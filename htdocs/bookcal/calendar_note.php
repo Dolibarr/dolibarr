@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       calendar_note.php
+ *  \file       htdocs/bookcal/calendar_note.php
  *  \ingroup    bookcal
  *  \brief      Tab for notes on Calendar
  */

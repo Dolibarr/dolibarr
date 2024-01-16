@@ -348,7 +348,7 @@ if ($action == 'update') {
 						$params['options'] = array($parameters=>null);
 					}
 				} else {
-					//Esle it's separated key/value and coma list
+					//Else it's separated key/value and coma list
 					foreach ($parameters_array as $param_ligne) {
 						list($key, $value) = explode(',', $param_ligne);
 						if (!array_key_exists('options', $params)) {

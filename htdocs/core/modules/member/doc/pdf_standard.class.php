@@ -262,7 +262,7 @@ class pdf_standard extends CommonStickerGenerator
 	/**
 	 *	Function to build PDF on disk, then output on HTTP stream.
 	 *
-	 *	@param	Adherent	$object		        Member object. Old usage: Array of record informations (array('textleft'=>,'textheader'=>, ...'id'=>,'photo'=>)
+	 *	@param	Adherent	$object		        Member object. Old usage: Array of record information (array('textleft'=>,'textheader'=>, ...'id'=>,'photo'=>)
 	 *	@param	Translate	$outputlangs		Lang object for output language
 	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file. Example: '5161', 'AVERYC32010', 'CARD', ...
 	 *	@param	string		$mode				Tell if doc module is called for 'member', ...
@@ -418,7 +418,7 @@ class pdf_standard extends CommonStickerGenerator
 		$pdf->SetAutoPageBreak(false);
 
 		$this->_Metric_Doc = $this->Tformat['metric'];
-		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja servie
+		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja service
 		$posX = 1;
 		$posY = 1;
 		if ($posX > 0) {

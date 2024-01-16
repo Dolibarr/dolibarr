@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2023		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -192,7 +193,7 @@ class Cronjob extends CommonObject
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -512,16 +513,16 @@ class Cronjob extends CommonObject
 	 *  Load list of cron jobs in a memory array from the database
 	 *  @TODO Use object CronJob and not CronJobLine.
 	 *
-	 *  @param	string		$sortorder      sort order
-	 *  @param	string		$sortfield      sort field
-	 *  @param	int			$limit		    limit page
-	 *  @param	int			$offset    	    page
-	 *  @param	int			$status    	    display active or not
-	 *  @param	array		$filter    	    filter output
-	 *  @param  int         $processing     Processing or not
-	 *  @return int          			    Return integer <0 if KO, >0 if OK
+	 *  @param	string		$sortorder		sort order
+	 *  @param	string		$sortfield		sort field
+	 *  @param	int			$limit			limit page
+	 *  @param	int			$offset			page
+	 *  @param	int			$status			display active or not
+	 *  @param	array		$filter			filter output
+	 *  @param	int			$processing		Processing or not
+	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder = 'DESC', $sortfield = 't.rowid', $limit = 0, $offset = 0, $status = 1, $filter = '', $processing = -1)
+	public function fetchAll($sortorder = 'DESC', $sortfield = 't.rowid', $limit = 0, $offset = 0, $status = 1, $filter = [], $processing = -1)
 	{
 		$this->lines = array();
 
@@ -1023,7 +1024,7 @@ class Cronjob extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option						On what the link point to ('nolink', ...)
@@ -1222,6 +1223,16 @@ class Cronjob extends CommonObject
 
 		// Run a method
 		if ($this->jobtype == 'method') {
+			// Deny to launch a method from a deactivated module
+			if (!empty($this->module_name) && !isModEnabled(strtolower($this->module_name))) {
+				$this->error = $langs->transnoentitiesnoconv('CronMethodNotAllowed', $this->methodename, $this->objectname);
+				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
+				$this->lastoutput = $this->error;
+				$this->lastresult = -1;
+				$retval = $this->lastresult;
+				$error++;
+			}
+
 			// load classes
 			if (!$error) {
 				$ret = dol_include_once($this->classesname);

@@ -135,9 +135,9 @@ $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_OPENSURVEY_LOGO_'.$suffix;
 if (!empty($conf->global->$paramlogo)) {
-	$logosmall = $conf->global->$paramlogo;
+	$logosmall = getDolGlobalString($paramlogo);
 } elseif (getDolGlobalString('ONLINE_OPENSURVEY_LOGO')) {
-	$logosmall = $conf->global->ONLINE_OPENSURVEY_LOGO_;
+	$logosmall = getDolGlobalString('ONLINE_OPENSURVEY_LOGO_');
 }
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
@@ -210,7 +210,7 @@ if (is_array($results)) {
 			print '</b><br>';
 
 			// Description
-			//print  $langs->trans("Desription").' : ';
+			//print  $langs->trans("Description").' : ';
 			print '<br>';
 			print '<div class="opensurveydescription centpercent">';
 			print dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->commentaires), 1, 1, 1));

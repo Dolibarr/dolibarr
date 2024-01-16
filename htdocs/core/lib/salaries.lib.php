@@ -96,7 +96,7 @@ function salaries_prepare_head($object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations
+ *  Return array head with list of tabs to view object information
  *
  *  @return	array		head
  */

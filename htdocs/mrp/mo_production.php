@@ -25,20 +25,20 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
+require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp_mo.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
-dol_include_once('/bom/class/bom.class.php');
-dol_include_once('/mrp/class/mo.class.php');
-dol_include_once('/mrp/lib/mrp_mo.lib.php');
 
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "stocks", "other", "product", "productbatch"));
@@ -70,7 +70,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -848,12 +848,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<td class="right">'.$langs->trans("UnitCost").'</td>';
 		}
 		// Qty already consumed
-		print '<td class="right">'.$langs->trans("QtyAlreadyConsumed").'</td>';
+		print '<td class="right">'.$form->textwithpicto($langs->trans("QtyAlreadyConsumedShort"), $langs->trans("QtyAlreadyConsumed")).'</td>';
 		// Warehouse
 		print '<td>';
 		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 			print $langs->trans("Warehouse");
-
+			if (isModEnabled('workstation')) {
+				print ' '.$langs->trans("or").' '.$langs->trans("Workstation");
+			}
 			// Select warehouse to force it everywhere
 			if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 				$listwarehouses = $tmpwarehouse->list_array(1);
@@ -1024,7 +1026,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 						// Qty
 						print '<td class="right nowraponall">';
-						print '<input name="qty_lineProduce" type="number" value="'. $line->qty.'" width="25px">';
+						print '<input class="width40" name="qty_lineProduce" value="'. $line->qty.'">';
 						print '</td>';
 						// Unit
 						if ($conf->global->PRODUCT_USE_UNITS) {
@@ -1041,24 +1043,29 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '</td>';
 						// Stock
 						print '<td class="nowraponall right">';
-						if ($tmpproduct->stock_reel < ($line->qty - $alreadyconsumed)) {
-							print img_warning($langs->trans('StockTooLow')).' ';
+						if ($tmpproduct->isStockManaged()) {
+							if ($tmpproduct->stock_reel < ($line->qty - $alreadyconsumed)) {
+								print img_warning($langs->trans('StockTooLow')).' ';
+							}
+							print '<span class="left">'. $tmpproduct->stock_reel  .' </span>';
 						}
-						print '<span class="left">'. $tmpproduct->stock_reel  .' </span>';
-						print '</td>';
-						// Batch
-						print '<td class="right">';
 						print '</td>';
 
+						// Batch
+						/*
+						print '<td class="right">';
+						print '</td>';
+						*/
+
 						// Action delete line
-						print '<td>';
-						print '<input type="submit" class="button buttongen button-add" name="save" value="' . $langs->trans("Edit") . '">';
-						print '<input type="submit" class="button buttongen button-cancel" name="cancel" value="' . $langs->trans("Cancel") . '">';
+						print '<td colspan="2">';
+						print '<input type="submit" class="button buttongen button-add small nominwidth" name="save" value="' . $langs->trans("Save") . '">';
+						print '<input type="submit" class="button buttongen button-cancel small nominwidth" name="cancel" value="' . $langs->trans("Cancel") . '">';
 						print '</td>';
 
 						// Action delete line
 						if ($permissiontodelete) {
-							print '<td class="center"></td>';
+							print '<td></td>';
 						}
 						print '<td></td>';
 						print '</tr>';
@@ -1140,10 +1147,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 						print ' ' . price2num($alreadyconsumed, 'MS');
 						print '</td>';
-						// Warehouse
+						// Warehouse and/or workstation
 						print '<td>';
 						if (getDolGlobalString('STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE') && $tmpwarehouse->id > 0) {
 							print img_picto('', $tmpwarehouse->picto) . " " . $tmpwarehouse->label;
+						}
+						if (isModEnabled('workstation') && $line->fk_default_workstation > 0) {
+							$tmpworkstation = new Workstation($db);
+							$tmpworkstation->fetch($line->fk_default_workstation);
+							print $tmpworkstation->getNomUrl(1);
 						}
 						print '</td>';
 						// Stock
@@ -1402,6 +1414,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			});</script>';
 		}
 
+
 		// Lines to produce
 
 		print '</div>';
@@ -1448,7 +1461,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 		}
 		// Already produced
-		print '<td class="right">'.$langs->trans("QtyAlreadyProduced").'</td>';
+		print '<td class="right">'.$form->textwithpicto($langs->trans("QtyAlreadyProducedShort"), $langs->trans("QtyAlreadyProduced")).'</td>';
 		// Warehouse
 		print '<td>';
 		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {

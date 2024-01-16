@@ -49,7 +49,7 @@ class mod_lot_free extends ModeleNumRefBatch
 	 */
 	public $code_modifiable;
 
-	public $code_modifiable_invalide; // Code modifiable si il est invalide
+	public $code_modifiable_invalide; // Code modifiable si il est invalid
 
 	public $code_modifiable_null; // Code modifiables si il est null
 

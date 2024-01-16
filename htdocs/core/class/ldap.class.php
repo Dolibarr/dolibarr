@@ -84,28 +84,28 @@ class Ldap
 
 	/**
 	 * User administrateur Ldap
-	 * Active Directory ne supporte pas les connexions anonymes
+	 * Active Directory does not allow anonymous connections
 	 */
 	public $searchUser;
 	/**
-	 * Mot de passe de l'administrateur
-	 * Active Directory ne supporte pas les connexions anonymes
+	 * Administraot Password
+	 * Active Directory does not allow anonymous connections
 	 */
 	public $searchPassword;
 	/**
-	 *  DN des utilisateurs
+	 * Users DN
 	 */
 	public $people;
 	/**
-	 * DN des groupes
+	 * Groups DN
 	 */
 	public $groups;
 	/**
-	 * Code erreur retourne par le serveur Ldap
+	 * @var string|null Error code provided by the LDAP server
 	 */
 	public $ldapErrorCode;
 	/**
-	 * Message texte de l'erreur
+	 * @var string|null Error text message
 	 */
 	public $ldapErrorText;
 
@@ -221,10 +221,10 @@ class Ldap
 
 		// Server
 		if (getDolGlobalString('LDAP_SERVER_HOST')) {
-			$this->server[] = $conf->global->LDAP_SERVER_HOST;
+			$this->server[] = getDolGlobalString('LDAP_SERVER_HOST');
 		}
 		if (getDolGlobalString('LDAP_SERVER_HOST_SLAVE')) {
-			$this->server[] = $conf->global->LDAP_SERVER_HOST_SLAVE;
+			$this->server[] = getDolGlobalString('LDAP_SERVER_HOST_SLAVE');
 		}
 		$this->serverPort          = getDolGlobalInt('LDAP_SERVER_PORT', 389);
 		$this->ldapProtocolVersion = getDolGlobalString('LDAP_SERVER_PROTOCOLVERSION');
@@ -326,7 +326,7 @@ class Ldap
 						dol_syslog(get_class($this)."::connect_bind this->connection is ok", LOG_DEBUG);
 					}
 
-					// Upgrade connexion to TLS, if requested by the configuration
+					// Upgrade connection to TLS, if requested by the configuration
 					if (getDolGlobalString('LDAP_SERVER_USE_TLS')) {
 						// For test/debug
 						//ldap_set_option($this->connection, LDAP_OPT_DEBUG_LEVEL, 7);
@@ -523,7 +523,7 @@ class Ldap
 	 *
 	 *	@param	string	$dn			DN entry key
 	 *	@param	array	$info		Attributes array
-	 *	@param	User		$user		Objet user that create
+	 *	@param	User	$user		Object user that create
 	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function add($dn, $info, $user)
@@ -554,7 +554,7 @@ class Ldap
 		$result = @ldap_add($this->connection, $dn, $info);
 
 		if ($result) {
-			dol_syslog(get_class($this)."::add successfull", LOG_DEBUG);
+			dol_syslog(get_class($this)."::add successful", LOG_DEBUG);
 			return 1;
 		} else {
 			$this->ldapErrorCode = @ldap_errno($this->connection);
@@ -571,7 +571,7 @@ class Ldap
 	 *
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
-	 *	@param	User		$user		Objet user that modify
+	 *	@param	User		$user		Object user that modify
 	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function modify($dn, $info, $user)
@@ -612,7 +612,7 @@ class Ldap
 		$result = @ldap_modify($this->connection, $dn, $info);
 
 		if ($result) {
-			dol_syslog(get_class($this)."::modify successfull", LOG_DEBUG);
+			dol_syslog(get_class($this)."::modify successful", LOG_DEBUG);
 			return 1;
 		} else {
 			$this->error = @ldap_error($this->connection);
@@ -628,8 +628,8 @@ class Ldap
 	 *	@param	string		$dn				Old DN entry key (uid=qqq,ou=xxx,dc=aaa,dc=bbb) (before update)
 	 *	@param	string		$newrdn			New RDN entry key (uid=qqq)
 	 *	@param	string		$newparent		New parent (ou=xxx,dc=aaa,dc=bbb)
-	 *	@param	User			$user			Objet user that modify
-	 *	@param	bool			$deleteoldrdn	If true the old RDN value(s) is removed, else the old RDN value(s) is retained as non-distinguished values of the entry.
+	 *	@param	User		$user			Object user that modify
+	 *	@param	bool		$deleteoldrdn	If true the old RDN value(s) is removed, else the old RDN value(s) is retained as non-distinguished values of the entry.
 	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function rename($dn, $newrdn, $newparent, $user, $deleteoldrdn = true)
@@ -655,7 +655,7 @@ class Ldap
 		$result = @ldap_rename($this->connection, $dn, $newrdn, $newparent, $deleteoldrdn);
 
 		if ($result) {
-			dol_syslog(get_class($this)."::rename successfull", LOG_DEBUG);
+			dol_syslog(get_class($this)."::rename successful", LOG_DEBUG);
 			return 1;
 		} else {
 			$this->error = @ldap_error($this->connection);
@@ -670,13 +670,13 @@ class Ldap
 	 *
 	 *  @param	string	$dn			DN entry key
 	 *  @param	array	$info		Attributes array
-	 *  @param	User		$user		Objet user that update
+	 *  @param	User	$user		Object user that update
 	 * 	@param	string	$olddn		Old DN entry key (before update)
 	 * 	@param	string	$newrdn		New RDN entry key (uid=qqq) (for ldap_rename)
 	 *	@param	string	$newparent	New parent (ou=xxx,dc=aaa,dc=bbb) (for ldap_rename)
 	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
-	public function update($dn, $info, $user, $olddn, $newrdn = false, $newparent = false)
+	public function update($dn, $info, $user, $olddn, $newrdn = '', $newparent = '')
 	{
 		dol_syslog(get_class($this)."::update dn=".$dn." olddn=".$olddn);
 
@@ -870,7 +870,7 @@ class Ldap
 	 *
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
-	 *	@param	User		$user		Objet user that create
+	 *	@param	User		$user		Object user that create
 	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function addAttribute($dn, $info, $user)
@@ -901,7 +901,7 @@ class Ldap
 		$result = @ldap_mod_add($this->connection, $dn, $info);
 
 		if ($result) {
-			dol_syslog(get_class($this)."::add_attribute successfull", LOG_DEBUG);
+			dol_syslog(get_class($this)."::add_attribute successful", LOG_DEBUG);
 			return 1;
 		} else {
 			$this->error = @ldap_error($this->connection);
@@ -916,7 +916,7 @@ class Ldap
 	 *
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
-	 *	@param	User		$user		Objet user that create
+	 *	@param	User		$user		Object user that create
 	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function updateAttribute($dn, $info, $user)
@@ -947,7 +947,7 @@ class Ldap
 		$result = @ldap_mod_replace($this->connection, $dn, $info);
 
 		if ($result) {
-			dol_syslog(get_class($this)."::updateAttribute successfull", LOG_DEBUG);
+			dol_syslog(get_class($this)."::updateAttribute successful", LOG_DEBUG);
 			return 1;
 		} else {
 			$this->error = @ldap_error($this->connection);
@@ -962,7 +962,7 @@ class Ldap
 	 *
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
-	 *	@param	User		$user		Objet user that create
+	 *	@param	User		$user		Object user that create
 	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function deleteAttribute($dn, $info, $user)
@@ -993,7 +993,7 @@ class Ldap
 		$result = @ldap_mod_del($this->connection, $dn, $info);
 
 		if ($result) {
-			dol_syslog(get_class($this)."::deleteAttribute successfull", LOG_DEBUG);
+			dol_syslog(get_class($this)."::deleteAttribute successful", LOG_DEBUG);
 			return 1;
 		} else {
 			$this->error = @ldap_error($this->connection);
@@ -1114,7 +1114,7 @@ class Ldap
 			} elseif (((string) $activefilter == 'member') && $this->filter) {
 				$filter = '('.$this->filtermember.')';
 			} else {
-				// If this->filter/this->filtergroup is empty, make fiter on * (all)
+				// If this->filter/this->filtergroup is empty, make filter on * (all)
 				$filter = '('.ldap_escape($useridentifier, '', LDAP_ESCAPE_FILTER).'=*)';
 			}
 		} else {						// Use a filter forged using the $search value
@@ -1270,8 +1270,8 @@ class Ldap
 	 * 	Fonction de recherche avec filtre
 	 *	this->connection doit etre defini donc la methode bind ou bindauth doit avoir deja ete appelee
 	 *	Ne pas utiliser pour recherche d'une liste donnee de proprietes
-	 *	car conflit majuscule-minuscule. A n'utiliser que pour les pages
-	 *	'Fiche LDAP' qui affiche champ lisibles par defaut.
+	 *	car conflict majuscule-minuscule. A n'utiliser que pour les pages
+	 *	'Fiche LDAP' qui affiche champ lisibles par default.
 	 *
 	 * 	@param	string		$checkDn		DN de recherche (Ex: ou=users,cn=my-domain,cn=com)
 	 * 	@param 	string		$filter			Search filter (ex: (sn=nom_personne) )

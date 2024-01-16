@@ -111,7 +111,7 @@ if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_d
 	if (preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
-		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially crypted
+		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
 	} else {
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 	}
@@ -1113,7 +1113,7 @@ if ($ok && GETPOST('set_empty_time_spent_amount', 'alpha')) {
 
 // force_disable_of_modules_not_found
 if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha')) {
-	print '<tr><td colspan="2"><br>*** Force modules not found physicaly to be disabled (only modules adding js, css or hooks can be detected as removed physicaly)</td></tr>';
+	print '<tr><td colspan="2"><br>*** Force modules not found physically to be disabled (only modules adding js, css or hooks can be detected as removed physically)</td></tr>';
 
 	$arraylistofkey = array('hooks', 'js', 'css');
 
@@ -1505,7 +1505,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 
 			// s’il y a plusieurs lignes avec le même produit sur cette commande fournisseur,
 			// on divise la ligne de dispatch en autant de lignes qu’on en a sur la commande pour le produit
-			// et on met la quantité de la ligne dans la limite du "budget" indiqué par dispatch.qty
+			// et on met la quantité de la ligne dans la limit du "budget" indiqué par dispatch.qty
 
 			$remaining_qty = $obj_dispatch->qty;
 			$first_iteration = true;
@@ -1596,7 +1596,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 	echo '<tr><td>'.join('</td></tr><tr><td>', $errors).'</td></tr>';
 }
 
-// Repair llx_commande_fournisseur to eleminate duplicate reference
+// Repair llx_commande_fournisseur to eliminate duplicate reference
 if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
 	require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
 	include_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';

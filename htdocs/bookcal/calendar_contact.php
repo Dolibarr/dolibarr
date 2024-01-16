@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       calendar_contact.php
+ *  \file       htdocs/bookcal/calendar_contact.php
  *  \ingroup    bookcal
  *  \brief      Tab for contacts linked to Calendar
  */

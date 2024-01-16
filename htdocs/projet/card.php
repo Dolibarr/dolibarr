@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2023      Charlene Benke       <charlene@patas_monkey.com>
+ * Copyright (C) 2023      Christian Foellmann  <christian@foellmann.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +83,7 @@ $object = new Project($db);
 $extrafields = new ExtraFields($db);
 
 // Load object
-//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Can't use generic include because when creating a project, ref is defined and we dont want error if fetch fails from ref.
+//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Can't use generic include because when creating a project, ref is defined and we don't want error if fetch fails from ref.
 if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref); // If we create project, ref may be defined into POST but record does not yet exists into database
 	if ($ret > 0) {
@@ -99,7 +100,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Security check
 $socid = GETPOST('socid', 'int');
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 restrictedArea($user, 'projet', $object->id, 'projet&project');
 
 if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && !GETPOST("cancel"))) {
@@ -196,7 +197,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		// Create with status validated immediatly
+		// Create with status validated immediately
 		if (getDolGlobalString('PROJECT_CREATE_NO_DRAFT') && !$error) {
 			$status = Project::STATUS_VALIDATED;
 		}
@@ -727,7 +728,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		print '</td><td class="maxwidthonsmartphone">';
 		$filter = '';
 		if (getDolGlobalString('PROJECT_FILTER_FOR_THIRDPARTY_LIST')) {
-			$filter = $conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
+			$filter = getDolGlobalString('PROJECT_FILTER_FOR_THIRDPARTY_LIST');
 		}
 		$text = img_picto('', 'company').$form->select_company(GETPOST('socid', 'int'), 'socid', $filter, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 		if (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') && empty($conf->dol_use_jmobile)) {
@@ -864,7 +865,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	print '</form>';
 
 	// Change probability from status or role of project
-	// Set also dependencies between use taks and bill time
+	// Set also dependencies between use task and bill time
 	print '<script type="text/javascript">
         jQuery(document).ready(function() {
         	function change_percent()
@@ -977,7 +978,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		// Status
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td><td>';
 		print '<select class="flat" name="status" id="status">';
-		foreach ($object->labelStatusShort as $key => $val) {
+		$statuses = $object->labelStatusShort;
+		if (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_PROJECT')) {
+			unset($statuses[$object::STATUS_DRAFT]);
+		}
+		foreach ($statuses as $key => $val) {
 			print '<option value="'.$key.'"'.((GETPOSTISSET('status') ? GETPOST('status') : $object->statut) == $key ? ' selected="selected"' : '').'>'.$langs->trans($val).'</option>';
 		}
 		print '</select>';
@@ -1114,7 +1119,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			print '</td><td>';
 			$filter = '';
 			if (getDolGlobalString('PROJECT_FILTER_FOR_THIRDPARTY_LIST')) {
-				$filter = $conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
+				$filter = getDolGlobalString('PROJECT_FILTER_FOR_THIRDPARTY_LIST');
 			}
 			$text = img_picto('', 'company', 'class="pictofixedwidth"');
 			$text .= $form->select_company(!empty($object->thirdparty->id) ? $object->thirdparty->id : "", 'socid', $filter, 'None', 1, 0, array(), 0, 'minwidth300');
@@ -1422,7 +1427,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 	print '</form>';
 
-	// Set also dependencies between use taks and bill time
+	// Set also dependencies between use task and bill time
 	print '<script type="text/javascript">
         jQuery(document).ready(function() {
         	jQuery("#usage_task").change(function() {

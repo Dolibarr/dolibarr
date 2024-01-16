@@ -25,7 +25,7 @@
 
 
 /**
- *	Class for accesing price global variables table
+ *	Class for accessing price global variables table
  */
 class PriceGlobalVariable
 {
@@ -66,7 +66,7 @@ class PriceGlobalVariable
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{

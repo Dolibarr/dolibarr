@@ -111,8 +111,8 @@ if ($action == 'uploadfile') {
 		$nbfile = count($_FILES['userfile']['name']);
 		for ($i = 0; $i < $nbfile; $i++) {
 			$newsection = $newsectioniso;
-			$fileupload = $_FILES['userfile']['name'][$i];
-			$fileuploadpath = $_FILES['userfile']['tmp_name'][$i];
+			$fileupload = dol_sanitizeFileName($_FILES['userfile']['name'][$i]);
+			$fileuploadpath = dol_sanitizePathName($_FILES['userfile']['tmp_name'][$i]);
 			$result = dol_ftp_put($conn_id, $fileupload, $fileuploadpath, $newsection);
 
 			if ($result) {
@@ -390,8 +390,8 @@ if (!function_exists('ftp_connect')) {
 		print $langs->trans("Server").': <b>'.$ftp_server.'</b><br>';
 		print $langs->trans("Port").': <b>'.$ftp_port.'</b> '.($ftp_passive ? "(Passive)" : "(Active)").'<br>';
 		print $langs->trans("User").': <b>'.$ftp_user.'</b><br>';
-		print $langs->trans("FTPs (FTP over SSH)").': <b>'.yn($conf->global->FTP_CONNECT_WITH_SSL).'</b><br>';
-		print $langs->trans("SFTP (FTP as a subsytem of SSH)").': <b>'.yn($conf->global->FTP_CONNECT_WITH_SFTP).'</b><br>';
+		print $langs->trans("FTPs (FTP over SSH)").': <b>'.yn(getDolGlobalString('FTP_CONNECT_WITH_SSL')).'</b><br>';
+		print $langs->trans("SFTP (FTP as a subsystem of SSH)").': <b>'.yn(getDolGlobalString('FTP_CONNECT_WITH_SFTP')).'</b><br>';
 		print $langs->trans("Directory").': ';
 		$sectionarray = preg_split('|[\/]|', $section);
 		// For /

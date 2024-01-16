@@ -395,7 +395,7 @@ class Notify
 		// Define some vars
 		$application = 'Dolibarr';
 		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-			$application = $conf->global->MAIN_APPLICATION_TITLE;
+			$application = getDolGlobalString('MAIN_APPLICATION_TITLE');
 		}
 		$replyto = $conf->notification->email_from;
 		$object_type = '';
@@ -507,7 +507,7 @@ class Notify
 								$link = '<a href="'.$urlwithroot.'/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->commande->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'commande');
 								$object_type = 'order';
-								$labeltouse = $conf->global->ORDER_CLOSE_TEMPLATE;
+								$labeltouse = getDolGlobalString('ORDER_CLOSE_TEMPLATE');
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextOrderClose", $link);
 								break;
 							case 'PROPAL_VALIDATE':
@@ -520,7 +520,7 @@ class Notify
 								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
 								$object_type = 'propal';
-								$labeltouse = $conf->global->PROPAL_CLOSE_REFUSED_TEMPLATE;
+								$labeltouse = getDolGlobalString('PROPAL_CLOSE_REFUSED_TEMPLATE');
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedRefused", $link);
 								if (!empty($object->context['closedfromonlinesignature'])) {
 									$mesg .= ' - From online page';

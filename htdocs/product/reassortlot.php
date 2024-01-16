@@ -75,7 +75,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $object = new Product($db);
 $search_sale = GETPOST("search_sale");
 if (GETPOSTISSET('catid')) {
@@ -101,7 +101,7 @@ if (!$sortorder) {
 }
 
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {

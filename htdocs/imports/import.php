@@ -292,7 +292,7 @@ if ($step == 3 && $datatoimport) {
 		} else {
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 		}
-		Header('Location: '.$_SERVER["PHP_SELF"].'?step='.$step.$param);
+		header('Location: '.$_SERVER["PHP_SELF"].'?step='.$step.$param);
 		exit;
 	}
 }
@@ -379,7 +379,7 @@ if ($step == 1 || !$datatoimport) {
 	print '<div class="opacitymedium">'.$langs->trans("SelectImportDataSet").'</div><br>';
 
 	// Affiche les modules d'imports
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Module").'</td>';
@@ -486,12 +486,12 @@ if ($step == 2 && $datatoimport) {
 
 	print '<br>';
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent" cellpadding="4">';
 
 	$filetoimport = '';
 
-	// Add format informations and link to download example
+	// Add format information and link to download example
 	print '<tr class="liste_titre"><td colspan="5">';
 	print $langs->trans("FileMustHaveOneOfFollowingFormat");
 	print '</td></tr>';
@@ -646,7 +646,7 @@ if ($step == 3 && $datatoimport) {
 	print '<input type="submit" class="button small" value="'.$langs->trans("AddFile").'"'.$out.' name="sendit">';
 	$out = '';
 	if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
-		$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
+		$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
 		$maxphp = @ini_get('upload_max_filesize'); // In unknown
 		if (preg_match('/k$/i', $maxphp)) {
 			$maxphp = (int) substr($maxphp, 0, -1);
@@ -701,7 +701,7 @@ if ($step == 3 && $datatoimport) {
 	// Search available imports
 	$filearray = dol_dir_list($conf->import->dir_temp, 'files', 0, '', '', 'name', SORT_DESC);
 	if (count($filearray) > 0) {
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder centpercent" width="100%" cellpadding="4">';
 
 		$dir = $conf->import->dir_temp;
@@ -803,7 +803,7 @@ if ($step == 4 && $datatoimport) {
 	// The value to use
 	$separator_used = str_replace('\t', "\t", $separator);
 
-	// Create classe to use for import
+	// Create class to use for import
 	$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
 	$file = "import_".$model.".modules.php";
 	$classname = "Import".ucfirst($model);
@@ -1061,7 +1061,7 @@ if ($step == 4 && $datatoimport) {
 	print '</form>';
 
 	// Title of array with fields
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("FieldsInSourceFile").'</td>';
@@ -1084,10 +1084,9 @@ if ($step == 4 && $datatoimport) {
 
 	// List of source fields
 
-	$var = false;
 	$lefti = 1;
 	foreach ($fieldssource as $key => $val) {
-		show_elem($fieldssource, $key, $val, $var); // key is field number in source file
+		show_elem($fieldssource, $key, $val); // key is field number in source file
 		$listofkeys[$key] = 1;
 		$fieldsplaced[$key] = 1;
 		$valforsourcefieldnb[$lefti] = $key;
@@ -1190,7 +1189,7 @@ if ($step == 4 && $datatoimport) {
 
 			$filecolumn = ($i + 1);
 			// Source field info
-			if (empty($objimport->array_import_convertvalue[0][$tmpcode])) {	// If source file does not need convertion
+			if (empty($objimport->array_import_convertvalue[0][$tmpcode])) {	// If source file does not need conversion
 				$filecolumntoshow = num2Alpha($i);
 			} else {
 				if ($objimport->array_import_convertvalue[0][$tmpcode]['rule'] == 'fetchidfromref') {
@@ -1203,7 +1202,7 @@ if ($step == 4 && $datatoimport) {
 			// Source required
 			$example = !empty($objimport->array_import_examplevalues[0][$tmpcode]) ? $objimport->array_import_examplevalues[0][$tmpcode] : "";
 			// Example
-			if (empty($objimport->array_import_convertvalue[0][$tmpcode])) {	// If source file does not need convertion
+			if (empty($objimport->array_import_convertvalue[0][$tmpcode])) {	// If source file does not need conversion
 				if ($example) {
 					$htmltext .= $langs->trans("SourceExample").': <b>'.str_replace('"', '', $example).'</b><br>';
 				}
@@ -1481,7 +1480,7 @@ if ($step == 4 && $datatoimport) {
 		print '<input type="hidden" value="'.dol_escape_htmltag($separator).'" name="separator">';
 		print '<input type="hidden" value="'.dol_escape_htmltag($enclosure).'" name="enclosure">';
 
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table summary="selectofimportprofil" class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("ImportModelName").'</td>';
@@ -1490,7 +1489,7 @@ if ($step == 4 && $datatoimport) {
 		print '</tr>';
 
 		$nameofimportprofile = str_replace(' ', '-', $langs->trans("ImportProfile").' '.$titleofmodule.' '.dol_print_date(dol_now('gmt'), 'dayxcard'));
-		if (GETPOST('import_name')) {	// If we have submited a form, we take value used fot the update try
+		if (GETPOST('import_name')) {	// If we have submitted a form, we take value used for the update try
 			$nameofimportprofile = $import_name;
 		}
 
@@ -1564,7 +1563,7 @@ if ($step == 5 && $datatoimport) {
 	$model = $format;
 	$list = $objmodelimport->listOfAvailableImportFormat($db);
 
-	// Create classe to use for import
+	// Create class to use for import
 	$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
 	$file = "import_".$model.".modules.php";
 	$classname = "Import".ucfirst($model);
@@ -2054,7 +2053,7 @@ if ($step == 6 && $datatoimport) {
 	$importid = GETPOST("importid", 'alphanohtml');
 
 
-	// Create classe to use for import
+	// Create class to use for import
 	$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
 	$file = "import_".$model.".modules.php";
 	$classname = "Import".ucfirst($model);
@@ -2406,11 +2405,9 @@ $db->close();
  * @param	array	$fieldssource	List of source fields
  * @param	int		$pos			Pos
  * @param	string	$key			Key
- * @param	boolean	$var			Line style (odd or not). No more used.
- * @param	int		$nostyle		Hide style
  * @return	void
  */
-function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
+function show_elem($fieldssource, $pos, $key)
 {
 	global $conf, $langs;
 
@@ -2451,7 +2448,7 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 		// Print field of source file
 		print '<tr style="height:'.$height.'" class="trimport oddevenimport">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
-		// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
+		// The image must have the class 'boxhandle' because it's value used in DOM draggable objects to define the area used to catch the full object
 		//print img_picto($langs->trans("MoveField", $pos), 'grip_title', 'class="boxhandle" style="cursor:move;"');
 		print img_picto($langs->trans("Column").' '.num2Alpha($pos - 1), 'file', 'class="pictofixedwith"');
 		print '</td>';
@@ -2520,7 +2517,7 @@ function getnewkey(&$fieldssource, &$listofkey)
  * Return array with element inserted in it at position $position
  *
  * @param 	array	$array			Array of field source
- * @param	mixed	$position		key of postion to insert to
+ * @param	mixed	$position		key of position to insert to
  * @param	array	$insertArray	Array to insert
  * @return	array
  */

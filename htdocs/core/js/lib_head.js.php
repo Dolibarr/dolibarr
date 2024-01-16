@@ -269,7 +269,7 @@ function formatDate(date,format)
 {
 	// alert('formatDate date='+date+' format='+format);
 
-	// Force parametres en chaine
+	// Force parameters en chaine
 	format=format+"";
 
 	var result="";
@@ -337,7 +337,7 @@ function getDateFromFormat(val,format)
 {
 	// alert('getDateFromFormat val='+val+' format='+format);
 
-	// Force parametres en chaine
+	// Force parameters en chaine
 	val=val+"";
 	format=format+"";
 
@@ -561,14 +561,14 @@ function hideMessage(fieldId,message) {
  *
  * @param	string	url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
  * @param	string	code		Code
- * @param	string	intput		Array of complementary actions to do if success
+ * @param	string	input		Array of complementary actions to do if success
  * @param	int		entity		Entity
  * @param	int		strict		Strict
  * @param   int     forcereload Force reload
  * @param   int     userid      User id
  * @param	int		value       Value to set
  * @param   string  token       Token
- * @retun   boolean
+ * @return   boolean
  */
 function setConstant(url, code, input, entity, strict, forcereload, userid, token, value) {
 	var saved_url = url; /* avoid undefined url */
@@ -668,7 +668,7 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
  *
  * @param	{string}	url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
  * @param	{string}	code		Code
- * @param	{string}	intput		Array of complementary actions to do if success
+ * @param	{string}	input		Array of complementary actions to do if success
  * @param	{int}		entity		Entity
  * @param	{int}		strict		Strict
  * @param   {int}     forcereload Force reload
@@ -765,7 +765,7 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
  * @param	string	action		Action
  * @param	string	url			Url
  * @param	string	code		Code
- * @param	string	intput		Array of complementary actions to do if success
+ * @param	string	input		Array of complementary actions to do if success
  * @param	string	box			Box
  * @param	int		entity		Entity
  * @param	int		yesButton	yesButton
@@ -884,7 +884,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 								}
 							});
 							if ( !valid ) {
-								// remove invalid value, as it didnt match anything
+								// remove invalid value, as it didn't match anything
 								$( this ).val( "" );
 								select.val( "" );
 								input.data("ui-autocomplete").term = "";
@@ -1265,7 +1265,7 @@ function price2numjs(amount) {
 	amount = amount.replace(thousand, '');        // Replace of thousand before replace of dec to avoid pb if thousand is .
 	amount = amount.replace(dec, '.');
 
-	//console.log("amount before="+amount+" rouding="+rounding)
+	//console.log("amount before="+amount+" rounding="+rounding)
 	var res = Math.round10(amount, - rounding);
 	// Other solution is
 	// var res = dolroundjs(amount, rounding)
@@ -1303,6 +1303,8 @@ $(document).ready(function() {
 	<?php
 } ?>
 
+
+
 jQuery(document).ready(function() {
 	// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
 	if (window.location && window.location.pathname.indexOf("externalsite/frametop.php") == -1 && window.location !== window.parent.location ) {
@@ -1315,6 +1317,25 @@ jQuery(document).ready(function() {
 
 	// Code to set tooltip on search field
 	jQuery('table.liste tr.liste_titre_filter td.liste_titre input[name^="search"][type=text]:not(".maxwidthdate")').attr('title', '<?php echo dol_escape_js($langs->transnoentities("SearchSyntaxTooltipForStringOrNum")) ?>');
+});
+
+
+jQuery(document).ready(function() {
+	jQuery(".butAction.dropdown-toggle").on("click", function(event) {
+		console.log("Click on .butAction.dropdown-toggle");
+		var parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown");
+			 var offset = parentholder.offset();
+		var widthdocument = $(document).width();
+		var left = offset.left;
+		var right = widthdocument - offset.left - parentholder.width();
+		var widthpopup = parentholder.children(".dropdown-content").width();
+		console.log("left="+left+" right="+right+" width="+widthpopup+" widthdocument="+widthdocument);
+		if (widthpopup + right >= widthdocument) {
+			right = 10;
+		}
+		parentholder.toggleClass("open");
+		parentholder.children(".dropdown-content").css({"right": right+"px", "left": "auto"});
+	});
 });
 
 

@@ -118,7 +118,7 @@ print "----- Synchronize all records from LDAP database:\n";
 print "host=" . getDolGlobalString('LDAP_SERVER_HOST')."\n";
 print "port=" . getDolGlobalString('LDAP_SERVER_PORT')."\n";
 print "login=" . getDolGlobalString('LDAP_ADMIN_DN')."\n";
-print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
+print "pass=".preg_replace('/./i', '*', getDolGlobalString('LDAP_ADMIN_PASS'))."\n";
 print "DN to extract=" . getDolGlobalString('LDAP_MEMBER_DN')."\n";
 if (getDolGlobalString('LDAP_MEMBER_FILTER')) {
 	print 'Filter=(' . getDolGlobalString('LDAP_MEMBER_FILTER').')'."\n"; // Note: filter is defined into function getRecords
@@ -192,7 +192,7 @@ if ($result >= 0) {
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_MEMBER_ACTIVE = 0;
 
-	$ldaprecords = $ldap->getRecords('*', $conf->global->LDAP_MEMBER_DN, $conf->global->LDAP_KEY_MEMBERS, $required_fields, 'member'); // Fiter on 'member' filter param
+	$ldaprecords = $ldap->getRecords('*', getDolGlobalString('LDAP_MEMBER_DN'), getDolGlobalString('LDAP_KEY_MEMBERS'), $required_fields, 'member'); // Filter on 'member' filter param
 	if (is_array($ldaprecords)) {
 		$db->begin();
 
@@ -253,16 +253,16 @@ if ($result >= 0) {
 			// print_r($member);
 
 			$datefirst = '';
-			if ($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE) {
+			if (getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE')) {
 				$datefirst = dol_stringtotime($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE')]);
 				$pricefirst = price2num($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT')]);
 			}
 
 			$datelast = '';
-			if ($conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE) {
+			if (getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE')) {
 				$datelast = dol_stringtotime($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE')]);
 				$pricelast = price2num($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT')]);
-			} elseif ($conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION) {
+			} elseif (getDolGlobalString('LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION')) {
 				$datelast = dol_time_plus_duree(dol_stringtotime($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION')]), -1, 'y') + 60 * 60 * 24;
 				$pricelast = price2num($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT')]);
 

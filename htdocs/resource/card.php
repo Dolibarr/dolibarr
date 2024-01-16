@@ -112,7 +112,7 @@ if (empty($reshook)) {
 				if ($result > 0) {
 					// Creation OK
 					setEventMessages($langs->trans('ResourceCreatedWithSuccess'), null, 'mesgs');
-					Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+					header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 					exit;
 				} else {
 					// Creation KO
@@ -121,7 +121,7 @@ if (empty($reshook)) {
 				}
 			}
 		} else {
-			Header("Location: list.php");
+			header("Location: list.php");
 			exit;
 		}
 	}
@@ -150,7 +150,7 @@ if (empty($reshook)) {
 
 				$result = $object->update($user);
 				if ($result > 0) {
-					Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+					header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 					exit;
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -174,7 +174,7 @@ if (empty($reshook)) {
 
 			if ($result >= 0) {
 				setEventMessages($langs->trans('RessourceSuccessfullyDeleted'), null, 'mesgs');
-				Header('Location: '.DOL_URL_ROOT.'/resource/list.php');
+				header('Location: '.DOL_URL_ROOT.'/resource/list.php');
 				exit;
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');

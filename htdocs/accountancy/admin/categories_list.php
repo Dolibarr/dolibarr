@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2004-2023  Laurent Destailleur      <eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2024  Alexandre Spangaro       <aspangaro@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -414,7 +414,9 @@ if ($action == 'disable_favorite') {
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-llxHeader('', $langs->trans('DictionaryAccountancyCategory'));
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
+
+llxHeader('', $langs->trans('DictionaryAccountancyCategory'), $help_url);
 
 $titre = $langs->trans($tablib[$id]);
 $linkback = '';
@@ -495,7 +497,7 @@ if ($tabname[$id]) {
 	foreach ($fieldlist as $field => $value) {
 		// Determine le nom du champ par rapport aux noms possibles
 		// dans les dictionnaires de donnees
-		$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
+		$valuetoshow = ucfirst($fieldlist[$field]); // By default
 		$valuetoshow = $langs->trans($valuetoshow); // try to translate
 		$class = "left";
 		if ($fieldlist[$field] == 'type') {
@@ -629,7 +631,7 @@ if ($resql) {
 
 	$filterfound = 0;
 	foreach ($fieldlist as $field => $value) {
-		$showfield = 1; // By defaut
+		$showfield = 1; // By default
 		if ($fieldlist[$field] == 'region_id' || $fieldlist[$field] == 'country_id') {
 			$showfield = 0;
 		}
@@ -655,7 +657,7 @@ if ($resql) {
 
 	$filterfound = 0;
 	foreach ($fieldlist as $field => $value) {
-		$showfield = 1; // By defaut
+		$showfield = 1; // By default
 
 		if ($fieldlist[$field] == 'region_id' || $fieldlist[$field] == 'country_id') {
 			$showfield = 0;
@@ -955,10 +957,10 @@ $db->close();
  * 	@param		array	$fieldlist		Array of fields
  * 	@param		Object	$obj			If we show a particular record, obj is filled with record fields
  *  @param		string	$tabname		Name of SQL table
- *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
+ *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		void
  */
-function fieldListAccountingCategories($fieldlist, $obj = '', $tabname = '', $context = '')
+function fieldListAccountingCategories($fieldlist, $obj = null, $tabname = '', $context = '')
 {
 	global $conf, $langs, $db;
 	global $form, $mysoc;

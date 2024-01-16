@@ -636,6 +636,12 @@ if ($nboftargetok) {
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/vendor`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/webmozart`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/autoload.php`;
+        
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/sabre/sabre/bin`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/sabre/sabre/*/bin`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/sabre/sabre/*/*/bin`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/sabre/sabre/*/*/*/bin`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/sabre/sabre/*/*/*/*/bin`;
 	}
 
 	# Build package for each target

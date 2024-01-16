@@ -31,7 +31,7 @@
 /**
  *  \file       htdocs/expedition/class/expedition.class.php
  *  \ingroup    expedition
- *  \brief      Fichier de la classe de gestion des expeditions
+ *  \brief      File of class managing the shipments
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -169,7 +169,7 @@ class Expedition extends CommonObject
 	public $weight;
 
 	/**
-	 * @var integer|string Date delivery planed
+	 * @var integer|string Date delivery planned
 	 */
 	public $date_delivery;
 
@@ -296,7 +296,7 @@ class Expedition extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('EXPEDITION_ADDON_NUMBER') . ".php";
-			$classname = $conf->global->EXPEDITION_ADDON_NUMBER;
+			$classname = getDolGlobalString('EXPEDITION_ADDON_NUMBER');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -332,7 +332,7 @@ class Expedition extends CommonObject
 	/**
 	 *  Create expedition en base
 	 *
-	 *  @param	User	$user       Objet du user qui cree
+	 *  @param	User	$user       Object du user qui cree
 	 * 	@param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return int 				Return integer <0 si erreur, id expedition creee si ok
 	 */
@@ -521,7 +521,7 @@ class Expedition extends CommonObject
 	/**
 	 * Create the detail of the expedition line. Create 1 record into expeditiondet for each warehouse and n record for each lot in this warehouse into expeditiondet_batch.
 	 *
-	 * @param 	object		$line_ext			Objet with full information of line. $line_ext->detail_batch must be an array of ExpeditionLineBatch
+	 * @param 	object		$line_ext			Object with full information of line. $line_ext->detail_batch must be an array of ExpeditionLineBatch
 	 * @param	array		$array_options		extrafields array
 	 * @return	int								Return integer <0 if KO, >0 if OK
 	 */
@@ -630,7 +630,7 @@ class Expedition extends CommonObject
 				$this->date                 = $this->db->jdate($obj->date_expedition); // TODO deprecated
 				$this->date_expedition      = $this->db->jdate($obj->date_expedition); // TODO deprecated
 				$this->date_shipping        = $this->db->jdate($obj->date_expedition); // Date real
-				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planed
+				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planned
 				$this->fk_delivery_address  = $obj->fk_address;
 				$this->model_pdf            = $obj->model_pdf;
 				$this->shipping_method_id   = $obj->fk_shipping_method;
@@ -674,7 +674,7 @@ class Expedition extends CommonObject
 				// Retrieve extrafields
 				$this->fetch_optionals();
 
-				// Fix Get multicurrency param for transmited
+				// Fix Get multicurrency param for transmitted
 				if (isModEnabled('multicurrency')) {
 					if (!empty($this->multicurrency_code)) {
 						$this->multicurrency_code = $this->thirdparty->multicurrency_code;
@@ -770,7 +770,7 @@ class Expedition extends CommonObject
 			$error++;
 		}
 
-		// If stock increment is done on sending (recommanded choice)
+		// If stock increment is done on sending (recommended choice)
 		if (!$error && isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {
 			$result = $this->manageStockMvtOnEvt($user, "ShipmentValidatedInDolibarr");
 			if ($result < 0) {
@@ -1275,7 +1275,7 @@ class Expedition extends CommonObject
 							}
 						}
 						if ($error) {
-							break; // break for loop incase of error
+							break; // break for loop in case of error
 						}
 					}
 				}
@@ -1464,7 +1464,7 @@ class Expedition extends CommonObject
 							}
 						}
 						if ($error) {
-							break; // break for loop incase of error
+							break; // break for loop in case of error
 						}
 					}
 				}
@@ -1843,7 +1843,7 @@ class Expedition extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0, $save_lastsearch_value = -1)
 	{
-		global $langs, $conf, $hookmanager;
+		global $langs, $hookmanager;
 
 		$result = '';
 		$params = [
@@ -1955,6 +1955,45 @@ class Expedition extends CommonObject
 	}
 
 	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs, $conf;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<div class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', 'order');
+		$return .= '</div>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+			$return .= '<br><div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
+		}
+		if (property_exists($this, 'total_ht')) {
+			$return .= '<div class="info-box-ref amount">'.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency).' '.$langs->trans('HT').'</div>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<div class="info-box-status">'.$this->getLibStatut(3).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+
+		return $return;
+	}
+
+	/**
 	 *  Initialise an instance with random values.
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
@@ -1972,7 +2011,7 @@ class Expedition extends CommonObject
 		$order = new Commande($this->db);
 		$order->initAsSpecimen();
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
@@ -2031,7 +2070,7 @@ class Expedition extends CommonObject
 	/**
 	 *	Set the planned delivery date
 	 *
-	 *	@param      User			$user        		Objet user that modify
+	 *	@param      User			$user        		Object user that modify
 	 *	@param      integer 		$delivery_date     Date of delivery
 	 *	@return     int         						Return integer <0 if KO, >0 if OK
 	 */
@@ -2322,7 +2361,7 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *	Classify the shipping as invoiced (used for exemple by trigger when WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE is on)
+	 *	Classify the shipping as invoiced (used for example by trigger when WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE is on)
 	 *
 	 *	@return     int     Return integer <0 if ko, >0 if ok
 	 */
@@ -2519,7 +2558,7 @@ class Expedition extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('EXPEDITION_ADDON_PDF')) {
-				$modele = $conf->global->EXPEDITION_ADDON_PDF;
+				$modele = getDolGlobalString('EXPEDITION_ADDON_PDF');
 			}
 		}
 
@@ -2550,7 +2589,7 @@ class Expedition extends CommonObject
 
 
 /**
- * Classe to manage lines of shipment
+ * Class to manage lines of shipment
  */
 class ExpeditionLigne extends CommonObjectLine
 {
@@ -3001,7 +3040,7 @@ class ExpeditionLigne extends CommonObjectLine
 				$this->errors[] = $this->db->lasterror()." - ExpeditionLineBatch::fetchAll";
 				$error++;
 			} else {
-				// caculate new total line qty
+				// calculate new total line qty
 				foreach ($lotArray as $lot) {
 					if ($expedition_batch_id != $lot->id) {
 						$remainingQty += $lot->qty;

@@ -48,7 +48,7 @@ class MultiCurrencies extends DolibarrApi
 	 * @param int		$limit			Limit for list
 	 * @param int	    $page			Page number
 	 * @param string    $sqlfilters		Other criteria to filter answers separated by a comma. Syntax example "(t.product_id:=:1) and (t.date_creation:<:'20160101')"
-	 * @param string    $properties		Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties		Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array					Array of warehouse objects
 	 *
 	 * @throws RestException
@@ -102,9 +102,6 @@ class MultiCurrencies extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve currencies list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No currencies found');
-		}
 
 		return $obj_ret;
 	}
@@ -112,7 +109,7 @@ class MultiCurrencies extends DolibarrApi
 	/**
 	 * Get properties of a Currency object
 	 *
-	 * Return an array with Currency informations
+	 * Return an array with Currency information
 	 *
 	 * @param	int			$id		ID of Currency
 	 * @return  Object              Object with cleaned properties
@@ -136,7 +133,7 @@ class MultiCurrencies extends DolibarrApi
 	/**
 	 * Get properties of a Currency object by code
 	 *
-	 * Return an array with Currency informations
+	 * Return an array with Currency information
 	 * @url GET /bycode/{code}
 	 *
 	 * @param	string		$code	Code of Currency (ex: EUR)
@@ -260,7 +257,7 @@ class MultiCurrencies extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$multicurrency->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -353,7 +350,7 @@ class MultiCurrencies extends DolibarrApi
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
 
-		// Clear all fields out of interrest
+		// Clear all fields out of interest
 		foreach ($object as $key => $value) {
 			if ($key == "rate") {
 				$object->$key = $this->_cleanObjectDatasRate($object->$key);
@@ -379,7 +376,7 @@ class MultiCurrencies extends DolibarrApi
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
 
-		// Clear all fields out of interrest
+		// Clear all fields out of interest
 		foreach ($object as $key => $value) {
 			if ($key == "id" || $key == "rate" || $key == "date_sync") {
 				continue;

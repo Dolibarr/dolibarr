@@ -103,7 +103,7 @@ $error = 0;
 
 // If install, check password and password_verification used to create admin account
 if ($action == "set") {
-	if ($pass <> $pass_verif) {
+	if ($pass != $pass_verif) {
 		header("Location: step4.php?error=1&selectlang=$setuplang".(isset($login) ? '&login='.$login : ''));
 		exit;
 	}
@@ -145,7 +145,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 		if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 			$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
-			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially crypted
+			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
 		} else {
 			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 		}
@@ -192,7 +192,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 			// Create admin user
 			include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-			// Set default encryption to yes, generate a salt and set default encryption algorythm (but only if there is no user yet into database)
+			// Set default encryption to yes, generate a salt and set default encryption algorithm (but only if there is no user yet into database)
 			$sql = "SELECT u.rowid, u.pass, u.pass_crypted";
 			$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 			$resql = $db->query($sql);
@@ -389,7 +389,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 			// Define if we need to update the MAIN_VERSION_LAST_UPGRADE value in database
 			$tagdatabase = false;
 			if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
-				$tagdatabase = true; // We don't know what it was before, so now we consider we are version choosed.
+				$tagdatabase = true; // We don't know what it was before, so now we consider we at the chosen version.
 			} else {
 				$mainversionlastupgradearray = preg_split('/[.-]/', $conf->global->MAIN_VERSION_LAST_UPGRADE);
 				$targetversionarray = preg_split('/[.-]/', $targetversion);

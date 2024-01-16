@@ -82,6 +82,7 @@ $conf->file->main_authentication = empty($dolibarr_main_authentication) ? 'dolib
 $conf->file->main_force_https = empty($dolibarr_main_force_https) ? '' : $dolibarr_main_force_https; // Force https
 $conf->file->strict_mode = empty($dolibarr_strict_mode) ? '' : $dolibarr_strict_mode; // Force php strict mode (for debug)
 $conf->file->instance_unique_id = empty($dolibarr_main_instance_unique_id) ? (empty($dolibarr_main_cookie_cryptkey) ? '' : $dolibarr_main_cookie_cryptkey) : $dolibarr_main_instance_unique_id; // Unique id of instance
+$conf->file->dol_main_url_root = $dolibarr_main_url_root;	// Define url inside the config file
 $conf->file->dol_document_root = array('main' => (string) DOL_DOCUMENT_ROOT); // Define array of document root directories ('/home/htdocs')
 $conf->file->dol_url_root = array('main' => (string) DOL_URL_ROOT); // Define array of url root path ('' or '/dolibarr')
 if (!empty($dolibarr_main_document_root_alt)) {
@@ -113,7 +114,7 @@ if (!empty($dolibarr_main_document_root_alt)) {
 	}
 }
 
-// Chargement des includes principaux de librairies communes
+// Load the main includes of common libraries
 if (!defined('NOREQUIREUSER')) {
 	require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php'; // Need 500ko memory
 }
@@ -126,7 +127,7 @@ if (!defined('NOREQUIRESOC')) {
 
 
 /*
- * Creation objet $langs (must be before all other code)
+ * Create object $langs (must be before all other code)
  */
 if (!defined('NOREQUIRETRAN')) {
 	$langs = new Translate('', $conf); // Must be after reading conf
@@ -162,7 +163,7 @@ if (!defined('NOREQUIREDB')) {
 	}
 }
 
-// Now database connexion is known, so we can forget password
+// Now database connection is known, so we can forget password
 //unset($dolibarr_main_db_pass); 	// We comment this because this constant is used in some other pages
 unset($conf->db->pass); // This is to avoid password to be shown in memory/swap dump
 
@@ -202,7 +203,7 @@ if (session_id() && !empty($_SESSION["dol_entity"])) {
 if (!is_numeric($conf->entity)) {
 	$conf->entity = 1;
 }
-// Here we read database (llx_const table) and define $conf->global->XXX var.
+// Here we read database (llx_const table) and define conf var $conf->global->XXX.
 //print "We work with data into entity instance number '".$conf->entity."'";
 $conf->setValues($db);
 
@@ -254,7 +255,7 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
 }
 
 
-// Set default language (must be after the setValues setting global $conf->global->MAIN_LANG_DEFAULT. Page main.inc.php will overwrite langs->defaultlang with user value later)
+// Set default language (must be after the setValues setting global conf 'MAIN_LANG_DEFAULT'. Page main.inc.php will overwrite langs->defaultlang with user value later)
 if (!defined('NOREQUIRETRAN')) {
 	$langcode = (GETPOST('lang', 'aZ09') ? GETPOST('lang', 'aZ09', 1) : getDolGlobalString('MAIN_LANG_DEFAULT', 'auto'));
 	if (defined('MAIN_LANG_DEFAULT')) {	// So a page can force the language whatever is setup and parameters in URL

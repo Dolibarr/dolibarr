@@ -59,6 +59,14 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
  */
 abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 {
+
+	/**
+	 * Constructor
+	 *
+	 *  @param DoliDB       $db     Database object
+	 */
+	abstract public function __construct($db);
+
 	/**
 	 * @var int Automatic numbering
 	 */
