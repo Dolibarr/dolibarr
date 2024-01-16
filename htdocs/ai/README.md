@@ -2,7 +2,7 @@
 
 ## Features
 
-Description of the module...
+Provides an api key for chatchpt for use it in other modules
 
 <!--
 ![Screenshot ai](img/screenshot_ai.png?raw=true "Ai"){imgmd}
