@@ -481,14 +481,13 @@ class Ldap
 
 
 	/**
-	 * Verification de la version du serveur ldap.
+	 * Verify LDAP server version
 	 *
-	 * @return	string					version
+	 * @return	int		version
 	 */
 	public function getVersion()
 	{
-		$version = 0;
-		$version = @ldap_get_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, $version);
+		@ldap_get_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, $version);
 		return $version;
 	}
 
