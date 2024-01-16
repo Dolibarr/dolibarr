@@ -63,6 +63,10 @@ if (isModEnabled('variants')) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
 
+if (isModEnabled('stock')) {
+	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'orders', 'sendings', 'companies', 'bills', 'propal', 'receptions', 'supplier_proposal', 'deliveries', 'products', 'stocks', 'productbatch'));
@@ -79,6 +83,8 @@ $confirm     = GETPOST('confirm', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'purchaseordercard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+
+$stockDelete = GETPOST('stockDelete', 'int');
 
 $socid     = GETPOST('socid', 'int');
 $projectid = GETPOST('projectid', 'int');
@@ -1101,12 +1107,59 @@ if (empty($reshook)) {
 
 
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
-		$result = $object->delete($user);
-		if ($result > 0) {
-			header("Location: ".DOL_URL_ROOT.'/fourn/commande/list.php?restore_lastsearch_values=1');
-			exit;
+		// Delete existing dispatched lines
+		$errOnDelete = 0;
+		$db->begin();
+		if ($stockDelete) {
+			$dispatchedLines = $object->getDispachedLines();
+			if (!empty($dispatchedLines)) {
+				foreach ($dispatchedLines as $dispatchedLine) {
+					$supplierorderdispatch = new CommandeFournisseurDispatch($db);
+					$result = $supplierorderdispatch->fetch($dispatchedLine['id']);
+					if ($result > 0) {
+						$qty = $supplierorderdispatch->qty;
+						$entrepot = $supplierorderdispatch->fk_entrepot;
+						$product = $supplierorderdispatch->fk_product;
+						$price = price2num(GETPOST('price', 'alpha'), 'MU');
+						$comment = $langs->trans('SupplierOrderDeletion', $object->ref);
+						$eatby = $supplierorderdispatch->eatby;
+						$sellby = $supplierorderdispatch->sellby;
+						$batch = $supplierorderdispatch->batch;
+						$result = $supplierorderdispatch->delete($user);
+					}
+					if ($result < 0) {
+						$errorsOnDelete = $object->errors;
+						$errOnDelete++;
+					} else {
+						// If module stock is enabled and the stock increase is done on purchase order dispatching
+						if ($entrepot > 0 && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) && empty($supplierorderdispatch->fk_reception)) {
+							$mouv = new MouvementStock($db);
+							if ($product > 0) {
+								$mouv->origin = &$object;
+								$mouv->setOrigin($object->element, $object->id);
+								$result = $mouv->livraison($user, $product, $entrepot, $qty, $price, $comment, '', $eatby, $sellby, $batch);
+								if ($result < 0) {
+									$errorsOnDelete = $mouv->errors;
+									$errOnDelete++;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		if (empty($errOnDelete)) {
+			$result = $object->delete($user);
+			if ($result > 0) {
+				$db->commit();
+				header("Location: " . DOL_URL_ROOT . '/fourn/commande/list.php?restore_lastsearch_values=1');
+				exit;
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
+			$db->rollback();
+			setEventMessages('', $errorsOnDelete, 'errors');
 		}
 	}
 
@@ -1914,7 +1967,34 @@ if ($action == 'create') {
 
 	// Confirmation de la suppression de la commande
 	if ($action == 'delete') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 2);
+		$arrayAjouts = array();
+		$heightModal = 0;
+		$widthModal = 500;
+		if (!empty($object->getDispachedLines())) {
+			$arrayAjouts = array(
+				array(
+					'type' => 'other',
+					'value' => img_warning() . " " . $langs->trans('ExistingDipatchLines')
+				),
+				array('type' => 'separator'),
+				array(
+					'type' => 'select',
+					'id' => 'stockDeleteSelect',
+					'name' => 'stockDelete',
+					'label' => $langs->trans('ConfirmDeleteDispatchedLines'),
+					'values' => array(1 => $langs->trans('Yes'), 0 => $langs->trans('No')),
+					'select_show_empty' => false
+				),
+				array(
+					'type' => 'other',
+					'value' => img_warning() . " " . $langs->trans('WarningDispatchedLinesWillNotBeAccessibles')
+				),
+				array('type' => 'separator'),
+			);
+			$heightModal = 300;
+			$widthModal = "70%";
+		}
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', $arrayAjouts, 0, 2, $heightModal, $widthModal);
 	}
 
 	// Clone confirmation
