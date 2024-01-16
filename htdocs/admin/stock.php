@@ -182,10 +182,16 @@ $formproduct = new FormProduct($db);
 
 
 $disabled = '';
+if (getDolGlobalInt('PRODUIT_SOUSPRODUITS') || isModEnabled('productbatch')) {
+	$disabled = ' disabled';
+}
+if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+	$langs->load('products');
+	print info_admin($langs->trans('WhenProductVirtualOnOptionAreForced'));
+}
 if (isModEnabled('productbatch')) {
 	// If module lot/serial enabled, we force the inc/dec mode to STOCK_CALCULATE_ON_SHIPMENT_CLOSE and STOCK_CALCULATE_ON_RECEPTION_CLOSE
 	$langs->load("productbatch");
-	$disabled = ' disabled';
 
 	// STOCK_CALCULATE_ON_SHIPMENT_CLOSE
 	$descmode = $langs->trans('DeStockOnShipmentOnClosing');

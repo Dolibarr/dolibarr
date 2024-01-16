@@ -70,18 +70,23 @@ function addDispatchLine(index, type, mode) {
 
 	console.log("expedition/js/lib_dispatch.js.php addDispatchLine Split line type="+type+" index="+index+" mode="+mode);
 
+	var lineId = '';
+	var typeArr = type.split('-');
+	if (typeArr.length > 0) {
+		lineId = typeArr[1];
+	}
 	var $row0 = $("tr[name='"+type+'_0_'+index+"']");
 	var $dpopt = $row0.find('.hasDatepicker').first().datepicker('option', 'all'); // get current datepicker options to apply the same to the cloned datepickers
 	var $row = $row0.clone(true); 		// clone first batch line to jQuery object
 	var nbrTrs = $("tr[name^='"+type+"_'][name$='_"+index+"']").length; // count nb of tr line with attribute name that starts with 'batch_' or 'dispatch_', and end with _index
 	var qtyOrdered = parseFloat($("#qty_ordered_0_"+index).val()); 		// Qty ordered is same for all rows
 
-	var qty = parseFloat($("#qty_"+(nbrTrs - 1)+"_"+index).val());
+	var qty = parseFloat($("#qty"+lineId+"_"+(nbrTrs - 1)+"_"+index).val());
 	if (isNaN(qty)) {
 		qty = '';
 	}
 
-	console.log("expedition/js/lib_dispatch.js.php addDispatchLine Split line nbrTrs="+nbrTrs+" qtyOrdered="+qtyOrdered+" qty="+qty);
+	console.log("expedition/js/lib_dispatch.js.php addDispatchLine Split line="+lineId+" nbrTrs="+nbrTrs+" qtyOrdered="+qtyOrdered+" qty="+qty);
 
 	var	qtyDispatched;
 
@@ -106,7 +111,7 @@ function addDispatchLine(index, type, mode) {
 		if (newlineqty <= 0) {
 			newlineqty = qty - 1;
 			oldlineqty = 1;
-			$("#qty_"+(nbrTrs - 1)+"_"+index).val(oldlineqty);
+			$("#qty"+lineId+"_"+(nbrTrs - 1)+"_"+index).val(oldlineqty);
 		}
 
 		//replace tr suffix nbr
@@ -124,65 +129,65 @@ function addDispatchLine(index, type, mode) {
 		}, 0);
 
 		//create new select2 to avoid duplicate id of cloned one
-		$row.find("select[name='" + 'entrepot_' + nbrTrs + '_' + index + "']").select2();
+		$row.find("select[name='"+'entrepot'+lineId+'_'+nbrTrs+'_'+index+"']").select2();
 		// TODO find solution to copy selected option to new select
 		// TODO find solution to keep new tr's after page refresh
 		//clear value
 		$row.find("input[name^='qty']").val('');
 		//change name of new row
-		$row.attr('name', type + '_' + nbrTrs + '_' + index);
+		$row.attr('name', type+'_'+nbrTrs+'_'+index);
 		//insert new row before last row
-		$("tr[name^='" + type + "_'][name$='_" + index + "']:last").after($row);
+		$("tr[name^='"+type+"_'][name$='_"+index+"']:last").after($row);
 
 		//remove cloned select2 with duplicate id.
-		$("#s2id_entrepot_" + nbrTrs + '_' + index).detach();			// old way to find duplicated select2 component
-		$(".csswarehouse_" + nbrTrs + "_" + index + ":first-child").parent("span.selection").parent(".select2").detach();
+		$("#s2id_entrepot"+lineId+"_"+nbrTrs+'_'+index).detach();			// old way to find duplicated select2 component
+		$(".csswarehouse"+lineId+"_"+nbrTrs+"_"+index + ":first-child").parent("span.selection").parent(".select2").detach();
 
 		/*  Suffix of lines are:  _ trs.length _ index  */
-		$("#qty_"+nbrTrs+"_"+index).focus();
+		$("#qty"+lineId+"_"+nbrTrs+"_"+index).focus();
 		$("#qty_dispatched_0_"+index).val(oldlineqty);
 
 		//hide all buttons then show only the last one
-		$("tr[name^='" + type + "_'][name$='_" + index + "'] .splitbutton").hide();
-		$("tr[name^='" + type + "_'][name$='_" + index + "']:last .splitbutton").show();
+		$("tr[name^='"+type+"_'][name$='_"+index+"'] .splitbutton").hide();
+		$("tr[name^='"+type+"_'][name$='_"+index+"']:last .splitbutton").show();
 
-		$("#reset_" + (nbrTrs) + "_" + index).click(function (event) {
+		$("#reset"+lineId+"_"+(nbrTrs)+"_"+index).click(function (event) {
 			event.preventDefault();
 			id = $(this).attr("id");
-			id = id.split("reset_");
+			id = id.split("reset"+lineId+"_");
 			idrow = id[1];
-			idlast = $("tr[name^='" + type + "_'][name$='_" + index + "']:last .qtydispatchinput").attr("id");
-			if (idlast == $("#qty_" + idrow).attr("id")) {
-				console.log("expedition/js/lib_dispatch.js.php Remove trigger for tr name = " + type + "_" + idrow);
-				$('tr[name="' + type + '_' + idrow + '"').remove();
-				$("tr[name^='" + type + "_'][name$='_" + index + "']:last .splitbutton").show();
+			idlast = $("tr[name^='"+type+"_'][name$='_"+index+"']:last .qtydispatchinput").attr("id");
+			if (idlast == $("#qty"+lineId+"_"+idrow).attr("id")) {
+				console.log("expedition/js/lib_dispatch.js.php Remove trigger for tr name = "+type+"_"+idrow);
+				$('tr[name="'+type+'_'+idrow+'"').remove();
+				$("tr[name^='"+type+"_'][name$='_"+index+"']:last .splitbutton").show();
 			} else {
-				console.log("expedition/js/lib_dispatch.js.php Reset trigger for id = qty_" + idrow);
-				$("#qty_" + idrow).val("");
+				console.log("expedition/js/lib_dispatch.js.php Reset trigger for id = qty_"+idrow);
+				$("#qty"+lineId+"_"+idrow).val("");
 			}
 		});
 
 		if (mode === 'lessone')
 		{
 			qty = 1; // keep 1 in old line
-			$("#qty_"+(nbrTrs-1)+"_"+index).val(qty);
+			$("#qty"+lineId+"_"+(nbrTrs-1)+"_"+index).val(qty);
 		}
-		$("#qty_"+nbrTrs+"_"+index).val(newlineqty);
+		$("#qty"+lineId+"_"+nbrTrs+"_"+index).val(newlineqty);
 		// Store arbitrary data for dispatch qty input field change event
-		$("#qty_" + (nbrTrs - 1) + "_" + index).data('qty', qty);
-		$("#qty_" + (nbrTrs - 1) + "_" + index).data('type', type);
-		$("#qty_" + (nbrTrs - 1) + "_" + index).data('index', index);
+		$("#qty"+lineId+"_" + (nbrTrs - 1) + "_" + index).data('qty', qty);
+		$("#qty"+lineId+"_" + (nbrTrs - 1) + "_" + index).data('type', type);
+		$("#qty"+lineId+"_" + (nbrTrs - 1) + "_" + index).data('index', index);
 		// Update dispatched qty when value dispatch qty input field changed
 		//$("#qty_" + (nbrTrs - 1) + "_" + index).change(this.onChangeDispatchLineQty);
 		//set focus on lot of new line (if it exists)
-		$("#lot_number_" + (nbrTrs) + "_" + index).focus();
+		$("#lot_number"+lineId+"_"+(nbrTrs)+"_"+index).focus();
 		//Clean bad values
-		$("tr[name^='" + type + "_'][name$='_" + index + "']:last").data("remove", "remove");
-		$("#lot_number_" + (nbrTrs) + "_" + index).val("")
-		$("#idline_" + (nbrTrs) + "_" + index).val("-1")
-		$("#qty_" + (nbrTrs) + "_" + index).data('expected', "0");
+		$("tr[name^='"+type+"_'][name$='_"+index + "']:last").data("remove", "remove");
+		$("#lot_number_"+(nbrTrs) + "_"+index).val("")
+		$("#idline"+lineId+"_"+(nbrTrs)+"_"+index).val("-1")
+		$("#qty"+lineId+"_"+(nbrTrs)+"_"+index).data('expected', "0");
 		//$("input[type='hidden']#lot_number_" + (nbrTrs) + "_" + index).remove();
-		$("#lot_number_" + (nbrTrs) + "_" + index).removeAttr("disabled");
+		$("#lot_number"+lineId+"_"+(nbrTrs)+"_"+index).removeAttr("disabled");
 	}
 }
 
@@ -204,13 +209,13 @@ function onChangeDispatchLineQty(element) {
 		index = id[2];
 
 	if (index >= 0 && type && qty >= 0) {
-		nbrTrs = $("tr[name^='" + type + "_'][name$='_" + index + "']").length;
+		nbrTrs = $("tr[name^='"+type+"_'][name$='_"+index+"']").length;
 		qtyChanged = parseFloat($(element).val()) - qty; // qty changed
 		qtyDispatching = parseFloat($(element).val()); // qty currently being dispatched
-		qtyOrdered = parseFloat($("#qty_ordered_0_" + index).val()); // qty ordered
-		qtyDispatched = parseFloat($("#qty_dispatched_0_" + index).val()); // qty already dispatched
+		qtyOrdered = parseFloat($("#qty_ordered_0_"+index).val()); // qty ordered
+		qtyDispatched = parseFloat($("#qty_dispatched_0_"+index).val()); // qty already dispatched
 
-		console.log("onChangeDispatchLineQty qtyChanged: " + qtyChanged + " qtyDispatching: " + qtyDispatching + " qtyOrdered: " + qtyOrdered + " qtyDispatched: " + qtyDispatched);
+		console.log("onChangeDispatchLineQty qtyChanged: "+qtyChanged+" qtyDispatching: "+qtyDispatching+" qtyOrdered: "+qtyOrdered+" qtyDispatched: "+qtyDispatched);
 
 		if ((qtyChanged) <= (qtyOrdered - (qtyDispatched + qtyDispatching))) {
 			$("#qty_dispatched_0_" + index).val(qtyDispatched + qtyChanged);

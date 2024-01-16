@@ -833,28 +833,29 @@ class MouvementStock extends CommonObject
 	/**
 	 *	Increase stock for product and subproducts
 	 *
-	 * 	@param 		User			$user			     	Object user
-	 * 	@param		int				$fk_product		     	Id product
-	 * 	@param		int				$entrepot_id	     	Warehouse id
-	 * 	@param		int				$qty			     	Quantity
-	 * 	@param		int				$price			     	Price
-	 * 	@param		string			$label			     	Label of stock movement
-	 *	@param		integer|string	$eatby			     	eat-by date
-	 *	@param		integer|string	$sellby			     	sell-by date
-	 *	@param		string			$batch			     	batch number
-	 * 	@param		integer|string	$datem			     	Force date of movement
-	 * 	@param		int				$id_product_batch    	Id product_batch
-	 *  @param      string			$inventorycode       	Inventory code
-	 *  @param		int				$donotcleanemptylines	Do not clean lines that remains in stock table with qty=0 (because we want to have this done by the caller)
-	 *	@return		int								     	Return integer <0 if KO, >0 if OK
+	 * 	@param 		User			$user			     				Object user
+	 * 	@param		int				$fk_product		     				Id product
+	 * 	@param		int				$entrepot_id	     				Warehouse id
+	 * 	@param		int				$qty			     				Quantity
+	 * 	@param		int				$price			     				Price
+	 * 	@param		string			$label			     				Label of stock movement
+	 *	@param		integer|string	$eatby			     				eat-by date
+	 *	@param		integer|string	$sellby			     				sell-by date
+	 *	@param		string			$batch			     				batch number
+	 * 	@param		integer|string	$datem			     				Force date of movement
+	 * 	@param		int				$id_product_batch    				Id product_batch
+	 *  @param      string			$inventorycode       				Inventory code
+	 *  @param		int				$donotcleanemptylines				Do not clean lines that remains in stock table with qty=0 (because we want to have this done by the caller)
+	 *  @param		int				$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
+	 *	@return		int								     				Return integer <0 if KO, >0 if OK
 	 */
-	public function reception($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $eatby = '', $sellby = '', $batch = '', $datem = '', $id_product_batch = 0, $inventorycode = '', $donotcleanemptylines = 0)
+	public function reception($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $eatby = '', $sellby = '', $batch = '', $datem = '', $id_product_batch = 0, $inventorycode = '', $donotcleanemptylines = 0, $disablestockchangeforsubproduct = 0)
 	{
 		global $conf;
 
 		$skip_batch = empty($conf->productbatch->enabled);
 
-		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch, 0, $donotcleanemptylines);
+		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch, $disablestockchangeforsubproduct, $donotcleanemptylines);
 	}
 
 	/**

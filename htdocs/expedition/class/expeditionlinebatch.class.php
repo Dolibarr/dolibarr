@@ -43,7 +43,7 @@ class ExpeditionLineBatch extends CommonObject
 	public $batch;
 	public $qty;
 	public $dluo_qty; // deprecated, use qty
-	public $entrepot_id;
+	public $entrepot_id; // @deprecated, use fk_warehouse
 	public $fk_origin_stock;		// rowid in llx_product_batch table (not usefull)
 	public $fk_warehouse;			// warehouse ID
 	public $fk_expeditiondet;
@@ -87,7 +87,7 @@ class ExpeditionLineBatch extends CommonObject
 				$this->sellby = $this->db->jdate($obj->sellby);
 				$this->eatby = $this->db->jdate($obj->eatby);
 				$this->batch = $obj->batch;
-				$this->entrepot_id = $obj->fk_entrepot;
+				$this->fk_warehouse = $obj->fk_entrepot;
 				$this->fk_origin_stock = (int) $id_stockdluo;
 			}
 			$this->db->free($resql);
