@@ -203,3 +203,10 @@ ALTER TABLE llx_c_tva ADD COLUMN type_vat smallint NOT NULL DEFAULT 0 AFTER fk_p
 
 ALTER TABLE llx_product DROP COLUMN onportal; 
 
+-- Draft : Create pivot table contact 0...N -> thirdparty
+CREATE TABLE llx_contact_thirdparty
+(
+    rowid       integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    fk_contact  integer NOT NULL,
+    fk_soc      integer NOT NULL
+) ENGINE = innodb;
