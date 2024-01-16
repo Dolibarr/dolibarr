@@ -755,7 +755,7 @@ class FormMail extends Form
 			if (!empty($this->withtoccuser) && is_array($this->withtoccuser) && getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')) {
 				$out .= '<tr><td>';
 				$out .= $langs->trans("MailToCCUsers");
-				$out .= '</td><td>';
+				$out .= '</td><>';
 
 				// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
 				$tmparray = $this->withtoccuser;
@@ -887,6 +887,11 @@ class FormMail extends Form
 				$out .= "</td></tr>\n";
 			}
 
+			//input prompt AI
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+			if (isModEnabled('ai') && $apiKey = dolibarr_get_const($this->db, 'AI_CHATGPT_API_KEY', 0)) {
+				$out .= $this->getHtmlForInstruction($arraydefaultmessage, $helpforsubstitution);
+			}
 			// Message
 			if (!empty($this->withbody)) {
 				$defaultmessage = GETPOST('message', 'restricthtml');
@@ -1359,6 +1364,26 @@ class FormMail extends Form
 		} else {
 			$out .= '<input type="text" class="quatrevingtpercent" id="subject" name="subject" value="'.((GETPOSTISSET("subject") && !GETPOST('modelselected')) ? GETPOST("subject") : ($defaulttopic ? $defaulttopic : '')).'" />';
 		}
+		$out .= "</td></tr>\n";
+		return $out;
+	}
+
+	/**
+	 * get Html For instruction of message
+	 * @return 	string      Text for instructions
+	 */
+	public function getHtmlForInstruction()
+	{
+		global $langs, $form;
+
+		$out = '<tr>';
+		$out .= '<td>';
+		$out .= $form->textwithpicto($langs->trans('helpWithAi'), $langs->trans("YouCanMakeSomeInstructionForEmail"));
+		$out .= '</td>';
+
+		$out .= '<td>';
+		$out .= '<input type="text" class="quatrevingtpercent" id="instruction" name="instruction" placeholder="message with AI"/>';
+		$out .= '<input type="submit" class="button smallpaddingimp" name="generate_email_content" value="'.$langs->trans('Generate').'" />';
 		$out .= "</td></tr>\n";
 		return $out;
 	}
