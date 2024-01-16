@@ -17,7 +17,7 @@ Translations can be completed manually by editing files into directories *langs*
 <!--
 This module contains also a sample configuration for Transifex, under the hidden directory [.tx](.tx), so it is possible to manage translation using this service.
 
-For more informations, see the [translator's documentation](https://wiki.dolibarr.org/index.php/Translator_documentation).
+For more information, see the [translator's documentation](https://wiki.dolibarr.org/index.php/Translator_documentation).
 
 There is a [Transifex project](https://transifex.com/projects/p/dolibarr-module-template) for this module.
 -->
