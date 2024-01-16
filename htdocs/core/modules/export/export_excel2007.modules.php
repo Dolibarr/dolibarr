@@ -655,7 +655,7 @@ class ExportExcel2007 extends ModeleExports
 	 * @param	string		$startCell	Starting cell
 	 * @param	int			$length		Length
 	 * @param	int			$offset		Starting offset
-	 * @return	int|string				Coordinate or -1 if KO
+	 * @return	int|string				Coordinate or if KO: -1
 	 */
 	public function setMergeCellValueByLength($val, $startCell, $length, $offset = 0)
 	{
