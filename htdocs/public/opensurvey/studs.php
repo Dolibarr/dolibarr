@@ -342,15 +342,17 @@ print '</div>';
 print '<br>';
 
 if (empty($object->description)) {
-	print '<div class="corps"> '."\n";
+	print '<div class="corps">'."\n";
+} else {
+	print '<br>'."\n";
 }
 
 // show title of survey
 $titre = str_replace("\\", "", $object->title);
-print '<br><div class="survey_title">'.img_picto('', 'poll', 'class="size15x paddingright"').' <strong>'.dol_htmlentities($titre).'</strong></div>';
+print '<div class="survey_title">'.img_picto('', 'poll', 'class="size15x paddingright"').' <strong>'.dol_htmlentities($titre).'</strong></div>';
 
 if (!empty($object->description)) {
-	print '<br><div class="corps"> '."\n";
+	print '<br><div class="corps">'."\n";
 }
 
 // show description of survey
