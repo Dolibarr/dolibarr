@@ -85,7 +85,7 @@ class FormCategory extends Form
 
 	/**
 	 *    Prints a select form for products categories
-	 *    @param    string	$selected          	Id category pre-selection
+	 *    @param    int 	$selected          	Id category pre-selection
 	 *    @param    string	$htmlname          	Name of HTML field
 	 *    @param    int		$showempty         	Add an empty field
 	 *    @return	int|null

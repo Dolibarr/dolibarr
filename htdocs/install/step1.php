@@ -426,7 +426,7 @@ if (!$error && $db->connected && $action == "set") {
 				}
 			}
 
-			// Documents are stored above the web pages root to prevent being downloaded without authentification
+			// Documents are stored above the web pages root to prevent being downloaded without authentication
 			$dir = array();
 			$dir[] = $main_data_dir."/mycompany";
 			$dir[] = $main_data_dir."/medias";
@@ -685,7 +685,7 @@ if (!$error && $db->connected && $action == "set") {
 		// We test access with dolibarr database user (not admin)
 		if (!$error) {
 			dolibarr_install_syslog("step1: connection type=".$conf->db->type." on host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name);
-			//print "connexion de type=".$conf->db->type." sur host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name;
+			//print "connection de type=".$conf->db->type." sur host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name;
 
 			$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 

@@ -250,8 +250,8 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
 	require_once DOL_DOCUMENT_ROOT."/core/db/".$type.'.class.php';
 
 	$class = 'DoliDB'.ucfirst($type);
-	$dolidb = new $class($type, $host, $user, $pass, $name, $port);
-	return $dolidb;
+	$db = new $class($type, $host, $user, $pass, $name, $port);
+	return $db;
 }
 
 /**
@@ -3104,7 +3104,7 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
  *										'tzuserrel' = local to user TZ taking dst into account at the given date. Use this one to convert date input from user into a GMT date.
  *										'tz,TimeZone' = use specified timezone
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
- *	@return	int|string					Date as a timestamp, '' or false if error
+ *	@return	int|string					Date as a timestamp, '' if error
  * 	@see 								dol_print_date(), dol_stringtotime(), dol_getdate()
  */
 function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', $check = 1)
@@ -10847,8 +10847,6 @@ function ajax_autoselect($htmlname, $addlink = '', $textonlink = 'Link')
  */
 function dolIsAllowedForPreview($file)
 {
-	global $conf;
-
 	// Check .noexe extension in filename
 	if (preg_match('/\.noexe$/i', $file)) {
 		return 0;
@@ -12441,6 +12439,7 @@ function jsonOrUnserialize($stringtodecode)
  * @param	int			$nopar		1=Do not add the perenthesis around the condition string.
  * @param	int			$noerror	1=If search criteria is not valid, does not return an error string but invalidate the SQL
  * @return	string					Return forged SQL string
+ * @see dolSqlDateFilter()
  */
 function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 0, $nopar = 0, $noerror = 0)
 {
@@ -12936,7 +12935,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 					$result = $contactaction->fetchResources();
 					if ($result < 0) {
 						dol_print_error($db);
-						setEventMessage("actions.lib::show_actions_messaging Error fetch ressource", 'errors');
+						setEventMessage("actions.lib::show_actions_messaging Error fetch resource", 'errors');
 					}
 
 					//if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";

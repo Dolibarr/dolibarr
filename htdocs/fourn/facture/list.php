@@ -429,7 +429,7 @@ $sql .= " country.code as country_code,";
 $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
-// TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
+// TODO Better solution to be able to sort on already paid or remain to pay is to store amount_payed in a denormalized field.
 if (!$search_all) {
 	$sql .= ', SUM(pf.amount) as dynamount_payed';
 }
@@ -1560,7 +1560,7 @@ while ($i < $imaxinloop) {
 
 	$object = $facturestatic;
 
-	//If invoice has been converted and the conversion has been used, we dont have remain to pay on invoice
+	//If invoice has been converted and the conversion has been used, we don't have remain to pay on invoice
 	if ($facturestatic->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
 		if ($facturestatic->isCreditNoteUsed()) {
 			$remaintopay = -$facturestatic->getSumFromThisCreditNotesNotUsed();

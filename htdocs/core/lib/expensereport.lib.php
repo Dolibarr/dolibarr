@@ -124,7 +124,7 @@ function payment_expensereport_prepare_head(PaymentExpenseReport $object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array   	        head array with tabs
  */

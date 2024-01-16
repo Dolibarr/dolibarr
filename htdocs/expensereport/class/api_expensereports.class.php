@@ -55,7 +55,7 @@ class ExpenseReports extends DolibarrApi
 	/**
 	 * Get properties of a Expense Report object
 	 *
-	 * Return an array with Expense Report informations
+	 * Return an array with Expense Report information
 	 *
 	 * @param   int         $id         ID of Expense Report
 	 * @return  Object					Object with cleaned properties
@@ -92,7 +92,7 @@ class ExpenseReports extends DolibarrApi
 	 * @param int		$page		Page number
 	 * @param string	$user_ids   User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of Expense Report objects
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '', $properties = '')
@@ -172,7 +172,7 @@ class ExpenseReports extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->expensereport->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -384,7 +384,7 @@ class ExpenseReports extends DolibarrApi
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 	  }
 
-	  // TODO Check the lineid $lineid is a line of ojbect
+	  // TODO Check the lineid $lineid is a line of object
 
 	  $updateRes = $this->expensereport->deleteline($lineid);
 	  if ($updateRes == 1) {
@@ -425,7 +425,7 @@ class ExpenseReports extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->expensereport->context['caller'] = $request_data['caller'];
 				continue;
 			}

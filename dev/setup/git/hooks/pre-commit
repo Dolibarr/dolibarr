@@ -6,21 +6,21 @@
 # When running git commit, it first execute this file checking only modified files, so it is faster than running on all files
 # To run the fix manually: cd ~/git/dolibarr; phpcbf -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true "fileordir"
 
-PROJECT=`php -r "echo dirname(dirname(dirname(realpath('$0'))));"`
-STAGED_FILES_CMD=`git diff --cached --name-only --diff-filter=ACMR HEAD | grep -v '/includes/'| grep \\\\.php`
+PROJECT=$(php -r "echo dirname(dirname(dirname(realpath('$0'))));")
+STAGED_FILES_CMD=$(git diff --cached --name-only --diff-filter=ACMR HEAD | grep -v '/includes/'| grep \\\\.php)
 DIRPHPCS=""
 AUTOFIX=1
 
-echo "Running precommit hook in .git/hooks/pre-commit" 1>&2;
+echo "Running precommit hook in .git/hooks/pre-commit" 1>&2
 
 # Determine if a file list is passed
 if [ "$#" -eq 1 ]
 then
-  oIFS=$IFS
-  IFS='
+	oIFS=$IFS
+  	IFS='
   '
-    SFILES="$1"
-    IFS=$oIFS
+	SFILES="$1"
+	IFS=$oIFS
 fi
 SFILES=${SFILES:-$STAGED_FILES_CMD}
 
@@ -28,47 +28,50 @@ echo "Checking PHP Lint with php -l ..."
 
 for FILE in $SFILES
 do
-    php -l -d display_errors=0 $PROJECT/$FILE
+	php -l -d display_errors=0 "$PROJECT/$FILE"
 
-    result1=$?
+	result1=$?
 
-    if [ "x$result1" != "x0" ]
-    then
-        echo "Fix the error before commit." 1>&2;
-        exit 1
-    fi
-    FILES="$FILES $PROJECT/$FILE"
+	if [ "x$result1" != "x0" ]
+	then
+		echo "Fix the error before commit." 1>&2
+		exit 1
+	fi
+	# shellcheck disable=2089
+	FILES="$FILES '$PROJECT/$FILE'"
 done
 
 
 if [ "$FILES" != "" ]
 then
-    echo "Running PHPCS Code Sniffer..."
+	echo "Running PHPCS Code Sniffer..."
 
-    # Check Dolibarr standard
-    ${DIRPHPCS}phpcs -s -p -d memory_limit=-1 --parallel=2 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
+	# Check Dolibarr standard
+	# shellcheck disable=2086,2090
+	"${DIRPHPCS}phpcs" -s -p -d memory_limit=-1 --parallel=2 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
 
-    # Check a common standard
-    #${DIRPHPCS}phpcs -s -p -d memory_limit=-1 --parallel=2 --extensions=php --colors --tab-width=4 --standard=PSR2 --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
+	# Check a common standard
+	#${DIRPHPCS}phpcs -s -p -d memory_limit=-1 --parallel=2 --extensions=php --colors --tab-width=4 --standard=PSR2 --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
 
-    result2=$?
+	result2=$?
 
-    if [ "x$result2" != "x0" ]
-    then
-        # Fix standard errors
-        if [ "x$AUTOFIX" != "x0" ]
-        then
-            ${DIRPHPCS}phpcbf -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
+	if [ "x$result2" != "x0" ]
+	then
+		# Fix standard errors
+		if [ "x$AUTOFIX" != "x0" ]
+		then
+			# shellcheck disable=2086,2090
+			"${DIRPHPCS}phpcbf" -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
 
-            #${DIRPHPCS}phpcbf -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=htdocs/custom/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
+			#${DIRPHPCS}phpcbf -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=htdocs/custom/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
 
-            echo "Found some errors in syntax rules. An automatic fix has been applied. Check it before commit." 1>&2;
-            exit 1
-        else
-            echo "Found some errors in syntax rules. Fix the error(s) before commit." 1>&2;
-            exit 1
-        fi
-    fi
+			echo "Found some errors in syntax rules. An automatic fix has been applied. Check it before commit." 1>&2
+			exit 1
+		else
+			echo "Found some errors in syntax rules. Fix the error(s) before commit." 1>&2;
+			exit 1
+		fi
+	fi
 fi
 
 exit 0

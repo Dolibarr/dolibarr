@@ -157,7 +157,7 @@ print '</div><div class="fichetwothirdright">';
 $max = 5;
 
 /*
- * Lattest modified orders
+ * Latest modified orders
  */
 
 $sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, c.date_cloture as datec, c.tms as datem,";

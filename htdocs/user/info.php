@@ -19,7 +19,7 @@
 /**
  *      \file       htdocs/user/info.php
  *      \ingroup    core
- *		\brief      Page des informations d'un utilisateur
+ *		\brief      Page des information d'un utilisateur
  */
 
 // Load Dolibarr environment
@@ -27,6 +27,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 // Load translation files required by page
 $langs->load("users");
@@ -37,6 +38,35 @@ $ref = GETPOST('ref', 'alpha');
 
 if (!isset($id) || empty($id)) {
 	accessforbidden();
+}
+
+if (GETPOST('actioncode', 'array')) {
+	$actioncode = GETPOST('actioncode', 'array', 3);
+	if (!count($actioncode)) {
+		$actioncode = '0';
+	}
+} else {
+	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
+}
+
+$search_rowid = GETPOST('search_rowid');
+$search_agenda_label = GETPOST('search_agenda_label');
+
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (!$sortfield) {
+	$sortfield = 'a.datep,a.id';
+}
+if (!$sortorder) {
+	$sortorder = 'DESC,DESC';
 }
 
 $object = new User($db);
@@ -59,6 +89,24 @@ if (($object->id != $user->id) && !$user->hasRight('user', 'user', 'lire')) {
 	accessforbidden();
 }
 
+$parameters = array('id'=>$userId);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	// Cancel
+	if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
+		header("Location: ".$backtopage);
+		exit;
+	}
+
+	// Purge search criteria
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+		$actioncode = '';
+		$search_agenda_label = '';
+	}
+}
 
 
 /*
@@ -108,6 +156,62 @@ print '</div>';
 
 
 print dol_get_fiche_end();
+
+$objUser = $object;
+$objcon = new stdClass();
+
+$out = '';
+$permok = $user->hasRight('agenda', 'myactions', 'create');
+if ((!empty($objUser->id) || !empty($objcon->id)) && $permok) {
+	if (is_object($objUser) && get_class($objUser) == 'User') {
+		$out .= '&amp;originid='.$objUser->id.($objUser->id > 0 ? '&amp;userid='.$objUser->id : '').'&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objUser->id > 0 ? '?userid='.$objUser->id : ''));
+	}
+	$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '');
+	$out .= '&amp;datep='.dol_print_date(dol_now(), 'dayhourlog', 'tzuserrel');
+}
+
+$morehtmlright = '';
+
+$messagingUrl = DOL_URL_ROOT.'/societe/messaging.php?userid='.$object->id;
+$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
+$messagingUrl = DOL_URL_ROOT.'/user/info.php?id='.$object->id;
+$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
+
+if (isModEnabled('agenda')) {
+	if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
+		$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
+	}
+}
+
+if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allaactions', 'read'))) {
+	print '<br>';
+	$param = '&id='.urlencode($id);
+
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.((int) $limit);
+	}
+
+
+	// Try to know count of actioncomm from cache
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+	$cachekey = 'count_events_user_'.$object->id;
+	$nbEvent = dol_getcache($cachekey);
+
+	$titlelist = $langs->trans("ActionsOnCompany").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
+	if (!empty($conf->dol_optimize_smallscreen)) {
+		$titlelist = $langs->trans("Actions").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
+	}
+
+	print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
+
+	// List of all actions
+	$filters = array();
+	$filters['search_agenda_label'] = $search_agenda_label;
+	$filters['search_rowid'] = $search_rowid;
+
+	// TODO Replace this with same code than into list.php
+	show_actions_done_user($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, $object->module);
+}
 
 // End of page
 llxFooter();

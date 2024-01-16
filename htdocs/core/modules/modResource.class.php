@@ -123,7 +123,7 @@ class modResource extends DolibarrModules
 		// 'product'			to add a tab in product view
 		// 'stock'				to add a tab in stock view
 		// 'propal'				to add a tab in propal view
-		// 'member'				to add a tab in fundation member view
+		// 'member'				to add a tab in foundation member view
 		// 'contract'			to add a tab in contract view
 		// 'user'				to add a tab in user view
 		// 'group'				to add a tab in group view

@@ -63,8 +63,8 @@ class FileUpload
 		//print 'fileupload.class.php: element='.$element.' pathname='.$pathname.' filename='.$filename.' dir_output='.$dir_output."\n";
 
 		if (empty($dir_output)) {
-			setEventMessage('The element '.$element.' is not supported for uploading file. dir_output is unknow.', 'errors');
-			throw new Exception('The element '.$element.' is not supported for uploading file. dir_output is unknow.');
+			setEventMessage('The element '.$element.' is not supported for uploading file. dir_output is unknown.', 'errors');
+			throw new Exception('The element '.$element.' is not supported for uploading file. dir_output is unknown.');
 		}
 
 		// If pathname and filename are null then we can still upload files if we have specified upload_dir on $options
@@ -283,7 +283,7 @@ class FileUpload
 	/**
 	 * Make validation on an uploaded file
 	 *
-	 * @param 	string	$uploaded_file		Uploade file
+	 * @param 	string	$uploaded_file		Upload file
 	 * @param 	object	$file				File
 	 * @param 	string	$error				Error
 	 * @param	string	$index				Index
@@ -398,7 +398,7 @@ class FileUpload
 	 * handleFileUpload.
 	 * Validate data, move the uploaded file then create the thumbs if this is an image.
 	 *
-	 * @param 	string		$uploaded_file		Uploade file
+	 * @param 	string		$uploaded_file		Upload file
 	 * @param 	string		$name				Name
 	 * @param 	int			$size				Size
 	 * @param 	string		$type				Type

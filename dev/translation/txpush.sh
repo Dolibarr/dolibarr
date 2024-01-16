@@ -7,6 +7,8 @@
 # Usage: txpush.sh (source|xx_XX) [-r dolibarr.file] [-f]
 #------------------------------------------------------
 
+# shellcheck disable=2006,2044,2086,2155,2164,2268
+
 export project='dolibarr'
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"

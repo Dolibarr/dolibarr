@@ -108,8 +108,8 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('projet', 'cree
 		}
 		$object->fk_task_parent = $task_parent;
 		$object->planned_workload = $planned_workload;
-		$object->date_start = dol_mktime(GETPOST('dateohour', 'int'), GETPOST('dateomin', 'int'), 0, GETPOST('dateomonth', 'int'), GETPOST('dateoday', 'int'), GETPOST('dateoyear', 'int'));
-		$object->date_end = dol_mktime(GETPOST('dateehour', 'int'), GETPOST('dateemin', 'int'), 0, GETPOST('dateemonth', 'int'), GETPOST('dateeday', 'int'), GETPOST('dateeyear', 'int'));
+		$object->date_start = dol_mktime(GETPOST('date_starthour', 'int'), GETPOST('date_startmin', 'int'), 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
+		$object->date_end = dol_mktime(GETPOST('date_endhour', 'int'), GETPOST('date_endmin', 'int'), 0, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
 		$object->progress = price2num(GETPOST('progress', 'alphanohtml'));
 		$object->budget_amount = price2num(GETPOST('budget_amount', 'alphanohtml'));
 
@@ -473,12 +473,12 @@ if ($id > 0 || !empty($ref)) {
 
 		// Date start
 		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-		print $form->selectDate($object->date_start, 'dateo', 1, 1, 0, '', 1, 0);
+		print $form->selectDate($object->date_start, 'date_start', 1, 1, 0, '', 1, 0);
 		print '</td></tr>';
 
 		// Date end
 		print '<tr><td>'.$langs->trans("Deadline").'</td><td>';
-		print $form->selectDate($object->date_end ? $object->date_end : -1, 'datee', 1, 1, 0, '', 1, 0);
+		print $form->selectDate($object->date_end ? $object->date_end : -1, 'date_end', 1, 1, 0, '', 1, 0);
 		print '</td></tr>';
 
 		// Planned workload

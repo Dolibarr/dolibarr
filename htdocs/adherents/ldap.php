@@ -171,7 +171,7 @@ if (getDolGlobalString('LDAP_MEMBER_ACTIVE') && getDolGlobalString('LDAP_MEMBER_
 
 
 
-// Affichage attributs LDAP
+// Affichage attributes LDAP
 print load_fiche_titre($langs->trans("LDAPInformationsForThisMember"));
 
 print '<table width="100%" class="noborder">';

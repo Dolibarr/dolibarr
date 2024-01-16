@@ -67,7 +67,7 @@ class modCommande extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("commande.php");
 
-		// Dependancies
+		// Dependencies
 		$this->depends = array("modSociete");
 		$this->requiredby = array("modExpedition");
 		$this->conflictwith = array();
