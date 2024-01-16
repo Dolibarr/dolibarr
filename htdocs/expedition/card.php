@@ -1247,7 +1247,7 @@ if ($action == 'create') {
 					}
 
 					$warehouseObject = null;
-					if (count($warehousePicking) == 1 || !($line->fk_product > 0) || !isModEnabled('stock')) {     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
+					if (count($warehousePicking) == 1 || !empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER) || !($line->fk_product > 0) || !isModEnabled('stock')) {     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
 						print '<!-- Case warehouse already known or product not a predefined product -->';
 						//ship from preselected location
 						$stock = + (isset($product->stock_warehouse[$warehouse_id]->real) ? $product->stock_warehouse[$warehouse_id]->real : 0); // Convert to number
