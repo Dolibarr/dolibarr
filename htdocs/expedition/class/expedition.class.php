@@ -3116,7 +3116,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 * @param	int		$line_id	Line id
 	 * @param	array	$list		List of sub-lines for a virtual product line
 	 * @param	int		$mode		[=0] array of lines ids, 1 array of line object for dispatcher
-	 * @return	int 	<0 if KO, >0 if OK
+	 * @return	int 	Return integer <0 if KO else >0 if OK
 	 */
 	public function findAllChild($line_id, &$list = array(), $mode = 0)
 	{
@@ -3178,7 +3178,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 *
 	 *	@param		User	$user			User that modify
 	 *	@param		int		$notrigger		0=launch triggers after, 1=disable triggers
-	 * 	@return		int		>0 if OK, <0 if KO
+	 * 	@return		int		Return integer < 0 if KO, > 0 if OK
 	 */
 	public function delete($user = null, $notrigger = 0)
 	{
