@@ -1411,8 +1411,29 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	global $db, $conf, $langs;
 
 	$multilangsactive = getDolGlobalInt('MAIN_MULTILANGS');
+
+    if ($issupplierline) {
+        include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+        $prodser = new ProductFournisseur($db);
+    } else {
+        include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+        $prodser = new Product($db);
+
+        if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+            include_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+        }
+    }
+
 	//id
 	$idprod = (!empty($object->lines[$i]->fk_product) ? $object->lines[$i]->fk_product : false);
+    if($idprod) {
+        $prodser->fetch($idprod);
+        //load multilangs
+        if($multilangsactive){
+            $prodser->getMultiLangs();
+            $object->lines[$i]->multilangs = $prodser->multilangs;
+        }
+    }
 	//label
 	if (!empty($object->lines[$i]->label)) {
 		$label = $object->lines[$i]->label;
@@ -1448,20 +1469,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	//dbatch
 	$dbatch = (!empty($object->lines[$i]->detail_batch) ? $object->lines[$i]->detail_batch : false);
 
-	if ($issupplierline) {
-		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-		$prodser = new ProductFournisseur($db);
-	} else {
-		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-		$prodser = new Product($db);
-
-		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
-			include_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
-		}
-	}
-
 	if ($idprod) {
-		$prodser->fetch($idprod);
 		// If a predefined product and multilang and on other lang, we renamed label with label translated
 		if ($multilangsactive && ($outputlangs->defaultlang != $langs->defaultlang)) {
 			$translatealsoifmodified = (!empty($conf->global->MAIN_MULTILANG_TRANSLATE_EVEN_IF_MODIFIED)); // By default if value was modified manually, we keep it (no translation because we don't have it)
