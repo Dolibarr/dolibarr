@@ -3261,18 +3261,18 @@ class ExpeditionLigne extends CommonObjectLine
 				$this->errors[] = $this->db->lasterror() . " - sql=$sql";
 				$error++;
 			}
+		}
 
-			if (!$error) {
-				$this->db->commit();
-				return 1;
-			} else {
-				foreach ($this->errors as $errmsg) {
-					dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
-					$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
-				}
-				$this->db->rollback();
-				return -1 * $error;
+		if (!$error) {
+			$this->db->commit();
+			return 1;
+		} else {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
+			$this->db->rollback();
+			return -1 * $error;
 		}
 	}
 
