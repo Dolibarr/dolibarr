@@ -270,7 +270,7 @@ class Ldap
 
 		$connected = 0;
 		$this->bind = 0;
-		$this->error = 0;
+		$this->error = '';
 		$this->connectedServer = '';
 
 		$ldapdebug = ((empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug == "false") ? false : true);
