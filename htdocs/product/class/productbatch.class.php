@@ -73,7 +73,7 @@ class Productbatch extends CommonObject
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -351,7 +351,7 @@ class Productbatch extends CommonObject
 	}
 
 	/**
-	 *  Clean fields (triming)
+	 *  Clean fields (trimming)
 	 *
 	 *  @return	void
 	 */
@@ -374,14 +374,14 @@ class Productbatch extends CommonObject
 	/**
 	 *  Find first detail record that match eather eat-by or sell-by or batch within given warehouse
 	 *
-	 *  @param	int			$fk_product_stock   id product_stock for objet
+	 *  @param	int			$fk_product_stock   id product_stock for object
 	 *  @param	integer		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
 	 *  @param	integer		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
 	 *  @param	string		$batch_number   	batch number for object
 	 *  @param	int			$fk_warehouse		filter on warehouse (use it if you don't have $fk_product_stock)
 	 *  @return int          					Return integer <0 if KO, >0 if OK
 	 */
-	public function find($fk_product_stock = 0, $eatby = '', $sellby = '', $batch_number = '', $fk_warehouse = 0)
+	public function find($fk_product_stock = 0, $eatby = null, $sellby = null, $batch_number = '', $fk_warehouse = 0)
 	{
 		$where = array();
 		$sql = "SELECT";
@@ -443,7 +443,7 @@ class Productbatch extends CommonObject
 	 * Return all batch detail records for a given product and warehouse
 	 *
 	 * @param	DoliDB		$dbs    			database object
-	 * @param	int			$fk_product_stock	id product_stock for objet
+	 * @param	int			$fk_product_stock	id product_stock for object
 	 * @param	int			$with_qty    		1 = doesn't return line with 0 quantity
 	 * @param  	int         $fk_product         If set to a product id, get eatby and sellby from table llx_product_lot
 	 * @return 	array|int         				Return integer <0 if KO, array of batch

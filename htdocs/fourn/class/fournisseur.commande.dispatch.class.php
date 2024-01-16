@@ -20,7 +20,7 @@
  *  \file       htdocs/fourn/class/fournisseur.commande.dispatch.class.php
  *  \ingroup    fournisseur stock
  *  \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *              Initialy built by build_class_from_table on 2015-02-24 10:38
+ *              Initially built by build_class_from_table on 2015-02-24 10:38
  */
 
 // Put here all includes required by your class file
@@ -122,7 +122,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{

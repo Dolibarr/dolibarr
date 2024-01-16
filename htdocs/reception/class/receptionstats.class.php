@@ -21,7 +21,7 @@
 /**
  *  \file       htdocs/reception/class/receptionstats.class.php
  *  \ingroup    reception
- *  \brief      File of class fo tmanage reception statistics
+ *  \brief      File of class to manage reception statistics
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';

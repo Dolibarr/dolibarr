@@ -783,7 +783,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 
 			$urltograbdirwithoutslash = dirname($urltograb.'.');
 			$urltograbdirrootwithoutslash = getRootURLFromURL($urltograbdirwithoutslash);
-			// Exemple, now $urltograbdirwithoutslash is https://www.dolimed.com/screenshots
+			// Example, now $urltograbdirwithoutslash is https://www.dolimed.com/screenshots
 			// and $urltograbdirrootwithoutslash is https://www.dolimed.com
 		}
 
@@ -1150,7 +1150,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 		// Define id of page the new page is translation of
 		$pageidfortranslation = (GETPOST('pageidfortranslation', 'int') > 0 ? GETPOST('pageidfortranslation', 'int') : 0);
 		if ($pageidfortranslation > 0) {
-			// Check if the page we are translation of is alreayd a translation of a source page. if yes, we will use source id instead
+			// Check if the page we are translation of is already a translation of a source page. if yes, we will use source id instead
 			$objectpagetmp = new WebsitePage($db);
 			$objectpagetmp->fetch($pageidfortranslation);
 			if ($objectpagetmp->fk_page > 0) {
@@ -2709,7 +2709,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 				$i++;
 			}
 
-			// Adding a RSS feed into a sitemap should nto be required. The RSS contains pages that are already included into
+			// Adding a RSS feed into a sitemap should not be required. The RSS contains pages that are already included into
 			// the sitemap and RSS feeds are not shown into index.
 			if ($addrsswrapper && getDolGlobalInt('WEBSITE_ADD_RSS_FEED_INTO_SITEMAP')) {
 				$url = $domtree->createElement('url');
@@ -2746,6 +2746,10 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 
 	// Add the entry Sitemap: into the robot.txt file.
 	$robotcontent = @file_get_contents($filerobot);
+	$result = preg_replace('/<?php \/\/ BEGIN PHP[^?]END PHP ?>\n/ims', '', $robotcontent);
+	if ($result) {
+		$robotcontent = $result;
+	}
 	$robotsitemap = "Sitemap: ".$domainname."/".$xmlname;
 	$result = strpos($robotcontent, 'Sitemap: ');
 	if ($result) {
@@ -2978,7 +2982,7 @@ if (!GETPOST('hide_websitemenu')) {
 			print '</span>';
 		}
 
-		// Refresh / Reload web site (for non javascript browers)
+		// Refresh / Reload web site (for non javascript browsers)
 		if (empty($conf->use_javascript_ajax)) {
 			print '<span class="websiteselection">';
 			print '<input type="image" class="valignmiddle" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshsite" value="'.$langs->trans("Load").'">';
@@ -3338,7 +3342,7 @@ if (!GETPOST('hide_websitemenu')) {
 				print '<!-- button EditInLine and ShowSubcontainers -->'."\n";
 				print '<div class="websiteselectionsection inline-block">';
 
-				print '<div class="inline-block marginrightonly">';	// Button include dynamic contant
+				print '<div class="inline-block marginrightonly">';	// Button includes dynamic content
 				print $langs->trans("ShowSubcontainers");
 				if (!getDolGlobalString('WEBSITE_SUBCONTAINERSINLINE')) {
 					print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=setshowsubcontainers&token='.newToken().'">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
@@ -3533,10 +3537,14 @@ if (!GETPOST('hide_websitemenu')) {
 		if ($action == 'editsource' || $action == 'editcontent' || GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha')) {
 			$url = 'https://wiki.dolibarr.org/index.php/Module_Website';
 
-			$htmltext = $langs->transnoentitiesnoconv("YouCanEditHtmlSource", $url);
+			$htmltext = '<small>';
+			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource", $url);
+			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource1", $url);
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource2", $url);
+			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource3", $url);
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourceMore", $url);
 			$htmltext .= '<br>';
+			$htmltext .= '</small>';
 			if ($conf->browser->layout == 'phone') {
 				print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
 			} else {
@@ -5017,7 +5025,7 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 		// $filecss
 		// $filephp
 
-		// Ouput page under the Dolibarr top menu
+		// Output page under the Dolibarr top menu
 		$objectpage->fetch($pageid);
 
 		$jscontent = @file_get_contents($filejs);
@@ -5107,7 +5115,7 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 			try {
 				$res = include $filephp;
 				if (empty($res)) {
-					print "ERROR: Failed to include file '".$filephp."'. Try to edit and re-save page ith this ID.";
+					print "ERROR: Failed to include file '".$filephp."'. Try to edit and re-save page with this ID.";
 				}
 			} catch (Exception $e) {
 				print $e->getMessage();

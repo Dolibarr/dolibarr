@@ -122,7 +122,7 @@ class Contrat extends CommonObject
 	public $fk_soc;
 
 
-	public $societe; // Objet societe
+	public $societe; // Object societe
 
 	/**
 	 * Status of the contract
@@ -226,7 +226,7 @@ class Contrat extends CommonObject
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
 	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
@@ -338,7 +338,7 @@ class Contrat extends CommonObject
 	/**
 	 *  Activate a contract line
 	 *
-	 *  @param	User		$user       Objet User who activate contract
+	 *  @param	User		$user       Object User who activate contract
 	 *  @param  int			$line_id    Id of line to activate
 	 *  @param  int			$date_start Opening date
 	 *  @param  int|string	$date_end   Expected end date
@@ -361,7 +361,7 @@ class Contrat extends CommonObject
 	/**
 	 *  Close a contract line
 	 *
-	 *  @param	User		$user       Objet User who close contract
+	 *  @param	User		$user       Object User who close contract
 	 *  @param  int			$line_id    Id of line to close
 	 *  @param  int			$date_end	End date
 	 * 	@param	string		$comment	A comment typed by user
@@ -490,7 +490,7 @@ class Contrat extends CommonObject
 	/**
 	 * Validate a contract
 	 *
-	 * @param	User	$user      		Objet User
+	 * @param	User	$user      		Object User
 	 * @param   string	$force_number	Reference to force on contract (not implemented yet)
 	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 * @return	int						Return integer <0 if KO, >0 if OK
@@ -2163,7 +2163,7 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *  Charge les informations d'ordre info dans l'objet contrat
+	 *  Charge les information d'ordre info dans l'objet contrat
 	 *
 	 *  @param  int		$id     id du contrat a charger
 	 *  @return	void
@@ -2280,7 +2280,7 @@ class Contrat extends CommonObject
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 *      @param	User	$user           Objet user
+	 *      @param	User	$user           Object user
 	 *      @param  string	$mode           "inactive" pour services a activer, "expired" pour services expires
 	 *      @return WorkboardResponse|int Return integer <0 if KO, WorkboardResponse if OK
 	 */
@@ -2376,7 +2376,7 @@ class Contrat extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *   Charge indicateurs this->nb de tableau de bord
+	 *   Load the indicators this->nb for state board
 	 *
 	 *   @return     int         Return integer <0 si ko, >0 si ok
 	 */
@@ -2467,7 +2467,7 @@ class Contrat extends CommonObject
 			}
 		}
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->specimen = 1;
 
@@ -3130,7 +3130,7 @@ class ContratLigne extends CommonObjectLine
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDb		$db      Database handler
+	 *  @param      DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -3744,7 +3744,7 @@ class ContratLigne extends CommonObjectLine
 	/**
 	 *  Activate a contract line
 	 *
-	 * @param   User 		$user 		Objet User who activate contract
+	 * @param   User 		$user 		Object User who activate contract
 	 * @param  	int 		$date 		Date real activation
 	 * @param  	int|string 	$date_end 	Date planned end. Use '-1' to keep it unchanged.
 	 * @param   string 		$comment 	A comment typed by user
@@ -3802,7 +3802,7 @@ class ContratLigne extends CommonObjectLine
 	/**
 	 *  Close a contract line
 	 *
-	 * @param    User 	$user 			Objet User who close contract
+	 * @param    User 	$user 			Object User who close contract
 	 * @param  	 int 	$date_end_real 	Date end
 	 * @param    string $comment 		A comment typed by user
 	 * @param    int	$notrigger		1=Does not execute triggers, 0=Execute triggers

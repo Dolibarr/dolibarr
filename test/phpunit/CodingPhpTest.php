@@ -240,7 +240,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					// Must not found $this->db->
 					$ok=true;
 					$matches=array();
-					// Check string $this->db-> into a non class.php file (it shoud be $db-> into such classes)
+					// Check string $this->db-> into a non class.php file (it should be $db-> into such classes)
 					preg_match_all('/'.preg_quote('$this->db->', '/').'/', $filecontent, $matches, PREG_SET_ORDER);
 					foreach ($matches as $key => $val) {
 						$ok=false;

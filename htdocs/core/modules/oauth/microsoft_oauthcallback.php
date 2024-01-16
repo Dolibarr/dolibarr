@@ -163,7 +163,7 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 
 			//$token = $apiService->requestAccessToken(GETPOST('code'), $state);
 			$token = $apiService->requestAccessToken(GETPOST('code'));
-			// Microsoft is a service that does not need state to be stored as second paramater of requestAccessToken
+			// Microsoft is a service that does not need state to be stored as second parameter of requestAccessToken
 
 			//print $token->getAccessToken().'<br><br>';
 			//print $token->getExtraParams()['id_token'].'<br>';

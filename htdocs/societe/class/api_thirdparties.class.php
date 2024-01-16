@@ -66,7 +66,7 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Get properties of a thirdparty object
 	 *
-	 * Return an array with thirdparty informations
+	 * Return an array with thirdparty information
 	 *
 	 * @param	int		$id				Id of third party to load
 	 * @return  Object					Object with cleaned properties
@@ -81,7 +81,7 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Get properties of a thirdparty object by email.
 	 *
-	 * Return an array with thirdparty informations
+	 * Return an array with thirdparty information
 	 *
 	 * @param string    $email  Email of third party to load
 	 * @return array|mixed Cleaned Societe object
@@ -98,7 +98,7 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Get properties of a thirdparty object by barcode.
 	 *
-	 * Return an array with thirdparty informations
+	 * Return an array with thirdparty information
 	 *
 	 * @param string    $barcode  Barcode of third party to load
 	 * @return array|mixed Cleaned Societe object
@@ -127,7 +127,7 @@ class Thirdparties extends DolibarrApi
 	 *								Set to 4 to show only suppliers
 	 * @param	int		$category   Use this param to filter list by category
 	 * @param   string  $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "((t.nom:like:'TheCompany%') or (t.name_alias:like:'TheCompany%')) and (t.datec:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of thirdparty objects
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $properties = '')
@@ -252,7 +252,7 @@ class Thirdparties extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->company->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -297,7 +297,7 @@ class Thirdparties extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->company->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -967,7 +967,7 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Return list of invoices qualified to be corrected by a credit note.
 	 * Invoices matching the following rules are returned
-	 * (validated + payment on process) or classified (paid completely or paid partialy) + not already replaced + not already a credit note
+	 * (validated + payment on process) or classified (paid completely or paid partially) + not already replaced + not already a credit note
 	 *
 	 * @param int   $id             Id of thirdparty
 	 *
@@ -1105,7 +1105,7 @@ class Thirdparties extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->company->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -1161,7 +1161,7 @@ class Thirdparties extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$account->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -1411,7 +1411,7 @@ class Thirdparties extends DolibarrApi
 
 			foreach ($request_data as $field => $value) {
 				if ($field === 'caller') {
-					// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+					// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 					$account->context['caller'] = $request_data['caller'];
 					continue;
 				}
@@ -1474,7 +1474,7 @@ class Thirdparties extends DolibarrApi
 
 			foreach ($request_data as $field => $value) {
 				if ($field === 'caller') {
-					// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+					// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 					$account->context['caller'] = $request_data['caller'];
 					continue;
 				}
@@ -1513,7 +1513,7 @@ class Thirdparties extends DolibarrApi
 
 			foreach ($request_data as $field => $value) {
 				if ($field === 'caller') {
-					// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+					// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 					$account->context['caller'] = $request_data['caller'];
 					continue;
 				}
@@ -1575,7 +1575,7 @@ class Thirdparties extends DolibarrApi
 
 			foreach ($request_data as $field => $value) {
 				if ($field === 'caller') {
-					// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+					// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 					$account->context['caller'] = $request_data['caller'];
 					continue;
 				}
@@ -1738,9 +1738,9 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Fetch properties of a thirdparty object.
 	 *
-	 * Return an array with thirdparty informations
+	 * Return an array with thirdparty information
 	 *
-	 * @param    int	$rowid      Id of third party to load (Use 0 to get a specimen record, use null to use other search criterias)
+	 * @param    int	$rowid      Id of third party to load (Use 0 to get a specimen record, use null to use other search criteria)
 	 * @param    string	$ref        Reference of third party, name (Warning, this can return several records)
 	 * @param    string	$ref_ext    External reference of third party (Warning, this information is a free field not provided by Dolibarr)
 	 * @param    string	$barcode    Barcode of third party to load
@@ -1781,8 +1781,8 @@ class Thirdparties extends DolibarrApi
 		}
 
 		if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
-			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
-			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
+			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
 		} else {
 			$filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
 			$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";

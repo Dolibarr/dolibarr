@@ -102,7 +102,7 @@ class ActionsDatapolicy extends CommonHookActions
 
 		// FIXME Removed hard coded id, use codes
 		if ($parameters['currentcontext'] == 'thirdpartycard' && $action == 'anonymiser' && (in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) || $object->typent_id == 8)) {
-			// on verifie si l'objet est utilisé
+			// Verify if the object is used
 			if ($object->isObjectUsed(GETPOST('socid'))) {
 				$object->name = $langs->trans('ANONYME');
 				$object->name_alias = '';
@@ -127,6 +127,7 @@ class ActionsDatapolicy extends CommonHookActions
 
 					setEventMessages($langs->trans('ANONYMISER_SUCCESS'), array());
 					header('Location:'.$_SERVER["PHP_SELF"]."?socid=".$object->id);
+					exit;
 				}
 			}
 		} elseif ($parameters['currentcontext'] == 'contactcard' && $action == 'send_datapolicy') {
@@ -251,7 +252,7 @@ class ActionsDatapolicy extends CommonHookActions
 			}
 
 			if (GETPOST('socid')) {
-				/* Removed due to awful harcoded values
+				/* Removed due to awful hardcoded values
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 				$societe = new Societe($this->db);
 				$societe->fetch(GETPOST('socid'));

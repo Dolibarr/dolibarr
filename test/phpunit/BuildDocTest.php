@@ -23,6 +23,7 @@
  *      \ingroup    test
  *      \brief      PHPUnit test
  *      \remarks    To run this script as CLI:  phpunit filename.php
+ *      			See also PdfDocTest to test methods
  */
 
 global $conf,$user,$langs,$db;
@@ -143,6 +144,8 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 			die(1);
 		}
 
+		print "PHP Version: ".phpversion()."\n";
+
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
 		print __METHOD__."\n";
@@ -207,12 +210,29 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 		$localobject=new Facture($db);
 		$localobject->createFromOrder($localobjectcom, $user);
 		$localobject->date_lim_reglement = dol_now() + 3600 * 24 *30;
+		$localobject->status = Facture::STATUS_DRAFT;
+
+		// To be sure we are not using the Swiss QR Code addition
+		$conf->global->INVOICE_ADD_SWISS_QR_CODE = 0;
+		// Force config to use a watermark and without TCPDI
+		$conf->global->FACTURE_DRAFT_WATERMARK = 'A watermark';
+		// Force without TCPDI
+		$conf->global->MAIN_DISABLE_TCPDI = 1;
 
 		// Crabe (english)
 		$localobject->model_pdf='crabe';
 		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
 		$this->assertLessThan($result, 0);
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__." result=".$result." for generation from crabe\n";
+
+		// Restore default usage with TCPDI
+		$conf->global->MAIN_DISABLE_TCPDI = 0;
+
+		// Crabe (english)
+		$localobject->model_pdf='crabe';
+		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
+		$this->assertLessThan($result, 0);
+		print __METHOD__." result=".$result." for generation from crabe with MAIN_DISABLE_TCPDI and a watermark\n";
 
 		// Crabe (japanese)
 		$newlangs1=new Translate("", $conf);

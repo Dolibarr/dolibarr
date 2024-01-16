@@ -143,7 +143,8 @@ $item = $formSetup->newItem('MYMODULE_MYPARAM10');
 $item->setAsMultiSelect($TField);
 $item->helpText = $langs->transnoentities('MYMODULE_MYPARAM10');
 
-
+// Setup conf for a category selection
+$formSetup->newItem('MYMODULE_CATEGORY_ID_XXX')->setAsCategory('product');
 
 // Setup conf MYMODULE_MYPARAM10
 $item = $formSetup->newItem('MYMODULE_MYPARAM10');

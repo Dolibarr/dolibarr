@@ -173,7 +173,6 @@ if ($socid) {
 	}
 
 	print '</table>';
-
 	print '</div>';
 
 	print dol_get_fiche_end();
@@ -194,7 +193,10 @@ if ($socid) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 	$result = show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $newcardbutton);
-	print '</form>';
+
+	if (empty($conf->dol_optimize_smallscreen)) {
+		print '</form>';
+	}
 }
 
 // End of page

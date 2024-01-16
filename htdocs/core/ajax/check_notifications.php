@@ -99,7 +99,7 @@ if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto
 	/*$time_update = (int) $conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY; // Always defined
 	if (!empty($_SESSION['auto_check_events_not_before']))
 	{
-		// We start scan from the not before so if two tabs were opend at differents seconds and we close one (so the js timer),
+		// We start scan from the not before so if two tabs were opened at different moments and we close one (so the js timer),
 		// then we are not losing periods
 		$starttime = $_SESSION['auto_check_events_not_before'];
 		// Protection to avoid too long sessions
@@ -137,7 +137,7 @@ if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
-			// Message must be formated and translated to be used with javascript directly
+			// Message must be formatted and translated to be used with javascript directly
 			$event = array();
 			$event['type'] = 'agenda';
 			$event['id_reminder'] = $obj->id_reminder;

@@ -46,6 +46,7 @@ create table llx_product
   price_min                     double(24,8) DEFAULT 0,
   price_min_ttc                 double(24,8) DEFAULT 0,
   price_base_type               varchar(3)   DEFAULT 'HT',
+  price_label                   varchar(255),
   cost_price                    double(24,8) DEFAULT NULL,          -- Cost price without tax. Can be used for margin calculation.
   default_vat_code              varchar(10),                        -- Same code than into table llx_c_tva (but no constraints). Should be used in priority to find default vat, npr, localtaxes for product.
   tva_tx                        double(7,4),                        -- Default VAT rate of product
@@ -58,7 +59,6 @@ create table llx_product
   fk_user_modif                 integer,                            -- user making last change
   tosell                        tinyint      DEFAULT 1,             -- Product you sell
   tobuy                         tinyint      DEFAULT 1,             -- Product you buy
-  onportal                      tinyint      DEFAULT 0,	            -- If it is a product you sell and you want to sell it from internal portal (module 'portal')
   tobatch                       tinyint      DEFAULT 0 NOT NULL,    -- Is it a product that need a batch management (eat-by or lot management)
   sell_or_eat_by_mandatory      tinyint      DEFAULT 0 NOT NULL,    -- Make sell-by or eat-by date mandatory
   batch_mask			        varchar(32)  DEFAULT NULL,          -- If the product has batch feature, you may want to use a batch mask per product

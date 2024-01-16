@@ -219,7 +219,7 @@ function dol_getcache($memoryid)
 function dol_getshmopaddress($memoryid)
 {
 	global $shmkeys, $shmoffset;
-	if (empty($shmkeys[$memoryid])) {	// No room reserved for thid memoryid, no way to use cache
+	if (empty($shmkeys[$memoryid])) {	// No room reserved for this memoryid, no way to use cache
 		return 0;
 	}
 	return $shmkeys[$memoryid] + $shmoffset;

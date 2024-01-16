@@ -20,7 +20,7 @@
 
 /**
  *      \file       htdocs/core/class/html.formbarcode.class.php
- *      \brief      Fichier de la classe des fonctions predefinie de composants html
+ *      \brief      Fichier de la class des functions predefinie de composants html
  */
 
 

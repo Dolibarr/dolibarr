@@ -115,8 +115,8 @@ class CommandeFournisseur extends CommonOrder
 	/**
 	 * @var int
 	 */
-	public $statut; // 0=Draft -> 1=Validated -> 2=Approved -> 3=Ordered/Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
-	//                                                                                          -> 7=Canceled/Never received -> (reopen) 3=Process runing
+	public $statut; // 0=Draft -> 1=Validated -> 2=Approved -> 3=Ordered/Process running -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
+	//                                                                                          -> 7=Canceled/Never received -> (reopen) 3=Process running
 	//									                            -> 6=Canceled -> (reopen) 2=Approved
 	//  		                                      -> 9=Refused  -> (reopen) 1=Validated
 	//  Note: billed or not is on another field "billed"
@@ -239,7 +239,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
 	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
@@ -1527,10 +1527,14 @@ class CommandeFournisseur extends CommonOrder
 						$line->date_end,
 						$line->array_options,
 						$line->fk_unit,
+						$line->multicurrency_subprice,  // pu_ht_devise
+						$line->origin,     // origin
+						$line->origin_id,  // origin_id
+						$line->rang,       // rang
 						$line->special_code
 					);
 					if ($result < 0) {
-						dol_syslog(get_class($this)."::create ".$this->error, LOG_WARNING); // do not use dol_print_error here as it may be a functionnal error
+						dol_syslog(get_class($this)."::create ".$this->error, LOG_WARNING); // do not use dol_print_error here as it may be a functional error
 						$this->db->rollback();
 						return -1;
 					}
@@ -1806,7 +1810,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param      string	$desc            		Description
 	 *	@param      float	$pu_ht              	Unit price (used if $price_base_type is 'HT')
 	 *	@param      float	$qty             		Quantity
-	 *	@param      float	$txtva           		Taux tva
+	 *	@param      float	$txtva           		VAT Rate
 	 *	@param      float	$txlocaltax1        	Localtax1 tax
 	 *  @param      float	$txlocaltax2        	Localtax2 tax
 	 *	@param      int		$fk_product      		Id product
@@ -1817,7 +1821,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param		float	$pu_ttc					Unit price TTC (used if $price_base_type is 'TTC')
 	 *	@param		int		$type					Type of line (0=product, 1=service)
 	 *	@param		int		$info_bits				More information
-	 *  @param		bool	$notrigger				Disable triggers
+	 *  @param		int		$notrigger				Disable triggers
 	 *  @param		int		$date_start				Date start of service
 	 *  @param		int		$date_end				Date end of service
 	 *  @param		array	$array_options			extrafields array
@@ -1829,7 +1833,7 @@ class CommandeFournisseur extends CommonOrder
 	 * 	@param		int		$special_code			Special code
 	 *	@return     int             				Return integer <=0 if KO, >0 if OK
 	 */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $fk_prod_fourn_price = 0, $ref_supplier = '', $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $type = 0, $info_bits = 0, $notrigger = false, $date_start = null, $date_end = null, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $origin = '', $origin_id = 0, $rang = -1, $special_code = 0)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $fk_prod_fourn_price = 0, $ref_supplier = '', $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $type = 0, $info_bits = 0, $notrigger = 0, $date_start = null, $date_end = null, $array_options = [], $fk_unit = null, $pu_ht_devise = 0, $origin = '', $origin_id = 0, $rang = -1, $special_code = 0)
 	{
 		global $langs, $mysoc, $conf;
 
@@ -2051,7 +2055,7 @@ class CommandeFournisseur extends CommonOrder
 			// Multicurrency
 			$this->line->fk_multicurrency = $this->fk_multicurrency;
 			$this->line->multicurrency_code = $this->multicurrency_code;
-			$this->line->multicurrency_subprice		= $pu_ht_devise;
+			$this->line->multicurrency_subprice	= $pu_ht_devise;
 			$this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
 			$this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
@@ -2077,7 +2081,7 @@ class CommandeFournisseur extends CommonOrder
 					}
 				}
 
-				// Mise a jour informations denormalisees au niveau de la commande meme
+				// Mise a jour information denormalisees au niveau de la commande meme
 				$result = $this->update_price(1, 'auto', 0, $this->thirdparty); // This method is designed to add line from user input so total calculation must be done using 'auto' mode.
 				if ($result > 0) {
 					$this->db->commit();
@@ -2559,7 +2563,7 @@ class CommandeFournisseur extends CommonOrder
 	/**
 	 *	Set the planned delivery date
 	 *
-	 *	@param      User			$user        		Objet user making change
+	 *	@param      User			$user        		Object user making change
 	 *	@param      integer  		$delivery_date     Planned delivery date
 	 *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         						Return integer <0 if KO, >0 if OK
@@ -2616,7 +2620,7 @@ class CommandeFournisseur extends CommonOrder
 	/**
 	 *	Set the id projet
 	 *
-	 *	@param      User			$user        		Objet utilisateur qui modifie
+	 *	@param      User			$user        		Object utilisateur qui modifie
 	 *	@param      int				$id_projet    	 	Delivery date
 	 *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         						Return integer <0 si ko, >0 si ok
@@ -2779,7 +2783,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param     	double		$txlocaltax1	    Localtax1 tax
 	 *  @param     	double		$txlocaltax2   		Localtax2 tax
 	 *  @param     	double		$price_base_type 	Type of price base
-	 *	@param		int			$info_bits			Miscellaneous informations
+	 *	@param		int			$info_bits			Miscellaneous information
 	 *	@param		int			$type				Type of line (0=product, 1=service)
 	 *  @param		int			$notrigger			Disable triggers
 	 *  @param      integer     $date_start     	Date start of service
@@ -3002,7 +3006,7 @@ class CommandeFournisseur extends CommonOrder
 			$prodid = $obj->rowid;
 		}
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
@@ -3056,7 +3060,7 @@ class CommandeFournisseur extends CommonOrder
 	}
 
 	/**
-	 *	Charge les informations d'ordre info dans l'objet facture
+	 *	Charge les information d'ordre info dans l'objet facture
 	 *
 	 *	@param  int		$id       	Id de la facture a charger
 	 *	@return	void
@@ -3095,7 +3099,7 @@ class CommandeFournisseur extends CommonOrder
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Charge indicateurs this->nb de tableau de bord
+	 *	Load the indicators this->nb for the state board
 	 *
 	 *	@return     int         Return integer <0 si ko, >0 si ok
 	 */
@@ -3135,7 +3139,7 @@ class CommandeFournisseur extends CommonOrder
 	/**
 	 *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 *	@param          User	$user   Objet user
+	 *	@param          User	$user   Object user
 	 *  @param          int		$mode   "opened", "awaiting" for orders awaiting reception
 	 *	@return WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */
@@ -3463,7 +3467,7 @@ class CommandeFournisseur extends CommonOrder
 					//var_dump($keysindeliverednotinwished);
 					//exit;
 
-					if (count($diff_array) == 0 && count($keysinwishednotindelivered) == 0 && count($keysindeliverednotinwished) == 0) { //No diff => mean everythings is received
+					if (count($diff_array) == 0 && count($keysinwishednotindelivered) == 0 && count($keysindeliverednotinwished) == 0) { //No diff => mean everything is received
 						if ($closeopenorder) {
 							//$ret=$this->setStatus($user,5);
 							$ret = $this->Livraison($user, $date_liv, 'tot', $comment); // GETPOST("type") is 'tot', 'par', 'nev', 'can'

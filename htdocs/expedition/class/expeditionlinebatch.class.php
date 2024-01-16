@@ -44,7 +44,7 @@ class ExpeditionLineBatch extends CommonObject
 	public $qty;
 	public $dluo_qty; // deprecated, use qty
 	public $entrepot_id; // @deprecated, use fk_warehouse
-	public $fk_origin_stock;		// rowid in llx_product_batch table (not usefull)
+	public $fk_origin_stock;		// rowid in llx_product_batch table (not useful)
 	public $fk_warehouse;			// warehouse ID
 	public $fk_expeditiondet;
 
@@ -52,7 +52,7 @@ class ExpeditionLineBatch extends CommonObject
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
