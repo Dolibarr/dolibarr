@@ -49,8 +49,10 @@ repos:
     hooks:
       - id: php-cbf
         files: \.(php)$
-        args: [-p]
+        args: [--standard=dev/setup/codesniffer/ruleset.xml -p]
       - id: php-cs
+        files: \.(php)$
+        args: [--standard=dev/setup/codesniffer/ruleset.xml -p]
       - id: php-lint
 
   # Prettier (format code, only for non common files)
