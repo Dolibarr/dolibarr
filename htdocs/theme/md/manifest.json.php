@@ -75,6 +75,16 @@ if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
 }
 $manifest->short_name = $manifest->name;
 
+$manifest->theme_color = getDolGlobalString('MAIN_MANIFEST_APPLI_THEME_COLOR', getDolGlobalString('THEME_ELDY_TOPMENU_BACK1', '#F05F40'));
+if (!preg_match('/#[a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9]$/', $manifest->theme_color)) {
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+	$manifest->theme_color = '#'.colorArrayToHex(colorStringToArray($manifest->theme_color));
+}
+$manifest->background_color = getDolGlobalString('MAIN_MANIFEST_APPLI_BG_COLOR', "#ffffff");
+if (!preg_match('/#[a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9]$/', $manifest->background_color)) {
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+	$manifest->background_color = '#'.colorArrayToHex(colorStringToArray($manifest->background_color));
+}
 $manifest->theme_color = empty($conf->global->MAIN_MANIFEST_APPLI_THEME_COLOR) ? getDolGlobalString('THEME_ELDY_TOPMENU_BACK1', '#F05F40') : $conf->global->MAIN_MANIFEST_APPLI_THEME_COLOR;
 $manifest->background_color = empty($conf->global->MAIN_MANIFEST_APPLI_BG_COLOR) ? "#ffffff" : $conf->global->MAIN_MANIFEST_APPLI_BG_COLOR;
 $manifest->display = "standalone";
