@@ -3034,8 +3034,7 @@ class ExpeditionLigne extends CommonObjectLine
 		if (empty($this->fk_expedition)
 			|| empty($this->fk_product) // product id is mandatory
 			|| (empty($this->fk_origin_line) && empty($this->fk_parent)) // at least origin line id of parent line id is set
-			|| !is_numeric($this->qty))
-		{
+			|| !is_numeric($this->qty)) {
 			$this->error = 'ErrorMandatoryParametersNotProvided';
 			return -1;
 		}
@@ -3115,6 +3114,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 * Find all children
 	 *
 	 * @param	int		$line_id	Line id
+	 * @param	array	$list		List of sub-lines for a virtual product line
 	 * @param	int		$mode		[=0] array of lines ids, 1 array of line object for dispatcher
 	 * @return	int 	<0 if KO, >0 if OK
 	 */

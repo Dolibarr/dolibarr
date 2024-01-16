@@ -973,7 +973,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 									print '</td>';
 									print '<td>';
 									if ($can_update_stock) {
-										print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" ' . ' onClick="addDispatchLine(' . $i . ', \'' . $type . '-' . $child_line_id . '\')"');
+										print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine(' . $i . ', \'' . $type . '-' . $child_line_id . '\')"');
 									}
 									print '</td>';
 
