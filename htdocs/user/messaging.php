@@ -1,6 +1,11 @@
 <?php
-/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2006-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,28 +22,24 @@
  */
 
 /**
- *      \file       htdocs/user/info.php
- *      \ingroup    core
- *		\brief      Page des information d'un utilisateur
+ *  \file       htdocs/societe/messaging.php
+ *  \ingroup    societe
+ *  \brief      Page of third party events
  */
 
 // Load Dolibarr environment
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 
-// Load translation files required by page
-$langs->load("users");
+// Load translation files required by the page
+$langs->loadLangs(array('agenda', 'bills', 'companies', 'orders', 'propal'));
 
-// Security check
-$id = GETPOST('id', 'int');
-$ref = GETPOST('ref', 'alpha');
-
-if (!isset($id) || empty($id)) {
-	accessforbidden();
-}
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'useragenda';
 
 if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST('actioncode', 'array', 3);
@@ -69,31 +70,41 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
 
+// Initialize technical objects
 $object = new User($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);
 	$object->getrights();
 }
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('agendathirdparty', 'globalcard'));
+
 // Security check
-$socid = 0;
-if ($user->socid > 0) {
-	$socid = $user->socid;
-}
-$feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user');
-
-$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
-
-// If user is not user that read and no permission to read other users, we stop
-if (($object->id != $user->id) && !$user->hasRight('user', 'user', 'lire')) {
-	accessforbidden();
+$userid = GETPOST('userid', 'int');
+if ($user->id) {
+	$userId = $user->id;
 }
 
-$parameters = array('id'=>$userId);
+$result = $object->fetch($userid);
+if ($result <= 0) {
+	accessforbidden('User not found');
+}
+
+$result = restrictedArea($user, 'user', $userId, '&user');
+
+
+
+/*
+ *	Actions
+ */
+
+$parameters = array('id'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
+
 if (empty($reshook)) {
 	// Cancel
 	if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
@@ -142,7 +153,7 @@ $morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->tra
 dol_banner_tab($object, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin, 'rowid', 'ref', $morehtmlref);
 
 
-$object->info($id); // This overwrite ->ref with login instead of id
+$object->info($userid);
 
 
 print '<div class="fichecenter">';
@@ -185,8 +196,10 @@ if (isModEnabled('agenda')) {
 
 if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allaactions', 'read'))) {
 	print '<br>';
-	$param = '&id='.urlencode($id);
-
+	$param = '&userid='.urlencode($userid);
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+		$param .= '&contextpage='.urlencode($contextpage);
+	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.((int) $limit);
 	}
@@ -209,10 +222,9 @@ if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') ||
 	$filters['search_agenda_label'] = $search_agenda_label;
 	$filters['search_rowid'] = $search_rowid;
 
-	// TODO Replace this with same code than into list.php
-	show_actions_done_user($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, $object->module);
+	show_actions_messaging_user($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 }
 
-// End of page
-llxFooter();
-$db->close();
+	//End of page
+	llxFooter();
+	$db->close();
