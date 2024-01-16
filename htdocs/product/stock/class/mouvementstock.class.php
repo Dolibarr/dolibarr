@@ -846,7 +846,7 @@ class MouvementStock extends CommonObject
 	 * 	@param		int				$id_product_batch    				Id product_batch
 	 *  @param      string			$inventorycode       				Inventory code
 	 *  @param		int				$donotcleanemptylines				Do not clean lines that remains in stock table with qty=0 (because we want to have this done by the caller)
-	 *  @param		int				$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
+	 *  @param		int				$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (useful only if product is a subproduct)
 	 *	@return		int								     				Return integer <0 if KO, >0 if OK
 	 */
 	public function reception($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $eatby = '', $sellby = '', $batch = '', $datem = '', $id_product_batch = 0, $inventorycode = '', $donotcleanemptylines = 0, $disablestockchangeforsubproduct = 0)
