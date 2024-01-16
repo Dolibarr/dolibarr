@@ -359,6 +359,26 @@ class Contacts extends DolibarrApi
 	}
 
 	/**
+	 * Link an existing contact to a third party
+	 *
+	 * @param $id
+	 * @param $request_data
+	 * @return void
+	 *
+	 * @url POST {id}/linkThirdparty
+	 *
+	 * @throws RestException
+	 */
+	public function linkContactTo3rd($id, $request_data = null) {
+		if (!DolibarrApiAccess::$user->rights->societe->contact->creer) {
+			throw new RestException(401, 'No permission to create/update contacts');
+		}
+
+		//Check mandatory fields
+		$result = $this->_validate($request_data);
+	}
+
+	/**
 	 * Delete contact
 	 *
 	 * @param   int     $id Contact ID
