@@ -8021,7 +8021,7 @@ class Form
 		$objectdescorig = $objectdesc;
 		$objecttmp = null;
 		$InfoFieldList = array();
-
+		var_dump($objectfield);
 		if ($objectfield) {	// We must retreive the objectdesc from the field or extrafield
 			// Example: $objectfield = 'product:options_package'
 			$tmparray = explode(':', $objectfield);
