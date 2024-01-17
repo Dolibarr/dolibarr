@@ -3387,7 +3387,6 @@ class Product extends CommonObject
 		$sql .= " GROUP BY role";
 
 		if ($warehouseid) {
-			$this->stock_warehouse[$warehouseid]->stats_mrptoconsume['qty'] = 0;
 			$this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'] = 0;
 		} else {
 			$this->stats_mrptoconsume['customers'] = 0;
@@ -3404,24 +3403,16 @@ class Product extends CommonObject
 		if ($result) {
 			while ($obj = $this->db->fetch_object($result)) {
 				if ($obj->role == 'toconsume') {
-					if ($warehouseid) {
-						$this->stock_warehouse[$warehouseid]->stats_mrptoconsume['qty'] += ($obj->qty ? $obj->qty : 0);
-					} else {
-						$this->stats_mrptoconsume['customers'] += $obj->nb_customers;
-						$this->stats_mrptoconsume['nb'] += $obj->nb;
-						$this->stats_mrptoconsume['rows'] += $obj->nb_rows;
-						$this->stats_mrptoconsume['qty'] += ($obj->qty ? $obj->qty : 0);
-					}
+                    $this->stats_mrptoconsume['customers'] += $obj->nb_customers;
+                    $this->stats_mrptoconsume['nb'] += $obj->nb;
+                    $this->stats_mrptoconsume['rows'] += $obj->nb_rows;
+                    $this->stats_mrptoconsume['qty'] += ($obj->qty ? $obj->qty : 0);
 				}
 				if ($obj->role == 'consumed') {
 					//$this->stats_mrptoconsume['customers'] += $obj->nb_customers;
 					//$this->stats_mrptoconsume['nb'] += $obj->nb;
 					//$this->stats_mrptoconsume['rows'] += $obj->nb_rows;
-					if ($warehouseid) {
-						$this->stock_warehouse[$warehouseid]->stats_mrptoconsume['qty'] -= ($obj->qty ? $obj->qty : 0);
-					} else {
-						$this->stats_mrptoconsume['qty'] -= ($obj->qty ? $obj->qty : 0);
-					}
+                    $this->stats_mrptoconsume['qty'] -= ($obj->qty ? $obj->qty : 0);
 				}
 				if ($obj->role == 'toproduce') {
 					if ($warehouseid) {
@@ -3447,9 +3438,6 @@ class Product extends CommonObject
 
 			// Clean data
 			if ($warehouseid) {
-				if ($this->stock_warehouse[$warehouseid]->stats_mrptoconsume['qty'] < 0) {
-					$this->stock_warehouse[$warehouseid]->stats_mrptoconsume['qty'] = 0;
-				}
 				if ($this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'] < 0) {
 					$this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'] = 0;
 				}
@@ -5695,7 +5683,7 @@ class Product extends CommonObject
                 }
 
                 if ($this->fk_default_warehouse == $warehouseid) {
-                    $this->stock_warehouse[$warehouseid]->virtual = $this->stock_warehouse[$warehouseid]->real + $this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'] + $this->stats_commande_fournisseur['qty'] - ($this->stats_commande['qty'] + $this->stock_warehouse[$warehouseid]->stats_mrptoconsume['qty']);
+                    $this->stock_warehouse[$warehouseid]->virtual = $this->stock_warehouse[$warehouseid]->real + $this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'] + $this->stats_commande_fournisseur['qty'] - ($this->stats_commande['qty'] + $this->stats_mrptoconsume['qty']);
                 } else {
                     $this->stock_warehouse[$warehouseid]->virtual = $this->stock_warehouse[$warehouseid]->real + $this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'];
                 }
