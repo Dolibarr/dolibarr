@@ -79,7 +79,7 @@ class Ldap
 	public $domainFQDN;
 
 	/**
-	 * @var int bind
+	 * @var bool bind
 	 */
 	public $bind;
 
@@ -270,7 +270,7 @@ class Ldap
 		global $dolibarr_main_auth_ldap_debug;
 
 		$connected = 0;
-		$this->bind = 0;
+		$this->bind = false;
 		$this->error = '';
 		$this->connectedServer = '';
 
