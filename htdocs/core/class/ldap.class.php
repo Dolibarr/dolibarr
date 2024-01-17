@@ -1203,11 +1203,11 @@ class Ldap
 
 
 	/**
-	 *  Recupere le SID de l'utilisateur
+	 *	Gets LDAP user SID.
 	 *	Required by Active Directory
 	 *
-	 * 	@param	string		$ldapUser		Login de l'utilisateur
-	 * 	@return	string						Sid
+	 *	@param	string		$ldapUser		User login
+	 *	@return	int|string					if SID OK: SID string, if KO: -1
 	 */
 	public function getObjectSid($ldapUser)
 	{
@@ -1248,7 +1248,7 @@ class Ldap
 			return $SIDText;
 		} else {
 			$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
-			return '?';
+			return -1;
 		}
 	}
 
