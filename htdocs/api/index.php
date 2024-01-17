@@ -444,12 +444,7 @@ if (function_exists('fastcgi_finish_request')) {
 	fastcgi_finish_request();
 }
 
-// Check the existence of a terminate callback to call for the API method that was executed
-$o = &$api->r->apiMethodInfo;
-$terminateCall = '_terminate_' . $o->methodName . '_' . $api->r->responseFormat->getExtension();
-if (method_exists($o->className, $terminateCall)) {
-	// Call the terminate callback with response data as parameter
-	call_user_func(array(Scope::get($o->className), $terminateCall), $responsedata);
-}
+// Call API termination method
+$api->r->terminate();
 
 //session_destroy();
