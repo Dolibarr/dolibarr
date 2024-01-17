@@ -889,7 +889,7 @@ class FormMail extends Form
 
 			//input prompt AI
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-			if (isModEnabled('ai') && $apiKey = dolibarr_get_const($this->db, 'AI_CHATGPT_API_KEY', 0)) {
+			if (isModEnabled('ai') && dolibarr_get_const($this->db, 'AI_CHATGPT_API_KEY', 0)) {
 				$out .= $this->getHtmlForInstruction();
 			}
 			// Message
