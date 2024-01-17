@@ -1700,7 +1700,7 @@ class Restler extends EventDispatcher
         $o = & $this->apiMethodInfo;
         $terminateCall = '_terminate_' . $o->methodName . '_' .
             $this->responseFormat->getExtension();
-        if (method_exists($o->className, $postCall)) {
+        if (method_exists($o->className, $terminateCall)) {
             $this->dispatch('terminateCall');
             $this->responseData = call_user_func(array(
                 Scope::get($o->className),
