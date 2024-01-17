@@ -1147,7 +1147,7 @@ if ($action == 'create') {
 				$formmail->withfrom = 0;
 				$formmail->withto = $user->email ? $user->email : 1;
 				$formmail->withtocc = 0;
-				$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
+				$formmail->withtoccc = getDolGlobalString('MAIN_EMAIL_USECCC');
 				$formmail->withtopic = 0;
 				$formmail->withtopicreadonly = 1;
 				$formmail->withfile = 0;
