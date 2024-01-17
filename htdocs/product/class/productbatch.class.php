@@ -477,14 +477,13 @@ class Productbatch extends CommonObject
 		}
 		if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock AS ps ON (ps.rowid = fk_product_stock)';
-			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'stock_mouvement AS sm ON (sm.batch = t.batch AND ps.fk_entrepot=sm.fk_entrepot)';
+			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'stock_mouvement AS sm ON (sm.batch = t.batch AND ps.fk_entrepot=sm.fk_entrepot AND sm.type_mouvement IN (0,3))';
 		}
 		$sql .= " WHERE fk_product_stock=".((int) $fk_product_stock);
 		if ($with_qty) {
 			$sql .= " AND t.qty <> 0";
 		}
 		if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
-			$sql .= ' AND sm.type_mouvement IN (0,3)';
 			$sql .= ' GROUP BY t.rowid, t.tms, t.fk_product_stock,t.sellby,t.eatby , t.batch,t.qty,t.import_key';
 			if ($fk_product > 0) {
 				$sql .= ', pl.rowid, pl.eatby, pl.sellby';
