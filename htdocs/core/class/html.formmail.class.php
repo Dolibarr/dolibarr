@@ -755,7 +755,7 @@ class FormMail extends Form
 			if (!empty($this->withtoccuser) && is_array($this->withtoccuser) && getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')) {
 				$out .= '<tr><td>';
 				$out .= $langs->trans("MailToCCUsers");
-				$out .= '</td><>';
+				$out .= '</td>';
 
 				// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
 				$tmparray = $this->withtoccuser;
@@ -889,7 +889,7 @@ class FormMail extends Form
 
 			//input prompt AI
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-			if (isModEnabled('ai') && $apiKey = dolibarr_get_const($this->db, 'AI_CHATGPT_API_KEY', 0)) {
+			if (isModEnabled('ai')) {
 				$out .= $this->getHtmlForInstruction();
 			}
 			// Message
@@ -1376,17 +1376,48 @@ class FormMail extends Form
 	{
 		global $langs, $form;
 
+		$baseUrl = dol_buildpath('/', 1);
+
 		$out = '<tr>';
 		$out .= '<td>';
 		$out .= $form->textwithpicto($langs->trans('helpWithAi'), $langs->trans("YouCanMakeSomeInstructionForEmail"));
 		$out .= '</td>';
 
 		$out .= '<td>';
-		$out .= '<input type="text" class="quatrevingtpercent" id="instruction" name="instruction" placeholder="message with AI"/>';
-		$out .= '<input type="submit" class="button smallpaddingimp" name="generate_email_content" value="'.$langs->trans('Generate').'" />';
+		$out .= '<input type="hidden" id="csrf_token" name="token" value="'.newToken().'">';
+		$out .= '<input type="text" class="quatrevingtpercent" id="ai_instructions" name="instruction" placeholder="message with AI"/>';
+		$out .= '<button id="generate_button" type="button" class="button smallpaddingimp">'.$langs->trans('Generate').'</button>';
 		$out .= "</td></tr>\n";
+		$out .= "<script type='text/javascript'>
+			$(document).ready(function() {
+				$('#generate_button').click(function() {
+					var instructions = $('#ai_instructions').val();
+					var token = $('#csrf_token').val();
+			
+					$.ajax({
+						url: '".$baseUrl."ai/lib/generate_content.lib.php',
+						method: 'POST',
+						dataType: 'json',
+						contentType: 'application/json',
+						data: JSON.stringify({ 
+							'token': token,
+							'instructions': instructions, 
+						}),
+						success: function(response) {
+							console.log(response);
+						},
+						error: function(xhr, status, error) {
+							console.error('error ajax', status, error);
+						}
+					});
+				});
+			});
+			</script>
+			";
 		return $out;
 	}
+
+
 
 	/**
 	 *  Return templates of email with type = $type_template or type = 'all'.
