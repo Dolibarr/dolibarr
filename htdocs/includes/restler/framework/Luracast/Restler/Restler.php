@@ -1686,4 +1686,27 @@ class Restler extends EventDispatcher
             ), $this->responseData);
         }
     }
+	
+    /**
+     * terminate call
+     *
+     * Call _terminate_{methodName}_{extension} if exists with the composed and
+     * serialized (applying the reponse format) response data
+     *
+     * @example _terminate_post_json
+     */
+    public function terminate()
+    {
+        $o = & $this->apiMethodInfo;
+        $terminateCall = '_terminate_' . $o->methodName . '_' .
+            $this->responseFormat->getExtension();
+        if (method_exists($o->className, $postCall)) {
+            $this->dispatch('terminateCall');
+            $this->responseData = call_user_func(array(
+                Scope::get($o->className),
+                $terminateCall
+            ), $this->responseData);
+        }
+    }
+
 }
