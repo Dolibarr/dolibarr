@@ -102,7 +102,7 @@ class Ldap
 	 */
 	public $groups;
 	/**
-	 * @var string|null Error code provided by the LDAP server
+	 * @var int|null Error code provided by the LDAP server
 	 */
 	public $ldapErrorCode;
 	/**
