@@ -239,14 +239,14 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 
 			// $numline=$reg[2] + 1; // line of product
 			$numline = $pos;
-			$prod = "product_".$reg[1].'_'.$reg[2];
-			$qty = "qty_".$reg[1].'_'.$reg[2];
-			$ent = "entrepot_".$reg[1].'_'.$reg[2];
-			if (empty(GETPOST($ent))) {
-				$ent = $fk_default_warehouse;
+			$productId = GETPOSTINT("product_".$reg[1].'_'.$reg[2]);
+			$qty = (float)GETPOST("qty_".$reg[1].'_'.$reg[2], 'int');
+			$warehouseId = GETPOSTINT("entrepot_".$reg[1].'_'.$reg[2]);
+			if (empty($warehouseId)) {
+				$warehouseId = $fk_default_warehouse;
 			}
-			$pu = "pu_".$reg[1].'_'.$reg[2]; // This is unit price including discount
-			$fk_commandefourndet = "fk_commandefourndet_".$reg[1].'_'.$reg[2];
+			$pu = (float)GETPOST("pu_".$reg[1].'_'.$reg[2], 'int'); // This is unit price including discount
+			$fk_commandefourndet = GETPOSTINT("fk_commandefourndet_".$reg[1].'_'.$reg[2]);
 
 			if (getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT')) {
 				if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
@@ -259,8 +259,8 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 			}
 
 			// We ask to move a qty
-			if (GETPOST($qty) != 0) {
-				if (!(GETPOST($ent, 'int') > 0)) {
+			if ($qty != 0) {
+				if (empty($warehouseId)) {
 					dol_syslog('No dispatch for line '.$key.' as no warehouse was chosen.');
 					$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').' '.($numline);
 					setEventMessages($langs->trans('ErrorFieldRequired', $text), null, 'errors');
@@ -268,7 +268,7 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 				}
 
 				if (!$error) {
-					$result = $object->dispatchProduct($user, GETPOST($prod, 'int'), GETPOST($qty), GETPOST($ent, 'int'), GETPOST($pu), GETPOST('comment'), '', '', '', GETPOST($fk_commandefourndet, 'int'), $notrigger);
+					$result = $object->dispatchProduct($user, $productId, $qty, $warehouseId, $pu, GETPOST('comment'), '', '', '', $fk_commandefourndet, $notrigger);
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
@@ -285,11 +285,11 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 							if (GETPOSTISSET($saveprice)) {
 								// TODO Use class
 								$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
-								$sql .= " SET unitprice='".price2num(GETPOST($pu), 'MU')."'";
-								$sql .= ", price=".price2num(GETPOST($pu), 'MU')."*quantity";
+								$sql .= " SET unitprice='".price2num($pu, 'MU')."'";
+								$sql .= ", price=".price2num($pu, 'MU')."*quantity";
 								$sql .= ", remise_percent = ".((float) $dto);
 								$sql .= " WHERE fk_soc=".((int) $object->socid);
-								$sql .= " AND fk_product=".((int) GETPOST($prod, 'int'));
+								$sql .= " AND fk_product=".$productId;
 
 								$resql = $db->query($sql);
 							}
@@ -303,18 +303,17 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 			$pos++;
 
 			// eat-by date dispatch
-			// $numline=$reg[2] + 1; // line of product
 			$numline = $pos;
-			$prod = 'product_batch_'.$reg[1].'_'.$reg[2];
-			$qty = 'qty_'.$reg[1].'_'.$reg[2];
-			$ent = 'entrepot_'.$reg[1].'_'.$reg[2];
-			$pu = 'pu_'.$reg[1].'_'.$reg[2];
-			$fk_commandefourndet = 'fk_commandefourndet_'.$reg[1].'_'.$reg[2];
-			$lot = 'lot_number_'.$reg[1].'_'.$reg[2];
-			$dDLUO = dol_mktime(12, 0, 0, GETPOST('dluo_'.$reg[1].'_'.$reg[2].'month', 'int'), GETPOST('dluo_'.$reg[1].'_'.$reg[2].'day', 'int'), GETPOST('dluo_'.$reg[1].'_'.$reg[2].'year', 'int'));
-			$dDLC = dol_mktime(12, 0, 0, GETPOST('dlc_'.$reg[1].'_'.$reg[2].'month', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'day', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'year', 'int'));
+			$productId = GETPOSTINT("product_batch_".$reg[1].'_'.$reg[2]);
+			$qty = (float)GETPOST("qty_".$reg[1].'_'.$reg[2], 'int');
+			$warehouseId = GETPOSTINT("entrepot_".$reg[1].'_'.$reg[2]);
+			//if (empty($warehouseId)) $warehouseId = $fk_default_warehouse; // to be activated in batch mode too ?
+			$pu = (float)GETPOST("pu_".$reg[1].'_'.$reg[2], 'int'); // This is unit price including discount
+			$fk_commandefourndet = GETPOSTINT("fk_commandefourndet_".$reg[1].'_'.$reg[2]);
 
-			$fk_commandefourndet = 'fk_commandefourndet_'.$reg[1].'_'.$reg[2];
+			$lot = trim(GETPOST('lot_number_'.$reg[1].'_'.$reg[2], 'alpha'));
+			$dDLUO = dol_mktime(12, 0, 0, GETPOSTINT('dluo_'.$reg[1].'_'.$reg[2].'month'), GETPOSTINT('dluo_'.$reg[1].'_'.$reg[2].'day'), GETPOSTINT('dluo_'.$reg[1].'_'.$reg[2].'year'));
+			$dDLC = dol_mktime(12, 0, 0, GETPOSTINT('dlc_'.$reg[1].'_'.$reg[2].'month'), GETPOSTINT('dlc_'.$reg[1].'_'.$reg[2].'day'), GETPOSTINT('dlc_'.$reg[1].'_'.$reg[2].'year'));
 
 			if (getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT')) {
 				if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
@@ -327,17 +326,15 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 			}
 
 			// We ask to move a qty
-			if (GETPOST($qty) > 0) {
-				$productId = GETPOSTINT($prod);
-
-				if (!(GETPOST($ent, 'int') > 0)) {
+			if ($qty > 0) {
+				if (!empty($warehouseId)) {
 					dol_syslog('No dispatch for line '.$key.' as no warehouse was chosen.');
 					$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').' '.($numline).'-'.($reg[1] + 1);
 					setEventMessages($langs->trans('ErrorFieldRequired', $text), null, 'errors');
 					$error++;
 				}
 
-				if (!(GETPOST($lot, 'alpha') || $dDLUO || $dDLC)) {
+				if (!($lot || $dDLUO || $dDLC)) {
 					dol_syslog('No dispatch for line '.$key.' as serial/eat-by/sellby date are not set');
 					$text = $langs->transnoentities('atleast1batchfield').', '.$langs->transnoentities('Line').' '.($numline).'-'.($reg[1] + 1);
 					setEventMessages($langs->trans('ErrorFieldRequired', $text), null, 'errors');
@@ -345,7 +342,7 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 				}
 
 				if (!$error) {
-					$result = $object->dispatchProduct($user, $productId, GETPOST($qty), GETPOST($ent, 'int'), GETPOST($pu), GETPOST('comment'), $dDLUO, $dDLC, GETPOST($lot, 'alpha'), GETPOST($fk_commandefourndet, 'int'), $notrigger);
+					$result = $object->dispatchProduct($user, $productId, $qty, $warehouseId, $pu, GETPOST('comment'), $dDLUO, $dDLC, $lot, $fk_commandefourndet, $notrigger);
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
@@ -358,11 +355,11 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 							if (GETPOSTISSET($saveprice)) {
 								// TODO Use class
 								$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
-								$sql .= " SET unitprice = ".price2num(GETPOST($pu), 'MU', 2);
-								$sql .= ", price = ".price2num(GETPOST($pu), 'MU', 2)." * quantity";
+								$sql .= " SET unitprice = ".price2num($pu, 'MU', 2);
+								$sql .= ", price = ".price2num($pu, 'MU', 2)." * quantity";
 								$sql .= ", remise_percent = ".price2num((empty($dto) ? 0 : $dto), 3, 2)."'";
 								$sql .= " WHERE fk_soc = ".((int) $object->socid);
-								$sql .= " AND fk_product=".((int) $productId);
+								$sql .= " AND fk_product=".($productId);
 
 								$resql = $db->query($sql);
 							}
