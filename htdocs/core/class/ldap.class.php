@@ -491,10 +491,10 @@ class Ldap
 	}
 
 	/**
-	 * Change LDAP protocol version to use.
+	 * Set LDAP protocol version.
 	 * LDAP_OPT_PROTOCOL_VERSION is a constant equal to 3
 	 *
-	 * @return	boolean		if set LDAP protocol version OK: true, if KO: false
+	 * @return	boolean		if set LDAP option OK: true, if KO: false
 	 */
 	public function setVersion()
 	{
