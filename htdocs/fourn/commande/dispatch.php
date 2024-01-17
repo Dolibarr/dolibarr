@@ -240,12 +240,12 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 			// $numline=$reg[2] + 1; // line of product
 			$numline = $pos;
 			$productId = GETPOSTINT("product_".$reg[1].'_'.$reg[2]);
-			$qty = (float)GETPOST("qty_".$reg[1].'_'.$reg[2], 'int');
+			$qty = (float) GETPOST("qty_".$reg[1].'_'.$reg[2], 'int');
 			$warehouseId = GETPOSTINT("entrepot_".$reg[1].'_'.$reg[2]);
 			if (empty($warehouseId)) {
 				$warehouseId = $fk_default_warehouse;
 			}
-			$pu = (float)GETPOST("pu_".$reg[1].'_'.$reg[2], 'int'); // This is unit price including discount
+			$pu = (float) GETPOST("pu_".$reg[1].'_'.$reg[2], 'int'); // This is unit price including discount
 			$fk_commandefourndet = GETPOSTINT("fk_commandefourndet_".$reg[1].'_'.$reg[2]);
 
 			if (getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT')) {
@@ -305,10 +305,10 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 			// eat-by date dispatch
 			$numline = $pos;
 			$productId = GETPOSTINT("product_batch_".$reg[1].'_'.$reg[2]);
-			$qty = (float)GETPOST("qty_".$reg[1].'_'.$reg[2], 'int');
+			$qty = (float) GETPOST("qty_".$reg[1].'_'.$reg[2], 'int');
 			$warehouseId = GETPOSTINT("entrepot_".$reg[1].'_'.$reg[2]);
 			//if (empty($warehouseId)) $warehouseId = $fk_default_warehouse; // to be activated in batch mode too ?
-			$pu = (float)GETPOST("pu_".$reg[1].'_'.$reg[2], 'int'); // This is unit price including discount
+			$pu = (float) GETPOST("pu_".$reg[1].'_'.$reg[2], 'int'); // This is unit price including discount
 			$fk_commandefourndet = GETPOSTINT("fk_commandefourndet_".$reg[1].'_'.$reg[2]);
 
 			$lot = trim(GETPOST('lot_number_'.$reg[1].'_'.$reg[2], 'alpha'));
