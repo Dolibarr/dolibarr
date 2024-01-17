@@ -391,7 +391,7 @@ $listofreferent = array(
 		'buttonnew'=>'AddWarehouse',
 		'project_field'=>'fk_project',
 		'testnew'=>$user->hasRight('stock', 'creer'),
-		'test'=>isModEnabled('stock') && $user->hasRight('stock', 'lire') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT')
+		'test'=>isModEnabled('stock') && $user->hasRight('stock', 'lire') // && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT')
 	),
 	'propal'=>array(
 		'name'=>"Proposals",
