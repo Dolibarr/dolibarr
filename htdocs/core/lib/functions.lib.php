@@ -6703,7 +6703,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 				$found = 1;
 			}
 		} else {
-			// TODO Read default product vat according to product and another countrycode.
+			// TODO Read default product vat according to product and an other countrycode.
 			// Vat for couple anothercountrycode/product is data that is not managed and store yet, so we will fallback on next rule.
 		}
 	}

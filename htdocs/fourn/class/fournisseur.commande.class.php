@@ -1527,6 +1527,10 @@ class CommandeFournisseur extends CommonOrder
 						$line->date_end,
 						$line->array_options,
 						$line->fk_unit,
+						$line->multicurrency_subprice,  // pu_ht_devise
+						$line->origin,     // origin
+						$line->origin_id,  // origin_id
+						$line->rang,       // rang
 						$line->special_code
 					);
 					if ($result < 0) {
@@ -1806,7 +1810,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param      string	$desc            		Description
 	 *	@param      float	$pu_ht              	Unit price (used if $price_base_type is 'HT')
 	 *	@param      float	$qty             		Quantity
-	 *	@param      float	$txtva           		Taux tva
+	 *	@param      float	$txtva           		VAT Rate
 	 *	@param      float	$txlocaltax1        	Localtax1 tax
 	 *  @param      float	$txlocaltax2        	Localtax2 tax
 	 *	@param      int		$fk_product      		Id product
@@ -2051,7 +2055,7 @@ class CommandeFournisseur extends CommonOrder
 			// Multicurrency
 			$this->line->fk_multicurrency = $this->fk_multicurrency;
 			$this->line->multicurrency_code = $this->multicurrency_code;
-			$this->line->multicurrency_subprice		= $pu_ht_devise;
+			$this->line->multicurrency_subprice	= $pu_ht_devise;
 			$this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
 			$this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
