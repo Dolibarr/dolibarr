@@ -1369,14 +1369,14 @@ class Ldap
 
 			$this->uacf       = $this->parseUACF($this->convToOutputCharset($result[0]["useraccountcontrol"][0], $this->ldapcharset));
 			if (isset($result[0]["pwdlastset"][0])) {	// If expiration on password exists
-				$this->pwdlastset = ($result[0]["pwdlastset"][0] != 0) ? $this->convert_time($this->convToOutputCharset($result[0]["pwdlastset"][0], $this->ldapcharset)) : 0;
+				$this->pwdlastset = ($result[0]["pwdlastset"][0] != 0) ? $this->convertTime($this->convToOutputCharset($result[0]["pwdlastset"][0], $this->ldapcharset)) : 0;
 			} else {
 				$this->pwdlastset = -1;
 			}
 			if (!$this->name && !$this->login) {
 				$this->pwdlastset = -1;
 			}
-			$this->badpwdtime = $this->convert_time($this->convToOutputCharset($result[0]["badpasswordtime"][0], $this->ldapcharset));
+			$this->badpwdtime = $this->convertTime($this->convToOutputCharset($result[0]["badpasswordtime"][0], $this->ldapcharset));
 
 			// FQDN domain
 			$domain = str_replace('dc=', '', $this->domain);
@@ -1488,16 +1488,14 @@ class Ldap
 		return $retval;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Convertit le temps ActiveDirectory en Unix timestamp
+	 *	Converts ActiveDirectory time to Unix timestamp
 	 *
 	 *	@param	string	$value		AD time to convert
 	 *	@return	integer				Unix timestamp
 	 */
-	public function convert_time($value)
+	public function convertTime($value)
 	{
-		// phpcs:enable
 		$dateLargeInt = $value; // nano secondes depuis 1601 !!!!
 		$secsAfterADEpoch = $dateLargeInt / (10000000); // secondes depuis le 1 jan 1601
 		$ADToUnixConvertor = ((1970 - 1601) * 365.242190) * 86400; // UNIX start date - AD start date * jours * secondes
