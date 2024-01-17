@@ -5695,7 +5695,7 @@ class Product extends CommonObject
                 }
 
                 if ($this->fk_default_warehouse == $warehouseid) {
-                    $this->stock_warehouse[$warehouseid]->virtual = $this->stock_warehouse[$warehouseid]->real + $this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'] - ($this->stats_commande['qty'] + $this->stats_commande_fournisseur['qty'] + $this->stock_warehouse[$warehouseid]->stats_mrptoconsume['qty']);
+                    $this->stock_warehouse[$warehouseid]->virtual = $this->stock_warehouse[$warehouseid]->real + $this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'] + $this->stats_commande_fournisseur['qty'] - ($this->stats_commande['qty'] + $this->stock_warehouse[$warehouseid]->stats_mrptoconsume['qty']);
                 } else {
                     $this->stock_warehouse[$warehouseid]->virtual = $this->stock_warehouse[$warehouseid]->real + $this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'];
                 }
