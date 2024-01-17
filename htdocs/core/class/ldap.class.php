@@ -512,15 +512,14 @@ class Ldap
 	}
 
 	/**
-	 * changement du referrals.
+	 * Set LDAP referrals.
+	 * LDAP_OPT_REFERRALS is a constant equal to ?
 	 *
-	 * @return	boolean                 referrals
+	 * @return	boolean		if set LDAP option OK: true, if KO: false
 	 */
 	public function setReferrals()
 	{
-		// LDAP_OPT_REFERRALS est une constante qui vaut ?
-		$ldapreferrals = ldap_set_option($this->connection, LDAP_OPT_REFERRALS, 0);
-		return $ldapreferrals;
+		return ldap_set_option($this->connection, LDAP_OPT_REFERRALS, 0);
 	}
 
 
