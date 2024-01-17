@@ -663,7 +663,7 @@ if ($action == 'create') {
 				if (!empty($object->linesmvt[0])) {
 					$tmpline = $object->linesmvt[0];
 					if (!empty($tmpline->numero_compte)) {
-						$line = new BookKeepingLine();
+						$line = new BookKeepingLine($db);
 						$object->linesmvt[] = $line;
 					}
 				}
