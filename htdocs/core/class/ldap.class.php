@@ -338,7 +338,7 @@ class Ldap
 		if (!function_exists("ldap_connect")) {
 			$this->error = 'LDAPFunctionsNotAvailableOnPHP';
 			dol_syslog(get_class($this)."::connect_bind ".$this->error, LOG_WARNING);
-			$return = -1;
+			return -1;
 		}
 
 		if (empty($this->error)) {
@@ -443,15 +443,13 @@ class Ldap
 		}
 
 		if ($connected) {
-			$return = $connected;
-			dol_syslog(get_class($this)."::connect_bind return=".$return, LOG_DEBUG);
+			dol_syslog(get_class($this)."::connect_bind ".$connected, LOG_DEBUG);
+			return $connected;
 		} else {
 			$this->error = 'Failed to connect to LDAP'.($this->error ? ': '.$this->error : '');
-			$return = -1;
-			dol_syslog(get_class($this)."::connect_bind return=".$return.' - '.$this->error, LOG_WARNING);
+			dol_syslog(get_class($this)."::connect_bind ".$this->error, LOG_WARNING);
+			return -1;
 		}
-
-		return $return;
 	}
 
 	/**
