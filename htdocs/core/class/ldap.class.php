@@ -187,7 +187,7 @@ class Ldap
 	public $ldapUserDN;
 
 	/**
-	 * @var string Fetched user name
+	 * @var string Fetched username
 	 */
 	public $name;
 
@@ -267,7 +267,6 @@ class Ldap
 	 */
 	public function __construct()
 	{
-		global $conf;
 
 		// Server
 		if (getDolGlobalString('LDAP_SERVER_HOST')) {
@@ -315,7 +314,6 @@ class Ldap
 	public function connect_bind()
 	{
 		// phpcs:enable
-		global $conf;
 		global $dolibarr_main_auth_ldap_debug;
 
 		$connected = 0;
@@ -1144,7 +1142,7 @@ class Ldap
 	 *	@param	string	$search			 	Value of field to search, '*' for all. Not used if $activefilter is set.
 	 *	@param	string	$userDn			 	DN (Ex: ou=adherents,ou=people,dc=parinux,dc=org)
 	 *	@param	string	$useridentifier 	Name of key field (Ex: uid).
-	 *	@param	array	$attributeArray 	Array of fields required. Note this array must also contains field $useridentifier (Ex: sn,userPassword)
+	 *	@param	array	$attributeArray 	Array of fields required. Note this array must also contain field $useridentifier (Ex: sn,userPassword)
 	 *	@param	int		$activefilter		'1' or 'user'=use field this->filter as filter instead of parameter $search, 'group'=use field this->filtergroup as filter, 'member'=use field this->filtermember as filter
 	 *	@param	array	$attributeAsArray 	Array of fields wanted as an array not a string
 	 *	@return	array|int					if KO: <0 || if OK: array of [id_record][ldap_field]=value
@@ -1603,7 +1601,6 @@ class Ldap
 	 */
 	public function getNextGroupGid($keygroup = 'LDAP_KEY_GROUPS')
 	{
-		global $conf;
 
 		if (empty($keygroup)) {
 			$keygroup = 'LDAP_KEY_GROUPS';
