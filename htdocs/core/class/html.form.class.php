@@ -8019,7 +8019,7 @@ class Form
 		$objectdescorig = $objectdesc;
 		$objecttmp = null;
 		$InfoFieldList = array();
-		var_dump($objectfield);
+
 		if ($objectfield) {	// We must retreive the objectdesc from the field or extrafield
 			// Example: $objectfield = 'product:options_package'
 			$tmparray = explode(':', $objectfield);
@@ -8485,10 +8485,6 @@ class Form
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 			$out .= ajax_combobox($idname, array(), 0, 0, 'resolve', (((int) $show_empty) < 0 ? (string) $show_empty : '-1'), $morecss);
 		}
-
-
-
-
 
 		return $out;
 	}
@@ -9034,11 +9030,11 @@ class Form
 	/**
 	 *  Show linked object block.
 	 *
-	 * @param CommonObject $object Object we want to show links to
-	 * @param string $morehtmlright More html to show on right of title
-	 * @param array $compatibleImportElementsList Array of compatibles elements object for "import from" action
-	 * @param string $title Title
-	 * @return    int                                                Return integer <0 if KO, >=0 if OK
+	 * @param 	CommonObject 	$object 						Object we want to show links to
+	 * @param 	string 			$morehtmlright 					More html to show on right of title
+	 * @param 	array 			$compatibleImportElementsList 	Array of compatibles elements object for "import from" action
+	 * @param 	string 			$title 							Title
+	 * @return  int                                             Return integer <0 if KO, >=0 if OK
 	 */
 	public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = array(), $title = 'RelatedObjects')
 	{
