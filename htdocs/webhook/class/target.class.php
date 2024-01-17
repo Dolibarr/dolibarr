@@ -223,7 +223,7 @@ class Target extends CommonObject
 	public function create(User $user, $notrigger = 0)
 	{
 		$resultcreate = $this->createCommon($user, $notrigger);
-		$this->ref = $this->id;
+		$this->ref = (string) $this->id;
 
 		if ($resultcreate <= 0) {
 			return $resultcreate;
