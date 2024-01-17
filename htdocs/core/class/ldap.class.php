@@ -344,8 +344,7 @@ class Ldap
 
 					// Execute the ldap_set_option here (after connect and before bind)
 					$this->setVersion();
-					ldap_set_option($this->connection, LDAP_OPT_SIZELIMIT, 0); // no limit here. should return true.
-
+					$this->setSizeLimit();
 
 					if ($this->serverType == "activedirectory") {
 						$result = $this->setReferrals();
@@ -500,6 +499,16 @@ class Ldap
 	public function setVersion()
 	{
 		return ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, $this->ldapProtocolVersion);
+	}
+
+	/**
+	 * Set LDAP size limit.
+	 *
+	 * @return	boolean		if set LDAP option OK: true, if KO: false
+	 */
+	public function setSizeLimit()
+	{
+		return ldap_set_option($this->connection, LDAP_OPT_SIZELIMIT, 0);
 	}
 
 	/**
