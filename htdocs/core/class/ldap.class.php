@@ -45,12 +45,12 @@ class Ldap
 	public $errors = array();
 
 	/**
-	 * Tableau des serveurs (IP addresses ou nom d'hotes)
+	 * @var array Servers (IP addresses or hostnames)
 	 */
 	public $server = array();
 
 	/**
-	 * Current connected server
+	 * @var string Current connected server
 	 */
 	public $connectedServer;
 
@@ -60,51 +60,62 @@ class Ldap
 	public $serverPort;
 
 	/**
-	 * Base DN (e.g. "dc=foo,dc=com")
+	 * @var string Base DN (e.g. "dc=foo,dc=com")
 	 */
+
 	public $dn;
 	/**
-	 * type de serveur, actuellement OpenLdap et Active Directory
+	 * @var string Server type: OpenLDAP or Active Directory
 	 */
+
 	public $serverType;
 	/**
-	 * Version du protocole ldap
+	 * @var string LDAP protocol version
 	 */
+
 	public $ldapProtocolVersion;
 	/**
-	 * Server DN
+	 * @var string Server DN
 	 */
+
 	public $domain;
 
+	/**
+	 * @var string Server FQDN
+	 */
 	public $domainFQDN;
 
 	/**
-	 * @var bool bind
+	 * @var bool LDAP bind
 	 */
 	public $bind;
 
 	/**
-	 * User administrateur Ldap
+	 * @var string LDAP administrator user
 	 * Active Directory does not allow anonymous connections
 	 */
 	public $searchUser;
 	/**
-	 * Administraot Password
+	 * @var string LDAP administrator password
 	 * Active Directory does not allow anonymous connections
 	 */
 	public $searchPassword;
+
 	/**
-	 * Users DN
+	 * @var string Users DN
 	 */
 	public $people;
+
 	/**
-	 * Groups DN
+	 * @var string Groups DN
 	 */
 	public $groups;
+
 	/**
 	 * @var int|null Error code provided by the LDAP server
 	 */
 	public $ldapErrorCode;
+
 	/**
 	 * @var string|null Error text message
 	 */
@@ -114,10 +125,12 @@ class Ldap
 	 * @var string
 	 */
 	public $filter;
+
 	/**
 	 * @var string
 	 */
 	public $filtergroup;
+
 	/**
 	 * @var string
 	 */
@@ -169,49 +182,85 @@ class Ldap
 	public $badpwdtime;
 
 	/**
-	 * @var string ladpUserDN
+	 * @var string LDAP user DN
 	 */
 	public $ldapUserDN;
 
-	//Fetch user
+	/**
+	 * @var string Fetched user name
+	 */
 	public $name;
+
+	/**
+	 * @var string Fetched user first name
+	 */
 	public $firstname;
+
+	/**
+	 * @var string Fetched user login
+	 */
 	public $login;
+
+	/**
+	 * @var string Fetched user phone number
+	 */
 	public $phone;
+
+	/**
+	 * @var string Fetched user fax number
+	 */
 	public $fax;
+
+	/**
+	 * @var string Fetched user email
+	 */
 	public $mail;
+
+	/**
+	 * @var string Fetched user mobile number
+	 */
 	public $mobile;
 
+	/**
+	 * @var array UserAccountControl Flags
+	 */
 	public $uacf;
+
+	/**
+	 * @var int Password last set time
+	 */
 	public $pwdlastset;
 
-	public $ldapcharset = 'UTF-8'; // LDAP should be UTF-8 encoded
-
+	/**
+	 * @var string LDAP charset.
+	 * LDAP should be UTF-8 encoded
+	 */
+	public $ldapcharset = 'UTF-8';
 
 	/**
-	 * The internal LDAP connection handle
+	 * @var bool|resource The internal LDAP connection handle
 	 */
 	public $connection;
+
 	/**
-	 * Result of any connections etc.
+	 * @var bool|resource Result of any connections or search.
 	 */
 	public $result;
 
 	/**
-	 * No Ldap synchronization
+	 * @var int No LDAP synchronization
 	 */
 	const SYNCHRO_NONE = 0;
 
 	/**
-	 * Dolibarr to Ldap synchronization
+	 * @var int Dolibarr to LDAP synchronization
 	 */
 	const SYNCHRO_DOLIBARR_TO_LDAP = 1;
 
 	/**
-	 * Ldap to Dolibarr synchronization
+	 * @var int LDAP to Dolibarr synchronization
 	 */
 	const SYNCHRO_LDAP_TO_DOLIBARR = 2;
-
 
 	/**
 	 *  Constructor
@@ -1411,7 +1460,7 @@ class Ldap
 	}
 
 	/**
-	 * 	UserAccountControl Flgs to more human understandable form...
+	 * 	UserAccountControl Flags to more human understandable form...
 	 *
 	 *	@param	string		$uacf		UACF
 	 *	@return	array
