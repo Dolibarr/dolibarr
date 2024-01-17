@@ -341,7 +341,7 @@ class Target extends CommonObject
 	{
 		$result = $this->fetchCommon($id, $ref);
 		if (empty($this->ref)) {
-			$this->ref = $this->id;
+			$this->ref = (string) $this->id;
 		}
 
 		return $result;
