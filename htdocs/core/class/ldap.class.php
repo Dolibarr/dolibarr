@@ -351,9 +351,9 @@ class Ldap
 					continue;
 				}
 
-				if ($this->serverPing($host, $this->serverPort) === true) {
+				if ($this->serverPing($host, $this->serverPort)) {
 					if ($ldapdebug) {
-						dol_syslog(get_class($this)."::connect_bind serverPing true, we try ldap_connect to ".$host);
+						dol_syslog(get_class($this)."::connect_bind serverPing true, we try ldap_connect to ".$host, LOG_DEBUG);
 					}
 					$this->connection = ldap_connect($host, $this->serverPort);
 				} else {
@@ -361,10 +361,13 @@ class Ldap
 						// With host = ldaps://server, the serverPing to ssl://server sometimes fails, even if the ldap_connect succeed, so
 						// we test this case and continue in such a case even if serverPing fails.
 						if ($ldapdebug) {
-							dol_syslog(get_class($this)."::connect_bind serverPing false, we try ldap_connect to ".$host);
+							dol_syslog(get_class($this)."::connect_bind serverPing false, we try ldap_connect to ".$host, LOG_DEBUG);
 						}
 						$this->connection = ldap_connect($host, $this->serverPort);
 					} else {
+						if ($ldapdebug) {
+							dol_syslog(get_class($this)."::connect_bind serverPing false, no ldap_connect ".$host, LOG_DEBUG);
+						}
 						continue;
 					}
 				}
