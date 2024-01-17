@@ -5688,16 +5688,17 @@ class Product extends CommonObject
 		if (!empty($this->stock_warehouse)) {
 			foreach ($this->stock_warehouse as $warehouseid => $stockwarehouse) {
 				if (isModEnabled('mrp')) {
-					$result = $this->load_stats_inproduction(0, '1,2', 1, $dateofvirtualstock, $warehouseid);
-					if ($result < 0) {
-						dol_print_error($this->db, $this->error);
-					}
-					if ($this->fk_default_warehouse == $warehouseid) {
-						$this->stock_warehouse[$warehouseid]->virtual = $this->stock_warehouse[$warehouseid]->real + $this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'] - ($this->stats_commande['qty'] + $this->stats_commande_fournisseur['qty'] + $this->stock_warehouse[$warehouseid]->stats_mrptoconsume['qty']);
-					} else {
-						$this->stock_warehouse[$warehouseid]->virtual = $this->stock_warehouse[$warehouseid]->real + $this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'];
-					}
-				}
+                    $result = $this->load_stats_inproduction(0, '1,2', 1, $dateofvirtualstock, $warehouseid);
+                    if ($result < 0) {
+                        dol_print_error($this->db, $this->error);
+                    }
+                }
+
+                if ($this->fk_default_warehouse == $warehouseid) {
+                    $this->stock_warehouse[$warehouseid]->virtual = $this->stock_warehouse[$warehouseid]->real + $this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'] - ($this->stats_commande['qty'] + $this->stats_commande_fournisseur['qty'] + $this->stock_warehouse[$warehouseid]->stats_mrptoconsume['qty']);
+                } else {
+                    $this->stock_warehouse[$warehouseid]->virtual = $this->stock_warehouse[$warehouseid]->real + $this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'];
+                }
 			}
 		}
 
