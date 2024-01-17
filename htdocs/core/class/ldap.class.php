@@ -853,20 +853,23 @@ class Ldap
 	public function dump($dn, $info)
 	{
 		global $conf;
-
+		$ldapDirTemp = $conf->ldap->dir_temp;
 		// Create content
 		$content = $this->dump_content($dn, $info);
 
-		//Create file
-		$result = dol_mkdir($conf->ldap->dir_temp);
-
-		$outputfile = $conf->ldap->dir_temp.'/ldapinput.in';
-		$fp = fopen($outputfile, "w");
-		if ($fp) {
-			fputs($fp, $content);
-			fclose($fp);
-			dolChmod($outputfile);
-			return 1;
+		//Create directory & file
+		$result = dol_mkdir($ldapDirTemp);
+		if ($result != 0) {
+			$outputfile = $ldapDirTemp.'/ldapinput.in';
+			$fp = fopen($outputfile, "w");
+			if ($fp) {
+				fputs($fp, $content);
+				fclose($fp);
+				dolChmod($outputfile);
+				return 1;
+			} else {
+				return -1;
+			}
 		} else {
 			return -1;
 		}
