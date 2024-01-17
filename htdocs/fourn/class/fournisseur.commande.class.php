@@ -3194,7 +3194,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *	@param          User	$user   Objet user
-	 *  @param          int		$mode   "opened", "awaiting" for orders awaiting reception
+	 *  @param          int		$mode   "opened", "awaiting", "await_approval" for orders awaiting reception
 	 *	@return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode = 'opened')
@@ -3210,8 +3210,10 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " WHERE c.entity = ".$conf->entity;
 		if ($mode === 'awaiting') {
 			$sql .= " AND c.fk_statut IN (".self::STATUS_ORDERSENT.", ".self::STATUS_RECEIVED_PARTIALLY.")";
+		} else if ($mode === 'await_approval') {
+			$sql .= " AND c.fk_statut = ".self::STATUS_VALIDATED;
 		} else {
-			$sql .= " AND c.fk_statut IN (".self::STATUS_VALIDATED.", ".self::STATUS_ACCEPTED.")";
+			$sql .= " AND c.fk_statut = ".self::STATUS_ACCEPTED;
 		}
 		if ($user->socid) {
 			$sql .= " AND c.fk_soc = ".((int) $user->socid);
@@ -3223,15 +3225,20 @@ class CommandeFournisseur extends CommonOrder
 
 			$response = new WorkboardResponse();
 			$response->warning_delay = $conf->commande->fournisseur->warning_delay / 60 / 60 / 24;
-			$response->label = $langs->trans("SuppliersOrdersToProcess");
-			$response->labelShort = $langs->trans("Opened");
-			$response->url = DOL_URL_ROOT.'/fourn/commande/list.php?search_status=1,2&mainmenu=commercial&leftmenu=orders_suppliers';
 			$response->img = img_object('', "order");
 
 			if ($mode === 'awaiting') {
 				$response->label = $langs->trans("SuppliersOrdersAwaitingReception");
 				$response->labelShort = $langs->trans("AwaitingReception");
 				$response->url = DOL_URL_ROOT.'/fourn/commande/list.php?search_status=3,4&mainmenu=commercial&leftmenu=orders_suppliers';
+			} else if ($mode === 'await_approval') {
+				$response->label = $langs->trans("SuppliersOrdersAwaitingApproval");
+				$response->labelShort = $langs->trans("AwaitingApproval");
+				$response->url = DOL_URL_ROOT.'/fourn/commande/list.php?search_status=1&mainmenu=commercial&leftmenu=orders_suppliers';
+			} else { //opened
+				$response->label = $langs->trans("SuppliersOrdersToProcess");
+				$response->labelShort = $langs->trans("Opened");
+				$response->url = DOL_URL_ROOT.'/fourn/commande/list.php?search_status=2&mainmenu=commercial&leftmenu=orders_suppliers';	
 			}
 
 			while ($obj = $this->db->fetch_object($resql)) {

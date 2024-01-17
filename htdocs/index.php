@@ -217,6 +217,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		$board = new CommandeFournisseur($db);
 		$dashboardlines[$board->element.'_opened'] = $board->load_board($user, "opened");
+		$dashboardlines[$board->element.'_await_approval'] = $board->load_board($user, "await_approval");
 		$dashboardlines[$board->element.'_awaiting'] = $board->load_board($user, 'awaiting');
 	}
 
@@ -371,7 +372,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 				'groupName' => 'SuppliersOrders',
 				'globalStatsKey' => 'supplier_orders',
 				'stats' =>
-					array('order_supplier_opened', 'order_supplier_awaiting'),
+					array('order_supplier_await_approval', 'order_supplier_opened', 'order_supplier_awaiting'),
 			),
 		'invoice_supplier' =>
 			array(
