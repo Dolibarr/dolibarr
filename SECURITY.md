@@ -52,8 +52,12 @@ ONLY vulnerabilities discovered, when the following setup on test platform is us
 * $dolibarr_main_prod must be set to 1 in conf.php
 * $dolibarr_nocsrfcheck must be kept to the value 0 in conf.php (this is the default value)
 * $dolibarr_main_force_https must be set to something else than 0.
-* The constant MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 3 in the backoffice menu Home - Setup - Other (this protection should be set to 3 soon by default). CSRF attacks are accepted but
- double check that you have set MAIN_SECURITY_CSRF_WITH_TOKEN to value 3.
+* Some constant must be set in the backoffice menu Home - Setup - Other
+  - MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 3 
+  - MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1
+  - MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1
+  - MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1 
+  CSRF attacks and HTML injections are accepted but double check this setup that is experimental setup that already fix a lot of case and soon enabled by default.
 * ONLY security reports on modules provided by default and with the "stable" status are valid (troubles in "experimental", "development" or external modules are not valid vulnerabilities).
 * The root of web server must link to htdocs and the documents directory must be outside of the web server root (this is the default when using the default installer but may differs with external installer).
 * The web server setup must be done so that only the documents directory is in write mode. The root directory called htdocs must be read-only.
