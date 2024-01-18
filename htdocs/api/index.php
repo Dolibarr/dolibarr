@@ -443,11 +443,10 @@ if (function_exists('fastcgi_finish_request')) {
 }
 
 // Call API termination method
-require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Scope.php';
 $apiMethodInfo = &$api->r->apiMethodInfo;
 $terminateCall = '_terminate_' . $apiMethodInfo->methodName . '_' . $api->r->responseFormat->getExtension();
 if (method_exists($apiMethodInfo->className, $terminateCall)) {
-	call_user_func(array(Scope::get($apiMethodInfo->className), $terminateCall), $responsedata);
+	call_user_func(array(Luracast\Restler\Scope::get($apiMethodInfo->className), $terminateCall), $responsedata);
 }
 
 //session_destroy();
