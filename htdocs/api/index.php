@@ -446,7 +446,7 @@ if (method_exists($apiMethodInfo->className, $terminateCall)) {
 		fastcgi_finish_request();
 	}
 
-	// Call a termination method. Warning: This method can do I/O, sync but must not make ouput.
+	// Call a termination method. Warning: This method can do I/O, sync but must not make output.
 	call_user_func(array(Luracast\Restler\Scope::get($apiMethodInfo->className), $terminateCall), $responsedata);
 }
 
