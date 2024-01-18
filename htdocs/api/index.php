@@ -436,8 +436,6 @@ if (Luracast\Restler\Defaults::$returnResponse) {
 
 // Now flush output buffers so that response data is sent to request client
 ob_end_flush();
-ob_flush();
-flush();
 
 // If you're using PHP-FPM, this function will allow you to send the response and then continue processing
 if (function_exists('fastcgi_finish_request')) {
@@ -445,6 +443,11 @@ if (function_exists('fastcgi_finish_request')) {
 }
 
 // Call API termination method
-$api->r->terminate();
+require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Scope.php';
+$apiMethodInfo = &$api->r->apiMethodInfo;
+$terminateCall = '_terminate_' . $apiMethodInfo->methodName . '_' . $api->r->responseFormat->getExtension();
+if (method_exists($apiMethodInfo->className, $terminateCall)) {
+  call_user_func(array(Scope::get($apiMethodInfo->className), $terminateCall), $responsedata);
+}
 
 //session_destroy();
