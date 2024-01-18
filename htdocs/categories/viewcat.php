@@ -301,6 +301,12 @@ print $langs->trans("Color").'</td><td>';
 print $formother->showColor($object->color);
 print '</td></tr>';
 
+// Position
+print '<tr><td class="titlefield notopnoleft">';
+print $langs->trans("Position").'</td><td>';
+print $object->position;
+print '</td></tr>';
+
 // Other attributes
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 

@@ -70,7 +70,7 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 	$roworder = GETPOST('roworder', 'alpha', 3);
 	$table_element_line = GETPOST('table_element_line', 'aZ09', 3);
 	$fk_element = GETPOST('fk_element', 'aZ09', 3);
-	$element_id = GETPOST('element_id', 'int', 3);
+	$element_id = GETPOSTINT('element_id', 3);
 
 	dol_syslog("AjaxRow roworder=".$roworder." table_element_line=".$table_element_line." fk_element=".$fk_element." element_id=".$element_id, LOG_DEBUG);
 

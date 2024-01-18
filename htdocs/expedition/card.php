@@ -874,6 +874,7 @@ if (empty($reshook)) {
 	}
 	$triggersendname = 'SHIPPING_SENTBYMAIL';
 	$paramname = 'id';
+	$autocopy = 'MAIN_MAIL_AUTOCOPY_SHIPMENT_TO';
 	$mode = 'emailfromshipment';
 	$trackid = 'shi'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';

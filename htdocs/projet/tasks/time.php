@@ -173,6 +173,9 @@ if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a ded
 }
 $arrayfields['author'] = array('label' => $langs->trans("By"), 'checked' => 1);
 $arrayfields['t.note'] = array('label' => $langs->trans("Note"), 'checked' => 1);
+if (!getDolGlobalInt('PROJECT_HIDE_TASKS') && getDolGlobalInt('PROJECT_BILL_TIME_SPENT') && !$projectstatic->usage_bill_time ) {
+	$projectstatic->usage_bill_time=1;
+}
 if (isModEnabled('service') && !empty($projectstatic->thirdparty) && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
 	$arrayfields['t.fk_product'] = array('label' => $langs->trans("Product"), 'checked' => 1);
 }
@@ -2282,7 +2285,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					$userstatic->lastname = $task_time->lastname;
 					$userstatic->firstname = $task_time->firstname;
 					$userstatic->photo = $task_time->photo;
-					$userstatic->statut = $task_time->user_status;
+					$userstatic->status = $task_time->user_status;
 					print $userstatic->getNomUrl(-1);
 				}
 				print '</td>';
@@ -2564,7 +2567,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 						$userstatic->lastname = $task_time->lastname;
 						$userstatic->firstname = $task_time->firstname;
 						$userstatic->photo = $task_time->photo;
-						$userstatic->statut = $task_time->user_status;
+						$userstatic->status = $task_time->user_status;
 						print $userstatic->getNomUrl(-1);
 					}
 					print '</td>';
@@ -2720,7 +2723,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 						$userstatic->lastname = $task_time->lastname;
 						$userstatic->firstname = $task_time->firstname;
 						$userstatic->photo = $task_time->photo;
-						$userstatic->statut = $task_time->user_status;
+						$userstatic->status = $task_time->user_status;
 						print $userstatic->getNomUrl(-1);
 					}
 					print '</td>';

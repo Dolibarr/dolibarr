@@ -887,6 +887,11 @@ class FormSetupItem
 				$selected = (empty($this->fieldValue) ? '' : $this->fieldValue);
 				$out.= $this->form->select_produits($selected, $this->confKey, '', 0, 0, 1, 2, '', 0, array(), 0, '1', 0, $this->cssClass, 0, '', null, 1);
 			}
+		} elseif ($this->type == 'selectBankAccount') {
+			if (isModEnabled("bank")) {
+				$selected = (empty($this->fieldValue) ? '' : $this->fieldValue);
+				$out.= $this->form->select_comptes($selected, $this->confKey, 0, '', 0, '', 0, '', 1);
+			}
 		} else {
 			$out.= $this->generateInputFieldText();
 		}
@@ -1175,6 +1180,16 @@ class FormSetupItem
 			} elseif ($resprod < 0) {
 				$this->setErrors($product->errors);
 			}
+		} elseif ($this->type == 'selectBankAccount') {
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+			$bankaccount = new Account($this->db);
+			$resbank = $bankaccount->fetch($this->fieldValue);
+			if ($resbank > 0) {
+				$out.= $bankaccount->label;
+			} elseif ($resbank < 0) {
+				$this->setErrors($bankaccount->errors);
+			}
 		} else {
 			$out.= $this->fieldValue;
 		}
@@ -1425,6 +1440,17 @@ class FormSetupItem
 	public function setAsSelectUser()
 	{
 		$this->type = 'selectUser';
+		return $this;
+	}
+
+	/**
+	 * Set type of input as a simple title. No data to store
+	 *
+	 * @return self
+	 */
+	public function setAsSelectBankAccount()
+	{
+		$this->type = 'selectBankAccount';
 		return $this;
 	}
 }
