@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2014 Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2023 William Mead			<william.mead@manchenumerique.fr>
+/* Copyright (C) 2014		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -160,42 +160,12 @@ abstract class DolibarrTriggers
 	}
 
 	/**
-	 * Returns the name of picto of trigger file
-	 *
-	 * @return string
-	 */
-	public function getPicto(): string
-	{
-		return $this->picto;
-	}
-
-	/**
-	 * Returns the family of trigger file
-	 *
-	 * @return string
-	 */
-	public function getFamily(): string
-	{
-		return $this->family;
-	}
-
-	/**
-	 * Returns the errors of trigger file
-	 *
-	 * @return array
-	 */
-	public function getErrors(): array
-	{
-		return $this->errors;
-	}
-
-	/**
 	 * setErrorsFromObject
 	 *
-	 * @param CommonObject $object commonobject
-	 * @return void
+	 * @param	CommonObject	$object		Object
+	 * @return	void
 	 */
-	public function setErrorsFromObject($object)
+	public function setErrorsFromObject(CommonObject $object)
 	{
 		if (!empty($object->error)) {
 			$this->errors = array_merge($this->errors, array($object->error));
@@ -206,7 +176,7 @@ abstract class DolibarrTriggers
 	}
 
 	/**
-	 *  Function called when a Dolibarrr business event is done.
+	 *  Function called when a Dolibarr business event is done.
 	 *  All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
 	 *  @param string       $action     Event action code
@@ -214,7 +184,7 @@ abstract class DolibarrTriggers
 	 *  @param User         $user       Object user
 	 *  @param Translate    $langs      Object langs
 	 *  @param conf         $conf       Object conf
-	 *  @return int                     Return integer if KO: <0, if no trigger ran: 0, if OK: >0
+	 *  @return int                     if KO: <0 || if no trigger ran: 0 || if OK: >0
 	 */
-	abstract public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf);
+	abstract public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf): int;
 }
