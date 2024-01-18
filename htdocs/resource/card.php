@@ -45,9 +45,9 @@ $zip					= GETPOST('zipcode', 'alpha');
 $town					= GETPOST('town', 'alpha');
 $description			= GETPOST('description', 'restricthtml');
 $confirm				= GETPOST('confirm', 'aZ09');
-$fk_code_type_resource  = GETPOST('fk_code_type_resource', 'alpha');
-$country_id				= GETPOST('country_id', 'int');
-$state_id				= GETPOST('state_id', 'int');
+$fk_code_type_resource  = GETPOSTINT('fk_code_type_resource');
+$country_id				= GETPOSTINT('country_id');
+$state_id				= GETPOSTINT('state_id');
 
 // Protection if external user
 if ($user->socid > 0) {
