@@ -204,9 +204,9 @@ if ($action == 'update' && !GETPOST('cancel', 'alpha') && $permissiontoadd) {
 
 		// Fetch was already done
 		$ecmdir->label = dol_sanitizeFileName(GETPOST("label"));
-		$fk_parent = GETPOST("catParent", 'int');
-		if ($fk_parent == "-1") {
-			$ecmdir->fk_parent = "0";
+		$fk_parent = GETPOSTINT("catParent");
+		if ($fk_parent == -1) {
+			$ecmdir->fk_parent = 0;
 		} else {
 			$ecmdir->fk_parent = $fk_parent;
 		}
