@@ -85,10 +85,10 @@ class FormCategory extends Form
 
 	/**
 	 *    Prints a select form for products categories
-	 *    @param    string	$selected          	Id category pre-selection
+	 *    @param    int 	$selected          	Id category pre-selection
 	 *    @param    string	$htmlname          	Name of HTML field
 	 *    @param    int		$showempty         	Add an empty field
-	 *    @return	integer|null
+	 *    @return	int|null
 	 */
 	public function selectProductCategory($selected = 0, $htmlname = 'product_category_id', $showempty = 0)
 	{
@@ -123,6 +123,7 @@ class FormCategory extends Form
 			return $num_rows;
 		} else {
 			dol_print_error($this->db);
+			return;
 		}
 	}
 }

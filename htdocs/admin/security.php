@@ -37,7 +37,7 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-// Allow/Disallow change to clear passwords once passwords are crypted
+// Allow/Disallow change to clear passwords once passwords are encrypted
 $allow_disable_encryption = true;
 
 

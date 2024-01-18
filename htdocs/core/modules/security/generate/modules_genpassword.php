@@ -32,7 +32,7 @@ abstract class ModeleGenPassword
 	public $picto = 'generic';
 
 	/**
-	 * Flag to 1 if we must clean ambiguous charaters for the autogeneration of password (List of ambiguous char is in $this->Ambi)
+	 * Flag to 1 if we must clean ambiguous characters for the autogeneration of password (List of ambiguous char is in $this->Ambi)
 	 *
 	 * @var integer
 	 */

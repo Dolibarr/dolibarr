@@ -158,4 +158,51 @@ ALTER TABLE llx_user_extrafields DROP INDEX idx_user_extrafields;
 ALTER TABLE llx_user_extrafields ADD UNIQUE INDEX uk_user_extrafields (fk_object);
 ALTER TABLE llx_usergroup_extrafields DROP INDEX idx_usergroup_extrafields;
 ALTER TABLE llx_usergroup_extrafields ADD UNIQUE INDEX uk_usergroup_extrafields (fk_object);
+
 ALTER TABLE llx_website ADD COLUMN name_template varchar(255) NULL;
+
+UPDATE llx_categorie SET date_creation = tms, tms = tms WHERE date_creation IS NULL AND tms IS NOT NULL;
+
+ALTER TABLE llx_product_price ADD COLUMN price_label varchar(255) AFTER fk_user_author;
+ALTER TABLE llx_product_customer_price_log ADD COLUMN price_label varchar(255) AFTER fk_user;
+ALTER TABLE llx_product_customer_price ADD COLUMN price_label varchar(255) AFTER fk_user;
+ALTER TABLE llx_product ADD COLUMN price_label varchar(255) AFTER price_base_type;
+
+
+CREATE TABLE llx_product_thirdparty
+(
+    rowid                               integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    fk_product                          integer NOT NULL,
+    fk_soc                              integer NOT NULL,
+    fk_product_thirdparty_relation_type integer NOT NULL,
+    date_start                          datetime,
+    date_end                            datetime,
+    fk_project                          integer,
+    description                         text,
+    note_public                         text,
+    note_private                        text,
+    date_creation                       datetime NOT NULL,
+    tms                                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_user_creat                       integer NOT NULL,
+    fk_user_modif                       integer,
+    last_main_doc                       varchar(255),
+    import_key                          varchar(14),
+    model_pdf                           varchar(255),
+    status                              integer DEFAULT 1 NOT NULL
+) ENGINE = innodb;
+
+
+CREATE TABLE llx_c_product_thirdparty_relation_type
+(
+    rowid  integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    code   varchar(24) NOT NULL,
+    label  varchar(128),
+    active tinyint default 1 NOT NULL
+) ENGINE = innodb;
+
+
+ALTER TABLE llx_c_tva ADD COLUMN type_vat smallint NOT NULL DEFAULT 0 AFTER fk_pays;
+
+ALTER TABLE llx_categorie ADD COLUMN position integer DEFAULT 0 AFTER color;
+
+ALTER TABLE llx_product DROP COLUMN onportal; 

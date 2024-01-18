@@ -130,13 +130,13 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 			$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
-			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially crypted
+			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
 		} else {
 			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 		}
 	}
 
-	// $conf is already instancied inside inc.php
+	// $conf is already instantiated inside inc.php
 	$conf->db->type = $dolibarr_main_db_type;
 	$conf->db->host = $dolibarr_main_db_host;
 	$conf->db->port = $dolibarr_main_db_port;
@@ -2044,7 +2044,7 @@ function migrate_modeles($db, $langs, $conf)
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 		$modellist = ModelePDFFactures::liste_modeles($db);
 		if (count($modellist) == 0) {
-			// Aucun model par defaut.
+			// Aucun model par default.
 			$sql = " insert into ".MAIN_DB_PREFIX."document_model(nom,type) values('crabe','invoice')";
 			$resql = $db->query($sql);
 			if (!$resql) {
@@ -2057,7 +2057,7 @@ function migrate_modeles($db, $langs, $conf)
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 		$modellist = ModelePDFCommandes::liste_modeles($db);
 		if (count($modellist) == 0) {
-			// Aucun model par defaut.
+			// Aucun model par default.
 			$sql = " insert into ".MAIN_DB_PREFIX."document_model(nom,type) values('einstein','order')";
 			$resql = $db->query($sql);
 			if (!$resql) {
@@ -2070,7 +2070,7 @@ function migrate_modeles($db, $langs, $conf)
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 		$modellist = ModelePdfExpedition::liste_modeles($db);
 		if (count($modellist) == 0) {
-			// Aucun model par defaut.
+			// Aucun model par default.
 			$sql = " insert into ".MAIN_DB_PREFIX."document_model(nom,type) values('rouget','shipping')";
 			$resql = $db->query($sql);
 			if (!$resql) {
@@ -2084,7 +2084,7 @@ function migrate_modeles($db, $langs, $conf)
 
 
 /**
- * Correspondance des expeditions et des commandes clients dans la table llx_co_exp
+ * Correspondence des expeditions et des commandes clients dans la table llx_co_exp
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -2149,7 +2149,7 @@ function migrate_commande_expedition($db, $langs, $conf)
 }
 
 /**
- * Correspondance des livraisons et des commandes clients dans la table llx_co_liv
+ * Correspondence des livraisons et des commandes clients dans la table llx_co_liv
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -3433,7 +3433,7 @@ function migrate_clean_association($db, $langs, $conf)
 		$obj = $db->fetch_object($result);
 		if ($obj) {	// It table categorie_association exists
 			$couples = array();
-			$filles = array();
+			$children = array();
 			$sql = "SELECT fk_categorie_mere, fk_categorie_fille";
 			$sql .= " FROM ".MAIN_DB_PREFIX."categorie_association";
 			dolibarr_install_syslog("upgrade: search duplicate");
@@ -3441,9 +3441,9 @@ function migrate_clean_association($db, $langs, $conf)
 			if ($resql) {
 				$num = $db->num_rows($resql);
 				while ($obj = $db->fetch_object($resql)) {
-					if (!isset($filles[$obj->fk_categorie_fille])) {	// Only one record as child (a child has only on parent).
+					if (!isset($children[$obj->fk_categorie_fille])) {	// Only one record as child (a child has only on parent).
 						if ($obj->fk_categorie_mere != $obj->fk_categorie_fille) {
-							$filles[$obj->fk_categorie_fille] = 1; // Set record for this child
+							$children[$obj->fk_categorie_fille] = 1; // Set record for this child
 							$couples[$obj->fk_categorie_mere.'_'.$obj->fk_categorie_fille] = array('mere'=>$obj->fk_categorie_mere, 'fille'=>$obj->fk_categorie_fille);
 						}
 					}
@@ -3560,7 +3560,7 @@ function migrate_categorie_association($db, $langs, $conf)
 }
 
 /**
- * Migrate event assignement to owner
+ * Migrate event assignment to owner
  *
  * @param	DoliDB		$db				Database handler
  * @param	Translate	$langs			Object langs
@@ -3626,7 +3626,7 @@ function migrate_event_assignement($db, $langs, $conf)
 }
 
 /**
- * Migrate event assignement to owner
+ * Migrate event assignment to owner
  *
  * @param	DoliDB		$db				Database handler
  * @param	Translate	$langs			Object langs
@@ -4247,7 +4247,7 @@ function migrate_delete_old_dir($db, $langs, $conf)
 
 
 /**
- * Disable/Reenable features modules.
+ * Disable/Re-enable features modules.
  * We must do this when internal menu of module or permissions has changed
  * or when triggers have moved.
  *

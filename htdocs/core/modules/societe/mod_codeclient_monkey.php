@@ -21,14 +21,14 @@
 /**
  *       \file       htdocs/core/modules/societe/mod_codeclient_monkey.php
  *       \ingroup    societe
- *       \brief      Fichier de la classe des gestion lion des codes clients
+ *       \brief      Fichier de la class des gestion lion des codes clients
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php';
 
 
 /**
- *	Classe permettant la gestion monkey des codes tiers
+ *	Class permettant la gestion monkey des codes tiers
  */
 class mod_codeclient_monkey extends ModeleThirdPartyCode
 {
@@ -39,7 +39,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 	public $code_modifiable; // Code modifiable
 
-	public $code_modifiable_invalide; // Code modifiable si il est invalide
+	public $code_modifiable_invalide; // Code modifiable si il est invalid
 
 	public $code_modifiable_null; // Code modifiables si il est null
 
@@ -65,9 +65,13 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 	/**
 	 * 	Constructor
+	 *
+	 *	@param DoliDB		$db		Database object
 	 */
-	public function __construct()
+	public function __construct($db)
 	{
+		$this->db = $db;
+
 		$this->code_null = 1;
 		$this->code_modifiable = 1;
 		$this->code_modifiable_invalide = 1;
@@ -112,7 +116,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 */
 	public function getNextValue($objsoc = 0, $type = -1)
 	{
-		global $db, $conf, $mc;
+		global $db;
 
 		$field = '';
 		$prefix = '';
@@ -126,7 +130,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 			return -1;
 		}
 
-		// First, we get the max value (reponse immediate car champ indexe)
+		// First, we get the max value (response immediate car champ indexe)
 		$posindice = strlen($prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(".$field." FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
@@ -176,8 +180,6 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 */
 	public function verif($db, &$code, $soc, $type)
 	{
-		global $conf;
-
 		$result = 0;
 		$code = strtoupper(trim($code));
 
@@ -209,19 +211,17 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *		Renvoi si un code est pris ou non (par autre tiers)
+	 *		Indicates if the code is available or not (by another third party)
 	 *
-	 *		@param	DoliDB		$db			Handler acces base
+	 *		@param	DoliDB		$db			Handler access base
 	 *		@param	string		$code		Code a verifier
-	 *		@param	Societe		$soc		Objet societe
+	 *		@param	Societe		$soc		Object societe
 	 *		@param  int		  	$type   	0 = customer/prospect , 1 = supplier
 	 *		@return	int						0 if available, <0 if KO
 	 */
 	public function verif_dispo($db, $code, $soc, $type = 0)
 	{
 		// phpcs:enable
-		global $conf, $mc;
-
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
 		if ($type == 1) {
 			$sql .= " WHERE code_fournisseur = '".$db->escape($code)."'";
@@ -249,7 +249,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi si un code respecte la syntaxe
+	 *  Renvoi si un code respecte la syntax
 	 *
 	 *  @param  string      $code       Code a verifier
 	 *  @return int                     0 si OK, <0 si KO

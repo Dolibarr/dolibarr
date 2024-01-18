@@ -349,41 +349,41 @@ if ($search_title != '') {
 if ($search_note != '') {
 	$param .= '&search_note='.urlencode($search_note);
 }
-if (GETPOST('datestartday_dtstart', 'int')) {
-	$param .= '&datestartday_dtstart='.GETPOST('datestartday_dtstart', 'int');
+if (GETPOST('datestart_dtstartday', 'int')) {
+	$param .= '&datestart_dtstartday='.GETPOST('datestart_dtstartday', 'int');
 }
-if (GETPOST('datestartmonth_dtstart', 'int')) {
-	$param .= '&datestartmonth_dtstart='.GETPOST('datestartmonth_dtstart', 'int');
+if (GETPOST('datestart_dtstartmonth', 'int')) {
+	$param .= '&datestart_dtstartmonth='.GETPOST('datestart_dtstartmonth', 'int');
 }
-if (GETPOST('datestartyear_dtstart', 'int')) {
-	$param .= '&datestartyear_dtstart='.GETPOST('datestartyear_dtstart', 'int');
+if (GETPOST('datestart_dtstartyear', 'int')) {
+	$param .= '&datestart_dtstartyear='.GETPOST('datestart_dtstartyear', 'int');
 }
-if (GETPOST('datestartday_dtend', 'int')) {
-	$param .= '&datestartday_dtend='.GETPOST('datestartday_dtend', 'int');
+if (GETPOST('datestart_dtendday', 'int')) {
+	$param .= '&datestart_dtendday='.GETPOST('datestart_dtendday', 'int');
 }
-if (GETPOST('datestartmonth_dtend', 'int')) {
-	$param .= '&datestartmonth_dtend='.GETPOST('datestartmonth_dtend', 'int');
+if (GETPOST('datestart_dtendmonth', 'int')) {
+	$param .= '&datestart_dtendmonth='.GETPOST('datestart_dtendmonth', 'int');
 }
-if (GETPOST('datestartyear_dtend', 'int')) {
-	$param .= '&datestartyear_dtend='.GETPOST('datestartyear_dtend', 'int');
+if (GETPOST('datestart_dtendyear', 'int')) {
+	$param .= '&datestart_dtendyear='.GETPOST('datestart_dtendyear', 'int');
 }
-if (GETPOST('dateendday_dtstart', 'int')) {
-	$param .= '&dateendday_dtstart='.GETPOST('dateendday_dtstart', 'int');
+if (GETPOST('dateend_dtstartday', 'int')) {
+	$param .= '&dateend_dtstartday='.GETPOST('dateend_dtstartday', 'int');
 }
-if (GETPOST('dateendmonth_dtstart', 'int')) {
-	$param .= '&dateendmonth_dtstart='.GETPOST('dateendmonth_dtstart', 'int');
+if (GETPOST('dateend_dtstartmonth', 'int')) {
+	$param .= '&dateend_dtstartmonth='.GETPOST('dateend_dtstartmonth', 'int');
 }
-if (GETPOST('dateendyear_dtstart', 'int')) {
-	$param .= '&dateendyear_dtstart='.GETPOST('dateendyear_dtstart', 'int');
+if (GETPOST('dateend_dtstartyear', 'int')) {
+	$param .= '&dateend_dtstartyear='.GETPOST('dateend_dtstartyear', 'int');
 }
-if (GETPOST('dateendday_dtend', 'int')) {
-	$param .= '&dateendday_dtend='.GETPOST('dateendday_dtend', 'int');
+if (GETPOST('dateend_dtendday', 'int')) {
+	$param .= '&dateend_dtendday='.GETPOST('dateend_dtendday', 'int');
 }
-if (GETPOST('dateendmonth_dtend', 'int')) {
-	$param .= '&dateendmonth_dtend='.GETPOST('dateendmonth_dtend', 'int');
+if (GETPOST('dateend_dtendmonth', 'int')) {
+	$param .= '&dateend_dtendmonth='.GETPOST('dateend_dtendmonth', 'int');
 }
-if (GETPOST('dateendyear_dtend', 'int')) {
-	$param .= '&dateendyear_dtend='.GETPOST('dateendyear_dtend', 'int');
+if (GETPOST('dateend_dtendyear', 'int')) {
+	$param .= '&dateend_dtendyear='.GETPOST('dateend_dtendyear', 'int');
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -438,9 +438,6 @@ $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields as ef ON (a.id = ef.fk_object)";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
-}
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
 $sql .= " ,".MAIN_DB_PREFIX."c_actioncomm as c";
@@ -448,7 +445,7 @@ $sql .= " ,".MAIN_DB_PREFIX."c_actioncomm as c";
 if ($resourceid > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
 }
-// We must filter on assignement table
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 }
@@ -492,13 +489,24 @@ if ($resourceid > 0) {
 if ($pid) {
 	$sql .= " AND a.fk_project=".((int) $pid);
 }
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
+// If the internal user must only see his customers, force searching by him
+$search_sale = 0;
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
 }
-if ($socid > 0) {
-	$sql .= " AND s.rowid = ".((int) $socid);
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
 }
-// We must filter on assignement table
+// Search on socid
+if ($socid) {
+	$sql .= " AND a.fk_soc = ".((int) $socid);
+}
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
 }
@@ -532,7 +540,7 @@ if ($search_title) {
 if ($search_note) {
 	$sql .= natural_search('a.note', $search_note);
 }
-// We must filter on assignement table
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= " AND (";
 	if ($filtert > 0) {

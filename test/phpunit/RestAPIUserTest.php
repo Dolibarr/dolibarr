@@ -202,7 +202,7 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testRestCreateUser()
 	{
-		// attemp to create without mandatory fields :
+		// attempt to create without mandatory fields :
 		$url = $this->api_url.'/users?api_key='.$this->api_key;
 		$addheaders=array('Content-Type: application/json');
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2017  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2017  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -330,16 +330,16 @@ if ($action == 'valid') {
  * View
  */
 
-$html = new Form($db);
+$form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
 $title = $langs->trans("CreateMvts");
-
-llxHeader('', $title);
+$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double';
+llxHeader('', $title, $help_url);
 
 // Confirmation to delete the command
 if ($action == 'delete') {
-	$formconfirm = $html->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&mode='.$mode, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt', $langs->transnoentitiesnoconv("RegistrationInAccounting")), 'confirm_delete', '', 0, 1);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&mode='.$mode, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt', $langs->transnoentitiesnoconv("RegistrationInAccounting")), 'confirm_delete', '', 0, 1);
 	print $formconfirm;
 }
 
@@ -374,7 +374,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Docdate").'</td>';
 	print '<td>';
-	print $html->selectDate('', 'doc_date', '', '', '', "create_mvt", 1, 1);
+	print $form->selectDate('', 'doc_date', '', '', '', "create_mvt", 1, 1);
 	print '</td>';
 	print '</tr>';
 
@@ -663,7 +663,7 @@ if ($action == 'create') {
 				if (!empty($object->linesmvt[0])) {
 					$tmpline = $object->linesmvt[0];
 					if (!empty($tmpline->numero_compte)) {
-						$line = new BookKeepingLine();
+						$line = new BookKeepingLine($db);
 						$object->linesmvt[] = $line;
 					}
 				}

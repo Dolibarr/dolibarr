@@ -82,6 +82,7 @@ class FormSetup
 	 */
 	public $errors = array();
 
+
 	/**
 	 * Constructor
 	 *
@@ -343,7 +344,7 @@ class FormSetup
 
 
 	/**
-	 * Method used to test  module builder convertion to this form usage
+	 * Method used to test  module builder conversion to this form usage
 	 *
 	 * @param 	array 	$params 	an array of arrays of params from old modulBuilder params
 	 * @return 	boolean
@@ -362,7 +363,7 @@ class FormSetup
 
 	/**
 	 * From old
-	 * Method was used to test  module builder convertion to this form usage.
+	 * Method was used to test  module builder conversion to this form usage.
 	 *
 	 * @param 	string 	$confKey 	the conf name to store
 	 * @param 	array 	$params 	an array of params from old modulBuilder params
@@ -375,7 +376,7 @@ class FormSetup
 		}
 
 		/*
-		 * Exemple from old module builder setup page
+		 * Example from old module builder setup page
 		 * 	// 'MYMODULE_MYPARAM1'=>array('type'=>'string', 'css'=>'minwidth500' ,'enabled'=>1),
 			// 'MYMODULE_MYPARAM2'=>array('type'=>'textarea','enabled'=>1),
 			//'MYMODULE_MYPARAM3'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
@@ -387,7 +388,7 @@ class FormSetup
 		 */
 
 		$item = new FormSetupItem($confKey);
-		// need to be ignored from scrutinizer setTypeFromTypeString was created as deprecated to incite developper to use object oriented usage
+		// need to be ignored from scrutinizer setTypeFromTypeString was created as deprecated to incite developer to use object oriented usage
 		/** @scrutinizer ignore-deprecated */ $item->setTypeFromTypeString($params['type']);
 
 		if (!empty($params['enabled'])) {
@@ -405,7 +406,7 @@ class FormSetup
 
 	/**
 	 * Used to export param array for /core/actions_setmoduleoptions.inc.php template
-	 * Method exists only for manage setup convertion
+	 * Method exists only for manage setup conversion
 	 *
 	 * @return array $arrayofparameters for /core/actions_setmoduleoptions.inc.php
 	 */
@@ -684,7 +685,7 @@ class FormSetupItem
 	}
 
 	/**
-	 * reload conf value from databases is an aliase of loadValueFromConf
+	 * reload conf value from databases is an alias of loadValueFromConf
 	 *
 	 * @deprecated
 	 * @return bool
@@ -886,6 +887,11 @@ class FormSetupItem
 				$selected = (empty($this->fieldValue) ? '' : $this->fieldValue);
 				$out.= $this->form->select_produits($selected, $this->confKey, '', 0, 0, 1, 2, '', 0, array(), 0, '1', 0, $this->cssClass, 0, '', null, 1);
 			}
+		} elseif ($this->type == 'selectBankAccount') {
+			if (isModEnabled("bank")) {
+				$selected = (empty($this->fieldValue) ? '' : $this->fieldValue);
+				$out.= $this->form->select_comptes($selected, $this->confKey, 0, '', 0, '', 0, '', 1);
+			}
 		} else {
 			$out.= $this->generateInputFieldText();
 		}
@@ -1055,7 +1061,7 @@ class FormSetupItem
 	 * to be sure we can manage evolution easily
 	 *
 	 * @param string $type possible values based on old module builder setup : 'string', 'textarea', 'category:'.Categorie::TYPE_CUSTOMER', 'emailtemplate', 'thirdparty_type'
-	 * @deprecated yes this setTypeFromTypeString came deprecated because it exists only for manage setup convertion
+	 * @deprecated yes this setTypeFromTypeString came deprecated because it exists only for manage setup conversion
 	 * @return bool
 	 */
 	public function setTypeFromTypeString($type)
@@ -1082,6 +1088,7 @@ class FormSetupItem
 		} elseif (!empty($errors)) {
 			$this->errors[] = $errors;
 		}
+		return;
 	}
 
 	/**
@@ -1147,7 +1154,7 @@ class FormSetupItem
 			if ($result < 0) {
 				$this->setErrors($c->errors);
 			}
-			$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
+			$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
 			$toprint = array();
 			foreach ($ways as $way) {
 				$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
@@ -1172,6 +1179,16 @@ class FormSetupItem
 				$out.= $product->ref;
 			} elseif ($resprod < 0) {
 				$this->setErrors($product->errors);
+			}
+		} elseif ($this->type == 'selectBankAccount') {
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+			$bankaccount = new Account($this->db);
+			$resbank = $bankaccount->fetch($this->fieldValue);
+			if ($resbank > 0) {
+				$out.= $bankaccount->label;
+			} elseif ($resbank < 0) {
+				$this->setErrors($bankaccount->errors);
 			}
 		} else {
 			$out.= $this->fieldValue;
@@ -1423,6 +1440,17 @@ class FormSetupItem
 	public function setAsSelectUser()
 	{
 		$this->type = 'selectUser';
+		return $this;
+	}
+
+	/**
+	 * Set type of input as a simple title. No data to store
+	 *
+	 * @return self
+	 */
+	public function setAsSelectBankAccount()
+	{
+		$this->type = 'selectBankAccount';
 		return $this;
 	}
 }

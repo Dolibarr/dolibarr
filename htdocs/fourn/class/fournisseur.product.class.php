@@ -6,7 +6,7 @@
  * Copyright (C) 2012		Christophe Battarel	  <christophe.battarel@altairis.fr>
  * Copyright (C) 2015		Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2016-2023	Charlene Benke         <charlene@patas-monkey.com>
- * Copyright (C) 2019-2021  Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France       <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Pierre Ardoin         <mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -255,7 +255,7 @@ class ProductFournisseur extends Product
 	 *    @param  	int			$availability		            Product availability
 	 *    @param	string		$ref_fourn			            Supplier ref
 	 *    @param	float		$tva_tx				            New VAT Rate (For example 8.5. Should not be a string)
-	 *    @param  	string		$charges			            costs affering to product
+	 *    @param  	string|float $charges			            costs affering to product
 	 *    @param  	float		$remise_percent		            Discount  regarding qty (percent)
 	 *    @param  	float		$remise				            Discount  regarding qty (amount)
 	 *    @param  	int			$newnpr				            Set NPR or not
@@ -273,8 +273,32 @@ class ProductFournisseur extends Product
 	 *    @param  	array		$options		     	       	Extrafields of product fourn price
 	 *    @return	int											Return integer <0 if KO, >=0 if OK
 	 */
-	public function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges = 0, $remise_percent = 0, $remise = 0, $newnpr = 0, $delivery_time_days = 0, $supplier_reputation = '', $localtaxes_array = array(), $newdefaultvatcode = '', $multicurrency_buyprice = 0, $multicurrency_price_base_type = 'HT', $multicurrency_tx = 1, $multicurrency_code = '', $desc_fourn = '', $barcode = '', $fk_barcode_type = '', $options = array())
-	{
+	public function update_buyprice(
+		$qty,
+		$buyprice,
+		$user,
+		$price_base_type,
+		$fourn,
+		$availability,
+		$ref_fourn,
+		$tva_tx,
+		$charges = 0,
+		$remise_percent = 0,
+		$remise = 0,
+		$newnpr = 0,
+		$delivery_time_days = 0,
+		$supplier_reputation = '',
+		$localtaxes_array = array(),
+		$newdefaultvatcode = '',
+		$multicurrency_buyprice = 0,
+		$multicurrency_price_base_type = 'HT',
+		$multicurrency_tx = 1,
+		$multicurrency_code = '',
+		$desc_fourn = '',
+		$barcode = '',
+		$fk_barcode_type = 0,
+		$options = array()
+	) {
 		// phpcs:enable
 		global $conf, $langs;
 		//global $mysoc;
@@ -346,7 +370,7 @@ class ProductFournisseur extends Product
 			$localtax1 = $localtaxes_array['1'];
 			$localtaxtype2 = $localtaxes_array['2'];
 			$localtax2 = $localtaxes_array['3'];
-		} else { // old method. deprecated because ot can't retrieve type
+		} else { // old method. deprecated because it can't retrieve type
 			$localtaxtype1 = '0';
 			$localtax1 = get_localtax($newvat, 1);
 			$localtaxtype2 = '0';
@@ -1148,7 +1172,7 @@ class ProductFournisseur extends Product
 
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto).
+	 *  Return a link to the object card (with optionally the picto).
 	 *  Used getNomUrl of ProductFournisseur if a specific supplier ref is loaded. Otherwise use Product->getNomUrl().
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)

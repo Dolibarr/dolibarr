@@ -27,15 +27,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product_batch/modules_product_batc
 
 /**
  *	\class 		mod_codeproduct_leopard
- *	\brief 		Classe permettant la gestion leopard des codes produits
+ *	\brief 		Class permettant la gestion leopard des codes produits
  */
 class mod_sn_free extends ModeleNumRefBatch
 {
 	/*
-	 * Attention ce module est utilise par defaut si aucun module n'a
-	 * ete definit dans la configuration
-	 *
-	 * Le fonctionnement de celui-ci doit donc rester le plus ouvert possible
+	 * :warning:
+	 *    This module is used by default if none was set in the configuration.
+	 *    Therefore, the implementation must remain as open as possible.
 	 */
 
 	/**
@@ -45,7 +44,7 @@ class mod_sn_free extends ModeleNumRefBatch
 
 	public $code_modifiable; // Code modifiable
 
-	public $code_modifiable_invalide; // Code modifiable si il est invalide
+	public $code_modifiable_invalide; // Code modifiable si il est invalid
 
 	public $code_modifiable_null; // Code modifiables si il est null
 

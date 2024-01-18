@@ -75,5 +75,6 @@ CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authen
 STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
 TERMINAL_LOCATION=Location (address) for Stripe Terminals
 RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+RequesCreditTransferWithStripe=Request Credit Transfer with Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
 StripeConnect_Mode=Stripe Connect mode

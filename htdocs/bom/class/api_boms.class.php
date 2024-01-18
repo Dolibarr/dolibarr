@@ -55,13 +55,15 @@ class Boms extends DolibarrApi
 	/**
 	 * Get properties of a bom object
 	 *
-	 * Return an array with bom informations
+	 * Return an array with bom information
 	 *
 	 * @param	int		$id				ID of bom
 	 * @return  Object					Object with cleaned properties
 	 *
 	 * @url	GET {id}
-	 * @throws	RestException
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		BOM not found
 	 */
 	public function get($id)
 	{
@@ -92,15 +94,15 @@ class Boms extends DolibarrApi
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Bad sqlfilters
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	503		Error retrieving list of boms
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
 		if (!DolibarrApiAccess::$user->rights->bom->read) {
 			throw new RestException(401);
 		}
@@ -114,40 +116,27 @@ class Boms extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if ($restrictonsocid && !DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) {
+		if ($restrictonsocid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
 		$sql = "SELECT t.rowid";
-		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
-			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-		}
-		$sql .= " FROM ".MAIN_DB_PREFIX.$tmpobject->table_element." AS t LEFT JOIN ".MAIN_DB_PREFIX.$tmpobject->table_element."_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
-
-		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
-		}
+		$sql .= " FROM ".MAIN_DB_PREFIX.$tmpobject->table_element." AS t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$tmpobject->table_element."_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= " WHERE 1 = 1";
-
-		// Example of use $mode
-		//if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
-		//if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
-
 		if ($tmpobject->ismultientitymanaged) {
 			$sql .= ' AND t.entity IN ('.getEntity($tmpobject->element).')';
-		}
-		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
-			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if ($restrictonsocid && $socid) {
 			$sql .= " AND t.fk_soc = ".((int) $socid);
 		}
-		if ($restrictonsocid && $search_sale > 0) {
-			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
-		}
-		// Insert sale filter
-		if ($restrictonsocid && $search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".((int) $search_sale);
+		// Search on sale representative
+		if ($search_sale && $search_sale != '-1') {
+			if ($search_sale == -2) {
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+			} elseif ($search_sale > 0) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			}
 		}
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -191,6 +180,9 @@ class Boms extends DolibarrApi
 	 *
 	 * @param array $request_data   Request datas
 	 * @return int  ID of bom
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	500		Error retrieving list of boms
 	 */
 	public function post($request_data = null)
 	{
@@ -202,7 +194,7 @@ class Boms extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->bom->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -225,6 +217,10 @@ class Boms extends DolibarrApi
 	 * @param array $request_data   Datas
 	 *
 	 * @return int
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		BOM not found
+	 * @throws	RestException	500		Error updating bom
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -246,7 +242,7 @@ class Boms extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->bom->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -268,6 +264,10 @@ class Boms extends DolibarrApi
 	 *
 	 * @param   int     $id   BOM ID
 	 * @return  array
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		BOM not found
+	 * @throws	RestException	500		Error deleting bom
 	 */
 	public function delete($id)
 	{
@@ -303,6 +303,9 @@ class Boms extends DolibarrApi
 	 * @url	GET {id}/lines
 	 *
 	 * @return array
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		BOM not found
 	 */
 	public function getLines($id)
 	{
@@ -335,6 +338,10 @@ class Boms extends DolibarrApi
 	 * @url	POST {id}/lines
 	 *
 	 * @return int
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		BOM not found
+	 * @throws	RestException	500		Error adding bom line
 	 */
 	public function postLine($id, $request_data = null)
 	{
@@ -361,13 +368,14 @@ class Boms extends DolibarrApi
 			$request_data->efficiency,
 			$request_data->position,
 			$request_data->fk_bom_child,
-			$request_data->import_key
+			$request_data->import_key,
+			$request_data->fk_unit
 		);
 
 		if ($updateRes > 0) {
 			return $updateRes;
 		} else {
-			throw new RestException(400, $this->bom->error);
+			throw new RestException(500, $this->bom->error);
 		}
 	}
 
@@ -381,6 +389,9 @@ class Boms extends DolibarrApi
 	 * @url	PUT {id}/lines/{lineid}
 	 *
 	 * @return object|bool
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		BOM not found
 	 */
 	public function putLine($id, $lineid, $request_data = null)
 	{
@@ -406,7 +417,8 @@ class Boms extends DolibarrApi
 			$request_data->disable_stock_change,
 			$request_data->efficiency,
 			$request_data->position,
-			$request_data->import_key
+			$request_data->import_key,
+			$request_data->fk_unit
 		);
 
 		if ($updateRes > 0) {
@@ -428,9 +440,9 @@ class Boms extends DolibarrApi
 	 *
 	 * @return int
 	 *
-	 * @throws RestException 401
-	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		BOM not found
+	 * @throws	RestException	500		Error deleting bom line
 	 */
 	public function deleteLine($id, $lineid)
 	{
@@ -463,7 +475,7 @@ class Boms extends DolibarrApi
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(405, $this->bom->error);
+			throw new RestException(500, $this->bom->error);
 		}
 	}
 

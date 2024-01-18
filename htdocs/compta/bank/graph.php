@@ -600,7 +600,7 @@ if ($result < 0) {
 		}
 
 
-		// Chargement de labels et data_xxx pour tableau 4 Mouvements
+		// Chargement de labels et data_xxx pour tableau 4 Movements
 		$labels = array();
 		$data_credit = array();
 		$data_debit = array();
@@ -701,7 +701,7 @@ if ($result < 0) {
 		}
 
 
-		// Chargement de labels et data_xxx pour tableau 4 Mouvements
+		// Chargement de labels et data_xxx pour tableau 4 Movements
 		$labels = array();
 		$data_credit = array();
 		$data_debit = array();
