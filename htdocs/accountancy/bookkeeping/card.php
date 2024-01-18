@@ -127,17 +127,17 @@ if ($action == "confirm_update") {
 			$object->subledger_label = $subledger_label;
 			$object->label_compte = $accountingaccount_label;
 			$object->label_operation = $label_operation;
-			$object->debit = $debit;
-			$object->credit = $credit;
+			$object->debit = (float) $debit;
+			$object->credit = (float) $credit;
 
 			if ((float) $debit != 0.0) {
-				$object->montant = $debit; // deprecated
-				$object->amount = $debit;
+				$object->montant = (float) $debit; // deprecated
+				$object->amount = (float) $debit;
 				$object->sens = 'D';
 			}
 			if ((float) $credit != 0.0) {
-				$object->montant = $credit; // deprecated
-				$object->amount = $credit;
+				$object->montant = (float) $credit; // deprecated
+				$object->amount = (float) $credit;
 				$object->sens = 'C';
 			}
 
@@ -178,11 +178,11 @@ if ($action == "confirm_update") {
 		$object->subledger_label = $subledger_label;
 		$object->label_compte = $accountingaccount_label;
 		$object->label_operation = $label_operation;
-		$object->debit = $debit;
-		$object->credit = $credit;
+		$object->debit = (float) $debit;
+		$object->credit = (float) $credit;
 		$object->doc_date = (string) GETPOST('doc_date', 'alpha');
 		$object->doc_type = (string) GETPOST('doc_type', 'alpha');
-		$object->piece_num = $piece_num;
+		$object->piece_num = (int) $piece_num;
 		$object->doc_ref = (string) GETPOST('doc_ref', 'alpha');
 		$object->code_journal = $journal_code;
 		$object->journal_label = $journal_label;
@@ -190,14 +190,14 @@ if ($action == "confirm_update") {
 		$object->fk_docdet = GETPOSTINT('fk_docdet');
 
 		if ((float) $debit != 0.0) {
-			$object->montant = $debit; // deprecated
-			$object->amount = $debit;
+			$object->montant = (float) $debit; // deprecated
+			$object->amount = (float) $debit;
 			$object->sens = 'D';
 		}
 
 		if ((float) $credit != 0.0) {
-			$object->montant = $credit; // deprecated
-			$object->amount = $credit;
+			$object->montant = (float) $credit; // deprecated
+			$object->amount = (float) $credit;
 			$object->sens = 'C';
 		}
 
@@ -252,7 +252,7 @@ if ($action == "confirm_update") {
 		$object->credit = 0;
 		$object->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
 		$object->doc_type = GETPOST('doc_type', 'alpha');
-		$object->piece_num = GETPOST('next_num_mvt', 'alpha');
+		$object->piece_num = (int) GETPOST('next_num_mvt', 'int');
 		$object->doc_ref = GETPOST('doc_ref', 'alpha');
 		$object->code_journal = $journal_code;
 		$object->journal_label = $journal_label;

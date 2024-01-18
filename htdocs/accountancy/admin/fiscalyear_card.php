@@ -109,7 +109,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 		$object->date_start = $date_start;
 		$object->date_end = $date_end;
 		$object->label = GETPOST('label', 'alpha');
-		$object->status = GETPOST('status', 'int');
+		$object->status = (int) GETPOST('status', 'int');
 		$object->datec = dol_now();
 
 		if (empty($object->date_start) && empty($object->date_end)) {
@@ -152,7 +152,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 		$object->date_start = GETPOST("fiscalyear") ? $date_start : '';
 		$object->date_end = GETPOST("fiscalyearend") ? $date_end : '';
 		$object->label = GETPOST('label', 'alpha');
-		$object->status = GETPOST('status', 'int');
+		$object->status = (int) GETPOST('status', 'int');
 
 		$result = $object->update($user);
 
