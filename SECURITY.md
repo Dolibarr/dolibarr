@@ -48,7 +48,7 @@ Reports are processed around once a month.
 
 ONLY vulnerabilities discovered, when the following setup on test platform is used, are "valid":
 
-* The version to analyze must be the last version available in the "develop" branch or in the last stable "vX.Y" released version. Reports on vulnerabilities already fixed (so already reported) in the develop branch will not be validated.   
+* The version to analyze must be the last version available in the "develop" branch. Reports on vulnerabilities already fixed (so already reported) in the develop branch will not be validated.   
 * $dolibarr_main_prod must be set to 1 in conf.php
 * $dolibarr_nocsrfcheck must be kept to the value 0 in conf.php (this is the default value)
 * $dolibarr_main_force_https must be set to something else than 0.
@@ -91,12 +91,10 @@ Scope is the web application (backoffice) and the APIs.
 * Logout and other instances of low-severity Cross-Site Request Forgery
 * Reports from automated web vulnerability scanners (Acunetix, Vega, etc.) that have not been validated
 * Reports on features on modules flagged as "deprecated", "experimental" or "development" if the module needs to be enabled for that (this is not the case on production).
-* Software or libraries versions or private IP disclosure when logged-in user is admin
-* Stack traces or path disclosure when logged-in user is admin
+* Software or libraries versions, private IP disclosure, Stack traces or path disclosure when logged-in user is admin.
 * Any vulnerabilities due to a configuration different than the one defined in chapter "Scope for qualified vulnerabilities".
 * Vulnerabilities affecting outdated browsers or platforms, or vulnerabilities inside browsers themself.
 * Brute force attacks on login page, password forgotten page or any public pages (/public/*) are not qualified if the recommended fail2ban rules were not installed.  
 * SSL/TLS best practices
-* Denial of Service attacks
 * Invalid or missing SPF (Sender Policy Framework) records (Incomplete or missing SPF/DKIM/DMARC)
 * Physical or social engineering attempts or issues that require physical access to a victim’s computer/device
