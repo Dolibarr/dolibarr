@@ -411,19 +411,19 @@ Luracast\Restler\Defaults::$returnResponse = $usecompression;
 
 // Call API (we suppose we found it).
 // The handle will use the file api/temp/routes.php to get data to run the API. If the file exists and the entry for API is not found, it will return 404.
-$result = $api->r->handle();
+$responsedata = $api->r->handle();
 
 if (Luracast\Restler\Defaults::$returnResponse) {
 	// We try to compress the data received data
 	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'br') !== false && function_exists('brotli_compress') && defined('BROTLI_TEXT')) {
 		header('Content-Encoding: br');
-		$result = brotli_compress($result, 11, constant('BROTLI_TEXT'));
+		$result = brotli_compress($responsedata, 11, constant('BROTLI_TEXT'));
 	} elseif (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'bz') !== false && function_exists('bzcompress')) {
 		header('Content-Encoding: bz');
-		$result = bzcompress($result, 9);
+		$result = bzcompress($responsedata, 9);
 	} elseif (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false && function_exists('gzencode')) {
 		header('Content-Encoding: gzip');
-		$result = gzencode($result, 9);
+		$result = gzencode($responsedata, 9);
 	} else {
 		header('Content-Encoding: text/html');
 		print "No compression method found. Try to disable compression by adding API_DISABLE_COMPRESSION=1";
@@ -432,6 +432,22 @@ if (Luracast\Restler\Defaults::$returnResponse) {
 
 	// Restler did not output data yet, we return it now
 	echo $result;
+}
+
+// Call API termination method
+$apiMethodInfo = &$api->r->apiMethodInfo;
+$terminateCall = '_terminate_' . $apiMethodInfo->methodName . '_' . $api->r->responseFormat->getExtension();
+if (method_exists($apiMethodInfo->className, $terminateCall)) {
+	// Now flush output buffers so that response data is sent to the client even if we still have action to do in a termination method.
+	ob_end_flush();
+
+	// If you're using PHP-FPM, this function will allow you to send the response and then continue processing
+	if (function_exists('fastcgi_finish_request')) {
+		fastcgi_finish_request();
+	}
+
+	// Call a termination method. Warning: This method can do I/O, sync but must not make ouput.
+	call_user_func(array(Luracast\Restler\Scope::get($apiMethodInfo->className), $terminateCall), $responsedata);
 }
 
 //session_destroy();
