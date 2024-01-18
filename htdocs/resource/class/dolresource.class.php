@@ -46,7 +46,7 @@ class Dolresource extends CommonObject
 
 
 	/**
-	 * @var int ID
+	 * @var string ID
 	 */
 	public $fk_code_type_resource;
 
