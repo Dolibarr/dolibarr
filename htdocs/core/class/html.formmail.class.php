@@ -1200,12 +1200,14 @@ class FormMail extends Form
 
 	/**
 	 * get html For WithCCC
+	 * This information is show when MAIN_EMAIL_USECCC is set.
 	 *
 	 * @return string html
 	 */
 	public function getHtmlForWithCcc()
 	{
-		global $conf, $langs, $form;
+		global $langs, $form;
+
 		$out = '<tr><td>';
 		$out .= $form->textwithpicto($langs->trans("MailCCC"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
 		$out .= '</td><td>';
@@ -1261,8 +1263,14 @@ class FormMail extends Form
 		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO') && !empty($this->param['models']) && $this->param['models'] == 'invoice_supplier_send') {
 			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO');
 		}
-		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROJECT_TO') && !empty($this->param['models']) && $this->param['models'] == 'project') {
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROJECT_TO') && !empty($this->param['models']) && $this->param['models'] == 'project') {	// don't know why there is not '_send' at end of this models name.
 			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROJECT_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SHIPMENT_TO') && !empty($this->param['models']) && $this->param['models'] == 'shipping_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SHIPMENT_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_RECEPTION_TO') && !empty($this->param['models']) && $this->param['models'] == 'reception_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_RECEPTION_TO');
 		}
 		if ($showinfobcc) {
 			$out .= ' + '.$showinfobcc;
@@ -1278,7 +1286,8 @@ class FormMail extends Form
 	 */
 	public function getHtmlForWithErrorsTo()
 	{
-		global $conf, $langs;
+		global $langs;
+
 		//if (! $this->errorstomail) $this->errorstomail=$this->frommail;
 		$errorstomail = getDolGlobalString('MAIN_MAIL_ERRORS_TO', (!empty($this->errorstomail) ? $this->errorstomail : ''));
 		if ($this->witherrorstoreadonly) {
@@ -1301,7 +1310,8 @@ class FormMail extends Form
 	 */
 	public function getHtmlForDeliveryreceipt()
 	{
-		global $conf, $langs;
+		global $langs;
+
 		$out = '<tr><td><label for="deliveryreceipt">'.$langs->trans("DeliveryReceipt").'</label></td><td>';
 
 		if (!empty($this->withdeliveryreceiptreadonly)) {
@@ -1339,7 +1349,7 @@ class FormMail extends Form
 	 */
 	public function getHtmlForTopic($arraydefaultmessage, $helpforsubstitution)
 	{
-		global $conf, $langs, $form;
+		global $langs, $form;
 
 		$defaulttopic = GETPOST('subject', 'restricthtml');
 
@@ -1393,15 +1403,15 @@ class FormMail extends Form
 				$('#generate_button').click(function() {
 					var instructions = $('#ai_instructions').val();
 					var token = $('#csrf_token').val();
-			
+
 					$.ajax({
 						url: '".$baseUrl."ai/lib/generate_content.lib.php',
 						method: 'POST',
 						dataType: 'json',
 						contentType: 'application/json',
-						data: JSON.stringify({ 
+						data: JSON.stringify({
 							'token': token,
-							'instructions': instructions, 
+							'instructions': instructions,
 						}),
 						success: function(response) {
 							console.log(response);
