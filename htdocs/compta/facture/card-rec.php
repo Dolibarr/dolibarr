@@ -248,7 +248,7 @@ if (empty($reshook)) {
 			$db->begin();
 
 			$oldinvoice = new Facture($db);
-			$oldinvoice->fetch(GETPOSTINT('facid');
+			$oldinvoice->fetch(GETPOSTINT('facid'));
 
 			$onlylines = GETPOST('toselect', 'array');
 
