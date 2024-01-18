@@ -597,9 +597,6 @@ class Dolresource extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		if (isset($this->resource_id)) {
-			$this->resource_id = trim($this->resource_id);
-		}
 		if (isset($this->resource_type)) {
 			$this->resource_type = trim($this->resource_type);
 		}
@@ -618,7 +615,7 @@ class Dolresource extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."element_resources SET";
-		$sql .= " resource_id=".(isset($this->resource_id) ? "'".$this->db->escape($this->resource_id)."'" : "null").",";
+		$sql .= " resource_id=".(isset($this->resource_id) ? $this->resource_id : "null").",";
 		$sql .= " resource_type=".(isset($this->resource_type) ? "'".$this->db->escape($this->resource_type)."'" : "null").",";
 		$sql .= " element_id=".(isset($this->element_id) ? $this->element_id : "null").",";
 		$sql .= " element_type=".(isset($this->element_type) ? "'".$this->db->escape($this->element_type)."'" : "null").",";
