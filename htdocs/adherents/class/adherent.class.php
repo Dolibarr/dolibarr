@@ -1121,7 +1121,7 @@ class Adherent extends CommonObject
 	 *    @param    int		$isencrypted    0 ou 1 if the password needs to be encrypted in the DB (default: 0)
 	 *	  @param	int		$notrigger		1=Does not raise the triggers
 	 *    @param	int		$nosyncuser		Do not synchronize linked user
-	 *    @return   string           		If OK return clear password, 0 if no change, < 0 if error
+	 *    @return   string|int				Clear password if change ok, 0 if no change, <0 if error
 	 */
 	public function setPassword($user, $password = '', $isencrypted = 0, $notrigger = 0, $nosyncuser = 0)
 	{
