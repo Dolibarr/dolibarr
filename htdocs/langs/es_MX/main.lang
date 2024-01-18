@@ -331,3 +331,4 @@ ContactDefault_order_supplier=Orden de compra
 ContactDefault_propal=Cotización
 ClientTZ=Zona Horaria cliente (usuario)
 Terminate=Terminar
+UserExpired=Expirado

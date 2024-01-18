@@ -41,8 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live sleutel
 ONLINE_PAYMENT_WAREHOUSE=Voorraad voor voorraadafname wanneer online betaling is voltooid <br> (TODO Wanneer optie om voorraad te verminderen wordt gedaan op een actie op factuur en de online betaling zelf de factuur genereert?)
 StripeLiveEnabled=Stripe live ingeschakeld (anders test / sandbox-modus)
 StripeImportPayment=Streepbetalingen importeren
-ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
-ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
+ExampleOfTestCreditCard=Voorbeeld van creditcard voor een testbetaling: %s => geldig, %s => fout CVC, %s => verlopen, %s => afschrijving mislukt
+ExampleOfTestBankAcountForSEPA=Voorbeeld bankrekening BAN voor incassotoets: %s
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect-client-ID (ca _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect-client-ID (ca _...)
@@ -51,6 +51,7 @@ StripeAccount=Stripe-account
 StripeChargeList=Lijst met Stripe kosten
 StripeTransactionList=Lijst met Stripe-transacties
 StripeCustomerId=Stripe klant-ID
+StripePaymentId=Stripe-betalings-ID
 StripePaymentModes=Stripe betaalwijzen
 LocalID=Lokaal ID
 StripeID=Stripe ID
@@ -62,7 +63,7 @@ DeleteACard=Kaart verwijderen
 ConfirmDeleteCard=Weet u zeker dat u deze creditcard of betaalpas wilt verwijderen?
 CreateCustomerOnStripe=Creëer klant op Stripe
 CreateCardOnStripe=Maak een kaart op Stripe
-CreateBANOnStripe=Create bank on Stripe
+CreateBANOnStripe=Maak een bank op Stripe
 ShowInStripe=Toon in streep
 StripeUserAccountForActions=Gebruikersaccount om te gebruiken voor e-mailmeldingen van sommige Stripe-evenementen (Stripe-uitbetalingen)
 StripePayoutList=Lijst met Stripe uitbetalingen
@@ -71,8 +72,8 @@ ToOfferALinkForLiveWebhook=Link om Stripe WebHook in te stellen om de IPN te bel
 PaymentWillBeRecordedForNextPeriod=De betaling wordt geregistreerd voor de volgende periode.
 ClickHereToTryAgain=<a href="%s">Klik hier om het opnieuw te proberen ...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Vanwege de strenge regels voor klantauthenticatie moet het aanmaken van een kaart worden gedaan vanuit Stripe backoffice. U kunt hier klikken om Stripe-klantrecord in te schakelen: %s
-STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
-TERMINAL_LOCATION=Location (address) for Stripe Terminals
-RequestDirectDebitWithStripe=Request Direct Debit with Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
+STRIPE_CARD_PRESENT=Kaart aanwezig voor Stripe Terminals
+TERMINAL_LOCATION=Locatie (adres) voor Stripe Terminals
+RequestDirectDebitWithStripe=Automatische incasso aanvragen met Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Schakel de automatische incasso via Stripe in
 

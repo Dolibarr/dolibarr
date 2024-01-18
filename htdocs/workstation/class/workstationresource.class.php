@@ -100,7 +100,7 @@ class WorkstationResource extends CommonObject
 	 * Function used to remove all resources linked to a workstation
 	 *
 	 * @param	int		$fk_workstation		Id of workstation we need to remove linked resources
-	 * @return 	int							<0 if KO, 0 if nothing done, >0 if OK and something done
+	 * @return 	int							Return integer <0 if KO, 0 if nothing done, >0 if OK and something done
 	 */
 	public static function deleteAllResourcesOfWorkstation($fk_workstation)
 	{

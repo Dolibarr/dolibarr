@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
 // Security check
-if (!$user->rights->opensurvey->write) {
+if (!$user->hasRight('opensurvey', 'write')) {
 	accessforbidden();
 }
 
@@ -153,7 +153,7 @@ print '</tr></table>'."\n";
 print '</form>'."\n";
 
 
-print '<a name=bas></a>'."\n";
+print '<a name="bas"></a>'."\n";
 print '<br><br><br>'."\n";
 print '</div>'."\n";
 

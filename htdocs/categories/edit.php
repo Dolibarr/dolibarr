@@ -36,7 +36,7 @@ $langs->load("categories");
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alphanohtml');
-$action = (GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'edit');
+$action = (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'edit');
 $confirm = GETPOST('confirm');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -45,6 +45,7 @@ $socid = (int) GETPOST('socid', 'int');
 $label = (string) GETPOST('label', 'alphanohtml');
 $description = (string) GETPOST('description', 'restricthtml');
 $color = preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('color', 'alphanohtml'));
+$position = (int) GETPOST('position', 'int');
 $visible = (int) GETPOST('visible', 'int');
 $parent = (int) GETPOST('parent', 'int');
 
@@ -59,7 +60,8 @@ $result = restrictedArea($user, 'categorie', $id, '&category');
 $object = new Categorie($db);
 $result = $object->fetch($id, $label);
 if ($result <= 0) {
-	dol_print_error($db, $object->error); exit;
+	dol_print_error($db, $object->error);
+	exit;
 }
 
 $type = $object->type;
@@ -79,54 +81,63 @@ $error = 0;
 /*
  * Actions
  */
-
-if ($cancel) {
-	if ($backtopage) {
-		header("Location: ".$backtopage);
-		exit;
-	} else {
-		header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
-		exit;
-	}
+$parameters = array('id' => $id, 'ref' => $ref, 'cancel'=> $cancel, 'backtopage' => $backtopage, 'socid' => $socid, 'label' => $label, 'description' => $description, 'color' => $color, 'position' => $position, 'visible' => $visible, 'parent' => $parent);
+// Note that $action and $object may be modified by some hooks
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-// Action mise a jour d'une categorie
-if ($action == 'update' && $user->rights->categorie->creer) {
-	$object->oldcopy = dol_clone($object);
-	$object->label = $label;
-	$object->description    = dol_htmlcleanlastbr($description);
-	$object->color          = $color;
-	$object->socid          = ($socid > 0 ? $socid : 0);
-	$object->visible        = $visible;
-	$object->fk_parent = $parent != -1 ? $parent : 0;
-
-	if (empty($object->label)) {
-		$error++;
-		$action = 'edit';
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
-	}
-	if (!$error && empty($object->error)) {
-		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
-		if ($ret < 0) {
-			$error++;
+if (empty($reshook)) {
+	if ($cancel) {
+		if ($backtopage) {
+			header("Location: ".$backtopage);
+			exit;
+		} else {
+			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
+			exit;
 		}
+	}
 
-		if (!$error && $object->update($user) > 0) {
-			if ($backtopage) {
-				header("Location: ".$backtopage);
-				exit;
+	// Action mise a jour d'une categorie
+	if ($action == 'update' && $user->hasRight('categorie', 'creer')) {
+		$object->oldcopy = dol_clone($object, 2);
+
+		$object->label = $label;
+		$object->description    = dol_htmlcleanlastbr($description);
+		$object->color          = $color;
+		$object->position       = $position;
+		$object->socid          = ($socid > 0 ? $socid : 0);
+		$object->visible        = $visible;
+		$object->fk_parent = $parent != -1 ? $parent : 0;
+
+		if (empty($object->label)) {
+			$error++;
+			$action = 'edit';
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
+		}
+		if (!$error && empty($object->error)) {
+			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
+			if ($ret < 0) {
+				$error++;
+			}
+
+			if (!$error && $object->update($user) > 0) {
+				if ($backtopage) {
+					header("Location: ".$backtopage);
+					exit;
+				} else {
+					header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
+					exit;
+				}
 			} else {
-				header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
-				exit;
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} else {
-		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
-
 
 
 /*
@@ -176,6 +187,12 @@ print '<td>'.$langs->trans("Color").'</td>';
 print '<td>';
 print $formother->selectColor($object->color, 'color');
 print '</td></tr>';
+
+// Position
+print '<tr><td>';
+print $langs->trans("Position").'</td>';
+print '<td><input type="text" size="25" id="position" name ="position" value="'.$object->position.'" />';
+print '</tr>';
 
 // Parent category
 print '<tr><td>'.$langs->trans("In").'</td><td>';

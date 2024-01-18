@@ -29,7 +29,7 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	require '../main.inc.php';
 
 	// Get parameters
-	$action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
+	$action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 	$massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 
 	$mode = GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'graph';
@@ -300,7 +300,7 @@ if (is_array($search_groupby) && count($search_groupby)) {
 			$sql .= " FROM ".MAIN_DB_PREFIX.$tabletouse." as ".$tablealiastouse;
 		}
 
-		// Add a where here keeping only the citeria on $tabletouse
+		// Add a where here keeping only the criteria on $tabletouse
 		// TODO
 		/*$sqlfilters = ... GETPOST('search_component_params_hidden', 'alphanohtml');
 		if ($sqlfilters) {
@@ -642,7 +642,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 	// Init the list of tables added. We include by default always the main table.
 	$listoftablesalreadyadded = array($object->table_element => $object->table_element);
 
-	// Add LEFT JOIN for all parent tables mentionned into the Xaxis
+	// Add LEFT JOIN for all parent tables mentioned into the Xaxis
 	//var_dump($arrayofxaxis); var_dump($search_xaxis);
 	foreach ($search_xaxis as $key => $val) {
 		if (!empty($arrayofxaxis[$val])) {
@@ -669,7 +669,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 		}
 	}
 
-	// Add LEFT JOIN for all parent tables mentionned into the Group by
+	// Add LEFT JOIN for all parent tables mentioned into the Group by
 	//var_dump($arrayofgroupby); var_dump($search_groupby);
 	foreach ($search_groupby as $key => $val) {
 		if (!empty($arrayofgroupby[$val])) {
@@ -696,7 +696,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 		}
 	}
 
-	// Add LEFT JOIN for all parent tables mentionned into the Yaxis
+	// Add LEFT JOIN for all parent tables mentioned into the Yaxis
 	//var_dump($arrayofgroupby); var_dump($search_groupby);
 	foreach ($search_measures as $key => $val) {
 		if (!empty($arrayofmesures[$val])) {
@@ -1011,11 +1011,11 @@ $db->close();
  * @param 	mixed		$object			Any object
  * @param	string		$tablealias		Alias of table
  * @param	string		$labelofobject	Label of object
- * @param	array		$arrayofmesures	Array of mesures already filled
+ * @param	array		$arrayofmesures	Array of measures already filled
  * @param	int			$level 			Level
  * @param	int			$count			Count
  * @param	string		$tablepath		Path of all tables ('t' or 't,contract' or 't,contract,societe'...)
- * @return 	array						Array of mesures
+ * @return 	array						Array of measures
  */
 function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesures, $level = 0, &$count = 0, &$tablepath = '')
 {
@@ -1032,7 +1032,7 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 	}
 
 	if ($level == 0) {
-		// Add the count of record only for the main/first level object. Parents are necessarly unique for each record.
+		// Add the count of record only for the main/first level object. Parents are necessarily unique for each record.
 		$arrayofmesures[$tablealias.'.count'] = array(
 			'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': Count',
 			'labelnohtml' => $labelofobject.': Count',
@@ -1047,7 +1047,7 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 	// Add main fields of object
 	foreach ($object->fields as $key => $val) {
 		if (!empty($val['isameasure']) && (!isset($val['enabled']) || dol_eval($val['enabled'], 1, 1, '1'))) {
-			$position = (empty($val['position']) ? 0 : intVal($val['position']));
+			$position = (empty($val['position']) ? 0 : intval($val['position']));
 			$arrayofmesures[$tablealias.'.'.$key.'-sum'] = array(
 				'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>',
 				'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
@@ -1079,7 +1079,7 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 		}
 	}
 	// Add extrafields to Measures
-	if (!empty($object->isextrafieldmanaged)) {
+	if (!empty($object->isextrafieldmanaged) && isset($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
 				$position = (!empty($val['position']) ? $val['position'] : 0);
@@ -1200,7 +1200,7 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 				continue;
 			}
 			if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-				$position = (empty($val['position']) ? 0 : intVal($val['position']));
+				$position = (empty($val['position']) ? 0 : intval($val['position']));
 				$arrayofxaxis[$tablealias.'.'.$key.'-year'] = array(
 					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>',
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
@@ -1223,7 +1223,7 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 					'tablefromt' => $tablepath
 				);
 			} else {
-				$position = (empty($val['position']) ? 0 : intVal($val['position']));
+				$position = (empty($val['position']) ? 0 : intval($val['position']));
 				$arrayofxaxis[$tablealias.'.'.$key] = array(
 					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']),
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
@@ -1236,7 +1236,7 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 	}
 
 	// Add extrafields to X-Axis
-	if (!empty($object->isextrafieldmanaged)) {
+	if (!empty($object->isextrafieldmanaged) && isset($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') {
 				continue;
@@ -1246,7 +1246,7 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 			}
 
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$key], array('timestamp', 'date', 'datetime'))) {
-				$position = (empty($extrafields->attributes[$object->table_element]['pos'][$key]) ? 0 : intVal($extrafields->attributes[$object->table_element]['pos'][$key]));
+				$position = (empty($extrafields->attributes[$object->table_element]['pos'][$key]) ? 0 : intval($extrafields->attributes[$object->table_element]['pos'][$key]));
 				$arrayofxaxis[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-year'] = array(
 					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val).' <span class="opacitymedium">('.$YYYY.')</span>',
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
@@ -1362,7 +1362,7 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 				continue;
 			}
 			if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-				$position = (empty($val['position']) ? 0 : intVal($val['position']));
+				$position = (empty($val['position']) ? 0 : intval($val['position']));
 				$arrayofgroupby[$tablealias.'.'.$key.'-year'] = array(
 					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>',
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
@@ -1385,7 +1385,7 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 					'tablefromt' => $tablepath
 				);
 			} else {
-				$position = (empty($val['position']) ? 0 : intVal($val['position']));
+				$position = (empty($val['position']) ? 0 : intval($val['position']));
 				$arrayofgroupby[$tablealias.'.'.$key] = array(
 					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']),
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
@@ -1398,7 +1398,7 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 	}
 
 	// Add extrafields to Group by
-	if (!empty($object->isextrafieldmanaged)) {
+	if (!empty($object->isextrafieldmanaged) && isset($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') {
 				continue;
@@ -1408,7 +1408,7 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 			}
 
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$key], array('timestamp', 'date', 'datetime'))) {
-				$position = (empty($extrafields->attributes[$object->table_element]['pos'][$key]) ? 0 : intVal($extrafields->attributes[$object->table_element]['pos'][$key]));
+				$position = (empty($extrafields->attributes[$object->table_element]['pos'][$key]) ? 0 : intval($extrafields->attributes[$object->table_element]['pos'][$key]));
 				$arrayofgroupby[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-year'] = array(
 					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val).' <span class="opacitymedium">('.$YYYY.')</span>',
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),

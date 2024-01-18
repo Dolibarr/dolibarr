@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = I skjemaet for å opprette/legge til en
 #
 # Object
 #
+OrganizedEvent=Organisert arrangement
 EventOrganizationConfOrBooth= Konferanse eller messe
 EventOrganizationConfOrBoothes=Konferanser eller stander
 ManageOrganizeEvent = Administrer organiseringen av et arrangement
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=Link til tredjepart (kunde, leverandør eller 
 OrganizationEvenLabelName=Offentlig navn på konferansen eller standen
 
 NewSuggestionOfBooth=Søknad om stand
-NewSuggestionOfConference=Søknad om konferanse
+NewSuggestionOfConference=Søknad om å holde en konferanse
 
 #
 # Vote page
@@ -174,3 +175,9 @@ NoPublicActionsAllowedForThisEvent=Ingen offentlige handlinger er åpne for offe
 MaxNbOfAttendees=Maks antall deltakere
 DateStartEvent=Startdato for arrangementet
 DateEndEvent=Sluttdato for arrangementet
+ModifyStatus=Endre status
+ConfirmModifyStatus=Bekreft statusendring
+ConfirmModifyStatusQuestion=Er du sikker på at du vil endre %s valgte post(er)?
+RecordsUpdated = %s Poster oppdatert
+RecordUpdated = Posten er oppdatert
+NoRecordUpdated = Ingen post oppdatert

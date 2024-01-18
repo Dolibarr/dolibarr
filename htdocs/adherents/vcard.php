@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alphanohtml');
 
-$object = new adherent($db);
+$object = new Adherent($db);
 
 // Fetch object
 if ($id > 0 || !empty($ref)) {
@@ -147,7 +147,7 @@ if ($company->id) {
 	}
 }
 
-// Personal informations
+// Personal information
 $v->setPhoneNumber($object->phone_perso, "TYPE=HOME;VOICE");
 if ($object->birth) {
 	$v->setBirthday($object->birth);

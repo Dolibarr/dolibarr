@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = Schränkt im Formular zum Erstellen/Hin
 #
 # Object
 #
+OrganizedEvent=Organisierte Veranstaltung
 EventOrganizationConfOrBooth= Konferenzbeitrag oder Stand
 EventOrganizationConfOrBoothes=Konferenzbeiträge oder Stände
 ManageOrganizeEvent = Veranstaltung organisieren
@@ -174,3 +175,9 @@ NoPublicActionsAllowedForThisEvent=Für diese Veranstaltung sind keine Aktionen 
 MaxNbOfAttendees=Maximale Teilnehmerzahl
 DateStartEvent=Startdatum der Veranstaltung
 DateEndEvent=Enddatum der Veranstaltung
+ModifyStatus=Status ändern
+ConfirmModifyStatus=Statusänderung bestätigen
+ConfirmModifyStatusQuestion=Sind Sie sicher, dass Sie die %s ausgewählten Datensätze ändern möchten?
+RecordsUpdated = %s Datensätze aktualisiert
+RecordUpdated = Datensatz aktualisiert
+NoRecordUpdated = Kein Datensatz aktualisiert

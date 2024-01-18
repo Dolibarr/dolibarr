@@ -31,7 +31,8 @@ $out .= '<div class="noborder borderbottom">';
 $out .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">'.$langs->trans("SelectResource").'</div>';
 $out .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
 $events = array();
-$out .= $formresources->select_resource_list('', 'fk_resource', '', 1, 1, 0, $events, '', 2, null);
+$out .= img_picto('', 'resource', 'class="pictofixedwidth"');
+$out .= $formresources->select_resource_list(0, 'fk_resource', '', 1, 1, 0, $events, '', 2, null);
 $out .= '</div>';
 
 $out .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block marginleftonly"><label for="resbusy">'.$langs->trans('Busy').'</label> ';
@@ -44,7 +45,7 @@ $out .= '<input type="checkbox" id="resmandatory" name="mandatory" value="1"'.(G
 $out .= '</div>';
 
 $out .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block right">';
-$out .= '<input type="submit" id="add-resource-place" class="button button-add" value="'.$langs->trans("Add").'"/>';
+$out .= '<input type="submit" id="add-resource-place" class="button button-add small" value="'.$langs->trans("Add").'"/>';
 $out .= '</div>';
 
 $out .= '</div>';

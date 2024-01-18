@@ -19,20 +19,20 @@
 /**
  *	\file       htdocs/contact/canvas/default/actions_contactcard_default.class.php
  *	\ingroup    thirdparty
- *	\brief      Fichier de la classe Thirdparty contact card controller (default canvas)
+ *	\brief      File for the class Thirdparty contact card controller (default canvas)
  */
 include_once DOL_DOCUMENT_ROOT.'/contact/canvas/actions_contactcard_common.class.php';
 
 /**
  *	\class      ActionsContactCardDefault
- *	\brief      Classe permettant la gestion des contacts par defaut
+ *	\brief      Default Class to manage contacts
  */
 class ActionsContactCardDefault extends ActionsContactCardCommon
 {
 	/**
 	 *  Constructor
 	 *
-	 *	@param	DoliDB	$db				Handler acces base de donnees
+	 *	@param	DoliDB	$db				Handler access base de donnees
 	 *	@param	string	$dirmodule		Name of directory of module
 	 *	@param	string	$targetmodule	Name of directory of module where canvas is stored
 	 *	@param	string	$canvas			Name of canvas
@@ -60,13 +60,13 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 		$out = '';
 
 		if ($action == 'view') {
-			$out .= (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contact") : $langs->trans("ContactAddress"));
+			$out .= (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contact") : $langs->trans("ContactAddress"));
 		}
 		if ($action == 'edit') {
-			$out .= (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("EditContact") : $langs->trans("EditContactAddress"));
+			$out .= (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("EditContact") : $langs->trans("EditContactAddress"));
 		}
 		if ($action == 'create') {
-			$out .= (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
+			$out .= (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
 		}
 
 		return $out;

@@ -94,7 +94,7 @@ if (@file_exists($forcedfile)) {
  *	View
  */
 
-session_start(); // To be able to keep info into session (used for not losing pass during navigation. pass must not transit through parmaeters)
+session_start(); // To be able to keep info into session (used for not losing pass during navigation. pass must not transit through parameters)
 
 pHeader($langs->trans("ConfigurationFile"), "step1", "set", "", (empty($force_dolibarr_js_JQUERY) ? '' : $force_dolibarr_js_JQUERY.'/'), 'main-inside-bis');
 
@@ -188,7 +188,7 @@ if (!empty($force_install_noedit)) {
 				   name="main_data_dir"
 				   value="<?php print $dolibarr_main_data_root ?>"
 <?php if (!empty($force_install_noedit)) {
-	print ' disabled';
+			print ' disabled';
 } ?>
 			>
 		</td>
@@ -220,7 +220,7 @@ if (!empty($force_install_noedit)) {
 				   name="main_url"
 				   value="<?php print $dolibarr_main_url_root; ?> "
 <?php if (!empty($force_install_noedit)) {
-	print ' disabled';
+		print ' disabled';
 }
 ?>
 			>
@@ -322,7 +322,6 @@ if (!empty($force_install_noedit)) {
 					}
 
 					// Version min of database
-					$versionbasemin = explode('.', $class::VERSIONMIN);
 					$note = '('.$class::LABEL.' >= '.$class::VERSIONMIN.')';
 
 					// Switch to mysql if mysqli is not present
@@ -332,22 +331,28 @@ if (!empty($force_install_noedit)) {
 
 					// Show line into list
 					if ($type == 'mysql') {
-						$testfunction = 'mysql_connect'; $testclass = '';
+						$testfunction = 'mysql_connect';
+						$testclass = '';
 					}
 					if ($type == 'mysqli') {
-						$testfunction = 'mysqli_connect'; $testclass = '';
+						$testfunction = 'mysqli_connect';
+						$testclass = '';
 					}
 					if ($type == 'pgsql') {
-						$testfunction = 'pg_connect'; $testclass = '';
+						$testfunction = 'pg_connect';
+						$testclass = '';
 					}
 					if ($type == 'mssql') {
-						$testfunction = 'mssql_connect'; $testclass = '';
+						$testfunction = 'mssql_connect';
+						$testclass = '';
 					}
 					if ($type == 'sqlite') {
-						$testfunction = ''; $testclass = 'PDO';
+						$testfunction = '';
+						$testclass = 'PDO';
 					}
 					if ($type == 'sqlite3') {
-						$testfunction = ''; $testclass = 'SQLite3';
+						$testfunction = '';
+						$testclass = 'SQLite3';
 					}
 					$option .= '<option value="'.$type.'"'.($defaultype == $type ? ' selected' : '');
 					if ($testfunction && !function_exists($testfunction)) {
@@ -399,7 +404,7 @@ if (!empty($force_install_noedit)) {
 			<input type="text"
 				   id="db_host"
 				   name="db_host"
-				   value="<?php print (!empty($force_install_dbserver) ? $force_install_dbserver : (!empty($dolibarr_main_db_host) ? $dolibarr_main_db_host : 'localhost')); ?>"
+				   value="<?php print(!empty($force_install_dbserver) ? $force_install_dbserver : (!empty($dolibarr_main_db_host) ? $dolibarr_main_db_host : 'localhost')); ?>"
 				<?php if ($force_install_noedit == 2 && $force_install_dbserver !== null) {
 					print ' disabled';
 				} ?>
@@ -483,7 +488,7 @@ if (!empty($force_install_noedit)) {
 	<tr class="hidesqlite">
 		<td class="label"><label for="db_pass"><b><?php echo $langs->trans("Password"); ?></b></label></td>
 		<td class="label">
-			<input type="password" class="text-security";
+			<input type="password" class="text-security"
 				   id="db_pass" autocomplete="off"
 				   name="db_pass"
 				   value="<?php
@@ -495,7 +500,7 @@ if (!empty($force_install_noedit)) {
 					print dol_escape_htmltag($autofill);
 					?>"
 				<?php if ($force_install_noedit == 2 && $force_install_databasepass !== null) {
-					print ' disabled';
+						print ' disabled';
 				} ?>
 			>
 		</td>
@@ -586,7 +591,7 @@ if (!empty($force_install_noedit)) {
 					print dol_escape_htmltag($autofill);
 					?>"
 				<?php if ($force_install_noedit > 0 && !empty($force_install_databaserootpass)) {
-					print ' disabled'; /* May be removed by javascript*/
+						print ' disabled'; /* May be removed by javascript*/
 				} ?>
 			>
 		</td>
@@ -725,7 +730,7 @@ jQuery(document).ready(function() {	// TODO Test $( window ).load(function() to 
 
 <?php
 
-// $db->close();	Not database connexion yet
+// $db->close();	Not database connection yet
 
 dolibarr_install_syslog("- fileconf: end");
 pFooter($err, $setuplang, 'jscheckparam');

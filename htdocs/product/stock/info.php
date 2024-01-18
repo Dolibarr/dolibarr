@@ -18,7 +18,7 @@
 /**
  *	\file       htdocs/product/stock/info.php
  *	\ingroup    stock
- *	\brief      Page des informations d'un entrepot
+ *	\brief      Page des information d'un entrepot
  */
 
 // Load Dolibarr environment
@@ -94,7 +94,7 @@ if (isModEnabled('project')) {
 $morehtmlref .= '</div>';
 
 $shownav = 1;
-if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+if ($user->socid && !in_array('stock', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 	$shownav = 0;
 }
 

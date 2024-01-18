@@ -49,12 +49,13 @@ class Subscriptions extends DolibarrApi
 	/**
 	 * Get properties of a subscription object
 	 *
-	 * Return an array with subscription informations
+	 * Return an array with subscription information
 	 *
-	 * @param   int     $id 			ID of subscription
-	 * @return  Object              	Object with cleaned properties
+	 * @param   int     $id				ID of subscription
+	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws  RestException
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		No Subscription found
 	 */
 	public function get($id)
 	{
@@ -81,11 +82,14 @@ class Subscriptions extends DolibarrApi
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.import_key:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array Array of subscription objects
 	 *
-	 * @throws RestException
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		No Subscription found
+	 * @throws	RestException	503		Error when retrieving Subscription list
 	 */
-	public function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		global $conf;
 
@@ -125,15 +129,12 @@ class Subscriptions extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$subscription = new Subscription($this->db);
 				if ($subscription->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($subscription);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($subscription), $properties);
 				}
 				$i++;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve subscription list : '.$this->db->lasterror());
-		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No Subscription found');
 		}
 
 		return $obj_ret;
@@ -144,6 +145,9 @@ class Subscriptions extends DolibarrApi
 	 *
 	 * @param array $request_data   Request data
 	 * @return int  ID of subscription
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	500		Error when creating Subscription
 	 */
 	public function post($request_data = null)
 	{
@@ -155,10 +159,16 @@ class Subscriptions extends DolibarrApi
 
 		$subscription = new Subscription($this->db);
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$subscription->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$subscription->$field = $value;
 		}
 		if ($subscription->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when creating contribution', array_merge(array($subscription->error), $subscription->errors));
+			throw new RestException(500, 'Error when creating subscription', array_merge(array($subscription->error), $subscription->errors));
 		}
 		return $subscription->id;
 	}
@@ -169,6 +179,10 @@ class Subscriptions extends DolibarrApi
 	 * @param int   $id             ID of subscription to update
 	 * @param array $request_data   Datas
 	 * @return Object
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		No Subscription found
+	 * @throws	RestException	500		Error when updating Subscription
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -186,6 +200,12 @@ class Subscriptions extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$subscription->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$subscription->$field = $value;
 		}
 
@@ -201,6 +221,11 @@ class Subscriptions extends DolibarrApi
 	 *
 	 * @param int $id   ID of subscription to delete
 	 * @return array
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		No Subscription found
+	 * @throws	RestException	409		No Subscription deleted
+	 * @throws	RestException	500		Error when deleting Subscription
 	 */
 	public function delete($id)
 	{
@@ -218,7 +243,7 @@ class Subscriptions extends DolibarrApi
 		if ($res < 0) {
 			throw new RestException(500, "Can't delete, error occurs");
 		} elseif ($res == 0) {
-			throw new RestException(409, "Can't delete, that product is probably used");
+			throw new RestException(409, "No subscription whas deleted");
 		}
 
 		return array(

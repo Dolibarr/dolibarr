@@ -47,7 +47,7 @@ $show_files = GETPOST('show_files', 'int');
 $confirm 	= GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
 $toselect 	= GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'memberslist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'memberslist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $optioncss 	= GETPOST('optioncss', 'aZ');
 $mode 		= GETPOST('mode', 'alpha');
@@ -80,6 +80,10 @@ $socid 		= GETPOST('socid', 'int');
 
 $search_filter 		= GETPOST("search_filter", 'alpha');
 $search_status 		= GETPOST("search_status", 'intcomma');  // statut
+$search_datec_start = dol_mktime(0, 0, 0, GETPOST('search_datec_start_month', 'int'), GETPOST('search_datec_start_day', 'int'), GETPOST('search_datec_start_year', 'int'));
+$search_datec_end = dol_mktime(23, 59, 59, GETPOST('search_datec_end_month', 'int'), GETPOST('search_datec_end_day', 'int'), GETPOST('search_datec_end_year', 'int'));
+$search_datem_start = dol_mktime(0, 0, 0, GETPOST('search_datem_start_month', 'int'), GETPOST('search_datem_start_day', 'int'), GETPOST('search_datem_start_year', 'int'));
+$search_datem_end = dol_mktime(23, 59, 59, GETPOST('search_datem_end_month', 'int'), GETPOST('search_datem_end_day', 'int'), GETPOST('search_datem_end_year', 'int'));
 
 $filter = GETPOST("filter", 'alpha');
 if ($filter) {
@@ -91,14 +95,14 @@ if ($statut != '') {
 	$search_status = $statut; // For backward compatibility
 }
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
 if ($search_status < -2) {
 	$search_status = '';
 }
 
 // Pagination parameters
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -143,9 +147,6 @@ $fieldstosearchall = array(
 	'd.note_public'=>'NotePublic',
 	'd.note_private'=>'NotePrivate',
 );
-if ($db->type == 'pgsql') {
-	unset($fieldstosearchall['d.rowid']);
-}
 
 $arrayfields = array(
 	'd.ref'=>array('label'=>"Ref", 'checked'=>1),
@@ -153,31 +154,56 @@ $arrayfields = array(
 	'd.lastname'=>array('label'=>"Lastname", 'checked'=>1),
 	'd.firstname'=>array('label'=>"Firstname", 'checked'=>1),
 	'd.gender'=>array('label'=>"Gender", 'checked'=>0),
-	'd.company'=>array('label'=>"Company", 'checked'=>1),
+	'd.company'=>array('label'=>"Company", 'checked'=>1, 'position'=>70),
 	'd.login'=>array('label'=>"Login", 'checked'=>1),
 	'd.morphy'=>array('label'=>"MemberNature", 'checked'=>1),
-	't.libelle'=>array('label'=>"Type", 'checked'=>1),
-	'd.email'=>array('label'=>"Email", 'checked'=>1),
+	't.libelle'=>array('label'=>"Type", 'checked'=>1, 'position'=>55),
 	'd.address'=>array('label'=>"Address", 'checked'=>0),
 	'd.zip'=>array('label'=>"Zip", 'checked'=>0),
 	'd.town'=>array('label'=>"Town", 'checked'=>0),
 	'd.phone'=>array('label'=>"Phone", 'checked'=>0),
 	'd.phone_perso'=>array('label'=>"PhonePerso", 'checked'=>0),
 	'd.phone_mobile'=>array('label'=>"PhoneMobile", 'checked'=>0),
-	'state.nom'=>array('label'=>"State", 'checked'=>0),
-	'country.code_iso'=>array('label'=>"Country", 'checked'=>0),
+	'd.email'=>array('label'=>"Email", 'checked'=>1),
+	'state.nom'=>array('label'=>"State", 'checked'=>0, 'position'=>90),
+	'country.code_iso'=>array('label'=>"Country", 'checked'=>0, 'position'=>95),
 	/*'d.note_public'=>array('label'=>"NotePublic", 'checked'=>0),
 	'd.note_private'=>array('label'=>"NotePrivate", 'checked'=>0),*/
-	'd.datefin'=>array('label'=>"EndSubscription", 'checked'=>1, 'position'=>500),
-	'd.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	'd.birth'=>array('label'=>"Birthday", 'checked'=>0, 'position'=>500),
-	'd.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
-	'd.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
-	'd.import_key'=>array('label'=>"ImportId", 'checked'=>0, 'position'=>1100),
+	'd.datefin'=>array('label'=>"EndSubscription"),
+	'd.datec'=>array('label'=>"DateCreation"),
+	'd.birth'=>array('label'=>"Birthday"),
+	'd.tms'=>array('label'=>"DateModificationShort"),
+	'd.statut'=>array('label'=>"Status"),
+	'd.import_key'=>array('label'=>"ImportId"),
 );
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
+$object->fields = dol_sort_array($object->fields, 'position');
+//$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
+
+// Complete array of fields for columns
+$tableprefix = 'd';
+foreach ($object->fields as $key => $val) {
+	if (!array_key_exists($tableprefix.'.'.$key, $arrayfields)) {	// Discard record not into $arrayfields
+		continue;
+	}
+	// If $val['visible']==0, then we never show the field
+
+	if (!empty($val['visible'])) {
+		$visible = (int) dol_eval($val['visible'], 1);
+		$arrayfields[$tableprefix.'.'.$key] = array(
+			'label'=>$val['label'],
+			'checked'=>(($visible < 0) ? 0 : 1),
+			'enabled'=>dol_eval($val['enabled'], 1),
+			'position'=>$val['position'],
+			'help'=> isset($val['help']) ? $val['help'] : ''
+		);
+	}
+}
+$arrayfields = dol_sort_array($arrayfields, 'position');
+//var_dump($arrayfields);exit;
 
 // Security check
 $result = restrictedArea($user, 'adherent');
@@ -236,6 +262,10 @@ if (empty($reshook)) {
 		$catid = "";
 		$search_all = "";
 		$toselect = array();
+		$search_datec_start = '';
+		$search_datec_end = '';
+		$search_datem_start = '';
+		$search_datem_end = '';
 		$search_array_options = array();
 	}
 
@@ -366,8 +396,8 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
-// SQL Aliase adherent
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";  // maybe better to use ad (adh) instead od d
+// SQL Alias adherent
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";  // maybe better to use ad (adh) instead of d
 if (!empty($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
 }
@@ -375,7 +405,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = d
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = d.state_id)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on (s.rowid = d.fk_soc)";
 
-// SQL Aliase adherent_type
+// SQL Alias adherent_type
 $sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 $sql .= " WHERE d.fk_adherent_type = t.rowid";
 
@@ -434,7 +464,7 @@ if ($search_filter == 'outofdate') {
 	$sql .= " AND (datefin < '".$db->idate($now)."')";
 }
 if ($search_status != '') {
-	// Peut valoir un nombre ou liste de nombre separes par virgules
+	// Peut valoir un nombre ou liste de nombre separates par virgules
 	$sql .= " AND d.statut in (".$db->sanitize($db->escape($search_status)).")";
 }
 if ($search_morphy != '' && $search_morphy != '-1') {
@@ -491,6 +521,18 @@ if ($search_country) {
 if ($search_import_key) {
 	$sql .= natural_search("d.import_key", $search_import_key);
 }
+if ($search_datec_start) {
+	$sql .= " AND d.datec >= '".$db->idate($search_datec_start)."'";
+}
+if ($search_datec_end) {
+	$sql .= " AND d.datec <= '".$db->idate($search_datec_end)."'";
+}
+if ($search_datem_start) {
+	$sql .= " AND d.tms >= '".$db->idate($search_datem_start)."'";
+}
+if ($search_datem_end) {
+	$sql .= " AND d.tms <= '".$db->idate($search_datem_end)."'";
+}
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -536,7 +578,7 @@ $num = $db->num_rows($resql);
 
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/adherents/card.php?id='.$id);
@@ -636,6 +678,12 @@ if ($search_import_key != '') {
 }
 if ($search_type > 0) {
 	$param .= "&search_type=".urlencode($search_type);
+}
+if ($search_datec_start) {
+	$param .= '&search_datec_start_day='.dol_print_date($search_datec_start, '%d').'&search_datec_start_month='.dol_print_date($search_datec_start, '%m').'&search_datec_start_year='.dol_print_date($search_datec_start, '%Y');
+}
+if ($search_datem_end) {
+	$param .= '&search_datem_end_day='.dol_print_date($search_datem_end, '%d').'&search_datem_end_month='.dol_print_date($search_datem_end, '%m').'&search_datem_end_year='.dol_print_date($search_datem_end, '%Y');
 }
 
 // Add $param from extra fields
@@ -748,7 +796,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 
 // Line numbering
-if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 	print '<td class="liste_titre">&nbsp;</td>';
 }
 
@@ -892,6 +940,12 @@ print $hookmanager->resPrint;
 // Date creation
 if (!empty($arrayfields['d.datec']['checked'])) {
 	print '<td class="liste_titre">';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datec_start ? $search_datec_start : -1, 'search_datec_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datec_end ? $search_datec_end : -1, 'search_datec_end_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 
@@ -904,6 +958,12 @@ if (!empty($arrayfields['d.birth']['checked'])) {
 // Date modification
 if (!empty($arrayfields['d.tms']['checked'])) {
 	print '<td class="liste_titre">';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datem_start ? $search_datem_start : -1, 'search_datem_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datem_end ? $search_datem_end : -1, 'search_datem_end_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 
@@ -947,7 +1007,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
 	$totalarray['nbfield']++;
 }
-if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 	print_liste_field_titre("ID", $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -1105,9 +1165,11 @@ while ($i < $imaxinloop) {
 	}
 	$memberstatic->company = $companyname;
 
+	$object = $memberstatic;
+
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		$membertypestatic->id = $obj->type_id;
@@ -1141,7 +1203,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Technical ID
-		if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+		if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 			print '<td class="center" data-key="id">'.$obj->rowid.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1431,7 +1493,7 @@ print '</div>'."\n";
 
 print '</form>'."\n";
 
-if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
+if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
 	$hidegeneratedfilelistifempty = 1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
 		$hidegeneratedfilelistifempty = 0;

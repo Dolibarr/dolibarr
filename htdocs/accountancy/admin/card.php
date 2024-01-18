@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2013-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
  * Copyright (C) 2014       Florian Henry       <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -85,23 +85,23 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 			// Clean code
 
 			// To manage zero or not at the end of the accounting account
-			if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+			if (getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
 				$account_number = $account_number;
 			} else {
 				$account_number = clean_account($account_number);
 			}
 
-			if (GETPOST('account_parent', 'int') <= 0) {
+			if (GETPOSTINT('account_parent') <= 0) {
 				$account_parent = 0;
 			} else {
-				$account_parent = GETPOST('account_parent', 'int');
+				$account_parent = GETPOSTINT('account_parent');
 			}
 
 			$object->fk_pcg_version = $obj->pcg_version;
 			$object->pcg_type = GETPOST('pcg_type', 'alpha');
 			$object->account_number = $account_number;
 			$object->account_parent = $account_parent;
-			$object->account_category = GETPOST('account_category', 'alpha');
+			$object->account_category = GETPOSTINT('account_category');
 			$object->label = $label;
 			$object->labelshort = GETPOST('labelshort', 'alpha');
 			$object->active = 1;
@@ -148,23 +148,23 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 			// Clean code
 
 			// To manage zero or not at the end of the accounting account
-			if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+			if (getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
 				$account_number = $account_number;
 			} else {
 				$account_number = clean_account($account_number);
 			}
 
-			if (GETPOST('account_parent', 'int') <= 0) {
+			if (GETPOSTINT('account_parent') <= 0) {
 				$account_parent = 0;
 			} else {
-				$account_parent = GETPOST('account_parent', 'int');
+				$account_parent = GETPOSTINT('account_parent');
 			}
 
 			$object->fk_pcg_version = $obj->pcg_version;
 			$object->pcg_type = GETPOST('pcg_type', 'alpha');
 			$object->account_number = $account_number;
 			$object->account_parent = $account_parent;
-			$object->account_category = GETPOST('account_category', 'alpha');
+			$object->account_category = GETPOSTINT('account_category');
 			$object->label = $label;
 			$object->labelshort = GETPOST('labelshort', 'alpha');
 
@@ -215,9 +215,9 @@ $accountsystem->fetch(getDolGlobalInt('CHARTOFACCOUNTS'));
 
 $title = $langs->trans('AccountAccounting')." - ".$langs->trans('Card');
 
-$help_url = 'EN:Category:Accounting';
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
-llxheader('', $title, $help_url);
+llxHeader('', $title, $help_url);
 
 
 // Create mode
@@ -329,7 +329,7 @@ if ($action == 'create') {
 			// Account parent
 			print '<tr><td>'.$langs->trans("Accountparent").'</td>';
 			print '<td>';
-			// Note: We accept disabled account as parent account so we can build a hierarchy and use only childs
+			// Note: We accept disabled account as parent account so we can build a hierarchy and use only children
 			print $formaccounting->select_account($object->account_parent, 'account_parent', 1, array(), 0, 0, 'minwidth100 maxwidth300 maxwidthonsmartphone', 1, '');
 			print '</td></tr>';
 
@@ -381,7 +381,7 @@ if ($action == 'create') {
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border centpercent">';
+			print '<table class="border centpercent tableforfield">';
 
 			// Label
 			print '<tr><td class="titlefield">'.$langs->trans("Label").'</td>';

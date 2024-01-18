@@ -46,7 +46,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 	// Force master entity in transversal mode
 	$entity = $entitytotest;
-	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+	if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 		$entity = 1;
 	}
 
@@ -137,7 +137,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 		// Forge LDAP user and password to test with them
 		// If LDAP need a dn with login like "uid=jbloggs,ou=People,dc=foo,dc=com", default dn may work even if previous code with
-		// admin login no exectued.
+		// admin login no executed.
 		$ldap->searchUser = $ldapuserattr."=".$usertotest.",".$ldapdn; // Default dn (will work if LDAP accept a dn with login value inside)
 		// But if LDAP need a dn with name like "cn=Jhon Bloggs,ou=People,dc=foo,dc=com", previous part must have been executed to have
 		// dn detected into ldapUserDN.
@@ -155,7 +155,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 				dol_syslog("functions_ldap::check_user_password_ldap $login authentication ok");
 				// For the case, we search the user id using a search key without the login (but using other fields like id),
 				// we need to get the real login to use in the ldap answer.
-				if (!empty($conf->global->LDAP_FIELD_LOGIN) && !empty($ldap->login)) {
+				if (getDolGlobalString('LDAP_FIELD_LOGIN') && !empty($ldap->login)) {
 					$login = $ldap->login;
 					dol_syslog("functions_ldap::check_user_password_ldap login is now $login (LDAP_FIELD_LOGIN=".getDolGlobalString('LDAP_FIELD_LOGIN').")");
 				}
@@ -187,7 +187,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 				if ($login && !empty($conf->ldap->enabled) && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') == Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {	// ldap2dolibarr synchronization
 					dol_syslog("functions_ldap::check_user_password_ldap Sync ldap2dolibarr");
 
-					// On charge les attributs du user ldap
+					// On charge les attributes du user ldap
 					if ($ldapdebug) {
 						print "DEBUG: login ldap = ".$login."<br>\n";
 					}
@@ -205,7 +205,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 					// On recherche le user dolibarr en fonction de son SID ldap (only for Active Directory)
 					$sid = null;
-					if ($conf->global->LDAP_SERVER_TYPE == "activedirectory") {
+					if (getDolGlobalString('LDAP_SERVER_TYPE') == "activedirectory") {
 						$sid = $ldap->getObjectSid($login);
 						if ($ldapdebug) {
 							print "DEBUG: sid = ".$sid."<br>\n";
@@ -216,12 +216,12 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					$resultFetchUser = $usertmp->fetch('', $login, $sid, 1, ($entitytotest > 0 ? $entitytotest : -1));
 					if ($resultFetchUser > 0) {
 						dol_syslog("functions_ldap::check_user_password_ldap Sync user found user id=".$usertmp->id);
-						// On verifie si le login a change et on met a jour les attributs dolibarr
+						// Verify if the login changed and update the Dolibarr attributes
 
 						if ($usertmp->login != $ldap->login && $ldap->login) {
 							$usertmp->login = $ldap->login;
 							$usertmp->update($usertmp);
-							// TODO Que faire si update echoue car on update avec un login deja existant pour un autre compte.
+							// TODO What to do if the update fails because the login already exists for another account.
 						}
 
 						//$resultUpdate = $usertmp->update_ldap2dolibarr($ldap);

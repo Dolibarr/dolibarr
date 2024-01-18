@@ -11,13 +11,13 @@ TypeOfSupport=支持类型
 TypeSupportCommunauty=社区（免费）
 TypeSupportCommercial=商业
 TypeOfHelp=类型
-NeedHelpCenter=需要帮助或支持？
+NeedHelpCenter=Need support?
 Efficiency=效率
 TypeHelpOnly=只有帮助
 TypeHelpDev=帮助+开发
 TypeHelpDevForm=帮助+开发+培训
-BackToHelpCenter=否则，<a href="%s">请返回帮助中心首页</a>
+BackToHelpCenter=否则，<a href="%s">请返回帮助中心主页</a>
 LinkToGoldMember=您可以通过点击小工具来呼叫Dolibarr为您的语言（%s）预先选择的教练（状态和最高价格会自动更新）：
 PossibleLanguages=支持的语言
-SubscribeToFoundation=帮助Dolibarr项目，向基金会捐款
+SubscribeToFoundation=帮助Dolibarr项目，订阅基金会
 SeeOfficalSupport=使用您语言的Dolibarr官方支持：<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

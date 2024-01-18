@@ -20,7 +20,7 @@
 
 /**
  *	\file       htdocs/core/lib/prelevement.lib.php
- *	\brief      Ensemble de fonctions de base pour le module prelevement
+ *	\brief      Ensemble de functions de base pour le module prelevement
  *	\ingroup    propal
  */
 
@@ -33,8 +33,11 @@
  */
 function prelevement_prepare_head(BonPrelevement $object)
 {
-	global $langs, $conf, $user;
-	$langs->load("withdrawals");
+	global $langs, $conf;
+
+	$salary = $object->checkIfSalaryBonPrelevement();
+
+	$langs->loadLangs(array("bills", "withdrawals"));
 
 	$h = 0;
 	$head = array();
@@ -49,8 +52,16 @@ function prelevement_prepare_head(BonPrelevement $object)
 	$head[$h][2] = 'prelevement';
 	$h++;
 
+	$titleoftab = $langs->trans("Bills");
+	if ($object->type == 'bank-transfer') {
+		$titleoftab = $langs->trans("SupplierBills");
+	}
+	if ($salary > 0) {
+		$titleoftab = $langs->trans("Salaries");
+	}
+
 	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Bills");
+	$head[$h][1] = $titleoftab;
 	$head[$h][2] = 'invoices';
 	$h++;
 
@@ -86,21 +97,58 @@ function prelevement_check_config($type = 'direct-debit')
 {
 	global $conf, $db;
 	if ($type == 'bank-transfer') {
-		if (empty($conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT)) {
+		if (!getDolGlobalString('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT')) {
 			return -1;
 		}
 		//if (empty($conf->global->PRELEVEMENT_ICS)) return -1;
-		if (empty($conf->global->PAYMENTBYBANKTRANSFER_USER)) {
+		if (!getDolGlobalString('PAYMENTBYBANKTRANSFER_USER')) {
 			return -1;
 		}
 	} else {
-		if (empty($conf->global->PRELEVEMENT_ID_BANKACCOUNT)) {
+		if (!getDolGlobalString('PRELEVEMENT_ID_BANKACCOUNT')) {
 			return -1;
 		}
 		//if (empty($conf->global->PRELEVEMENT_ICS)) return -1;
-		if (empty($conf->global->PRELEVEMENT_USER)) {
+		if (!getDolGlobalString('PRELEVEMENT_USER')) {
 			return -1;
 		}
 	}
 	return 0;
+}
+
+	/**
+ *  Return array head with list of tabs to view object information
+ *
+ *  @param	BonPrelevement	$object         	Member
+ *  @param  int     		$nbOfInvoices   	No of invoices
+ *  @param  int     		$nbOfSalaryInvoice  No of salary invoices
+ *  @return array           					head
+ */
+function bon_prelevement_prepare_head(BonPrelevement $object, $nbOfInvoices, $nbOfSalaryInvoice)
+{
+	global $langs, $conf;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/create.php?type=bank-transfer';
+	$head[$h][1] = ($nbOfInvoices <= 0 ? $langs->trans("Invoices") : $langs->trans("Invoices").'<span class="badge marginleftonlyshort">'.$nbOfInvoices.'</span>');
+	$head[$h][2] = 'invoice';
+	$h++;
+
+	// Salaries
+
+	$head[$h][0] = DOL_URL_ROOT."/compta/prelevement/create.php?type=bank-transfer&sourcetype=salary";
+	$head[$h][1] = ($nbOfSalaryInvoice <= 0 ? $langs->trans("Salaries") : $langs->trans("Salaries").'<span class="badge marginleftonlyshort">'.$nbOfSalaryInvoice.'</span>');
+	$head[$h][2] = 'salary';
+	$h++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'prelevement');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'prelevement', 'remove');
+	return $head;
 }

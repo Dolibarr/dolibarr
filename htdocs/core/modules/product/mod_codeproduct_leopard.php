@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/core/modules/product/mod_codeproduct_leopard.php
  *       \ingroup    product
- *       \brief      Fichier de la classe des gestion leopard des codes produits
+ *       \brief      Fichier de la class des gestion leopard des codes produits
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php';
@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
 
 /**
  *	\class 		mod_codeproduct_leopard
- *	\brief 		Classe permettant la gestion leopard des codes produits
+ *	\brief 		Class permettant la gestion leopard des codes produits
  */
 class mod_codeproduct_leopard extends ModeleProductCode
 {
@@ -52,7 +52,7 @@ class mod_codeproduct_leopard extends ModeleProductCode
 
 	public $code_modifiable; // Code modifiable
 
-	public $code_modifiable_invalide; // Code modifiable si il est invalide
+	public $code_modifiable_invalide; // Code modifiable si il est invalid
 
 	public $code_modifiable_null; // Code modifiables si il est null
 
@@ -95,6 +95,18 @@ class mod_codeproduct_leopard extends ModeleProductCode
 		return $langs->trans("LeopardNumRefModelDesc");
 	}
 
+	/**
+	 * Return an example of result returned by getNextValue
+	 *
+	 * @param	Translate	$langs		Object langs
+	 * @param	Product		$objproduct		Object product
+	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string					Return string example
+	 */
+	public function getExample($langs, $objproduct = null, $type = -1)
+	{
+		return '';
+	}
 
 	/**
 	 * Return an example of result returned by getNextValue
@@ -103,9 +115,8 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return next value
 	 */
-	public function getNextValue($objproduct = 0, $type = -1)
+	public function getNextValue($objproduct = null, $type = -1)
 	{
-		global $langs;
 		return '';
 	}
 
@@ -130,9 +141,9 @@ class mod_codeproduct_leopard extends ModeleProductCode
 		$result = 0;
 		$code = strtoupper(trim($code));
 
-		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) {
+		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
 			$result = 0;
-		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))) {
+		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED'))) {
 			$result = -2;
 		}
 

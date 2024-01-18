@@ -240,7 +240,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					// Must not found $this->db->
 					$ok=true;
 					$matches=array();
-					// Check string $this->db-> into a non class.php file (it shoud be $db-> into such classes)
+					// Check string $this->db-> into a non class.php file (it should be $db-> into such classes)
 					preg_match_all('/'.preg_quote('$this->db->', '/').'/', $filecontent, $matches, PREG_SET_ORDER);
 					foreach ($matches as $key => $val) {
 						$ok=false;
@@ -343,9 +343,9 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			preg_match_all('/\$sql \.= \'\s*VALUES.*\$/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
 				//if ($val[1] != '\'"' && $val[1] != '\'\'') {
-					var_dump($matches);
-					$ok=false;
-					break;
+				var_dump($matches);
+				$ok=false;
+				break;
 				//}
 				//if ($reg[0] != 'db') $ok=false;
 			}
@@ -504,8 +504,8 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			// Check string ='print_liste_field_titre\(\$langs'.
 			preg_match_all('/print_liste_field_titre\(\$langs/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				   $ok=false;
-				   break;
+				$ok=false;
+				break;
 			}
 			$this->assertTrue($ok, 'Found a use of print_liste_field_titre with first parameter that is a translated value instead of just the translation key in file '.$file['relativename'].'. Bad.');
 
@@ -567,7 +567,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				$ok=false;
 				break;
 			}
-			$this->assertTrue($ok, 'Found code empty($user->hasRight in file '.$file['relativename'].'. empty() must not be used with hasRight.');
+			$this->assertTrue($ok, 'Found code empty($user->hasRight in file '.$file['relativename'].'. empty() must not be used on a var not on a function.');
 
 			// Test we don't have empty(DolibarrApiAccess::$user->hasRight
 			$ok=true;
@@ -577,7 +577,17 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				$ok=false;
 				break;
 			}
-			$this->assertTrue($ok, 'Found code empty(DolibarrApiAccess::$user->hasRight in file '.$file['relativename'].'. empty() must not be used with hasRight.');
+			$this->assertTrue($ok, 'Found code empty(DolibarrApiAccess::$user->hasRight in file '.$file['relativename'].'. empty() must not be used on a var not on a function.');
+
+			// Test we don't have empty($user->hasRight
+			$ok=true;
+			$matches=array();
+			preg_match_all('/empty\(getDolGlobal/', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				$ok=false;
+				break;
+			}
+			$this->assertTrue($ok, 'Found code empty(getDolGlobal... in file '.$file['relativename'].'. empty() must be used on a var not on a function.');
 
 			// Test we don't have @var array(
 			$ok=true;

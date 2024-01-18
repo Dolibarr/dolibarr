@@ -60,14 +60,14 @@ class Contacts extends DolibarrApi
 	/**
 	 * Get properties of a contact object
 	 *
-	 * Return an array with contact informations
+	 * Return an array with contact information
 	 *
-	 * @param 	int    $id                  ID of contact
+	 * @param	int    $id                  ID of contact
 	 * @param   int    $includecount        Count and return also number of elements the contact is used as a link for
 	 * @param   int    $includeroles        Includes roles of the contact
-	 * @return 	array|mixed data without useless information
+	 * @return	array|mixed data without useless information
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id, $includecount = 0, $includeroles = 0)
 	{
@@ -107,10 +107,10 @@ class Contacts extends DolibarrApi
 	/**
 	 * Get properties of a contact object by Email
 	 *
-	 * @param 	string 	$email 					Email of contact
+	 * @param	string	$email					Email of contact
 	 * @param   int    $includecount        Count and return also number of elements the contact is used as a link for
 	 * @param   int    $includeroles        Includes roles of the contact
-	 * @return 	array|mixed data without useless information
+	 * @return	array|mixed data without useless information
 	 *
 	 * @url GET email/{email}
 	 *
@@ -157,20 +157,21 @@ class Contacts extends DolibarrApi
 	 *
 	 * Get a list of contacts
 	 *
-	 * @param string	$sortfield	        Sort field
-	 * @param string	$sortorder	        Sort order
-	 * @param int		$limit		        Limit for list
-	 * @param int		$page		        Page number
-	 * @param string   	$thirdparty_ids	    Thirdparty ids to filter contacts of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param int    	$category   Use this param to filter list by category
+	 * @param string	$sortfield			Sort field
+	 * @param string	$sortorder			Sort order
+	 * @param int		$limit				Limit for list
+	 * @param int		$page				Page number
+	 * @param string	$thirdparty_ids		Thirdparty ids to filter contacts of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param int		$category   Use this param to filter list by category
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param int       $includecount       Count and return also number of elements the contact is used as a link for
-	 * @param int    	$includeroles        Includes roles of the contact
+	 * @param int		$includeroles        Includes roles of the contact
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                        Array of contact objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $includecount = 0, $includeroles = 0)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $includecount = 0, $includeroles = 0, $properties = '')
 	{
 		global $db, $conf;
 
@@ -195,27 +196,19 @@ class Contacts extends DolibarrApi
 			$sql .= ", ".MAIN_DB_PREFIX."categorie_contact as c";
 		}
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as te ON te.fk_object = t.rowid";
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
-			// We need this table joined to the select in order to filter by sale
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		}
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON t.fk_soc = s.rowid";
 		$sql .= ' WHERE t.entity IN ('.getEntity('contact').')';
 		if ($socids) {
 			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
 		}
-
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
-			$sql .= " AND t.fk_soc = sc.fk_soc";
+		// Search on sale representative
+		if ($search_sale && $search_sale != '-1') {
+			if ($search_sale == -2) {
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+			} elseif ($search_sale > 0) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			}
 		}
-		if ($search_sale > 0) {
-			$sql .= " AND s.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
-		}
-		// Insert sale filter
-		if ($search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".((int) $search_sale);
-		}
-
 		// Select contacts of given category
 		if ($category > 0) {
 			$sql .= " AND c.fk_categorie = ".((int) $category);
@@ -261,7 +254,7 @@ class Contacts extends DolibarrApi
 						$contact_static->getNoEmail();
 					}
 
-					$obj_ret[] = $this->_cleanObjectDatas($contact_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($contact_static), $properties);
 				}
 
 				$i++;
@@ -290,7 +283,19 @@ class Contacts extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
-			$this->contact->$field = $value;
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->contact->context['caller'] = $request_data['caller'];
+				continue;
+			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->contact->array_options[$index] = $val;
+				}
+				continue;
+			}
+
+			$this->contact->$field = $this->_checkValForAPI($field, $value, $this->contact);
 		}
 		if ($this->contact->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating contact", array_merge(array($this->contact->error), $this->contact->errors));
@@ -326,13 +331,20 @@ class Contacts extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
-			} elseif ($field == 'array_options' && is_array($value)) {
+			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->contact->context['caller'] = $request_data['caller'];
+				continue;
+			}
+			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
 					$this->contact->array_options[$index] = $val;
 				}
-			} else {
-				$this->contact->$field = $value;
+				continue;
 			}
+
+			$this->contact->$field = $this->_checkValForAPI($field, $value, $this->contact);
 		}
 
 		if (isModEnabled('mailing') && !empty($this->contact->email) && isset($this->contact->no_email)) {
@@ -366,13 +378,13 @@ class Contacts extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->contact->oldcopy = clone $this->contact;
-		return $this->contact->delete();
+		return $this->contact->delete(DolibarrApiAccess::$user);
 	}
 
 	/**
 	 * Create an user account object from contact (external user)
 	 *
-	 * @param   int   	$id   Id of contact
+	 * @param   int		$id   Id of contact
 	 * @param   array   $request_data   Request datas
 	 * @return  int     ID of user
 	 *
@@ -445,10 +457,6 @@ class Contacts extends DolibarrApi
 
 		$result = $categories->getListForItem($id, 'contact', $sortfield, $sortorder, $limit, $page);
 
-		if (empty($result)) {
-			throw new RestException(404, 'No category found');
-		}
-
 		if ($result < 0) {
 			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
 		}
@@ -459,7 +467,7 @@ class Contacts extends DolibarrApi
 	/**
 	 * Add a category to a contact
 	 *
-	 * @url POST {id}/categories/{category_id}
+	 * @url PUT {id}/categories/{category_id}
 	 *
 	 * @param   int		$id             Id of contact
 	 * @param   int     $category_id    Id of category

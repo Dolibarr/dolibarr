@@ -242,7 +242,7 @@ print $formadvtargetemaling->multiselectselectSalesRepresentatives('cust_saleman
 print '</td><td>'."\n";
 print '</td></tr>'."\n";
 
-// Customer Default Langauge
+// Customer Default Language
 if (getDolGlobalInt('MAIN_MULTILANGS')) {
 	print '<tr><td>'.$langs->trans("DefaultLang");
 	if (!empty($array_query['cust_language'])) {
@@ -268,7 +268,7 @@ if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 }
 
 // Standard Extrafield feature
-if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
+if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 	$socstatic = new Societe($db);
 	$elementtype = $socstatic->table_element;
 	// fetch optionals attributes and labels
@@ -460,7 +460,7 @@ if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 }
 
 // Standard Extrafield feature
-if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
+if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 	$contactstatic = new Contact($db);
 	$elementype = $contactstatic->table_element;
 	// fetch optionals attributes and labels

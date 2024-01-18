@@ -63,7 +63,7 @@ DATAPOLICY_opposition_prospection = Opposes the processing of his personal data 
 #
 # Popup
 #
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonymize a thirdparty
+DATAPOLICY_POPUP_ANONYME_TITLE = Anonymize a third party
 DATAPOLICY_POPUP_ANONYME_TEXTE = You can not delete this contact from Dolibarr because there are related items. In accordance with the GDPR, you will make all this data anonymous to respect your obligations. Would you like to continue ?
 
 #

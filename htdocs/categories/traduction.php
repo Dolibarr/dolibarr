@@ -52,7 +52,8 @@ $result = restrictedArea($user, 'categorie', $id, '&category');
 $object = new Categorie($db);
 $result = $object->fetch($id, $label);
 if ($result <= 0) {
-	dol_print_error($db, $object->error); exit;
+	dol_print_error($db, $object->error);
+	exit;
 }
 
 $type = $object->type;
@@ -76,7 +77,7 @@ if ($cancel == $langs->trans("Cancel")) {
 // validation of addition
 if ($action == 'vadd' &&
 $cancel != $langs->trans("Cancel") &&
-($user->rights->categorie->creer)) {
+($user->hasRight('categorie', 'creer'))) {
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
@@ -125,7 +126,7 @@ $cancel != $langs->trans("Cancel") &&
 // validation of the edition
 if ($action == 'vedit' &&
 $cancel != $langs->trans("Cancel") &&
-($user->rights->categorie->creer)) {
+($user->hasRight('categorie', 'creer'))) {
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
@@ -189,7 +190,7 @@ print dol_get_fiche_head($head, 'translation', $langs->trans($title), -1, 'categ
 
 $backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.urlencode($type));
 $linkback = '<a href="'.dol_sanitizeUrl($backtolist).'">'.$langs->trans("BackToList").'</a>';
-$object->next_prev_filter = ' type = '.$object->type;
+$object->next_prev_filter = 'type = '.((int) $object->type);
 $object->ref = $object->label;
 $morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 $ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
@@ -293,7 +294,7 @@ if ($action == 'edit') {
 			print '<tr class="liste_titre"><td colspan="2">'.($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'&type='.$type.'">'.img_delete('', '').'</a></td></tr>';
 			print '<tr><td class="titlefield">'.$langs->trans('Label').'</td><td>'.$object->multilangs[$key]["label"].'</td></tr>';
 			print '<tr><td>'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
-			if (!empty($conf->global->CATEGORY_USE_OTHER_FIELD_IN_TRANSLATION)) {
+			if (getDolGlobalString('CATEGORY_USE_OTHER_FIELD_IN_TRANSLATION')) {
 				print '<tr><td>'.$langs->trans('Other').' ('.$langs->trans("NotUsed").')</td><td>'.$object->multilangs[$key]["other"].'</td></tr>';
 			}
 			print '</table>';

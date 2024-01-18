@@ -50,7 +50,7 @@ if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuse
 	unset($_SESSION["dol_login"]);
 	unset($_SESSION['dol_entity']);
 	unset($_SESSION['urlfrom']);
-	die("Applicative disconnection should be useless when connection was made in mode ".$_SESSION["dol_authmode"]);
+	die("Applicative disconnection should be useless when connection was made in mode ".$_SESSION["dol_authmode"]);	// TODO Really ? It at least delete the session file ?!
 }
 
 //global $conf, $langs, $user;
@@ -79,8 +79,8 @@ $url = DOL_URL_ROOT."/index.php"; // By default go to login page
 if ($urlfrom) {
 	$url = DOL_URL_ROOT.$urlfrom;
 }
-if (!empty($conf->global->MAIN_LOGOUT_GOTO_URL)) {
-	$url = $conf->global->MAIN_LOGOUT_GOTO_URL;
+if (getDolGlobalString('MAIN_LOGOUT_GOTO_URL')) {
+	$url = getDolGlobalString('MAIN_LOGOUT_GOTO_URL');
 }
 
 if (GETPOST('dol_hide_topmenu')) {

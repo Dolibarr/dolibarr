@@ -163,7 +163,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
 		$model='csvutf8';
 
 		$conf->global->EXPORT_CSV_SEPARATOR_TO_USE = ',';
-		print 'EXPORT_CSV_SEPARATOR_TO_USE = '.$conf->global->EXPORT_CSV_SEPARATOR_TO_USE;
+		print 'EXPORT_CSV_SEPARATOR_TO_USE = ' . getDolGlobalString('EXPORT_CSV_SEPARATOR_TO_USE');
 
 		// Creation of class to export using model ExportXXX
 		$dir = DOL_DOCUMENT_ROOT . "/core/modules/export/";
@@ -252,7 +252,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
 		$model='csviso';
 
 		$conf->global->EXPORT_CSV_SEPARATOR_TO_USE = ',';
-		print 'EXPORT_CSV_SEPARATOR_TO_USE = '.$conf->global->EXPORT_CSV_SEPARATOR_TO_USE;
+		print 'EXPORT_CSV_SEPARATOR_TO_USE = ' . getDolGlobalString('EXPORT_CSV_SEPARATOR_TO_USE');
 
 		// Creation of class to export using model ExportXXX
 		$dir = DOL_DOCUMENT_ROOT . "/core/modules/export/";
@@ -455,7 +455,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
 
 		$filterdatatoexport='';
 		//$filterdatatoexport='';
-		//$array_selected = array("s.rowid"=>1, "s.nom"=>2);	// Mut be fields found into declaration of dataset
+		//$array_selected = array("s.rowid"=>1, "s.nom"=>2);	// Must be fields found into declaration of dataset
 
 		// Load properties of arrays to make export
 		$objexport=new Export($db);

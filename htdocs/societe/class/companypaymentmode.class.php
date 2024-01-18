@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2024       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ class CompanyPaymentMode extends CommonObject
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'position' is the sort order of field.
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
@@ -114,8 +114,9 @@ class CompanyPaymentMode extends CommonObject
 		'max_total_amount_of_all_payments' =>array('type'=>'double(24,8)', 'label'=>'Max total amount of all payments', 'enabled'=>1, 'visible'=>-2, 'position'=>155),
 		'preapproval_key' =>array('type'=>'varchar(255)', 'label'=>'Preapproval key', 'enabled'=>1, 'visible'=>-2, 'position'=>160),
 		'total_amount_of_all_payments' =>array('type'=>'double(24,8)', 'label'=>'Total amount of all payments', 'enabled'=>1, 'visible'=>-2, 'position'=>165),
-		'stripe_card_ref' =>array('type'=>'varchar(128)', 'label'=>'Stripe card ref', 'enabled'=>1, 'visible'=>-2, 'position'=>170),
-		'stripe_account' =>array('type'=>'varchar(128)', 'label'=>'Stripe account', 'enabled'=>1, 'visible'=>-2, 'position'=>171),
+		'stripe_card_ref' =>array('type'=>'varchar(128)', 'label'=>'ExternalSystemID', 'enabled'=>1, 'visible'=>-2, 'position'=>170, 'help'=>'IDOfPaymentInAnExternalSystem'),
+		'stripe_account' =>array('type'=>'varchar(128)', 'label'=>'ExternalSystemCustomerAccount', 'enabled'=>1, 'visible'=>-2, 'position'=>171, 'help'=>'IDOfCustomerInAnExternalSystem'),
+		'ext_payment_site' =>array('type'=>'varchar(128)', 'label'=>'ExternalSystem', 'enabled'=>1, 'visible'=>-2, 'position'=>172, 'help'=>'NameOfExternalSystem'),
 		'status' =>array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>175),
 		'starting_date' =>array('type'=>'date', 'label'=>'Starting date', 'enabled'=>1, 'visible'=>-2, 'position'=>180),
 		'ending_date' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>1, 'visible'=>-2, 'position'=>185),
@@ -178,8 +179,9 @@ class CompanyPaymentMode extends CommonObject
 	public $max_total_amount_of_all_payments;
 	public $preapproval_key;
 	public $total_amount_of_all_payments;
-	public $stripe_card_ref;
-	public $stripe_account;
+	public $stripe_card_ref;	// External system payment mode ID
+	public $stripe_account;		// External system customer ID
+	public $ext_payment_site;	// External system 'StripeLive', 'StripeTest', 'StancerLive', 'StancerTest', ...
 
 	/**
 	 * @var int Status
@@ -210,7 +212,7 @@ class CompanyPaymentMode extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -218,7 +220,7 @@ class CompanyPaymentMode extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -230,10 +232,10 @@ class CompanyPaymentMode extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		$idpayment = $this->createCommon($user, $notrigger);
 
@@ -298,7 +300,7 @@ class CompanyPaymentMode extends CommonObject
 	 * @param	int		$socid			Id of company to get first default payment mode
 	 * @param	string	$type			Filter on type ('ban', 'card', ...)
 	 * @param	string	$morewhere		More SQL filters (' AND ...')
-	 * @return 	int         			<0 if KO, 0 if not found, >0 if OK
+	 * @return 	int         			Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $socid = 0, $type = '', $morewhere = '')
 	{
@@ -321,7 +323,7 @@ class CompanyPaymentMode extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	/*public function fetchLines()
 	{
@@ -336,10 +338,10 @@ class CompanyPaymentMode extends CommonObject
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		return $this->updateCommon($user, $notrigger);
 	}
@@ -347,17 +349,17 @@ class CompanyPaymentMode extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param User 	$user       User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option						On what the link point to ('nolink', ...)
@@ -388,7 +390,7 @@ class CompanyPaymentMode extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -398,7 +400,7 @@ class CompanyPaymentMode extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowCompanyPaymentMode");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -429,7 +431,7 @@ class CompanyPaymentMode extends CommonObject
 	 * Set a Payment mode as Default
 	 *
 	 * @param   int     $id    		Payment mode ID
-	 * @param	string	$alltypes	1=The default is for all payment types instead of per type
+	 * @param	int 	$alltypes	1=The default is for all payment types instead of per type
 	 * @return  int             	0 if KO, 1 if OK
 	 */
 	public function setAsDefault($id = 0, $alltypes = 0)
@@ -538,6 +540,7 @@ class CompanyPaymentMode extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;

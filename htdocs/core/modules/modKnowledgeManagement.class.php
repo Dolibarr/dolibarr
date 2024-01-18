@@ -182,7 +182,7 @@ class modKnowledgeManagement extends DolibarrModules
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
 		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
@@ -266,7 +266,7 @@ class modKnowledgeManagement extends DolibarrModules
 			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'top', // This is a Top menu entry
 			'titre'=>'ModuleKnowledgeManagementName',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
+			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth em092"'),
 			'mainmenu'=>'knowledgemanagement',
 			'leftmenu'=>'',
 			'url'=>'/knowledgemanagement/knowledgerecord_list.php',

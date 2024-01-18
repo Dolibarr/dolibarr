@@ -21,7 +21,7 @@
  *		\brief      File of class to build exports with CSV format
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/export/exportcsv.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/export/exportcsv.class.php';
 
 // avoid timeout for big export
 set_time_limit(0);
@@ -31,7 +31,6 @@ set_time_limit(0);
  */
 class ExportCsvIso extends ExportCsv
 {
-
 	/**
 	 *	Constructor
 	 *
@@ -43,8 +42,8 @@ class ExportCsvIso extends ExportCsv
 		$this->db = $db;
 
 		$this->separator = ',';
-		if (!empty($conf->global->EXPORT_CSV_SEPARATOR_TO_USE)) {
-			$this->separator = $conf->global->EXPORT_CSV_SEPARATOR_TO_USE;
+		if (getDolGlobalString('EXPORT_CSV_SEPARATOR_TO_USE')) {
+			$this->separator = getDolGlobalString('EXPORT_CSV_SEPARATOR_TO_USE');
 		}
 
 		$conf->global->EXPORT_CSV_FORCE_CHARSET = 'ISO-8859-1';
@@ -71,7 +70,7 @@ class ExportCsvIso extends ExportCsv
 	 *  @param      array		$array_selected_sorted       	Array with list of field to export
 	 *  @param      Translate	$outputlangs    				Object lang to translate values
 	 *  @param		array		$array_types					Array with types of fields
-	 * 	@return		int											<0 if KO, >0 if OK
+	 * 	@return		int											Return integer <0 if KO, >0 if OK
 	 */
 	public function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
 	{
@@ -89,7 +88,7 @@ class ExportCsvIso extends ExportCsv
 	 *  @param     	resource	$objp                       A record from a fetch with all fields from select
 	 *  @param     	Translate	$outputlangs    			Object lang to translate values
 	 *  @param		array		$array_types				Array with types of fields
-	 * 	@return		int										<0 if KO, >0 if OK
+	 * 	@return		int										Return integer <0 if KO, >0 if OK
 	 */
 	public function write_record($array_selected_sorted, $objp, $outputlangs, $array_types)
 	{

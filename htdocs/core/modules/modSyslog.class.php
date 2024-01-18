@@ -17,11 +17,12 @@
  */
 
 /**
- *	\defgroup   syslog  Module syslog
- *	\brief      Module pour gerer les messages d'erreur dans syslog
- *	\file       htdocs/core/modules/modSyslog.class.php
- *	\ingroup    syslog
- *	\brief      Description and activation file for the module syslog
+ *  \defgroup   syslog  Module Syslog
+ *  \brief      Module to manage error messages in syslog
+ *
+ *  \file       htdocs/core/modules/modSyslog.class.php
+ *  \ingroup    syslog
+ *  \brief      Description and activation file for the module syslog
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -31,7 +32,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modSyslog extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
