@@ -849,9 +849,9 @@ class Project extends CommonObject
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." IN (".$this->db->sanitize($ids).") AND entity IN (".getEntity($type).")";
 		}
 
-		if ($date_start > 0 && $type == 'loan') {
+		if (isDolTms($date_start) && $type == 'loan') {
 			$sql .= " AND (dateend > '".$this->db->idate($date_start)."' OR dateend IS NULL)";
-		} elseif ($date_start > 0 && ($type != 'project_task')) {	// For table project_taks, we want the filter on date apply on project_time_spent table
+		} elseif (isDolTms($date_start) && ($type != 'project_task')) {	// For table project_taks, we want the filter on date apply on project_time_spent table
 			if (empty($datefieldname) && !empty($this->table_element_date)) {
 				$datefieldname = $this->table_element_date;
 			}
@@ -861,9 +861,9 @@ class Project extends CommonObject
 			$sql .= " AND (".$datefieldname." >= '".$this->db->idate($date_start)."' OR ".$datefieldname." IS NULL)";
 		}
 
-		if ($date_end > 0 && $type == 'loan') {
+		if (isDolTms($date_end) && $type == 'loan') {
 			$sql .= " AND (datestart < '".$this->db->idate($date_end)."' OR datestart IS NULL)";
-		} elseif ($date_end > 0 && ($type != 'project_task')) {	// For table project_taks, we want the filter on date apply on project_time_spent table
+		} elseif (isDolTms($date_end) && ($type != 'project_task')) {	// For table project_taks, we want the filter on date apply on project_time_spent table
 			if (empty($datefieldname) && !empty($this->table_element_date)) {
 				$datefieldname = $this->table_element_date;
 			}
