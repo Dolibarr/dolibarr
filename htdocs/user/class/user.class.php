@@ -3875,15 +3875,13 @@ class User extends CommonObject
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load metrics this->nb for dashboard
 	 *
 	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $conf;
 
 		$this->nb = array();

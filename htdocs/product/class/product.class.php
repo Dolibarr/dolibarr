@@ -6123,15 +6123,13 @@ class Product extends CommonObject
 		$this->imgHeight = $infoImg[1]; // Hauteur de l'image
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load indicators this->nb for the dashboard
 	 *
 	 * @return int                 Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $hookmanager;
 
 		$this->nb = array();
