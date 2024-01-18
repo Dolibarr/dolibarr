@@ -2285,7 +2285,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					$userstatic->lastname = $task_time->lastname;
 					$userstatic->firstname = $task_time->firstname;
 					$userstatic->photo = $task_time->photo;
-					$userstatic->statut = $task_time->user_status;
+					$userstatic->status = $task_time->user_status;
 					print $userstatic->getNomUrl(-1);
 				}
 				print '</td>';
@@ -2567,7 +2567,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 						$userstatic->lastname = $task_time->lastname;
 						$userstatic->firstname = $task_time->firstname;
 						$userstatic->photo = $task_time->photo;
-						$userstatic->statut = $task_time->user_status;
+						$userstatic->status = $task_time->user_status;
 						print $userstatic->getNomUrl(-1);
 					}
 					print '</td>';
@@ -2723,7 +2723,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 						$userstatic->lastname = $task_time->lastname;
 						$userstatic->firstname = $task_time->firstname;
 						$userstatic->photo = $task_time->photo;
-						$userstatic->statut = $task_time->user_status;
+						$userstatic->status = $task_time->user_status;
 						print $userstatic->getNomUrl(-1);
 					}
 					print '</td>';
