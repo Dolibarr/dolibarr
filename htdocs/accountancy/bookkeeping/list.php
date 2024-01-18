@@ -1037,7 +1037,7 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print "</tr>\n";
 
 
-$line = new BookKeepingLine();
+$line = new BookKeepingLine($db);
 
 // Loop on record
 // --------------------------------------------------------------------
