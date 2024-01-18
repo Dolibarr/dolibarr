@@ -643,7 +643,7 @@ class BankAccounts extends DolibarrApi
 
 		$accountLine->label = sanitizeVal($label);
 
-		$result = $accountLine->update_label();
+		$result = $accountLine->updateLabel();
 		if ($result < 0) {
 			throw new RestException(503, 'Error when updating link to account line: ' . $accountLine->error);
 		}
