@@ -232,7 +232,7 @@ if (empty($reshook)) {
 			// Get first contract linked to invoice used to generate template (facid is id of source invoice)
 			if (GETPOSTINT('facid') > 0) {
 				$srcObject = new Facture($db);
-				$srcObject->fetch(GETPOSTINT('facid');
+				$srcObject->fetch(GETPOSTINT('facid'));
 
 				$srcObject->fetchObjectLinked();
 
