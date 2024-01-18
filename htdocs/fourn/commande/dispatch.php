@@ -289,7 +289,7 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 								$sql .= ", price=".price2num($pu, 'MU')."*quantity";
 								$sql .= ", remise_percent = ".((float) $dto);
 								$sql .= " WHERE fk_soc=".((int) $object->socid);
-								$sql .= " AND fk_product=".$productId;
+								$sql .= " AND fk_product=".((int) $productId);
 
 								$resql = $db->query($sql);
 							}
@@ -359,7 +359,7 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 								$sql .= ", price = ".price2num($pu, 'MU', 2)." * quantity";
 								$sql .= ", remise_percent = ".price2num((empty($dto) ? 0 : $dto), 3, 2)."'";
 								$sql .= " WHERE fk_soc = ".((int) $object->socid);
-								$sql .= " AND fk_product=".($productId);
+								$sql .= " AND fk_product=".((int) $productId);
 
 								$resql = $db->query($sql);
 							}
