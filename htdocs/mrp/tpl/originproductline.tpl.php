@@ -22,6 +22,8 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
+'@phan-var-force CommonObject $this';
+
 global $db, $langs;
 
 if (empty($form) || !is_object($form)) {

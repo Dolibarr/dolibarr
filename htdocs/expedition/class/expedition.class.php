@@ -1629,6 +1629,7 @@ class Expedition extends CommonObject
 
 
 				if ($originline > 0 && $originline == $obj->fk_origin_line) {
+					'@phan-var-force ExpeditionLigne $line';  // $line from previous loop
 					$line->entrepot_id = 0; // entrepod_id in details_entrepot
 					$line->qty_shipped += $obj->qty_shipped;
 				} else {

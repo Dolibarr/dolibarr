@@ -163,6 +163,7 @@ class InterfaceStripe extends DolibarrTriggers
 									$taxids = $customer->allTaxIds($customer->id);
 									if (is_array($taxids->data)) {
 										foreach ($taxids->data as $taxidobj) {
+											// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 											$customer->deleteTaxId($customer->id, $taxidobj->id);
 										}
 									}
