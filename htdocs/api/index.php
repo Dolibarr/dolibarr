@@ -434,18 +434,19 @@ if (Luracast\Restler\Defaults::$returnResponse) {
 	echo $result;
 }
 
-// Now flush output buffers so that response data is sent to request client
-ob_end_flush();
-
-// If you're using PHP-FPM, this function will allow you to send the response and then continue processing
-if (function_exists('fastcgi_finish_request')) {
-	fastcgi_finish_request();
-}
-
 // Call API termination method
 $apiMethodInfo = &$api->r->apiMethodInfo;
 $terminateCall = '_terminate_' . $apiMethodInfo->methodName . '_' . $api->r->responseFormat->getExtension();
 if (method_exists($apiMethodInfo->className, $terminateCall)) {
+	// Now flush output buffers so that response data is sent to the client even if we still have action to do in a termination method.
+	ob_end_flush();
+
+	// If you're using PHP-FPM, this function will allow you to send the response and then continue processing
+	if (function_exists('fastcgi_finish_request')) {
+		fastcgi_finish_request();
+	}
+
+	// Call a termination method. Warning: This method can do I/O, sync but must not make ouput.
 	call_user_func(array(Luracast\Restler\Scope::get($apiMethodInfo->className), $terminateCall), $responsedata);
 }
 
