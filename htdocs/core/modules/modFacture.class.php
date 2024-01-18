@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -503,7 +504,7 @@ class modFacture extends DolibarrModules
 			's.code_compta_fournisseur'=>'SupplierAccountancyCode',
 			's.tva_intra'=>'VATIntra',
 			't.libelle'=>"ThirdPartyType", // 'ce.code'=>"Staff", "cfj.libelle"=>"JuridicalStatus",
-			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_client'=>'RefCustomer',
+			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_client'=>'RefCustomer', 'f.fk_facture_source'=>'SourceInvoiceId',
 			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue", 'f.total_ht'=>"TotalHT",
 			'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.localtax1'=>'LT1', 'f.localtax2'=>'LT2', 'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus', 'f.close_code'=>'EarlyClosingReason', 'f.close_note'=>'EarlyClosingComment',
 			'none.rest'=>'Rest',
@@ -630,7 +631,7 @@ class modFacture extends DolibarrModules
 			's.phone'=>'Phone',
 			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.code_compta'=>'CustomerAccountancyCode',
 			's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
-			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_client'=>'RefCustomer',
+			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_client'=>'RefCustomer', 'f.fk_facture_source'=>'SourceInvoiceId',
 			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue", 'f.total_ht'=>"TotalHT",
 			'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.localtax1'=>'LT1', 'f.localtax2'=>'LT2', 'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus', 'f.close_code'=>'EarlyClosingReason', 'f.close_note'=>'EarlyClosingComment',
 			'none.rest'=>'Rest',
