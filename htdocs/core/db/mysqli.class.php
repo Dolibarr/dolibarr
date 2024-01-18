@@ -1270,7 +1270,11 @@ class mysqliDoli extends mysqli
 	public function __construct($host, $user, $pass, $name, $port = 0, $socket = "")
 	{
 		$flags = 0;
-		parent::init();
+		if (PHP_VERSION_ID >= 80100) {
+			parent::__construct();
+		} else {
+			parent::init();
+		}
 		if (strpos($host, 'ssl://') === 0) {
 			$host = substr($host, 6);
 			parent::options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
