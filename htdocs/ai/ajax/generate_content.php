@@ -41,9 +41,9 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 
-require_once '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
+require '../../main.inc.php';
 
+require_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
 
 //get data from AJAX
 $rawData = file_get_contents('php://input');
@@ -52,19 +52,14 @@ $jsonData = json_decode($rawData, true);
 if (is_null($jsonData)) {
 	dol_print_error('data with format JSON valide.');
 }
-$token = GETPOST('token');
-if ($token !== currentToken()) { // Remplacez 'newToken' par le nom de votre variable de session contenant le token
-	dol_print_error('CSRF token validation failed.');
-	exit;
-}
-$chatGPT = new Ai('API_ENDPOINT', 'API_KEY');
+$chatGPT = new Ai($db);
 
 $instructions = dol_string_nohtmltag($jsonData['instructions'], 1, 'UTF-8');
 
 $generatedContent = $chatGPT->generateContent($instructions);
 
-if ($generatedContent) {
-	print $generatedContent;
+if (is_array($generatedContent) && $generatedContent['error']) {
+	print "Error : " . $generatedContent['message'];
 } else {
-	dol_print_error('error!!');
+	print $generatedContent;
 }

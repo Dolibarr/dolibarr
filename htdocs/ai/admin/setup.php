@@ -63,16 +63,9 @@ $formSetup = new FormSetup($db);
 $item = $formSetup->newItem('AI_KEY_API_CHATGPT');
 $item->defaultFieldValue = '';
 
+$endpoint = $formSetup->newItem('AI_API_ENDPOINT');
+$item->defaultFieldValue = '';
 
-// Save API Key
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$apiKey = GETPOST('api_key', 'alpha');
-	// Validate and clean $apiKey here
-	dolibarr_set_const($db, 'MAIN_AI_CHATGPT_API_KEY', $apiKey, 'chaine', 0, '', $conf->entity);
-}
-
-// Retrieve existing API Key
-$apiKey = dolibarr_get_const($db, 'MAIN_AI_CHATGPT_API_KEY');
 
 $setupnotempty =+ count($formSetup->items);
 
@@ -231,7 +224,6 @@ if ($action == 'edit') {
 if (empty($setupnotempty)) {
 	 print '<br>'.$langs->trans("NothingToSetup");
 }
-
  // Page end
  print dol_get_fiche_end();
 
