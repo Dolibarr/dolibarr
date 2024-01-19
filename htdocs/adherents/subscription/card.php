@@ -42,11 +42,11 @@ $errmsg = '';
 
 $action = GETPOST("action", 'alpha');
 $rowid = GETPOST("rowid", "int") ? GETPOST("rowid", "int") : GETPOST("id", "int");
-$typeid = GETPOST("typeid", "int");
+$typeid = GETPOSTINT("typeid");
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm');
 $note = GETPOST('note', 'alpha');
-$typeid = (int) GETPOST('typeid', 'int');
+$typeid = GETPOSTINT('typeid');
 $amount = price2num(GETPOST('amount', 'alpha'), 'MT');
 
 if (!$user->hasRight('adherent', 'cotisation', 'lire')) {
