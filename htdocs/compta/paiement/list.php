@@ -187,7 +187,7 @@ if (GETPOST("orphelins", "alpha")) {
 } else {
 	// DISTINCT is to avoid duplicate when there is a link to sales representatives
 	$sql = "SELECT DISTINCT p.rowid, p.ref, p.datep, p.fk_bank, p.amount, p.statut, p.num_paiement";
-	$sql .= ", c.code as paiement_code";
+	$sql .= ", c.code as paiement_code, c.libelle";
 	$sql .= ", ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.fk_accountancy_journal as accountancy_journal";
 	$sql .= ", s.rowid as socid, s.nom as name, s.email";
 
