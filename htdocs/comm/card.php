@@ -228,7 +228,7 @@ if (empty($reshook)) {
 	// set prospect level
 	if ($action == 'setprospectlevel' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
-		$object->fk_prospectlevel = GETPOSTINT('prospect_level_id');
+		$object->fk_prospectlevel = GETPOST('prospect_level_id', 'alpha');
 		$result = $object->update($object->id, $user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
