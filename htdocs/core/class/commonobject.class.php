@@ -6650,6 +6650,7 @@ abstract class CommonObject
 						$this->array_options["options_".$key] = null;
 					}
 					break;
+				case 'price':
 				case 'double':
 					$value = price2num($value);
 					if (!is_numeric($value) && $value != '') {
@@ -6668,9 +6669,6 @@ abstract class CommonObject
 						 $this->array_options[$key] = null;
 					 }
 					 break;*/
-				case 'price':
-					$this->array_options["options_".$key] = price2num($this->array_options["options_".$key]);
-					break;
 				case 'date':
 				case 'datetime':
 					if (empty($this->array_options["options_".$key])) {
