@@ -11,9 +11,21 @@
 #   ```shell
 #   echo > dev/tools/codespell/codespell-lines-ignore.txt
 #   ```
-# and then execute this script
+# and then execute this script.
 #
 # author: https://github.com/mdeweerd
+
+#
+# :warning:
+#
+# This script only works properly if codespell is install for your CLI.
+# As the configuration is in pyproject.toml, you also need tomli.
+#
+# ```shell
+# python -m pip install codespell tomli
+# # or
+# pip install codespell tomli
+# ```
 
 codespell_ignore_file=dev/tools/codespell/codespell-lines-ignore.txt
 if [ -z "${0##*.sh}" ] ; then

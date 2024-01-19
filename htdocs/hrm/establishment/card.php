@@ -96,8 +96,8 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 			$object->address = GETPOST('address', 'alpha');
 			$object->zip = GETPOST('zipcode', 'alpha');
 			$object->town = GETPOST('town', 'alpha');
-			$object->country_id = GETPOST("country_id", 'int');
-			$object->status = GETPOST('status', 'int');
+			$object->country_id = GETPOSTINT("country_id");
+			$object->status = GETPOSTINT('status');
 			$object->fk_user_author	= $user->id;
 			$object->datec = dol_now();
 			$object->entity = GETPOST('entity', 'int') > 0 ? GETPOST('entity', 'int') : $conf->entity;
@@ -133,9 +133,9 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 			$object->address = GETPOST('address', 'alpha');
 			$object->zip 			= GETPOST('zipcode', 'alpha');
 			$object->town			= GETPOST('town', 'alpha');
-			$object->country_id     = GETPOST('country_id', 'int');
+			$object->country_id     = GETPOSTINT('country_id');
 			$object->fk_user_mod = $user->id;
-			$object->status         = GETPOST('status', 'int');
+			$object->status         = GETPOSTINT('status');
 			$object->entity         = GETPOST('entity', 'int') > 0 ? GETPOST('entity', 'int') : $conf->entity;
 
 			$result = $object->update($user);

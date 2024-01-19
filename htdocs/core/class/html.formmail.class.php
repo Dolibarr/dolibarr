@@ -755,7 +755,7 @@ class FormMail extends Form
 			if (!empty($this->withtoccuser) && is_array($this->withtoccuser) && getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')) {
 				$out .= '<tr><td>';
 				$out .= $langs->trans("MailToCCUsers");
-				$out .= '</td><td>';
+				$out .= '</td>';
 
 				// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
 				$tmparray = $this->withtoccuser;
@@ -887,6 +887,11 @@ class FormMail extends Form
 				$out .= "</td></tr>\n";
 			}
 
+			//input prompt AI
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+			if (isModEnabled('ai')) {
+				$out .= $this->getHtmlForInstruction();
+			}
 			// Message
 			if (!empty($this->withbody)) {
 				$defaultmessage = GETPOST('message', 'restricthtml');
@@ -1195,12 +1200,14 @@ class FormMail extends Form
 
 	/**
 	 * get html For WithCCC
+	 * This information is show when MAIN_EMAIL_USECCC is set.
 	 *
 	 * @return string html
 	 */
 	public function getHtmlForWithCcc()
 	{
-		global $conf, $langs, $form;
+		global $langs, $form;
+
 		$out = '<tr><td>';
 		$out .= $form->textwithpicto($langs->trans("MailCCC"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
 		$out .= '</td><td>';
@@ -1256,8 +1263,14 @@ class FormMail extends Form
 		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO') && !empty($this->param['models']) && $this->param['models'] == 'invoice_supplier_send') {
 			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO');
 		}
-		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROJECT_TO') && !empty($this->param['models']) && $this->param['models'] == 'project') {
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROJECT_TO') && !empty($this->param['models']) && $this->param['models'] == 'project') {	// don't know why there is not '_send' at end of this models name.
 			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROJECT_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SHIPMENT_TO') && !empty($this->param['models']) && $this->param['models'] == 'shipping_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SHIPMENT_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_RECEPTION_TO') && !empty($this->param['models']) && $this->param['models'] == 'reception_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_RECEPTION_TO');
 		}
 		if ($showinfobcc) {
 			$out .= ' + '.$showinfobcc;
@@ -1273,7 +1286,8 @@ class FormMail extends Form
 	 */
 	public function getHtmlForWithErrorsTo()
 	{
-		global $conf, $langs;
+		global $langs;
+
 		//if (! $this->errorstomail) $this->errorstomail=$this->frommail;
 		$errorstomail = getDolGlobalString('MAIN_MAIL_ERRORS_TO', (!empty($this->errorstomail) ? $this->errorstomail : ''));
 		if ($this->witherrorstoreadonly) {
@@ -1296,7 +1310,8 @@ class FormMail extends Form
 	 */
 	public function getHtmlForDeliveryreceipt()
 	{
-		global $conf, $langs;
+		global $langs;
+
 		$out = '<tr><td><label for="deliveryreceipt">'.$langs->trans("DeliveryReceipt").'</label></td><td>';
 
 		if (!empty($this->withdeliveryreceiptreadonly)) {
@@ -1334,7 +1349,7 @@ class FormMail extends Form
 	 */
 	public function getHtmlForTopic($arraydefaultmessage, $helpforsubstitution)
 	{
-		global $conf, $langs, $form;
+		global $langs, $form;
 
 		$defaulttopic = GETPOST('subject', 'restricthtml');
 
@@ -1362,6 +1377,57 @@ class FormMail extends Form
 		$out .= "</td></tr>\n";
 		return $out;
 	}
+
+	/**
+	 * get Html For instruction of message
+	 * @return 	string      Text for instructions
+	 */
+	public function getHtmlForInstruction()
+	{
+		global $langs, $form;
+
+		$baseUrl = dol_buildpath('/', 1);
+
+		$out = '<tr>';
+		$out .= '<td>';
+		$out .= $form->textwithpicto($langs->trans('helpWithAi'), $langs->trans("YouCanMakeSomeInstructionForEmail"));
+		$out .= '</td>';
+
+		$out .= '<td>';
+		$out .= '<input type="hidden" id="csrf_token" name="token" value="'.newToken().'">';
+		$out .= '<input type="text" class="quatrevingtpercent" id="ai_instructions" name="instruction" placeholder="message with AI"/>';
+		$out .= '<button id="generate_button" type="button" class="button smallpaddingimp">'.$langs->trans('Generate').'</button>';
+		$out .= "</td></tr>\n";
+		$out .= "<script type='text/javascript'>
+			$(document).ready(function() {
+				$('#generate_button').click(function() {
+					var instructions = $('#ai_instructions').val();
+					var token = $('#csrf_token').val();
+
+					$.ajax({
+						url: '".$baseUrl."ai/lib/generate_content.lib.php',
+						method: 'POST',
+						dataType: 'json',
+						contentType: 'application/json',
+						data: JSON.stringify({
+							'token': token,
+							'instructions': instructions,
+						}),
+						success: function(response) {
+							console.log(response);
+						},
+						error: function(xhr, status, error) {
+							console.error('error ajax', status, error);
+						}
+					});
+				});
+			});
+			</script>
+			";
+		return $out;
+	}
+
+
 
 	/**
 	 *  Return templates of email with type = $type_template or type = 'all'.
