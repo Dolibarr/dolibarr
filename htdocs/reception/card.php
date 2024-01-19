@@ -83,7 +83,7 @@ if (empty($origin_id)) {
 	$origin_id  = GETPOST('originid', 'int'); // Id of order or propal
 }
 $ref = GETPOST('ref', 'alpha');
-$line_id = GETPOST('lineid', 'int') ? GETPOST('lineid', 'int') : '';
+$line_id = GETPOSTINT('lineid') ? GETPOSTINT('lineid') : 0;
 $facid = GETPOST('facid', 'int');
 
 $action	= GETPOST('action', 'alpha');
@@ -657,7 +657,7 @@ if (empty($reshook)) {
 
 
 					$line->id = $line_id;
-					$line->fk_entrepot = GETPOST($stockLocation, 'int');
+					$line->fk_entrepot = GETPOSTINT($stockLocation);
 					$line->qty = GETPOST($qty, 'int');
 					$line->comment = GETPOST($comment, 'alpha');
 
