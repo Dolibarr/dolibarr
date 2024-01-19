@@ -307,7 +307,7 @@ if (empty($reshook)) {
 			$object->fk_incoterms = GETPOSTINT('incoterm_id');
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-			$object->multicurrency_tx = GETPOSTINT('originmulticurrency_tx');
+			$object->multicurrency_tx = (float) price2num(GETPOST('originmulticurrency_tx'));
 			// Fill array 'array_options' with data from add form
 			if (!$error) {
 				$ret = $extrafields->setOptionalsFromPost(null, $object);
