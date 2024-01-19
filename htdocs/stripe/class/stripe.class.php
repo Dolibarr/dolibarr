@@ -603,7 +603,7 @@ class Stripe extends CommonObject
 				} else {
 					$_SESSION["stripe_payment_intent"] = $paymentintent;
 				}
-			} catch (Stripe\Error\Card $e) {
+			} catch (Stripe\Exception\CardException $e) {
 				$error++;
 				$this->error = $e->getMessage();
 				$this->code = $e->getStripeCode();
@@ -1354,9 +1354,9 @@ class Stripe extends CommonObject
 					$return->message = $charge->id;
 				}
 			}
-		} catch (\Stripe\Error\Card $e) {
+		} catch (\Stripe\Exception\CardException $e) {
 			include DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			// Since it's a decline, \Stripe\Error\Card will be caught
+			// Since it's a decline, \Stripe\Exception\Card will be caught
 			$body = $e->getJsonBody();
 			$err = $body['error'];
 
@@ -1372,24 +1372,24 @@ class Stripe extends CommonObject
 
 			$error++;
 			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (\Stripe\Error\RateLimit $e) {
+		} catch (\Stripe\Exception\RateLimitException $e) {
 			// Too many requests made to the API too quickly
 			$error++;
 			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (\Stripe\Error\InvalidRequest $e) {
+		} catch (\Stripe\Exception\InvalidRequestException $e) {
 			// Invalid parameters were supplied to Stripe's API
 			$error++;
 			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (\Stripe\Error\Authentication $e) {
+		} catch (\Stripe\Exception\AuthenticationException $e) {
 			// Authentication with Stripe's API failed
 			// (maybe you changed API keys recently)
 			$error++;
 			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (\Stripe\Error\ApiConnection $e) {
+		} catch (\Stripe\Exception\ApiConnectionException $e) {
 			// Network communication with Stripe failed
 			$error++;
 			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (\Stripe\Error\Base $e) {
+		} catch (\Stripe\Exception\ExceptionInterface $e) {
 			// Display a very generic error to the user, and maybe send
 			// yourself an email
 			$error++;
