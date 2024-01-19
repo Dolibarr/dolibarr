@@ -7081,7 +7081,7 @@ abstract class CommonObject
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
 	 *  @return int                 		-1=error, O=did nothing, 1=OK
-	 *  @see updateExtraFields(), insertExtraLanguages()
+	 *  @see updateExtraField(), insertExtraLanguages()
 	 */
 	public function updateExtraLanguages($key, $trigger = null, $userused = null)
 	{
