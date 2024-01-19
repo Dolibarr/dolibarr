@@ -634,11 +634,14 @@ class Dolresource extends CommonObject
 		$error = 0;
 
 		// Clean parameters
+		if (!is_numeric($this->resource_id)) {
+			$this->resource_id = 0;
+		}
 		if (isset($this->resource_type)) {
 			$this->resource_type = trim($this->resource_type);
 		}
-		if (isset($this->element_id)) {
-			$this->element_id = trim($this->element_id);
+		if (!is_numeric($this->element_id)) {
+			$this->element_id = 0;
 		}
 		if (isset($this->element_type)) {
 			$this->element_type = trim($this->element_type);
