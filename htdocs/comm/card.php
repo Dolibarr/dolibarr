@@ -218,7 +218,7 @@ if (empty($reshook)) {
 	// assujetissement a la TVA
 	if ($action == 'setassujtva' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
-		$object->tva_assuj = GETPOST('assujtva_value');
+		$object->tva_assuj = GETPOSTINT('assujtva_value');
 		$result = $object->update($object->id);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -228,7 +228,7 @@ if (empty($reshook)) {
 	// set prospect level
 	if ($action == 'setprospectlevel' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
-		$object->fk_prospectlevel = GETPOST('prospect_level_id', 'alpha');
+		$object->fk_prospectlevel = GETPOSTINT('prospect_level_id');
 		$result = $object->update($object->id, $user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
