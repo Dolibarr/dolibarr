@@ -220,7 +220,6 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 			if (analyseVarsForSqlAndScriptsInjection($key, $type) && analyseVarsForSqlAndScriptsInjection($value, $type)) {
 				//$var[$key] = $value;	// This is useless
 			} else {
-				global $dolibarr_main_prod;
 				http_response_code(403);
 
 				// Get remote IP: PS: We do not use getRemoteIP(), function is not yet loaded and we need a value that can't be spoofed
@@ -236,14 +235,9 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 				print "<br>\n";
 				print 'Try to go back, fix data of your form and resubmit it. You can contact also your technical support.';
 
-				if (empty($dolibarr_main_prod)) {	// If not prod
-					print '<br><br>'."\n";
-					print 'Technical debug information: '.$errormessage2;
-				} else {
-					print '<!--'."\n";
-					print $errormessage2;
-					print "\n".'-->';
-				}
+				print '<!--'."\n";
+				print $errormessage2;
+				print "\n".'-->';
 
 				// Add entry into error the PHP server error log
 				if (function_exists('error_log')) {
