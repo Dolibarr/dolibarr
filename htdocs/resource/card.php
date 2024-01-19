@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014	Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2023		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 $langs->loadLangs(array('resource', 'companies', 'other', 'main'));
 
 // Get parameters
-$id						= GETPOST('id', 'int');
+$id						= GETPOSTINT('id');
 $action					= GETPOST('action', 'aZ09');
 $cancel					= GETPOST('cancel', 'alpha');
 $ref					= GETPOST('ref', 'alpha');
@@ -46,8 +46,8 @@ $town					= GETPOST('town', 'alpha');
 $description			= GETPOST('description', 'restricthtml');
 $confirm				= GETPOST('confirm', 'aZ09');
 $fk_code_type_resource	= GETPOST('fk_code_type_resource', 'aZ09');
-$country_id				= GETPOST('country_id', 'int');
-$state_id				= GETPOSTINT('state_id', 'int');
+$country_id				= GETPOSTINT('country_id');
+$state_id				= GETPOSTINT('state_id');
 
 // Protection if external user
 if ($user->socid > 0) {
