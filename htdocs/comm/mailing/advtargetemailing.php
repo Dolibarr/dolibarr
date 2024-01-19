@@ -61,7 +61,7 @@ if (!$sortfield) {
 	$sortfield = "email";
 }
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $rowid = GETPOST('rowid', 'int');
 $action = GETPOST('action', 'aZ09');
 $search_nom = GETPOST("search_nom");
