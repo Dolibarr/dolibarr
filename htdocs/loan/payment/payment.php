@@ -154,7 +154,7 @@ if ($action == 'add_payment') {
 			$payment->amount_interest	= $pay_amount_interest;
 			$payment->fk_bank           = GETPOSTINT('accountid');
 			$payment->paymenttype       = GETPOST('paymenttype', 'int');
-			$payment->num_payment		= GETPOSTINT('num_payment');
+			$payment->num_payment		= GETPOST('num_payment', 'alphanohtml');
 			$payment->note_private      = GETPOST('note_private', 'restricthtml');
 			$payment->note_public       = GETPOST('note_public', 'restricthtml');
 
