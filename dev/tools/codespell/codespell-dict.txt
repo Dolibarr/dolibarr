@@ -6,3 +6,4 @@ mot de passe->password
 choosed->chosen
 tableau de bord->state board
 #DoliDB->DoliDB
+alpahnohtml->alphanohtml
