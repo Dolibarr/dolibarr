@@ -39,10 +39,10 @@ $error = 0;
 $action = GETPOST('action', 'aZ09');
 
 $id = GETPOST('id', 'int');
-$ikoffset = GETPOST('ikoffset', 'int');
-$coef = GETPOST('coef', 'int');
-$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat');
-$fk_range = GETPOST('fk_range', 'int');
+$ikoffset = (float) GETPOST('ikoffset', 'int');
+$coef = (float) GETPOST('coef', 'int');
+$fk_c_exp_tax_cat = GETPOSTINT('fk_c_exp_tax_cat');
+$fk_range = GETPOSTINT('fk_range');
 
 $expIk = new ExpenseReportIk($db);
 
