@@ -1034,11 +1034,8 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 		} else {
 			$db->rollback();
 		}
-		//var_dump($listofobjectthirdparties);exit;
 	}
 }
-
-//var_dump($_POST);var_dump($massaction);exit;
 
 // Delete record from mass action (massaction = 'delete' for direct delete, action/confirm='delete'/'yes' with a confirmation step before)
 if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 'yes')) && $permissiontodelete) {
@@ -1086,8 +1083,10 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 			}
 
 			if (in_array($objecttmp->element, array('societe', 'member'))) {
+				/** @var Societe|Adherent $objecttmp */
 				$result = $objecttmp->delete($objecttmp->id, $user, 1);
 			} elseif (in_array($objecttmp->element, array('action'))) {
+				/** @var ActionComm $objecttmp */
 				$result = $objecttmp->delete();	// TODO Add User $user as first param
 			} else {
 				$result = $objecttmp->delete($user);
