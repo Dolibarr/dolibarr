@@ -72,7 +72,7 @@ $addreminder = GETPOST('addreminder', 'alpha');
 $offsetvalue = GETPOSTINT('offsetvalue');
 $offsetunit = GETPOST('offsetunittype_duration', 'aZ09');
 $remindertype = GETPOST('selectremindertype', 'aZ09');
-$modelmail = GETPOST('actioncommsendmodel_mail', 'int');
+$modelmail = GETPOSTINT('actioncommsendmodel_mail');
 $complete = GETPOST('complete', 'alpha');	// 'na' must be allowed
 $private = GETPOST('private', 'alphanohtml');
 if ($complete == 'na' || $complete == -2) {
@@ -368,7 +368,7 @@ if (empty($reshook) && $action == 'add') {
 				$hasPermissionOnLinkedObject = 1;
 			}
 			if ($hasPermissionOnLinkedObject) {
-				$object->fk_element = GETPOST("fk_element", 'int');
+				$object->fk_element = GETPOSTINT("fk_element");
 				$object->elementtype = GETPOST("elementtype", 'alpha');
 			}
 		}
@@ -387,7 +387,7 @@ if (empty($reshook) && $action == 'add') {
 		}
 		$object->fk_project = GETPOSTISSET("projectid") ? GETPOST("projectid", 'int') : 0;
 
-		$taskid = GETPOST('taskid', 'int');
+		$taskid = GETPOSTINT('taskid');
 		if (!empty($taskid)) {
 			$taskProject = new Task($db);
 			if ($taskProject->fetch($taskid) > 0) {
@@ -426,7 +426,7 @@ if (empty($reshook) && $action == 'add') {
 
 	if (!$error && getDolGlobalString('AGENDA_ENABLE_DONEBY')) {
 		if (GETPOST("doneby") > 0) {
-			$object->userdoneid = GETPOST("doneby", "int");
+			$object->userdoneid = GETPOSTINT("doneby");
 		}
 	}
 
@@ -437,7 +437,7 @@ if (empty($reshook) && $action == 'add') {
 	}
 
 	if (GETPOST('socid', 'int') > 0) {
-		$object->socid = GETPOST('socid', 'int');
+		$object->socid = GETPOSTINT('socid');
 		$object->fetch_thirdparty();
 
 		$object->societe = $object->thirdparty; // For backward compatibility
