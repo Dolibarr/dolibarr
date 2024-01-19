@@ -15,7 +15,6 @@ repos:
       - id: trailing-whitespace
         exclude_types: [markdown]
       - id: end-of-file-fixer
-        types: [yaml]
       - id: check-merge-conflict
       - id: check-executables-have-shebangs
       - id: check-shebang-scripts-are-executable
@@ -49,8 +48,10 @@ repos:
     hooks:
       - id: php-cbf
         files: \.(php)$
-        args: [-p]
+        args: [--standard=dev/setup/codesniffer/ruleset.xml -p]
       - id: php-cs
+        files: \.(php)$
+        args: [--standard=dev/setup/codesniffer/ruleset.xml -p]
       - id: php-lint
 
   # Prettier (format code, only for non common files)
@@ -75,7 +76,7 @@ repos:
           - css
           - yaml
 
-  # Check format of yam files
+  # Check format of yaml files
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.32.0
     hooks:

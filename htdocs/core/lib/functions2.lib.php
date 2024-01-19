@@ -903,7 +903,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
 	if (!is_object($objsoc)) {
 		$valueforccc = $objsoc;
-	} elseif ($table == "commande_fournisseur" || $table == "facture_fourn") {
+	} elseif ($table == "commande_fournisseur" || $table == "facture_fourn" || $table == "paiementfourn") {
 		$valueforccc = dol_string_unaccent($objsoc->code_fournisseur);
 	} else {
 		$valueforccc = dol_string_unaccent($objsoc->code_client);
@@ -1612,7 +1612,7 @@ function hexbin($hexa)
  */
 function numero_semaine($time)
 {
-	$stime = strftime('%Y-%m-%d', $time);
+	$stime = dol_print_date($time, '%Y-%m-%d');
 
 	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/i', $stime, $reg)) {
 		// Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'

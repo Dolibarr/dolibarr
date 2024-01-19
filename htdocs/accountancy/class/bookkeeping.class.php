@@ -26,6 +26,7 @@
 
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
@@ -986,7 +987,7 @@ class BookKeeping extends CommonObject
 
 				$i = 0;
 				while (($obj = $this->db->fetch_object($resql)) && (empty($limit) || $i < min($limit, $num))) {
-					$line = new BookKeepingLine();
+					$line = new BookKeepingLine($this->db);
 
 					$line->id = $obj->rowid;
 
@@ -1140,7 +1141,7 @@ class BookKeeping extends CommonObject
 
 			$i = 0;
 			while (($obj = $this->db->fetch_object($resql)) && (empty($limit) || $i < min($limit, $num))) {
-				$line = new BookKeepingLine();
+				$line = new BookKeepingLine($this->db);
 
 				$line->id = $obj->rowid;
 
@@ -1275,7 +1276,7 @@ class BookKeeping extends CommonObject
 
 			$i = 0;
 			while (($obj = $this->db->fetch_object($resql)) && (empty($limit) || $i < min($limit, $num))) {
-				$line = new BookKeepingLine();
+				$line = new BookKeepingLine($this->db);
 
 				$line->numero_compte = $obj->numero_compte;
 				//$line->label_compte = $obj->label_compte;
@@ -1881,7 +1882,7 @@ class BookKeeping extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			while ($obj = $this->db->fetch_object($result)) {
-				$line = new BookKeepingLine();
+				$line = new BookKeepingLine($this->db);
 
 				$line->id = $obj->rowid;
 
@@ -1951,7 +1952,7 @@ class BookKeeping extends CommonObject
 
 			$num = $this->db->num_rows($resql);
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new BookKeepingLine();
+				$line = new BookKeepingLine($this->db);
 
 				$line->id = $obj->rowid;
 
@@ -2976,7 +2977,7 @@ class BookKeeping extends CommonObject
 /**
  * Class BookKeepingLine
  */
-class BookKeepingLine
+class BookKeepingLine extends CommonObjectLine
 {
 	/**
 	 * @var int ID
