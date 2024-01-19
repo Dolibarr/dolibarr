@@ -533,7 +533,7 @@ class Societe extends CommonObject
 	public $transport_mode_supplier_id;
 
 	/**
-	 * @var int ID
+	 * @var string	Prospect level. ie: 'PL_LOW', 'PL...'
 	 */
 	public $fk_prospectlevel;
 
@@ -4563,7 +4563,7 @@ class Societe extends CommonObject
 	/**
 	 *  Return label of prospect level
 	 *
-	 *  @param	int		$fk_prospectlevel   	Prospect level
+	 *  @param	string	$fk_prospectlevel   	Prospect level
 	 *  @return string        					label of level
 	 */
 	public function LibProspLevel($fk_prospectlevel)
@@ -4573,7 +4573,7 @@ class Societe extends CommonObject
 
 		$lib = $langs->trans("ProspectLevel".$fk_prospectlevel);
 		// If lib not found in language file, we get label from cache/database
-		if ($lib == $langs->trans("ProspectLevel".$fk_prospectlevel)) {
+		if ($lib == "ProspectLevel".$fk_prospectlevel) {
 			$lib = $langs->getLabelFromKey($this->db, $fk_prospectlevel, 'c_prospectlevel', 'code', 'label');
 		}
 		return $lib;
