@@ -48,15 +48,13 @@ class Client extends Societe
 		$this->fournisseur = 0;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load indicators into this->nb for board
 	 *
 	 *  @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $user, $hookmanager;
 
 		$this->nb = array("prospects" => 0, "customers" => 0);

@@ -59,7 +59,7 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $confirm = GETPOST('confirm');
 
 $label = GETPOST('label', 'alphanohtml');
-$projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
+$projectid = GETPOSTINT('projectid') ? GETPOSTINT('projectid') : GETPOSTINT('fk_project');
 $accountid = GETPOST('accountid', 'int') > 0 ? GETPOST('accountid', 'int') : 0;
 if (GETPOSTISSET('auto_create_paiement') || $action === 'add') {
 	$auto_create_paiement = GETPOST("auto_create_paiement", "int");
@@ -234,7 +234,7 @@ if ($action == 'add' && empty($cancel)) {
 		$datev = $datep;
 	}
 
-	$type_payment = GETPOST("paymenttype", 'alpha');
+	$type_payment = GETPOSTINT("paymenttype");
 	$amount = price2num(GETPOST("amount", 'alpha'), 'MT', 2);
 
 	$object->accountid = GETPOST("accountid", 'int') > 0 ? GETPOST("accountid", "int") : 0;
@@ -496,7 +496,7 @@ if ($id > 0) {
 // Create
 if ($action == 'create' && $permissiontoadd) {
 	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-	$pastmonth = strftime("%m", dol_now()) - 1;
+	$pastmonth = dol_print_date(dol_now(), "%m") - 1;
 	$pastmonthyear = $year_current;
 	if ($pastmonth == 0) {
 		$pastmonth = 12;
