@@ -1334,17 +1334,17 @@ jQuery(document).ready(function() {
 });
 
 
+<?php
+if (empty($conf->global->MAIN_DISABLE_SELECT2_FOCUS_PROTECTION) && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
+	?>
 /*
- * Hacky fix for a bug in select2 with jQuery 3.6.0's new nested-focus "protection"
+ * Hacky fix for a bug in select2 with jQuery 3.6.4's new nested-focus "protection"
+ * This fix needs to click a second time when clicking into a combo with ajax (see Test4d and Test5a in test_forms.php
  * see: https://github.com/select2/select2/issues/5993
  * see: https://github.com/jquery/jquery/issues/4382
  *
  * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
  */
-
-<?php
-if (empty($conf->global->MAIN_DISABLE_SELECT2_FOCUS_PROTECTION) && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
-	?>
 $(document).on('select2:open', (e) => {
 	console.log("Execute the focus (click on combo or use space when on component");
 	const target = $(e.target);
