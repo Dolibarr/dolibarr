@@ -235,6 +235,25 @@ function isModEnabled($module)
 }
 
 /**
+ * isDolTms check if a timestamp is valid.
+ *
+ * @param  int|string|null $timestamp timestamp to check
+ * @return bool
+ */
+function isDolTms($timestamp)
+{
+	if ($timestamp === '') {
+		dol_syslog('Using empty string for a timestamp is deprecated, prefer use of null when calling page '.$_SERVER["PHP_SELF"], LOG_NOTICE);
+		return false;
+	}
+	if (is_null($timestamp) || !is_numeric($timestamp)) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
  * Return a DoliDB instance (database handler).
  *
  * @param   string	$type		Type of database (mysql, pgsql...)
@@ -2781,7 +2800,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 function dol_strftime($fmt, $ts = false, $is_gmt = false)
 {
 	if ((abs($ts) <= 0x7FFFFFFF)) { // check if number in 32-bit signed range
-		return ($is_gmt) ? @gmstrftime($fmt, $ts) : @strftime($fmt, $ts);
+		return ($is_gmt) ? @gmstrftime($fmt, $ts) : @dol_print_date($ts, $fmt);
 	} else {
 		return 'Error date into a not supported range';
 	}

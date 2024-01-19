@@ -3889,8 +3889,8 @@ class Product extends CommonObject
 		}
 
 		if (empty($year)) {
-			$year = strftime('%Y', time());
-			$month = strftime('%m', time());
+			$year = dol_print_date(time(), '%Y');
+			$month = dol_print_date(time(), '%m');
 		} elseif ($year == -1) {
 			$year = '';
 			$month = 12; // We imagine we are at end of year, so we get last 12 month before, so all correct year.
@@ -6123,15 +6123,13 @@ class Product extends CommonObject
 		$this->imgHeight = $infoImg[1]; // Hauteur de l'image
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load indicators this->nb for the dashboard
 	 *
 	 * @return int                 Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $hookmanager;
 
 		$this->nb = array();

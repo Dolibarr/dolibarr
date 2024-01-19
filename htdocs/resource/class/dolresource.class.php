@@ -51,7 +51,15 @@ class Dolresource extends CommonObject
 	 * @var string address variables
 	 */
 	public $address;
+
+	/**
+	 * @var string zip of town
+	 */
 	public $zip;
+
+	/**
+	 * @var string yown
+	 */
 	public $town;
 
 	/**
@@ -67,9 +75,13 @@ class Dolresource extends CommonObject
 	public $description;
 
 	/**
-	 * @var int ID
+	 * @var int ID country
 	 */
 	public $fk_country;
+
+	/**
+	 * @var int ID state
+	 */
 	public $fk_state;
 
 	// Variable for a link of resource
