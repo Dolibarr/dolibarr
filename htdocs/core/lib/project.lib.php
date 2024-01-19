@@ -2218,6 +2218,10 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 			if (empty($mine) || !empty($tasksrole[$lines[$i]->id])) {
 				//dol_syslog("projectLinesPerWeek Found line ".$i.", a qualified task (i have role or want to show all tasks) with id=".$lines[$i]->id." project id=".$lines[$i]->fk_project);
 
+				if ($restricteditformytask == 2 && empty($tasksrole[$lines[$i]->id])) {	// we have no role on task and we request to hide such cases
+					continue;
+				}
+
 				// Break on a new project
 				if ($parent == 0 && $lines[$i]->fk_project != $lastprojectid) {
 					$lastprojectid = $lines[$i]->fk_project;
