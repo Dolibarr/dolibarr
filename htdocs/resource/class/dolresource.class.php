@@ -374,7 +374,7 @@ class Dolresource extends CommonObject
 						$error++;
 					}
 				}
-			}
+			}diction
 		}
 
 		if (!$error) {
@@ -655,14 +655,13 @@ class Dolresource extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."element_resources SET";
-		$sql .= " resource_id=".(isset($this->resource_id) ? $this->resource_id : "null").",";
-		$sql .= " resource_type=".(isset($this->resource_type) ? "'".$this->db->escape($this->resource_type)."'" : "null").",";
-		$sql .= " element_id=".(isset($this->element_id) ? $this->element_id : "null").",";
-		$sql .= " element_type=".(isset($this->element_type) ? "'".$this->db->escape($this->element_type)."'" : "null").",";
-		$sql .= " busy=".(isset($this->busy) ? $this->busy : "null").",";
-		$sql .= " mandatory=".(isset($this->mandatory) ? $this->mandatory : "null").",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null');
-
+		$sql .= " resource_id = ".(isset($this->resource_id) ? (int) $this->resource_id : "null").",";
+		$sql .= " resource_type = ".(isset($this->resource_type) ? "'".$this->db->escape($this->resource_type)."'" : "null").",";
+		$sql .= " element_id = ".(isset($this->element_id) ? (int) $this->element_id : "null").",";
+		$sql .= " element_type = ".(isset($this->element_type) ? "'".$this->db->escape($this->element_type)."'" : "null").",";
+		$sql .= " busy = ".(isset($this->busy) ? (int) $this->busy : "null").",";
+		$sql .= " mandatory = ".(isset($this->mandatory) ? (int) $this->mandatory : "null").",";
+		$sql .= " tms = ".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null');
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
