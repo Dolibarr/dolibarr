@@ -528,7 +528,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setrevenuestamp' && $usercancreate) {
 		$object->fetch($id);
-		$object->revenuestamp = (float) GETPOST('revenuestamp','int');
+		$object->revenuestamp = (float) GETPOST('revenuestamp', 'int');
 		$result = $object->update($user);
 		$object->update_price(1);
 		if ($result < 0) {
