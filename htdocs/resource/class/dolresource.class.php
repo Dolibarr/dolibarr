@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013-2015	Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2023		William Mead		<william.mead@manchenumerique.fr>
+/* Copyright (C) 2013-2015		Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2023-2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ class Dolresource extends CommonObject
 	public $tms;
 
 	/**
-	 * Used by fetch_element_resource() to return an object
+	 * Used by fetchElementResource() to return an object
 	 */
 	public $objelement;
 
