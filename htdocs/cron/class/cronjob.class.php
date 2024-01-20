@@ -1577,4 +1577,5 @@ class Cronjob extends CommonObject
  * Crob Job line class
  * @TODO Deprecated, to delete very soon
  */
-class Cronjobline extends Cronjob {}
+class Cronjobline extends Cronjob
+{}
