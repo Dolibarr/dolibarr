@@ -131,7 +131,7 @@ class Commande extends CommonOrder
 	public $billed;
 
 	/**
-	 * @var string Limit date payment
+	 * @var int Deadline for payment
 	 */
 	public $date_lim_reglement;
 	/**
