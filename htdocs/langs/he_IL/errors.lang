@@ -332,3 +332,14 @@ BadSetupOfField = שגיאה בהגדרת שדה
 BadSetupOfFieldClassNotFoundForValidation = שגיאה בהגדרת שדה: לא נמצא מחלקה לאימות
 BadSetupOfFieldFileNotFound = שגיאה בהגדרת שדה: לא נמצא קובץ לכלול
 BadSetupOfFieldFetchNotCallable = שגיאה בהגדרת שדה: פעולת Fetch אינה ניתנת לקריאה על מחלקה
+
+ErrorOppStatusRequiredIfUsage=בחרת לעקוב אחרי ההזדמנות בפרויקט זה, ולכן עליך גם למלא את סטטוס הליד.
+
+
+
+
+
+
+
+
+
