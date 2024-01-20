@@ -209,7 +209,7 @@ class Holiday extends CommonObject
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -1233,7 +1233,7 @@ class Holiday extends CommonObject
 					}
 				}
 			} else {
-				dol_print_error('', 'Bad value of parameter halfday when calling function verifDateHolidayCP');
+				dol_print_error(null, 'Bad value of parameter halfday when calling function verifDateHolidayCP');
 			}
 		}
 

@@ -430,7 +430,7 @@ llxHeader('', $langs->trans('Inventory'), $help_url);
 
 // Part to show record
 if ($object->id <= 0) {
-	dol_print_error('', 'Bad value for object id');
+	dol_print_error(null, 'Bad value for object id');
 	exit;
 }
 

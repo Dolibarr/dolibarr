@@ -234,7 +234,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 			dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
 			return $prefix.$yymm."-".$num;
 		} else {
-			dol_print_error('', 'Bad parameter for getNextValue');
+			dol_print_error(null, 'Bad parameter for getNextValue');
 			return -1;
 		}
 	}

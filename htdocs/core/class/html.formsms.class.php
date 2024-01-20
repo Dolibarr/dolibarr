@@ -207,7 +207,7 @@ function limitChars(textarea, limit, infodiv)
 							$sms->error = 'The SMS manager "'.$classfile.'" defined into SMS setup MAIN_MODULE_'.strtoupper($sendmode).'_SMS is not found';
 						}
 					} catch (Exception $e) {
-						dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
+						dol_print_error(null, 'Error to get list of senders: '.$e->getMessage());
 						exit;
 					}
 				} else {

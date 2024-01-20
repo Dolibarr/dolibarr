@@ -43,7 +43,7 @@ $ref=GETPOST('ref', 'alpha');
 $action=GETPOST('action', 'alpha');
 
 if ($id == '' && $ref == '') {
-	dol_print_error('', 'Bad parameter');
+	dol_print_error(null, 'Bad parameter');
 	exit;
 }
 

@@ -774,7 +774,7 @@ if ($id > 0) {
 		}
 	} else {
 		// Loan not found
-		dol_print_error('', $object->error);
+		dol_print_error(null, $object->error);
 	}
 }
 

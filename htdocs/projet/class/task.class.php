@@ -1303,7 +1303,7 @@ class Task extends CommonObjectLine
 
 		// Check parameters
 		if (!is_object($user)) {
-			dol_print_error('', "Method addTimeSpent was called with wrong parameter user");
+			dol_print_error(null, "Method addTimeSpent was called with wrong parameter user");
 			return -1;
 		}
 
