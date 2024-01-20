@@ -396,6 +396,8 @@ if ($action == 'getProducts') {
 		echo 'Failed to search product : '.$db->lasterror();
 	}
 } elseif ($action == "opendrawer" && $term != '') {
+	top_httphead('application/html');
+
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 	$printer = new dolReceiptPrinter($db);
 	// check printer for terminal
@@ -406,6 +408,8 @@ if ($action == 'getProducts') {
 		$printer->close();
 	}
 } elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && $user->hasRight('facture', 'lire')) {
+	top_httphead('application/html');
+
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$printer = new dolReceiptPrinter($db);
@@ -427,6 +431,8 @@ if ($action == 'getProducts') {
 
 	echo json_encode($object);
 } elseif ($action == 'thecheck') {
+	top_httphead('application/html');
+
 	$place = GETPOST('place', 'alpha');
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
