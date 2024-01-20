@@ -1578,4 +1578,5 @@ class Cronjob extends CommonObject
  * @TODO Deprecated, to delete very soon
  */
 class Cronjobline extends Cronjob
-{}
+{
+}
