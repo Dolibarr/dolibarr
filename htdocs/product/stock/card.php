@@ -292,6 +292,14 @@ if ($action == 'create') {
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 llxHeader("", $title, $help_url);
 
+// Function to generate a unique identifier for Ref
+function generateUniqueRef() {
+	// You can customize the prefix or use a timestamp, random string, etc.
+	$prefix = 'REF';
+	$uniqueIdentifier = uniqid(); // This generates a unique identifier based on the current timestamp
+
+	return $prefix . $uniqueIdentifier;
+}
 
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewWarehouse"), '', 'stock');
@@ -308,7 +316,8 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 
 	// Ref
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value=""></td></tr>';
+	$initialRefValue = generateUniqueRef(); // Generate the initial value for Ref
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value="'.$initialRefValue.'"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("LocationSummary").'</td><td><input name="lieu" size="40" value="'.(!empty($object->lieu) ? $object->lieu : '').'"></td></tr>';
 
