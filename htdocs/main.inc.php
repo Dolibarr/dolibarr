@@ -221,15 +221,33 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 			if (analyseVarsForSqlAndScriptsInjection($key, $type) && analyseVarsForSqlAndScriptsInjection($value, $type)) {
 				//$var[$key] = $value;	// This is useless
 			} else {
+				http_response_code(403);
+
 				// Get remote IP: PS: We do not use getRemoteIP(), function is not yet loaded and we need a value that can't be spoofed
 				$ip = (empty($_SERVER['REMOTE_ADDR']) ? 'unknown' : $_SERVER['REMOTE_ADDR']);
-				$errormessage = 'Access refused to '.htmlentities($ip, ENT_COMPAT, 'UTF-8').' by SQL or Script injection protection in main.inc.php - GETPOST type='.htmlentities($type, ENT_COMPAT, 'UTF-8').' paramkey='.htmlentities($key, ENT_COMPAT, 'UTF-8').' paramvalue='.htmlentities($value, ENT_COMPAT, 'UTF-8').' page='.htmlentities($_SERVER["REQUEST_URI"], ENT_COMPAT, 'UTF-8');
+
+				$errormessage = 'Access refused to '.htmlentities($ip, ENT_COMPAT, 'UTF-8').' by SQL or Script injection protection in main.inc.php:analyseVarsForSqlAndScriptsInjection type='.htmlentities($type, ENT_COMPAT, 'UTF-8');
+
+				$errormessage2 = 'paramkey='.htmlentities($key, ENT_COMPAT, 'UTF-8');
+				$errormessage2 .= ' paramvalue='.htmlentities($value, ENT_COMPAT, 'UTF-8');
+				$errormessage2 .= ' page='.htmlentities($_SERVER["REQUEST_URI"], ENT_COMPAT, 'UTF-8');
+
 				print $errormessage;
-				// Add entry into error log
+				print "<br>\n";
+				print 'Try to go back, fix data of your form and resubmit it. You can contact also your technical support.';
+
+				print '<!--'."\n";
+				print $errormessage2;
+				print "\n".'-->';
+
+				// Add entry into error the PHP server error log
 				if (function_exists('error_log')) {
-					error_log($errormessage);
+					error_log($errormessage.' '.$errormessage2);
 				}
-				// TODO Add entry into security audit table
+
+				// Note: No addition into security audit table is done because we don't want to execute code in such a case.
+				// Detection of too many such requests can be done with a fail2ban rule on 403 error code or into the PHP server error log.
+
 				exit;
 			}
 		}
@@ -263,7 +281,7 @@ if (!defined('NOSCANPHPSELFFORINJECTION') && !empty($_SERVER["PHP_SELF"])) {
 if (!defined('NOSCANGETFORINJECTION') && !empty($_SERVER["QUERY_STRING"])) {
 	// Note: QUERY_STRING is url encoded, but $_GET and $_POST are already decoded
 	// Because the analyseVarsForSqlAndScriptsInjection is designed for already url decoded value, we must decode QUERY_STRING
-	// Another solution is to provide $_GET as parameter
+	// Another solution is to provide $_GET as parameter with analyseVarsForSqlAndScriptsInjection($_GET, 1);
 	$morevaltochecklikeget = array(urldecode($_SERVER["QUERY_STRING"]));
 	analyseVarsForSqlAndScriptsInjection($morevaltochecklikeget, 1);
 }
