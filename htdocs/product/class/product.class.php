@@ -663,10 +663,10 @@ class Product extends CommonObject
 			$this->ref = dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)));
 		}
 		$this->label = trim($this->label);
-		$this->price_ttc = price2num($this->price_ttc);
-		$this->price = price2num($this->price);
-		$this->price_min_ttc = price2num($this->price_min_ttc);
-		$this->price_min = price2num($this->price_min);
+		$this->price_ttc = (float) price2num($this->price_ttc);
+		$this->price = (float) price2num($this->price);
+		$this->price_min_ttc = (float) price2num($this->price_min_ttc);
+		$this->price_min = (float) price2num($this->price_min);
 		if (empty($this->tva_tx)) {
 			$this->tva_tx = 0;
 		}
@@ -4542,7 +4542,7 @@ class Product extends CommonObject
 	 *
 	 * @param  int 	$fk_parent 		Id of parent kit product
 	 * @param  int 	$fk_child  		Id of child product
-	 * @return int                  Return integer <0 if KO, >0 if OK
+	 * @return bool|int             Return true or false ; -1 if error
 	 */
 	public function is_sousproduit($fk_parent, $fk_child)
 	{
