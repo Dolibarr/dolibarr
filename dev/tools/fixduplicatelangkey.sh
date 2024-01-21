@@ -26,7 +26,12 @@ then
 			sed "s/\s*\=/=/" | # Remove any whitespace before =
 			grep -Po "(^.*?)(?==)" | # Non greedy match everything before =
 			sort | uniq -d | # Find duplicates
-			awk '$0="'"$file"':"$0' # Prefix with filename (for ci)
+			while IFS= read -r key ; do
+				grep -n "^$key" "$file" |
+				# Format line to be recognised for code annotation by logToCs.py
+				echo "$file:$(cut -d ':' -f 1 | tail -n 1):error:Duplicate '$key'"
+			done
+			# awk '$0="'"$file"':"$0' # Prefix with filename (for ci)
 		)
 
 		if [ -n "$dupes" ]
