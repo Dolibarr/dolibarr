@@ -1,9 +1,10 @@
+# Please add in alphabetical order->(`sort -u` like).
+EPR->ERP
+alpahnohtml->alphanohtml
+choosed->chosen
 dolibar->dolibarr
 dollibar->dolibarr
 dollibarr->dolibarr
-not de passe->password
 mot de passe->password
-choosed->chosen
+not de passe->password
 tableau de bord->state board
-#DoliDB->DoliDB
-alpahnohtml->alphanohtml
