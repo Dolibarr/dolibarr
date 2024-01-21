@@ -62,7 +62,7 @@ $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("pa
 
 // Security check
 $id = (GETPOST('facid', 'int') ? GETPOST('facid', 'int') : GETPOST('id', 'int'));
-$lineid = GETPOST('lineid', 'int');
+$lineid = GETPOSTINT('lineid');
 $title = GETPOST('title', 'alpha');
 $libelle = GETPOST('libelle', 'alpha');
 $ref_supplier = GETPOST('ref_supplier', 'alpha');
@@ -194,7 +194,7 @@ if (empty($reshook)) {
 			$object->title = GETPOST('title', 'alphanohtml');
 			$object->libelle = GETPOST('libelle', 'alpha');	// deprecated
 			$object->label = GETPOST('libelle', 'alpha');
-			$object->fk_project = GETPOST('projectid', 'int');
+			$object->fk_project = GETPOSTINT('projectid');
 			$object->ref_supplier = GETPOST('ref_supplier', 'alphanohtml');
 
 			$object->note_private = GETPOST('note_private', 'restricthtml');

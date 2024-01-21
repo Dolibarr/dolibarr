@@ -132,7 +132,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				$object->label = GETPOST('label');
-				$object->fk_bank = GETPOST('accountid');
+				$object->fk_bank = GETPOSTINT('accountid');
 				$object->capital = $capital;
 				$object->datestart = $datestart;
 				$object->dateend = $dateend;
@@ -140,7 +140,7 @@ if (empty($reshook)) {
 				$object->rate = $rate;
 				$object->note_private = GETPOST('note_private', 'restricthtml');
 				$object->note_public = GETPOST('note_public', 'restricthtml');
-				$object->fk_project = GETPOST('projectid', 'int');
+				$object->fk_project = GETPOSTINT('projectid');
 				$object->insurance_amount = GETPOST('insurance_amount', 'int');
 
 				$accountancy_account_capital = GETPOST('accountancy_account_capital');
