@@ -312,7 +312,7 @@ class Task extends CommonObjectLine
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id					Id object
-	 *  @param	int		$ref				ref object
+	 *  @param	string	$ref				ref object
 	 *  @param	int		$loadparentdata		Also load parent data
 	 *  @return int 		        		Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
