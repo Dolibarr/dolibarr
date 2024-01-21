@@ -7,11 +7,17 @@ repos:
     hooks:
       - id: no-commit-to-branch
         args: [--branch, develop, --pattern, \d+.0]
+      - id: check-xml
       - id: check-yaml
         args: [--unsafe]
       - id: check-json
       - id: mixed-line-ending
-        exclude: (?x)^(htdocs/includes/tecnickcom/tcpdf/fonts/.*)$
+        # alternative for dev/tools/fixdosfiles.sh
+        exclude: |
+          (?x)^(htdocs/includes/tecnickcom/tcpdf/fonts/.*
+               |.*/CRLF.*.php  # Files in swiftmailer
+               )$
+        args: [--fix=lf]
       - id: trailing-whitespace
         exclude_types: [markdown]
       - id: end-of-file-fixer
@@ -41,8 +47,8 @@ repos:
   #   ```shell
   #  #!/bin/bash
   #   MYDIR=$(dirname "$0")
-  #   CHANGED_INTERNALS=$(git diff --name-only | grep -v includes)
-  #   "$MYDIR/dev/tools/updatelicense.php" $CHANGED_INTERNALS
+  #   git diff HEAD --name-only | grep -v includes | \
+  #       xargs "$MYDIR/dev/tools/updatelicense.php"
   #   ```
   - repo: local
     hooks:
@@ -51,6 +57,13 @@ repos:
         language: system
         entry: bash -c '[ ! -x local.sh ] || ./local.sh'
         pass_filenames: false
+      - id: duplicate-lang-keys
+        name: Find duplicate language keys
+        files: (?x)^(htdocs/langs/en_US/.*\.lang)
+        language: script
+        entry: ./dev/tools/fixduplicatelanglines.sh
+        pass_filenames: false
+        args: [list]
 
   # Check PHP syntax
   - repo: https://github.com/mdeweerd/pre-commit-php
