@@ -8,6 +8,8 @@ repos:
       - id: no-commit-to-branch
         args: [--branch, develop, --pattern, \d+.0]
       - id: check-xml
+        exclude: |
+          (?x)^(htdocs/includes/.*)$
       - id: check-yaml
         args: [--unsafe]
       - id: check-json
@@ -62,6 +64,13 @@ repos:
         files: (?x)^(htdocs/langs/en_US/.*\.lang)
         language: script
         entry: ./dev/tools/fixduplicatelanglines.sh
+        pass_filenames: false
+        args: [list]
+      - id: duplicate-lang-keys
+        name: Find duplicate language keys
+        files: (?x)^(htdocs/langs/en_US/.*\.lang)
+        language: script
+        entry: ./dev/tools/fixduplicatelangkey.sh
         pass_filenames: false
         args: [list]
 
