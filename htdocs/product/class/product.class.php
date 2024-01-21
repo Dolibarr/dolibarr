@@ -4542,7 +4542,7 @@ class Product extends CommonObject
 	 *
 	 * @param  int 	$fk_parent 		Id of parent kit product
 	 * @param  int 	$fk_child  		Id of child product
-	 * @return bool|int             Return true or false ; -1 if error
+	 * @return int             		Return 1 or 0; -1 if error
 	 */
 	public function is_sousproduit($fk_parent, $fk_child)
 	{
@@ -4562,9 +4562,9 @@ class Product extends CommonObject
 				$this->is_sousproduit_qty = $obj->qty;
 				$this->is_sousproduit_incdec = $obj->incdec;
 
-				return true;
+				return 1;
 			} else {
-				return false;
+				return 0;
 			}
 		} else {
 			dol_print_error($this->db);
