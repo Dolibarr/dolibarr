@@ -736,7 +736,7 @@ class Mos extends DolibarrApi
 	 *
 	 * @return void
 	 */
-	private function checkRefNumbering(): void
+	private function checkRefNumbering()
 	{
 		$ref = substr($this->mo->ref, 1, 4);
 		if ($this->mo->status > 0 && $ref == 'PROV') {
