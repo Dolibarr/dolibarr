@@ -2624,7 +2624,7 @@ class BookKeeping extends CommonObject
 			$sql .= ' LEFT JOIN  ' . MAIN_DB_PREFIX . 'accounting_account as aa ON aa.account_number = t.numero_compte';
 			$sql .= ' WHERE t.entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
 			$sql .= " AND aa.entity = " . ((int) $conf->entity);
-			$sql .= ' AND aa.fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid = ' . ((int)getDolGlobalInt('CHARTOFACCOUNTS')) . ')';
+			$sql .= ' AND aa.fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid = ' . ((int) getDolGlobalInt('CHARTOFACCOUNTS')) . ')';
 			$sql .= ' AND aa.pcg_type IN (' . $this->db->sanitize(implode(',', $pcg_type_filter), 1) . ')';
 			$sql .= " AND DATE(t.doc_date) >= '" . $this->db->idate($date_start) . "'";
 			$sql .= " AND DATE(t.doc_date) <= '" . $this->db->idate($date_end) . "'";
