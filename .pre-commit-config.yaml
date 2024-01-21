@@ -59,8 +59,8 @@ repos:
         language: system
         entry: bash -c '[ ! -x local.sh ] || ./local.sh'
         pass_filenames: false
-      - id: duplicate-lang-keys
-        name: Find duplicate language keys
+      - id: duplicate-lang-lines
+        name: Find duplicate language lines
         files: (?x)^(htdocs/langs/en_US/.*\.lang)
         language: script
         entry: ./dev/tools/fixduplicatelanglines.sh
@@ -73,6 +73,13 @@ repos:
         entry: ./dev/tools/fixduplicatelangkey.sh
         pass_filenames: false
         args: [list]
+      - id: fix-alt-languages
+        name: Fix alt languages
+        # Selection: see fixaltlanguages.sh script
+        files: (?x)^(htdocs/langs/(e[lnstu]|k[akmno]|s[lqrv]|b[nrs]|c[asy]|n[bel]|[ip]t|a[mr]|d[ae]|f[ar]|h[ei]|m[sy]|t[ag]|u[kr]|gl|ja|lo|ru|vi|zh)_[^/]*/.*\.lang)
+        language: script
+        entry: ./dev/tools/fixaltlanguages_pre-commit.sh
+        pass_filenames: true
 
   # Check PHP syntax
   - repo: https://github.com/mdeweerd/pre-commit-php
