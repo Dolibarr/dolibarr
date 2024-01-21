@@ -27,7 +27,7 @@ jobs:
           python-version: '3.11'
       - run: python -m pip install pre-commit regex
       # Restore previous cache of precommit
-      - uses: actions/cache/restore@v3
+      - uses: actions/cache/restore@v4
         with:
           path: ~/.cache/pre-commit/
           key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
@@ -54,8 +54,8 @@ jobs:
           notices-as-warnings: true  # optional
           prepend-filename: true  # optional
       # Save the precommit cache
-      - uses: actions/cache/save@v3
-        if: ${{ always() }}
+      - uses: actions/cache/save@v4
+        if: ${{ ! cancelled() }}
         with:
           path: ~/.cache/pre-commit/
           key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml')
@@ -63,7 +63,7 @@ jobs:
       # Upload result log files of precommit into the Artifact shared store
       - name: Provide log as artifact
         uses: actions/upload-artifact@v4
-        if: ${{ always() }}
+        if: ${{ ! cancelled() }}
         with:
           name: precommit-logs
           path: |
