@@ -849,7 +849,7 @@ class FactureFournisseur extends CommonInvoice
 	 * 	@param	string	$ref_ext	External reference of invoice
 	 *  @return int  	   			Return integer <0 if KO, >0 if OK, 0 if not found
 	 */
-	public function fetch($id = '', $ref = '', $ref_ext = '')
+	public function fetch($id = 0, $ref = '', $ref_ext = '')
 	{
 		if (empty($id) && empty($ref) && empty($ref_ext)) {
 			return -1;
