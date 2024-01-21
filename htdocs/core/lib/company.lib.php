@@ -29,7 +29,7 @@
 
 /**
  *	\file       htdocs/core/lib/company.lib.php
- *	\brief      Ensemble de fonctions de base pour le module societe
+ *	\brief      Ensemble de functions de base pour le module societe
  *	\ingroup    societe
  */
 
@@ -463,7 +463,7 @@ function societe_prepare_head2($object)
 
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array   	        head array with tabs
  */
@@ -691,7 +691,7 @@ function currency_name($code_iso, $withcode = '', $outputlangs = null)
 
 	$outputlangs->load("dict");
 
-	// If there is a translation, we can send immediatly the label
+	// If there is a translation, we can send immediately the label
 	if ($outputlangs->trans("Currency".$code_iso) != "Currency".$code_iso) {
 		return ($withcode ? $code_iso.' - ' : '').$outputlangs->trans("Currency".$code_iso);
 	}
@@ -1098,7 +1098,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		}
 	}
 
-	// Initialize array of search criterias
+	// Initialize array of search criteria
 	$search = array();
 	foreach ($arrayfields as $key => $val) {
 		$queryName = 'search_'.substr($key, 2);
@@ -1156,7 +1156,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
-	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print "\n".'<table class="tagtable liste">'."\n";
 
 	$param = "socid=".urlencode($object->id);
@@ -1872,7 +1872,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 					$result = $contactaction->fetchResources();
 					if ($result < 0) {
 						dol_print_error($db);
-						setEventMessage("company.lib::show_actions_done Error fetch ressource", 'errors');
+						setEventMessage("company.lib::show_actions_done Error fetch resource", 'errors');
 					}
 
 					//if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
@@ -2360,7 +2360,7 @@ function addEventTypeSQL(&$sql, $actioncode, $sqlANDOR = "AND")
  *		@param	string		$sql		    $sql modified
  * 		@param	string		$donetodo		donetodo
  * 		@param	string		$now		    now
- * 		@param	string		$filters		array
+ * 		@param	array		$filters		array
  * 		@return	string      sql request
  */
 function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)

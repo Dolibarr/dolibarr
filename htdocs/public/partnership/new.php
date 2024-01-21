@@ -272,8 +272,8 @@ if (empty($reshook) && $action == 'add') {
 				$company->town        = GETPOST('town');
 				$company->email       = GETPOST('email');
 				$company->url         = GETPOST('url');
-				$company->country_id  = GETPOST('country_id', 'int');
-				$company->state_id    = GETPOST('state_id', 'int');
+				$company->country_id  = GETPOSTINT('country_id');
+				$company->state_id    = GETPOSTINT('state_id');
 				$company->name_alias  = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
 
 				$resultat=$company->create($user);
@@ -300,7 +300,7 @@ if (empty($reshook) && $action == 'add') {
 				$company->town = GETPOST('town');
 			}
 			if (empty($company->country_id)) {
-				$company->country_id = GETPOST('country_id', 'int');
+				$company->country_id = GETPOSTINT('country_id');
 			}
 			if (empty($company->email)) {
 				$company->email = GETPOST('email');
@@ -309,7 +309,7 @@ if (empty($reshook) && $action == 'add') {
 				$company->url = GETPOST('url');
 			}
 			if (empty($company->state_id)) {
-				$company->state_id = GETPOST('state_id', 'int');
+				$company->state_id = GETPOSTINT('state_id');
 			}
 			if (empty($company->name_alias)) {
 				$company->name_alias = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
@@ -512,7 +512,7 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		$db->commit();
 
-		Header("Location: ".$urlback);
+		header("Location: ".$urlback);
 		exit;
 	} else {
 		$db->rollback();

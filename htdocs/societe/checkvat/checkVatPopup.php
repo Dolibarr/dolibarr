@@ -112,7 +112,7 @@ if (!$vatNumber) {
 		$messagetoshow = $result['faultstring'];
 	} elseif (preg_match('/INVALID_INPUT/i', $result['faultstring'])
 	|| ($result['requestDate'] && !$result['valid'])) {
-		// Syntaxe ko
+		// Syntax ko
 		if ($result['requestDate']) {
 			print $langs->trans("Date").': '.$result['requestDate'].'<br>';
 		}
@@ -120,7 +120,7 @@ if (!$vatNumber) {
 		print $langs->trans("ValueIsValid").': <span class="error">'.$langs->trans("No").'</span> (Might be a non europeen VAT)<br>';
 		//$messagetoshow=$soapclient->response;
 	} else {
-		// Syntaxe ok
+		// Syntax ok
 		if ($result['requestDate']) {
 			print $langs->trans("Date").': '.$result['requestDate'].'<br>';
 		}

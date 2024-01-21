@@ -156,8 +156,8 @@ class box_external_rss extends ModeleBoxes
 				$title = mb_convert_encoding($title, 'ISO-8859-1');
 			}
 
-			$title = preg_replace("/([[:alnum:]])\?([[:alnum:]])/", "\\1'\\2", $title); // Gere probleme des apostrophes mal codee/decodee par utf8
-			$title = preg_replace("/^\s+/", "", $title); // Supprime espaces de debut
+			$title = preg_replace("/([[:alnum:]])\?([[:alnum:]])/", "\\1'\\2", $title); // Manage issue of quotes improperly (de)coded in utf-8
+			$title = preg_replace("/^\s+/", "", $title); // Remove leading whitespace
 			$this->info_box_contents["$href"] = "$title";
 
 			$tooltip = $title;

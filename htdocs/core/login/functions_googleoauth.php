@@ -113,7 +113,7 @@ function check_user_password_googleoauth($usertotest, $passwordtotest, $entityto
 				$_POST['dol_use_jmobile'] = $tmparray['dol_use_jmobile'];
 			}
 
-			// If googleoauth_login has been set (by google_oauthcallback after a successfull OAUTH2 request on openid scope
+			// If googleoauth_login has been set (by google_oauthcallback after a successful OAUTH2 request on openid scope
 			if (!empty($_SESSION['googleoauth_receivedlogin']) && dol_verifyHash($conf->file->instance_unique_id.$usertotest, $_SESSION['googleoauth_receivedlogin'], '0')) {
 				unset($_SESSION['googleoauth_receivedlogin']);
 				$login = $usertotest;

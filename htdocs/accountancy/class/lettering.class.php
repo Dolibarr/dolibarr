@@ -282,10 +282,10 @@ class Lettering extends BookKeeping
 	/**
 	 *
 	 * @param	array		$ids			ids array
-	 * @param	boolean		$notrigger		no trigger
+	 * @param	int			$notrigger		no trigger
 	 * @return	int
 	 */
-	public function updateLettering($ids = array(), $notrigger = false)
+	public function updateLettering($ids = array(), $notrigger = 0)
 	{
 		$error = 0;
 
@@ -363,10 +363,10 @@ class Lettering extends BookKeeping
 	/**
 	 *
 	 * @param	array		$ids			ids array
-	 * @param	boolean		$notrigger		no trigger
+	 * @param	int			$notrigger		no trigger
 	 * @return	int
 	 */
-	public function deleteLettering($ids, $notrigger = false)
+	public function deleteLettering($ids, $notrigger = 0)
 	{
 		$error = 0;
 

@@ -400,7 +400,7 @@ function LoadProducts(position, issubcat) {
 			}
 			$("#prowatermark"+ishow).hide();
 			ishow++; //Next product to show after print data product
-			idata++; //Next data everytime
+			idata++; //Next data every time
 		}
 	});
 
@@ -475,7 +475,7 @@ function MoreProducts(moreorless) {
 			}
 			$("#prowatermark"+ishow).hide();
 			ishow++; //Next product to show after print data product
-			idata++; //Next data everytime
+			idata++; //Next data every time
 		}
 	});
 
@@ -1022,7 +1022,7 @@ $( document ).ready(function() {
 
 	$("body").mouseup(function(){
 		pressTimer.forEach(clearInterval);
-		console.log("body");
+		console.log("body mouseup");
 	});
 
 	function scrollTo(){

@@ -80,6 +80,10 @@ $socid 		= GETPOST('socid', 'int');
 
 $search_filter 		= GETPOST("search_filter", 'alpha');
 $search_status 		= GETPOST("search_status", 'intcomma');  // statut
+$search_datec_start = dol_mktime(0, 0, 0, GETPOST('search_datec_start_month', 'int'), GETPOST('search_datec_start_day', 'int'), GETPOST('search_datec_start_year', 'int'));
+$search_datec_end = dol_mktime(23, 59, 59, GETPOST('search_datec_end_month', 'int'), GETPOST('search_datec_end_day', 'int'), GETPOST('search_datec_end_year', 'int'));
+$search_datem_start = dol_mktime(0, 0, 0, GETPOST('search_datem_start_month', 'int'), GETPOST('search_datem_start_day', 'int'), GETPOST('search_datem_start_year', 'int'));
+$search_datem_end = dol_mktime(23, 59, 59, GETPOST('search_datem_end_month', 'int'), GETPOST('search_datem_end_day', 'int'), GETPOST('search_datem_end_year', 'int'));
 
 $filter = GETPOST("filter", 'alpha');
 if ($filter) {
@@ -258,6 +262,10 @@ if (empty($reshook)) {
 		$catid = "";
 		$search_all = "";
 		$toselect = array();
+		$search_datec_start = '';
+		$search_datec_end = '';
+		$search_datem_start = '';
+		$search_datem_end = '';
 		$search_array_options = array();
 	}
 
@@ -388,8 +396,8 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
-// SQL Aliase adherent
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";  // maybe better to use ad (adh) instead od d
+// SQL Alias adherent
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";  // maybe better to use ad (adh) instead of d
 if (!empty($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
 }
@@ -397,7 +405,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = d
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = d.state_id)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on (s.rowid = d.fk_soc)";
 
-// SQL Aliase adherent_type
+// SQL Alias adherent_type
 $sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 $sql .= " WHERE d.fk_adherent_type = t.rowid";
 
@@ -456,7 +464,7 @@ if ($search_filter == 'outofdate') {
 	$sql .= " AND (datefin < '".$db->idate($now)."')";
 }
 if ($search_status != '') {
-	// Peut valoir un nombre ou liste de nombre separes par virgules
+	// Peut valoir un nombre ou liste de nombre separates par virgules
 	$sql .= " AND d.statut in (".$db->sanitize($db->escape($search_status)).")";
 }
 if ($search_morphy != '' && $search_morphy != '-1') {
@@ -512,6 +520,18 @@ if ($search_country) {
 }
 if ($search_import_key) {
 	$sql .= natural_search("d.import_key", $search_import_key);
+}
+if ($search_datec_start) {
+	$sql .= " AND d.datec >= '".$db->idate($search_datec_start)."'";
+}
+if ($search_datec_end) {
+	$sql .= " AND d.datec <= '".$db->idate($search_datec_end)."'";
+}
+if ($search_datem_start) {
+	$sql .= " AND d.tms >= '".$db->idate($search_datem_start)."'";
+}
+if ($search_datem_end) {
+	$sql .= " AND d.tms <= '".$db->idate($search_datem_end)."'";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -658,6 +678,12 @@ if ($search_import_key != '') {
 }
 if ($search_type > 0) {
 	$param .= "&search_type=".urlencode($search_type);
+}
+if ($search_datec_start) {
+	$param .= '&search_datec_start_day='.dol_print_date($search_datec_start, '%d').'&search_datec_start_month='.dol_print_date($search_datec_start, '%m').'&search_datec_start_year='.dol_print_date($search_datec_start, '%Y');
+}
+if ($search_datem_end) {
+	$param .= '&search_datem_end_day='.dol_print_date($search_datem_end, '%d').'&search_datem_end_month='.dol_print_date($search_datem_end, '%m').'&search_datem_end_year='.dol_print_date($search_datem_end, '%Y');
 }
 
 // Add $param from extra fields
@@ -914,6 +940,12 @@ print $hookmanager->resPrint;
 // Date creation
 if (!empty($arrayfields['d.datec']['checked'])) {
 	print '<td class="liste_titre">';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datec_start ? $search_datec_start : -1, 'search_datec_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datec_end ? $search_datec_end : -1, 'search_datec_end_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 
@@ -926,6 +958,12 @@ if (!empty($arrayfields['d.birth']['checked'])) {
 // Date modification
 if (!empty($arrayfields['d.tms']['checked'])) {
 	print '<td class="liste_titre">';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datem_start ? $search_datem_start : -1, 'search_datem_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datem_end ? $search_datem_end : -1, 'search_datem_end_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 

@@ -114,7 +114,7 @@ if (!empty($dolibarr_main_document_root_alt)) {
 	}
 }
 
-// Chargement des includes principaux de librairies communes
+// Load the main includes of common libraries
 if (!defined('NOREQUIREUSER')) {
 	require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php'; // Need 500ko memory
 }
@@ -127,7 +127,7 @@ if (!defined('NOREQUIRESOC')) {
 
 
 /*
- * Creation objet $langs (must be before all other code)
+ * Create object $langs (must be before all other code)
  */
 if (!defined('NOREQUIRETRAN')) {
 	$langs = new Translate('', $conf); // Must be after reading conf
@@ -163,7 +163,7 @@ if (!defined('NOREQUIREDB')) {
 	}
 }
 
-// Now database connexion is known, so we can forget password
+// Now database connection is known, so we can forget password
 //unset($dolibarr_main_db_pass); 	// We comment this because this constant is used in some other pages
 unset($conf->db->pass); // This is to avoid password to be shown in memory/swap dump
 

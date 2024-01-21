@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/user/group/ldap.php
  *       \ingroup    ldap
- *       \brief      Page fiche LDAP groupe
+ *       \brief      Page Record LDAP Group
  */
 
 // Load Dolibarr environment
@@ -162,7 +162,7 @@ if (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 
 
 
-// Affichage attributs LDAP
+// Affichage attributes LDAP
 print load_fiche_titre($langs->trans("LDAPInformationsForThisGroup"));
 
 print '<table class="noborder centpercent">';

@@ -59,29 +59,28 @@ class MyModuleApi extends DolibarrApi
 	/**
 	 * Get properties of a myobject object
 	 *
-	 * Return an array with myobject informations
+	 * Return an array with myobject information
 	 *
 	 * @param	int		$id				ID of myobject
 	 * @return  Object					Object with cleaned properties
 	 *
 	 * @url	GET myobjects/{id}
 	 *
-	 * @throws RestException 401 Not allowed
+	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
 	 */
 	public function get($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->read) {
-			throw new RestException(401);
+			throw new RestException(403);
+		}
+		if (!DolibarrApi::_checkAccessToResource('myobject', $id, 'mymodule_myobject')) {
+			throw new RestException(403, 'Access to instance id='.$this->myobject->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->myobject->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'MyObject not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('myobject', $this->myobject->id, 'mymodule_myobject')) {
-			throw new RestException(401, 'Access to instance id='.$this->myobject->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->myobject);
@@ -98,10 +97,11 @@ class MyModuleApi extends DolibarrApi
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 *
-	 * @throws RestException
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 503 System error
 	 *
 	 * @url	GET /myobjects/
 	 */
@@ -111,7 +111,7 @@ class MyModuleApi extends DolibarrApi
 		$tmpobject = new MyObject($this->db);
 
 		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->read) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : 0;
@@ -186,16 +186,17 @@ class MyModuleApi extends DolibarrApi
 	 * Create myobject object
 	 *
 	 * @param array $request_data   Request datas
-	 * @return int  ID of myobject
+	 * @return int  				ID of myobject
 	 *
-	 * @throws RestException
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 500 System error
 	 *
 	 * @url	POST myobjects/
 	 */
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->write) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		// Check mandatory fields
@@ -203,7 +204,7 @@ class MyModuleApi extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->myobject->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -227,14 +228,19 @@ class MyModuleApi extends DolibarrApi
 	 * @param array $request_data   Datas
 	 * @return int
 	 *
-	 * @throws RestException
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 500 System error
 	 *
 	 * @url	PUT myobjects/{id}
 	 */
 	public function put($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->write) {
-			throw new RestException(401);
+			throw new RestException(403);
+		}
+		if (!DolibarrApi::_checkAccessToResource('myobject', $id, 'mymodule_myobject')) {
+			throw new RestException(403, 'Access to instance id='.$this->myobject->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->myobject->fetch($id);
@@ -242,16 +248,12 @@ class MyModuleApi extends DolibarrApi
 			throw new RestException(404, 'MyObject not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('myobject', $this->myobject->id, 'mymodule_myobject')) {
-			throw new RestException(401, 'Access to instance id='.$this->myobject->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
-		}
-
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->myobject->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -275,22 +277,25 @@ class MyModuleApi extends DolibarrApi
 	 * @param   int     $id   MyObject ID
 	 * @return  array
 	 *
-	 * @throws RestException
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 409 Nothing to do
+	 * @throws RestException 500 System error
 	 *
 	 * @url	DELETE myobjects/{id}
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->delete) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('mymodule', 'myobject', 'delete')) {
+			throw new RestException(403);
 		}
+		if (!DolibarrApi::_checkAccessToResource('myobject', $id, 'mymodule_myobject')) {
+			throw new RestException(403, 'Access to instance id='.$this->myobject->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result = $this->myobject->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'MyObject not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('myobject', $this->myobject->id, 'mymodule_myobject')) {
-			throw new RestException(401, 'Access to instance id='.$this->myobject->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if ($this->myobject->delete(DolibarrApiAccess::$user) == 0) {
@@ -347,40 +352,6 @@ class MyModuleApi extends DolibarrApi
 
 		unset($object->rowid);
 		unset($object->canvas);
-
-		/*unset($object->name);
-		unset($object->lastname);
-		unset($object->firstname);
-		unset($object->civility_id);
-		unset($object->statut);
-		unset($object->state);
-		unset($object->state_id);
-		unset($object->state_code);
-		unset($object->region);
-		unset($object->region_code);
-		unset($object->country);
-		unset($object->country_id);
-		unset($object->country_code);
-		unset($object->barcode_type);
-		unset($object->barcode_type_code);
-		unset($object->barcode_type_label);
-		unset($object->barcode_type_coder);
-		unset($object->total_ht);
-		unset($object->total_tva);
-		unset($object->total_localtax1);
-		unset($object->total_localtax2);
-		unset($object->total_ttc);
-		unset($object->fk_account);
-		unset($object->comments);
-		unset($object->note);
-		unset($object->mode_reglement_id);
-		unset($object->cond_reglement_id);
-		unset($object->cond_reglement);
-		unset($object->shipping_method_id);
-		unset($object->fk_incoterms);
-		unset($object->label_incoterms);
-		unset($object->location_incoterms);
-		*/
 
 		// If object has lines, remove $db property
 		if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0) {

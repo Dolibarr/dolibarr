@@ -175,7 +175,7 @@ if (empty($reshook)) {
 	}
 
 
-	// Confirmation desactivation
+	// Confirmation deactivation
 	if ($action == 'disable' && !empty($permissiontoadd)) {
 		$object->fetch($id);
 		if ($object->setstatus(0) < 0) {
@@ -206,7 +206,7 @@ if (empty($reshook)) {
 		}
 
 		$object->entity = (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : $conf->entity);
-		$object->socid = GETPOST("socid", 'int');
+		$object->socid = GETPOSTINT("socid");
 		$object->lastname = (string) GETPOST("lastname", 'alpha');
 		$object->firstname = (string) GETPOST("firstname", 'alpha');
 		$object->civility_code = (string) GETPOST("civility_code", 'alpha');
@@ -225,12 +225,12 @@ if (empty($reshook)) {
 			}
 		}
 		$object->email = (string) GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
-		$object->no_email = GETPOST("no_email", "int");
+		$object->no_email = GETPOSTINT("no_email");
 		$object->phone_pro = (string) GETPOST("phone_pro", 'alpha');
 		$object->phone_perso = (string) GETPOST("phone_perso", 'alpha');
 		$object->phone_mobile = (string) GETPOST("phone_mobile", 'alpha');
 		$object->fax = (string) GETPOST("fax", 'alpha');
-		$object->priv = GETPOST("priv", 'int');
+		$object->priv = GETPOSTINT("priv");
 		$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 		$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 		$object->roles = GETPOST("roles", 'array');
@@ -239,7 +239,7 @@ if (empty($reshook)) {
 
 		// Note: Correct date should be completed with location to have exact GM time of birth.
 		$object->birthday = dol_mktime(0, 0, 0, GETPOST("birthdaymonth", 'int'), GETPOST("birthdayday", 'int'), GETPOST("birthdayyear", 'int'));
-		$object->birthday_alert = GETPOST("birthday_alert", 'alpha');
+		$object->birthday_alert = GETPOSTINT("birthday_alert");
 
 		//Default language
 		$object->default_lang = GETPOST('default_lang');
@@ -257,7 +257,7 @@ if (empty($reshook)) {
 			$action = 'create';
 		}
 
-		if (!empty($object->email) && !isValidEMail($object->email)) {
+		if (!empty($object->email) && !isValidEmail($object->email)) {
 			$langs->load("errors");
 			$error++;
 			$errors[] = $langs->trans("ErrorBadEMail", GETPOST('email', 'alpha'));
@@ -348,7 +348,7 @@ if (empty($reshook)) {
 			$action = 'edit';
 		}
 
-		if (!empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL)) && !isValidEMail(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
+		if (!empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL)) && !isValidEmail(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
 			$langs->load("errors");
 			$error++;
 			$errors[] = $langs->trans("ErrorBadEMail", GETPOST('email', 'alpha'));
@@ -608,7 +608,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	 */
 	$head = array();
 	if ($id > 0) {
-		// Si edition contact deja existant
+		// Si edition contact deja existent
 		$object = new Contact($db);
 		$res = $object->fetch($id, $user);
 		if ($res < 0) {
@@ -896,7 +896,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			print '<hr style="margin-bottom: 20px">';
 
-			// Add personnal information
+			// Add personal information
 			print load_fiche_titre('<div class="comboperso">'.$langs->trans("PersonalInformations").'</div>', '', '');
 
 			print '<table class="border centpercent">';

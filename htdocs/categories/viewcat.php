@@ -301,6 +301,12 @@ print $langs->trans("Color").'</td><td>';
 print $formother->showColor($object->color);
 print '</td></tr>';
 
+// Position
+print '<tr><td class="titlefield notopnoleft">';
+print $langs->trans("Position").'</td><td>';
+print $object->position;
+print '</td></tr>';
+
 // Other attributes
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
@@ -499,6 +505,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 		if ($prods < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
+			/** @var Product[] $prods */
 			// Form to add record into the category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -584,6 +591,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 		if ($socs < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
+			/** @var Societe[] $socs */
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -668,6 +676,7 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 		if ($socs < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
+			/** @var Fournisseur[] $socs */
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -751,10 +760,11 @@ if ($type == Categorie::TYPE_MEMBER) {
 
 		$permission = $user->hasRight('adherent', 'creer');
 
-		$prods = $object->getObjectsInCateg($type, 0, $limit, $offset);
-		if ($prods < 0) {
+		$members = $object->getObjectsInCateg($type, 0, $limit, $offset);
+		if ($members < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
+			/** @var Adherent[] $members */
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -784,7 +794,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 
 			print '<br>';
 			$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
-			$num = count($prods);
+			$num = count($members);
 			$nbtotalofrecords = '';
 			$newcardbutton = dolGetButtonTitle($langs->trans("AddMember"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/card.php?action=create&memcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->hasRight('adherent', 'creer'));
 
@@ -793,9 +803,9 @@ if ($type == Categorie::TYPE_MEMBER) {
 			print '<table class="noborder centpecent">'."\n";
 			print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Name").'</td></tr>'."\n";
 
-			if (count($prods) > 0) {
+			if (count($members) > 0) {
 				$i = 0;
-				foreach ($prods as $key => $member) {
+				foreach ($members as $key => $member) {
 					$i++;
 					if ($i > $limit) {
 						break;
@@ -841,6 +851,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 		if (is_numeric($contacts) && $contacts < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
+			/** @var Contact[] $contacts */
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -932,6 +943,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 		if ($accounts < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
+			/** @var Account[] $accounts */
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -1019,6 +1031,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 		if ($objects < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
+			/** @var Project $object */
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -1104,6 +1117,7 @@ if ($type == Categorie::TYPE_USER) {
 		if ($users < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
+			/** @var User[] $users */
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -1180,7 +1194,7 @@ if ($type == Categorie::TYPE_USER) {
 // List of warehouses
 if ($type == Categorie::TYPE_WAREHOUSE) {
 	if ($user->hasRight("stock", "read")) {
-		$permission = $user->rights->stock->creer;
+		$permission = $user->hasRight('stock', 'creer');
 
 		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
@@ -1188,6 +1202,7 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 		if ($objects < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
+			/** @var Entrepot[] $objects */
 			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
@@ -1208,7 +1223,7 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 
 			if (count($objects) > 0) {
 				$i = 0;
-				foreach ($objects as $key => $project) {
+				foreach ($objects as $key => $warehouse) {
 					$i++;
 					if ($i > $limit) {
 						break;
@@ -1216,14 +1231,14 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 
 					print "\t".'<tr class="oddeven">'."\n";
 					print '<td class="nowrap tdtop">';
-					print $project->getNomUrl(1);
+					print $warehouse->getNomUrl(1);
 					print "</td>\n";
-					print '<td class="tdtop">'.$project->ref."</td>\n";
-					print '<td class="tdtop">'.$project->title."</td>\n";
+					print '<td class="tdtop">'.$warehouse->ref."</td>\n";
+					print '<td class="tdtop">'.$warehouse->lieu."</td>\n";
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {
-						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$project->id."'>";
+						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$warehouse->id."'>";
 						print $langs->trans("DeleteFromCat");
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
 						print "</a>";
@@ -1253,6 +1268,7 @@ if ($type == Categorie::TYPE_TICKET) {
 		if ($tickets < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
+			/** @var Ticket[] $tickets */
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {

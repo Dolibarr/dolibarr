@@ -114,12 +114,12 @@ class Holiday extends CommonObject
 	public $fk_user_refuse;
 
 	/**
-	 * @var int 	Date for cancelation
+	 * @var int 	Date for cancellation
 	 */
 	public $date_cancel = '';
 
 	/**
-	 * @var int 	ID for cancelation
+	 * @var int 	ID for cancellation
 	 */
 	public $fk_user_cancel;
 
@@ -1276,7 +1276,7 @@ class Holiday extends CommonObject
 				while ($i < $num_rows) {
 					$obj = $this->db->fetch_object($resql);
 
-					// Note: $obj->halfday is  0:Full days, 2:Sart afternoon end morning, -1:Start afternoon, 1:End morning
+					// Note: $obj->halfday is  0:Full days, 2:Start afternoon end morning, -1:Start afternoon, 1:End morning
 					$arrayofrecord[$obj->rowid] = array('date_start'=>$this->db->jdate($obj->date_start), 'date_end'=>$this->db->jdate($obj->date_end), 'halfday'=>$obj->halfday);
 					$i++;
 				}
@@ -2062,9 +2062,9 @@ class Holiday extends CommonObject
 		$sql .= " WHERE u.statut > 0";
 
 		$result = $this->db->query($sql);
-		$objet = $this->db->fetch_object($result);
+		$object = $this->db->fetch_object($result);
 
-		return $objet->compteur;
+		return $object->compteur;
 	}
 	/**
 	 *	Compte le nombre d'utilisateur actifs dans Dolibarr sans CP
@@ -2078,9 +2078,9 @@ class Holiday extends CommonObject
 		$sql .= " WHERE u.statut > 0 AND hu.fk_user IS NULL";
 
 		$result = $this->db->query($sql);
-		$objet = $this->db->fetch_object($result);
+		$object = $this->db->fetch_object($result);
 
-		return $objet->compteur;
+		return $object->compteur;
 	}
 
 	/**
@@ -2362,15 +2362,13 @@ class Holiday extends CommonObject
 		$this->statut = Holiday::STATUS_VALIDATED;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load this->nb for dashboard
 	 *
 	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $user;
 
 		$this->nb = array();
@@ -2403,7 +2401,7 @@ class Holiday extends CommonObject
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 *      @param	User	$user   		Objet user
+	 *      @param	User	$user   		Object user
 	 *      @return WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user)

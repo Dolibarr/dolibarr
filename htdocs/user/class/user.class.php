@@ -393,7 +393,7 @@ class User extends CommonObject
 	/**
 	 *    Constructor of the class
 	 *
-	 *    @param   DoliDb  $db     Database handler
+	 *    @param   DoliDB  $db     Database handler
 	 */
 	public function __construct($db)
 	{
@@ -1590,7 +1590,7 @@ class User extends CommonObject
 		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
 
 		// Check parameters
-		if (getDolGlobalString('USER_MAIL_REQUIRED') && !isValidEMail($this->email)) {
+		if (getDolGlobalString('USER_MAIL_REQUIRED') && !isValidEmail($this->email)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail", $this->email);
 			return -1;
@@ -1993,7 +1993,7 @@ class User extends CommonObject
 		// Check parameters
 		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
 
-		if (getDolGlobalString('USER_MAIL_REQUIRED') && !isValidEMail($this->email)) {
+		if (getDolGlobalString('USER_MAIL_REQUIRED') && !isValidEmail($this->email)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail", $this->email);
 			return -1;
@@ -2328,7 +2328,7 @@ class User extends CommonObject
 	 *	@param	int		$nosyncmember	        Do not synchronize linked member
 	 *  @param	int		$passwordalreadycrypted 0=Value is cleartext password, 1=Value is encrypted value.
 	 *  @param	int		$flagdelsessionsbefore  1=Save also the current date to ask to invalidate all other session before this date.
-	 *  @return string 			          		If OK return clear password, 0 if no change (warning, you may retrieve 1 instead of 0 even if password was same), < 0 if error
+	 *  @return int|string		          		If OK return clear password, 0 if no change (warning, you may retrieve 1 instead of 0 even if password was same), < 0 if error
 	 */
 	public function setPassword($user, $password = '', $changelater = 0, $notrigger = 0, $nosyncmember = 0, $passwordalreadycrypted = 0, $flagdelsessionsbefore = 1)
 	{
@@ -3334,7 +3334,7 @@ class User extends CommonObject
 		// When password is modified
 		if (!empty($this->pass)) {
 			if (getDolGlobalString('LDAP_FIELD_PASSWORD')) {
-				$info[getDolGlobalString('LDAP_FIELD_PASSWORD')] = $this->pass; // this->pass = mot de passe non crypte
+				$info[getDolGlobalString('LDAP_FIELD_PASSWORD')] = $this->pass; // this->pass = unencrypted password
 			}
 			if (getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')) {
 				$info[getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
@@ -3352,7 +3352,7 @@ class User extends CommonObject
 			} elseif (!empty($this->pass_indatabase)) {
 				// Use $this->pass_indatabase value if exists
 				if (getDolGlobalString('LDAP_FIELD_PASSWORD')) {
-					$info[getDolGlobalString('LDAP_FIELD_PASSWORD')] = $this->pass_indatabase; // $this->pass_indatabase = mot de passe non crypte
+					$info[getDolGlobalString('LDAP_FIELD_PASSWORD')] = $this->pass_indatabase; // $this->pass_indatabase = unencrypted password
 				}
 				if (getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')) {
 					$info[getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass_indatabase, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
@@ -3875,15 +3875,13 @@ class User extends CommonObject
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load metrics this->nb for dashboard
 	 *
 	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $conf;
 
 		$this->nb = array();

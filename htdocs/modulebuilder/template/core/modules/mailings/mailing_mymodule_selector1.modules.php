@@ -29,9 +29,9 @@ class mailing_mailing_mymodule_selector1 extends MailingTargets
 	public $require_module = array();
 
 	/**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 * @var string 	String with the name of icon for myobject. Can be an image filename like 'object_myobject.png' of a font awesome code 'fa-...'.
 	 */
-	public $picto = 'mymodule@mymodule';
+	public $picto = 'generic';
 
 	/**
 	 * @var DoliDB Database handler.
@@ -169,7 +169,7 @@ class mailing_mailing_mymodule_selector1 extends MailingTargets
 	 */
 	public function getSqlArrayForStats()
 	{
-		// CHANGE THIS: Optionnal
+		// CHANGE THIS: Optional
 
 		//var $statssql=array();
 		//$this->statssql[0]="SELECT field1 as label, count(distinct(email)) as nb FROM mytable WHERE email IS NOT NULL";

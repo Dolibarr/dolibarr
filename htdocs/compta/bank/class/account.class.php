@@ -1346,16 +1346,14 @@ class Account extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load the indicators this->nb for the state board
 	 *
 	 *		@param		int			$filteraccountid	To get info for a particular account id
 	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board($filteraccountid = 0)
+	public function loadStateBoard($filteraccountid = 0)
 	{
-		// phpcs:enable
 		global $user;
 
 		if ($user->socid) {
