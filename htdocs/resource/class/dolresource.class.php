@@ -374,7 +374,7 @@ class Dolresource extends CommonObject
 						$error++;
 					}
 				}
-			}diction
+			}
 		}
 
 		if (!$error) {
