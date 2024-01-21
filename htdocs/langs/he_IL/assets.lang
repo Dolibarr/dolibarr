@@ -57,10 +57,140 @@ MenuTypeAssets=סוגי נכסים
 MenuListAssets=רשימה
 MenuNewTypeAssets=סוג נכס חדש
 MenuListTypeAssets=רשימת סוגי נכסים
-
+MenuAssetModels=דפדוף בדפים
+MenuNewAssetModel=דף חדש
+MenuListAssetModels=רשימה
 #
 # Module
 #
 NewAssetType=סוג נכס חדש
 NewAsset=נכס חדש
+ConfirmDeleteAsset=האם אתה בטוח שברצונך להסיר את הנכס הזה?
+
+#
+# Tab
+#
+AssetDepreciationOptions=אפשרויות פקידה
+AssetAccountancyCodes=חשבונות הניהול
+AssetDepreciation=הורדה
+
+#
+# Asset
+#
+Asset=נכס
+Assets=נכסים
+AssetReversalAmountHT=סכום ההורדה (ללא מע"מ)
+AssetAcquisitionValueHT=סכום הרכישה (ללא מע"מ)
+AssetRecoveredVAT=מע"מ שהוחזר
+AssetReversalDate=תאריך הורדה
+AssetDateAcquisition=תאריך רכישה
+AssetDateStart=תאריך התחלה
+AssetAcquisitionType=סוג רכישה
+AssetAcquisitionTypeNew=חדש
+AssetAcquisitionTypeOccasion=משומש
+AssetType=סוג נכס
+AssetTypeIntangible=לא גופני
+AssetTypeTangible=גופני
+AssetTypeInProgress=בתהליך
+AssetTypeFinancial=פיננסי
+AssetNotDepreciated=לא הורד
+AssetDisposal=השלם
+AssetConfirmDisposalAsk=האם אתה בטוח שברצונך להשלים את הנכס <b>%s</b>?
+AssetConfirmReOpenAsk=האם אתה בטוח שברצונך לפתוח מחדש את הנכס <b>%s</b>?
+
+#
+# Asset status
+#
+AssetInProgress=בתהליך
+AssetDisposed=הושלם
+AssetRecorded=מאומת
+
+#
+# Asset disposal
+#
+AssetDisposalDate=תאריך השלם
+AssetDisposalAmount=ערך השלם
+AssetDisposalType=סוג השלם
+AssetDisposalDepreciated=פקיד יתורגם לפי השנה של ההעברה
+AssetDisposalSubjectToVat=השלם כולל מע"מ
+
+#
+# Asset model
+#
+AssetModel=דגם נכס
+AssetModels=דגמי נכס
+
+#
+# Asset depreciation options
+#
+AssetDepreciationOptionEconomic=התרחשות כלכלית
+AssetDepreciationOptionAcceleratedDepreciation=פקידה מואחדת (מס)
+AssetDepreciationOptionDepreciationType=סוג פקידה
+AssetDepreciationOptionDepreciationTypeLinear=ליניארית
+AssetDepreciationOptionDepreciationTypeDegressive=גורמת
+AssetDepreciationOptionDepreciationTypeExceptional=חריגה
+AssetDepreciationOptionDegressiveRate=שיעור גורמת
+AssetDepreciationOptionAcceleratedDepreciation=מואחדת (מס)
+AssetDepreciationOptionDuration=משך
+AssetDepreciationOptionDurationType=סוג משך
+AssetDepreciationOptionDurationTypeAnnual=שנתי
+AssetDepreciationOptionDurationTypeMonthly=חודשי
+AssetDepreciationOptionDurationTypeDaily=יומי
+AssetDepreciationOptionRate=שיעור (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=בסיס פקידה (לא כולל מע"מ)
+AssetDepreciationOptionAmountBaseDeductibleHT=בסיס ניכון (לא כולל מע"מ)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=סכום כולל לפקידה אחרונה (לא כולל מע"מ)
+
+#
+# Asset accountancy codes
+#
+DepreciationEconomic=פקידה כלכלית
+AssetAccountancyCodeAsset=נכס
+AssetAccountancyCodeDepreciationAsset=פקידה
+AssetAccountancyCodeDepreciationExpense=הוצאת פקידה
+AssetAccountancyCodeValueAssetSold=ערך הנכס שנמכר
+AssetAccountancyCodeReceivableOnAssignment=חוב על העברה
+AssetAccountancyCodeProceedsFromSales=הכנסות ממכירות
+AssetAccountancyCodeVatCollected=מע"מ מחויב
+AssetAccountancyCodeVatDeductible=מע"מ משוחזרת על נכסים
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=פקידה מואחדת (מס)
+AssetAccountancyCodeAcceleratedDepreciation=חשבון
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=הוצאת פקידה
+AssetAccountancyCodeProvisionAcceleratedDepreciation=מחזור/החזקה
+
+
+#
+# Asset depreciation
+#
+AssetBaseDepreciationHT=בסיס פקידה (לא כולל מע"מ)
+AssetDepreciationBeginDate=תחילת פקידה בתאריך
+AssetDepreciationDuration=משך
+AssetDepreciationRate=שיעור (%%)
+AssetDepreciationDate=תאריך פקידה
+AssetDepreciationHT=פקידה (לא כולל מע"מ)
+AssetCumulativeDepreciationHT=פקידה מצטברת (לא כולל מע"מ)
+AssetResidualHT=ערך משאר (לא כולל מע"מ)
+AssetDispatchedInBookkeeping=הפקדה נרשמה
+AssetFutureDepreciationLine=קו פקידה עתידי
+AssetDepreciationReversal=ביטול פקידה
+
+#
+# Errors
+#
+AssetErrorAssetOrAssetModelIDNotProvide=לא סופק מזהה של הנכס או הדגם
+AssetErrorFetchAccountancyCodesForMode=שגיאה בעת אחזור חשבונאות עבור מצב פקידה '%s'
+AssetErrorDeleteAccountancyCodesForMode=שגיאה בעת מחיקת חשבונאות ממצב הפקידה '%s'
+AssetErrorInsertAccountancyCodesForMode=שגיאה בעת הכנסת חשבונאות מצב פקידה '%s'
+AssetErrorFetchDepreciationOptionsForMode=שגיאה בעת אחזור אפשרויות עבור מצב הפקידה '%s'
+AssetErrorDeleteDepreciationOptionsForMode=שגיאה בעת מחיקת אפשרויות הפקידה '%s'
+AssetErrorInsertDepreciationOptionsForMode=שגיאה בעת הכנסת אפשרויות הפקידה '%s'
+AssetErrorFetchDepreciationLines=שגיאה בעת אחזור קווים של פקידה מורשם
+AssetErrorClearDepreciationLines=שגיאה בעת ניקוי קווי פקידה מורשם (ביטול ועתיד)
+AssetErrorAddDepreciationLine=שגיאה בעת הוספת קו פקידה
+AssetErrorCalculationDepreciationLines=שגיאה בעת חישוב קווים של פקידה (שחזור ועתיד)
+AssetErrorReversalDateNotProvidedForMode=לא סופק תאריך הופך עבור שיטת הפקידה '%s'
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=תאריך ההופכה חייב להיות גדול או שווה לתחילת שנת הפקידה הנוכחית עבור שיטת הפקידה '%s'
+AssetErrorReversalAmountNotProvidedForMode=לא סופק סכום הופכה עבור שיטת הפקידה '%s'.
+AssetErrorFetchCumulativeDepreciation=שגיאה בעת אחזור סכום הפקידה המצטברת מקו הפקידה
+AssetErrorSetLastCumulativeDepreciation=שגיאה בעת הזנת סכום הפקידה המצטברת האחרונה
 
