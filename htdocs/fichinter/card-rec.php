@@ -466,7 +466,7 @@ if ($action == 'create') {
 
 		print "</form>\n";
 	} else {
-		dol_print_error('', "Error, no fichinter ".$object->id);
+		dol_print_error(null, "Error, no fichinter ".$object->id);
 	}
 } elseif ($action == 'selsocforcreatefrommodel') {
 	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'intervention');

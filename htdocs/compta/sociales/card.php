@@ -884,7 +884,7 @@ if ($id > 0) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	} else {
 		/* Social contribution not found */
-		dol_print_error('', $object->error);
+		dol_print_error(null, $object->error);
 	}
 }
 

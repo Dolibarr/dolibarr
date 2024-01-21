@@ -707,7 +707,7 @@ if (!defined('NOLOGIN')) {
 	// No authentication mode
 	if (!count($authmode)) {
 		$langs->load('main');
-		dol_print_error('', $langs->trans("ErrorConfigParameterNotDefined", 'dolibarr_main_authentication'));
+		dol_print_error(null, $langs->trans("ErrorConfigParameterNotDefined", 'dolibarr_main_authentication'));
 		exit;
 	}
 

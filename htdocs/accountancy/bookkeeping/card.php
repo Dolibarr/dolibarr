@@ -350,7 +350,7 @@ if ($action == 'create') {
 	$next_num_mvt = $object->getNextNumMvt('_tmp');
 
 	if (empty($next_num_mvt)) {
-		dol_print_error('', 'Failed to get next piece number');
+		dol_print_error(null, 'Failed to get next piece number');
 	}
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" name="create_mvt" method="POST">';

@@ -59,7 +59,7 @@ if ($action == 'updateik') {
 	if ($id > 0) {
 		$result = $expIk->fetch($id);
 		if ($result < 0) {
-			dol_print_error('', $expIk->error, $expIk->errors);
+			dol_print_error(null, $expIk->error, $expIk->errors);
 		}
 	}
 
@@ -85,7 +85,7 @@ if ($action == 'updateik') {
 	if ($id > 0) {
 		$result = $expIk->fetch($id);
 		if ($result < 0) {
-			dol_print_error('', $expIk->error, $expIk->errors);
+			dol_print_error(null, $expIk->error, $expIk->errors);
 		}
 
 		$expIk->delete($user);

@@ -167,7 +167,7 @@ if ($action == 'add' && $permissiontoadd) {
 			}
 			if (empty($dirfornewdir)) {
 				$error++;
-				dol_print_error('', 'Bad value for module. Not supported.');
+				dol_print_error(null, 'Bad value for module. Not supported.');
 			}
 
 			if (!$error) {

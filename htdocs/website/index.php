@@ -213,7 +213,7 @@ if (empty($pageid) && empty($pageref) && $object->id > 0 && $action != 'createco
 	if (empty($pageid)) {
 		$array = $objectpage->fetchAll($object->id, 'ASC,ASC', 'type_container,pageurl');
 		if (!is_array($array) && $array < 0) {
-			dol_print_error('', $objectpage->error, $objectpage->errors);
+			dol_print_error(null, $objectpage->error, $objectpage->errors);
 		}
 		$atleastonepage = (is_array($array) && count($array) > 0);
 
@@ -370,7 +370,7 @@ if (GETPOST('refreshsite', 'alpha') || GETPOST('refreshsite.x', 'alpha') || GETP
 	if (empty($pageid)) {
 		$array = $objectpage->fetchAll($object->id, 'ASC,ASC', 'type_container,pageurl');
 		if (!is_array($array) && $array < 0) {
-			dol_print_error('', $objectpage->error, $objectpage->errors);
+			dol_print_error(null, $objectpage->error, $objectpage->errors);
 		}
 		$atleastonepage = (is_array($array) && count($array) > 0);
 
@@ -2885,7 +2885,7 @@ if (!GETPOST('hide_websitemenu')) {
 		$object->lines = $array;
 	}
 	if (!is_array($array) && $array < 0) {
-		dol_print_error('', $objectpage->error, $objectpage->errors);
+		dol_print_error(null, $objectpage->error, $objectpage->errors);
 	}
 	$atleastonepage = (is_array($array) && count($array) > 0);
 

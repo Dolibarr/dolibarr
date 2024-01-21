@@ -211,7 +211,7 @@ class Translate
 
 		// Check parameters
 		if (empty($domain)) {
-			dol_print_error('', get_class($this) . "::Load ErrorWrongParameters");
+			dol_print_error(null, get_class($this) . "::Load ErrorWrongParameters");
 			return -1;
 		}
 		if ($this->defaultlang === 'none_NONE') {

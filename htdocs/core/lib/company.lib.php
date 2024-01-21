@@ -1621,7 +1621,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
 	// Check parameters
 	if (!is_object($filterobj) && !is_object($objcon)) {
-		dol_print_error('', 'BadParameter');
+		dol_print_error(null, 'BadParameter');
 	}
 
 	$out = '';

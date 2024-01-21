@@ -2,7 +2,7 @@
 
 if (empty($keyforclass) || empty($keyforclassfile) || empty($keyforelement)) {
 	//print $keyforclass.' - '.$keyforclassfile.' - '.$keyforelement;
-	dol_print_error('', 'include of file commonfieldsinimport.inc.php was done but var $keyforclass or $keyforclassfile or $keyforelement was not set');
+	dol_print_error(null, 'include of file commonfieldsinimport.inc.php was done but var $keyforclass or $keyforclassfile or $keyforelement was not set');
 	exit;
 }
 if (empty($keyforalias)) {

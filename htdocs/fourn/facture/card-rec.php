@@ -1103,7 +1103,7 @@ if ($action == 'create') {
 
 		print "</form>\n";
 	} else {
-		dol_print_error('', "Error, no invoice " . $object->id);
+		dol_print_error(null, "Error, no invoice " . $object->id);
 	}
 } else {
 	/*

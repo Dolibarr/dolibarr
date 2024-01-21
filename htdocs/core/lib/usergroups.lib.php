@@ -1250,7 +1250,7 @@ function show_actions_done_user($conf, $langs, $db, $filterobj, $objcon = null, 
 
 	// Check parameters
 	if (!is_object($filterobj) && !is_object($objcon)) {
-		dol_print_error('', 'BadParameter');
+		dol_print_error(null, 'BadParameter');
 	}
 
 	$out = '';

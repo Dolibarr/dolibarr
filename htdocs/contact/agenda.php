@@ -165,7 +165,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$object = new Contact($db);
 		$result = $object->fetch($id);
 		if ($result <= 0) {
-			dol_print_error('', $object->error);
+			dol_print_error(null, $object->error);
 		}
 	}
 	$objcanvas->assign_values($action, $object->id, $object->ref); // Set value for templates

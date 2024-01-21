@@ -115,7 +115,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 
 	// If we use date_start and date_end, we must not use $y, $m, $q
 	if (($date_start || $date_end) && (!empty($y) || !empty($m) || !empty($q))) {
-		dol_print_error('', 'Bad value of input parameter for tax_by_rate');
+		dol_print_error(null, 'Bad value of input parameter for tax_by_rate');
 	}
 
 	$list = array();
@@ -704,7 +704,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 
 	// If we use date_start and date_end, we must not use $y, $m, $q
 	if (($date_start || $date_end) && (!empty($y) || !empty($m) || !empty($q))) {
-		dol_print_error('', 'Bad value of input parameter for tax_by_rate');
+		dol_print_error(null, 'Bad value of input parameter for tax_by_rate');
 	}
 
 	$list = array();

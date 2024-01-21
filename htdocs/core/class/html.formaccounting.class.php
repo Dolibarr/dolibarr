@@ -242,7 +242,7 @@ class FormAccounting extends Form
 		global $langs, $mysoc;
 
 		if (empty($mysoc->country_id) && empty($mysoc->country_code) && empty($allcountries)) {
-			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
+			dol_print_error(null, 'Call to select_accounting_account with mysoc country not yet defined');
 			exit;
 		}
 

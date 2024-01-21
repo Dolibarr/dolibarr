@@ -75,7 +75,7 @@ if (empty($reshook)) {
 	if (!empty($id)) {
 		$result = $object->fetch($id);
 		if ($result < 0) {
-			dol_print_error('', $object->error, $object->errors);
+			dol_print_error(null, $object->error, $object->errors);
 		}
 	}
 
