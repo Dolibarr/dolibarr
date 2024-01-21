@@ -132,6 +132,8 @@ AgendaUrlOptions3=<b>logina=%s</b> להגבלת הפלט לפעולות ששיי
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> להגבלת הפלט לפעולות שאינן שייכות למשתמש <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> להגבלת הפלט לפעולות ששוייכו למשתמש <b>%s</b> (בעלים ואחרים).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> להגבלת הפלט לפעולות הקשורות לפרויקט <b>__PROJECT_ID__</b>.
+AgendaUrlOptions4=<b>logint=%s</b> כדי להגביל את הפלט לפעולות שמשוייכות למשתמש <b>%s</b> (בעלים ואחרים).
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> כדי להגביל את הפלט לפעולות הקשורות לפרויקט <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> לא כולל ארועים אוטומטיים.
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> לכלול ארועי חגים.
 AgendaShowBirthdayEvents=ימי הולדת של אנשי קשר
@@ -172,4 +174,6 @@ AddReminder=צור התראת תזכורת אוטומטית לארוע זה
 ErrorReminderActionCommCreation=שגיאה ביצירת התראת תזכורת לארוע זה
 BrowserPush=התראה בדפדפן
 ActiveByDefault=מופעל כברירת מחדל
-
+Reminders=תזכורות
+Until=עד
+DataFromWasMerged=הנתונים מ-%s מיזוגו
