@@ -194,9 +194,13 @@ class AssetModel extends CommonObject
 	public function create(User $user, $notrigger = false)
 	{
 		$resultcreate = $this->createCommon($user, $notrigger);
-		if ($resultcreate > 0) {
+
+		if ($resultcreate > 0 && !empty($this->asset_depreciation_options)) {
 			$this->asset_depreciation_options->setDeprecationOptionsFromPost(1);
 			$this->asset_depreciation_options->updateDeprecationOptions($user, 0, $resultcreate);
+		}
+
+		if ($resultcreate > 0 && !empty($this->asset_accountancy_codes)) {
 			$this->asset_accountancy_codes->setAccountancyCodesFromPost();
 			$this->asset_accountancy_codes->updateAccountancyCodes($user, 0, $resultcreate);
 		}
@@ -422,9 +426,13 @@ class AssetModel extends CommonObject
 	public function update(User $user, $notrigger = false)
 	{
 		$resultupdate = $this->updateCommon($user, $notrigger);
-		if ($resultupdate > 0) {
+
+		if ($resultupdate > 0 && !empty($this->asset_depreciation_options)) {
 			$this->asset_depreciation_options->setDeprecationOptionsFromPost(1);
 			$this->asset_depreciation_options->updateDeprecationOptions($user, 0, $resultupdate);
+		}
+
+		if ($resultupdate > 0 && !empty($this->asset_accountancy_codes)) {
 			$this->asset_accountancy_codes->setAccountancyCodesFromPost();
 			$this->asset_accountancy_codes->updateAccountancyCodes($user, 0, $resultupdate);
 		}
