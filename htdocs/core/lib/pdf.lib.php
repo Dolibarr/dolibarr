@@ -1438,8 +1438,8 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	if (!empty($object->lines[$i]->label)) {
 		$label = $object->lines[$i]->label;
 	} else {
-		if (!empty($object->lines[$i]->multilangs[$langs->defaultlang]['label']) && $multilangsactive) {
-			$label = $object->lines[$i]->multilangs[$langs->defaultlang]['label'];
+		if (!empty($object->lines[$i]->multilangs[$outputlangs->defaultlang]['label']) && $multilangsactive) {
+			$label = $object->lines[$i]->multilangs[$outputlangs->defaultlang]['label'];
 		} else {
 			if (!empty($object->lines[$i]->product_label)) {
 				$label = $object->lines[$i]->product_label;
@@ -1452,8 +1452,8 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	if (!empty($object->lines[$i]->desc)) {
 		$desc = $object->lines[$i]->desc;
 	} else {
-		if (!empty($object->lines[$i]->multilangs[$langs->defaultlang]['description']) && $multilangsactive) {
-			$desc = $object->lines[$i]->multilangs[$langs->defaultlang]['description'];
+		if (!empty($object->lines[$i]->multilangs[$outputlangs->defaultlang]['description']) && $multilangsactive) {
+			$desc = $object->lines[$i]->multilangs[$outputlangs->defaultlang]['description'];
 		} else {
 			if (!empty($object->lines[$i]->description)) {
 				$desc = $object->lines[$i]->description;
