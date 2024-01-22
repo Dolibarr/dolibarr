@@ -43,9 +43,9 @@ $cancel = GETPOST('cancel', 'aZ09');
 
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
-$id = GETPOST('id', 'int'); // id of record
+$id = GETPOSTINT('id'); // id of record
 $mode = GETPOST('mode', 'aZ09'); // '' or '_tmp'
-$piece_num = GETPOST("piece_num", 'int'); // id of transaction (several lines share the same transaction id)
+$piece_num = GETPOSTINT("piece_num"); // id of transaction (several lines share the same transaction id)
 
 $accountingaccount = new AccountingAccount($db);
 $accountingjournal = new AccountingJournal($db);
@@ -65,8 +65,8 @@ if ($subledger_account == -1) {
 $subledger_label = GETPOST('subledger_label', 'alphanohtml');
 
 $label_operation = GETPOST('label_operation', 'alphanohtml');
-$debit = price2num(GETPOST('debit', 'alpha'));
-$credit = price2num(GETPOST('credit', 'alpha'));
+$debit = (float) price2num(GETPOST('debit', 'alpha'));
+$credit = (float) price2num(GETPOST('credit', 'alpha'));
 
 $save = GETPOST('save', 'alpha');
 if (!empty($save)) {
@@ -252,7 +252,7 @@ if ($action == "confirm_update") {
 		$object->credit = 0;
 		$object->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
 		$object->doc_type = GETPOST('doc_type', 'alpha');
-		$object->piece_num = GETPOST('next_num_mvt', 'alpha');
+		$object->piece_num = GETPOSTINT('next_num_mvt');
 		$object->doc_ref = GETPOST('doc_ref', 'alpha');
 		$object->code_journal = $journal_code;
 		$object->journal_label = $journal_label;
