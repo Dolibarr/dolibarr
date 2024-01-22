@@ -1345,7 +1345,7 @@ if ($source == 'contractline') {
 
 			$amount = $pu_ttc;
 			if (empty($amount)) {
-				dol_print_error('', 'ErrorNoPriceDefinedForThisProduct');
+				dol_print_error(null, 'ErrorNoPriceDefinedForThisProduct');
 				exit;
 			}
 		}

@@ -127,7 +127,7 @@ if ($id > 0 && $action != 'add') {
 		$ret1 = $object->fetch_userassigned();
 	}
 	if ($ret < 0 || $ret1 < 0) {
-		dol_print_error('', $object->error);
+		dol_print_error(null, $object->error);
 	}
 }
 

@@ -2475,7 +2475,7 @@ class Product extends CommonObject
 	 * @param  int    $ignore_lang_load  Load product without loading $this->multilangs language arrays (when we are sure we don't need them)
 	 * @return int                       Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id = '', $ref = '', $ref_ext = '', $barcode = '', $ignore_expression = 0, $ignore_price_load = 0, $ignore_lang_load = 0)
+	public function fetch($id = 0, $ref = '', $ref_ext = '', $barcode = '', $ignore_expression = 0, $ignore_price_load = 0, $ignore_lang_load = 0)
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 

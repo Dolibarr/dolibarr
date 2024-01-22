@@ -565,7 +565,7 @@ function dolibarr_del_const($db, $name, $entity = 1)
 	global $conf;
 
 	if (empty($name)) {
-		dol_print_error('', 'Error call dolibar_del_const with parameter name empty');
+		dol_print_error(null, 'Error call dolibar_del_const with parameter name empty');
 		return -1;
 	}
 

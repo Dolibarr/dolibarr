@@ -128,7 +128,7 @@ if ($qualified) {
 	//print $_GET["cm"].",".$_GET["sd"].",".$_GET["m"].",".$_GET["y"];exit;
 	displayBox(GETPOST("sd", 'alpha'), GETPOST("m", 'int'), GETPOST("y", 'int'));
 } else {
-	dol_print_error('', 'ErrorBadParameters');
+	dol_print_error(null, 'ErrorBadParameters');
 }
 
 

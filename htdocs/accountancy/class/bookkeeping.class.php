@@ -2595,6 +2595,56 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
+	 *  Define accounting result
+	 *
+	 * @param	int		$date_start		Date start
+	 * @param	int		$date_end		Date end
+	 * @return	string					Accounting result
+	 */
+	public function accountingResult($date_start, $date_end)
+	{
+		global $conf;
+
+		$this->db->begin();
+
+		$income_statement_amount = 0;
+
+		if (getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT')) {
+			$accounting_groups_used_for_income_statement = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT'))), 'strlen');
+
+			foreach ($accounting_groups_used_for_income_statement as $item) {
+				$pcg_type_filter[] = "'" . $this->db->escape($item) . "'";
+			}
+
+			$sql = 'SELECT';
+			$sql .= " t.numero_compte,";
+			$sql .= " aa.pcg_type,";
+			$sql .= " (SUM(t.credit) - SUM(t.debit)) as accounting_result";
+			$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
+			$sql .= ' LEFT JOIN  ' . MAIN_DB_PREFIX . 'accounting_account as aa ON aa.account_number = t.numero_compte';
+			$sql .= ' WHERE t.entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
+			$sql .= " AND aa.entity = " . ((int) $conf->entity);
+			$sql .= ' AND aa.fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid = ' . ((int) getDolGlobalInt('CHARTOFACCOUNTS')) . ')';
+			$sql .= ' AND aa.pcg_type IN (' . $this->db->sanitize(implode(',', $pcg_type_filter), 1) . ')';
+			$sql .= " AND DATE(t.doc_date) >= '" . $this->db->idate($date_start) . "'";
+			$sql .= " AND DATE(t.doc_date) <= '" . $this->db->idate($date_end) . "'";
+			$sql .= ' GROUP BY t.numero_compte, aa.pcg_type';
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->errors[] = 'Error ' . $this->db->lasterror();
+				dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			} else {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$income_statement_amount += $obj->accounting_result;
+				}
+			}
+		}
+
+		return $income_statement_amount;
+	}
+
+	/**
 	 *  Close fiscal period
 	 *
 	 * @param 	int		$fiscal_period_id				Fiscal year ID

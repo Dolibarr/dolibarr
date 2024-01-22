@@ -16,7 +16,8 @@ jobs:
         if: false
       # Checkout git sources to analyze
       - uses: actions/checkout@v4
-      # ???
+      # Action setup-python needs a requirements.txt or pyproject.toml
+      # This ensures one of them exists.
       - name: Create requirements.txt if no requirements.txt or pyproject.toml
         run: |-
           [ -r requirements.txt ] || [ -r pyproject.toml ] || touch requirements.txt
@@ -31,7 +32,8 @@ jobs:
         with:
           path: ~/.cache/pre-commit/
           key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
-      # Run all the precommit tools (defined into pre-commit-config.yaml). We can force exclusion of some of them here.
+      # Run all the precommit tools (defined into pre-commit-config.yaml).
+      # We can force exclusion of some of them here.
       - name: Run pre-commit hooks
         env:
           # SKIP is used by pre-commit to not execute certain hooks
