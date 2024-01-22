@@ -345,17 +345,7 @@ class CMailFile
 					$emailtoadd = '';	// Email already in the "To"
 				}
 				if ($emailtoadd) {
-					// Verify if there is email address to not send to inside MAIN_MAIL_AUTOCOPY_TO constant
-					if (getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO')) {
-						$listofemailstonotsendto = explode(',', getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO'));
-						if (in_array($emailtoadd, $listofemailstonotsendto)) {
-							unset($listofemailstoadd[$key]);
-						} else {
-							$listofemailstoadd[$key] = $emailtoadd;
-						}
-					} else {
-						$listofemailstoadd[$key] = $emailtoadd;
-					}
+					$listofemailstoadd[$key] = $emailtoadd;
 				} else {
 					unset($listofemailstoadd[$key]);
 				}
