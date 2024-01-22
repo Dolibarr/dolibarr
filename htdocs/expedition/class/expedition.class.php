@@ -1706,8 +1706,8 @@ class Expedition extends CommonObject
 							// We delete PDFs
 							$ref = dol_sanitizeFileName($this->ref);
 							if (!empty($conf->expedition->dir_output)) {
-								$dir = $conf->expedition->dir_output.'/sending/'.$ref;
-								$file = $dir.'/'.$ref.'.pdf';
+								$dir = $conf->expedition->dir_output . '/sending/' . $ref;
+								$file = $dir . '/' . $ref . '.pdf';
 								if (file_exists($file)) {
 									if (!dol_delete_file($file)) {
 										return 0;
