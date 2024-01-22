@@ -60,6 +60,9 @@ if ($pdluoid > 0) {
 
 $sellByCss = '';
 $eatByCss = '';
+// A date is mandatory when we record the lot the first time. Then once lot and date is recorded
+// a user should be able to manage the lot only (this is main goal of lot)
+/*
 if ($object->sell_or_eat_by_mandatory == Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY) {
 	$sellByCss = 'fieldrequired';
 } elseif ($object->sell_or_eat_by_mandatory == Product::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY) {
@@ -68,6 +71,7 @@ if ($object->sell_or_eat_by_mandatory == Product::SELL_OR_EAT_BY_MANDATORY_ID_SE
 	$sellByCss = 'fieldrequired';
 	$eatByCss = 'fieldrequired';
 }
+*/
 
 $disableSellBy = getDolGlobalInt('PRODUCT_DISABLE_SELLBY');
 $disableEatBy = getDolGlobalInt('PRODUCT_DISABLE_EATBY');
