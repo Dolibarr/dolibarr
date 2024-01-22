@@ -831,10 +831,10 @@ if ($object->id > 0 || !empty($object->ref)) {
 													$sql_child .= " SUM(".$db->ifsql("pa.rowid IS NOT NULL", 1, 0).") as iskit";
 													$sql_child .= ", ".$db->ifsql("pai.incdec IS NULL", 1, "pai.incdec")." as incdec";
 													$sql_child .= " FROM ".$db->prefix()."expeditiondet as ed";
-													$sql_child .= " LEFT JOIN ".$db->prefix()."expeditiondet as edp ON edp.rowid = ".$line_obj->fk_parent;
-													$sql_child .= " LEFT JOIN ".$db->prefix()."product_association as pa ON pa.fk_product_pere = ".$child_product_id;
-													$sql_child .= " LEFT JOIN ".$db->prefix()."product_association as pai ON pai.fk_product_pere = edp.fk_product AND pai.fk_product_fils = ".$child_product_id;
-													$sql_child .= " WHERE ed.rowid = ".$line_obj->rowid;
+													$sql_child .= " LEFT JOIN ".$db->prefix()."expeditiondet as edp ON edp.rowid = ".((int) $line_obj->fk_parent);
+													$sql_child .= " LEFT JOIN ".$db->prefix()."product_association as pa ON pa.fk_product_pere = ".((int) $child_product_id);
+													$sql_child .= " LEFT JOIN ".$db->prefix()."product_association as pai ON pai.fk_product_pere = edp.fk_product AND pai.fk_product_fils = ".((int) $child_product_id);
+													$sql_child .= " WHERE ed.rowid = ".((int) $line_obj->rowid);
 													$sql_child .= " GROUP BY pa.rowid, pai.incdec";
 													$resql_child = $db->query($sql_child);
 													if ($resql_child) {
