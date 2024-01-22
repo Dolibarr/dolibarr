@@ -44,7 +44,7 @@ class DocumentController extends Controller
 	public $fullpath_original_file_osencoded;
 
 	/**
-	 * @var string Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Exemple: 'medias', 'invoice', 'logs', 'tax-vat', ...
+	 * @var string Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Example: 'medias', 'invoice', 'logs', 'tax-vat', ...
 	 */
 	public $modulepart;
 

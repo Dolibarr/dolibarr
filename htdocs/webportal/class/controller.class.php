@@ -36,7 +36,7 @@ class Controller
 
 
 	/**
-	 * Constructeur de la classe
+	 * Constructor
 	 *
 	 * @return	void
 	 */

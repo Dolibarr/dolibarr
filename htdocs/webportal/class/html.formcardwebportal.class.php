@@ -263,10 +263,10 @@ class FormCardWebPortal
 		// Action to update record
 		if ($action == 'update' && !empty($permissiontoadd)) {
 			foreach ($object->fields as $key => $val) {
-				// Check if field was submited to be edited
+				// Check if field was submitted to be edited
 				if ($object->fields[$key]['type'] == 'duration') {
 					if (!GETPOSTISSET($key . 'hour') || !GETPOSTISSET($key . 'min')) {
-						continue; // The field was not submited to be saved
+						continue; // The field was not submitted to be saved
 					}
 				} elseif ($object->fields[$key]['type'] == 'boolean') {
 					if (!GETPOSTISSET($key)) {
@@ -275,7 +275,7 @@ class FormCardWebPortal
 					}
 				} else {
 					if (!GETPOSTISSET($key) && !preg_match('/^chkbxlst:/', $object->fields[$key]['type']) && $object->fields[$key]['type'] !== 'checkbox') {
-						continue; // The field was not submited to be saved
+						continue; // The field was not submitted to be saved
 					}
 				}
 				// Ignore special fields

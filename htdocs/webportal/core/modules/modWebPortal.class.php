@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2023-2024  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2023-2024  	Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024		Lionel Vessiller		<lvessiller@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -185,7 +185,7 @@ class modWebPortal extends DolibarrModules
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
 		// 'order'            to add a tab in sale order view
 		// 'order_supplier'   to add a tab in supplier order view

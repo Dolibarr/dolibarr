@@ -66,7 +66,7 @@ class Context
 	public $tokenKey = 'token';
 
 	/**
-	 * Curent object of page
+	 * Current object of page
 	 * @var object $object
 	 */
 	public $object;
@@ -252,7 +252,7 @@ class Context
 	 *
 	 * @param	string			$controller		Controller name
 	 * @param	string|array	$moreParams		More parameters
-	 * @param	bool			$addToken		Add token hash only if $controller is setted
+	 * @param	bool			$addToken		Add token hash only if $controller is set
 	 * @return	string
 	 * @deprecated see getControllerUrl()
 	 */
@@ -540,11 +540,6 @@ class Context
 	 */
 	protected function generateNewToken()
 	{
-
-
-
-
-
 		if (empty($controller)) {
 			$controller = !empty($this->controller) ? $this->controller : 'default';
 		}
@@ -558,7 +553,7 @@ class Context
 			}
 
 			// Save what will be next token. Into forms, we will add param $context->newToken();
-			$token = dol_hash(uniqid(mt_rand(), true)); // Generat
+			$token = dol_hash(uniqid(mt_rand(), true)); // Generate
 			$_SESSION['newtoken'] = $token;
 
 			return $token;
@@ -566,47 +561,6 @@ class Context
 			return $this->newToken();
 		}
 	}
-
-	/**
-	 * Return the value of token currently saved into session with name 'token'.
-	 *
-	 * @param	bool		$controller		Controller
-	 * @return  string
-	 */
-	/*public function currentToken($controller = false)
-	{
-		if (empty($controller)) {
-			$controller = !empty($this->controller) ? $this->controller : 'default';
-		}
-
-		return isset($_SESSION['controllers_tokens'][$controller]['token']) ? $_SESSION['controllers_tokens'][$controller]['token'] : false;
-	}*/
-
-	/**
-	 * Validate token
-	 *
-	 * @param	false 	$controller	Controller
-	 * @param	bool	$erase		Erase
-	 * @return  bool
-	 */
-	/*public function validateToken($controller = false, $erase = true)
-	{
-		$token = GETPOST($this->tokenKey, 'aZ09');
-
-		if (empty($controller)) {
-			$controller = !empty($this->controller) ? $this->controller : 'default';
-		}
-		$currentToken = $this->currentToken($controller);
-
-		if (empty($currentToken)) return false;
-		if (empty($token)) return false;
-		if ($currentToken === $token) {
-			if ($erase) {
-				unset($_SESSION['controllers_tokens'][$controller]['token']);
-			}
-			return true;
-		}
-	}*/
 
 	/**
 	 * Get token url

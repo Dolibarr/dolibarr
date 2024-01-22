@@ -126,22 +126,22 @@ if (empty($reshook)) {
 		if (!empty($maxTopMenu) && $maxTopMenu < count($navMenu)) {
 			// AFFECT MENU ITEMS TO GROUPS
 			foreach ($navMenu as $menuId => $menuItem) {
-				// affectation des items de menu au groupement
+				// assign items to group menu
 				if (!empty($menuItem['group']) && !empty($navGroupMenu[$menuItem['group']])) {
 					$goupId = $menuItem['group'];
 
-					// Affectation de l'item au groupe
+					// set item to group
 					$navGroupMenu[$goupId]['children'][$menuId] = $menuItem;
 
-					// Application du rang
+					// apply rank
 					if (!empty($navGroupMenu[$goupId]['rank']) && $navGroupMenu[$goupId]['rank'] > 0) {
-						// le rang mini des items du groupe défini le rang du groupe
+						// minimum rank of group determine rank of group
 						$navGroupMenu[$goupId]['rank'] = min(abs($navGroupMenu[$goupId]['rank']), abs($menuItem['rank']));
 					}
 				}
 			}
 
-			// INSERTION DES GROUPES DANS LE MENU
+			// add grouped items to this menu
 			foreach ($navGroupMenu as $groupId => $groupItem) {
 				// If group have more than 1 item, group is valid
 				if (!empty($groupItem['children']) && count($groupItem['children']) > 1) {

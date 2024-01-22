@@ -142,7 +142,7 @@ class FormListWebPortal
 		$this->page = GETPOSTISSET('page') ? (int) GETPOST('page', 'int') : 1;
 		$this->titleKey = $objectclass . 'ListTitle';
 
-		// Initialize array of search criterias
+		// Initialize array of search criteria
 		//$search_all = GETPOST('search_all', 'alphanohtml');
 		$search = array();
 		foreach ($object->fields as $key => $val) {
@@ -729,10 +729,12 @@ class FormListWebPortal
 	}
 
 	/**
-	 * @param string $url url of curent page
-	 * @param int $nbPages total of pages results
-	 * @param int $currentPage number of current page
-	 * @return string
+	 * Generate with pagination navigaion
+	 *
+	 * @param 	string	$url			Url of current page
+	 * @param	int 	$nbPages		Total of pages results
+	 * @param	int 	$currentPage	Number of current page
+	 * @return	string
 	 */
 	public static function generatePageListNav(string $url, int $nbPages, int $currentPage)
 	{
