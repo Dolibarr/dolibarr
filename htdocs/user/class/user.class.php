@@ -296,7 +296,7 @@ class User extends CommonObject
 	public $photo;
 
 	/**
-	 * @var sting default language
+	 * @var string default language
 	 */
 	public $lang;
 
