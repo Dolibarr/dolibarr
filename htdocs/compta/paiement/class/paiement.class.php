@@ -272,8 +272,8 @@ class Paiement extends CommonObject
 			// Add controls of input validity
 			if ($value_converted === false) {
 				// We failed to find the conversion for one invoice
-				$this->error = 'FailedToFoundTheConversionRateForInvoice';
-				return -1;
+                $this->error = $langs->trans('FailedToFoundTheConversionRateForInvoice');
+                return -1;
 			}
 			if (empty($currencyofpayment)) {
 				$currencyofpayment = $this->multicurrency_code[$key];
@@ -314,7 +314,7 @@ class Paiement extends CommonObject
 		// Check parameters
 		if (empty($totalamount) && empty($atleastonepaymentnotnull)) {	 // We accept negative amounts for withdraw reject but not empty arrays
 			$this->errors[] = 'TotalAmountEmpty';
-			$this->error = 'TotalAmountEmpty';
+            $this->error = $langs->trans('TotalAmountEmpty');
 			return -1;
 		}
 
