@@ -48,7 +48,7 @@ class FormCardWebPortal
 	public $backtopageforcancel = '';
 
 	/**
-	 * @var string Back to page fo JS fields
+	 * @var string Back to page for JS fields
 	 */
 	public $backtopagejsfields = '';
 

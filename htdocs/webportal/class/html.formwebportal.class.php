@@ -664,6 +664,8 @@ class FormWebPortal extends Form
 		//$list = (!empty($val['list']) ? $val[$key]['list'] : 0);
 		$hidden = (in_array(abs($val['visible']), array(0, 2)) ? 1 : 0);
 
+		$objectid = $this->id;
+
 		if ($computed) {
 			if (!preg_match('/^search_/', $keyprefix)) {
 				return '<span>' . $langs->trans("AutomaticallyCalculated") . '</span>';

@@ -28,7 +28,7 @@ class Context
 
 	/**
 	 * The application name
-	 * @var $appliName
+	 * @var string $appliName
 	 */
 	public $appliName;
 
@@ -51,6 +51,9 @@ class Context
 	 */
 	public $error;
 
+	/**
+	 * @var string Action
+	 */
 	public $action;
 
 	public $tplDir;
@@ -154,7 +157,7 @@ class Context
 	/**
 	 * Init controller
 	 *
-	 * @return  bool
+	 * @return  void
 	 */
 	public function initController()
 	{
@@ -540,10 +543,6 @@ class Context
 	 */
 	protected function generateNewToken()
 	{
-		if (empty($controller)) {
-			$controller = !empty($this->controller) ? $this->controller : 'default';
-		}
-
 		$currentToken = $this->newToken();
 		// Creation of a token against CSRF vulnerabilities
 		if (!defined('NOTOKENRENEWAL') || empty($currentToken) ) {
@@ -565,37 +564,31 @@ class Context
 	/**
 	 * Get token url
 	 *
-	 * @param	false|string	$controller		Controller
 	 * @return	string|null
 	 */
-	public function getUrlToken($controller = false)
+	public function getUrlToken()
 	{
-		if (empty($controller)) {
-			$controller = !empty($this->controller) ? $this->controller : 'default';
+		$token = $this->newToken();
+		if ($token) {
+			return '&' . $this->tokenKey . '=' . $this->newToken();
 		}
 
-		$token = $this->newToken($controller);
-		if ($token) {
-			return '&' . $this->tokenKey . '=' . $this->newToken($controller);
-		}
+		return null;
 	}
 
 	/**
 	 * Get token input for form
 	 *
-	 * @param	false|string	$controller		Controller
 	 * @return  string|null
 	 */
-	public function getFormToken($controller = false)
+	public function getFormToken()
 	{
-		if (empty($controller)) {
-			$controller = !empty($this->controller) ? $this->controller : 'default';
+		$token = $this->newToken();
+		if ($token) {
+			return '<input type="hidden" name="' . $this->tokenKey . '" value="' . $this->newToken() . '" />';
 		}
 
-		$token = $this->newToken($controller);
-		if ($token) {
-			return '<input type="hidden" name="' . $this->tokenKey . '" value="' . $this->newToken($controller) . '" />';
-		}
+		return null;
 	}
 
 	/**

@@ -44,6 +44,16 @@ class WebPortalTheme
 	public $menuLogoUrl;
 	public $loginBackground;
 
+	/**
+	 * @var string Background of banner
+	 */
+	public $bannerBackground;
+
+	/**
+	 * @var int Use dark theme on banner
+	 */
+	public $bannerUseDarkTheme;
+
 
 	/**
 	 * Constructor
@@ -60,9 +70,9 @@ class WebPortalTheme
 	}
 
 	/**
-	 * return hex of primary theme color
+	 * Load hex of primary theme color
 	 *
-	 * @return string
+	 * @return void
 	 */
 	public function loadPrimaryColor()
 	{

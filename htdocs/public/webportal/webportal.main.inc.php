@@ -50,7 +50,7 @@ dol_include_once('/webportal/class/webportalpartnership.class.php');
 // Init session. Name of session is specific to WEBPORTAL instance.
 // Must be done after the include of filefunc.inc.php so global variables of conf file are defined (like $dolibarr_main_instance_unique_id or $dolibarr_main_force_https).
 // Note: the function dol_getprefix is defined into functions.lib.php but may have been defined to return a different key to manage another area to protect.
-$prefix = dol_getprefix('');
+$prefix = dol_getprefix();
 $sessionname = 'WEBPORTAL_SESSID_' . $prefix;
 $sessiontimeout = 'WEBPORTAL_SESSTIMEOUT_' . $prefix;
 if (!empty($_COOKIE[$sessiontimeout]) && session_status()===PHP_SESSION_NONE) {
