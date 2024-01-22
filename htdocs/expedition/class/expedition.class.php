@@ -1699,27 +1699,27 @@ class Expedition extends CommonObject
 					if (!$error) {
 						$this->db->commit();
 
-							// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
-							$this->deleteEcmFiles(0);	 // Deleting files physically is done later with the dol_delete_dir_recursive
-							$this->deleteEcmFiles(1);	 // Deleting files physically is done later with the dol_delete_dir_recursive
+						// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
+						$this->deleteEcmFiles(0);	 // Deleting files physically is done later with the dol_delete_dir_recursive
+						$this->deleteEcmFiles(1);	 // Deleting files physically is done later with the dol_delete_dir_recursive
 
-							// We delete PDFs
-							$ref = dol_sanitizeFileName($this->ref);
-							if (!empty($conf->expedition->dir_output)) {
-								$dir = $conf->expedition->dir_output . '/sending/' . $ref;
-								$file = $dir . '/' . $ref . '.pdf';
-								if (file_exists($file)) {
-									if (!dol_delete_file($file)) {
-										return 0;
-									}
-								}
-								if (file_exists($dir)) {
-									if (!dol_delete_dir_recursive($dir)) {
-										$this->error = $langs->trans("ErrorCanNotDeleteDir", $dir);
-										return 0;
-									}
+						// We delete PDFs
+						$ref = dol_sanitizeFileName($this->ref);
+						if (!empty($conf->expedition->dir_output)) {
+							$dir = $conf->expedition->dir_output . '/sending/' . $ref;
+							$file = $dir . '/' . $ref . '.pdf';
+							if (file_exists($file)) {
+								if (!dol_delete_file($file)) {
+									return 0;
 								}
 							}
+							if (file_exists($dir)) {
+								if (!dol_delete_dir_recursive($dir)) {
+									$this->error = $langs->trans("ErrorCanNotDeleteDir", $dir);
+									return 0;
+								}
+							}
+						}
 
 						return 1;
 					} else {
