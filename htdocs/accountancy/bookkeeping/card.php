@@ -190,14 +190,14 @@ if ($action == "confirm_update") {
 		$object->fk_docdet = GETPOSTINT('fk_docdet');
 
 		if ((float) $debit != 0.0) {
-			$object->montant = (float) $debit; // deprecated
-			$object->amount = (float) $debit;
+			$object->montant = $debit; // deprecated
+			$object->amount = $debit;
 			$object->sens = 'D';
 		}
 
 		if ((float) $credit != 0.0) {
-			$object->montant = (float) $credit; // deprecated
-			$object->amount = (float) $credit;
+			$object->montant = $credit; // deprecated
+			$object->amount = $credit;
 			$object->sens = 'C';
 		}
 
