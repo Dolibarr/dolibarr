@@ -65,3 +65,25 @@ if ($action == 'getDurationUnitByProduct' && $user->hasRight('product', 'lire'))
 	echo json_encode($fk_unit);
 	exit();
 }
+
+if ($action == 'getWorkstationByProduct' && $user->hasRight('product', 'lire')) {
+    $product = new Product($db);
+    $res = $product->fetch($idproduct);
+
+    $result = array();
+
+
+    if($res < 0){
+        $error = 'SQL ERROR';
+    }elseif($res == 0){
+        $error = 'NOT FOUND';
+    }else{
+        $error = null;
+        $result['defaultWk']=$product->fk_default_workstation;
+    }
+
+    $result['error']=$error;
+
+    echo json_encode($result);
+    exit();
+}

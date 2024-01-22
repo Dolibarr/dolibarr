@@ -792,7 +792,7 @@ class BOM extends CommonObject
 					$line->array_options[$key] = $array_options[$key];
 				}
 			}
-			if ($fk_default_workstation > 0 && $line->fk_default_workstation != $fk_default_workstation) {
+			if ($line->fk_default_workstation != $fk_default_workstation) {
 				$line->fk_default_workstation = $fk_default_workstation;
 			}
 
