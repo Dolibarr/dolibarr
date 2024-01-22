@@ -965,9 +965,9 @@ class Contrat extends CommonObject
 
 		// Now set the global properties on contract not stored into database.
 		$this->nbofservices = count($this->lines);
-		$this->total_ttc = price2num($total_ttc);
-		$this->total_tva = price2num($total_vat);
-		$this->total_ht = price2num($total_ht);
+		$this->total_ttc = (float) price2num($total_ttc);
+		$this->total_tva = (float) price2num($total_vat);
+		$this->total_ht = (float) price2num($total_ht);
 
 		return $this->lines;
 	}
@@ -1586,8 +1586,9 @@ class Contrat extends CommonObject
 
 			// if buy price not defined, define buyprice as configured in margin admin
 			if ($pa_ht == 0) {
-				if (($result = $this->defineBuyPrice($pu_ht, $remise_percent, $fk_product)) < 0) {
-					return $result;
+				$result = $this->defineBuyPrice($pu_ht, $remise_percent, $fk_product);
+				if ($result < 0) {
+					return -1;
 				} else {
 					$pa_ht = $result;
 				}
@@ -1783,8 +1784,9 @@ class Contrat extends CommonObject
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($pa_ht == 0) {
-			if (($result = $this->defineBuyPrice($pu, $remise_percent)) < 0) {
-				return $result;
+			$result = $this->defineBuyPrice($pu, $remise_percent);
+			if ($result < 0) {
+				return -1;
 			} else {
 				$pa_ht = $result;
 			}
@@ -3430,11 +3432,11 @@ class ContratLigne extends CommonObjectLine
 		$this->fk_remise_except = (int) $this->fk_remise_except;
 		$this->subprice = price2num($this->subprice);
 		$this->price_ht = price2num($this->price_ht);
-		$this->total_ht = trim($this->total_ht);
-		$this->total_tva = trim($this->total_tva);
-		$this->total_localtax1 = trim($this->total_localtax1);
-		$this->total_localtax2 = trim($this->total_localtax2);
-		$this->total_ttc = trim($this->total_ttc);
+		$this->total_ht = (float) trim($this->total_ht);
+		$this->total_tva = (float) trim($this->total_tva);
+		$this->total_localtax1 = (float) trim($this->total_localtax1);
+		$this->total_localtax2 = (float) trim($this->total_localtax2);
+		$this->total_ttc = (float) trim($this->total_ttc);
 		$this->info_bits = trim($this->info_bits);
 		$this->fk_user_author = (int) $this->fk_user_author;
 		$this->fk_user_ouverture = (int) $this->fk_user_ouverture;
@@ -3496,8 +3498,9 @@ class ContratLigne extends CommonObjectLine
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0) {
-			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0) {
-				return $result;
+			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product);
+			if ($result < 0) {
+				return -1;
 			} else {
 				$this->pa_ht = $result;
 			}
