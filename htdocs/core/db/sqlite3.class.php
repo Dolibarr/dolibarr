@@ -86,7 +86,7 @@ class DoliDBSqlite3 extends DoliDB
 			$this->ok = false;
 			$this->error="Sqlite PHP functions for using Sqlite driver are not available in this version of PHP. Try to use another driver.";
 			dol_syslog(get_class($this)."::DoliDBSqlite3 : Sqlite PHP functions for using Sqlite driver are not available in this version of PHP. Try to use another driver.",LOG_ERR);
-			return $this->ok;
+			return;
 		}*/
 
 		/*if (! $host)
@@ -95,7 +95,7 @@ class DoliDBSqlite3 extends DoliDB
 			$this->ok = false;
 			$this->error=$langs->trans("ErrorWrongHostParameter");
 			dol_syslog(get_class($this)."::DoliDBSqlite3 : Erreur Connect, wrong host parameters",LOG_ERR);
-			return $this->ok;
+			return;
 		}*/
 
 		// Essai connexion serveur
@@ -126,8 +126,6 @@ class DoliDBSqlite3 extends DoliDB
 			//$this->error=sqlite_connect_error();
 			dol_syslog(get_class($this)."::DoliDBSqlite3 : Error Connect ".$this->error, LOG_ERR);
 		}
-
-		return $this->ok;
 	}
 
 
@@ -1081,7 +1079,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	string	$field_name 		Name of field to add
 	 *	@param	string	$field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
 	 *	@param	string	$field_position 	Optionnel ex.: "after champtruc"
-	 *	@return	int							<0 if KO, >0 if OK
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLAddField($table, $field_name, $field_desc, $field_position = "")
 	{
@@ -1127,7 +1125,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	string	$table 				Name of table
 	 *	@param	string	$field_name 		Name of field to modify
 	 *	@param	string	$field_desc 		Array with description of field format
-	 *	@return	int							<0 if KO, >0 if OK
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc)
 	{
@@ -1151,7 +1149,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *
 	 *	@param	string	$table 			Name of table
 	 *	@param	string	$field_name 	Name of field to drop
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLDropField($table, $field_name)
 	{
@@ -1414,8 +1412,8 @@ class DoliDBSqlite3 extends DoliDB
 		} else {
 			$num -= floor(($month * 4 + 23) / 10);
 		}
-			$temp = floor(($y / 100 + 1) * 3 / 4);
-			return $num + floor($y / 4) - $temp;
+		$temp = floor(($y / 100 + 1) * 3 / 4);
+		return $num + floor($y / 4) - $temp;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

@@ -36,7 +36,7 @@ $langs->loadLangs(array('banks', 'categories'));
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width', 380); // Large for one graph in a smarpthone.
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', 160);
 
-$id = GETPOST('account') ?GETPOST('account', 'alpha') : GETPOST('id');
+$id = GETPOST('account') ? GETPOST('account', 'alpha') : GETPOST('id');
 $ref = GETPOST('ref');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context

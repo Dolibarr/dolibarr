@@ -191,7 +191,7 @@ class FormWebsite
 		}
 
 		$out = '';
-		$out .= '<select id="select'.$htmlname.'" class="selectSampleOfContainer'.($morecss? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
+		$out .= '<select id="select'.$htmlname.'" class="selectSampleOfContainer'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
 
 		if ($useempty == 1 || $useempty == 2) {
 			$out .= '<option value="-1">&nbsp;</option>';

@@ -441,7 +441,7 @@ class BonPrelevement extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -763,7 +763,7 @@ class BonPrelevement extends CommonObject
 		}
 		$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pd";
 		$sql .= ($type !== 'salary' ? " WHERE f.entity IN (".getEntity('invoice').")" : " WHERE s.entity IN (".getEntity('salary').")");
-		if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
+		if (!getDolGlobalString('WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS')) {
 			$sql .= ($type !== 'salary' ? " AND f.fk_statut = ".Facture::STATUS_VALIDATED : " AND s.paye = ".Salary::STATUS_UNPAID);
 		}
 		if ($type !== 'salary') {
@@ -825,7 +825,7 @@ class BonPrelevement extends CommonObject
 		// phpcs:enable
 		global $conf;
 
-		if ($forsalary == 1 ) {
+		if ($forsalary == 1) {
 			$sql = "SELECT count(s.rowid) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
 		} else {
@@ -840,12 +840,12 @@ class BonPrelevement extends CommonObject
 		$sql .= ", ".MAIN_DB_PREFIX."prelevement_demande as pd";
 		if ($forsalary == 1) {
 			$sql .= " WHERE s.entity IN (".getEntity('invoice').")";
-			if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
+			if (!getDolGlobalString('WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS')) {
 				$sql .= " AND s.paye = 0";
 			}
 		} else {
 			$sql .= " WHERE f.entity IN (".getEntity('invoice').")";
-			if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
+			if (!getDolGlobalString('WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS')) {
 				$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 			}
 		}
@@ -1494,7 +1494,7 @@ class BonPrelevement extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -2172,7 +2172,7 @@ class BonPrelevement extends CommonObject
 				$XML_CREDITOR .= '				<PmtTpInf>' . $CrLf;
 
 				// Can be 'NORM' for normal or 'HIGH' for high priority level
-				if (!empty($conf->global->PAYMENTBYBANKTRANSFER_FORCE_HIGH_PRIORITY)) {
+				if (getDolGlobalString('PAYMENTBYBANKTRANSFER_FORCE_HIGH_PRIORITY')) {
 					$instrprty = 'HIGH';
 				} else {
 					$instrprty = 'NORM';

@@ -45,7 +45,7 @@ if (!$user->admin) {
 }
 
 $action = GETPOST('action', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'adminihm'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'adminihm'; // To manage different context of search
 
 $mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'other'; // 'template', 'dashboard', 'login', 'other'
 
@@ -329,12 +329,20 @@ if ($action == 'update') {
 
 $wikihelp = 'EN:First_setup|FR:Premiers_param&eacute;trages|ES:Primeras_configuraciones';
 
-llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0,
+llxHeader(
+	'',
+	$langs->trans("Setup"),
+	$wikihelp,
+	'',
+	0,
+	0,
 	array(
 	'/includes/ace/src/ace.js',
 	'/includes/ace/src/ext-statusbar.js',
 	'/includes/ace/src/ext-language_tools.js',
-	), array());
+	),
+	array()
+);
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -490,6 +498,13 @@ if ($mode == 'other') {
 	print '</td>';
 	print '</tr>';
 	*/
+
+
+	// Show search area in top menu
+	print '<tr class="oddeven"><td>' . $langs->trans("ShowSearchAreaInTopMenu") . '</td><td>';
+	print ajax_constantonoff("MAIN_USE_TOP_MENU_SEARCH_DROPDOWN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+	print '</td>';
+	print '</tr>';
 
 	// Show bugtrack link
 	print '<tr class="oddeven"><td>';

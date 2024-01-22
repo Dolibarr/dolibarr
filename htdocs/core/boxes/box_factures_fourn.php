@@ -81,7 +81,7 @@ class box_factures_fourn extends ModeleBoxes
 		$thirdpartystatic = new Fournisseur($this->db);
 
 		$this->info_box_head = array(
-			'text' => $langs->trans("BoxTitleLast".(!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) ? "" : "Modified")."SupplierBills", $max)
+			'text' => $langs->trans("BoxTitleLast".(getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE') ? "" : "Modified")."SupplierBills", $max)
 		);
 
 		if ($user->hasRight('fournisseur', 'facture', 'lire')) {
@@ -111,7 +111,7 @@ class box_factures_fourn extends ModeleBoxes
 			if ($user->socid) {
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
-			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) {
+			if (getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE')) {
 				$sql .= " ORDER BY f.datef DESC, f.ref DESC ";
 			} else {
 				$sql .= " ORDER BY f.tms DESC, f.ref DESC ";
@@ -204,7 +204,7 @@ class box_factures_fourn extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoModifiedSupplierBills"),
+						'text'=> '<span class="opacitymedium">'.$langs->trans("NoModifiedSupplierBills").'</span>',
 					);
 				}
 
@@ -218,8 +218,8 @@ class box_factures_fourn extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->transnoentities("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->transnoentities("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

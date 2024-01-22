@@ -142,7 +142,7 @@ class RemiseCheque extends CommonObject
 	 *	@param  int		$account_id 	Bank account for cheque receipt
 	 *  @param  int		$limit          Limit ref of cheque to this
 	 *  @param	array	$toRemise		array with cheques to remise
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $account_id, $limit, $toRemise)
 	{
@@ -296,6 +296,7 @@ class RemiseCheque extends CommonObject
 		global $conf;
 
 		$this->errno = 0;
+
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bordereau_cheque";
@@ -338,7 +339,7 @@ class RemiseCheque extends CommonObject
 	 *  Validate a receipt
 	 *
 	 *  @param	User	$user 		User
-	 *  @return int      			<0 if KO, >0 if OK
+	 *  @return int      			Return integer <0 if KO, >0 if OK
 	 */
 	public function validate($user)
 	{
@@ -399,7 +400,7 @@ class RemiseCheque extends CommonObject
 		$langs->load("bills");
 
 		// Clean parameters (if not defined or using deprecated value)
-		if (empty($conf->global->CHEQUERECEIPTS_ADDON)) {
+		if (!getDolGlobalString('CHEQUERECEIPTS_ADDON')) {
 			$conf->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipt_mint';
 		} elseif (getDolGlobalString('CHEQUERECEIPTS_ADDON') == 'thyme') {
 			$conf->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipt_thyme';
@@ -407,7 +408,7 @@ class RemiseCheque extends CommonObject
 			$conf->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipt_mint';
 		}
 
-		if (!empty($conf->global->CHEQUERECEIPTS_ADDON)) {
+		if (getDolGlobalString('CHEQUERECEIPTS_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('CHEQUERECEIPTS_ADDON') . ".php";
@@ -567,7 +568,7 @@ class RemiseCheque extends CommonObject
 	 *
 	 *	@param	string		$model 			Model name
 	 *	@param 	Translate	$outputlangs	Object langs
-	 * 	@return int        					<0 if KO, >0 if OK
+	 * 	@return int        					Return integer <0 if KO, >0 if OK
 	 */
 	public function generatePdf($model, $outputlangs)
 	{
@@ -814,7 +815,7 @@ class RemiseCheque extends CommonObject
 	 *
 	 *      @param	User		$user           Object user
 	 *      @param  int   $date           Date creation
-	 *      @return int                 		<0 if KO, >0 if OK
+	 *      @return int                 		Return integer <0 if KO, >0 if OK
 	 */
 	public function set_date($user, $date)
 	{
@@ -844,7 +845,7 @@ class RemiseCheque extends CommonObject
 	 *
 	 *      @param	User		$user           Object user
 	 *      @param  int   $ref         ref of bordereau
-	 *      @return int                 		<0 if KO, >0 if OK
+	 *      @return int                 		Return integer <0 if KO, >0 if OK
 	 */
 	public function set_number($user, $ref)
 	{
@@ -925,7 +926,7 @@ class RemiseCheque extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowCheckReceipt");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -990,7 +991,7 @@ class RemiseCheque extends CommonObject
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
-		/**
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)

@@ -40,8 +40,12 @@ $permissiontoadd  = $user->admin;
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', 0);
-if (!isModEnabled('hrm')) accessforbidden();
-if (empty($permissiontoread)) accessforbidden();
+if (!isModEnabled('hrm')) {
+	accessforbidden();
+}
+if (empty($permissiontoread)) {
+	accessforbidden();
+}
 
 $sortorder     = GETPOST('sortorder', 'aZ09comma');
 $sortfield     = GETPOST('sortfield', 'aZ09comma');
@@ -56,7 +60,7 @@ if (empty($page) || $page == -1) {
 	$page = 0;
 }
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;

@@ -86,7 +86,7 @@ if ($permtoadd) {
 	print '</a>';
 }
 if ($module == 'ecm') {
-	$tmpurl = ((!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&amp;module='.$module : '').($section ? '&amp;section='.$section : '')));
+	$tmpurl = ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&amp;module='.$module : '').($section ? '&amp;section='.$section : '')));
 	print '<a id="arefreshbutton" href="'.$tmpurl.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
 	print img_picto('', 'refresh', 'id="refreshbutton"', false, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
@@ -150,7 +150,7 @@ $nameforformuserfile = 'formuserfileecm';
 print '<div class="inline-block valignmiddle floatright">';
 
 // For to attach a new file
-if ((!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) || !empty($section)) {
+if ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) || !empty($section)) {
 	if ((empty($section) || $section == -1) && ($module != 'medias')) {
 		?>
 		<script>
@@ -161,7 +161,7 @@ if ((!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
 		<?php
 	}
 
-	$sectiondir = GETPOST('file', 'alpha') ?GETPOST('file', 'alpha') : GETPOST('section_dir', 'alpha');
+	$sectiondir = GETPOST('file', 'alpha') ? GETPOST('file', 'alpha') : GETPOST('section_dir', 'alpha');
 
 	print '<!-- Start form to attach new file in filemanager.tpl.php sectionid='.$section.' sectiondir='.$sectiondir.' -->'."\n";
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -206,8 +206,12 @@ if ($action == 'confirmconvertimgwebp') {
 		$formquestion['website']=array('type'=>'hidden', 'value'=>$website->ref, 'name'=>'website');
 	}
 	$param = '';
-	if (!empty($sortfield)) $param .= '&sortfield='.urlencode($sortfield);
-	if (!empty($sortorder)) $param .= '&sortorder='.urlencode($sortorder);
+	if (!empty($sortfield)) {
+		$param .= '&sortfield='.urlencode($sortfield);
+	}
+	if (!empty($sortorder)) {
+		$param .= '&sortorder='.urlencode($sortorder);
+	}
 	print $form->formconfirm($_SERVER["PHP_SELF"].($param ? '?'.$param : ''), empty($file) ? $langs->trans('ConfirmImgWebpCreation') : $langs->trans('ConfirmChosenImgWebpCreation'), empty($file) ? $langs->trans('ConfirmGenerateImgWebp') : $langs->trans('ConfirmGenerateChosenImgWebp', basename($file)), 'convertimgwebp', $formquestion, "yes", 1);
 	$action = 'file_manager';
 }
@@ -282,7 +286,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 	$htmltooltip = $langs->trans("ECMAreaDesc2a");
 	$htmltooltip .= '<br>'.$langs->trans("ECMAreaDesc2b");
 
-	if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+	if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 		// Show the link to "Root"
 		if ($showroot) {
 			print '<tr class="nooddeven"><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1'.(!empty($websitekey) ? '&website='.urlencode($websitekey) : '').'&pageid='.urlencode($pageid).'">';
@@ -365,7 +369,7 @@ include DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php'; // Show content of a 
 <?php
 
 
-if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) { // Show filtree when ajax is enabled
+if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) { // Show filtree when ajax is enabled
 	//var_dump($modulepart);
 	// Variables that may be defined:
 	// $_GET['modulepart'], $_GET['openeddir'], $_GET['sortfield'], $_GET['sortorder']

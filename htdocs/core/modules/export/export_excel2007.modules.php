@@ -182,7 +182,7 @@ class ExportExcel2007 extends ModeleExports
 		// phpcs:enable
 		global $user, $conf, $langs;
 
-		if (!empty($conf->global->MAIN_USE_PHP_WRITEEXCEL)) {
+		if (getDolGlobalString('MAIN_USE_PHP_WRITEEXCEL')) {
 			$outputlangs->charset_output = 'ISO-8859-1'; // Because Excel 5 format is ISO
 		}
 
@@ -224,7 +224,7 @@ class ExportExcel2007 extends ModeleExports
 	 *  Write header
 	 *
 	 *  @param      Translate	$outputlangs        Object lang to translate values
-	 * 	@return		int								<0 if KO, >0 if OK
+	 * 	@return		int								Return integer <0 if KO, >0 if OK
 	 */
 	public function write_header($outputlangs)
 	{
@@ -243,7 +243,7 @@ class ExportExcel2007 extends ModeleExports
 	 *  @param      array		$array_selected_sorted       	Array with list of field to export
 	 *  @param      Translate	$outputlangs    				Object lang to translate values
 	 *  @param		array		$array_types					Array with types of fields
-	 * 	@return		int											<0 if KO, >0 if OK
+	 * 	@return		int											Return integer <0 if KO, >0 if OK
 	 */
 	public function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
 	{
@@ -256,7 +256,7 @@ class ExportExcel2007 extends ModeleExports
 		$selectlabel = array();
 
 		$this->col = 1;
-		if (!empty($conf->global->MAIN_USE_PHP_WRITEEXCEL)) {
+		if (getDolGlobalString('MAIN_USE_PHP_WRITEEXCEL')) {
 			$this->col = 0;
 		}
 		foreach ($array_selected_sorted as $code => $value) {
@@ -270,7 +270,7 @@ class ExportExcel2007 extends ModeleExports
 			if (preg_match('/^Select:/i', $typefield) && $typefield = substr($typefield, 7)) {
 				$selectlabel[$code."_label"] = $alias."_label";
 			}
-			if (!empty($conf->global->MAIN_USE_PHP_WRITEEXCEL)) {
+			if (getDolGlobalString('MAIN_USE_PHP_WRITEEXCEL')) {
 				$this->worksheet->write($this->row, $this->col, $outputlangs->transnoentities($alias), $formatheader);
 			} else {
 				$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $outputlangs->transnoentities($alias));
@@ -281,7 +281,7 @@ class ExportExcel2007 extends ModeleExports
 			$this->col++;
 		}
 		foreach ($selectlabel as $key => $value) {
-			if (!empty($conf->global->MAIN_USE_PHP_WRITEEXCEL)) {
+			if (getDolGlobalString('MAIN_USE_PHP_WRITEEXCEL')) {
 				$this->worksheet->write($this->row, $this->col, $outputlangs->transnoentities($value), $formatheader);
 			} else {
 				$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $outputlangs->transnoentities($value));
@@ -303,7 +303,7 @@ class ExportExcel2007 extends ModeleExports
 	 *  @param      resource	$objp                       A record from a fetch with all fields from select
 	 *  @param      Translate	$outputlangs                Object lang to translate values
 	 *  @param		array		$array_types				Array with types of fields
-	 * 	@return		int										<0 if KO, >0 if OK
+	 * 	@return		int										Return integer <0 if KO, >0 if OK
 	 */
 	public function write_record($array_selected_sorted, $objp, $outputlangs, $array_types)
 	{
@@ -312,7 +312,7 @@ class ExportExcel2007 extends ModeleExports
 
 		// Define first row
 		$this->col = 1;
-		if (!empty($conf->global->MAIN_USE_PHP_WRITEEXCEL)) {
+		if (getDolGlobalString('MAIN_USE_PHP_WRITEEXCEL')) {
 			$this->col = 0;
 		}
 
@@ -407,7 +407,7 @@ class ExportExcel2007 extends ModeleExports
 	 *	Write footer
 	 *
 	 * 	@param		Translate	$outputlangs	Output language object
-	 * 	@return		int							<0 if KO, >0 if OK
+	 * 	@return		int							Return integer <0 if KO, >0 if OK
 	 */
 	public function write_footer($outputlangs)
 	{
@@ -420,7 +420,7 @@ class ExportExcel2007 extends ModeleExports
 	/**
 	 *	Close Excel file
 	 *
-	 * 	@return		int							<0 if KO, >0 if OK
+	 * 	@return		int							Return integer <0 if KO, >0 if OK
 	 */
 	public function close_file()
 	{
@@ -461,7 +461,6 @@ class ExportExcel2007 extends ModeleExports
 	 */
 	public function column2Letter($c)
 	{
-
 		$c = intval($c);
 		if ($c <= 0) {
 			return '';

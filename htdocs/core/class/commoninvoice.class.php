@@ -35,6 +35,11 @@ abstract class CommonInvoice extends CommonObject
 	use CommonIncoterm;
 
 	/**
+	 * @var string		Label used as ref for template invoices
+	 */
+	public $title;
+
+	/**
 	 * @var int		Type of invoice (See TYPE_XXX constants)
 	 */
 	public $type = self::TYPE_STANDARD;
@@ -88,18 +93,6 @@ abstract class CommonInvoice extends CommonObject
 	public $sumcreditnote_multicurrency;
 	public $remaintopay;
 
-	// Multicurrency
-	/**
-	 * @var int ID
-	 */
-	public $fk_multicurrency;
-
-	public $multicurrency_code;
-	public $multicurrency_tx;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
-
 	/**
 	 * @var int
 	 */
@@ -140,6 +133,13 @@ abstract class CommonInvoice extends CommonObject
 	 * @var string Close note
 	 */
 	public $close_note;
+
+
+	/**
+	 * ! Populate by Payment module like stripe
+	 * @var string message return by Online Payment module
+	 */
+	public $postactionmessages;
 
 
 	/**
@@ -548,7 +548,7 @@ abstract class CommonInvoice extends CommonObject
 			return 1;
 		}
 
-		if (!empty($conf->global->INVOICE_CAN_NEVER_BE_REMOVED)) {
+		if (getDolGlobalString('INVOICE_CAN_NEVER_BE_REMOVED')) {
 			return 0;
 		}
 
@@ -568,7 +568,7 @@ abstract class CommonInvoice extends CommonObject
 
 				// If there is no invoice into the reset range and not already dispatched, we can delete
 				// If invoice to delete is last one and not already dispatched, we can delete
-				if (empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED) && $maxref != '' && $maxref != $this->ref) {
+				if (!getDolGlobalString('INVOICE_CAN_ALWAYS_BE_REMOVED') && $maxref != '' && $maxref != $this->ref) {
 					return -2;
 				}
 
@@ -585,7 +585,7 @@ abstract class CommonInvoice extends CommonObject
 		}
 
 		// Test if there is at least one payment. If yes, refuse to delete.
-		if (empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED) && $this->getSommePaiement() > 0) {
+		if (!getDolGlobalString('INVOICE_CAN_ALWAYS_BE_REMOVED') && $this->getSommePaiement() > 0) {
 			return -4;
 		}
 
@@ -689,13 +689,13 @@ abstract class CommonInvoice extends CommonObject
 	{
 		$subtypeLabel = '';
 		if ($table === 'facture' || $table === 'facture_fourn') {
-			$sql = "SELECT s.label FROM " . MAIN_DB_PREFIX . $table . " AS f";
-			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "c_invoice_subtype AS s ON f.subtype = s.rowid";
+			$sql = "SELECT s.label FROM " . $this->db->prefix() . $table . " AS f";
+			$sql .= " INNER JOIN " . $this->db->prefix() . "c_invoice_subtype AS s ON f.subtype = s.rowid";
 			$sql .= " WHERE f.ref = '".$this->db->escape($this->ref)."'";
 		} elseif ($table === 'facture_rec' || $table === 'facture_fourn_rec') {
-			$sql = "SELECT s.label FROM " . MAIN_DB_PREFIX . $table . " AS f";
-			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "c_invoice_subtype AS s ON f.subtype = s.rowid";
-			$sql .= " WHERE f.titre = '".$this->db->escape($this->titre)."'";
+			$sql = "SELECT s.label FROM " . $this->db->prefix() . $table . " AS f";
+			$sql .= " INNER JOIN " . $this->db->prefix() . "c_invoice_subtype AS s ON f.subtype = s.rowid";
+			$sql .= " WHERE f.titre = '".$this->db->escape($this->title)."'";
 		} else {
 			return -1;
 		}
@@ -1076,11 +1076,12 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param      User	$fuser      	User asking the direct debit transfer
 	 *  @param		int		$id				Invoice ID with remain to pay
 	 *  @param		string	$sourcetype		Source ('facture' or 'supplier_invoice')
-	 *	@return     int         			<0 if KO, >0 if OK
+	 *	@return     int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function makeStripeCardRequest($fuser, $id, $sourcetype = 'facture')
 	{
 		// TODO See in sellyoursaas
+		return 0;
 	}
 
 	/**
@@ -1093,22 +1094,22 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param		string	$sourcetype		Source ('facture' or 'supplier_invoice')
 	 *  @param		string	$service		'StripeTest', 'StripeLive', ...
 	 *  @param		string	$forcestripe	To force another stripe env: 'cus_account@pk_...:sk_...'
-	 *	@return     int         			<0 if KO, >0 if OK
+	 *	@return     int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function makeStripeSepaRequest($fuser, $did, $type = 'direct-debit', $sourcetype = 'facture', $service = '', $forcestripe = '')
 	{
 		global $conf, $user, $langs;
 
-		if ($type != 'bank-transfer' && $type != 'credit-transfer' && empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
+		if ($type != 'bank-transfer' && $type != 'credit-transfer' && !getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT')) {
 			return 0;
 		}
-		if ($type != 'direct-debit' && empty($conf->global->STRIPE_SEPA_CREDIT_TRANSFER)) {
+		if ($type != 'direct-debit' && !getDolGlobalString('STRIPE_SEPA_CREDIT_TRANSFER')) {
 			return 0;
 		}
 		// Set a default value for service if not provided
 		if (empty($service)) {
 			$service = 'StripeTest';
-			if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+			if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
 				$service = 'StripeLive';
 			}
 		}
@@ -1249,7 +1250,9 @@ abstract class CommonInvoice extends CommonObject
 								// So it inits or erases the $stripearrayofkeysbyenv
 								$stripe = new Stripe($this->db);
 
-								if (empty($savstripearrayofkeysbyenv)) $savstripearrayofkeysbyenv = $stripearrayofkeysbyenv;
+								if (empty($savstripearrayofkeysbyenv)) {
+									$savstripearrayofkeysbyenv = $stripearrayofkeysbyenv;
+								}
 								dol_syslog("makeStripeSepaRequest Current Stripe environment is " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key']);
 								dol_syslog("makeStripeSepaRequest Current Saved Stripe environment is ".$savstripearrayofkeysbyenv[$servicestatus]['publishable_key']);
 
@@ -1976,13 +1979,6 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $info_bits = 0;
 
 	public $special_code = 0;
-
-	public $fk_multicurrency;
-	public $multicurrency_code;
-	public $multicurrency_subprice;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
 
 	public $fk_user_author;
 	public $fk_user_modif;

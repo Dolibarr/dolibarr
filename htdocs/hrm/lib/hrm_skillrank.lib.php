@@ -55,7 +55,7 @@ function skillrankPrepareHead($object)
 		$head[$h][0] = dol_buildpath('/hrm/skillrank_note.php', 1).'?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
-			$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
+			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
 		}
 		$head[$h][2] = 'note';
 		$h++;
@@ -118,7 +118,9 @@ function displayRankInfos($selected_rank, $fk_skill, $inputname = 'TNote', $mode
 	if (!is_array($Lines) && $Lines<0) {
 		setEventMessages($skilldet->error, $skilldet->errors, 'errors');
 	}
-	if (empty($Lines)) return $langs->trans('SkillHasNoLines');
+	if (empty($Lines)) {
+		return $langs->trans('SkillHasNoLines');
+	}
 
 	$ret = '<!-- field jquery --><span title="'.$langs->trans('NA').'" class="radio_js_bloc_number '.$inputname.'_'.$fk_skill.(empty($selected_rank) ? ' selected' : '').'">';
 	$ret .= $langs->trans('NA');

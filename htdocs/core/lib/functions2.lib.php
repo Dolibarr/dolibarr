@@ -1002,7 +1002,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$maskraz = -1;
 	$maskoffset = 0;
 	$resetEveryMonth = false;
-	if (dol_strlen($maskcounter) < 3 && empty($conf->global->MAIN_COUNTER_WITH_LESS_3_DIGITS)) {
+	if (dol_strlen($maskcounter) < 3 && !getDolGlobalString('MAIN_COUNTER_WITH_LESS_3_DIGITS')) {
 		return 'ErrorCounterMustHaveMoreThan3Digits';
 	}
 
@@ -1117,7 +1117,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	//print "yearoffset=".$yearoffset." yearoffsettype=".$yearoffsettype;
 	if (is_numeric($yearoffsettype) && $yearoffsettype >= 1) {
 		$maskraz = $yearoffsettype; // For backward compatibility
-	} elseif ($yearoffsettype === '0' || (!empty($yearoffsettype) && !is_numeric($yearoffsettype) && $conf->global->SOCIETE_FISCAL_MONTH_START > 1)) {
+	} elseif ($yearoffsettype === '0' || (!empty($yearoffsettype) && !is_numeric($yearoffsettype) && getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1)) {
 		$maskraz = $conf->global->SOCIETE_FISCAL_MONTH_START;
 	}
 	//print "maskraz=".$maskraz;	// -1=no reset
@@ -1146,8 +1146,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			if (dol_strlen($reg[$posy]) < 2) {
 				return 'ErrorCantUseRazWithYearOnOneDigit';
 			}
-		} else // if reset is for a specific month in year, we need year
-		{
+		} else { // if reset is for a specific month in year, we need year
 			if (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i', $maskwithonlyymcode, $reg)) {
 				$posy = 3;
 				$posm = 2;
@@ -1162,8 +1161,8 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			}
 		}
 		// Define length
-		$yearlen = $posy ?dol_strlen($reg[$posy]) : 0;
-		$monthlen = $posm ?dol_strlen($reg[$posm]) : 0;
+		$yearlen = $posy ? dol_strlen($reg[$posy]) : 0;
+		$monthlen = $posm ? dol_strlen($reg[$posm]) : 0;
 		// Define pos
 		$yearpos = (dol_strlen($reg[1]) + 1);
 		$monthpos = ($yearpos + $yearlen);
@@ -1269,7 +1268,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$counter = 0;
 	$sql = "SELECT MAX(".$sqlstring.") as val";
 	$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (!empty($conf->global->SEARCH_FOR_NEXT_VAL_ON_START_ONLY) ? "%" : "") . "'";
+	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
 	$sql .= " AND ".$field." NOT LIKE '(PROV%)'";
 
 	// To ensure that all variables within the MAX() brackets are integers
@@ -1306,7 +1305,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	} elseif (preg_match('/[^0-9]/i', $counter)) {
 		dol_syslog("Error, the last counter found is '".$counter."' so is not a numeric value. We will restart to 1.", LOG_ERR);
 		$counter = 0;
-	} elseif ($counter < $maskoffset && empty($conf->global->MAIN_NUMBERING_OFFSET_ONLY_FOR_FIRST)) {
+	} elseif ($counter < $maskoffset && !getDolGlobalString('MAIN_NUMBERING_OFFSET_ONLY_FOR_FIRST')) {
 		$counter = $maskoffset;
 	}
 
@@ -1336,7 +1335,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$ref = '';
 		$sql = "SELECT ".$field." as ref";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (!empty($conf->global->SEARCH_FOR_NEXT_VAL_ON_START_ONLY) ? "%" : "") . "'";
+		$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
 		$sql .= " AND ".$field." NOT LIKE '%PROV%'";
 		if ($bentityon) { // only if entity enable
 			$sql .= " AND entity IN (".getEntity($sharetable).")";
@@ -1398,7 +1397,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskrefclient_sql = "SELECT MAX(".$maskrefclient_sqlstring.") as val";
 			$maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$table;
 			//$sql.= " WHERE ".$field." not like '(%'";
-			$maskrefclient_sql .= " WHERE ".$field." LIKE '".$db->escape($maskrefclient_maskLike) . (!empty($conf->global->SEARCH_FOR_NEXT_VAL_ON_START_ONLY) ? "%" : "") . "'";
+			$maskrefclient_sql .= " WHERE ".$field." LIKE '".$db->escape($maskrefclient_maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
 			if ($bentityon) { // only if entity enable
 				$maskrefclient_sql .= " AND entity IN (".getEntity($sharetable).")";
 			} elseif (!empty($forceentity)) {
@@ -1435,8 +1434,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$numFinal = preg_replace('/\{yyyy\}/i', date("Y", $date) + $yearoffset, $numFinal);
 			$numFinal = preg_replace('/\{yy\}/i', date("y", $date) + $yearoffset, $numFinal);
 			$numFinal = preg_replace('/\{y\}/i', substr(date("y", $date), 1, 1) + $yearoffset, $numFinal);
-		} else // we want yyyy to be current year
-		{
+		} else { // we want yyyy to be current year
 			$numFinal = preg_replace('/\{yyyy\}/i', date("Y", $date), $numFinal);
 			$numFinal = preg_replace('/\{yy\}/i', date("y", $date), $numFinal);
 			$numFinal = preg_replace('/\{y\}/i', substr(date("y", $date), 1, 1), $numFinal);
@@ -1491,13 +1489,13 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 function get_string_between($string, $start, $end)
 {
 	$string = " ".$string;
-	 $ini = strpos($string, $start);
+	$ini = strpos($string, $start);
 	if ($ini == 0) {
 		return "";
 	}
-	 $ini += strlen($start);
-	 $len = strpos($string, $end, $ini) - $ini;
-	 return substr($string, $ini, $len);
+	$ini += strlen($start);
+	$len = strpos($string, $end, $ini) - $ini;
+	return substr($string, $ini, $len);
 }
 
 /**
@@ -1707,15 +1705,14 @@ function numero_semaine($time)
 		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)) + (4 - date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)))) * 24 * 60 * 60;
 	} elseif (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) > 4) { // du Vendredi au Samedi
 		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)) + (7 - (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) - 4)) * 24 * 60 * 60;
-	} else // Jeudi
-	{
+	} else { // Jeudi
 		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine));
 	}
 
 	// Definition du numero de semaine: nb de jours entre "premier Jeudi de l'annee" et "Jeudi de la semaine";
 	$numeroSemaine = (
-	(
-	date("z", mktime(12, 0, 0, date("m", $jeudiSemaine), date("d", $jeudiSemaine), date("Y", $jeudiSemaine)))
+		(
+		date("z", mktime(12, 0, 0, date("m", $jeudiSemaine), date("d", $jeudiSemaine), date("Y", $jeudiSemaine)))
 	-
 	date("z", mktime(12, 0, 0, date("m", $premierJeudiAnnee), date("d", $premierJeudiAnnee), date("Y", $premierJeudiAnnee)))
 	) / 7
@@ -1775,7 +1772,7 @@ function weight_convert($weight, &$from_unit, $to_unit)
  *	@param	Conf	$conf		Object conf
  *	@param	User	$user      	Object user
  *	@param	array	$tab        Array (key=>value) with all parameters to save/update
- *	@return int         		<0 if KO, >0 if OK
+ *	@return int         		Return integer <0 if KO, >0 if OK
  *
  *	@see		dolibarr_get_const(), dolibarr_set_const(), dolibarr_del_const()
  */
@@ -1881,6 +1878,20 @@ function version_os($option = '')
 function version_php()
 {
 	return phpversion();
+}
+
+/**
+ * 	Return DB version
+ *
+ * 	@return		string			PHP version
+ */
+function version_db()
+{
+	global $db;
+	if (is_object($db) && method_exists($db, 'getVersion')) {
+		return $db->getVersion();
+	}
+	return '';
 }
 
 /**
@@ -2064,13 +2075,13 @@ function getSoapParams()
 	global $conf;
 
 	$params = array();
-	$proxyuse = (empty($conf->global->MAIN_PROXY_USE) ?false:true);
-	$proxyhost = (empty($conf->global->MAIN_PROXY_USE) ?false:$conf->global->MAIN_PROXY_HOST);
-	$proxyport = (empty($conf->global->MAIN_PROXY_USE) ?false:$conf->global->MAIN_PROXY_PORT);
-	$proxyuser = (empty($conf->global->MAIN_PROXY_USE) ?false:$conf->global->MAIN_PROXY_USER);
-	$proxypass = (empty($conf->global->MAIN_PROXY_USE) ?false:$conf->global->MAIN_PROXY_PASS);
-	$timeout = (empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 10 : $conf->global->MAIN_USE_CONNECT_TIMEOUT); // Connection timeout
-	$response_timeout = (empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT); // Response timeout
+	$proxyuse = (!getDolGlobalString('MAIN_PROXY_USE') ? false : true);
+	$proxyhost = (!getDolGlobalString('MAIN_PROXY_USE') ? false : $conf->global->MAIN_PROXY_HOST);
+	$proxyport = (!getDolGlobalString('MAIN_PROXY_USE') ? false : $conf->global->MAIN_PROXY_PORT);
+	$proxyuser = (!getDolGlobalString('MAIN_PROXY_USE') ? false : $conf->global->MAIN_PROXY_USER);
+	$proxypass = (!getDolGlobalString('MAIN_PROXY_USE') ? false : $conf->global->MAIN_PROXY_PASS);
+	$timeout = (!getDolGlobalString('MAIN_USE_CONNECT_TIMEOUT') ? 10 : $conf->global->MAIN_USE_CONNECT_TIMEOUT); // Connection timeout
+	$response_timeout = (!getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT') ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT); // Response timeout
 	//print extension_loaded('soap');
 	if ($proxyuse) {
 		$params = array('connection_timeout'=>$timeout,
@@ -2471,8 +2482,7 @@ function colorAgressiveness($hex, $ratio = -50, $brightness = 0)
 			if ($color < 128) {
 				$color -= ($color * ($ratio / 100));
 			}
-		} else // We decrease agressiveness
-		{
+		} else { // We decrease agressiveness
 			if ($color > 128) {
 				$color -= (($color - 128) * (abs($ratio) / 100));
 			}
@@ -2743,11 +2753,11 @@ function price2fec($amount)
 	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occured when amount value = o (letter) instead 0 (number)
 
 	// Output decimal number by default
-	$nbdecimal = (empty($conf->global->ACCOUNTING_FEC_DECIMAL_LENGTH) ? 2 : $conf->global->ACCOUNTING_FEC_DECIMAL_LENGTH);
+	$nbdecimal = (!getDolGlobalString('ACCOUNTING_FEC_DECIMAL_LENGTH') ? 2 : $conf->global->ACCOUNTING_FEC_DECIMAL_LENGTH);
 
 	// Output separators by default
-	$dec = (empty($conf->global->ACCOUNTING_FEC_DECIMAL_SEPARATOR) ? ',' : $conf->global->ACCOUNTING_FEC_DECIMAL_SEPARATOR);
-	$thousand = (empty($conf->global->ACCOUNTING_FEC_THOUSAND_SEPARATOR) ? '' : $conf->global->ACCOUNTING_FEC_THOUSAND_SEPARATOR);
+	$dec = (!getDolGlobalString('ACCOUNTING_FEC_DECIMAL_SEPARATOR') ? ',' : $conf->global->ACCOUNTING_FEC_DECIMAL_SEPARATOR);
+	$thousand = (!getDolGlobalString('ACCOUNTING_FEC_THOUSAND_SEPARATOR') ? '' : $conf->global->ACCOUNTING_FEC_THOUSAND_SEPARATOR);
 
 	// Format number
 	$output = number_format($amount, $nbdecimal, $dec, $thousand);
@@ -2920,7 +2930,8 @@ function removeGlobalParenthesis($string)
 	}
 
 	$nbofchars = dol_strlen($string);
-	$i = 0; $g = 0;
+	$i = 0;
+	$g = 0;
 	$countparenthesis = 0;
 	while ($i < $nbofchars) {
 		$char = dol_substr($string, $i, 1);

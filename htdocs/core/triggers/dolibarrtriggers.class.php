@@ -92,7 +92,6 @@ abstract class DolibarrTriggers
 	 */
 	public function __construct(DoliDB $db)
 	{
-
 		$this->db = $db;
 
 		if (empty($this->name)) {
@@ -140,6 +139,22 @@ abstract class DolibarrTriggers
 			return $this->version;
 		} else {
 			return $langs->trans("Unknown");
+		}
+	}
+
+	/**
+	 * setErrorsFromObject
+	 *
+	 * @param CommonObject $object commonobject
+	 * @return void
+	 */
+	public function setErrorsFromObject($object)
+	{
+		if (!empty($object->error)) {
+			$this->errors = array_merge($this->errors, array($object->error));
+		}
+		if (!empty($object->errors)) {
+			$this->errors = array_merge($this->errors, $object->errors);
 		}
 	}
 

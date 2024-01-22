@@ -67,7 +67,7 @@ class FormAdmin
 		// phpcs:enable
 		global $conf, $langs;
 
-		if (!empty($conf->global->MAIN_DEFAULT_LANGUAGE_FILTER)) {
+		if (getDolGlobalString('MAIN_DEFAULT_LANGUAGE_FILTER')) {
 			if (!is_array($filter)) {
 				$filter = array();
 			}
