@@ -341,7 +341,9 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 					$error++;
 				}
 
-				if (!(GETPOST($lot, 'alpha') || $dDLUO || $dDLC)) {
+				// check sell-by / eat-by date is mandatory
+				$errorMsgArr = Productlot::checkSellOrEatByMandatoryFromProductIdAndDates($productId, $dDLC, $dDLUO);
+				if (!(GETPOST($lot, 'alpha')) || !empty($errorMsgArr)) {
 					dol_syslog('No dispatch for line '.$key.' as serial/eat-by/sellby date are not set');
 					$text = $langs->transnoentities('atleast1batchfield').', '.$langs->transnoentities('Line').' '.($numline).'-'.($reg[1] + 1);
 					setEventMessages($langs->trans('ErrorFieldRequired', $text), null, 'errors');
