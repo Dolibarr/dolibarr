@@ -163,7 +163,7 @@ if (empty($reshook)) {
 			$action = '';
 		} else {
 			if ($object->statut == 0) {
-				dol_print_error('', 'ErrorMailIsNotValidated');
+				dol_print_error(null, 'ErrorMailIsNotValidated');
 				exit;
 			}
 

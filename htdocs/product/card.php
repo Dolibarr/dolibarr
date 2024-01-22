@@ -575,7 +575,7 @@ if (empty($reshook)) {
 			// Set barcode_type_xxx from barcode_type id
 			$stdobject = new GenericObject($db);
 			$stdobject->element = 'product';
-			$stdobject->barcode_type = GETPOST('fk_barcode_type');
+			$stdobject->barcode_type = GETPOSTINT('fk_barcode_type');
 			$result = $stdobject->fetch_barcode();
 			if ($result < 0) {
 				$error++;
@@ -817,7 +817,7 @@ if (empty($reshook)) {
 				// Set barcode_type_xxx from barcode_type id
 				$stdobject = new GenericObject($db);
 				$stdobject->element = 'product';
-				$stdobject->barcode_type = GETPOST('fk_barcode_type');
+				$stdobject->barcode_type = GETPOSTINT('fk_barcode_type');
 				$result = $stdobject->fetch_barcode();
 				if ($result < 0) {
 					$error++;

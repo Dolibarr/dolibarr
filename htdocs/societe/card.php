@@ -859,7 +859,7 @@ if (isModEnabled('accounting')) {
 if ($socid > 0 && empty($object->id)) {
 	$result = $object->fetch($socid);
 	if ($result <= 0) {
-		dol_print_error('', $object->error);
+		dol_print_error(null, $object->error);
 		exit(-1);
 	}
 }

@@ -155,7 +155,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				}
 			}
 		} else {
-			dol_print_error('', "Use actions_sendmails.in.php for an element/object '".$object->element."' that is not supported");
+			dol_print_error(null, "Use actions_sendmails.in.php for an element/object '".$object->element."' that is not supported");
 		}
 
 		if (is_object($hookmanager)) {

@@ -317,7 +317,7 @@ if (isModEnabled('paypal')) {
 				$ErrorShortMsg = "Session expired";
 
 				dol_syslog($ErrorLongMsg, LOG_WARNING, 0, '_payment');
-				dol_print_error('', 'Session expired');
+				dol_print_error(null, 'Session expired');
 			}
 		} else {
 			$ErrorCode = "PAYPALTOKENNOTDEFINED";
@@ -325,7 +325,7 @@ if (isModEnabled('paypal')) {
 			$ErrorShortMsg = "Parameter PAYPALTOKEN not defined";
 
 			dol_syslog($ErrorLongMsg, LOG_WARNING, 0, '_payment');
-			dol_print_error('', 'PAYPALTOKEN not defined');
+			dol_print_error(null, 'PAYPALTOKEN not defined');
 		}
 	}
 }

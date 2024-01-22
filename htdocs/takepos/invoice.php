@@ -1287,12 +1287,15 @@ function TakeposConnector(id){
 	return true;
 }
 
+// Call the ajax to execute the print.
+// With some external module another method may be called.
 function DolibarrTakeposPrinting(id) {
-	console.log("DolibarrTakeposPrinting Printing invoice ticket " + id)
+	console.log("DolibarrTakeposPrinting Printing invoice ticket " + id);
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
 		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&token='.newToken().'&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
+
 	});
 	return true;
 }

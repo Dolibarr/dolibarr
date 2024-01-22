@@ -1301,7 +1301,7 @@ if ($resql) {
 		// If we are in a situation where we need/can show balance, we calculate the start of balance
 		if (!$balancecalculated && (!empty($arrayfields['balancebefore']['checked']) || !empty($arrayfields['balance']['checked'])) && ($mode_balance_ok || $search_conciliated === '0')) {
 			if (!$search_account) {
-				dol_print_error('', 'account is not defined but $mode_balance_ok is true');
+				dol_print_error(null, 'account is not defined but $mode_balance_ok is true');
 				exit;
 			}
 

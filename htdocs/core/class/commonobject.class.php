@@ -2182,7 +2182,7 @@ abstract class CommonObject
 		global $conf, $user;
 
 		if (!$this->table_element) {
-			dol_print_error('', get_class($this)."::load_previous_next_ref was called on object with property table_element not defined");
+			dol_print_error(null, get_class($this)."::load_previous_next_ref was called on object with property table_element not defined");
 			return -1;
 		}
 		if ($fieldid == 'none') {
@@ -4716,7 +4716,7 @@ abstract class CommonObject
 
 		// Check parameters
 		if (!isset($this->childtables) || !is_array($this->childtables) || count($this->childtables) == 0) {
-			dol_print_error('Called isObjectUsed on a class with property this->childtables not defined');
+			dol_print_error(null, 'Called isObjectUsed on a class with property this->childtables not defined');
 			return -1;
 		}
 
@@ -5173,7 +5173,7 @@ abstract class CommonObject
 				// Define output language and label
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					if (property_exists($this, 'socid') && !is_object($this->thirdparty)) {
-						dol_print_error('', 'Error: Method printObjectLine was called on an object and object->fetch_thirdparty was not done before');
+						dol_print_error(null, 'Error: Method printObjectLine was called on an object and object->fetch_thirdparty was not done before');
 						return;
 					}
 
@@ -6000,7 +6000,7 @@ abstract class CommonObject
 		global $langs, $conf;
 
 		if (!empty(self::TRIGGER_PREFIX) && strpos($triggerName, self::TRIGGER_PREFIX . '_') !== 0) {
-			dol_print_error('', 'The trigger "' . $triggerName . '" does not start with "' . self::TRIGGER_PREFIX . '_" as required.');
+			dol_print_error(null, 'The trigger "' . $triggerName . '" does not start with "' . self::TRIGGER_PREFIX . '_" as required.');
 			exit;
 		}
 		if (!is_object($langs)) {	// If lang was not defined, we set it. It is required by run_triggers().

@@ -342,7 +342,7 @@ class pdf_standard extends CommonStickerGenerator
 
 		$this->Tformat = $_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) {
-			dol_print_error('', 'ErrorBadTypeForCard'.$this->code);
+			dol_print_error(null, 'ErrorBadTypeForCard'.$this->code);
 			exit;
 		}
 
@@ -373,7 +373,7 @@ class pdf_standard extends CommonStickerGenerator
 			$title = $outputlangs->transnoentities('MembersCards');
 			$keywords = $outputlangs->transnoentities('MembersCards')." ".$outputlangs->transnoentities("Foundation")." ".$outputlangs->convToOutputCharset($mysoc->name);
 		} else {
-			dol_print_error('', 'Bad value for $mode');
+			dol_print_error(null, 'Bad value for $mode');
 			return -1;
 		}
 
