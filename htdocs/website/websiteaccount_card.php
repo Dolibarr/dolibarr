@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2023 Lionel Vessiller	   <lvessiller@open-dsi.fr>
+ * Copyright (C) 2023-2024 Lionel Vessiller	   <lvessiller@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -249,7 +249,6 @@ if (($id || $ref) && $action == 'edit') {
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	print dol_get_fiche_head();
 
