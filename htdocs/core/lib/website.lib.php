@@ -108,7 +108,7 @@ function dolKeepOnlyPhpCode($str)
 
 /**
  * Convert a page content to have correct links (based on DOL_URL_ROOT) into an html content. It replaces also dynamic content with '...php...'
- * Used to ouput the page on the Preview from backoffice.
+ * Used to output the page on the Preview from backoffice.
  *
  * @param	Website		$website			Web site object
  * @param	string		$content			Content to replace
@@ -118,7 +118,7 @@ function dolKeepOnlyPhpCode($str)
  * @return	boolean							True if OK
  * @see dolWebsiteOutput() for function used to replace content in a web server context
  */
-function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $contenttype = 'html', $containerid = '')
+function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $contenttype = 'html', $containerid = 0)
 {
 	$nbrep = 0;
 
@@ -271,7 +271,7 @@ function dolReplaceSmileyCodeWithUTF8($content)
 
 /**
  * Render a string of an HTML content and output it.
- * Used to ouput the page when viewed from a server (Dolibarr or Apache).
+ * Used to output the page when viewed from a server (Dolibarr or Apache).
  *
  * @param   string  $content    	Content string
  * @param	string	$contenttype	Content type
@@ -279,7 +279,7 @@ function dolReplaceSmileyCodeWithUTF8($content)
  * @return  void
  * @see	dolWebsiteReplacementOfLinks()  for function used to replace content in the backoffice context.
  */
-function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
+function dolWebsiteOutput($content, $contenttype = 'html', $containerid = 0)
 {
 	global $db, $langs, $conf, $user;
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
@@ -441,7 +441,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
  * @param   int		$websiteid			ID of website
  * @param	string	$websitepagetype	Type of page ('blogpost', 'page', ...)
  * @param	int		$websitepageid		ID of page
- * @return  int							<0 if KO, >0 if OK
+ * @return  int							Return integer <0 if KO, >0 if OK
  */
 function dolWebsiteIncrementCounter($websiteid, $websitepagetype, $websitepageid)
 {
@@ -557,8 +557,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 				$newurl = $currenturi.'&pageref='.urlencode($containerref);
 			}
 		}
-	} else // When page called from virtual host server
-	{
+	} else { // When page called from virtual host server
 		$newurl = '/'.$containerref.'.php';
 	}
 
@@ -638,7 +637,7 @@ function includeContainer($containerref)
  */
 function getStructuredData($type, $data = array())
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs; // Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs; // Very important. Required to have var available when running included containers.
 
 	$type = strtolower($type);
 
@@ -843,7 +842,7 @@ function getStructuredData($type, $data = array())
  */
 function getSocialNetworkHeaderCards($params = null)
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 
 	$out = '';
 
@@ -917,7 +916,7 @@ function getSocialNetworkHeaderCards($params = null)
  */
 function getSocialNetworkSharingLinks()
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 
 	$out = '<!-- section for social network sharing of page -->'."\n";
 
@@ -969,6 +968,107 @@ function getSocialNetworkSharingLinks()
 	return $out;
 }
 
+
+/**
+ * Return HTML content to add structured data for an article, news or Blog Post.
+ *
+ * @param	Object	$object			Object
+ * @return  string					HTML img content or '' if no image found
+ * @see getImagePublicURLOfObject()
+ */
+function getNbOfImagePublicURLOfObject($object)
+{
+	global $db;
+
+	$nb = 0;
+
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+	$regexforimg = getListOfPossibleImageExt(0);
+	$regexforimg = '('.$regexforimg.')$';
+
+	$sql = "SELECT COUNT(rowid) as nb";
+	$sql .= " FROM ".MAIN_DB_PREFIX."ecm_files";
+	$sql .= " WHERE entity IN (".getEntity($object->element).")";
+	$sql .= " AND src_object_type = '".$db->escape($object->element)."' AND src_object_id = ".((int) $object->id);	// Filter on object
+	$sql .= " AND ".$db->regexpsql('filename', $regexforimg, 1);
+	$sql .= " AND share IS NOT NULL";	// Only image that are public
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj) {
+			$nb = $obj->nb;
+		}
+	}
+
+	return $nb;
+}
+
+/**
+ * Return HTML content to add structured data for an article, news or Blog Post.
+ *
+ * @param	Object	$object			Object
+ * @param	int		$no				Numero of image (if there is several images. 1st one by default)
+ * @param   string  $extName        Extension to differentiate thumb file name ('', '_small', '_mini')
+ * @return  string					HTML img content or '' if no image found
+ * @see getNbOfImagePublicURLOfObject()
+ */
+function getImagePublicURLOfObject($object, $no = 1, $extName = '')
+{
+	global $db;
+
+	$image_path = '';
+
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+	$regexforimg = getListOfPossibleImageExt(0);
+	$regexforimg = '('.$regexforimg.')$';
+
+	$sql = "SELECT rowid, ref, share, filename, cover, position";
+	$sql .= " FROM ".MAIN_DB_PREFIX."ecm_files";
+	$sql .= " WHERE entity IN (".getEntity($object->element).")";
+	$sql .= " AND src_object_type = '".$db->escape($object->element)."' AND src_object_id = ".((int) $object->id);	// Filter on object
+	$sql .= " AND ".$db->regexpsql('filename', $regexforimg, 1);
+	$sql .= $db->order("cover,position,rowid", "ASC,ASC,ASC");
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		$found = 0;
+		$foundnotshared = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				if (empty($obj->share)) {
+					$foundnotshared++;
+				} else {
+					$found++;
+
+					$image_path = DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($obj->share);
+					if ($extName) {
+						//getImageFileNameForSize($dir.$file, '_small')
+						$image_path .= '&extname='.urlencode($extName);
+					}
+				}
+			}
+			if ($found >= $no) {
+				break;
+			}
+			$i++;
+		}
+		if (!$found && $foundnotshared) {
+			$image_path = DOL_URL_ROOT.'/viewimage.php?modulepart=common&file=nophotopublic.png';
+		}
+	}
+
+	if (empty($image_path)) {
+		$image_path = DOL_URL_ROOT.'/viewimage.php?modulepart=common&file=nophoto.png';
+	}
+
+	return $image_path;
+}
+
+
 /**
  * Return list of containers object that match a criteria.
  * WARNING: This function can be used by websites.
@@ -986,7 +1086,7 @@ function getSocialNetworkSharingLinks()
  */
 function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = 'null', $status = 1)
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 
 	$error = 0;
 	$arrayresult = array('code'=>'', 'list'=>array());
@@ -1141,7 +1241,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
  *
  * @param 	Website	 	$object			Object website
  * @param 	WebsitePage	$objectpage		Object website page
- * @param 	string		$urltograb		URL to grab (exemple: http://www.nltechno.com/ or http://www.nltechno.com/dir1/ or http://www.nltechno.com/dir1/mapage1)
+ * @param 	string		$urltograb		URL to grab (example: http://www.nltechno.com/ or http://www.nltechno.com/dir1/ or http://www.nltechno.com/dir1/mapage1)
  * @param 	string		$tmp			Content to parse
  * @param 	string		$action			Var $action
  * @param	string		$modifylinks	0=Do not modify content, 1=Replace links with a link to viewimage
@@ -1215,7 +1315,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 					$action = 'create';
 				} else {
-					$alreadygrabbed[$urltograbbis] = 1; // Track that file was alreay grabbed.
+					$alreadygrabbed[$urltograbbis] = 1; // Track that file was already grabbed.
 
 					dol_mkdir(dirname($filetosave));
 
@@ -1284,7 +1384,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 					$action = 'create';
 				} else {
-					$alreadygrabbed[$urltograbbis] = 1; // Track that file was alreay grabbed.
+					$alreadygrabbed[$urltograbbis] = 1; // Track that file was already grabbed.
 
 					dol_mkdir(dirname($filetosave));
 

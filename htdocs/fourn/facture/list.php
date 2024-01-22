@@ -57,14 +57,14 @@ $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'alpha');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'supplierinvoicelist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'supplierinvoicelist';
 $mode = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_label = GETPOST("search_label", "alpha");
 $search_amount_no_tax = GETPOST("search_amount_no_tax", "alpha");
 $search_amount_all_tax = GETPOST("search_amount_all_tax", "alpha");
-$search_ref = GETPOST('sf_ref') ?GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
+$search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refsupplier = GETPOST('search_refsupplier', 'alpha');
 $search_type = GETPOST('search_type', 'int');
 $search_subtype = GETPOST('search_subtype', 'int');
@@ -114,7 +114,7 @@ if ($option == 'late') {
 $filter = GETPOST('filtre', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -429,7 +429,7 @@ $sql .= " country.code as country_code,";
 $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
-// TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
+// TODO Better solution to be able to sort on already paid or remain to pay is to store amount_payed in a denormalized field.
 if (!$search_all) {
 	$sql .= ', SUM(pf.amount) as dynamount_payed';
 }
@@ -1085,10 +1085,10 @@ if (!empty($arrayfields['f.label']['checked'])) {
 // Date invoice
 if (!empty($arrayfields['f.datef']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -1096,7 +1096,7 @@ if (!empty($arrayfields['f.datef']['checked'])) {
 // Date due
 if (!empty($arrayfields['f.date_lim_reglement']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="">';
 	/*
 	 print $langs->trans('From').' ';
 	 print $form->selectDate($search_datelimit_start ? $search_datelimit_start : -1, 'search_datelimit_start', 0, 0, 1);
@@ -1104,7 +1104,8 @@ if (!empty($arrayfields['f.date_lim_reglement']['checked'])) {
 	 print '<div class="nowrap">';
 	 print $langs->trans('to').' ';*/
 	print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("Before"));
-	print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late' ? ' checked' : '').'> '.$langs->trans("Alert");
+	//print '<br>';
+	print '<div class="nowraponall inline-block valignmiddle"><input type="checkbox" class="valignmiddle" name="search_option" id="search_option" value="late"'.($option == 'late' ? ' checked' : '').'><label for="search_option" class="valignmiddle">'.$langs->trans("Alert").'</label></div>';
 	print '</div>';
 	print '</td>';
 }
@@ -1559,7 +1560,7 @@ while ($i < $imaxinloop) {
 
 	$object = $facturestatic;
 
-	//If invoice has been converted and the conversion has been used, we dont have remain to pay on invoice
+	//If invoice has been converted and the conversion has been used, we don't have remain to pay on invoice
 	if ($facturestatic->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
 		if ($facturestatic->isCreditNoteUsed()) {
 			$remaintopay = -$facturestatic->getSumFromThisCreditNotesNotUsed();
@@ -1849,7 +1850,7 @@ while ($i < $imaxinloop) {
 			$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 			$nbLinks = Link::count($db, $facturestatic->element, $facturestatic->id);
 			$nbTotal = $nbFiles + $nbLinks;
-			echo '<td class="center">'.(empty($nbTotal)? '':$nbTotal).'</td>';
+			echo '<td class="center">'.(empty($nbTotal) ? '' : $nbTotal).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1857,7 +1858,7 @@ while ($i < $imaxinloop) {
 
 		// Author
 		if (!empty($arrayfields['u.login']['checked'])) {
-			print '<td class="tdoverflowmax150">';
+			print '<td class="tdoverflowmax125">';
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1);
 			} else {
@@ -1870,7 +1871,7 @@ while ($i < $imaxinloop) {
 		}
 
 		if (!empty($arrayfields['dynamount_payed']['checked'])) {
-			print '<td class="right nowrap"><span class="amount">'.(!empty($totalpay) ?price($totalpay, 0, $langs) : '').'</span></td>'; // TODO Use a denormalized field
+			print '<td class="right nowrap"><span class="amount">'.(!empty($totalpay) ? price($totalpay, 0, $langs) : '').'</span></td>'; // TODO Use a denormalized field
 			if (!$i) {
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalam';
@@ -1879,7 +1880,7 @@ while ($i < $imaxinloop) {
 		}
 
 		if (!empty($arrayfields['rtp']['checked'])) {
-			print '<td class="right nowrap">'.(!empty($remaintopay) ?price($remaintopay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
+			print '<td class="right nowrap">'.(!empty($remaintopay) ? price($remaintopay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
 			if (!$i) {
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'rtp';
@@ -1926,7 +1927,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['multicurrency_dynamount_payed']['checked'])) {
-			print '<td class="right nowrap"><span class="amount">'.(!empty($multicurrency_totalpay) ?price($multicurrency_totalpay, 0, $langs) : '').'</span></td>'; // TODO Use a denormalized field
+			print '<td class="right nowrap"><span class="amount">'.(!empty($multicurrency_totalpay) ? price($multicurrency_totalpay, 0, $langs) : '').'</span></td>'; // TODO Use a denormalized field
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1935,7 +1936,7 @@ while ($i < $imaxinloop) {
 		// Pending amount
 		if (!empty($arrayfields['multicurrency_rtp']['checked'])) {
 			print '<td class="right nowrap"><span class="amount">';
-			print (!empty($multicurrency_remaintopay) ? price($multicurrency_remaintopay, 0, $langs) : '');
+			print(!empty($multicurrency_remaintopay) ? price($multicurrency_remaintopay, 0, $langs) : '');
 			print '</span></td>'; // TODO Use a denormalized field
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2025,7 +2026,7 @@ print '</div>'."\n";
 
 print '</form>'."\n";
 
-if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
+if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
 	$hidegeneratedfilelistifempty = 1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
 		$hidegeneratedfilelistifempty = 0;

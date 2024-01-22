@@ -57,7 +57,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $rowid = GETPOST('rowid', 'int');
-$id = GETPOST('id') ?GETPOST('id', 'int') : $rowid;
+$id = GETPOST('id') ? GETPOST('id', 'int') : $rowid;
 $typeid = GETPOST('typeid', 'int');
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int');
@@ -307,8 +307,8 @@ if (empty($reshook)) {
 			$object->address     = trim(GETPOST("address", 'alphanohtml'));
 			$object->zip         = trim(GETPOST("zipcode", 'alphanohtml'));
 			$object->town        = trim(GETPOST("town", 'alphanohtml'));
-			$object->state_id    = GETPOST("state_id", 'int');
-			$object->country_id  = GETPOST("country_id", 'int');
+			$object->state_id    = GETPOSTINT("state_id");
+			$object->country_id  = GETPOSTINT("country_id");
 
 			$object->phone       = trim(GETPOST("phone", 'alpha'));
 			$object->phone_perso = trim(GETPOST("phone_perso", 'alpha'));
@@ -323,7 +323,7 @@ if (empty($reshook)) {
 			}
 			$object->birth = $birthdate;
 			$object->default_lang = GETPOST('default_lang', 'alpha');
-			$object->typeid = GETPOST("typeid", 'int');
+			$object->typeid = GETPOSTINT("typeid");
 			//$object->note = trim(GETPOST("comment", "restricthtml"));
 			$object->morphy = GETPOST("morphy", 'alpha');
 
@@ -334,9 +334,9 @@ if (empty($reshook)) {
 			}
 
 			// Get status and public property
-			$object->statut = GETPOST("statut", 'alpha');
-			$object->status = GETPOST("statut", 'alpha');
-			$object->public = GETPOST("public", 'alpha');
+			$object->statut = GETPOSTINT("statut");
+			$object->status = GETPOSTINT("statut");
+			$object->public = GETPOSTINT("public");
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -563,7 +563,7 @@ if (empty($reshook)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 		}
-		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEMail($email)) {
+		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEmail($email)) {
 			$error++;
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadEMail", $email), null, 'errors');
@@ -616,7 +616,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-		$action = ($result < 0 || !$error) ?  '' : 'create';
+		$action = ($result < 0 || !$error) ? '' : 'create';
 
 		if (!$error && $backtopage) {
 			header("Location: ".$backtopage);
@@ -913,7 +913,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$object = new Adherent($db);
 		$result = $object->fetch($id);
 		if ($result <= 0) {
-			dol_print_error('', $object->error);
+			dol_print_error(null, $object->error);
 		}
 	}
 	$objcanvas->assign_values($action, $object->id, $object->ref); // Set value for templates
@@ -1022,7 +1022,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Moral");
 		print '<tr><td class="fieldrequired">'.$langs->trans("MemberNature")."</td><td>\n";
-		print $form->selectarray("morphy", $morphys, (GETPOST('morphy', 'alpha') ?GETPOST('morphy', 'alpha') : $object->morphy), 1, 0, 0, '', 0, 0, 0, '', '', 1);
+		print $form->selectarray("morphy", $morphys, (GETPOST('morphy', 'alpha') ? GETPOST('morphy', 'alpha') : $object->morphy), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 		print "</td>\n";
 
 		// Company
@@ -1058,7 +1058,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Address
 		print '<tr><td class="tdtop">'.$langs->trans("Address").'</td><td>';
-		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="2">'.(GETPOSTISSET('address') ?GETPOST('address', 'alphanohtml') : $soc->address).'</textarea>';
+		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="2">'.(GETPOSTISSET('address') ? GETPOST('address', 'alphanohtml') : $soc->address).'</textarea>';
 		print '</td></tr>';
 
 		// Zip / Town
@@ -1118,7 +1118,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Birth Date
 		print "<tr><td>".$langs->trans("DateOfBirth")."</td><td>\n";
-		print $form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
+		print img_picto('', 'object_calendar', 'class="pictofixedwidth"').$form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
 		print "</td></tr>\n";
 
 		// Public profil
@@ -1154,11 +1154,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	if ($action == 'edit') {
 		$res = $object->fetch($id);
 		if ($res < 0) {
-			dol_print_error($db, $object->error); exit;
+			dol_print_error($db, $object->error);
+			exit;
 		}
 		$res = $object->fetch_optionals();
 		if ($res < 0) {
-			dol_print_error($db); exit;
+			dol_print_error($db);
+			exit;
 		}
 
 		$adht = new AdherentType($db);
@@ -1307,7 +1309,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Website
 		print '<tr><td>'.$form->editfieldkey('Web', 'member_url', GETPOST('member_url', 'alpha'), $object, 0).'</td>';
-		print '<td>'.img_picto('', 'globe', 'class="pictofixedwidth"').'<input type="text" name="member_url" id="member_url" class="maxwidth200onsmartphone maxwidth500 widthcentpercentminusx " value="'.(GETPOSTISSET('member_url') ?GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
+		print '<td>'.img_picto('', 'globe', 'class="pictofixedwidth"').'<input type="text" name="member_url" id="member_url" class="maxwidth200onsmartphone maxwidth500 widthcentpercentminusx " value="'.(GETPOSTISSET('member_url') ? GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
 
 		// Address
 		print '<tr><td>'.$langs->trans("Address").'</td><td>';
@@ -1356,19 +1358,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if (!$value['active']) {
 					break;
 				}
-				print '<tr><td>'.$langs->trans($value['label']).'</td><td><input type="text" name="'.$key.'" class="minwidth100" value="'.(GETPOSTISSET($key) ? GETPOST($key, 'alphanohtml') : (isset($object->socialnetworks[$key])? $object->socialnetworks[$key] : null)).'"></td></tr>';
+				print '<tr><td>'.$langs->trans($value['label']).'</td><td><input type="text" name="'.$key.'" class="minwidth100" value="'.(GETPOSTISSET($key) ? GETPOST($key, 'alphanohtml') : (isset($object->socialnetworks[$key]) ? $object->socialnetworks[$key] : null)).'"></td></tr>';
 			}
 		}
 
 		// Birth Date
 		print "<tr><td>".$langs->trans("DateOfBirth")."</td><td>\n";
-		print $form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
+		print img_picto('', 'object_calendar', 'class="pictofixedwidth"').$form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
 		print "</td></tr>\n";
 
 		// Default language
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3">'."\n";
-			print img_picto('', 'language').$formadmin->select_language($object->default_lang, 'default_lang', 0, 0, 1);
+			print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language($object->default_lang, 'default_lang', 0, 0, 1);
 			print '</td>';
 			print '</tr>';
 		}
@@ -1435,17 +1437,20 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	if ($id > 0 && $action != 'edit') {
 		$res = $object->fetch($id);
 		if ($res < 0) {
-			dol_print_error($db, $object->error); exit;
+			dol_print_error($db, $object->error);
+			exit;
 		}
 		$res = $object->fetch_optionals();
 		if ($res < 0) {
-			dol_print_error($db); exit;
+			dol_print_error($db);
+			exit;
 		}
 
 		$adht = new AdherentType($db);
 		$res = $adht->fetch($object->typeid);
 		if ($res < 0) {
-			dol_print_error($db); exit;
+			dol_print_error($db);
+			exit;
 		}
 
 

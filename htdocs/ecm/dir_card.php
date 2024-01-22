@@ -66,7 +66,7 @@ if (!$sortfield) {
 
 $section = GETPOST("section", 'alpha') ? GETPOST("section", 'alpha') : GETPOST("relativedir", 'alpha');
 if (!$section) {
-	dol_print_error('', "ErrorSectionParamNotDefined");
+	dol_print_error(null, "ErrorSectionParamNotDefined");
 	exit;
 }
 
@@ -83,8 +83,7 @@ if ($module == 'ecm') {
 		$relativepath = $section;
 		$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 	}
-} else // For example $module == 'medias'
-{
+} else { // For example $module == 'medias'
 	$relativepath = $section;
 	$upload_dir = $conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
 }
@@ -126,8 +125,7 @@ if (GETPOST("sendit") && getDolGlobalString('MAIN_UPLOAD_DOC') && $permissiontou
 			} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload)) {
 				// Files infected by a virus
 				setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
-			} else // Known error
-			{
+			} else { // Known error
 				setEventMessages($langs->trans($resupload), null, 'errors');
 			}
 		}
@@ -206,9 +204,9 @@ if ($action == 'update' && !GETPOST('cancel', 'alpha') && $permissiontoadd) {
 
 		// Fetch was already done
 		$ecmdir->label = dol_sanitizeFileName(GETPOST("label"));
-		$fk_parent = GETPOST("catParent", 'int');
-		if ($fk_parent == "-1") {
-			$ecmdir->fk_parent = "0";
+		$fk_parent = GETPOSTINT("catParent");
+		if ($fk_parent == -1) {
+			$ecmdir->fk_parent = 0;
 		} else {
 			$ecmdir->fk_parent = $fk_parent;
 		}
@@ -294,8 +292,8 @@ if ($module == 'ecm' && $ecmdir->id > 0) {
 llxHeader();
 
 // Built the file List
-$filearrayall = dol_dir_list($upload_dir, "all", 0, '', '', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
-$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+$filearrayall = dol_dir_list($upload_dir, "all", 0, '', '', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 $totalsize = 0;
 foreach ($filearray as $key => $file) {
 	$totalsize += $file['size'];

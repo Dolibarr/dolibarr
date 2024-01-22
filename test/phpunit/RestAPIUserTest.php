@@ -76,7 +76,8 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
 		$this->savdb=$db;
 
 		if (!isModEnabled('api')) {
-			print __METHOD__." module api must be enabled.\n"; die(1);
+			print __METHOD__." module api must be enabled.\n";
+			die(1);
 		}
 
 		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
@@ -201,7 +202,7 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testRestCreateUser()
 	{
-		// attemp to create without mandatory fields :
+		// attempt to create without mandatory fields :
 		$url = $this->api_url.'/users?api_key='.$this->api_key;
 		$addheaders=array('Content-Type: application/json');
 

@@ -188,8 +188,8 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
 		echo __METHOD__.' curl_error_no: '.$result['curl_error_no']."\n";
 		$object = json_decode($result['content'], true);
 		$this->assertNotNull($object, 'Parsing of json result must not be null');
-		$this->assertEquals('401', $result['http_code'], 'Return code is not 401');
-		$this->assertEquals('401', (empty($object['error']['code']) ? '' : $object['error']['code']), 'Error code is not 401');
+		$this->assertEquals('400', $result['http_code'], 'Test to push a document on a non existing dir does not return 400');
+		$this->assertEquals('400', (empty($object['error']['code']) ? '' : $object['error']['code']), 'Test to push a document on a non existing dir does not return 400');
 
 
 		// Send to existent directory

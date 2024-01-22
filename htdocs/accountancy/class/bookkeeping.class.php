@@ -26,6 +26,7 @@
 
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
@@ -206,7 +207,7 @@ class BookKeeping extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -217,10 +218,10 @@ class BookKeeping extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User	$user		User that creates
-	 * @param  bool	$notrigger	false=launch triggers after, true=disable triggers
-	 * @return int				<0 if KO, Id of created object if OK
+	 * @param  int	$notrigger	false=launch triggers after, true=disable triggers
+	 * @return int				Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -367,7 +368,7 @@ class BookKeeping extends CommonObject
 					$this->piece_num = $objnum->piece_num;
 				}
 
-				dol_syslog(get_class($this).":: create this->piece_num=".$this->piece_num, LOG_DEBUG);
+				dol_syslog(get_class($this)."::create this->piece_num=".$this->piece_num, LOG_DEBUG);
 				if (empty($this->piece_num)) {
 					$sqlnum = "SELECT MAX(piece_num)+1 as maxpiecenum";
 					$sqlnum .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
@@ -567,12 +568,12 @@ class BookKeeping extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User	$user	   User that creates
-	 * @param  bool	$notrigger  false=launch triggers after, true=disable triggers
-	 * @param  string  $mode 	   Mode
-	 * @return int				 <0 if KO, Id of created object if OK
+	 * @param  User		$user	   	User that creates
+	 * @param  int		$notrigger  false=launch triggers after, true=disable triggers
+	 * @param  string  	$mode 	   	Mode
+	 * @return int				 	Return integer <0 if KO, Id of created object if OK
 	 */
-	public function createStd(User $user, $notrigger = false, $mode = '')
+	public function createStd(User $user, $notrigger = 0, $mode = '')
 	{
 		global $conf, $langs;
 
@@ -762,7 +763,7 @@ class BookKeeping extends CommonObject
 	 * @param string $ref Ref
 	 * @param string $mode 	Mode
 	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @return int Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $mode = '')
 	{
@@ -869,7 +870,7 @@ class BookKeeping extends CommonObject
 	 * @param 	string 	$filtermode 	filter mode (AND or OR)
 	 * @param 	int 	$option 		option (0: general account or 1: subaccount)
 	 * @param	int		$countonly		Do not fill the $object->lines, return only the count.
-	 * @return 	int 					<0 if KO, Number of lines if OK
+	 * @return 	int 					Return integer <0 if KO, Number of lines if OK
 	 */
 	public function fetchAllByAccount($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND', $option = 0, $countonly = 0)
 	{
@@ -986,7 +987,7 @@ class BookKeeping extends CommonObject
 
 				$i = 0;
 				while (($obj = $this->db->fetch_object($resql)) && (empty($limit) || $i < min($limit, $num))) {
-					$line = new BookKeepingLine();
+					$line = new BookKeepingLine($this->db);
 
 					$line->id = $obj->rowid;
 
@@ -1046,7 +1047,7 @@ class BookKeeping extends CommonObject
 	 * @param array 		$filter                         Filter array
 	 * @param string 		$filtermode                     Filter mode (AND or OR)
 	 * @param int           $showAlreadyExportMovements     Show movements when field 'date_export' is not empty (0:No / 1:Yes (Default))
-	 * @return int                                          <0 if KO, >0 if OK
+	 * @return int                                          Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND', $showAlreadyExportMovements = 1)
 	{
@@ -1140,7 +1141,7 @@ class BookKeeping extends CommonObject
 
 			$i = 0;
 			while (($obj = $this->db->fetch_object($resql)) && (empty($limit) || $i < min($limit, $num))) {
-				$line = new BookKeepingLine();
+				$line = new BookKeepingLine($this->db);
 
 				$line->id = $obj->rowid;
 
@@ -1197,7 +1198,7 @@ class BookKeeping extends CommonObject
 	 * @param 	array 	$filter 		filter array
 	 * @param 	string 	$filtermode 	filter mode (AND or OR)
 	 * @param 	int 	$option 		option (0: aggregate by general account or 1: aggreegate by subaccount)
-	 * @return 	int 					<0 if KO, >0 if OK
+	 * @return 	int 					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAllBalance($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND', $option = 0)
 	{
@@ -1275,7 +1276,7 @@ class BookKeeping extends CommonObject
 
 			$i = 0;
 			while (($obj = $this->db->fetch_object($resql)) && (empty($limit) || $i < min($limit, $num))) {
-				$line = new BookKeepingLine();
+				$line = new BookKeepingLine($this->db);
 
 				$line->numero_compte = $obj->numero_compte;
 				//$line->label_compte = $obj->label_compte;
@@ -1304,12 +1305,12 @@ class BookKeeping extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param  User    $user       User that modifies
-	 * @param  bool    $notrigger  false=launch triggers after, true=disable triggers
-	 * @param  string  $mode       Mode ('' or _tmp')
-	 * @return int                 <0 if KO, >0 if OK
+	 * @param  User    	$user       User that modifies
+	 * @param  int		$notrigger  false=launch triggers after, true=disable triggers
+	 * @param  string  	$mode       Mode ('' or _tmp')
+	 * @return int                 	Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false, $mode = '')
+	public function update(User $user, $notrigger = 0, $mode = '')
 	{
 		global $langs;
 		$error = 0;
@@ -1452,7 +1453,7 @@ class BookKeeping extends CommonObject
 	 * @param  string  $field          Field
 	 * @param  string  $value          Value
 	 * @param  string  $mode           Mode ('' or _tmp')
-	 * @return number                  <0 if KO, >0 if OK
+	 * @return number                  Return integer <0 if KO, >0 if OK
 	 */
 	public function updateByMvt($piece_num = '', $field = '', $value = '', $mode = '')
 	{
@@ -1491,12 +1492,12 @@ class BookKeeping extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user User that deletes
-	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 * @param string $mode Mode
-	 * @return int <0 if KO, >0 if OK
+	 * @param User 		$user 		User that deletes
+	 * @param int 		$notrigger 	false=launch triggers after, true=disable triggers
+	 * @param string 	$mode 		Mode
+	 * @return int 					Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false, $mode = '')
+	public function delete(User $user, $notrigger = 0, $mode = '')
 	{
 		global $langs;
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -1593,7 +1594,7 @@ class BookKeeping extends CommonObject
 	 * @param  string $journal		Journal to delete
 	 * @param  string $mode 		Mode
 	 * @param  int	  $delmonth     Month
-	 * @return int					<0 if KO, >0 if OK
+	 * @return int					Return integer <0 if KO, >0 if OK
 	 */
 	public function deleteByYearAndJournal($delyear = 0, $journal = '', $mode = '', $delmonth = 0)
 	{
@@ -1778,7 +1779,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param int $piecenum Accounting document to get
 	 * @param string $mode Mode
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchPerMvt($piecenum, $mode = '')
 	{
@@ -1854,11 +1855,11 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Load all informations of accountancy document
+	 * Load all information of accountancy document
 	 *
 	 * @param  int     $piecenum   Id of line to get
 	 * @param  string  $mode       Mode
-	 * @return int                 <0 if KO, >0 if OK
+	 * @return int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAllPerMvt($piecenum, $mode = '')
 	{
@@ -1881,7 +1882,7 @@ class BookKeeping extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			while ($obj = $this->db->fetch_object($result)) {
-				$line = new BookKeepingLine();
+				$line = new BookKeepingLine($this->db);
 
 				$line->id = $obj->rowid;
 
@@ -1951,7 +1952,7 @@ class BookKeeping extends CommonObject
 
 			$num = $this->db->num_rows($resql);
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new BookKeepingLine();
+				$line = new BookKeepingLine($this->db);
 
 				$line->id = $obj->rowid;
 
@@ -1992,7 +1993,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param  number   $direction      If 0: tmp => real, if 1: real => tmp
 	 * @param  string   $piece_num      Piece num = Transaction ref
-	 * @return int                      int <0 if KO, >0 if OK
+	 * @return int                      int Return integer <0 if KO, >0 if OK
 	 */
 	public function transformTransaction($direction = 0, $piece_num = '')
 	{
@@ -2124,7 +2125,7 @@ class BookKeeping extends CommonObject
 	 * @param array		$event		Event options
 	 * @param int		$select_in	Value is a aa.rowid (0 default) or aa.account_number (1)
 	 * @param int		$select_out	Set value returned by select 0=rowid (default), 1=account_number
-	 * @param int		$aabase		Set accounting_account base class to display empty=all or from 1 to 8 will display only account beginning by this number
+	 * @param string	$aabase		Set accounting_account base class to display empty=all or from 1 to 8 will display only account beginning by this number
 	 * @return string	String with HTML select
 	 */
 	public function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $aabase = '')
@@ -2303,7 +2304,7 @@ class BookKeeping extends CommonObject
 	 * Is the bookkeeping can be modified or deleted ?
 	 *
 	 * @param 	int		$id		Bookkeeping ID
-	 * @return 	int				<0 if KO, == 0 if No, == 1 if Yes
+	 * @return 	int				Return integer <0 if KO, == 0 if No, == 1 if Yes
 	 */
 	public function canModifyBookkeeping($id)
 	{
@@ -2359,7 +2360,7 @@ class BookKeeping extends CommonObject
 	 * Is the bookkeeping date valid (on an open period or not on a closed period) ?
 	 *
 	 * @param 	int		$date		Bookkeeping date
-	 * @return 	int					<0 if KO, == 0 if No, == 1 if date is valid for a transfer
+	 * @return 	int					Return integer <0 if KO, == 0 if No, == 1 if date is valid for a transfer
 	 */
 	public function validBookkeepingDate($date)
 	{
@@ -2404,7 +2405,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param 	bool	$force		Force reload
 	 * @param	string	$mode		active or closed ?
-	 * @return 	int					<0 if KO, >0 if OK
+	 * @return 	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function loadFiscalPeriods($force = false, $mode = 'active')
 	{
@@ -2464,7 +2465,7 @@ class BookKeeping extends CommonObject
 	 * Get list of fiscal period
 	 *
 	 * @param 	string	$filter		Filter
-	 * @return 	array|int			<0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]
+	 * @return 	array|int			Return integer <0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]
 	 */
 	public function getFiscalPeriods($filter = '')
 	{
@@ -2474,7 +2475,9 @@ class BookKeeping extends CommonObject
 		$sql = "SELECT rowid, label, date_start, date_end, statut";
 		$sql .= " FROM " . $this->db->prefix() . "accounting_fiscalyear";
 		$sql .= " WHERE entity = " . ((int) $conf->entity);
-		if (!empty($filter)) $sql .= " AND (" . $filter . ')';
+		if (!empty($filter)) {
+			$sql .= " AND (" . $filter . ')';
+		}
 		$sql .= $this->db->order('date_start', 'ASC');
 
 		$resql = $this->db->query($sql);
@@ -2501,7 +2504,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param 	int			$date_start		Date start
 	 * @param 	int			$date_end		Date end
-	 * @return 	array|int					<0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]
+	 * @return 	array|int					Return integer <0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]
 	 */
 	public function getCountByMonthForFiscalPeriod($date_start, $date_end)
 	{
@@ -2565,7 +2568,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param 	int		$date_start		Date start
 	 * @param 	int		$date_end		Date end
-	 * @return	int						int <0 if KO, >0 if OK
+	 * @return	int						int Return integer <0 if KO, >0 if OK
 	 */
 	public function validateMovementForFiscalPeriod($date_start, $date_end)
 	{
@@ -2592,13 +2595,63 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
+	 *  Define accounting result
+	 *
+	 * @param	int		$date_start		Date start
+	 * @param	int		$date_end		Date end
+	 * @return	string					Accounting result
+	 */
+	public function accountingResult($date_start, $date_end)
+	{
+		global $conf;
+
+		$this->db->begin();
+
+		$income_statement_amount = 0;
+
+		if (getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT')) {
+			$accounting_groups_used_for_income_statement = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT'))), 'strlen');
+
+			foreach ($accounting_groups_used_for_income_statement as $item) {
+				$pcg_type_filter[] = "'" . $this->db->escape($item) . "'";
+			}
+
+			$sql = 'SELECT';
+			$sql .= " t.numero_compte,";
+			$sql .= " aa.pcg_type,";
+			$sql .= " (SUM(t.credit) - SUM(t.debit)) as accounting_result";
+			$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
+			$sql .= ' LEFT JOIN  ' . MAIN_DB_PREFIX . 'accounting_account as aa ON aa.account_number = t.numero_compte';
+			$sql .= ' WHERE t.entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
+			$sql .= " AND aa.entity = " . ((int) $conf->entity);
+			$sql .= ' AND aa.fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid = ' . ((int) getDolGlobalInt('CHARTOFACCOUNTS')) . ')';
+			$sql .= ' AND aa.pcg_type IN (' . $this->db->sanitize(implode(',', $pcg_type_filter), 1) . ')';
+			$sql .= " AND DATE(t.doc_date) >= '" . $this->db->idate($date_start) . "'";
+			$sql .= " AND DATE(t.doc_date) <= '" . $this->db->idate($date_end) . "'";
+			$sql .= ' GROUP BY t.numero_compte, aa.pcg_type';
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->errors[] = 'Error ' . $this->db->lasterror();
+				dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			} else {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$income_statement_amount += $obj->accounting_result;
+				}
+			}
+		}
+
+		return $income_statement_amount;
+	}
+
+	/**
 	 *  Close fiscal period
 	 *
 	 * @param 	int		$fiscal_period_id				Fiscal year ID
 	 * @param 	int		$new_fiscal_period_id			New fiscal year ID
 	 * @param	bool	$separate_auxiliary_account		Separate auxiliary account
 	 * @param 	bool	$generate_bookkeeping_records	Generate closure bookkeeping records
-	 * @return	int										int <0 if KO, >0 if OK
+	 * @return	int										int Return integer <0 if KO, >0 if OK
 	 */
 	public function closeFiscalPeriod($fiscal_period_id, $new_fiscal_period_id, $separate_auxiliary_account = false, $generate_bookkeeping_records = true)
 	{
@@ -2834,7 +2887,7 @@ class BookKeeping extends CommonObject
 	 * @param 	int		$new_fiscal_period_id	New fiscal year ID
 	 * @param 	int		$date_start				Date start
 	 * @param 	int		$date_end				Date end
-	 * @return	int								int <0 if KO, >0 if OK
+	 * @return	int								int Return integer <0 if KO, >0 if OK
 	 */
 	public function insertAccountingReversal($fiscal_period_id, $inventory_journal_id, $new_fiscal_period_id, $date_start, $date_end)
 	{
@@ -2974,7 +3027,7 @@ class BookKeeping extends CommonObject
 /**
  * Class BookKeepingLine
  */
-class BookKeepingLine
+class BookKeepingLine extends CommonObjectLine
 {
 	/**
 	 * @var int ID

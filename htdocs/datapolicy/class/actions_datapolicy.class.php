@@ -69,7 +69,7 @@ class ActionsDatapolicy extends CommonHookActions
 	 * @param   array           $parameters		Array of parameters
 	 * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
 	 * @param   string          $action      	'add', 'update', 'view'
-	 * @return  int         					<0 if KO,
+	 * @return  int         					Return integer <0 if KO,
 	 *                           				=0 if OK but we want to process standard actions too,
 	 *                            				>0 if OK and we want to replace standard actions.
 	 */
@@ -87,7 +87,7 @@ class ActionsDatapolicy extends CommonHookActions
 	 * @param   Societe|CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
 	 * @param   string         			$action         Current action (if set). Generally create or edit or null
 	 * @param   HookManager     		$hookmanager    Hook manager propagated to allow calling another hook
-	 * @return  int                     		        < 0 on error, 0 on success, 1 to replace standard code
+	 * @return  int                     		        Return integer < 0 on error, 0 on success, 1 to replace standard code
 	 */
 	public function doActions($parameters, &$object, &$action, $hookmanager)
 	{
@@ -102,7 +102,7 @@ class ActionsDatapolicy extends CommonHookActions
 
 		// FIXME Removed hard coded id, use codes
 		if ($parameters['currentcontext'] == 'thirdpartycard' && $action == 'anonymiser' && (in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) || $object->typent_id == 8)) {
-			// on verifie si l'objet est utilisé
+			// Verify if the object is used
 			if ($object->isObjectUsed(GETPOST('socid'))) {
 				$object->name = $langs->trans('ANONYME');
 				$object->name_alias = '';
@@ -127,6 +127,7 @@ class ActionsDatapolicy extends CommonHookActions
 
 					setEventMessages($langs->trans('ANONYMISER_SUCCESS'), array());
 					header('Location:'.$_SERVER["PHP_SELF"]."?socid=".$object->id);
+					exit;
 				}
 			}
 		} elseif ($parameters['currentcontext'] == 'contactcard' && $action == 'send_datapolicy') {
@@ -136,7 +137,7 @@ class ActionsDatapolicy extends CommonHookActions
 			require_once  DOL_DOCUMENT_ROOT.'/datapolicy/class/datapolicy.class.php';
 			DataPolicy::sendMailDataPolicyContact($object);
 		} elseif ($parameters['currentcontext'] == 'membercard' && $action == 'send_datapolicy') {
-			 $object->fetch(GETPOST('id'));
+			$object->fetch(GETPOST('id'));
 			require_once  DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			require_once  DOL_DOCUMENT_ROOT.'/datapolicy/class/datapolicy.class.php';
 			DataPolicy::sendMailDataPolicyAdherent($object);
@@ -251,7 +252,7 @@ class ActionsDatapolicy extends CommonHookActions
 			}
 
 			if (GETPOST('socid')) {
-				/* Removed due to awful harcoded values
+				/* Removed due to awful hardcoded values
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 				$societe = new Societe($this->db);
 				$societe->fetch(GETPOST('socid'));

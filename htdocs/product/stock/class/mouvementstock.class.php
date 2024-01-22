@@ -179,10 +179,10 @@ class MouvementStock extends CommonObject
 	 *	@param		string			$batch				batch number
 	 *	@param		boolean			$skip_batch			If set to true, stock movement is done without impacting batch record
 	 * 	@param		int				$id_product_batch	Id product_batch (when skip_batch is false and we already know which record of product_batch to use)
-	 *  @param		int				$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
+	 *  @param		int				$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (useful only if product is a subproduct)
 	 *  @param		int				$donotcleanemptylines				Do not clean lines in stock table with qty=0 (because we want to have this done by the caller)
 	 * 	@param		boolean			$force_update_batch	Allows to add batch stock movement even if $product doesn't use batch anymore
-	 *	@return		int									<0 if KO, 0 if fk_product is null or product id does not exists, >0 if OK
+	 *	@return		int									Return integer <0 if KO, 0 if fk_product is null or product id does not exists, >0 if OK
 	 */
 	public function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0, $disablestockchangeforsubproduct = 0, $donotcleanemptylines = 0, $force_update_batch = false)
 	{
@@ -221,7 +221,7 @@ class MouvementStock extends CommonObject
 
 			if ($reshook < 0) {
 				if (!empty($hookmanager->resPrint)) {
-					dol_print_error('', $hookmanager->resPrint);
+					dol_print_error(null, $hookmanager->resPrint);
 				}
 				return $reshook;
 			} elseif ($reshook > 0) {
@@ -232,12 +232,18 @@ class MouvementStock extends CommonObject
 
 		// Clean parameters
 		$price = price2num($price, 'MU'); // Clean value for the casse we receive a float zero value, to have it a real zero value.
-		if (empty($price)) $price = 0;
+		if (empty($price)) {
+			$price = 0;
+		}
 		$now = (!empty($datem) ? $datem : dol_now());
 
 		// Check parameters
-		if (!($fk_product > 0)) return 0;
-		if (!($entrepot_id > 0)) return 0;
+		if (!($fk_product > 0)) {
+			return 0;
+		}
+		if (!($entrepot_id > 0)) {
+			return 0;
+		}
 
 		if (is_numeric($eatby) && $eatby < 0) {
 			dol_syslog(get_class($this)."::_create start ErrorBadValueForParameterEatBy eatby = ".$eatby);
@@ -270,7 +276,7 @@ class MouvementStock extends CommonObject
 		if ($result < 0) {
 			$this->error = $product->error;
 			$this->errors = $product->errors;
-			dol_print_error('', "Failed to fetch product");
+			dol_print_error(null, "Failed to fetch product");
 			return -1;
 		}
 		if ($product->id <= 0) {	// Can happen if database is corrupted (a product id exist in stock with product that has been removed)
@@ -278,9 +284,11 @@ class MouvementStock extends CommonObject
 		}
 
 		// Define if we must make the stock change (If product type is a service or if stock is used also for services)
-		// Only record into stock tables wil be disabled by this (the rest like writing into lot table or movement of subproucts are done)
+		// Only record into stock tables will be disabled by this (the rest like writing into lot table or movement of subproucts are done)
 		$movestock = 0;
-		if ($product->type != Product::TYPE_SERVICE || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) $movestock = 1;
+		if ($product->type != Product::TYPE_SERVICE || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+			$movestock = 1;
+		}
 
 		$this->db->begin();
 
@@ -380,8 +388,8 @@ class MouvementStock extends CommonObject
 					}
 				} else { // If not found, we add record
 					$productlot = new Productlot($this->db);
-					$productlot->origin = !empty($this->origin) ? (empty($this->origin->origin_type) ? $this->origin->element : $this->origin->origin_type) : '';
-					$productlot->origin_id = !empty($this->origin) ? $this->origin->id : 0;
+					$productlot->origin = !empty($this->origin_type) ? $this->origin_type : '';
+					$productlot->origin_id = !empty($this->origin_id) ? $this->origin_id : 0;
 					$productlot->entity = $conf->entity;
 					$productlot->fk_product = $fk_product;
 					$productlot->batch = $batch;
@@ -416,7 +424,9 @@ class MouvementStock extends CommonObject
 					}
 
 					$foundforbatch = 1;
-					if ($prodbatch->qty < abs($qty)) $qtyisnotenough = $prodbatch->qty;
+					if ($prodbatch->qty < abs($qty)) {
+						$qtyisnotenough = $prodbatch->qty;
+					}
 					break;
 				}
 				if (!$foundforbatch || $qtyisnotenough) {
@@ -618,10 +628,12 @@ class MouvementStock extends CommonObject
 		if ($movestock && !$error) {
 			// Call trigger
 			$result = $this->call_trigger('STOCK_MOVEMENT', $user);
-			if ($result < 0) $error++;
+			if ($result < 0) {
+				$error++;
+			}
 			// End call triggers
 
-			// Check unicity for serial numbered equipments once all movement were done.
+			// Check unicity for serial numbered equipment once all movement were done.
 			if (!$error && isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				if ($product->status_batch == 2 && $qty > 0) {	// We check only if we increased qty
 					if ($this->getBatchCount($fk_product, $batch) > 1) {
@@ -649,7 +661,7 @@ class MouvementStock extends CommonObject
 	 *
 	 * @param int    $id  Id object
 	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @return int Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -740,7 +752,7 @@ class MouvementStock extends CommonObject
 	 * 	@param		string			$label			Label of movement
 	 *  @param		string			$inventorycode	Inventory code
 	 *  @param		integer|string	$datem			Force date of movement
-	 * 	@return 	int     		<0 if KO, 0 if OK
+	 * 	@return 	int     		Return integer <0 if KO, 0 if OK
 	 */
 	private function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '')
 	{
@@ -807,7 +819,7 @@ class MouvementStock extends CommonObject
 	 * 	@param		int				$id_product_batch		Id product_batch
 	 *  @param      string  		$inventorycode      	Inventory code
 	 *  @param		int				$donotcleanemptylines	Do not clean lines that remains in stock table with qty=0 (because we want to have this done by the caller)
-	 * 	@return		int								    	<0 if KO, >0 if OK
+	 * 	@return		int								    	Return integer <0 if KO, >0 if OK
 	 */
 	public function livraison($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $id_product_batch = 0, $inventorycode = '', $donotcleanemptylines = 0)
 	{
@@ -834,7 +846,7 @@ class MouvementStock extends CommonObject
 	 * 	@param		int				$id_product_batch    	Id product_batch
 	 *  @param      string			$inventorycode       	Inventory code
 	 *  @param		int				$donotcleanemptylines	Do not clean lines that remains in stock table with qty=0 (because we want to have this done by the caller)
-	 *	@return		int								     	<0 if KO, >0 if OK
+	 *	@return		int								     	Return integer <0 if KO, >0 if OK
 	 */
 	public function reception($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $eatby = '', $sellby = '', $batch = '', $datem = '', $id_product_batch = 0, $inventorycode = '', $donotcleanemptylines = 0)
 	{
@@ -864,7 +876,9 @@ class MouvementStock extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			if ($obj) $nb = $obj->nb;
+			if ($obj) {
+				$nb = $obj->nb;
+			}
 			return (empty($nb) ? 0 : $nb);
 		} else {
 			dol_print_error($this->db);
@@ -879,7 +893,7 @@ class MouvementStock extends CommonObject
 	 *                                    - int if row id of product_batch table (for update)
 	 *                                    - or complete array('fk_product_stock'=>, 'batchnumber'=>)
 	 * @param	int			$qty	      Quantity of product with batch number. May be a negative amount.
-	 * @return 	int   				      <0 if KO, -2 if we try to update a product_batchid that does not exist, else return productbatch id
+	 * @return 	int   				      Return integer <0 if KO, -2 if we try to update a product_batchid that does not exist, else return productbatch id
 	 */
 	private function createBatch($dluo, $qty)
 	{
@@ -1106,7 +1120,7 @@ class MouvementStock extends CommonObject
 	}
 
 	/**
-	 *  Return a link (with optionaly the picto)
+	 *  Return a link (with optionally the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -1217,7 +1231,7 @@ class MouvementStock extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('MOUVEMENT_ADDON_PDF')) {
-				$modele = $conf->global->MOUVEMENT_ADDON_PDF;
+				$modele = getDolGlobalString('MOUVEMENT_ADDON_PDF');
 			}
 		}
 
@@ -1229,22 +1243,22 @@ class MouvementStock extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param User 	$user       User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 
 	/**
-	 * Retrieve number of equipments for a product lot/serial
+	 * Retrieve number of equipment for a product lot/serial
 	 *
 	 * @param 	int 		$fk_product 	Product id
 	 * @param 	string 		$batch  		batch number
-	 * @return 	int            				<0 if KO, number of equipments found if OK
+	 * @return 	int            				Return integer <0 if KO, number of equipment found if OK
 	 */
 	private function getBatchCount($fk_product, $batch)
 	{
@@ -1273,14 +1287,13 @@ class MouvementStock extends CommonObject
 	}
 
 	/**
-	 * reverse mouvement for object by updating infos
+	 * reverse movement for object by updating infos
 	 * @return int    1 if OK,-1 if KO
 	 */
 	public function reverseMouvement()
 	{
-
 		$formattedDate = "REVERTMV" .dol_print_date($this->datem, '%Y%m%d%His');
-		if ($this->label == 'Annulation mouvement ID'.$this->id) {
+		if ($this->label == 'Annulation movement ID'.$this->id) {
 			return -1;
 		}
 		if ($this->inventorycode == $formattedDate) {
@@ -1288,7 +1301,7 @@ class MouvementStock extends CommonObject
 		}
 
 		$sql = "UPDATE ".$this->db->prefix()."stock_mouvement SET";
-		$sql .= " label = 'Annulation mouvement ID ".((int) $this->id)."',";
+		$sql .= " label = 'Annulation movement ID ".((int) $this->id)."',";
 		$sql .= "inventorycode = '".($formattedDate)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 

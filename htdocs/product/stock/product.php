@@ -67,7 +67,7 @@ $cancel = GETPOST('cancel', 'alpha');
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$stocklimit = GETPOST('seuil_stock_alerte');
+$stocklimit = (float) GETPOST('seuil_stock_alerte');
 $desiredstock = GETPOST('desiredstock');
 $cancel = GETPOST('cancel', 'alpha');
 $fieldid = isset($_GET["ref"]) ? 'ref' : 'rowid';
@@ -117,11 +117,11 @@ $error = 0;
 
 $usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
 $usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
-$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'lire');
+$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_prices') : $user->hasRight('product', 'lire');
 
 if ($object->isService()) {
 	$label = $langs->trans('Service');
-	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'lire');
+	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_prices') : $user->hasRight('service', 'lire');
 }
 
 if ($object->id > 0) {
@@ -153,7 +153,7 @@ if ($reshook < 0) {
 if ($action == 'setcost_price') {
 	if ($id) {
 		$result = $object->fetch($id);
-		$object->cost_price = price2num($cost_price);
+		$object->cost_price = (float) price2num($cost_price);
 		$result = $object->update($object->id, $user);
 		if ($result > 0) {
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
@@ -190,7 +190,7 @@ if ($action == 'addlimitstockwarehouse' && $user->hasRight('produit', 'creer')) 
 			}
 		} else {
 			// Create
-			$pse->fk_entrepot = GETPOST('fk_entrepot', 'int');
+			$pse->fk_entrepot = GETPOSTINT('fk_entrepot');
 			$pse->fk_product  	 	 = $id;
 			$pse->seuil_stock_alerte = GETPOST('seuil_stock_alerte');
 			$pse->desiredstock  	 = GETPOST('desiredstock');
@@ -614,7 +614,7 @@ if ($id > 0 || $ref) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$shownav = 1;
-		if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+		if ($user->socid && !in_array('stock', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 			$shownav = 0;
 		}
 
@@ -859,7 +859,7 @@ if ($id > 0 || $ref) {
 			}
 
 
-			// Calculating a theorical value
+			// Calculating a theoretical value
 			print '<tr><td>';
 			print $form->textwithpicto($langs->trans("VirtualStock"), $langs->trans("VirtualStockDesc"));
 			print '</td>';
@@ -959,7 +959,7 @@ if (empty($reshook)) {
 }
 
 
-if (!$variants) {
+if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT')) {
 	/*
 	 * Stock detail (by warehouse). May go down into batch details.
 	 */
@@ -1050,7 +1050,7 @@ if (!$variants) {
 			print $entrepotstatic->getNomUrl(1);
 			if (!empty($conf->use_javascript_ajax) && isModEnabled('productbatch') && $object->hasbatch()) {
 				print '<a class="collapse_batch marginleftonly" id="ent' . $entrepotstatic->id . '" href="#">';
-				print (!getDolGlobalString('STOCK_SHOW_ALL_BATCH_BY_DEFAULT') ? '(+)' : '(-)');
+				print(!getDolGlobalString('STOCK_SHOW_ALL_BATCH_BY_DEFAULT') ? '(+)' : '(-)');
 				print '</a>';
 			}
 			print '</td>';
@@ -1068,7 +1068,8 @@ if (!$variants) {
 			}
 
 			// Sell price
-			$minsellprice = null; $maxsellprice = null;
+			$minsellprice = null;
+			$maxsellprice = null;
 			print '<td class="right nowraponall">';
 			if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				foreach ($object->multiprices as $priceforlevel) {
@@ -1181,7 +1182,7 @@ if (!$variants) {
 							$colspan--;
 							print '<td class="center">'.dol_print_date($pdluo->eatby, 'day').'</td>';
 						}
-						print '<td class="right" colspan="'.$colspan.'">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : (($pdluo->qty > 1 && $object->status_batch == 2) ? ' '.img_warning($langs->trans('IlligalQtyForSerialNumbers')): '')).'</td>';
+						print '<td class="right" colspan="'.$colspan.'">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : (($pdluo->qty > 1 && $object->status_batch == 2) ? ' '.img_warning($langs->trans('IlligalQtyForSerialNumbers')) : '')).'</td>';
 						print '<td colspan="4"></td>';
 						print '<td class="center tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("TransferStock")).'">';
 						if ($entrepotstatic->status != $entrepotstatic::STATUS_CLOSED) {
@@ -1222,7 +1223,7 @@ if (!$variants) {
 	print '<td class="liste_total right">'.price2num($total, 'MS').'</td>';
 	print '<td class="liste_total right">';
 	if ($usercancreadprice) {
-		print ($totalwithpmp ? price(price2num($totalvalue / $totalwithpmp, 'MU')) : '&nbsp;'); // This value may have rounding errors
+		print($totalwithpmp ? price(price2num($totalvalue / $totalwithpmp, 'MU')) : '&nbsp;'); // This value may have rounding errors
 	}
 	print '</td>';
 	// Value purchase
@@ -1331,8 +1332,7 @@ if (!$variants) {
 
 	print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0);
 
-	print '<div class="div-table-responsive">';
-	?>
+	print '<div class="div-table-responsive">'; ?>
 	<table class="liste">
 		<tr class="liste_titre">
 			<td class="liste_titre"><?php echo $langs->trans('Product') ?></td>
@@ -1349,8 +1349,7 @@ if (!$variants) {
 			foreach ($productCombinations as $currcomb) {
 				$prodstatic->fetch($currcomb->fk_product_child);
 				$prodstatic->load_stock();
-				$stock_total += $prodstatic->stock_reel;
-				?>
+				$stock_total += $prodstatic->stock_reel; ?>
 				<tr class="oddeven">
 					<td><?php echo $prodstatic->getNomUrl(1) ?></td>
 					<td>
@@ -1386,8 +1385,7 @@ if (!$variants) {
 			print '</tr>';
 		} else {
 			print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
-		}
-		?>
+		} ?>
 	</table>
 
 	<?php

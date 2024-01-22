@@ -141,13 +141,13 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$result=dol_basename('adir/afile');
+		$result=dol_basename('adir/a_file');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('afile', $result);
+		$this->assertEquals('a_file', $result);
 
-		$result=dol_basename('adir/afile/');
+		$result=dol_basename('adir/a_file/');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('afile', $result);
+		$this->assertEquals('a_file', $result);
 
 		$result=dol_basename('adir/νεο');    // With cyrillic data. Here basename fails to return correct value
 		print __METHOD__." result=".$result."\n";
@@ -469,7 +469,9 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		// Test compression of a directory
 		// $dirout is $conf->admin->dir_temp.'/testdirgz'
 		$excludefiles = '/(\.back|\.old|\.log|documents[\/\\\]admin[\/\\\]documents[\/\\\])/i';
-		if (preg_match($excludefiles, 'a/temp/b')) { echo '----- Regex OK -----'."\n"; }
+		if (preg_match($excludefiles, 'a/temp/b')) {
+			echo '----- Regex OK -----'."\n";
+		}
 		$result=dol_compress_dir($dirout, $conf->admin->dir_temp.'/testcompressdirzip.zip', 'zip', $excludefiles);
 		print __METHOD__." dol_compress_dir result=".$result."\n";
 		print join(', ', $conf->logbuffer);
@@ -595,7 +597,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		dol_copy($file, $dirsrcpath.'/file.csv');
 		$result=dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
 		print __METHOD__." result=".$result."\n";
-		$this->assertTrue($result, 'move of directory with file whitout rename needed in directory');
+		$this->assertTrue($result, 'move of directory with file without rename needed in directory');
 
 		// To test a move with a directory to rename in src directory
 		dol_mkdir($dirsrcpath);
@@ -611,6 +613,6 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		dol_mkdir($dirsrcpath.'/notorename');
 		$result=dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
 		print __METHOD__." result=".$result."\n";
-		$this->assertTrue($result, 'move of directory with directory whitout rename needed in directory');
+		$this->assertTrue($result, 'move of directory with directory without rename needed in directory');
 	}
 }

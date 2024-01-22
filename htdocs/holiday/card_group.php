@@ -48,8 +48,8 @@ $cancel 		= GETPOST('cancel', 'alpha');
 $confirm 		= GETPOST('confirm', 'alpha');
 $id 			= GETPOST('id', 'int');
 $ref 			= GETPOST('ref', 'alpha');
-$fuserid 		= (GETPOST('fuserid', 'int') ?GETPOST('fuserid', 'int') : $user->id);
-$users 			=  (GETPOST('users', 'array') ?GETPOST('users', 'array') : array($user->id));
+$fuserid 		= (GETPOST('fuserid', 'int') ? GETPOST('fuserid', 'int') : $user->id);
+$users 			=  (GETPOST('users', 'array') ? GETPOST('users', 'array') : array($user->id));
 $groups 		= GETPOST('groups', 'array');
 $socid 			= GETPOST('socid', 'int');
 $autoValidation 	= GETPOST('autoValidation', 'int');
@@ -183,7 +183,7 @@ if (empty($reshook)) {
 				$halfday = 1;
 			}
 
-			$approverid = GETPOST('valideur', 'int');
+			$approverid = GETPOSTINT('valideur');
 			$description = trim(GETPOST('description', 'restricthtml'));
 
 			// Check that leave is for a user inside the hierarchy or advanced permission for all is set
@@ -277,7 +277,7 @@ if (empty($reshook)) {
 				/** USERS  */
 				if (is_array($users) && count($users) > 0) {
 					foreach ($users as $u) {
-							$TusersToProcess[$u] = $u;
+						$TusersToProcess[$u] = $u;
 					}
 				}
 				foreach ($TusersToProcess as $u) {
@@ -327,7 +327,7 @@ if (empty($reshook)) {
 								$htemp->statut = Holiday::STATUS_VALIDATED;
 								$resultValidated = $htemp->update($approverid);
 
-								if ($resultValidated < 0 ) {
+								if ($resultValidated < 0) {
 									setEventMessages($object->error, $object->errors, 'errors');
 									$error++;
 								}
@@ -336,7 +336,9 @@ if (empty($reshook)) {
 								if ($AutoSendMail && !$error) {
 									// send a mail to the user
 									$returnSendMail = sendMail($result, $cancreate, $now, $autoValidation);
-									if (!empty($returnSendMail->msg))  setEventMessage($returnSendMail->msg, $returnSendMail->style);
+									if (!empty($returnSendMail->msg)) {
+										setEventMessage($returnSendMail->msg, $returnSendMail->style);
+									}
 								}
 							}
 						}
@@ -538,7 +540,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')' : '');
 			$arraytypeleaves[$val['rowid']] = $labeltoshow;
 		}
-		print $form->selectarray('type', $arraytypeleaves, (GETPOST('type', 'alpha') ?GETPOST('type', 'alpha') : ''), 1, 0, 0, '', 0, 0, 0, '', '', true);
+		print $form->selectarray('type', $arraytypeleaves, (GETPOST('type', 'alpha') ? GETPOST('type', 'alpha') : ''), 1, 0, 0, '', 0, 0, 0, '', '', true);
 		if ($user->admin) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
@@ -559,7 +561,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			print $form->selectDate($tmpdate, 'date_debut_', 0, 0, 0, '', 1, 1);
 		}
 		print ' &nbsp; &nbsp; ';
-		print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday', 'alpha') ?GETPOST('starthalfday', 'alpha') : 'morning'));
+		print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday', 'alpha') ? GETPOST('starthalfday', 'alpha') : 'morning'));
 		print '</td>';
 		print '</tr>';
 
@@ -576,7 +578,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			print $form->selectDate($tmpdate, 'date_fin_', 0, 0, 0, '', 1, 1);
 		}
 		print ' &nbsp; &nbsp; ';
-		print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday', 'alpha') ?GETPOST('endhalfday', 'alpha') : 'afternoon'));
+		print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday', 'alpha') ? GETPOST('endhalfday', 'alpha') : 'afternoon'));
 		print '</td>';
 		print '</tr>';
 
@@ -594,7 +596,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			// Note: This use will be set only if the deinfed approvr has permission to approve so is inside include_users
 			$defaultselectuser = (empty($user->fk_user_holiday_validator) ? $user->fk_user : $user->fk_user_holiday_validator);
 			if (getDolGlobalString('HOLIDAY_DEFAULT_VALIDATOR')) {
-				$defaultselectuser = $conf->global->HOLIDAY_DEFAULT_VALIDATOR; // Can force default approver
+				$defaultselectuser = getDolGlobalString('HOLIDAY_DEFAULT_VALIDATOR'); // Can force default approver
 			}
 			if (GETPOST('valideur', 'int') > 0) {
 				$defaultselectuser = GETPOST('valideur', 'int');
@@ -708,12 +710,12 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 				$expediteur = new User($db);
 				$expediteur->fetch($object->fk_user);
 				//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-				$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+				$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
 				// Subject
-				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+				$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+					$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 				}
 
 				$subject = $societeName." - ".$langs->transnoentitiesnoconv("HolidaysToValidate");

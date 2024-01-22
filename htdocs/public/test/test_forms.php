@@ -36,7 +36,7 @@ This page is a sample of page using Dolibarr HTML widget methods. It is designed
 <?php
 $form = new Form($db);
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 
 // Test1: form->selectDate using tzuser date
 print "Test 1a: We must have here current date and hour for user (must match hour on browser). Note: Check your are logged so user TZ and DST are known.";
@@ -66,7 +66,7 @@ print '<br><br>'."\n";
 
 // Test4a: a select
 print "Test 4a: a select<br>\n";
-$array = array(1=>'Value 1', 2=>'Value 2', 3=>'Value 3 ith a very long text. aze eazeae e ae aeae a e a ea ea ea e a e aea e ae aeaeaeaze.');
+$array = array(1=>'Value 1', 2=>'Value 2', 3=>'Value 3 with a very long text. aze eazeae e ae aeae a e a ea ea ea e a e aea e ae aeaeaeaze.');
 $selected = 3;
 print $form->selectarray('testselecta', $array, $selected, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
 print '<br><br>';
@@ -125,7 +125,7 @@ if (is_file(DOL_DOCUMENT_ROOT.'/includes/flowjs/flow.js')) {
 			testChunks:false
 		});
 		';
-		print 'if(flow.support){
+	print 'if(flow.support){
 			flow.assignBrowse(document.getElementById("buttonbigupload"));
 			flow.on("fileAdded", function(file, event){
 				console.log("Trigger event file added", file, event);

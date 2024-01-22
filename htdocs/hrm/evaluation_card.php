@@ -64,7 +64,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -97,7 +97,9 @@ $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->enti
 if (!isModEnabled("hrm")) {
 	accessforbidden();
 }
-if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) accessforbidden();
+if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
+	accessforbidden();
+}
 
 
 /*
@@ -210,7 +212,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'reopen' ) {
+	if ($action == 'reopen') {
 		// no update here we just change the evaluation status
 		$object->setStatut(Evaluation::STATUS_VALIDATED);
 	}
@@ -611,9 +613,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			print '</table>';
-			print '</div>';
-
-			?>
+			print '</div>'; ?>
 
 			<script>
 

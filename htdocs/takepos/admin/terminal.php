@@ -217,9 +217,9 @@ if (isModEnabled("banque")) {
 		$stripe = new Stripe($db);
 		$stripeacc = $stripe->getStripeAccount($service);
 		if ($stripeacc) {
-			$readers = \Stripe\Terminal\Reader::all('', array("location" => $conf->global->STRIPE_LOCATION, "stripe_account" => $stripeacc));
+			$readers = \Stripe\Terminal\Reader::all('', array("location" => getDolGlobalString('STRIPE_LOCATION'), "stripe_account" => $stripeacc));
 		} else {
-			$readers = \Stripe\Terminal\Reader::all('', array("location" => $conf->global->STRIPE_LOCATION));
+			$readers = \Stripe\Terminal\Reader::all('', array("location" => getDolGlobalString('STRIPE_LOCATION')));
 		}
 
 		$reader = array();
@@ -250,7 +250,7 @@ if (isModEnabled("banque")) {
 		$name = "CASHDESK_ID_BANKACCOUNT_".$modep->code.$terminaltouse;
 		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountFor").' '.$langs->trans($modep->label).'</td>';
 		print '<td>';
-		if (!empty($conf->global->$name)) {
+		if (getDolGlobalString($name)) {
 			$atleastonefound++;
 		}
 		$cour = preg_match('/^LIQ.*/', $modep->code) ? 2 : 1;
@@ -262,7 +262,9 @@ if (isModEnabled("banque")) {
 }
 
 if (isModEnabled('stock')) {
-	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>'; // Force warehouse (this is not a default value)
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("CashDeskDoNotDecreaseStock"), $langs->trans("CashDeskDoNotDecreaseStockHelp"));
+	print '</td>'; // Force warehouse (this is not a default value)
 	print '<td>';
 	print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK'.$terminal, getDolGlobalInt('CASHDESK_NO_DECREASE_STOCK'.$terminal), 1);
 	print '</td></tr>';
@@ -271,9 +273,13 @@ if (isModEnabled('stock')) {
 
 
 	print '<tr class="oddeven"><td>';
-	if (!$disabled) { print '<span class="fieldrequired">'; }
+	if (!$disabled) {
+		print '<span class="fieldrequired">';
+	}
 	print $langs->trans("CashDeskIdWareHouse");
-	if (!$disabled) { print '</span>'; }
+	if (!$disabled) {
+		print '</span>';
+	}
 	if (!getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$terminal)) {
 		print img_warning($langs->trans("DisableStockChange").' - '.$langs->trans("NoWarehouseDefinedForTerminal"));
 	}
@@ -360,7 +366,7 @@ if (getDolGlobalString('TAKEPOS_ADDON') == "terminal") {
 			$handle = opendir($dir);
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
-					if (!is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')) {
+					if (!is_dir($dir.$file) || (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS')) {
 						$filebis = $file;
 						$classname = preg_replace('/\.php$/', '', $file);
 						// For compatibility

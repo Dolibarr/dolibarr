@@ -56,12 +56,20 @@ $permissiontoadd = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->ha
 $permissionnote = $permissiontoadd; // Used by the include of actions_setnotes.inc.php
 
 // Security check (enable the most restrictive one)
-if ($user->socid > 0) accessforbidden();
-if ($user->socid > 0) $socid = $user->socid;
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, 'asset', $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->asset->enabled)) accessforbidden();
-if (!$permissiontoread) accessforbidden();
+if (empty($conf->asset->enabled)) {
+	accessforbidden();
+}
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -85,7 +93,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 $help_url = '';
-llxHeader('', $langs->trans('AssetModel'), $help_url);
+llxHeader('', $langs->trans('AssetModel'), $help_url, '', 0, 0, '', '', '', 'mod-asset page-model-card_notes');
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();

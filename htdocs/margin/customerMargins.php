@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -52,7 +52,7 @@ if (!$sortorder) {
 
 $startdate = $enddate = '';
 if (GETPOST('startdatemonth')) {
-	$startdate = dol_mktime(0, 0, 0, GETPOST('startdatemonth', 'int'),  GETPOST('startdateday', 'int'),  GETPOST('startdateyear', 'int'));
+	$startdate = dol_mktime(0, 0, 0, GETPOST('startdatemonth', 'int'), GETPOST('startdateday', 'int'), GETPOST('startdateyear', 'int'));
 }
 if (GETPOST('enddatemonth')) {
 	$enddate = dol_mktime(23, 59, 59, GETPOST('enddatemonth', 'int'), GETPOST('enddateday', 'int'), GETPOST('enddateyear'));
@@ -231,14 +231,14 @@ if (!empty($TSelectedCats)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=d.fk_product';
 }
 
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE f.fk_soc = s.rowid";
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " AND f.fk_statut NOT IN (".$db->sanitize(implode(', ', $invoice_status_except_list)).")";
@@ -260,7 +260,7 @@ if (!empty($enddate)) {
 }
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 // We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
-// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredicable.
+// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredictable.
 if (getDolGlobalInt('ForceBuyingPriceIfNull') == 2) {
 	$sql .= " AND d.buy_price_ht <> 0";
 }
@@ -347,8 +347,8 @@ if ($result) {
 			$marge = $objp->marge;
 
 			if ($marge < 0) {
-				$marginRate = ($pa != 0) ?-1 * (100 * $marge / $pa) : '';
-				$markRate = ($pv != 0) ?-1 * (100 * $marge / $pv) : '';
+				$marginRate = ($pa != 0) ? -1 * (100 * $marge / $pa) : '';
+				$markRate = ($pv != 0) ? -1 * (100 * $marge / $pv) : '';
 			} else {
 				$marginRate = ($pa != 0) ? (100 * $marge / $pa) : '';
 				$markRate = ($pv != 0) ? (100 * $marge / $pv) : '';
@@ -401,8 +401,8 @@ if ($result) {
 	}
 	else
 	{*/
-		$marginRate = ($cumul_achat != 0) ? (100 * $totalMargin / $cumul_achat) : '';
-		$markRate = ($cumul_vente != 0) ? (100 * $totalMargin / $cumul_vente) : '';
+	$marginRate = ($cumul_achat != 0) ? (100 * $totalMargin / $cumul_achat) : '';
+	$markRate = ($cumul_vente != 0) ? (100 * $totalMargin / $cumul_vente) : '';
 	//}
 
 	print '<tr class="liste_total">';

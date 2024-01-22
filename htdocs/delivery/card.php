@@ -166,7 +166,7 @@ if ($action == 'add') {
 
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('expedition', 'delivery', 'supprimer')) {
 	$db->begin();
-	$result = $object->delete();
+	$result = $object->delete($user);
 
 	if ($result > 0) {
 		$db->commit();
@@ -326,7 +326,7 @@ if ($action == 'create') {
 			$morehtmlref = '<div class="refidno">';
 			// Ref customer shipment
 			$morehtmlref .= $form->editfieldkey("RefCustomer", '', $expedition->ref_customer, $expedition, $user->hasRight('expedition', 'creer'), 'string', '', 0, 1);
-			$morehtmlref .= $form->editfieldval("RefCustomer", '', $expedition->ref_customer, $expedition, $user->hasRight('expedition', 'creer'), 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':' . getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
+			$morehtmlref .= $form->editfieldval("RefCustomer", '', $expedition->ref_customer, $expedition, $user->hasRight('expedition', 'creer'), 'string'.(getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') ? ':' . getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
 			$morehtmlref .= '<br>'.$langs->trans("RefDeliveryReceipt").' : '.$object->ref;
 			// Thirdparty
 			$morehtmlref .= '<br>'.$expedition->thirdparty->getNomUrl(1);
@@ -510,7 +510,8 @@ if ($action == 'create') {
 			 */
 
 			$num_prod = count($object->lines);
-			$i = 0; $total = 0;
+			$i = 0;
+			$total = 0;
 
 			print '<table class="noborder centpercent">';
 
@@ -600,10 +601,10 @@ if ($action == 'create') {
 
 					// Display lines extrafields
 					//if (!empty($extrafields)) {
-						$colspan = 2;
-						$mode = ($object->statut == 0) ? 'edit' : 'view';
+					$colspan = 2;
+					$mode = ($object->statut == 0) ? 'edit' : 'view';
 
-						$object->lines[$i]->fetch_optionals();
+					$object->lines[$i]->fetch_optionals();
 
 					if ($action == 'create_delivery') {
 						$srcLine = new ExpeditionLigne($db);
@@ -614,10 +615,10 @@ if ($action == 'create') {
 
 						$object->lines[$i]->array_options = array_merge($object->lines[$i]->array_options, $srcLine->array_options);
 					} else {
-							$srcLine = new DeliveryLine($db);
-							$extrafields->fetch_name_optionals_label($srcLine->table_element);
+						$srcLine = new DeliveryLine($db);
+						$extrafields->fetch_name_optionals_label($srcLine->table_element);
 					}
-						print $object->lines[$i]->showOptionals($extrafields, $mode, array('style' => 'class="oddeven"', 'colspan' => $colspan), '');
+					print $object->lines[$i]->showOptionals($extrafields, $mode, array('style' => 'class="oddeven"', 'colspan' => $colspan), '');
 					//}
 				}
 
@@ -695,11 +696,11 @@ if ($action == 'create') {
 			print '</div></div>';
 		} else {
 			/* Expedition non trouvee */
-			print "Expedition inexistante ou acces refuse";
+			print "Expedition inexistante ou access refuse";
 		}
 	} else {
 		/* Expedition non trouvee */
-		print "Expedition inexistante ou acces refuse";
+		print "Expedition inexistante ou access refuse";
 	}
 }
 

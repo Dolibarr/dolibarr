@@ -45,7 +45,9 @@ if (empty($object) || !is_object($object)) {
 }
 
 global $filtertype;
-if (empty($filtertype))	$filtertype = 0;
+if (empty($filtertype)) {
+	$filtertype = 0;
+}
 
 
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax, $langs;
@@ -67,8 +69,11 @@ if (empty($outputalsopricetotalwithtax)) {
 }
 
 // add html5 elements
-if ($filtertype == 1) $domData  = ' data-element="'.$line->element.'service"';
-else $domData  = ' data-element="'.$line->element.'"';
+if ($filtertype == 1) {
+	$domData  = ' data-element="'.$line->element.'service"';
+} else {
+	$domData  = ' data-element="'.$line->element.'"';
+}
 
 $domData .= ' data-id="'.$line->id.'"';
 $domData .= ' data-qty="'.$line->qty.'"';
@@ -100,7 +105,7 @@ if ($tmpbom->id > 0) {
 	print ' '.$langs->trans("or").' ';
 	print $tmpbom->getNomUrl(1);
 	print ' <a class="collapse_bom" id="collapse-'.$line->id.'" href="#">';
-	print (!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT') ? img_picto('', 'folder') : img_picto('', 'folder-open'));
+	print(!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT') ? img_picto('', 'folder') : img_picto('', 'folder-open'));
 	print '</a>';
 } else {
 	print $tmpproduct->getNomUrl(1);
@@ -122,13 +127,13 @@ print '</td>';
 // Qty
 print '<td class="linecolqty nowrap right">';
 $coldisplay++;
-echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
+echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formatting role of function price
 print '</td>';
 
 if ($filtertype != 1) {
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		print '<td class="linecoluseunit nowrap left">';
-		$label = measuringUnitString($line->fk_unit, '',  '', 1);
+		$label = measuringUnitString($line->fk_unit, '', '', 1);
 		if ($label !== '') {
 			print $langs->trans($label);
 		}
@@ -141,7 +146,7 @@ if ($filtertype != 1) {
 	print '</td>';
 	print '<td class="linecoldisablestockchange nowrap right">';
 	$coldisplay++;
-	echo $line->disable_stock_change ? yn($line->disable_stock_change) : ''; // Yes, it is a quantity, not a price, but we just want the formating role of function price
+	echo $line->disable_stock_change ? yn($line->disable_stock_change) : ''; // Yes, it is a quantity, not a price, but we just want the formatting role of function price
 	print '</td>';
 
 	print '<td class="linecolefficiency nowrap right">';
@@ -157,7 +162,7 @@ if ($filtertype != 1) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 		$unit = new CUnits($this->db);
 		$unit->fetch($line->fk_unit);
-		print (isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '');
+		print(isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '');
 	}
 
 	print '</td>';
@@ -169,7 +174,9 @@ if ($filtertype != 1) {
 
 		print '<td class="linecolworkstation nowrap right">';
 		$coldisplay++;
-		if ($res > 0) echo $workstation->getNomUrl();
+		if ($res > 0) {
+			echo $workstation->getNomUrl(1);
+		}
 		print '</td>';
 	}
 }
@@ -237,7 +244,7 @@ if ($action == 'selectlines') {
 print '</tr>';
 
 // Select of all the sub-BOM lines
-// From this pont to the end of the file, we only take care of sub-BOM lines
+// From this point to the end of the file, we only take care of sub-BOM lines
 $sql = 'SELECT rowid, fk_bom_child, fk_product, qty FROM '.MAIN_DB_PREFIX.'bom_bomline AS bl';
 $sql.= ' WHERE fk_bom ='. (int) $tmpbom->id;
 $resql = $object->db->query($sql);
@@ -280,7 +287,9 @@ if ($resql) {
 			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty, 0, '', 0, 0).'</td>';
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				print '<td class="linecoluseunit nowrap left">';
-				if ($label !== '') print $langs->trans($label);
+				if ($label !== '') {
+					print $langs->trans($label);
+				}
 				print '</td>';
 			}
 			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">'.$langs->trans('Yes').'</td>';
@@ -288,7 +297,9 @@ if ($resql) {
 			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * $line->qty, 0, '', 0, 0).'</td>';
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				print '<td class="linecoluseunit nowrap left">';
-				if ($label !== '') print $langs->trans($label);
+				if ($label !== '') {
+					print $langs->trans($label);
+				}
 				print '</td>';
 			}
 
@@ -316,7 +327,9 @@ if ($resql) {
 			$qty = convertDurationtoHour($sub_bom_line->qty, $unit);
 			$workstation = new Workstation($this->db);
 			$res = $workstation->fetch($sub_bom_product->fk_default_workstation);
-			if ($res > 0) $sub_bom_line->total_cost = price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
+			if ($res > 0) {
+				$sub_bom_line->total_cost = price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
+			}
 
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom_line->total_cost, 'MT')).'</span></td>';
 			$this->total_cost += $line->total_cost;

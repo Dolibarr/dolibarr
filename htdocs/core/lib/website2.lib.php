@@ -103,7 +103,9 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 			$filename = basename($filealias);
 			foreach (explode(',', $object->otherlang) as $sublang) {
 				// Avoid to erase main alias file if $sublang is empty string
-				if (empty(trim($sublang))) continue;
+				if (empty(trim($sublang))) {
+					continue;
+				}
 				$filealiassub = $dirname.'/'.$sublang.'/'.$filename;
 
 				$aliascontent = '<?php'."\n";
@@ -121,7 +123,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 		}
 	}
 
-	return ($result ?true:false);
+	return ($result ? true : false);
 }
 
 
@@ -322,7 +324,9 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $o
 					$dirname = dirname($fileindex);
 					foreach (explode(',', $object->otherlang) as $sublang) {
 						// Avoid to erase main alias file if $sublang is empty string
-						if (empty(trim($sublang))) continue;
+						if (empty(trim($sublang))) {
+							continue;
+						}
 						$fileindexsub = $dirname.'/'.$sublang.'/index.php';
 
 						// Same indexcontent than previously but with ../ instead of ./ for master and tpl file include/require_once.
@@ -577,7 +581,7 @@ function showWebsiteTemplates(Website $website)
 				$handle = opendir($dirtheme);
 				if (is_resource($handle)) {
 					while (($subdir = readdir($handle)) !== false) {
-						if (is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.' && substr($subdir, 0, 3) <> 'CVS' && preg_match('/\.zip$/i', $subdir)) {
+						if (is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) != '.' && substr($subdir, 0, 3) != 'CVS' && preg_match('/\.zip$/i', $subdir)) {
 							$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
 
 							// Disable not stable themes (dir ends with _exp or _dev)
@@ -647,8 +651,8 @@ function showWebsiteTemplates(Website $website)
  * - Block if bad code in the new string.
  * - Block also if user has no permission to change PHP code.
  *
- * @param	string		$phpfullcodestringold		PHP old string. For exemple "<?php echo 'a' ?><php echo 'b' ?>"
- * @param	string		$phpfullcodestring			PHP new string. For exemple "<?php echo 'a' ?><php echo 'c' ?>"
+ * @param	string		$phpfullcodestringold		PHP old string. For example "<?php echo 'a' ?><php echo 'b' ?>"
+ * @param	string		$phpfullcodestring			PHP new string. For example "<?php echo 'a' ?><php echo 'c' ?>"
  * @return	int										Error or not
  * @see dolKeepOnlyPhpCode()
  */

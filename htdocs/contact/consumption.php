@@ -81,7 +81,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 // Customer or supplier selected in drop box
 $thirdTypeSelect = GETPOST("third_select_id");
-$type_element = GETPOSTISSET('type_element') ?GETPOST('type_element') : '';
+$type_element = GETPOSTISSET('type_element') ? GETPOST('type_element') : '';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "interventions", "contracts", "products"));
@@ -206,7 +206,7 @@ if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	$tables_from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'fichinter as f ON d.fk_fichinter=f.rowid';
 	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid AND ec.fk_socpeople = '.((int) $object->id);
 	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='fichinter' and tc.source='external' and tc.active=1)";
-	$where = ' WHERE f.entity IN ('.getEntity('ficheinter').')';
+	$where = ' WHERE f.entity IN ('.getEntity('intervention').')';
 	$dateprint = 'f.datec';
 	$doc_number = 'f.ref';
 } elseif ($type_element == 'invoice') { 	// Customer : show products from invoices
@@ -481,7 +481,9 @@ if ($sql_select) {
 		print '<td>';
 
 		// Define text, description and type
-		$text = ''; $description = ''; $type = 0;
+		$text = '';
+		$description = '';
+		$type = 0;
 
 		// Code to show product duplicated from commonobject->printObjectLine
 		if ($objp->fk_product > 0) {
@@ -541,26 +543,26 @@ if ($sql_select) {
 				if ($objp->description == '(CREDIT_NOTE)' && $objp->fk_remise_except > 0) {
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
-					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromCreditNote", $discount->getNomUrl(0));
+					echo($txt ? ' - ' : '').$langs->transnoentities("DiscountFromCreditNote", $discount->getNomUrl(0));
 				}
 				if ($objp->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0) {
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
-					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessReceived", $discount->getNomUrl(0));
+					echo($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessReceived", $discount->getNomUrl(0));
 				} elseif ($objp->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0) {
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
-					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
+					echo($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
 				} elseif ($objp->description == '(DEPOSIT)' && $objp->fk_remise_except > 0) {
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
-					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromDeposit", $discount->getNomUrl(0));
+					echo($txt ? ' - ' : '').$langs->transnoentities("DiscountFromDeposit", $discount->getNomUrl(0));
 					// Add date of deposit
 					if (getDolGlobalString('INVOICE_ADD_DEPOSIT_DATE')) {
 						echo ' ('.dol_print_date($discount->datec).')';
 					}
 				} else {
-					echo ($txt ? ' - ' : '').dol_htmlentitiesbr($objp->description);
+					echo($txt ? ' - ' : '').dol_htmlentitiesbr($objp->description);
 				}
 			}
 		} else {

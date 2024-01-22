@@ -59,7 +59,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 	public $NbRepeat;
 
 	/**
-	 * Flag to 1 if we must clean ambiguous charaters for the autogeneration of password (List of ambiguous char is in $this->Ambi)
+	 * Flag to 1 if we must clean ambiguous characters for the autogeneration of password (List of ambiguous char is in $this->Ambi)
 	 *
 	 * @var integer
 	 */
@@ -78,7 +78,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 *  @param		DoliDB		$db			Database handler
 	 *	@param		Conf		$conf		Handler de conf
 	 *	@param		Translate	$langs		Handler de langue
-	 *	@param		User		$user		Handler du user connecte
+	 *	@param		User		$user		Handler du user connected
 	 */
 	public function __construct($db, $conf, $langs, $user)
 	{
@@ -101,7 +101,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$this->Spe = "!@#$%&*()_-+={}[]\\|:;'/";
 		$this->Ambi = array("1", "I", "l", "|", "O", "0");
 
-		$tabConf = explode(";", $conf->global->USER_PASSWORD_PATTERN);
+		$tabConf = explode(";", getDolGlobalString('USER_PASSWORD_PATTERN'));
 		$this->length2 = $tabConf[0];
 		$this->NbMaj = $tabConf[1];
 		$this->NbNum = $tabConf[2];

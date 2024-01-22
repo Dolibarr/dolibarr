@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  *
@@ -99,7 +99,7 @@ $user->loadDefaultValues();
  * @param 	array  		$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
 	global $user, $conf, $langs, $mysoc;
 
@@ -150,7 +150,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
  */
 function llxFooterVierge()
 {
-	global $conf;
+	global $conf, $langs;
 
 	print '</div>';
 
@@ -272,8 +272,8 @@ if (empty($reshook) && $action == 'add') {
 				$company->town        = GETPOST('town');
 				$company->email       = GETPOST('email');
 				$company->url         = GETPOST('url');
-				$company->country_id  = GETPOST('country_id', 'int');
-				$company->state_id    = GETPOST('state_id', 'int');
+				$company->country_id  = GETPOSTINT('country_id');
+				$company->state_id    = GETPOSTINT('state_id');
 				$company->name_alias  = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
 
 				$resultat=$company->create($user);
@@ -300,7 +300,7 @@ if (empty($reshook) && $action == 'add') {
 				$company->town = GETPOST('town');
 			}
 			if (empty($company->country_id)) {
-				$company->country_id = GETPOST('country_id', 'int');
+				$company->country_id = GETPOSTINT('country_id');
 			}
 			if (empty($company->email)) {
 				$company->email = GETPOST('email');
@@ -309,7 +309,7 @@ if (empty($reshook) && $action == 'add') {
 				$company->url = GETPOST('url');
 			}
 			if (empty($company->state_id)) {
-				$company->state_id = GETPOST('state_id', 'int');
+				$company->state_id = GETPOSTINT('state_id');
 			}
 			if (empty($company->name_alias)) {
 				$company->name_alias = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
@@ -422,7 +422,7 @@ if (empty($reshook) && $action == 'add') {
 				if (!empty($backtopage)) {
 					$urlback = $backtopage;
 				} elseif (getDolGlobalString('PARTNERSHIP_URL_REDIRECT_SUBSCRIPTION')) {
-					$urlback = $conf->global->PARTNERSHIP_URL_REDIRECT_SUBSCRIPTION;
+					$urlback = getDolGlobalString('PARTNERSHIP_URL_REDIRECT_SUBSCRIPTION');
 					// TODO Make replacement of __AMOUNT__, etc...
 				} else {
 					$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
@@ -491,7 +491,7 @@ if (empty($reshook) && $action == 'add') {
 							}
 						}
 					} else {
-						dol_print_error('', "Autosubscribe form is setup to ask an online payment for a not managed online payment");
+						dol_print_error(null, "Autosubscribe form is setup to ask an online payment for a not managed online payment");
 						exit;
 					}
 				}*/
@@ -512,7 +512,7 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		$db->commit();
 
-		Header("Location: ".$urlback);
+		header("Location: ".$urlback);
 		exit;
 	} else {
 		$db->rollback();
@@ -558,7 +558,7 @@ print '<div id="divsubscribe">';
 
 print '<div class="center subscriptionformhelptext opacitymedium justify">';
 if (getDolGlobalString('PARTNERSHIP_NEWFORM_TEXT')) {
-	print $langs->trans($conf->global->PARTNERSHIP_NEWFORM_TEXT)."<br>\n";
+	print $langs->trans(getDolGlobalString('PARTNERSHIP_NEWFORM_TEXT'))."<br>\n";
 } else {
 	print $langs->trans("NewPartnershipRequestDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
 }

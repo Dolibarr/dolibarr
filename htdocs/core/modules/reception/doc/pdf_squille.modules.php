@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/core/modules/reception/doc/pdf_squille.modules.php
  *	\ingroup    reception
- *	\brief      Fichier de la classe permettant de generer les bordereaux envoi au modele Squille
+ *	\brief      Fichier de la class permettant de generer les bordereaux envoi au modele Squille
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
- *	Classe permettant de generer les borderaux envoi au modele Squille
+ *	Class permettant de generer les borderaux envoi au modele Squille
  */
 class pdf_squille extends ModelePdfReception
 {
@@ -154,7 +154,7 @@ class pdf_squille extends ModelePdfReception
 
 		// Show Draft Watermark
 		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('RECEPTION_DRAFT_WATERMARK'))) {
-			$this->watermark = $conf->global->RECEPTION_DRAFT_WATERMARK;
+			$this->watermark = getDolGlobalString('RECEPTION_DRAFT_WATERMARK');
 		}
 
 		$nblines = count($object->lines);
@@ -474,8 +474,7 @@ class pdf_squille extends ModelePdfReception
 								$showpricebeforepagebreak = 0;
 							}
 						}
-					} else // No pagebreak
-					{
+					} else { // No pagebreak
 						$pdf->commitTransaction();
 					}
 					$posYAfterDescription = $pdf->GetY();
@@ -499,7 +498,7 @@ class pdf_squille extends ModelePdfReception
 						$curY = $tab_top_newpage;
 					}
 
-					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
 					// Description
 					$pdf->SetXY($this->posxweightvol, $curY);
@@ -641,7 +640,7 @@ class pdf_squille extends ModelePdfReception
 	 *	@param  Reception	$object         Object reception
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
-	 *	@param	Translate	$outputlangs	Objet langs
+	 *	@param	Translate	$outputlangs	Object langs
 	 *  @param	int			$totalOrdered	Total ordered
 	 *  @param	int			$totalAmount	Total amount
 	 *	@return int							Position pour suite
@@ -933,10 +932,10 @@ class pdf_squille extends ModelePdfReception
 
 		// Date planned delivery
 		if (!empty($object->date_delivery)) {
-				$posy += 4;
-				$pdf->SetXY($posx, $posy);
-				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery, "day", false, $outputlangs, true), '', 'R');
+			$posy += 4;
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery, "day", false, $outputlangs, true), '', 'R');
 		}
 
 		if (!empty($object->thirdparty->code_fournisseur)) {
@@ -1044,7 +1043,7 @@ class pdf_squille extends ModelePdfReception
 
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, (!empty($object->contact) ? $object->contact : null), $usecontact, 'targetwithdetails', $object);
 
-				// Show recipient name
+			// Show recipient name
 			$pdf->SetXY($posx + 2, $posy + 3);
 			$pdf->SetFont('', 'B', $default_font_size);
 			$pdf->MultiCell($widthrecbox - 2, 4, $carac_client_name, 0, 'L');

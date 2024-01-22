@@ -122,7 +122,7 @@ print '<table class="border centpercent tableforfield">';
 // Login
 print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
 
-// If there is a link to password not crypted, we show value in database here so we can compare because it is shown nowhere else
+// If there is a link to the unencrypted password, we show the value in database here so we can compare because it is shown nowhere else
 if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')) {
 	print '<tr><td>'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td>';
 	print '<td class="valeur">'.$object->pass.'</td>';
@@ -171,7 +171,7 @@ if (getDolGlobalString('LDAP_MEMBER_ACTIVE') && getDolGlobalString('LDAP_MEMBER_
 
 
 
-// Affichage attributs LDAP
+// Affichage attributes LDAP
 print load_fiche_titre($langs->trans("LDAPInformationsForThisMember"));
 
 print '<table width="100%" class="noborder">';

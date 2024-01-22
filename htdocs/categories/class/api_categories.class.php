@@ -38,12 +38,12 @@ class Categories extends DolibarrApi
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'label',
 		'type'
 	);
 
-	static $TYPES = array(
+	public static $TYPES = array(
 		0 => 'product',
 		1 => 'supplier',
 		2 => 'customer',
@@ -78,7 +78,7 @@ class Categories extends DolibarrApi
 	/**
 	 * Get properties of a category object
 	 *
-	 * Return an array with category informations
+	 * Return an array with category information
 	 *
 	 * @param	int		$id ID of category
 	 * @param	bool	$include_childs Include child categories list (true or false)
@@ -126,7 +126,7 @@ class Categories extends DolibarrApi
 	 * @param int		$page		Page number
 	 * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of category objects
 	 *
 	 * @throws RestException
@@ -182,9 +182,7 @@ class Categories extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve category list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No category found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -204,6 +202,12 @@ class Categories extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->category->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->category->$field = $value;
 		}
 		if ($this->category->create(DolibarrApiAccess::$user) < 0) {
@@ -238,6 +242,12 @@ class Categories extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->category->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->category->$field = $value;
 		}
 
@@ -330,9 +340,6 @@ class Categories extends DolibarrApi
 		$categories = $this->category->getListForItem($id, $type, $sortfield, $sortorder, $limit, $page);
 
 		if (!is_array($categories)) {
-			if ($categories == 0) {
-				throw new RestException(404, 'No category found for this object');
-			}
 			throw new RestException(600, 'Error when fetching object categories', array_merge(array($this->category->error), $this->category->errors));
 		}
 		return $categories;
@@ -667,7 +674,7 @@ class Categories extends DolibarrApi
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
 
-		// Remove fields not relevent to categories
+		// Remove fields not relevant to categories
 		unset($object->MAP_CAT_FK);
 		unset($object->MAP_CAT_TABLE);
 		unset($object->MAP_OBJ_CLASS);

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014 Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2016 Laurent Destailleur  <eldy@uers.sourceforge.net>
+ * Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ if (isModEnabled('categorie')) {
 }
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -61,7 +61,7 @@ if (!$sortfield) {
 	$sortfield = "email";
 }
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $rowid = GETPOST('rowid', 'int');
 $action = GETPOST('action', 'aZ09');
 $search_nom = GETPOST("search_nom");
@@ -256,7 +256,7 @@ if ($action == 'add') {
 }
 
 if ($action == 'clear') {
-	// Chargement de la classe
+	// Load a new class instance
 	$classname = "MailingTargets";
 	$obj = new $classname($db);
 	$obj->clear_target($id);
@@ -447,7 +447,7 @@ if ($object->fetch($id) >= 0) {
 	print '</td><td colspan="3">';
 	$nbemail = ($object->nbemail ? $object->nbemail : '0');
 	if (getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) {
-		$text = $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
+		$text = $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 		print $form->textwithpicto($nbemail, $text, 1, 'warning');
 	} else {
 		print $nbemail;

@@ -64,7 +64,9 @@ $object = new Ticket($db);
 
 // Security check
 $id = GETPOST("id", 'int');
-if ($user->socid > 0) $socid = $user->socid;
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'ticket', $object->id, '');
 
 // restrict access for externals users
@@ -155,7 +157,7 @@ if ($action == 'deletecontact' && $user->hasRight('ticket', 'write')) {
 		$result = $object->delete_contact($lineid);
 
 		if ($result >= 0) {
-			Header("Location: ".$url_page_current."?id=".$object->id);
+			header("Location: ".$url_page_current."?id=".$object->id);
 			exit;
 		}
 	}

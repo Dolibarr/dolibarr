@@ -90,13 +90,13 @@ AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Ser
 
 AccountancyAreaDescBind=STEP %s: Check the binding between existing %s lines and accounting account is done, so application will be able to journalize transactions in Ledger in one click. Complete missing bindings. For this, use the menu entry %s.
 AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the Ledger. For this, go into menu <strong>%s</strong>, and click into button <strong>%s</strong>.
-AccountancyAreaDescAnalyze=STEP %s: Add or edit existing transactions and generate reports and exports.
-
-AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't make modification in a future.
+AccountancyAreaDescAnalyze=STEP %s: Read reportings or generate export files for other bookkeepers.
+AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't transfer anymore data in the same period in a future.
 
 TheFiscalPeriodIsNotDefined=A mandatory step in setup has not been completed (Fiscal period is not defined)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup has not been completed (accounting code journal not defined for all bank accounts)
 Selectchartofaccounts=Select active chart of accounts
+CurrentChartOfAccount=Current active chart of account
 ChangeAndLoad=Change and load
 Addanaccount=Add an accounting account
 AccountAccounting=Accounting account
@@ -343,7 +343,7 @@ AccountingJournalType3=Purchases
 AccountingJournalType4=Bank
 AccountingJournalType5=Expense reports
 AccountingJournalType8=Inventory
-AccountingJournalType9=Has-new
+AccountingJournalType9=Retained earnings
 GenerationOfAccountingEntries=Generation of accounting entries
 ErrorAccountingJournalIsAlreadyUse=This journal is already use
 AccountingAccountForSalesTaxAreDefinedInto=Note: Accounting account for Sales tax are defined into menu <b>%s</b> - <b>%s</b>
@@ -446,16 +446,16 @@ AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modif
 AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
 
 ## Closure
-AccountancyClosureStep1=Step 1 : Validate and lock movements
-AccountancyClosureStep2=Step 2 : Close fiscal period
+AccountancyClosureStep1=Step 1 : Validate and lock the movements
+AccountancyClosureStep2=Step 2 : Close the fiscal period
 AccountancyClosureStep3=Step 3 : Extract entries (Optional)
 AccountancyClosureClose=Close fiscal period
-AccountancyClosureAccountingReversal=Extract entries
+AccountancyClosureAccountingReversal=Extract and record "Retained earnings" entries
 AccountancyClosureStep3NewFiscalPeriod=Next fiscal period
-AccountancyClosureGenerateClosureBookkeepingRecords=Generate "has-new" entry on the next fiscal period
-AccountancyClosureSeparateAuxiliaryAccounts=When generating the "has-new" entry, detail the sub-ledger accounts
+AccountancyClosureGenerateClosureBookkeepingRecords=Generate "Retained earnings" entries on the next fiscal period
+AccountancyClosureSeparateAuxiliaryAccounts=When generating the "Retained earnings" entries, detail the sub-ledger accounts
 AccountancyClosureCloseSuccessfully=Fiscal period has been closed successfully
-AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping records has been inserted successfully
+AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping entries for "Retained earnings" has been inserted successfully
 
 ## Confirm box
 ConfirmMassUnletteringAuto=Bulk auto unreconcile confirmation
@@ -464,7 +464,7 @@ ConfirmMassUnletteringQuestion=Are you sure you want to unreconcile the %s selec
 ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
 ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
 AccountancyClosureConfirmClose=Are you sure you want to close the current fiscal period ? <span class="warning">You understand that closing the fiscal period is an irreversible action and will permanently block any modification or deletion of entries over this period</span>.
-AccountancyClosureConfirmAccountingReversal=Are you sure you want to accounting reversal ?
+AccountancyClosureConfirmAccountingReversal=Are you sure you want to record entries for the "Retained earnings" ?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Some mandatory steps of setup was not done, please complete them

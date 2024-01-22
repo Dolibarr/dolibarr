@@ -49,6 +49,13 @@ class PaymentSalary extends CommonObject
 	public $picto = 'payment';
 
 	/**
+	 * @var int chid
+	 * @deprecated
+	 * @see $fk_salary
+	 */
+	public $chid;
+
+	/**
 	 * @var int ID
 	 */
 	public $fk_salary;
@@ -134,13 +141,6 @@ class PaymentSalary extends CommonObject
 	public $datev = '';
 
 	/**
-	 * @var int chid
-	 * @deprecated
-	 * @see $id from CommonObject
-	 */
-	public $chid;
-
-	/**
 	 * @var array
 	 */
 	public $fields = array(
@@ -162,8 +162,8 @@ class PaymentSalary extends CommonObject
 	 *  Use this->amounts to have list of lines for the payment
 	 *
 	 *  @param      User	$user   				User making payment
-	 *	@param		int		$closepaidcontrib   	1=Also close payed contributions to paid, 0=Do nothing more
-	 *  @return     int     						<0 if KO, id of payment if OK
+	 *	@param		int		$closepaidcontrib   	1=Also close paid contributions to paid, 0=Do nothing more
+	 *  @return     int     						Return integer <0 if KO, id of payment if OK
 	 */
 	public function create($user, $closepaidcontrib = 0)
 	{
@@ -181,22 +181,40 @@ class PaymentSalary extends CommonObject
 			$this->datep = $this->datepaye;
 		}
 
-		// Validate parametres
+		// Validate parameters
 		if (empty($this->datep)) {
 			$this->error = 'ErrorBadValueForParameterCreatePaymentSalary';
 			return -1;
 		}
 
 		// Clean parameters
-		if (isset($this->fk_salary)) $this->fk_salary = (int) $this->fk_salary;
-		if (isset($this->amount)) $this->amount = trim($this->amount);
-		if (isset($this->fk_typepayment)) $this->fk_typepayment = (int) $this->fk_typepayment;
-		if (isset($this->num_paiement)) $this->num_paiement = trim($this->num_paiement); // deprecated
-		if (isset($this->num_payment)) $this->num_payment = trim($this->num_payment);
-		if (isset($this->note)) $this->note = trim($this->note);
-		if (isset($this->fk_bank)) $this->fk_bank = (int) $this->fk_bank;
-		if (isset($this->fk_user_author)) $this->fk_user_author = (int) $this->fk_user_author;
-		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
+		if (isset($this->fk_salary)) {
+			$this->fk_salary = (int) $this->fk_salary;
+		}
+		if (isset($this->amount)) {
+			$this->amount = trim($this->amount);
+		}
+		if (isset($this->fk_typepayment)) {
+			$this->fk_typepayment = (int) $this->fk_typepayment;
+		}
+		if (isset($this->num_paiement)) {
+			$this->num_paiement = trim($this->num_paiement);
+		} // deprecated
+		if (isset($this->num_payment)) {
+			$this->num_payment = trim($this->num_payment);
+		}
+		if (isset($this->note)) {
+			$this->note = trim($this->note);
+		}
+		if (isset($this->fk_bank)) {
+			$this->fk_bank = (int) $this->fk_bank;
+		}
+		if (isset($this->fk_user_author)) {
+			$this->fk_user_author = (int) $this->fk_user_author;
+		}
+		if (isset($this->fk_user_modif)) {
+			$this->fk_user_modif = (int) $this->fk_user_modif;
+		}
 
 		$totalamount = 0;
 		foreach ($this->amounts as $key => $value) {  // How payment is dispatch
@@ -207,62 +225,64 @@ class PaymentSalary extends CommonObject
 		$totalamount = price2num($totalamount);
 
 		// Check parameters
-		if ($totalamount == 0) return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
+		if ($totalamount == 0) {
+			return -1;
+		} // On accepte les montants negatifs pour les rejets de prelevement mais pas null
 
 
 		$this->db->begin();
 
 		if ($totalamount != 0) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_salary (entity, fk_salary, datec, datep, amount,";
-			$sql .= " fk_typepayment, num_payment, note, fk_user_author, fk_bank)";
-			$sql .= " VALUES (".((int) $conf->entity).", ".((int) $this->fk_salary).", '".$this->db->idate($now)."',";
-			$sql .= " '".$this->db->idate($this->datep)."',";
-			$sql .= " ".price2num($totalamount).",";
-			$sql .= " ".((int) $this->fk_typepayment).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".((int) $user->id).",";
-			$sql .= " 0)";
+			// Insert array of amounts
+			foreach ($this->amounts as $key => $amount) {
+				$salary_id = $key;
+				$amount = price2num($amount);
+				if (is_numeric($amount) && !empty($amount)) {
+					// We can have n payments for 1 salary but we can't have 1 payments for n salaries (for invoices link is n-n, not for salaries).
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_salary (entity, fk_salary, datec, datep, amount,";
+					$sql .= " fk_typepayment, num_payment, note, fk_user_author, fk_bank)";
+					$sql .= " VALUES (".((int) $conf->entity).", ".((int) $salary_id).", '".$this->db->idate($now)."',";
+					$sql .= " '".$this->db->idate($this->datep)."',";
+					$sql .= " ".price2num($amount).",";
+					$sql .= " ".((int) $this->fk_typepayment).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".((int) $user->id).",";
+					$sql .= " 0)";
 
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_salary");
+					$resql = $this->db->query($sql);
+					if ($resql) {
+						$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_salary");
+					}
 
-				// Insere tableau des montants / factures
-				foreach ($this->amounts as $key => $amount) {
-					$contribid = $key;
-					if (is_numeric($amount) && $amount <> 0) {
-						$amount = price2num($amount);
-
-						// If we want to closed payed invoices
-						if ($closepaidcontrib) {
-							$tmpsalary = new Salary($this->db);
-							$tmpsalary->fetch($contribid);
-							$paiement = $tmpsalary->getSommePaiement();
-							//$creditnotes=$tmpsalary->getSumCreditNotesUsed();
-							$creditnotes = 0;
-							//$deposits=$tmpsalary->getSumDepositsUsed();
-							$deposits = 0;
-							$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
-							$remaintopay = price2num($tmpsalary->amount - $paiement - $creditnotes - $deposits, 'MT');
-							if ($remaintopay == 0) {
-								$result = $tmpsalary->setPaid($user);
-							} else {
-								dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
-							}
+					// If we want to closed paid invoices
+					if ($closepaidcontrib) {
+						$tmpsalary = new Salary($this->db);
+						$tmpsalary->fetch($salary_id);
+						$paiement = $tmpsalary->getSommePaiement();
+						//$creditnotes=$tmpsalary->getSumCreditNotesUsed();
+						$creditnotes = 0;
+						//$deposits=$tmpsalary->getSumDepositsUsed();
+						$deposits = 0;
+						$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
+						$remaintopay = price2num($tmpsalary->amount - $paiement - $creditnotes - $deposits, 'MT');
+						if ($remaintopay == 0) {
+							$result = $tmpsalary->setPaid($user);
+						} else {
+							dol_syslog("Remain to pay for salary id=".$salary_id." not null. We do nothing.");
 						}
 					}
 				}
-			} else {
-				$error++;
 			}
 		}
 
 		$result = $this->call_trigger('PAYMENTSALARY_CREATE', $user);
-		if ($result < 0) $error++;
+		if ($result < 0) {
+			$error++;
+		}
 
 		if ($totalamount != 0 && !$error) {
 			$this->amount = $totalamount;
 			$this->total = $totalamount; // deprecated
 			$this->db->commit();
-			return $this->id;
+			return $this->id;	// id of the last payment inserted
 		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
@@ -274,7 +294,7 @@ class PaymentSalary extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id         Id object
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -343,7 +363,7 @@ class PaymentSalary extends CommonObject
 	 *
 	 *  @param	User	$user        	User that modify
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			<0 if KO, >0 if OK
+	 *  @return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -352,15 +372,33 @@ class PaymentSalary extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->fk_salary)) $this->fk_salary = (int) $this->fk_salary;
-		if (isset($this->amount)) $this->amount = trim($this->amount);
-		if (isset($this->fk_typepayment)) $this->fk_typepayment = (int) $this->fk_typepayment;
-		if (isset($this->num_paiement)) $this->num_paiement = trim($this->num_paiement); // deprecated
-		if (isset($this->num_payment)) $this->num_payment = trim($this->num_payment);
-		if (isset($this->note)) $this->note = trim($this->note);
-		if (isset($this->fk_bank)) $this->fk_bank = (int) $this->fk_bank;
-		if (isset($this->fk_user_author)) $this->fk_user_author = (int) $this->fk_user_author;
-		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
+		if (isset($this->fk_salary)) {
+			$this->fk_salary = (int) $this->fk_salary;
+		}
+		if (isset($this->amount)) {
+			$this->amount = trim($this->amount);
+		}
+		if (isset($this->fk_typepayment)) {
+			$this->fk_typepayment = (int) $this->fk_typepayment;
+		}
+		if (isset($this->num_paiement)) {
+			$this->num_paiement = trim($this->num_paiement);
+		} // deprecated
+		if (isset($this->num_payment)) {
+			$this->num_payment = trim($this->num_payment);
+		}
+		if (isset($this->note)) {
+			$this->note = trim($this->note);
+		}
+		if (isset($this->fk_bank)) {
+			$this->fk_bank = (int) $this->fk_bank;
+		}
+		if (isset($this->fk_user_author)) {
+			$this->fk_user_author = (int) $this->fk_user_author;
+		}
+		if (isset($this->fk_user_modif)) {
+			$this->fk_user_modif = (int) $this->fk_user_modif;
+		}
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -384,7 +422,10 @@ class PaymentSalary extends CommonObject
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
 
 		// Commit or rollback
 		if ($error) {
@@ -406,11 +447,10 @@ class PaymentSalary extends CommonObject
 	 *
 	 *  @param	User	$user        	User that delete
 	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
-	 *  @return int						<0 if KO, >0 if OK
+	 *  @return int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		dol_syslog(get_class($this)."::delete");
@@ -420,7 +460,7 @@ class PaymentSalary extends CommonObject
 		if ($this->bank_line > 0) {
 			$accline = new AccountLine($this->db);
 			$accline->fetch($this->bank_line);
-			$result = $accline->delete();
+			$result = $accline->delete($user);
 			if ($result < 0) {
 				$this->errors[] = $accline->error;
 				$error++;
@@ -433,7 +473,10 @@ class PaymentSalary extends CommonObject
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+			if (!$resql) {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		// Commit or rollback
@@ -534,11 +577,11 @@ class PaymentSalary extends CommonObject
 	 *      @param  int		$accountid          Id of bank account to do link with
 	 *      @param  string	$emetteur_nom       Name of transmitter
 	 *      @param  string	$emetteur_banque    Name of bank
-	 *      @return int                 		<0 if KO, >0 if OK
+	 *      @return int                 		Return integer <0 if KO, >0 if OK
 	 */
 	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// Clean data
 		$this->num_payment = trim($this->num_payment ? $this->num_payment : $this->num_paiement);
@@ -608,7 +651,7 @@ class PaymentSalary extends CommonObject
 									DOL_URL_ROOT.'/user/card.php?id=',
 									$fuser->getFullName($langs),
 									'user'
-									);
+								);
 							}
 							if ($result <= 0) {
 								$this->error = $this->db->lasterror();
@@ -632,7 +675,7 @@ class PaymentSalary extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Mise a jour du lien entre le paiement de  salaire et la ligne dans llx_bank generee
 	 *
@@ -641,7 +684,7 @@ class PaymentSalary extends CommonObject
 	 */
 	public function update_fk_bank($id_bank)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_salary SET fk_bank = ".((int) $id_bank)." WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
@@ -659,7 +702,7 @@ class PaymentSalary extends CommonObject
 	 *  Old name of function is update_date()
 	 *
 	 *  @param	int	$date   		New date
-	 *  @return int					<0 if KO, 0 if OK
+	 *  @return int					Return integer <0 if KO, 0 if OK
 	 */
 	public function updatePaymentDate($date)
 	{
@@ -720,7 +763,7 @@ class PaymentSalary extends CommonObject
 		return $this->LibStatut($this->statut, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -730,7 +773,7 @@ class PaymentSalary extends CommonObject
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs; // TODO Renvoyer le libelle anglais et faire traduction a affichage
 
 		$langs->load('compta');
@@ -827,7 +870,7 @@ class PaymentSalary extends CommonObject
 				$label = $langs->trans("SalaryPayment");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -870,33 +913,6 @@ class PaymentSalary extends CommonObject
 			$result .= $hookmanager->resPrint;
 		}
 
-		/*
-		if (empty($this->ref)) $this->ref = $this->lib;
-
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("SalaryPayment").'</u>';
-		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		if (!empty($this->label)) {
-			$labeltoshow = $this->label;
-			$reg = array();
-			if (preg_match('/^\((.*)\)$/i', $this->label, $reg)) {
-				// Label generique car entre parentheses. On l'affiche en le traduisant
-				if ($reg[1] == 'paiement') $reg[1] = 'Payment';
-				$labeltoshow = $langs->trans($reg[1]);
-			}
-			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$labeltoshow;
-		}
-		if ($this->datep) {
-			$label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'day');
-		}
-
-		if (!empty($this->id)) {
-			$link = '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-			$linkend = '</a>';
-
-			if ($withpicto) $result .= ($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend);
-			if ($withpicto != 2) $result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
-		}
-		*/
 		return $result;
 	}
 
@@ -926,8 +942,10 @@ class PaymentSalary extends CommonObject
 			if (!empty($this->total_ttc)) {
 				$datas['AmountTTC'] = '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 			}
-			if (!empty($this->datepaye)) {
-				$datas['Date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datepaye, 'day');
+			if (!empty($this->datep)) {
+				$datas['Date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'dayhour', 'tzuserrel');
+			} elseif (!empty($this->datepaye)) {
+				$datas['Date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datepaye, 'dayhour', 'tzuserrel');
 			}
 		}
 

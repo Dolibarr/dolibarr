@@ -53,7 +53,9 @@ $mode = GETPOST('mode', 'alpha');
 $socid = GETPOST('socid', 'int');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 
 $search_ref				= GETPOST('search_ref', 'alpha');
 $search_date_startday	= GETPOST('search_date_startday', 'int');
@@ -378,10 +380,10 @@ if (!empty($arrayfields['pndf.rowid']['checked'])) {
 // Filter: Date
 if (!empty($arrayfields['pndf.datep']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -584,7 +586,7 @@ while ($i < $imaxinloop) {
 
 		// Pyament type
 		if (!empty($arrayfields['c.libelle']['checked'])) {
-			$payment_type = $langs->trans("PaymentType".$objp->paiement_type) != ("PaymentType".$objp->paiement_type) ? $langs->trans("PaymentType".$objp->paiement_type) : $objp->paiement_libelle;
+			$payment_type = $langs->trans("PaymentType".$objp->paiement_type) != "PaymentType".$objp->paiement_type ? $langs->trans("PaymentType".$objp->paiement_type) : $objp->paiement_libelle;
 			print '<td>'.$payment_type.' '.dol_trunc($objp->num_payment, 32).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

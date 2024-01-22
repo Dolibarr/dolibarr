@@ -157,7 +157,7 @@ if (empty($reshook)) {
 			// Search company saved with email
 			$searched_companies = $object->searchSocidByEmail($origin_email, '0');
 
-			// Chercher un contact existant avec cette adresse email
+			// Chercher un contact existent avec cette address email
 			// Le premier contact trouvé est utilisé pour déterminer le contact suivi
 			$contacts = $object->searchContactByEmail($origin_email);
 
@@ -477,7 +477,7 @@ if (empty($reshook)) {
 					setEventMessages($messagetoshow, null, 'warnings');
 					setEventMessages($langs->trans('PleaseRememberThisId'), null, 'warnings');
 
-					header("Location: index.php".(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:''));
+					header("Location: index.php".(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : ''));
 					exit;
 				}
 			} else {

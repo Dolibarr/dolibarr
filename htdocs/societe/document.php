@@ -58,10 +58,10 @@ $pageprev 	= $page - 1;
 $pagenext 	= $page + 1;
 
 if (getDolGlobalString('MAIN_DOC_SORT_FIELD')) {
-	$sortfield = $conf->global->MAIN_DOC_SORT_FIELD;
+	$sortfield = getDolGlobalString('MAIN_DOC_SORT_FIELD');
 }
 if (getDolGlobalString('MAIN_DOC_SORT_ORDER')) {
-	$sortorder = $conf->global->MAIN_DOC_SORT_ORDER;
+	$sortorder = getDolGlobalString('MAIN_DOC_SORT_ORDER');
 }
 
 if (!$sortorder) {
@@ -127,7 +127,7 @@ print dol_get_fiche_head($head, 'document', $langs->trans("ThirdParty"), -1, 'co
 
 
 // Build file list
-$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 $totalsize = 0;
 foreach ($filearray as $key => $file) {
 	$totalsize += $file['size'];

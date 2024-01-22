@@ -102,7 +102,8 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 $path = ''; // This value may be used in future for external module to overwrite theme
 $theme = 'eldy'; // Value of theme
 if (getDolGlobalString('MAIN_OVERWRITE_THEME_RES')) {
-	$path = '/' . getDolGlobalString('MAIN_OVERWRITE_THEME_RES'); $theme = $conf->global->MAIN_OVERWRITE_THEME_RES;
+	$path = '/' . getDolGlobalString('MAIN_OVERWRITE_THEME_RES');
+	$theme = getDolGlobalString('MAIN_OVERWRITE_THEME_RES');
 }
 
 // Define image path files and other constants
@@ -224,9 +225,11 @@ $tmppart = explode(',', $colorbacktitle1);
 if ($colortexttitle == '') {
 	$tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
 	if ($tmpval <= 460) {
-		$colortexttitle = 'FFFFFF'; $colorshadowtitle = '888888';
+		$colortexttitle = 'FFFFFF';
+		$colorshadowtitle = '888888';
 	} else {
-		$colortexttitle = '000000'; $colorshadowtitle = 'FFFFFF';
+		$colortexttitle = '000000';
+		$colorshadowtitle = 'FFFFFF';
 	}
 } else {
 	$colorshadowtitle = '888888';
@@ -276,7 +279,9 @@ $heightmenu2 = 49; /* height of top menu, part with login  */
 $disableimages = 0;
 $maxwidthloginblock = 180;
 if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1) {
-	$disableimages = 1; $maxwidthloginblock = $maxwidthloginblock + 50; $minwidthtmenu = 0;
+	$disableimages = 1;
+	$maxwidthloginblock = $maxwidthloginblock + 50;
+	$minwidthtmenu = 0;
 }
 
 if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {

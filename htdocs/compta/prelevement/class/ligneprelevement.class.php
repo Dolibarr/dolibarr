@@ -78,7 +78,7 @@ class LignePrelevement
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb	$db			Database handler
+	 *  @param	DoliDB	$db			Database handler
 	 */
 	public function __construct($db)
 	{
@@ -98,7 +98,7 @@ class LignePrelevement
 	 *  Recupere l'objet prelevement
 	 *
 	 *  @param	int		$rowid      Id de la facture a recuperer
-	 *  @return	integer				<0 if KO, >=0 if OK
+	 *  @return	integer				Return integer <0 if KO, >=0 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -191,7 +191,8 @@ class LignePrelevement
 				return $langs->trans($this->labelStatus[$status]).' '.img_picto($langs->transnoentitiesnoconv($this->labelStatus[$status]), 'statut8', 'class="valignmiddle"');
 			}
 		}
-		//return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+		// return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+		return;
 	}
 
 	/**

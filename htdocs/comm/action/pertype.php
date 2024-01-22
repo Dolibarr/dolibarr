@@ -68,7 +68,7 @@ $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("pa
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 if (!$sortorder) {
 	$sortorder = "ASC";
@@ -79,7 +79,7 @@ if (!$sortfield) {
 
 
 // Security check
-$socid = GETPOST("search_socid", "int") ?GETPOST("search_socid", "int") : GETPOST("socid", "int");
+$socid = GETPOST("search_socid", "int") ? GETPOST("search_socid", "int") : GETPOST("socid", "int");
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -118,7 +118,7 @@ if (GETPOST('search_actioncode', 'array:aZ09')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("search_actioncode", "alpha", 3) ?GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode", "alpha") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+	$actioncode = GETPOST("search_actioncode", "alpha", 3) ? GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode", "alpha") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 
 $dateselect = dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'));
@@ -132,8 +132,8 @@ if ($dateselect > 0) {
 $tmp = !getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS') ? '9-18' : $conf->global->MAIN_DEFAULT_WORKING_HOURS;
 $tmp = str_replace(' ', '', $tmp); // FIX 7533
 $tmparray = explode('-', $tmp);
-$begin_h = GETPOST('begin_h', 'int') != '' ?GETPOST('begin_h', 'int') : ($tmparray[0] != '' ? $tmparray[0] : 9);
-$end_h   = GETPOST('end_h', 'int') ?GETPOST('end_h', 'int') : ($tmparray[1] != '' ? $tmparray[1] : 18);
+$begin_h = GETPOST('begin_h', 'int') != '' ? GETPOST('begin_h', 'int') : ($tmparray[0] != '' ? $tmparray[0] : 9);
+$end_h   = GETPOST('end_h', 'int') ? GETPOST('end_h', 'int') : ($tmparray[1] != '' ? $tmparray[1] : 18);
 if ($begin_h < 0 || $begin_h > 23) {
 	$begin_h = 9;
 }
@@ -160,15 +160,19 @@ if (empty($mode) && !GETPOSTISSET('mode')) {
 
 // View by month
 if (GETPOST('viewcal', 'alpha') && $mode != 'show_day' && $mode != 'show_week' && $mode != 'show_peruser') {
-	$mode = 'show_month'; $day = '';
+	$mode = 'show_month';
+	$day = '';
 }
 // View by week
 if (GETPOST('viewweek', 'alpha') || $mode == 'show_week') {
-	$mode = 'show_week'; $week = ($week ? $week : date("W")); $day = ($day ? $day : date("d"));
+	$mode = 'show_week';
+	$week = ($week ? $week : date("W"));
+	$day = ($day ? $day : date("d"));
 }
 // View by day
 if (GETPOST('viewday', 'alpha') || $mode == 'show_day') {
-	$mode = 'show_day'; $day = ($day ? $day : date("d"));
+	$mode = 'show_day';
+	$day = ($day ? $day : date("d"));
 }
 // View by year
 if (GETPOST('viewyear', 'alpha') || $mode == 'show_year') {
@@ -196,17 +200,7 @@ $search_status = $status;
  * Actions
  */
 
-/*
-if ($action == 'delete_action' && $user->rights->agenda->delete) {
-	$event = new ActionComm($db);
-	$event->fetch($actionid);
-	$event->fetch_optionals();
-	$event->fetch_userassigned();
-	$event->oldcopy = dol_clone($event);
-
-	$result = $event->delete();
-}
-*/
+// None
 
 
 /*
@@ -528,14 +522,11 @@ $sql .= ' a.transparency, a.priority, a.fulldayevent, a.location,';
 $sql .= ' a.fk_soc, a.fk_contact, a.fk_element, a.elementtype, a.fk_project,';
 $sql .= ' ca.code, ca.libelle as type_label, ca.color, ca.type as type_type, ca.picto as type_picto';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
-}
 // We must filter on resource table
 if ($resourceid > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
 }
-// We must filter on assignement table
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 }
@@ -577,15 +568,26 @@ if ($resourceid > 0) {
 	$sql .= " AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".((int) $resourceid);
 }
 if ($pid) {
-	$sql .= " AND a.fk_project=".((int) $pid);
+	$sql .= " AND a.fk_project = ".((int) $pid);
 }
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
+// If the internal user must only see his customers, force searching by him
+$search_sale = 0;
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
 }
-if ($socid > 0) {
-	$sql .= ' AND a.fk_soc = '.((int) $socid);
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
 }
-// We must filter on assignement table
+// Search on socid
+if ($socid) {
+	$sql .= " AND a.fk_soc = ".((int) $socid);
+}
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
 }
@@ -633,7 +635,7 @@ if ($status == 'done' || $status == '100') {
 if ($status == 'todo') {
 	$sql .= " AND (a.percent >= 0 AND a.percent < 100)";
 }
-// We must filter on assignement table
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= " AND (";
 	if ($filtert > 0) {
@@ -730,7 +732,8 @@ if ($resql) {
 			$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
 
 			// Loop on each day covered by action to prepare an index to show on calendar
-			$loop = true; $j = 0;
+			$loop = true;
+			$j = 0;
 			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
 			do {
 				//if ($event->id==408) print 'daykey='.$daykey.' '.$event->datep.' '.$event->datef.'<br>';
@@ -980,7 +983,12 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 	$cases1 = array(); // Color first half hour
 	$cases2 = array(); // Color second half hour
 
-	$i = 0; $nummytasks = 0; $numother = 0; $numbirthday = 0; $numical = 0; $numicals = array();
+	$i = 0;
+	$nummytasks = 0;
+	$numother = 0;
+	$numbirthday = 0;
+	$numical = 0;
+	$numicals = array();
 	$ymd = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $day);
 
 	$nextindextouse = count($colorindexused); // At first run, this is 0, so fist user has 0, next 1, ...
@@ -1015,9 +1023,12 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 				$ponct = ($event->date_start_in_calendar == $event->date_end_in_calendar);
 
 				// Define $color (Hex string like '0088FF') and $cssclass of event
-				$color = -1; $cssclass = ''; $colorindex = -1;
+				$color = -1;
+				$cssclass = '';
+				$colorindex = -1;
 				if (in_array($user->id, $keysofuserassigned)) {
-					$nummytasks++; $cssclass = 'family_mytasks';
+					$nummytasks++;
+					$cssclass = 'family_mytasks';
 					if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 						$color = $event->type_color;
 					}
@@ -1033,9 +1044,13 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 					$color = $event->icalcolor;
 					$cssclass = (!empty($event->icalname) ? 'family_ext'.md5($event->icalname) : 'family_other unsortable');
 				} elseif ($event->type_code == 'BIRTHDAY') {
-					$numbirthday++; $colorindex = 2; $cssclass = 'family_birthday unsortable'; $color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
+					$numbirthday++;
+					$colorindex = 2;
+					$cssclass = 'family_birthday unsortable';
+					$color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
 				} else {
-					$numother++; $cssclass = 'family_other';
+					$numother++;
+					$cssclass = 'family_other';
 					if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 						$color = $event->type_color;
 					}
@@ -1181,10 +1196,14 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 
 	// Now output $casesX from start hour to end hour
 	for ($h = $begin_h; $h < $end_h; $h++) {
-		$color1 = ''; $color2 = '';
-		$style1 = ''; $style2 = '';
-		$string1 = '&nbsp;'; $string2 = '&nbsp;';
-		$title1 = ''; $title2 = '';
+		$color1 = '';
+		$color2 = '';
+		$style1 = '';
+		$style2 = '';
+		$string1 = '&nbsp;';
+		$string2 = '&nbsp;';
+		$title1 = '';
+		$title2 = '';
 		if (isset($cases1[$h]) && $cases1[$h] != '') {
 			//$title1.=count($cases1[$h]).' '.(count($cases1[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases1[$h]) > 1) {

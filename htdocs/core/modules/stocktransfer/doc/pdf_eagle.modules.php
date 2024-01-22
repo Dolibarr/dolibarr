@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2021 		Gauthier VERDOL 	<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 class pdf_eagle extends ModelePDFStockTransfer
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -74,8 +74,20 @@ class pdf_eagle extends ModelePDFStockTransfer
 	 * @var int posx weightvol
 	 */
 	public $posxweightvol;
+
+	/**
+	 * @var int posx warehousesource
+	 */
 	public $posxwarehousesource;
+
+	/**
+	 * @var int posx warehousedestination
+	 */
 	public $posxwarehousedestination;
+
+	/**
+	 * @var int at Least One Batch
+	 */
 	public $atLeastOneBatch;
 
 	/**
@@ -83,7 +95,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 	 *
 	 *	@param	DoliDB	$db		Database handler
 	 */
-	public function __construct($db = 0)
+	public function __construct($db)
 	{
 		global $conf, $langs, $mysoc;
 
@@ -105,7 +117,9 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 		// Get source company
 		$this->emetteur = $mysoc;
-		if (!$this->emetteur->country_code) $this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
+		if (!$this->emetteur->country_code) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2);
+		} // By default if not defined
 
 		// Define position of columns
 		$this->posxdesc = $this->marge_gauche + 1;
@@ -124,7 +138,9 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$this->posxtotalht = $this->page_largeur - $this->marge_droite - 20;
 		}*/
 
-		if (getDolGlobalString('STOCKTRANSFER_PDF_HIDE_WEIGHT_AND_VOLUME')) $this->posxweightvol = $this->posxqty;
+		if (getDolGlobalString('STOCKTRANSFER_PDF_HIDE_WEIGHT_AND_VOLUME')) {
+			$this->posxweightvol = $this->posxqty;
+		}
 
 		$this->posxpicture = $this->posxweightvol - (!getDolGlobalString('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images
 		//var_dump($this->posxpicture, $this->posxweightvol);exit;
@@ -165,9 +181,13 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 		$this->atLeastOneBatch = $this->atLeastOneBatch($object);
 
-		if (!is_object($outputlangs)) $outputlangs = $langs;
+		if (!is_object($outputlangs)) {
+			$outputlangs = $langs;
+		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (getDolGlobalString('MAIN_USE_FPDF')) $outputlangs->charset_output = 'ISO-8859-1';
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
+			$outputlangs->charset_output = 'ISO-8859-1';
+		}
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch", "stocks", "stocktransfer@stocktransfer"));
@@ -180,7 +200,9 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$objphoto = new Product($this->db);
 
 			for ($i = 0; $i < $nblines; $i++) {
-				if (empty($object->lines[$i]->fk_product)) continue;
+				if (empty($object->lines[$i]->fk_product)) {
+					continue;
+				}
 
 				$objphoto = new Product($this->db);
 				$objphoto->fetch($object->lines[$i]->fk_product);
@@ -210,16 +232,22 @@ class pdf_eagle extends ModelePDFStockTransfer
 					break;
 				}
 
-				if ($realpath) $realpatharray[$i] = $realpath;
+				if ($realpath) {
+					$realpatharray[$i] = $realpath;
+				}
 			}
 		}
 
-		if (count($realpatharray) == 0) $this->posxpicture = $this->posxweightvol;
+		if (count($realpatharray) == 0) {
+			$this->posxpicture = $this->posxweightvol;
+		}
 
 
 		if (!empty($this->atLeastOneBatch)) {
 			$this->posxpicture = $this->posxlot;
-			if (getDolGlobalString('MAIN_GENERATE_STOCKTRANSFER_WITH_PICTURE')) $this->posxpicture -= (!getDolGlobalString('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images
+			if (getDolGlobalString('MAIN_GENERATE_STOCKTRANSFER_WITH_PICTURE')) {
+				$this->posxpicture -= (!getDolGlobalString('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);
+			} // width of images
 		}
 
 		if ($conf->stocktransfer->dir_output) {
@@ -259,7 +287,9 @@ class pdf_eagle extends ModelePDFStockTransfer
 				$heightforinfotot = 8; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if (getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS') > 0) $heightforfooter += 6;
+				if (getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS') > 0) {
+					$heightforfooter += 6;
+				}
 				$pdf->SetAutoPageBreak(1, 0);
 
 				if (class_exists('TCPDF')) {
@@ -277,7 +307,9 @@ class pdf_eagle extends ModelePDFStockTransfer
 				$pagenb = 0;
 				$pdf->SetDrawColor(128, 128, 128);
 
-				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
+				if (method_exists($pdf, 'AliasNbPages')) {
+					$pdf->AliasNbPages();
+				}
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Shipment"));
@@ -292,7 +324,9 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 				// New page
 				$pdf->AddPage();
-				if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+				if (!empty($tplidx)) {
+					$pdf->useTemplate($tplidx);
+				}
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('', '', $default_font_size - 1);
@@ -344,7 +378,9 @@ class pdf_eagle extends ModelePDFStockTransfer
 								// Get code using getLabelFromKey
 								$code = $outputlangs->getLabelFromKey($this->db, $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 								$label = '';
-								if ($object->tracking_url != $object->tracking_number) $label .= $outputlangs->trans("LinkToTrackYourPackage")."<br>";
+								if ($object->tracking_url != $object->tracking_number) {
+									$label .= $outputlangs->trans("LinkToTrackYourPackage")."<br>";
+								}
 								$label .= $outputlangs->trans("SendingMethod").": ".$outputlangs->trans("SendingMethod".strtoupper($code));
 								//var_dump($object->tracking_url != $object->tracking_number);exit;
 								if ($object->tracking_url != $object->tracking_number) {
@@ -391,7 +427,9 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 					// Define size of image if we need it
 					$imglinesize = array();
-					if (!empty($realpatharray[$i])) $imglinesize = pdf_getSizeForImage($realpatharray[$i]);
+					if (!empty($realpatharray[$i])) {
+						$imglinesize = pdf_getSizeForImage($realpatharray[$i]);
+					}
 
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
@@ -404,16 +442,22 @@ class pdf_eagle extends ModelePDFStockTransfer
 					// We start with Photo of product line
 					if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// If photo too high, we moved completely on new page
 						$pdf->AddPage('', '', true);
-						if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						if (!empty($tplidx)) {
+							$pdf->useTemplate($tplidx);
+						}
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+							$this->_pagehead($pdf, $object, 0, $outputlangs);
+						}
 						$pdf->setPage($pageposbefore + 1);
 
 						$curY = $tab_top_newpage;
 
 						// Allows data in the first page if description is long enough to break in multiples pages
-						if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE'))
+						if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
 							$showpricebeforepagebreak = 1;
-						else $showpricebeforepagebreak = 0;
+						} else {
+							$showpricebeforepagebreak = 0;
+						}
 					}
 
 					if (isset($imglinesize['width']) && isset($imglinesize['height'])) {
@@ -460,20 +504,25 @@ class pdf_eagle extends ModelePDFStockTransfer
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
 							if ($i == ($nblines - 1)) {	// No more lines, and no space left to show total, so we create a new page
 								$pdf->AddPage('', '', true);
-								if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-								if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
+								if (!empty($tplidx)) {
+									$pdf->useTemplate($tplidx);
+								}
+								if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+									$this->_pagehead($pdf, $object, 0, $outputlangs);
+								}
 								$pdf->setPage($pageposafter + 1);
 							}
 						} else {
 							// We found a page break
 
 							// Allows data in the first page if description is long enough to break in multiples pages
-							if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE'))
+							if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
 								$showpricebeforepagebreak = 1;
-							else $showpricebeforepagebreak = 0;
+							} else {
+								$showpricebeforepagebreak = 0;
+							}
 						}
-					} else // No pagebreak
-					{
+					} else { // No pagebreak
 						$pdf->commitTransaction();
 					}
 					$posYAfterDescription = $pdf->GetY();
@@ -487,15 +536,17 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 					// We suppose that a too long description or photo were moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
-						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+						$pdf->setPage($pageposafter);
+						$curY = $tab_top_newpage;
 					}
 
 					// We suppose that a too long description is moved completely on next page
 					if ($pageposafter > $pageposbefore) {
-						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+						$pdf->setPage($pageposafter);
+						$curY = $tab_top_newpage;
 					}
 
-					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
 					// Lot / série
 					if (isModEnabled('productbatch')) {
@@ -527,8 +578,9 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 					// Warehouse source
 					$wh_source = new Entrepot($db);
-					if (!empty($TCacheEntrepots[$object->lines[$i]->fk_warehouse_source])) $wh_source = $TCacheEntrepots[$object->lines[$i]->fk_warehouse_source];
-					else {
+					if (!empty($TCacheEntrepots[$object->lines[$i]->fk_warehouse_source])) {
+						$wh_source = $TCacheEntrepots[$object->lines[$i]->fk_warehouse_source];
+					} else {
 						$wh_source->fetch($object->lines[$i]->fk_warehouse_source);
 						$TCacheEntrepots[$object->lines[$i]->fk_warehouse_source] = $wh_source;
 					}
@@ -537,8 +589,9 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 					// Warehouse destination
 					$wh_destination = new Entrepot($db);
-					if (!empty($TCacheEntrepots[$object->lines[$i]->fk_warehouse_destination])) $wh_destination = $TCacheEntrepots[$object->lines[$i]->fk_warehouse_destination];
-					else {
+					if (!empty($TCacheEntrepots[$object->lines[$i]->fk_warehouse_destination])) {
+						$wh_destination = $TCacheEntrepots[$object->lines[$i]->fk_warehouse_destination];
+					} else {
 						$wh_destination->fetch($object->lines[$i]->fk_warehouse_destination);
 						$TCacheEntrepots[$object->lines[$i]->fk_warehouse_destination] = $wh_destination;
 					}
@@ -554,7 +607,9 @@ class pdf_eagle extends ModelePDFStockTransfer
 					}
 
 					$nexY += 3;
-					if ($weighttxt && $voltxt) $nexY += 2;
+					if ($weighttxt && $voltxt) {
+						$nexY += 2;
+					}
 
 					// Add line
 					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
@@ -577,7 +632,9 @@ class pdf_eagle extends ModelePDFStockTransfer
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+							$this->_pagehead($pdf, $object, 0, $outputlangs);
+						}
 					}
 					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
 						if ($pagenb == 1) {
@@ -588,9 +645,13 @@ class pdf_eagle extends ModelePDFStockTransfer
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						// New page
 						$pdf->AddPage();
-						if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+						if (!empty($tplidx)) {
+							$pdf->useTemplate($tplidx);
+						}
 						$pagenb++;
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+							$this->_pagehead($pdf, $object, 0, $outputlangs);
+						}
 					}
 				}
 
@@ -608,7 +669,9 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 				// Pied de page
 				$this->_pagefoot($pdf, $object, $outputlangs);
-				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
+				if (method_exists($pdf, 'AliasNbPages')) {
+					$pdf->AliasNbPages();
+				}
 
 				$pdf->Close();
 
@@ -648,7 +711,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 	 *	@param  StockTransfer	$object         Object invoice
 	 *	@param  int				$deja_regle     Montant deja regle
 	 *	@param	int				$posy			Position depart
-	 *	@param	Translate		$outputlangs	Objet langs
+	 *	@param	Translate		$outputlangs	Object langs
 	 *	@return int								Position pour suite
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
@@ -665,13 +728,17 @@ class pdf_eagle extends ModelePDFStockTransfer
 		$pdf->SetFont('', 'B', $default_font_size - 1);
 
 		// Tableau total
-		$col1x = $this->posxqty - 50; $col2x = $this->posxqty;
+		$col1x = $this->posxqty - 50;
+		$col2x = $this->posxqty;
 		/*if ($this->page_largeur < 210) // To work with US executive format
 		{
 			$col2x-=20;
 		}*/
-		if (!getDolGlobalString('STOCKTRANSFER_PDF_HIDE_ORDERED')) $largcol2 = ($this->posxwarehousesource - $this->posxqty);
-		else $largcol2 = ($this->posxwarehousedestination - $this->posxqty);
+		if (!getDolGlobalString('STOCKTRANSFER_PDF_HIDE_ORDERED')) {
+			$largcol2 = ($this->posxwarehousesource - $this->posxqty);
+		} else {
+			$largcol2 = ($this->posxwarehousedestination - $this->posxqty);
+		}
 
 		$useborder = 0;
 		$index = 0;
@@ -684,9 +751,10 @@ class pdf_eagle extends ModelePDFStockTransfer
 		$totalWeight = $tmparray['weight'];
 		$totalVolume = $tmparray['volume'];
 		$totalQty = 0;
-		if (!empty($object->lines))
-		foreach ($object->lines as $line) {
-			$totalQty+=$line->qty;
+		if (!empty($object->lines)) {
+			foreach ($object->lines as $line) {
+				$totalQty+=$line->qty;
+			}
 		}
 		// Set trueVolume and volume_units not currently stored into database
 		if ($object->trueWidth && $object->trueHeight && $object->trueDepth) {
@@ -694,10 +762,18 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$object->volume_units = $object->size_units * 3;
 		}
 
-		if ($totalWeight != '') $totalWeighttoshow = showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs);
-		if ($totalVolume != '') $totalVolumetoshow = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs);
-		if ($object->trueWeight) $totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
-		if ($object->trueVolume) $totalVolumetoshow = showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
+		if ($totalWeight != '') {
+			$totalWeighttoshow = showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs);
+		}
+		if ($totalVolume != '') {
+			$totalVolumetoshow = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs);
+		}
+		if ($object->trueWeight) {
+			$totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
+		}
+		if ($object->trueVolume) {
+			$totalVolumetoshow = showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
+		}
 
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
@@ -730,7 +806,9 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 				$index++;
 			}
-			if (!$totalWeighttoshow && !$totalVolumetoshow) $index++;
+			if (!$totalWeighttoshow && !$totalVolumetoshow) {
+				$index++;
+			}
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
@@ -758,7 +836,9 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 		// Force to disable hidetop and hidebottom
 		$hidebottom = 0;
-		if ($hidetop) $hidetop = -1;
+		if ($hidetop) {
+			$hidetop = -1;
+		}
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -839,7 +919,6 @@ class pdf_eagle extends ModelePDFStockTransfer
 ￼	 */
 	public function atLeastOneBatch($object)
 	{
-
 		global $conf;
 
 		$atLeastOneBatch = false;
@@ -1002,7 +1081,9 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$text = $linkedobject->ref;
-				if ($linkedobject->ref_client) $text .= ' ('.$linkedobject->ref_client.')';
+				if ($linkedobject->ref_client) {
+					$text .= ' ('.$linkedobject->ref_client.')';
+				}
 				$Yoff = $Yoff + 8;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - $w, $Yoff);
 				$pdf->MultiCell($w, 2, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), 0, 'R');
@@ -1027,18 +1108,28 @@ class pdf_eagle extends ModelePDFStockTransfer
 				$result = $object->fetch_contact($arrayidcontact[0]);
 			}
 
-			if ($usecontact) $thirdparty = $object->contact;
-			else $thirdparty = $this->emetteur;
+			if ($usecontact) {
+				$thirdparty = $object->contact;
+			} else {
+				$thirdparty = $this->emetteur;
+			}
 
-			if (!empty($thirdparty)) $carac_emetteur_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
+			if (!empty($thirdparty)) {
+				$carac_emetteur_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
+			}
 
-			if ($usecontact) $carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, $object->contact, 1, 'targetwithdetails', $object);
-			else $carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
+			if ($usecontact) {
+				$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, $object->contact, 1, 'targetwithdetails', $object);
+			} else {
+				$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
+			}
 
 			// Show sender
 			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
 			$posx = $this->marge_gauche;
-			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) $posx = $this->page_largeur - $this->marge_droite - 80;
+			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
+				$posx = $this->page_largeur - $this->marge_droite - 80;
+			}
 
 			$hautcadre = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 38 : 40;
 			$widthrecbox = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 82;
@@ -1082,16 +1173,22 @@ class pdf_eagle extends ModelePDFStockTransfer
 				$thirdparty = $object->thirdparty;
 			}
 
-			if (!empty($thirdparty)) $carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
+			if (!empty($thirdparty)) {
+				$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
+			}
 
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, (!empty($object->contact) ? $object->contact : null), $usecontact, 'targetwithdetails', $object);
 
 			// Show recipient
 			$widthrecbox = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 100;
-			if ($this->page_largeur < 210) $widthrecbox = 84; // To work with US executive format
+			if ($this->page_largeur < 210) {
+				$widthrecbox = 84;
+			} // To work with US executive format
 			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
-			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) $posx = $this->marge_gauche;
+			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
+				$posx = $this->marge_gauche;
+			}
 
 			// Show recipient frame
 			$pdf->SetTextColor(0, 0, 0);

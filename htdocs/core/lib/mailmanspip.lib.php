@@ -18,11 +18,11 @@
 
 /**
  *	    \file       htdocs/core/lib/member.lib.php
- *		\brief      Ensemble de fonctions de base pour les adherents
+ *		\brief      Ensemble de functions de base pour les adherents
  */
 
 /**
- *  Return array head with list of tabs to view object informations
+ *  Return array head with list of tabs to view object information
  *
  *  @return array Tabs of the module
  */

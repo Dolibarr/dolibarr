@@ -2,6 +2,7 @@
 /* Copyright (C) 2016	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2021	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2022	Anthony Berton		<anthony.berton@bb2a.fr>
+ * Copyright (C) 2023	William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,7 +132,7 @@ class Utils
 				}
 
 				if (isModEnabled('syslog')) {
-					$filelog = $conf->global->SYSLOG_FILE;
+					$filelog = getDolGlobalString('SYSLOG_FILE');
 					$filelog = preg_replace('/DOL_DATA_ROOT/i', DOL_DATA_ROOT, $filelog);
 
 					$alreadyincluded = false;
@@ -215,7 +216,7 @@ class Utils
 	 *  @param  string      $file              'auto' or filename to build
 	 *  @param  int         $keeplastnfiles    Keep only last n files (not used yet)
 	 *  @param	int		    $execmethod		   0=Use default method (that is 1 by default), 1=Use the PHP 'exec' - need size of dump in memory, but low memory method is used if GETPOST('lowmemorydump') is set, 2=Use the 'popen' method (low memory method)
-	 *  @param	int			$lowmemorydump	   1=Use the low memory method. If $lowmemorydump is set, it means we want to make the compression using an external pipe instead retreiving the content of the dump in PHP memory array $output_arr and then print it into the PHP pipe open with xopen().
+	 *  @param	int			$lowmemorydump	   1=Use the low memory method. If $lowmemorydump is set, it means we want to make the compression using an external pipe instead retrieving the content of the dump in PHP memory array $output_arr and then print it into the PHP pipe open with xopen().
 	 *  @return	int						       0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
 	public function dumpDatabase($compression = 'none', $type = 'auto', $usedefault = 1, $file = 'auto', $keeplastnfiles = 0, $execmethod = 0, $lowmemorydump = 0)
@@ -274,7 +275,7 @@ class Utils
 			if (!getDolGlobalString('SYSTEMTOOLS_MYSQLDUMP')) {
 				$cmddump = $db->getPathOfDump();
 			} else {
-				$cmddump = $conf->global->SYSTEMTOOLS_MYSQLDUMP;
+				$cmddump = getDolGlobalString('SYSTEMTOOLS_MYSQLDUMP');
 			}
 			if (empty($cmddump)) {
 				$this->error = "Failed to detect command to use for mysqldump. Try a manual backup before to set path of command.";
@@ -294,7 +295,7 @@ class Utils
 			$outputerror = $outputfile.'.err';
 			dol_mkdir($conf->admin->dir_output.'/backup');
 
-			// Parameteres execution
+			// Parameters execution
 			$command = $cmddump;
 			$command = preg_replace('/(\$|%)/', '', $command); // We removed chars that can be used to inject vars that contains space inside path of command without seeing there is a space to bypass the escapeshellarg.
 			if (preg_match("/\s/", $command)) {
@@ -410,7 +411,7 @@ class Utils
 			$ok = 0;
 			if ($handle) {
 				if (getDolGlobalString('MAIN_EXEC_USE_POPEN')) {
-					$execmethod = $conf->global->MAIN_EXEC_USE_POPEN;
+					$execmethod = getDolGlobalString('MAIN_EXEC_USE_POPEN');
 				}
 				if (empty($execmethod)) {
 					$execmethod = 1;
@@ -542,7 +543,7 @@ class Utils
 					//print "$outputfile -> $outputerror";
 					@dol_delete_file($outputerror, 1, 0, 0, null, false, 0);
 					@rename($outputfile, $outputerror);
-					// Si safe_mode on et command hors du parametre exec, on a un fichier out vide donc errormsg vide
+					// Si safe_mode on et command hors du parameter exec, on a un fichier out vide donc errormsg vide
 					if (!$errormsg) {
 						$langs->load("errors");
 						$errormsg = $langs->trans("ErrorFailedToRunExternalCommand");
@@ -586,7 +587,7 @@ class Utils
 
 		// POSTGRESQL
 		if ($type == 'postgresql' || $type == 'pgsql') {
-			$cmddump = $conf->global->SYSTEMTOOLS_POSTGRESQLDUMP;
+			$cmddump = getDolGlobalString('SYSTEMTOOLS_POSTGRESQLDUMP');
 
 			$outputfile = $outputdir.'/'.$file;
 			// for compression format, we add extension
@@ -600,7 +601,7 @@ class Utils
 			$outputerror = $outputfile.'.err';
 			dol_mkdir($conf->admin->dir_output.'/backup');
 
-			// Parameteres execution
+			// Parameters execution
 			$command = $cmddump;
 			$command = preg_replace('/(\$|%)/', '', $command); // We removed chars that can be used to inject vars that contains space inside path of command without seeing there is a space to bypass the escapeshellarg.
 			if (preg_match("/\s/", $command)) {
@@ -685,7 +686,7 @@ class Utils
 	 * @param 	string	$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
 	 * @param	int		$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
 	 * @param	string	$redirectionfile	If defined, a redirection of output to this file is added.
-	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter needs you alreay have sanitized the $command parameter. If not, it will lead to security vulnerability.
+	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter needs you already have sanitized the $command parameter. If not, it will lead to security vulnerability.
 	 * 										This parameter is provided for backward compatibility with external modules. Always use 0 in core.
 	 * @param	string	$redirectionfileerr	If defined, a redirection of error is added to this file instead of to channel 1.
 	 * @return	array						array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
@@ -714,7 +715,7 @@ class Utils
 		}
 
 		if (getDolGlobalString('MAIN_EXEC_USE_POPEN')) {
-			$execmethod = $conf->global->MAIN_EXEC_USE_POPEN;
+			$execmethod = getDolGlobalString('MAIN_EXEC_USE_POPEN');
 		}
 		if (empty($execmethod)) {
 			$execmethod = 1;
@@ -765,7 +766,7 @@ class Utils
 	 * Generate documentation of a Module
 	 *
 	 * @param 	string	$module		Module name
-	 * @return	int					<0 if KO, >0 if OK
+	 * @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function generateDoc($module)
 	{
@@ -1082,7 +1083,7 @@ class Utils
 	 *
 	 *	@param	string	$outputfile		Output file name
 	 *	@param	string	$tables			Table name or '*' for all
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function backupTables($outputfile, $tables = '*')
 	{
@@ -1172,7 +1173,7 @@ class Utils
 			$resqldrop = $db->query('SHOW CREATE TABLE '.$table);
 			$row2 = $db->fetch_row($resqldrop);
 			if (empty($row2[1])) {
-				fwrite($handle, "\n-- WARNING: Show create table ".$table." return empy string when it should not.\n");
+				fwrite($handle, "\n-- WARNING: Show create table ".$table." return empty string when it should not.\n");
 			} else {
 				fwrite($handle, $row2[1].";\n");
 				//fwrite($handle,"/*!40101 SET character_set_client = @saved_cs_client */;\n\n");
@@ -1268,7 +1269,7 @@ class Utils
 	 *	@param 	string	$message             Message
 	 *	@param 	string	$filename		     List of files to attach (full path of filename on file system)
 	 * 	@param 	string	$filter			     Filter file send
-	 * 	@param 	string	$sizelimit			 Limit size to send file
+	 * 	@param 	int 	$sizelimit			 Limit size to send file
 	 *  @return	int						     0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
 	public function sendBackup($sendto = '', $from = '', $subject = '', $message = '', $filename = '', $filter = '', $sizelimit = 100000000)
@@ -1283,7 +1284,7 @@ class Utils
 		if (!empty($from)) {
 			$from = dol_escape_htmltag($from);
 		} elseif (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
-			$from = dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL);
+			$from = dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
 		} else {
 			$error++;
 		}
@@ -1291,7 +1292,7 @@ class Utils
 		if (!empty($sendto)) {
 			$sendto = dol_escape_htmltag($sendto);
 		} elseif (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
-			$from = dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL);
+			$from = dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
 		} else {
 			$error++;
 		}
@@ -1404,7 +1405,7 @@ class Utils
 		}
 
 		$cron_job = new Cronjob($db);
-		$cron_job->fetchAll('DESC', 't.rowid', 100, 0, 1, '', 1);	// Fetch jobs that are currently running
+		$cron_job->fetchAll('DESC', 't.rowid', 100, 0, 1, [], 1);	// Fetch jobs that are currently running
 
 		// Iterate over all jobs in processing (this can't be this job since his state is set to 0 before)
 		foreach ($cron_job->lines as $job_line) {

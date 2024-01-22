@@ -117,7 +117,7 @@ class ActionsTicket extends CommonHookActions
 	 * @param	int		$id				ID of ticket
 	 * @param	string	$ref			Reference of ticket
 	 * @param	string	$track_id		Track ID of ticket (for public area)
-	 * @return int              		<0 if KO, >0 if OK
+	 * @return int              		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id = 0, $ref = '', $track_id = '')
 	{
@@ -179,7 +179,7 @@ class ActionsTicket extends CommonHookActions
 	/**
 	 * Show ticket original message
 	 *
-	 * @param 	User		$user		User wich display
+	 * @param 	User		$user		User which display
 	 * @param 	string 		$action    	Action mode
 	 * @param	Ticket		$object		Object ticket
 	 * @return	void
@@ -198,7 +198,7 @@ class ActionsTicket extends CommonHookActions
 		}
 
 		// Initial message
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder centpercent margintable margintable">';
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
@@ -215,26 +215,17 @@ class ActionsTicket extends CommonHookActions
 			$msg = GETPOSTISSET('message_initial') ? GETPOST('message_initial', 'restricthtml') : $object->message;
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$uselocalbrowser = true;
-			$ckeditorenabledforticket = $conf->global->FCKEDITOR_ENABLE_TICKET;
+			$ckeditorenabledforticket = getDolGlobalString('FCKEDITOR_ENABLE_TICKET');
 			$doleditor = new DolEditor('message_initial', $msg, '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser, $ckeditorenabledforticket, ROWS_9, '95%');
 			$doleditor->Create();
 		} else {
-			// Deal with format differences (text / HTML)
-			if (dol_textishtml($object->message)) {
-				print '<div class="longmessagecut">';
-				print dol_htmlwithnojs($object->message);
-				print '</div>';
-				/*print '<div class="clear center">';
-				print $langs->trans("More").'...';
-				print '</div>';*/
-			} else {
-				print '<div class="longmessagecut">';
-				print dol_nl2br($object->message);
-				print '</div>';
-				/*print '<div class="clear center">';
-				print $langs->trans("More").'...';
-				print '</div>';*/
-			}
+			print '<div class="longmessagecut">';
+			//print dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->message), 1, 1, 1, 0)), 1, 1, 'common', 0, 1);
+			print dolPrintHTML($object->message);
+			print '</div>';
+			/*print '<div class="clear center">';
+			print $langs->trans("More").'...';
+			print '</div>';*/
 
 			//print '<div>' . $object->message . '</div>';
 		}
@@ -265,7 +256,7 @@ class ActionsTicket extends CommonHookActions
 	 */
 	public function viewTicketMessages($show_private, $show_user, $object)
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		// Load logs in cache
 		$ret = $this->dao->loadCacheMsgsTicket();

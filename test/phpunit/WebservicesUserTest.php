@@ -161,7 +161,7 @@ class WebservicesUserTest extends PHPUnit\Framework\TestCase
 
 		// Call the WebService method and store its result in $result.
 		$authentication=array(
-			'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
+			'dolibarrkey'=>getDolGlobalString('WEBSERVICES_KEY'),
 			'sourceapplication'=>'DEMO',
 			'login'=>'admin',
 			'password'=>'admin',
@@ -193,7 +193,7 @@ class WebservicesUserTest extends PHPUnit\Framework\TestCase
 		}
 
 		print __METHOD__." count(result)=".count($result)."\n";
-		$this->assertEquals('OK', empty($result['result']['result_code'])?'':$result['result']['result_code'], 'Test on ref admin');
+		$this->assertEquals('OK', empty($result['result']['result_code']) ? '' : $result['result']['result_code'], 'Test on ref admin');
 
 		// Test URL
 		$result='';

@@ -19,14 +19,14 @@
 /**
  *	\file       htdocs/core/modules/project/mod_project_universal.php
  *	\ingroup    project
- *	\brief      Fichier contenant la classe du modele de numerotation de reference de projet Universal
+ *	\brief      Fichier contenant la class du modele de numerotation de reference de projet Universal
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
 
 
 /**
- * 	Classe du modele de numerotation de reference de projet Universal
+ * 	Class du modele de numerotation de reference de projet Universal
  */
 class mod_task_universal extends ModeleNumRefTask
 {
@@ -136,7 +136,7 @@ class mod_task_universal extends ModeleNumRefTask
 			return 0;
 		}
 
-		$date = empty($object->date_c) ?dol_now() : $object->date_c;
+		$date = empty($object->date_c) ? dol_now() : $object->date_c;
 		$numFinal = get_next_value($db, $mask, 'projet_task', 'ref', '', (is_object($objsoc) ? $objsoc->code_client : ''), $date);
 
 		return  $numFinal;

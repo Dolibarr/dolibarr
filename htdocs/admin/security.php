@@ -20,7 +20,7 @@
 /**
  *		\file       htdocs/admin/security.php
  *      \ingroup    setup
- *      \brief      Page de configuration du module securite
+ *      \brief      Page of setup of security
  */
 
 // Load Dolibarr environment
@@ -37,7 +37,7 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-// Allow/Disallow change to clear passwords once passwords are crypted
+// Allow/Disallow change to clear passwords once passwords are encrypted
 $allow_disable_encryption = true;
 
 

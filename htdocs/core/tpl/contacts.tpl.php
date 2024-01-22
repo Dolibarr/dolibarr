@@ -89,9 +89,7 @@ if ($permission) {
 	print '<div class="underbanner clearboth"></div>'."\n";
 
 	print '<div class="div-table-responsive-no-min">'."\n";
-	print '<div class="tagtable tableforcontact centpercent noborder nobordertop allwidth">'."\n";
-
-	?>
+	print '<div class="tagtable tableforcontact centpercent noborder nobordertop allwidth">'."\n"; ?>
 	<form class="tagtr liste_titre">
 		<div class="tagtd liste_titre"><?php echo img_object('', 'company', 'class="optiongrey paddingright"').$langs->trans("ThirdParty"); ?></div>
 		<div class="tagtd liste_titre"><?php echo img_picto($langs->trans("Users"), 'user', 'class="optiongrey paddingright"').$langs->trans("Users").' | '.img_picto($langs->trans("Contacts"), 'contact', 'class="optiongrey paddingright"').$langs->trans("Contacts"); ?></div>
@@ -122,8 +120,7 @@ if ($permission) {
 		if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
 			$tmpobject = $objectsrc;
 		}
-		$formcompany->selectTypeContact($tmpobject, '', 'type', 'internal', 'position', 0, 'minwidth125imp widthcentpercentminusx maxwidth400');
-		?></div>
+		$formcompany->selectTypeContact($tmpobject, '', 'type', 'internal', 'position', 0, 'minwidth125imp widthcentpercentminusx maxwidth400'); ?></div>
 		<div class="tagtd">&nbsp;</div>
 		<div class="tagtd center"><input type="submit" class="button small" value="<?php echo $langs->trans("Add"); ?>"></div>
 	</form>
@@ -146,9 +143,8 @@ if ($permission) {
 
 		<div class="tagtd nowrap noborderbottom">
 			<?php
-			$selectedCompany = GETPOSTISSET("newcompany") ? GETPOST("newcompany", 'int') : (empty($object->socid) ?  0 : $object->socid);
-			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp');	// This also print the select component
-			?>
+			$selectedCompany = GETPOSTISSET("newcompany") ? GETPOST("newcompany", 'int') : (empty($object->socid) ? 0 : $object->socid);
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp');	// This also print the select component?>
 		</div>
 		<div class="tagtd noborderbottom minwidth500imp">
 			<?php
@@ -159,8 +155,7 @@ if ($permission) {
 			if (!empty($object->socid) && $object->socid > 1 && $user->hasRight('societe', 'creer')) {
 				$newcardbutton .= '<a href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$selectedCompany.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.$langs->trans('NewContact').'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			}
-			print $newcardbutton;
-			?>
+			print $newcardbutton; ?>
 		</div>
 		<div class="tagtd noborderbottom">
 			<?php
@@ -168,8 +163,7 @@ if ($permission) {
 			if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
 				$tmpobject = $objectsrc;
 			}
-			$formcompany->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'typecontact', 'external', 'position', 0, 'minwidth125imp widthcentpercentminusx maxwidth400');
-			?>
+			$formcompany->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'typecontact', 'external', 'position', 0, 'minwidth125imp widthcentpercentminusx maxwidth400'); ?>
 		</div>
 		<div class="tagtd noborderbottom">&nbsp;</div>
 		<div class="tagtd center noborderbottom">
@@ -203,43 +197,53 @@ foreach (array('internal', 'external') as $source) {
 	foreach ($contactlist as $contact) {
 		$entry = new stdClass();
 		$entry->id   = $contact['rowid'];
+		$entry->type_id = $contact['fk_c_type_contact'];
 		$entry->type = $contact['libelle'];
 		$entry->nature = "";
+		$entry->nature_html = "";
 		$entry->thirdparty_html = "";
 		$entry->thirdparty_name = "";
 		$entry->contact_html = "";
 		$entry->contact_name = "";
-		$entry->status = "";
+		$entry->status = 0;
+		$entry->status_html = "";
 
 		if ($contact['source'] == 'internal') {
-			$entry->nature = $langs->trans("User");
+			$entry->nature = 'user';
+			$entry->nature_html = $langs->trans("User");
 		} elseif ($contact['source'] == 'external') {
-			$entry->nature = $langs->trans("ThirdPartyContact");
+			$entry->nature = 'thirdparty';
+			$entry->nature_html = $langs->trans("ThirdPartyContact");
 		}
 
 		if ($contact['socid'] > 0) {
 			$companystatic->fetch($contact['socid']);
+			$entry->thirdparty_id   = $companystatic->id;
 			$entry->thirdparty_html = $companystatic->getNomUrl(1);
 			$entry->thirdparty_name = strtolower($companystatic->getFullName($langs));
 		} elseif ($contact['socid'] < 0) {
-			$entry->thirdparty_html = $conf->global->MAIN_INFO_SOCIETE_NOM;
+			$entry->thirdparty_html = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 			$entry->thirdparty_name = strtolower($conf->global->MAIN_INFO_SOCIETE_NOM);
 		}
 
 		if ($contact['source'] == 'internal') {
 			$userstatic->fetch($contact['id']);
+			$entry->contact_id   = $userstatic->id;
 			$entry->contact_html = $userstatic->getNomUrl(-1, '', 0, 0, 0, 0, '', 'valignmiddle');
 			$entry->contact_name = strtolower($userstatic->getFullName($langs));
 		} elseif ($contact['source'] == 'external') {
 			$contactstatic->fetch($contact['id']);
+			$entry->contact_id   = $contactstatic->id;
 			$entry->contact_html = $contactstatic->getNomUrl(1, '', 0, '', 0, 0);
 			$entry->contact_name = strtolower($contactstatic->getFullName($langs));
 		}
 
 		if ($contact['source'] == 'internal') {
-			$entry->status = $userstatic->LibStatut($contact['statuscontact'], 3);
+			$entry->status = $contact['statuscontact'];
+			$entry->status_html = $userstatic->LibStatut($contact['statuscontact'], 3);
 		} elseif ($contact['source'] == 'external') {
-			$entry->status = $contactstatic->LibStatut($contact['statuscontact'], 3);
+			$entry->status = $contact['statuscontact'];
+			$entry->status_html = $contactstatic->LibStatut($contact['statuscontact'], 3);
 		}
 
 		$list[] = $entry;
@@ -297,13 +301,13 @@ if ($permission) {
 print "</tr>";
 
 foreach ($list as $entry) {
-	print '<tr class="oddeven">';
+	print '<tr class="oddeven" data-rowid="' . $entry->id . '">';
 
-	print '<td class="tdoverflowmax200">'.$entry->thirdparty_html.'</td>';
-	print '<td class="tdoverflowmax200">'.$entry->contact_html.'</td>';
-	print '<td class="nowrap"><span class="opacitymedium">'.$entry->nature.'</span></td>';
-	print '<td class="tdoverflowmax200">'.$entry->type.'</td>';
-	print '<td class="tdoverflowmax200 center">'.$entry->status.'</td>';
+	print '<td class="tdoverflowmax200" data-thirdparty_id="' . ((int) $entry->thirdparty_id) . '" data-thirdparty_name="' . dol_escape_htmltag($entry->thirdparty_name) . '">'.$entry->thirdparty_html.'</td>';
+	print '<td class="tdoverflowmax200" data-contact_id="' . ((int) $entry->contact_id) . '">'.$entry->contact_html.'</td>';
+	print '<td class="nowrap" data-nature="' . dol_escape_htmltag($entry->nature) . '"><span class="opacitymedium">'.dol_escape_htmltag($entry->nature_html).'</span></td>';
+	print '<td class="tdoverflowmax200" data-type_id="' . ((int) $entry->type_id) . '" data-type="' . dol_escape_htmltag($entry->type) . '">'.dol_escape_htmltag($entry->type).'</td>';
+	print '<td class="tdoverflowmax200 center" data-status_id="' . ((int) $entry->status) . '">'.$entry->status_html.'</td>';
 
 	if ($permission) {
 		$href = $_SERVER["PHP_SELF"];

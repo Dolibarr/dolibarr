@@ -427,7 +427,7 @@ if (!empty($search_fk_warehouse)) {
 	}
 }
 if ($productid > 0) {
-	$param .= '&productid='.$productid;
+	$param .= '&productid='.(int) $productid;
 }
 if (GETPOST('dateday', 'int') > 0) {
 	$param .= '&dateday='.GETPOST('dateday', 'int');
@@ -442,7 +442,7 @@ if (GETPOST('dateyear', 'int') > 0) {
 // TODO Move this into the title line ?
 print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'stock', 0, '', '', $limit, 0, 0, 1);
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="liste centpercent">';
 
 $stocklabel = $langs->trans('StockAtDate');
@@ -556,7 +556,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			//}
 		} else {
 			//if ($productid > 0) {
-				$currentstock = $stock_prod[$objp->rowid];
+			$currentstock = $stock_prod[$objp->rowid];
 			//} else {
 			//	$currentstock = $objp->stock;
 			//}
@@ -639,7 +639,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if ($nbofmovement > 0) {
 				print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$objp->rowid;
 				foreach ($search_fk_warehouse as $val) {
-					print ($val > 0 ? '&search_warehouse='.$val : '');
+					print($val > 0 ? '&search_warehouse='.$val : '');
 				}
 				print '">'.$langs->trans("Movements").'</a>';
 				print ' <span class="tabs"><span class="badge">'.$nbofmovement.'</span></span>';

@@ -61,6 +61,13 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 {
 
 	/**
+	 * Constructor
+	 *
+	 *  @param DoliDB       $db     Database object
+	 */
+	abstract public function __construct($db);
+
+	/**
 	 * @var int Automatic numbering
 	 */
 	public $code_auto;
@@ -211,7 +218,6 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
  */
 abstract class ModeleAccountancyCode extends CommonNumRefGenerator
 {
-
 	/**
 	 * @var string
 	 */

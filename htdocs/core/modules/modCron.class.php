@@ -32,7 +32,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modCron extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -65,7 +64,7 @@ class modCron extends DolibarrModules
 		//-------------
 		$this->config_page_url = array("cron.php@cron");
 
-		// Dependancies
+		// Dependencies
 		//-------------
 		$this->hidden = getDolGlobalString('MODULE_CRON_DISABLED'); // A condition to disable module
 		$this->depends = array(); // List of modules id that must be enabled if this module is enabled

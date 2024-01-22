@@ -18,12 +18,12 @@
 /**
  *	\file       htdocs/contact/canvas/actions_contactcard_common.class.php
  *	\ingroup    thirdparty
- *	\brief      Fichier de la classe Thirdparty contact card controller (common)
+ *	\brief      File for the class Thirdparty contact card controller (common)
  */
 
 /**
  *	\class      ActionsContactCardCommon
- *	\brief      Classe permettant la gestion des contacts par defaut
+ *	\brief      Common Abstract Class for contact managmeent
  */
 abstract class ActionsContactCardCommon
 {
@@ -70,7 +70,7 @@ abstract class ActionsContactCardCommon
 		}
 		else
 		{*/
-			$object = new Contact($this->db);
+		$object = new Contact($this->db);
 		if (!empty($id)) {
 			$object->fetch($id);
 		}

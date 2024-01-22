@@ -58,6 +58,8 @@ class Paiement extends CommonObject
 	public $picto = 'payment';
 
 	public $facid;
+	public $socid;
+
 	public $datepaye;
 	public $date;		// same than $datepaye
 
@@ -174,9 +176,9 @@ class Paiement extends CommonObject
 	 *    @param	int		$id			Id of payment to get
 	 *    @param	string	$ref		Ref of payment to get (currently ref = id but this may change in future)
 	 *    @param	int		$fk_bank	Id of bank line associated to payment
-	 *    @return   int		            <0 if KO, 0 if not found, >0 if OK
+	 *    @return   int		            Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = '', $fk_bank = '')
+	public function fetch($id, $ref = '', $fk_bank = 0)
 	{
 		$sql = 'SELECT p.rowid, p.ref, p.ref_ext, p.datep as dp, p.amount, p.statut, p.ext_payment_id, p.ext_payment_site, p.fk_bank, p.multicurrency_amount,';
 		$sql .= ' c.code as type_code, c.libelle as type_label,';
@@ -237,7 +239,7 @@ class Paiement extends CommonObject
 	 *  For payment of a customer invoice, amounts are positive, for payment of credit note, amounts are negative
 	 *
 	 *  @param	User	  $user                	Object user
-	 *  @param  int		  $closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
+	 *  @param  int		  $closepaidinvoices   	1=Also close paid invoices to paid, 0=Do nothing more
 	 *  @param  Societe   $thirdparty           Thirdparty
 	 *  @return int                 			id of created payment, < 0 if error
 	 */
@@ -360,10 +362,10 @@ class Paiement extends CommonObject
 			// Insert links amount / invoices
 			foreach ($this->amounts as $key => $amount) {
 				$facid = $key;
-				if (is_numeric($amount) && $amount <> 0) {
+				if (is_numeric($amount) && $amount != 0) {
 					$amount = price2num($amount);
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount, multicurrency_amount, multicurrency_code, multicurrency_tx)";
-					$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).", ".((float) $this->multicurrency_amounts[$key]).", ".($currencyofpayment ? "'".$this->db->escape($currencyofpayment)."'" : 'NULL').", ".(!empty($this->multicurrency_tx) ? (double) $currencytxofpayment : 1).")";
+					$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).", ".((float) $this->multicurrency_amounts[$key]).", ".($currencyofpayment ? "'".$this->db->escape($currencyofpayment)."'" : 'NULL').", ".(!empty($this->multicurrency_tx) ? (float) $currencytxofpayment : 1).")";
 
 					dol_syslog(get_class($this).'::create Amount line '.$key.' insert paiement_facture', LOG_DEBUG);
 					$resql = $this->db->query($sql);
@@ -371,7 +373,7 @@ class Paiement extends CommonObject
 						$invoice = new Facture($this->db);
 						$invoice->fetch($facid);
 
-						// If we want to closed payed invoices
+						// If we want to closed paid invoices
 						if ($closepaidinvoices) {
 							$paiement = $invoice->getSommePaiement();
 							$creditnotes = $invoice->getSumCreditNotesUsed();
@@ -540,16 +542,17 @@ class Paiement extends CommonObject
 
 
 	/**
-	 *  Delete a payment and generated links into account
+	 * Delete a payment and generated links into account
 	 *  - Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
 	 *  - Si le paiement porte sur au moins une facture a "payee", on refuse
+	 * @TODO Add first param User $user
 	 *
-	 *  @param	int		$notrigger		No trigger
-	 *  @return int     				<0 si ko, >0 si ok
+	 * @param	int		$notrigger		No trigger
+	 * @return 	int     				Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($notrigger = 0)
 	{
-		global $conf, $user, $langs;
+		global $user;
 
 		$error = 0;
 
@@ -646,7 +649,7 @@ class Paiement extends CommonObject
 	 *      @param	int		$notrigger			No trigger
 	 *  	@param	string	$accountancycode	When we record a free bank entry, we must provide accounting account if accountancy module is on.
 	 *      @param	string	$addbankurl			'direct-debit' or 'credit-transfer': Add another entry into bank_url.
-	 *      @return int                 		<0 if KO, bank_line_id if OK
+	 *      @return int                 		Return integer <0 if KO, bank_line_id if OK
 	 */
 	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0, $accountancycode = '', $addbankurl = '')
 	{
@@ -712,7 +715,7 @@ class Paiement extends CommonObject
 				null,
 				'',
 				$totalamount_main_currency
-				);
+			);
 
 			// Mise a jour fk_bank dans llx_paiement
 			// On connait ainsi le paiement qui a genere l'ecriture bancaire
@@ -756,7 +759,7 @@ class Paiement extends CommonObject
 									DOL_URL_ROOT.'/comm/card.php?socid=',
 									$fac->thirdparty->name,
 									'company'
-									);
+								);
 								if ($result <= 0) {
 									dol_syslog(get_class($this).'::addPaymentToBank '.$this->db->lasterror());
 								}
@@ -774,7 +777,7 @@ class Paiement extends CommonObject
 									DOL_URL_ROOT.'/fourn/card.php?socid=',
 									$fac->thirdparty->name,
 									'company'
-									);
+								);
 								if ($result <= 0) {
 									dol_syslog(get_class($this).'::addPaymentToBank '.$this->db->lasterror());
 								}
@@ -792,10 +795,10 @@ class Paiement extends CommonObject
 						DOL_URL_ROOT.'/compta/prelevement/card.php?id=',
 						$this->num_payment,
 						$addbankurl
-						);
+					);
 				}
 
-				// Add link to the Direct Debit if invoice redused ('InvoiceRefused') in bank_url
+				// Add link to the Direct Debit if invoice refused ('InvoiceRefused') in bank_url
 				if (!$error && $label == '(InvoiceRefused)') {
 					$result=$acc->add_url_line(
 						$bank_line_id,
@@ -803,7 +806,7 @@ class Paiement extends CommonObject
 						DOL_URL_ROOT.'/compta/prelevement/card.php?id=',
 						$this->num_prelevement,
 						'withdraw'
-						);
+					);
 				}
 
 				if (!$error && !$notrigger) {
@@ -840,7 +843,7 @@ class Paiement extends CommonObject
 	 *      Mise a jour du lien entre le paiement et la ligne generee dans llx_bank
 	 *
 	 *      @param	int		$id_bank    Id compte bancaire
-	 *      @return	int					<0 if KO, >0 if OK
+	 *      @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update_fk_bank($id_bank)
 	{
@@ -864,7 +867,7 @@ class Paiement extends CommonObject
 	 *	Updates the payment date
 	 *
 	 *  @param	int	$date   New date
-	 *  @return int					<0 if KO, 0 if OK
+	 *  @return int					Return integer <0 if KO, 0 if OK
 	 */
 	public function update_date($date)
 	{
@@ -920,21 +923,21 @@ class Paiement extends CommonObject
 	/**
 	 *  Updates the payment number
 	 *
-	 *  @param	string	$num		New num
-	 *  @return int					<0 if KO, 0 if OK
+	 *  @param	string	$num_payment		New num
+	 *  @return int							Return integer <0 if KO, 0 if OK
 	 */
-	public function update_num($num)
+	public function update_num($num_payment)
 	{
 		// phpcs:enable
-		if (!empty($num) && $this->statut != 1) {
+		if (!empty($num_payment) && $this->statut != 1) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET num_paiement = '".$this->db->escape($num)."'";
+			$sql .= " SET num_paiement = '".$this->db->escape($num_payment)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::update_num", LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result) {
-				$this->num_payment = $this->db->escape($num);
+				$this->num_payment = $this->db->escape($num_payment);
 				return 0;
 			} else {
 				$this->error = 'Error -1 '.$this->db->error();
@@ -948,7 +951,7 @@ class Paiement extends CommonObject
 	 * Validate payment
 	 *
 	 * @param	User|null	$user		User making validation
-	 * @return	int     				<0 if KO, >0 if OK
+	 * @return	int     				Return integer <0 if KO, >0 if OK
 	 * @deprecated
 	 */
 	public function valide(User $user = null)
@@ -960,7 +963,7 @@ class Paiement extends CommonObject
 	 * Validate payment
 	 *
 	 * @param	User|null	$user		User making validation
-	 * @return	int     				<0 if KO, >0 if OK
+	 * @return	int     				Return integer <0 if KO, >0 if OK
 	 */
 	public function validate(User $user = null)
 	{
@@ -981,7 +984,7 @@ class Paiement extends CommonObject
 	 * Reject payment
 	 *
 	 * @param	User|null	$user		User making reject
-	 * @return  int     				<0 if KO, >0 if OK
+	 * @return  int     				Return integer <0 if KO, >0 if OK
 	 */
 	public function reject(User $user = null)
 	{
@@ -1001,7 +1004,7 @@ class Paiement extends CommonObject
 	/**
 	 * Information sur l'objet
 	 *
-	 * @param   int     $id      id du paiement dont il faut afficher les infos
+	 * @param   int     $id      id du paiement don't il faut afficher les infos
 	 * @return  void
 	 */
 	public function info($id)
@@ -1034,7 +1037,7 @@ class Paiement extends CommonObject
 	 *  Return list of invoices the payment is related to.
 	 *
 	 *  @param	string		$filter         Filter
-	 *  @return int|array					<0 if KO or array of invoice id
+	 *  @return int|array					Return integer <0 if KO or array of invoice id
 	 *  @see getAmountsArray()
 	 */
 	public function getBillsArray($filter = '')
@@ -1122,7 +1125,7 @@ class Paiement extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('PAYMENT_ADDON') . ".php";
-			$classname = $conf->global->PAYMENT_ADDON;
+			$classname = getDolGlobalString('PAYMENT_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1153,7 +1156,7 @@ class Paiement extends CommonObject
 			}
 
 			if (!$mybool) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -1379,7 +1382,7 @@ class Paiement extends CommonObject
 	 *  For payments, take the thirdparty linked to the first invoice found. This is enough because payments are done on invoices of the same thirdparty.
 	 *
 	 *	@param		int		$force_thirdparty_id	Force thirdparty id
-	 *	@return		int								<0 if KO, >0 if OK
+	 *	@return		int								Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_thirdparty($force_thirdparty_id = 0)
 	{

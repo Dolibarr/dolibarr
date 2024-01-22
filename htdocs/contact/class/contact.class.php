@@ -81,7 +81,7 @@ class Contact extends CommonObject
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
 	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
@@ -99,7 +99,7 @@ class Contact extends CommonObject
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id', 'css'=>'left'),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>3, 'notnull'=>1, 'position'=>30, 'index'=>1),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>3, 'position'=>35),
 		'civility' =>array('type'=>'varchar(6)', 'label'=>'Civility', 'enabled'=>1, 'visible'=>3, 'position'=>40),
@@ -339,8 +339,14 @@ class Contact extends CommonObject
 	public $roles;
 
 	public $cacheprospectstatus = array();
+
+	/**
+	 * @var string	Prospect level. ie: 'PL_LOW', 'PL...'
+	 */
 	public $fk_prospectlevel;
+
 	public $stcomm_id;
+
 	public $statut_commercial;
 
 	/**
@@ -356,14 +362,9 @@ class Contact extends CommonObject
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs;
-
 		$this->db = $db;
 		$this->statut = 1; // By default, status is enabled
 
-		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
-			$this->fields['rowid']['visible'] = 0;
-		}
 		if (!isModEnabled('mailing')) {
 			$this->fields['no_email']['enabled'] = 0;
 		}
@@ -402,15 +403,13 @@ class Contact extends CommonObject
 		}*/
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load indicators into this->nb for board
 	 *
-	 *  @return     int         <0 if KO, >0 if OK
+	 *  @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $user, $hookmanager;
 
 		$this->nb = array();
@@ -418,7 +417,7 @@ class Contact extends CommonObject
 
 		$sql = "SELECT count(sp.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql .= " WHERE sp.fk_soc = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -455,7 +454,7 @@ class Contact extends CommonObject
 	 *
 	 *  @param      User	$user           Object user that create
 	 *  @param      int     $notrigger	    1=Does not execute triggers, 0= execute triggers
-	 *  @return     int      			    <0 if KO, >0 if OK
+	 *  @return     int      			    Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -467,7 +466,7 @@ class Contact extends CommonObject
 		$this->db->begin();
 
 		// Clean parameters
-		$this->lastname = $this->lastname ?trim($this->lastname) : trim($this->name);
+		$this->lastname = $this->lastname ? trim($this->lastname) : trim($this->name);
 		$this->firstname = trim($this->firstname);
 		$this->setUpperOrLowerCase();
 		if (empty($this->socid)) {
@@ -562,18 +561,18 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *      Update informations into database
+	 *      Update information into database
 	 *
 	 *      @param      int		$id          	Id of contact/address to update
-	 *      @param      User	$user        	Objet user making change
+	 *      @param      User	$user        	Object user making change
 	 *      @param      int		$notrigger	    0=no, 1=yes
 	 *      @param		string	$action			Current action for hookmanager
 	 *      @param		int		$nosyncuser		No sync linked user (external users and contacts are linked)
-	 *      @return     int      			   	<0 if KO, >0 if OK
+	 *      @return     int      			   	Return integer <0 if KO, >0 if OK
 	 */
 	public function update($id, $user = null, $notrigger = 0, $action = 'update', $nosyncuser = 0)
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf;
 
 		$error = 0;
 
@@ -583,7 +582,7 @@ class Contact extends CommonObject
 
 		// Clean parameters
 		$this->ref_ext = trim($this->ref_ext);
-		$this->lastname = trim($this->lastname) ?trim($this->lastname) : trim($this->lastname);
+		$this->lastname = trim($this->lastname) ? trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname);
 		$this->email = trim($this->email);
 		$this->phone_pro = trim($this->phone_pro);
@@ -601,6 +600,7 @@ class Contact extends CommonObject
 			$this->civility_code = $this->civility_id; // For backward compatibility
 		}
 		$this->setUpperOrLowerCase();
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET";
@@ -758,7 +758,7 @@ class Contact extends CommonObject
 		if ($mode == 0) {
 			$dn = getDolGlobalString('LDAP_KEY_CONTACTS') . "=".$info[getDolGlobalString('LDAP_KEY_CONTACTS')]."," . getDolGlobalString('LDAP_CONTACT_DN');
 		} elseif ($mode == 1) {
-			$dn = $conf->global->LDAP_CONTACT_DN;
+			$dn = getDolGlobalString('LDAP_CONTACT_DN');
 		} elseif ($mode == 2) {
 			$dn = getDolGlobalString('LDAP_KEY_CONTACTS') . "=".$info[getDolGlobalString('LDAP_KEY_CONTACTS')];
 		}
@@ -781,7 +781,7 @@ class Contact extends CommonObject
 		$info = array();
 
 		// Object classes
-		$info["objectclass"] = explode(',', $conf->global->LDAP_CONTACT_OBJECT_CLASS);
+		$info["objectclass"] = explode(',', getDolGlobalString('LDAP_CONTACT_OBJECT_CLASS'));
 
 		$this->fullname = $this->getFullName($langs);
 
@@ -883,7 +883,7 @@ class Contact extends CommonObject
 	 *  @param      int			$id         Id of contact
 	 *  @param      User		$user		User asking to change alert or birthday
 	 *  @param      int		    $notrigger	0=no, 1=yes
-	 *  @return     int         			<0 if KO, >=0 if OK
+	 *  @return     int         			Return integer <0 if KO, >=0 if OK
 	 */
 	public function update_perso($id, $user = null, $notrigger = 0)
 	{
@@ -893,7 +893,7 @@ class Contact extends CommonObject
 
 		$this->db->begin();
 
-		// Mis a jour contact
+		// Update the contact
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET";
 		$sql .= " birthday = ".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
 		$sql .= ", photo = ".($this->photo ? "'".$this->db->escape($this->photo)."'" : "null");
@@ -1032,7 +1032,7 @@ class Contact extends CommonObject
 				$this->ref_ext	= $obj->ref_ext;
 
 				$this->civility_code    = $obj->civility_code;
-				$this->civility	        = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != ("Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
+				$this->civility	        = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != "Civility".$obj->civility_code ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
 
 				$this->lastname		= $obj->lastname;
 				$this->firstname	= $obj->firstname;
@@ -1178,7 +1178,7 @@ class Contact extends CommonObject
 	 *  ref_commande (for order and/or shipments)
 	 *  ref_propale
 	 *
-	 *  @return     int             					<0 if KO, >=0 if OK
+	 *  @return     int             					Return integer <0 if KO, >=0 if OK
 	 */
 	public function load_ref_elements()
 	{
@@ -1218,15 +1218,13 @@ class Contact extends CommonObject
 
 	/**
 	 *	Delete a contact from database
-	 *  // TODO Add $user as first param
 	 *
+	 *  @param		User	$user			User making the delete
 	 *  @param		int		$notrigger		Disable all trigger
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs, $user;
-
 		$error = 0;
 
 		$this->db->begin();
@@ -1416,7 +1414,7 @@ class Contact extends CommonObject
 		}
 		$datas['email'] = '<br><b>'.$langs->trans("EMail").':</b> '.$this->email;
 		$phonelist = array();
-		$country_code = empty($this->country_code) ? '': $this->country_code;
+		$country_code = empty($this->country_code) ? '' : $this->country_code;
 		if ($this->phone_pro) {
 			$phonelist[] = dol_print_phone($this->phone_pro, $country_code, $this->id, 0, '', '&nbsp;', 'phone');
 		}
@@ -1490,7 +1488,7 @@ class Contact extends CommonObject
 				$label = $langs->trans("ShowContact");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1680,7 +1678,7 @@ class Contact extends CommonObject
 	 *  Change status of a user
 	 *
 	 *	@param	int		$status		Status to set
-	 *  @return int     			<0 if KO, 0 if nothing is done, >0 if OK
+	 *  @return int     			Return integer <0 if KO, 0 if nothing is done, >0 if OK
 	 */
 	public function setstatus($status)
 	{
@@ -1731,7 +1729,7 @@ class Contact extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	int[]|int 	$categories 	Category or categories IDs
-	 * @return 	int							<0 if KO, >0 if OK
+	 * @return 	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -1760,7 +1758,7 @@ class Contact extends CommonObject
 	 * Fetch roles (default contact of some companies) for the current contact.
 	 * This load the array ->roles.
 	 *
-	 * @return 	int			<0 if KO, Nb of roles found if OK
+	 * @return 	int			Return integer <0 if KO, Nb of roles found if OK
 	 * @see updateRoles()
 	 */
 	public function fetchRoles()
@@ -1925,7 +1923,7 @@ class Contact extends CommonObject
 	 *  Load array of prospect status
 	 *
 	 *  @param	int		$active     1=Active only, 0=Not active only, -1=All
-	 *  @return int					<0 if KO, >0 if OK
+	 *  @return int					Return integer <0 if KO, >0 if OK
 	 */
 	public function loadCacheOfProspStatus($active = 1)
 	{
@@ -1959,7 +1957,7 @@ class Contact extends CommonObject
 	/**
 	 *  Return label of prospect level
 	 *
-	 *  @param	int		$fk_prospectlevel   	Prospect level
+	 *  @param	string	$fk_prospectlevel   	Prospect level
 	 *  @return string        					label of level
 	 */
 	public function libProspLevel($fk_prospectlevel)
@@ -1967,8 +1965,8 @@ class Contact extends CommonObject
 		global $langs;
 
 		$lib = $langs->trans("ProspectLevel".$fk_prospectlevel);
-		// If lib not found in language file, we get label from cache/databse
-		if ($lib == $langs->trans("ProspectLevel".$fk_prospectlevel)) {
+		// If lib not found in language file, we get label from cache/database
+		if ($lib == "ProspectLevel".$fk_prospectlevel) {
 			$lib = $langs->getLabelFromKey($this->db, $fk_prospectlevel, 'c_prospectlevel', 'code', 'label');
 		}
 		return $lib;
@@ -1979,7 +1977,7 @@ class Contact extends CommonObject
 	 *  Set prospect level
 	 *
 	 *  @param  User	$user		User who defines the discount
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 * @deprecated Use update function instead
 	 */
 	public function setProspectLevel(User $user)
@@ -2071,7 +2069,7 @@ class Contact extends CommonObject
 	 *  Set "blacklist" mailing status
 	 *
 	 *  @param	int		$no_email	1=Do not send mailing, 0=Ok to receive mailing
-	 *  @return int					<0 if KO, >0 if OK
+	 *  @return int					Return integer <0 if KO, >0 if OK
 	 */
 	public function setNoEmail($no_email)
 	{
@@ -2126,9 +2124,9 @@ class Contact extends CommonObject
 
 	/**
 	 *  get "blacklist" mailing status
-	 * 	set no_email attribut to 1 or 0
+	 * 	set no_email attribute to 1 or 0
 	 *
-	 *  @return int					<0 if KO, >0 if OK
+	 *  @return int					Return integer <0 if KO, >0 if OK
 	 */
 	public function getNoEmail()
 	{
@@ -2171,7 +2169,7 @@ class Contact extends CommonObject
 		}
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<div class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</div>';
+		$return .= '<div class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</div>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
@@ -2187,7 +2185,7 @@ class Contact extends CommonObject
 			$return .= '<span> : '.$this->LibPubPriv($this->priv).'</span>';
 		}*/
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

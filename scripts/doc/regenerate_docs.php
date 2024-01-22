@@ -70,7 +70,7 @@ print '--- start'."\n";
 $dir = DOL_DATA_ROOT;
 $subdir = $argv[1];
 if (empty($dir) || empty($subdir)) {
-	dol_print_error('', 'dir not defined');
+	dol_print_error(null, 'dir not defined');
 	exit(1);
 }
 if (!dol_is_dir($dir.'/'.$subdir)) {
@@ -140,7 +140,8 @@ if ($tmpobject) {
 			}
 			if ($result < 0) {
 				$nbko++;
-			} if ($result == 0) {
+			}
+			if ($result == 0) {
 				print 'File for ref '.$tmpobject->ref.' returned 0 during regeneration with template '.$tmpobject->model_pdf."\n";
 				$nbok++;
 			} else {

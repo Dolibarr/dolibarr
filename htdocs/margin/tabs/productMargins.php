@@ -142,7 +142,7 @@ if ($id > 0 || !empty($ref)) {
 			$sql = "SELECT s.nom as name, s.rowid as socid, s.code_client,";
 			$sql .= " f.rowid as facid, f.ref, f.total_ht,";
 			$sql .= " f.datef, f.paye, f.fk_statut as statut, f.type,";
-			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " sc.fk_soc, sc.fk_user,";
 			}
 			$sql .= " sum(d.total_ht) as selling_price,"; // may be negative or positive
@@ -152,7 +152,7 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 			$sql .= ", ".MAIN_DB_PREFIX."facturedet as d";
-			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE f.fk_soc = s.rowid";
@@ -160,20 +160,20 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " AND f.entity IN (".getEntity('invoice').")";
 			$sql .= " AND d.fk_facture = f.rowid";
 			$sql .= " AND d.fk_product = ".((int) $object->id);
-			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if (!empty($socid)) {
-				$sql .= " AND f.fk_soc = $socid";
+				$sql .= " AND f.fk_soc = ".((int) $socid);
 			}
 			$sql .= " AND d.buy_price_ht IS NOT NULL";
 			// We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
-			// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredicable.
+			// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredictable.
 			if (getDolGlobalInt('ForceBuyingPriceIfNull') == 2) {
 				$sql .= " AND d.buy_price_ht <> 0";
 			}
 			$sql .= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut, f.type";
-			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", sc.fk_soc, sc.fk_user";
 			}
 			$sql .= $db->order($sortfield, $sortorder);
@@ -253,8 +253,8 @@ if ($id > 0 || !empty($ref)) {
 
 				$totalMargin = $cumul_vente - $cumul_achat;
 				if ($totalMargin < 0) {
-					$marginRate = ($cumul_achat != 0) ?-1 * (100 * $totalMargin / $cumul_achat) : '';
-					$markRate = ($cumul_vente != 0) ?-1 * (100 * $totalMargin / $cumul_vente) : '';
+					$marginRate = ($cumul_achat != 0) ? -1 * (100 * $totalMargin / $cumul_achat) : '';
+					$markRate = ($cumul_vente != 0) ? -1 * (100 * $totalMargin / $cumul_vente) : '';
 				} else {
 					$marginRate = ($cumul_achat != 0) ? (100 * $totalMargin / $cumul_achat) : '';
 					$markRate = ($cumul_vente != 0) ? (100 * $totalMargin / $cumul_vente) : '';

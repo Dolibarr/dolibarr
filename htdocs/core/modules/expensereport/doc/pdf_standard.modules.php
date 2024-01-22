@@ -44,9 +44,9 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
  */
 class pdf_standard extends ModeleExpenseReport
 {
-	 /**
-	  * @var DoliDb Database handler
-	  */
+	/**
+	 * @var DoliDB Database handler
+	 */
 	public $db;
 
 	/**
@@ -322,7 +322,6 @@ class pdf_standard extends ModeleExpenseReport
 				}
 
 				$iniY = $tab_top + 7;
-				$initialY = $tab_top + 7;
 				$nexY = $tab_top + 7;
 
 				$showpricebeforepagebreak = 1;
@@ -357,7 +356,7 @@ class pdf_standard extends ModeleExpenseReport
 								$pdf->useTemplate($tplidx);
 							}
 							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-								 $this->_pagehead($pdf, $object, 0, $outputlangs);
+								$this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
 							$pdf->setPage($pageposafter + 1);
 							$showpricebeforepagebreak = 1;
@@ -399,8 +398,7 @@ class pdf_standard extends ModeleExpenseReport
 								$showpricebeforepagebreak = 0;
 							}
 						}
-					} else // No pagebreak
-					{
+					} else { // No pagebreak
 						$pdf->commitTransaction();
 					}
 					$i++;
@@ -489,7 +487,7 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->SetFillColor(248, 248, 248);
 
 				if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
-					// TODO Show vat amout per tax level
+					// TODO Show vat amount per tax level
 					$posy += 5;
 					$pdf->SetXY(130, $posy);
 					$pdf->SetTextColor(0, 0, 60);
@@ -552,7 +550,7 @@ class pdf_standard extends ModeleExpenseReport
 	 * @param   ExpenseReport	$object             Object to show
 	 * @param   int         	$linenumber         line number
 	 * @param   int         	$curY               current y position
-	 * @param   int         	$default_font_size  default siez of font
+	 * @param   int         	$default_font_size  default font size
 	 * @param   Translate   	$outputlangs        Object lang for output
 	 * @param	int				$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
 	 * @return  void
@@ -709,13 +707,13 @@ class pdf_standard extends ModeleExpenseReport
 		$posy += 5;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 3, $outputlangs->transnoentities("DateStart")." : ".($object->date_debut > 0 ?dol_print_date($object->date_debut, "day", false, $outputlangs) : ''), '', 'R');
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 3, $outputlangs->transnoentities("DateStart")." : ".($object->date_debut > 0 ? dol_print_date($object->date_debut, "day", false, $outputlangs) : ''), '', 'R');
 
 		// Date end period
 		$posy += 5;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 3, $outputlangs->transnoentities("DateEnd")." : ".($object->date_fin > 0 ?dol_print_date($object->date_fin, "day", false, $outputlangs) : ''), '', 'R');
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 3, $outputlangs->transnoentities("DateEnd")." : ".($object->date_fin > 0 ? dol_print_date($object->date_fin, "day", false, $outputlangs) : ''), '', 'R');
 
 		// Status Expense Report
 		$posy += 6;
@@ -808,7 +806,7 @@ class pdf_standard extends ModeleExpenseReport
 			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("TripNDF")." :", 0, 'L');
 			$pdf->rect($posx, $posy, $this->page_largeur - $this->marge_gauche - $posx, $hautcadre);
 
-			// Informations for expense report (dates and users workflow)
+			// Information for expense report (dates and users workflow)
 			if ($object->fk_user_author > 0) {
 				$userfee = new User($this->db);
 				$userfee->fetch($object->fk_user_author);
@@ -1008,7 +1006,7 @@ class pdf_standard extends ModeleExpenseReport
 	 *  @param  ExpenseReport	$object         Object expensereport
 	 *  @param  int				$posy           Position y in PDF
 	 *  @param  Translate		$outputlangs    Object langs for output
-	 *  @return int             				<0 if KO, >0 if OK
+	 *  @return int             				Return integer <0 if KO, >0 if OK
 	 */
 	protected function tablePayments(&$pdf, $object, $posy, $outputlangs)
 	{

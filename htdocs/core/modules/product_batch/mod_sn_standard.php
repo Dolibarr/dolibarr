@@ -84,7 +84,8 @@ class mod_sn_standard extends ModeleNumRefBatch
 	{
 		global $conf, $langs, $db;
 
-		$coyymm = ''; $max = '';
+		$coyymm = '';
+		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(batch FROM ".$posindice.") AS SIGNED)) as max";
@@ -93,7 +94,7 @@ class mod_sn_standard extends ModeleNumRefBatch
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)	{
+		if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) {
 				$max = intval($obj->max);
@@ -129,7 +130,7 @@ class mod_sn_standard extends ModeleNumRefBatch
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)	{
+		if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) {
 				$max = intval($obj->max);
@@ -143,10 +144,13 @@ class mod_sn_standard extends ModeleNumRefBatch
 
 		//$date=time();
 		$date = dol_now();
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
-		if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-		else $num = sprintf("%04s", $max + 1);
+		if ($max >= (pow(10, 4) - 1)) {
+			$num = $max + 1;
+		} else { // If counter > 9999, we do not format on 4 chars, we take number as it is
+			$num = sprintf("%04s", $max + 1);
+		}
 
 		dol_syslog("mod_sn_standard::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;

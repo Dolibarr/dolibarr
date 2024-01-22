@@ -44,7 +44,7 @@ if (!$sortfield) {
 if (empty($page) || $page == -1) {
 	$page = 0;
 }
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
 if (!$user->admin) {
@@ -238,7 +238,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	if (!getDolGlobalString('SYSTEMTOOLS_MYSQLDUMP')) {
 		$fullpathofmysqldump = $db->getPathOfDump();
 	} else {
-		$fullpathofmysqldump = $conf->global->SYSTEMTOOLS_MYSQLDUMP;
+		$fullpathofmysqldump = getDolGlobalString('SYSTEMTOOLS_MYSQLDUMP');
 	}
 	print '<input type="text" name="mysqldump" style="width: 80%" value="'.$fullpathofmysqldump.'">';
 	print '</fieldset>';
@@ -281,7 +281,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 
 	$execmethod = 0;
 	if (getDolGlobalString('MAIN_EXEC_USE_POPEN')) {
-		$execmethod = $conf->global->MAIN_EXEC_USE_POPEN;
+		$execmethod = getDolGlobalString('MAIN_EXEC_USE_POPEN');
 	}
 	if (empty($execmethod)) {
 		$execmethod = 1;
@@ -409,7 +409,7 @@ if (in_array($type, array('pgsql'))) {
 	if (!getDolGlobalString('SYSTEMTOOLS_POSTGRESQLDUMP')) {
 		$fullpathofpgdump = $db->getPathOfDump();
 	} else {
-		$fullpathofpgdump = $conf->global->SYSTEMTOOLS_POSTGRESQLDUMP;
+		$fullpathofpgdump = getDolGlobalString('SYSTEMTOOLS_POSTGRESQLDUMP');
 	}
 	print '<br>';
 	print '<input type="text" name="postgresqldump" style="width: 80%" value="'.$fullpathofpgdump.'" />';
@@ -597,7 +597,7 @@ print "</div> 	<!-- end div fichehalfleft -->\n";
 
 print '<div id="backupdatabaseright" class="fichehalfright">';
 
-$filearray = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
+$filearray = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
 $result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'backup/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
 print '<br>';
 
@@ -654,8 +654,7 @@ foreach ($filecompression as $key => $val) {
 		}
 		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'2"'.$checked.'>';
 		print ' <label for="'.$val['id'].'2">'.$val['label'].'</label>';
-	} else // Disabled export format
-	{
+	} else { // Disabled export format
 		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'2" disabled>';
 		print ' <label for="'.$val['id'].'2">'.$val['label'].'</label>';
 		print ' <span class="opacitymedium">('.$langs->trans("NotAvailable").')</span>';
@@ -677,7 +676,7 @@ print '</div>';
 
 print '<div id="backupfileright" class="fichehalfright">';
 
-$filearray = dol_dir_list($conf->admin->dir_output.'/documents', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
+$filearray = dol_dir_list($conf->admin->dir_output.'/documents', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
 $result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
 print '<br>';
 

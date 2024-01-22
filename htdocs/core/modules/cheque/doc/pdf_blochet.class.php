@@ -375,7 +375,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$lineinpage = 0;
 		$num = count($this->lines);
 		for ($j = 0; $j < $num; $j++) {
-			// Dynamic max line heigh calculation
+			// Dynamic max line height calculation
 			$dynamic_line_height = array();
 			$dynamic_line_height[] = $pdf->getStringHeight(60, $outputlangs->convToOutputCharset($this->lines[$j]->bank_chq));
 			$dynamic_line_height[] = $pdf->getStringHeight(80, $outputlangs->convToOutputCharset($this->lines[$j]->emetteur_chq));
@@ -444,7 +444,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$newfreetext = '';
 		$paramfreetext = 'BANK_CHEQUERECEIPT_FREE_TEXT';
 		if (!empty($conf->global->$paramfreetext)) {
-			$newfreetext = make_substitutions($conf->global->$paramfreetext, $substitutionarray);
+			$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray);
 		}
 
 		return pdf_pagefoot($pdf, $outputlangs, $newfreetext, $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);

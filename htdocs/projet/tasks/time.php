@@ -131,7 +131,7 @@ if ($id > 0 || $ref) {
 
 // Security check
 $socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;	  // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;	  // For external user, no check is done on company because readability is managed by public status of project and assignment.
 if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }
@@ -173,6 +173,9 @@ if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a ded
 }
 $arrayfields['author'] = array('label' => $langs->trans("By"), 'checked' => 1);
 $arrayfields['t.note'] = array('label' => $langs->trans("Note"), 'checked' => 1);
+if (!getDolGlobalInt('PROJECT_HIDE_TASKS') && getDolGlobalInt('PROJECT_BILL_TIME_SPENT') && !$projectstatic->usage_bill_time ) {
+	$projectstatic->usage_bill_time=1;
+}
 if (isModEnabled('service') && !empty($projectstatic->thirdparty) && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
 	$arrayfields['t.fk_product'] = array('label' => $langs->trans("Product"), 'checked' => 1);
 }
@@ -818,7 +821,9 @@ if ($action == 'confirm_generateinvoice') {
 if ($action == 'confirm_generateinter') {
 	$langs->load('interventions');
 
-	if (!empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
+	if (!empty($projectstatic->socid)) {
+		$projectstatic->fetch_thirdparty();
+	}
 
 	if (!($projectstatic->thirdparty->id > 0)) {
 		setEventMessages($langs->trans("ThirdPartyRequiredToGenerateIntervention"), null, 'errors');
@@ -1044,10 +1049,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Date start - end project
 			print '<tr><td>' . $langs->trans("Dates") . '</td><td>';
 			$start = dol_print_date($projectstatic->date_start, 'day');
-			print ($start ? $start : '?');
+			print($start ? $start : '?');
 			$end = dol_print_date($projectstatic->date_end, 'day');
 			print ' - ';
-			print ($end ? $end : '?');
+			print($end ? $end : '?');
 			if ($projectstatic->hasDelay()) {
 				print img_warning("Late");
 			}
@@ -1206,10 +1211,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		// Date start - Date end task
 		print '<tr><td class="titlefield">' . $langs->trans("DateStart") . ' - ' . $langs->trans("Deadline") . '</td><td>';
 		$start = dol_print_date($object->date_start, 'dayhour');
-		print ($start ? $start : '?');
+		print($start ? $start : '?');
 		$end = dol_print_date($object->date_end, 'dayhour');
 		print ' - ';
-		print ($end ? $end : '?');
+		print($end ? $end : '?');
 		if ($object->hasDelay()) {
 			print img_warning("Late");
 		}
@@ -1595,7 +1600,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if (empty($search_user)) {
 				$search_user = $user->id;
 			}
-			if ($search_user > 0) $sql .= " AND t.fk_user = " . ((int) $search_user);
+			if ($search_user > 0) {
+				$sql .= " AND t.fk_user = " . ((int) $search_user);
+			}
 		}
 
 		if ($search_note) {
@@ -1734,7 +1741,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<input type="hidden" name="taskid" value="' . $id . '">';
 			}
 
-			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 			print '<table class="noborder nohover centpercent">';
 
 			print '<tr class="liste_titre">';
@@ -1892,10 +1899,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		// Date
 		if (!empty($arrayfields['t.element_date']['checked'])) {
 			print '<td class="liste_titre left">';
-			print '<div class="nowrap">';
+			print '<div class="nowrapfordate">';
 			print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 			print '</div>';
-			print '<div class="nowrap">';
+			print '<div class="nowrapfordate">';
 			print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 			print '</div>';
 			print '</td>';
@@ -2278,7 +2285,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					$userstatic->lastname = $task_time->lastname;
 					$userstatic->firstname = $task_time->firstname;
 					$userstatic->photo = $task_time->photo;
-					$userstatic->statut = $task_time->user_status;
+					$userstatic->status = $task_time->user_status;
 					print $userstatic->getNomUrl(-1);
 				}
 				print '</td>';
@@ -2560,7 +2567,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 						$userstatic->lastname = $task_time->lastname;
 						$userstatic->firstname = $task_time->firstname;
 						$userstatic->photo = $task_time->photo;
-						$userstatic->statut = $task_time->user_status;
+						$userstatic->status = $task_time->user_status;
 						print $userstatic->getNomUrl(-1);
 					}
 					print '</td>';
@@ -2716,7 +2723,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 						$userstatic->lastname = $task_time->lastname;
 						$userstatic->firstname = $task_time->firstname;
 						$userstatic->photo = $task_time->photo;
-						$userstatic->statut = $task_time->user_status;
+						$userstatic->status = $task_time->user_status;
 						print $userstatic->getNomUrl(-1);
 					}
 					print '</td>';

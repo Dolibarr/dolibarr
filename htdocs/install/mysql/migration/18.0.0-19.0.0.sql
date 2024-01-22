@@ -201,3 +201,7 @@ ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN element_type varchar(50
 ALTER TABLE llx_expensereport DROP INDEX idx_expensereport_fk_refuse, ADD INDEX idx_expensereport_fk_refuse(fk_user_refuse);
 
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (1,'66','Société publique locale');
+
+ALTER TABLE llx_prelevement_lignes ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+ALTER TABLE llx_bom_bomline ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;

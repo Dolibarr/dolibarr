@@ -59,7 +59,7 @@ if ($action == 'updateik') {
 	if ($id > 0) {
 		$result = $expIk->fetch($id);
 		if ($result < 0) {
-			dol_print_error('', $expIk->error, $expIk->errors);
+			dol_print_error(null, $expIk->error, $expIk->errors);
 		}
 	}
 
@@ -85,7 +85,7 @@ if ($action == 'updateik') {
 	if ($id > 0) {
 		$result = $expIk->fetch($id);
 		if ($result < 0) {
-			dol_print_error('', $expIk->error, $expIk->errors);
+			dol_print_error(null, $expIk->error, $expIk->errors);
 		}
 
 		$expIk->delete($user);
@@ -172,7 +172,7 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab) {
 		if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat) {
 			echo '<input type="text" class="maxwidth100" name="coef" value="'.$range->ik->coef.'" />';
 		} else {
-			echo ($range->ik->id > 0 ? $range->ik->coef : $langs->trans('expenseReportCoefUndefined'));
+			echo($range->ik->id > 0 ? $range->ik->coef : $langs->trans('expenseReportCoefUndefined'));
 		}
 		echo '</td>';
 

@@ -92,7 +92,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -148,7 +148,9 @@ if ($user->socid > 0) { // Protection if external user
 	accessforbidden();
 }
 $result = restrictedArea($user, 'eventorganization');
-if (!$permissiontoread) accessforbidden();
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -226,12 +228,13 @@ if (empty($reshook)) {
 
 	if ($permissiontoadd && (($action == 'setstatus' && $confirm == "yes") || $massaction == 'setstatus')) {
 		$db->begin();
-		$error = 0;$nbok = 0;
+		$error = 0;
+		$nbok = 0;
 		$objecttmp = new $objectclass($db);
 		foreach ($toselect as $key => $idselect) {
 			$result = $objecttmp->fetch($idselect);
 			if ($result > 0) {
-				$objecttmp->status = GETPOST("statusmassaction", 'int');
+				$objecttmp->status = GETPOSTINT("statusmassaction");
 				$result = $objecttmp->update($user);
 				if ($result <= 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
@@ -393,10 +396,10 @@ if ($projectid > 0) {
 	// Date start - end project
 	print '<tr><td>'.$langs->trans("Dates").' ('.$langs->trans("Project").')</td><td>';
 	$start = dol_print_date($project->date_start, 'day');
-	print ($start ? $start : '?');
+	print($start ? $start : '?');
 	$end = dol_print_date($project->date_end, 'day');
 	print ' - ';
-	print ($end ? $end : '?');
+	print($end ? $end : '?');
 	if ($object->hasDelay()) {
 		print img_warning("Late");
 	}
@@ -405,10 +408,10 @@ if ($projectid > 0) {
 	// Date start - end of event
 	print '<tr><td>'.$langs->trans("Dates").' ('.$langs->trans("Event").')</td><td>';
 	$start = dol_print_date($project->date_start_event, 'day');
-	print ($start ? $start : '?');
+	print($start ? $start : '?');
 	$end = dol_print_date($project->date_end_event, 'day');
 	print ' - ';
-	print ($end ? $end : '?');
+	print($end ? $end : '?');
 	if ($object->hasDelay()) {
 		print img_warning("Late");
 	}
@@ -724,7 +727,7 @@ if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'pr
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].(!empty($projectid)?'?projectid='.$projectid:'').'">'."\n";
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].(!empty($projectid) ? '?projectid='.$projectid : '').'">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -740,10 +743,10 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.(!empty($project->id)?'&withproject=1&fk_project='.$project->id:'').(!empty($project->socid)?'&fk_soc='.$project->socid:'').preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.(!empty($project->id)?'&withproject=1&fk_project='.$project->id:'').(!empty($project->socid)?'&fk_soc='.$project->socid:'').preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.(!empty($project->id) ? '&withproject=1&fk_project='.$project->id : '').(!empty($project->socid) ? '&fk_soc='.$project->socid : '').preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.(!empty($project->id) ? '&withproject=1&fk_project='.$project->id : '').(!empty($project->socid) ? '&fk_soc='.$project->socid : '').preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.php?action=create'.(!empty($project->id)?'&withproject=1&fk_project='.$project->id:'').(!empty($project->socid)?'&fk_soc='.$project->socid:'').'&backtopage='.urlencode($_SERVER['PHP_SELF']).(!empty($project->id)?'?projectid='.$project->id:''), '', $permissiontoadd);
+$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.php?action=create'.(!empty($project->id) ? '&withproject=1&fk_project='.$project->id : '').(!empty($project->socid) ? '&fk_soc='.$project->socid : '').'&backtopage='.urlencode($_SERVER['PHP_SELF']).(!empty($project->id) ? '?projectid='.$project->id : ''), '', $permissiontoadd);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -808,7 +811,7 @@ $selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('sele
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 
@@ -1008,7 +1011,7 @@ while ($i < $imaxinloop) {
 				if ($key == 'status') {
 					print $object->getLibStatut(5);
 				} elseif ($key == 'ref') {
-					print $object->getNomUrl(1, 0, '', (($projectid > 0)?'withproject':''));
+					print $object->getNomUrl(1, 0, '', (($projectid > 0) ? 'withproject' : ''));
 				} else {
 					print $object->showOutputField($val, $key, $object->$key, '');
 				}
@@ -1084,7 +1087,7 @@ print '</div>'."\n";
 
 print '</form>'."\n";
 
-if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
+if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
 	$hidegeneratedfilelistifempty = 1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
 		$hidegeneratedfilelistifempty = 0;

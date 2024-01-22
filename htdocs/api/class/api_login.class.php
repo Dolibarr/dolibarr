@@ -153,7 +153,7 @@ class Login
 			}
 
 			// Generate token for user
-			$token = dol_hash($login.uniqid().(!getDolGlobalString('MAIN_API_KEY')?'':$conf->global->MAIN_API_KEY), 1);
+			$token = dol_hash($login.uniqid().(!getDolGlobalString('MAIN_API_KEY') ? '' : $conf->global->MAIN_API_KEY), 1);
 
 			// We store API token into database
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
@@ -170,6 +170,10 @@ class Login
 			if (!utf8_check($token)) {
 				throw new RestException(500, 'Error, the API token of this user has a non valid value. Try to update it with a valid value.');
 			}
+		}
+
+		if (!ascii_check($token)) {
+			throw new RestException(500, 'Error the token for this user has not an hexa format. Try first to reset it.');
 		}
 
 		//return token

@@ -68,7 +68,7 @@ $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("pa
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 if (!$sortorder) {
 	$sortorder = "ASC";
@@ -77,7 +77,7 @@ if (!$sortfield) {
 	$sortfield = "a.datec";
 }
 
-$socid = GETPOST("search_socid", "int") ?GETPOST("search_socid", "int") : GETPOST("socid", "int");
+$socid = GETPOST("search_socid", "int") ? GETPOST("search_socid", "int") : GETPOST("socid", "int");
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -97,15 +97,15 @@ if (!$user->hasRight('agenda', 'allactions', 'read') || $filter == 'mine') {  //
 }
 
 $mode = 'show_peruser';
-$resourceid = GETPOST("search_resourceid", "int") ?GETPOST("search_resourceid", "int") : GETPOST("resourceid", "int");
-$year = GETPOST("year", "int") ?GETPOST("year", "int") : date("Y");
-$month = GETPOST("month", "int") ?GETPOST("month", "int") : date("m");
-$week = GETPOST("week", "int") ?GETPOST("week", "int") : date("W");
-$day = GETPOST("day", "int") ?GETPOST("day", "int") : date("d");
+$resourceid = GETPOST("search_resourceid", "int") ? GETPOST("search_resourceid", "int") : GETPOST("resourceid", "int");
+$year = GETPOST("year", "int") ? GETPOST("year", "int") : date("Y");
+$month = GETPOST("month", "int") ? GETPOST("month", "int") : date("m");
+$week = GETPOST("week", "int") ? GETPOST("week", "int") : date("W");
+$day = GETPOST("day", "int") ? GETPOST("day", "int") : date("d");
 $pid = GETPOSTISSET("search_projectid") ? GETPOST("search_projectid", "int", 3) : GETPOST("projectid", "int", 3);
 $status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09'); // status may be 0, 50, 100, 'todo', 'na' or -1
 $type = GETPOSTISSET("search_type") ? GETPOST("search_type", 'alpha') : GETPOST("type", 'alpha');
-$maxprint = ((GETPOST("maxprint", 'int') != '') ?GETPOST("maxprint", 'int') : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
+$maxprint = ((GETPOST("maxprint", 'int') != '') ? GETPOST("maxprint", 'int') : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('search_actioncode', 'array:aZ09')) {
@@ -114,7 +114,7 @@ if (GETPOST('search_actioncode', 'array:aZ09')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("search_actioncode", "alpha", 3) ?GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode", "alpha") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+	$actioncode = GETPOST("search_actioncode", "alpha", 3) ? GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode", "alpha") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 
 $dateselect = dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'));
@@ -142,8 +142,8 @@ if ($end_h <= $begin_h) {
 $tmp = !getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS') ? '1-5' : $conf->global->MAIN_DEFAULT_WORKING_DAYS;
 $tmp = str_replace(' ', '', $tmp); // FIX 7533
 $tmparray = explode('-', $tmp);
-$begin_d = GETPOST('begin_d', 'int') ?GETPOST('begin_d', 'int') : ($tmparray[0] != '' ? $tmparray[0] : 1);
-$end_d   = GETPOST('end_d', 'int') ?GETPOST('end_d', 'int') : ($tmparray[1] != '' ? $tmparray[1] : 5);
+$begin_d = GETPOST('begin_d', 'int') ? GETPOST('begin_d', 'int') : ($tmparray[0] != '' ? $tmparray[0] : 1);
+$end_d   = GETPOST('end_d', 'int') ? GETPOST('end_d', 'int') : ($tmparray[1] != '' ? $tmparray[1] : 5);
 if ($begin_d < 1 || $begin_d > 7) {
 	$begin_d = 1;
 }
@@ -163,13 +163,17 @@ if (empty($mode) && !GETPOSTISSET('mode')) {
 }
 
 if (GETPOST('viewcal', 'alpha') && $mode != 'show_day' && $mode != 'show_week' && $mode != 'show_peruser') {
-	$mode = 'show_month'; $day = '';
+	$mode = 'show_month';
+	$day = '';
 } // View by month
 if (GETPOST('viewweek', 'alpha') || $mode == 'show_week') {
-	$mode = 'show_week'; $week = ($week ? $week : date("W")); $day = ($day ? $day : date("d"));
+	$mode = 'show_week';
+	$week = ($week ? $week : date("W"));
+	$day = ($day ? $day : date("d"));
 } // View by week
 if (GETPOST('viewday', 'alpha') || $mode == 'show_day') {
-	$mode = 'show_day'; $day = ($day ? $day : date("d"));
+	$mode = 'show_day';
+	$day = ($day ? $day : date("d"));
 } // View by day
 
 $object = new ActionComm($db);
@@ -192,17 +196,7 @@ $search_status = $status;
  * Actions
  */
 
-/*
-if ($action == 'delete_action' && $user->rights->agenda->delete) {
-	$event = new ActionComm($db);
-	$event->fetch($actionid);
-	$event->fetch_optionals();
-	$event->fetch_userassigned();
-	$event->oldcopy = dol_clone($event);
-
-	$result = $event->delete();
-}
-*/
+// None
 
 
 /*
@@ -541,14 +535,11 @@ $sql .= " a.transparency, a.priority, a.fulldayevent, a.location,";
 $sql .= " a.fk_soc, a.fk_contact, a.fk_element, a.elementtype, a.fk_project,";
 $sql .= " ca.code, ca.libelle as type_label, ca.color, ca.type as type_type, ca.picto as type_picto";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm as ca, ".MAIN_DB_PREFIX."actioncomm as a";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
-}
 // We must filter on resource table
 if ($resourceid > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
 }
-// We must filter on assignement table
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 	$sql .= " ON ar.fk_actioncomm = a.id AND ar.element_type='user'";
@@ -597,10 +588,21 @@ if ($resourceid > 0) {
 if ($pid) {
 	$sql .= " AND a.fk_project = ".((int) $pid);
 }
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
+// If the internal user must only see his customers, force searching by him
+$search_sale = 0;
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
 }
-if ($socid > 0) {
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
+// Search on socid
+if ($socid) {
 	$sql .= " AND a.fk_soc = ".((int) $socid);
 }
 
@@ -740,7 +742,8 @@ if ($resql) {
 			//print $daycursor.' '.dol_print_date($daycursor, 'dayhour', 'gmt').' '.$event->id.' -> '.$annee.'-'.$mois.'-'.$jour.'<br>';
 
 			// Loop on each day covered by action to prepare an index to show on calendar
-			$loop = true; $j = 0;
+			$loop = true;
+			$j = 0;
 			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
 			do {
 				//print 'Add event into eventarray for daykey='.$daykey.'='.dol_print_date($daykey, 'dayhour', 'gmt').' '.$event->id.' '.$event->datep.' '.$event->datef.'<br>';
@@ -906,16 +909,16 @@ while ($currentdaytoshow < $lastdaytoshow) {
 			$sql .= " WHERE u.rowid IN (";
 			$sql .= " SELECT ug.fk_user FROM ".$db->prefix()."usergroup_user as ug";
 			$sql .= " WHERE ug.entity IN (".getEntity('usergroup').")";
-			if ($usergroup > 0)	{
+			if ($usergroup > 0) {
 				$sql .= " AND ug.fk_usergroup = ".((int) $usergroup);
 			}
 			$sql .= ")";
 		} else {
-			if ($usergroup > 0)	{
+			if ($usergroup > 0) {
 				$sql .= " LEFT JOIN ".$db->prefix()."usergroup_user as ug ON u.rowid = ug.fk_user";
 			}
 			$sql .= " WHERE u.entity IN (".getEntity('user').")";
-			if ($usergroup > 0)	{
+			if ($usergroup > 0) {
 				$sql .= " AND ug.fk_usergroup = ".((int) $usergroup);
 			}
 		}
@@ -1120,7 +1123,11 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 	$cases3 = array(); // Color third half hour
 	$cases4 = array(); // Color 4th half hour
 
-	$i = 0; $numother = 0; $numbirthday = 0; $numical = 0; $numicals = array();
+	$i = 0;
+	$numother = 0;
+	$numbirthday = 0;
+	$numical = 0;
+	$numicals = array();
 	//$ymd = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $day);
 
 	$colorindexused[$user->id] = 0; // Color index for current user (user->id) is always 0
@@ -1161,7 +1168,9 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				}
 
 				// Define $color (Hex string like '0088FF') and $cssclass of event
-				$color = -1; $cssclass = ''; $colorindex = -1;
+				$color = -1;
+				$cssclass = '';
+				$colorindex = -1;
 				if (in_array($user->id, $keysofuserassigned)) {
 					$cssclass = 'family_mytasks';
 
@@ -1192,7 +1201,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 					$color = $event->icalcolor;
 					$cssclass = (!empty($event->icalname) ? 'family_ext'.md5($event->icalname) : 'family_other unsortable');
 				} elseif ($event->type_code == 'BIRTHDAY') {
-					$numbirthday++; $colorindex = 2; $cssclass = 'family_birthday unsortable'; $color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
+					$numbirthday++;
+					$colorindex = 2;
+					$cssclass = 'family_birthday unsortable';
+					$color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
 				} else {
 					$numother++;
 					$color = ($event->icalcolor ? $event->icalcolor : -1);
@@ -1450,10 +1462,22 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 
 	// Now output $casesX from start hour to end hour
 	for ($h = $begin_h; $h < $end_h; $h++) {
-		$color1 = ''; $color2 = ''; $color3 = ''; $color4 = '';
-		$style1 = ''; $style2 = ''; $style3 = ''; $style4 = '';
-		$string1 = '&nbsp;'; $string2 = '&nbsp;'; $string3 = '&nbsp;'; $string4 = '&nbsp;';
-		$title1 = ''; $title2 = ''; $title3 = ''; $title4 = '';
+		$color1 = '';
+		$color2 = '';
+		$color3 = '';
+		$color4 = '';
+		$style1 = '';
+		$style2 = '';
+		$style3 = '';
+		$style4 = '';
+		$string1 = '&nbsp;';
+		$string2 = '&nbsp;';
+		$string3 = '&nbsp;';
+		$string4 = '&nbsp;';
+		$title1 = '';
+		$title2 = '';
+		$title3 = '';
+		$title4 = '';
 		if (isset($cases1[$h]) && $cases1[$h] != '') {
 			//$title1.=count($cases1[$h]).' '.(count($cases1[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases1[$h]) > 1) {
@@ -1611,10 +1635,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		if ($style1 == 'peruser_notbusy') {
 			print 'style="border: 1px solid #'.($color1 ? $color1 : "888").' !important" ';
 		} elseif ($color1) {
-			print ($color1 ? 'style="background: #'.$color1.';"' : '');
+			print($color1 ? 'style="background: #'.$color1.';"' : '');
 		}
 		print 'class="';
-		print ($style1 ? $style1.' ' : '');
+		print($style1 ? $style1.' ' : '');
 		print 'onclickopenref center'.($title2 ? ' classfortooltip' : '').($title1 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_00_'.($ids1 ? $ids1 : 'none').'"'.($title1 ? ' title="'.$title1.'"' : '').'>';
 		print $string1;
 		print '</td>';
@@ -1623,10 +1647,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		if ($style2 == 'peruser_notbusy') {
 			print 'style="border: 1px solid #'.($color2 ? $color2 : "888").' !important" ';
 		} elseif ($color2) {
-			print ($color2 ? 'style="background: #'.$color2.';"' : '');
+			print($color2 ? 'style="background: #'.$color2.';"' : '');
 		}
 		print 'class="';
-		print ($style2 ? $style2.' ' : '');
+		print($style2 ? $style2.' ' : '');
 		print 'onclickopenref center'.($title2 ? ' classfortooltip' : '').($title1 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_15_'.($ids2 ? $ids2 : 'none').'"'.($title2 ? ' title="'.$title2.'"' : '').'>';
 		print $string2;
 		print '</td>';
@@ -1635,10 +1659,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		if ($style3 == 'peruser_notbusy') {
 			print 'style="border: 1px solid #'.($color3 ? $color3 : "888").' !important" ';
 		} elseif ($color3) {
-			print ($color3 ? 'style="background: #'.$color3.';"' : '');
+			print($color3 ? 'style="background: #'.$color3.';"' : '');
 		}
 		print 'class="';
-		print ($style3 ? $style3.' ' : '');
+		print($style3 ? $style3.' ' : '');
 		print 'onclickopenref center'.($title2 ? ' classfortooltip' : '').($title3 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_30_'.($ids3 ? $ids3 : 'none').'"'.($title3 ? ' title="'.$title3.'"' : '').'>';
 		print $string3;
 		print '</td>';
@@ -1647,10 +1671,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		if ($style4 == 'peruser_notbusy') {
 			print 'style="border: 1px solid #'.($color4 ? $color4 : "888").' !important" ';
 		} elseif ($color4) {
-			print ($color4 ? 'style="background: #'.$color4.';"' : '');
+			print($color4 ? 'style="background: #'.$color4.';"' : '');
 		}
 		print 'class="';
-		print ($style4 ? $style4.' ' : '');
+		print($style4 ? $style4.' ' : '');
 		print 'onclickopenref center'.($title3 ? ' classfortooltip' : '').($title4 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_45_'.($ids4 ? $ids4 : 'none').'"'.($title4 ? ' title="'.$title4.'"' : '').'>';
 		print $string4;
 		print '</td>';

@@ -165,7 +165,7 @@ class Establishment extends CommonObject
 	 *	Create object in database
 	 *
 	 *	@param		User	$user   User making creation
-	 *	@return 	int				<0 if KO, >0 if OK
+	 *	@return 	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -243,7 +243,7 @@ class Establishment extends CommonObject
 	 *	Update record
 	 *
 	 *	@param	User	$user		User making update
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user)
 	{
@@ -285,7 +285,7 @@ class Establishment extends CommonObject
 	 * Load an object from database
 	 *
 	 * @param	int		$id		Id of record to load
-	 * @return	int				<0 if KO, >=0 if OK
+	 * @return	int				Return integer <0 if KO, >=0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -327,7 +327,7 @@ class Establishment extends CommonObject
 	 *	Delete record
 	 *
 	 *	@param	int		$id		Id of record to delete
-	 *	@return	int				<0 if KO, >0 if OK
+	 *	@return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($id)
 	{
@@ -423,7 +423,7 @@ class Establishment extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *  @param  string  $option                     On what the link point to ('nolink', ...)

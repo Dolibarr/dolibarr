@@ -44,7 +44,7 @@ $selectcpt = GETPOST('cpt_bk');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
 $cancel = GETPOST('cancel', 'alpha');
-$showaccountdetail = GETPOST('showaccountdetail', 'aZ09') ?GETPOST('showaccountdetail', 'aZ09') : 'no';
+$showaccountdetail = GETPOST('showaccountdetail', 'aZ09') ? GETPOST('showaccountdetail', 'aZ09') : 'no';
 
 
 $date_startmonth = GETPOST('date_startmonth', 'int');
@@ -75,11 +75,11 @@ $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
 // We define date_start and date_end
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
-	$q = GETPOST("q") ?GETPOST("q", 'int') : 0;
+	$q = GETPOST("q") ? GETPOST("q", 'int') : 0;
 	if ($q == 0) {
 		// We define date_start and date_end
 		$year_end = $year_start + ($nbofyear - 1);
-		$month_start = GETPOST("month", 'int') ?GETPOST("month", 'int') : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+		$month_start = GETPOST("month", 'int') ? GETPOST("month", 'int') : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 		$date_startmonth = $month_start;
 		if (!GETPOST('month')) {
 			if (!$year && $month_start > $month_current) {
@@ -140,7 +140,7 @@ if ($cat_id == 0) {
 }
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
-$modecompta = $conf->global->ACCOUNTING_MODE;
+$modecompta = getDolGlobalString('ACCOUNTING_MODE');
 if (isModEnabled('accounting')) {
 	$modecompta = 'BOOKKEEPING';
 }
@@ -182,7 +182,7 @@ $months = array(
 	$langs->trans("MonthShort12"),
 );
 
-llxheader('', $langs->trans('ReportInOut'));
+llxHeader('', $langs->trans('ReportInOut'));
 
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);
@@ -215,7 +215,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("AnnualByAccountInputOutputMode");
-	$calcmode = $langs->trans("CalcModeEngagement");
+	$calcmode = $langs->trans("CalcModePayment");
 	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.(GETPOST("month") > 0 ? '&month='.GETPOST("month") : '').'&modecompta=CREANCES-DETTES">', '</a>').')';
 	if (isModEnabled('accounting')) {
 		$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=BOOKKEEPING">', '</a>').')';
@@ -240,7 +240,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$builddate = dol_now();
 }
 
-report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array('modecompta'=>$modecompta, 'action' => ''), $calcmode);
+report_header($name, '', $period, $periodlink ?? '', $description, $builddate, $exportlink ?? '', array('modecompta'=>$modecompta, 'action' => ''), $calcmode);
 
 
 if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
@@ -315,7 +315,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		// Loop on each custom group of accounts
 		foreach ($cats as $cat) {
 			if (!empty($cat['category_type'])) {
-				// category calculed
+				// category calculated
 				// When we enter here, $sommes was filled by group of accounts
 
 				$formula = $cat['formula'];
@@ -491,7 +491,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				}
 
 				// Set value into column N and month M ($totCat)
-				// This make 12 calls for each accountancy account (12 monthes M)
+				// This make 12 calls for each accountancy account (12 months M)
 				foreach ($cpts as $i => $cpt) {    // Loop on each account.
 					// We make 1 loop for each account because we may want detail per account.
 					// @todo Optimize to ask a 'group by' account and a filter with account in (..., ...) in request

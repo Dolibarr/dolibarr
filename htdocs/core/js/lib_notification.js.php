@@ -81,7 +81,7 @@ if ("Notification" in window) {
 	if (Notification.permission !== "granted") {
 		console.log("Ask Notification.permission");
 		Notification.requestPermission(function(result) {
-			console.log("result for requestPermission is "+result);
+			console.log("result for Notification.requestPermission is "+result);
 		});
 	}
 
@@ -212,7 +212,7 @@ function check_events() {
 
 		result = 1;
 	} else {
-		console.log("Cancel check_events() with dolnotif_nb_test_for_page="+dolnotif_nb_test_for_page+". Check is useless because javascript Notification.permission is "+Notification.permission+" (blocked manualy or web site is not https).");
+		console.log("Cancel check_events() with dolnotif_nb_test_for_page="+dolnotif_nb_test_for_page+". Check is useless because javascript Notification.permission is "+Notification.permission+" (blocked manually or web site is not https).");
 
 		result = 2;	// We return a positive so the repeated check will done even if authroization is not yet allowed may be after this check)
 	}

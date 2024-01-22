@@ -12,10 +12,11 @@
  * Copyright (C) 2013-2014 Florian Henry         <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Ferran Marcet         <fmarcet@2byte.es>
  * Copyright (C) 2016      Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2018-2021 Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024 Frédéric France       <frederic.france@netlogic.fr>
  * Copyright (C) 2020	   Nicolas ZABOURI       <info@inovea-conseil.com>
  * Copyright (C) 2022	   Gauthier VERDOL       <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023	   Lenin Rivas       	 <lenin.rivas777@gmail.com>
+ * Copyright (C) 2023	   William Mead			 <william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -235,6 +236,16 @@ if (empty($reshook)) {
 				}
 			}
 		}
+	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $usercanclose) {
+		// Cancel proposal
+		$result = $object->setCancel($user);
+		if ($result > 0) {
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			exit();
+		} else {
+			$langs->load("errors");
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
 		// Delete proposal
 		$result = $object->delete($user);
@@ -277,7 +288,7 @@ if (empty($reshook)) {
 		// Validation
 		$idwarehouse = GETPOST('idwarehouse', 'int');
 		$result = $object->valid($user);
-		if ( $result > 0 && getDolGlobalString('PROPAL_SKIP_ACCEPT_REFUSE') ) {
+		if ($result > 0 && getDolGlobalString('PROPAL_SKIP_ACCEPT_REFUSE')) {
 			$result = $object->closeProposal($user, $object::STATUS_SIGNED);
 		}
 		if ($result >= 0) {
@@ -329,8 +340,12 @@ if (empty($reshook)) {
 			} elseif (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					$newlang = GETPOST('lang_id', 'aZ09');
+				}
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
@@ -350,8 +365,12 @@ if (empty($reshook)) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					$newlang = GETPOST('lang_id', 'aZ09');
+				}
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
@@ -418,19 +437,19 @@ if (empty($reshook)) {
 					$object->datep = $datep;
 					$object->date = $datep;
 					$object->delivery_date = $date_delivery;
-					$object->availability_id = GETPOST('availability_id');
-					$object->demand_reason_id = GETPOST('demand_reason_id');
-					$object->fk_delivery_address = GETPOST('fk_address', 'int');
-					$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
-					$object->warehouse_id = GETPOST('warehouse_id', 'int');
+					$object->availability_id = GETPOSTINT('availability_id');
+					$object->demand_reason_id = GETPOSTINT('demand_reason_id');
+					$object->fk_delivery_address = GETPOSTINT('fk_address');
+					$object->shipping_method_id = GETPOSTINT('shipping_method_id');
+					$object->warehouse_id = GETPOSTINT('warehouse_id');
 					$object->duree_validite = $duration;
-					$object->cond_reglement_id = GETPOST('cond_reglement_id');
+					$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
 					$object->deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
-					$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
-					$object->fk_account = GETPOST('fk_account', 'int');
-					$object->socid = GETPOST('socid', 'int');
-					$object->contact_id = GETPOST('contactid', 'int');
-					$object->fk_project = GETPOST('projectid', 'int');
+					$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
+					$object->fk_account = GETPOSTINT('fk_account');
+					$object->socid = GETPOSTINT('socid');
+					$object->contact_id = GETPOSTINT('contactid');
+					$object->fk_project = GETPOSTINT('projectid');
 					$object->model_pdf = GETPOST('model', 'alphanohtml');
 					$object->author = $user->id; // deprecated
 					$object->user_author_id = $user->id;
@@ -438,7 +457,7 @@ if (empty($reshook)) {
 					$object->note_public = GETPOST('note_public', 'restricthtml');
 					$object->statut = Propal::STATUS_DRAFT;
 					$object->status = Propal::STATUS_DRAFT;
-					$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+					$object->fk_incoterms = GETPOSTINT('incoterm_id');
 					$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				} else {
 					setEventMessages($langs->trans("ErrorFailedToCopyProposal", GETPOST('copie_propal')), null, 'errors');
@@ -449,27 +468,27 @@ if (empty($reshook)) {
 				$object->datep = $datep;
 				$object->date = $datep;
 				$object->delivery_date = $date_delivery;
-				$object->availability_id = GETPOST('availability_id', 'int');
-				$object->demand_reason_id = GETPOST('demand_reason_id', 'int');
-				$object->fk_delivery_address = GETPOST('fk_address', 'int');
-				$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
-				$object->warehouse_id = GETPOST('warehouse_id', 'int');
+				$object->availability_id = GETPOSTINT('availability_id');
+				$object->demand_reason_id = GETPOSTINT('demand_reason_id');
+				$object->fk_delivery_address = GETPOSTINT('fk_address');
+				$object->shipping_method_id = GETPOSTINT('shipping_method_id');
+				$object->warehouse_id = GETPOSTINT('warehouse_id');
 				$object->duree_validite = price2num(GETPOST('duree_validite', 'alpha'));
-				$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
+				$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
 				$object->deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
-				$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
-				$object->fk_account = GETPOST('fk_account', 'int');
-				$object->contact_id = GETPOST('contactid', 'int');
-				$object->fk_project = GETPOST('projectid', 'int');
+				$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
+				$object->fk_account = GETPOSTINT('fk_account');
+				$object->contact_id = GETPOSTINT('contactid');
+				$object->fk_project = GETPOSTINT('projectid');
 				$object->model_pdf = GETPOST('model');
 				$object->author = $user->id; // deprecated
 				$object->note_private = GETPOST('note_private', 'restricthtml');
 				$object->note_public = GETPOST('note_public', 'restricthtml');
-				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+				$object->fk_incoterms = GETPOSTINT('incoterm_id');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
 				$object->origin = GETPOST('origin');
-				$object->origin_id = GETPOST('originid');
+				$object->origin_id = GETPOSTINT('originid');
 
 				// Multicurrency
 				if (isModEnabled("multicurrency")) {
@@ -606,7 +625,7 @@ if (empty($reshook)) {
 							// Hooks
 							$parameters = array('objFrom' => $srcobject);
 							$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
-																											   // modified by hook
+							// modified by hook
 							if ($reshook < 0) {
 								setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 								$error++;
@@ -704,7 +723,7 @@ if (empty($reshook)) {
 		} elseif (GETPOST('statut', 'int') == $object::STATUS_SIGNED || GETPOST('statut', 'int') == $object::STATUS_NOTSIGNED) {
 			$locationTarget = '';
 			// prevent browser refresh from closing proposal several times
-			if ($object->statut == $object::STATUS_VALIDATED || ( getDolGlobalString('PROPAL_SKIP_ACCEPT_REFUSE') && $object->statut == $object::STATUS_DRAFT)) {
+			if ($object->statut == $object::STATUS_VALIDATED || (getDolGlobalString('PROPAL_SKIP_ACCEPT_REFUSE') && $object->statut == $object::STATUS_DRAFT)) {
 				$db->begin();
 
 				$result = $object->closeProposal($user, GETPOST('statut', 'int'), GETPOST('note_private', 'restricthtml'));
@@ -777,13 +796,17 @@ if (empty($reshook)) {
 	} elseif ($action == 'confirm_reopen' && $usercanclose && !GETPOST('cancel', 'alpha')) {
 		// Reopen proposal
 		// prevent browser refresh from reopening proposal several times
-		if ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED) {
+		if ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED || $object->statut == Propal::STATUS_CANCELED) {
 			$db->begin();
 
-			$result = $object->reopen($user, !getDolGlobalString('PROPAL_SKIP_ACCEPT_REFUSE'));
+			$newstatus = (getDolGlobalInt('PROPAL_SKIP_ACCEPT_REFUSE') ? Propal::STATUS_DRAFT : Propal::STATUS_VALIDATED);
+			$result = $object->reopen($user, $newstatus);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
+			} else {
+				$object->statut = $newstatus;
+				$object->status = $newstatus;
 			}
 
 			if (!$error) {
@@ -929,7 +952,7 @@ if (empty($reshook)) {
 			$prod = new Product($db);
 			$prod->fetch($line->fk_product);
 			if ($prod->price_min > $subprice) {
-				$price_subprice  = price($subprice,        0, $outlangs, 1, -1, -1, 'auto');
+				$price_subprice  = price($subprice, 0, $outlangs, 1, -1, -1, 'auto');
 				$price_price_min = price($prod->price_min, 0, $outlangs, 1, -1, -1, 'auto');
 				setEventMessages($prod->ref.' - '.$prod->label.' ('.$price_subprice.' < '.$price_price_min.' '.strtolower($langs->trans("MinPrice")).')'."\n", null, 'warnings');
 			}
@@ -1201,7 +1224,7 @@ if (empty($reshook)) {
 					$desc = $prod->description;
 				}
 
-				//If text set in desc is the same as product description (as now it's preloaded) whe add it only one time
+				//If text set in desc is the same as product description (as now it's preloaded) we add it only one time
 				if ($product_desc==$desc && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
 					$product_desc='';
 				}
@@ -1287,7 +1310,7 @@ if (empty($reshook)) {
 
 			// Margin
 			$fournprice = price2num(GETPOST('fournprice'.$predef) ? GETPOST('fournprice'.$predef) : '');
-			$buyingprice = price2num(GETPOST('buying_price'.$predef) != '' ? GETPOST('buying_price'.$predef) : ''); // If buying_price is '0', we muste keep this value
+			$buyingprice = price2num(GETPOST('buying_price'.$predef) != '' ? GETPOST('buying_price'.$predef) : ''); // If buying_price is '0', we must keep this value
 
 			$date_start = dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start'.$predef.'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 			$date_end = dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
@@ -1416,7 +1439,7 @@ if (empty($reshook)) {
 
 		// Add buying price
 		$fournprice = price2num(GETPOST('fournprice') ? GETPOST('fournprice') : '');
-		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : ''); // If buying_price is '0', we muste keep this value
+		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : ''); // If buying_price is '0', we must keep this value
 
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
 		$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
@@ -1690,7 +1713,7 @@ if (empty($reshook)) {
 	}
 
 	// Actions to build doc
-	$upload_dir = !empty($conf->propal->multidir_output[$object->entity])?$conf->propal->multidir_output[$object->entity]:$conf->propal->dir_output;
+	$upload_dir = !empty($conf->propal->multidir_output[$object->entity]) ? $conf->propal->multidir_output[$object->entity] : $conf->propal->dir_output;
 	$permissiontoadd = $usercancreate;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
@@ -1832,7 +1855,7 @@ if ($action == 'create') {
 	}
 	if (isModEnabled('stock') && empty($warehouse_id) && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')) {
 		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
-			$warehouse_id = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+			$warehouse_id = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 		}
 		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
 			$warehouse_id = $user->fk_warehouse;
@@ -1865,7 +1888,7 @@ if ($action == 'create') {
 
 		// Ref customer
 		print '<tr class="field_ref_client"><td class="titlefieldcreate">'.$langs->trans('RefCustomer').'</td><td class="valuefieldcreate">';
-		print '<input type="text" name="ref_client" value="'.(!empty($ref_client)?$ref_client:GETPOST('ref_client')).'"></td>';
+		print '<input type="text" name="ref_client" value="'.(!empty($ref_client) ? $ref_client : GETPOST('ref_client')).'"></td>';
 		print '</tr>';
 
 		// Third party
@@ -1885,7 +1908,7 @@ if ($action == 'create') {
 			print '<td class="valuefieldcreate">';
 			$filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';
 			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
-			// reload page to retrieve customer informations
+			// reload page to retrieve customer information
 			if (!getDolGlobalString('RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED')) {
 				print '<script>
 				$(document).ready(function() {
@@ -2040,7 +2063,7 @@ if ($action == 'create') {
 			print '<tr class="field_currency">';
 			print '<td class="titlefieldcreate">'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 			print '<td class="valuefieldcreate maxwidthonsmartphone">';
-			print img_picto('', 'currency', 'class="pictofixedwidth"').$form->selectMultiCurrency(((GETPOSTISSET('multicurrency_code') && !GETPOST('changecompany'))?GETPOST('multicurrency_code'):$currency_code), 'multicurrency_code', 0);
+			print img_picto('', 'currency', 'class="pictofixedwidth"').$form->selectMultiCurrency(((GETPOSTISSET('multicurrency_code') && !GETPOST('changecompany')) ? GETPOST('multicurrency_code') : $currency_code), 'multicurrency_code', 0);
 			print '</td></tr>';
 		}
 
@@ -2375,6 +2398,9 @@ if ($action == 'create') {
 		} else {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?statut=3&id=' . $object->id, $langs->trans('Close'), '', 'confirm_closeas', $formquestion, '', 1, 250);
 		}
+	} elseif ($action == 'cancel') {
+		// Confirm cancel
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("CancelPropal"), $langs->trans('ConfirmCancelPropal', $object->ref), 'confirm_cancel', '', 0, 1);
 	} elseif ($action == 'delete') {
 		// Confirm delete
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp', $object->ref), 'confirm_delete', '', 0, 1);
@@ -2412,8 +2438,8 @@ if ($action == 'create') {
 		$nbMandated = 0;
 		foreach ($object->lines as $line) {
 			$res = $line->fetch_product();
-			if ($res  > 0  ) {
-				if ($line->product->isService() && $line->product->isMandatoryPeriod() && (empty($line->date_start) || empty($line->date_end) )) {
+			if ($res  > 0) {
+				if ($line->product->isService() && $line->product->isMandatoryPeriod() && (empty($line->date_start) || empty($line->date_end))) {
 					$nbMandated++;
 					break;
 				}
@@ -2493,8 +2519,8 @@ if ($action == 'create') {
 
 		// Link for thirdparty discounts
 		if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
-			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
-			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
+			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
 		} else {
 			$filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
 			$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
@@ -2759,7 +2785,7 @@ if ($action == 'create') {
 			print $langs->trans('OutstandingBill');
 			print '</td><td class="valuefield">';
 			$arrayoutstandingbills = $soc->getOutstandingBills();
-			print ($arrayoutstandingbills['opened'] > $soc->outstanding_limit ? img_warning() : '');
+			print($arrayoutstandingbills['opened'] > $soc->outstanding_limit ? img_warning() : '');
 			print price($arrayoutstandingbills['opened']).' / ';
 			print price($soc->outstanding_limit, 0, $langs, 1, - 1, - 1, $conf->currency);
 			print '</td>';
@@ -2942,9 +2968,12 @@ if ($action == 'create') {
 			if ($action != 'editline') {
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-				if (empty($reshook))
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				if (empty($reshook)) {
 					$object->formAddObjectLine(1, $mysoc, $soc);
+				}
 			} else {
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formEditObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -2971,7 +3000,7 @@ if ($action == 'create') {
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-																									   // modified by hook
+		// modified by hook
 		if (empty($reshook)) {
 			if ($action != 'editline') {
 				// Validate
@@ -2994,7 +3023,7 @@ if ($action == 'create') {
 				}
 
 				// ReOpen
-				if ( (( getDolGlobalString('PROPAL_REOPEN_UNSIGNED_ONLY') && $object->statut == Propal::STATUS_NOTSIGNED) || (!getDolGlobalString('PROPAL_REOPEN_UNSIGNED_ONLY') && ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED))) && $usercanclose) {
+				if (((getDolGlobalString('PROPAL_REOPEN_UNSIGNED_ONLY') && $object->statut == Propal::STATUS_NOTSIGNED) || (!getDolGlobalString('PROPAL_REOPEN_UNSIGNED_ONLY') && ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED || $object->statut == Propal::STATUS_CANCELED))) && $usercanclose) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#reopen').'"';
 					print '>'.$langs->trans('ReOpen').'</a>';
 				}
@@ -3074,6 +3103,11 @@ if ($action == 'create') {
 					}
 				}
 
+				// Cancel propal
+				if ($object->status > Propal::STATUS_DRAFT && $usercanclose) {
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'">'.$langs->trans("CancelPropal").'</a>';
+				}
+
 				// Clone
 				if ($usercancreate) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object='.$object->element.'">'.$langs->trans("ToClone").'</a>';
@@ -3121,7 +3155,7 @@ if ($action == 'create') {
 		if ($object->statut != Propal::STATUS_DRAFT && $useonlinesignature) {
 			print '<br><!-- Link to sign -->';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
-			print showOnlineSignatureUrl('proposal', $object->ref).'<br>';
+			print showOnlineSignatureUrl('proposal', $object->ref, $object).'<br>';
 		}
 
 		print '</div><div class="fichehalfright">';

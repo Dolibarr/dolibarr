@@ -49,7 +49,7 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $TBomLineId = GETPOST('bomlineid', 'array');
@@ -69,7 +69,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -143,7 +143,7 @@ if (empty($reshook)) {
 	}
 	$triggermodname = 'MO_MODIFY'; // Name of trigger action code to execute when we modify record
 
-	// Create MO with Childs
+	// Create MO with Children
 	if ($action == 'add' && empty($id) && !empty($TBomLineId)) {
 		$noback = 1;
 		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -198,7 +198,7 @@ if (empty($reshook)) {
 
 	if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 		if (!($object->id > 0)) {
-			dol_print_error('', 'Error, object must be fetched before being deleted');
+			dol_print_error(null, 'Error, object must be fetched before being deleted');
 			exit;
 		}
 
@@ -365,9 +365,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	mrpCollapseBomManagement();
-
-	?>
+	mrpCollapseBomManagement(); ?>
 	<script>
 		 $(document).ready(function () {
 			 jQuery('#fk_bom').change(function() {
@@ -430,6 +428,7 @@ if ($action == 'create') {
 	if ($objectbom->id > 0) {
 		print load_fiche_titre($titlelist);
 
+		print '<!-- list of product/services to consume -->'."\n";
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 
@@ -496,8 +495,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'delete') {
 		$numberofmochilds = count($object->getAllMoChilds());
 
-		if ($numberofmochilds > 0)$label = $langs->trans("DeleteMoChild", '('.strval($numberofmochilds).')');
-		else $label = $langs->trans("DeleteMoChild");
+		if ($numberofmochilds > 0) {
+			$label = $langs->trans("DeleteMoChild", '('.strval($numberofmochilds).')');
+		} else {
+			$label = $langs->trans("DeleteMoChild");
+		}
 
 		$formquestion = array(
 			array('type' => 'checkbox', 'name' => 'deletechilds', 'label' => $label, 'value' => 0),

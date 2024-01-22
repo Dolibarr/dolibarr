@@ -70,7 +70,7 @@ print '--- start'."\n";
 $dir = DOL_DATA_ROOT;
 $subdir = $argv[1];
 if (empty($dir) || empty($subdir)) {
-	dol_print_error('', 'dir not defined');
+	dol_print_error(null, 'dir not defined');
 	exit(1);
 }
 if (!dol_is_dir($dir.'/'.$subdir)) {
@@ -84,7 +84,7 @@ global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
 
 foreach ($filearray as $keyf => $valf) {
 	$ref = basename($valf['name']);
-	$filearrayimg = dol_dir_list($valf['fullname'], "files", 0, '(\.gif|\.png|\.jpg|\.jpeg|\.bmp)$', '(\.meta|_preview.*\.png)$');
+	$filearrayimg = dol_dir_list($valf['fullname'], "files", 0, '(\.gif|\.png|\.jpg|\.jpeg|\.bmp|\.webp)$', '(\.meta|_preview.*\.png)$');
 	foreach ($filearrayimg as $keyi => $vali) {
 		print 'Process image for ref '.$ref.' : '.$vali['name']."\n";
 

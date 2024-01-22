@@ -161,7 +161,7 @@ class pdf_standard extends ModelePDFMovement
 		$product_id = GETPOST("product_id");
 		$action = GETPOST('action', 'aZ09');
 		$cancel = GETPOST('cancel', 'alpha');
-		$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'movementlist';
+		$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'movementlist';
 
 		$idproduct = GETPOST('idproduct', 'int');
 		$year = GETPOST("year");
@@ -177,7 +177,7 @@ class pdf_standard extends ModelePDFMovement
 		$search_qty = trim(GETPOST("search_qty"));
 		$search_type_mouvement = GETPOST('search_type_mouvement', 'int');
 
-		$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+		$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 		$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 		$sortfield = GETPOST('sortfield', 'aZ09comma');
 		$sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -512,8 +512,7 @@ class pdf_standard extends ModelePDFMovement
 									$showpricebeforepagebreak = 0;
 								}
 							}
-						} else // No pagebreak
-						{
+						} else { // No pagebreak
 							$pdf->commitTransaction();
 						}
 						$posYAfterDescription = $pdf->GetY();
@@ -531,7 +530,7 @@ class pdf_standard extends ModelePDFMovement
 							$curY = $tab_top_newpage;
 						}
 
-						$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+						$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
 						// $objp = $this->db->fetch_object($resql);
 
@@ -580,7 +579,7 @@ class pdf_standard extends ModelePDFMovement
 						$pdf->SetXY($this->posxlabel + 0.8, $curY);
 						$pdf->MultiCell($this->posxqty - $this->posxlabel - 0.8, 6, $productstatic->label, 0, 'L');
 
-						// Lot/serie
+						// Lot/series
 						$pdf->SetXY($this->posxqty, $curY);
 						$pdf->MultiCell($this->posxup - $this->posxqty - 0.8, 3, $productlot->batch, 0, 'R');
 
@@ -588,7 +587,7 @@ class pdf_standard extends ModelePDFMovement
 						$pdf->SetXY($this->posxup, $curY);
 						$pdf->MultiCell($this->posxunit - $this->posxup - 0.8, 3, $objp->inventorycode, 0, 'R');
 
-						// Label mouvement
+						// Label movement
 						$pdf->SetXY($this->posxunit, $curY);
 						$pdf->MultiCell($this->posxdiscount - $this->posxunit - 0.8, 3, $objp->label, 0, 'R');
 						$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
@@ -812,7 +811,7 @@ class pdf_standard extends ModelePDFMovement
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 
@@ -857,7 +856,7 @@ class pdf_standard extends ModelePDFMovement
 			$pdf->MultiCell($this->posxqty - $this->posxlabel, 2, $outputlangs->transnoentities("Label"), '', 'C');
 		}
 
-		//Lot/serie Product
+		//Lot/series Product
 		//$pdf->line($this->posxqty - 1, $tab_top, $this->posxqty - 1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxqty, $tab_top + 1);
@@ -871,11 +870,11 @@ class pdf_standard extends ModelePDFMovement
 			$pdf->MultiCell($this->posxunit - $this->posxup, 2, $outputlangs->transnoentities("Inventory Code"), '', 'C');
 		}
 
-		//Label mouvement
+		//Label movement
 		//$pdf->line($this->posxunit, $tab_top, $this->posxunit, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxunit, $tab_top + 1);
-			$pdf->MultiCell($this->posxdiscount - $this->posxunit, 2, $outputlangs->transnoentities("Label Mouvement"), '', 'C');
+			$pdf->MultiCell($this->posxdiscount - $this->posxunit, 2, $outputlangs->transnoentities("Label Movement"), '', 'C');
 		}
 
 		//Origin

@@ -62,13 +62,15 @@ $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("pa
 
 // Security check
 $id = (GETPOST('facid', 'int') ? GETPOST('facid', 'int') : GETPOST('id', 'int'));
-$lineid = GETPOST('lineid', 'int');
+$lineid = GETPOSTINT('lineid');
 $title = GETPOST('title', 'alpha');
 $libelle = GETPOST('libelle', 'alpha');
 $ref_supplier = GETPOST('ref_supplier', 'alpha');
 $projectid = GETPOST('projectid', 'int');
 $year_date_when = GETPOST('year_date_when');
 $month_date_when = GETPOST('month_date_when');
+// Security check
+$socid = GETPOST('socid', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -127,7 +129,6 @@ $now = dol_now();
 $error = 0;
 
 $result = restrictedArea($user, 'supplier_invoicerec', $object->id, $objecttype);
-
 
 
 /*
@@ -193,7 +194,7 @@ if (empty($reshook)) {
 			$object->title = GETPOST('title', 'alphanohtml');
 			$object->libelle = GETPOST('libelle', 'alpha');	// deprecated
 			$object->label = GETPOST('libelle', 'alpha');
-			$object->fk_project = GETPOST('projectid', 'int');
+			$object->fk_project = GETPOSTINT('projectid');
 			$object->ref_supplier = GETPOST('ref_supplier', 'alphanohtml');
 
 			$object->note_private = GETPOST('note_private', 'restricthtml');
@@ -566,7 +567,7 @@ if (empty($reshook)) {
 					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
 				} elseif ($tmpvat != $tmpprodvat) {
 					// On reevalue prix selon taux tva car taux tva transaction peut etre different
-					// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+					// de ceux du produit par default (par example si pays different entre vendeur et acheteur).
 					if ($price_base_type != 'HT') {
 						$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
 					} else {
@@ -906,8 +907,12 @@ if ($action == 'create') {
 		print dol_get_fiche_head(null, '', '', 0);
 
 		$rowspan = 4;
-		if (isModEnabled('project')) $rowspan++;
-		if ($object->fk_account > 0) $rowspan++;
+		if (isModEnabled('project')) {
+			$rowspan++;
+		}
+		if ($object->fk_account > 0) {
+			$rowspan++;
+		}
 
 		print '<table class="border centpercent">';
 
@@ -943,8 +948,8 @@ if ($action == 'create') {
 		$substitutionarray['__INVOICE_YEAR__'] = $langs->trans("YearOfInvoice") . ' (' . $langs->trans("Example") . ': ' . dol_print_date($object->date, '%Y') . ')';
 		$substitutionarray['__INVOICE_NEXT_YEAR__'] = $langs->trans("NextYearOfInvoice") . ' (' . $langs->trans("Example") . ': ' . dol_print_date(dol_time_plus_duree($object->date, 1, 'y'), '%Y') . ')';
 		// Only on template invoices
-		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = $langs->trans("DateNextInvoiceBeforeGen") . ' (' . $langs->trans("Example") . ': ' . dol_print_date($object->date_when, 'dayhour') . ')';
-		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = $langs->trans("DateNextInvoiceAfterGen") . ' (' . $langs->trans("Example") . ': ' . dol_print_date(dol_time_plus_duree($object->date_when, $object->frequency, $object->unit_frequency), 'dayhour') . ')';
+		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = $langs->trans("DateNextInvoiceBeforeGen") . (isset($object->date_when) ? ' (' . $langs->trans("Example") . ': ' .dol_print_date($object->date_when, 'dayhour') . ')' : '');
+		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = $langs->trans("DateNextInvoiceAfterGen") . (isset($object->date_when) ? ' (' . $langs->trans("Example") . ': ' . dol_print_date(dol_time_plus_duree($object->date_when, $object->frequency, $object->unit_frequency), 'dayhour') . ')' : '');
 		$substitutionarray['__INVOICE_COUNTER_CURRENT__'] = $langs->trans("Count");
 		$substitutionarray['__INVOICE_COUNTER_MAX__'] = $langs->trans("MaxPeriodNumber");
 
@@ -1098,7 +1103,7 @@ if ($action == 'create') {
 
 		print "</form>\n";
 	} else {
-		dol_print_error('', "Error, no invoice " . $object->id);
+		dol_print_error(null, "Error, no invoice " . $object->id);
 	}
 } else {
 	/*
@@ -1107,6 +1112,8 @@ if ($action == 'create') {
 	if ($object->id > 0) {
 		$object->fetch($object->id);
 		$object->fetch_thirdparty();
+
+		$formconfirm = '';
 
 		// Confirmation de la suppression d'une ligne produit
 		if ($action == 'ask_deleteline') {
@@ -1407,7 +1414,7 @@ if ($action == 'create') {
 
 		print '<tr><td colspan="2">' . img_picto('', 'recurring', 'class="pictofixedwidth"') . $title . '</td></tr>';
 
-		// if "frequency" is empty or = 0, the reccurence is disabled
+		// if "frequency" is empty or = 0, the recurrence is disabled
 		print '<tr><td style="width: 50%">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Frequency');
@@ -1586,9 +1593,12 @@ if ($action == 'create') {
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-				if (empty($reshook))
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				if (empty($reshook)) {
 					global $senderissupplier;
+				}
 				$senderissupplier = 2;
 				$object->formAddObjectLine(0, $object->thirdparty, $mysoc); // No date selector for template invoice
 			}

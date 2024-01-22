@@ -102,7 +102,7 @@ if ($action == 'setvalue' && $user->admin) {
 	$valkey = '';
 	$key = GETPOST("key");
 	if ($key) {
-		$valkey = $conf->global->$key;
+		$valkey = getDolGlobalString($key);
 	}
 	if (!dolibarr_set_const($db, 'LDAP_KEY_CONTACTS', $valkey, 'chaine', 0, '', $conf->entity)) {
 		$error++;
@@ -132,7 +132,7 @@ print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 
 $head = ldap_prepare_head();
 
-// Test si fonction LDAP actives
+// Test si function LDAP actives
 if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
@@ -281,20 +281,20 @@ print '</form>';
 
 
 /*
- * Test de la connexion
+ * Test the connection
  */
 $butlabel = $langs->trans("LDAPTestSynchroContact");
 $testlabel = 'test';
-$key = $conf->global->LDAP_KEY_CONTACTS;
-$dn = $conf->global->LDAP_CONTACT_DN;
-$objectclass = $conf->global->LDAP_CONTACT_OBJECT_CLASS;
+$key = getDolGlobalString('LDAP_KEY_CONTACTS');
+$dn = getDolGlobalString('LDAP_CONTACT_DN');
+$objectclass = getDolGlobalString('LDAP_CONTACT_OBJECT_CLASS');
 
 show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
 
 
 if (function_exists("ldap_connect")) {
 	if ($_GET["action"] == 'test') {
-		// Creation objet
+		// Create object
 		$object = new Contact($db);
 		$object->initAsSpecimen();
 

@@ -28,7 +28,6 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
  */
 class Donations extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
@@ -54,7 +53,7 @@ class Donations extends DolibarrApi
 	/**
 	 * Get properties of an donation object
 	 *
-	 * Return an array with donation informations
+	 * Return an array with donation information
 	 *
 	 * @param   int         $id         ID of order
 	 * @return  Object					Object with cleaned properties
@@ -95,7 +94,7 @@ class Donations extends DolibarrApi
 	 * @param int       $page               Page number
 	 * @param string    $thirdparty_ids     Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                       Array of order objects
 	 *
 	 * @throws RestException
@@ -166,9 +165,6 @@ class Donations extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve donation list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No donation found');
-		}
 
 		return $obj_ret;
 	}
@@ -189,6 +185,12 @@ class Donations extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->don->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->don->$field = $value;
 		}
 		/*if (isset($request_data["lines"])) {
@@ -232,6 +234,12 @@ class Donations extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->don->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->don->$field = $value;
 		}
 

@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 class pdf_timespent extends ModelePDFProjects
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -205,7 +205,7 @@ class pdf_timespent extends ModelePDFProjects
 					$tplidx = $pdf->importPage(1);
 				}
 
-				// Complete object by loading several other informations
+				// Complete object by loading several other information
 				$task = new Task($this->db);
 				$tasksarray = $task->getTasksArray(0, 0, $object->id);
 
@@ -352,7 +352,7 @@ class pdf_timespent extends ModelePDFProjects
 									$this->_pagehead($pdf, $object, 0, $outputlangs);
 								}
 								$pdf->setPage($pageposafter + 1);
-								$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+								$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 								$pdf->MultiCell(0, 3, ''); // Set interline to 3
 								$pdf->SetTextColor(0, 0, 0);
 
@@ -368,8 +368,7 @@ class pdf_timespent extends ModelePDFProjects
 							}
 						}
 						//var_dump($i.' '.$posybefore.' '.$posyafter.' '.($this->page_hauteur -  ($heightforfooter + $heightforfreetext + $heightforinfotot)).' '.$showpricebeforepagebreak);
-					} else // No pagebreak
-					{
+					} else { // No pagebreak
 						$pdf->commitTransaction();
 					}
 					$posYAfterDescription = $pdf->GetY();

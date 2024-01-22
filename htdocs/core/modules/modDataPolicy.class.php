@@ -29,13 +29,13 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 // The class name should start with a lower case mod for Dolibarr to pick it up
-// so we ignore the Squiz.Classes.ValidClassName.NotCamelCaps rule.
+// so we ignore the Squiz.Class.ValidClassName.NotCamelCaps rule.
 // @codingStandardsIgnoreStart
 /**
  *  Description and activation class for module datapolicy
  */
-class modDataPolicy extends DolibarrModules {
-
+class modDataPolicy extends DolibarrModules
+{
 	// @codingStandardsIgnoreEnd
 	/**
 	 * Constructor. Define names, constants, directories, boxes, permissions
@@ -160,7 +160,7 @@ class modDataPolicy extends DolibarrModules {
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
 		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view

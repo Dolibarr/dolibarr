@@ -59,7 +59,7 @@ $warehouseStatus = GETPOST('warehousestatus', 'alpha');
 $hidepriceinlabel = GETPOST('hidepriceinlabel', 'int');
 
 // Security check
-restrictedArea($user, 'produit|service', 0, 'product&product');
+restrictedArea($user, 'produit|service|commande|propal|facture', 0, 'product&product');
 
 
 /*
@@ -174,11 +174,11 @@ if ($action == 'fetch' && !empty($id)) {
 				$objp = $db->fetch_object($result);
 				if ($objp) {
 					$found = true;
-					$outprice_ht = price($objp->price);			// formated for langage user because is inserted into input field
-					$outprice_ttc = price($objp->price_ttc);	// formated for langage user because is inserted into input field
+					$outprice_ht = price($objp->price);			// formatted for language user because is inserted into input field
+					$outprice_ttc = price($objp->price_ttc);	// formatted for language user because is inserted into input field
 					$outpricebasetype = $objp->price_base_type;
 					if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {
-						$outtva_tx_formated = price($objp->tva_tx);	// formated for langage user because is inserted into input field
+						$outtva_tx_formated = price($objp->tva_tx);	// formatted for language user because is inserted into input field
 						$outtva_tx = price2num($objp->tva_tx);		// international numeric
 						$outdefault_vat_code = $objp->default_vat_code;
 					} else {

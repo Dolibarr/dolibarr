@@ -104,7 +104,7 @@ if ($id > 0 || !empty($ref)) {
 
 $permissiontoread = $user->rights->salaries->read;
 $permissiontoadd = $user->rights->salaries->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
-$permissiontodelete = $user->rights->salaries->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissiontodelete = $user->rights->salaries->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_UNPAID);
 
 $moreparam = '';
 if ($type == 'bank-transfer') {
@@ -153,7 +153,7 @@ if ($reshook < 0) {
 
 
 if ($action == "new") {
-		//var_dump($object);exit;
+	//var_dump($object);exit;
 	if ($object->id > 0) {
 		$db->begin();
 
@@ -167,12 +167,12 @@ if ($action == "new") {
 
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 		} else {
-				dol_print_error($db, $error);
-				$db->rollback();
+			dol_print_error($db, $error);
+			$db->rollback();
 			setEventMessages($obj->error, $obj->errors, 'errors');
 		}
 	}
-		$action = '';
+	$action = '';
 }
 
 if ($action == "delete" && $permissiontodelete) {
@@ -299,8 +299,9 @@ print '<tr><td>';
 print '<table class="nobordernopadding" width="100%"><tr><td>';
 print $langs->trans('DefaultPaymentMode');
 print '</td>';
-if ($action != 'editmode')
+if ($action != 'editmode') {
 	print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+}
 print '</tr></table>';
 print '</td><td>';
 
@@ -365,9 +366,10 @@ if ($resql) {
 
 	$num = $db->num_rows($resql);
 
-	$i = 0; $total = 0;
+	$i = 0;
+	$total = 0;
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder paymenttable">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("RefPayment").'</td>';
@@ -387,7 +389,7 @@ if ($resql) {
 			print '<tr class="oddeven"><td>';
 			print '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($objp->dp), 'dayhour', 'tzuserrel')."</td>\n";
-			$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
+			$labeltype = $langs->trans("PaymentType".$objp->type_code) != "PaymentType".$objp->type_code ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 			print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
 			if (isModEnabled("banque")) {
 				$bankaccountstatic->id = $objp->baid;
@@ -405,8 +407,9 @@ if ($resql) {
 				}
 
 				print '<td class="right">';
-				if ($bankaccountstatic->id)
+				if ($bankaccountstatic->id) {
 					print $bankaccountstatic->getNomUrl(1, 'transactions');
+				}
 				print '</td>';
 			}
 			print '<td class="right nowrap amountcard">'.price($objp->amount)."</td>\n";
@@ -423,7 +426,7 @@ if ($resql) {
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right nowrap amountcard">'.price($totalpaid)."</td></tr>\n";
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right nowrap amountcard">'.price($object->amount)."</td></tr>\n";
 
-	 $resteapayer = $object->amount - $totalpaid;
+	$resteapayer = $object->amount - $totalpaid;
 	// $cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
@@ -478,7 +481,7 @@ if ($object->paye == 0 && $hadRequest == 0) {
 			print '</form>';
 
 			if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT_SHOW_OLD_BUTTON')) {	// This is hidden, prefer to use mode enabled with STRIPE_SEPA_DIRECT_DEBIT
-				// TODO Replace this with a checkbox for each payment mode: "Send request to XXX immediatly..."
+				// TODO Replace this with a checkbox for each payment mode: "Send request to XXX immediately..."
 				print "<br>";
 				//add stripe sepa button
 				$buttonlabel = $langs->trans("MakeWithdrawRequestStripe");
@@ -610,7 +613,7 @@ if ($resql) {
 				print $withdrawreceipt->getNomUrl(1);
 			}
 
-			if ($type != 'bank-transfer') {
+			if (!in_array($type, array('bank-transfer', 'salaire', 'salary'))) {
 				if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT')) {
 					$langs->load("stripe");
 					if ($obj->fk_prelevement_bons > 0) {
@@ -624,7 +627,7 @@ if ($resql) {
 					if ($obj->fk_prelevement_bons > 0) {
 						print ' &nbsp; ';
 					}
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripecredittransfer&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripecredittransfer&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequesCreditTransferWithStripe").'</a>';
 				}
 			}
 			print '</td>';
