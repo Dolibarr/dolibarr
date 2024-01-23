@@ -970,7 +970,7 @@ function GETPOSTINT($paramname, $method = 0)
 function GETPOSTFLOAT($paramname, $rounding = '')
 {
 	// price2num() is used to sanitize any valid user input (such as "1 234.5", "1 234,5", "1'234,5", "1·234,5", "1,234.5", etc.)
-	return (float) price2num(GETPOST($paramname), $rounding);
+	return (float) price2num(GETPOST($paramname), $rounding, 2);
 }
 
 

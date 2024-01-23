@@ -62,7 +62,7 @@ class BookKeeping extends CommonObject
 	public $id;
 
 	/**
-	 * @var string Date of source document, in db date NOT NULL
+	 * @var int	Date of source document, in db date NOT NULL
 	 */
 	public $doc_date;
 
@@ -285,7 +285,7 @@ class BookKeeping extends CommonObject
 			$this->journal_label = trim($this->journal_label);
 		}
 		if (isset($this->piece_num)) {
-			$this->piece_num = trim($this->piece_num);
+			$this->piece_num = (int) trim($this->piece_num);
 		}
 		if (empty($this->debit)) {
 			$this->debit = 0.0;
@@ -615,16 +615,16 @@ class BookKeeping extends CommonObject
 			$this->label_operation = trim($this->label_operation);
 		}
 		if (isset($this->debit)) {
-			$this->debit = trim($this->debit);
+			$this->debit = (float) trim($this->debit);
 		}
 		if (isset($this->credit)) {
-			$this->credit = trim($this->credit);
+			$this->credit = (float) trim($this->credit);
 		}
 		if (isset($this->montant)) {
-			$this->montant = trim($this->montant);
+			$this->montant = (float) trim($this->montant);
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) trim($this->amount);
 		}
 		if (isset($this->sens)) {
 			$this->sens = trim($this->sens);
@@ -639,7 +639,7 @@ class BookKeeping extends CommonObject
 			$this->journal_label = trim($this->journal_label);
 		}
 		if (isset($this->piece_num)) {
-			$this->piece_num = trim($this->piece_num);
+			$this->piece_num = (int) trim($this->piece_num);
 		}
 		if (empty($this->debit)) {
 			$this->debit = 0;
@@ -663,9 +663,9 @@ class BookKeeping extends CommonObject
 			return -1;
 		}
 
-		$this->debit = price2num($this->debit, 'MT');
-		$this->credit = price2num($this->credit, 'MT');
-		$this->montant = price2num($this->montant, 'MT');
+		$this->debit = (float) price2num($this->debit, 'MT');
+		$this->credit = (float) price2num($this->credit, 'MT');
+		$this->montant = (float) price2num($this->montant, 'MT');
 
 		$now = dol_now();
 
@@ -1349,13 +1349,13 @@ class BookKeeping extends CommonObject
 			$this->label_operation = trim($this->label_operation);
 		}
 		if (isset($this->debit)) {
-			$this->debit = trim($this->debit);
+			$this->debit = (float) trim($this->debit);
 		}
 		if (isset($this->credit)) {
-			$this->credit = trim($this->credit);
+			$this->credit = (float) trim($this->credit);
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) trim($this->amount);
 		}
 		if (isset($this->sens)) {
 			$this->sens = trim($this->sens);
@@ -1370,7 +1370,7 @@ class BookKeeping extends CommonObject
 			$this->journal_label = trim($this->journal_label);
 		}
 		if (isset($this->piece_num)) {
-			$this->piece_num = trim($this->piece_num);
+			$this->piece_num = (int) trim($this->piece_num);
 		}
 
 		$result = $this->canModifyBookkeeping($this->id);
@@ -1385,8 +1385,8 @@ class BookKeeping extends CommonObject
 			return -1;
 		}
 
-		$this->debit = price2num($this->debit, 'MT');
-		$this->credit = price2num($this->credit, 'MT');
+		$this->debit = (float) price2num($this->debit, 'MT');
+		$this->credit = (float) price2num($this->credit, 'MT');
 
 		// Check parameters
 		// Put here code to add a control on parameters values
@@ -1785,7 +1785,7 @@ class BookKeeping extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT piece_num, doc_date,code_journal, journal_label, doc_ref, doc_type,";
+		$sql = "SELECT piece_num, doc_date, code_journal, journal_label, doc_ref, doc_type,";
 		$sql .= " date_creation, tms as date_modification, date_validated as date_validation";
 		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
 		if ($mode != "_tmp") {
@@ -1850,7 +1850,7 @@ class BookKeeping extends CommonObject
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(get_class($this)."::getNextNumMvt ".$this->error, LOG_ERR);
-			return -1;
+			return "-1";
 		}
 	}
 
@@ -2152,7 +2152,7 @@ class BookKeeping extends CommonObject
 		if (!$resql) {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(get_class($this)."::select_account ".$this->error, LOG_ERR);
-			return -1;
+			return "-1";
 		}
 
 		$out = ajax_combobox($htmlname, $event);
@@ -2264,7 +2264,7 @@ class BookKeeping extends CommonObject
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(__METHOD__." ".$this->error, LOG_ERR);
-			return -1;
+			return "-1";
 		}
 	}
 
@@ -2781,7 +2781,7 @@ class BookKeeping extends CommonObject
 
 							$bookkeeping = new BookKeeping($this->db);
 							$bookkeeping->doc_date = $new_fiscal_period->date_start;
-							$bookkeeping->date_lim_reglement = '';
+							$bookkeeping->date_lim_reglement = (string) '';
 							$bookkeeping->doc_ref = $new_fiscal_period->label;
 							$bookkeeping->date_creation = $now;
 							$bookkeeping->doc_type = 'closure';
@@ -2828,7 +2828,7 @@ class BookKeeping extends CommonObject
 
 						$bookkeeping = new BookKeeping($this->db);
 						$bookkeeping->doc_date = $new_fiscal_period->date_start;
-						$bookkeeping->date_lim_reglement = '';
+						$bookkeeping->date_lim_reglement = (string) '';
 						$bookkeeping->doc_ref = $new_fiscal_period->label;
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'closure';
@@ -3034,7 +3034,7 @@ class BookKeepingLine extends CommonObjectLine
 	 */
 	public $id;
 
-	public $doc_date = '';
+	public $doc_date = null;
 	public $doc_type;
 	public $doc_ref;
 
@@ -3074,7 +3074,7 @@ class BookKeepingLine extends CommonObjectLine
 	public $multicurrency_amount;
 
 	/**
-	 * @var float 	Multicurrency code
+	 * @var string 	Multicurrency code
 	 */
 	public $multicurrency_code;
 
