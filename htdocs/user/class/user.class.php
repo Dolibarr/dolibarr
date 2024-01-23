@@ -2810,6 +2810,7 @@ class User extends CommonObject
 	 *  @param	string	$cssclass		Force a css class
 	 * 	@param	string	$imagesize		'mini', 'small' or '' (original)
 	 *	@return	string					String with URL link
+	 * 	@see getImagePublicURLOfObject()
 	 */
 	public function getPhotoUrl($width, $height, $cssclass = '', $imagesize = '')
 	{
@@ -2823,7 +2824,7 @@ class User extends CommonObject
 	/**
 	 * Return array of data to show into tooltips
 	 *
-	 * @param array $params ex option, infologin
+	 * @param array $params 	Array with options, infologin
 	 * @since v18
 	 * @return array
 	 */
