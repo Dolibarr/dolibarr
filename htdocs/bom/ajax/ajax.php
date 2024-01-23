@@ -74,9 +74,9 @@ if ($action == 'getWorkstationByProduct' && $user->hasRight('product', 'lire')) 
 
 	if ($res < 0) {
 		$error = 'SQL ERROR';
-	}elseif($res == 0){
+	} elseif ($res == 0) {
 		$error = 'NOT FOUND';
-	}else{
+	} else {
 		$error = null;
 		$result['defaultWk']=$product->fk_default_workstation;
 	}
