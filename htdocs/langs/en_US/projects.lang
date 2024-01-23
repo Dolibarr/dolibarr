@@ -250,7 +250,7 @@ LatestModifiedProjects=Latest %s modified projects
 OtherFilteredTasks=Other filtered tasks
 NoAssignedTasks=No assigned tasks found (assign project/tasks to the current user from the top select box to enter time on it)
 ThirdPartyRequiredToGenerateInvoice=A third party must be defined on project to be able to invoice it.
-ThirdPartyRequiredToGenerateInvoice=A third party must be defined on project to be able to create intervention.
+ThirdPartyRequiredToGenerateIntervention=A third party must be defined on project to be able to create intervention.
 ChooseANotYetAssignedTask=Choose a task not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Allow user comments on tasks
