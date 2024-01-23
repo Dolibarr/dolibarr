@@ -285,7 +285,7 @@ class BookKeeping extends CommonObject
 			$this->journal_label = trim($this->journal_label);
 		}
 		if (isset($this->piece_num)) {
-			$this->piece_num = trim($this->piece_num);
+			$this->piece_num = (int) $this->piece_num;
 		}
 		if (empty($this->debit)) {
 			$this->debit = 0.0;
@@ -384,6 +384,10 @@ class BookKeeping extends CommonObject
 				if (empty($this->piece_num)) {
 					$this->piece_num = 1;
 				}
+
+				$this->debit = (float) price2num($this->debit, 'MT');
+				$this->credit = (float) price2num($this->credit, 'MT');
+				$this->montant = (float) price2num($this->montant, 'MT');
 
 				$now = dol_now();
 
@@ -615,16 +619,16 @@ class BookKeeping extends CommonObject
 			$this->label_operation = trim($this->label_operation);
 		}
 		if (isset($this->debit)) {
-			$this->debit = trim($this->debit);
+			$this->debit = (float) $this->debit;
 		}
 		if (isset($this->credit)) {
-			$this->credit = trim($this->credit);
+			$this->credit = (float) $this->credit;
 		}
 		if (isset($this->montant)) {
-			$this->montant = trim($this->montant);
+			$this->montant = (float) $this->montant;
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) $this->amount;
 		}
 		if (isset($this->sens)) {
 			$this->sens = trim($this->sens);
@@ -639,7 +643,7 @@ class BookKeeping extends CommonObject
 			$this->journal_label = trim($this->journal_label);
 		}
 		if (isset($this->piece_num)) {
-			$this->piece_num = trim($this->piece_num);
+			$this->piece_num = (int) $this->piece_num;
 		}
 		if (empty($this->debit)) {
 			$this->debit = 0;
@@ -663,9 +667,9 @@ class BookKeeping extends CommonObject
 			return -1;
 		}
 
-		$this->debit = price2num($this->debit, 'MT');
-		$this->credit = price2num($this->credit, 'MT');
-		$this->montant = price2num($this->montant, 'MT');
+		$this->debit = (float) price2num($this->debit, 'MT');
+		$this->credit = (float) price2num($this->credit, 'MT');
+		$this->montant = (float) price2num($this->montant, 'MT');
 
 		$now = dol_now();
 
@@ -1349,13 +1353,16 @@ class BookKeeping extends CommonObject
 			$this->label_operation = trim($this->label_operation);
 		}
 		if (isset($this->debit)) {
-			$this->debit = trim($this->debit);
+			$this->debit = (float) $this->debit;
 		}
 		if (isset($this->credit)) {
-			$this->credit = trim($this->credit);
+			$this->credit =  (float) $this->credit;
+		}
+		if (isset($this->montant)) {
+			$this->montant = (float) $this->montant;
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) $this->amount;
 		}
 		if (isset($this->sens)) {
 			$this->sens = trim($this->sens);
@@ -1370,7 +1377,7 @@ class BookKeeping extends CommonObject
 			$this->journal_label = trim($this->journal_label);
 		}
 		if (isset($this->piece_num)) {
-			$this->piece_num = trim($this->piece_num);
+			$this->piece_num = (int) $this->piece_num;
 		}
 
 		$result = $this->canModifyBookkeeping($this->id);
@@ -1387,6 +1394,7 @@ class BookKeeping extends CommonObject
 
 		$this->debit = price2num($this->debit, 'MT');
 		$this->credit = price2num($this->credit, 'MT');
+		$this->montant = price2num($this->montant, 'MT');
 
 		// Check parameters
 		// Put here code to add a control on parameters values
@@ -1751,7 +1759,7 @@ class BookKeeping extends CommonObject
 		$now = dol_now();
 
 		$this->id = 0;
-		$this->doc_date = $now;
+		$this->doc_date = (string) $now;
 		$this->doc_type = '';
 		$this->doc_ref = '';
 		$this->fk_doc = 0;
@@ -1825,7 +1833,7 @@ class BookKeeping extends CommonObject
 	 * Return next number movement
 	 *
 	 * @param	string	$mode	Mode
-	 * @return	string			Next numero to use
+	 * @return	int			Return integer <0 if KO, >0 if OK (Next numero to use)
 	 */
 	public function getNextNumMvt($mode = '')
 	{
@@ -2126,7 +2134,7 @@ class BookKeeping extends CommonObject
 	 * @param int		$select_in	Value is a aa.rowid (0 default) or aa.account_number (1)
 	 * @param int		$select_out	Set value returned by select 0=rowid (default), 1=account_number
 	 * @param string	$aabase		Set accounting_account base class to display empty=all or from 1 to 8 will display only account beginning by this number
-	 * @return string	String with HTML select
+	 * @return string|int	String with HTML select or -1 if KO
 	 */
 	public function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $aabase = '')
 	{
@@ -2232,7 +2240,7 @@ class BookKeeping extends CommonObject
 	 * Description of accounting account
 	 *
 	 * @param	string	$account	Accounting account
-	 * @return	string				Account desc
+	 * @return	string|int				Account desc or -1 if KO
 	 */
 	public function get_compte_desc($account = null)
 	{
