@@ -449,12 +449,12 @@ class FormSetup
 
 	/**
 	 * Create a new item
-	 * the tagret is useful with hooks : that allow externals modules to add setup items on good place
+	 * The tagret is useful with hooks : that allow externals modules to add setup items on good place
 	 *
 	 * @param string	$confKey 				the conf key used in database
 	 * @param string	$targetItemKey    		target item used to place the new item beside
 	 * @param bool		$insertAfterTarget		insert before or after target item ?
-	 * @return FormSetupItem the new setup item created
+	 * @return FormSetupItem 					the new setup item created
 	 */
 	public function newItem($confKey, $targetItemKey = '', $insertAfterTarget = false)
 	{
@@ -911,7 +911,7 @@ class FormSetupItem
 	 */
 	public function generateInputFieldText()
 	{
-		if (empty($this->fieldAttr)) {
+		if (empty($this->fieldAttr) || empty($this->fieldAttr['class'])) {
 			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass);
 		}
 		return '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
