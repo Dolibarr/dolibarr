@@ -584,7 +584,7 @@ if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire && ($use
 	$moreforfilter .= img_picto($tmptitle, 'category');
 	//$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
 	//$moreforfilter .= $form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
-	$moreforfilter .= $formother->select_categories(Categorie::TYPE_PRODUCT, $search_product_category, 'parent', 1, $tmptitle);
+	$moreforfilter .= $formother->select_categories(Categorie::TYPE_PRODUCT, $search_product_category, 'search_product_category', 1, $tmptitle);
 
 	$moreforfilter .= '</div>';
 }
