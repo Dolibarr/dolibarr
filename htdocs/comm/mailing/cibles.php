@@ -645,6 +645,7 @@ if ($object->fetch($id) >= 0) {
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
+		print '<input type="hidden" name="page_y" value="">';
 
 		$morehtmlcenter = '';
 		if ($allowaddtarget) {
@@ -712,7 +713,7 @@ if ($object->fetch($id) >= 0) {
 		print '&nbsp;';
 		print '</td>';
 
-		//Statut
+		// Status
 		print '<td class="liste_titre center parentonrightofpage">';
 		print $formmailing->selectDestinariesStatus($search_dest_status, 'search_dest_status', 1, 'width100 onrightofpage');
 		print '</td>';
