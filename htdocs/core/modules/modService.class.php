@@ -793,7 +793,7 @@ class modService extends DolibarrModules
 				}
 				if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 					$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
-						'sp.packagning'=>'10',
+						'sp.packaging'=>'10',
 					));
 				}
 
