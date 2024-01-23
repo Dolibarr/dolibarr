@@ -37,6 +37,10 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modAgenda extends DolibarrModules
 {
+	private mixed $import_sql_start;
+	private mixed $import_sql_end;
+	private mixed $import_sql_order;
+
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
