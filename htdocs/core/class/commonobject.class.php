@@ -99,8 +99,8 @@ abstract class CommonObject
 
 	/**
 	 * @var string 		Name to use for 'features' parameter to check module permissions user->rights->feature with restrictedArea().
-	 * 					Undefined means same value than $element. 
-  	 *					Can be use to force a check on another element (for example for class of a line, we mention here its parent element).
+	 * 					Undefined means same value than $element.
+	 *					Can be use to force a check on another element (for example for class of a line, we mention here its parent element).
 	 */
 	public $element_for_permission;
 
@@ -329,7 +329,7 @@ abstract class CommonObject
 	 */
 	public $country_id;
 
-	/**	
+	/**
 	 * @var string		ISO country code on 2 chars
 	 * @see getFullAddress(), isInEEC(), country
 	 */
