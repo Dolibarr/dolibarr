@@ -241,6 +241,7 @@ class FormCardWebPortal
 		$context = Context::getInstance();
 
 		$backurlforlist = $context->getControllerUrl('default');
+		$noback = 1;
 
 		if (empty($backtopage) || ($cancel && empty($id))) {
 			if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
@@ -373,7 +374,7 @@ class FormCardWebPortal
 				}
 
 				// Validation of fields values
-				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
+				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || getDolGlobalString('MAIN_ACTIVATE_VALIDATION_RESULT')) {
 					if (!$error && !empty($val['validate']) && is_callable(array($object, 'validateField'))) {
 						if (!$object->validateField($object->fields, $key, $value)) {
 							$error++;

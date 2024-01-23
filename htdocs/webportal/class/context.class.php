@@ -52,6 +52,11 @@ class Context
 	public $error;
 
 	/**
+	 * @var array errors
+	 */
+	public $errors = array();
+
+	/**
 	 * @var string Action
 	 */
 	public $action;
