@@ -19,6 +19,7 @@
 
 create table llx_c_prospectlevel
 (
+  rowid           integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
   code            varchar(12) PRIMARY KEY,
   label           varchar(128),
   sortorder       smallint,
