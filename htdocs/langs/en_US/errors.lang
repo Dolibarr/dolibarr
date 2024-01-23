@@ -392,3 +392,7 @@ BadSetupOfField = Error bad setup of field
 BadSetupOfFieldClassNotFoundForValidation = Error bad setup of field : Class not found for validation
 BadSetupOfFieldFileNotFound = Error bad setup of field : File not found for inclusion
 BadSetupOfFieldFetchNotCallable = Error bad setup of field : Fetch not callable on class
+TotalAmountEmpty=Total Amount Empty
+FailedToFoundTheConversionRateForInvoice=Failed to found the conversion rate for invoice
+ThisIdNotDefined=$this->id not defined
+OperNotDefined=Oper not defined
