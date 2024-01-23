@@ -242,7 +242,7 @@ if ($action == 'edit') {
 	echo '<input type="hidden" name="action" value="save" />';
 }
 
-print dol_fiche_end();
+print dol_get_fiche_end();
 
 
 echo '<table class="noborder centpercent">';
