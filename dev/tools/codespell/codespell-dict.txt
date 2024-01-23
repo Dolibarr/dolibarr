@@ -6,7 +6,7 @@ choosed->chosen
 dolibar->dolibarr
 dollibar->dolibarr
 dollibarr->dolibarr
-fiche->card
+# fiche->card
 mot de passe->password
 not de passe->password
 tableau de bord->state board
