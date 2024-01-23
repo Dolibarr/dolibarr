@@ -102,6 +102,7 @@ $item->cssClass = 'minwidth500';
 // Setup conf for selection of a simple string input
 $item = $formSetup->newItem('MYMODULE_MYPARAM2');
 $item->defaultFieldValue = 'default value';
+$item->fieldAttr['placeholder'] = 'A placehoder here';
 
 // Setup conf for selection of a simple textarea input but we replace the text of field title
 $item = $formSetup->newItem('MYMODULE_MYPARAM3');
@@ -302,14 +303,19 @@ print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "mymo
 echo '<span class="opacitymedium">'.$langs->trans("MyModuleSetupPage").'</span><br><br>';
 
 
-if ($action == 'edit') {
+/*if ($action == 'edit') {
+ print $formSetup->generateOutput(true);
+ print '<br>';
+ } elseif (!empty($formSetup->items)) {
+ print $formSetup->generateOutput();
+ print '<div class="tabsAction">';
+ print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+ print '</div>';
+ }
+ */
+if (!empty($formSetup->items)) {
 	print $formSetup->generateOutput(true);
 	print '<br>';
-} elseif (!empty($formSetup->items)) {
-	print $formSetup->generateOutput();
-	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
-	print '</div>';
 } else {
 	print '<br>'.$langs->trans("NothingToSetup");
 }
