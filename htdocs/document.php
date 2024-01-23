@@ -295,6 +295,7 @@ if ($reshook < 0) {
 
 // Permissions are ok and file found, so we return it
 top_httphead($type);
+
 header('Content-Description: File Transfer');
 if ($encoding) {
 	header('Content-Encoding: '.$encoding);

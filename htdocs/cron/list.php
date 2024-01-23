@@ -40,7 +40,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'cronjoblist'; // To manage different context of search
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -164,7 +164,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 
-			// Programm next run
+			// Plan next run
 			$res = $object->reprogram_jobs($user->login, $now);
 			if ($res > 0) {
 				if ($resrunjob >= 0) {	// We show the result of reprogram only if no error message already reported
@@ -490,7 +490,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "t.rowid", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronLabel", $_SERVER["PHP_SELF"], "t.label", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("Prority", $_SERVER["PHP_SELF"], "t.priority", "", $param, '', $sortfield, $sortorder);
+print_liste_field_titre("Priority", $_SERVER["PHP_SELF"], "t.priority", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronModule", $_SERVER["PHP_SELF"], "t.module_name", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronType", '', '', "", $param, '', $sortfield, $sortorder, 'tdoverflowmax100 ');
 print_liste_field_titre("CronFrequency", '', "", "", $param, '', $sortfield, $sortorder);

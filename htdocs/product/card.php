@@ -159,7 +159,7 @@ if ($id > 0 || !empty($ref)) {
 		$upload_dir = $conf->service->multidir_output[$entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
 	}
 
-	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {    // For backward compatiblity, we scan also old dirs
+	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {    // For backward compatibility, we scan also old dirs
 		if (isModEnabled("product")) {
 			$upload_dirold = $conf->product->multidir_output[$entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
 		} else {
@@ -533,7 +533,7 @@ if (empty($reshook)) {
 			$localtax2 = 0;
 			$localtax1_type = '0';
 			$localtax2_type = '0';
-			// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+			// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes
 			$reg = array();
 			if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
 				// We look into database using code (we can't use get_localtax() because it depends on buyer that is not known). Same in update price.
@@ -568,6 +568,7 @@ if (empty($reshook)) {
 			$object->status             	 = GETPOST('statut');
 			$object->status_buy = GETPOST('statut_buy');
 			$object->status_batch = GETPOST('status_batch');
+			$object->sell_or_eat_by_mandatory = GETPOST('sell_or_eat_by_mandatory', 'int');
 			$object->batch_mask = GETPOST('batch_mask');
 
 			$object->barcode_type = GETPOST('fk_barcode_type');
@@ -575,7 +576,7 @@ if (empty($reshook)) {
 			// Set barcode_type_xxx from barcode_type id
 			$stdobject = new GenericObject($db);
 			$stdobject->element = 'product';
-			$stdobject->barcode_type = GETPOST('fk_barcode_type');
+			$stdobject->barcode_type = GETPOSTINT('fk_barcode_type');
 			$result = $stdobject->fetch_barcode();
 			if ($result < 0) {
 				$error++;
@@ -765,6 +766,7 @@ if (empty($reshook)) {
 				$object->status                 = GETPOST('statut', 'int');
 				$object->status_buy             = GETPOST('statut_buy', 'int');
 				$object->status_batch = GETPOST('status_batch', 'aZ09');
+				$object->sell_or_eat_by_mandatory = GETPOST('sell_or_eat_by_mandatory', 'int');
 				$object->batch_mask = GETPOST('batch_mask', 'alpha');
 				$object->fk_default_warehouse   = GETPOST('fk_default_warehouse', 'int');
 				$object->fk_default_workstation   = GETPOST('fk_default_workstation', 'int');
@@ -817,7 +819,7 @@ if (empty($reshook)) {
 				// Set barcode_type_xxx from barcode_type id
 				$stdobject = new GenericObject($db);
 				$stdobject->element = 'product';
-				$stdobject->barcode_type = GETPOST('fk_barcode_type');
+				$stdobject->barcode_type = GETPOSTINT('fk_barcode_type');
 				$result = $stdobject->fetch_barcode();
 				if ($result < 0) {
 					$error++;
@@ -1094,7 +1096,7 @@ if (empty($reshook)) {
 			$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
 
 			// On reevalue prix selon taux tva car taux tva transaction peut etre different
-			// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+			// de ceux du produit par default (par example si pays different entre vendeur et acheteur).
 			if ($tmpvat != $tmpprodvat) {
 				if ($price_base_type != 'HT') {
 					$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
@@ -1249,7 +1251,10 @@ $formcompany = new FormCompany($db);
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
-
+$sellOrEatByMandatoryList = null;
+if (isModEnabled('productbatch')) {
+	$sellOrEatByMandatoryList = Product::getSellOrEatByMandatoryList();
+}
 
 $title = $langs->trans('ProductServiceCard');
 
@@ -1452,6 +1457,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 								</script>';
 						print '</td></tr>';
 					}
+				}
+
+				// SellBy / EatBy mandatory list
+				if (!empty($sellOrEatByMandatoryList)) {
+					print '<tr><td>'.$langs->trans('BatchSellOrEatByMandatoryList', $langs->trans('SellByDate'), $langs->trans('EatByDate')).'</td><td>';
+					print $form->selectarray('sell_or_eat_by_mandatory', $sellOrEatByMandatoryList, GETPOST('sell_or_eat_by_mandatory', 'int'));
+					print '</td></tr>';
 				}
 			}
 
@@ -1952,7 +1964,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</select>';
 				print '</td></tr>';
 
-				// Batch number managment
+				// Batch number management
 				if (isModEnabled('productbatch')) {
 					if ($object->isProduct() || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 						print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
@@ -2060,6 +2072,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 							}
 							print '</td></tr>';
 						}
+					}
+
+					// SellBy / EatBy mandatory list
+					if (!empty($sellOrEatByMandatoryList)) {
+						if (GETPOSTISSET('sell_or_eat_by_mandatory')) {
+							$sellOrEatByMandatorySelectedId = GETPOST('sell_or_eat_by_mandatory', 'int');
+						} else {
+							$sellOrEatByMandatorySelectedId = $object->sell_or_eat_by_mandatory;
+						}
+						print '<tr><td>'.$langs->trans('BatchSellOrEatByMandatoryList', $langs->trans('SellByDate'), $langs->trans('EatByDate')).'</td><td>';
+						print $form->selectarray('sell_or_eat_by_mandatory', $sellOrEatByMandatoryList, $sellOrEatByMandatorySelectedId);
+						print '</td></tr>';
 					}
 				}
 
@@ -2505,6 +2529,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 							print '</td></tr>';
 						}
 					}
+
+					print '<tr><td>'.$langs->trans('BatchSellOrEatByMandatoryList', $langs->trans('SellByDate'), $langs->trans('EatByDate')).'</td><td>';
+					print $object->getSellOrEatByMandatoryLabel();
+					print '</td></tr>';
 				}
 
 				if (!getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING')) {

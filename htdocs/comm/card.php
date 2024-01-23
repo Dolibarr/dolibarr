@@ -218,7 +218,7 @@ if (empty($reshook)) {
 	// assujetissement a la TVA
 	if ($action == 'setassujtva' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
-		$object->tva_assuj = GETPOST('assujtva_value');
+		$object->tva_assuj = GETPOSTINT('assujtva_value');
 		$result = $object->update($object->id);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -513,7 +513,7 @@ if ($object->id > 0) {
 
 	if ($object->client) {
 		if (isModEnabled('commande') && getDolGlobalString('ORDER_MANAGE_MIN_AMOUNT')) {
-			print '<!-- Minimim amount for orders -->'."\n";
+			print '<!-- Minimum amount for orders -->'."\n";
 			print '<tr class="nowrap">';
 			print '<td>';
 			print $form->editfieldkey("OrderMinAmount", 'order_min_amount', $object->order_min_amount, $object, $user->hasRight('societe', 'creer'));

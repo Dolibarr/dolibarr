@@ -92,7 +92,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -519,7 +519,7 @@ if (empty($reshook)) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			if ($object->delete($user) > 0) {
 				setEventMessages('<div class="confirm">'.$langs->trans('TicketDeletedSuccess').'</div>', null, 'mesgs');
-				Header("Location: ".DOL_URL_ROOT."/ticket/list.php");
+				header("Location: ".DOL_URL_ROOT."/ticket/list.php");
 				exit;
 			} else {
 				$langs->load("errors");
@@ -1240,7 +1240,7 @@ if ($action == 'create' || $action == 'presend') {
 		$actionobject->viewTicketOriginalMessage($user, $action, $object);
 
 		// Classification of ticket
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder tableforfield centpercent margintable">';
 		print '<tr class="liste_titre">';
 		print '<td>';

@@ -64,7 +64,7 @@ $_SESSION[$sessionkey] = $string;
 
 $img = imagecreate(80, 32);
 if (empty($img)) {
-	dol_print_error('', "Problem with GD creation");
+	dol_print_error(null, "Problem with GD creation");
 	exit;
 }
 

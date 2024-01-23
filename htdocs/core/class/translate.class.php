@@ -20,7 +20,7 @@
 /**
  *   	\file       htdocs/core/class/translate.class.php
  *      \ingroup    core
- *		\brief      File for Tanslate class
+ *		\brief      File for Translate class
  */
 
 
@@ -197,7 +197,7 @@ class Translate
 	 *												then in htdocs/module/langs/code_CODE/file.lang instead of htdocs/langs/code_CODE/file.lang
 	 *  @param	integer	$alt         				0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US)
 	 * 	@param	int		$stopafterdirection			Stop when the DIRECTION tag is found (optimize speed)
-	 * 	@param	int		$forcelangdir				To force a different lang directory
+	 * 	@param	string	$forcelangdir				To force a different lang directory
 	 *  @param  int     $loadfromfileonly   		1=Do not load overwritten translation from file or old conf.
 	 *  @param  int     $forceloadifalreadynotfound	Force attempt to reload lang file if it was previously not found
 	 *	@return	int									Return integer <0 if KO, 0 if already loaded or loading not required, >0 if OK
@@ -211,7 +211,7 @@ class Translate
 
 		// Check parameters
 		if (empty($domain)) {
-			dol_print_error('', get_class($this) . "::Load ErrorWrongParameters");
+			dol_print_error(null, get_class($this) . "::Load ErrorWrongParameters");
 			return -1;
 		}
 		if ($this->defaultlang === 'none_NONE') {
@@ -571,7 +571,7 @@ class Translate
 	 * Return translated value of key for special keys ("Currency...", "Civility...", ...).
 	 * Search in lang file, then into database. Key must be any complete entry into lang file: CurrencyEUR, ...
 	 * If not found, return key.
-	 * The string return is not formated (translated with transnoentitiesnoconv).
+	 * The string return is not formatted (translated with transnoentitiesnoconv).
 	 * NOTE: To avoid infinite loop (getLabelFromKey->transnoentities->getTradFromKey->getLabelFromKey), if you modify this function,
 	 * check that getLabelFromKey is never called with the same value than $key.
 	 *
@@ -776,7 +776,7 @@ class Translate
 
 
 	/**
-	 *  Retourne la version traduite du texte passe en parametre complete du code pays
+	 *  Retourne la version traduite du texte passe en parameter complete du code pays
 	 *
 	 *  @param	string	$str            string root to translate
 	 *  @param  string	$countrycode    country code (FR, ...)
@@ -899,7 +899,7 @@ class Translate
 	 *  Return if a filename $filename exists for current language (or alternate language)
 	 *
 	 *  @param	string	$filename       Language filename to search
-	 *  @param  integer	$searchalt      Search also alernate language file
+	 *  @param  integer	$searchalt      Search also alternate language file
 	 *  @return boolean         		true if exists and readable
 	 */
 	public function file_exists($filename, $searchalt = 0)
@@ -980,7 +980,7 @@ class Translate
 	 * 		@param	string	$fieldlabel		Field for label. This value must always be a hardcoded string and not a value coming from user input.
 	 *      @param	string	$keyforselect	Use another value than the translation key for the where into select
 	 *      @param  int		$filteronentity	Use a filter on entity
-	 *      @return string					Label in UTF8 (but without entities)
+	 *      @return string|int				Label in UTF8 (but without entities) or -1 if error
 	 *      @see dol_getIdFromCode()
 	 */
 	public function getLabelFromKey($db, $key, $tablename, $fieldkey, $fieldlabel, $keyforselect = '', $filteronentity = 0)

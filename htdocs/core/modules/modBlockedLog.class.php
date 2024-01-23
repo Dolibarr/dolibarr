@@ -65,7 +65,7 @@ class modBlockedLog extends DolibarrModules
 		//-------------
 		$this->config_page_url = array('blockedlog.php?withtab=1@blockedlog');
 
-		// Dependancies
+		// Dependencies
 		//-------------
 		$this->hidden = false; // A condition to disable module
 		$this->depends = array('always'=>'modFacture'); // List of modules id that must be enabled if this module is enabled

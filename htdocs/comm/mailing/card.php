@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2005-2019	Laurent Destailleur		<eldy@uers.sourceforge.net>
+ * Copyright (C) 2005-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021		Waël Almoman            <info@almoman.com>
  *
@@ -163,7 +163,7 @@ if (empty($reshook)) {
 			$action = '';
 		} else {
 			if ($object->statut == 0) {
-				dol_print_error('', 'ErrorMailIsNotValidated');
+				dol_print_error(null, 'ErrorMailIsNotValidated');
 				exit;
 			}
 
@@ -482,7 +482,7 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			// Is the message in html
-			$msgishtml = -1; // Unknow = autodetect by default
+			$msgishtml = -1; // Unknown = autodetect by default
 			if (preg_match('/[\s\t]*<html>/i', $object->body)) {
 				$msgishtml = 1;
 			}
@@ -852,7 +852,7 @@ if ($action == 'create') {
 			 * View mode mailing
 			 */
 			if ($action == 'sendall') {
-				// Define message to recommand from command line
+				// Define message to recommend from command line
 				$sendingmode = getDolGlobalString('EMAILING_MAIL_SENDMODE');
 				if (empty($sendingmode)) {
 					$sendingmode = getDolGlobalString('MAIN_MAIL_SENDMODE');
@@ -863,8 +863,8 @@ if ($action == 'create') {
 
 				// MAILING_NO_USING_PHPMAIL may be defined or not.
 				// MAILING_LIMIT_SENDBYWEB is always defined to something != 0 (-1=forbidden).
-				// MAILING_LIMIT_SENDBYCLI may be defined ot not (-1=forbidden, 0 or undefined=no limit).
-				// MAILING_LIMIT_SENDBYDAY may be defined ot not (0 or undefined=no limit).
+				// MAILING_LIMIT_SENDBYCLI may be defined or not (-1=forbidden, 0 or undefined=no limit).
+				// MAILING_LIMIT_SENDBYDAY may be defined or not (0 or undefined=no limit).
 				if (getDolGlobalString('MAILING_NO_USING_PHPMAIL') && $sendingmode == 'mail') {
 					// EMailing feature may be a spam problem, so when you host several users/instance, having this option may force each user to use their own SMTP agent.
 					// You ensure that every user is using its own SMTP server when using the mass emailing module.
@@ -893,7 +893,7 @@ if ($action == 'create') {
 					// The feature is forbidden from GUI, we show just message to use from command line.
 					setEventMessages($langs->trans("MailingNeedCommand"), null, 'warnings');
 					setEventMessages('<textarea cols="60" rows="'.ROWS_1.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>', null, 'warnings');
-					if ($conf->file->mailing_limit_sendbyweb != '-1') {  // MAILING_LIMIT_SENDBYWEB was set to -1 in database, but it is allowed ot increase it.
+					if ($conf->file->mailing_limit_sendbyweb != '-1') {  // MAILING_LIMIT_SENDBYWEB was set to -1 in database, but it is allowed to increase it.
 						setEventMessages($langs->trans("MailingNeedCommand2"), null, 'warnings'); // You can send online with constant...
 					}
 					$_GET["action"] = '';

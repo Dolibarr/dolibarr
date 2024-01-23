@@ -57,7 +57,7 @@ class Contracts extends DolibarrApi
 	/**
 	 * Get properties of a contract object
 	 *
-	 * Return an array with contract informations
+	 * Return an array with contract information
 	 *
 	 * @param   int         $id         ID of contract
 	 * @return  Object					Object with cleaned properties
@@ -95,7 +95,7 @@ class Contracts extends DolibarrApi
 	 * @param int			   $page				Page number
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter contracts of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of contract objects
 	 *
 	 * @throws RestException 404 Not found
@@ -191,7 +191,7 @@ class Contracts extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->contract->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -504,7 +504,7 @@ class Contracts extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->contract->context['caller'] = $request_data['caller'];
 				continue;
 			}

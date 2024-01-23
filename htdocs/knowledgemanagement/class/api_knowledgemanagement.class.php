@@ -58,7 +58,7 @@ class KnowledgeManagement extends DolibarrApi
 	/**
 	 * Get properties of a knowledgerecord object
 	 *
-	 * Return an array with knowledgerecord informations
+	 * Return an array with knowledgerecord information
 	 *
 	 * @param	int		$id				ID of knowledgerecord
 	 * @return  Object					Object with cleaned properties
@@ -127,7 +127,7 @@ class KnowledgeManagement extends DolibarrApi
 	 * @param int				$page				Page number
 	 * @param int				$category			Use this param to filter list by category
 	 * @param string			$sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string			$properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string			$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException
@@ -237,7 +237,7 @@ class KnowledgeManagement extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->knowledgerecord->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -285,7 +285,7 @@ class KnowledgeManagement extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->knowledgerecord->context['caller'] = $request_data['caller'];
 				continue;
 			}

@@ -235,6 +235,25 @@ function isModEnabled($module)
 }
 
 /**
+ * isDolTms check if a timestamp is valid.
+ *
+ * @param  int|string|null $timestamp timestamp to check
+ * @return bool
+ */
+function isDolTms($timestamp)
+{
+	if ($timestamp === '') {
+		dol_syslog('Using empty string for a timestamp is deprecated, prefer use of null when calling page '.$_SERVER["PHP_SELF"], LOG_NOTICE);
+		return false;
+	}
+	if (is_null($timestamp) || !is_numeric($timestamp)) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
  * Return a DoliDB instance (database handler).
  *
  * @param   string	$type		Type of database (mysql, pgsql...)
@@ -250,8 +269,8 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
 	require_once DOL_DOCUMENT_ROOT."/core/db/".$type.'.class.php';
 
 	$class = 'DoliDB'.ucfirst($type);
-	$dolidb = new $class($type, $host, $user, $pass, $name, $port);
-	return $dolidb;
+	$db = new $class($type, $host, $user, $pass, $name, $port);
+	return $db;
 }
 
 /**
@@ -927,17 +946,31 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 }
 
 /**
- *  Return value of a param into GET or POST supervariable.
+ *  Return the value of a $_GET or $_POST supervariable, converted into integer.
  *  Use the property $user->default_values[path]['creatform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
  *  Note: The property $user->default_values is loaded by main.php when loading the user.
  *
- *  @param  string  $paramname   Name of parameter to found
- *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
- *  @return int                  Value found (int)
+ *  @param  string  $paramname   Name of the $_GET or $_POST parameter
+ *  @param  int     $method      Type of method (0 = $_GET then $_POST, 1 = only $_GET, 2 = only $_POST, 3 = $_POST then $_GET)
+ *  @return int                  Value converted into integer
  */
 function GETPOSTINT($paramname, $method = 0)
 {
 	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
+}
+
+
+/**
+ *  Return the value of a $_GET or $_POST supervariable, converted into float.
+ *
+ *  @param  string          $paramname      Name of the $_GET or $_POST parameter
+ *  @param  string|int      $rounding       Type of rounding ('', 'MU', 'MT, 'MS', 'CU', 'CT', integer) {@see price2num()}
+ *  @return float                           Value converted into float
+ */
+function GETPOSTFLOAT($paramname, $rounding = '')
+{
+	// price2num() is used to sanitize any valid user input (such as "1 234.5", "1 234,5", "1'234,5", "1·234,5", "1,234.5", etc.)
+	return (float) price2num(GETPOST($paramname), $rounding, 2);
 }
 
 
@@ -1072,7 +1105,8 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 			}
 			break;
 		default:
-			dol_syslog("Error, you call sanitizeVal() with a bad value for the check type. Data can't be sanitized.", LOG_ERR);
+			dol_syslog("Error, you call sanitizeVal() with a bad value for the check type. Data will be sanitized with alphanohtml.", LOG_ERR);
+			$out = GETPOST($out, 'alphanohtml');
 			break;
 	}
 
@@ -1351,6 +1385,7 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 	$tmp = str_replace('..', '', $tmp);
 	return $tmp;
 }
+
 
 /**
  *	Clean a string to use it as a path name. Similare to dol_sanitizeFileName but accept / and \ chars.
@@ -2775,15 +2810,15 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
  *
  *	@param	string	$fmt		Format of strftime function (http://php.net/manual/fr/function.strftime.php)
  *  @param	int		$ts			Timestamp (If is_gmt is true, timestamp is already includes timezone and daylight saving offset, if is_gmt is false, timestamp is a GMT timestamp and we must compensate with server PHP TZ)
- *  @param	int		$is_gmt		See comment of timestamp parameter
+ *  @param	bool	$is_gmt		See comment of timestamp parameter
  *	@return	string				A formatted string
  */
 function dol_strftime($fmt, $ts = false, $is_gmt = false)
 {
 	if ((abs($ts) <= 0x7FFFFFFF)) { // check if number in 32-bit signed range
-		return ($is_gmt) ? @gmstrftime($fmt, $ts) : @strftime($fmt, $ts);
+		return dol_print_date($ts, $fmt, $is_gmt);
 	} else {
-		return 'Error date into a not supported range';
+		return 'Error date outside supported range';
 	}
 }
 
@@ -2798,7 +2833,7 @@ function dol_strftime($fmt, $ts = false, $is_gmt = false)
  *										"%d/%m/%Y %H:%M:%S",
  *                                      "%B"=Long text of month, "%A"=Long text of day, "%b"=Short text of month, "%a"=Short text of day
  *										"day", "daytext", "dayhour", "dayhourldap", "dayhourtext", "dayrfc", "dayhourrfc", "...inputnoreduce", "...reduceformat"
- * 	@param	string		$tzoutput		true or 'gmt' => string is for Greenwich location
+ * 	@param	string|bool	$tzoutput		true or 'gmt' => string is for Greenwich location
  * 										false or 'tzserver' => output string is for local PHP server TZ usage
  * 										'tzuser' => output string is for user TZ (current browser TZ with current dst) => In a future, we should have same behaviour than 'tzuserrel'
  *                                      'tzuserrel' => output string is for user TZ (current browser TZ with dst or not, depending on date position)
@@ -2926,7 +2961,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	// Analyze date
 	$reg = array();
 	if (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg)) {	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
-		dol_print_error('', "Functions.lib::dol_print_date function called with a bad value from page ".(empty($_SERVER["PHP_SELF"]) ? 'unknown' : $_SERVER["PHP_SELF"]));
+		dol_print_error(null, "Functions.lib::dol_print_date function called with a bad value from page ".(empty($_SERVER["PHP_SELF"]) ? 'unknown' : $_SERVER["PHP_SELF"]));
 		return '';
 	} elseif (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $time, $reg)) {    // Still available to solve problems in extrafields of type date
 		// This part of code should not be used anymore.
@@ -3104,7 +3139,7 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
  *										'tzuserrel' = local to user TZ taking dst into account at the given date. Use this one to convert date input from user into a GMT date.
  *										'tz,TimeZone' = use specified timezone
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
- *	@return	int|string					Date as a timestamp, '' or false if error
+ *	@return	int|string					Date as a timestamp, '' if error
  * 	@see 								dol_print_date(), dol_stringtotime(), dol_getdate()
  */
 function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', $check = 1)
@@ -5326,13 +5361,13 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
  *  This function must be called when a blocking technical error is encountered.
  *  However, one must try to call it only within php pages, classes must return their error through their property "error".
  *
- *	@param	 	DoliDB|string   $db      	Database handler
+ *	@param	 	DoliDB|null     $db      	Database handler
  *	@param  	string|string[] $error		String or array of errors strings to show
- *  @param		array           $errors		Array of errors
+ *  @param		string[]|null   $errors		Array of errors
  *	@return 	void
  *  @see    	dol_htmloutput_errors()
  */
-function dol_print_error($db = '', $error = '', $errors = null)
+function dol_print_error($db = null, $error = '', $errors = null)
 {
 	global $conf, $langs, $argv;
 	global $dolibarr_main_prod;
@@ -6724,7 +6759,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 				$found = 1;
 			}
 		} else {
-			// TODO Read default product vat according to product and another countrycode.
+			// TODO Read default product vat according to product and an other countrycode.
 			// Vat for couple anothercountrycode/product is data that is not managed and store yet, so we will fallback on next rule.
 		}
 	}
@@ -9091,7 +9126,7 @@ function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '', $no
 		}
 		if (empty($messagekey) || empty($_COOKIE["DOLHIDEMESSAGE".$messagekey])) {
 			if (!in_array((string) $style, array('mesgs', 'warnings', 'errors'))) {
-				dol_print_error('', 'Bad parameter style='.$style.' for setEventMessages');
+				dol_print_error(null, 'Bad parameter style='.$style.' for setEventMessages');
 			}
 			if (empty($mesgs)) {
 				setEventMessage($mesg, $style, $noduplicate);
@@ -10847,8 +10882,6 @@ function ajax_autoselect($htmlname, $addlink = '', $textonlink = 'Link')
  */
 function dolIsAllowedForPreview($file)
 {
-	global $conf;
-
 	// Check .noexe extension in filename
 	if (preg_match('/\.noexe$/i', $file)) {
 		return 0;
@@ -11880,6 +11913,9 @@ function getElementProperties($element_type)
 		$module = 'societe';
 		$subelement = 'contact';
 		$table_element = 'socpeople';
+	} elseif ($element_type == 'inventory') {
+		$module = 'product';
+		$classpath = 'product/inventory/class';
 	} elseif ($element_type == 'stock') {
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
@@ -12441,6 +12477,7 @@ function jsonOrUnserialize($stringtodecode)
  * @param	int			$nopar		1=Do not add the perenthesis around the condition string.
  * @param	int			$noerror	1=If search criteria is not valid, does not return an error string but invalidate the SQL
  * @return	string					Return forged SQL string
+ * @see dolSqlDateFilter()
  */
 function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 0, $nopar = 0, $noerror = 0)
 {
@@ -12733,7 +12770,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 
 	// Check parameters
 	if (!is_object($filterobj) && !is_object($objcon)) {
-		dol_print_error('', 'BadParameter');
+		dol_print_error(null, 'BadParameter');
 	}
 
 	$histo = array();
@@ -12936,7 +12973,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 					$result = $contactaction->fetchResources();
 					if ($result < 0) {
 						dol_print_error($db);
-						setEventMessage("actions.lib::show_actions_messaging Error fetch ressource", 'errors');
+						setEventMessage("actions.lib::show_actions_messaging Error fetch resource", 'errors');
 					}
 
 					//if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";

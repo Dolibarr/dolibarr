@@ -228,7 +228,7 @@ class FormAccounting extends Form
 	 *	Return list of accounting category.
 	 * 	Use mysoc->country_id or mysoc->country_code so they must be defined.
 	 *
-	 *	@param	string	$selected       Preselected type
+	 *	@param	int		$selected       Preselected type
 	 *	@param  string	$htmlname       Name of field in form
 	 * 	@param	int		$useempty		Set to 1 if we want an empty value
 	 * 	@param	int		$maxlen			Max length of text in combo box
@@ -236,13 +236,13 @@ class FormAccounting extends Form
 	 *  @param  int     $allcountries   All countries
 	 * 	@return	string					HTML component with the select
 	 */
-	public function select_accounting_category($selected = '', $htmlname = 'account_category', $useempty = 0, $maxlen = 0, $help = 1, $allcountries = 0)
+	public function select_accounting_category($selected = 0, $htmlname = 'account_category', $useempty = 0, $maxlen = 0, $help = 1, $allcountries = 0)
 	{
 		// phpcs:enable
 		global $langs, $mysoc;
 
 		if (empty($mysoc->country_id) && empty($mysoc->country_code) && empty($allcountries)) {
-			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
+			dol_print_error(null, 'Call to select_accounting_account with mysoc country not yet defined');
 			exit;
 		}
 
@@ -459,7 +459,7 @@ class FormAccounting extends Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return list of auxilary accounts. Cumulate list from customers, suppliers and users.
+	 * Return list of auxiliary accounts. Cumulate list from customers, suppliers and users.
 	 *
 	 * @param string   		$selectid       Preselected pcg_type
 	 * @param string   		$htmlname       Name of field in html form
@@ -559,7 +559,7 @@ class FormAccounting extends Form
 	 * @param string 	$selected 		Preselected value
 	 * @param string 	$htmlname 		Name of HTML select object
 	 * @param int 		$useempty 		Affiche valeur vide dans liste
-	 * @param string 	$output_format 	(html/opton (for option html only)/array (to return options arrays
+	 * @param string 	$output_format 	(html/option (for option html only)/array (to return options arrays
 	 * @return string|array				HTML select component or array of select options
 	 */
 	public function selectyear_accountancy_bookkepping($selected = '', $htmlname = 'yearid', $useempty = 0, $output_format = 'html')

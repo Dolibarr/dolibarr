@@ -201,7 +201,7 @@ class DolGeoIP
 	}
 
 	/**
-	 * Return verion of data file
+	 * Return version of data file
 	 *
 	 * @return  string      Version of datafile
 	 */

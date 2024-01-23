@@ -45,7 +45,7 @@ function dol_getwebuser($mode)
 }
 
 /**
- *  Return a login if login/pass was successfull
+ *  Return a login if login/pass was successful
  *
  *	@param		string	$usertotest			Login value to test
  *	@param		string	$passwordtotest		Password value to test
@@ -97,7 +97,7 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
 					$function = 'check_user_password_'.$mode;
 					$login = call_user_func($function, $usertotest, $passwordtotest, $entitytotest, $context);
 					if ($login && $login != '--bad-login-validity--') {
-						// Login is successfull with this method
+						// Login is successful with this method
 						$test = false; // To stop once at first login success
 						$conf->authmode = $mode; // This properties is defined only when logged to say what mode was successfully used
 						/*$dol_tz = GETPOST('tz');
@@ -479,7 +479,7 @@ function encodedecode_dbpassconf($level = 0)
  * Return a generated password using default module
  *
  * @param		boolean		$generic				true=Create generic password (32 chars/numbers), false=Use the configured password generation module
- * @param		array		$replaceambiguouschars	Discard ambigous characters. For example array('I').
+ * @param		array		$replaceambiguouschars	Discard ambiguous characters. For example array('I').
  * @param       int         $length                 Length of random string (Used only if $generic is true)
  * @return		string		    					New value for password
  * @see dol_hash(), dolJSToSetRandomPassword()
@@ -562,7 +562,7 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 }
 
 /**
- * Ouput javacript to autoset a generated password using default module into a HTML element.
+ * Output javascript to autoset a generated password using default module into a HTML element.
  *
  * @param		string 		$htmlname			HTML name of element to insert key into
  * @param		string		$htmlnameofbutton	HTML name of button

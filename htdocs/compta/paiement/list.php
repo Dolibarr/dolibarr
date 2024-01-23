@@ -41,14 +41,14 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'compta', 'companies'));
 
-$action				= GETPOST('action', 'alpha');
-$massaction			= GETPOST('massaction', 'alpha');
-$confirm			= GETPOST('confirm', 'alpha');
+$action = GETPOST('action', 'alpha');
+$massaction = GETPOST('massaction', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
-$contextpage		= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'paymentlist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'paymentlist';
 
-$facid				= GETPOST('facid', 'int');
-$socid				= GETPOST('socid', 'int');
+$facid = GETPOST('facid', 'int');
+$socid = GETPOST('socid', 'int');
 $userid = GETPOST('userid', 'int');
 
 $search_ref = GETPOST("search_ref", "alpha");
@@ -68,9 +68,10 @@ $search_amount = GETPOST("search_amount", 'alpha'); // alpha because we must be 
 $search_status = GETPOST('search_status', 'intcomma');
 $search_sale = GETPOST('search_sale', 'int');
 
+$mode = GETPOST('mode', 'alpha');
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield			= GETPOST('sortfield', 'aZ09comma');
-$sortorder			= GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
 if (empty($page) || $page == -1) {

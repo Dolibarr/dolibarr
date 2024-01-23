@@ -62,7 +62,7 @@ $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("pa
 
 // Security check
 $id = (GETPOST('facid', 'int') ? GETPOST('facid', 'int') : GETPOST('id', 'int'));
-$lineid = GETPOST('lineid', 'int');
+$lineid = GETPOSTINT('lineid');
 $title = GETPOST('title', 'alpha');
 $libelle = GETPOST('libelle', 'alpha');
 $ref_supplier = GETPOST('ref_supplier', 'alpha');
@@ -194,7 +194,7 @@ if (empty($reshook)) {
 			$object->title = GETPOST('title', 'alphanohtml');
 			$object->libelle = GETPOST('libelle', 'alpha');	// deprecated
 			$object->label = GETPOST('libelle', 'alpha');
-			$object->fk_project = GETPOST('projectid', 'int');
+			$object->fk_project = GETPOSTINT('projectid');
 			$object->ref_supplier = GETPOST('ref_supplier', 'alphanohtml');
 
 			$object->note_private = GETPOST('note_private', 'restricthtml');
@@ -567,7 +567,7 @@ if (empty($reshook)) {
 					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
 				} elseif ($tmpvat != $tmpprodvat) {
 					// On reevalue prix selon taux tva car taux tva transaction peut etre different
-					// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+					// de ceux du produit par default (par example si pays different entre vendeur et acheteur).
 					if ($price_base_type != 'HT') {
 						$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
 					} else {
@@ -1103,7 +1103,7 @@ if ($action == 'create') {
 
 		print "</form>\n";
 	} else {
-		dol_print_error('', "Error, no invoice " . $object->id);
+		dol_print_error(null, "Error, no invoice " . $object->id);
 	}
 } else {
 	/*
@@ -1414,7 +1414,7 @@ if ($action == 'create') {
 
 		print '<tr><td colspan="2">' . img_picto('', 'recurring', 'class="pictofixedwidth"') . $title . '</td></tr>';
 
-		// if "frequency" is empty or = 0, the reccurence is disabled
+		// if "frequency" is empty or = 0, the recurrence is disabled
 		print '<tr><td style="width: 50%">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Frequency');

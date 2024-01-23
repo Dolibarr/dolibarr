@@ -78,7 +78,7 @@ class Categories extends DolibarrApi
 	/**
 	 * Get properties of a category object
 	 *
-	 * Return an array with category informations
+	 * Return an array with category information
 	 *
 	 * @param	int		$id ID of category
 	 * @param	bool	$include_childs Include child categories list (true or false)
@@ -126,7 +126,7 @@ class Categories extends DolibarrApi
 	 * @param int		$page		Page number
 	 * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of category objects
 	 *
 	 * @throws RestException
@@ -203,7 +203,7 @@ class Categories extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->category->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -243,7 +243,7 @@ class Categories extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->category->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -674,7 +674,7 @@ class Categories extends DolibarrApi
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
 
-		// Remove fields not relevent to categories
+		// Remove fields not relevant to categories
 		unset($object->MAP_CAT_FK);
 		unset($object->MAP_CAT_TABLE);
 		unset($object->MAP_OBJ_CLASS);

@@ -9,7 +9,7 @@
 # WARNING: This script erase setup of instance,
 # but not the database
 #------------------------------------------------------
-
+# shellcheck disable=2006,2034,2046,2064,2068,2086,2155,2166,2186,2172,2268
 
 export mydir=`echo "$0" | sed -e 's/removedemo.sh//'`;
 if [ "x$mydir" = "x" ]

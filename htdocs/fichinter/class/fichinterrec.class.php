@@ -25,7 +25,7 @@
 /**
  *  \file       htdocs/fichinter/class/fichinterrec.class.php
  *  \ingroup    fichinter
- *  \brief      Fichier de la classe des factures recurentes
+ *  \brief      File for class to manage recurring invoices/templates (models)
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
 
 /**
- *	Classe de gestion des factures recurrentes/Modeles
+ * Class to manage recurring invoices/templates (models)
  */
 class FichinterRec extends Fichinter
 {
@@ -471,7 +471,7 @@ class FichinterRec extends Fichinter
 	 *  @param		double		$remise_percent  	Percentage of discount on line
 	 *  @param		string		$price_base_type	HT or TTC
 	 *  @param		int			$info_bits			Bits for type of lines
-	 *  @param		int			$fk_remise_except   Id discount
+	 *  @param		int			$fk_remise_except   Id discount (not used)
 	 *  @param		double		$pu_ttc			    Unit price with tax (> 0 even for credit note)
 	 *  @param		int			$type				Type of line (0=product, 1=service)
 	 *  @param		int			$special_code		Special code
@@ -479,7 +479,7 @@ class FichinterRec extends Fichinter
 	 *  @param		string		$fk_unit			Unit
 	 *  @return		int			 				    Return integer <0 if KO, Id of line if OK
 	 */
-	public function addline($desc, $duration, $date, $rang = -1, $pu_ht = 0, $qty = 0, $txtva = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = '', $pu_ttc = 0, $type = 0, $special_code = 0, $label = '', $fk_unit = null)
+	public function addline($desc, $duration, $date, $rang = -1, $pu_ht = 0, $qty = 0, $txtva = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $special_code = 0, $label = '', $fk_unit = null)
 	{
 		global $mysoc;
 
@@ -768,7 +768,7 @@ class FichinterRec extends Fichinter
 	public function setNextDate($date, $increment_nb_gen_done = 0)
 	{
 		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setNextDate was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setNextDate was called on object with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
@@ -800,7 +800,7 @@ class FichinterRec extends Fichinter
 	public function setMaxPeriod($nb)
 	{
 		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setMaxPeriod was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setMaxPeriod was called on object with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 

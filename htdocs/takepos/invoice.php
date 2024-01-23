@@ -82,7 +82,7 @@ if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->la
 
 
 /**
- * Abort invoice creationg with a given error message
+ * Abort invoice creation with a given error message
  *
  * @param   string  $message        Message explaining the error to the user
  * @return	void
@@ -434,7 +434,7 @@ if (empty($reshook)) {
 			$line->fk_parent_line = $fk_parent_line;
 
 			$line->subprice = -$line->subprice; // invert price for object
-			$line->pa_ht = $line->pa_ht; // we choosed to have buy/cost price always positive, so no revert of sign here
+			$line->pa_ht = $line->pa_ht; // we chose to have the buy/cost price always positive, so no inversion of the sign here
 			$line->total_ht = -$line->total_ht;
 			$line->total_tva = -$line->total_tva;
 			$line->total_ttc = -$line->total_ttc;
@@ -446,7 +446,7 @@ if (empty($reshook)) {
 			$line->multicurrency_total_tva = -$line->multicurrency_total_tva;
 			$line->multicurrency_total_ttc = -$line->multicurrency_total_ttc;
 
-			$result = $line->insert(0, 1); // When creating credit note with same lines than source, we must ignore error if discount alreayd linked
+			$result = $line->insert(0, 1); // When creating credit note with same lines than source, we must ignore error if discount already linked
 
 			$creditnote->lines[] = $line; // insert new line in current object
 
@@ -766,7 +766,7 @@ if (empty($reshook)) {
 
 	// Action to delete or discard an invoice
 	if ($action == "delete" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
-		// $placeid is the invoice id (it differs from place) and is defined if the place is set and the ref of invoice is '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')', so the fetch at begining of page works.
+		// $placeid is the invoice id (it differs from place) and is defined if the place is set and the ref of invoice is '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')', so the fetch at beginning of page works.
 		if ($placeid > 0) {
 			$result = $invoice->fetch($placeid);
 
@@ -1287,12 +1287,15 @@ function TakeposConnector(id){
 	return true;
 }
 
+// Call the ajax to execute the print.
+// With some external module another method may be called.
 function DolibarrTakeposPrinting(id) {
-	console.log("DolibarrTakeposPrinting Printing invoice ticket " + id)
+	console.log("DolibarrTakeposPrinting Printing invoice ticket " + id);
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
 		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&token='.newToken().'&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
+
 	});
 	return true;
 }
