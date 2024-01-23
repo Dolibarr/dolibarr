@@ -1366,7 +1366,7 @@ class BookKeeping extends CommonObject
 
 		$this->debit = (float) price2num($this->debit, 'MT');
 		$this->credit = (float) price2num($this->credit, 'MT');
-		$this->montant = price2num($this->montant, 'MT');
+		$this->montant = (float) price2num($this->montant, 'MT');
 
 		// Check parameters
 		// Put here code to add a control on parameters values
