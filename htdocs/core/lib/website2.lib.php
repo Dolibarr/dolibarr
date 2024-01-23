@@ -31,10 +31,9 @@
  */
 function dolSaveMasterFile($filemaster)
 {
-	global $conf;
-
 	// Now generate the master.inc.php page
-	dol_syslog("We regenerate the master file");
+	dol_syslog("We regenerate the master.inc.php file");
+
 	dol_delete_file($filemaster);
 
 	$mastercontent = '<?php'."\n";
@@ -62,8 +61,6 @@ function dolSaveMasterFile($filemaster)
  */
 function dolSavePageAlias($filealias, $object, $objectpage)
 {
-	global $conf;
-
 	// Now create the .tpl file
 	dol_syslog("dolSavePageAlias We regenerate the alias page filealias=".$filealias);
 
@@ -140,7 +137,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
  */
 function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, $backupold = 0)
 {
-	global $conf, $db;
+	global $db;
 
 	// Now create the .tpl file (duplicate code with actions updatesource or updatecontent but we need this to save new header)
 	dol_syslog("dolSavePageContent We regenerate the tpl page filetpl=".$filetpl);
@@ -193,6 +190,12 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 	$tplcontent .= '<meta name="description" content="'.dol_string_nohtmltag($objectpage->description, 0, 'UTF-8').'" />'."\n";
 	$tplcontent .= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.' (https://www.dolibarr.org)" />'."\n";
 	$tplcontent .= '<meta name="dolibarr:pageid" content="'.dol_string_nohtmltag($objectpage->id).'" />'."\n";
+
+	// Add favicon
+	if ($objectpage->id == $object->fk_default_home) {
+		$tplcontent .= '<link rel="icon" type="image/png" href="/favicon.png" />'."\n";
+	}
+
 	// Add canonical reference
 	if ($object->virtualhost) {
 		$tplcontent .= '<link rel="canonical" href="'.(($objectpage->id == $object->fk_default_home) ? '/' : (($shortlangcode != substr($object->lang, 0, 2) ? '/'.$shortlangcode : '').'/'.$objectpage->pageurl.'.php')).'" />'."\n";
@@ -289,7 +292,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
  */
 function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $object = null)
 {
-	global $conf, $db;
+	global $db;
 
 	$result1 = false;
 	$result2 = false;
@@ -378,7 +381,7 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $o
  */
 function dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent)
 {
-	global $conf, $pathofwebsite;
+	global $pathofwebsite;
 
 	dol_syslog("Save html header into ".$filehtmlheader);
 
@@ -398,7 +401,7 @@ function dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent)
  */
 function dolSaveCssFile($filecss, $csscontent)
 {
-	global $conf, $pathofwebsite;
+	global $pathofwebsite;
 
 	dol_syslog("Save css file into ".$filecss);
 
@@ -418,7 +421,7 @@ function dolSaveCssFile($filecss, $csscontent)
  */
 function dolSaveJsFile($filejs, $jscontent)
 {
-	global $conf, $pathofwebsite;
+	global $pathofwebsite;
 
 	dol_syslog("Save js file into ".$filejs);
 
@@ -438,7 +441,7 @@ function dolSaveJsFile($filejs, $jscontent)
  */
 function dolSaveRobotFile($filerobot, $robotcontent)
 {
-	global $conf, $pathofwebsite;
+	global $pathofwebsite;
 
 	dol_syslog("Save robot file into ".$filerobot);
 
@@ -458,7 +461,7 @@ function dolSaveRobotFile($filerobot, $robotcontent)
  */
 function dolSaveHtaccessFile($filehtaccess, $htaccess)
 {
-	global $conf, $pathofwebsite;
+	global $pathofwebsite;
 
 	dol_syslog("Save htaccess file into ".$filehtaccess);
 
@@ -478,7 +481,7 @@ function dolSaveHtaccessFile($filehtaccess, $htaccess)
  */
 function dolSaveManifestJson($file, $content)
 {
-	global $conf, $pathofwebsite;
+	global $pathofwebsite;
 
 	dol_syslog("Save manifest.js.php file into ".$file);
 
@@ -498,7 +501,7 @@ function dolSaveManifestJson($file, $content)
  */
 function dolSaveReadme($file, $content)
 {
-	global $conf, $pathofwebsite;
+	global $pathofwebsite;
 
 	dol_syslog("Save README.md file into ".$file);
 
@@ -518,7 +521,7 @@ function dolSaveReadme($file, $content)
  */
 function dolSaveLicense($file, $content)
 {
-	global $conf, $pathofwebsite;
+	global $pathofwebsite;
 
 	dol_syslog("Save LICENSE file into ".$file);
 
