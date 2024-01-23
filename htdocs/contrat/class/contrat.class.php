@@ -1623,7 +1623,7 @@ class Contrat extends CommonObject
 			$sql .= " ".price2num($remise_percent).",";
 			$sql .= " ".price2num($pu_ht).",";
 			$sql .= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_localtax1).",".price2num($total_localtax2).",".price2num($total_ttc).",";
-			$sql .= " '".$this->db->escape($info_bits)."',";
+			$sql .= " ".((int) $info_bits).",";
 			$sql .= " ".price2num($price).",".price2num($remise).",";
 			if (isset($fk_fournprice)) {
 				$sql .= ' '.((int) $fk_fournprice).',';
@@ -3061,29 +3061,35 @@ class ContratLigne extends CommonObjectLine
 	public $total_ttc;
 
 	/**
-	 * @var int ID
+	 * @var int 	ID
 	 */
 	public $fk_fournprice;
 
 	public $pa_ht;
 
+	/**
+	 * @var int		Info bits
+	 */
 	public $info_bits;
 
 	/**
-	 * @var int ID
+	 * @var int 	ID of user that insert the service
 	 */
 	public $fk_user_author;
 
 	/**
-	 * @var int ID
+	 * @var int 	ID of user opening the service
 	 */
 	public $fk_user_ouverture;
 
 	/**
-	 * @var int ID
+	 * @var int 	ID of user closing the service
 	 */
 	public $fk_user_cloture;
 
+	/**
+	 * @var string	Comment
+	 */
 	public $commentaire;
 
 
