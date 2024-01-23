@@ -172,7 +172,7 @@ abstract class Stats
 	/**
 	 * @param	int		$year			year number
 	 * @param	int 	$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return 	int						value
+	 * @return array					array of values by month
 	 */
 	abstract protected function getAmountByMonth($year, $format = 0);
 
