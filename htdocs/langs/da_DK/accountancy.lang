@@ -178,6 +178,7 @@ ACCOUNTING_SELL_JOURNAL=Salgsjournal - salg og returnering
 ACCOUNTING_PURCHASE_JOURNAL=Købsjournal - køb og returnering
 ACCOUNTING_BANK_JOURNAL=Kassekladde - ind- og udbetalinger
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Udgiftskladde
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Default accounting account for "expense reports"
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Almindelig journal
 ACCOUNTING_HAS_NEW_JOURNAL=Ny Journal
 ACCOUNTING_INVENTORY_JOURNAL=Lagerjournal

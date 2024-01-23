@@ -72,6 +72,7 @@ ACCOUNTING_LIST_SORT_VENTILATION_TODO=Comience la ordenación de la página "Enl
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Comience la ordenación de la página "Enlace realizado" por los elementos más recientes
 BANK_DISABLE_DIRECT_INPUT=Deshabilitar el registro directo de la transacción en la cuenta bancaria
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Diario de reporte de gastos
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Default accounting account for "expense reports"
 ACCOUNTING_HAS_NEW_JOURNAL=Tiene nuevo diario
 ACCOUNTING_SOCIAL_JOURNAL=Diario Social
 ACCOUNTING_RESULT_PROFIT=Cuenta contable de resultados (Ganancia)

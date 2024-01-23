@@ -178,6 +178,7 @@ ACCOUNTING_SELL_JOURNAL=Журнал продаж - продажи и возвр
 ACCOUNTING_PURCHASE_JOURNAL=Журнал покупок - покупка и возврат
 ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Журнал отчетов о расходах
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Default accounting account for "expense reports"
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Общий журнал
 ACCOUNTING_HAS_NEW_JOURNAL=Есть новый журнал
 ACCOUNTING_INVENTORY_JOURNAL=Inventory journal

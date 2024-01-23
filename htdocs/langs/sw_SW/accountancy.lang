@@ -178,6 +178,7 @@ ACCOUNTING_SELL_JOURNAL=Jarida la mauzo - mauzo na mapato
 ACCOUNTING_PURCHASE_JOURNAL=Jarida la ununuzi - ununuzi na urejeshaji
 ACCOUNTING_BANK_JOURNAL=Jarida la pesa - risiti na malipo
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Default accounting account for "expense reports"
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Jarida la jumla
 ACCOUNTING_HAS_NEW_JOURNAL=Ina Jarida jipya
 ACCOUNTING_INVENTORY_JOURNAL=Jarida la hesabu

@@ -90,6 +90,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Comprimento das contas de contabilidade de terceiros 
 ACCOUNTING_MANAGE_ZERO=Permitir gerenciar diferentes números de zeros no final de uma conta contábil. Necessário para alguns países (como a Suíça). Se definido como desativado (padrão), você pode definir os dois parâmetros a seguir para solicitar que o aplicativo adicione zeros virtuais.
 BANK_DISABLE_DIRECT_INPUT=Desabilitar o registro direto da transação na conta bancária
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Diário de relatórios de despesas
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Default accounting account for "expense reports"
 ACCOUNTING_RESULT_PROFIT=Conta de contabilidade de resultado (Lucro)
 ACCOUNTING_RESULT_LOSS=Conta contábil do resultado (perda)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Jornal de encerramento

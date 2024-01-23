@@ -99,6 +99,7 @@ ACCOUNTING_MANAGE_ZERO=Permitir administrar diferentes números de ceros al fina
 BANK_DISABLE_DIRECT_INPUT=Deshabilitar el registro directo de la transacción en la cuenta bancaria
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Habilitar borrador de exportación en la revista
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Diario de informe de gastos
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Default accounting account for "expense reports"
 ACCOUNTING_HAS_NEW_JOURNAL=Tiene nuevo diario
 ACCOUNTING_INVENTORY_JOURNAL=diario de inventario
 ACCOUNTING_SOCIAL_JOURNAL=Revista social

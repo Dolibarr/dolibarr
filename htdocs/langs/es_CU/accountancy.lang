@@ -108,6 +108,7 @@ ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Habilitar la exportación de borradores e
 ACCOUNTANCY_COMBO_FOR_AUX=Habilite la lista combinada para la cuenta subsidiaria (puede ser lenta si tiene muchos terceros, interrumpe la capacidad de buscar una parte del valor)
 ACCOUNTING_DATE_START_BINDING=Defina una fecha para comenzar a vincular y transferir en contabilidad. Por debajo de esta fecha, las transacciones no serán trasladadas a contabilidad.
 ACCOUNTING_EXPENSEREPORT_JOURNAL=diario de informe de gastos
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Default accounting account for "expense reports"
 ACCOUNTING_HAS_NEW_JOURNAL=Tiene nuevo Diario
 ACCOUNTING_INVENTORY_JOURNAL=diario de inventario
 ACCOUNTING_SOCIAL_JOURNAL=diario social

@@ -178,6 +178,7 @@ ACCOUNTING_SELL_JOURNAL=Försäljningsjournal - försäljning och returer
 ACCOUNTING_PURCHASE_JOURNAL=Inköpsjournal - köp och returer
 ACCOUNTING_BANK_JOURNAL=Kassajournal - in- och utbetalningar
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Utgiftsloggbok
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Default accounting account for "expense reports"
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Allmän journal
 ACCOUNTING_HAS_NEW_JOURNAL=Har ny loggbok
 ACCOUNTING_INVENTORY_JOURNAL=Inventeringsjournal

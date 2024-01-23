@@ -142,7 +142,7 @@ if ($result) {
 	$num = $db->num_rows($result);
 
 	// Variables
-	$account_salary = (!empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT)) ? $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT : 'NotDefined';
+	$account_salary = (!empty($conf->global->ACCOUNTING_ACCOUNT_EXPENSEREPORT)) ? $conf->global->ACCOUNTING_ACCOUNT_EXPENSEREPORT : 'NotDefined';
 	$account_vat = (!empty($conf->global->ACCOUNTING_VAT_BUY_ACCOUNT)) ? $conf->global->ACCOUNTING_VAT_BUY_ACCOUNT : 'NotDefined';
 
 	$i = 0;
@@ -227,7 +227,7 @@ if ($action == 'writebookkeeping' && !$error) {
 	$error = 0;
 
 	$accountingaccountexpense = new AccountingAccount($db);
-	$accountingaccountexpense->fetch(null, $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT, true);
+	$accountingaccountexpense->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_EXPENSEREPORT, true);
 
 	foreach ($taber as $key => $val) {		// Loop on each expense report
 		$errorforline = 0;
@@ -259,7 +259,7 @@ if ($action == 'writebookkeeping' && !$error) {
 					$bookkeeping->subledger_account = $tabuser[$key]['user_accountancy_code'];
 					$bookkeeping->subledger_label = $tabuser[$key]['name'];
 
-					$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_EXPENSEREPORT;
 					$bookkeeping->label_compte = $accountingaccountexpense->label;
 
 					$bookkeeping->label_operation = $tabuser[$key]['name'];
@@ -551,7 +551,7 @@ if (empty($action) || $action == 'view') {
 	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
 	// Button to write into Ledger
-	if (empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1') {
+	if (empty($conf->global->ACCOUNTING_ACCOUNT_EXPENSEREPORT) || $conf->global->ACCOUNTING_ACCOUNT_EXPENSEREPORT == '-1') {
 		print '<br><div class="warning">'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
 		$desc = ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '{link}');
 		$desc = str_replace('{link}', '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>', $desc);
@@ -563,7 +563,7 @@ if (empty($action) || $action == 'view') {
 	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') {
 		print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';
 	}
-	if (empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1') {
+	if (empty($conf->global->ACCOUNTING_ACCOUNT_EXPENSEREPORT) || $conf->global->ACCOUNTING_ACCOUNT_EXPENSEREPORT == '-1') {
 		print '<input type="button" class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="'.$langs->trans("WriteBookKeeping").'" />';
 	} else {
 		if ($in_bookkeeping == 'notyet') {
@@ -687,7 +687,7 @@ if (empty($action) || $action == 'view') {
 			print "<td>".$expensereportstatic->getNomUrl(1)."</td>";
 			// Account
 			print "<td>";
-			$accountoshow = length_accountg($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT);
+			$accountoshow = length_accountg($conf->global->ACCOUNTING_ACCOUNT_EXPENSEREPORT);
 			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
 				print '<span class="error">'.$langs->trans("MainAccountForUsersNotDefined").'</span>';
 			} else {

@@ -178,6 +178,7 @@ ACCOUNTING_SELL_JOURNAL=Diario de vendas - vendas e devolucións
 ACCOUNTING_PURCHASE_JOURNAL=Diario de compras: compra e devolucións
 ACCOUNTING_BANK_JOURNAL=Diario de caixa - recibos e desembolsos
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Informe de gastos diario
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Default accounting account for "expense reports"
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Xornal xeral
 ACCOUNTING_HAS_NEW_JOURNAL=Ten un novo diario
 ACCOUNTING_INVENTORY_JOURNAL=Diario de inventario

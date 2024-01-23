@@ -89,6 +89,7 @@ ACCOUNTING_MANAGE_ZERO=Permitir gestionar diferentes números de ceros al final 
 BANK_DISABLE_DIRECT_INPUT=Inhabilitar la grabación directa de la transacción en una cuenta bancaria
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Habilitar la exportación del borrador en el diario
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Diario de informes de gastos
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Default accounting account for "expense reports"
 ACCOUNTING_RESULT_PROFIT=Cuenta contable de resultados (beneficio)
 ACCOUNTING_RESULT_LOSS=Cuenta contable de resultados (pérdida)
 TransitionalAccount=Cuenta de transferencia bancaria transitoria

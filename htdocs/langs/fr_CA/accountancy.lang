@@ -82,6 +82,7 @@ ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Tronquer le formulaire de description de c
 ACCOUNTING_LENGTH_GACCOUNT=Longueur des comptes comptables généraux (Si vous définissez la valeur à 6 ici, le compte '706' apparaîtra comme '706000' à l'écran)
 BANK_DISABLE_DIRECT_INPUT=Désactiver l'enregistrement direct de la transaction dans le compte bancaire
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Note de frais
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Compte comptable par défaut pour les "notes de frais"
 ACCOUNTING_SOCIAL_JOURNAL=Journal de paie
 NotMatch=Pas encore défini
 FinanceJournal=Journal des finances

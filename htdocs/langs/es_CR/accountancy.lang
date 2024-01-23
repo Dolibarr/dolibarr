@@ -83,6 +83,7 @@ ACCOUNTING_LENGTH_GACCOUNT=Longitud de las cuentas de contabilidad general (si e
 BANK_DISABLE_DIRECT_INPUT=Deshabilitar el registro directo de la transacción en la cuenta bancaria
 ACCOUNTING_BANK_JOURNAL=Libro de caja - recibos y pagos
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Diario de informes de gastos
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Default accounting account for "expense reports"
 ACCOUNTING_HAS_NEW_JOURNAL=Tiene nuevo diario
 ACCOUNTING_RESULT_PROFIT=Cuenta contable de resultados (Ganancia)
 ACCOUNTING_RESULT_LOSS=Cuenta contable de resultados (Pérdida)

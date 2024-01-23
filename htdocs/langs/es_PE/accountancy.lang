@@ -32,6 +32,7 @@ ACCOUNTING_LENGTH_DESCRIPTION=Truncar la descripción de los productos y servici
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Truncar el formulario de descripción de la cuenta de producto y servicios en los listados después de los caracteres x (mejor = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Longitud de las cuentas de contabilidad general (si establece el valor a 6 aquí, la cuenta '706' aparecerá como '706000' en la pantalla)
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Informe de Gastos Diario
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Default accounting account for "expense reports"
 ACCOUNTING_SOCIAL_JOURNAL=Diario Social
 Codejournal=Periódico
 FinanceJournal=Periodo Financiero

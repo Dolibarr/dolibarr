@@ -178,6 +178,7 @@ ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
 ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns
 ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Pregled stroškovnih poročil
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Default accounting account for "expense reports"
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Splošni dnevnik
 ACCOUNTING_HAS_NEW_JOURNAL=Ima nov dnevnik
 ACCOUNTING_INVENTORY_JOURNAL=Inventurni dnevnik

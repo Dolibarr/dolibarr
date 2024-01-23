@@ -178,6 +178,7 @@ ACCOUNTING_SELL_JOURNAL=Jurnal de vânzări - vânzări și retururi
 ACCOUNTING_PURCHASE_JOURNAL=Jurnal de achiziții - achiziții și retururi
 ACCOUNTING_BANK_JOURNAL=Jurnal de încasări numerar - încasări și plăți
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Jurnalul rapoartelor de cheltuieli
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Default accounting account for "expense reports"
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Registrul jurnal
 ACCOUNTING_HAS_NEW_JOURNAL=Are un nou jurnal
 ACCOUNTING_INVENTORY_JOURNAL=Jurnalul de inventar

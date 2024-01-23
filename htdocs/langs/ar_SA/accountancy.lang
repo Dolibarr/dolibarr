@@ -178,6 +178,7 @@ ACCOUNTING_SELL_JOURNAL=المبيعات في اليومية العامة - ال
 ACCOUNTING_PURCHASE_JOURNAL=المشتريات في اليومية العامة - المشتريات و المرتجعات
 ACCOUNTING_BANK_JOURNAL=دفتر اليومية النقدية - المقبوضات و المدفوعات
 ACCOUNTING_EXPENSEREPORT_JOURNAL=دفتر تقرير المصروف اليومي
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Default accounting account for "expense reports"
 ACCOUNTING_MISCELLANEOUS_JOURNAL=اليومية العامة
 ACCOUNTING_HAS_NEW_JOURNAL=له دفتر يوميات جديد
 ACCOUNTING_INVENTORY_JOURNAL=المخزون في اليومية

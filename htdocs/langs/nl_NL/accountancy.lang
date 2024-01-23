@@ -178,6 +178,7 @@ ACCOUNTING_SELL_JOURNAL=Verkoopjournaal - verkoop en retouren
 ACCOUNTING_PURCHASE_JOURNAL=Aankoopjournaal - aankoop en retouren
 ACCOUNTING_BANK_JOURNAL=Kasjournaal - ontvangsten en uitbetalingen
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Default accounting account for "expense reports"
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Algemeen journaal
 ACCOUNTING_HAS_NEW_JOURNAL=Heeft nieuw Journaal
 ACCOUNTING_INVENTORY_JOURNAL=Voorraad journaal

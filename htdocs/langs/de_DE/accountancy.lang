@@ -178,6 +178,7 @@ ACCOUNTING_SELL_JOURNAL=Verkaufsjournal - Verkäufe und Retouren
 ACCOUNTING_PURCHASE_JOURNAL=Einkaufsjournal - Käufe und Retouren
 ACCOUNTING_BANK_JOURNAL=Kassenbuch - Einnahmen und Ausgaben
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Spesen-Abrechnungs-Journal
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Standardkonto für „Spesenabrechnungen“
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Sammeljournal
 ACCOUNTING_HAS_NEW_JOURNAL=Eröffnungsjournal
 ACCOUNTING_INVENTORY_JOURNAL=Bestandsjournal

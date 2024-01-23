@@ -116,6 +116,7 @@ ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Entwurfsexport des Journales erlauben
 ACCOUNTANCY_COMBO_FOR_AUX=Kombinierte Liste für Nebenbuchkonten aktivieren (das kann bei vielen Geschäftspartnern langsam gehen. Weiter kannst du so nicht nach Teilwerten suchen.
 ACCOUNTING_DATE_START_BINDING=Eröffnungsdatum der Buchhaltung festlegen. Alle Vorgänge davor werden in der Buchhaltung nicht berücksichtigt.
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Spesenabrechnungsjournal
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Standardkonto für „Spesenabrechnungen“
 ACCOUNTING_HAS_NEW_JOURNAL=Hat neuen Journaleintrag
 ACCOUNTING_SOCIAL_JOURNAL=Personaljournal
 ACCOUNTING_RESULT_PROFIT=Ergebniskonto (Gewinn)

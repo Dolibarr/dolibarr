@@ -178,6 +178,7 @@ ACCOUNTING_SELL_JOURNAL=Pārdošanas žurnāls - pārdošana un atgriešana
 ACCOUNTING_PURCHASE_JOURNAL=Pirkumu žurnāls - pirkšana un atgriešana
 ACCOUNTING_BANK_JOURNAL=Kases žurnāls - kvītis un izmaksas
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Izdevumu atskaites žurnāls
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Default accounting account for "expense reports"
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Vispārējais žurnāls
 ACCOUNTING_HAS_NEW_JOURNAL=Vai jauns Vēstnesis?
 ACCOUNTING_INVENTORY_JOURNAL=Inventāra žurnāls

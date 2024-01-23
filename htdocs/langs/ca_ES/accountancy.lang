@@ -178,6 +178,7 @@ ACCOUNTING_SELL_JOURNAL=Diari de vendes: vendes i devolucions
 ACCOUNTING_PURCHASE_JOURNAL=Diari de compres: compres i devolucions
 ACCOUNTING_BANK_JOURNAL=Diari d'efectiu: rebuts i desemborsaments
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Diari de l'informe de despeses
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Default accounting account for "expense reports"
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diari general
 ACCOUNTING_HAS_NEW_JOURNAL=Té un nou Diari
 ACCOUNTING_INVENTORY_JOURNAL=Diari d'inventari
