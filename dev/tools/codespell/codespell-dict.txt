@@ -9,4 +9,5 @@ dollibarr->dolibarr
 mot de passe->password
 not de passe->password
 tableau de bord->state board
+tagret->target
 thridparty->thirdparty
