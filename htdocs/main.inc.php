@@ -537,7 +537,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	// Array of action code where CSRFCHECK with token will be forced (so token must be provided on url request)
 	$sensitiveget = false;
 	if ((GETPOSTISSET('massaction') || GETPOST('action', 'aZ09')) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 3) {
-		// All GET actions (except the listed exception) and mass actions are processed as sensitive.
+		// All GET actions (except the listed exception that are post actions) and mass actions are processed as sensitive.
 		if (GETPOSTISSET('massaction') || !in_array(GETPOST('action', 'aZ09'), array('create', 'createsite', 'createcard', 'edit', 'editvalidator', 'file_manager', 'presend', 'presend_addmessage', 'preview', 'specimen'))) {	// We exclude some action that are legitimate
 			$sensitiveget = true;
 		}
@@ -2202,7 +2202,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 						}
 					} else {
 						foreach ($value as $value2) {
-							if ($value2 !== '') {
+							if (($value2 !== '') && (!is_array($value2))) {
 								$qs .= '&'.$key.'[]='.urlencode($value2);
 							}
 						}

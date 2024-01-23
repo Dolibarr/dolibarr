@@ -2374,15 +2374,13 @@ class Contrat extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Load the indicators this->nb for state board
 	 *
 	 *   @return     int         Return integer <0 si ko, >0 si ok
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $conf, $user;
 
 		$this->nb = array();

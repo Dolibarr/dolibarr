@@ -5152,15 +5152,13 @@ class Facture extends CommonInvoice
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *      @return         int     Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $conf, $user;
 
 		$this->nb = array();
@@ -5810,9 +5808,9 @@ class Facture extends CommonInvoice
 							$joinFileName = [];
 							$joinFileMime = [];
 							if ($arraymessage->joinfiles == 1 && !empty($tmpinvoice->last_main_doc)) {
-								$joinFile[] = DOL_DATA_ROOT.$tmpinvoice->last_main_doc;
+								$joinFile[] = DOL_DATA_ROOT.'/'.$tmpinvoice->last_main_doc;
 								$joinFileName[] = basename($tmpinvoice->last_main_doc);
-								$joinFileMime[] = dol_mimetype(DOL_DATA_ROOT.$tmpinvoice->last_main_doc);
+								$joinFileMime[] = dol_mimetype(DOL_DATA_ROOT.'/'.$tmpinvoice->last_main_doc);
 							}
 
 							// Mail Creation

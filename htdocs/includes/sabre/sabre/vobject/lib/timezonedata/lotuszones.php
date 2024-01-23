@@ -34,7 +34,7 @@ return [
     'Newfoundland' => 'America/St_Johns',
     'Argentina' => 'America/Argentina/Buenos_Aires',
     'E. South America' => 'America/Belem',
-    'Greenland' => 'America/Nuuk',
+    'Greenland' => 'America/Godthab',
     'Montevideo' => 'America/Montevideo',
     'SA Eastern' => 'America/Belem',
     // 'Mid-Atlantic'           => 'Etc/GMT-2', // conflict with windows timezones.

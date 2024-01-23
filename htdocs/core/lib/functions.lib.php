@@ -235,6 +235,25 @@ function isModEnabled($module)
 }
 
 /**
+ * isDolTms check if a timestamp is valid.
+ *
+ * @param  int|string|null $timestamp timestamp to check
+ * @return bool
+ */
+function isDolTms($timestamp)
+{
+	if ($timestamp === '') {
+		dol_syslog('Using empty string for a timestamp is deprecated, prefer use of null when calling page '.$_SERVER["PHP_SELF"], LOG_NOTICE);
+		return false;
+	}
+	if (is_null($timestamp) || !is_numeric($timestamp)) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
  * Return a DoliDB instance (database handler).
  *
  * @param   string	$type		Type of database (mysql, pgsql...)
@@ -2781,7 +2800,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 function dol_strftime($fmt, $ts = false, $is_gmt = false)
 {
 	if ((abs($ts) <= 0x7FFFFFFF)) { // check if number in 32-bit signed range
-		return ($is_gmt) ? @gmstrftime($fmt, $ts) : @strftime($fmt, $ts);
+		return ($is_gmt) ? @gmstrftime($fmt, $ts) : @dol_print_date($ts, $fmt);
 	} else {
 		return 'Error date into a not supported range';
 	}
@@ -3104,7 +3123,7 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
  *										'tzuserrel' = local to user TZ taking dst into account at the given date. Use this one to convert date input from user into a GMT date.
  *										'tz,TimeZone' = use specified timezone
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
- *	@return	int|string					Date as a timestamp, '' or false if error
+ *	@return	int|string					Date as a timestamp, '' if error
  * 	@see 								dol_print_date(), dol_stringtotime(), dol_getdate()
  */
 function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', $check = 1)
@@ -6724,7 +6743,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 				$found = 1;
 			}
 		} else {
-			// TODO Read default product vat according to product and another countrycode.
+			// TODO Read default product vat according to product and an other countrycode.
 			// Vat for couple anothercountrycode/product is data that is not managed and store yet, so we will fallback on next rule.
 		}
 	}
@@ -11878,6 +11897,9 @@ function getElementProperties($element_type)
 		$module = 'societe';
 		$subelement = 'contact';
 		$table_element = 'socpeople';
+	} elseif ($element_type == 'inventory') {
+		$module = 'product';
+		$classpath = 'product/inventory/class';
 	} elseif ($element_type == 'stock') {
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
@@ -12439,6 +12461,7 @@ function jsonOrUnserialize($stringtodecode)
  * @param	int			$nopar		1=Do not add the perenthesis around the condition string.
  * @param	int			$noerror	1=If search criteria is not valid, does not return an error string but invalidate the SQL
  * @return	string					Return forged SQL string
+ * @see dolSqlDateFilter()
  */
 function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 0, $nopar = 0, $noerror = 0)
 {

@@ -2081,6 +2081,12 @@ class Form
 		if (getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX') || $notdisabled) {
 			$sql .= " AND u.statut <> 0";
 		}
+		if (!empty($conf->global->USER_HIDE_NONEMPLOYEE_IN_COMBOBOX) || $notdisabled) {
+			$sql .= " AND u.employee <> 0";
+		}
+		if (!empty($conf->global->USER_HIDE_EXTERNAL_IN_COMBOBOX) || $notdisabled) {
+			$sql .= " AND u.fk_soc IS NULL";
+		}
 		if (!empty($morefilter)) {
 			$sql .= " " . $morefilter;
 		}
@@ -2425,7 +2431,7 @@ class Form
 
 			$events = array();
 			$out .= img_picto('', 'resource', 'class="pictofixedwidth"');
-			$out .= $formresources->select_resource_list('', $htmlname, '', 1, 1, 0, $events, '', 2, null);
+			$out .= $formresources->select_resource_list(0, $htmlname, '', 1, 1, 0, $events, '', 2, null);
 			//$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
 			$out .= ' <input type="submit" disabled class="button valignmiddle smallpaddingimp reposition" id="' . $action . 'assignedtoresource" name="' . $action . 'assignedtoresource" value="' . dol_escape_htmltag($langs->trans("Add")) . '">';
 			$out .= '<br>';
@@ -2439,29 +2445,29 @@ class Form
 	/**
 	 *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_list
 	 *
-	 * @param int 			$selected 				Preselected products
-	 * @param string 		$htmlname 				Name of HTML select field (must be unique in page).
-	 * @param int|string 	$filtertype 			Filter on product type (''=nofilter, 0=product, 1=service)
-	 * @param int 			$limit 					Limit on number of returned lines
-	 * @param int 			$price_level 			Level of price to show
-	 * @param int 			$status 				Sell status -1=Return all products, 0=Products not on sell, 1=Products on sell
-	 * @param int 			$finished 				2=all, 1=finished, 0=raw material
-	 * @param string 		$selected_input_value 	Value of preselected input text (for use with ajax)
-	 * @param int 			$hidelabel 				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
-	 * @param array 		$ajaxoptions 			Options for ajax_autocompleter
-	 * @param int 			$socid 					Thirdparty Id (to get also price dedicated to this customer)
-	 * @param string 		$showempty 				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
-	 * @param int 			$forcecombo 			Force to use combo box
-	 * @param string 		$morecss 				Add more css on select
-	 * @param int 			$hidepriceinlabel 		1=Hide prices in label
-	 * @param string 		$warehouseStatus 		Warehouse status filter to count the quantity in stock. Following comma separated filter options can be used
-	 *                                				'warehouseopen' = count products from open warehouses,
-	 *                                				'warehouseclosed' = count products from closed warehouses,
-	 *                               				'warehouseinternal' = count products from warehouses for internal correct/transfer only
-	 * @param array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
-	 * @param int	 		$nooutput 				No print, return the output into a string
-	 * @param int 			$status_purchase 		Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
-	 * @return        void|string
+	 *  @param		int			$selected				Preselected products
+	 *  @param		string		$htmlname				Name of HTML select field (must be unique in page).
+	 *  @param		int|string	$filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
+	 *  @param		int			$limit					Limit on number of returned lines
+	 *  @param		int			$price_level			Level of price to show
+	 *  @param		int			$status					Sell status: -1=No filter on sell status, 0=Products not on sell, 1=Products on sell
+	 *  @param		int			$finished				2=all, 1=finished, 0=raw material
+	 *  @param		string		$selected_input_value	Value of preselected input text (for use with ajax)
+	 *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
+	 *  @param		array		$ajaxoptions			Options for ajax_autocompleter
+	 *  @param      int			$socid					Thirdparty Id (to get also price dedicated to this customer)
+	 *  @param		string		$showempty				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * 	@param		int			$forcecombo				Force to use combo box
+	 *  @param      string      $morecss                Add more css on select
+	 *  @param      int         $hidepriceinlabel       1=Hide prices in label
+	 *  @param      string      $warehouseStatus        Warehouse status filter to count the quantity in stock. Following comma separated filter options can be used
+	 *										            'warehouseopen' = count products from open warehouses,
+	 *										            'warehouseclosed' = count products from closed warehouses,
+	 *										            'warehouseinternal' = count products from warehouses for internal correct/transfer only
+	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
+	 *  @param		string		$nooutput				No print, return the output into a string
+	 *  @param		int			$status_purchase		Purchase status: -1=No filter on purchase status, 0=Products not on purchase, 1=Products on purchase
+	 *  @return		void|string
 	 */
 	public function select_produits($selected = 0, $htmlname = 'productid', $filtertype = '', $limit = 0, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = null, $nooutput = 0, $status_purchase = -1)
 	{
@@ -2858,12 +2864,10 @@ class Form
 		if ($finished == 0) {
 			$sql .= " AND p.finished = " . ((int) $finished);
 		} elseif ($finished == 1) {
-			$sql .= " AND p.finished = " . ((int) $finished);
-			if ($status >= 0) {
-				$sql .= " AND p.tosell = " . ((int) $status);
-			}
-		} elseif ($status >= 0) {
-			$sql .= " AND p.tosell = " . ((int) $status);
+			$sql .= " AND p.finished = ".((int) $finished);
+		}
+		if ($status >= 0) {
+			$sql .= " AND p.tosell = ".((int) $status);
 		}
 		if ($status_purchase >= 0) {
 			$sql .= " AND p.tobuy = " . ((int) $status_purchase);
@@ -6522,14 +6526,31 @@ class Form
 		}
 		if (getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC')) {    // If option to have vat for end customer for services is on
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
-			if (!isInEEC($societe_vendeuse) && (!is_object($societe_acheteuse) || (isInEEC($societe_acheteuse) && !$societe_acheteuse->isACompany()))) {
+			// If SERVICE_ARE_ECOMMERCE_200238EC=1 combo list vat rate of purchaser and seller countries
+			// If SERVICE_ARE_ECOMMERCE_200238EC=2 combo list only the vat rate of the purchaser country
+			$selectVatComboMode = getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC');
+			if (isInEEC($societe_vendeuse) && isInEEC($societe_acheteuse) && !$societe_acheteuse->isACompany()) {
 				// We also add the buyer country code
 				if (is_numeric($type)) {
 					if ($type == 1) { // We know product is a service
-						$code_country .= ",'" . $societe_acheteuse->country_code . "'";
+						switch ($selectVatComboMode) {
+							case '1':
+								$code_country .= ",'" . $societe_acheteuse->country_code . "'";
+								break;
+							case '2':
+								$code_country = "'" . $societe_acheteuse->country_code . "'";
+								break;
+						}
 					}
 				} elseif (!$idprod) {  // We don't know type of product
-					$code_country .= ",'" . $societe_acheteuse->country_code . "'";
+					switch ($selectVatComboMode) {
+						case '1':
+							$code_country .= ",'" . $societe_acheteuse->country_code . "'";
+							break;
+						case '2':
+							$code_country = "'" . $societe_acheteuse->country_code . "'";
+							break;
+					}
 				} else {
 					$prodstatic = new Product($this->db);
 					$prodstatic->fetch($idprod);
@@ -6542,6 +6563,7 @@ class Form
 
 		// Now we load the list of VAT
 		$this->load_cache_vatrates($code_country); // If no vat defined, return -1 with message into this->error
+
 		// Keep only the VAT qualified for $type_vat
 		$arrayofvatrates = array();
 		foreach ($this->cache_vatrates as $cachevalue) {
@@ -8508,10 +8530,6 @@ class Form
 			$out .= ajax_combobox($idname, array(), 0, 0, 'resolve', (((int) $show_empty) < 0 ? (string) $show_empty : '-1'), $morecss);
 		}
 
-
-
-
-
 		return $out;
 	}
 
@@ -8774,10 +8792,16 @@ class Form
 		}
 
 		$useenhancedmultiselect = 0;
-		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') || defined('REQUIRE_JQUERY_MULTISELECT')) {
-			$useenhancedmultiselect = 1;
+		if (!empty($conf->use_javascript_ajax) && (getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') || defined('REQUIRE_JQUERY_MULTISELECT'))) {
+			if ($addjscombo) {
+				$useenhancedmultiselect = 1;	// Use the js multiselect in one line. Possible only if $addjscombo not 0.
+			}
 		}
 
+		// We need a hidden field because when using the multiselect, if we unselect all, there is no
+		// variable submitted at all, so no way to make a difference between variable not submitted and variable
+		// submitted to nothing.
+		$out .= '<input type="hidden" name="'.$htmlname.'_multiselect" value="1">';
 		// Output select component
 		$out .= '<select id="' . $htmlname . '" class="multiselect' . ($useenhancedmultiselect ? ' multiselectononeline' : '') . ($morecss ? ' ' . $morecss : '') . '" multiple name="' . $htmlname . '[]"' . ($moreattrib ? ' ' . $moreattrib : '') . ($width ? ' style="width: ' . (preg_match('/%/', $width) ? $width : $width . 'px') . '"' : '') . '>' . "\n";
 		if (is_array($array) && !empty($array)) {
@@ -9050,11 +9074,11 @@ class Form
 	/**
 	 *  Show linked object block.
 	 *
-	 * @param CommonObject $object Object we want to show links to
-	 * @param string $morehtmlright More html to show on right of title
-	 * @param array $compatibleImportElementsList Array of compatibles elements object for "import from" action
-	 * @param string $title Title
-	 * @return    int                                                Return integer <0 if KO, >=0 if OK
+	 * @param 	CommonObject 	$object 						Object we want to show links to
+	 * @param 	string 			$morehtmlright 					More html to show on right of title
+	 * @param 	array 			$compatibleImportElementsList 	Array of compatibles elements object for "import from" action
+	 * @param 	string 			$title 							Title
+	 * @return  int                                             Return integer <0 if KO, >=0 if OK
 	 */
 	public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = array(), $title = 'RelatedObjects')
 	{
