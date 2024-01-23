@@ -8119,7 +8119,7 @@ FIX: [ bug #3383 ] Company name is overlapped with company direction in PDF mode
 FIX: [ bug #3426 ] Unable to create an invoice from a contract with extrafields
 FIX: [ bug #3431 ] Invoice bank account is not respected
 FIX: [ bug #3432 ] Spaces should be removed from IBAN when formatting it
-FIX: Can create Proposal on close thridparty #3526
+FIX: Can create Proposal on close thirdparty #3526
 FIX: change order date on clone (as everywhere else)
 FIX: Close #2835 Customer prices of a product shows incorrect history order
 FIX: Close #2837 Product list table column header does not match column body
