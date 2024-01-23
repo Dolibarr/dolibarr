@@ -164,8 +164,8 @@ class CommandeFournisseur extends CommonOrder
 
 	/**
 	 * @var int Date of the purchase order second approval
-  	 * Used when SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set
-	 */	
+	 * Used when SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set
+	 */
 	public $date_approve2;
 
 	/**
@@ -224,7 +224,7 @@ class CommandeFournisseur extends CommonOrder
 	 * @var string Payment conditions code
 	 */
 	public $cond_reglement_code;
-	
+
 	/**
 	 * @var string Payment conditions label
 	 */
@@ -267,8 +267,8 @@ class CommandeFournisseur extends CommonOrder
 
 	/**
 	 * @var int User ID of the purchase order second approver
-     * Used when SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set
-	 */		
+	 * Used when SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set
+	 */
 	public $user_approve_id2;
 
 	public $refuse_note;
