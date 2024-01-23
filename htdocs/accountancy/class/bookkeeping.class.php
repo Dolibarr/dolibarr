@@ -1751,7 +1751,7 @@ class BookKeeping extends CommonObject
 		$now = dol_now();
 
 		$this->id = 0;
-		$this->doc_date = (string) $now;
+		$this->doc_date = $now;
 		$this->doc_type = '';
 		$this->doc_ref = '';
 		$this->fk_doc = 0;
