@@ -2092,7 +2092,7 @@ class AccountLine extends CommonObjectLine
 				$this->fk_user_rappro = $obj->fk_user_rappro;
 
 				$this->fk_type = $obj->fk_type; // Type of transaction
-				$this->rappro = $obj->rappro;
+				$this->rappro = (int) $obj->rappro;
 				$this->num_releve = $obj->num_releve;
 
 				$this->num_chq = $obj->num_chq;

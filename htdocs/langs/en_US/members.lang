@@ -244,3 +244,4 @@ MemberCodeDesc=Member Code, unique for all members
 NoRecordedMembers=No recorded members
 MemberSubscriptionStartFirstDayOf=The start date of a membership corresponds to the first day of a
 MemberSubscriptionStartAfter=Minimum period before the entry into force of the start date of a subscription except renewals (example +3m = +3 months, -5d = -5 days, +1Y = +1 year)
+SubscriptionLinkedToConciliatedTransaction=Membership is linked to a conciliated transaction so this modification is not allowed.
