@@ -90,18 +90,17 @@ class CommandeFournisseur extends CommonOrder
 	protected $table_ref_field = 'ref';
 
 	/**
-	 * @var int ID
+	 * @var int Purchase Order ID
 	 */
 	public $id;
 
 	/**
-	 * Supplier order reference
-	 * @var string
+	 * @var string Supplier order reference
 	 */
 	public $ref;
 
 	/**
-	 * @var string ref supplier
+	 * @var string Supplier reference
 	 */
 	public $ref_supplier;
 
@@ -133,13 +132,45 @@ class CommandeFournisseur extends CommonOrder
 
 	public $billed;
 
+	/**
+	 * @var int Company ID
+	 */
 	public $socid;
+
+	/**
+	 * @var int Supplier ID
+	 */
 	public $fourn_id;
+
+	/**
+	 * @var int Date
+	 */
 	public $date;
+
+	/**
+	 * @var int Date of the purchase order creation
+	 */
 	public $date_creation;
+
+	/**
+	 * @var int Date of the purchase order validation
+	 */
 	public $date_valid;
+
+	/**
+	 * @var int Date of the purchase order approval
+	 */
 	public $date_approve;
-	public $date_approve2; // Used when SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set
+
+	/**
+	 * @var int Date of the purchase order second approval
+  	 * Used when SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set
+	 */	
+	public $date_approve2;
+
+	/**
+	 * @var int Date of the purchase order ordering
+	 */
 	public $date_commande;
 
 	//For backward compatibility
@@ -148,15 +179,35 @@ class CommandeFournisseur extends CommonOrder
 	public $methode_commande;
 
 	/**
-	 *  @var int Date expected for delivery
+	 *  @var int Expected Delivery Date
 	 */
 	public $delivery_date;
 
+	/**
+	 *  @var float Total value, excluding taxes (HT = "Hors Taxe" in French)
+	 */
 	public $total_ht;
+
+	/**
+	 *  @var float Total VAT
+	 */
 	public $total_tva;
-	public $total_localtax1; // Total Local tax 1
-	public $total_localtax2; // Total Local tax 2
+
+	/**
+	 *  @var float Total Local tax 1
+	 */
+	public $total_localtax1;
+
+	/**
+	 *  @var float Total Local tax 2
+	 */
+	public $total_localtax2;
+
+	/**
+	 *  @var float Total value, including taxes (TTC = "Toutes Taxes Comprises" in French)
+	 */
 	public $total_ttc;
+
 	public $source;
 
 	/**
@@ -164,34 +215,61 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public $fk_project;
 
+	/**
+	 * @var int Payment conditions ID
+	 */
 	public $cond_reglement_id;
-	public $cond_reglement_code;
-	public $cond_reglement_label;	// Label
-	public $cond_reglement_doc;		// Label on documents
 
 	/**
-	 * @var int ID
+	 * @var string Payment conditions code
+	 */
+	public $cond_reglement_code;
+	
+	/**
+	 * @var string Payment conditions label
+	 */
+	public $cond_reglement_label;
+
+	/**
+	 * @var string Payment conditions label on documents
+	 */
+	public $cond_reglement_doc;
+
+	/**
+	 * @var int Account ID
 	 */
 	public $fk_account;
 
 	/**
-	 * @var int payment choice ID
+	 * @var int Payment choice ID
 	 */
 	public $mode_reglement_id;
 
 	/**
-	 * @var string payment choice code
+	 * @var string Payment choice code
 	 */
 	public $mode_reglement_code;
 
 	/**
-	 * @var string paymnet choice label
+	 * @var string Payment choice label
 	 */
 	public $mode_reglement;
 
+	/**
+	 * @var int User ID of the purchase order author
+	 */
 	public $user_author_id;
+
+	/**
+	 * @var int User ID of the purchase order approver
+	 */
 	public $user_approve_id;
-	public $user_approve_id2; // Used when SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set
+
+	/**
+	 * @var int User ID of the purchase order second approver
+     * Used when SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set
+	 */		
+	public $user_approve_id2;
 
 	public $refuse_note;
 
@@ -213,7 +291,7 @@ class CommandeFournisseur extends CommonOrder
 	public $linked_objects = array();
 
 	/**
-	 * @var int Deadline for payment
+	 * @var int Date of the purchase order payment deadline
 	 */
 	public $date_lim_reglement;
 	public $receptions = array();
@@ -224,10 +302,29 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public $fk_multicurrency;
 
+	/**
+	 * @var string
+	 */
 	public $multicurrency_code;
+
+	/**
+	 * @var float Rate
+	 */
 	public $multicurrency_tx;
+
+	/**
+	 * @var float Total value in the other currency, excluding taxes (HT = "Hors Taxes" in French)
+	 */
 	public $multicurrency_total_ht;
+
+	/**
+	 * @var float Total VAT in the other currency (TVA = "Taxe sur la Valeur Ajoutée" in French)
+	 */
 	public $multicurrency_total_tva;
+
+	/**
+	 * @var float Total value in the other currency, including taxes (TTC = "Toutes Taxes Comprises in French)
+	 */
 	public $multicurrency_total_ttc;
 
 	/**
@@ -2777,15 +2874,15 @@ class CommandeFournisseur extends CommonOrder
 	/**
 	 *	Update line
 	 *
-	 *	@param     	int			$rowid           	Id de la ligne de facture
-	 *	@param     	string		$desc            	Description de la ligne
-	 *	@param     	double		$pu              	Prix unitaire
-	 *	@param     	double		$qty             	Quantity
-	 *	@param     	double		$remise_percent  	Percent discount on line
-	 *	@param     	double		$txtva          	VAT rate
-	 *  @param     	double		$txlocaltax1	    Localtax1 tax
-	 *  @param     	double		$txlocaltax2   		Localtax2 tax
-	 *  @param     	double		$price_base_type 	Type of price base
+	 *	@param     	int			$rowid           	ID de la ligne de facture
+	 *	@param     	string		$desc            	Line description
+	 *	@param     	float		$pu              	Unit price
+	 *	@param     	float		$qty             	Quantity
+	 *	@param     	float		$remise_percent  	Percent discount on line
+	 *	@param     	float		$txtva          	VAT rate
+	 *  @param     	float		$txlocaltax1	    Localtax1 tax
+	 *  @param     	float		$txlocaltax2   		Localtax2 tax
+	 *  @param     	float		$price_base_type 	Type of price base
 	 *	@param		int			$info_bits			Miscellaneous information
 	 *	@param		int			$type				Type of line (0=product, 1=service)
 	 *  @param		int			$notrigger			Disable triggers
@@ -2793,7 +2890,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param      integer     $date_end       	Date end of service
 	 *  @param		array		$array_options		Extrafields array
 	 * 	@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
-	 * 	@param		double		$pu_ht_devise		Unit price in currency
+	 * 	@param		float		$pu_ht_devise		Unit price in currency
 	 *  @param		string		$ref_supplier		Supplier ref
 	 *	@return    	int         	    			Return integer < 0 if error, > 0 if ok
 	 */
@@ -2836,8 +2933,8 @@ class CommandeFournisseur extends CommonOrder
 			if (!preg_match('/\((.*)\)/', $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
-			$txlocaltax1 = price2num($txlocaltax1);
-			$txlocaltax2 = price2num($txlocaltax2);
+			$txlocaltax1 = (float) price2num($txlocaltax1);
+			$txlocaltax2 = (float) price2num($txlocaltax2);
 
 			// Check parameters
 			if ($type < 0) {
