@@ -10374,7 +10374,8 @@ class Form
 		global $langs;
 
 		$out = '';
-		$sql = "SELECT id, code, label FROM " . $this->db->prefix() . "c_type_fees";
+		$sql = "SELECT id, code, label";
+		$sql .= " FROM ".$this->db->prefix()."c_type_fees";
 		$sql .= " WHERE active = 1";
 
 		$resql = $this->db->query($sql);
@@ -10397,6 +10398,8 @@ class Form
 				$out .= '<option ' . ($selected == $obj->{$field} ? 'selected="selected"' : '') . ' value="' . $obj->{$field} . '">' . ($key != $obj->code ? $key : $obj->label) . '</option>';
 			}
 			$out .= '</select>';
+
+			$out .= ajax_combobox('select_'.$htmlname);
 		} else {
 			dol_print_error($this->db);
 		}
