@@ -70,6 +70,7 @@ $search_account = GETPOST("search_account", "int");
 $search_payment_num = GETPOST('search_payment_num', 'alpha');
 $search_amount = GETPOST("search_amount", 'alpha'); // alpha because we must be able to search on "< x"
 $search_status = GETPOST('search_status', 'intcomma');
+$search_sale = GETPOST('search_sale', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield			= GETPOST('sortfield', 'aZ09comma');
@@ -116,6 +117,17 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('paymentlist'));
 $object = new Paiement($db);
+
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
+}
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'facture', $facid, '');
+
 
 /*
  * Actions
@@ -185,8 +197,7 @@ if (GETPOST("orphelins", "alpha")) {
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 } else {
-	// DISTINCT is to avoid duplicate when there is a link to sales representatives
-	$sql = "SELECT DISTINCT p.rowid, p.ref, p.datep, p.fk_bank, p.amount, p.statut, p.num_paiement";
+	$sql = "SELECT p.rowid, p.ref, p.datep, p.fk_bank, p.amount, p.statut, p.num_paiement";
 	$sql .= ", c.code as paiement_code";
 	$sql .= ", ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.fk_accountancy_journal as accountancy_journal";
 	$sql .= ", s.rowid as socid, s.nom as name, s.email";
@@ -205,13 +216,7 @@ if (GETPOST("orphelins", "alpha")) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-	}
 	$sql .= " WHERE p.entity IN (".getEntity('invoice').")";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
-		$sql .= " AND sc.fk_user = ".((int) $user->id);
-	}
 	if ($socid > 0) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
@@ -247,6 +252,14 @@ if (GETPOST("orphelins", "alpha")) {
 	}
 	if ($search_company) {
 		$sql .= natural_search('s.nom', $search_company);
+	}
+	// Search on sale representative
+	if ($search_sale && $search_sale != '-1') {
+		if ($search_sale == -2) {
+			$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc)";
+		} elseif ($search_sale > 0) {
+			$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		}
 	}
 
 	if ($search_all) {
