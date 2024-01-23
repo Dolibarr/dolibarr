@@ -130,12 +130,13 @@ class FormSetup
 
 
 	/**
-	 * generateOutput
+	 * Generate the form (in read or edit mode depending on $editMode)
 	 *
 	 * @param 	bool 	$editMode 	true will display output on edit mod
-	 * @return 	string				html output
+	 * @param	bool	$hideTitle	True to hide the first title line
+	 * @return 	string				Html output
 	 */
-	public function generateOutput($editMode = false)
+	public function generateOutput($editMode = false, $hideTitle = false)
 	{
 		global $hookmanager, $action;
 
@@ -167,7 +168,7 @@ class FormSetup
 			}
 
 			// generate output table
-			$out .= $this->generateTableOutput($editMode);
+			$out .= $this->generateTableOutput($editMode, $hideTitle);
 
 
 			$reshook = $hookmanager->executeHooks('formSetupBeforeGenerateOutputButton', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
@@ -200,10 +201,11 @@ class FormSetup
 	/**
 	 * generateTableOutput
 	 *
-	 * @param 	bool 	$editMode 	true will display output on edit mod
-	 * @return 	string				html output
+	 * @param 	bool 	$editMode 	True will display output on edit modECM
+	 * @param	bool	$hideTitle	True to hide the first title line
+	 * @return 	string				Html output
 	 */
-	public function generateTableOutput($editMode = false)
+	public function generateTableOutput($editMode = false, $hideTitle = false)
 	{
 		global $hookmanager, $action;
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -220,12 +222,14 @@ class FormSetup
 			return $hookmanager->resPrint;
 		} else {
 			$out = '<table class="noborder centpercent">';
-			$out .= '<thead>';
-			$out .= '<tr class="liste_titre">';
-			$out .= '	<td>' . $this->langs->trans("Parameter") . '</td>';
-			$out .= '	<td>' . $this->langs->trans("Value") . '</td>';
-			$out .= '</tr>';
-			$out .= '</thead>';
+			if (empty($hideTitle)) {
+				$out .= '<thead>';
+				$out .= '<tr class="liste_titre">';
+				$out .= '	<td>' . $this->langs->trans("Parameter") . '</td>';
+				$out .= '	<td>' . $this->langs->trans("Value") . '</td>';
+				$out .= '</tr>';
+				$out .= '</thead>';
+			}
 
 			// Sort items before render
 			$this->sortingItems();
@@ -445,12 +449,12 @@ class FormSetup
 
 	/**
 	 * Create a new item
-	 * the tagret is useful with hooks : that allow externals modules to add setup items on good place
+	 * The tagret is useful with hooks : that allow externals modules to add setup items on good place
 	 *
 	 * @param string	$confKey 				the conf key used in database
 	 * @param string	$targetItemKey    		target item used to place the new item beside
 	 * @param bool		$insertAfterTarget		insert before or after target item ?
-	 * @return FormSetupItem the new setup item created
+	 * @return FormSetupItem 					the new setup item created
 	 */
 	public function newItem($confKey, $targetItemKey = '', $insertAfterTarget = false)
 	{
@@ -686,7 +690,7 @@ class FormSetupItem
 	}
 
 	/**
-	 * reload conf value from databases is an alias of loadValueFromConf
+	 * Reload conf value from databases is an alias of loadValueFromConf
 	 *
 	 * @deprecated
 	 * @return bool
@@ -907,7 +911,7 @@ class FormSetupItem
 	 */
 	public function generateInputFieldText()
 	{
-		if (empty($this->fieldAttr)) {
+		if (empty($this->fieldAttr) || empty($this->fieldAttr['class'])) {
 			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass);
 		}
 		return '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';

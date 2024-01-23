@@ -102,6 +102,7 @@ $item->cssClass = 'minwidth500';
 // Setup conf for selection of a simple string input
 $item = $formSetup->newItem('MYMODULE_MYPARAM2');
 $item->defaultFieldValue = 'default value';
+$item->fieldAttr['placeholder'] = 'A placeholder here';
 
 // Setup conf for selection of a simple textarea input but we replace the text of field title
 $item = $formSetup->newItem('MYMODULE_MYPARAM3');
