@@ -119,7 +119,7 @@ if (empty($conf->dol_no_mouse_hover)) {
 			 }, opendelay));
 	});
 	target.on("mouseout", function(event) {
-		console.log("mouse out");
+		console.log("mouse out of a .classforajaxtooltip");
 	    event.stopImmediatePropagation();
 	    clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
 	    target.tooltip("close");
