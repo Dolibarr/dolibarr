@@ -7102,7 +7102,7 @@ FIX: incoterms do not output into crabe invoice PDF
 FIX: in PgSQL no quote "word style" is permitted around column name
 FIX: Introduce hidden option MAIL_PREFIX_FOR_EMAIL_ID to solve pb of tracking email.
 FIX: margin tab on customer card must filter on current entity invoices
-FIX: missing column into SQL on thridparty list
+FIX: missing column into SQL on thirdparty list
 FIX: only show projects of related third if external user
 FIX: PgSQL Module Resource list crash #5637
 FIX: php Strict
@@ -7156,7 +7156,7 @@ FIX: incoterms do not output into crabe invoice PDF
 FIX: in PgSQL no quote "word style" is permitted around column name
 FIX: Introduce hidden option MAIL_PREFIX_FOR_EMAIL_ID to solve pb of tracking email.
 FIX: margin tab on customer card must filter on current entity invoices
-FIX: missing column into SQL on thridparty list
+FIX: missing column into SQL on thirdparty list
 FIX: only show projects of related third if external user
 FIX: PgSQL Module Resource list crash #5637
 FIX: php Strict
@@ -7792,7 +7792,7 @@ FIX: avoid SQL error when no sortfield send to method
 FIX: bad link into project box
 FIX: Bad title line in project view when using jmobile
 FIX: Bad translation key for project "Overview"
-FIX: Can create Proposal on close thridparty #3526
+FIX: Can create Proposal on close thirdparty #3526
 FIX: Can't change state on a contact
 FIX: Can't change the admin with default setup
 FIX: Can't delete thirdparty if there is some discounts
@@ -8128,7 +8128,7 @@ FIX: [ bug #3383 ] Company name is overlapped with company direction in PDF mode
 FIX: [ bug #3426 ] Unable to create an invoice from a contract with extrafields
 FIX: [ bug #3431 ] Invoice bank account is not respected
 FIX: [ bug #3432 ] Spaces should be removed from IBAN when formatting it
-FIX: Can create Proposal on close thridparty #3526
+FIX: Can create Proposal on close thirdparty #3526
 FIX: change order date on clone (as everywhere else)
 FIX: Close #2835 Customer prices of a product shows incorrect history order
 FIX: Close #2837 Product list table column header does not match column body
