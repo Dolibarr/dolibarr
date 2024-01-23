@@ -570,7 +570,7 @@ function showWebsiteTemplates(Website $website)
 
 	print '<tr><td colspan="'.$colspan.'">';
 
-	print '<table class="nobordernopadding centpercent"><tr><td><div class="center">';
+	print '<table class="nobordernopadding centpercent"><tr><td><div class="display-flex">';
 
 	if (count($dirthemes)) {
 		$i = 0;
@@ -592,7 +592,7 @@ function showWebsiteTemplates(Website $website)
 								continue;
 							}
 
-							print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
+							print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px; margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
 
 							$templatedir = $dirtheme."/".$subdir;
 							$file = $dirtheme."/".$subdirwithoutzip.".jpg";
@@ -632,6 +632,11 @@ function showWebsiteTemplates(Website $website)
 							$i++;
 						}
 					}
+					print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px;margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;"></div>';
+					print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px;margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;"></div>';
+					print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px;margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;"></div>';
+					print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px;margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;"></div>';
+					print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px;margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;"></div>';
 				}
 			}
 		}
