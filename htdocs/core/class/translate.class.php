@@ -2,6 +2,7 @@
 /* Copyright (C) 2001      Eric Seigne         <erics@rycks.com>
  * Copyright (C) 2004-2015 Destailleur Laurent <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -767,8 +768,9 @@ class Translate
 	 */
 	public function transcountry($str, $countrycode)
 	{
-		if (!empty($this->tab_translate["$str$countrycode"])) {
-			return $this->trans("$str$countrycode");
+		$strLocaleKey=$str.$countrycode;
+		if (!empty($this->tab_translate[$strLocaleKey])) {
+			return $this->trans($strLocaleKey);
 		} else {
 			return $this->trans($str);
 		}
@@ -785,8 +787,9 @@ class Translate
 	 */
 	public function transcountrynoentities($str, $countrycode)
 	{
-		if (!empty($this->tab_translate["$str$countrycode"])) {
-			return $this->transnoentities("$str$countrycode");
+		$strLocaleKey=$str.$countrycode;
+		if (!empty($this->tab_translate[$strLocaleKey])) {
+			return $this->transnoentities($strLocaleKey);
 		} else {
 			return $this->transnoentities($str);
 		}
