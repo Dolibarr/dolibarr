@@ -62,7 +62,7 @@ class BookKeeping extends CommonObject
 	public $id;
 
 	/**
-	 * @var string Date of source document, in db date NOT NULL
+	 * @var int	Date of source document, in db date NOT NULL
 	 */
 	public $doc_date;
 
@@ -1785,7 +1785,7 @@ class BookKeeping extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT piece_num, doc_date,code_journal, journal_label, doc_ref, doc_type,";
+		$sql = "SELECT piece_num, doc_date, code_journal, journal_label, doc_ref, doc_type,";
 		$sql .= " date_creation, tms as date_modification, date_validated as date_validation";
 		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
 		if ($mode != "_tmp") {
@@ -2780,7 +2780,7 @@ class BookKeeping extends CommonObject
 							$mt = $obj->opening_balance;
 
 							$bookkeeping = new BookKeeping($this->db);
-							$bookkeeping->doc_date = (string) $new_fiscal_period->date_start;
+							$bookkeeping->doc_date = $new_fiscal_period->date_start;
 							$bookkeeping->date_lim_reglement = (string) '';
 							$bookkeeping->doc_ref = $new_fiscal_period->label;
 							$bookkeeping->date_creation = $now;
@@ -2827,7 +2827,7 @@ class BookKeeping extends CommonObject
 						$accountingaccount->fetch(null, getDolGlobalString($income_statement_amount < 0 ? 'ACCOUNTING_RESULT_LOSS' : 'ACCOUNTING_RESULT_PROFIT'), true);
 
 						$bookkeeping = new BookKeeping($this->db);
-						$bookkeeping->doc_date = (string) $new_fiscal_period->date_start;
+						$bookkeeping->doc_date = $new_fiscal_period->date_start;
 						$bookkeeping->date_lim_reglement = (string) '';
 						$bookkeeping->doc_ref = $new_fiscal_period->label;
 						$bookkeeping->date_creation = $now;
@@ -2987,7 +2987,7 @@ class BookKeeping extends CommonObject
 				}
 
 				$bookkeeping->id = 0;
-				$bookkeeping->doc_date = (string) $new_fiscal_period->date_start;
+				$bookkeeping->doc_date = $new_fiscal_period->date_start;
 				$bookkeeping->doc_ref = $new_fiscal_period->label;
 				$bookkeeping->date_creation = $now;
 				$bookkeeping->doc_type = 'accounting_reversal';
@@ -3034,7 +3034,7 @@ class BookKeepingLine extends CommonObjectLine
 	 */
 	public $id;
 
-	public $doc_date = '';
+	public $doc_date = null;
 	public $doc_type;
 	public $doc_ref;
 
