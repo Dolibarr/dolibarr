@@ -9,6 +9,7 @@
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2018  Charlie Benke           <charlie@patas-monkey.com>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,7 +142,7 @@ if ($action == 'add') {
 	}
 
 	// gestion des fréquences et des échéances
-	$frequency = GETPOST('frequency', 'int');
+	$frequency = GETPOSTINT('frequency');
 	$reyear = GETPOST('reyear');
 	$remonth = GETPOST('remonth');
 	$reday = GETPOST('reday');
@@ -167,14 +168,14 @@ if ($action == 'add') {
 		$object->id_origin = $id;
 		$object->title			= GETPOST('titre', 'alpha');
 		$object->description	= GETPOST('description', 'restricthtml');
-		$object->socid			= GETPOST('socid', 'alpha');
-		$object->fk_project		= GETPOST('projectid', 'int');
-		$object->fk_contract	= GETPOST('contractid', 'int');
+		$object->socid			= GETPOSTINT('socid');
+		$object->fk_project		= GETPOSTINT('projectid');
+		$object->fk_contrat		= GETPOSTINT('contractid');
 
 		$object->frequency = $frequency;
 		$object->unit_frequency = GETPOST('unit_frequency', 'alpha');
 		$object->nb_gen_max = $nb_gen_max;
-		$object->auto_validate = GETPOST('auto_validate', 'int');
+		$object->auto_validate = GETPOSTINT('auto_validate');
 
 		$object->date_when = $date_next_execution;
 
@@ -198,7 +199,7 @@ if ($action == 'add') {
 		$newinter->fk_project = $object->fk_project;
 		$newinter->fk_contrat = $object->fk_contrat;
 	} else {
-		$newinter->socid = GETPOST("socid");
+		$newinter->socid = GETPOSTINT("socid");
 	}
 
 	$newinter->entity = $object->entity;
@@ -357,7 +358,7 @@ if ($action == 'create') {
 		if (isModEnabled('contrat')) {
 			$formcontract = new FormContract($db);
 			print "<tr><td>".$langs->trans("Contract")."</td><td>";
-			$contractid = GETPOST('contractid') ? GETPOST('contractid') : (!empty($object->fk_contract) ? $object->fk_contract : 0) ;
+			$contractid = GETPOST('contractid') ? GETPOST('contractid') : (!empty($object->fk_contrat) ? $object->fk_contrat : 0) ;
 			$numcontract = $formcontract->select_contract($object->thirdparty->id, $contractid, 'contracttid');
 			print "</td></tr>";
 		}
