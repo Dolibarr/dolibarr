@@ -44,7 +44,7 @@ if (!isset($usedbyinclude) || empty($usedbyinclude)) {
 	$res = @include '../../main.inc.php';
 
 	// Security check
-	// None. Beeing connected is enough.
+	// None. Being connected is enough.
 
 	top_httphead('application/json');
 

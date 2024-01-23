@@ -70,7 +70,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = trim(GETPOST("search_all", 'alpha'));
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -135,7 +135,7 @@ if (empty($reshook)) {
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
-	// On remet cette lecture de permission ici car nécessaire d'avoir le nouveau statut de l'objet après toute action exécutée dessus (après incrémentation par exemple, le bouton supprimer doit disparaître)
+	// On remet cette lecture de permission ici car nécessaire d'avoir le nouveau statut de l'objet après toute action exécutée dessus (après incrémentation par example, le bouton supprimer doit disparaître)
 	$permissiontodelete = $user->rights->stocktransfer->stocktransfer->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 
 	// Actions when linking object each other
@@ -401,7 +401,7 @@ llxHeader('', $title, $help_url);
 print '<script type="text/javascript" language="javascript">
 jQuery(document).ready(function() {';
 
-// Affichage alerte date prévue de départ si transfert concerné
+// Show alert for planned departure date if the transfer is related
 $date_prevue_depart = $object->date_prevue_depart;
 $date_prevue_depart_plus_delai = $date_prevue_depart;
 if ($object->lead_time_for_warning > 0) {
@@ -773,7 +773,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print getTitleFieldOfList($langs->trans('WarehouseSource'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
 	print getTitleFieldOfList($langs->trans('WarehouseTarget'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
 	print getTitleFieldOfList($langs->trans('Qty'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'center tagtd maxwidthonsmartphone ');
-	if ($conf->global->PRODUCT_USE_UNITS) {
+	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		print getTitleFieldOfList($langs->trans('Unit'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
 	}
 	print getTitleFieldOfList($langs->trans('AverageUnitPricePMPShort'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'center tagtd maxwidthonsmartphone ');
@@ -846,7 +846,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<td class="center">'.$line->qty.'</td>';
 		}
 
-		if ($conf->global->PRODUCT_USE_UNITS) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			print '<td class="linecoluseunit nowrap left">';
 			$label = $productstatic->getLabelOfUnit('short');
 			if ($label !== '') {
@@ -968,7 +968,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td class="center"><input type="text" class="flat maxwidth50" name="qty" '.(!empty($error) ? 'value="'.$qty.'"' : '').'></td>';
 		// PMP
 		print '<td></td>';
-		if ($conf->global->PRODUCT_USE_UNITS) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			// Unité
 			print '<td></td>';
 		}

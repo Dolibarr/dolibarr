@@ -261,7 +261,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as t";
 			$sql .= " WHERE t.date_ech between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
-			//$sql.=" AND fk_statut <> ".ChargeSociales::STATUS_DRAFT;
+			//$sql.=" AND fk_statut <> ".ChargeSociales::STATUS_UNPAID;
 			if (!empty($projectid)) {
 				$sql .= " AND fk_projet = ".((int) $projectid);
 			}
@@ -727,7 +727,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 
 	print '<br>';
 
-	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], "item", "", $param, '', $sortfield, $sortorder, 'nowrap ');

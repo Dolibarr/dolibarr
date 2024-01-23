@@ -170,7 +170,7 @@ class PrestaShopWebservice
 	 *
 	 * @throws PrestaShopWebserviceException
 	 */
-	protected function executeRequest($url, $curl_params = array())
+	public function executeRequest($url, $curl_params = array())
 	{
 		$defaultParams = $this->getCurlDefaultParams();
 

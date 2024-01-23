@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2022       Lionel Vessiller        <lvessiller@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
@@ -505,6 +505,7 @@ $sql .= " t.label_operation,";
 $sql .= " t.debit,";
 $sql .= " t.credit,";
 $sql .= " t.lettering_code,";
+$sql .= " t.date_lettering,";
 $sql .= " t.montant as amount,";
 $sql .= " t.sens,";
 $sql .= " t.fk_user_author,";
@@ -513,6 +514,7 @@ $sql .= " t.code_journal,";
 $sql .= " t.journal_label,";
 $sql .= " t.piece_num,";
 $sql .= " t.date_creation,";
+$sql .= " t.date_lim_reglement,";
 $sql .= " t.tms as date_modification,";
 $sql .= " t.date_export,";
 $sql .= " t.date_validated as date_validation,";
@@ -575,18 +577,46 @@ if (count($sqlwhere) > 0) {
 // Export into a file with format defined into setup (FEC, CSV, ...)
 // Must be after definition of $sql
 if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements', 'export')) {
-	// TODO Replace the fetchAll to get all ->line followed by call to ->export(). fetchAll() currently consumes too much memory on large export.
-	// Replace this with the query($sql) and loop on each line to export them.
-	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', (!getDolGlobalString('ACCOUNTING_REEXPORT') ? 0 : 1));
+	// Export files then exit
+	$accountancyexport = new AccountancyExport($db);
+
+	$error = 0;
+	$nbtotalofrecords = 0;
+
+	// Open transaction to read lines to export, export them and update field date_export or date_validated
+	$db->begin();
+
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	$db->free($resql);
+
+	//$sqlforexport = $sql;
+	//$sqlforexport .= $db->order($sortfield, $sortorder);
+
+
+	// TODO Call the fetchAll for a $limit and $offset
+	// Replace the fetchAll to get all ->line followed by call to ->export(). fetchAll() currently consumes too much memory on large export.
+	// Replace this with the query($sqlforexport) on a limited block and loop on each line to export them.
+	$limit = 0;
+	$offset = 0;
+	$result = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter, 'AND', (!getDolGlobalString('ACCOUNTING_REEXPORT') ? 0 : 1));
 
 	if ($result < 0) {
+		$error++;
 		setEventMessages($object->error, $object->errors, 'errors');
 	} else {
-		// Export files then exit
-		$accountancyexport = new AccountancyExport($db);
-
 		$formatexport = GETPOST('formatexport', 'int');
 		$notexportlettering = GETPOST('notexportlettering', 'alpha');
+
 
 		if (!empty($notexportlettering)) {
 			if (is_array($object->lines)) {
@@ -602,9 +632,9 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 		$withAttachment = !empty(trim(GETPOST('notifiedexportfull', 'alphanohtml'))) ? 1 : 0;
 
 		// Output data on screen or download
-		$result = $accountancyexport->export($object->lines, $formatexport, $withAttachment);
+		//$result = $accountancyexport->export($object->lines, $formatexport, $withAttachment);
+		$result = $accountancyexport->export($object->lines, $formatexport, $withAttachment, 1, 1, 1);
 
-		$error = 0;
 		if ($result < 0) {
 			$error++;
 		} else {
@@ -612,11 +642,9 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 				if (is_array($object->lines)) {
 					dol_syslog("/accountancy/bookkeeping/list.php Function export_file Specify movements as exported", LOG_DEBUG);
 
-					// Specify as export : update field date_export or date_validated
-					$db->begin();
-
 					// TODO Merge update for each line into one global using rowid IN (list of movement ids)
 					foreach ($object->lines as $movement) {
+						// Upate the line to set date_export and/or date_validated (if not already set !)
 						$now = dol_now();
 
 						$setfields = '';
@@ -640,23 +668,45 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 						}
 					}
 
-					if (!$error) {
-						$db->commit();
-					} else {
-						$error++;
+					if ($error) {
 						$accountancyexport->errors[] = $langs->trans('NotAllExportedMovementsCouldBeRecordedAsExportedOrValidated');
-						$db->rollback();
 					}
 				}
 			}
 		}
-
-		if ($error) {
-			setEventMessages('', $accountancyexport->errors, 'errors');
-			header('Location: '.$_SERVER['PHP_SELF']);
-		}
-		exit(); // download or show errors
 	}
+
+	if (!$error) {
+		$db->commit();
+
+		$downloadFilePath = $accountancyexport->generatedfiledata['downloadFilePath'];
+		$downloadFileMimeType = $accountancyexport->generatedfiledata['downloadFileMimeType'];
+		$downloadFileFullName = $accountancyexport->generatedfiledata['downloadFileFullName'];
+
+		// No error, we can output the file
+		top_httphead($downloadFileMimeType);
+
+		header('Content-Description: File Transfer');
+		// Add MIME Content-Disposition from RFC 2183 (inline=automatically displayed, attachment=need user action to open)
+		$attachment = 1;
+		if ($attachment) {
+			header('Content-Disposition: attachment; filename="'.$downloadFileFullName.'"');
+		} else {
+			header('Content-Disposition: inline; filename="'.$downloadFileFullName.'"');
+		}
+		// Ajout directives pour resoudre bug IE
+		header('Cache-Control: Public, must-revalidate');
+		header('Pragma: public');
+		header('Content-Length: ' . dol_filesize($downloadFilePath));
+
+		readfileLowMemory($downloadFilePath);
+	} else {
+		$db->rollback();
+
+		setEventMessages('', $accountancyexport->errors, 'errors');
+		header('Location: '.$_SERVER['PHP_SELF']);
+	}
+	exit(); // download or show errors
 }
 
 
@@ -708,8 +758,9 @@ $arrayofselected = is_array($toselect) ? $toselect : array();
 
 // Output page
 // --------------------------------------------------------------------
+$help_url ='EN:Module_Double_Entry_Accounting#Exports|FR:Module_Comptabilit&eacute;_en_Partie_Double#Exports';
 
-llxHeader('', $title_page);
+llxHeader('', $title_page, $help_url);
 
 $formconfirm = '';
 
@@ -1086,7 +1137,7 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print "</tr>\n";
 
 
-$line = new BookKeepingLine();
+$line = new BookKeepingLine($db);
 
 // Loop on record
 // --------------------------------------------------------------------

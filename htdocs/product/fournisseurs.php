@@ -807,7 +807,7 @@ if ($id > 0 || $ref) {
 					print '<td>'.$langs->trans('GencodBuyPrice').'</td>';
 					print '<td>';
 					print img_picto('', 'barcode', 'class="pictofixedwidth"');
-					print $formbarcode->selectBarcodeType((GETPOSTISSET('fk_barcode_type') ? GETPOST('fk_barcode_type', 'int') : ($rowid ? $object->supplier_fk_barcode_type : getDolGlobalint("PRODUIT_DEFAULT_BARCODE_TYPE"))), 'fk_barcode_type', 1);
+					print $formbarcode->selectBarcodeType((GETPOSTISSET('fk_barcode_type') ? GETPOST('fk_barcode_type', 'int') : ($rowid ? $object->supplier_fk_barcode_type : getDolGlobalInt("PRODUIT_DEFAULT_BARCODE_TYPE"))), 'fk_barcode_type', 1);
 					print ' <input class="flat" name="barcode"  value="'.(GETPOSTISSET('barcode') ? GETPOST('barcode') : ($rowid ? $object->supplier_barcode : '')).'"></td>';
 					print '</tr>';
 				}

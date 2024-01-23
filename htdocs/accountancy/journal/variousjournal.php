@@ -50,7 +50,7 @@ $result = $object->fetch($id_journal);
 if ($result > 0) {
 	$id_journal = $object->id;
 } elseif ($result < 0) {
-	dol_print_error('', $object->error, $object->errors);
+	dol_print_error(null, $object->error, $object->errors);
 } elseif ($result == 0) {
 	accessforbidden('ErrorRecordNotFound');
 }

@@ -219,6 +219,7 @@ class Accountancy extends DolibarrApi
 			$filter['t.doc_date<='] = $doc_date_end;
 		}
 
+		// @FIXME Critical bugged. Never use fetchAll without limit !
 		$result = $bookkeeping->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', $alreadyexport);
 
 		if ($result < 0) {

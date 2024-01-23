@@ -85,7 +85,7 @@ if ($id > 0 || $ref) {
 
 $permissiontoread = $user->rights->tax->charges->lire;
 $permissiontoadd = $user->rights->tax->charges->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->tax->charges->supprimer || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissiontodelete = $user->rights->tax->charges->supprimer || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_UNPAID);
 $permissionnote = $user->rights->tax->charges->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->tax->charges->creer; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->tax->multidir_output[isset($object->entity) ? $object->entity : 1];
@@ -572,7 +572,7 @@ if ($id > 0) {
 
 		$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '', 0, $morehtmlright);
 
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
@@ -692,7 +692,7 @@ if ($id > 0) {
 			$i = 0;
 			$total = 0;
 
-			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 			print '<table class="noborder paymenttable">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("RefPayment").'</td>';
@@ -884,7 +884,7 @@ if ($id > 0) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	} else {
 		/* Social contribution not found */
-		dol_print_error('', $object->error);
+		dol_print_error(null, $object->error);
 	}
 }
 

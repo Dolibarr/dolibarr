@@ -473,8 +473,6 @@ foreach ($dirmodels as $reldir) {
 								}
 								print '</td>';
 
-								print "</tr>\n";
-
 								// Info
 								$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
 								$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
@@ -494,6 +492,8 @@ foreach ($dirmodels as $reldir) {
 								print '<td class="center">';
 								print $formcategory->textwithpicto('', $htmltooltip, 1, 0);
 								print '</td>';
+
+								print "</tr>\n";
 							}
 						}
 					}

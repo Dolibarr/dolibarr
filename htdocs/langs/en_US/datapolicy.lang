@@ -78,11 +78,8 @@ DATAPOLICY_PORTABILITE_CONFIRMATION = You want to export the personal data of th
 #
 ANONYMISER_AT = Anonymised the %s
 
-# V2
-DATAPOLICYReturn = GDPR Validation
 DATAPOLICY_date = Date of agreement/desagreement GDPR
 DATAPOLICY_send = Date sending agreement email
-DATAPOLICYReturn = GDPR Return
 DATAPOLICY_SEND = Send GDPR email
 MailSent = Email has been sent
 

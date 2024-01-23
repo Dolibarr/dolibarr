@@ -70,7 +70,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -204,7 +204,7 @@ if (empty($reshook)) {
 				$moline->fk_default_workstation = $tmpproduct->fk_default_workstation;
 			}
 			$moline->disable_stock_change = ($tmpproduct->type == Product::TYPE_SERVICE ? 1 : 0);
-			if ($conf->global->PRODUCT_USE_UNITS) {
+			if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 				$moline->fk_unit = $tmpproduct->fk_unit;
 			}
 		}
@@ -840,7 +840,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Qty
 		print '<td class="right">'.$langs->trans("Qty").'</td>';
 		// Unit
-		if ($conf->global->PRODUCT_USE_UNITS) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			print '<td class="right">' . $langs->trans("Unit") . '</td>';
 		}
 		// Cost price
@@ -911,7 +911,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '</td>';
 			// Qty
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
-			if ($conf->global->PRODUCT_USE_UNITS) {
+			if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 				print '<td></td>';
 			}
 			// Cost price
@@ -1029,7 +1029,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<input class="width40" name="qty_lineProduce" value="'. $line->qty.'">';
 						print '</td>';
 						// Unit
-						if ($conf->global->PRODUCT_USE_UNITS) {
+						if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 							print '<td class="right nowraponall">';
 							print measuringUnitString($line->fk_unit, '', '', 1);
 							print '</td>';
@@ -1107,7 +1107,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print price2num($line->qty, 'MS');
 						print '</td>';
 						// Unit
-						if ($conf->global->PRODUCT_USE_UNITS) {
+						if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 							print '<td class="right nowraponall">';
 							print measuringUnitString($line->fk_unit, '', '', 1);
 							print '</td>';
@@ -1323,7 +1323,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<td class="right"><input type="text" class="width50 right" id="qtytoconsume-' . $line->id . '-' . $i . '" name="qty-' . $line->id . '-' . $i . '" value="' . $preselected . '" ' . $disable . '></td>';
 
 						// Unit
-						if ($conf->global->PRODUCT_USE_UNITS) {
+						if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 							print '<td></td>';
 						}
 
@@ -1449,7 +1449,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Qty
 		print '<td class="right">'.$langs->trans("Qty").'</td>';
 		/// Unit
-		if ($conf->global->PRODUCT_USE_UNITS) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			print '<td class="right">'.$langs->trans("Unit").'</td>';
 		}
 		// Cost price
@@ -1502,7 +1502,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Qty
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
 			//Unit
-			if ($conf->global->PRODUCT_USE_UNITS) {
+			if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 				print '<td></td>';
 			}
 			// Cost price
@@ -1569,7 +1569,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					// Qty
 					print '<td class="right">'.$line->qty.'</td>';
 					// Unit
-					if ($conf->global->PRODUCT_USE_UNITS) {
+					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 						print '<td class="right">'.measuringUnitString($line->fk_unit, '', '', 1).'</td>';
 					}
 					// Cost price
@@ -1668,7 +1668,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						// Qty
 						print '<td></td>';
 						// Unit
-						if ($conf->global->PRODUCT_USE_UNITS) {
+						if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 							print '<td></td>';
 						}
 						// Cost price
@@ -1721,7 +1721,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						// Qty
 						print '<td class="right"><input type="text" class="width50 right" id="qtytoproduce-'.$line->id.'-'.$i.'" name="qtytoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
 						//Unit
-						if ($conf->global->PRODUCT_USE_UNITS) {
+						if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 							print '<td class="right"></td>';
 						}
 						// Cost

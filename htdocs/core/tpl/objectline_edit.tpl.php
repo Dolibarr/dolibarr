@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
+/* Copyright (C) 2010-2012	Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2022	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -143,7 +143,7 @@ $coldisplay++;
 	}
 
 	// Do not allow editing during a situation cycle
-	// but in some situations that is required (update legal informations for example)
+	// but in some situations that is required (update legal information for example)
 	if (getDolGlobalString('INVOICE_SITUATION_CAN_FORCE_UPDATE_DESCRIPTION')) {
 		$situationinvoicelinewithparent = 0;
 	}
@@ -178,7 +178,7 @@ $coldisplay++;
 		}
 	}
 
-	// Show autofill date for recuring invoices
+	// Show autofill date for recurring invoices
 	if (isModEnabled("service") && $line->product_type == 1 && ($line->element == 'facturedetrec' || $line->element == 'invoice_supplier_det_rec')) {
 		if ($line->element == 'invoice_supplier_det_rec') {
 			$line->date_start_fill = $line->date_start;
@@ -205,9 +205,14 @@ $coldisplay++;
 
 	// VAT Rate
 	$coldisplay++;
+	if ($object->element == 'propal' || $object->element == 'commande' || $object->element == 'facture' || $object->element == 'facturerec') {
+		$type_tva = 1;
+	} elseif ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {
+		$type_tva = 2;
+	}
 	if (!$situationinvoicelinewithparent) {
 		print '<td class="right">';
-		print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : ($line->tva_tx.($line->vat_src_code ? (' ('.$line->vat_src_code.')') : '')), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1);
+		print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : ($line->tva_tx.($line->vat_src_code ? (' ('.$line->vat_src_code.')') : '')), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1, $type_tva);
 		print '</td>';
 	} else {
 		print '<td class="right"><input size="1" type="text" class="flat right" name="tva_tx" value="'.price($line->tva_tx).'" readonly />%</td>';
@@ -316,7 +321,7 @@ $coldisplay++;
 		if ($user->hasRight('margins', 'creer')) {
 			if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 				$margin_rate = (GETPOSTISSET("np_marginRate") ? GETPOST("np_marginRate", "alpha", 2) : (($line->pa_ht == 0) ? '' : price($line->marge_tx)));
-				// if credit note, dont allow to modify margin
+				// if credit note, don't allow to modify margin
 				if ($line->subprice < 0) {
 					echo '<td class="right nowrap margininfos">'.$margin_rate.'<span class="opacitymedium hideonsmartphone">%</span></td>';
 				} else {
@@ -326,7 +331,7 @@ $coldisplay++;
 			}
 			if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 				$mark_rate = (GETPOSTISSET("np_markRate") ? GETPOST("np_markRate", 'alpha', 2) : price($line->marque_tx));
-				// if credit note, dont allow to modify margin
+				// if credit note, don't allow to modify margin
 				if ($line->subprice < 0) {
 					echo '<td class="right nowrap margininfos">'.$mark_rate.'<span class="opacitymedium hideonsmartphone">%</span></td>';
 				} else {
@@ -464,7 +469,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			else if (npRate == "np_markRate")
 				price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
 		}
-		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value
+		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
 
 		return true;
 	}
@@ -510,11 +515,11 @@ jQuery(document).ready(function()
 	if (isModEnabled('margin')) {
 		?>
 		/* Add rule to clear margin when we change some data, so when we change sell or buy price, margin will be recalculated after submitting form */
-		jQuery("#tva_tx").click(function() {						/* somtimes field is a text, sometimes a combo */
+		jQuery("#tva_tx").click(function() {						/* sometimes field is a text, sometimes a combo */
 			jQuery("input[name='np_marginRate']:first").val('');
 			jQuery("input[name='np_markRate']:first").val('');
 		});
-		jQuery("#tva_tx").keyup(function() {						/* somtimes field is a text, sometimes a combo */
+		jQuery("#tva_tx").keyup(function() {						/* sometimes field is a text, sometimes a combo */
 			jQuery("input[name='np_marginRate']:first").val('');
 			jQuery("input[name='np_markRate']:first").val('');
 		});

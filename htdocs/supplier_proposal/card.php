@@ -277,17 +277,17 @@ if (empty($reshook)) {
 		if (!$error) {
 			$db->begin();
 
-			// Si on a selectionne une demande a copier, on realise la copie
+			// When a copy request was made, make the copy
 			if (GETPOST('createmode') == 'copy' && GETPOST('copie_supplier_proposal')) {
 				if ($object->fetch(GETPOST('copie_supplier_proposal')) > 0) {
 					$object->ref = GETPOST('ref');
 					$object->delivery_date = $date_delivery;
-					$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
-					$object->cond_reglement_id = GETPOST('cond_reglement_id');
-					$object->mode_reglement_id = GETPOST('mode_reglement_id');
-					$object->fk_account = GETPOST('fk_account', 'int');
+					$object->shipping_method_id = GETPOSTINT('shipping_method_id');
+					$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
+					$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
+					$object->fk_account = GETPOSTINT('fk_account');
 					$object->socid = GETPOST('socid');
-					$object->fk_project = GETPOST('projectid', 'int');
+					$object->fk_project = GETPOSTINT('projectid');
 					$object->model_pdf = GETPOST('model');
 					$object->author = $user->id; // deprecated
 					$object->note = GETPOST('note', 'restricthtml');
@@ -299,19 +299,19 @@ if (empty($reshook)) {
 			} else {
 				$object->ref = GETPOST('ref');
 				$object->delivery_date = $date_delivery;
-				$object->demand_reason_id = GETPOST('demand_reason_id');
-				$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
-				$object->cond_reglement_id = GETPOST('cond_reglement_id');
-				$object->mode_reglement_id = GETPOST('mode_reglement_id');
-				$object->fk_account = GETPOST('fk_account', 'int');
-				$object->fk_project = GETPOST('projectid', 'int');
+				$object->demand_reason_id = GETPOSTINT('demand_reason_id');
+				$object->shipping_method_id = GETPOSTINT('shipping_method_id');
+				$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
+				$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
+				$object->fk_account = GETPOSTINT('fk_account');
+				$object->fk_project = GETPOSTINT('projectid');
 				$object->model_pdf = GETPOST('model');
 				$object->author = $user->id; // deprecated
 				$object->note = GETPOST('note', 'restricthtml');
 				$object->note_private = GETPOST('note', 'restricthtml');
 
 				$object->origin = GETPOST('origin');
-				$object->origin_id = GETPOST('originid');
+				$object->origin_id = GETPOSTINT('originid');
 
 				// Multicurrency
 				if (isModEnabled("multicurrency")) {
@@ -574,7 +574,7 @@ if (empty($reshook)) {
 		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
 		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
 		foreach ($object->lines as $line) {
-			$result = $object->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
+			$result = $object->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->array_options, $line->ref_fourn, $line->fk_unit, $line->multicurrency_subprice);
 		}
 	} elseif ($action == 'addline' && $usercancreate) {
 		$langs->load('errors');
@@ -702,7 +702,7 @@ if (empty($reshook)) {
 						$desc = $productsupplier->desc_supplier;
 					}
 
-					//If text set in desc is the same as product descpription (as now it's preloaded) whe add it only one time
+					//If text set in desc is the same as product descpription (as now it's preloaded) we add it only one time
 					if (trim($product_desc) == trim($desc) && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
 						$product_desc='';
 					}
@@ -978,7 +978,7 @@ if (empty($reshook)) {
 
 		// Add buying price
 		$fournprice = (GETPOST('fournprice') ? GETPOST('fournprice') : '');
-		$buyingprice = (GETPOST('buying_price') != '' ? GETPOST('buying_price') : ''); // If buying_price is '0', we muste keep this value
+		$buyingprice = (GETPOST('buying_price') != '' ? GETPOST('buying_price') : ''); // If buying_price is '0', we must keep this value
 
 		// Extrafields Lines
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -1276,7 +1276,7 @@ if ($action == 'create') {
 			print '<td colspan="2">';
 			$filter = '((s.fournisseur:=:1) AND (s.status:=:1))';
 			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company((empty($socid) ? '' : $socid), 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
-			// reload page to retrieve customer informations
+			// reload page to retrieve customer information
 			if (getDolGlobalString('RELOAD_PAGE_ON_SUPPLIER_CHANGE')) {
 				print '<script>
 				$(document).ready(function() {
@@ -1557,7 +1557,7 @@ if ($action == 'create') {
 		// Confirm validate askprice
 		$error = 0;
 
-		// on verifie si l'objet est en numerotation provisoire
+		// Verify if the object has a temporary number
 		$ref = substr($object->ref, 1, 4);
 		if ($ref == 'PROV') {
 			$numref = $object->getNextNumRef($soc);
@@ -1647,8 +1647,8 @@ if ($action == 'create') {
 
 		// Relative and absolute discounts
 		if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
-			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
-			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
+			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
 		} else {
 			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')";
 			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS PAID)%')";

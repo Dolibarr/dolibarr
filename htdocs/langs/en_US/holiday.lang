@@ -109,7 +109,6 @@ TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
 LastHolidays=Latest %s leave requests
 AllHolidays=All leave requests
 HalfDay=Half day
-NotTheAssignedApprover=You are not the assigned approver
 LEAVE_PAID=Paid vacation
 LEAVE_SICK=Sick leave
 LEAVE_OTHER=Other leave

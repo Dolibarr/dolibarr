@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016	Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2022	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024	Alexandre Spangaro	<aspangaro@easya.solutions>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2013-2016	Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
@@ -165,7 +165,9 @@ if (GETPOST('sortfield') == 'erd.date, erd.rowid') {
 $form = new Form($db);
 $formother = new FormOther($db);
 
-llxHeader('', $langs->trans("ExpenseReportsVentilation").' - '.$langs->trans("Dispatched"));
+$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
+
+llxHeader('', $langs->trans("ExpenseReportsVentilation").' - '.$langs->trans("Dispatched"), $help_url);
 
 print '<script type="text/javascript">
 			$(function () {

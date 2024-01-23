@@ -557,7 +557,7 @@ function showWebsiteTemplates(Website $website)
 	print '<tr class="liste_titre"><th class="titlefield">';
 	print $form->textwithpicto($langs->trans("Templates"), $langs->trans("ThemeDir").' : '.join(", ", $dirthemes));
 	print ' ';
-	print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($website->ref).'&importsite=1" target="_blank" rel="noopener noreferrer external">';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($website->ref).'&importsite=1" rel="noopener noreferrer external">';
 	print img_picto('', 'refresh');
 	print '</a>';
 	print '</th>';
@@ -570,7 +570,7 @@ function showWebsiteTemplates(Website $website)
 
 	print '<tr><td colspan="'.$colspan.'">';
 
-	print '<table class="nobordernopadding centpercent"><tr><td><div class="center">';
+	print '<table class="nobordernopadding centpercent"><tr><td><div class="display-flex">';
 
 	if (count($dirthemes)) {
 		$i = 0;
@@ -592,7 +592,7 @@ function showWebsiteTemplates(Website $website)
 								continue;
 							}
 
-							print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
+							print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px; margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
 
 							$templatedir = $dirtheme."/".$subdir;
 							$file = $dirtheme."/".$subdirwithoutzip.".jpg";
@@ -632,6 +632,11 @@ function showWebsiteTemplates(Website $website)
 							$i++;
 						}
 					}
+					print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px;margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;"></div>';
+					print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px;margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;"></div>';
+					print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px;margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;"></div>';
+					print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px;margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;"></div>';
+					print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px;margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;"></div>';
 				}
 			}
 		}
@@ -651,8 +656,8 @@ function showWebsiteTemplates(Website $website)
  * - Block if bad code in the new string.
  * - Block also if user has no permission to change PHP code.
  *
- * @param	string		$phpfullcodestringold		PHP old string. For exemple "<?php echo 'a' ?><php echo 'b' ?>"
- * @param	string		$phpfullcodestring			PHP new string. For exemple "<?php echo 'a' ?><php echo 'c' ?>"
+ * @param	string		$phpfullcodestringold		PHP old string. For example "<?php echo 'a' ?><php echo 'b' ?>"
+ * @param	string		$phpfullcodestring			PHP new string. For example "<?php echo 'a' ?><php echo 'c' ?>"
  * @return	int										Error or not
  * @see dolKeepOnlyPhpCode()
  */

@@ -242,7 +242,7 @@ print $formadvtargetemaling->multiselectselectSalesRepresentatives('cust_saleman
 print '</td><td>'."\n";
 print '</td></tr>'."\n";
 
-// Customer Default Langauge
+// Customer Default Language
 if (getDolGlobalInt('MAIN_MULTILANGS')) {
 	print '<tr><td>'.$langs->trans("DefaultLang");
 	if (!empty($array_query['cust_language'])) {

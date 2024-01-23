@@ -239,7 +239,7 @@ class Paiement extends CommonObject
 	 *  For payment of a customer invoice, amounts are positive, for payment of credit note, amounts are negative
 	 *
 	 *  @param	User	  $user                	Object user
-	 *  @param  int		  $closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
+	 *  @param  int		  $closepaidinvoices   	1=Also close paid invoices to paid, 0=Do nothing more
 	 *  @param  Societe   $thirdparty           Thirdparty
 	 *  @return int                 			id of created payment, < 0 if error
 	 */
@@ -373,7 +373,7 @@ class Paiement extends CommonObject
 						$invoice = new Facture($this->db);
 						$invoice->fetch($facid);
 
-						// If we want to closed payed invoices
+						// If we want to closed paid invoices
 						if ($closepaidinvoices) {
 							$paiement = $invoice->getSommePaiement();
 							$creditnotes = $invoice->getSumCreditNotesUsed();
@@ -798,7 +798,7 @@ class Paiement extends CommonObject
 					);
 				}
 
-				// Add link to the Direct Debit if invoice redused ('InvoiceRefused') in bank_url
+				// Add link to the Direct Debit if invoice refused ('InvoiceRefused') in bank_url
 				if (!$error && $label == '(InvoiceRefused)') {
 					$result=$acc->add_url_line(
 						$bank_line_id,
@@ -1004,7 +1004,7 @@ class Paiement extends CommonObject
 	/**
 	 * Information sur l'objet
 	 *
-	 * @param   int     $id      id du paiement dont il faut afficher les infos
+	 * @param   int     $id      id du paiement don't il faut afficher les infos
 	 * @return  void
 	 */
 	public function info($id)
@@ -1156,7 +1156,7 @@ class Paiement extends CommonObject
 			}
 
 			if (!$mybool) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 

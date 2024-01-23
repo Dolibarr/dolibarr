@@ -97,7 +97,7 @@ if ($action == 'validate' && $user->hasRight('deplacement', 'creer')) {
 		$error = 0;
 
 		$object->date = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-		$object->km = price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formated amount
+		$object->km = price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formatted amount
 		$object->type = GETPOST('type', 'alpha');
 		$object->socid = (int) GETPOST('socid', 'int');
 		$object->fk_user = (int) GETPOST('fk_user', 'int');
@@ -141,7 +141,7 @@ if ($action == 'validate' && $user->hasRight('deplacement', 'creer')) {
 		$result = $object->fetch($id);
 
 		$object->date			= dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-		$object->km = price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formated amount
+		$object->km = price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formatted amount
 		$object->type			= GETPOST('type', 'alpha');
 		$object->socid = (int) GETPOST('socid', 'int');
 		$object->fk_user = (int) GETPOST('fk_user', 'int');

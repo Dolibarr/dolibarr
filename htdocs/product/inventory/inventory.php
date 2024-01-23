@@ -18,7 +18,7 @@
 /**
  *   	\file       htdocs/product/inventory/inventory.php
  *		\ingroup    inventory
- *		\brief      Tabe to enter counting
+ *		\brief      Tab to enter counting
  */
 
 // Load Dolibarr environment
@@ -75,7 +75,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -430,7 +430,7 @@ llxHeader('', $langs->trans('Inventory'), $help_url);
 
 // Part to show record
 if ($object->id <= 0) {
-	dol_print_error('', 'Bad value for object id');
+	dol_print_error(null, 'Bad value for object id');
 	exit;
 }
 

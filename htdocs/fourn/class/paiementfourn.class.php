@@ -159,7 +159,7 @@ class PaiementFourn extends Paiement
 	 *	Create payment in database
 	 *
 	 *	@param		User	   $user        		Object of creating user
-	 *	@param		int		   $closepaidinvoices   1=Also close payed invoices to paid, 0=Do nothing more
+	 *	@param		int		   $closepaidinvoices   1=Also close paid invoices to paid, 0=Do nothing more
 	 *  @param      Societe    $thirdparty          Thirdparty
 	 *	@return     int         					id of created payment, < 0 if error
 	 */
@@ -515,7 +515,7 @@ class PaiementFourn extends Paiement
 	/**
 	 *	Information on object
 	 *
-	 *	@param	int		$id      Id du paiement dont il faut afficher les infos
+	 *	@param	int		$id      Id du paiement don't il faut afficher les infos
 	 *	@return	void
 	 */
 	public function info($id)
@@ -799,7 +799,7 @@ class PaiementFourn extends Paiement
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 

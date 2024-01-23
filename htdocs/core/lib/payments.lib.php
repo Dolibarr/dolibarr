@@ -230,7 +230,7 @@ function getHtmlOnlinePaymentLink($type, $ref, $label = '', $amount = 0)
 /**
  * Return string with full Url
  *
- * @param   int			$mode		      0=True url, 1=Url formated with colors
+ * @param   int			$mode		      0=True url, 1=Url formatted with colors
  * @param   string		$type		      Type of URL ('free', 'order', 'invoice', 'contractline', 'member', 'boothlocation', ...)
  * @param	string		$ref		      Ref of object
  * @param	int|float	$amount		      Amount of money to request for

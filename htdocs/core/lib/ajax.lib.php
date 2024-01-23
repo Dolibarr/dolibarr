@@ -72,7 +72,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 					var autoselect = '.((int) $autoselect).';
 					var options = '.json_encode($ajaxoptions).'; /* Option of actions to do after keyup, or after select */
 
-					/* Remove selected id as soon as we type or delete a char (it means old selection is wrong). Use keyup/down instead of change to avoid loosing the product id. This is needed only for select of predefined product */
+					/* Remove selected id as soon as we type or delete a char (it means old selection is wrong). Use keyup/down instead of change to avoid losing the product id. This is needed only for select of predefined product */
 					$("input#search_'.$htmlnamejquery.'").keydown(function(e) {
 						if (e.keyCode != 9)		/* If not "Tab" key */
 						{

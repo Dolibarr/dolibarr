@@ -55,9 +55,9 @@ if (isModEnabled('salaries')) {
 
 
 $id = GETPOST('rowid', 'int');
-$rowid = GETPOST("rowid", 'int');
-$accountoldid = GETPOST('account', 'int');		// GETPOST('account') is old account id
-$accountid = GETPOST('accountid', 'int');		// GETPOST('accountid') is new account id
+$rowid = GETPOSTINT('rowid');
+$accountoldid = GETPOSTINT('account');		// GETPOST('account') is old account id
+$accountid = GETPOSTINT('accountid');		// GETPOST('accountid') is new account id
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -261,12 +261,12 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
 		$updatePathFile = true;
 		$update_dir = true;
 
-		dol_syslog("line.php update bank line to set the new bank receipt nuber", LOG_DEBUG);
+		dol_syslog("line.php update bank line to set the new bank receipt number", LOG_DEBUG);
 
 		$result = $db->query($sql);
 
 		// We must not rename the directory of the bank receipt when we change 1 line of bank receipt. Other lines may share the same old ref.
-		// Renaming can be done when we rename globaly a bank receipt but not when changing 1 line from one receipt into another one.
+		// Renaming can be done when we rename globally a bank receipt but not when changing 1 line from one receipt into another one.
 		/*
 		if ($result) {
 			if ($oldNum_rel) {
@@ -469,7 +469,7 @@ if ($result) {
 					print img_object($langs->trans('Donation'), 'payment').' ';
 					print $langs->trans("DonationPayment");
 					print '</a>';
-				} elseif ($links[$key]['type'] == 'banktransfert') {	// transfert between 1 local account and another local account
+				} elseif ($links[$key]['type'] == 'banktransfert') {	// transfer between 1 local account and another local account
 					print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('Transaction'), 'payment').' ';
 					print $langs->trans("TransactionOnTheOtherAccount");

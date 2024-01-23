@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 class pdf_zenith extends ModelePDFSupplierProposal
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -118,7 +118,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 		}
 
 		// Define position of columns
-		$this->posxdesc = $this->marge_gauche + 1; // For module retrocompatibility support durring PDF transition: TODO remove this at the end
+		$this->posxdesc = $this->marge_gauche + 1; // For module retrocompatibility support during PDF transition: TODO remove this at the end
 
 		$this->tabTitleHeight = 5; // default height
 
@@ -143,7 +143,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 	 *  @param		int					$hideref			Do not show ref
 	 *  @return		int										1=OK, 0=KO
 	 */
-	public function write_file($object, $outputlangs = '', $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs = null, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $hookmanager, $mysoc, $nblines;
@@ -408,7 +408,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 						}
 
 
-						// apply note frame to previus pages
+						// apply note frame to previous pages
 						$i = $pageposbeforenote;
 						while ($i < $pageposafternote) {
 							$pdf->setPage($i);
@@ -577,7 +577,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 						$curY = $tab_top_newpage;
 					}
 
-					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
 					// VAT Rate
 					if ($this->getColumnStatus('vat')) {
@@ -604,7 +604,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 
 					// Unit
 					if ($this->getColumnStatus('unit')) {
-						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
+						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'unit', $unit);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
@@ -909,7 +909,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
-	 *	@param	Translate	$outputlangs	Objet langs
+	 *	@param	Translate	$outputlangs	Object langs
 	 *	@return int							Position pour suite
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
@@ -1476,7 +1476,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			'width' => false, // only for desc
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is usefull in somme case with module
+				'textkey' => 'Designation', // use lang key is useful in somme case with module
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label

@@ -44,7 +44,7 @@
  *		@param  float	$uselocaltax2_rate          0=do not use localtax2, >0=apply and get value from localtaxes_array (or database if empty), -1=autodetect according to seller if we must apply, get value from localtaxes_array (or database if empty). Try to always use -1.
  *		@param 	float	$remise_percent_global		0
  *		@param	string	$price_base_type 			'HT'=Unit price parameter $pu is HT, 'TTC'=Unit price parameter $pu is TTC (HT+VAT but not Localtax. TODO Add also mode 'INCT' when pu is price HT+VAT+LT1+LT2)
- *		@param	int		$info_bits					Miscellaneous informations on line
+ *		@param	int		$info_bits					Miscellaneous information on line
  *		@param	int		$type						0/1=Product/service
  *		@param  Societe	$seller						Thirdparty seller (we need $seller->country_id property). Provided only if seller is the supplier, otherwise $seller will be $mysoc.
  *		@param  array	$localtaxes_array			Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
@@ -277,33 +277,33 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		// We work to define prices using the price without tax
 		$result[6] = price2num($tot_sans_remise, 'MT');
 		$result[8] = price2num($tot_sans_remise * (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)) + $localtaxes[0], 'MT'); // Selon TVA NPR ou non
-		$result8bis = price2num($tot_sans_remise * (1 + ($txtva / 100)) + $localtaxes[0], 'MT'); // Si TVA consideree normale (non NPR)
+		$result8bis = price2num($tot_sans_remise * (1 + ($txtva / 100)) + $localtaxes[0], 'MT'); // Si TVA consideree normal (non NPR)
 		$result[7] = price2num($result8bis - ($result[6] + $localtaxes[0]), 'MT');
 
 		$result[0] = price2num($tot_avec_remise, 'MT');
 		$result[2] = price2num($tot_avec_remise * (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)) + $localtaxes[1], 'MT'); // Selon TVA NPR ou non
-		$result2bis = price2num($tot_avec_remise * (1 + ($txtva / 100)) + $localtaxes[1], 'MT'); // Si TVA consideree normale (non NPR)
+		$result2bis = price2num($tot_avec_remise * (1 + ($txtva / 100)) + $localtaxes[1], 'MT'); // Si TVA consideree normal (non NPR)
 		$result[1] = price2num($result2bis - ($result[0] + $localtaxes[1]), 'MT'); // Total VAT = TTC - (HT + localtax)
 
 		$result[3] = price2num($pu, 'MU');
 		$result[5] = price2num($pu * (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)) + $localtaxes[2], 'MU'); // Selon TVA NPR ou non
-		$result5bis = price2num($pu * (1 + ($txtva / 100)) + $localtaxes[2], 'MU'); // Si TVA consideree normale (non NPR)
+		$result5bis = price2num($pu * (1 + ($txtva / 100)) + $localtaxes[2], 'MU'); // Si TVA consideree normal (non NPR)
 		$result[4] = price2num($result5bis - ($result[3] + $localtaxes[2]), 'MU');
 	} else {
 		// We work to define prices using the price with tax
 		$result[8] = price2num($tot_sans_remise + $localtaxes[0], 'MT');
 		$result[6] = price2num($tot_sans_remise / (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)), 'MT'); // Selon TVA NPR ou non
-		$result6bis = price2num($tot_sans_remise / (1 + ($txtva / 100)), 'MT'); // Si TVA consideree normale (non NPR)
+		$result6bis = price2num($tot_sans_remise / (1 + ($txtva / 100)), 'MT'); // Si TVA consideree normal (non NPR)
 		$result[7] = price2num($result[8] - ($result6bis + $localtaxes[0]), 'MT');
 
 		$result[2] = price2num($tot_avec_remise + $localtaxes[1], 'MT');
 		$result[0] = price2num($tot_avec_remise / (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)), 'MT'); // Selon TVA NPR ou non
-		$result0bis = price2num($tot_avec_remise / (1 + ($txtva / 100)), 'MT'); // Si TVA consideree normale (non NPR)
+		$result0bis = price2num($tot_avec_remise / (1 + ($txtva / 100)), 'MT'); // Si TVA consideree normal (non NPR)
 		$result[1] = price2num($result[2] - ($result0bis + $localtaxes[1]), 'MT'); // Total VAT = TTC - (HT + localtax)
 
 		$result[5] = price2num($pu + $localtaxes[2], 'MU');
 		$result[3] = price2num($pu / (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)), 'MU'); // Selon TVA NPR ou non
-		$result3bis = price2num($pu / (1 + ($txtva / 100)), 'MU'); // Si TVA consideree normale (non NPR)
+		$result3bis = price2num($pu / (1 + ($txtva / 100)), 'MU'); // Si TVA consideree normal (non NPR)
 		$result[4] = price2num($result[5] - ($result3bis + $localtaxes[2]), 'MU');
 	}
 

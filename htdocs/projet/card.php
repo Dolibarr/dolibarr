@@ -83,7 +83,7 @@ $object = new Project($db);
 $extrafields = new ExtraFields($db);
 
 // Load object
-//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Can't use generic include because when creating a project, ref is defined and we dont want error if fetch fails from ref.
+//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Can't use generic include because when creating a project, ref is defined and we don't want error if fetch fails from ref.
 if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref); // If we create project, ref may be defined into POST but record does not yet exists into database
 	if ($ret > 0) {
@@ -100,7 +100,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Security check
 $socid = GETPOST('socid', 'int');
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 restrictedArea($user, 'projet', $object->id, 'projet&project');
 
 if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && !GETPOST("cancel"))) {
@@ -197,7 +197,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		// Create with status validated immediatly
+		// Create with status validated immediately
 		if (getDolGlobalString('PROJECT_CREATE_NO_DRAFT') && !$error) {
 			$status = Project::STATUS_VALIDATED;
 		}
@@ -865,7 +865,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	print '</form>';
 
 	// Change probability from status or role of project
-	// Set also dependencies between use taks and bill time
+	// Set also dependencies between use task and bill time
 	print '<script type="text/javascript">
         jQuery(document).ready(function() {
         	function change_percent()
@@ -1427,7 +1427,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 	print '</form>';
 
-	// Set also dependencies between use taks and bill time
+	// Set also dependencies between use task and bill time
 	print '<script type="text/javascript">
         jQuery(document).ready(function() {
         	jQuery("#usage_task").change(function() {
