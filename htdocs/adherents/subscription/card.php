@@ -47,7 +47,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm');
 $note = GETPOST('note', 'alpha');
 $typeid = GETPOSTINT('typeid');
-$amount = price2num(GETPOST('amount', 'alpha'), 'MT');
+$amount = (float) price2num(GETPOST('amount', 'alpha'), 'MT');
 
 if (!$user->hasRight('adherent', 'cotisation', 'lire')) {
 	accessforbidden();

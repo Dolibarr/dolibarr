@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Partnership dedicated to this member
 DatePartnershipStart=Start date
 DatePartnershipEnd=End date
 ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
+ReasonDeclineOrCancel=Reason for refusal or cancellation
 PartnershipAlreadyExist=Partnership already exist
 ManagePartnership=Manage partnership
 BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
@@ -89,7 +89,6 @@ YourPartnershipCanceledContent=We would like to inform you that our partnership 
 
 CountLastUrlCheckError=Number of errors for last URL check
 LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Reason for declining or canceling
 
 NewPartnershipRequest=New partnership request
 NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.

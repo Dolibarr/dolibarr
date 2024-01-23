@@ -58,7 +58,7 @@ fi
 #   - For each line, create a grep command to find the lines;
 #   - Execute that command by evaluation
 codespell . \
-	| sed -n -E 's@^([^:]+)@\1@p' \
+	| sed -n -E 's@^([^:]+):.*@\1@p' \
 	| xargs -r git ls-files -- \
 	| xargs -r codespell -- \
 	| sed -n -E 's@^([^:]+):[[:digit:]]+:[[:space:]](\S+)[[:space:]].*@grep -P '\''\\b\2\\b'\'' -- "\1" >> '"${codespell_ignore_file}"'@p' \
