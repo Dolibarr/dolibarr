@@ -3433,12 +3433,7 @@ class ContratLigne extends CommonObjectLine
 		$this->fk_remise_except = (int) $this->fk_remise_except;
 		$this->subprice = price2num($this->subprice);
 		$this->price_ht = price2num($this->price_ht);
-		$this->total_ht = (float) trim($this->total_ht);
-		$this->total_tva = (float) trim($this->total_tva);
-		$this->total_localtax1 = (float) trim($this->total_localtax1);
-		$this->total_localtax2 = (float) trim($this->total_localtax2);
-		$this->total_ttc = (float) trim($this->total_ttc);
-		$this->info_bits = trim($this->info_bits);
+		$this->info_bits = (int) $this->info_bits;
 		$this->fk_user_author = (int) $this->fk_user_author;
 		$this->fk_user_ouverture = (int) $this->fk_user_ouverture;
 		$this->fk_user_cloture = (int) $this->fk_user_cloture;
