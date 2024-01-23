@@ -137,7 +137,8 @@ class FormSetup
 	 */
 	public function generateOutput($editMode = false)
 	{
-		global $hookmanager, $action, $langs;
+		global $hookmanager, $action;
+
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 		$parameters = array(
@@ -177,12 +178,12 @@ class FormSetup
 			if ($reshook > 0) {
 				return $hookmanager->resPrint;
 			} elseif ($editMode) {
-				$out .= '<br>'; // Todo : remove this <br/> by adding style to form-setup-button-container css class in all themes
 				$out .= '<div class="form-setup-button-container center">'; // Todo : remove .center by adding style to form-setup-button-container css class in all themes
 				$out.= $this->htmlOutputMoreButton;
 				$out .= '<input class="button button-save" type="submit" value="' . $this->langs->trans("Save") . '">'; // Todo fix dolibarr style for <button and use <button instead of input
-				$out .= ' &nbsp;&nbsp; ';
-				$out .= '<a class="button button-cancel" type="submit" href="' . $this->formAttributes['action'] . '">'.$langs->trans('Cancel').'</a>';
+				/*$out .= ' &nbsp;&nbsp; ';
+				$out .= '<a class="button button-cancel" type="submit" href="' . $this->formAttributes['action'] . '">'.$this->langs->trans('Cancel').'</a>';
+				*/
 				$out .= '</div>';
 			}
 
@@ -940,6 +941,7 @@ class FormSetupItem
 
 	/**
 	 * generate input field for categories
+	 *
 	 * @return string
 	 */
 	public function generateInputFieldCategories()
@@ -950,7 +952,12 @@ class FormSetupItem
 
 		$tmp = explode(':', $this->type);
 		$out = img_picto('', 'category', 'class="pictofixedwidth"');
-		$out .= $formother->select_categories($tmp[1], $this->fieldValue, $this->confKey, 0, $this->langs->trans('CustomersProspectsCategoriesShort'));
+
+		$label = 'Categories';
+		if ($this->type == 'customer') {
+			$label = 'CustomersProspectsCategoriesShort';
+		}
+		$out .= $formother->select_categories($tmp[1], $this->fieldValue, $this->confKey, 0, $this->langs->trans($label));
 
 		return $out;
 	}
