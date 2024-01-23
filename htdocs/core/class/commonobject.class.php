@@ -17,6 +17,7 @@
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2023      Lenin Rivas      	<lenin.rivas777@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -6459,12 +6460,12 @@ abstract class CommonObject
 						//dol_syslog("double value"." on ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
 						$new_array_options[$key] = $value;
 						break;
-					/*case 'select':	// Not required, we chose value='0' for undefined values
-						 if ($value=='-1')
-						 {
-							 $this->array_options[$key] = null;
-						 }
-						 break;*/
+						/*case 'select':	// Not required, we chose value='0' for undefined values
+							 if ($value=='-1')
+							 {
+								 $this->array_options[$key] = null;
+							 }
+							 break;*/
 					case 'password':
 						$algo = '';
 						if ($this->array_options[$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options'])) {
@@ -6877,14 +6878,14 @@ abstract class CommonObject
 
 					$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					break;
-				/*case 'select':	// Not required, we chose value='0' for undefined values
-					 if ($value=='-1')
-					 {
-						$new_array_options["options_".$key] = $value;
+					/*case 'select':	// Not required, we chose value='0' for undefined values
+						 if ($value=='-1')
+						 {
+							$new_array_options["options_".$key] = $value;
 
-						$this->array_options["options_".$key] = $new_array_options["options_".$key];
-					 }
-					 break;*/
+							$this->array_options["options_".$key] = $new_array_options["options_".$key];
+						 }
+						 break;*/
 				case 'password':
 					$algo = '';
 					if ($this->array_options["options_".$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options'])) {
@@ -6969,35 +6970,35 @@ abstract class CommonObject
 						$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					}
 					break;
-				/*
-				case 'link':
-					$param_list = array_keys($attributeParam['options']);
-					// 0 : ObjectName
-					// 1 : classPath
-					$InfoFieldList = explode(":", $param_list[0]);
-					dol_include_once($InfoFieldList[1]);
-					if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
-					{
-						if ($value == '-1')	// -1 is key for no defined in combo list of objects
+					/*
+					case 'link':
+						$param_list = array_keys($attributeParam['options']);
+						// 0 : ObjectName
+						// 1 : classPath
+						$InfoFieldList = explode(":", $param_list[0]);
+						dol_include_once($InfoFieldList[1]);
+						if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
 						{
-							$new_array_options[$key] = '';
-						} elseif ($value) {
-							$object = new $InfoFieldList[0]($this->db);
-							if (is_numeric($value)) $res = $object->fetch($value);	// Common case
-							else $res = $object->fetch('', $value);					// For compatibility
+							if ($value == '-1')	// -1 is key for no defined in combo list of objects
+							{
+								$new_array_options[$key] = '';
+							} elseif ($value) {
+								$object = new $InfoFieldList[0]($this->db);
+								if (is_numeric($value)) $res = $object->fetch($value);	// Common case
+								else $res = $object->fetch('', $value);					// For compatibility
 
-							if ($res > 0) $new_array_options[$key] = $object->id;
-							else {
-								$this->error = "Id/Ref '".$value."' for object '".$object->element."' not found";
-								$this->db->rollback();
-								return -1;
+								if ($res > 0) $new_array_options[$key] = $object->id;
+								else {
+									$this->error = "Id/Ref '".$value."' for object '".$object->element."' not found";
+									$this->db->rollback();
+									return -1;
+								}
 							}
+						} else {
+							dol_syslog('Error bad setup of extrafield', LOG_WARNING);
 						}
-					} else {
-						dol_syslog('Error bad setup of extrafield', LOG_WARNING);
-					}
-					break;
-				*/
+						break;
+					*/
 				case 'checkbox':
 				case 'chkbxlst':
 					$new_array_options = array();
@@ -8250,7 +8251,7 @@ abstract class CommonObject
 	{
 		global $langs;
 		if (empty($msg)) {
-			$msg = $langs->trans("UnknowError");
+			$msg = $langs->trans("UnknownError");
 		}
 
 		$this->error = $this->validateFieldsErrors[$fieldKey] = $msg;
