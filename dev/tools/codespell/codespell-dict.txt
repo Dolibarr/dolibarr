@@ -1,7 +1,7 @@
 # Please add in alphabetical order->(`sort -u` like).
 EPR->ERP
 alpah->alpha
-alphanothtml->alphanothtml
+alphanothtml->alphanohtml
 alpahnothtml->alphanohtml
 aplha->alpha
 aplhanothtml->alphanohtml
