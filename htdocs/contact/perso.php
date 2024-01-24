@@ -135,7 +135,7 @@ $head = contact_prepare_head($object);
 
 if ($action == 'edit') {
 	/*
-	 * Fiche en mode edition
+	 * Card in edit mode
 	 */
 
 	print '<form name="perso" method="POST" enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';

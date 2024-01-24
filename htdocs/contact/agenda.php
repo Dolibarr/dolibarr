@@ -210,7 +210,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$objsoc = new Societe($db);
 
 		/*
-		 * Fiche en mode visualisation
+		 * Card in view mode
 		 */
 
 		dol_htmloutput_errors($error, $errors);
