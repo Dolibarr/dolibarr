@@ -380,18 +380,18 @@ class PaymentVarious extends CommonObject
 	{
 		$this->id = 0;
 
-		$this->tms = '';
+		$this->tms = 0;
 		$this->datep = '';
 		$this->datev = '';
-		$this->sens = '';
+		$this->sens = 0;
 		$this->amount = '';
 		$this->label = '';
 		$this->accountancy_code = '';
 		$this->subledger_account = '';
 		$this->note = '';
-		$this->fk_bank = '';
-		$this->fk_user_author = '';
-		$this->fk_user_modif = '';
+		$this->fk_bank = 0;
+		$this->fk_user_author = 0;
+		$this->fk_user_modif = 0;
 	}
 
 	/**
