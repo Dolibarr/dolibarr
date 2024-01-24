@@ -9,7 +9,7 @@ require_once __DIR__ . '/webPortalTheme.class.php';
 class Context
 {
 	/**
-	 * @var Singleton
+	 * @var Context Singleton
 	 * @access private
 	 * @static
 	 */
