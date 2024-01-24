@@ -4424,7 +4424,7 @@ class Facture extends CommonInvoice
 	 *	Set percent discount
 	 *
 	 *	@param     	User	$user		User that set discount
-	 *	@param     	double	$remise		Discount
+	 *	@param     	float	$remise		Discount
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 				Return integer <0 if KO, >0 if OK
 	 *	@deprecated remise_percent is a deprecated field for object parent
@@ -4433,18 +4433,18 @@ class Facture extends CommonInvoice
 	{
 		// Clean parameters
 		if (empty($remise)) {
-			$remise = 0;
+			$remise = 0.0;
 		}
 
 		if ($user->hasRight('facture', 'creer')) {
-			$remise = price2num($remise, 2);
+			$remise = (float) price2num($remise, 2);
 
 			$error = 0;
 
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-			$sql .= ' SET remise_percent = '.((float) $remise);
+			$sql .= ' SET remise_percent = '.$remise;
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= ' AND fk_statut = '.self::STATUS_DRAFT;
 
@@ -6295,7 +6295,8 @@ class FactureLigne extends CommonInvoiceLine
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring) {
-			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0) {
+			($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product))
+			if ($result < 0) {
 				return $result;
 			} else {
 				$this->pa_ht = $result;
@@ -6734,7 +6735,7 @@ class FactureLigne extends CommonInvoiceLine
 	 *
 	 * @param  int     $invoiceid      			Invoice id
 	 * @param  bool    $include_credit_note		Include credit note or not
-	 * @return int                     			>= 0
+	 * @return float|int                     	Reurrn previous situation percent, 0 or -1 if error
 	 */
 	public function get_prev_progress($invoiceid, $include_credit_note = true)
 	{
