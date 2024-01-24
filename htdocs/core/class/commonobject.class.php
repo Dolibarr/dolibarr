@@ -204,7 +204,7 @@ abstract class CommonObject
 	public $canvas;
 
 	/**
-	 * @var Project 	The related project object
+	 * @var Project|null 	The related project object
 	 * @see fetch_projet()
 	 */
 	public $project;
@@ -241,7 +241,7 @@ abstract class CommonObject
 	public $contact_id;
 
 	/**
-	 * @var Societe 	A related thirdparty object
+	 * @var Societe|null 	A related thirdparty object
 	 * @see fetch_thirdparty()
 	 */
 	public $thirdparty;
@@ -645,7 +645,7 @@ abstract class CommonObject
 	public $user_validation;
 
 	/**
-	 * @var int			User id of validation
+	 * @var int|null		User id of validation
 	 */
 	public $user_validation_id;
 
