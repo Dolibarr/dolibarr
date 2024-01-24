@@ -3264,7 +3264,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (preg_match('/^([a-z]+)_user_temp$/i', $modulepart, $reg)) {
 			$tmpmodule = $reg[1];
 			if (empty($conf->$tmpmodule->dir_temp)) {	// modulepart not supported
-				dol_print_error('', 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
+				dol_print_error(null, 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
 				exit;
 			}
 			if ($fuser->hasRight($tmpmodule, $lire) || $fuser->hasRight($tmpmodule, $read) || $fuser->hasRight($tmpmodule, $download)) {
@@ -3274,7 +3274,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		} elseif (preg_match('/^([a-z]+)_temp$/i', $modulepart, $reg)) {
 			$tmpmodule = $reg[1];
 			if (empty($conf->$tmpmodule->dir_temp)) {	// modulepart not supported
-				dol_print_error('', 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
+				dol_print_error(null, 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
 				exit;
 			}
 			if ($fuser->hasRight($tmpmodule, $lire) || $fuser->hasRight($tmpmodule, $read) || $fuser->hasRight($tmpmodule, $download)) {
@@ -3284,7 +3284,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		} elseif (preg_match('/^([a-z]+)_user$/i', $modulepart, $reg)) {
 			$tmpmodule = $reg[1];
 			if (empty($conf->$tmpmodule->dir_output)) {	// modulepart not supported
-				dol_print_error('', 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
+				dol_print_error(null, 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
 				exit;
 			}
 			if ($fuser->hasRight($tmpmodule, $lire) || $fuser->hasRight($tmpmodule, $read) || $fuser->hasRight($tmpmodule, $download)) {
@@ -3294,7 +3294,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		} elseif (preg_match('/^massfilesarea_([a-z]+)$/i', $modulepart, $reg)) {
 			$tmpmodule = $reg[1];
 			if (empty($conf->$tmpmodule->dir_output)) {	// modulepart not supported
-				dol_print_error('', 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
+				dol_print_error(null, 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
 				exit;
 			}
 			if ($fuser->hasRight($tmpmodule, $lire) || preg_match('/^specimen/i', $original_file)) {
@@ -3303,7 +3303,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$original_file = $conf->$tmpmodule->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 		} else {
 			if (empty($conf->$modulepart->dir_output)) {	// modulepart not supported
-				dol_print_error('', 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.'). The module for this modulepart value may not be activated.');
+				dol_print_error(null, 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.'). The module for this modulepart value may not be activated.');
 				exit;
 			}
 

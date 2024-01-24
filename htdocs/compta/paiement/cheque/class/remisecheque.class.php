@@ -443,7 +443,7 @@ class RemiseCheque extends CommonObject
 			}
 
 			if (!$mybool) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -524,16 +524,14 @@ class RemiseCheque extends CommonObject
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load indicators this->nb for the state board
 	 *
 	 *      @param	string	$type		Type of payment mode deposit ('CHQ', 'TRA', ...)
 	 *      @return int         		Return integer <0 if ko, >0 if ok
 	 */
-	public function load_state_board($type = 'CHQ')
+	public function loadStateBoard($type = 'CHQ')
 	{
-		// phpcs:enable
 		global $user;
 
 		if ($user->socid) {

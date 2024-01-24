@@ -259,7 +259,7 @@ if (empty($reshook)) {
 		$object->date_debut = $date_start;
 		$object->date_fin = $date_end;
 
-		$object->fk_user_author = GETPOST('fk_user_author', 'int');
+		$object->fk_user_author = GETPOSTINT('fk_user_author');
 		if (!($object->fk_user_author > 0)) {
 			$object->fk_user_author = $user->id;
 		}
@@ -284,7 +284,7 @@ if (empty($reshook)) {
 
 		$object->status = 1;
 		$object->fk_c_paiement = GETPOST('fk_c_paiement', 'int');
-		$object->fk_user_validator = GETPOST('fk_user_validator', 'int');
+		$object->fk_user_validator = GETPOSTINT('fk_user_validator');
 		$object->note_public = GETPOST('note_public', 'restricthtml');
 		$object->note_private = GETPOST('note_private', 'restricthtml');
 		// Fill array 'array_options' with data from add form
@@ -333,7 +333,7 @@ if (empty($reshook)) {
 		$object->date_fin = $date_end;
 
 		if ($object->status < 3) {
-			$object->fk_user_validator = GETPOST('fk_user_validator', 'int');
+			$object->fk_user_validator = GETPOSTINT('fk_user_validator');
 		}
 
 		$object->fk_c_paiement = GETPOST('fk_c_paiement', 'int');
@@ -1735,7 +1735,7 @@ if ($action == 'create') {
 				$userauthor = new User($db);
 				$result = $userauthor->fetch($object->fk_user_author);
 				if ($result < 0) {
-					dol_print_error('', $userauthor->error);
+					dol_print_error(null, $userauthor->error);
 				} elseif ($result > 0) {
 					print $userauthor->getNomUrl(-1);
 				}

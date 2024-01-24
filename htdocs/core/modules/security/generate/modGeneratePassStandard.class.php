@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modules_genpassw
 class modGeneratePassStandard extends ModeleGenPassword
 {
 	/**
-	 * @var int ID
+	 * @var string ID
 	 */
 	public $id;
 
@@ -40,7 +40,7 @@ class modGeneratePassStandard extends ModeleGenPassword
 	/**
 	 * Minimum length (text visible by end user)
 	 *
-	 * @var string
+	 * @var int
 	 */
 	public $length;
 

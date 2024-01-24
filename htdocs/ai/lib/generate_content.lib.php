@@ -50,11 +50,11 @@ $rawData = file_get_contents('php://input');
 $jsonData = json_decode($rawData, true);
 
 if (is_null($jsonData)) {
-	dol_print_error('data with format JSON valide.');
+	dol_print_error(null, 'data with format JSON valide.');
 }
 $token = GETPOST('token');
 if ($token !== currentToken()) { // Remplacez 'newToken' par le nom de votre variable de session contenant le token
-	dol_print_error('CSRF token validation failed.');
+	dol_print_error(null, 'CSRF token validation failed.');
 	exit;
 }
 $chatGPT = new Ai('API_ENDPOINT', 'API_KEY');
@@ -66,5 +66,5 @@ $generatedContent = $chatGPT->generateContent($instructions);
 if ($generatedContent) {
 	print $generatedContent;
 } else {
-	dol_print_error('error!!');
+	dol_print_error(null, 'error!!');
 }

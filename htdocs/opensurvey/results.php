@@ -42,7 +42,7 @@ $numsondage = GETPOST("id", 'alphanohtml');
 $object = new Opensurveysondage($db);
 $result = $object->fetch(0, $numsondage);
 if ($result <= 0) {
-	dol_print_error('', 'Failed to get survey id '.$numsondage);
+	dol_print_error(null, 'Failed to get survey id '.$numsondage);
 }
 
 $nblines = $object->fetch_lines();

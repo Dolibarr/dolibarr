@@ -2363,15 +2363,13 @@ class SupplierProposal extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load indicator this->nb of global stats widget
 	 *
 	 *      @return     int         Return integer <0 if ko, >0 if ok
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $conf, $user;
 
 		$this->nb = array();
@@ -2431,7 +2429,7 @@ class SupplierProposal extends CommonObject
 			}
 
 			if (!$mybool) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 

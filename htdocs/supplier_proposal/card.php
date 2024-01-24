@@ -282,12 +282,12 @@ if (empty($reshook)) {
 				if ($object->fetch(GETPOST('copie_supplier_proposal')) > 0) {
 					$object->ref = GETPOST('ref');
 					$object->delivery_date = $date_delivery;
-					$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
-					$object->cond_reglement_id = GETPOST('cond_reglement_id');
-					$object->mode_reglement_id = GETPOST('mode_reglement_id');
-					$object->fk_account = GETPOST('fk_account', 'int');
+					$object->shipping_method_id = GETPOSTINT('shipping_method_id');
+					$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
+					$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
+					$object->fk_account = GETPOSTINT('fk_account');
 					$object->socid = GETPOST('socid');
-					$object->fk_project = GETPOST('projectid', 'int');
+					$object->fk_project = GETPOSTINT('projectid');
 					$object->model_pdf = GETPOST('model');
 					$object->author = $user->id; // deprecated
 					$object->note = GETPOST('note', 'restricthtml');
@@ -299,19 +299,19 @@ if (empty($reshook)) {
 			} else {
 				$object->ref = GETPOST('ref');
 				$object->delivery_date = $date_delivery;
-				$object->demand_reason_id = GETPOST('demand_reason_id');
-				$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
-				$object->cond_reglement_id = GETPOST('cond_reglement_id');
-				$object->mode_reglement_id = GETPOST('mode_reglement_id');
-				$object->fk_account = GETPOST('fk_account', 'int');
-				$object->fk_project = GETPOST('projectid', 'int');
+				$object->demand_reason_id = GETPOSTINT('demand_reason_id');
+				$object->shipping_method_id = GETPOSTINT('shipping_method_id');
+				$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
+				$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
+				$object->fk_account = GETPOSTINT('fk_account');
+				$object->fk_project = GETPOSTINT('projectid');
 				$object->model_pdf = GETPOST('model');
 				$object->author = $user->id; // deprecated
 				$object->note = GETPOST('note', 'restricthtml');
 				$object->note_private = GETPOST('note', 'restricthtml');
 
 				$object->origin = GETPOST('origin');
-				$object->origin_id = GETPOST('originid');
+				$object->origin_id = GETPOSTINT('originid');
 
 				// Multicurrency
 				if (isModEnabled("multicurrency")) {
@@ -574,7 +574,7 @@ if (empty($reshook)) {
 		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
 		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
 		foreach ($object->lines as $line) {
-			$result = $object->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
+			$result = $object->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->array_options, $line->ref_fourn, $line->fk_unit, $line->multicurrency_subprice);
 		}
 	} elseif ($action == 'addline' && $usercancreate) {
 		$langs->load('errors');
@@ -1106,7 +1106,7 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'updateline' && $usercancreate && GETPOST('cancel', 'alpha') == $langs->trans("Cancel")) {
-		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // Pour reaffichage de la fiche en cours d'edition
+		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); //  To re-display card in edit mode
 		exit();
 	} elseif ($action == 'classin' && $usercancreate) {
 		// Set project

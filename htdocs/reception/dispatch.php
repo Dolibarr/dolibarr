@@ -193,7 +193,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 						} else {
 							$qtystart = $supplierorderdispatch->qty;
 							$supplierorderdispatch->qty = GETPOST($qty);
-							$supplierorderdispatch->fk_entrepot = GETPOST($ent, 'int');
+							$supplierorderdispatch->fk_entrepot = GETPOSTINT($ent);
 							if ($modebatch == "batch") {
 								$supplierorderdispatch->eatby = $dDLUO;
 								$supplierorderdispatch->sellby = $dDLC;

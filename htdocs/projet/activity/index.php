@@ -327,7 +327,7 @@ if (getDolGlobalString('PROJECT_TASK_TIME_YEAR')) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<br><table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("ActivityOnProjectThisYear").': '.strftime("%Y", $now).'</td>';
+	print '<td>'.$langs->trans("ActivityOnProjectThisYear").': '.dol_print_date($now, "%Y").'</td>';
 	print '<td class="right">'.$langs->trans("Time").'</td>';
 	print "</tr>\n";
 
@@ -340,7 +340,7 @@ if (getDolGlobalString('PROJECT_TASK_TIME_YEAR')) {
 	$sql .= " AND tt.fk_element = t.rowid";
 	$sql .= " AND tt.elementtype = 'task'";
 	$sql .= " AND tt.fk_user = ".((int) $user->id);
-	$sql .= " AND YEAR(element_date) = '".strftime("%Y", $now)."'";
+	$sql .= " AND YEAR(element_date) = '".dol_print_date($now, "%Y")."'";
 	$sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 	$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
 

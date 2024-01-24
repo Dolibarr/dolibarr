@@ -77,7 +77,7 @@ class PaymentLoan extends CommonObject
 	public $fk_typepayment;
 
 	/**
-	 * @var int Payment ID
+	 * @var string Payment ID (ex: 12345-chq1)
 	 */
 	public $num_payment;
 

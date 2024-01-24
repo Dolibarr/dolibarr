@@ -287,7 +287,7 @@ function dol_setshmop($memoryid, $data, $expire)
  * 	Read a memory area shared by all users, all sessions on server
  *
  *  @param	string	$memoryid		Memory id of shared area ('main', 'agenda', ...)
- * 	@return	int						Return integer <0 if KO, data if OK, Null if no cache enabled or not found
+ * 	@return	int|null				Return integer <0 if KO, data if OK, null if no cache enabled or not found
  */
 function dol_getshmop($memoryid)
 {

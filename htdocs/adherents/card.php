@@ -307,8 +307,8 @@ if (empty($reshook)) {
 			$object->address     = trim(GETPOST("address", 'alphanohtml'));
 			$object->zip         = trim(GETPOST("zipcode", 'alphanohtml'));
 			$object->town        = trim(GETPOST("town", 'alphanohtml'));
-			$object->state_id    = GETPOST("state_id", 'int');
-			$object->country_id  = GETPOST("country_id", 'int');
+			$object->state_id    = GETPOSTINT("state_id");
+			$object->country_id  = GETPOSTINT("country_id");
 
 			$object->phone       = trim(GETPOST("phone", 'alpha'));
 			$object->phone_perso = trim(GETPOST("phone_perso", 'alpha'));
@@ -334,9 +334,9 @@ if (empty($reshook)) {
 			}
 
 			// Get status and public property
-			$object->statut = GETPOST("statut", 'alpha');
-			$object->status = GETPOST("statut", 'alpha');
-			$object->public = GETPOST("public", 'alpha');
+			$object->statut = GETPOSTINT("statut");
+			$object->status = GETPOSTINT("statut");
+			$object->public = GETPOSTINT("public");
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -913,7 +913,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$object = new Adherent($db);
 		$result = $object->fetch($id);
 		if ($result <= 0) {
-			dol_print_error('', $object->error);
+			dol_print_error(null, $object->error);
 		}
 	}
 	$objcanvas->assign_values($action, $object->id, $object->ref); // Set value for templates

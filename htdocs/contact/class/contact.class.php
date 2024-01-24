@@ -339,8 +339,14 @@ class Contact extends CommonObject
 	public $roles;
 
 	public $cacheprospectstatus = array();
+
+	/**
+	 * @var string	Prospect level. ie: 'PL_LOW', 'PL...'
+	 */
 	public $fk_prospectlevel;
+
 	public $stcomm_id;
+
 	public $statut_commercial;
 
 	/**
@@ -397,15 +403,13 @@ class Contact extends CommonObject
 		}*/
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load indicators into this->nb for board
 	 *
 	 *  @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $user, $hookmanager;
 
 		$this->nb = array();
@@ -1818,6 +1822,7 @@ class Contact extends CommonObject
 		$sql .= " WHERE sc.fk_soc =".((int) $this->socid);
 		$sql .= " AND sc.fk_c_type_contact=tc.rowid";
 		$sql .= " AND tc.element = '".$this->db->escape($element)."'";
+		$sql .= " AND sp.entity IN (".getEntity('contact').")";
 		$sql .= " AND tc.active = 1";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -1953,7 +1958,7 @@ class Contact extends CommonObject
 	/**
 	 *  Return label of prospect level
 	 *
-	 *  @param	int		$fk_prospectlevel   	Prospect level
+	 *  @param	string	$fk_prospectlevel   	Prospect level
 	 *  @return string        					label of level
 	 */
 	public function libProspLevel($fk_prospectlevel)
@@ -1962,7 +1967,7 @@ class Contact extends CommonObject
 
 		$lib = $langs->trans("ProspectLevel".$fk_prospectlevel);
 		// If lib not found in language file, we get label from cache/database
-		if ($lib == $langs->trans("ProspectLevel".$fk_prospectlevel)) {
+		if ($lib == "ProspectLevel".$fk_prospectlevel) {
 			$lib = $langs->getLabelFromKey($this->db, $fk_prospectlevel, 'c_prospectlevel', 'code', 'label');
 		}
 		return $lib;
