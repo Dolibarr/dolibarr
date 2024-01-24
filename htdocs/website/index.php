@@ -3660,7 +3660,7 @@ if ($action == 'editcss') {
 		// Clean the php htmlheader file to remove php code and get only html part
 		$robotcontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $robotcontent);
 	} else {
-		$robotcontent = GETPOST('WEBSITE_ROBOT', 'nothtml');
+		$robotcontent = GETPOST('WEBSITE_ROBOT', 'nohtml');
 	}
 	if (!trim($robotcontent)) {
 		$robotcontent .= "# Robot file. Generated with ".DOL_APPLICATION_TITLE."\n";
