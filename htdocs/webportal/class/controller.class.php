@@ -25,7 +25,7 @@ class Controller
 	public $controllerStatus = true;
 
 	/**
-	 * @var $db Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -54,7 +54,7 @@ class Controller
 	 * Action method is called before html output
 	 * can be used to manage security and change context
 	 *
-	 * @return  int     < 0 on error, 0 on success, 1 to replace standard code
+	 * @return  int     Return integer < 0 on error, 0 on success, 1 to replace standard code
 	 */
 	public function action()
 	{
@@ -119,7 +119,7 @@ class Controller
 	 * Execute hook doActions
 	 *
 	 * @param	array		$parameters		Parameters
-	 * @return  int			< 0 on error, 0 on success, 1 to replace standard code
+	 * @return  int			Return integer < 0 on error, 0 on success, 1 to replace standard code
 	 */
 	public function hookDoAction($parameters = array())
 	{
@@ -142,7 +142,7 @@ class Controller
 	 * Execute hook PrintPageView
 	 *
 	 * @param	array		$parameters		Parameters
-	 * @return	int			< 0 on error, 0 on success, 1 to replace standard code
+	 * @return	int			Return integer < 0 on error, 0 on success, 1 to replace standard code
 	 */
 	public function hookPrintPageView($parameters = array())
 	{

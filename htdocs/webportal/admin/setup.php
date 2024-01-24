@@ -295,11 +295,12 @@ if ($action == 'edit') {
 
 $moduledir = 'webportal';
 $myTmpObjects = array();
-// TODO Scan list of objects
-$myTmpObjects['myobject'] = array('label' => 'MyObject', 'includerefgeneration' => 0, 'includedocgeneration' => 0);
-
+$myTmpObjects['MyObject'] = array('label' => 'MyObject', 'includerefgeneration' => 0, 'includedocgeneration' => 0);
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
+	if ($myTmpObjectKey == 'MyObject') {
+		continue;
+	}
 	if ($myTmpObjectArray['includerefgeneration']) {
 		/*
 		 * Orders Numbering model

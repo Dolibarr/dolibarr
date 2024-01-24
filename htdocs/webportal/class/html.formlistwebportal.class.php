@@ -36,6 +36,11 @@ dol_include_once('/webportal/class/html.formwebportal.class.php');
 class FormListWebPortal
 {
 	/**
+	 * @var string Action
+	 */
+	public $action = '';
+
+	/**
 	 * @var DoliDB Database
 	 */
 	public $db;
@@ -135,6 +140,7 @@ class FormListWebPortal
 		$object = new $objectclass($this->db);
 
 		// set form list
+		$this->action = GETPOST('action', 'aZ09');
 		$this->object = $object;
 		$this->limit = GETPOSTISSET('limit') ? (int) GETPOST('limit', 'int') : -1;
 		$this->sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -237,6 +243,7 @@ class FormListWebPortal
 		$html = '';
 
 		// initialize
+		$action = $this->action;
 		$object = $this->object;
 		$limit = $this->limit;
 		$page = $this->page;
