@@ -44,7 +44,7 @@ class Ai
 	 * Constructor
 	 *
 	 * @param   string  $apiEndpoint       Endpoint of api
-	 * @param   boolean $apiKey   key of api
+	 * @param   string  $apiKey   key of api
 	 */
 	public function __construct($apiEndpoint, $apiKey)
 	{

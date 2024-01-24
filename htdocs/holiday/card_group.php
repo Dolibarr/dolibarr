@@ -8,6 +8,7 @@
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020-2021  Udo Tamm            <dev@dolibit.de>
  * Copyright (C) 2022		Anthony Berton      <anthony.berton@bb2a.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -700,7 +701,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 					dol_syslog("Expected validator has no email, so we redirect directly to finished page without sending email");
 
 					$objStd->error++;
-					$objStd->msg = $langs->trans('ErroremailTo');
+					$objStd->msg = $langs->trans('ErrorMailRecipientIsEmpty');
 					$objStd->status = 'error';
 					$objStd->style="warnings";
 					return $objStd;
@@ -782,17 +783,17 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 
 				if (!$result) {
 					$objStd->error++;
-					$objStd->msg = $langs->trans('ErroreSendmail');
+					$objStd->msg = $langs->trans('ErrorMailNotSend');
 					$objStd->style="warnings";
 					$objStd->status = 'error';
 				} else {
-					$objStd->msg = $langs->trans('mailSended');
+					$objStd->msg = $langs->trans('MailSent');
 				}
 
 				return $objStd;
 			} else {
 				$objStd->error++;
-				$objStd->msg = $langs->trans('ErroreVerif');
+				$objStd->msg = $langs->trans('ErrorVerif');
 				$objStd->status = 'error';
 				$objStd->style="errors";
 				return $objStd;

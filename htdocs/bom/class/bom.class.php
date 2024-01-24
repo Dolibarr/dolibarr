@@ -217,7 +217,7 @@ class BOM extends CommonObject
 	// If this object has a subtable with lines
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = 'bom_bomline';
 
@@ -247,12 +247,12 @@ class BOM extends CommonObject
 	public $lines = array();
 
 	/**
-	 * @var int		Calculated cost for the BOM
+	 * @var float		Calculated cost for the BOM
 	 */
 	public $total_cost = 0;
 
 	/**
-	 * @var int		Calculated cost for 1 unit of the product in BOM
+	 * @var float		Calculated cost for 1 unit of the product in BOM
 	 */
 	public $unit_cost = 0;
 
@@ -597,7 +597,7 @@ class BOM extends CommonObject
 	 * @param	int		$position				Position of BOM-Line in BOM-Lines
 	 * @param	int		$fk_bom_child			Id of BOM Child
 	 * @param	string	$import_key				Import Key
-	 * @param	string	$fk_unit				Unit
+	 * @param	int 	$fk_unit				Unit
 	 * @param	array	$array_options			extrafields array
 	 * @param	int		$fk_default_workstation	Default workstation
 	 * @return	int								Return integer <0 if KO, Id of created object if OK
@@ -636,9 +636,9 @@ class BOM extends CommonObject
 				$position = -1;
 			}
 
-			$qty = price2num($qty);
-			$efficiency = price2num($efficiency);
-			$position = price2num($position);
+			$qty = (float) price2num($qty);
+			$efficiency = (float) price2num($efficiency);
+			$position = (float) price2num($position);
 
 			$this->db->begin();
 
@@ -741,9 +741,9 @@ class BOM extends CommonObject
 				$position = -1;
 			}
 
-			$qty = price2num($qty);
-			$efficiency = price2num($efficiency);
-			$position = price2num($position);
+			$qty = (float) price2num($qty);
+			$efficiency = (float) price2num($efficiency);
+			$position = (float) price2num($position);
 
 			$this->db->begin();
 
@@ -1475,7 +1475,7 @@ class BOM extends CommonObject
 							$this->error = $tmpproduct->error;
 							return -1;
 						}
-						$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+						$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : (float) $tmpproduct->pmp);
 						if (empty($line->unit_cost)) {
 							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
 								if ($productFournisseur->fourn_remise_percent != "0") {
@@ -1486,7 +1486,7 @@ class BOM extends CommonObject
 							}
 						}
 
-						$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
+						$line->total_cost = (float) price2num($line->qty * $line->unit_cost, 'MT');
 
 						$this->total_cost += $line->total_cost;
 					} else {
@@ -1495,7 +1495,7 @@ class BOM extends CommonObject
 						if ($res > 0) {
 							$bom_child->calculateCosts();
 							$line->childBom[] = $bom_child;
-							$this->total_cost += price2num($bom_child->total_cost * $line->qty, 'MT');
+							$this->total_cost += (float) price2num($bom_child->total_cost * $line->qty, 'MT');
 							$this->total_cost += $line->total_cost;
 						} else {
 							$this->error = $bom_child->error;
@@ -1512,7 +1512,7 @@ class BOM extends CommonObject
 						$res = $workstation->fetch($line->fk_default_workstation);
 
 						if ($res > 0) {
-							$line->total_cost = price2num($qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
+							$line->total_cost = (float) price2num($qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
 						} else {
 							$this->error = $workstation->error;
 							return -3;
@@ -1526,9 +1526,9 @@ class BOM extends CommonObject
 						}
 
 						if ($qtyhourservice) {
-							$line->total_cost = price2num($qtyhourforline / $qtyhourservice * $tmpproduct->cost_price, 'MT');
+							$line->total_cost = (float) price2num($qtyhourforline / $qtyhourservice * $tmpproduct->cost_price, 'MT');
 						} else {
-							$line->total_cost = price2num($line->qty * $tmpproduct->cost_price, 'MT');
+							$line->total_cost = (float) price2num($line->qty * $tmpproduct->cost_price, 'MT');
 						}
 					}
 
@@ -1536,12 +1536,12 @@ class BOM extends CommonObject
 				}
 			}
 
-			$this->total_cost = price2num($this->total_cost, 'MT');
+			$this->total_cost = (float) price2num($this->total_cost, 'MT');
 
 			if ($this->qty > 0) {
-				$this->unit_cost = price2num($this->total_cost / $this->qty, 'MU');
+				$this->unit_cost = (float) price2num($this->total_cost / $this->qty, 'MU');
 			} elseif ($this->qty < 0) {
-				$this->unit_cost = price2num($this->total_cost * $this->qty, 'MU');
+				$this->unit_cost = (float) price2num($this->total_cost * $this->qty, 'MU');
 			}
 		}
 
