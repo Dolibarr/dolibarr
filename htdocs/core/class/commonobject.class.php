@@ -48,7 +48,7 @@ abstract class CommonObject
 	const TRIGGER_PREFIX = ''; // to be overridden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc.
 
 	/**
-	 * @var string ID of module.
+	 * @var string		ID of module.
 	 */
 	public $module;
 
@@ -74,7 +74,7 @@ abstract class CommonObject
 	public $error;
 
 	/**
-	 * @var string 		Error string that is hidden but can be used to store complementatry technical code.
+	 * @var string 		Error string that is hidden but can be used to store additional technical code
 	 */
 	public $errorhidden;
 
@@ -94,13 +94,14 @@ abstract class CommonObject
 	public $element;
 
 	/**
-	 * @var string    Fieldname with ID of parent key if this field has a parent
+	 * @var string		Fieldname with the ID of the parent object, if this object has a parent
 	 */
 	public $fk_element;
 
 	/**
 	 * @var string 		Name to use for 'features' parameter to check module permissions user->rights->feature with restrictedArea().
-	 * 					Undefined means same value than $element. Can be use to force a check on another element for example for class of line, we mention here the parent element.
+	 * 					Undefined means same value than $element.
+	 *					Can be use to force a check on another element (for example for class of a line, we mention here its parent element).
 	 */
 	public $element_for_permission;
 
@@ -165,12 +166,12 @@ abstract class CommonObject
 	private $linkedObjectsFullLoaded = array();
 
 	/**
-	 * @var CommonObject To store a cloned copy of object before to edit it and keep track of old properties
+	 * @var CommonObject	To store a cloned copy of the object before editing it (to keep track of its former properties)
 	 */
 	public $oldcopy;
 
 	/**
-	 * @var string To store old value of a modified ref
+	 * @var string 		To store the old value of a modified reference
 	 */
 	public $oldref;
 
@@ -185,10 +186,11 @@ abstract class CommonObject
 	public $restrictiononfksoc = 0;
 
 
-	// Following vars are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
+	// The following vars are used by some objects only.
+	// We keep these properties in CommonObject in order to provide common methods using them.
 
 	/**
-	 * @var array<string,mixed>		Can be used to pass information when only object is provided to method
+	 * @var array<string,mixed>		Can be used to pass information when only the object is provided to the method
 	 */
 	public $context = array();
 
@@ -283,7 +285,7 @@ abstract class CommonObject
 	public $ref;
 
 	/**
-	 * @var string 		An external reference for the object
+	 * @var string 		An external reference to the object
 	 */
 	public $ref_ext;
 
@@ -303,7 +305,7 @@ abstract class CommonObject
 	public $newref;
 
 	/**
-	 * @var int 		The object's status. Prefer use of status.
+	 * @var int 		The object's status. Use status instead.
 	 * @deprecated
 	 * @see setStatut()
 	 */
@@ -317,74 +319,74 @@ abstract class CommonObject
 
 
 	/**
-	 * @var string
+	 * @var string		Country name
 	 * @see getFullAddress()
 	 */
 	public $country;
 
 	/**
-	 * @var int
+	 * @var int			Country ID
 	 * @see getFullAddress(), country
 	 */
 	public $country_id;
 
 	/**
-	 * @var string		The ISO country code on 2 chars.
+	 * @var string		ISO country code on 2 chars
 	 * @see getFullAddress(), isInEEC(), country
 	 */
 	public $country_code;
 
 	/**
-	 * @var string
+	 * @var string		State name
 	 * @see getFullAddress()
 	 */
 	public $state;
 
 	/**
-	 * @var int
+	 * @var int			State ID
 	 * @see getFullAddress(), state
 	 */
 	public $state_id;
 
 	/**
-	 * @var string
+	 * @var string		State code
 	 * @see getFullAddress(), $state
 	 */
 	public $state_code;
 
 	/**
-	 * @var int
+	 * @var int			Region ID
 	 * @see getFullAddress(), $region_code, $region
 	 */
 	public $region_id;
 
 	/**
-	 * @var string
+	 * @var string		Region code
 	 * @see getFullAddress(), $region_id, $region
 	 */
 	public $region_code;
 
 	/**
-	 * @var string
+	 * @var string		Region name
 	 * @see getFullAddress(), $region_id, $region_code
 	 */
 	public $region;
 
 
 	/**
-	 * @var int
+	 * @var int			Barcode type
 	 * @see fetch_barcode()
 	 */
 	public $barcode_type;
 
 	/**
-	 * @var string
+	 * @var string		Code of the barcode type
 	 * @see fetch_barcode(), barcode_type
 	 */
 	public $barcode_type_code;
 
 	/**
-	 * @var string
+	 * @var string		Label of the barcode type
 	 * @see fetch_barcode(), barcode_type
 	 */
 	public $barcode_type_label;
@@ -451,27 +453,27 @@ abstract class CommonObject
 	public $fk_multicurrency;
 
 	/**
-	 * @var string Multicurrency code
+	 * @var string		Multicurrency code
 	 */
 	public $multicurrency_code;
 
 	/**
-	 * @var float Multicurrency rate
+	 * @var float		Multicurrency rate
 	 */
 	public $multicurrency_tx;
 
 	/**
-	 * @var float Multicurrency total without tax
+	 * @var float 		Multicurrency total amount excluding taxes (HT = "Hors Taxe" in French)
 	 */
 	public $multicurrency_total_ht;
 
 	/**
-	 * @var float Multicurrency total vat
+	 * @var float 		Multicurrency total VAT amount (TVA = "Taxe sur la Valeur Ajoutée" in French)
 	 */
 	public $multicurrency_total_tva;
 
 	/**
-	 * @var float Multicurrency total with tax
+	 * @var float 		Multicurrency total amount including taxes (TTC = "Toutes Taxes Comprises" in French)
 	 */
 	public $multicurrency_total_ttc;
 
@@ -526,13 +528,13 @@ abstract class CommonObject
 	public $note;
 
 	/**
-	 * @var float 		Total amount before taxes
+	 * @var float 		Total amount excluding taxes (HT = "Hors Taxe" in French)
 	 * @see update_price()
 	 */
 	public $total_ht;
 
 	/**
-	 * @var float 		Total VAT amount
+	 * @var float 		Total VAT amount (TVA = "Taxe sur la Valeur Ajoutée" in French)
 	 * @see update_price()
 	 */
 	public $total_tva;
@@ -550,7 +552,7 @@ abstract class CommonObject
 	public $total_localtax2;
 
 	/**
-	 * @var float 		Total amount with taxes
+	 * @var float 		Total amount including taxes (TTC = "Toutes Taxes Comprises" in French)
 	 * @see update_price()
 	 */
 	public $total_ttc;
@@ -561,7 +563,7 @@ abstract class CommonObject
 	public $lines;
 
 	/**
-	 * @var mixed		Contains comments
+	 * @var mixed		Comments
 	 * @see fetchComments()
 	 */
 	public $comments = array();
@@ -588,39 +590,39 @@ abstract class CommonObject
 
 	// Dates
 	/**
-	 * @var integer|string|null date_creation
+	 * @var integer|string|null		Object creation date
 	 */
 	public $date_creation;
 
 	/**
-	 * @var integer|string|null $date_validation;
+	 * @var integer|string|null		Object last validation date
 	 */
-	public $date_validation; // Date validation
+	public $date_validation;
 
 	/**
-	 * @var integer|string|null $date_modification;
+	 * @var integer|string|null		Object last modification date
 	 */
-	public $date_modification; // Date last change (tms field)
+	public $date_modification;
 
 	/**
-	 * @var integer|string|null $date_modification;
-	 * @deprecated 		Use date_modification
+	 * @var integer|string|null
+	 * @deprecated 					Use $date_modification
 	 */
 	public $date_update;
 
 	/**
-	 * @var integer|string|null $date_cloture;
+	 * @var integer|string|null		Object closing date
 	 */
-	public $date_cloture; // Date closing (tms field)
+	public $date_cloture;
 
 	/**
-	 * @var User	User author/creation
-	 * @deprecated	Store only id in user_creation_id
+	 * @var User		User author/creation
+	 * @deprecated		Store only id in user_creation_id
 	 */
 	public $user_author;
 
 	/**
-	 * @var User	User author/creation
+	 * @var User		User author/creation
 	 * @deprecated
 	 */
 	public $user_creation;
@@ -631,13 +633,13 @@ abstract class CommonObject
 	public $user_creation_id;
 
 	/**
-	 * @var User	User of validation
+	 * @var User		User of validation
 	 * @deprecated
 	 */
 	public $user_valid;
 
 	/**
-	 * @var User	User of validation
+	 * @var User		User of validation
 	 * @deprecated
 	 */
 	public $user_validation;
@@ -659,7 +661,7 @@ abstract class CommonObject
 	public $user_modification;
 
 	/**
-	 * @var int			User id last modifier
+	 * @var int			User ID who last modified the object
 	 */
 	public $user_modification_id;
 
@@ -687,17 +689,17 @@ abstract class CommonObject
 	public $totalpaid;
 
 	/**
-	 * @var array		Array with label of status
+	 * @var array		Array with labels of status
 	 */
 	public $labelStatus = array();
 
 	/**
-	 * @var array		Array with short label of status
+	 * @var array		Array with short labels of status
 	 */
 	public $labelStatusShort = array();
 
 	/**
-	 * @var array		Array to store list of tpl
+	 * @var array		Array to store lists of tpl
 	 */
 	public $tpl;
 
@@ -718,7 +720,7 @@ abstract class CommonObject
 	public $nbphoto;
 
 	/**
-	 * @var string output
+	 * @var string 		output
 	 */
 	public $output;
 
@@ -740,28 +742,28 @@ abstract class CommonObject
 	protected $childtablesoncascade = array();
 
 	/**
-	 * @var Product Populate by fetch_product()
+	 * @var Product 	Populated by fetch_product()
 	 */
 	public $product;
 
 	/**
-	 * @var int Populate by setPaymentTerms()
+	 * @var int 		Populated by setPaymentTerms()
 	 */
 	public $cond_reglement_supplier_id;
 
 	/**
-	 * @var string Populate by setPaymentTerms()
+	 * @var string 		Populated by setPaymentTerms()
 	 */
 	public $deposit_percent;
 
 
 	/**
-	 * @var string Populate by setRetainedWarrantyPaymentTerms()
+	 * @var string 		Populated by setRetainedWarrantyPaymentTerms()
 	 */
 	public $retained_warranty_fk_cond_reglement;
 
 	/**
-	 * @var int Populate by setWarehouse()
+	 * @var int 		Populated by setWarehouse()
 	 */
 	public $warehouse_id;
 
@@ -769,8 +771,8 @@ abstract class CommonObject
 
 
 	/**
-	 * Check an object id/ref exists
-	 * If you don't need/want to instantiate object and just need to know if object exists, use this method instead of fetch
+	 * Check if an object id or ref exists
+	 * If you don't need or want to instantiate the object and just need to know if the object exists, use this method instead of fetch
 	 *
 	 *  @param	string	$element   	String of element ('product', 'facture', ...)
 	 *  @param	int		$id      	Id of object
