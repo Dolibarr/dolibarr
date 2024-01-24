@@ -531,19 +531,18 @@ class PaymentSocialContribution extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-
-		$this->fk_charge = '';
+		$this->fk_charge = 0;
 		$this->datec = '';
 		$this->tms = '';
 		$this->datep = '';
 		$this->amount = '';
 		$this->fk_typepaiement = '';
-		$this->num_payment = '';
+		$this->num_payment = 0;
 		$this->note_private = '';
 		$this->note_public = '';
-		$this->fk_bank = '';
-		$this->fk_user_creat = '';
-		$this->fk_user_modif = '';
+		$this->fk_bank = 0;
+		$this->fk_user_creat = 0;
+		$this->fk_user_modif = 0;
 	}
 
 
