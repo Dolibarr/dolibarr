@@ -420,7 +420,7 @@ class Product extends CommonObject
 	public $accountancy_code_buy_export;
 
 	/**
-	 * @var string	Main Barcode value
+	 * @var string|int	Main Barcode value, -1 for auto code
 	 */
 	public $barcode;
 

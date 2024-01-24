@@ -1545,8 +1545,14 @@ if ($action == 'create') {
 		if ($origin=='contact') {
 			$preselectedids[GETPOST('originid', 'int')] = GETPOST('originid', 'int');
 		}
+		// select "all" or "none" contact by default
+		if (getDolGlobalInt('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT')) {
+			$select_contact_default = 0; // select "all" contacts by default : avoid to use it if there is a lot of contacts
+		} else {
+			$select_contact_default = -1; // select "none" by default
+		}
 		print img_picto('', 'contact', 'class="paddingrightonly"');
-		print $form->selectcontacts(!getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? GETPOST('socid', 'int') : 0, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', false, 0, array(), false, 'multiple', 'contactid');
+		print $form->selectcontacts(GETPOSTISSET('socid') ? GETPOSTINT('socid') : $select_contact_default, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', false, 0, array(), false, 'multiple', 'contactid');
 		print '</td></tr>';
 	}
 

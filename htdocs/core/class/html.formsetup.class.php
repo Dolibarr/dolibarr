@@ -449,7 +449,7 @@ class FormSetup
 
 	/**
 	 * Create a new item
-	 * The tagret is useful with hooks : that allow externals modules to add setup items on good place
+	 * The target is useful with hooks : that allow externals modules to add setup items on good place
 	 *
 	 * @param string	$confKey 				the conf key used in database
 	 * @param string	$targetItemKey    		target item used to place the new item beside
