@@ -33,11 +33,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'trips'));
 
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $amounts = array();
-$accountid = GETPOST('accountid', 'int');
+$accountid = GETPOSTINT('accountid');
 $cancel = GETPOST('cancel');
 
 // Security check
@@ -111,8 +111,8 @@ if ($action == 'add_payment') {
 			$payment->datep       	 = $datepaid;
 			$payment->amounts		 = $amounts; // Tableau de montant
 			$payment->total          = $total;
-			$payment->fk_typepayment = GETPOST("fk_typepayment", 'int');
-			$payment->num_payment    = GETPOST("num_payment", 'alphanohtml');
+			$payment->fk_typepayment = GETPOSTINT("fk_typepayment");
+			$payment->num_payment    = GETPOST("num_payment", 'alphanothtml');
 			$payment->note_public    = GETPOST("note_public", 'restricthtml');
 			$payment->fk_bank        = $accountid;
 
