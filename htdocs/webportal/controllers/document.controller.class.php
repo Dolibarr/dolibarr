@@ -1,7 +1,7 @@
 <?php
 
-
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+
 
 /**
  * Class for DocumentController
@@ -14,7 +14,7 @@ class DocumentController extends Controller
 	public $action;
 
 	/**
-	 * @var
+	 * @var	string	Attachement
 	 */
 	public $attachment;
 
