@@ -1879,7 +1879,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		 * Product card
 		 */
 
-		// Fiche en mode edition
+		// Card in edit mode
 		if ($action == 'edit' && $usercancreate) {
 			//WYSIWYG Editor
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -2416,7 +2416,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			print '</form>';
 		} else {
-			// Fiche en mode visu
+			// Card in view mode
 
 			$showbarcode = isModEnabled('barcode');
 			if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('barcode', 'lire_advance')) {

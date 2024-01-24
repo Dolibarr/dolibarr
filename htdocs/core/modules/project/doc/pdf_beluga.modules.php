@@ -612,7 +612,7 @@ class pdf_beluga extends ModelePDFProjects
 										$date = $element->date_contrat;
 									}
 									if (empty($date)) {
-										$date = $element->datev; // Fiche inter
+										$date = $element->datev; // Intervention card
 									}
 								}
 

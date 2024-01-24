@@ -17,6 +17,7 @@
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023       Joachim Küter      		<git-jk@bloxera.com>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,11 +103,12 @@ function testSqlAndScriptInject($val, $type)
 		// Sometimes we have entities without the ; at end so html_entity_decode does not work but entities is still interpreted by browser.
 		$val = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) {
 			// Decode '&#110;', ...
-			return realCharForNumericEntities($m); }, $val);
+			return realCharForNumericEntities($m);
+		}, $val);
 
-			// We clean html comments because some hacks try to obfuscate evil strings by inserting HTML comments. Example: on<!-- -->error=alert(1)
-			$val = preg_replace('/<!--[^>]*-->/', '', $val);
-			$val = preg_replace('/[\r\n\t]/', '', $val);
+		// We clean html comments because some hacks try to obfuscate evil strings by inserting HTML comments. Example: on<!-- -->error=alert(1)
+		$val = preg_replace('/<!--[^>]*-->/', '', $val);
+		$val = preg_replace('/[\r\n\t]/', '', $val);
 	} while ($oldval != $val);
 	//print "type = ".$type." after decoding: ".$val."\n";
 
@@ -513,11 +515,11 @@ if (getDolGlobalString('MAIN_NOT_INSTALLED') || getDolGlobalString('MAIN_NOT_UPG
 // If an upgrade process is required, we call the install page.
 if ((getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') && ($conf->global->MAIN_VERSION_LAST_UPGRADE != DOL_VERSION))
 		|| (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') && getDolGlobalString('MAIN_VERSION_LAST_INSTALL') && ($conf->global->MAIN_VERSION_LAST_INSTALL != DOL_VERSION))) {
-		$versiontocompare = !getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') ? $conf->global->MAIN_VERSION_LAST_INSTALL : $conf->global->MAIN_VERSION_LAST_UPGRADE;
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-		$dolibarrversionlastupgrade = preg_split('/[.-]/', $versiontocompare);
-		$dolibarrversionprogram = preg_split('/[.-]/', DOL_VERSION);
-		$rescomp = versioncompare($dolibarrversionprogram, $dolibarrversionlastupgrade);
+	$versiontocompare = !getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') ? $conf->global->MAIN_VERSION_LAST_INSTALL : $conf->global->MAIN_VERSION_LAST_UPGRADE;
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+	$dolibarrversionlastupgrade = preg_split('/[.-]/', $versiontocompare);
+	$dolibarrversionprogram = preg_split('/[.-]/', DOL_VERSION);
+	$rescomp = versioncompare($dolibarrversionprogram, $dolibarrversionlastupgrade);
 	if ($rescomp > 0) {   // Programs have a version higher than database.
 		if (!getDolGlobalString('MAIN_NO_UPGRADE_REDIRECT_ON_LEVEL_3_CHANGE') || $rescomp < 3) {
 			// We did not add "&& $rescomp < 3" because we want upgrade process for build upgrades
@@ -583,10 +585,10 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 		$sensitiveget ||
 		GETPOSTISSET('massaction') ||
 		((GETPOSTISSET('actionlogin') || GETPOSTISSET('action')) && defined('CSRFCHECK_WITH_TOKEN'))
-		) {
-			// If token is not provided or empty, error (we are in case it is mandatory)
+	) {
+		// If token is not provided or empty, error (we are in case it is mandatory)
 		if (!GETPOST('token', 'alpha') || GETPOST('token', 'alpha') == 'notrequired') {
-				top_httphead();
+			top_httphead();
 			if (GETPOST('uploadform', 'int')) {
 				dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused. File size too large or not provided.");
 				$langs->loadLangs(array("errors", "install"));
@@ -614,31 +616,31 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	$sessiontokenforthisurl = (empty($_SESSION['token']) ? '' : $_SESSION['token']);
 	// TODO Get the sessiontokenforthisurl into an array of session token (one array per base URL so we can use the CSRF per page and we keep ability for several tabs per url in a browser)
 	if (GETPOSTISSET('token') && GETPOST('token') != 'notrequired' && GETPOST('token', 'alpha') != $sessiontokenforthisurl) {
-			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referrer=".(empty($_SERVER['HTTP_REFERER'])?'':$_SERVER['HTTP_REFERER']).", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha'), LOG_WARNING);
-			//dol_syslog("_SESSION['token']=".$sessiontokenforthisurl, LOG_DEBUG);
-			// Do not output anything on standard output because this create problems when using the BACK button on browsers. So we just set a message into session.
+		dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referrer=".(empty($_SERVER['HTTP_REFERER'])?'':$_SERVER['HTTP_REFERER']).", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha'), LOG_WARNING);
+		//dol_syslog("_SESSION['token']=".$sessiontokenforthisurl, LOG_DEBUG);
+		// Do not output anything on standard output because this create problems when using the BACK button on browsers. So we just set a message into session.
 		if (!defined('NOTOKENRENEWAL')) {
 			// If the page is not a page that disable the token renewal, we report a warning message to explain token has epired.
 			setEventMessages('SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry', null, 'warnings', '', 1);
 		}
-			$savid = null;
+		$savid = null;
 		if (isset($_POST['id'])) {
 			$savid = ((int) $_POST['id']);
 		}
-			unset($_POST);
-			unset($_GET['confirm']);
-			unset($_GET['action']);
-			unset($_GET['confirmmassaction']);
-			unset($_GET['massaction']);
-			unset($_GET['token']);			// TODO Make a redirect if we have a token in url to remove it ?
+		unset($_POST);
+		unset($_GET['confirm']);
+		unset($_GET['action']);
+		unset($_GET['confirmmassaction']);
+		unset($_GET['massaction']);
+		unset($_GET['token']);			// TODO Make a redirect if we have a token in url to remove it ?
 		if (isset($savid)) {
 			$_POST['id'] = ((int) $savid);
 		}
-			// So rest of code can know something was wrong here
-			$_GET['errorcode'] = 'InvalidToken';
+		// So rest of code can know something was wrong here
+		$_GET['errorcode'] = 'InvalidToken';
 	}
 
-		// Note: There is another CSRF protection into the filefunc.inc.php
+	// Note: There is another CSRF protection into the filefunc.inc.php
 }
 
 // Disable modules (this must be after session_start and after conf has been loaded)
@@ -1003,11 +1005,11 @@ if (!defined('NOLOGIN')) {
 			|| ($user->status != $user::STATUS_ENABLED)
 			|| ($user->isNotIntoValidityDateRange())) {
 			if ($resultFetchUser <= 0) {
-					// Account has been removed after login
-					dol_syslog("Can't load user even if session logged. _SESSION['dol_login']=".$login, LOG_WARNING);
+				// Account has been removed after login
+				dol_syslog("Can't load user even if session logged. _SESSION['dol_login']=".$login, LOG_WARNING);
 			} elseif ($user->flagdelsessionsbefore && !empty($_SESSION["dol_logindate"]) && $user->flagdelsessionsbefore > $_SESSION["dol_logindate"]) {
-					// Session is no more valid
-					dol_syslog("The user has a date for session invalidation = ".$user->flagdelsessionsbefore." and a session date = ".$_SESSION["dol_logindate"].". We must invalidate its sessions.");
+				// Session is no more valid
+				dol_syslog("The user has a date for session invalidation = ".$user->flagdelsessionsbefore." and a session date = ".$_SESSION["dol_logindate"].". We must invalidate its sessions.");
 			} elseif ($user->status != $user::STATUS_ENABLED) {
 				// User is not enabled
 				dol_syslog("The user login is disabled");
@@ -1320,11 +1322,11 @@ if ((!empty($conf->browser->layout) && $conf->browser->layout == 'phone')
 			|| (!empty($_SESSION['dol_screenwidth']) && $_SESSION['dol_screenwidth'] < 400)
 			|| (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 400
 				|| getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER'))
-			) {
-		$conf->dol_optimize_smallscreen = 1;
+) {
+	$conf->dol_optimize_smallscreen = 1;
 
 	if (getDolGlobalInt('PRODUIT_DESC_IN_FORM') == 1) {
-			$conf->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = 0;
+		$conf->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = 0;
 	}
 }
 // Replace themes bugged with jmobile with eldy
