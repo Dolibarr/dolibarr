@@ -1143,7 +1143,7 @@ while ($i < $imaxinloop) {
 	$memberstatic->lastname = $obj->lastname;
 	$memberstatic->firstname = $obj->firstname;
 	$memberstatic->gender = $obj->gender;
-	$memberstatic->statut = $obj->status;
+	$memberstatic->status = $obj->status;
 	$memberstatic->status = $obj->status;
 	$memberstatic->datefin = $datefin;
 	$memberstatic->socid = $obj->fk_soc;
