@@ -14,7 +14,7 @@ class DocumentController extends Controller
 	public $action;
 
 	/**
-	 * @var	string	Attachement
+	 * @var	string	Attachment
 	 */
 	public $attachment;
 
