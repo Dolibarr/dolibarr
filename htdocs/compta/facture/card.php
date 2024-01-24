@@ -528,7 +528,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setrevenuestamp' && $usercancreate) {
 		$object->fetch($id);
-		$object->revenuestamp = GETPOST('revenuestamp');
+		$object->revenuestamp = (float) price2num(GETPOST('revenuestamp'));
 		$result = $object->update($user);
 		$object->update_price(1);
 		if ($result < 0) {
@@ -1003,7 +1003,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'add' && $usercancreate) {
 		// Insert new invoice in database
 		if ($socid > 0) {
-			$object->socid = GETPOST('socid', 'int');
+			$object->socid = GETPOSTINT('socid');
 		}
 
 		if (GETPOST('type', 'int') === '') {
@@ -1104,7 +1104,7 @@ if (empty($reshook)) {
 				if (!empty($originentity)) {
 					$object->entity = $originentity;
 				}
-				$object->socid              = GETPOST('socid', 'int');
+				$object->socid              = GETPOSTINT('socid');
 				$object->subtype            = GETPOST('subtype');
 				$object->ref                = GETPOST('ref');
 				$object->date               = $dateinvoice;
@@ -1326,7 +1326,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				$object->socid              = GETPOST('socid', 'int');
+				$object->socid              = GETPOSTINT('socid');
 				$object->type               = GETPOST('type');
 				$object->subtype            = GETPOST('subtype');
 				$object->ref                = GETPOST('ref');
@@ -1413,7 +1413,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				$object->socid              = GETPOST('socid', 'int');
+				$object->socid              = GETPOSTINT('socid');
 				$object->type				= GETPOST('type');
 				$object->subtype            = GETPOST('subtype');
 				$object->ref                = GETPOST('ref');
@@ -5926,7 +5926,7 @@ if ($action == 'create') {
 				print dolGetButtonAction($htmltooltip, $langs->trans('Delete'), 'delete', $deleteHref, '', $enableDelete, $params);
 			} else {
 				$params['attr']['title'] = '';
-				print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', '#', '', false);
+				print dolGetButtonAction($htmltooltip, $langs->trans('Delete'), 'delete', '#', '', false);
 			}
 		}
 		print '</div>';

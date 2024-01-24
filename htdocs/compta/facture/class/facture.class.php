@@ -129,7 +129,7 @@ class Facture extends CommonInvoice
 	public $user_valid;
 
 	/**
-	 * @var int ID
+	 * @var int|null ID
 	 */
 	public $fk_user_valid;
 
@@ -2452,7 +2452,7 @@ class Facture extends CommonInvoice
 			$this->type = self::TYPE_STANDARD;
 		}
 		if (isset($this->subtype)) {
-			$this->subtype = trim($this->subtype);
+			$this->subtype = (int) trim($this->subtype);
 		}
 		if (isset($this->ref)) {
 			$this->ref = trim($this->ref);
@@ -3856,7 +3856,7 @@ class Facture extends CommonInvoice
 				$ref_ext = '';
 			}
 
-			$remise_percent = price2num($remise_percent);
+			$remise_percent = (float) price2num($remise_percent);
 			$qty = price2num($qty);
 			$pu_ht = price2num($pu_ht);
 			$pu_ht_devise = price2num($pu_ht_devise);
@@ -4117,7 +4117,7 @@ class Facture extends CommonInvoice
 				$ref_ext = '';
 			}
 
-			$remise_percent = price2num($remise_percent);
+			$remise_percent = (float) price2num($remise_percent);
 			$qty			= price2num($qty);
 			$pu 			= price2num($pu);
 			$pu_ht_devise = price2num($pu_ht_devise);
@@ -4125,8 +4125,8 @@ class Facture extends CommonInvoice
 			if (!preg_match('/\((.*)\)/', $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
-			$txlocaltax1	= price2num($txlocaltax1);
-			$txlocaltax2	= price2num($txlocaltax2);
+			$txlocaltax1	= (float) price2num($txlocaltax1);
+			$txlocaltax2	= (float) price2num($txlocaltax2);
 
 			// Check parameters
 			if ($type < 0) {
@@ -4633,7 +4633,7 @@ class Facture extends CommonInvoice
 			}
 
 			if (!$mybool) {
-				dol_print_error('', 'Failed to include file '.$file);
+				dol_print_error(null, 'Failed to include file '.$file);
 				return '';
 			}
 

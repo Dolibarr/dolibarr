@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,7 +214,7 @@ if (empty($pageid) && empty($pageref) && $object->id > 0 && $action != 'createco
 	if (empty($pageid)) {
 		$array = $objectpage->fetchAll($object->id, 'ASC,ASC', 'type_container,pageurl');
 		if (!is_array($array) && $array < 0) {
-			dol_print_error('', $objectpage->error, $objectpage->errors);
+			dol_print_error(null, $objectpage->error, $objectpage->errors);
 		}
 		$atleastonepage = (is_array($array) && count($array) > 0);
 
@@ -370,7 +371,7 @@ if (GETPOST('refreshsite', 'alpha') || GETPOST('refreshsite.x', 'alpha') || GETP
 	if (empty($pageid)) {
 		$array = $objectpage->fetchAll($object->id, 'ASC,ASC', 'type_container,pageurl');
 		if (!is_array($array) && $array < 0) {
-			dol_print_error('', $objectpage->error, $objectpage->errors);
+			dol_print_error(null, $objectpage->error, $objectpage->errors);
 		}
 		$atleastonepage = (is_array($array) && count($array) > 0);
 
@@ -2885,7 +2886,7 @@ if (!GETPOST('hide_websitemenu')) {
 		$object->lines = $array;
 	}
 	if (!is_array($array) && $array < 0) {
-		dol_print_error('', $objectpage->error, $objectpage->errors);
+		dol_print_error(null, $objectpage->error, $objectpage->errors);
 	}
 	$atleastonepage = (is_array($array) && count($array) > 0);
 
@@ -3664,7 +3665,7 @@ if ($action == 'editcss') {
 		// Clean the php htmlheader file to remove php code and get only html part
 		$robotcontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $robotcontent);
 	} else {
-		$robotcontent = GETPOST('WEBSITE_ROBOT', 'nothtml');
+		$robotcontent = GETPOST('WEBSITE_ROBOT', 'nohtml');
 	}
 	if (!trim($robotcontent)) {
 		$robotcontent .= "# Robot file. Generated with ".DOL_APPLICATION_TITLE."\n";

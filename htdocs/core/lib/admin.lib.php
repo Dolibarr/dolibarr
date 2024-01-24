@@ -565,7 +565,7 @@ function dolibarr_del_const($db, $name, $entity = 1)
 	global $conf;
 
 	if (empty($name)) {
-		dol_print_error('', 'Error call dolibar_del_const with parameter name empty');
+		dol_print_error(null, 'Error call dolibar_del_const with parameter name empty');
 		return -1;
 	}
 
@@ -1379,9 +1379,8 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 
 							// phpcs:disable
 							// Complete the arrays &$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond
-							// Note: "diction"."naries" to prevent codespell from detecting a spelling error. 
-							if (empty($objMod->dictionaries) && !empty($objMod->{"dicton"."naries"})) {
-								$objMod->dictionaries = $objMod->{"diction"."naries"}; // For backward compatibility
+							if (empty($objMod->dictionaries) && !empty($objMod->{"dictionnaries"})) {
+								$objMod->dictionaries = $objMod->{"dictionnaries"}; // For backward compatibility
 							}
 							// phpcs:enable
 

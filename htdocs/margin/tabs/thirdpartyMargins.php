@@ -294,7 +294,7 @@ if ($socid > 0) {
 	print '<br>';
 	$db->free($result);
 } else {
-	dol_print_error('', 'Parameter socid not defined');
+	dol_print_error(null, 'Parameter socid not defined');
 }
 
 

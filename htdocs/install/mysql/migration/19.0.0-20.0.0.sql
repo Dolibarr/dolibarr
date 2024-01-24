@@ -205,4 +205,6 @@ ALTER TABLE llx_c_tva ADD COLUMN type_vat smallint NOT NULL DEFAULT 0 AFTER fk_p
 
 ALTER TABLE llx_categorie ADD COLUMN position integer DEFAULT 0 AFTER color;
 
-ALTER TABLE llx_product DROP COLUMN onportal; 
+ALTER TABLE llx_product DROP COLUMN onportal;
+
+ALTER TABLE llx_knowledgemanagement_knowledgerecord MODIFY COLUMN answer longtext;

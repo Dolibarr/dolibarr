@@ -50,7 +50,7 @@ $visible = (int) GETPOST('visible', 'int');
 $parent = (int) GETPOST('parent', 'int');
 
 if ($id == "") {
-	dol_print_error('', 'Missing parameter id');
+	dol_print_error(null, 'Missing parameter id');
 	exit();
 }
 
