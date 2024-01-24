@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "bills", "compta"));
 
-$chid = GETPOST("id", 'int');
+$chid = GETPOSTINT("id");
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel');
 
@@ -190,7 +190,7 @@ if ($action == 'create') {
 
 	$sql = "SELECT sum(p.amount) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
-	$sql .= " WHERE p.fk_charge = ".((int) $chid);
+	$sql .= " WHERE p.fk_charge = ".$chid;
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
