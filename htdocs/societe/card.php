@@ -1154,7 +1154,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			print '<script type="text/javascript">';
 			print '$(document).ready(function () {
-					var canHaveCategoryIfNotCustomerProspectSupplier = ' . (!getDolGlobalString('THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT') ? '0' : '1') . ';
+					var canHaveCustomerCategoryIfNotCustomerProspectSupplier = ' . (!getDolGlobalString('THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT') ? '0' : '1') . ';
 
 					init_customer_categ();
 			  		$("#customerprospect").change(function() {
@@ -1162,7 +1162,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					});
 					function init_customer_categ() {
 						console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-						if (jQuery("#customerprospect").val() == 0 && !canHaveCategoryIfNotCustomerProspectSupplier) {
+						if (jQuery("#customerprospect").val() == 0 && !canHaveCustomerCategoryIfNotCustomerProspectSupplier) {
 							jQuery(".visibleifcustomer").hide();
 						} else {
 							jQuery(".visibleifcustomer").show();
@@ -1979,7 +1979,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
     				}
     			});
 
-				var canHaveCategoryIfNotCustomerProspectSupplier = ' . (!getDolGlobalString('THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT') ? '0' : '1') . ';
+				var canHaveCustomerCategoryIfNotCustomerProspect = ' . (getDolGlobalInt('THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT') ? '1' : '0') . ';
 
 				init_customer_categ();
 	  			$("#customerprospect").change(function() {
@@ -1987,7 +1987,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				});
        			function init_customer_categ() {
 					console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-					if (jQuery("#customerprospect").val() == 0 && !canHaveCategoryIfNotCustomerProspectSupplier)
+					if (jQuery("#customerprospect").val() == 0 && !canHaveCustomerCategoryIfNotCustomerProspect)
 					{
 						jQuery(".visibleifcustomer").hide();
 					}
