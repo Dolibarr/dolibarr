@@ -6864,6 +6864,7 @@ abstract class CommonObject
 						$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					}
 					break;
+				case 'price':
 				case 'double':
 					$value = price2num($value);
 					if (!is_numeric($value) && $value != '') {
@@ -6886,11 +6887,6 @@ abstract class CommonObject
 						$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					 }
 					 break;*/
-				case 'price':
-					$new_array_options["options_".$key] = price2num($this->array_options["options_".$key]);
-
-					$this->array_options["options_".$key] = $new_array_options["options_".$key];
-					break;
 				case 'password':
 					$algo = '';
 					if ($this->array_options["options_".$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options'])) {
