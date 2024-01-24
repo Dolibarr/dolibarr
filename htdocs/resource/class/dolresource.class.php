@@ -58,7 +58,7 @@ class Dolresource extends CommonObject
 	public $zip;
 
 	/**
-	 * @var string yown
+	 * @var string town
 	 */
 	public $town;
 
@@ -67,6 +67,9 @@ class Dolresource extends CommonObject
 	 */
 	public $fk_code_type_resource;
 
+	/**
+	 * @var string type label
+	 */
 	public $type_label;
 
 	/**
@@ -84,23 +87,55 @@ class Dolresource extends CommonObject
 	 */
 	public $fk_state;
 
-	// Variable for a link of resource
-
 	/**
-	 * @var int ID
+	 * @var int resource ID
+	 * For resource-element link
+	 * @see updateElementResource()
+	 * @see fetchElementResource()
 	 */
 	public $resource_id;
+
+	/**
+	 * @var string resource type
+	 */
 	public $resource_type;
+
+	/**
+	 * @var int element ID
+	 * For resource-element link
+	 * @see updateElementResource()
+	 * @see fetchElementResource()
+	 */
 	public $element_id;
+
+	/**
+	 * @var string element type
+	 */
 	public $element_type;
+
+	/**
+	 * @var int
+	 */
 	public $busy;
+
+	/**
+	 * @var int
+	 */
 	public $mandatory;
+
+	/**
+	 * @var int
+	 */
 	public $fulldayevent;
 
 	/**
 	 * @var int ID
 	 */
 	public $fk_user_create;
+
+	/**
+	 * @var string timestamp
+	 */
 	public $tms;
 
 	/**
