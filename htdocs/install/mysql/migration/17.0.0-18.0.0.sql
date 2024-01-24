@@ -581,3 +581,6 @@ ALTER TABLE llx_facture ADD COLUMN fk_input_reason integer NULL DEFAULT NULL AFT
 -- Product/service managed in stock
 ALTER TABLE llx_product ADD COLUMN stockable_product integer DEFAULT 1 NOT NULL;
 UPDATE llx_product set stockable_product = 0 WHERE type = 1;
+
+-- Rename const to add customer categories on not customer/prospect third-party if enabled
+UPDATE llx_const SET name = 'THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT' WHERE name = 'THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER';
