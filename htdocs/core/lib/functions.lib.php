@@ -946,17 +946,31 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 }
 
 /**
- *  Return value of a param into GET or POST supervariable.
+ *  Return the value of a $_GET or $_POST supervariable, converted into integer.
  *  Use the property $user->default_values[path]['creatform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
  *  Note: The property $user->default_values is loaded by main.php when loading the user.
  *
- *  @param  string  $paramname   Name of parameter to found
- *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
- *  @return int                  Value found (int)
+ *  @param  string  $paramname   Name of the $_GET or $_POST parameter
+ *  @param  int     $method      Type of method (0 = $_GET then $_POST, 1 = only $_GET, 2 = only $_POST, 3 = $_POST then $_GET)
+ *  @return int                  Value converted into integer
  */
 function GETPOSTINT($paramname, $method = 0)
 {
 	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
+}
+
+
+/**
+ *  Return the value of a $_GET or $_POST supervariable, converted into float.
+ *
+ *  @param  string          $paramname      Name of the $_GET or $_POST parameter
+ *  @param  string|int      $rounding       Type of rounding ('', 'MU', 'MT, 'MS', 'CU', 'CT', integer) {@see price2num()}
+ *  @return float                           Value converted into float
+ */
+function GETPOSTFLOAT($paramname, $rounding = '')
+{
+	// price2num() is used to sanitize any valid user input (such as "1 234.5", "1 234,5", "1'234,5", "1·234,5", "1,234.5", etc.)
+	return (float) price2num(GETPOST($paramname), $rounding, 2);
 }
 
 
@@ -5854,11 +5868,11 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 			if ($cpt >= 1) {
 				if (empty($pagenavastextinput)) {
-					$pagelist .= '<li class="pagination"><a href="'.$file.'?page=0'.$options.'">1</a></li>';
+					$pagelist .= '<li class="pagination"><a class="reposition" href="'.$file.'?page=0'.$options.'">1</a></li>';
 					if ($cpt > 2) {
 						$pagelist .= '<li class="pagination"><span class="inactive">...</span></li>';
 					} elseif ($cpt == 2) {
-						$pagelist .= '<li class="pagination"><a href="'.$file.'?page=1'.$options.'">2</a></li>';
+						$pagelist .= '<li class="pagination"><a class="reposition" href="'.$file.'?page=1'.$options.'">2</a></li>';
 					}
 				}
 			}
@@ -5873,7 +5887,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 					if ($cpt == $page) {
 						$pagelist .= '<li class="pagination"><span class="active">'.($page + 1).'</span></li>';
 					} else {
-						$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.$cpt.$options.'">'.($cpt + 1).'</a></li>';
+						$pagelist .= '<li class="pagination"><a class="reposition" href="'.$file.'?page='.$cpt.$options.'">'.($cpt + 1).'</a></li>';
 					}
 				}
 				$cpt++;
@@ -5884,13 +5898,13 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 					if ($cpt < $nbpages - 2) {
 						$pagelist .= '<li class="pagination"><span class="inactive">...</span></li>';
 					} elseif ($cpt == $nbpages - 2) {
-						$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.($nbpages - 2).$options.'">'.($nbpages - 1).'</a></li>';
+						$pagelist .= '<li class="pagination"><a class="reposition" href="'.$file.'?page='.($nbpages - 2).$options.'">'.($nbpages - 1).'</a></li>';
 					}
-					$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.($nbpages - 1).$options.'">'.$nbpages.'</a></li>';
+					$pagelist .= '<li class="pagination"><a class="reposition" href="'.$file.'?page='.($nbpages - 1).$options.'">'.$nbpages.'</a></li>';
 				}
 			} else {
 				//var_dump($page.' '.$cpt.' '.$nbpages);
-				$pagelist .= '<li class="pagination paginationlastpage"><a href="'.$file.'?page='.($nbpages - 1).$options.'">'.$nbpages.'</a></li>';
+				$pagelist .= '<li class="pagination paginationlastpage"><a class="reposition" href="'.$file.'?page='.($nbpages - 1).$options.'">'.$nbpages.'</a></li>';
 			}
 		} else {
 			$pagelist .= '<li class="pagination"><span class="active">'.($page + 1)."</li>";
@@ -5996,7 +6010,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 			print '</li>';
 		}
 		if ($page > 0) {
-			print '<li class="pagination paginationpage paginationpageleft"><a class="paginationprevious" href="'.$file.'?page='.($page - 1).$options.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
+			print '<li class="pagination paginationpage paginationpageleft"><a class="paginationprevious reposition" href="'.$file.'?page='.($page - 1).$options.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
 		}
 		if ($betweenarrows) {
 			print '<!--<div class="betweenarrows nowraponall inline-block">-->';
@@ -6004,7 +6018,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 			print '<!--</div>-->';
 		}
 		if ($nextpage > 0) {
-			print '<li class="pagination paginationpage paginationpageright"><a class="paginationnext" href="'.$file.'?page='.($page + 1).$options.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
+			print '<li class="pagination paginationpage paginationpageright"><a class="paginationnext reposition" href="'.$file.'?page='.($page + 1).$options.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
 		}
 		if ($afterarrows) {
 			print '<li class="paginationafterarrows">';

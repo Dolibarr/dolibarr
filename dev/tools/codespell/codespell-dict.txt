@@ -1,6 +1,7 @@
 # Please add in alphabetical order->(`sort -u` like).
 EPR->ERP
-alpahnohtml->alphanohtml
+alpah->alpha
+aplha->alpha
 choosed->chosen
 dolibar->dolibarr
 dollibar->dolibarr
@@ -8,3 +9,5 @@ dollibarr->dolibarr
 mot de passe->password
 not de passe->password
 tableau de bord->state board
+tagret->target
+thridparty->thirdparty

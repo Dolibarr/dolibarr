@@ -48,6 +48,14 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 class Product extends CommonObject
 {
 	/**
+	 * Const sell or eat by mandatory id
+	 */
+	const SELL_OR_EAT_BY_MANDATORY_ID_NONE = 0;
+	const SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY = 1;
+	const SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY = 2;
+	const SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT = 3;
+
+	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'product';
@@ -360,6 +368,13 @@ class Product extends CommonObject
 	public $status_batch = 0;
 
 	/**
+	 * Make sell-by or eat-by date mandatory
+	 *
+	 * @var int
+	 */
+	public $sell_or_eat_by_mandatory = 0;
+
+	/**
 	 * If allowed, we can edit batch or serial number mask for each product
 	 *
 	 * @var string
@@ -405,7 +420,7 @@ class Product extends CommonObject
 	public $accountancy_code_buy_export;
 
 	/**
-	 * @var string	Main Barcode value
+	 * @var string|int	Main Barcode value, -1 for auto code
 	 */
 	public $barcode;
 
@@ -593,15 +608,6 @@ class Product extends CommonObject
 	 * Service
 	 */
 	const TYPE_SERVICE = 1;
-
-	/**
-	 * Const sell or eat by mandatory id
-	 */
-	const SELL_OR_EAT_BY_MANDATORY_ID_NONE = 0;
-	const SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY = 1;
-	const SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY = 2;
-	const SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT = 3;
-
 
 	/**
 	 *  Constructor
@@ -822,6 +828,7 @@ class Product extends CommonObject
 					$sql .= ", canvas";
 					$sql .= ", finished";
 					$sql .= ", tobatch";
+					$sql .= ", sell_or_eat_by_mandatory";
 					$sql .= ", batch_mask";
 					$sql .= ", fk_unit";
 					$sql .= ", mandatory_period";
@@ -851,6 +858,7 @@ class Product extends CommonObject
 					$sql .= ", '".$this->db->escape($this->canvas)."'";
 					$sql .= ", ".((!isset($this->finished) || $this->finished < 0 || $this->finished == '') ? 'NULL' : (int) $this->finished);
 					$sql .= ", ".((empty($this->status_batch) || $this->status_batch < 0) ? '0' : ((int) $this->status_batch));
+					$sql .= ", ".((empty($this->sell_or_eat_by_mandatory) || $this->sell_or_eat_by_mandatory < 0) ? 0 : ((int) $this->sell_or_eat_by_mandatory));
 					$sql .= ", '".$this->db->escape($this->batch_mask)."'";
 					$sql .= ", ".($this->fk_unit > 0 ? ((int) $this->fk_unit) : 'NULL');
 					$sql .= ", '".$this->db->escape($this->mandatory_period)."'";
@@ -1244,6 +1252,7 @@ class Product extends CommonObject
 			$sql .= ", tosell = ".(int) $this->status;
 			$sql .= ", tobuy = ".(int) $this->status_buy;
 			$sql .= ", tobatch = ".((empty($this->status_batch) || $this->status_batch < 0) ? '0' : (int) $this->status_batch);
+			$sql .= ", sell_or_eat_by_mandatory = ".((empty($this->sell_or_eat_by_mandatory) || $this->sell_or_eat_by_mandatory < 0) ? 0 : (int) $this->sell_or_eat_by_mandatory);
 			$sql .= ", batch_mask = '".$this->db->escape($this->batch_mask)."'";
 
 			$sql .= ", finished = ".((!isset($this->finished) || $this->finished < 0 || $this->finished == '') ? "null" : (int) $this->finished);
@@ -1612,6 +1621,42 @@ class Product extends CommonObject
 			$this->error = "ErrorRecordIsUsedCantDelete";
 			return 0;
 		}
+	}
+
+	/**
+	 * Get sell or eat by mandatory list
+	 *
+	 * @return 	array	Sell or eat by mandatory list
+	 */
+	public static function getSellOrEatByMandatoryList()
+	{
+		global $langs;
+
+		$sellByLabel = $langs->trans('SellByDate');
+		$eatByLabel = $langs->trans('EatByDate');
+		return array(
+			self::SELL_OR_EAT_BY_MANDATORY_ID_NONE => $langs->trans('BatchSellOrEatByMandatoryNone'),
+			self::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY => $sellByLabel,
+			self::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY => $eatByLabel,
+			self::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT => $langs->trans('BatchSellOrEatByMandatoryAll', $sellByLabel, $eatByLabel),
+		);
+	}
+
+	/**
+	 * Get sell or eat by mandatory label
+	 *
+	 * @return 	string	Sell or eat by mandatory label
+	 */
+	public function getSellOrEatByMandatoryLabel()
+	{
+		$sellOrEatByMandatoryLabel = '';
+
+		$sellOrEatByMandatoryList = self::getSellOrEatByMandatoryList();
+		if (isset($sellOrEatByMandatoryList[$this->sell_or_eat_by_mandatory])) {
+			$sellOrEatByMandatoryLabel = $sellOrEatByMandatoryList[$this->sell_or_eat_by_mandatory];
+		}
+
+		return $sellOrEatByMandatoryLabel;
 	}
 
 	/**
@@ -2524,7 +2569,7 @@ class Product extends CommonObject
 		} else {
 			$sql .= " p.pmp,";
 		}
-		$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
+		$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
 		$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf,";
 		if ($separatedStock) {
 			$sql .= " SUM(sp.reel) as stock";
@@ -2567,7 +2612,7 @@ class Product extends CommonObject
 			} else {
 				$sql .= " p.pmp,";
 			}
-			$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
+			$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
 			$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf";
 			if (!$separatedStock) {
 				$sql .= ", p.stock";
@@ -2595,6 +2640,7 @@ class Product extends CommonObject
 				$this->status = $obj->tosell;
 				$this->status_buy = $obj->tobuy;
 				$this->status_batch = $obj->tobatch;
+				$this->sell_or_eat_by_mandatory = $obj->sell_or_eat_by_mandatory;
 				$this->batch_mask = $obj->batch_mask;
 
 				$this->customcode = $obj->customcode;
@@ -6269,6 +6315,7 @@ class Product extends CommonObject
 		$this->status = 1;
 		$this->status_buy = 1;
 		$this->tobatch = 0;
+		$this->sell_or_eat_by_mandatory = 0;
 		$this->note_private = 'This is a comment (private)';
 		$this->note_public = 'This is a comment (public)';
 		$this->date_creation = $now;
