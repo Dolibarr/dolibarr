@@ -539,13 +539,13 @@ abstract class CommonObject
 	public $total_tva;
 
 	/**
-	 * @var float 		Total local tax 1
+	 * @var float 		Total local tax 1 amount
 	 * @see update_price()
 	 */
 	public $total_localtax1;
 
 	/**
-	 * @var float 		Total local tax 2
+	 * @var float 		Total local tax 2 amount
 	 * @see update_price()
 	 */
 	public $total_localtax2;
