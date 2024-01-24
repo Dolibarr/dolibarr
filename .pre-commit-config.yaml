@@ -115,7 +115,8 @@ repos:
           - dev/tools/codespell/codespell-lines-ignore.txt
           - --uri-ignore-words-list
           - ned
-        exclude: (?x)^(.phan/stubs/.*|.*\.svg)$
+        exclude_types: [image]
+        exclude: (?x)^(.phan/stubs/.*)$
         additional_dependencies: [tomli]
       - alias: codespell-lang-en_US
         # Only for translations with specialised exceptions
