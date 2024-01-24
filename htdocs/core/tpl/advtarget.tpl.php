@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ */
 /*
  *
  * This program is free software; you can redistribute it and/or modify
@@ -165,7 +167,7 @@ print '</td><td>'."\n";
 print '</td></tr>'."\n";
 
 // Mother Company
-print '<tr><td>'.$langs->trans("Maison mère");
+print '<tr><td>'.$langs->trans("ParentCompany");
 if (!empty($array_query['cust_mothercompany'])) {
 	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 }
