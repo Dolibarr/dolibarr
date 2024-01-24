@@ -45,6 +45,8 @@ require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
 
+top_httphead('application/json');
+
 //get data from AJAX
 $rawData = file_get_contents('php://input');
 $jsonData = json_decode($rawData, true);
