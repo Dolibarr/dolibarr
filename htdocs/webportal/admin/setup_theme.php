@@ -143,21 +143,21 @@ include DOL_DOCUMENT_ROOT . '/core/actions_setmoduleoptions.inc.php';
 $form = new Form($db);
 
 $help_url = '';
-$page_name = "WebPortalSetup";
+$title = "Setup";
 
-llxHeader('', $langs->trans($page_name), $help_url);
+llxHeader('', $langs->trans($title), $help_url);
 
 // Subheader
 $linkback = '<a href="' . ($backtopage ? $backtopage : DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1') . '">' . $langs->trans("BackToModuleList") . '</a>';
 
-print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 
 // Configuration header
 $head = webportalAdminPrepareHead();
-print dol_get_fiche_head($head, 'themesettings', $langs->trans($page_name), -1, "webportal@webportal");
+print dol_get_fiche_head($head, 'themesettings', $langs->trans($title), -1, "webportal@webportal");
 
 // Setup page goes here
-echo '<span class="opacitymedium">' . $langs->trans("WebPortalSetupPage") . ' : ' . $langs->trans('UserAccountForWebPortalAreInThirdPartyTabHelp') .'</span>.<br><br>';
+echo '<span class="opacitymedium">' . $langs->trans("SetupPage") . ' : ' . $langs->trans('UserAccountForWebPortalAreInThirdPartyTabHelp') .'</span>.<br><br>';
 
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);

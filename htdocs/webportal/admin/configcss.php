@@ -18,7 +18,7 @@
  */
 
 /**
- * \file    admin/configcss.php
+ * \file    htdocs/webportal/admin/configcss.php
  * \ingroup webportal
  * \brief   WebPortal setup page.
  */
@@ -62,7 +62,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 dol_include_once('/webportal/lib/webportal.lib.php');
 
 // Translations
-$langs->loadLangs(array("admin", "webportal", "hrm", "other"));
+$langs->loadLangs(array("admin", "hrm", "other"));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('webportalsetup', 'globalsetup'));
@@ -106,13 +106,13 @@ if ($action == 'updatecss') {
  * View
  */
 
-$page_name = "WebPortalCSS";
+$title = "WebPortalCSS";
 
 $wikihelp = 'EN:First_setup|FR:Premiers_param&eacute;trages|ES:Primeras_configuraciones';
 
 llxHeader(
 	'',
-	$langs->trans($page_name),
+	$langs->trans($title),
 	$wikihelp,
 	'',
 	0,
@@ -128,11 +128,11 @@ llxHeader(
 // Subheader
 $linkback = '<a href="' . ($backtopage ? $backtopage : DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1') . '">' . $langs->trans("BackToModuleList") . '</a>';
 
-print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 
 // Configuration header
 $head = webportalAdminPrepareHead();
-print dol_get_fiche_head($head, 'css', $langs->trans($page_name), -1, "webportal@webportal");
+print dol_get_fiche_head($head, 'css', $langs->trans($title), -1, "webportal@webportal");
 
 // Setup page goes here
 echo '<span class="opacitymedium">' . $langs->trans("WebPortalCSS") . '</span><br><br>';
