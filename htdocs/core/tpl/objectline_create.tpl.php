@@ -640,6 +640,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#price_ht").val() != '') {
 			jQuery("#price_ttc").val('');
 			jQuery("#multicurrency_subprice").val('');
+			jQuery("#multicurrency_price_ht").val('');
 		}
 	});
 	jQuery("#price_ttc").keyup(function(event) {
@@ -647,11 +648,19 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
 			jQuery("#price_ht").val('');
 			jQuery("#multicurrency_subprice").val('');
+			jQuery("#multicurrency_price_ht").val('');
 		}
 	});
 	jQuery("#multicurrency_subprice").keyup(function(event) {
 		// console.log(event.which);		// discard event tag and arrows
-		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
+		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#multicurrency_subprice").val() != '') {
+			jQuery("#price_ht").val('');
+			jQuery("#price_ttc").val('');
+		}
+	});
+	jQuery("#multicurrency_price_ht").keyup(function(event) {
+		// console.log(event.which);		// discard event tag and arrows
+		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#multicurrency_price_ht").val() != '') {
 			jQuery("#price_ht").val('');
 			jQuery("#price_ttc").val('');
 		}
