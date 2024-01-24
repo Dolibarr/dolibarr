@@ -126,8 +126,8 @@ print '</td></tr></table>';
 
 //if ($choice != 'confirm_allfiles')
 //{
-	print '<br>';
-	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("PurgeRunNow").'"></div>';
+print '<br>';
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("PurgeRunNow").'"></div>';
 //}
 
 print '</form>';

@@ -599,7 +599,7 @@ class FormMail extends Form
 						&& !preg_match('/user_aliases/', $this->fromtype)
 						&& !preg_match('/global_aliases/', $this->fromtype)
 						&& !preg_match('/senderprofile/', $this->fromtype)
-						) {
+					) {
 						// Use this->fromname and this->frommail or error if not defined
 						$out .= $this->fromname;
 						if ($this->frommail) {

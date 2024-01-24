@@ -36,7 +36,7 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-	// Load translation files required by the page
+// Load translation files required by the page
 $langs->loadLangs(array('admin', 'other', 'orders'));
 
 $extrafields = new ExtraFields($db);

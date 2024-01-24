@@ -152,16 +152,16 @@ $fk_usergroup1 = GETPOST('fk_usergroup1');
 						</tr>
 						<tr>
 							<td><?php
-									echo $langs->trans('OrJobToCompare') . '</td><td>';
-									$j = new Job($db);
-									$jobs = $j->fetchAll();
-									$TJobs = array();
+							echo $langs->trans('OrJobToCompare') . '</td><td>';
+							$j = new Job($db);
+							$jobs = $j->fetchAll();
+							$TJobs = array();
 
 							foreach ($jobs as &$j) {
 								$TJobs[$j->id] = $j->label;
 							}
 
-									print img_picto('', 'jobprofile', 'class="pictofixedwidth"').$form->selectarray('fk_job', $TJobs, $fk_job, 1);
+							print img_picto('', 'jobprofile', 'class="pictofixedwidth"').$form->selectarray('fk_job', $TJobs, $fk_job, 1);
 							?></td>
 						</tr>
 					</table>

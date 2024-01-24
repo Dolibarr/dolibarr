@@ -2755,39 +2755,39 @@ class Product extends CommonObject
 
 							// Price by quantity
 							/*
-							 $this->prices_by_qty[$i]=$result["price_by_qty"];
-							 $this->prices_by_qty_id[$i]=$result["rowid"];
-							 // Récuperation de la liste des prix selon qty si flag positionné
-							 if ($this->prices_by_qty[$i] == 1)
-							 {
-							 $sql = "SELECT rowid, price, unitprice, quantity, remise_percent, remise, price_base_type";
-							 $sql.= " FROM ".$this->db->prefix()."product_price_by_qty";
-							 $sql.= " WHERE fk_product_price = ".((int) $this->prices_by_qty_id[$i]);
-							 $sql.= " ORDER BY quantity ASC";
-							 $resultat=array();
-							 $resql = $this->db->query($sql);
-							 if ($resql)
-							 {
-							 $ii=0;
-							 while ($result= $this->db->fetch_array($resql)) {
-							 $resultat[$ii]=array();
-							 $resultat[$ii]["rowid"]=$result["rowid"];
-							 $resultat[$ii]["price"]= $result["price"];
-							 $resultat[$ii]["unitprice"]= $result["unitprice"];
-							 $resultat[$ii]["quantity"]= $result["quantity"];
-							 $resultat[$ii]["remise_percent"]= $result["remise_percent"];
-							 $resultat[$ii]["remise"]= $result["remise"];                    // deprecated
-							 $resultat[$ii]["price_base_type"]= $result["price_base_type"];
-							 $ii++;
-							 }
-							 $this->prices_by_qty_list[$i]=$resultat;
-							 }
-							 else
-							 {
-							 dol_print_error($this->db);
-							 return -1;
-							 }
-							 }*/
+							$this->prices_by_qty[$i]=$result["price_by_qty"];
+							$this->prices_by_qty_id[$i]=$result["rowid"];
+							// Récuperation de la liste des prix selon qty si flag positionné
+							if ($this->prices_by_qty[$i] == 1)
+							{
+							$sql = "SELECT rowid, price, unitprice, quantity, remise_percent, remise, price_base_type";
+							$sql.= " FROM ".$this->db->prefix()."product_price_by_qty";
+							$sql.= " WHERE fk_product_price = ".((int) $this->prices_by_qty_id[$i]);
+							$sql.= " ORDER BY quantity ASC";
+							$resultat=array();
+							$resql = $this->db->query($sql);
+							if ($resql)
+							{
+							$ii=0;
+							while ($result= $this->db->fetch_array($resql)) {
+							$resultat[$ii]=array();
+							$resultat[$ii]["rowid"]=$result["rowid"];
+							$resultat[$ii]["price"]= $result["price"];
+							$resultat[$ii]["unitprice"]= $result["unitprice"];
+							$resultat[$ii]["quantity"]= $result["quantity"];
+							$resultat[$ii]["remise_percent"]= $result["remise_percent"];
+							$resultat[$ii]["remise"]= $result["remise"];                    // deprecated
+							$resultat[$ii]["price_base_type"]= $result["price_base_type"];
+							$ii++;
+							}
+							$this->prices_by_qty_list[$i]=$resultat;
+							}
+							else
+							{
+							dol_print_error($this->db);
+							return -1;
+							}
+							}*/
 						} else {
 							$this->error = $this->db->lasterror;
 							return -1;

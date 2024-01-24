@@ -825,13 +825,13 @@ print '</tr>';
 
 $key = 'PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE';
 echo '<tr class="oddeven">',
-		'<td class="left">',
-			$form->textwithpicto($langs->transnoentities($key), $langs->transnoentities($key . '_help')),
-		'</td>',
-		'<td class="right" colspan="2">',
-			ajax_constantonoff($key),
-		'</td>',
-	'</tr>';
+'<td class="left">',
+$form->textwithpicto($langs->transnoentities($key), $langs->transnoentities($key . '_help')),
+'</td>',
+'<td class="right" colspan="2">',
+ajax_constantonoff($key),
+'</td>',
+'</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("TimesheetPreventAfterFollowingMonths").'</td>';

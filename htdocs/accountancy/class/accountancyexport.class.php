@@ -1789,7 +1789,7 @@ class AccountancyExport
 					&& $objectLines[$aIndex + 1]->piece_num == $line->piece_num
 					&& $aIndex - 1 < $aSize
 					&& $objectLines[$aIndex - 1]->piece_num == $line->piece_num
-					) {
+			) {
 				$sammelBuchung = true;
 			}
 

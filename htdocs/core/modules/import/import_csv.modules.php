@@ -405,7 +405,7 @@ class ImportCsv extends ModeleImports
 								if ($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeid'
 									|| $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromref'
 									|| $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeorlabel'
-									) {
+								) {
 									// New val can be an id or ref. If it start with id: it is forced to id, if it start with ref: it is forced to ref. It not, we try to guess.
 									$isidorref = 'id';
 									if (!is_numeric($newval) && $newval != '' && !preg_match('/^id:/i', $newval)) {

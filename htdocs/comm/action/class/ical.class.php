@@ -193,7 +193,7 @@ class ICal
 						$type = "VCALENDAR";
 						break;
 
-					// Manage VALARM that are inside a VEVENT to avoid fields of VALARM to overwrites fields of VEVENT
+						// Manage VALARM that are inside a VEVENT to avoid fields of VALARM to overwrites fields of VEVENT
 					case "BEGIN:VALARM":
 						$insidealarm = 1;
 						break;

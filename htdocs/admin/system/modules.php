@@ -408,13 +408,13 @@ llxFooter();
 $db->close();
 
 
- /**
-  * Compare two modules by their ID for a ascending order
-  *
-  * @param	stdClass 	$a		First module
-  * @param	stdClass 	$b		Second module
-  * @return	int					Compare result (-1, 0, 1)
-  */
+/**
+ * Compare two modules by their ID for a ascending order
+ *
+ * @param	stdClass 	$a		First module
+ * @param	stdClass 	$b		Second module
+ * @return	int					Compare result (-1, 0, 1)
+ */
 function compareIdAsc(stdClass $a, stdClass $b)
 {
 	if ((int) $a->id == (int) $b->id) {
@@ -424,13 +424,13 @@ function compareIdAsc(stdClass $a, stdClass $b)
 	return ((int) $a->id < (int) $b->id) ? -1 : 1;
 }
 
- /**
-  * Compare two modules by their ID for a descending order
-  *
-  * @param	stdClass 	$a		First module
-  * @param	stdClass 	$b		Second module
-  * @return	int					Compare result (-1, 0, 1)
-  */
+/**
+ * Compare two modules by their ID for a descending order
+ *
+ * @param	stdClass 	$a		First module
+ * @param	stdClass 	$b		Second module
+ * @return	int					Compare result (-1, 0, 1)
+ */
 function compareIdDesc(stdClass $a, stdClass $b)
 {
 	if ((int) $a->id == (int) $b->id) {
@@ -440,13 +440,13 @@ function compareIdDesc(stdClass $a, stdClass $b)
 	return ((int) $b->id < (int) $a->id) ? -1 : 1;
 }
 
- /**
-  * Compare two modules by their ID for a ascending order
-  *
-  * @param	stdClass 	$a		First module
-  * @param	stdClass 	$b		Second module
-  * @return	int					Compare result (-1, 0, 1)
-  */
+/**
+ * Compare two modules by their ID for a ascending order
+ *
+ * @param	stdClass 	$a		First module
+ * @param	stdClass 	$b		Second module
+ * @return	int					Compare result (-1, 0, 1)
+ */
 function comparePermissionIdsAsc(stdClass $a, stdClass $b)
 {
 	if (empty($a->permission) && empty($b->permission)) {
@@ -467,13 +467,13 @@ function comparePermissionIdsAsc(stdClass $a, stdClass $b)
 	return $a->permission[0] < $b->permission[0] ? -1 : 1;
 }
 
- /**
-  * Compare two modules by their permissions for a descending order
-  *
-  * @param	stdClass 	$a		First module
-  * @param	stdClass 	$b		Second module
-  * @return	int					Compare result (-1, 0, 1)
-  */
+/**
+ * Compare two modules by their permissions for a descending order
+ *
+ * @param	stdClass 	$a		First module
+ * @param	stdClass 	$b		Second module
+ * @return	int					Compare result (-1, 0, 1)
+ */
 function comparePermissionIdsDesc(stdClass $a, stdClass $b)
 {
 	if (empty($a->permission) && empty($b->permission)) {
