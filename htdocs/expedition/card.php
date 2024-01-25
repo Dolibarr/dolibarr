@@ -14,6 +14,7 @@
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2022       Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -537,7 +538,7 @@ if (empty($reshook)) {
 		|| $action == 'settrueDepth'
 		|| $action == 'setshipping_method_id')
 		&& $user->hasRight('expedition', 'creer')
-		) {
+	) {
 		// Action update
 		$error = 0;
 
@@ -874,6 +875,7 @@ if (empty($reshook)) {
 	}
 	$triggersendname = 'SHIPPING_SENTBYMAIL';
 	$paramname = 'id';
+	$autocopy = 'MAIN_MAIL_AUTOCOPY_SHIPMENT_TO';
 	$mode = 'emailfromshipment';
 	$trackid = 'shi'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
@@ -2461,7 +2463,7 @@ if ($action == 'create') {
 							print '</tr>';
 						} else {
 							print '<!-- case edit 5 -->';
-							print '<tr><td colspan="3">'.$langs->trans("NotEnoughStock").'</td></tr>';
+							print '<tr><td colspan="3">'.$langs->trans("ErrorStockIsNotEnough").'</td></tr>';
 						}
 					} else {
 						print '<!-- case edit 6 -->';

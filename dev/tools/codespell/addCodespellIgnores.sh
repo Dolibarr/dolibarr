@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+
 #
 # Script to add codespell exceptions to the ignores lines file.
 #
@@ -11,9 +13,21 @@
 #   ```shell
 #   echo > dev/tools/codespell/codespell-lines-ignore.txt
 #   ```
-# and then execute this script
+# and then execute this script.
 #
 # author: https://github.com/mdeweerd
+
+#
+# :warning:
+#
+# This script only works properly if codespell is installed for your CLI.
+# As the configuration is in pyproject.toml, you also need tomli.
+#
+# ```shell
+# python -m pip install codespell tomli
+# # or
+# pip install codespell tomli
+# ```
 
 codespell_ignore_file=dev/tools/codespell/codespell-lines-ignore.txt
 if [ -z "${0##*.sh}" ] ; then
@@ -38,11 +52,17 @@ fi
 [ -r "${codespell_ignore_file}" ] || { echo "${codespell_ignore_file} not found" ; exit 1 ; }
 # Then:
 #   - Run codespell;
+#   - Identify files that have fixes;
+#   - Limit to files under git control;
+#   - Run codespell on selected files;
 #   - For each line, create a grep command to find the lines;
 #   - Execute that command by evaluation
-codespell . | sed -n -E 's@^([^:]+):[[:digit:]]+:[[:space:]](\S+)[[:space:]].*@grep -P '\''\\b\2\\b'\'' "\1" >> '"${codespell_ignore_file}"'@p' | \
-	while read -r line ; do eval "$line" ; done
+codespell . \
+	| sed -n -E 's@^([^:]+):.*@\1@p' \
+	| xargs -r git ls-files -- \
+	| xargs -r codespell -- \
+	| sed -n -E 's@^([^:]+):[[:digit:]]+:[[:space:]](\S+)[[:space:]].*@grep -P '\''\\b\2\\b'\'' -- "\1" >> '"${codespell_ignore_file}"'@p' \
+	| while read -r line ; do eval "$line" ; done
 
 # Finally, sort and remove duplicates to make merges easier.
 sort -u -o "${codespell_ignore_file}"{,}
-

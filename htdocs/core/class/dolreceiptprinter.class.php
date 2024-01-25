@@ -460,7 +460,6 @@ class dolReceiptPrinter extends Printer
 	 */
 	public function updatePrinter($name, $type, $profile, $parameter, $printerid)
 	{
-		global $conf;
 		$error = 0;
 
 		$sql = "UPDATE ".$this->db->prefix()."printer_receipt";
@@ -625,6 +624,7 @@ class dolReceiptPrinter extends Printer
 
 		$error = 0;
 		$ret = $this->loadTemplate($templateid);
+
 		$now = dol_now('tzuser');
 		// tags a remplacer par leur valeur avant de parser (dol_value_xxx)
 		$this->template = str_replace('{dol_value_object_id}', $object->id, $this->template);
@@ -706,6 +706,7 @@ class dolReceiptPrinter extends Printer
 		// print ticket
 		$nbcharactbyline = getDolGlobalInt('RECEIPT_PRINTER_NB_CHARACT_BY_LINE', 48);
 		$ret = $this->initPrinter($printerid);
+
 		if ($ret > 0) {
 			setEventMessages($this->error, $this->errors, 'errors');
 		} else {
@@ -961,22 +962,23 @@ class dolReceiptPrinter extends Printer
 	}
 
 	/**
-	 *  Function to load Template
+	 *  Function to load Template into $this->template
 	 *
 	 *  @param   int       $templateid          Template id
 	 *  @return  int                            0 if OK; >0 if KO
 	 */
 	public function loadTemplate($templateid)
 	{
-		global $conf;
 		$error = 0;
+
 		$sql = "SELECT template";
 		$sql .= " FROM ".$this->db->prefix()."printer_receipt_template";
 		$sql .= " WHERE rowid = ".((int) $templateid);
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity IN (".getEntity('printer_receipt_template').")";
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$obj = $this->db->fetch_array($resql);
+			$obj = $this->db->fetch_object($resql);
 		} else {
 			$error++;
 			$this->errors[] = $this->db->lasterror;
@@ -985,7 +987,7 @@ class dolReceiptPrinter extends Printer
 			$error++;
 			$this->errors[] = 'TemplateDontExist';
 		} else {
-			$this->template = $obj['0'];
+			$this->template = $obj->template;
 		}
 
 		return $error;
@@ -993,24 +995,25 @@ class dolReceiptPrinter extends Printer
 
 
 	/**
-	 *  Function Init Printer
+	 *  Function Init Printer into $this->printer
 	 *
 	 *  @param   int       $printerid       Printer id
-	 *  @return  void|int                        0 if OK; >0 if KO
+	 *  @return  void|int                   0 if OK; >0 if KO
 	 */
 	public function initPrinter($printerid)
 	{
-		global $conf;
 		if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 			$this->connector = new DummyPrintConnector();
 			$this->printer = new Printer($this->connector, $this->profile);
 			return;
 		}
+
 		$error = 0;
 		$sql = "SELECT rowid, name, fk_type, fk_profile, parameter";
 		$sql .= " FROM ".$this->db->prefix()."printer_receipt";
 		$sql .= " WHERE rowid = ".((int) $printerid);
-		$sql .= " AND entity = ".((int) $conf->entity);
+		$sql .= " AND entity IN (".getEntity('printer_receipt').")";
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_array($resql);

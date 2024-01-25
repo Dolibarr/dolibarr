@@ -76,7 +76,12 @@ class Holiday extends CommonObject
 	public $date_debut_gmt = ''; // Date start in GMT
 	public $date_fin_gmt = ''; // Date end in GMT
 	public $halfday = ''; // 0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
-	public $statut = ''; // 1=draft, 2=validated, 3=approved
+
+	/**
+	 * @var int
+	 * @deprecated
+	 */
+	public $statut = 0; // 1=draft, 2=validated, 3=approved
 
 	/**
 	 * @var int 	ID of user that must approve. Real user for approval is fk_user_valid (old version) or fk_user_approve (new versions)
@@ -209,7 +214,7 @@ class Holiday extends CommonObject
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -376,8 +381,6 @@ class Holiday extends CommonObject
 	 */
 	public function fetch($id, $ref = '')
 	{
-		global $langs;
-
 		$sql = "SELECT";
 		$sql .= " cp.rowid,";
 		$sql .= " cp.ref,";
@@ -387,7 +390,7 @@ class Holiday extends CommonObject
 		$sql .= " cp.date_debut,";
 		$sql .= " cp.date_fin,";
 		$sql .= " cp.halfday,";
-		$sql .= " cp.statut,";
+		$sql .= " cp.statut as status,";
 		$sql .= " cp.fk_validator,";
 		$sql .= " cp.date_valid,";
 		$sql .= " cp.fk_user_valid,";
@@ -426,7 +429,8 @@ class Holiday extends CommonObject
 				$this->date_debut_gmt = $this->db->jdate($obj->date_debut, 1);
 				$this->date_fin_gmt = $this->db->jdate($obj->date_fin, 1);
 				$this->halfday = $obj->halfday;
-				$this->statut = $obj->statut;
+				$this->statut = $obj->status;
+				$this->status = $obj->status;
 				$this->fk_validator = $obj->fk_validator;
 				$this->date_valid = $this->db->jdate($obj->date_valid);
 				$this->fk_user_valid = $obj->fk_user_valid;
@@ -469,8 +473,6 @@ class Holiday extends CommonObject
 	 */
 	public function fetchByUser($user_id, $order = '', $filter = '')
 	{
-		global $langs, $conf;
-
 		$sql = "SELECT";
 		$sql .= " cp.rowid,";
 		$sql .= " cp.ref,";
@@ -482,7 +484,7 @@ class Holiday extends CommonObject
 		$sql .= " cp.date_debut,";
 		$sql .= " cp.date_fin,";
 		$sql .= " cp.halfday,";
-		$sql .= " cp.statut,";
+		$sql .= " cp.statut as status,";
 		$sql .= " cp.fk_validator,";
 		$sql .= " cp.date_valid,";
 		$sql .= " cp.fk_user_valid,";
@@ -497,13 +499,13 @@ class Holiday extends CommonObject
 		$sql .= " uu.lastname as user_lastname,";
 		$sql .= " uu.firstname as user_firstname,";
 		$sql .= " uu.login as user_login,";
-		$sql .= " uu.statut as user_statut,";
+		$sql .= " uu.statut as user_status,";
 		$sql .= " uu.photo as user_photo,";
 
 		$sql .= " ua.lastname as validator_lastname,";
 		$sql .= " ua.firstname as validator_firstname,";
 		$sql .= " ua.login as validator_login,";
-		$sql .= " ua.statut as validator_statut,";
+		$sql .= " ua.statut as validator_status,";
 		$sql .= " ua.photo as validator_photo";
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
@@ -552,7 +554,8 @@ class Holiday extends CommonObject
 				$tab_result[$i]['date_debut_gmt'] = $this->db->jdate($obj->date_debut, 1);
 				$tab_result[$i]['date_fin_gmt'] = $this->db->jdate($obj->date_fin, 1);
 				$tab_result[$i]['halfday'] = $obj->halfday;
-				$tab_result[$i]['statut'] = $obj->statut;
+				$tab_result[$i]['statut'] = $obj->status;
+				$tab_result[$i]['status'] = $obj->status;
 				$tab_result[$i]['fk_validator'] = $obj->fk_validator;
 				$tab_result[$i]['date_valid'] = $this->db->jdate($obj->date_valid);
 				$tab_result[$i]['fk_user_valid'] = $obj->fk_user_valid;
@@ -567,13 +570,15 @@ class Holiday extends CommonObject
 				$tab_result[$i]['user_firstname'] = $obj->user_firstname;
 				$tab_result[$i]['user_lastname'] = $obj->user_lastname;
 				$tab_result[$i]['user_login'] = $obj->user_login;
-				$tab_result[$i]['user_statut'] = $obj->user_statut;
+				$tab_result[$i]['user_statut'] = $obj->user_status;
+				$tab_result[$i]['user_status'] = $obj->user_status;
 				$tab_result[$i]['user_photo'] = $obj->user_photo;
 
 				$tab_result[$i]['validator_firstname'] = $obj->validator_firstname;
 				$tab_result[$i]['validator_lastname'] = $obj->validator_lastname;
 				$tab_result[$i]['validator_login'] = $obj->validator_login;
-				$tab_result[$i]['validator_statut'] = $obj->validator_statut;
+				$tab_result[$i]['validator_statut'] = $obj->validator_status;
+				$tab_result[$i]['validator_status'] = $obj->validator_status;
 				$tab_result[$i]['validator_photo'] = $obj->validator_photo;
 
 				$i++;
@@ -598,12 +603,9 @@ class Holiday extends CommonObject
 	 */
 	public function fetchAll($order, $filter)
 	{
-		global $langs;
-
 		$sql = "SELECT";
 		$sql .= " cp.rowid,";
 		$sql .= " cp.ref,";
-
 		$sql .= " cp.fk_user,";
 		$sql .= " cp.fk_type,";
 		$sql .= " cp.date_create,";
@@ -612,7 +614,7 @@ class Holiday extends CommonObject
 		$sql .= " cp.date_debut,";
 		$sql .= " cp.date_fin,";
 		$sql .= " cp.halfday,";
-		$sql .= " cp.statut,";
+		$sql .= " cp.statut as status,";
 		$sql .= " cp.fk_validator,";
 		$sql .= " cp.date_valid,";
 		$sql .= " cp.fk_user_valid,";
@@ -627,13 +629,13 @@ class Holiday extends CommonObject
 		$sql .= " uu.lastname as user_lastname,";
 		$sql .= " uu.firstname as user_firstname,";
 		$sql .= " uu.login as user_login,";
-		$sql .= " uu.statut as user_statut,";
+		$sql .= " uu.statut as user_status,";
 		$sql .= " uu.photo as user_photo,";
 
 		$sql .= " ua.lastname as validator_lastname,";
 		$sql .= " ua.firstname as validator_firstname,";
 		$sql .= " ua.login as validator_login,";
-		$sql .= " ua.statut as validator_statut,";
+		$sql .= " ua.statut as validator_status,";
 		$sql .= " ua.photo as validator_photo";
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
@@ -682,7 +684,8 @@ class Holiday extends CommonObject
 				$tab_result[$i]['date_debut_gmt'] = $this->db->jdate($obj->date_debut, 1);
 				$tab_result[$i]['date_fin_gmt'] = $this->db->jdate($obj->date_fin, 1);
 				$tab_result[$i]['halfday'] = $obj->halfday;
-				$tab_result[$i]['statut'] = $obj->statut;
+				$tab_result[$i]['statut'] = $obj->status;
+				$tab_result[$i]['status'] = $obj->status;
 				$tab_result[$i]['fk_validator'] = $obj->fk_validator;
 				$tab_result[$i]['date_valid'] = $this->db->jdate($obj->date_valid);
 				$tab_result[$i]['fk_user_valid'] = $obj->fk_user_valid;
@@ -697,13 +700,15 @@ class Holiday extends CommonObject
 				$tab_result[$i]['user_firstname'] = $obj->user_firstname;
 				$tab_result[$i]['user_lastname'] = $obj->user_lastname;
 				$tab_result[$i]['user_login'] = $obj->user_login;
-				$tab_result[$i]['user_statut'] = $obj->user_statut;
+				$tab_result[$i]['user_statut'] = $obj->user_status;
+				$tab_result[$i]['user_status'] = $obj->user_status;
 				$tab_result[$i]['user_photo'] = $obj->user_photo;
 
 				$tab_result[$i]['validator_firstname'] = $obj->validator_firstname;
 				$tab_result[$i]['validator_lastname'] = $obj->validator_lastname;
 				$tab_result[$i]['validator_login'] = $obj->validator_login;
-				$tab_result[$i]['validator_statut'] = $obj->validator_statut;
+				$tab_result[$i]['validator_statut'] = $obj->validator_status;
+				$tab_result[$i]['validator_status'] = $obj->validator_status;
 				$tab_result[$i]['validator_photo'] = $obj->validator_photo;
 
 				$i++;
@@ -1233,7 +1238,7 @@ class Holiday extends CommonObject
 					}
 				}
 			} else {
-				dol_print_error('', 'Bad value of parameter halfday when calling function verifDateHolidayCP');
+				dol_print_error(null, 'Bad value of parameter halfday when calling function verifDateHolidayCP');
 			}
 		}
 
@@ -1252,13 +1257,11 @@ class Holiday extends CommonObject
 	 */
 	public function verifDateHolidayForTimestamp($fk_user, $timestamp, $status = '-1')
 	{
-		global $langs, $conf;
-
 		$isavailablemorning = true;
 		$isavailableafternoon = true;
 
 		// Check into leave requests
-		$sql = "SELECT cp.rowid, cp.date_debut as date_start, cp.date_fin as date_end, cp.halfday, cp.statut";
+		$sql = "SELECT cp.rowid, cp.date_debut as date_start, cp.date_fin as date_end, cp.halfday, cp.statut as status";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp";
 		$sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
 		$sql .= " AND cp.fk_user = ".(int) $fk_user;
@@ -1277,7 +1280,7 @@ class Holiday extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 
 					// Note: $obj->halfday is  0:Full days, 2:Start afternoon end morning, -1:Start afternoon, 1:End morning
-					$arrayofrecord[$obj->rowid] = array('date_start'=>$this->db->jdate($obj->date_start), 'date_end'=>$this->db->jdate($obj->date_end), 'halfday'=>$obj->halfday);
+					$arrayofrecord[$obj->rowid] = array('date_start'=>$this->db->jdate($obj->date_start), 'date_end'=>$this->db->jdate($obj->date_end), 'halfday'=>$obj->halfday, 'status'=>$obj->status);
 					$i++;
 				}
 
@@ -1328,7 +1331,7 @@ class Holiday extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$langs->load('holiday');
 		$nofetch = !empty($params['nofetch']);
@@ -1909,7 +1912,7 @@ class Holiday extends CommonObject
 				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 					$sql .= " DISTINCT";
 				}
-				$sql .= " u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut, u.fk_user";
+				$sql .= " u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut as status, u.fk_user";
 				$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 
 				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
@@ -1945,7 +1948,7 @@ class Holiday extends CommonObject
 						$tab_result[$i]['lastname'] = $obj->lastname;
 						$tab_result[$i]['firstname'] = $obj->firstname;
 						$tab_result[$i]['gender'] = $obj->gender;
-						$tab_result[$i]['status'] = $obj->statut;
+						$tab_result[$i]['status'] = $obj->status;
 						$tab_result[$i]['employee'] = $obj->employee;
 						$tab_result[$i]['photo'] = $obj->photo;
 						$tab_result[$i]['fk_user'] = $obj->fk_user; // rowid of manager
@@ -1963,7 +1966,7 @@ class Holiday extends CommonObject
 				}
 			} else {
 				// List of vacation balance users
-				$sql = "SELECT cpu.fk_type, cpu.nb_holiday, u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut, u.fk_user";
+				$sql = "SELECT cpu.fk_type, cpu.nb_holiday, u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut as status, u.fk_user";
 				$sql .= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu, ".MAIN_DB_PREFIX."user as u";
 				$sql .= " WHERE cpu.fk_user = u.rowid";
 				if ($filters) {
@@ -1988,7 +1991,7 @@ class Holiday extends CommonObject
 						$tab_result[$i]['lastname'] = $obj->lastname;
 						$tab_result[$i]['firstname'] = $obj->firstname;
 						$tab_result[$i]['gender'] = $obj->gender;
-						$tab_result[$i]['status'] = $obj->statut;
+						$tab_result[$i]['status'] = $obj->status;
 						$tab_result[$i]['employee'] = $obj->employee;
 						$tab_result[$i]['photo'] = $obj->photo;
 						$tab_result[$i]['fk_user'] = $obj->fk_user; // rowid of manager
@@ -2360,17 +2363,16 @@ class Holiday extends CommonObject
 		$this->halfday = 0;
 		$this->fk_type = 1;
 		$this->statut = Holiday::STATUS_VALIDATED;
+		$this->status = Holiday::STATUS_VALIDATED;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load this->nb for dashboard
 	 *
 	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $user;
 
 		$this->nb = array();

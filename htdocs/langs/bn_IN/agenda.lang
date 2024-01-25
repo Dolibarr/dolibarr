@@ -89,6 +89,8 @@ ShippingSentByEMail=চালান %s ইমেলের মাধ্যমে 
 ShippingValidated= চালান %s বৈধ
 InterventionSentByEMail=হস্তক্ষেপ %s ইমেলের মাধ্যমে পাঠানো
 ProjectSentByEMail=প্রকল্প %s ইমেলের মাধ্যমে পাঠানো হয়েছে
+ProjectDeletedInDolibarr=প্রকল্প %s মুছে ফেলা হয়েছে
+ProjectClosedInDolibarr=প্রকল্প %s বন্ধ
 ProposalDeleted=প্রস্তাব মোছা
 OrderDeleted=অর্ডার মুছে ফেলা হয়েছে
 InvoiceDeleted=চালান মুছে ফেলা হয়েছে
@@ -129,6 +131,7 @@ MRP_MO_DELETEInDolibarr=MO মুছে ফেলা হয়েছে
 MRP_MO_CANCELInDolibarr=MO বাতিল হয়েছে
 PAIDInDolibarr=%s অর্থপ্রদান
 ENABLEDISABLEInDolibarr=ব্যবহারকারী সক্ষম বা অক্ষম
+CANCELInDolibarr=বাতিল
 ##### End agenda events #####
 AgendaModelModule=ইভেন্টের জন্য নথির টেমপ্লেট
 DateActionStart=শুরুর তারিখ

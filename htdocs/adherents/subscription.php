@@ -163,7 +163,7 @@ if (empty($reshook) && $action == 'setuserid' && ($user->hasRight('user', 'self'
 		if (GETPOST("userid", 'int') != $object->user_id) {  // If link differs from currently in database
 			$result = $object->setUserId(GETPOST("userid", 'int'));
 			if ($result < 0) {
-				dol_print_error('', $object->error);
+				dol_print_error(null, $object->error);
 			}
 			$action = '';
 		}
@@ -192,7 +192,7 @@ if (empty($reshook) && $action == 'setsocid') {
 			if (!$error) {
 				$result = $object->setThirdPartyId(GETPOST('socid', 'int'));
 				if ($result < 0) {
-					dol_print_error('', $object->error);
+					dol_print_error(null, $object->error);
 				}
 				$action = '';
 			}

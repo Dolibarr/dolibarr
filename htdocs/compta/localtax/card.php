@@ -71,7 +71,7 @@ if ($action == 'add' && !$cancel) {
 	$datev = dol_mktime(12, 0, 0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
 	$datep = dol_mktime(12, 0, 0, GETPOST("datepmonth"), GETPOST("datepday"), GETPOST("datepyear"));
 
-	$object->accountid = GETPOST("accountid", 'int');
+	$object->accountid = GETPOSTINT("accountid");
 	$object->paymenttype = GETPOST("paiementtype");
 	$object->datev = $datev;
 	$object->datep = $datep;

@@ -877,15 +877,13 @@ class Don extends CommonObject
 		return $result;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Load the indicators this->nb for the state board
 	 *
 	 *	@return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		$this->nb = array();
 
 		$sql = "SELECT count(d.rowid) as nb";

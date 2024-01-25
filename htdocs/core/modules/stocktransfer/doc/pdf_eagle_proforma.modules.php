@@ -1602,7 +1602,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 			),
 			'border-left' => true, // add left line separator
 		);
-		if ($conf->global->PRODUCT_USE_UNITS) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->cols['unit']['status'] = true;
 		}
 

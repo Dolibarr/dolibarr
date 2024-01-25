@@ -317,7 +317,7 @@ if (isModEnabled('paypal')) {
 				$ErrorShortMsg = "Session expired";
 
 				dol_syslog($ErrorLongMsg, LOG_WARNING, 0, '_payment');
-				dol_print_error('', 'Session expired');
+				dol_print_error(null, 'Session expired');
 			}
 		} else {
 			$ErrorCode = "PAYPALTOKENNOTDEFINED";
@@ -325,7 +325,7 @@ if (isModEnabled('paypal')) {
 			$ErrorShortMsg = "Parameter PAYPALTOKEN not defined";
 
 			dol_syslog($ErrorLongMsg, LOG_WARNING, 0, '_payment');
-			dol_print_error('', 'PAYPALTOKEN not defined');
+			dol_print_error(null, 'PAYPALTOKEN not defined');
 		}
 	}
 }
@@ -564,6 +564,18 @@ if ($ispaymentok) {
 				}
 				if ($paymentmethod == 'stripe') {
 					$accountid = getDolGlobalString('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS');
+				}
+
+				//Get bank account for a specific paymentmedthod
+				$parameters = [
+					'paymentmethod' => $paymentmethod,
+				];
+				$reshook = $hookmanager->executeHooks('getBankAccountPaymentMethod', $parameters, $object, $action);
+				if ($reshook >= 0) {
+					if (isset($hookmanager->resArray['bankaccountid'])) {
+						dol_syslog('accountid overwrite by hook return with value='.$hookmanager->resArray['bankaccountid'], LOG_DEBUG, 0, '_payment');
+						$accountid = $hookmanager->resArray['bankaccountid'];
+					}
 				}
 				if ($accountid < 0) {
 					$error++;
@@ -903,6 +915,17 @@ if ($ispaymentok) {
 						$bankaccountid = getDolGlobalString('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS');
 					}
 
+					//Get bank account for a specific paymentmedthod
+					$parameters = [
+						'paymentmethod' => $paymentmethod,
+					];
+					$reshook = $hookmanager->executeHooks('getBankAccountPaymentMethod', $parameters, $object, $action);
+					if ($reshook >= 0) {
+						if (isset($hookmanager->resArray['bankaccountid'])) {
+							dol_syslog('bankaccountid overwrite by hook return with value='.$hookmanager->resArray['bankaccountid'], LOG_DEBUG, 0, '_payment');
+							$bankaccountid = $hookmanager->resArray['bankaccountid'];
+						}
+					}
 					if ($bankaccountid > 0) {
 						$label = '(CustomerInvoicePayment)';
 						if ($object->type == Facture::TYPE_CREDIT_NOTE) {
@@ -1020,6 +1043,17 @@ if ($ispaymentok) {
 								$bankaccountid = getDolGlobalString('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS');
 							}
 
+							//Get bank account for a specific paymentmedthod
+							$parameters = [
+								'paymentmethod' => $paymentmethod,
+							];
+							$reshook = $hookmanager->executeHooks('getBankAccountPaymentMethod', $parameters, $object, $action);
+							if ($reshook >= 0) {
+								if (isset($hookmanager->resArray['bankaccountid'])) {
+									dol_syslog('bankaccountid overwrite by hook return with value='.$hookmanager->resArray['bankaccountid'], LOG_DEBUG, 0, '_payment');
+									$bankaccountid = $hookmanager->resArray['bankaccountid'];
+								}
+							}
 							if ($bankaccountid > 0) {
 								$label = '(CustomerInvoicePayment)';
 								if ($object->type == Facture::TYPE_CREDIT_NOTE) {
@@ -1146,6 +1180,17 @@ if ($ispaymentok) {
 						$bankaccountid = getDolGlobalString('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS');
 					}
 
+					//Get bank account for a specific paymentmedthod
+					$parameters = [
+						'paymentmethod' => $paymentmethod,
+					];
+					$reshook = $hookmanager->executeHooks('getBankAccountPaymentMethod', $parameters, $object, $action);
+					if ($reshook >= 0) {
+						if (isset($hookmanager->resArray['bankaccountid'])) {
+							dol_syslog('bankaccountid overwrite by hook return with value='.$hookmanager->resArray['bankaccountid'], LOG_DEBUG, 0, '_payment');
+							$bankaccountid = $hookmanager->resArray['bankaccountid'];
+						}
+					}
 					if ($bankaccountid > 0) {
 						$label = '(DonationPayment)';
 						$result = $paiement->addPaymentToBank($user, 'payment_donation', $label, $bankaccountid, '', '');
@@ -1265,6 +1310,17 @@ if ($ispaymentok) {
 							$bankaccountid = getDolGlobalString('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS');
 						}
 
+						//Get bank account for a specific paymentmedthod
+						$parameters = [
+							'paymentmethod' => $paymentmethod,
+						];
+						$reshook = $hookmanager->executeHooks('getBankAccountPaymentMethod', $parameters, $object, $action);
+						if ($reshook >= 0) {
+							if (isset($hookmanager->resArray['bankaccountid'])) {
+								dol_syslog('bankaccountid overwrite by hook return with value='.$hookmanager->resArray['bankaccountid'], LOG_DEBUG, 0, '_payment');
+								$bankaccountid = $hookmanager->resArray['bankaccountid'];
+							}
+						}
 						if ($bankaccountid > 0) {
 							$label = '(CustomerInvoicePayment)';
 							if ($object->type == Facture::TYPE_CREDIT_NOTE) {
@@ -1484,6 +1540,17 @@ if ($ispaymentok) {
 							$bankaccountid = getDolGlobalString('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS');
 						}
 
+						//Get bank account for a specific paymentmedthod
+						$parameters = [
+							'paymentmethod' => $paymentmethod,
+						];
+						$reshook = $hookmanager->executeHooks('getBankAccountPaymentMethod', $parameters, $object, $action);
+						if ($reshook >= 0) {
+							if (isset($hookmanager->resArray['bankaccountid'])) {
+								dol_syslog('bankaccountid overwrite by hook return with value='.$hookmanager->resArray['bankaccountid'], LOG_DEBUG, 0, '_payment');
+								$bankaccountid = $hookmanager->resArray['bankaccountid'];
+							}
+						}
 						if ($bankaccountid > 0) {
 							$label = '(CustomerInvoicePayment)';
 							if ($object->type == Facture::TYPE_CREDIT_NOTE) {
@@ -1684,6 +1751,17 @@ if ($ispaymentok) {
 								$bankaccountid = getDolGlobalString('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS');
 							}
 
+							//Get bank account for a specific paymentmedthod
+							$parameters = [
+								'paymentmethod' => $paymentmethod,
+							];
+							$reshook = $hookmanager->executeHooks('getBankAccountPaymentMethod', $parameters, $object, $action);
+							if ($reshook >= 0) {
+								if (isset($hookmanager->resArray['bankaccountid'])) {
+									dol_syslog('bankaccountid overwrite by hook return with value='.$hookmanager->resArray['bankaccountid'], LOG_DEBUG, 0, '_payment');
+									$bankaccountid = $hookmanager->resArray['bankaccountid'];
+								}
+							}
 							if ($bankaccountid > 0) {
 								$label = '(CustomerInvoicePayment)';
 								if ($object->type == Facture::TYPE_CREDIT_NOTE) {

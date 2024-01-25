@@ -15,7 +15,6 @@ repos:
       - id: trailing-whitespace
         exclude_types: [markdown]
       - id: end-of-file-fixer
-        types: [yaml]
       - id: check-merge-conflict
       - id: check-executables-have-shebangs
       - id: check-shebang-scripts-are-executable
@@ -35,6 +34,15 @@ repos:
         args: [--tab]
 
   # Run local script
+  #
+  # For instance to update the license in edited files, you could add to local.sh:
+  #
+  #   ```shell
+  #   #!/bin/bash
+  #   MYDIR=$(dirname "$0")
+  #   CHANGED_INTERNALS=$(git diff --name-only | grep -v includes)
+  #   "$MYDIR/dev/tools/updatelicense.php" $CHANGED_INTERNALS
+  #   ```
   - repo: local
     hooks:
       - id: local-precommit-script
@@ -77,7 +85,7 @@ repos:
           - css
           - yaml
 
-  # Check format of yam files
+  # Check format of yaml files
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.32.0
     hooks:
@@ -107,6 +115,7 @@ repos:
           - dev/tools/codespell/codespell-lines-ignore.txt
           - --uri-ignore-words-list
           - ned
+        exclude_types: [image]
         exclude: (?x)^(.phan/stubs/.*)$
         additional_dependencies: [tomli]
       - alias: codespell-lang-en_US
