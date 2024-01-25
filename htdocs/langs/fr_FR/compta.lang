@@ -162,6 +162,7 @@ CalcModeVATDebt=Mode <b>%sTVA sur débit%s</b>.
 CalcModeVATEngagement=Mode <b>%sTVA sur encaissement%s</b>.
 CalcModeDebt=Analyse des documents enregistrés connus
 CalcModeEngagement=Analyse des paiements enregistrés connus
+CalcModePayment=Analyse des paiements enregistrés connus
 CalcModeBookkeeping=Analyse des données journalisées dans le Grand livre.
 CalcModeNoBookKeeping=Même s'ils ne sont pas encore comptabilisés dans la comptabilité
 CalcModeLT1= Mode <b>%sRE sur factures clients - factures fournisseurs%s<b>
