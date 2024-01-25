@@ -207,5 +207,5 @@ ALTER TABLE llx_product DROP COLUMN onportal;
 
 ALTER TABLE llx_knowledgemanagement_knowledgerecord MODIFY COLUMN answer longtext;
 
-RENAME TABLE llx_commande_fournisseur_dispatch_extrafields TO llx_receptiondet_batch_extrafields;
-RENAME TABLE llx_commande_fournisseur_dispatch TO llx_receptiondet_batch;
+ALTER TABLE llx_commande_fournisseur_dispatch_extrafields RENAME llx_receptiondet_batch_extrafields;
+ALTER TABLE llx_commande_fournisseur_dispatch RENAME llx_receptiondet_batch;
