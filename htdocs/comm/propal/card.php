@@ -437,19 +437,19 @@ if (empty($reshook)) {
 					$object->datep = $datep;
 					$object->date = $datep;
 					$object->delivery_date = $date_delivery;
-					$object->availability_id = GETPOST('availability_id');
-					$object->demand_reason_id = GETPOST('demand_reason_id');
-					$object->fk_delivery_address = GETPOST('fk_address', 'int');
-					$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
-					$object->warehouse_id = GETPOST('warehouse_id', 'int');
+					$object->availability_id = GETPOSTINT('availability_id');
+					$object->demand_reason_id = GETPOSTINT('demand_reason_id');
+					$object->fk_delivery_address = GETPOSTINT('fk_address');
+					$object->shipping_method_id = GETPOSTINT('shipping_method_id');
+					$object->warehouse_id = GETPOSTINT('warehouse_id');
 					$object->duree_validite = $duration;
-					$object->cond_reglement_id = GETPOST('cond_reglement_id');
+					$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
 					$object->deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
-					$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
-					$object->fk_account = GETPOST('fk_account', 'int');
-					$object->socid = GETPOST('socid', 'int');
-					$object->contact_id = GETPOST('contactid', 'int');
-					$object->fk_project = GETPOST('projectid', 'int');
+					$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
+					$object->fk_account = GETPOSTINT('fk_account');
+					$object->socid = GETPOSTINT('socid');
+					$object->contact_id = GETPOSTINT('contactid');
+					$object->fk_project = GETPOSTINT('projectid');
 					$object->model_pdf = GETPOST('model', 'alphanohtml');
 					$object->author = $user->id; // deprecated
 					$object->user_author_id = $user->id;
@@ -457,7 +457,7 @@ if (empty($reshook)) {
 					$object->note_public = GETPOST('note_public', 'restricthtml');
 					$object->statut = Propal::STATUS_DRAFT;
 					$object->status = Propal::STATUS_DRAFT;
-					$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+					$object->fk_incoterms = GETPOSTINT('incoterm_id');
 					$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				} else {
 					setEventMessages($langs->trans("ErrorFailedToCopyProposal", GETPOST('copie_propal')), null, 'errors');
@@ -468,27 +468,27 @@ if (empty($reshook)) {
 				$object->datep = $datep;
 				$object->date = $datep;
 				$object->delivery_date = $date_delivery;
-				$object->availability_id = GETPOST('availability_id', 'int');
-				$object->demand_reason_id = GETPOST('demand_reason_id', 'int');
-				$object->fk_delivery_address = GETPOST('fk_address', 'int');
-				$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
-				$object->warehouse_id = GETPOST('warehouse_id', 'int');
+				$object->availability_id = GETPOSTINT('availability_id');
+				$object->demand_reason_id = GETPOSTINT('demand_reason_id');
+				$object->fk_delivery_address = GETPOSTINT('fk_address');
+				$object->shipping_method_id = GETPOSTINT('shipping_method_id');
+				$object->warehouse_id = GETPOSTINT('warehouse_id');
 				$object->duree_validite = price2num(GETPOST('duree_validite', 'alpha'));
-				$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
+				$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
 				$object->deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
-				$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
-				$object->fk_account = GETPOST('fk_account', 'int');
-				$object->contact_id = GETPOST('contactid', 'int');
-				$object->fk_project = GETPOST('projectid', 'int');
+				$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
+				$object->fk_account = GETPOSTINT('fk_account');
+				$object->contact_id = GETPOSTINT('contactid');
+				$object->fk_project = GETPOSTINT('projectid');
 				$object->model_pdf = GETPOST('model');
 				$object->author = $user->id; // deprecated
 				$object->note_private = GETPOST('note_private', 'restricthtml');
 				$object->note_public = GETPOST('note_public', 'restricthtml');
-				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+				$object->fk_incoterms = GETPOSTINT('incoterm_id');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
 				$object->origin = GETPOST('origin');
-				$object->origin_id = GETPOST('originid');
+				$object->origin_id = GETPOSTINT('originid');
 
 				// Multicurrency
 				if (isModEnabled("multicurrency")) {
@@ -1616,7 +1616,7 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'updateline' && $usercancreate && GETPOST('cancel', 'alpha')) {
-		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // Pour reaffichage de la fiche en cours d'edition
+		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); //  To re-display card in edit mode
 		exit();
 	} elseif ($action == 'classin' && $usercancreate) {
 		// Set project
@@ -1654,14 +1654,15 @@ if (empty($reshook)) {
 		$result = $object->setWarehouse(GETPOST('warehouse_id', 'int'));
 	} elseif ($action == 'update_extras') {
 		$object->oldcopy = dol_clone($object, 2);
+		$attribute_name = GETPOST('attribute', 'restricthtml');
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 		if (!$error) {
-			$result = $object->insertExtraFields('PROPAL_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'PROPAL_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;

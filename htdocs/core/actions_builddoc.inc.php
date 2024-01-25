@@ -43,7 +43,7 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) 
 		$ret = $object->fetch_thirdparty();
 		/*if (empty($object->id) || ! $object->id > 0)
 		{
-			dol_print_error('Object must have been loaded by a fetch');
+			dol_print_error(null, 'Object must have been loaded by a fetch');
 			exit;
 		}*/
 

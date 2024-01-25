@@ -312,7 +312,7 @@ class Task extends CommonObjectLine
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id					Id object
-	 *  @param	int		$ref				ref object
+	 *  @param	string	$ref				ref object
 	 *  @param	int		$loadparentdata		Also load parent data
 	 *  @return int 		        		Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
@@ -1303,7 +1303,7 @@ class Task extends CommonObjectLine
 
 		// Check parameters
 		if (!is_object($user)) {
-			dol_print_error('', "Method addTimeSpent was called with wrong parameter user");
+			dol_print_error(null, "Method addTimeSpent was called with wrong parameter user");
 			return -1;
 		}
 

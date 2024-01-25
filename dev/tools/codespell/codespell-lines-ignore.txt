@@ -1,4 +1,5 @@
-
+								$objMod->dictionaries = $objMod->{"dictionnaries"}; // For backward compatibility
+							if (empty($objMod->dictionaries) && !empty($objMod->{"dictionnaries"})) {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">';
 						$reponsesadd = str_split($obj->reponses);
 						$sql .= " SET reponses = '".$db->escape($reponsesadd)."'";

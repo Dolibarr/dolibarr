@@ -221,7 +221,7 @@ class MouvementStock extends CommonObject
 
 			if ($reshook < 0) {
 				if (!empty($hookmanager->resPrint)) {
-					dol_print_error('', $hookmanager->resPrint);
+					dol_print_error(null, $hookmanager->resPrint);
 				}
 				return $reshook;
 			} elseif ($reshook > 0) {
@@ -276,7 +276,7 @@ class MouvementStock extends CommonObject
 		if ($result < 0) {
 			$this->error = $product->error;
 			$this->errors = $product->errors;
-			dol_print_error('', "Failed to fetch product");
+			dol_print_error(null, "Failed to fetch product");
 			return -1;
 		}
 		if ($product->id <= 0) {	// Can happen if database is corrupted (a product id exist in stock with product that has been removed)

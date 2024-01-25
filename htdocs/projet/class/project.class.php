@@ -2085,7 +2085,7 @@ class Project extends CommonObject
 		$this->weekWorkLoadPerTask = array();
 
 		if (empty($datestart)) {
-			dol_print_error('', 'Error datestart parameter is empty');
+			dol_print_error(null, 'Error datestart parameter is empty');
 		}
 
 		$sql = "SELECT ptt.rowid as taskid, ptt.element_duration, ptt.element_date, ptt.element_datehour, ptt.fk_element";
@@ -2149,7 +2149,7 @@ class Project extends CommonObject
 		$this->monthWorkLoadPerTask = array();
 
 		if (empty($datestart)) {
-			dol_print_error('', 'Error datestart parameter is empty');
+			dol_print_error(null, 'Error datestart parameter is empty');
 		}
 
 		$sql = "SELECT ptt.rowid as taskid, ptt.element_duration, ptt.element_date, ptt.element_datehour, ptt.fk_element";

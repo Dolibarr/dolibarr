@@ -69,6 +69,9 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public $date;
 
+	/**
+	 * @var int Deadline for payment
+	 */
 	public $date_lim_reglement;
 
 	public $cond_reglement_id; // Id in llx_c_paiement

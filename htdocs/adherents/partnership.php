@@ -197,7 +197,7 @@ if ($id > 0) {
 
 	print dol_get_fiche_end();
 } else {
-	dol_print_error('', 'Parameter rowid not defined');
+	dol_print_error(null, 'Parameter rowid not defined');
 }
 
 
