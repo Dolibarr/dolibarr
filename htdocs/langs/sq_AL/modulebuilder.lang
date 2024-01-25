@@ -183,3 +183,7 @@ DictionaryDeleted=Fjalori <b>%s</b> u hoq me sukses
 PropertyModuleUpdated=Vetia <b>%s</b> është përditësuar me sukses
 InfoForApiFile=* Kur gjeneroni skedar për herë të parë, atëherë të gjitha metodat do të krijohen <strong>për çdo objekt.</strong><br>* Kur klikoni në <strong>hiq</strong> ju thjesht hiqni të gjitha metodat e klasës ='notranslate'><strong></span>objekt i zgjedhur</strong>.
 SetupFile=Faqe për konfigurimin e modulit
+EmailingSelectors=Përzgjedhësit e postës elektronike
+EmailingSelectorDesc=Ju mund të gjeneroni dhe modifikoni këtu skedarët e klasës për të siguruar përzgjedhës të rinj të synimeve të postës elektronike për modulin e dërgimit masiv të postës elektronike
+EmailingSelectorFile=Skedari i përzgjedhësit të emaileve
+NoEmailingSelector=Nuk ka skedar përzgjedhës të postës elektronike
