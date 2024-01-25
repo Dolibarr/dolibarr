@@ -118,7 +118,7 @@ if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 
 	$account->bank            = GETPOST('bank', 'alpha');
 	$account->label           = GETPOST('label', 'alpha');
-	$account->courant         = GETPOST('courant', 'alpha');
+	$account->courant         = GETPOSTINT('courant');
 	$account->code_banque     = GETPOST('code_banque', 'alpha');
 	$account->code_guichet    = GETPOST('code_guichet', 'alpha');
 	$account->number          = GETPOST('number', 'alpha');
@@ -149,7 +149,7 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 
 	$account->bank            = GETPOST('bank', 'alpha');
 	$account->label           = GETPOST('label', 'alpha');
-	$account->courant         = GETPOST('courant', 'alpha');
+	$account->courant         = GETPOSTINT('courant');
 	$account->code_banque     = GETPOST('code_banque', 'alpha');
 	$account->code_guichet    = GETPOST('code_guichet', 'alpha');
 	$account->number          = GETPOST('number', 'alpha');

@@ -71,6 +71,7 @@ function societe_prepare_head(Societe $object)
 				$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 				$sql .= $hookmanager->resPrint;
 				$sql .= " WHERE p.fk_soc = ".((int) $object->id);
+				$sql .= " AND entity IN (".getEntity($object->element).")";
 				// Add where from hooks
 				$parameters = array('contacttab' => true);
 				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -1621,7 +1622,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
 	// Check parameters
 	if (!is_object($filterobj) && !is_object($objcon)) {
-		dol_print_error('', 'BadParameter');
+		dol_print_error(null, 'BadParameter');
 	}
 
 	$out = '';

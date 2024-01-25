@@ -901,7 +901,7 @@ class EmailCollector extends CommonObject
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
 		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-			$newlang = $object->thirdparty->default_lang;
+			$newlang = !empty($object->thirdparty->default_lang) ? $object->thirdparty->default_lang : $newlang;
 		}
 		if (!empty($newlang)) {
 			$outputlangs = new Translate('', $conf);
@@ -1907,10 +1907,10 @@ class EmailCollector extends CommonObject
 					$fromstring = $overview[0]->from;
 					//$replytostring = empty($overview[0]->replyto) ? '' : $overview[0]->replyto;
 
-					$sender = $overview[0]->sender;
+					$sender = !empty($overview[0]->sender) ? $overview[0]->sender : '';
 					$to = $overview[0]->to;
-					$sendtocc = $overview[0]->cc;
-					$sendtobcc = $overview[0]->bcc;
+					$sendtocc = !empty($overview[0]->cc) ? $overview[0]->cc : '';
+					$sendtobcc = !empty($overview[0]->bcc) ? $overview[0]->bcc : '';
 					$date = $overview[0]->udate;
 					$msgid = str_replace(array('<', '>'), '', $overview[0]->message_id);
 					$subject = $overview[0]->subject;

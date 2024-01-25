@@ -23,7 +23,7 @@
 /**
  *	\file       htdocs/product/traduction.php
  *	\ingroup    product
- *	\brief      Page de traduction des produits
+ *	\brief      Page for translation of product descriptions
  */
 
 // Load Dolibarr environment
@@ -272,7 +272,7 @@ if ($action == 'edit') {
 			$doleditor->Create();
 			print '</td></tr>';
 			if (getDolGlobalString('PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION')) {
-				print '<tr><td class="tdtop">'.$langs->trans('Other').' ('.$langs->trans("NotUsed").')</td><td>';
+				print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td><td>';
 				$doleditor = new DolEditor("other-$key", $object->multilangs[$key]["other"], '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_3, '90%');
 				$doleditor->Create();
 			}
@@ -304,7 +304,7 @@ if ($action == 'edit') {
 			print '<tr><td class="titlefieldcreate">'.$langs->trans('Label').'</td><td>'.$object->multilangs[$key]["label"].'</td></tr>';
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
 			if (getDolGlobalString('PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION')) {
-				print '<tr><td>'.$langs->trans('Other').' ('.$langs->trans("NotUsed").')</td><td>'.$object->multilangs[$key]["other"].'</td></tr>';
+				print '<tr><td>'.$langs->trans("NotePrivate").'</td><td>'.$object->multilangs[$key]["other"].'</td></tr>';
 			}
 			print '</table>';
 			print '</div>';
@@ -344,7 +344,7 @@ if ($action == 'add' && ($user->hasRight('produit', 'creer') || $user->hasRight(
 	print '</td></tr>';
 	// Other field (not used)
 	if (getDolGlobalString('PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION')) {
-		print '<tr><td class="tdtop">'.$langs->trans('Other').' ('.$langs->trans("NotUsed").'</td><td>';
+		print '<tr><td class="tdtop">'.$langs->trans('NotePrivate').'</td><td>';
 		$doleditor = new DolEditor('other', '', '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_3, '90%');
 		$doleditor->Create();
 		print '</td></tr>';

@@ -11,8 +11,8 @@ parameters:
 	fileExtensions:
 		- php
 	paths:
-	    - htdocs
-	    - scripts
+		- htdocs
+		- scripts
 	excludePaths:
 		analyseAndScan:
 		- htdocs/custom/*
@@ -55,8 +55,8 @@ parameters:
 		- '#Default value of the parameter#'
 	internalErrorsCountLimit: 50
 	cache:
-	    nodesByFileCountMax: 512
-	    nodesByStringCountMax: 512
+		nodesByFileCountMax: 512
+		nodesByStringCountMax: 512
 	reportUnmatchedIgnoredErrors: false
 	universalObjectCratesClasses:
 		- stdClass

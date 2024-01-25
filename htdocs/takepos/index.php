@@ -1022,7 +1022,7 @@ $( document ).ready(function() {
 
 	$("body").mouseup(function(){
 		pressTimer.forEach(clearInterval);
-		console.log("body");
+		console.log("body mouseup");
 	});
 
 	function scrollTo(){

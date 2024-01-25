@@ -34,6 +34,15 @@ repos:
         args: [--tab]
 
   # Run local script
+  #
+  # For instance to update the license in edited files, you could add to local.sh:
+  #
+  #   ```shell
+  #   #!/bin/bash
+  #   MYDIR=$(dirname "$0")
+  #   CHANGED_INTERNALS=$(git diff --name-only | grep -v includes)
+  #   "$MYDIR/dev/tools/updatelicense.php" $CHANGED_INTERNALS
+  #   ```
   - repo: local
     hooks:
       - id: local-precommit-script
@@ -106,6 +115,7 @@ repos:
           - dev/tools/codespell/codespell-lines-ignore.txt
           - --uri-ignore-words-list
           - ned
+        exclude_types: [image]
         exclude: (?x)^(.phan/stubs/.*)$
         additional_dependencies: [tomli]
       - alias: codespell-lang-en_US

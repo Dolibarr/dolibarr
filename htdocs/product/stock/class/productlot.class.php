@@ -337,80 +337,88 @@ class Productlot extends CommonObject
 			return -1;
 		}
 		// Put here code to add control on parameters values
-
-		// Insert request
-		$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'(';
-		$sql .= 'entity,';
-		$sql .= 'fk_product,';
-		$sql .= 'batch,';
-		$sql .= 'eatby,';
-		$sql .= 'sellby,';
-		$sql .= 'eol_date,';
-		$sql .= 'manufacturing_date,';
-		$sql .= 'scrapping_date,';
-		//$sql .= 'commissionning_date,';
-		$sql .= 'qc_frequency,';
-		$sql .= 'lifetime,';
-		$sql .= 'datec,';
-		$sql .= 'fk_user_creat,';
-		$sql .= 'fk_user_modif,';
-		$sql .= 'import_key';
-		$sql .= ') VALUES (';
-		$sql .= ' '.(!isset($this->entity) ? $conf->entity : $this->entity).',';
-		$sql .= ' '.(!isset($this->fk_product) ? 'NULL' : $this->fk_product).',';
-		$sql .= ' '.(!isset($this->batch) ? 'NULL' : "'".$this->db->escape($this->batch)."'").',';
-		$sql .= ' '.(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : "'".$this->db->idate($this->eatby)."'").',';
-		$sql .= ' '.(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : "'".$this->db->idate($this->sellby)."'").',';
-		$sql .= ' '.(!isset($this->eol_date) || dol_strlen($this->eol_date) == 0 ? 'NULL' : "'".$this->db->idate($this->eol_date)."'").',';
-		$sql .= ' '.(!isset($this->manufacturing_date) || dol_strlen($this->manufacturing_date) == 0 ? 'NULL' : "'".$this->db->idate($this->manufacturing_date)."'").',';
-		$sql .= ' '.(!isset($this->scrapping_date) || dol_strlen($this->scrapping_date) == 0 ? 'NULL' : "'".$this->db->idate($this->scrapping_date)."'").',';
-		//$sql .= ' '.(!isset($this->commissionning_date) || dol_strlen($this->commissionning_date) == 0 ? 'NULL' : "'".$this->db->idate($this->commissionning_date)."'").',';
-		$sql .= ' '.(empty($this->qc_frequency) ? 'NULL' : $this->qc_frequency).',';
-		$sql .= ' '.(empty($this->lifetime) ? 'NULL' : $this->lifetime).',';
-		$sql .= ' '."'".$this->db->idate(dol_now())."'".',';
-		$sql .= ' '.(!isset($this->fk_user_creat) ? 'NULL' : $this->fk_user_creat).',';
-		$sql .= ' '.(!isset($this->fk_user_modif) ? 'NULL' : $this->fk_user_modif).',';
-		$sql .= ' '.(!isset($this->import_key) ? 'NULL' : $this->import_key);
-		$sql .= ')';
-
-		$this->db->begin();
-
-		$resql = $this->db->query($sql);
-		if (!$resql) {
+		$res = $this->checkSellOrEatByMandatory();
+		if ($res < 0) {
 			$error++;
-			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
+			// Insert request
+			$sql = 'INSERT INTO ' . $this->db->prefix() . $this->table_element . '(';
+			$sql .= 'entity,';
+			$sql .= 'fk_product,';
+			$sql .= 'batch,';
+			$sql .= 'eatby,';
+			$sql .= 'sellby,';
+			$sql .= 'eol_date,';
+			$sql .= 'manufacturing_date,';
+			$sql .= 'scrapping_date,';
+			//$sql .= 'commissionning_date,';
+			$sql .= 'qc_frequency,';
+			$sql .= 'lifetime,';
+			$sql .= 'datec,';
+			$sql .= 'fk_user_creat,';
+			$sql .= 'fk_user_modif,';
+			$sql .= 'import_key';
+			$sql .= ') VALUES (';
+			$sql .= ' ' . (!isset($this->entity) ? $conf->entity : $this->entity) . ',';
+			$sql .= ' ' . (!isset($this->fk_product) ? 'NULL' : $this->fk_product) . ',';
+			$sql .= ' ' . (!isset($this->batch) ? 'NULL' : "'" . $this->db->escape($this->batch) . "'") . ',';
+			$sql .= ' ' . (!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : "'" . $this->db->idate($this->eatby) . "'") . ',';
+			$sql .= ' ' . (!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : "'" . $this->db->idate($this->sellby) . "'") . ',';
+			$sql .= ' ' . (!isset($this->eol_date) || dol_strlen($this->eol_date) == 0 ? 'NULL' : "'" . $this->db->idate($this->eol_date) . "'") . ',';
+			$sql .= ' ' . (!isset($this->manufacturing_date) || dol_strlen($this->manufacturing_date) == 0 ? 'NULL' : "'" . $this->db->idate($this->manufacturing_date) . "'") . ',';
+			$sql .= ' ' . (!isset($this->scrapping_date) || dol_strlen($this->scrapping_date) == 0 ? 'NULL' : "'" . $this->db->idate($this->scrapping_date) . "'") . ',';
+			//$sql .= ' '.(!isset($this->commissionning_date) || dol_strlen($this->commissionning_date) == 0 ? 'NULL' : "'".$this->db->idate($this->commissionning_date)."'").',';
+			$sql .= ' '.(empty($this->qc_frequency) ? 'NULL' : $this->qc_frequency).',';
+			$sql .= ' '.(empty($this->lifetime) ? 'NULL' : $this->lifetime).',';
+			$sql .= ' ' . "'" . $this->db->idate(dol_now()) . "'" . ',';
+			$sql .= ' ' . (!isset($this->fk_user_creat) ? 'NULL' : $this->fk_user_creat) . ',';
+			$sql .= ' ' . (!isset($this->fk_user_modif) ? 'NULL' : $this->fk_user_modif) . ',';
+			$sql .= ' ' . (!isset($this->import_key) ? 'NULL' : $this->import_key);
+			$sql .= ')';
 
-			// Actions on extra fields
+			$this->db->begin();
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = 'Error ' . $this->db->lasterror();
+			}
+
 			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
+				$this->id = $this->db->last_insert_id($this->db->prefix() . $this->table_element);
+
+				// Actions on extra fields
+				if (!$error) {
+					$result = $this->insertExtraFields();
+					if ($result < 0) {
+						$error++;
+					}
+				}
+
+				if (!$error && !$notrigger) {
+					// Call triggers
+					$result = $this->call_trigger('PRODUCTLOT_CREATE', $user);
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
 				}
 			}
 
-			if (!$error && !$notrigger) {
-				// Call triggers
-				$result = $this->call_trigger('PRODUCTLOT_CREATE', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
+			// Commit or rollback
+			if ($error) {
+				$this->db->rollback();
+			} else {
+				$this->db->commit();
 			}
 		}
 
-		// Commit or rollback
 		if ($error) {
-			$this->db->rollback();
-
+			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 			return -1 * $error;
 		} else {
-			$this->db->commit();
-
 			return $this->id;
 		}
 	}
@@ -543,65 +551,76 @@ class Productlot extends CommonObject
 			$this->import_key = trim($this->import_key);
 		}
 
+		// Check parameters
+		// Put here code to add a control on parameters values
+		$res = $this->checkSellOrEatByMandatory();
+		if ($res < 0) {
+			$error++;
+		}
+
 		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
 		if (empty($this->oldcopy)) {
 			$this->oldcopy = dol_clone($this);
 		}
 
-		// Update request
-		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET';
-		$sql .= ' entity = '.(isset($this->entity) ? $this->entity : "null").',';
-		$sql .= ' fk_product = '.(isset($this->fk_product) ? $this->fk_product : "null").',';
-		$sql .= ' batch = '.(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").',';
-		$sql .= ' eatby = '.(!isset($this->eatby) || dol_strlen($this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').',';
-		$sql .= ' sellby = '.(!isset($this->sellby) || dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null').',';
-		$sql .= ' eol_date = '.(!isset($this->eol_date) || dol_strlen($this->eol_date) != 0 ? "'".$this->db->idate($this->eol_date)."'" : 'null').',';
-		$sql .= ' manufacturing_date = '.(!isset($this->manufacturing_date) || dol_strlen($this->manufacturing_date) != 0 ? "'".$this->db->idate($this->manufacturing_date)."'" : 'null').',';
-		$sql .= ' scrapping_date = '.(!isset($this->scrapping_date) || dol_strlen($this->scrapping_date) != 0 ? "'".$this->db->idate($this->scrapping_date)."'" : 'null').',';
-		//$sql .= ' commissionning_date = '.(!isset($this->first_use_date) || dol_strlen($this->first_use_date) != 0 ? "'".$this->db->idate($this->first_use_date)."'" : 'null').',';
-		$sql .= ' qc_frequency = '.(!empty($this->qc_frequency) ? (int) $this->qc_frequency : 'null').',';
-		$sql .= ' lifetime = '.(!empty($this->lifetime) ? (int) $this->lifetime : 'null').',';
-		$sql .= ' datec = '.(!isset($this->datec) || dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').',';
-		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
-		$sql .= ' fk_user_creat = '.(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").',';
-		$sql .= ' fk_user_modif = '.(isset($this->fk_user_modif) ? $this->fk_user_modif : "null").',';
-		$sql .= ' import_key = '.(isset($this->import_key) ? $this->import_key : "null");
-		$sql .= ' WHERE rowid='.((int) $this->id);
-
-		$this->db->begin();
-
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$error++;
-			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
-		}
-
-		// Actions on extra fields
 		if (!$error) {
-			$result = $this->insertExtraFields();
-			if ($result < 0) {
+			// Update request
+			$sql = 'UPDATE ' . $this->db->prefix() . $this->table_element . ' SET';
+			$sql .= ' entity = ' . (isset($this->entity) ? $this->entity : "null") . ',';
+			$sql .= ' fk_product = ' . (isset($this->fk_product) ? $this->fk_product : "null") . ',';
+			$sql .= ' batch = ' . (isset($this->batch) ? "'" . $this->db->escape($this->batch) . "'" : "null") . ',';
+			$sql .= ' eatby = ' . (!isset($this->eatby) || dol_strlen($this->eatby) != 0 ? "'" . $this->db->idate($this->eatby) . "'" : 'null') . ',';
+			$sql .= ' sellby = ' . (!isset($this->sellby) || dol_strlen($this->sellby) != 0 ? "'" . $this->db->idate($this->sellby) . "'" : 'null') . ',';
+			$sql .= ' eol_date = ' . (!isset($this->eol_date) || dol_strlen($this->eol_date) != 0 ? "'" . $this->db->idate($this->eol_date) . "'" : 'null') . ',';
+			$sql .= ' manufacturing_date = ' . (!isset($this->manufacturing_date) || dol_strlen($this->manufacturing_date) != 0 ? "'" . $this->db->idate($this->manufacturing_date) . "'" : 'null') . ',';
+			$sql .= ' scrapping_date = ' . (!isset($this->scrapping_date) || dol_strlen($this->scrapping_date) != 0 ? "'" . $this->db->idate($this->scrapping_date) . "'" : 'null') . ',';
+			//$sql .= ' commissionning_date = '.(!isset($this->first_use_date) || dol_strlen($this->first_use_date) != 0 ? "'".$this->db->idate($this->first_use_date)."'" : 'null').',';
+			$sql .= ' qc_frequency = '.(!empty($this->qc_frequency) ? (int) $this->qc_frequency : 'null').',';
+			$sql .= ' lifetime = '.(!empty($this->lifetime) ? (int) $this->lifetime : 'null').',';
+			$sql .= ' datec = ' . (!isset($this->datec) || dol_strlen($this->datec) != 0 ? "'" . $this->db->idate($this->datec) . "'" : 'null') . ',';
+			$sql .= ' tms = ' . (dol_strlen($this->tms) != 0 ? "'" . $this->db->idate($this->tms) . "'" : "'" . $this->db->idate(dol_now()) . "'") . ',';
+			$sql .= ' fk_user_creat = ' . (isset($this->fk_user_creat) ? $this->fk_user_creat : "null") . ',';
+			$sql .= ' fk_user_modif = ' . (isset($this->fk_user_modif) ? $this->fk_user_modif : "null") . ',';
+			$sql .= ' import_key = ' . (isset($this->import_key) ? $this->import_key : "null");
+			$sql .= ' WHERE rowid=' . ((int) $this->id);
+
+			$this->db->begin();
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
 				$error++;
+				$this->errors[] = 'Error ' . $this->db->lasterror();
+			}
+
+			// Actions on extra fields
+			if (!$error) {
+				$result = $this->insertExtraFields();
+				if ($result < 0) {
+					$error++;
+				}
+			}
+
+			if (!$error && !$notrigger) {
+				// Call triggers
+				$result = $this->call_trigger('PRODUCTLOT_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			// Commit or rollback
+			if ($error) {
+				$this->db->rollback();
+			} else {
+				$this->db->commit();
 			}
 		}
 
-		if (!$error && !$notrigger) {
-			// Call triggers
-			$result = $this->call_trigger('PRODUCTLOT_MODIFY', $user);
-			if ($result < 0) {
-				$error++;
-			}
-			// End call triggers
-		}
-
-		// Commit or rollback
 		if ($error) {
-			$this->db->rollback();
-
+			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 			return -1 * $error;
 		} else {
-			$this->db->commit();
-
 			return 1;
 		}
 	}
