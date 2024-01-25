@@ -53,7 +53,7 @@ $idproduct = GETPOST('idproduct', 'int');
  * View
  */
 
-top_httphead();
+top_httphead('application/json');
 
 if ($action == 'getDurationUnitByProduct' && $user->hasRight('product', 'lire')) {
 	$product = new Product($db);
