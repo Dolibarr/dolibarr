@@ -2158,14 +2158,26 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			$toprightmenu .= $form->textwithtooltip('', $langs->trans("ModuleBuilder"), 2, 1, $text, 'login_block_elem', 2);
 		}
 
-		// Link to print main content area
+		// Link to print main content area (optioncss=print)
 		if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			$qs = dol_escape_htmltag($_SERVER["QUERY_STRING"]);
 
 			if (isset($_POST) && is_array($_POST)) {
 				foreach ($_POST as $key => $value) {
-					if ($key !== 'action' && $key !== 'password' && !is_array($value)) {
-						$qs .= '&'.$key.'='.urlencode($value);
+					$key = preg_replace('/[^a-z0-9_\.\-\[\]]/i', '', $key);
+					if (in_array($key, array('action', 'massaction', 'password'))) {
+						continue;
+					}
+					if (!is_array($value)) {
+						if ($value !== '') {
+							$qs .= '&'.urlencode($key).'='.urlencode($value);
+						}
+					} else {
+						foreach ($value as $value2) {
+							if (($value2 !== '') && (!is_array($value2))) {
+								$qs .= '&'.urlencode($key).'[]='.urlencode($value2);
+							}
+						}
 					}
 				}
 			}
