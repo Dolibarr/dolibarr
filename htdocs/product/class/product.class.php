@@ -1814,6 +1814,7 @@ class Product extends CommonObject
 
 		// Call hook if any
 		if (is_object($hookmanager)) {
+			$hookmanager->initHooks(array('productdao'));
 			$parameters = array('thirdparty_seller'=>$thirdparty_seller, 'thirdparty_buyer' => $thirdparty_buyer, 'pqp' => $pqp);
 			// Note that $action and $object may have been modified by some hooks
 			$reshook = $hookmanager->executeHooks('getSellPrice', $parameters, $this, $action);
