@@ -276,7 +276,7 @@ class FormProduct
 	 *  @param  string      $morecss            Add more css classes to HTML select
 	 *  @param	array	    $exclude            Warehouses ids to exclude
 	 *  @param  int         $showfullpath       1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
-	 *  @param  bool|int    $stockMin           [=false] Value of minimum stock to filter or false not not filter by minimum stock
+	 *  @param  bool|int    $stockMin           [=false] Value of minimum stock to filter (only warehouse with stock > stockMin are loaded) or false not not filter by minimum stock
 	 *  @param  string      $orderBy            [='e.ref'] Order by
 	 *  @param	int			$multiselect		1=Allow multiselect
 	 * 	@return string					        HTML select
