@@ -4402,7 +4402,7 @@ class Societe extends CommonObject
 		$this->logo_squarred_mini = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI');
 
 		// Define if company use vat or not
-		$this->tva_assuj = getDolGlobalString('FACTURE_TVAOPTION');
+		$this->tva_assuj = (is_numeric(getDolGlobalString('FACTURE_TVAOPTION'))) ? (int) getDolGlobalString('FACTURE_TVAOPTION') : 0;
 
 		// Define if company use local taxes
 		$this->localtax1_assuj = ((isset($conf->global->FACTURE_LOCAL_TAX1_OPTION) && (getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == '1' || getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == 'localtax1on')) ? 1 : 0);
