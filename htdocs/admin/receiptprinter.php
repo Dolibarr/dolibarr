@@ -301,6 +301,7 @@ if ($mode == 'config' && $user->admin) {
 
 	print '<span class="opacitymedium">'.$langs->trans("ReceiptPrinterDesc")."</span><br><br>\n";
 
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">'."\n";
 	print '<tr class="liste_titre">';
 	print '<th>'.$langs->trans("Name").'</th>';
@@ -377,6 +378,7 @@ if ($mode == 'config' && $user->admin) {
 	}
 
 	print '</table>';
+	print '</div>';
 
 	print dol_get_fiche_end();
 
@@ -387,6 +389,7 @@ if ($mode == 'config' && $user->admin) {
 
 	print load_fiche_titre($langs->trans("ReceiptPrinterTypeDesc"), '', '')."\n";
 
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">'."\n";
 	print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_DUMMY").':</td><td>'.$langs->trans("CONNECTOR_DUMMY_HELP").'</td></tr>';
 	print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT").':</td><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT_HELP").'</td></tr>';
@@ -394,6 +397,7 @@ if ($mode == 'config' && $user->admin) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT").':</td><td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT_HELP").'</td></tr>';
 	print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_CUPS_PRINT").':</td><td>'.$langs->trans("CONNECTOR_CUPS_PRINT_HELP").'</td></tr>';
 	print '</table>';
+	print '</div>';
 
 	print '<br>';
 }
@@ -410,6 +414,7 @@ if ($mode == 'template' && $user->admin) {
 		print '<input type="hidden" name="action" value="updatetemplate">';
 	}
 
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">'."\n";
 	print '<tr class="liste_titre">';
 	print '<th>'.$langs->trans("Name").'</th>';
@@ -468,6 +473,7 @@ if ($mode == 'template' && $user->admin) {
 	}
 
 	print '</table>';
+	print '</div>';
 
 	print '</form>';
 
@@ -475,6 +481,7 @@ if ($mode == 'template' && $user->admin) {
 
 	print '<br>';
 
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">'."\n";
 	print '<tr class="liste_titre">';
 	print '<th>'.$langs->trans("Tag").'</th>';
@@ -488,6 +495,7 @@ if ($mode == 'template' && $user->admin) {
 		print '</tr>';
 	}
 	print '</table>';
+	print '</div>';
 }
 
 // End of page
