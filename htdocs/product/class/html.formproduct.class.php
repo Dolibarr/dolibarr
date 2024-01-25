@@ -68,7 +68,7 @@ class FormProduct
 	 *                      				    'warehouseinternal' = select products from warehouses for internal correct/transfer only
 	 * @param	boolean	    $sumStock		    sum total stock of a warehouse, default true
 	 * @param	array       $exclude            warehouses ids to exclude
-	 * @param   bool|int    $stockMin           [=false] Value of minimum stock to filter or false not not filter by minimum stock
+	 * @param   bool|int    $stockMin           [=false] Value of minimum stock to filter (only warehouse with stock > stockMin are loaded) or false not not filter by minimum stock
 	 * @param   string      $orderBy            [='e.ref'] Order by
 	 * @return  int                             Nb of loaded lines, 0 if already loaded, <0 if KO
 	 * @throws  Exception
