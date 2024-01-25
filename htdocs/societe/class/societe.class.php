@@ -929,7 +929,7 @@ class Societe extends CommonObject
 		if ($this->code_client == -1 || $this->code_client === 'auto') {
 			$this->get_codeclient($this, 0);
 		}
-		if ($this->code_fournisseur == -1 || $this->code_fournisseur === 'auto') {
+		if ($this->code_fournisseur == '-1' || $this->code_fournisseur === 'auto') {
 			$this->get_codefournisseur($this, 1);
 		}
 
@@ -1399,7 +1399,7 @@ class Societe extends CommonObject
 		if ($this->code_client == -1 || $this->code_client === 'auto') {
 			$this->get_codeclient($this, 0);
 		}
-		if ($this->code_fournisseur == -1 || $this->code_fournisseur === 'auto') {
+		if ($this->code_fournisseur == '-1' || $this->code_fournisseur === 'auto') {
 			$this->get_codefournisseur($this, 1);
 		}
 
@@ -4229,7 +4229,7 @@ class Societe extends CommonObject
 
 		$this->client = 1; // A member is a customer by default
 		$this->code_client = ($customercode ? $customercode : -1);
-		$this->code_fournisseur = -1;
+		$this->code_fournisseur = '-1';
 		$this->typent_code = ($member->morphy == 'phy' ? 'TE_PRIVATE' : 0);
 		$this->typent_id = $this->typent_code ? dol_getIdFromCode($this->db, $this->typent_code, 'c_typent', 'id', 'code') : 0;
 
@@ -4303,10 +4303,11 @@ class Societe extends CommonObject
 		$this->note_private = getDolGlobalString('MAIN_INFO_SOCIETE_NOTE');
 
 		// We define country_id, country_code and country
-		$country_id = $country_code = $country_label = '';
+		$country_id = 0;
+		$country_code = $country_label = '';
 		if (getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY')) {
 			$tmp = explode(':', getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'));
-			$country_id = $tmp[0];
+			$country_id =  (is_numeric($tmp[0])) ? (int) $tmp[0] : 0;
 			if (!empty($tmp[1])) {   // If $conf->global->MAIN_INFO_SOCIETE_COUNTRY is "id:code:label"
 				$country_code = $tmp[1];
 				$country_label = $tmp[2];
