@@ -2318,7 +2318,7 @@ if (empty($reshook)) {
 			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc, $tva_npr);
 
 			$pu_ht_devise = price2num($price_ht_devise, '', 2);
-			$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
+			$pu_ttc_devise = price2num($price_ttc_devise, '', 2);
 
 			// Prepare a price equivalent for minimum price check
 			$pu_equivalent = $pu_ht;
