@@ -94,6 +94,10 @@ class modExternalSite extends DolibarrModules
 		$this->rights_class = 'externalsite'; // Permission key
 		$this->rights = array(); // Permission array used by this module
 
+		$this->module_parts = array( // allow access to external users
+			'moduleforexternal' => 1
+		); 
+
 		// Menus
 		//------
 		$r = 0;
@@ -110,7 +114,7 @@ class modExternalSite extends DolibarrModules
 			'perms'=>'',
 			'enabled'=>'$conf->externalsite->enabled',
 			'target'=>'',
-			'user'=>0
+			'user'=>2
 		);
 		$r++;
 	}
