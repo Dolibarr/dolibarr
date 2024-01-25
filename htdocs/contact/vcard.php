@@ -117,7 +117,7 @@ if ($company->id) {
 	}
 }
 
-// Personal informations
+// Personal information
 $v->setPhoneNumber($contact->phone_perso, "TYPE=HOME;VOICE");
 if ($contact->birthday) {
 	$v->setBirthday($contact->birthday);

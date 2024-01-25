@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -270,7 +271,7 @@ class ExportExcel2007 extends ModeleExports
 			$alias = $array_export_fields_label[$code];
 			//print "dd".$alias;
 			if (empty($alias)) {
-				dol_print_error('', 'Bad value for field with code='.$code.'. Try to redefine export.');
+				dol_print_error(null, 'Bad value for field with code='.$code.'. Try to redefine export.');
 			}
 			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
 
@@ -321,7 +322,7 @@ class ExportExcel2007 extends ModeleExports
 				$alias = substr($code, strpos($code, ' as ') + 4);
 			}
 			if (empty($alias)) {
-				dol_print_error('', 'Bad value for field with code='.$code.'. Try to redefine export.');
+				dol_print_error(null, 'Bad value for field with code='.$code.'. Try to redefine export.');
 			}
 			$newvalue = $objp->$alias;
 
@@ -651,11 +652,11 @@ class ExportExcel2007 extends ModeleExports
 	/**
 	 * Set a value cell and merging it by giving a starting cell and a length
 	 *
-	 * @param string $val       Cell value
-	 * @param string $startCell Starting cell
-	 * @param int    $length    Length
-	 * @param int    $offset    Starting offset
-	 * @return string Coordinate or -1 if KO
+	 * @param	string		$val		Cell value
+	 * @param	string		$startCell	Starting cell
+	 * @param	int			$length		Length
+	 * @param	int			$offset		Starting offset
+	 * @return	int|string				Coordinate or if KO: -1
 	 */
 	public function setMergeCellValueByLength($val, $startCell, $length, $offset = 0)
 	{

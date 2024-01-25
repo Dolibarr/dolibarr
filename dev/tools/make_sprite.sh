@@ -2,6 +2,8 @@
 
 # Based of: https://gist.github.com/jaymzcd/342399 and https://github.com/buren/flag-sprite-maker
 
+# shellcheck disable=2006,2086,2129,2219,2231
+
 # uses imagemagick to stich together all images in a folder and
 # then writes a css file with the correct offsets along with a
 # test html page for verification that its all good

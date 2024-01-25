@@ -79,7 +79,11 @@ $catid 		= GETPOST("catid", 'int');
 $socid 		= GETPOST('socid', 'int');
 
 $search_filter 		= GETPOST("search_filter", 'alpha');
-$search_status 		= GETPOST("search_status", 'intcomma');  // statut
+$search_status 		= GETPOST("search_status", 'intcomma');  // status
+$search_datec_start = dol_mktime(0, 0, 0, GETPOST('search_datec_start_month', 'int'), GETPOST('search_datec_start_day', 'int'), GETPOST('search_datec_start_year', 'int'));
+$search_datec_end = dol_mktime(23, 59, 59, GETPOST('search_datec_end_month', 'int'), GETPOST('search_datec_end_day', 'int'), GETPOST('search_datec_end_year', 'int'));
+$search_datem_start = dol_mktime(0, 0, 0, GETPOST('search_datem_start_month', 'int'), GETPOST('search_datem_start_day', 'int'), GETPOST('search_datem_start_year', 'int'));
+$search_datem_end = dol_mktime(23, 59, 59, GETPOST('search_datem_end_month', 'int'), GETPOST('search_datem_end_day', 'int'), GETPOST('search_datem_end_year', 'int'));
 
 $filter = GETPOST("filter", 'alpha');
 if ($filter) {
@@ -258,6 +262,10 @@ if (empty($reshook)) {
 		$catid = "";
 		$search_all = "";
 		$toselect = array();
+		$search_datec_start = '';
+		$search_datec_end = '';
+		$search_datem_start = '';
+		$search_datem_end = '';
 		$search_array_options = array();
 	}
 
@@ -366,7 +374,7 @@ if ((!empty($search_categ) && $search_categ > 0) || !empty($catid)) {
 $sql .= " d.rowid, d.ref, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc,";
 $sql .= " d.civility, d.datefin, d.address, d.zip, d.town, d.state_id, d.country,";
 $sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.birth, d.public, d.photo,";
-$sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut, d.datec as date_creation, d.tms as date_update,";
+$sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut as status, d.datec as date_creation, d.tms as date_update,";
 $sql .= " d.note_private, d.note_public, d.import_key,";
 $sql .= " s.nom,";
 $sql .= " ".$db->ifsql("d.societe IS NULL", "s.nom", "d.societe")." as companyname,";
@@ -388,8 +396,8 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
-// SQL Aliase adherent
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";  // maybe better to use ad (adh) instead od d
+// SQL Alias adherent
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";  // maybe better to use ad (adh) instead of d
 if (!empty($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
 }
@@ -397,7 +405,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = d
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = d.state_id)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on (s.rowid = d.fk_soc)";
 
-// SQL Aliase adherent_type
+// SQL Alias adherent_type
 $sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 $sql .= " WHERE d.fk_adherent_type = t.rowid";
 
@@ -456,7 +464,7 @@ if ($search_filter == 'outofdate') {
 	$sql .= " AND (datefin < '".$db->idate($now)."')";
 }
 if ($search_status != '') {
-	// Peut valoir un nombre ou liste de nombre separes par virgules
+	// Peut valoir un nombre ou liste de nombre separates par virgules
 	$sql .= " AND d.statut in (".$db->sanitize($db->escape($search_status)).")";
 }
 if ($search_morphy != '' && $search_morphy != '-1') {
@@ -512,6 +520,18 @@ if ($search_country) {
 }
 if ($search_import_key) {
 	$sql .= natural_search("d.import_key", $search_import_key);
+}
+if ($search_datec_start) {
+	$sql .= " AND d.datec >= '".$db->idate($search_datec_start)."'";
+}
+if ($search_datec_end) {
+	$sql .= " AND d.datec <= '".$db->idate($search_datec_end)."'";
+}
+if ($search_datem_start) {
+	$sql .= " AND d.tms >= '".$db->idate($search_datem_start)."'";
+}
+if ($search_datem_end) {
+	$sql .= " AND d.tms <= '".$db->idate($search_datem_end)."'";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -658,6 +678,12 @@ if ($search_import_key != '') {
 }
 if ($search_type > 0) {
 	$param .= "&search_type=".urlencode($search_type);
+}
+if ($search_datec_start) {
+	$param .= '&search_datec_start_day='.dol_print_date($search_datec_start, '%d').'&search_datec_start_month='.dol_print_date($search_datec_start, '%m').'&search_datec_start_year='.dol_print_date($search_datec_start, '%Y');
+}
+if ($search_datem_end) {
+	$param .= '&search_datem_end_day='.dol_print_date($search_datem_end, '%d').'&search_datem_end_month='.dol_print_date($search_datem_end, '%m').'&search_datem_end_year='.dol_print_date($search_datem_end, '%Y');
 }
 
 // Add $param from extra fields
@@ -914,6 +940,12 @@ print $hookmanager->resPrint;
 // Date creation
 if (!empty($arrayfields['d.datec']['checked'])) {
 	print '<td class="liste_titre">';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datec_start ? $search_datec_start : -1, 'search_datec_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datec_end ? $search_datec_end : -1, 'search_datec_end_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 
@@ -926,19 +958,12 @@ if (!empty($arrayfields['d.birth']['checked'])) {
 // Date modification
 if (!empty($arrayfields['d.tms']['checked'])) {
 	print '<td class="liste_titre">';
-	print '</td>';
-}
-
-// Status
-if (!empty($arrayfields['d.statut']['checked'])) {
-	print '<td class="liste_titre right parentonrightofpage">';
-	$liststatus = array(
-		Adherent::STATUS_DRAFT => $langs->trans("Draft"),
-		Adherent::STATUS_VALIDATED => $langs->trans("Validated"),
-		Adherent::STATUS_RESILIATED => $langs->trans("MemberStatusResiliatedShort"),
-		Adherent::STATUS_EXCLUDED =>$langs->trans("MemberStatusExcludedShort")
-	);
-	print $form->selectarray('search_status', $liststatus, $search_status, -3, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datem_start ? $search_datem_start : -1, 'search_datem_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datem_end ? $search_datem_end : -1, 'search_datem_end_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 
@@ -946,6 +971,19 @@ if (!empty($arrayfields['d.statut']['checked'])) {
 if (!empty($arrayfields['d.import_key']['checked'])) {
 	print '<td class="liste_titre center">';
 	print '<input class="flat searchstring maxwidth50" type="text" name="search_import_key" value="'.dol_escape_htmltag($search_import_key).'">';
+	print '</td>';
+}
+
+// Status
+if (!empty($arrayfields['d.statut']['checked'])) {
+	print '<td class="liste_titre center parentonrightofpage">';
+	$liststatus = array(
+		Adherent::STATUS_DRAFT => $langs->trans("Draft"),
+		Adherent::STATUS_VALIDATED => $langs->trans("Validated"),
+		Adherent::STATUS_RESILIATED => $langs->trans("MemberStatusResiliatedShort"),
+		Adherent::STATUS_EXCLUDED =>$langs->trans("MemberStatusExcludedShort")
+	);
+	print $form->selectarray('search_status', $liststatus, $search_status, -3, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 
@@ -970,7 +1008,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
-	print_liste_field_titre("ID", $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("ID", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.ref']['checked'])) {
@@ -1058,27 +1096,27 @@ $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // No
 print $hookmanager->resPrint;
 
 if (!empty($arrayfields['d.datec']['checked'])) {
-	print_liste_field_titre($arrayfields['d.datec']['label'], $_SERVER["PHP_SELF"], "d.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['d.datec']['label'], $_SERVER["PHP_SELF"], "d.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.birth']['checked'])) {
-	print_liste_field_titre($arrayfields['d.birth']['label'], $_SERVER["PHP_SELF"], "d.birth", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['d.birth']['label'], $_SERVER["PHP_SELF"], "d.birth", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.tms']['checked'])) {
-	print_liste_field_titre($arrayfields['d.tms']['label'], $_SERVER["PHP_SELF"], "d.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['d.statut']['checked'])) {
-	print_liste_field_titre($arrayfields['d.statut']['label'], $_SERVER["PHP_SELF"], "d.statut,t.subscription,d.datefin", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['d.tms']['label'], $_SERVER["PHP_SELF"], "d.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['d.import_key']['label'], $_SERVER["PHP_SELF"], "d.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['d.statut']['checked'])) {
+	print_liste_field_titre($arrayfields['d.statut']['label'], $_SERVER["PHP_SELF"], "d.statut,t.subscription,d.datefin", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	$totalarray['nbfield']++;
 }
 print "</tr>\n";
@@ -1105,7 +1143,8 @@ while ($i < $imaxinloop) {
 	$memberstatic->lastname = $obj->lastname;
 	$memberstatic->firstname = $obj->firstname;
 	$memberstatic->gender = $obj->gender;
-	$memberstatic->statut = $obj->statut;
+	$memberstatic->statut = $obj->status;
+	$memberstatic->status = $obj->status;
 	$memberstatic->datefin = $datefin;
 	$memberstatic->socid = $obj->fk_soc;
 	$memberstatic->photo = $obj->photo;
@@ -1336,7 +1375,7 @@ while ($i < $imaxinloop) {
 		// End of subscription date
 		$datefin = $db->jdate($obj->datefin);
 		if (!empty($arrayfields['d.datefin']['checked'])) {
-			print '<td class="nowrap center">';
+			print '<td class="nowraponall center">';
 			if ($datefin) {
 				print dol_print_date($datefin, 'day');
 				if ($memberstatic->hasDelay()) {
@@ -1346,7 +1385,7 @@ while ($i < $imaxinloop) {
 			} else {
 				if (!empty($obj->subscription)) {
 					print '<span class="opacitymedium">'.$langs->trans("SubscriptionNotReceived").'</span>';
-					if ($obj->statut > 0) {
+					if ($obj->status > 0) {
 						print " ".img_warning();
 					}
 				} else {
@@ -1391,19 +1430,20 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Status
-		if (!empty($arrayfields['d.statut']['checked'])) {
-			print '<td class="nowrap right">';
-			print $memberstatic->LibStatut($obj->statut, $obj->subscription, $datefin, 5);
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
+		// Import key
 		if (!empty($arrayfields['d.import_key']['checked'])) {
 			print '<td class="tdoverflowmax100 center" title="'.dol_escape_htmltag($obj->import_key).'">';
 			print dol_escape_htmltag($obj->import_key);
 			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Status
+		if (!empty($arrayfields['d.statut']['checked'])) {
+			print '<td class="nowrap center">';
+			print $memberstatic->LibStatut($obj->status, $obj->subscription, $datefin, 5);
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

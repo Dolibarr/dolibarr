@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 class MailingTargets // This can't be abstract as it is used for some method
 {
 	/**
-	 * @var DoliDb		Database handler (result of a new DoliDB)
+	 * @var DoliDB		Database handler (result of a new DoliDB)
 	 */
 	public $db;
 

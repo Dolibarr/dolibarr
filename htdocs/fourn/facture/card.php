@@ -348,7 +348,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_paid_partially' && $confirm == 'yes') {
-		// Classif "paid partialy"
+		// Classif "paid partially"
 		$object->fetch($id);
 		$close_code = GETPOST("close_code", 'restricthtml');
 		$close_note = GETPOST("close_note", 'restricthtml');
@@ -724,7 +724,7 @@ if (empty($reshook)) {
 
 			if (empty($error)) {
 				if ($object->type != FactureFournisseur::TYPE_DEPOSIT) {
-					// Classe facture
+					// Set invoice as paid
 					$result = $object->setPaid($user);
 					if ($result >= 0) {
 						$db->commit();
@@ -760,7 +760,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'add' && $usercancreate) {
 		// Insert new invoice in database
 		if ($socid > 0) {
-			$object->socid = GETPOST('socid', 'int');
+			$object->socid = GETPOSTINT('socid');
 		}
 		$selectedLines = GETPOST('toselect', 'array');
 
@@ -829,7 +829,7 @@ if (empty($reshook)) {
 				$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
 				$object->transport_mode_id	= GETPOST('transport_mode_id', 'int');
 
-				// Proprietes particulieres a facture de remplacement
+				// Proprietes particulieres a facture de replacement
 				$object->fk_facture_source = GETPOST('fac_replacement', 'int');
 				$object->type = FactureFournisseur::TYPE_REPLACEMENT;
 
@@ -1671,7 +1671,7 @@ if (empty($reshook)) {
 					$desc = $productsupplier->desc_supplier;
 				}
 
-				//If text set in desc is the same as product descpription (as now it's preloaded) whe add it only one time
+				//If text set in desc is the same as product descpription (as now it's preloaded) we add it only one time
 				if (trim($product_desc) == trim($desc) && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
 					$product_desc = '';
 				}
@@ -1875,7 +1875,7 @@ if (empty($reshook)) {
 		$ventilExportCompta = $object->getVentilExportCompta();
 
 		if (!$ventilExportCompta) {
-			// On verifie si aucun paiement n'a ete effectue
+			// We verify that no payment was done
 			if ($resteapayer == price2num($object->total_ttc, 'MT', 1) && $object->statut == FactureFournisseur::STATUS_VALIDATED) {
 				$idwarehouse = GETPOST('idwarehouse');
 
@@ -2293,7 +2293,7 @@ if ($action == 'create') {
 		} else {
 			$filter = '((s.fournisseur:=:1) AND (s.status:=:1))';
 			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(empty($societe->id) ? 0 : $societe->id, 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 widthcentpercentminusxx maxwidth500');
-			// reload page to retrieve supplier informations
+			// reload page to retrieve supplier information
 			if (!getDolGlobalString('RELOAD_PAGE_ON_SUPPLIER_CHANGE_DISABLED')) {
 				print '<script type="text/javascript">
 					$(document).ready(function() {
@@ -2359,7 +2359,7 @@ if ($action == 'create') {
 						$i++;
 					}
 					print '</select>';
-					// Option to reload page to retrieve customer informations. Note, this clear other input
+					// Option to reload page to retrieve customer information. Note, this clear other input
 					if (!getDolGlobalString('RELOAD_PAGE_ON_TEMPLATE_CHANGE_DISABLED')) {
 						print '<script type="text/javascript">
 						$(document).ready(function() {
@@ -2918,8 +2918,8 @@ if ($action == 'create') {
 		$resteapayeraffiche = $resteapayer;
 
 		if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {	// Never use this
-			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
-			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
+			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
 		} else {
 			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')";
 			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS PAID)%')";
@@ -4005,7 +4005,7 @@ if ($action == 'create') {
 			if (empty($reshook)) {
 				// Modify a validated invoice with no payments
 				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $action != 'confirm_edit' && $object->getSommePaiement() == 0 && $usercancreate) {
-					// We check if lines of invoice are not already transfered into accountancy
+					// We check if lines of invoice are not already transferred into accountancy
 					$ventilExportCompta = $object->getVentilExportCompta(); // Should be 0 since the sum of payments are zero. But we keep the protection.
 
 					if ($ventilExportCompta == 0) {

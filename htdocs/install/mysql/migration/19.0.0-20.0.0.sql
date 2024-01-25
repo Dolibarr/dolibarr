@@ -159,6 +159,8 @@ ALTER TABLE llx_user_extrafields ADD UNIQUE INDEX uk_user_extrafields (fk_object
 ALTER TABLE llx_usergroup_extrafields DROP INDEX idx_usergroup_extrafields;
 ALTER TABLE llx_usergroup_extrafields ADD UNIQUE INDEX uk_usergroup_extrafields (fk_object);
 
+ALTER TABLE llx_website ADD COLUMN name_template varchar(255) NULL;
+
 UPDATE llx_categorie SET date_creation = tms, tms = tms WHERE date_creation IS NULL AND tms IS NOT NULL;
 
 ALTER TABLE llx_product_price ADD COLUMN price_label varchar(255) AFTER fk_user_author;
@@ -201,3 +203,8 @@ CREATE TABLE llx_c_product_thirdparty_relation_type
 
 ALTER TABLE llx_c_tva ADD COLUMN type_vat smallint NOT NULL DEFAULT 0 AFTER fk_pays;
 
+ALTER TABLE llx_categorie ADD COLUMN position integer DEFAULT 0 AFTER color;
+
+ALTER TABLE llx_product DROP COLUMN onportal;
+
+ALTER TABLE llx_knowledgemanagement_knowledgerecord MODIFY COLUMN answer longtext;

@@ -63,7 +63,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 
@@ -197,7 +197,7 @@ if ($id > 0) {
 
 	print dol_get_fiche_end();
 } else {
-	dol_print_error('', 'Parameter rowid not defined');
+	dol_print_error(null, 'Parameter rowid not defined');
 }
 
 

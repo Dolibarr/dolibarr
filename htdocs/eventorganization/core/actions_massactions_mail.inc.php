@@ -276,7 +276,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 	$resaction .= $langs->trans("NbSent") . ': ' . ($nbsent ? $nbsent : 0) . "\n<br>";
 
 	if ($nbsent) {
-		$action = ''; // Do not show form post if there was at least one successfull sent
+		$action = ''; // Do not show form post if there was at least one successful sent
 		//setEventMessages($langs->trans("EMailSentToNRecipients", $nbsent.'/'.count($toselect)), null, 'mesgs');
 		setEventMessages($langs->trans("EMailSentForNElements", $nbsent . '/' . count($toselect)), null, 'mesgs');
 		setEventMessages($resaction, null, 'mesgs');

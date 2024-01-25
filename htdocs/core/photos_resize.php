@@ -338,14 +338,14 @@ if ($cancel) {
 		header("Location: ".$backtourl);
 		exit;
 	} else {
-		dol_print_error('', 'Cancel on photo_resize with a not supported value of modulepart='.$modulepart);
+		dol_print_error(null, 'Cancel on photo_resize with a not supported value of modulepart='.$modulepart);
 		exit;
 	}
 }
 
 if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex") && GETPOSTISSET("sizey")) {
 	if (empty($dir)) {
-		dol_print_error('', 'Bug: Value for $dir could not be defined.');
+		dol_print_error(null, 'Bug: Value for $dir could not be defined.');
 		exit;
 	}
 
@@ -398,7 +398,7 @@ if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex")
 			header("Location: ".$backtourl);
 			exit;
 		} else {
-			dol_print_error('', 'confirm_resize on photo_resize without backtourl defined for modulepart='.$modulepart);
+			dol_print_error(null, 'confirm_resize on photo_resize without backtourl defined for modulepart='.$modulepart);
 			exit;
 		}
 	} else {
@@ -461,7 +461,7 @@ if ($action == 'confirm_crop') {
 			header("Location: ".$backtourl);
 			exit;
 		} else {
-			dol_print_error('', 'confirm_crop on photo_resize without backtourl defined for modulepart='.$modulepart);
+			dol_print_error(null, 'confirm_crop on photo_resize without backtourl defined for modulepart='.$modulepart);
 			exit;
 		}
 	} else {

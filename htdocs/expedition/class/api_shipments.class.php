@@ -55,7 +55,7 @@ class Shipments extends DolibarrApi
 	/**
 	 * Get properties of a shipment object
 	 *
-	 * Return an array with shipment informations
+	 * Return an array with shipment information
 	 *
 	 * @param   int         $id         ID of shipment
 	 * @return  Object					Object with cleaned properties
@@ -94,7 +94,7 @@ class Shipments extends DolibarrApi
 	 * @param int			   $page				Page number
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter shipments of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of shipment objects
 	 *
 	 * @throws RestException
@@ -190,7 +190,7 @@ class Shipments extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->shipment->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -406,7 +406,7 @@ class Shipments extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// TODO Check the lineid $lineid is a line of ojbect
+		// TODO Check the lineid $lineid is a line of object
 
 		$updateRes = $this->shipment->deleteline(DolibarrApiAccess::$user, $lineid);
 		if ($updateRes > 0) {
@@ -443,7 +443,7 @@ class Shipments extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->shipment->context['caller'] = $request_data['caller'];
 				continue;
 			}

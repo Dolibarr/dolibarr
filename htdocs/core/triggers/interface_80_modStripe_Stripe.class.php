@@ -20,12 +20,12 @@
  *  \file       htdocs/core/triggers/interface_80_modStripe_Stripe.class.php
  *  \ingroup    core
  *  \brief      Fichier
- *  \remarks    Son propre fichier d'actions peut etre cree par recopie de celui-ci:
- *              - Le nom du fichier doit etre: interface_99_modMymodule_Mytrigger.class.php
- *                                           ou: interface_99_all_Mytrigger.class.php
- *              - Le fichier doit rester stocke dans core/triggers
- *              - Le nom de la classe doit etre InterfaceMytrigger
- *              - Le nom de la propriete name doit etre Mytrigger
+ *  \remarks    This file can be used as a template for creating your own action file:
+ *              - The file name must be: interface_99_modMymodule_Mytrigger.class.php
+ *                                   or: interface_99_all_Mytrigger.class.php
+ *              - The file must be located in core/triggers
+ *              - The class name must be InterfaceMytrigger
+ *              - The property name must be Mytrigger
  */
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 

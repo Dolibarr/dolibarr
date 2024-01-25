@@ -17,6 +17,7 @@
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023       Joachim Küter      		<git-jk@bloxera.com>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +81,7 @@ function realCharForNumericEntities($matches)
 /**
  * Security: WAF layer for SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
  * Warning: Such a protection can't be enough. It is not reliable as it will always be possible to bypass this. Good protection can
- * only be guaranted by escaping data during output.
+ * only be guaranteed by escaping data during output.
  *
  * @param		string		$val		Brute value found into $_GET, $_POST or PHP_SELF
  * @param		string		$type		0=POST, 1=GET, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
@@ -102,11 +103,12 @@ function testSqlAndScriptInject($val, $type)
 		// Sometimes we have entities without the ; at end so html_entity_decode does not work but entities is still interpreted by browser.
 		$val = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) {
 			// Decode '&#110;', ...
-			return realCharForNumericEntities($m); }, $val);
+			return realCharForNumericEntities($m);
+		}, $val);
 
-			// We clean html comments because some hacks try to obfuscate evil strings by inserting HTML comments. Example: on<!-- -->error=alert(1)
-			$val = preg_replace('/<!--[^>]*-->/', '', $val);
-			$val = preg_replace('/[\r\n\t]/', '', $val);
+		// We clean html comments because some hacks try to obfuscate evil strings by inserting HTML comments. Example: on<!-- -->error=alert(1)
+		$val = preg_replace('/<!--[^>]*-->/', '', $val);
+		$val = preg_replace('/[\r\n\t]/', '', $val);
 	} while ($oldval != $val);
 	//print "type = ".$type." after decoding: ".$val."\n";
 
@@ -176,6 +178,7 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)[a-z]*\s*=/i', $val);
 	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)[a-z]*\s*=/i', $val);
 	// More not into the previous list
+
 	$inj += preg_match('/on(repeat|begin|finish|beforeinput)[a-z]*\s*=/i', $val);
 
 	// We refuse html into html because some hacks try to obfuscate evil strings by inserting HTML into HTML. Example: <img on<a>error=alert(1) to bypass test on onerror
@@ -220,15 +223,33 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 			if (analyseVarsForSqlAndScriptsInjection($key, $type) && analyseVarsForSqlAndScriptsInjection($value, $type)) {
 				//$var[$key] = $value;	// This is useless
 			} else {
+				http_response_code(403);
+
 				// Get remote IP: PS: We do not use getRemoteIP(), function is not yet loaded and we need a value that can't be spoofed
 				$ip = (empty($_SERVER['REMOTE_ADDR']) ? 'unknown' : $_SERVER['REMOTE_ADDR']);
-				$errormessage = 'Access refused to '.htmlentities($ip, ENT_COMPAT, 'UTF-8').' by SQL or Script injection protection in main.inc.php - GETPOST type='.htmlentities($type, ENT_COMPAT, 'UTF-8').' paramkey='.htmlentities($key, ENT_COMPAT, 'UTF-8').' paramvalue='.htmlentities($value, ENT_COMPAT, 'UTF-8').' page='.htmlentities($_SERVER["REQUEST_URI"], ENT_COMPAT, 'UTF-8');
+
+				$errormessage = 'Access refused to '.htmlentities($ip, ENT_COMPAT, 'UTF-8').' by SQL or Script injection protection in main.inc.php:analyseVarsForSqlAndScriptsInjection type='.htmlentities($type, ENT_COMPAT, 'UTF-8');
+
+				$errormessage2 = 'paramkey='.htmlentities($key, ENT_COMPAT, 'UTF-8');
+				$errormessage2 .= ' paramvalue='.htmlentities($value, ENT_COMPAT, 'UTF-8');
+				$errormessage2 .= ' page='.htmlentities($_SERVER["REQUEST_URI"], ENT_COMPAT, 'UTF-8');
+
 				print $errormessage;
-				// Add entry into error log
+				print "<br>\n";
+				print 'Try to go back, fix data of your form and resubmit it. You can contact also your technical support.';
+
+				print '<!--'."\n";
+				print $errormessage2;
+				print "\n".'-->';
+
+				// Add entry into error the PHP server error log
 				if (function_exists('error_log')) {
-					error_log($errormessage);
+					error_log($errormessage.' '.$errormessage2);
 				}
-				// TODO Add entry into security audit table
+
+				// Note: No addition into security audit table is done because we don't want to execute code in such a case.
+				// Detection of too many such requests can be done with a fail2ban rule on 403 error code or into the PHP server error log.
+
 				exit;
 			}
 		}
@@ -262,7 +283,7 @@ if (!defined('NOSCANPHPSELFFORINJECTION') && !empty($_SERVER["PHP_SELF"])) {
 if (!defined('NOSCANGETFORINJECTION') && !empty($_SERVER["QUERY_STRING"])) {
 	// Note: QUERY_STRING is url encoded, but $_GET and $_POST are already decoded
 	// Because the analyseVarsForSqlAndScriptsInjection is designed for already url decoded value, we must decode QUERY_STRING
-	// Another solution is to provide $_GET as parameter
+	// Another solution is to provide $_GET as parameter with analyseVarsForSqlAndScriptsInjection($_GET, 1);
 	$morevaltochecklikeget = array(urldecode($_SERVER["QUERY_STRING"]));
 	analyseVarsForSqlAndScriptsInjection($morevaltochecklikeget, 1);
 }
@@ -494,11 +515,11 @@ if (getDolGlobalString('MAIN_NOT_INSTALLED') || getDolGlobalString('MAIN_NOT_UPG
 // If an upgrade process is required, we call the install page.
 if ((getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') && ($conf->global->MAIN_VERSION_LAST_UPGRADE != DOL_VERSION))
 		|| (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') && getDolGlobalString('MAIN_VERSION_LAST_INSTALL') && ($conf->global->MAIN_VERSION_LAST_INSTALL != DOL_VERSION))) {
-		$versiontocompare = !getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') ? $conf->global->MAIN_VERSION_LAST_INSTALL : $conf->global->MAIN_VERSION_LAST_UPGRADE;
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-		$dolibarrversionlastupgrade = preg_split('/[.-]/', $versiontocompare);
-		$dolibarrversionprogram = preg_split('/[.-]/', DOL_VERSION);
-		$rescomp = versioncompare($dolibarrversionprogram, $dolibarrversionlastupgrade);
+	$versiontocompare = !getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') ? $conf->global->MAIN_VERSION_LAST_INSTALL : $conf->global->MAIN_VERSION_LAST_UPGRADE;
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+	$dolibarrversionlastupgrade = preg_split('/[.-]/', $versiontocompare);
+	$dolibarrversionprogram = preg_split('/[.-]/', DOL_VERSION);
+	$rescomp = versioncompare($dolibarrversionprogram, $dolibarrversionlastupgrade);
 	if ($rescomp > 0) {   // Programs have a version higher than database.
 		if (!getDolGlobalString('MAIN_NO_UPGRADE_REDIRECT_ON_LEVEL_3_CHANGE') || $rescomp < 3) {
 			// We did not add "&& $rescomp < 3" because we want upgrade process for build upgrades
@@ -536,7 +557,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	// Array of action code where CSRFCHECK with token will be forced (so token must be provided on url request)
 	$sensitiveget = false;
 	if ((GETPOSTISSET('massaction') || GETPOST('action', 'aZ09')) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 3) {
-		// All GET actions (except the listed exception) and mass actions are processed as sensitive.
+		// All GET actions (except the listed exception that are post actions) and mass actions are processed as sensitive.
 		if (GETPOSTISSET('massaction') || !in_array(GETPOST('action', 'aZ09'), array('create', 'createsite', 'createcard', 'edit', 'editvalidator', 'file_manager', 'presend', 'presend_addmessage', 'preview', 'specimen'))) {	// We exclude some action that are legitimate
 			$sensitiveget = true;
 		}
@@ -564,10 +585,10 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 		$sensitiveget ||
 		GETPOSTISSET('massaction') ||
 		((GETPOSTISSET('actionlogin') || GETPOSTISSET('action')) && defined('CSRFCHECK_WITH_TOKEN'))
-		) {
-			// If token is not provided or empty, error (we are in case it is mandatory)
+	) {
+		// If token is not provided or empty, error (we are in case it is mandatory)
 		if (!GETPOST('token', 'alpha') || GETPOST('token', 'alpha') == 'notrequired') {
-				top_httphead();
+			top_httphead();
 			if (GETPOST('uploadform', 'int')) {
 				dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused. File size too large or not provided.");
 				$langs->loadLangs(array("errors", "install"));
@@ -595,31 +616,31 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	$sessiontokenforthisurl = (empty($_SESSION['token']) ? '' : $_SESSION['token']);
 	// TODO Get the sessiontokenforthisurl into an array of session token (one array per base URL so we can use the CSRF per page and we keep ability for several tabs per url in a browser)
 	if (GETPOSTISSET('token') && GETPOST('token') != 'notrequired' && GETPOST('token', 'alpha') != $sessiontokenforthisurl) {
-			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referrer=".(empty($_SERVER['HTTP_REFERER'])?'':$_SERVER['HTTP_REFERER']).", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha'), LOG_WARNING);
-			//dol_syslog("_SESSION['token']=".$sessiontokenforthisurl, LOG_DEBUG);
-			// Do not output anything on standard output because this create problems when using the BACK button on browsers. So we just set a message into session.
+		dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referrer=".(empty($_SERVER['HTTP_REFERER'])?'':$_SERVER['HTTP_REFERER']).", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha'), LOG_WARNING);
+		//dol_syslog("_SESSION['token']=".$sessiontokenforthisurl, LOG_DEBUG);
+		// Do not output anything on standard output because this create problems when using the BACK button on browsers. So we just set a message into session.
 		if (!defined('NOTOKENRENEWAL')) {
 			// If the page is not a page that disable the token renewal, we report a warning message to explain token has epired.
 			setEventMessages('SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry', null, 'warnings', '', 1);
 		}
-			$savid = null;
+		$savid = null;
 		if (isset($_POST['id'])) {
 			$savid = ((int) $_POST['id']);
 		}
-			unset($_POST);
-			unset($_GET['confirm']);
-			unset($_GET['action']);
-			unset($_GET['confirmmassaction']);
-			unset($_GET['massaction']);
-			unset($_GET['token']);			// TODO Make a redirect if we have a token in url to remove it ?
+		unset($_POST);
+		unset($_GET['confirm']);
+		unset($_GET['action']);
+		unset($_GET['confirmmassaction']);
+		unset($_GET['massaction']);
+		unset($_GET['token']);			// TODO Make a redirect if we have a token in url to remove it ?
 		if (isset($savid)) {
 			$_POST['id'] = ((int) $savid);
 		}
-			// So rest of code can know something was wrong here
-			$_GET['errorcode'] = 'InvalidToken';
+		// So rest of code can know something was wrong here
+		$_GET['errorcode'] = 'InvalidToken';
 	}
 
-		// Note: There is another CSRF protection into the filefunc.inc.php
+	// Note: There is another CSRF protection into the filefunc.inc.php
 }
 
 // Disable modules (this must be after session_start and after conf has been loaded)
@@ -688,7 +709,7 @@ if (!defined('NOLOGIN')) {
 	// No authentication mode
 	if (!count($authmode)) {
 		$langs->load('main');
-		dol_print_error('', $langs->trans("ErrorConfigParameterNotDefined", 'dolibarr_main_authentication'));
+		dol_print_error(null, $langs->trans("ErrorConfigParameterNotDefined", 'dolibarr_main_authentication'));
 		exit;
 	}
 
@@ -746,7 +767,7 @@ if (!defined('NOLOGIN')) {
 
 			// Check code
 			if (!$ok) {
-				dol_syslog('Bad value for code, connexion refused', LOG_NOTICE);
+				dol_syslog('Bad value for code, connection refused', LOG_NOTICE);
 				// Load translation files required by page
 				$langs->loadLangs(array('main', 'errors'));
 
@@ -854,7 +875,7 @@ if (!defined('NOLOGIN')) {
 			}
 
 			if (!$login) {
-				dol_syslog('Bad password, connexion refused (see a previous notice message for more info)', LOG_NOTICE);
+				dol_syslog('Bad password, connection refused (see a previous notice message for more info)', LOG_NOTICE);
 				// Load translation files required by page
 				$langs->loadLangs(array('main', 'errors'));
 
@@ -888,12 +909,12 @@ if (!defined('NOLOGIN')) {
 		}
 
 		// End test login / passwords
-		if (!$login || (in_array('ldap', $authmode) && empty($passwordtotest))) {	// With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connexion is a success.
+		if (!$login || (in_array('ldap', $authmode) && empty($passwordtotest))) {	// With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connection is a success.
 			// No data to test login, so we show the login page.
 			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." - action=".GETPOST('action', 'aZ09')." - actionlogin=".GETPOST('actionlogin', 'aZ09')." - showing the login form and exit", LOG_NOTICE);
 			if (defined('NOREDIRECTBYMAINTOLOGIN')) {
 				// When used with NOREDIRECTBYMAINTOLOGIN set, the http header must already be set when including the main.
-				// See example with selectsearchbox.php. This case is reserverd for the selectesearchbox.php so we can
+				// See example with selectsearchbox.php. This case is reserved for the selectesearchbox.php so we can
 				// report a message to ask to login when search ajax component is used after a timeout.
 				//top_httphead();
 				return 'ERROR_NOT_LOGGED';
@@ -908,7 +929,7 @@ if (!defined('NOLOGIN')) {
 
 		$resultFetchUser = $user->fetch('', $login, '', 1, ($entitytotest > 0 ? $entitytotest : -1)); // value for $login was retrieved previously when checking password.
 		if ($resultFetchUser <= 0 || $user->isNotIntoValidityDateRange()) {
-			dol_syslog('User not found or not valid, connexion refused');
+			dol_syslog('User not found or not valid, connection refused');
 			session_destroy();
 			session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie
 			session_name($sessionname);
@@ -984,17 +1005,17 @@ if (!defined('NOLOGIN')) {
 			|| ($user->status != $user::STATUS_ENABLED)
 			|| ($user->isNotIntoValidityDateRange())) {
 			if ($resultFetchUser <= 0) {
-					// Account has been removed after login
-					dol_syslog("Can't load user even if session logged. _SESSION['dol_login']=".$login, LOG_WARNING);
+				// Account has been removed after login
+				dol_syslog("Can't load user even if session logged. _SESSION['dol_login']=".$login, LOG_WARNING);
 			} elseif ($user->flagdelsessionsbefore && !empty($_SESSION["dol_logindate"]) && $user->flagdelsessionsbefore > $_SESSION["dol_logindate"]) {
-					// Session is no more valid
-					dol_syslog("The user has a date for session invalidation = ".$user->flagdelsessionsbefore." and a session date = ".$_SESSION["dol_logindate"].". We must invalidate its sessions.");
+				// Session is no more valid
+				dol_syslog("The user has a date for session invalidation = ".$user->flagdelsessionsbefore." and a session date = ".$_SESSION["dol_logindate"].". We must invalidate its sessions.");
 			} elseif ($user->status != $user::STATUS_ENABLED) {
 				// User is not enabled
 				dol_syslog("The user login is disabled");
 			} else {
 				// User validity dates are no more valid
-				dol_syslog("The user login has a validity between [".$user->datestartvalidity." and ".$user->dateendvalidity."], curren date is ".dol_now());
+				dol_syslog("The user login has a validity between [".$user->datestartvalidity." and ".$user->dateendvalidity."], current date is ".dol_now());
 			}
 			session_destroy();
 			session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie
@@ -1109,7 +1130,7 @@ if (!defined('NOLOGIN')) {
 	}
 
 	// Is it a new session that has started ?
-	// If we are here, this means authentication was successfull.
+	// If we are here, this means authentication was successful.
 	if (!isset($_SESSION["dol_login"])) {
 		// New session for this login has started.
 		$error = 0;
@@ -1165,7 +1186,7 @@ if (!defined('NOLOGIN')) {
 		}
 		// End call triggers
 
-		// Hooks on successfull login
+		// Hooks on successful login
 		$action = '';
 		$hookmanager->initHooks(array('login'));
 		$parameters = array('dol_authmode'=>$dol_authmode, 'dol_loginfo'=>$loginfo);
@@ -1296,16 +1317,16 @@ if (!empty($conf->browser->layout) && $conf->browser->layout != 'classic') {
 	$conf->dol_no_mouse_hover = 1;
 }
 
-// If on smartphone or optmized for small screen
+// If on smartphone or optimized for small screen
 if ((!empty($conf->browser->layout) && $conf->browser->layout == 'phone')
 			|| (!empty($_SESSION['dol_screenwidth']) && $_SESSION['dol_screenwidth'] < 400)
 			|| (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 400
 				|| getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER'))
-			) {
-		$conf->dol_optimize_smallscreen = 1;
+) {
+	$conf->dol_optimize_smallscreen = 1;
 
 	if (getDolGlobalInt('PRODUIT_DESC_IN_FORM') == 1) {
-			$conf->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = 0;
+		$conf->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = 0;
 	}
 }
 // Replace themes bugged with jmobile with eldy
@@ -1440,7 +1461,7 @@ if (!function_exists("llxHeader")) {
 	/**
 	 *	Show HTML header HTML + BODY + Top menu + left menu + DIV
 	 *
-	 * @param 	string 			$head				Optionnal head lines
+	 * @param 	string 			$head				Optional head lines
 	 * @param 	string 			$title				HTML title
 	 * @param	string			$help_url			Url links to help page
 	 * 		                            			Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
@@ -1651,10 +1672,10 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 }
 
 /**
- * Ouput html header of a page. It calls also top_httphead()
+ * Output html header of a page. It calls also top_httphead()
  * This code is also duplicated into security2.lib.php::dol_loginfunction
  *
- * @param 	string 	$head			 Optionnal head lines
+ * @param 	string 	$head			 Optional head lines
  * @param 	string 	$title			 HTML title
  * @param 	int    	$disablejs		 Disable js output
  * @param 	int    	$disablehead	 Disable head output
@@ -1719,6 +1740,13 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		// Mobile appli like icon
 		$manifest = DOL_URL_ROOT.'/theme/'.$conf->theme.'/manifest.json.php';
+		$parameters = array('manifest'=>$manifest);
+		$resHook = $hookmanager->executeHooks('hookSetManifest', $parameters); // Note that $action and $object may have been modified by some hooks
+		if ($resHook > 0) {
+			$manifest = $hookmanager->resPrint; // Replace manifest.json
+		} else {
+			$manifest .= $hookmanager->resPrint; // Concat to actual manifest declaration
+		}
 		if (!empty($manifest)) {
 			print '<link rel="manifest" href="'.$manifest.'" />'."\n";
 		}
@@ -1763,7 +1791,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		print "\n";
 
 		if (GETPOST('version', 'int')) {
-			$ext = 'version='.GETPOST('version', 'int'); // usefull to force no cache on css/js
+			$ext = 'version='.GETPOST('version', 'int'); // useful to force no cache on css/js
 		}
 		// Refresh value of MAIN_IHM_PARAMS_REV before forging the parameter line.
 		if (GETPOST('dol_resetcache')) {
@@ -2179,14 +2207,25 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			$toprightmenu .= $form->textwithtooltip('', $langs->trans("ModuleBuilder"), 2, 1, $text, 'login_block_elem', 2);
 		}
 
-		// Link to print main content area
+		// Link to print main content area (optioncss=print)
 		if (!getDolGlobalString('MAIN_PRINT_DISABLELINK') && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			$qs = dol_escape_htmltag($_SERVER["QUERY_STRING"]);
 
 			if (isset($_POST) && is_array($_POST)) {
 				foreach ($_POST as $key => $value) {
-					if ($key !== 'action' && $key !== 'password' && !is_array($value)) {
-						$qs .= '&'.$key.'='.urlencode($value);
+					if (in_array($key, array('action', 'massaction', 'password'))) {
+						continue;
+					}
+					if (!is_array($value)) {
+						if ($value !== '') {
+							$qs .= '&'.$key.'='.urlencode($value);
+						}
+					} else {
+						foreach ($value as $value2) {
+							if (($value2 !== '') && (!is_array($value2))) {
+								$qs .= '&'.$key.'[]='.urlencode($value2);
+							}
+						}
 					}
 				}
 			}
@@ -2556,12 +2595,12 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	            });
 
 	            jQuery("#topmenulogincompanyinfo-btn").on("click", function() {
-					console.log("Clik on #topmenulogincompanyinfo-btn");
+					console.log("Click on #topmenulogincompanyinfo-btn");
 	                jQuery("#topmenulogincompanyinfo").slideToggle();
 	            });
 
 	            jQuery("#topmenuloginmoreinfo-btn").on("click", function() {
-					console.log("Clik on #topmenuloginmoreinfo-btn");
+					console.log("Click on #topmenuloginmoreinfo-btn");
 	                jQuery("#topmenuloginmoreinfo").slideToggle();
 	            });';
 		}
@@ -2983,7 +3022,7 @@ function top_menu_search()
     <script>
     jQuery(document).ready(function() {
 
-        // prevent submiting form on press ENTER
+        // prevent submitting form on press ENTER
         jQuery("#top-global-search-input").keydown(function (e) {
             if (e.keyCode == 13 || e.keyCode == 40) {
                 var inputs = $(this).parents("form").eq(0).find(":button");
@@ -3068,7 +3107,7 @@ function top_menu_search()
 /**
  *  Show left menu bar
  *
- *  @param  array	$menu_array_before 	       	Table of menu entries to show before entries of menu handler. This param is deprectaed and must be provided to ''.
+ *  @param  array	$menu_array_before 	       	Table of menu entries to show before entries of menu handler. This param is deprecated and must be provided to ''.
  *  @param  string	$helppagename    	       	Name of wiki page for help ('' by default).
  * 				     		                   	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
  * 									         	For other external page: http://server/url
@@ -3272,7 +3311,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 				$bugbaseurl .= urlencode("## Steps to reproduce the behavior\n");
 				$bugbaseurl .= urlencode("[*Verbose description*]\n");
 				$bugbaseurl .= urlencode("\n");
-				$bugbaseurl .= urlencode("## [Attached files](https://help.github.com/articles/issue-attachments) (Screenshots, screencasts, dolibarr.log, debugging informations…)\n");
+				$bugbaseurl .= urlencode("## [Attached files](https://help.github.com/articles/issue-attachments) (Screenshots, screencasts, dolibarr.log, debugging information…)\n");
 				$bugbaseurl .= urlencode("[*Files*]\n");
 				$bugbaseurl .= urlencode("\n");
 
@@ -3351,7 +3390,7 @@ function main_area($title = '')
 	}
 
 	// Permit to add user company information on each printed document by setting SHOW_SOCINFO_ON_PRINT
-	if (getDolGlobalString('SHOW_SOCINFO_ON_PRINT') && GETPOST('optioncss', 'aZ09') == 'print' && empty(GETPOST('disable_show_socinfo_on_print', 'az09'))) {
+	if (getDolGlobalString('SHOW_SOCINFO_ON_PRINT') && GETPOST('optioncss', 'aZ09') == 'print' && empty(GETPOST('disable_show_socinfo_on_print', 'aZ09'))) {
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('showSocinfoOnPrint', $parameters);
 		if (empty($reshook)) {
@@ -3487,7 +3526,7 @@ if (!function_exists("llxFooter")) {
 	 *
 	 * @param	string	$comment    				A text to add as HTML comment into HTML generated page
 	 * @param	string	$zone						'private' (for private pages) or 'public' (for public pages)
-	 * @param	int		$disabledoutputofmessages	Clear all messages stored into session without diplaying them
+	 * @param	int		$disabledoutputofmessages	Clear all messages stored into session without displaying them
 	 * @return	void
 	 */
 	function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)
@@ -3528,7 +3567,7 @@ if (!function_exists("llxFooter")) {
 					if (empty($val['sortorder'])) {
 						unset($val['sortorder']);
 					}
-					dol_syslog('Save lastsearch_values_tmp_'.$key.'='.json_encode($val, 0)." (systematic recording of last search criterias)");
+					dol_syslog('Save lastsearch_values_tmp_'.$key.'='.json_encode($val, 0)." (systematic recording of last search criteria)");
 					$_SESSION['lastsearch_values_tmp_'.$key] = json_encode($val);
 					unset($_SESSION['lastsearch_values_'.$key]);
 				}
@@ -3665,7 +3704,7 @@ if (!function_exists("llxFooter")) {
 					// MAIN_LAST_PING_KO_DATE
 					// Disable ping if MAIN_LAST_PING_KO_DATE is set and is recent (this month)
 					if (getDolGlobalString('MAIN_LAST_PING_KO_DATE') && substr($conf->global->MAIN_LAST_PING_KO_DATE, 0, 6) == dol_print_date(dol_now(), '%Y%m') && !$forceping) {
-						print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. An error already occured this month, we will try later. -->\n";
+						print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. An error already occurred this month, we will try later. -->\n";
 					} else {
 						include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 

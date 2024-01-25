@@ -17,7 +17,7 @@
 */
 
 /**
- *	\file       htdocs/opensurvey/fonctions.php
+ *	\file       htdocs/opensurvey/lib/opensurvey.lib.php
  *	\ingroup    opensurvey
  *	\brief      Functions for module
  */
@@ -73,12 +73,12 @@ function opensurvey_prepare_head(Opensurveysondage $object)
  * @param	string		$numsondage			Num survey
  * @return	void
  */
-function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $numsondage = '')
+function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $numsondage = '')
 {
 	global $conf, $langs, $mysoc;
 	global $dolibarr_main_url_root;
 
-	//$replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
+	// $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, 1); // Show html headers
 
@@ -95,7 +95,7 @@ function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $
 	// Define logo and logosmall
 	$logosmall = $mysoc->logo_small;
 	$logo = $mysoc->logo;
-	//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
+	// print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 	// Define urllogo
 	$urllogo = '';
 	$urllogofull = '';

@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2013-2016 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2023 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2016-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
+ * Copyright (C) 2016-2018  Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -226,7 +226,9 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-llxHeader('', $langs->trans("ListAccounts"));
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
+
+llxHeader('', $langs->trans("ListAccounts"), $help_url);
 
 if ($action == 'delete') {
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('DeleteAccount'), $langs->trans('ConfirmDeleteAccount'), 'confirm_delete', '', 0, 1);
@@ -374,7 +376,7 @@ if ($resql) {
 			<script type="text/javascript">
 			$(document).ready(function () {
 		    	$("#change_chart").on("click", function (e) {
-					console.log("chartofaccounts seleted = "+$("#chartofaccounts").val());
+					console.log("chartofaccounts selected = "+$("#chartofaccounts").val());
 					// reload page
 					window.location.href = "'.$_SERVER["PHP_SELF"].'?valid_change_chart=1&chartofaccounts="+$("#chartofaccounts").val();
 			    });
@@ -667,7 +669,7 @@ if ($resql) {
 				print '<!-- obj->account_parent = '.$obj->account_parent.' obj->rowid2 = '.$obj->rowid2.' -->';
 				$accountparent->id = $obj->rowid2;
 				$accountparent->label = $obj->label2;
-				$accountparent->account_number = $obj->account_number2; // Sotre an account number for output
+				$accountparent->account_number = $obj->account_number2; // Store an account number for output
 				print $accountparent->getNomUrl(1);
 				print "</td>\n";
 				if (!$i) {

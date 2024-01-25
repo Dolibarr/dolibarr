@@ -73,7 +73,7 @@ if ($action == 'updateMask') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'specimen') { // For fiche inter
+} elseif ($action == 'specimen') { // For Intervention card
 	$modele = GETPOST('module', 'alpha');
 
 	$inter = new Fichinter($db);

@@ -66,7 +66,7 @@ class ImportCsv extends ModeleImports
 
 	public $handle; // Handle fichier
 
-	public $cacheconvert = array(); // Array to cache list of value found after a convertion
+	public $cacheconvert = array(); // Array to cache list of value found after a conversion
 
 	public $cachefieldtable = array(); // Array to cache list of value found into fields@tables
 
@@ -254,18 +254,18 @@ class ImportCsv extends ModeleImports
 				if (getDolGlobalString('IMPORT_CSV_FORCE_CHARSET')) {	// Forced charset
 					if (strtolower($conf->global->IMPORT_CSV_FORCE_CHARSET) == 'utf8') {
 						$newarrayres[$key]['val'] = $val;
-						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
+						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we consider it's null
 					} else {
 						$newarrayres[$key]['val'] = mb_convert_encoding($val, 'UTF-8', 'ISO-8859-1');
-						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
+						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we consider it's null
 					}
 				} else { // Autodetect format (UTF8 or ISO)
 					if (utf8_check($val)) {
 						$newarrayres[$key]['val'] = $val;
-						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
+						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we consider it's null
 					} else {
 						$newarrayres[$key]['val'] = mb_convert_encoding($val, 'UTF-8', 'ISO-8859-1');
-						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
+						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we consider it's null
 					}
 				}
 			}
@@ -424,7 +424,7 @@ class ImportCsv extends ModeleImports
 										} else {
 											$resultload = dol_include_once($file);
 											if (empty($resultload)) {
-												dol_print_error('', 'Error trying to call file='.$file.', class='.$class.', method='.$method);
+												dol_print_error(null, 'Error trying to call file='.$file.', class='.$class.', method='.$method);
 												break;
 											}
 											$classinstance = new $class($this->db);
@@ -503,7 +503,7 @@ class ImportCsv extends ModeleImports
 										} else {
 											$resultload = dol_include_once($file);
 											if (empty($resultload)) {
-												dol_print_error('', 'Error trying to call file='.$file.', class='.$class.', method='.$method.', code='.$code);
+												dol_print_error(null, 'Error trying to call file='.$file.', class='.$class.', method='.$method.', code='.$code);
 												break;
 											}
 											$classinstance = new $class($this->db);
@@ -539,7 +539,7 @@ class ImportCsv extends ModeleImports
 									} else {
 										$resultload = dol_include_once($file);
 										if (empty($resultload)) {
-											dol_print_error('', 'Error trying to call file='.$file.', class='.$class.', method='.$method.', units='.$units);
+											dol_print_error(null, 'Error trying to call file='.$file.', class='.$class.', method='.$method.', units='.$units);
 											break;
 										}
 										$classinstance = new $class($this->db);
@@ -638,7 +638,7 @@ class ImportCsv extends ModeleImports
 									$method = $objimport->array_import_convertvalue[0][$val]['method'];
 									$resultload = dol_include_once($file);
 									if (empty($resultload)) {
-										dol_print_error('', 'Error trying to call file='.$file.', class='.$class.', method='.$method);
+										dol_print_error(null, 'Error trying to call file='.$file.', class='.$class.', method='.$method);
 										break;
 									}
 									$classinstance = new $class($this->db);
@@ -808,7 +808,7 @@ class ImportCsv extends ModeleImports
 									$method = $objimport->array_import_convertvalue[0][$fieldname]['method'];
 									$resultload = dol_include_once($file);
 									if (empty($resultload)) {
-										dol_print_error('', 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method);
+										dol_print_error(null, 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method);
 										break;
 									}
 									$classinstance = new $class($this->db);
@@ -917,7 +917,7 @@ class ImportCsv extends ModeleImports
 								// This is required when updating table with some extrafields. When inserting a record in parent table, we can make
 								// a direct insert into subtable extrafields, but when me wake an update, the insertid is defined and the child record
 								// may already exists. So we rescan the extrafield table to know if record exists or not for the rowid.
-								// Note: For extrafield tablename, we have in importfieldshidden_array an enty 'extra.fk_object'=>'lastrowid-tableparent' so $keyfield is 'fk_object'
+								// Note: For extrafield tablename, we have in importfieldshidden_array an entry 'extra.fk_object'=>'lastrowid-tableparent' so $keyfield is 'fk_object'
 								$sqlSelect = "SELECT rowid FROM ".$tablename;
 
 								if (empty($keyfield)) {
@@ -1036,7 +1036,7 @@ class ImportCsv extends ModeleImports
 					}
 					/*else
 					{
-						dol_print_error('','ErrorFieldListEmptyFor '.$alias."/".$tablename);
+						dol_print_error(null,'ErrorFieldListEmptyFor '.$alias."/".$tablename);
 					}*/
 				}
 

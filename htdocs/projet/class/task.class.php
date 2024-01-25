@@ -83,14 +83,21 @@ class Task extends CommonObjectLine
 	public $duration_effective; // total of time spent on this task
 	public $planned_workload;
 	public $date_c;
-	public $date_start;
-	public $date_end;
 	public $progress;
+
+	/**
+	 * @deprecated Use date_start instead
+	 */
+	public $dateo;
+
+	public $date_start;
 
 	/**
 	 * @deprecated Use date_end instead
 	 */
 	public $datee;
+
+	public $date_end;
 
 	/**
 	 * @var int ID
@@ -149,7 +156,7 @@ class Task extends CommonObjectLine
 	public $tobill;
 	public $billed;
 
-	// Properties to store project informations
+	// Properties to store project information
 	public $projectref;
 	public $projectstatus;
 	public $projectlabel;
@@ -305,7 +312,7 @@ class Task extends CommonObjectLine
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id					Id object
-	 *  @param	int		$ref				ref object
+	 *  @param	string	$ref				ref object
 	 *  @param	int		$loadparentdata		Also load parent data
 	 *  @return int 		        		Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
@@ -324,8 +331,8 @@ class Task extends CommonObjectLine
 		$sql .= " t.duration_effective,";
 		$sql .= " t.planned_workload,";
 		$sql .= " t.datec,";
-		$sql .= " t.dateo,";
-		$sql .= " t.datee,";
+		$sql .= " t.dateo as date_start,";
+		$sql .= " t.datee as date_end,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_valid,";
 		$sql .= " t.fk_statut,";
@@ -369,8 +376,8 @@ class Task extends CommonObjectLine
 				$this->duration_effective = $obj->duration_effective;
 				$this->planned_workload = $obj->planned_workload;
 				$this->date_c = $this->db->jdate($obj->datec);
-				$this->date_start = $this->db->jdate($obj->dateo);
-				$this->date_end				= $this->db->jdate($obj->datee);
+				$this->date_start = $this->db->jdate($obj->date_start);
+				$this->date_end				= $this->db->jdate($obj->date_end);
 				$this->fk_user_creat		= $obj->fk_user_creat;
 				$this->fk_user_valid		= $obj->fk_user_valid;
 				$this->fk_statut			= $obj->fk_statut;
@@ -1177,7 +1184,7 @@ class Task extends CommonObjectLine
 			return -1;
 		}
 
-		/* Liste des taches et role sur les projets ou taches */
+		/* Liste des taches et role sur les projects ou taches */
 		$sql = "SELECT pt.rowid as pid, ec.element_id, ctc.code, ctc.source";
 		if ($userp) {
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as pt";
@@ -1296,7 +1303,7 @@ class Task extends CommonObjectLine
 
 		// Check parameters
 		if (!is_object($user)) {
-			dol_print_error('', "Method addTimeSpent was called with wrong parameter user");
+			dol_print_error(null, "Method addTimeSpent was called with wrong parameter user");
 			return -1;
 		}
 
@@ -1816,7 +1823,7 @@ class Task extends CommonObjectLine
 				}
 			}
 
-			// Update hourly rate of this time spent entry, but only if it was not set initialy
+			// Update hourly rate of this time spent entry, but only if it was not set initially
 			$res_update = 1;
 			if (empty($timespent->thm) || getDolGlobalString('TIMESPENT_ALWAYS_UPDATE_THM')) {
 				$resql_thm_user = $this->db->query("SELECT thm FROM " . MAIN_DB_PREFIX . "user WHERE rowid = " . ((int) $timespent->fk_user));
@@ -1977,15 +1984,15 @@ class Task extends CommonObjectLine
 			$projectstatic = new Project($this->db);
 			$projectstatic->fetch($ori_project_id);
 
-			//Origin project strat date
+			//Origin project start date
 			$orign_project_dt_start = $projectstatic->date_start;
 
-			//Calcultate new task start date with difference between origin proj start date and origin task start date
+			//Calculate new task start date with difference between origin proj start date and origin task start date
 			if (!empty($clone_task->date_start)) {
 				$clone_task->date_start = $now + $clone_task->date_start - $orign_project_dt_start;
 			}
 
-			//Calcultate new task end date with difference between origin proj end date and origin task end date
+			//Calculate new task end date with difference between origin proj end date and origin task end date
 			if (!empty($clone_task->date_end)) {
 				$clone_task->date_end = $now + $clone_task->date_end - $orign_project_dt_start;
 			}
@@ -2224,8 +2231,8 @@ class Task extends CommonObjectLine
 	/**
 	 *  Create an intervention document on disk using template defined into PROJECT_TASK_ADDON_PDF
 	 *
-	 *  @param	string		$modele			force le modele a utiliser ('' par defaut)
-	 *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param	string		$modele			force le modele a utiliser ('' par default)
+	 *  @param	Translate	$outputlangs	object lang a utiliser pour traduction
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
 	 *  @param  int			$hideref        Hide ref
@@ -2257,7 +2264,7 @@ class Task extends CommonObjectLine
 	/**
 	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 * @param	User	$user   Objet user
+	 * @param	User	$user   Object user
 	 * @return WorkboardResponse|int Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user)
@@ -2265,7 +2272,7 @@ class Task extends CommonObjectLine
 		// phpcs:enable
 		global $conf, $langs;
 
-		// For external user, no check is done on company because readability is managed by public status of project and assignement.
+		// For external user, no check is done on company because readability is managed by public status of project and assignment.
 		//$socid = $user->socid;
 		$socid = 0;
 
@@ -2275,7 +2282,7 @@ class Task extends CommonObjectLine
 		// List of tasks (does not care about permissions. Filtering will be done later)
 		$sql = "SELECT p.rowid as projectid, p.fk_statut as projectstatus,";
 		$sql .= " t.rowid as taskid, t.progress as progress, t.fk_statut as status,";
-		$sql .= " t.dateo as date_start, t.datee as datee";
+		$sql .= " t.dateo as date_start, t.datee as date_end";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 		//if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
@@ -2314,7 +2321,8 @@ class Task extends CommonObjectLine
 				$task_static->projectstatus = $obj->projectstatus;
 				$task_static->progress = $obj->progress;
 				$task_static->fk_statut = $obj->status;
-				$task_static->date_end = $this->db->jdate($obj->datee);
+				$task_static->date_start = $this->db->jdate($obj->date_start);
+				$task_static->date_end = $this->db->jdate($obj->date_end);
 
 				if ($task_static->hasDelay()) {
 					$response->nbtodolate++;
@@ -2329,15 +2337,13 @@ class Task extends CommonObjectLine
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Charge indicateurs this->nb de tableau de bord
+	 *      Load indicators this->nb for state board
 	 *
 	 *      @return     int         Return integer <0 if ko, >0 if ok
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $user;
 
 		$mine = 0;

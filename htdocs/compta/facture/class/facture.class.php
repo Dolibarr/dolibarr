@@ -129,7 +129,7 @@ class Facture extends CommonInvoice
 	public $user_valid;
 
 	/**
-	 * @var int ID
+	 * @var int|null ID
 	 */
 	public $fk_user_valid;
 
@@ -2452,7 +2452,7 @@ class Facture extends CommonInvoice
 			$this->type = self::TYPE_STANDARD;
 		}
 		if (isset($this->subtype)) {
-			$this->subtype = trim($this->subtype);
+			$this->subtype = (int) trim($this->subtype);
 		}
 		if (isset($this->ref)) {
 			$this->ref = trim($this->ref);
@@ -3007,7 +3007,7 @@ class Facture extends CommonInvoice
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Tags the invoice as incompletely paied and call the trigger BILL_UNPAYED
+	 *  Tags the invoice as incompletely paid and call the trigger BILL_UNPAYED
 	 *	This method is used when a direct debit (fr:prelevement) is refused
 	 * 	or when a canceled invoice is reopened.
 	 *
@@ -3242,7 +3242,7 @@ class Facture extends CommonInvoice
 				} else {
 					if ($key == 'EMAIL') {
 						// Check for mandatory
-						if (getDolGlobalString('SOCIETE_EMAIL_INVOICE_MANDATORY') && !isValidEMail($this->thirdparty->email)) {
+						if (getDolGlobalString('SOCIETE_EMAIL_INVOICE_MANDATORY') && !isValidEmail($this->thirdparty->email)) {
 							$langs->load("errors");
 							$this->error = $langs->trans("ErrorBadEMail", $this->thirdparty->email).' ('.$langs->trans("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
 							dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
@@ -3856,7 +3856,7 @@ class Facture extends CommonInvoice
 				$ref_ext = '';
 			}
 
-			$remise_percent = price2num($remise_percent);
+			$remise_percent = (float) price2num($remise_percent);
 			$qty = price2num($qty);
 			$pu_ht = price2num($pu_ht);
 			$pu_ht_devise = price2num($pu_ht_devise);
@@ -4117,7 +4117,7 @@ class Facture extends CommonInvoice
 				$ref_ext = '';
 			}
 
-			$remise_percent = price2num($remise_percent);
+			$remise_percent = (float) price2num($remise_percent);
 			$qty			= price2num($qty);
 			$pu 			= price2num($pu);
 			$pu_ht_devise = price2num($pu_ht_devise);
@@ -4125,8 +4125,8 @@ class Facture extends CommonInvoice
 			if (!preg_match('/\((.*)\)/', $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
-			$txlocaltax1	= price2num($txlocaltax1);
-			$txlocaltax2	= price2num($txlocaltax2);
+			$txlocaltax1	= (float) price2num($txlocaltax1);
+			$txlocaltax2	= (float) price2num($txlocaltax2);
 
 			// Check parameters
 			if ($type < 0) {
@@ -4633,7 +4633,7 @@ class Facture extends CommonInvoice
 			}
 
 			if (!$mybool) {
-				dol_print_error('', 'Failed to include file '.$file);
+				dol_print_error(null, 'Failed to include file '.$file);
 				return '';
 			}
 
@@ -5152,15 +5152,13 @@ class Facture extends CommonInvoice
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *      @return         int     Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $conf, $user;
 
 		$this->nb = array();
@@ -5810,9 +5808,9 @@ class Facture extends CommonInvoice
 							$joinFileName = [];
 							$joinFileMime = [];
 							if ($arraymessage->joinfiles == 1 && !empty($tmpinvoice->last_main_doc)) {
-								$joinFile[] = DOL_DATA_ROOT.$tmpinvoice->last_main_doc;
+								$joinFile[] = DOL_DATA_ROOT.'/'.$tmpinvoice->last_main_doc;
 								$joinFileName[] = basename($tmpinvoice->last_main_doc);
-								$joinFileMime[] = dol_mimetype(DOL_DATA_ROOT.$tmpinvoice->last_main_doc);
+								$joinFileMime[] = dol_mimetype(DOL_DATA_ROOT.'/'.$tmpinvoice->last_main_doc);
 							}
 
 							// Mail Creation
@@ -6623,10 +6621,10 @@ class FactureLigne extends CommonInvoiceLine
 	 * Delete line in database
 	 *
 	 * @param 	User 	$tmpuser    User that deletes
-	 * @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
+	 * @param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
 	 * @return 	int		           	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($tmpuser = null, $notrigger = false)
+	public function delete($tmpuser = null, $notrigger = 0)
 	{
 		global $user;
 

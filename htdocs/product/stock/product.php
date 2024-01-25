@@ -67,7 +67,7 @@ $cancel = GETPOST('cancel', 'alpha');
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$stocklimit = GETPOST('seuil_stock_alerte');
+$stocklimit = (float) GETPOST('seuil_stock_alerte');
 $desiredstock = GETPOST('desiredstock');
 $cancel = GETPOST('cancel', 'alpha');
 $fieldid = isset($_GET["ref"]) ? 'ref' : 'rowid';
@@ -153,7 +153,7 @@ if ($reshook < 0) {
 if ($action == 'setcost_price') {
 	if ($id) {
 		$result = $object->fetch($id);
-		$object->cost_price = price2num($cost_price);
+		$object->cost_price = (float) price2num($cost_price);
 		$result = $object->update($object->id, $user);
 		if ($result > 0) {
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
@@ -190,7 +190,7 @@ if ($action == 'addlimitstockwarehouse' && $user->hasRight('produit', 'creer')) 
 			}
 		} else {
 			// Create
-			$pse->fk_entrepot = GETPOST('fk_entrepot', 'int');
+			$pse->fk_entrepot = GETPOSTINT('fk_entrepot');
 			$pse->fk_product  	 	 = $id;
 			$pse->seuil_stock_alerte = GETPOST('seuil_stock_alerte');
 			$pse->desiredstock  	 = GETPOST('desiredstock');
@@ -859,7 +859,7 @@ if ($id > 0 || $ref) {
 			}
 
 
-			// Calculating a theorical value
+			// Calculating a theoretical value
 			print '<tr><td>';
 			print $form->textwithpicto($langs->trans("VirtualStock"), $langs->trans("VirtualStockDesc"));
 			print '</td>';

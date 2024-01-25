@@ -12,11 +12,12 @@
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2017      Rui Strecht          <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018-2023 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2023      Lenin Rivas      	<lenin.rivas777@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,12 +48,12 @@ abstract class CommonObject
 	const TRIGGER_PREFIX = ''; // to be overridden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc.
 
 	/**
-	 * @var string ID of module.
+	 * @var string		ID of module.
 	 */
 	public $module;
 
 	/**
-	 * @var DoliDb		Database handler (result of a new DoliDB)
+	 * @var DoliDB		Database handler (result of a new DoliDB)
 	 */
 	public $db;
 
@@ -73,7 +74,7 @@ abstract class CommonObject
 	public $error;
 
 	/**
-	 * @var string 		Error string that is hidden but can be used to store complementatry technical code.
+	 * @var string 		Error string that is hidden but can be used to store additional technical code
 	 */
 	public $errorhidden;
 
@@ -93,13 +94,14 @@ abstract class CommonObject
 	public $element;
 
 	/**
-	 * @var string    Fieldname with ID of parent key if this field has a parent
+	 * @var string		Fieldname with the ID of the parent object, if this object has a parent
 	 */
 	public $fk_element;
 
 	/**
 	 * @var string 		Name to use for 'features' parameter to check module permissions user->rights->feature with restrictedArea().
-	 * 					Undefined means same value than $element. Can be use to force a check on another element for example for class of line, we mention here the parent element.
+	 * 					Undefined means same value than $element.
+	 *					Can be use to force a check on another element (for example for class of a line, we mention here its parent element).
 	 */
 	public $element_for_permission;
 
@@ -164,12 +166,12 @@ abstract class CommonObject
 	private $linkedObjectsFullLoaded = array();
 
 	/**
-	 * @var CommonObject To store a cloned copy of object before to edit it and keep track of old properties
+	 * @var CommonObject	To store a cloned copy of the object before editing it (to keep track of its former properties)
 	 */
 	public $oldcopy;
 
 	/**
-	 * @var string To store old value of a modified ref
+	 * @var string 		To store the old value of a modified reference
 	 */
 	public $oldref;
 
@@ -184,10 +186,11 @@ abstract class CommonObject
 	public $restrictiononfksoc = 0;
 
 
-	// Following vars are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
+	// The following vars are used by some objects only.
+	// We keep these properties in CommonObject in order to provide common methods using them.
 
 	/**
-	 * @var array<string,mixed>		Can be used to pass information when only object is provided to method
+	 * @var array<string,mixed>		Can be used to pass information when only the object is provided to the method
 	 */
 	public $context = array();
 
@@ -201,7 +204,7 @@ abstract class CommonObject
 	public $canvas;
 
 	/**
-	 * @var Project 	The related project object
+	 * @var Project|null 	The related project object
 	 * @see fetch_projet()
 	 */
 	public $project;
@@ -238,7 +241,7 @@ abstract class CommonObject
 	public $contact_id;
 
 	/**
-	 * @var Societe 	A related thirdparty object
+	 * @var Societe|null 	A related thirdparty object
 	 * @see fetch_thirdparty()
 	 */
 	public $thirdparty;
@@ -282,7 +285,7 @@ abstract class CommonObject
 	public $ref;
 
 	/**
-	 * @var string 		An external reference for the object
+	 * @var string 		An external reference to the object
 	 */
 	public $ref_ext;
 
@@ -302,7 +305,7 @@ abstract class CommonObject
 	public $newref;
 
 	/**
-	 * @var int 		The object's status. Prefer use of status.
+	 * @var int 		The object's status. Use status instead.
 	 * @deprecated
 	 * @see setStatut()
 	 */
@@ -316,74 +319,74 @@ abstract class CommonObject
 
 
 	/**
-	 * @var string
+	 * @var string		Country name
 	 * @see getFullAddress()
 	 */
 	public $country;
 
 	/**
-	 * @var int
+	 * @var int			Country ID
 	 * @see getFullAddress(), country
 	 */
 	public $country_id;
 
 	/**
-	 * @var string		The ISO country code on 2 chars.
+	 * @var string		ISO country code on 2 chars
 	 * @see getFullAddress(), isInEEC(), country
 	 */
 	public $country_code;
 
 	/**
-	 * @var string
+	 * @var string		State name
 	 * @see getFullAddress()
 	 */
 	public $state;
 
 	/**
-	 * @var int
+	 * @var int			State ID
 	 * @see getFullAddress(), state
 	 */
 	public $state_id;
 
 	/**
-	 * @var string
+	 * @var string		State code
 	 * @see getFullAddress(), $state
 	 */
 	public $state_code;
 
 	/**
-	 * @var int
+	 * @var int			Region ID
 	 * @see getFullAddress(), $region_code, $region
 	 */
 	public $region_id;
 
 	/**
-	 * @var string
+	 * @var string		Region code
 	 * @see getFullAddress(), $region_id, $region
 	 */
 	public $region_code;
 
 	/**
-	 * @var string
+	 * @var string		Region name
 	 * @see getFullAddress(), $region_id, $region_code
 	 */
 	public $region;
 
 
 	/**
-	 * @var int
+	 * @var int			Barcode type
 	 * @see fetch_barcode()
 	 */
 	public $barcode_type;
 
 	/**
-	 * @var string
+	 * @var string		Code of the barcode type
 	 * @see fetch_barcode(), barcode_type
 	 */
 	public $barcode_type_code;
 
 	/**
-	 * @var string
+	 * @var string		Label of the barcode type
 	 * @see fetch_barcode(), barcode_type
 	 */
 	public $barcode_type_label;
@@ -450,27 +453,27 @@ abstract class CommonObject
 	public $fk_multicurrency;
 
 	/**
-	 * @var string Multicurrency code
+	 * @var string		Multicurrency code
 	 */
 	public $multicurrency_code;
 
 	/**
-	 * @var float Multicurrency rate
+	 * @var float		Multicurrency rate
 	 */
 	public $multicurrency_tx;
 
 	/**
-	 * @var float Multicurrency total without tax
+	 * @var float 		Multicurrency total amount excluding taxes (HT = "Hors Taxe" in French)
 	 */
 	public $multicurrency_total_ht;
 
 	/**
-	 * @var float Multicurrency total vat
+	 * @var float 		Multicurrency total VAT amount (TVA = "Taxe sur la Valeur Ajoutée" in French)
 	 */
 	public $multicurrency_total_tva;
 
 	/**
-	 * @var float Multicurrency total with tax
+	 * @var float 		Multicurrency total amount including taxes (TTC = "Toutes Taxes Comprises" in French)
 	 */
 	public $multicurrency_total_ttc;
 
@@ -525,13 +528,13 @@ abstract class CommonObject
 	public $note;
 
 	/**
-	 * @var float 		Total amount before taxes
+	 * @var float 		Total amount excluding taxes (HT = "Hors Taxe" in French)
 	 * @see update_price()
 	 */
 	public $total_ht;
 
 	/**
-	 * @var float 		Total VAT amount
+	 * @var float 		Total VAT amount (TVA = "Taxe sur la Valeur Ajoutée" in French)
 	 * @see update_price()
 	 */
 	public $total_tva;
@@ -549,7 +552,7 @@ abstract class CommonObject
 	public $total_localtax2;
 
 	/**
-	 * @var float 		Total amount with taxes
+	 * @var float 		Total amount including taxes (TTC = "Toutes Taxes Comprises" in French)
 	 * @see update_price()
 	 */
 	public $total_ttc;
@@ -560,7 +563,7 @@ abstract class CommonObject
 	public $lines;
 
 	/**
-	 * @var mixed		Contains comments
+	 * @var mixed		Comments
 	 * @see fetchComments()
 	 */
 	public $comments = array();
@@ -587,39 +590,39 @@ abstract class CommonObject
 
 	// Dates
 	/**
-	 * @var integer|string date_creation
+	 * @var integer|string|null		Object creation date
 	 */
 	public $date_creation;
 
 	/**
-	 * @var integer|string $date_validation;
+	 * @var integer|string|null		Object last validation date
 	 */
-	public $date_validation; // Date validation
+	public $date_validation;
 
 	/**
-	 * @var integer|string $date_modification;
+	 * @var integer|string|null		Object last modification date
 	 */
-	public $date_modification; // Date last change (tms field)
+	public $date_modification;
 
 	/**
-	 * @var integer|string $date_modification;
-	 * @deprecated 		Use date_modification
+	 * @var integer|string|null
+	 * @deprecated 					Use $date_modification
 	 */
 	public $date_update;
 
 	/**
-	 * @var integer|string $date_cloture;
+	 * @var integer|string|null		Object closing date
 	 */
-	public $date_cloture; // Date closing (tms field)
+	public $date_cloture;
 
 	/**
-	 * @var User	User author/creation
-	 * @deprecated	Store only id in user_creation_id
+	 * @var User		User author/creation
+	 * @deprecated		Store only id in user_creation_id
 	 */
 	public $user_author;
 
 	/**
-	 * @var User	User author/creation
+	 * @var User		User author/creation
 	 * @deprecated
 	 */
 	public $user_creation;
@@ -630,19 +633,19 @@ abstract class CommonObject
 	public $user_creation_id;
 
 	/**
-	 * @var User	User of validation
+	 * @var User		User of validation
 	 * @deprecated
 	 */
 	public $user_valid;
 
 	/**
-	 * @var User	User of validation
+	 * @var User		User of validation
 	 * @deprecated
 	 */
 	public $user_validation;
 
 	/**
-	 * @var int			User id of validation
+	 * @var int|null		User id of validation
 	 */
 	public $user_validation_id;
 
@@ -658,7 +661,7 @@ abstract class CommonObject
 	public $user_modification;
 
 	/**
-	 * @var int			User id last modifier
+	 * @var int			User ID who last modified the object
 	 */
 	public $user_modification_id;
 
@@ -686,17 +689,17 @@ abstract class CommonObject
 	public $totalpaid;
 
 	/**
-	 * @var array		Array with label of status
+	 * @var array		Array with labels of status
 	 */
 	public $labelStatus = array();
 
 	/**
-	 * @var array		Array with short label of status
+	 * @var array		Array with short labels of status
 	 */
 	public $labelStatusShort = array();
 
 	/**
-	 * @var array		Array to store list of tpl
+	 * @var array		Array to store lists of tpl
 	 */
 	public $tpl;
 
@@ -717,7 +720,7 @@ abstract class CommonObject
 	public $nbphoto;
 
 	/**
-	 * @var string output
+	 * @var string 		output
 	 */
 	public $output;
 
@@ -739,28 +742,28 @@ abstract class CommonObject
 	protected $childtablesoncascade = array();
 
 	/**
-	 * @var Product Populate by fetch_product()
+	 * @var Product 	Populated by fetch_product()
 	 */
 	public $product;
 
 	/**
-	 * @var int Populate by setPaymentTerms()
+	 * @var int 		Populated by setPaymentTerms()
 	 */
 	public $cond_reglement_supplier_id;
 
 	/**
-	 * @var string Populate by setPaymentTerms()
+	 * @var string 		Populated by setPaymentTerms()
 	 */
 	public $deposit_percent;
 
 
 	/**
-	 * @var string Populate by setRetainedWarrantyPaymentTerms()
+	 * @var string 		Populated by setRetainedWarrantyPaymentTerms()
 	 */
 	public $retained_warranty_fk_cond_reglement;
 
 	/**
-	 * @var int Populate by setWarehouse()
+	 * @var int 		Populated by setWarehouse()
 	 */
 	public $warehouse_id;
 
@@ -768,8 +771,8 @@ abstract class CommonObject
 
 
 	/**
-	 * Check an object id/ref exists
-	 * If you don't need/want to instantiate object and just need to know if object exists, use this method instead of fetch
+	 * Check if an object id or ref exists
+	 * If you don't need or want to instantiate the object and just need to know if the object exists, use this method instead of fetch
 	 *
 	 *  @param	string	$element   	String of element ('product', 'facture', ...)
 	 *  @param	int		$id      	Id of object
@@ -2182,7 +2185,7 @@ abstract class CommonObject
 		global $conf, $user;
 
 		if (!$this->table_element) {
-			dol_print_error('', get_class($this)."::load_previous_next_ref was called on object with property table_element not defined");
+			dol_print_error(null, get_class($this)."::load_previous_next_ref was called on object with property table_element not defined");
 			return -1;
 		}
 		if ($fieldid == 'none') {
@@ -2926,12 +2929,11 @@ abstract class CommonObject
 	 *  Change the shipping method
 	 *
 	 *  @param      int     $shipping_method_id     Id of shipping method
-	 *  @param      bool    $notrigger              false=launch triggers after, true=disable triggers
+	 *  @param      int    	$notrigger              0=launch triggers after, 1=disable triggers
 	 *  @param      User	$userused               Object user
-	 *
-	 *  @return     int              1 if OK, 0 if KO
+	 *  @return     int              				1 if OK, 0 if KO
 	 */
-	public function setShippingMethod($shipping_method_id, $notrigger = false, $userused = null)
+	public function setShippingMethod($shipping_method_id, $notrigger = 0, $userused = null)
 	{
 		global $user;
 
@@ -3051,11 +3053,11 @@ abstract class CommonObject
 	 *  Change the bank account
 	 *
 	 *  @param		int		$fk_account		Id of bank account
-	 *  @param      bool    $notrigger      false=launch triggers after, true=disable triggers
+	 *  @param      int    	$notrigger      0=launch triggers after, 1=disable triggers
 	 *  @param      User	$userused		Object user
-	 *  @return		int				1 if OK, 0 if KO
+	 *  @return		int						1 if OK, 0 if KO
 	 */
-	public function setBankAccount($fk_account, $notrigger = false, $userused = null)
+	public function setBankAccount($fk_account, $notrigger = 0, $userused = null)
 	{
 		global $user;
 
@@ -4717,7 +4719,7 @@ abstract class CommonObject
 
 		// Check parameters
 		if (!isset($this->childtables) || !is_array($this->childtables) || count($this->childtables) == 0) {
-			dol_print_error('Called isObjectUsed on a class with property this->childtables not defined');
+			dol_print_error(null, 'Called isObjectUsed on a class with property this->childtables not defined');
 			return -1;
 		}
 
@@ -5174,7 +5176,7 @@ abstract class CommonObject
 				// Define output language and label
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					if (property_exists($this, 'socid') && !is_object($this->thirdparty)) {
-						dol_print_error('', 'Error: Method printObjectLine was called on an object and object->fetch_thirdparty was not done before');
+						dol_print_error(null, 'Error: Method printObjectLine was called on an object and object->fetch_thirdparty was not done before');
 						return;
 					}
 
@@ -6001,7 +6003,7 @@ abstract class CommonObject
 		global $langs, $conf;
 
 		if (!empty(self::TRIGGER_PREFIX) && strpos($triggerName, self::TRIGGER_PREFIX . '_') !== 0) {
-			dol_print_error('', 'The trigger "' . $triggerName . '" does not start with "' . self::TRIGGER_PREFIX . '_" as required.');
+			dol_print_error(null, 'The trigger "' . $triggerName . '" does not start with "' . self::TRIGGER_PREFIX . '_" as required.');
 			exit;
 		}
 		if (!is_object($langs)) {	// If lang was not defined, we set it. It is required by run_triggers().
@@ -6460,12 +6462,12 @@ abstract class CommonObject
 						//dol_syslog("double value"." on ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
 						$new_array_options[$key] = $value;
 						break;
-					/*case 'select':	// Not required, we chose value='0' for undefined values
-						 if ($value=='-1')
-						 {
-							 $this->array_options[$key] = null;
-						 }
-						 break;*/
+						/*case 'select':	// Not required, we chose value='0' for undefined values
+							 if ($value=='-1')
+							 {
+								 $this->array_options[$key] = null;
+							 }
+							 break;*/
 					case 'password':
 						$algo = '';
 						if ($this->array_options[$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options'])) {
@@ -6479,7 +6481,7 @@ abstract class CommonObject
 								if (is_object($this->oldcopy)) {	// If this->oldcopy is not defined, we can't know if we change attribute or not, so we must keep value
 									//var_dump('iii'.$algo.' '.$this->oldcopy->array_options[$key].' -> '.$this->array_options[$key]);
 									if (isset($this->oldcopy->array_options[$key]) && $this->array_options[$key] == $this->oldcopy->array_options[$key]) {
-										// If old value encrypted in database is same than submited new value, it means we don't change it, so we don't update.
+										// If old value encrypted in database is same than submitted new value, it means we don't change it, so we don't update.
 										if ($algo == 'dolcrypt') {	// dolibarr reversible encryption
 											if (!preg_match('/^dolcrypt:/', $this->array_options[$key])) {
 												$new_array_options[$key] = dolEncrypt($this->array_options[$key]);	// warning, must be called when on the master
@@ -6863,6 +6865,7 @@ abstract class CommonObject
 						$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					}
 					break;
+				case 'price':
 				case 'double':
 					$value = price2num($value);
 					if (!is_numeric($value) && $value != '') {
@@ -6877,19 +6880,14 @@ abstract class CommonObject
 
 					$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					break;
-				/*case 'select':	// Not required, we chose value='0' for undefined values
-					 if ($value=='-1')
-					 {
-						$new_array_options["options_".$key] = $value;
+					/*case 'select':	// Not required, we chose value='0' for undefined values
+						 if ($value=='-1')
+						 {
+							$new_array_options["options_".$key] = $value;
 
-						$this->array_options["options_".$key] = $new_array_options["options_".$key];
-					 }
-					 break;*/
-				case 'price':
-					$new_array_options["options_".$key] = price2num($this->array_options["options_".$key]);
-
-					$this->array_options["options_".$key] = $new_array_options["options_".$key];
-					break;
+							$this->array_options["options_".$key] = $new_array_options["options_".$key];
+						 }
+						 break;*/
 				case 'password':
 					$algo = '';
 					if ($this->array_options["options_".$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options'])) {
@@ -6903,7 +6901,7 @@ abstract class CommonObject
 							//var_dump($key.' '.$this->array_options["options_".$key].' '.$algo);
 							if (is_object($this->oldcopy)) {		// If this->oldcopy is not defined, we can't know if we change attribute or not, so we must keep value
 								//var_dump($this->oldcopy->array_options["options_".$key]); var_dump($this->array_options["options_".$key]);
-								if (isset($this->oldcopy->array_options["options_".$key]) && $this->array_options["options_".$key] == $this->oldcopy->array_options["options_".$key]) {	// If old value encrypted in database is same than submited new value, it means we don't change it, so we don't update.
+								if (isset($this->oldcopy->array_options["options_".$key]) && $this->array_options["options_".$key] == $this->oldcopy->array_options["options_".$key]) {	// If old value encrypted in database is same than submitted new value, it means we don't change it, so we don't update.
 									if ($algo == 'dolcrypt') {	// dolibarr reversible encryption
 										if (!preg_match('/^dolcrypt:/', $this->array_options["options_".$key])) {
 											$new_array_options["options_".$key] = dolEncrypt($this->array_options["options_".$key]);	// warning, must be called when on the master
@@ -6974,35 +6972,35 @@ abstract class CommonObject
 						$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					}
 					break;
-				/*
-				case 'link':
-					$param_list = array_keys($attributeParam['options']);
-					// 0 : ObjectName
-					// 1 : classPath
-					$InfoFieldList = explode(":", $param_list[0]);
-					dol_include_once($InfoFieldList[1]);
-					if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
-					{
-						if ($value == '-1')	// -1 is key for no defined in combo list of objects
+					/*
+					case 'link':
+						$param_list = array_keys($attributeParam['options']);
+						// 0 : ObjectName
+						// 1 : classPath
+						$InfoFieldList = explode(":", $param_list[0]);
+						dol_include_once($InfoFieldList[1]);
+						if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
 						{
-							$new_array_options[$key] = '';
-						} elseif ($value) {
-							$object = new $InfoFieldList[0]($this->db);
-							if (is_numeric($value)) $res = $object->fetch($value);	// Common case
-							else $res = $object->fetch('', $value);					// For compatibility
+							if ($value == '-1')	// -1 is key for no defined in combo list of objects
+							{
+								$new_array_options[$key] = '';
+							} elseif ($value) {
+								$object = new $InfoFieldList[0]($this->db);
+								if (is_numeric($value)) $res = $object->fetch($value);	// Common case
+								else $res = $object->fetch('', $value);					// For compatibility
 
-							if ($res > 0) $new_array_options[$key] = $object->id;
-							else {
-								$this->error = "Id/Ref '".$value."' for object '".$object->element."' not found";
-								$this->db->rollback();
-								return -1;
+								if ($res > 0) $new_array_options[$key] = $object->id;
+								else {
+									$this->error = "Id/Ref '".$value."' for object '".$object->element."' not found";
+									$this->db->rollback();
+									return -1;
+								}
 							}
+						} else {
+							dol_syslog('Error bad setup of extrafield', LOG_WARNING);
 						}
-					} else {
-						dol_syslog('Error bad setup of extrafield', LOG_WARNING);
-					}
-					break;
-				*/
+						break;
+					*/
 				case 'checkbox':
 				case 'chkbxlst':
 					$new_array_options = array();
@@ -7082,7 +7080,7 @@ abstract class CommonObject
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
 	 *  @return int                 		-1=error, O=did nothing, 1=OK
-	 *  @see updateExtraFields(), insertExtraLanguages()
+	 *  @see updateExtraField(), insertExtraLanguages()
 	 */
 	public function updateExtraLanguages($key, $trigger = null, $userused = null)
 	{
@@ -8255,7 +8253,7 @@ abstract class CommonObject
 	{
 		global $langs;
 		if (empty($msg)) {
-			$msg = $langs->trans("UnknowError");
+			$msg = $langs->trans("UnknownError");
 		}
 
 		$this->error = $this->validateFieldsErrors[$fieldKey] = $msg;
@@ -8877,7 +8875,7 @@ abstract class CommonObject
 	/**
 	 * Returns the rights used for this class
 	 *
-	 * @return stdClass		Object of permission for the module
+	 * @return int|stdClass		Object of permission for the module
 	 */
 	public function getRights()
 	{
@@ -9617,10 +9615,10 @@ abstract class CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function createCommon(User $user, $notrigger = false)
+	public function createCommon(User $user, $notrigger = 0)
 	{
 		global $langs;
 
@@ -9911,10 +9909,10 @@ abstract class CommonObject
 	 * Update object into database
 	 *
 	 * @param  User $user      	User that modifies
-	 * @param  bool $notrigger 	false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger 	0=launch triggers after, 1=disable triggers
 	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function updateCommon(User $user, $notrigger = false)
+	public function updateCommon(User $user, $notrigger = 0)
 	{
 		dol_syslog(get_class($this)."::updateCommon update", LOG_DEBUG);
 
@@ -10013,11 +10011,11 @@ abstract class CommonObject
 	 * Delete object in database
 	 *
 	 * @param 	User 	$user       			User that deletes
-	 * @param 	bool 	$notrigger  			false=launch triggers after, true=disable triggers
+	 * @param 	int 	$notrigger  			0=launch triggers after, 1=disable triggers
 	 * @param	int		$forcechilddeletion		0=no, 1=Force deletion of children
 	 * @return 	int             				Return integer <0 if KO, 0=Nothing done because object has child, >0 if OK
 	 */
-	public function deleteCommon(User $user, $notrigger = false, $forcechilddeletion = 0)
+	public function deleteCommon(User $user, $notrigger = 0, $forcechilddeletion = 0)
 	{
 		dol_syslog(get_class($this)."::deleteCommon delete", LOG_DEBUG);
 
@@ -10225,13 +10223,11 @@ abstract class CommonObject
 	 *
 	 *	@param  User	$user       User that delete
 	 *  @param	int		$idline		Id of line to delete
-	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
+	 *  @param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
 	 *  @return int         		>0 if OK, <0 if KO
 	 */
-	public function deleteLineCommon(User $user, $idline, $notrigger = false)
+	public function deleteLineCommon(User $user, $idline, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		$tmpforobjectclass = get_class($this);

@@ -105,7 +105,7 @@ class Interventions extends DolibarrApi
 	 * @param int		   $page				Page number
 	 * @param string		   $thirdparty_ids			Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string           $sqlfilters              Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                                   Array of order objects
 	 *
 	 * @throws RestException
@@ -199,7 +199,7 @@ class Interventions extends DolibarrApi
 		$result = $this->_validate($request_data);
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->fichinter->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -268,7 +268,7 @@ class Interventions extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->fichinter->context['caller'] = $request_data['caller'];
 				continue;
 			}

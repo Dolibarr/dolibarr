@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2014-2016  Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2014-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,7 +109,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 		$object->date_start = $date_start;
 		$object->date_end = $date_end;
 		$object->label = GETPOST('label', 'alpha');
-		$object->status = GETPOST('status', 'int');
+		$object->status = GETPOSTINT('status');
 		$object->datec = dol_now();
 
 		if (empty($object->date_start) && empty($object->date_end)) {
@@ -152,7 +152,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 		$object->date_start = GETPOST("fiscalyear") ? $date_start : '';
 		$object->date_end = GETPOST("fiscalyearend") ? $date_end : '';
 		$object->label = GETPOST('label', 'alpha');
-		$object->status = GETPOST('status', 'int');
+		$object->status = GETPOSTINT('status');
 
 		$result = $object->update($user);
 
@@ -181,7 +181,7 @@ if ($action == 'create') {
 	$title = $langs->trans("NewFiscalYear");
 }
 
-$help_url = "EN:Module_Double_Entry_Accounting";
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
 llxHeader('', $title, $help_url);
 

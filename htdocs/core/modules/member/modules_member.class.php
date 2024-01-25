@@ -59,7 +59,7 @@ abstract class ModelePDFMember extends CommonDocGenerator
 
 
 /**
- *  Classe mere des modeles de numerotation des references de members
+ *  Class mere des modeles de numerotation des references de members
  */
 abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 {

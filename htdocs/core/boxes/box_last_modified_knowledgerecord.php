@@ -46,7 +46,7 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 	public $boxlabel;
 
 	/**
-	 * @var array box dependancies
+	 * @var array box dependencies
 	 */
 	public $depends = array("knowledgemanagement");
 

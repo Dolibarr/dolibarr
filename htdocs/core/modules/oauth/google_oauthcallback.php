@@ -203,7 +203,7 @@ if (!GETPOST('code')) {
 			$url .= '&login_hint='.urlencode(GETPOST('username'));
 		}
 
-		// Check that the redirect_uri that wil be used is same than url of current domain
+		// Check that the redirect_uri that will be used is same than url of current domain
 
 		// Define $urlwithroot
 		global $dolibarr_main_url_root;
@@ -283,7 +283,7 @@ if (!GETPOST('code')) {
 
 				// Verify that email is a verified email
 				/*if (empty($userinfo['email_verified'])) {
-					setEventMessages($langs->trans('Bad value for email, emai lwas not verified by Google'), null, 'errors');
+					setEventMessages($langs->trans('Bad value for email, email lwas not verified by Google'), null, 'errors');
 					$errorincheck++;
 				}*/
 
@@ -343,7 +343,7 @@ if (!GETPOST('code')) {
 			} else {
 				// If call back to url for a OAUTH2 login
 				if ($forlogin) {
-					$_SESSION["dol_loginmesg"] = "Failed to login using Google. OAuth callback URL retreives a token with non valid data";
+					$_SESSION["dol_loginmesg"] = "Failed to login using Google. OAuth callback URL retrieves a token with non valid data";
 					$errorincheck++;
 				}
 			}
