@@ -3988,30 +3988,27 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *  Return if third party is a company (Business) or an end user (Consumer)
+	 *  Check if third party is a company (Business) or an end user (Consumer)
 	 *
-	 *  @return    boolean     true=is a company, false=a and user
+	 *  @return		boolean		if a company: true || if a user: false
 	 */
 	public function isACompany()
 	{
-		global $conf;
-
 		// Define if third party is treated as company (or not) when nature is unknown
-		$isacompany = !getDolGlobalString('MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES') ? 0 : 1; // 0 by default
+		$isACompany = !getDolGlobalString('MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES') ? false : true;
 		if (!empty($this->tva_intra)) {
-			$isacompany = 1;
+			$isACompany = true;
 		} elseif (!empty($this->idprof1) || !empty($this->idprof2) || !empty($this->idprof3) || !empty($this->idprof4) || !empty($this->idprof5) || !empty($this->idprof6)) {
-			$isacompany = 1;
+			$isACompany = true;
 		} elseif (!empty($this->typent_code) && $this->typent_code != 'TE_UNKNOWN') {
 			// TODO Add a field is_a_company into dictionary
 			if (preg_match('/^TE_PRIVATE/', $this->typent_code)) {
-				$isacompany = 0;
+				$isACompany = false;
 			} else {
-				$isacompany = 1;
+				$isACompany = true;
 			}
 		}
-
-		return $isacompany;
+		return $isACompany;
 	}
 
 	/**
