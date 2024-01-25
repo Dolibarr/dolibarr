@@ -38,6 +38,8 @@
 
 ALTER TABLE llx_product_perentity ADD COLUMN pmp double(24,8);
 
+ALTER TABLE llx_projet_task ADD COLUMN fk_user_modif integer after fk_user_creat;
+
 
 -- v19
 
