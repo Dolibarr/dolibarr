@@ -310,8 +310,7 @@ class Societe extends CommonObject
 	public $status = 1;
 
 	/**
-	 * Id of region
-	 * @var int
+	 * @var string	region code
 	 */
 	public $region_code;
 
@@ -1334,17 +1333,17 @@ class Societe extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->id = $id;
-		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
-		$this->name = $this->name ? trim($this->name) : trim($this->nom);
-		$this->nom = $this->name; // For backward compatibility
-		$this->name_alias = trim($this->name_alias);
+		$this->id 			= $id;
+		$this->entity 		= ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
+		$this->name 		= $this->name ? trim($this->name) : trim($this->nom);
+		$this->nom 			= $this->name; // For backward compatibility
+		$this->name_alias 	= trim($this->name_alias);
 		$this->ref_ext		= trim($this->ref_ext);
-		$this->address		= $this->address ? trim($this->address) : trim($this->address);
-		$this->zip = $this->zip ? trim($this->zip) : trim($this->zip);
-		$this->town = $this->town ? trim($this->town) : trim($this->town);
-		$this->state_id = trim($this->state_id);
-		$this->country_id = ($this->country_id > 0) ? $this->country_id : 0;
+		$this->address		= trim($this->address);
+		$this->zip 			= trim($this->zip);
+		$this->town 		= trim($this->town);
+		$this->state_id 	= (is_numeric($this->state_id)) ? (int) trim($this->state_id) : 0;
+		$this->country_id 	= ($this->country_id > 0) ? $this->country_id : 0;
 		$this->phone		= trim($this->phone);
 		$this->phone		= preg_replace("/\s/", "", $this->phone);
 		$this->phone		= preg_replace("/\./", "", $this->phone);
@@ -1361,14 +1360,14 @@ class Societe extends CommonObject
 		$this->idprof4		= trim($this->idprof4);
 		$this->idprof5		= (!empty($this->idprof5) ? trim($this->idprof5) : '');
 		$this->idprof6		= (!empty($this->idprof6) ? trim($this->idprof6) : '');
-		$this->prefix_comm = trim($this->prefix_comm);
+		$this->prefix_comm 	= trim($this->prefix_comm);
 		$this->outstanding_limit = price2num($this->outstanding_limit);
 		$this->order_min_amount = price2num($this->order_min_amount);
 		$this->supplier_order_min_amount = price2num($this->supplier_order_min_amount);
 
-		$this->tva_assuj			= trim($this->tva_assuj);
+		$this->tva_assuj			= (is_numeric($this->tva_assuj)) ? (int) trim($this->tva_assuj) : 0;
 		$this->tva_intra			= dol_sanitizeFileName($this->tva_intra, '');
-		$this->vat_reverse_charge	= empty($this->vat_reverse_charge) ? '0' : '1';
+		$this->vat_reverse_charge	= empty($this->vat_reverse_charge) ? 0 : 1;
 		if (empty($this->status)) {
 			$this->status = 0;
 		}
@@ -1388,12 +1387,7 @@ class Societe extends CommonObject
 		$this->localtax1_value = trim($this->localtax1_value);
 		$this->localtax2_value = trim($this->localtax2_value);
 
-		if ($this->capital != '') {
-			$this->capital = price2num(trim($this->capital));
-		}
-		if (!is_numeric($this->capital)) {
-			$this->capital = ''; // '' = undef
-		}
+		$this->capital = (!empty($this->capital)) ? (float) price2num(trim($this->capital)) : 0;
 
 		$this->effectif_id = trim($this->effectif_id);
 		$this->forme_juridique_code = trim($this->forme_juridique_code);
@@ -1550,7 +1544,7 @@ class Societe extends CommonObject
 				$sql .= ",localtax2_value =0.000";
 			}
 
-			$sql .= ",capital = ".($this->capital == '' ? "null" : $this->capital);
+			$sql .= ",capital = ".($this->capital == 0 ? "null" : $this->capital);
 
 			$sql .= ",prefix_comm = ".(!empty($this->prefix_comm) ? "'".$this->db->escape($this->prefix_comm)."'" : "null");
 
@@ -1913,7 +1907,7 @@ class Societe extends CommonObject
 				$this->state_id     = $obj->state_id;
 				$this->state_code   = $obj->state_code;
 				$this->region_id    = $obj->region_id;
-				$this->region_code = $obj->region_code;
+				$this->region_code  = $obj->region_code;
 				$this->state        = ($obj->state != '-' ? $obj->state : '');
 
 				$transcode = $langs->trans('StatusProspect'.$obj->fk_stcomm);
