@@ -966,6 +966,7 @@ function GETPOSTINT($paramname, $method = 0)
  *  @param  string          $paramname      Name of the $_GET or $_POST parameter
  *  @param  string|int      $rounding       Type of rounding ('', 'MU', 'MT, 'MS', 'CU', 'CT', integer) {@see price2num()}
  *  @return float                           Value converted into float
+ *  @since	Dolibarr V20
  */
 function GETPOSTFLOAT($paramname, $rounding = '')
 {
