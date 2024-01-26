@@ -468,7 +468,7 @@ class modStockTransfer extends DolibarrModules
 	{
 		// Get free id for insert
 		$newid = 0;
-		$sql = "SELECT max(rowid) newid from ".MAIN_DB_PREFIX."c_type_contact";
+		$sql = "SELECT MAX(rowid) newid from ".MAIN_DB_PREFIX."c_type_contact";
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);

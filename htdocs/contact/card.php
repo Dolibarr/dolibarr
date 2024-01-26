@@ -586,7 +586,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$object = new Contact($db);
 		$result = $object->fetch($id);
 		if ($result <= 0) {
-			dol_print_error('', $object->error);
+			dol_print_error(null, $object->error);
 		}
 	}
 	$objcanvas->assign_values($action, $object->id, $object->ref); // Set value for templates
@@ -624,7 +624,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	if ($user->hasRight('societe', 'contact', 'creer')) {
 		if ($action == 'create') {
 			/*
-			 * Fiche en mode creation
+			 * Card in create mode
 			 */
 			$object->canvas = $canvas;
 
@@ -929,7 +929,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print "</form>";
 		} elseif ($action == 'edit' && !empty($id)) {
 			/*
-			 * Fiche en mode edition
+			 * Card in edit mode
 			 */
 
 			// We set country_id, and country_code label of the chosen country

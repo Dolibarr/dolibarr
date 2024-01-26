@@ -102,4 +102,5 @@ ActionCommCategoriesArea=Esemény kategóriák
 WebsitePagesCategoriesArea=Oldal-tároló kategóriák
 KnowledgemanagementsCategoriesArea=KM cikk kategóriák
 UseOrOperatorForCategories=Használja az „OR” operátort a kategóriákhoz
-AddObjectIntoCategory=Assign the category
+AddObjectIntoCategory=Assign to the category
+Position=Pozíció

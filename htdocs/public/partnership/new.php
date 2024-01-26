@@ -491,7 +491,7 @@ if (empty($reshook) && $action == 'add') {
 							}
 						}
 					} else {
-						dol_print_error('', "Autosubscribe form is setup to ask an online payment for a not managed online payment");
+						dol_print_error(null, "Autosubscribe form is setup to ask an online payment for a not managed online payment");
 						exit;
 					}
 				}*/

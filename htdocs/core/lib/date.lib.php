@@ -102,7 +102,7 @@ function getServerTimeZoneInt($refgmtdate = 'now')
 		//print $refgmtdate.'='.$tmp;
 	} else {
 		$tmp = 0;
-		dol_print_error('', 'PHP version must be 5.3+');
+		dol_print_error(null, 'PHP version must be 5.3+');
 	}
 	$tz = round(($tmp < 0 ? 1 : -1) * abs($tmp / 3600));
 	return $tz;
