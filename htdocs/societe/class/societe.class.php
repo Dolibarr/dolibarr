@@ -1388,7 +1388,7 @@ class Societe extends CommonObject
 		$this->localtax1_value = trim($this->localtax1_value);
 		$this->localtax2_value = trim($this->localtax2_value);
 
-		$this->capital = (!empty($this->capital)) ? (float) price2num(trim($this->capital)) : 0;
+		$this->capital = ($this->capital != '') ? (float) price2num(trim($this->capital)) : null;
 
 		$this->effectif_id = trim($this->effectif_id);
 		$this->forme_juridique_code = trim($this->forme_juridique_code);
@@ -1545,7 +1545,7 @@ class Societe extends CommonObject
 				$sql .= ",localtax2_value =0.000";
 			}
 
-			$sql .= ",capital = ".($this->capital == 0 ? "null" : $this->capital);
+			$sql .= ",capital = ".($this->capital == null ? "null" : $this->capital);
 
 			$sql .= ",prefix_comm = ".(!empty($this->prefix_comm) ? "'".$this->db->escape($this->prefix_comm)."'" : "null");
 
