@@ -1751,7 +1751,7 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 		}
 
 		if (!$error) {
-			$clone_task->fk_project = GETPOST('projectid', 'int');
+			$clone_task->fk_project = GETPOSTINT('projectid');
 			$clone_task->ref = $defaultref;
 			$clone_task->label = $origin_task->label;
 			$clone_task->description = $origin_task->description;
