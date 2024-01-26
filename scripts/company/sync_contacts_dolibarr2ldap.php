@@ -48,6 +48,9 @@ $version = DOL_VERSION;
 $error = 0;
 $confirmed = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */
