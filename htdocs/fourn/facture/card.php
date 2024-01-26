@@ -2300,9 +2300,15 @@ if ($action == 'create') {
 						$("#socid").change(function() {
 							console.log("We have changed the company - Reload page");
 							// reload page
-							$("input[name=action]").val("create");
-							$("input[name=changecompany]").val("1");
-							$("form[name=add]").submit();
+							//$("input[name=action]").val("create");
+							//$("input[name=changecompany]").val("1");
+							//$("form[name=add]").submit();
+							var socid = $(this).val();
+							var projectid = "";
+							if ($(\'#projectid\').val() > 0) {
+								projectid = "&projectid="+$(\'#projectid\').val();
+							}
+							window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create"+projectid+"&socid="+socid;
 						});
 					});
 					</script>';
