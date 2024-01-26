@@ -4443,10 +4443,10 @@ class Facture extends CommonInvoice
 
 			$this->db->begin();
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-			$sql .= ' SET remise_percent = '.$remise;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
+			$sql .= " SET remise_percent = ".((float) $remise);
 			$sql .= " WHERE rowid = ".((int) $this->id);
-			$sql .= ' AND fk_statut = '.self::STATUS_DRAFT;
+			$sql .= " AND fk_statut = ".((int) self::STATUS_DRAFT);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
