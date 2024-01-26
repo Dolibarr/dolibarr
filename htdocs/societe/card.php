@@ -1261,7 +1261,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
                         	document.formsoc.private.value=1;
                         });
 
-						var canHaveCategoryIfNotCustomerProspectSupplier = ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT) ? '0' : '1') . ';
+						var canHaveCustomerCategoryIfNotCustomerProspect = ' . (getDolGlobalInt('THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT') ? '1' : '0') . ';
 
 						init_customer_categ();
 			  			$("#customerprospect").change(function() {
@@ -1269,7 +1269,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						});
 						function init_customer_categ() {
 								console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-								if (jQuery("#customerprospect").val() == 0 && !canHaveCategoryIfNotCustomerProspectSupplier)
+								if (jQuery("#customerprospect").val() == 0 && !canHaveCustomerCategoryIfNotCustomerProspect)
 								{
 									jQuery(".visibleifcustomer").hide();
 								}
@@ -2124,7 +2124,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
     				}
     			});
 
-				var canHaveCategoryIfNotCustomerProspectSupplier = ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT) ? '0' : '1') . ';
+				var canHaveCustomerCategoryIfNotCustomerProspect = ' . (getDolGlobalInt('THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT') ? '1' : '0') . ';
 
 				init_customer_categ();
 	  			$("#customerprospect").change(function() {
@@ -2132,7 +2132,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				});
        			function init_customer_categ() {
 					console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-					if (jQuery("#customerprospect").val() == 0 && !canHaveCategoryIfNotCustomerProspectSupplier)
+					if (jQuery("#customerprospect").val() == 0 && !canHaveCustomerCategoryIfNotCustomerProspect)
 					{
 						jQuery(".visibleifcustomer").hide();
 					}
@@ -3016,7 +3016,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Tags / categories
 		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 			// Customer
-			if ($object->prospect || $object->client || !empty($conf->global->THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT)) {
+			if ($object->prospect || $object->client || getDolGlobalInt('THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT')) {
 				print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
 				print '<td>';
 				print $form->showCategories($object->id, Categorie::TYPE_CUSTOMER, 1);
