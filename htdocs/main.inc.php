@@ -456,7 +456,7 @@ if (GETPOST('textbrowser', 'int') || (!empty($conf->browser->name) && $conf->bro
 
 // Force HTTPS if required ($conf->file->main_force_https is 0/1 or 'https dolibarr root url')
 // $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
-if (!empty($conf->file->main_force_https) && (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on') && !defined('NOHTTPSREDIRECT')) {
+if (!empty($conf->file->main_force_https) && isHTTPS() && !defined('NOHTTPSREDIRECT')) {
 	$newurl = '';
 	if (is_numeric($conf->file->main_force_https)) {
 		if ($conf->file->main_force_https == '1' && !empty($_SERVER["SCRIPT_URI"])) {	// If SCRIPT_URI supported by server
@@ -2213,17 +2213,18 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 			if (isset($_POST) && is_array($_POST)) {
 				foreach ($_POST as $key => $value) {
+					$key = preg_replace('/[^a-z0-9_\.\-\[\]]/i', '', $key);
 					if (in_array($key, array('action', 'massaction', 'password'))) {
 						continue;
 					}
 					if (!is_array($value)) {
 						if ($value !== '') {
-							$qs .= '&'.$key.'='.urlencode($value);
+							$qs .= '&'.urlencode($key).'='.urlencode($value);
 						}
 					} else {
 						foreach ($value as $value2) {
 							if (($value2 !== '') && (!is_array($value2))) {
-								$qs .= '&'.$key.'[]='.urlencode($value2);
+								$qs .= '&'.urlencode($key).'[]='.urlencode($value2);
 							}
 						}
 					}

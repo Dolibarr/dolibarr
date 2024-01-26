@@ -63,6 +63,8 @@ include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
 
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main
