@@ -1334,6 +1334,7 @@ class pdf_sponge extends ModelePDFFactures
 						$useonlinepayment++;
 					}
 					$parameters = array();
+					$action = '';
 					$reshook = $hookmanager->executeHooks('doShowOnlinePaymentUrl', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 					if ($reshook > 0) {
 						if (isset($hookmanager->resArray['showonlinepaymenturl'])) {
