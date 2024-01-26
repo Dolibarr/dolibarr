@@ -1545,7 +1545,7 @@ class Societe extends CommonObject
 				$sql .= ",localtax2_value =0.000";
 			}
 
-			$sql .= ",capital = ".($this->capital == null ? "null" : $this->capital);
+			$sql .= ",capital = ".($this->capital === null ? "null" : $this->capital);
 
 			$sql .= ",prefix_comm = ".(!empty($this->prefix_comm) ? "'".$this->db->escape($this->prefix_comm)."'" : "null");
 
