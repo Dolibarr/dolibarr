@@ -379,13 +379,12 @@ class PaymentVarious extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-
-		$this->tms = 0;
-		$this->datep = '';
-		$this->datev = '';
+		$this->tms = dol_now();
+		$this->datep = dol_now();
+		$this->datev = dol_now();
 		$this->sens = 0;
-		$this->amount = '';
-		$this->label = '';
+		$this->amount = 100;
+		$this->label = 'Specimen payment';
 		$this->accountancy_code = '';
 		$this->subledger_account = '';
 		$this->note = '';
