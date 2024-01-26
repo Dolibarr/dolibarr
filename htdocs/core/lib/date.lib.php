@@ -647,7 +647,7 @@ function dol_get_last_hour($date, $gm = 'tzserver')
  *	@param		int			$date		Date GMT
  * 	@param		mixed		$gm			False or 0 or 'tzserver' = Return date to compare with server TZ,
  * 										'gmt' to compare with GMT date.
- *  @return		int						Date for last hour of a given date
+ *  @return		int						Date for first hour of a given date
  */
 function dol_get_first_hour($date, $gm = 'tzserver')
 {
