@@ -283,7 +283,7 @@ The following changes may create regressions for some external modules, but were
 * Hidden option ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USEr_ON_SALARY_BANK_PAYMENT has been renamed into ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USER_ON_SALARY_BANK_PAYMENT
 * The delete() method of AdherentType, Contact, Delivery, MultiCurrency, CurrencyRate now need $user as first parameter.
 * A very high number of class properties (with old name in french) are now deprecated in favor of the property name in english.
-
+* The load of hook context productdao has been removed before calling loadvirtualstock. Modules must use the context of main parent page or 'all' for all cases.
 
 ***** ChangeLog for 18.0.4 compared to 18.0.3 *****
 FIX: $this->newref already exists and could have been modified by trigger but we still use a local variable for the filesystem-based renaming
