@@ -755,7 +755,7 @@ class FormMail extends Form
 			if (!empty($this->withtoccuser) && is_array($this->withtoccuser) && getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')) {
 				$out .= '<tr><td>';
 				$out .= $langs->trans("MailToCCUsers");
-				$out .= '</td>';
+				$out .= '</td></td>';
 
 				// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
 				$tmparray = $this->withtoccuser;
@@ -889,7 +889,7 @@ class FormMail extends Form
 
 			//input prompt AI
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-			if (isModEnabled('ai')) {
+			if (isModEnabled('ai') && getDolGlobalConst('AI_CHATGPT_API_KEY')) {
 				$out .= $this->getHtmlForInstruction();
 			}
 			// Message

@@ -25,6 +25,7 @@
  * \ingroup mailing
  * \brief 	Script to send a prepared and validated emaling from command line
  */
+
 if (!defined('NOSESSION')) {
 	define('NOSESSION', '1');
 }
@@ -77,6 +78,8 @@ if (!isModEnabled('mailing')) {
 	print 'Module Emailing not enabled';
 	exit(-1);
 }
+
+$hookmanager->initHooks(array('cli'));
 
 
 /*

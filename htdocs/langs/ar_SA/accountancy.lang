@@ -90,13 +90,13 @@ AccountancyAreaDescProd=الخطوة %s: تحديد حسابات المحاسب�
 
 AccountancyAreaDescBind=الخطوة %s: تحقق من الربط بين سطور %s الحالية وحساب المحاسبة ، لتمكين التطبيق من تسجيل المعاملات في دفتر الأستاذ بنقرة واحدة. إكمال الارتباطات المفقودة. لهذا ، استخدم إدخال القائمة %s.
 AccountancyAreaDescWriteRecords=الخطوة %s: اكتب المعاملات في دفتر الأستاذ. لهذا ، انتقل إلى القائمة <strong> %s </strong> ، وانقر فوق الزر <strong> %s </strong>.
-AccountancyAreaDescAnalyze=الخطوة %s: إضافة أو تحرير المعاملات الحالية وإنشاء التقارير والصادرات.
-
-AccountancyAreaDescClosePeriod=الخطوة %s: إغلاق الفترة لذا لا يمكننا إجراء تعديل في المستقبل.
+AccountancyAreaDescAnalyze=الخطوة %s: قراءة التقارير أو إنشاء ملفات تصدير لمحاسبين آخرين.
+AccountancyAreaDescClosePeriod=الخطوة %s: إغلاق الفترة حتى لا نتمكن من نقل المزيد من البيانات في نفس الفترة في المستقبل.
 
 TheFiscalPeriodIsNotDefined=لم يتم إكمال خطوة إلزامية في الإعداد (لم يتم تحديد الفترة المالية)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=لم تكتمل الخطوة الإلزامية في الإعداد (لم يتم تحديد رمز دفتر يومية المحاسبة لجميع الحسابات البنكية)
 Selectchartofaccounts=حدد مخطط الحسابات النشط
+CurrentChartOfAccount=الرسم البياني النشط الحالي للحساب
 ChangeAndLoad=تغيير و تحميل
 Addanaccount=إضافة حساب محاسبي
 AccountAccounting=حساب محاسبي
@@ -343,7 +343,7 @@ AccountingJournalType3=مشتريات
 AccountingJournalType4=بنك
 AccountingJournalType5=تقارير المصاريف
 AccountingJournalType8=الجرد
-AccountingJournalType9=Retained earnings
+AccountingJournalType9=الأرباح المحتجزة
 GenerationOfAccountingEntries=توليد القيود المحاسبية
 ErrorAccountingJournalIsAlreadyUse=هذه الدفتر مستخدم بالفعل
 AccountingAccountForSalesTaxAreDefinedInto=ملاحظة: تم تعريف حساب ضريبة المبيعات في القائمة <b> %s </b> - <b> %s </b>
@@ -446,16 +446,16 @@ AccountancyOneUnletteringModifiedSuccessfully=تم تعديل أحد ملفات 
 AccountancyUnletteringModifiedSuccessfully=تم تعديل %s بنجاح
 
 ## Closure
-AccountancyClosureStep1=الخطوة 1: التحقق من صحة حركات قفل و
-AccountancyClosureStep2=الخطوة 2: إغلاق الفترة المالية
+AccountancyClosureStep1=Step 1 : Validate and lock the movements
+AccountancyClosureStep2=Step 2 : Close the fiscal period
 AccountancyClosureStep3=الخطوة 3: استخراج الإدخالات (اختياري)
 AccountancyClosureClose=إغلاق الفترة المالية
-AccountancyClosureAccountingReversal=Extract and record "Retained earnings" entries
+AccountancyClosureAccountingReversal=استخرج و سجل إدخالات "الأرباح المحتجزة"
 AccountancyClosureStep3NewFiscalPeriod=الفترة المالية القادمة
-AccountancyClosureGenerateClosureBookkeepingRecords=Generate "Retained earnings" entries on the next fiscal period
-AccountancyClosureSeparateAuxiliaryAccounts=When generating the "Retained earnings" entries, detail the sub-ledger accounts
+AccountancyClosureGenerateClosureBookkeepingRecords=إنشاء إدخالات "الأرباح المحتجزة" في الفترة المالية التالية
+AccountancyClosureSeparateAuxiliaryAccounts=عند إنشاء إدخالات "الأرباح المحتجزة"، قم بتفصيل حسابات دفتر الأستاذ الفرعي
 AccountancyClosureCloseSuccessfully=تم إغلاق الفترة المالية بنجاح
-AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping entries for "Retained earnings" has been inserted successfully
+AccountancyClosureInsertAccountingReversalSuccessfully=تم إدخال إدخالات مسك الدفاتر الخاصة بـ "الأرباح المحتجزة" بنجاح
 
 ## Confirm box
 ConfirmMassUnletteringAuto=تأكيد عدم التسوية التلقائي للجميع
@@ -464,7 +464,7 @@ ConfirmMassUnletteringQuestion=هل أنت متأكد أنك تريد عدم ا�
 ConfirmMassDeleteBookkeepingWriting=تأكيد الحذف الضخم
 ConfirmMassDeleteBookkeepingWritingQuestion=سيؤدي هذا إلى حذف المعاملة من المحاسبة (سيتم حذف جميع إدخالات السطر المتعلقة بنفس المعاملة). هل أنت متأكد أنك تريد حذف الإدخالات %s المحددة؟
 AccountancyClosureConfirmClose=هل أنت متأكد أنك تريد إغلاق الفترة المالية الحالية؟ <span class="warning">أنت تدرك أن إغلاق الفترة المالية هو إجراء لا رجعة فيه و سيمنع بشكل دائم أي تعديل أو حذف للإدخالات خلال هذه الفترة</span>.
-AccountancyClosureConfirmAccountingReversal=Are you sure you want to record entries for the "Retained earnings" ?
+AccountancyClosureConfirmAccountingReversal=هل أنت متأكد أنك تريد تسجيل قيود "الأرباح المحتجزة"؟
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=لم يتم تنفيذ بعض خطوات الإعداد الإلزامية ، يرجى إكمالها

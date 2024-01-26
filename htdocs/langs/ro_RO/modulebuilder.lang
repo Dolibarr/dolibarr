@@ -183,3 +183,7 @@ DictionaryDeleted=Dicționarul <b>%s</b> a șters cu succes
 PropertyModuleUpdated=Proprietatea <b>%s</b> a fost actualizată cu succes
 InfoForApiFile=* Când generezi fișierul pentru prima dată, atunci toate metodele vor fi create <strong>pentru fiecare obiect.</strong><br>* Când faci clic pe <strong>eliminare</strong>, elimini toate metodele pentru doar <strong>obiectul selectat</strong>.
 SetupFile=Pagina pentru configurarea modulului
+EmailingSelectors=Selectori email-uri
+EmailingSelectorDesc=Poți genera și edita aici fișierele de clasă pentru a oferi noi selectori de destinatari de email pentru modulul de Email-uri în masă
+EmailingSelectorFile=Fișier selector email-uri
+NoEmailingSelector=Niciun fișier selector email-uri

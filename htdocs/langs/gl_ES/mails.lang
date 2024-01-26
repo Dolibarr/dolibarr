@@ -184,3 +184,5 @@ EmailOptedOut=O propietario do correo electrónico solicitou que non se poña en
 EvenUnsubscribe=Incluír correos electrónicos excluidos
 EvenUnsubscribeDesc=Incluír correos electrónicos excluidos cando seleccione correos electrónicos como destinos. Útil para correos electrónicos de servizo obrigatorio, por exemplo.
 XEmailsDoneYActionsDone=Correos electrónicos %s precalificados, correos electrónicos %s procesados correctamente (para %s rexistro/accións realizadas)
+helpWithAi=Engade instrucións
+YouCanMakeSomeInstructionForEmail=Pode facer algunhas instrucións para o seu correo electrónico (Exemplo: xerar imaxe no modelo de correo electrónico...)
