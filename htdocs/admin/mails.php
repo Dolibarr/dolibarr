@@ -88,6 +88,7 @@ if ($action == 'update' && !$cancel) {
 		dolibarr_set_const($db, "MAIN_MAIL_FORCE_SENDTO", GETPOST("MAIN_MAIL_FORCE_SENDTO", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_MAIL_ENABLED_USER_DEST_SELECT", GETPOST("MAIN_MAIL_ENABLED_USER_DEST_SELECT", 'int'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, 'MAIN_MAIL_NO_WITH_TO_SELECTED', GETPOST('MAIN_MAIL_NO_WITH_TO_SELECTED', 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, 'MAIN_MAIL_WITH_TO_SELECTED_CONTACT_CUSTOMER', GETPOST('MAIN_MAIL_WITH_TO_SELECTED_CONTACT_CUSTOMER', 'int'), 'chaine', 0, '', $conf->entity);
 		// Send mode parameters
 		dolibarr_set_const($db, "MAIN_MAIL_SENDMODE", GETPOST("MAIN_MAIL_SENDMODE", 'aZ09'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT", GETPOST("MAIN_MAIL_SMTP_PORT", 'int'), 'chaine', 0, '', $conf->entity);
@@ -644,7 +645,9 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_NO_WITH_TO_SELECTED").'</td><td>';
 	print $form->selectyesno('MAIN_MAIL_NO_WITH_TO_SELECTED', getDolGlobalString('MAIN_MAIL_NO_WITH_TO_SELECTED'), 1);
 	print '</td></tr>';
-
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_WITH_TO_SELECTED_CONTACT_CUSTOMER").'</td><td>';
+	print $form->selectyesno('MAIN_MAIL_WITH_TO_SELECTED_CONTACT_CUSTOMER', getDolGlobalString('MAIN_MAIL_WITH_TO_SELECTED_CONTACT_CUSTOMER'), 1);
+	print '</td></tr>';
 	print '</table>';
 
 	print dol_get_fiche_end();
@@ -940,7 +943,7 @@ if ($action == 'edit') {
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>'.yn(getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')).'</td></tr>';
 		//Disable autoselect to
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_NO_WITH_TO_SELECTED").'</td><td>'.yn(getDolGlobalString('MAIN_MAIL_NO_WITH_TO_SELECTED')).'</td></tr>';
-
+		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_WITH_TO_SELECTED_CONTACT_CUSTOMER").'</td><td>'.yn(!empty($conf->global->MAIN_MAIL_WITH_TO_SELECTED_CONTACT_CUSTOMER)).'</td></tr>';
 		print '</table>';
 		print '</div>';
 	}
