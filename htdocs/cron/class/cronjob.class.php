@@ -184,6 +184,11 @@ class Cronjob extends CommonObject
 	 */
 	public $autodelete;
 
+	/**
+	 * @var array 			Cronjob
+	 */
+	public $lines;
+
 
 	const STATUS_DISABLED = 0;
 	const STATUS_ENABLED = 1;
@@ -512,7 +517,6 @@ class Cronjob extends CommonObject
 
 	/**
 	 *  Load list of cron jobs in a memory array from the database
-	 *  @TODO Use object CronJob and not CronJobLine.
 	 *
 	 *  @param	string		$sortorder		sort order
 	 *  @param	string		$sortfield		sort field
