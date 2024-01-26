@@ -4433,7 +4433,7 @@ class Facture extends CommonInvoice
 	{
 		// Clean parameters
 		if (empty($remise)) {
-			$remise = 0.0;
+			$remise = 0;
 		}
 
 		if ($user->hasRight('facture', 'creer')) {
