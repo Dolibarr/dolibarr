@@ -35,7 +35,7 @@ function webportalAdminPrepareHead()
 	// $extrafields = new ExtraFields($db);
 	// $extrafields->fetch_name_optionals_label('myobject');
 
-	$langs->load("webportal@webportal");
+	$langs->load("website");
 
 	$h = 0;
 	$head = array();
@@ -74,9 +74,9 @@ function webportalAdminPrepareHead()
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@webportal:/webportal/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'webportal@webportal');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'website');
 
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'webportal@webportal', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'website', 'remove');
 
 	return $head;
 }
