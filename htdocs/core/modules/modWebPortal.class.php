@@ -53,7 +53,7 @@ class modWebPortal extends DolibarrModules
 		$this->family = "portal";
 
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '80';
+		$this->module_position = '47';
 
 		// Gives the possibility for the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
@@ -139,7 +139,7 @@ class modWebPortal extends DolibarrModules
 		$this->conflictwith = array();
 
 		// The language file dedicated to your module
-		$this->langfiles = array("webportal@webportal");
+		$this->langfiles = array("website");
 
 		// Prerequisites
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
@@ -165,7 +165,8 @@ class modWebPortal extends DolibarrModules
 			'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
 		)*/
 
-		if (!isset($conf->webportal) || !isset($conf->webportal->enabled)) {
+		// To avoid warnings
+		if (isModEnabled('webportal')) {
 			$conf->webportal = new stdClass();
 			$conf->webportal->enabled = 0;
 		}
@@ -202,7 +203,7 @@ class modWebPortal extends DolibarrModules
 		$this->dictionaries = array();
 		/* Example:
 		$this->dictionaries=array(
-			'langs'=>'webportal@webportal',
+			'langs'=>'website',
 			// List of tables we want to see into dictonnary editor
 			'tabname'=>array("table1", "table2", "table3"),
 			// Label of tables
@@ -287,7 +288,7 @@ class modWebPortal extends DolibarrModules
 			'mainmenu' => 'webportal',
 			'leftmenu' => '',
 			'url' => getDolGlobalString('WEBPORTAL_ROOT_URL', '/public/webportal/index.php'),
-			'langs' => 'webportal@webportal', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs' => 'website', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("webportal")', // Define condition to show or hide menu entry. Use 'isModEnabled("webportal")' if entry must be visible if module is enabled.
 			'perms' => '1', // Use 'perms'=>'$user->hasRight("webportal", "webportalpropal", "read")' if you want your menu with a permission rules
@@ -302,7 +303,7 @@ class modWebPortal extends DolibarrModules
 			'mainmenu'=>'webportal',
 			'leftmenu'=>'webportalpropal',
 			'url'=>'/webportal/webportalindex.php',
-			'langs'=>'webportal@webportal',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs'=>'website',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'isModEnabled("webportal")', // Define condition to show or hide menu entry. Use 'isModEnabled("webportal")' if entry must be visible if module is enabled.
 			'perms'=>'$user->hasRight("webportal", "webportalpropal", "read")',
@@ -316,7 +317,7 @@ class modWebPortal extends DolibarrModules
 			'mainmenu'=>'webportal',
 			'leftmenu'=>'webportal_webportalpropal_list',
 			'url'=>'/webportal/webportalpropal_list.php',
-			'langs'=>'webportal@webportal',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs'=>'website',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'isModEnabled("webportal")', // Define condition to show or hide menu entry. Use 'isModEnabled("webportal")' if entry must be visible if module is enabled.
 			'perms'=>'$user->hasRight("webportal", "webportalpropal", "read")'
@@ -330,7 +331,7 @@ class modWebPortal extends DolibarrModules
 			'mainmenu'=>'webportal',
 			'leftmenu'=>'webportal_webportalpropal_new',
 			'url'=>'/webportal/webportalpropal_card.php?action=create',
-			'langs'=>'webportal@webportal',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs'=>'website',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'isModEnabled("webportal")', // Define condition to show or hide menu entry. Use 'isModEnabled("webportal")' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'perms'=>'$user->hasRight("webportal", "webportalpropal", "write")'
@@ -349,7 +350,7 @@ class modWebPortal extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $langs;
+		//global $conf, $langs;
 
 		//$result = $this->_load_tables('/install/mysql/', 'webportal');
 		$result = $this->_load_tables('/webportal/sql/');
@@ -360,11 +361,11 @@ class modWebPortal extends DolibarrModules
 		// Create extrafields during init
 		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		//$extrafields = new ExtraFields($this->db);
-		//$result1=$extrafields->addExtraField('webportal_myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'webportal@webportal', 'isModEnabled("webportal")');
-		//$result2=$extrafields->addExtraField('webportal_myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'webportal@webportal', 'isModEnabled("webportal")');
-		//$result3=$extrafields->addExtraField('webportal_myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'webportal@webportal', 'isModEnabled("webportal")');
-		//$result4=$extrafields->addExtraField('webportal_myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'webportal@webportal', 'isModEnabled("webportal")');
-		//$result5=$extrafields->addExtraField('webportal_myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'webportal@webportal', 'isModEnabled("webportal")');
+		//$result1=$extrafields->addExtraField('webportal_myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'website', 'isModEnabled("webportal")');
+		//$result2=$extrafields->addExtraField('webportal_myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'website', 'isModEnabled("webportal")');
+		//$result3=$extrafields->addExtraField('webportal_myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'website', 'isModEnabled("webportal")');
+		//$result4=$extrafields->addExtraField('webportal_myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'website', 'isModEnabled("webportal")');
+		//$result5=$extrafields->addExtraField('webportal_myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'website', 'isModEnabled("webportal")');
 
 		// Permissions
 		$this->remove($options);

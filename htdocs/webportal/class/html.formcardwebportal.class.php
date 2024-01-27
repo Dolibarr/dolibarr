@@ -161,7 +161,7 @@ class FormCardWebPortal
 		dol_include_once('/webportal/class/webportal' . $elementEn . '.class.php');
 
 		// Load translation files required by the page
-		$langs->loadLangs(array('webportal@webportal', 'other'));
+		$langs->loadLangs(array('website', 'other'));
 
 		// Get parameters
 		//$id = $id > 0 ? $id : GETPOST('id', 'int');
