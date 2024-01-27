@@ -269,13 +269,13 @@ class ProfidLibTest extends PHPUnit\Framework\TestCase
 	{
 		// Tests for NIF
 		$this->assertEquals(1, isValidTinForES(""));			// valid NIF
-  		$this->assertEquals(-1, isValidTinForES(""));			// valid regex, but invalid control key
+		$this->assertEquals(-1, isValidTinForES(""));			// valid regex, but invalid control key
 		// Tests for CIF
 		$this->assertEquals(2, isValidTinForES(""));			// valid CIF
-  		$this->assertEquals(-2, isValidTinForES(""));			// valid regex, but invalid control key
+		$this->assertEquals(-2, isValidTinForES(""));			// valid regex, but invalid control key
 		// Tests for NIE
 		$this->assertEquals(3, isValidTinForES(""));			// valid NIE
-  		$this->assertEquals(-3, isValidTinForES(""));			// valid regex, but invalid control key
+		$this->assertEquals(-3, isValidTinForES(""));			// valid regex, but invalid control key
 		// Tests for unknown error
 		$this->assertEquals(-4, isValidTinForES(""));			// invalid regex for both NIF, CIF and NIE
 	}
