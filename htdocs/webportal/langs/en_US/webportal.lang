@@ -27,6 +27,7 @@ WebPortalDescription = Public web portal module for membership and partnership
 # Admin page
 #
 WebPortalSetup = WebPortal setup
+WebPortalCSS=Web portal CSS
 Settings = Settings
 WebPortalSetupPage = WebPortal setup page
 WEBPORTAL_ROOT_URL = Public access url
