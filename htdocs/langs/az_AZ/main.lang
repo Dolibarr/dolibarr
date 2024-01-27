@@ -10,16 +10,16 @@ DIRECTION=ltr
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
 # freeserif is for Tamil
-FONTFORPDF=helvetica
+FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
 SeparatorThousand=,
 FormatDateShort=%m/%d/%Y
 FormatDateShortInput=%m/%d/%Y
-FormatDateShortJava=AA/gg/yyyy
-FormatDateShortJavaInput=AA/gg/yyyy
-FormatDateShortJQuery=mm/gg/yy
-FormatDateShortJQueryInput=mm/gg/yy
+FormatDateShortJava=MM/dd/yyyy
+FormatDateShortJavaInput=MM/dd/yyyy
+FormatDateShortJQuery=MM/dd/yy
+FormatDateShortJQueryInput=MM/dd/yy
 FormatHourShortJQuery=HH:MI
 FormatHourShort=%I:%M %p
 FormatHourShortDuration=%H:%M

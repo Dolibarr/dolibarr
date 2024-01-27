@@ -9,26 +9,26 @@ DIRECTION=ltr
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil
-FONTFORPDF=ሄልቬቲካ
+# freeserif is for Tamil and Ethiopian
+FONTFORPDF=freeserif
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
 SeparatorThousand=,
 FormatDateShort=%m/%d/%Y
 FormatDateShortInput=%m/%d/%Y
-FormatDateShortJava=ወወ/ቀን/ዓዓ
-FormatDateShortJavaInput=ወወ/ቀን/ዓዓ
-FormatDateShortJQuery=ሚሜ/ቀን/ዓ
-FormatDateShortJQueryInput=ሚሜ/ቀን/ዓ
+FormatDateShortJava=MM/dd/yyyy
+FormatDateShortJavaInput=MM/dd/yyyy
+FormatDateShortJQuery=mm/dd/yy
+FormatDateShortJQueryInput=mm/dd/yy
 FormatHourShortJQuery=HH:MI
 FormatHourShort=%I:%M %p
-FormatHourShortDuration=%H፡%M
-FormatDateTextShort=%b %d፣ %Y
-FormatDateText=%B %d፣ %Y
+FormatHourShortDuration=%H:%M
+FormatDateTextShort=%b %d, %Y
+FormatDateText=%B %d, %Y
 FormatDateHourShort=%m/%d/%Y %I:%M %p
 FormatDateHourSecShort=%m/%d/%Y %I:%M:%S %p
-FormatDateHourTextShort=%b %d፣ %Y፣ %I:%M %p
-FormatDateHourText=%B %d፣ %Y፣ %I:%M %p
+FormatDateHourTextShort=%b %d, %Y, %I:%M %p
+FormatDateHourText=%B %d, %Y, %I:%M %p
 DatabaseConnection=የውሂብ ጎታ ግንኙነት
 NoTemplateDefined=ለዚህ ኢሜይል አይነት ምንም አብነት የለም።
 AvailableVariables=የሚገኙ ተለዋዋጮች

@@ -169,7 +169,7 @@ class modMyModule extends DolibarrModules
 			'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
 		)*/
 
-		if (!isset($conf->mymodule) || !isset($conf->mymodule->enabled)) {
+		if (!isModEnabled("mymodule")) {
 			$conf->mymodule = new stdClass();
 			$conf->mymodule->enabled = 0;
 		}
