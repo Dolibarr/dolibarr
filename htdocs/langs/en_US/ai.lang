@@ -1,3 +1,4 @@
 AiDescription=AI (Artificial Intelligence) features
 AiDescriptionLong=Provides AI (Artificial Intelligence) features in different part of the application. Need external AI API. 
-AI_KEY_API_CHATGPT= Key for IA api 
+AI_KEY_API_CHATGPT= Key for IA api
+AiSetup=AI module setup
