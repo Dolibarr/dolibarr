@@ -161,8 +161,8 @@ Visibility=Visibility
 Everyone=Everyone
 AssignedContacts=Assigned contacts
 WebsiteTypeLabel=Type of Web site
-WebsiteTypeDolibarrWebsite=Web site (Module WebSite)
-WebsiteTypeDolibarrPortal=Native and ready to use web portal (Module WebPortal)
+WebsiteTypeDolibarrWebsite=Web site (Module WebSites CMS)
+WebsiteTypeDolibarrPortal=Native and ready to use web portal (Module Web Portal)
 WebPortalURL=Web portal URL 
 NewWebsiteAccount=New accounts for websites
 
