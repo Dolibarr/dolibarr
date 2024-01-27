@@ -41,7 +41,6 @@ $modulepart = GETPOST('modulepart', 'aZ09');    // Used by actions_setmoduleopti
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
-$type = 'myobject';
 
 // Access control
 if (!$user->admin) {
@@ -59,7 +58,6 @@ if (!class_exists('FormSetup')) {
 }
 
 $formSetup = new FormSetup($db);
-
 
 require_once __DIR__ . '/../class/webPortalTheme.class.php';
 $webPortalTheme = new WebPortalTheme();
@@ -92,14 +90,17 @@ $item = $formSetup->newItem('WEBPORTAL_BANNER_BACKGROUND_IS_DARK')->setAsYesNo()
 $setupnotempty += count($formSetup->items);
 
 
-$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-
 
 /*
  * Actions
  */
 
 include DOL_DOCUMENT_ROOT . '/core/actions_setmoduleoptions.inc.php';
+
+// Force always edit mode
+if (empty($action) || $action == 'update') {
+	$action = 'edit';
+}
 
 
 /*

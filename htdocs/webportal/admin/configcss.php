@@ -38,6 +38,10 @@ $hookmanager->initHooks(array('webportalsetup', 'globalsetup'));
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
+if (empty($action)) {
+	$action = 'edit';
+}
+
 // Access control
 if (!$user->admin) {
 	accessforbidden();

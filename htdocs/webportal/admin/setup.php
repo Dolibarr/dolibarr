@@ -38,6 +38,10 @@ $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 $modulepart = GETPOST('modulepart', 'aZ09');    // Used by actions_setmoduleoptions.inc.php
 
+if (empty($action)) {
+	$action = 'edit';
+}
+
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
@@ -219,6 +223,10 @@ if ($action == 'updateMask') {
 	}
 }
 
+// Force always edit mode
+if (empty($action) || $action == 'update') {
+	$action = 'edit';
+}
 
 /*
  * View
