@@ -165,12 +165,12 @@ function isValidTinForBE($str)
 
 /**
  *  Check the syntax validity of a Spanish (ES) Tax Identification Number (TIN), where:
- *  - NIF = Número de Identificación Fiscal
- *  - CIF = Código de Identificación Fiscal
+ *  - NIF = Número de Identificación Fiscal (used for residents only before 2008. Used for both residents and companies since 2008.)
+ *  - CIF = Código de Identificación Fiscal (used for companies only before 2008. Replaced by NIF since 2008.)
  *  - NIE = Número de Identidad de Extranjero
  *
  *  @param		string		$str		TIN to check
- *  @return		int						1 if NIF ok, 2 if CIF ok, 3 if NIE ok, -1 if NIF bad, -2 if CIF bad, -3 if NIE bad, 0 if unexpected bad
+ *  @return		int						1 if NIF ok, 2 if CIF ok, 3 if NIE ok, -1 if NIF bad, -2 if CIF bad, -3 if NIE bad, -4 if unexpected bad
  *  @since		Dolibarr V20
  */
 function isValidTinForES($str)
