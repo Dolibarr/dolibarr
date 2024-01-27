@@ -2310,7 +2310,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		// Local tax was not saved into table llx_product on old version. So we will use value linked to VAT code.
 		$localtaxarray = getLocalTaxesFromRate($object->tva_tx.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), 0, $mysoc, $mysoc);
 		// Define part of HT, VAT, TTC
-		$resultarray = calcul_price_total(1, $pu, 0, $object->tva_tx, 1, 1, 0, $object->price_base_type, $object->recuperableonly, $object->type, $mysoc, $localtaxarray);
+		$resultarray = calcul_price_total(1, $pu, 0, $object->tva_tx, 1, 1, 0, $object->price_base_type, $prodcustprice->recuperableonly, $object->type, $mysoc, $localtaxarray);
 		// Calcul du total ht sans remise
 		$total_ht = $resultarray[0];
 		$total_vat = $resultarray[1];
