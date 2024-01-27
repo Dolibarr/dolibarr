@@ -184,6 +184,7 @@ BackToLoginPage=חזרה לדף הכניסה
 AuthenticationDoesNotAllowSendNewPassword=מצב האימות הוא <b>%s</b>.<br>במצב כזה, Dolibarr לא יכול לדעת ולשנות את הסיסמה שלך.<br>יש ליצור קשר עם מנהל המערכת אם ברצונך לשנות את הסיסמה שלך.
 EnableGDLibraryDesc=התקן או הפעל את ספריית GD בהתקנת PHP כדי להשתמש באפשרות זו.
 ProfIdShortDesc=<b>מזהה פרופיל %s</b> הוא מידע התלוי במדינה של צד שלישי.<br>לדוגמה, עבור מדינה <b>%s</b>, זהו קוד <b>%s</b>.
+StatsByAmount=סטטיסטיקות על כמות המוצרים/השירותים
 DolibarrDemo=דמו של Dolibarr ERP/CRM
 StatsByNumberOfUnits=סטטיסטיקות לסך כמויות המוצרים/השירותים
 StatsByNumberOfEntities=סטטיסטיקות למספר הישויות המתייחסות (מספר חשבוניות, או הזמנות...)
