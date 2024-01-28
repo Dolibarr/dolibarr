@@ -1096,10 +1096,16 @@ if ($num) {
 				}
 				print "</tr>\n";
 
-				print '<tr class="oddeven nohover'.(in_array($tmpfieldlist, array('topic', 'joinfiles')) ? ' nobottom' : '').'" id="tr-'.$tmpfieldlist.'-'.$rowid.'">';
-				print '<td colspan="10">';
-
+				$idParts = [];
 				$fieldsforcontent = array('topic', 'email_from','joinfiles', 'content');
+				foreach ($fieldsforcontent as $field) {
+					$idParts[] = $field;
+				}
+				$nobottomClass = (in_array('topic', $idParts) || in_array('joinfiles', $idParts)) ? ' nobottom' : '';
+				$idValue = 'tr-' . implode('-', $idParts) . '-' . $rowid;
+				print '<tr class="oddeven nohover'.$nobottomClass.'" id="'.$idValue.'">';
+				print '<td colspan="10">';
+				
 				if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 					$fieldsforcontent[] = 'content_lines';
 				}
