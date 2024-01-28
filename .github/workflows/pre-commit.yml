@@ -63,13 +63,21 @@ jobs:
       #     files: |
       #        **.php
 
+      - name: Setup PHPCS
+        uses: shivammathur/setup-php@v2
+        if: steps.changed-php.outputs.any_changed == 'true'
+        with:
+          php-version: 8.1
+          coverage: none  # disable xdebug, pcov
+          tools: phpcs
+
       - name: Run some pre-commit hooks on selected changed files only
         if: steps.changed-php.outputs.any_changed == 'true'
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
         run: |
           set -o pipefail
-          pre-commit run php-cs ${ALL_CHANGED_FILES} | tee -a ${RAW_LOG}
+          pre-commit run php-cs --files ${ALL_CHANGED_FILES} | tee -a ${RAW_LOG}
 
       # If error, we convert log in the checkstyle format
       - name: Convert Raw Log to CheckStyle format
