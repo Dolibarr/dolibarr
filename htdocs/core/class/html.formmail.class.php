@@ -889,7 +889,7 @@ class FormMail extends Form
 
 			//input prompt AI
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-			if (isModEnabled('ai') && getDolGlobalConst('AI_CHATGPT_API_KEY')) {
+			if (isModEnabled('ai') && getDolGlobalString('AI_CHATGPT_API_KEY')) {
 				$out .= $this->getHtmlForInstruction();
 			}
 			// Message
