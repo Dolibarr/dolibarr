@@ -2405,7 +2405,6 @@ if ($action == 'exportsite' && $user->hasRight('website', 'export')) {
 
 	if ($fileofzip) {
 		$file_name = basename($fileofzip);
-
 		header("Content-Type: application/zip");
 		header("Content-Disposition: attachment; filename=".$file_name);
 		header("Content-Length: ".filesize($fileofzip));
@@ -2418,6 +2417,10 @@ if ($action == 'exportsite' && $user->hasRight('website', 'export')) {
 	}
 }
 
+// Overite site
+if ($action == 'overwitesite' && $user->hasRight('website', 'export')) {
+	$fileofzip = $object->overwriteTemplate();
+}
 // Regenerate site
 if ($action == 'regeneratesite' && $usercanedit) {
 	// Check symlink to medias and restore it if ko. Recreate also dir of website if not found.
@@ -2518,6 +2521,9 @@ if ($action == 'importsiteconfirm' && $usercanedit) {
 				}
 
 				if (!$error && GETPOSTISSET('templateuserfile')) {
+					$templatewithoutzip = preg_replace('/\.zip$/i', '', GETPOST('templateuserfile'));
+					$object->setTemplateName($templatewithoutzip);
+
 					$result = $object->importWebSite($fileofzip);
 
 					if ($result < 0) {
@@ -3059,6 +3065,8 @@ if (!GETPOST('hide_websitemenu')) {
 
 			print '</span>';
 		}
+		// overite template
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=overwitesite&website='.urlencode($website->ref).'" class="button bordertransp"> <i class="fa fa-bolt" aria-hidden="true"></i> '.dol_escape_htmltag($langs->trans("Overwrite")).'</a>';
 	} else {
 		print '<input type="hidden" name="website" id="website" value="'.$websitekey.'">';
 	}

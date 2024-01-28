@@ -16,7 +16,7 @@ If the Thirdparty module is enabled:
 
 If the Patnership module is enabled:
 * Read properties (status, start date, end date) of its partnership.
- 
+
 If the Proposal module is enabled:
 * Read its orders
 
@@ -42,4 +42,3 @@ Documentation
 
 [Module Web Portal](https://wiki.dolibarr.org/index.php/Module_Web_Portal)
 
- 
