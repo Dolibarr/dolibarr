@@ -1104,11 +1104,11 @@ class CommandeFournisseur extends CommonOrder
 
 
 	/**
-	 *  Returns the following order reference not used depending on the numbering model activated
-	 *                  defined within COMMANDE_SUPPLIER_ADDON_NUMBER
+	 *  Returns the next order reference not used, based on the
+	 *  numbering model defined within COMMANDE_SUPPLIER_ADDON_NUMBER
 	 *
 	 *  @param	    Societe		$soc  		company object
-	 *  @return     string                  free reference for the invoice
+	 *  @return     string|int              free reference for the invoice
 	 */
 	public function getNextNumRef($soc)
 	{
@@ -1864,13 +1864,13 @@ class CommandeFournisseur extends CommonOrder
 		// Clear fields
 		$this->user_author_id     = $user->id;
 		$this->user_validation_id = 0;
-		$this->date_creation      = '';
-		$this->date_validation    = '';
-		$this->ref_supplier       = null;
-		$this->user_approve_id    = '';
-		$this->user_approve_id2   = '';
-		$this->date_approve       = '';
-		$this->date_approve2      = '';
+		$this->date_creation      = 0;
+		$this->date_validation    = 0;
+		$this->ref_supplier       = '';
+		$this->user_approve_id    = 0;
+		$this->user_approve_id2   = 0;
+		$this->date_approve       = 0;
+		$this->date_approve2      = 0;
 
 		// Create clone
 		$this->context['createfromclone'] = 'createfromclone';
@@ -2923,7 +2923,7 @@ class CommandeFournisseur extends CommonOrder
 				$remise_percent = 0;
 			}
 
-			$remise_percent = price2num($remise_percent);
+			$remise_percent = (float) price2num($remise_percent);
 			$qty = price2num($qty);
 			if (!$qty) {
 				$qty = 1;
