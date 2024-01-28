@@ -57,15 +57,15 @@ $useFormSetup = 1;
 if (!class_exists('FormSetup')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formsetup.class.php';
 }
-
 $formSetup = new FormSetup($db);
 
 // root url
 $item = $formSetup->newItem('WEBPORTAL_ROOT_URL')->setAsString();
+$item->nameText = $langs->transnoentities('UrlPublicInterfaceLabelAdmin');
 $item->fieldAttr = array('placeholder' => 'https://');
-$item->helpText = $langs->transnoentities('WebPortalRootUrlHelp');
+$item->helpText = $langs->transnoentities('UrlPublicInterfaceHelpAdmin');
 require_once __DIR__ . '/../class/context.class.php';
-$context = Context::getInstance();
+//$context = Context::getInstance();
 //$item->fieldOutputOverride = '<a target="_blank" href="'.Context::getRootConfigUrl().'" >'.img_picto('', 'globe', 'class="pictofixedwidth"').Context::getRootConfigUrl().'</a>';
 
 
@@ -270,7 +270,7 @@ print ajax_autoselect('publicurlmember');
 // Setup page goes here
 print info_admin($langs->trans("UserAccountForWebPortalAreInThirdPartyTabHelp"));
 
-print '<br>';
+print '<br><br>';
 
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);
