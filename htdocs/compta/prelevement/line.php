@@ -216,7 +216,7 @@ if ($id) {
 		print '<input type="hidden" name="action" value="confirm_rejet">';
 		print '<input type="hidden" name="type" value="'.$type.'">';
 
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder centpercent">';
 
 		print '<tr class="liste_titre">';

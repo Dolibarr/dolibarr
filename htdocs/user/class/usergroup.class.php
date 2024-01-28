@@ -144,9 +144,9 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *    Constructor de la classe
+	 *    Class constructor
 	 *
-	 *    @param   DoliDb  $db     Database handler
+	 *    @param   DoliDB  $db     Database handler
 	 */
 	public function __construct($db)
 	{
@@ -156,7 +156,7 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *  Charge un objet group avec toutes ses caracteristiques (except ->members array)
+	 *  Charge un object group avec toutes ses caracteristiques (except ->members array)
 	 *
 	 *	@param      int		$id				Id of group to load
 	 *	@param      string	$groupname		Name of group to load
@@ -458,7 +458,7 @@ class UserGroup extends CommonObject
 		if (!empty($rid)) {
 			$module = $perms = $subperms = '';
 
-			// Si on a demande supression d'un droit en particulier, on recupere
+			// Si on a demande suppression d'un droit en particulier, on recupere
 			// les caracteristiques module, perms et subperms de ce droit.
 			$sql = "SELECT module, perms, subperms";
 			$sql .= " FROM ".$this->db->prefix()."rights_def";
@@ -489,7 +489,7 @@ class UserGroup extends CommonObject
 			}
 
 			// Pour compatibilite, si lowid = 0, on est en mode suppression de tout
-			// TODO A virer quand sera gere par l'appelant
+			// TODO To remove when this will be implemented by the caller
 			//if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
 		} else {
 			// Add permission of the list $wherefordel
@@ -565,10 +565,10 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *  Charge dans l'objet group, la liste des permissions auquels le groupe a droit
+	 *  Load the list of permissions for the user into the group object
 	 *
 	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
-	 *	@return     int						Return integer <0 if KO, >=0 if OK
+	 *  @return     int						Return integer <0 if KO, >=0 if OK
 	 */
 	public function getrights($moduletag = '')
 	{
@@ -790,7 +790,7 @@ class UserGroup extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the user card (with optionaly the picto)
+	 *  Return a link to the user card (with optionally the picto)
 	 *  Use this->id,this->lastname, this->firstname
 	 *
 	 *  @param  int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
@@ -898,7 +898,7 @@ class UserGroup extends CommonObject
 			$dn = getDolGlobalString('LDAP_KEY_GROUPS') . "=".$info[getDolGlobalString('LDAP_KEY_GROUPS')]."," . getDolGlobalString('LDAP_GROUP_DN');
 		}
 		if ($mode == 1) {
-			$dn = $conf->global->LDAP_GROUP_DN;
+			$dn = getDolGlobalString('LDAP_GROUP_DN');
 		}
 		if ($mode == 2) {
 			$dn = getDolGlobalString('LDAP_KEY_GROUPS') . "=".$info[getDolGlobalString('LDAP_KEY_GROUPS')];
@@ -912,7 +912,7 @@ class UserGroup extends CommonObject
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
-	 *	@return		array		Tableau info des attributs
+	 *	@return		array		Tableau info des attributes
 	 */
 	public function _load_ldap_info()
 	{
@@ -960,7 +960,7 @@ class UserGroup extends CommonObject
 	{
 		global $conf, $user, $langs;
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
@@ -996,7 +996,7 @@ class UserGroup extends CommonObject
 		// Positionne le modele sur le nom du modele a utiliser
 		if (!dol_strlen($modele)) {
 			if (getDolGlobalString('USERGROUP_ADDON_PDF')) {
-				$modele = $conf->global->USERGROUP_ADDON_PDF;
+				$modele = getDolGlobalString('USERGROUP_ADDON_PDF');
 			} else {
 				$modele = 'grass';
 			}

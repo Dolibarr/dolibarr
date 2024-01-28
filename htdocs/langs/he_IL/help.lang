@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - help
-CommunitySupport=Forum/Wiki support
-EMailSupport=Emails support
-RemoteControlSupport=Online real time / remote support
-OtherSupport=Other support
-ToSeeListOfAvailableRessources=To contact/see available resources:
-HelpCenter=Help center
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
-TypeSupportCommunauty=Community (free)
+CommunitySupport=תמיכה בפורום/ויקי
+EMailSupport=תמיכה במיילים
+RemoteControlSupport=תמיכה מקוונת בזמן אמת / מרחוק
+OtherSupport=תמיכה אחרת
+ToSeeListOfAvailableRessources=ליצירת קשר/לראות משאבים זמינים:
+HelpCenter=מרכז עזרה
+DolibarrHelpCenter=מרכז העזרה והתמיכה של Dolibarr
+ToGoBackToDolibarr=אחרת, <a href="%s">לחץ כאן כדי להמשיך להשתמש ב-Dolibarr</a>.
+TypeOfSupport=סוג התמיכה
+TypeSupportCommunauty=קהילה (חינם)
 TypeSupportCommercial=מסחרי
-TypeOfHelp=Type
-NeedHelpCenter=Need help or support?
-Efficiency=Efficiency
-TypeHelpOnly=Help only
-TypeHelpDev=Help+Development
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
-PossibleLanguages=Supported languages
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+TypeOfHelp=סוּג
+NeedHelpCenter=צריך תמיכה?
+Efficiency=יְעִילוּת
+TypeHelpOnly=עזרה בלבד
+TypeHelpDev=עזרה+פיתוח
+TypeHelpDevForm=עזרה+פיתוח+הדרכה
+BackToHelpCenter=אחרת, <a href="%s">חזור לדף הבית של מרכז העזרה</a>.
+LinkToGoldMember=אתה יכול להתקשר לאחד מהמאמנים שנבחרו מראש על ידי Dolibarr עבור השפה שלך (%s) על ידי לחיצה על הווידג'ט שלהם (סטטוס ומחיר מקסימלי מתעדכנים אוטומטית):
+PossibleLanguages=שפות נתמכות
+SubscribeToFoundation=עזרו לפרויקט Dolibarr, הירשם לקרן
+SeeOfficalSupport=לתמיכה רשמית של Dolibarr בשפה שלך: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

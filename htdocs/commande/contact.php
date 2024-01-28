@@ -117,7 +117,7 @@ $userstatic = new User($db);
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Mode vue et edition                                                         */
+/* Card view and edit mode                                                       */
 /*                                                                             */
 /* *************************************************************************** */
 
@@ -127,7 +127,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$title = $object->ref." - ".$langs->trans('ContactsAddresses');
 		$help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
-		llxHeader('', $title, $help_url);
+		llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-order page-card_contact');
 
 		$head = commande_prepare_head($object);
 		print dol_get_fiche_head($head, 'contact', $langs->trans("CustomerOrder"), -1, 'order');

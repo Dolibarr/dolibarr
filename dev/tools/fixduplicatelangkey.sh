@@ -3,11 +3,12 @@
 #
 # Copyright (C) 2014 Raphaël Doursenaud - rdoursenaud@gpcsolutions.fr
 
+# shellcheck disable=2006,2035,2044,2061,2166,2268
 
 # Syntax
 if [ "x$1" != "xlist" -a "x$1" != "xfix" ]
 then
-    echo "Detect duplicate translation keys inside a file (there is no cross file check)."
+	echo "Detect duplicate translation keys inside a file (there is no cross file check)."
 	echo "Usage: detectduplicatelangkey.sh (list|fix)"
 fi
 
@@ -17,19 +18,19 @@ then
 	echo "Search duplicate keys into en_US lang files (there is no cross file check)"
 	for file in `find htdocs/langs/en_US -name *.lang -type f`
 	do
-	    dupes=$(
-	    sed "s/^\s*//" "$file" | # Remove any leading whitespace
-	    sed "s/\s*\=/=/" | # Remove any whitespace before =
-	    grep -Po "(^.*?)=" | # Non greedeely match everything before =
-	    sed "s/\=//" | # Remove trailing = so we get the key
-	    sort | uniq -d # Find duplicates
-	    )
-	
-	    if [ -n "$dupes" ]
-	    then
-	        echo "Duplicates found in $file"
-	        echo "$dupes"
-	    fi
+		dupes=$(
+			sed "s/^\s*//" "$file" | # Remove any leading whitespace
+			sed "s/\s*\=/=/" | # Remove any whitespace before =
+			grep -Po "(^.*?)=" | # Non greedeely match everything before =
+			sed "s/\=//" | # Remove trailing = so we get the key
+			sort | uniq -d # Find duplicates
+		)
+
+		if [ -n "$dupes" ]
+		then
+			echo "Duplicates found in $file"
+			echo "$dupes"
+		fi
 	done
 fi
 

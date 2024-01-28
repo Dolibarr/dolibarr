@@ -680,7 +680,7 @@ if (empty($reshook)) {
 			// Echec
 			setEventMessages($langs->trans("ErrorFailedToSetNewPassword"), null, 'errors');
 		} else {
-			// Succes
+			// Success
 			if ($action == 'confirm_passwordsend' && $confirm == 'yes') {
 				if ($object->send_password($user, $newpassword) > 0) {
 					setEventMessages($langs->trans("PasswordChangedAndSentTo", $object->email), null, 'mesgs');
@@ -1411,7 +1411,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 		}
 
-		// Connexion ldap
+		// Connection ldap
 		// pour recuperer passDoNotExpire et userChangePassNextLogon
 		if (isModEnabled('ldap') && !empty($object->ldap_sid)) {
 			$ldap = new Ldap();
@@ -1463,14 +1463,14 @@ if ($action == 'create' || $action == 'adduserldap') {
 		$head = user_prepare_head($object);
 
 		/*
-		 * Confirmation reinitialisation mot de passe
+		 * Confirmation reinitialisation password
 		 */
 		if ($action == 'password') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("ReinitPassword"), $langs->trans("ConfirmReinitPassword", $object->login), "confirm_password", '', 0, 1);
 		}
 
 		/*
-		 * Confirmation envoi mot de passe
+		 * Confirmation envoi password
 		 */
 		if ($action == 'passwordsend') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("SendNewPassword"), $langs->trans("ConfirmSendNewPassword", $object->login), "confirm_passwordsend", '', 0, 1);
@@ -1886,7 +1886,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					if ($user->admin && $user->id == $object->id) {
 						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '');
 						$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
-						$valuetoshow .= '<!-- Crypted into '.$object->pass_indatabase_crypted.' -->';
+						$valuetoshow .= '<!-- Encrypted into '.$object->pass_indatabase_crypted.' -->';
 					} else {
 						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '');
 						$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
@@ -2087,7 +2087,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 					print load_fiche_titre($langs->trans("ListOfGroupsForUser"), '', '');
 
-					// On selectionne les groupes auquel fait parti le user
+					// We select the groups that the users belongs to
 					$exclude = array();
 
 					$usergroup = new UserGroup($db);
@@ -2521,7 +2521,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if ($caneditfield) {
 				print '<textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 			}
-			print $object->address;
+			print dol_escape_htmltag(GETPOSTISSET('address') ? GETPOST('address') : $object->address);
 			if ($caneditfield) {
 				print '</textarea>';
 			}
@@ -2530,7 +2530,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Zip
 			print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
 			if ($caneditfield) {
-				print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
+				print $formcompany->select_ziptown((GETPOSTISSET('zipcode') ? GETPOST('zipcode') : $object->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
 			} else {
 				print $object->zip;
 			}
@@ -2539,7 +2539,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Town
 			print '<tr><td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
 			if ($caneditfield) {
-				print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+				print $formcompany->select_ziptown((GETPOSTISSET('town') ? GETPOST('town') : $object->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 			} else {
 				print $object->town;
 			}

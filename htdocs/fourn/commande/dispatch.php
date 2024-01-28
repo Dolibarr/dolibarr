@@ -259,7 +259,9 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 			}
 
 			// We ask to move a qty
-			if (GETPOST($qty) != 0) {
+			$qtytomove = (float) price2num(GETPOST($qty, 'alphanohtml'));
+			$puformove = (float) price2num(GETPOST($pu, 'alphanohtml'));
+			if ($qtytomove != 0) {
 				if (!(GETPOST($ent, 'int') > 0)) {
 					dol_syslog('No dispatch for line '.$key.' as no warehouse was chosen.');
 					$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').' '.($numline);
@@ -268,7 +270,7 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 				}
 
 				if (!$error) {
-					$result = $object->dispatchProduct($user, GETPOST($prod, 'int'), GETPOST($qty), GETPOST($ent, 'int'), GETPOST($pu), GETPOST('comment'), '', '', '', GETPOST($fk_commandefourndet, 'int'), $notrigger);
+					$result = $object->dispatchProduct($user, GETPOSTINT($prod), $qtytomove, GETPOSTINT($ent), $puformove, GETPOST('comment'), '', '', '', GETPOST($fk_commandefourndet, 'int'), $notrigger);
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
@@ -327,7 +329,9 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 			}
 
 			// We ask to move a qty
-			if (GETPOST($qty) > 0) {
+			$qtytomove = (float) price2num(GETPOST($qty, 'alphanohtml'));
+			$puformove = (float) price2num(GETPOST($pu, 'alphanohtml'));
+			if ($qtytomove > 0) {
 				$productId = GETPOSTINT($prod);
 
 				if (!(GETPOST($ent, 'int') > 0)) {
@@ -337,7 +341,16 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 					$error++;
 				}
 
-				if (!(GETPOST($lot, 'alpha') || $dDLUO || $dDLC)) {
+				// check sell-by / eat-by date is mandatory
+				/* Not required. Mandatory is checked when we insert the lot. Once lot has been recorded and is known, user can just enter the lot/serial
+				$errorMsgArr = Productlot::checkSellOrEatByMandatoryFromProductIdAndDates($productId, $dDLC, $dDLUO);
+				if (!(GETPOST($lot, 'alpha')) || !empty($errorMsgArr)) {
+					dol_syslog('No dispatch for line '.$key.' as serial/eat-by/sellby date are not set');
+					$text = $langs->transnoentities('atleast1batchfield').', '.$langs->transnoentities('Line').' '.($numline).'-'.($reg[1] + 1);
+					setEventMessages($langs->trans('ErrorFieldRequired', $text), null, 'errors');
+					$error++;
+				}*/
+				if (!GETPOST($lot, 'alpha') && !$dDLUO && !$dDLC) {
 					dol_syslog('No dispatch for line '.$key.' as serial/eat-by/sellby date are not set');
 					$text = $langs->transnoentities('atleast1batchfield').', '.$langs->transnoentities('Line').' '.($numline).'-'.($reg[1] + 1);
 					setEventMessages($langs->trans('ErrorFieldRequired', $text), null, 'errors');
@@ -345,7 +358,7 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 				}
 
 				if (!$error) {
-					$result = $object->dispatchProduct($user, $productId, GETPOST($qty), GETPOST($ent, 'int'), GETPOST($pu), GETPOST('comment'), $dDLUO, $dDLC, GETPOST($lot, 'alpha'), GETPOST($fk_commandefourndet, 'int'), $notrigger);
+					$result = $object->dispatchProduct($user, $productId, $qtytomove, GETPOSTINT($ent), $puformove, GETPOST('comment'), $dDLUO, $dDLC, GETPOST($lot, 'alpha'), GETPOST($fk_commandefourndet, 'int'), $notrigger);
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
@@ -507,7 +520,7 @@ $title = $object->ref." - ".$langs->trans('OrderDispatch');
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
 $morejs = array('/fourn/js/lib_dispatch.js.php');
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs);
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, '', '', 'mod-supplier-order page-card_dispatch');
 
 if ($id > 0 || !empty($ref)) {
 	$soc = new Societe($db);

@@ -118,7 +118,7 @@ if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 
 	$account->bank            = GETPOST('bank', 'alpha');
 	$account->label           = GETPOST('label', 'alpha');
-	$account->courant         = GETPOST('courant', 'alpha');
+	$account->courant         = GETPOSTINT('courant');
 	$account->code_banque     = GETPOST('code_banque', 'alpha');
 	$account->code_guichet    = GETPOST('code_guichet', 'alpha');
 	$account->number          = GETPOST('number', 'alpha');
@@ -130,8 +130,8 @@ if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 	$account->owner_address   = GETPOST('owner_address', 'alpha');
 
 	$account->currency_code = trim(GETPOST("account_currency_code"));
-	$account->state_id = GETPOST("account_state_id", 'int');
-	$account->country_id = GETPOST("account_country_id", 'int');
+	$account->state_id = GETPOSTINT("account_state_id");
+	$account->country_id = GETPOSTINT("account_country_id");
 
 	$result = $account->create($user);
 
@@ -149,7 +149,7 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 
 	$account->bank            = GETPOST('bank', 'alpha');
 	$account->label           = GETPOST('label', 'alpha');
-	$account->courant         = GETPOST('courant', 'alpha');
+	$account->courant         = GETPOSTINT('courant');
 	$account->code_banque     = GETPOST('code_banque', 'alpha');
 	$account->code_guichet    = GETPOST('code_guichet', 'alpha');
 	$account->number          = GETPOST('number', 'alpha');
@@ -161,8 +161,8 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 	$account->owner_address   = GETPOST('owner_address', 'alpha');
 
 	$account->currency_code = trim(GETPOST("account_currency_code"));
-	$account->state_id = GETPOST("account_state_id", 'int');
-	$account->country_id = GETPOST("account_country_id", 'int');
+	$account->state_id = GETPOSTINT("account_state_id");
+	$account->country_id = GETPOSTINT("account_country_id");
 
 	$result = $account->update($user);
 
@@ -596,7 +596,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	print '</div><div class="fichehalfright">';
 
 	// Max number of elements in small lists
-	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+	$MAXLIST = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
 
 	// Latest payments of salaries
 	if (isModEnabled('salaries') &&
@@ -617,7 +617,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		if ($resql) {
 			$num = $db->num_rows($resql);
 
-			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
@@ -678,7 +678,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		if ($resql) {
 			$num = $db->num_rows($resql);
 
-			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
@@ -736,7 +736,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		if ($resql) {
 			$num = $db->num_rows($resql);
 
-			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
@@ -793,7 +793,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank_account');
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="liste centpercent">';
 
 	print '<tr class="liste_titre">';

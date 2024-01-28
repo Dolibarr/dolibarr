@@ -136,10 +136,10 @@ function dol_getDefaultFormat(Translate $outputlangs = null)
 
 
 /**
- *	Show informations on an object
+ *	Show information on an object
  *  TODO Move this into html.formother
  *
- *	@param	object	$object			Objet to show
+ *	@param	object	$object			Object to show
  *  @param  int     $usetable       Output into a table
  *	@return	void
  */
@@ -754,7 +754,7 @@ function isValidVATID($company)
  */
 function clean_url($url, $http = 1)
 {
-	// Fixed by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/fix-cleaning-url.html)
+	// Fixed by Matelli (see http://matelli.fr/showcases/patch%73-dolibarr/fix-cleaning-url.html)
 	// To include the minus sign in a char class, we must not escape it but put it at the end of the class
 	// Also, there's no need of escape a dot sign in a class
 	$regs = array();
@@ -790,7 +790,7 @@ function clean_url($url, $http = 1)
  * 	Returns an email value with obfuscated parts.
  *
  * 	@param 		string		$mail				Email
- * 	@param 		string		$replace			Replacement character (defaul: *)
+ * 	@param 		string		$replace			Replacement character (default: *)
  * 	@param 		int			$nbreplace			Number of replacement character (default: 8)
  * 	@param 		int			$nbdisplaymail		Number of character unchanged (default: 4)
  * 	@param 		int			$nbdisplaydomain	Number of character unchanged of domain (default: 3)
@@ -888,7 +888,7 @@ function array2table($data, $tableMarkup = 1, $tableoptions = '', $troptions = '
  * @param   string		$mask			Mask to use
  * @param   string		$table			Table containing field with counter
  * @param   string		$field			Field containing already used values of counter
- * @param   string		$where			To add a filter on selection (for exemple to filter on invoice types)
+ * @param   string		$where			To add a filter on selection (for example to filter on invoice types)
  * @param   Societe		$objsoc			The company that own the object we need a counter for
  * @param   string		$date			Date to use for the {y},{m},{d} tags.
  * @param   string		$mode			'next' for next value or 'last' for last value
@@ -903,7 +903,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
 	if (!is_object($objsoc)) {
 		$valueforccc = $objsoc;
-	} elseif ($table == "commande_fournisseur" || $table == "facture_fourn") {
+	} elseif ($table == "commande_fournisseur" || $table == "facture_fourn" || $table == "paiementfourn") {
 		$valueforccc = dol_string_unaccent($objsoc->code_fournisseur);
 	} else {
 		$valueforccc = dol_string_unaccent($objsoc->code_client);
@@ -1059,7 +1059,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	if (is_numeric($yearoffsettype) && $yearoffsettype >= 1) {
 		$maskraz = $yearoffsettype; // For backward compatibility
 	} elseif ($yearoffsettype === '0' || (!empty($yearoffsettype) && !is_numeric($yearoffsettype) && getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1)) {
-		$maskraz = $conf->global->SOCIETE_FISCAL_MONTH_START;
+		$maskraz = getDolGlobalString('SOCIETE_FISCAL_MONTH_START');
 	}
 	//print "maskraz=".$maskraz;	// -1=no reset
 
@@ -1185,7 +1185,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$maskLike = dol_string_nospecial($mask);
 	$maskLike = str_replace("%", "_", $maskLike);
 
-	// Replace protected special codes with matching number of _ as wild card caracter
+	// Replace protected special codes with matching number of _ as wild card character
 	$maskLike = preg_replace('/\{yyyy\}/i', '____', $maskLike);
 	$maskLike = preg_replace('/\{yy\}/i', '__', $maskLike);
 	$maskLike = preg_replace('/\{y\}/i', '_', $maskLike);
@@ -1256,7 +1256,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		// Define $maskLike
 		$maskLike = dol_string_nospecial($mask);
 		$maskLike = str_replace("%", "_", $maskLike);
-		// Replace protected special codes with matching number of _ as wild card caracter
+		// Replace protected special codes with matching number of _ as wild card character
 		$maskLike = preg_replace('/\{yyyy\}/i', '____', $maskLike);
 		$maskLike = preg_replace('/\{yy\}/i', '__', $maskLike);
 		$maskLike = preg_replace('/\{y\}/i', '_', $maskLike);
@@ -1325,7 +1325,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			// Define $maskrefclient_maskLike
 			$maskrefclient_maskLike = dol_string_nospecial($mask);
 			$maskrefclient_maskLike = str_replace("%", "_", $maskrefclient_maskLike);
-			// Replace protected special codes with matching number of _ as wild card caracter
+			// Replace protected special codes with matching number of _ as wild card character
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{yyyy}'), '____', $maskrefclient_maskLike);
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{yy}'), '__', $maskrefclient_maskLike);
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{y}'), '_', $maskrefclient_maskLike);
@@ -1612,7 +1612,7 @@ function hexbin($hexa)
  */
 function numero_semaine($time)
 {
-	$stime = strftime('%Y-%m-%d', $time);
+	$stime = dol_print_date($time, '%Y-%m-%d');
 
 	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/i', $stime, $reg)) {
 		// Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
@@ -1623,9 +1623,9 @@ function numero_semaine($time)
 
 	/*
 	 * Norme ISO-8601:
-	 * - La semaine 1 de toute annee est celle qui contient le 4 janvier ou que la semaine 1 de toute annee est celle qui contient le 1er jeudi de janvier.
-	 * - La majorite des annees ont 52 semaines mais les annees qui commence un jeudi et les annees bissextiles commencant un mercredi en possede 53.
-	 * - Le 1er jour de la semaine est le Lundi
+	 * - Week 1 of the year contains Jan 4th, or contains the first Thursday of January.
+	 * - Most years have 52 weeks, but 53 weeks for years starting on a Thursday and bisectile years that start on a Wednesday.
+	 * - The first day of a week is Monday
 	 */
 
 	// Definition du Jeudi de la semaine
@@ -1707,7 +1707,7 @@ function weight_convert($weight, &$from_unit, $to_unit)
 }
 
 /**
- *	Save personnal parameter
+ *	Save personal parameter
  *
  *	@param	DoliDB	$db         Handler database
  *	@param	Conf	$conf		Object conf
@@ -1719,7 +1719,7 @@ function weight_convert($weight, &$from_unit, $to_unit)
  */
 function dol_set_user_param($db, $conf, &$user, $tab)
 {
-	// Verification parametres
+	// Verification parameters
 	if (count($tab) < 1) {
 		return -1;
 	}
@@ -1775,11 +1775,11 @@ function dol_set_user_param($db, $conf, &$user, $tab)
 }
 
 /**
- *	Returns formated reduction
+ *	Returns formatted reduction
  *
  *	@param	int			$reduction		Reduction percentage
  *	@param	Translate	$langs			Output language
- *	@return	string						Formated reduction
+ *	@return	string						Formatted reduction
  */
 function dol_print_reduction($reduction, $langs)
 {
@@ -1795,7 +1795,7 @@ function dol_print_reduction($reduction, $langs)
 
 /**
  * 	Return OS version.
- *  Note that PHP_OS returns only OS (not version) and OS PHP was built on, not necessarly OS PHP runs on.
+ *  Note that PHP_OS returns only OS (not version) and OS PHP was built on, not necessarily OS PHP runs on.
  *
  *  @param 		string		$option 	Option string
  * 	@return		string					OS version
@@ -1951,7 +1951,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 
 /**
  * This function evaluates a string that should be a valid IPv4
- * Note: For ip 169.254.0.0, it returns 0 with some PHP (5.6.24) and 2 with some minor patchs of PHP (5.6.25). See https://github.com/php/php-src/pull/1954.
+ * Note: For ip 169.254.0.0, it returns 0 with some PHP (5.6.24) and 2 with some minor patches of PHP (5.6.25). See https://github.com/php/php-src/pull/1954.
  *
  * @param	string $ip IP Address
  * @return	int 0 if not valid or reserved range, 1 if valid and public IP, 2 if valid and private range IP
@@ -2422,7 +2422,7 @@ function colorAgressiveness($hex, $ratio = -50, $brightness = 0)
 			if ($color < 128) {
 				$color -= ($color * ($ratio / 100));
 			}
-		} else { // We decrease agressiveness
+		} else { // We decrease aggressiveness
 			if ($color > 128) {
 				$color -= (($color - 128) * (abs($ratio) / 100));
 			}
@@ -2526,6 +2526,62 @@ function colorHexToRgb($hex, $alpha = false, $returnArray = false)
 	}
 }
 
+/**
+ * Color Hex to Hsl (used for style)
+ *
+ * @param	string 			$hex 			Color in hex
+ * @param	float|false 	$alpha 			0 to 1 to add alpha channel
+ * @param	bool 			$returnArray	true=return an array instead, false=return string
+ * @return	string|array					String or array
+ */
+function colorHexToHsl($hex, $alpha = false, $returnArray = false)
+{
+	$hex = str_replace('#', '', $hex);
+	$red = hexdec(substr($hex, 0, 2)) / 255;
+	$green = hexdec(substr($hex, 2, 2)) / 255;
+	$blue = hexdec(substr($hex, 4, 2)) / 255;
+
+	$cmin = min($red, $green, $blue);
+	$cmax = max($red, $green, $blue);
+	$delta = $cmax - $cmin;
+
+	if ($delta == 0) {
+		$hue = 0;
+	} elseif ($cmax === $red) {
+		$hue = (($green - $blue) / $delta);
+	} elseif ($cmax === $green) {
+		$hue = ($blue - $red) / $delta + 2;
+	} else {
+		$hue = ($red - $green) / $delta + 4;
+	}
+
+	$hue = round($hue * 60);
+	if ($hue < 0) {
+		$hue += 360;
+	}
+
+	$lightness = (($cmax + $cmin) / 2);
+	$saturation = $delta === 0 ? 0 : ($delta / (1 - abs(2 * $lightness - 1)));
+	if ($saturation < 0) {
+		$saturation += 1;
+	}
+
+	$lightness = round($lightness*100);
+	$saturation = round($saturation*100);
+
+	if ($returnArray) {
+		return array(
+			'h' => $hue,
+			'l' => $lightness,
+			's' => $saturation,
+			'a' => $alpha === false ? 1 : $alpha
+		);
+	} elseif ($alpha) {
+		return 'hsla('.$hue.', '.$saturation.', '.$lightness.' / '.$alpha.')';
+	} else {
+		return 'hsl('.$hue.', '.$saturation.', '.$lightness.')';
+	}
+}
 
 /**
  * Applies the Cartesian product algorithm to an array
@@ -2690,7 +2746,7 @@ function price2fec($amount)
 	if (empty($amount)) {
 		$amount = 0; // To have a numeric value if amount not defined or = ''
 	}
-	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occured when amount value = o (letter) instead 0 (number)
+	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occurred when amount value = o (letter) instead 0 (number)
 
 	// Output decimal number by default
 	$nbdecimal = (!getDolGlobalString('ACCOUNTING_FEC_DECIMAL_LENGTH') ? 2 : $conf->global->ACCOUNTING_FEC_DECIMAL_LENGTH);

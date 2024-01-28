@@ -166,7 +166,7 @@ class PaymentVAT extends CommonObject
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
-		// Validate parametres
+		// Validate parameters
 		if (!$this->datepaye) {
 			$this->error = 'ErrorBadValueForParameterCreatePaymentVAT';
 			return -1;
@@ -533,13 +533,12 @@ class PaymentVAT extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-
 		$this->fk_tva = 0;
 		$this->datec = '';
 		$this->tms = '';
 		$this->datep = '';
 		$this->amount = '';
-		$this->fk_typepaiement = '';
+		$this->fk_typepaiement = 0;
 		$this->num_payment = '';
 		$this->note_private = '';
 		$this->note_public = '';

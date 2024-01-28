@@ -286,7 +286,7 @@ if ($action == 'getProducts') {
 		$sql .= " AND archive = 0";
 	}*/
 	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
-		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_stock as ps';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps';
 		$sql .= ' ON (p.rowid = ps.fk_product';
 		if (getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
 			$sql .= " AND ps.fk_entrepot = ".((int) getDolGlobalInt("CASHDESK_ID_WAREHOUSE".$_SESSION['takeposterminal']));
@@ -381,6 +381,7 @@ if ($action == 'getProducts') {
 				} else {
 					$row = array();
 				}
+				$rows[] = $row;
 			} else {
 				// add
 				if (count($hookmanager->resArray)) {
@@ -395,6 +396,8 @@ if ($action == 'getProducts') {
 		echo 'Failed to search product : '.$db->lasterror();
 	}
 } elseif ($action == "opendrawer" && $term != '') {
+	top_httphead('application/html');
+
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 	$printer = new dolReceiptPrinter($db);
 	// check printer for terminal
@@ -405,6 +408,8 @@ if ($action == 'getProducts') {
 		$printer->close();
 	}
 } elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && $user->hasRight('facture', 'lire')) {
+	top_httphead('application/html');
+
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$printer = new dolReceiptPrinter($db);
@@ -426,6 +431,8 @@ if ($action == 'getProducts') {
 
 	echo json_encode($object);
 } elseif ($action == 'thecheck') {
+	top_httphead('application/html');
+
 	$place = GETPOST('place', 'alpha');
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';

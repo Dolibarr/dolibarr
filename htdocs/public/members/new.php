@@ -360,7 +360,7 @@ if (empty($reshook) && $action == 'add') {
 					$outputlangs->loadLangs(array("main", "members"));
 					// Get email content from template
 					$arraydefaultmessage = null;
-					$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER;
+					$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER');
 
 					if (!empty($labeltouse)) {
 						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
@@ -393,7 +393,7 @@ if (empty($reshook) && $action == 'add') {
 					// Define link to login card
 					$appli = constant('DOL_APPLICATION_TITLE');
 					if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-						$appli = $conf->global->MAIN_APPLICATION_TITLE;
+						$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
 						if (preg_match('/\d\.\d/', $appli)) {
 							if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
 								$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
@@ -439,7 +439,7 @@ if (empty($reshook) && $action == 'add') {
 				if (!empty($backtopage)) {
 					$urlback = $backtopage;
 				} elseif (getDolGlobalString('MEMBER_URL_REDIRECT_SUBSCRIPTION')) {
-					$urlback = $conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
+					$urlback = getDolGlobalString('MEMBER_URL_REDIRECT_SUBSCRIPTION');
 					// TODO Make replacement of __AMOUNT__, etc...
 				} else {
 					$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
@@ -447,7 +447,7 @@ if (empty($reshook) && $action == 'add') {
 
 				if (getDolGlobalString('MEMBER_NEWFORM_PAYONLINE') && getDolGlobalString('MEMBER_NEWFORM_PAYONLINE') != '-1') {
 					if (empty($adht->caneditamount)) {			// If edition of amount not allowed
-						// TODO Check amount is same than the amount required for the type of member or if not defined as the defeault amount into $conf->global->MEMBER_NEWFORM_AMOUNT
+						// TODO Check amount is same than the amount required for the type of member or if not defined as the default amount into $conf->global->MEMBER_NEWFORM_AMOUNT
 						// It is not so important because a test is done on return of payment validation.
 					}
 
@@ -457,7 +457,7 @@ if (empty($reshook) && $action == 'add') {
 						$urlback .= '&email='.urlencode(GETPOST('email'));
 					}
 					if (getDolGlobalString('MEMBER_NEWFORM_PAYONLINE') != '-1' && getDolGlobalString('MEMBER_NEWFORM_PAYONLINE') != 'all') {
-						$urlback .= '&paymentmethod='.urlencode($conf->global->MEMBER_NEWFORM_PAYONLINE);
+						$urlback .= '&paymentmethod='.urlencode(getDolGlobalString('MEMBER_NEWFORM_PAYONLINE'));
 					}
 				} else {
 					if (!empty($entity)) {
@@ -474,7 +474,7 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		$db->commit();
 
-		Header("Location: ".$urlback);
+		header("Location: ".$urlback);
 		exit;
 	} else {
 		$db->rollback();
@@ -522,7 +522,7 @@ print '<div id="divsubscribe">';
 
 print '<div class="center subscriptionformhelptext opacitymedium justify">';
 if (getDolGlobalString('MEMBER_NEWFORM_TEXT')) {
-	print $langs->trans($conf->global->MEMBER_NEWFORM_TEXT)."<br>\n";
+	print $langs->trans(getDolGlobalString('MEMBER_NEWFORM_TEXT'))."<br>\n";
 } else {
 	print $langs->trans("NewSubscriptionDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
 }
@@ -593,7 +593,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		print $form->selectarray("typeid", $adht->liste_array(1), GETPOST('typeid') ? GETPOST('typeid') : $defaulttype, $isempty);
 		print '</td></tr>'."\n";
 	} else {
-		$adht->fetch($conf->global->MEMBER_NEWFORM_FORCETYPE);
+		$adht->fetch(getDolGlobalString('MEMBER_NEWFORM_FORCETYPE'));
 		print '<input type="hidden" id="typeid" name="typeid" value="' . getDolGlobalString('MEMBER_NEWFORM_FORCETYPE').'">';
 	}
 
@@ -769,9 +769,9 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		$amount = empty($amountbytype[$typeid]) ? (isset($amount) ? $amount : 0) : $amountbytype[$typeid];
 		// - If not found, take the default amount only of the user is authorized to edit it
 		if ($caneditamount && empty($amount) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
-			$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
+			$amount = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
 		}
-		// - If not set, we accept ot have amount defined as parameter (for backward compatibility).
+		// - If not set, we accept to have amount defined as parameter (for backward compatibility).
 		if (empty($amount)) {
 			$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
 		}
@@ -787,7 +787,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		print '</td><td class="nowrap">';
 
 		if (empty($amount) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
-			$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
+			$amount = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
 		}
 
 		if ($caneditamount) {

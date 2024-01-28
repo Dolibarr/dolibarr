@@ -18,6 +18,7 @@
  * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,14 +137,14 @@ class Propal extends CommonObject
 	 * Status of the quote
 	 * @var int
 	 * @deprecated Try to use $status now
-	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED
+	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED, Propal::STATUS_CANCELED
 	 */
 	public $statut;
 
 	/**
 	 * Status of the quote
 	 * @var int
-	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED
+	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED, Propal::STATUS_CANCELED
 	 */
 	public $status;
 
@@ -235,24 +236,24 @@ class Propal extends CommonObject
 	public $address;
 
 	/**
-	 * @var int availabilty ID
+	 * @var int availability ID
 	 */
 	public $availability_id;
 
 	/**
-	 * @var int availabilty ID
+	 * @var int availability ID
 	 * @deprecated
 	 * @see $availability_id
 	 */
 	public $fk_availability;
 
 	/**
-	 * @var string availabilty code
+	 * @var string availability code
 	 */
 	public $availability_code;
 
 	/**
-	 * @var string availabilty label
+	 * @var string availability label
 	 */
 	public $availability;
 
@@ -303,7 +304,7 @@ class Propal extends CommonObject
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
 	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
@@ -374,6 +375,10 @@ class Propal extends CommonObject
 	// END MODULEBUILDER PROPERTIES
 
 	/**
+	 * Canceled status
+	 */
+	const STATUS_CANCELED = -1;
+	/**
 	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
@@ -425,7 +430,7 @@ class Propal extends CommonObject
 	 * 	@param  int		$remise_percent  	Discount effected on Product
 	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 *
-	 *	TODO	Replace calls to this function by generation objet Ligne
+	 *	TODO	Replace calls to this function by generation object Ligne
 	 */
 	public function add_product($idproduct, $qty, $remise_percent = 0)
 	{
@@ -781,7 +786,7 @@ class Propal extends CommonObject
 					}
 				}
 
-				// Mise a jour informations denormalisees au niveau de la propale meme
+				// Mise a jour information denormalisees au niveau de la propale meme
 				if (empty($noupdateafterinsertline)) {
 					$result = $this->update_price(1, 'auto', 0, $mysoc); // This method is designed to add line from user input so total calculation must be done using 'auto' mode.
 				}
@@ -819,7 +824,7 @@ class Propal extends CommonObject
 	 *  @param	  	float		$txlocaltax2		Local tax 2 rate
 	 *  @param      string		$desc            	Description
 	 *	@param	  	string		$price_base_type	HT or TTC
-	 *	@param      int			$info_bits        	Miscellaneous informations
+	 *	@param      int			$info_bits        	Miscellaneous information
 	 *	@param		int			$special_code		Special code (also used by externals modules!)
 	 * 	@param		int			$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
 	 * 	@param		int			$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
@@ -1609,7 +1614,7 @@ class Propal extends CommonObject
 			}
 			$sql .= " AND p.ref='".$this->db->escape($ref)."'";
 		} else {
-			// Dont't use entity if you use rowid
+			// Don't use entity if you use rowid
 			$sql .= " WHERE p.rowid = ".((int) $rowid);
 		}
 
@@ -1982,7 +1987,7 @@ class Propal extends CommonObject
 
 		// Protection
 		if ($this->statut == self::STATUS_VALIDATED) {
-			dol_syslog(get_class($this)."::valid action abandonned: already validated", LOG_WARNING);
+			dol_syslog(get_class($this)."::valid action abandoned: already validated", LOG_WARNING);
 			return 0;
 		}
 
@@ -2859,6 +2864,53 @@ class Propal extends CommonObject
 		}
 	}
 
+	/**
+	 *	Cancel the proposal
+	 *
+	 *	@param  	User	$user	Object user
+	 *	@return		int				Return integer if KO <0 , if OK >0
+	 */
+	public function setCancel(User $user)
+	{
+		$error = 0;
+
+		$this->db->begin();
+
+		$sql = "UPDATE ". MAIN_DB_PREFIX . "propal";
+		$sql .= " SET fk_statut = " . self::STATUS_CANCELED . ",";
+		$sql .= " fk_user_modif = " . ((int) $user->id);
+		$sql .= " WHERE rowid = " . ((int) $this->id);
+
+		dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			if (!$error) {
+				// Call trigger
+				$result = $this->call_trigger('PROPAL_CANCEL', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if (!$error) {
+				$this->statut = self::STATUS_CANCELED;
+				$this->db->commit();
+				return 1;
+			} else {
+				foreach ($this->errors as $errmsg) {
+					dol_syslog(get_class($this)."::cancel ".$errmsg, LOG_ERR);
+					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				}
+				$this->db->rollback();
+				return -1;
+			}
+		} else {
+			$this->error = $this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set draft status
@@ -2929,7 +2981,7 @@ class Propal extends CommonObject
 	 *    @param	int		$shortlist			0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref,name=>name)
 	 *    @param	int		$draft				0=not draft, 1=draft
 	 *    @param	int		$notcurrentuser		0=all user, 1=not current user
-	 *    @param    int		$socid				Id third pary
+	 *    @param    int		$socid				Id third party
 	 *    @param    int		$limit				For pagination
 	 *    @param    int		$offset				For pagination
 	 *    @param    string	$sortfield			Sort criteria
@@ -2946,24 +2998,30 @@ class Propal extends CommonObject
 		$sql = "SELECT s.rowid, s.nom as name, s.client,";
 		$sql .= " p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
 		$sql .= " p.datep as dp, p.fin_validite as datelimite";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-			$sql .= ", sc.fk_soc, sc.fk_user";
-		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		}
 		$sql .= " WHERE p.entity IN (".getEntity('propal').")";
 		$sql .= " AND p.fk_soc = s.rowid";
 		$sql .= " AND p.fk_statut = c.id";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) { //restriction
-			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+
+		// If the internal user must only see his customers, force searching by him
+		$search_sale = 0;
+		if (!$user->hasRight('societe', 'client', 'voir')) {
+			$search_sale = $user->id;
 		}
+		// Search on sale representative
+		if ($search_sale && $search_sale != '-1') {
+			if ($search_sale == -2) {
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+			} elseif ($search_sale > 0) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			}
+		}
+		// Search on socid
 		if ($socid) {
-			$sql .= " AND s.rowid = ".((int) $socid);
+			$sql .= " AND p.fk_soc = ".((int) $socid);
 		}
 		if ($draft) {
-			$sql .= " AND p.fk_statut = ".self::STATUS_DRAFT;
+			$sql .= " AND p.fk_statut = ".((int) self::STATUS_DRAFT);
 		}
 		if ($notcurrentuser > 0) {
 			$sql .= " AND p.fk_user_author <> ".((int) $user->id);
@@ -3024,14 +3082,14 @@ class Propal extends CommonObject
 
 		$this->fetchObjectLinked($id, $this->element);
 		foreach ($this->linkedObjectsIds as $objecttype => $objectid) {
-			// Nouveau système du comon object renvoi des rowid et non un id linéaire de 1 à n
+			// Nouveau système du common object renvoi des rowid et non un id linéaire de 1 à n
 			// On parcourt donc une liste d'objets en tant qu'objet unique
 			foreach ($objectid as $key => $object) {
 				// Cas des factures liees directement
 				if ($objecttype == 'facture') {
 					$linkedInvoices[] = $object;
 				} else {
-					// Cas des factures liees par un autre objet (ex: commande)
+					// Cas des factures liees par un autre object (ex: commande)
 					$this->fetchObjectLinked($object, $objecttype);
 					foreach ($this->linkedObjectsIds as $subobjecttype => $subobjectid) {
 						foreach ($subobjectid as $subkey => $subobject) {
@@ -3404,11 +3462,13 @@ class Propal extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			$langs->load("propal");
+			$this->labelStatus[-1] = $langs->transnoentitiesnoconv("PropalStatusCanceled");
 			$this->labelStatus[0] = $langs->transnoentitiesnoconv("PropalStatusDraft");
 			$this->labelStatus[1] = $langs->transnoentitiesnoconv("PropalStatusValidated");
 			$this->labelStatus[2] = $langs->transnoentitiesnoconv("PropalStatusSigned");
 			$this->labelStatus[3] = $langs->transnoentitiesnoconv("PropalStatusNotSigned");
 			$this->labelStatus[4] = $langs->transnoentitiesnoconv("PropalStatusBilled");
+			$this->labelStatusShort[-1] = $langs->transnoentitiesnoconv("PropalStatusCanceledShort");
 			$this->labelStatusShort[0] = $langs->transnoentitiesnoconv("PropalStatusDraftShort");
 			$this->labelStatusShort[1] = $langs->transnoentitiesnoconv("PropalStatusValidatedShort");
 			$this->labelStatusShort[2] = $langs->transnoentitiesnoconv("PropalStatusSignedShort");
@@ -3417,7 +3477,9 @@ class Propal extends CommonObject
 		}
 
 		$statusType = '';
-		if ($status == self::STATUS_DRAFT) {
+		if ($status == self::STATUS_CANCELED) {
+			$statusType = 'status9';
+		} elseif ($status == self::STATUS_DRAFT) {
 			$statusType = 'status0';
 		} elseif ($status == self::STATUS_VALIDATED) {
 			$statusType = 'status1';
@@ -3458,11 +3520,6 @@ class Propal extends CommonObject
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin, p.total_ht";
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
-			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
-			$clause = " AND";
-		}
 		$sql .= $clause." p.entity IN (".getEntity('propal').")";
 		if ($mode == 'opened') {
 			$sql .= " AND p.fk_statut = ".self::STATUS_VALIDATED;
@@ -3470,8 +3527,18 @@ class Propal extends CommonObject
 		if ($mode == 'signed') {
 			$sql .= " AND p.fk_statut = ".self::STATUS_SIGNED;
 		}
-		if ($user->socid) {
-			$sql .= " AND p.fk_soc = ".((int) $user->socid);
+		// If the internal user must only see his customers, force searching by him
+		$search_sale = 0;
+		if (!$user->hasRight('societe', 'client', 'voir')) {
+			$search_sale = $user->id;
+		}
+		// Search on sale representative
+		if ($search_sale && $search_sale != '-1') {
+			if ($search_sale == -2) {
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+			} elseif ($search_sale > 0) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			}
 		}
 
 		$resql = $this->db->query($sql);
@@ -3556,7 +3623,7 @@ class Propal extends CommonObject
 			}
 		}
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->ref_client = 'NEMICEPS';
@@ -3618,15 +3685,13 @@ class Propal extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Charge indicateurs this->nb de tableau de bord
+	 *      Load the indicators this->nb for the state board
 	 *
 	 *      @return     int         Return integer <0 if ko, >0 if ok
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $user;
 
 		$this->nb = array();
@@ -3635,12 +3700,21 @@ class Propal extends CommonObject
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
-			$clause = "AND";
-		}
 		$sql .= " ".$clause." p.entity IN (".getEntity('propal').")";
+
+		// If the internal user must only see his customers, force searching by him
+		$search_sale = 0;
+		if (!$user->hasRight('societe', 'client', 'voir')) {
+			$search_sale = $user->id;
+		}
+		// Search on sale representative
+		if ($search_sale && $search_sale != '-1') {
+			if ($search_sale == -2) {
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+			} elseif ($search_sale > 0) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			}
+		}
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -3670,7 +3744,7 @@ class Propal extends CommonObject
 		global $conf, $langs;
 		$langs->load("propal");
 
-		$classname = $conf->global->PROPALE_ADDON;
+		$classname = getDolGlobalString('PROPALE_ADDON');
 
 		if (!empty($classname)) {
 			$mybool = false;
@@ -3687,7 +3761,7 @@ class Propal extends CommonObject
 			}
 
 			if (!$mybool) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -3778,7 +3852,7 @@ class Propal extends CommonObject
 	 *
 	 *	@param      int		$withpicto		          Add picto into link
 	 *	@param      string	$option			          Where point the link ('expedition', 'document', ...)
-	 *	@param      string	$get_params    	          Parametres added to url
+	 *	@param      string	$get_params    	          Parameters added to url
 	 *  @param	    int   	$notooltip		          1=Disable tooltip
 	 *  @param      int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @param      int     $addlinktonotes           -1=Disable, 0=Just add label show notes, 1=Add private note (only internal user), 2=Add public note (internal or external user), 3=Add private (internal user) and public note (internal and external user)
@@ -3945,7 +4019,7 @@ class Propal extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('PROPALE_ADDON_PDF')) {
-				$modele = $conf->global->PROPALE_ADDON_PDF;
+				$modele = getDolGlobalString('PROPALE_ADDON_PDF');
 			}
 		}
 
@@ -4080,14 +4154,14 @@ class PropaleLigne extends CommonObjectLine
 	public $marge_tx;
 	public $marque_tx;
 
-	public $special_code; // Tag for special lines (exlusive tags)
+	public $special_code; // Tag for special lines (exclusive tags)
 	// 1: frais de port
 	// 2: ecotaxe
 	// 3: option line (when qty = 0)
 
 	public $info_bits = 0; // Some other info:
-	// Bit 0: 	0 si TVA normal - 1 si TVA NPR
-	// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
+	// Bit 0: 	0 si TVA normal - 1 if TVA NPR
+	// Bit 1:	0 ligne normal - 1 if line with fixed discount
 
 	public $total_ht; // Total HT  de la ligne toute quantite et incluant la remise ligne
 	public $total_tva; // Total TVA  de la ligne toute quantite et incluant la remise ligne
@@ -4170,7 +4244,7 @@ class PropaleLigne extends CommonObjectLine
 
 
 	/**
-	 * 	Class line Contructor
+	 * 	Class line Constructor
 	 *
 	 * 	@param	DoliDB	$db	Database handler
 	 */

@@ -342,7 +342,7 @@ if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
 	// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 	// must also not be output for most entities (proposal, intervention, ...)
 	//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
-	print price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
+	print price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formatting role of function price
 } else {
 	print '&nbsp;';
 }
@@ -391,9 +391,15 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 }
 
 // Price total without tax
-if ($line->special_code == 3) { ?>
-	<td class="linecoloption nowrap right"><?php $coldisplay++; ?><?php print $langs->trans('Option'); ?></td>
-<?php } else {
+if ($line->special_code == 3) {
+	$coldisplay++;
+	$colspanOptions	= '';
+	if (!empty($conf->multicurrency->enabled) && $object->multicurrency_code != $conf->currency) {
+		$coldisplay++;
+		$colspanOptions	= ' colspan="2"';
+	}
+	print '<td class="linecoloption nowrap right"'.$colspanOptions.'>'.$langs->trans('Option').'</td>';
+} else {
 	print '<td class="linecolht nowrap right">';
 	$coldisplay++;
 	print $tooltiponprice;
@@ -429,7 +435,7 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 			!empty($product_static->accountancy_code_buy_intra) ||
 			!empty($product_static->accountancy_code_buy_export)
 		) {
-			$accountancy_category_asset = $conf->global->ASSET_ACCOUNTANCY_CATEGORY;
+			$accountancy_category_asset = getDolGlobalString('ASSET_ACCOUNTANCY_CATEGORY');
 			$filters = array();
 			if (!empty($product_static->accountancy_code_buy)) {
 				$filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy) . "'";

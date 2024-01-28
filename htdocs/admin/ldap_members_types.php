@@ -101,7 +101,7 @@ print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 
 $head = ldap_prepare_head();
 
-// Test si fonction LDAP actives
+// Test if the LDAP functions are enabled
 if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
@@ -187,21 +187,21 @@ print '</form>';
 
 
 /*
- * Test de la connexion
+ * Test de la connection
  */
 if (getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 	$butlabel = $langs->trans("LDAPTestSynchroMemberType");
 	$testlabel = 'testmembertype';
-	$key = $conf->global->LDAP_KEY_MEMBERS_TYPES;
-	$dn = $conf->global->LDAP_MEMBER_TYPE_DN;
-	$objectclass = $conf->global->LDAP_MEMBER_TYPE_OBJECT_CLASS;
+	$key = getDolGlobalString('LDAP_KEY_MEMBERS_TYPES');
+	$dn = getDolGlobalString('LDAP_MEMBER_TYPE_DN');
+	$objectclass = getDolGlobalString('LDAP_MEMBER_TYPE_OBJECT_CLASS');
 
 	show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
 }
 
 if (function_exists("ldap_connect")) {
 	if ($_GET["action"] == 'testmembertype') {
-		// Creation objet
+		// Create object
 		$object = new AdherentType($db);
 		$object->initAsSpecimen();
 

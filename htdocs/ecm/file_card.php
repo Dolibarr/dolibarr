@@ -65,12 +65,12 @@ if (!$sortfield) {
 
 $section = GETPOST("section", 'alpha');
 if (!$section) {
-	dol_print_error('', 'Error, section parameter missing');
+	dol_print_error(null, 'Error, section parameter missing');
 	exit;
 }
 $urlfile = (string) dol_sanitizePathName(GETPOST("urlfile"), '_', 0);
 if (!$urlfile) {
-	dol_print_error('', "ErrorParamNotDefined");
+	dol_print_error(null, "ErrorParamNotDefined");
 	exit;
 }
 

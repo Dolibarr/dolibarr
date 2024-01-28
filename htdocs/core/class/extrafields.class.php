@@ -290,7 +290,7 @@ class ExtraFields
 	 *  @param  array|string	$param			Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
 	 *  @param  int				$alwayseditable	Is attribute always editable regardless of the document status
 	 *  @param	string			$perms			Permission to check
-	 *  @param	string			$list			Visibily
+	 *  @param	string			$list			Visibility
 	 *  @param	string			$help			Help on tooltip
 	 *  @param  string          $default        Default value (in database. use the default_value feature for default value on screen).
 	 *  @param  string          $computed       Computed value
@@ -464,7 +464,7 @@ class ExtraFields
 				$sql .= " FROM ".$this->db->prefix()."extrafields";
 				$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'";
 				$sql .= " AND name = '".$this->db->escape($attrname)."'";
-				//$sql.= " AND entity IN (0,".$conf->entity.")";      Do not test on entity here. We want to see if there is still on field remaning in other entities before deleting field in table
+				//$sql.= " AND entity IN (0,".$conf->entity.")";      Do not test on entity here. We want to see if there is still on field remaining in other entities before deleting field in table
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
@@ -663,7 +663,7 @@ class ExtraFields
 	 *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
-	 *  @param	string	$list				Visiblity
+	 *  @param	string	$list				Visibility
 	 *  @param	string	$help				Help on tooltip.
 	 *  @param  string  $default            Default value (in database. use the default_value feature for default value on screen).
 	 *  @param  string  $computed           Computed value
@@ -736,7 +736,7 @@ class ExtraFields
 			}
 
 			if ($entity === '' || $entity != '0') {
-				// We dont want on all entities, we delete all and current
+				// We don't want on all entities, we delete all and current
 				$sql_del = "DELETE FROM ".$this->db->prefix()."extrafields";
 				$sql_del .= " WHERE name = '".$this->db->escape($attrname)."'";
 				$sql_del .= " AND entity IN (0, ".($entity === '' ? $conf->entity : $entity).")";
@@ -824,7 +824,7 @@ class ExtraFields
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Load the array of extrafields defintion $this->attributes
+	 * 	Load the array of extrafields definition $this->attributes
 	 *
 	 * 	@param	string		$elementtype		Type of element ('all' = all or $object->table_element like 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
@@ -933,7 +933,7 @@ class ExtraFields
 	 * @param  string        $keyprefix      		Suffix string to add before name and id of field (can be used to avoid duplicate names)
 	 * @param  string        $morecss        		More css (to defined size of field. Old behaviour: may also be a numeric)
 	 * @param  int           $objectid       		Current object id
-	 * @param  string        $extrafieldsobjectkey	The key to use to store retreived data (commonly $object->table_element)
+	 * @param  string        $extrafieldsobjectkey	The key to use to store retrieved data (commonly $object->table_element)
 	 * @param  int	         $mode                  1=Used for search filters
 	 * @return string
 	 */
@@ -1120,9 +1120,10 @@ class ExtraFields
 				} else {
 					$checked = ' value="1" ';
 				}
-				$out = '<input type="checkbox" class="flat valignmiddle'.($morecss ? ' '.$morecss : '').' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.$checked.' '.($moreparam ? $moreparam : '').'>';
+				$out = '<input type="hidden" name="'.$keyprefix.$key.$keysuffix.'_boolean" value="1">';	// A hidden field ending with "_boolean" that is always set to 1.
+				$out .= '<input type="checkbox" class="flat valignmiddle'.($morecss ? ' '.$morecss : '').' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.$checked.' '.($moreparam ? $moreparam : '').'>';
 			} else {
-				$out .= $form->selectyesno($keyprefix.$key.$keysuffix, $value, 1, false, 1);
+				$out = $form->selectyesno($keyprefix.$key.$keysuffix, $value, 1, false, 1);
 			}
 		} elseif ($type == 'price') {
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
@@ -1440,28 +1441,28 @@ class ExtraFields
 							// Pattern for word=$ID$
 							$word = '\b[a-zA-Z0-9-\.-_]+\b=\$ID\$';
 
-							// Removing space arount =, ( and )
+							// Removing spaces around =, ( and )
 							$InfoFieldList[4] = preg_replace('# *(=|\(|\)) *#', '$1', $InfoFieldList[4]);
 
 							$nbPreg = 1;
 							// While we have parenthesis
 							while ($nbPreg != 0) {
-								// Init des compteurs
+								// Initialise counters
 								$nbPregRepl = $nbPregSel = 0;
-								// On retire toutes les parenthèses sans = avant
+								// Remove all parenthesis not preceded with '=' sign
 								$InfoFieldList[4] = preg_replace('#([^=])(\([^)^(]*('.$word.')[^)^(]*\))#', '$1 $3 ', $InfoFieldList[4], -1, $nbPregRepl);
-								// On retire les espaces autour des = et parenthèses
+								// Remove all escape characters around '=' and parenthesis
 								$InfoFieldList[4] = preg_replace('# *(=|\(|\)) *#', '$1', $InfoFieldList[4]);
-								// On retire toutes les parenthèses avec = avant
+								// Remove all parentheses preceded with '='
 								$InfoFieldList[4] = preg_replace('#\b[a-zA-Z0-9-\.-_]+\b=\([^)^(]*('.$word.')[^)^(]*\)#', '$1 ', $InfoFieldList[4], -1, $nbPregSel);
-								// On retire les espaces autour des = et parenthèses
+								// On retire les escapes autour des = et parenthèses
 								$InfoFieldList[4] = preg_replace('# *(=|\(|\)) *#', '$1', $InfoFieldList[4]);
 
-								// Calcul du compteur général pour la boucle
+								// UPdate the totals counter for the loop
 								$nbPreg = $nbPregRepl + $nbPregSel;
 							}
 
-							// Si l'on a un AND ou un OR, avant ou après
+							// In case there is AND ou OR, before or after
 							$matchCondition = array();
 							preg_match('#(AND|OR|) *('.$word.') *(AND|OR|)#', $InfoFieldList[4], $matchCondition);
 							while (!empty($matchCondition[0])) {
@@ -1481,7 +1482,7 @@ class ExtraFields
 									}
 								}
 
-								// Si l'on a un AND ou un OR, avant ou après
+								// In case there is AND ou OR, before or after
 								preg_match('#(AND|OR|) *('.$word.') *(AND|OR|)#', $InfoFieldList[4], $matchCondition);
 							}
 						} else {
@@ -1583,8 +1584,8 @@ class ExtraFields
 		} elseif ($type == 'link') {
 			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
 			/* Removed.
-			The selectForForms is called with parameter $objectfield defined, so tha app can retreive the filter inside the ajax component instead of being provided as parameters. The
-			filter was use to pass SQL requests leading to serious SQL injection problem. This should not be possible. Also the call of the ajax was broken by some WAF.
+			The selectForForms is called with parameter $objectfield defined, so that the app can retrieve the filter inside the ajax component instead of being provided as parameters. The
+			filter was used to pass SQL requests leading to serious SQL injection problems. This should not be possible. Also the call of the ajax was broken by some WAF.
 			if (strpos($param_list[0], '$ID$') !== false && !empty($objectid)) {
 				$param_list[0] = str_replace('$ID$', $objectid, $param_list[0]);
 			}*/
@@ -1595,6 +1596,8 @@ class ExtraFields
 			$element = $extrafieldsobjectkey;		// $extrafieldsobjectkey comes from $object->table_element but we need $object->element
 			if ($element == 'socpeople') {
 				$element = 'contact';
+			} elseif ( $element == 'projet' ) {
+				$element = 'project';
 			}
 
 			//$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '');
@@ -1625,7 +1628,7 @@ class ExtraFields
 	 * @param   string	$value          		Value to show
 	 * @param	string	$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
 	 * @param	string	$extrafieldsobjectkey	Required (for example $object->table_element).
-	 * @return	string							Formated value
+	 * @return	string							Formatted value
 	 */
 	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '')
 	{
@@ -1936,7 +1939,7 @@ class ExtraFields
 			$out = '';
 
 			// Only if something to display (perf)
-			if ($value) {		// If we have -1 here, pb is into insert, not into ouptut (fix insert instead of changing code here to compensate)
+			if ($value) {		// If we have -1 here, pb is into insert, not into output (fix insert instead of changing code here to compensate)
 				$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
 
 				$InfoFieldList = explode(":", $param_list[0]);
@@ -1978,7 +1981,7 @@ class ExtraFields
 	 *
 	 * @param   string	$key            		Key of attribute
 	 * @param	string	$extrafieldsobjectkey	If defined, use the new method to get extrafields data
-	 * @return	string							Formated value
+	 * @return	string							Formatted value
 	 */
 	public function getAlignFlag($key, $extrafieldsobjectkey = '')
 	{
@@ -2048,7 +2051,7 @@ class ExtraFields
 		}
 		$disabledcookiewrite = 0;
 		if ($mode == 'create') {
-			// On create mode, force separator group to not be collapsable
+			// On create mode, force separator group to not be collapsible
 			$extrafield_collapse_display_value = 1;
 			$expand_display = true;	// We force group to be shown expanded
 			$disabledcookiewrite = 1; // We keep status of group unchanged into the cookie
@@ -2350,7 +2353,9 @@ class ExtraFields
 						$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);
 					}
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
-					if (!GETPOST($keysuffix."options_".$key.$keyprefix)) {
+					// We test on a hidden field named "..._multiselect" that is always set to 1 if param is in form so
+					// when nothing is provided we can make a difference between noparam in the form and param was set to nothing.
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix.'_multiselect')) {
 						continue; // Value was not provided, we should not set it.
 					}
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
@@ -2358,7 +2363,7 @@ class ExtraFields
 					$value_arr = (array) $value_arr;
 					$value_key = implode(',', $value_arr);
 				} elseif (in_array($key_type, array('price', 'double', 'int'))) {
-					if (!GETPOST($keysuffix."options_".$key.$keyprefix)) {
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
 						continue; // Value was not provided, we should not set it.
 					}
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
@@ -2368,14 +2373,16 @@ class ExtraFields
 						$value_key = $value_arr;
 					}
 				} elseif (in_array($key_type, array('boolean'))) {
-					if (!GETPOST($keysuffix."options_".$key.$keyprefix)) {
+					// We test on a hidden field named "..._boolean" that is always set to 1 if param is in form so
+					// when nothing is provided we can make a difference between noparam in the form and param was set to nothing.
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix."_boolean")) {
 						$value_key = '';
 					} else {
 						$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
 						$value_key = $value_arr;
 					}
 				} elseif (in_array($key_type, array('html'))) {
-					if (!GETPOST($keysuffix."options_".$key.$keyprefix)) {
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
 						continue; // Value was not provided, we should not set it.
 					}
 					$value_key = dol_htmlcleanlastbr(GETPOST($keysuffix."options_".$key.$keyprefix, 'restricthtml'));

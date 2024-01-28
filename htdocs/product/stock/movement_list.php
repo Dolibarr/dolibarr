@@ -175,7 +175,7 @@ $uploaddir = $conf->stock->dir_output.'/movements';
 
 $permissiontoread = $user->rights->stock->mouvement->lire;
 $permissiontoadd = $user->rights->stock->mouvement->creer;
-$permissiontodelete = $user->rights->stock->mouvement->creer; // There is no deletion permission for stock movement as we shoul dnever delete
+$permissiontodelete = $user->rights->stock->mouvement->creer; // There is no deletion permission for stock movement as we should never delete
 
 $usercanread = $user->rights->stock->mouvement->lire;
 $usercancreate = $user->rights->stock->mouvement->creer;
@@ -586,7 +586,7 @@ if ($action == "transfert_stock" && !$cancel) {
 	}
 }
 
-// reverse mouvement of stock
+// reverse movement of stock
 if ($action == 'confirm_reverse') {
 	$listMouvement = array();
 	$toselect = array_map('intval', $toselect);
@@ -1143,7 +1143,7 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
@@ -1159,7 +1159,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 if (!empty($arrayfields['m.rowid']['checked'])) {
 	// Ref
 	print '<td class="liste_titre left">';
-	print '<input class="flat maxwidth25" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+	print '<input class="flat maxwidth40" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['m.datem']['checked'])) {
@@ -1641,8 +1641,8 @@ if (count($arrayofuniqueproduct) == 1 && !empty($year) && is_numeric($year)) {
 		$productidselected = $key;
 		$productlabelselected = $val;
 	}
-	$datebefore = dol_get_first_day($year ? $year : strftime("%Y", time()), $month ? $month : 1, true);
-	$dateafter = dol_get_last_day($year ? $year : strftime("%Y", time()), $month ? $month : 12, true);
+	$datebefore = dol_get_first_day($year ? $year : dol_print_date(time(), "%Y"), $month ? $month : 1, true);
+	$dateafter = dol_get_last_day($year ? $year : dol_print_date(time(), "%Y"), $month ? $month : 12, true);
 	$balancebefore = $movement->calculateBalanceForProductBefore($productidselected, $datebefore);
 	$balanceafter = $movement->calculateBalanceForProductBefore($productidselected, $dateafter);
 

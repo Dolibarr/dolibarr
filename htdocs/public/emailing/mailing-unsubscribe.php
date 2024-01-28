@@ -63,7 +63,7 @@ $langs->loadLangs(array("main", "mails"));
 
 $mtid = GETPOST('mtid');
 $email = GETPOST('email');
-$tag = GETPOST('tag');	// To retreive the emailing, and recipient
+$tag = GETPOST('tag');	// To retrieve the emailing, and recipient
 $unsuscrib = GETPOST('unsuscrib');
 $securitykey = GETPOST('securitykey');
 

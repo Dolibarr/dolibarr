@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 class FormOrder extends Form
 {
 	/**
-	 *  Return combo list of differents status of a orders
+	 *  Return combo list of different statuses of orders
 	 *
 	 *  @param	string	$selected   Preselected value
 	 *  @param	int		$short		Use short labels

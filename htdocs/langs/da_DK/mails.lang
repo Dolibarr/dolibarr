@@ -184,3 +184,5 @@ EmailOptedOut=E-mail-ejeren har anmodet om ikke at kontakte ham med denne e-mail
 EvenUnsubscribe=Inkluder fravalgs-e-mails
 EvenUnsubscribeDesc=Inkluder fravalgs-e-mails, når du vælger e-mails som mål. Nyttig til for eksempel obligatoriske service-e-mails.
 XEmailsDoneYActionsDone=%s e-mails prækvalificeret, %s e-mails behandlet med succes (for %s registrering/handlinger udført)
+helpWithAi=Tilføj instruktioner
+YouCanMakeSomeInstructionForEmail=Du kan lave en instruktion til din e-mail (eksempel: generer billede i e-mail-skabelon...)

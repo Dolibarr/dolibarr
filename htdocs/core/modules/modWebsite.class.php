@@ -37,8 +37,6 @@ class modWebsite extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
-
 		$this->db = $db;
 		$this->numero = 10000;
 

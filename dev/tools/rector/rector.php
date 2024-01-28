@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 use Rector\Core\ValueObject\PhpVersion;
 use Rector\Set\ValueObject\LevelSetList;
+use Rector\Set\ValueObject\SetList;
 
 return static function (RectorConfig $rectorConfig): void {
 	$rectorConfig->phpVersion(PhpVersion::PHP_71);
@@ -55,8 +56,19 @@ return static function (RectorConfig $rectorConfig): void {
 	$rectorConfig->rule(Dolibarr\Rector\Renaming\UserRightsToFunction::class);
 	$rectorConfig->rule(Dolibarr\Rector\Renaming\EmptyGlobalToFunction::class);
 
-	// Add all predefined rules to migrate to up to php 71
-	// $rectorConfig->sets([
-	//	LevelSetList::UP_TO_PHP_71
-	// ]);
+	// Add all predefined rules to migrate to up to php 71.
+	// Warning this break tab spacing of arrays on several lines
+	/*$rectorConfig->sets([
+		LevelSetList::UP_TO_PHP_70
+	]);*/
+	// Add predefined rules for a given version only
+	//$rectorConfig->import(SetList::PHP_70);
+	//$rectorConfig->import(SetList::PHP_71);
+	//$rectorConfig->import(SetList::PHP_72);
+	//$rectorConfig->import(SetList::PHP_73);
+	//$rectorConfig->import(SetList::PHP_74);
+	//$rectorConfig->import(SetList::PHP_80);
+	//$rectorConfig->import(SetList::PHP_81);
+	//$rectorConfig->import(SetList::PHP_82);
+	//$rectorConfig->import(SetList::PHP_83);
 };

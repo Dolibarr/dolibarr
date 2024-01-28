@@ -2,7 +2,7 @@
 /* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -259,7 +259,7 @@ if (empty($reshook)) {
 		$object->date_debut = $date_start;
 		$object->date_fin = $date_end;
 
-		$object->fk_user_author = GETPOST('fk_user_author', 'int');
+		$object->fk_user_author = GETPOSTINT('fk_user_author');
 		if (!($object->fk_user_author > 0)) {
 			$object->fk_user_author = $user->id;
 		}
@@ -284,7 +284,7 @@ if (empty($reshook)) {
 
 		$object->status = 1;
 		$object->fk_c_paiement = GETPOST('fk_c_paiement', 'int');
-		$object->fk_user_validator = GETPOST('fk_user_validator', 'int');
+		$object->fk_user_validator = GETPOSTINT('fk_user_validator');
 		$object->note_public = GETPOST('note_public', 'restricthtml');
 		$object->note_private = GETPOST('note_private', 'restricthtml');
 		// Fill array 'array_options' with data from add form
@@ -315,7 +315,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				$db->commit();
-				Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 				exit;
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -333,7 +333,7 @@ if (empty($reshook)) {
 		$object->date_fin = $date_end;
 
 		if ($object->status < 3) {
-			$object->fk_user_validator = GETPOST('fk_user_validator', 'int');
+			$object->fk_user_validator = GETPOSTINT('fk_user_validator');
 		}
 
 		$object->fk_c_paiement = GETPOST('fk_c_paiement', 'int');
@@ -419,7 +419,7 @@ if (empty($reshook)) {
 			// FROM
 			$expediteur = new User($db);
 			$expediteur->fetch($object->fk_user_author);
-			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+			$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
 			if ($emailTo && $emailFrom) {
 				$filename = array();
@@ -427,9 +427,9 @@ if (empty($reshook)) {
 				$mimetype = array();
 
 				// SUBJECT
-				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+				$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+					$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 				}
 
 				$subject = $societeName." - ".$langs->transnoentities("ExpenseReportWaitingForApproval");
@@ -528,7 +528,7 @@ if (empty($reshook)) {
 			// FROM
 			$expediteur = new User($db);
 			$expediteur->fetch($object->fk_user_author);
-			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+			$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
 			if ($emailFrom && $emailTo) {
 				$filename = array();
@@ -536,9 +536,9 @@ if (empty($reshook)) {
 				$mimetype = array();
 
 				// SUBJECT
-				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+				$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+					$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 				}
 
 				$subject = $societeName." - ".$langs->transnoentities("ExpenseReportWaitingForReApproval");
@@ -756,7 +756,7 @@ if (empty($reshook)) {
 			// FROM
 			$expediteur = new User($db);
 			$expediteur->fetch($object->fk_user_refuse);
-			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+			$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
 			if ($emailFrom && $emailTo) {
 				$filename = array();
@@ -764,9 +764,9 @@ if (empty($reshook)) {
 				$mimetype = array();
 
 				// SUBJECT
-				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+				$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+					$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 				}
 
 				$subject = $societeName." - ".$langs->transnoentities("ExpenseReportRefused");
@@ -872,7 +872,7 @@ if (empty($reshook)) {
 					// FROM
 					$expediteur = new User($db);
 					$expediteur->fetch($object->fk_user_cancel);
-					$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+					$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
 					if ($emailFrom && $emailTo) {
 						$filename = array();
@@ -880,9 +880,9 @@ if (empty($reshook)) {
 						$mimetype = array();
 
 						// SUBJECT
-						$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+						$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 						if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-							$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+							$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 						}
 
 						$subject = $societeName." - ".$langs->transnoentities("ExpenseReportCanceled");
@@ -1054,7 +1054,7 @@ if (empty($reshook)) {
 			// FROM
 			$expediteur = new User($db);
 			$expediteur->fetch($user->id);
-			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+			$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
 			if ($emailFrom && $emailTo) {
 				$filename = array();
@@ -1062,9 +1062,9 @@ if (empty($reshook)) {
 				$mimetype = array();
 
 				// SUBJECT
-				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+				$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+					$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 				}
 
 				$subject = $societeName." - ".$langs->transnoentities("ExpenseReportPaid");
@@ -1471,7 +1471,7 @@ if ($action == 'create') {
 	} else {
 		$defaultselectuser = (empty($user->fk_user_expense_validator) ? $user->fk_user : $user->fk_user_expense_validator); // Will work only if supervisor has permission to approve so is inside include_users
 		if (getDolGlobalString('EXPENSEREPORT_DEFAULT_VALIDATOR')) {
-			$defaultselectuser = $conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR; // Can force default approver
+			$defaultselectuser = getDolGlobalString('EXPENSEREPORT_DEFAULT_VALIDATOR'); // Can force default approver
 		}
 		if (GETPOST('fk_user_validator', 'int') > 0) {
 			$defaultselectuser = GETPOST('fk_user_validator', 'int');
@@ -1735,7 +1735,7 @@ if ($action == 'create') {
 				$userauthor = new User($db);
 				$result = $userauthor->fetch($object->fk_user_author);
 				if ($result < 0) {
-					dol_print_error('', $userauthor->error);
+					dol_print_error(null, $userauthor->error);
 				} elseif ($result > 0) {
 					print $userauthor->getNomUrl(-1);
 				}
@@ -2077,7 +2077,7 @@ if ($action == 'create') {
 				print '<td>';
 				print '</td>';
 
-				// Information if theres a rule restriction
+				// Information if there's a rule restriction
 				print '<td>';
 				print '</td>';
 
@@ -2179,7 +2179,7 @@ if ($action == 'create') {
 								$relativepath = preg_replace('/expensereport\//', '', $ecmfilesstatic->filepath);
 								$fileinfo = pathinfo($ecmfilesstatic->filepath.'/'.$ecmfilesstatic->filename);
 								if (image_format_supported($fileinfo['basename']) > 0) {
-									$minifile = getImageFileNameForSize($fileinfo['basename'], '_mini'); // For new thumbs using same ext (in lower case howerver) than original
+									$minifile = getImageFileNameForSize($fileinfo['basename'], '_mini'); // For new thumbs using same ext (in lower case however) than original
 									if (!dol_is_file($conf->expensereport->dir_output.'/'.$relativepath.'/'.$minifile)) {
 										$minifile = getImageFileNameForSize($fileinfo['basename'], '_mini', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
 									}
@@ -2203,7 +2203,7 @@ if ($action == 'create') {
 
 										$pdfexists = file_exists($filepdf);
 										if ($pdfexists) {
-											// Conversion du PDF en image png si fichier png non existant
+											// Conversion du PDF en image png si fichier png non existent
 											if (!file_exists($fileimage) || (filemtime($fileimage) < filemtime($filepdf))) {
 												if (!getDolGlobalString('MAIN_DISABLE_PDF_THUMBS')) {		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
 													include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -2364,7 +2364,7 @@ if ($action == 'create') {
 						// VAT
 						$selectedvat = price2num($line->vatrate).(!empty($line->vat_src_code) ? ' ('.$line->vat_src_code.')' : '');
 						print '<td class="right">';
-						print $form->load_tva('vatrate', (GETPOSTISSET("vatrate") ? GETPOST("vatrate") : $selectedvat), $mysoc, '', 0, 0, '', false, 1);
+						print $form->load_tva('vatrate', (GETPOSTISSET("vatrate") ? GETPOST("vatrate") : $selectedvat), $mysoc, '', 0, 0, '', false, 1, 2);
 						print '</td>';
 
 						// Unit price
@@ -2389,7 +2389,7 @@ if ($action == 'create') {
 						print '<td class="center">';
 						//print $line->fk_ecm_files;
 						print '</td>';
-						// Information if theres a rule restriction
+						// Information if there's a rule restriction
 						print '<td class="center">';
 						print '</td>';
 

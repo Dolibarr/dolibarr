@@ -69,7 +69,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -143,7 +143,7 @@ if (empty($reshook)) {
 	}
 	$triggermodname = 'MO_MODIFY'; // Name of trigger action code to execute when we modify record
 
-	// Create MO with Childs
+	// Create MO with Children
 	if ($action == 'add' && empty($id) && !empty($TBomLineId)) {
 		$noback = 1;
 		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -198,7 +198,7 @@ if (empty($reshook)) {
 
 	if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 		if (!($object->id > 0)) {
-			dol_print_error('', 'Error, object must be fetched before being deleted');
+			dol_print_error(null, 'Error, object must be fetched before being deleted');
 			exit;
 		}
 

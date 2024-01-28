@@ -183,3 +183,7 @@ DictionaryDeleted=Dicionario <b> %s </b> eliminado correctamente
 PropertyModuleUpdated=A propiedade <b> %s </b> actualizouse correctamente
 InfoForApiFile=* Cando xera o ficheiro por primeira vez, crearanse todos os métodos <strong>para cada obxecto.</strong><br>* Cando prema en <strong>eliminar</strong> só elimina todos os métodos para a clase<strong>obxecto seleccionado</strong>.
 SetupFile=Páxina para a configuración do módulo
+EmailingSelectors=Selectores de correo electrónico
+EmailingSelectorDesc=Pode xerar e editar aquí os ficheiros de clase para proporcionar novos selectores de destino de correo electrónico para o módulo de correo electrónico masivo
+EmailingSelectorFile=Ficheiro de selección de correos electrónicos
+NoEmailingSelector=Non hai ficheiros de selección de correos electrónicos

@@ -81,7 +81,7 @@ $errorforinvoice = array();
 
 $accountingaccount = new AccountingAccount($db);
 
-// Get informations of journal
+// Get information of journal
 $accountingjournalstatic = new AccountingJournal($db);
 $accountingjournalstatic->fetch($id_journal);
 $journal = $accountingjournalstatic->code;
@@ -488,7 +488,7 @@ $userstatic = new User($db);
 
 // Export
 if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
-	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+	$sep = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
 
 	$filename = 'journal';
 	$type_export = 'journal';

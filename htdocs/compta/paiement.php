@@ -303,7 +303,7 @@ if (empty($reshook)) {
 				$facid = $key;
 				if (is_numeric($amount) && $amount != 0) {
 					if ($invoiceid != 0) {
-						$invoiceid = -1; // There is more than one invoice payed by this payment
+						$invoiceid = -1; // There is more than one invoice paid by this payment
 					} else {
 						$invoiceid = $facid;
 					}
@@ -363,7 +363,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		// TODO add hook here
 		if (isModEnabled('paypalplus') && $conf->global->PAYPAL_ENABLE_TRANSACTION_MANAGEMENT && !empty($facture->ref_ext)) {
 			if (getDolGlobalString('PAYPAL_BANK_ACCOUNT')) {
-				$accountid = $conf->global->PAYPAL_BANK_ACCOUNT;
+				$accountid = getDolGlobalString('PAYPAL_BANK_ACCOUNT');
 			}
 			$paymentnum = $facture->ref_ext;
 		}
@@ -607,7 +607,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				//print '<tr><td colspan="3">';
 				print '<br>';
 
-				print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+				print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 				print '<table class="noborder centpercent">';
 
 				print '<tr class="liste_titre">';

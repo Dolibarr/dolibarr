@@ -81,13 +81,12 @@ $php_self = preg_replace('/(\?|&amp;|&)token=[^&]+/', '\1', $php_self);
 
 // Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
 $arrayofjs = array(
-	'/includes/jstz/jstz.min.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(DOL_VERSION)),
 	'/core/js/dst.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(DOL_VERSION))
 );
 
 // We display application title instead Login term
 if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-	$titleofloginpage = $conf->global->MAIN_APPLICATION_TITLE;
+	$titleofloginpage = getDolGlobalString('MAIN_APPLICATION_TITLE');
 } else {
 	$titleofloginpage = $langs->trans('Login');
 }
@@ -119,7 +118,7 @@ if (getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
 	<?php
 } else {
 	?>
-	<body class="body bodylogin"<?php print !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file=logos/'.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
+	<body class="body bodylogin"<?php print !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file=logos/'.urlencode(getDolGlobalString('MAIN_LOGIN_BACKGROUND')).'\')"'; ?>>
 	<?php
 }
 ?>
@@ -310,7 +309,7 @@ if ($forgetpasslink || $helpcenterlink) {
 	if ($forgetpasslink) {
 		$url = DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam;
 		if (getDolGlobalString('MAIN_PASSWORD_FORGOTLINK')) {
-			$url = $conf->global->MAIN_PASSWORD_FORGOTLINK;
+			$url = getDolGlobalString('MAIN_PASSWORD_FORGOTLINK');
 		}
 		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'">';
 		echo $langs->trans('PasswordForgotten');
@@ -324,7 +323,7 @@ if ($forgetpasslink || $helpcenterlink) {
 	if ($helpcenterlink) {
 		$url = DOL_URL_ROOT.'/support/index.php'.$moreparam;
 		if (getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE')) {
-			$url = $conf->global->MAIN_HELPCENTER_LINKTOUSE;
+			$url = getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE');
 		}
 		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'" target="_blank" rel="noopener noreferrer">';
 		echo $langs->trans('NeedHelpCenter');
@@ -340,7 +339,7 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 	print '<div class="center" style="margin-top: 20px; margin-bottom: 10px">';
 	print '<div class="loginbuttonexternal">';
 
-	$url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+	$url = getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL');
 	if (!empty($url)) {
 		print '<a class="alogin" href="'.$url.'">'.$langs->trans("LoginUsingOpenID").'</a>';
 	} else {
@@ -422,6 +421,12 @@ if (getDolGlobalString('MAIN_EASTER_EGG_COMMITSTRIP')) {
 		$resgetcommitstrip = getURLContent("https://www.commitstrip.com/en/feed/");
 	}
 	if ($resgetcommitstrip && $resgetcommitstrip['http_code'] == '200') {
+		if (LIBXML_VERSION < 20900) {
+			// Avoid load of external entities (security problem).
+			// Required only if LIBXML_VERSION < 20900
+			libxml_disable_entity_loader(true);
+		}
+
 		$xml = simplexml_load_string($resgetcommitstrip['content'], 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
 		$little = $xml->channel->item[0]->children('content', true);
 		print preg_replace('/width="650" height="658"/', '', $little->encoded);

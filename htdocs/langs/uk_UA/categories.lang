@@ -102,4 +102,5 @@ ActionCommCategoriesArea=Категорії подій
 WebsitePagesCategoriesArea=Категорії контейнерів сторінки
 KnowledgemanagementsCategoriesArea=Категорії статті КМ
 UseOrOperatorForCategories=Використовуйте оператор «АБО» для категорій
-AddObjectIntoCategory=Assign the category
+AddObjectIntoCategory=Assign to the category
+Position=Позиція

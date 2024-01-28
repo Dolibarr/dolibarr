@@ -53,7 +53,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -144,7 +144,7 @@ $formfile = new FormFile($db);
 
 $title = $langs->trans("AssetModel") . ' - ' . $langs->trans("Card");
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-asset page-model-card');
 
 // Part to create
 if ($action == 'create') {

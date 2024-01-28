@@ -37,17 +37,7 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 	public $boxlabel = "BoxTitleMembersSubscriptionsByYear";
 	public $depends = array("adherent");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor

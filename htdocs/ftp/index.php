@@ -124,7 +124,7 @@ if ($action == 'uploadfile') {
 		}
 		$action = '';
 	} else {
-		dol_print_error('', $mesg);
+		dol_print_error(null, $mesg);
 	}
 }
 
@@ -148,7 +148,7 @@ if ($action == 'addfolder') {
 		}
 		$action = '';
 	} else {
-		dol_print_error('', $mesg);
+		dol_print_error(null, $mesg);
 	}
 }
 
@@ -193,7 +193,7 @@ if ($action == 'confirm_deletefile' && GETPOST('confirm') == 'yes') {
 
 		$action = '';
 	} else {
-		dol_print_error('', $mesg);
+		dol_print_error(null, $mesg);
 	}
 }
 
@@ -232,7 +232,7 @@ if (GETPOST("const", 'array') && GETPOST("delete") && GETPOST("delete") == $lang
 			}
 		}
 	} else {
-		dol_print_error('', $mesg);
+		dol_print_error(null, $mesg);
 	}
 }
 
@@ -262,7 +262,7 @@ if ($action == 'confirm_deletesection' && $confirm == 'yes') {
 
 		$action = '';
 	} else {
-		dol_print_error('', $mesg);
+		dol_print_error(null, $mesg);
 	}
 }
 
@@ -321,7 +321,7 @@ if ($action == 'download') {
 			setEventMessages($langs->transnoentitiesnoconv('FailedToGetFile', $file), null, 'errors');
 		}
 	} else {
-		dol_print_error('', $mesg);
+		dol_print_error(null, $mesg);
 	}
 
 	//ftp_close($conn_id);	Close later
@@ -390,8 +390,8 @@ if (!function_exists('ftp_connect')) {
 		print $langs->trans("Server").': <b>'.$ftp_server.'</b><br>';
 		print $langs->trans("Port").': <b>'.$ftp_port.'</b> '.($ftp_passive ? "(Passive)" : "(Active)").'<br>';
 		print $langs->trans("User").': <b>'.$ftp_user.'</b><br>';
-		print $langs->trans("FTPs (FTP over SSH)").': <b>'.yn($conf->global->FTP_CONNECT_WITH_SSL).'</b><br>';
-		print $langs->trans("SFTP (FTP as a subsytem of SSH)").': <b>'.yn($conf->global->FTP_CONNECT_WITH_SFTP).'</b><br>';
+		print $langs->trans("FTPs (FTP over SSH)").': <b>'.yn(getDolGlobalString('FTP_CONNECT_WITH_SSL')).'</b><br>';
+		print $langs->trans("SFTP (FTP as a subsystem of SSH)").': <b>'.yn(getDolGlobalString('FTP_CONNECT_WITH_SFTP')).'</b><br>';
 		print $langs->trans("Directory").': ';
 		$sectionarray = preg_split('|[\/]|', $section);
 		// For /

@@ -205,7 +205,7 @@ function conferenceorboothAttendeePrepareHead($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	//TODO : Note and docuement
+	//TODO : Note and document
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'conferenceorboothattendee@eventorganization');
 

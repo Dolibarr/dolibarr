@@ -26,13 +26,13 @@
 /**
  *       \file       htdocs/core/class/html.formmail.class.php
  *       \ingroup    core
- *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
+ *       \brief      Fichier de la class permettant la generation du formulaire html d'envoi de mail unitaire
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
 /**
- *      Classe permettant la generation du formulaire html d'envoi de mail unitaire
+ *      Class permettant la generation du formulaire html d'envoi de mail unitaire
  *      Usage: $formail = new FormMail($db)
  *             $formmail->proprietes=1 ou chaine ou tableau de valeurs
  *             $formmail->show_form() affiche le formulaire
@@ -440,9 +440,9 @@ class FormMail extends Form
 
 			if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelselected') && GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
 				if (!empty($arraydefaultmessage->joinfiles) && !empty($this->param['fileinit']) && is_array($this->param['fileinit'])) {
-					foreach ($this->param['fileinit'] as $file) {
-						if (!empty($file)) {
-							$this->add_attached_files($file, basename($file), dol_mimetype($file));
+					foreach ($this->param['fileinit'] as $path) {
+						if (!empty($path)) {
+							$this->add_attached_files($path);
 						}
 					}
 				}
@@ -631,7 +631,7 @@ class FormMail extends Form
 						// Also add robot email
 						if (!empty($this->fromalsorobot)) {
 							if (getDolGlobalString('MAIN_MAIL_EMAIL_FROM') && getDolGlobalString('MAIN_MAIL_EMAIL_FROM') != getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
-								$s = $conf->global->MAIN_MAIL_EMAIL_FROM;
+								$s = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 								if ($this->frommail) {
 									$s .= ' &lt;' . getDolGlobalString('MAIN_MAIL_EMAIL_FROM').'&gt;';
 								}
@@ -708,7 +708,7 @@ class FormMail extends Form
 				$out .= $langs->trans("MailToUsers");
 				$out .= '</td><td>';
 
-				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+				// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
 				$tmparray = $this->withtouser;
 				foreach ($tmparray as $key => $val) {
 					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
@@ -755,9 +755,9 @@ class FormMail extends Form
 			if (!empty($this->withtoccuser) && is_array($this->withtoccuser) && getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')) {
 				$out .= '<tr><td>';
 				$out .= $langs->trans("MailToCCUsers");
-				$out .= '</td><td>';
+				$out .= '</td></td>';
 
-				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+				// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
 				$tmparray = $this->withtoccuser;
 				foreach ($tmparray as $key => $val) {
 					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
@@ -792,7 +792,7 @@ class FormMail extends Form
 
 			// Ask delivery receipt
 			if (!empty($this->withdeliveryreceipt) && getDolGlobalInt('MAIN_EMAIL_SUPPORT_ACK')) {
-				$out .= $this->getHtmlForDeliveryReceipt();
+				$out .= $this->getHtmlForDeliveryreceipt();
 			}
 
 			// Topic
@@ -887,6 +887,11 @@ class FormMail extends Form
 				$out .= "</td></tr>\n";
 			}
 
+			//input prompt AI
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+			if (isModEnabled('ai') && getDolGlobalString('AI_CHATGPT_API_KEY')) {
+				$out .= $this->getHtmlForInstruction();
+			}
 			// Message
 			if (!empty($this->withbody)) {
 				$defaultmessage = GETPOST('message', 'restricthtml');
@@ -1123,7 +1128,7 @@ class FormMail extends Form
 
 					$tmparray[$key]['label'] = $label;
 					$tmparray[$key]['label'] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]['label']);
-					// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+					// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
 					$tmparray[$key]['label'] = dol_htmlentities($tmparray[$key]['label'], ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8', true);
 
 					$tmparray[$key]['labelhtml'] = $label;
@@ -1176,7 +1181,7 @@ class FormMail extends Form
 
 					$tmparray[$key]['label'] = $label;
 					$tmparray[$key]['label'] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]['label']);
-					// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+					// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
 					$tmparray[$key]['label'] = dol_htmlentities($tmparray[$key]['label'], ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8', true);
 
 					$tmparray[$key]['labelhtml'] = $label;
@@ -1195,12 +1200,14 @@ class FormMail extends Form
 
 	/**
 	 * get html For WithCCC
+	 * This information is show when MAIN_EMAIL_USECCC is set.
 	 *
 	 * @return string html
 	 */
 	public function getHtmlForWithCcc()
 	{
-		global $conf, $langs, $form;
+		global $langs, $form;
+
 		$out = '<tr><td>';
 		$out .= $form->textwithpicto($langs->trans("MailCCC"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
 		$out .= '</td><td>';
@@ -1223,7 +1230,7 @@ class FormMail extends Form
 
 					$tmparray[$key]['label'] = $label;
 					$tmparray[$key]['label'] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]['label']);
-					// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+					// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
 					$tmparray[$key]['label'] = dol_htmlentities($tmparray[$key]['label'], ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8', true);
 
 					$tmparray[$key]['labelhtml'] = $label;
@@ -1239,25 +1246,31 @@ class FormMail extends Form
 
 		$showinfobcc = '';
 		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROPOSAL_TO') && !empty($this->param['models']) && $this->param['models'] == 'propal_send') {
-			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO;
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROPOSAL_TO');
 		}
 		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_ORDER_TO') && !empty($this->param['models']) && $this->param['models'] == 'order_send') {
-			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO;
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_ORDER_TO');
 		}
 		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_INVOICE_TO') && !empty($this->param['models']) && $this->param['models'] == 'facture_send') {
-			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO;
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_INVOICE_TO');
 		}
 		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO') && !empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') {
-			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO;
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO');
 		}
 		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO') && !empty($this->param['models']) && $this->param['models'] == 'order_supplier_send') {
-			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO;
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO');
 		}
 		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO') && !empty($this->param['models']) && $this->param['models'] == 'invoice_supplier_send') {
-			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO;
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO');
 		}
-		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROJECT_TO') && !empty($this->param['models']) && $this->param['models'] == 'project') {
-			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO;
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROJECT_TO') && !empty($this->param['models']) && $this->param['models'] == 'project') {	// don't know why there is not '_send' at end of this models name.
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROJECT_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SHIPMENT_TO') && !empty($this->param['models']) && $this->param['models'] == 'shipping_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SHIPMENT_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_RECEPTION_TO') && !empty($this->param['models']) && $this->param['models'] == 'reception_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_RECEPTION_TO');
 		}
 		if ($showinfobcc) {
 			$out .= ' + '.$showinfobcc;
@@ -1273,7 +1286,8 @@ class FormMail extends Form
 	 */
 	public function getHtmlForWithErrorsTo()
 	{
-		global $conf, $langs;
+		global $langs;
+
 		//if (! $this->errorstomail) $this->errorstomail=$this->frommail;
 		$errorstomail = getDolGlobalString('MAIN_MAIL_ERRORS_TO', (!empty($this->errorstomail) ? $this->errorstomail : ''));
 		if ($this->witherrorstoreadonly) {
@@ -1296,7 +1310,8 @@ class FormMail extends Form
 	 */
 	public function getHtmlForDeliveryreceipt()
 	{
-		global $conf, $langs;
+		global $langs;
+
 		$out = '<tr><td><label for="deliveryreceipt">'.$langs->trans("DeliveryReceipt").'</label></td><td>';
 
 		if (!empty($this->withdeliveryreceiptreadonly)) {
@@ -1334,7 +1349,7 @@ class FormMail extends Form
 	 */
 	public function getHtmlForTopic($arraydefaultmessage, $helpforsubstitution)
 	{
-		global $conf, $langs, $form;
+		global $langs, $form;
 
 		$defaulttopic = GETPOST('subject', 'restricthtml');
 
@@ -1362,6 +1377,57 @@ class FormMail extends Form
 		$out .= "</td></tr>\n";
 		return $out;
 	}
+
+	/**
+	 * get Html For instruction of message
+	 * @return 	string      Text for instructions
+	 */
+	public function getHtmlForInstruction()
+	{
+		global $langs, $form;
+
+		$baseUrl = dol_buildpath('/', 1);
+
+		$out = '<tr>';
+		$out .= '<td>';
+		$out .= $form->textwithpicto($langs->trans('helpWithAi'), $langs->trans("YouCanMakeSomeInstructionForEmail"));
+		$out .= '</td>';
+
+		$out .= '<td>';
+		$out .= '<input type="hidden" id="csrf_token" name="token" value="'.newToken().'">';
+		$out .= '<input type="text" class="quatrevingtpercent" id="ai_instructions" name="instruction" placeholder="message with AI"/>';
+		$out .= '<button id="generate_button" type="button" class="button smallpaddingimp">'.$langs->trans('Generate').'</button>';
+		$out .= "</td></tr>\n";
+		$out .= "<script type='text/javascript'>
+			$(document).ready(function() {
+				$('#generate_button').click(function() {
+					var instructions = $('#ai_instructions').val();
+					var token = $('#csrf_token').val();
+
+					$.ajax({
+						url: '".$baseUrl."ai/lib/generate_content.lib.php',
+						method: 'POST',
+						dataType: 'json',
+						contentType: 'application/json',
+						data: JSON.stringify({
+							'token': token,
+							'instructions': instructions,
+						}),
+						success: function(response) {
+							console.log(response);
+						},
+						error: function(xhr, status, error) {
+							console.error('error ajax', status, error);
+						}
+					});
+				});
+			});
+			</script>
+			";
+		return $out;
+	}
+
+
 
 	/**
 	 *  Return templates of email with type = $type_template or type = 'all'.
@@ -1721,7 +1787,7 @@ class FormMail extends Form
 				$onlinepaymentenabled++;
 			}
 			if ($onlinepaymentenabled && getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
-				$tmparray['__SECUREKEYPAYMENT__'] = $conf->global->PAYMENT_SECURITY_TOKEN;
+				$tmparray['__SECUREKEYPAYMENT__'] = getDolGlobalString('PAYMENT_SECURITY_TOKEN');
 				if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 					if (isModEnabled('adherent')) {
 						$tmparray['__SECUREKEYPAYMENT_MEMBER__'] = 'SecureKeyPAYMENTUniquePerMember';

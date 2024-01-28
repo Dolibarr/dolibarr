@@ -266,7 +266,7 @@ class Account extends CommonObject
 	public $balance;
 
 	/**
-	 * Creditor Identifier CI. Some banks use different ICS for direct debit and bank tranfer
+	 * Creditor Identifier CI. Some banks use different ICS for direct debit and bank transfer
 	 * @var string
 	 */
 	public $ics;
@@ -289,7 +289,7 @@ class Account extends CommonObject
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
 	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
@@ -466,7 +466,7 @@ class Account extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= " ".((int) $line_id);
 		$sql .= ", ".((int) $url_id);
-		$sql .= ", '".$this->db->escape($url)."'";		// dperecated
+		$sql .= ", '".$this->db->escape($url)."'";		// deprecated
 		$sql .= ", '".$this->db->escape($label)."'";
 		$sql .= ", '".$this->db->escape($type)."'";
 		$sql .= ")";
@@ -543,10 +543,10 @@ class Account extends CommonObject
 	 *
 	 *  @param	int	        $date			Date operation
 	 *  @param	string		$oper			'VIR','PRE','LIQ','VAD','CB','CHQ'...
-	 *  @param	string		$label			Descripton
+	 *  @param	string		$label			Description
 	 *  @param	float		$amount			Amount
 	 *  @param	string		$num_chq		Numero cheque or transfer
-	 *  @param	int  		$categorie		Category id (optionnal)
+	 *  @param	int  		$categorie		Category id (optional)
 	 *  @param	User		$user			User that create
 	 *  @param	string		$emetteur		Name of cheque writer
 	 *  @param	string		$banque			Bank of cheque writer
@@ -558,6 +558,8 @@ class Account extends CommonObject
 	 */
 	public function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur = '', $banque = '', $accountancycode = '', $datev = null, $num_releve = '', $amount_main_currency = null)
 	{
+		global $langs;
+
 		// Deprecation warning
 		if (is_numeric($oper)) {
 			dol_syslog(__METHOD__.": using numeric operations is deprecated", LOG_WARNING);
@@ -590,11 +592,11 @@ class Account extends CommonObject
 
 		// Check parameters
 		if (!$oper) {
-			$this->error = "Operation code not defined";
+			$this->error = $langs->trans("OperNotDefined");
 			return -1;
 		}
 		if (!$this->id) {
-			$this->error = "this->id not defined";
+			$this->error = $langs->trans("ThisIdNotDefined");
 			return -2;
 		}
 		if ($this->courant == Account::TYPE_CASH && $oper != 'LIQ') {
@@ -700,7 +702,7 @@ class Account extends CommonObject
 			return -1;
 		}
 
-		// Load librairies to check BAN
+		// Load libraries to check BAN
 		$balance = $this->balance;
 		if (empty($balance) && !empty($this->solde)) {
 			$balance = $this->solde;
@@ -1218,9 +1220,9 @@ class Account extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Renvoi si un compte peut etre supprimer ou non (sans mouvements)
+	 *    Indicates if an account can be deleted or not (without movements)
 	 *
-	 *    @return     boolean     vrai si peut etre supprime, faux sinon
+	 *    @return     boolean     True is the deletion is ok, false if not
 	 */
 	public function can_be_deleted()
 	{
@@ -1292,7 +1294,7 @@ class Account extends CommonObject
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 *      @param	User	$user        		Objet user
+	 *      @param	User	$user        		Object user
 	 *		@param	int		$filteraccountid	To get info for a particular account id
 	 *      @return WorkboardResponse|int 		Return integer <0 if KO, WorkboardResponse if OK
 	 */
@@ -1346,16 +1348,14 @@ class Account extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Charge indicateurs this->nb de tableau de bord
+	 *      Load the indicators this->nb for the state board
 	 *
 	 *		@param		int			$filteraccountid	To get info for a particular account id
 	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board($filteraccountid = 0)
+	public function loadStateBoard($filteraccountid = 0)
 	{
-		// phpcs:enable
 		global $user;
 
 		if ($user->socid) {
@@ -1784,7 +1784,7 @@ class Account extends CommonObject
 		);
 
 		if (getDolGlobalString('BANK_SHOW_ORDER_OPTION')) {
-			if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION)) {
+			if (is_numeric(getDolGlobalString('BANK_SHOW_ORDER_OPTION'))) {
 				if (getDolGlobalString('BANK_SHOW_ORDER_OPTION') == '1') {
 					$fieldlists = array(
 						'BankCode',
@@ -2092,7 +2092,7 @@ class AccountLine extends CommonObjectLine
 				$this->fk_user_rappro = $obj->fk_user_rappro;
 
 				$this->fk_type = $obj->fk_type; // Type of transaction
-				$this->rappro = $obj->rappro;
+				$this->rappro = (int) $obj->rappro;
 				$this->num_releve = $obj->num_releve;
 
 				$this->num_chq = $obj->num_chq;
@@ -2339,7 +2339,7 @@ class AccountLine extends CommonObjectLine
 	/**
 	 *	Update conciliation field
 	 *
-	 *	@param	User	$user			Objet user making update
+	 *	@param	User	$user			Object user making update
 	 *	@param 	int		$cat			Category id
 	 *	@param	int		$conciliated	1=Set transaction to conciliated, 0=Keep transaction non conciliated
 	 *	@return	int						Return integer <0 if KO, >0 if OK
@@ -2354,7 +2354,7 @@ class AccountLine extends CommonObjectLine
 		// Check statement field
 		if (getDolGlobalString('BANK_STATEMENT_REGEX_RULE')) {
 			if (!preg_match('/' . getDolGlobalString('BANK_STATEMENT_REGEX_RULE').'/', $this->num_releve)) {
-				$this->errors[] = $langs->trans("ErrorBankStatementNameMustFollowRegex", $conf->global->BANK_STATEMENT_REGEX_RULE);
+				$this->errors[] = $langs->trans("ErrorBankStatementNameMustFollowRegex", getDolGlobalString('BANK_STATEMENT_REGEX_RULE'));
 				return -1;
 			}
 		}

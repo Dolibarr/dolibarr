@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2023 Laurent Destailleur  <eldy@uers.sourceforge.net>
+ * Copyright (C) 2005-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Florian Henry        <florian.henry@open-concept.pro>
  *
@@ -348,7 +348,7 @@ if ($object->fetch($id) >= 0) {
 		$text = '';
 		if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || ($object->statut == 2 && $nbtry < $nbemail))) {
 			if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
-				$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
+				$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 			} else {
 				$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 			}
@@ -645,6 +645,7 @@ if ($object->fetch($id) >= 0) {
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
+		print '<input type="hidden" name="page_y" value="">';
 
 		$morehtmlcenter = '';
 		if ($allowaddtarget) {
@@ -712,7 +713,7 @@ if ($object->fetch($id) >= 0) {
 		print '&nbsp;';
 		print '</td>';
 
-		//Statut
+		// Status
 		print '<td class="liste_titre center parentonrightofpage">';
 		print $formmailing->selectDestinariesStatus($search_dest_status, 'search_dest_status', 1, 'width100 onrightofpage');
 		print '</td>';

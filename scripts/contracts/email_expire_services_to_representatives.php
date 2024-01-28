@@ -59,6 +59,9 @@ $langs->loadLangs(array('main', 'contracts'));
 $version = DOL_VERSION;
 $error = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */

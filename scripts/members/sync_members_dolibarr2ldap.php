@@ -49,6 +49,9 @@ $version = constant('DOL_VERSION');
 $error = 0;
 $confirmed = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */
@@ -148,7 +151,7 @@ if ($resql) {
 		$info = $member->_load_ldap_info();
 		$dn = $member->_load_ldap_dn($info);
 
-		$result = $ldap->add($dn, $info, $user); // Wil fail if already exists
+		$result = $ldap->add($dn, $info, $user); // Will fail if already exists
 		$result = $ldap->update($dn, $info, $user, $olddn);
 		if ($result > 0) {
 			print " - ".$langs->transnoentities("OK");

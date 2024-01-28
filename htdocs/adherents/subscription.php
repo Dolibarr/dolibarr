@@ -163,7 +163,7 @@ if (empty($reshook) && $action == 'setuserid' && ($user->hasRight('user', 'self'
 		if (GETPOST("userid", 'int') != $object->user_id) {  // If link differs from currently in database
 			$result = $object->setUserId(GETPOST("userid", 'int'));
 			if ($result < 0) {
-				dol_print_error('', $object->error);
+				dol_print_error(null, $object->error);
 			}
 			$action = '';
 		}
@@ -192,7 +192,7 @@ if (empty($reshook) && $action == 'setsocid') {
 			if (!$error) {
 				$result = $object->setThirdPartyId(GETPOST('socid', 'int'));
 				if ($result < 0) {
-					dol_print_error('', $object->error);
+					dol_print_error(null, $object->error);
 				}
 				$action = '';
 			}
@@ -208,7 +208,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscripti
 	$result = $object->fetch($rowid);
 	$result = $adht->fetch($object->typeid);
 
-	// Subscription informations
+	// Subscription information
 	$datesubscription = 0;
 	$datesubend = 0;
 	$defaultdelay = !empty($adht->duration_value) ? $adht->duration_value : 1;
@@ -226,7 +226,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscripti
 	$amount = price2num(GETPOST("subscription", 'alpha')); // Amount of subscription
 	$label = GETPOST("label");
 
-	// Payment informations
+	// Payment information
 	$accountid = GETPOST("accountid", 'int');
 	$operation = GETPOST("operation", "alphanohtml"); // Payment mode
 	$num_chq = GETPOST("num_chq", "alphanohtml");
@@ -373,7 +373,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscripti
 
 					// Get email content from template
 					$arraydefaultmessage = null;
-					$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
+					$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION');
 
 					if (!empty($labeltouse)) {
 						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
@@ -825,6 +825,14 @@ if (($action != 'addsubscription' && $action != 'create_thirdparty')) {
 	// Shon online payment link
 	$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
 
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('doShowOnlinePaymentUrl', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+	if ($reshook > 0) {
+		if (isset($hookmanager->resArray['showonlinepaymenturl'])) {
+			$useonlinepayment = $hookmanager->resArray['showonlinepaymenturl'];
+		}
+	}
+
 	if ($useonlinepayment) {
 		print '<br>';
 
@@ -869,7 +877,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 	print "\n\n<!-- Form add subscription -->\n";
 
 	if ($conf->use_javascript_ajax) {
-		//var_dump($bankdirect.'-'.$bankviainvoice.'-'.$invoiceonly.'-'.empty($conf->global->ADHERENT_BANK_USE));
+		//var_dump($bankdirect.'-'.$bankviainvoice.'-'.$invoiceonly);
 		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
 					$(".bankswitchclass, .bankswitchclass2").'.(($bankdirect || $bankviainvoice) ? 'show()' : 'hide()').';
@@ -1034,7 +1042,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 
 			print '<input type="radio" class="moreaction" id="none" name="paymentsave" value="none"'.(empty($bankdirect) && empty($invoiceonly) && empty($bankviainvoice) ? ' checked' : '').'>';
 			print '<label for="none"> '.$langs->trans("None").'</label><br>';
-			// Add entry into bank accoun
+			// Add entry into bank account
 			if (isModEnabled('banque')) {
 				print '<input type="radio" class="moreaction" id="bankdirect" name="paymentsave" value="bankdirect"'.(!empty($bankdirect) ? ' checked' : '');
 				print '><label for="bankdirect">  '.$langs->trans("MoreActionBankDirect").'</label><br>';
@@ -1061,7 +1069,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 				}
 				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled('product') || isModEnabled('service'))) {
 					$prodtmp = new Product($db);
-					$result = $prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+					$result = $prodtmp->fetch(getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS'));
 					if ($result < 0) {
 						setEventMessage($prodtmp->error, 'errors');
 					}
@@ -1091,7 +1099,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 				}
 				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled('product')|| isModEnabled('service'))) {
 					$prodtmp = new Product($db);
-					$result = $prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+					$result = $prodtmp->fetch(getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS'));
 					if ($result < 0) {
 						setEventMessage($prodtmp->error, 'errors');
 					}
@@ -1158,7 +1166,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 		$outputlangs->loadLangs(array("main", "members"));
 		// Get email content from template
 		$arraydefaultmessage = null;
-		$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
+		$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION');
 
 		if (!empty($labeltouse)) {
 			$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);

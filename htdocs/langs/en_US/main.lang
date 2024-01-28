@@ -9,7 +9,7 @@ DIRECTION=ltr
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil
+# freeserif is for Tamil or Ethiopian
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
@@ -1097,7 +1097,7 @@ KeyboardShortcut=Keyboard shortcut
 AssignedTo=Assigned to
 Deletedraft=Delete draft
 ConfirmMassDraftDeletion=Draft mass delete confirmation
-FileSharedViaALink=File shared with a public link
+FileSharedViaALink=Public file shared via link
 SelectAThirdPartyFirst=Select a third party first...
 YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
 Inventory=Inventory
@@ -1232,6 +1232,7 @@ ExternalUser=External user
 NoSpecificContactAddress=No specific contact or address
 NoSpecificContactAddressBis=This tab is dedicated to force specific contacts or addresses for the current object. Use it only if you want to define one or several specific contacts or addresses for the object when the information on the third party is not enough or not accurate.
 HideOnVCard=Hide %s
+ShowOnVCard=Show %s
 AddToContacts=Add address to my contacts
 LastAccess=Last access
 UploadAnImageToSeeAPhotoHere=Upload an image from the tab %s to see a photo here
@@ -1261,4 +1262,4 @@ AmountSalary=Salary amount
 InvoiceSubtype=Invoice subtype
 ConfirmMassReverse=Bulk Reverse confirmation
 ConfirmMassReverseQuestion=Are you sure you want to reverse the %s selected record(s)?
-
+Encrypted=Encrypted

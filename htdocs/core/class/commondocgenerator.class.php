@@ -71,7 +71,7 @@ abstract class CommonDocGenerator
 	public $update_main_doc_field;
 
 	/**
-	 * @var string	The name of constant to use to scan ODT files (Exemple: 'COMMANDE_ADDON_PDF_ODT_PATH')
+	 * @var string	The name of constant to use to scan ODT files (Example: 'COMMANDE_ADDON_PDF_ODT_PATH')
 	 */
 	public $scandir;
 
@@ -509,7 +509,7 @@ abstract class CommonDocGenerator
 	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{
 		// phpcs:enable
-		global $conf, $extrafields;
+		global $extrafields;
 
 		$sumpayed = $sumdeposit = $sumcreditnote = '';
 		$already_payed_all = 0;
@@ -831,8 +831,10 @@ abstract class CommonDocGenerator
 	public function get_substitutionarray_shipment($object, $outputlangs, $array_key = 'object')
 	{
 		// phpcs:enable
-		global $conf, $extrafields;
-		dol_include_once('/core/lib/product.lib.php');
+		global $extrafields;
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+
 		$object->list_delivery_methods($object->shipping_method_id);
 		$calculatedVolume = ($object->trueWidth * $object->trueHeight * $object->trueDepth);
 
@@ -875,7 +877,7 @@ abstract class CommonDocGenerator
 			$array_shipment = $this->fill_substitutionarray_with_extrafields($object, $array_shipment, $extrafields, $array_key, $outputlangs);
 		}
 
-		// Add infor from $object->xxx where xxx has been loaded by fetch_origin() of shipment
+		// Add info from $object->xxx where xxx has been loaded by fetch_origin() of shipment
 		if (!empty($object->commande) && is_object($object->commande)) {
 			$array_shipment['order_ref'] = $object->commande->ref;
 			$array_shipment['order_ref_customer'] = $object->commande->ref_customer;
@@ -1085,7 +1087,7 @@ abstract class CommonDocGenerator
 		// Sorting
 		uasort($this->cols, array($this, 'columnSort'));
 
-		// Positionning
+		// Positioning
 		$curX = $this->page_largeur - $this->marge_droite; // start from right
 
 		// Array width
@@ -1229,7 +1231,7 @@ abstract class CommonDocGenerator
 	 *  print standard column content
 	 *
 	 *  @param	TCPDF		$pdf    		pdf object
-	 *  @param	float		$curY    		curent Y position
+	 *  @param	float		$curY    		current Y position
 	 *  @param	string		$colKey    		the column key
 	 *  @param	string		$columnText   	column text
 	 *  @return	int							Return integer <0 if KO, >= if OK
@@ -1252,9 +1254,9 @@ abstract class CommonDocGenerator
 			if (empty($columnText)) {
 				return 0;
 			}
-			$pdf->SetXY($this->getColumnContentXStart($colKey), $curY); // Set curent position
+			$pdf->SetXY($this->getColumnContentXStart($colKey), $curY); // Set current position
 			$colDef = $this->cols[$colKey];
-			// save curent cell padding
+			// save current cell padding
 			$curentCellPaddinds = $pdf->getCellPaddings();
 			// set cell padding with column content definition
 			$pdf->setCellPaddings(isset($colDef['content']['padding'][3]) ? $colDef['content']['padding'][3] : 0, isset($colDef['content']['padding'][0]) ? $colDef['content']['padding'][0] : 0, isset($colDef['content']['padding'][1]) ? $colDef['content']['padding'][1] : 0, isset($colDef['content']['padding'][2]) ? $colDef['content']['padding'][2] : 0);
@@ -1272,7 +1274,7 @@ abstract class CommonDocGenerator
 	 *  print description column content
 	 *
 	 *  @param	TCPDF		$pdf    		pdf object
-	 *  @param	float		$curY    		curent Y position
+	 *  @param	float		$curY    		current Y position
 	 *  @param	string		$colKey    		the column key
 	 *  @param  object      $object 		CommonObject
 	 *  @param  int         $i  			the $object->lines array key
@@ -1286,7 +1288,7 @@ abstract class CommonDocGenerator
 	{
 		// load desc col params
 		$colDef = $this->cols[$colKey];
-		// save curent cell padding
+		// save current cell padding
 		$curentCellPaddinds = $pdf->getCellPaddings();
 		// set cell padding with column content definition
 		$pdf->setCellPaddings($colDef['content']['padding'][3], $colDef['content']['padding'][0], $colDef['content']['padding'][1], $colDef['content']['padding'][2]);
@@ -1381,7 +1383,7 @@ abstract class CommonDocGenerator
 	 *
 	 *  @param	object		$object    		line of common object
 	 *  @param 	Translate 	$outputlangs    Output language
-	 *  @param 	array 		$params    		array of additionals parameters
+	 *  @param 	array 		$params    		array of additional parameters
 	 *  @return	string  					Html string
 	 */
 	public function getExtrafieldsInHtml($object, $outputlangs, $params = array())
@@ -1392,7 +1394,7 @@ abstract class CommonDocGenerator
 			return "";
 		}
 
-		// Load extrafields if not allready done
+		// Load extrafields if not already done
 		if (empty($this->extrafieldsCache)) {
 			$this->extrafieldsCache = new ExtraFields($this->db);
 		}
@@ -1461,7 +1463,7 @@ abstract class CommonDocGenerator
 				$field->label = $outputlangs->transnoentities($label);
 				$field->type = $extrafields->attributes[$object->table_element]['type'][$key];
 
-				// dont display if empty
+				// don't display if empty
 				if ($disableOnEmpty && empty($field->content)) {
 					continue;
 				}
@@ -1610,7 +1612,7 @@ abstract class CommonDocGenerator
 				}
 
 				if (empty($hidetop)) {
-					// save curent cell padding
+					// save current cell padding
 					$curentCellPaddinds = $pdf->getCellPaddings();
 
 					// Add space for lines (more if we need to show a second alternative language)
@@ -1682,7 +1684,7 @@ abstract class CommonDocGenerator
 
 		if (!empty($extrafields->attributes[$object->table_element]) && is_array($extrafields->attributes[$object->table_element]) && array_key_exists('label', $extrafields->attributes[$object->table_element]) && is_array($extrafields->attributes[$object->table_element]['label'])) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
-				// Dont display separator yet even is set to be displayed (not compatible yet)
+				// Don't display separator yet even is set to be displayed (not compatible yet)
 				if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') {
 					continue;
 				}
@@ -1699,7 +1701,7 @@ abstract class CommonDocGenerator
 
 				if (!$enabled) {
 					continue;
-				} // don't wast resourses if we don't need them...
+				} // don't waste resources if we don't need them...
 
 				// Load language if required
 				if (!empty($extrafields->attributes[$object->table_element]['langfile'][$key])) {
@@ -1774,7 +1776,7 @@ abstract class CommonDocGenerator
 			'width' => false, // only for desc
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is usefull in somme case with module
+				'textkey' => 'Designation', // use lang key is useful in somme case with module
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label

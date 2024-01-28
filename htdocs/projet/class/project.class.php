@@ -276,7 +276,7 @@ class Project extends CommonObject
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
 	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
@@ -819,7 +819,7 @@ class Project extends CommonObject
 	 *	@param		string		$projectkey		Equivalent key  to fk_projet for actual type
 	 * 	@return		mixed						Array list of object ids linked to project, < 0 or string if error
 	 */
-	public function get_element_list($type, $tablename, $datefieldname = '', $date_start = '', $date_end = '', $projectkey = 'fk_projet')
+	public function get_element_list($type, $tablename, $datefieldname = '', $date_start = null, $date_end = null, $projectkey = 'fk_projet')
 	{
 		// phpcs:enable
 
@@ -849,9 +849,9 @@ class Project extends CommonObject
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." IN (".$this->db->sanitize($ids).") AND entity IN (".getEntity($type).")";
 		}
 
-		if ($date_start > 0 && $type == 'loan') {
+		if (isDolTms($date_start) && $type == 'loan') {
 			$sql .= " AND (dateend > '".$this->db->idate($date_start)."' OR dateend IS NULL)";
-		} elseif ($date_start > 0 && ($type != 'project_task')) {	// For table project_taks, we want the filter on date apply on project_time_spent table
+		} elseif (isDolTms($date_start) && ($type != 'project_task')) {	// For table project_taks, we want the filter on date apply on project_time_spent table
 			if (empty($datefieldname) && !empty($this->table_element_date)) {
 				$datefieldname = $this->table_element_date;
 			}
@@ -861,9 +861,9 @@ class Project extends CommonObject
 			$sql .= " AND (".$datefieldname." >= '".$this->db->idate($date_start)."' OR ".$datefieldname." IS NULL)";
 		}
 
-		if ($date_end > 0 && $type == 'loan') {
+		if (isDolTms($date_end) && $type == 'loan') {
 			$sql .= " AND (datestart < '".$this->db->idate($date_end)."' OR datestart IS NULL)";
-		} elseif ($date_end > 0 && ($type != 'project_task')) {	// For table project_taks, we want the filter on date apply on project_time_spent table
+		} elseif (isDolTms($date_end) && ($type != 'project_task')) {	// For table project_taks, we want the filter on date apply on project_time_spent table
 			if (empty($datefieldname) && !empty($this->table_element_date)) {
 				$datefieldname = $this->table_element_date;
 			}
@@ -1168,7 +1168,7 @@ class Project extends CommonObject
 
 		// Protection
 		if ($this->status == self::STATUS_VALIDATED) {
-			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
+			dol_syslog(get_class($this)."::validate action abandoned: already validated", LOG_WARNING);
 			return 0;
 		}
 
@@ -1380,7 +1380,7 @@ class Project extends CommonObject
 
 		$result = '';
 		if (getDolGlobalString('PROJECT_OPEN_ALWAYS_ON_TAB')) {
-			$option = $conf->global->PROJECT_OPEN_ALWAYS_ON_TAB;
+			$option = getDolGlobalString('PROJECT_OPEN_ALWAYS_ON_TAB');
 		}
 		$params = [
 			'id' => $this->id,
@@ -1586,7 +1586,7 @@ class Project extends CommonObject
 	 * @param 	int		$mode			0=All project I have permission on (assigned to me or public), 1=Projects assigned to me only, 2=Will return list of all projects with no test on contacts
 	 * @param 	int		$list			0=Return array, 1=Return string list
 	 * @param	int		$socid			0=No filter on third party, id of third party
-	 * @param	string	$filter			additionnal filter on project (statut, ref, ...)
+	 * @param	string	$filter			additional filter on project (statut, ref, ...)
 	 * @return 	array|string			Array of projects id, or string with projects id separated with "," if list is 1
 	 */
 	public function getProjectsAuthorizedForUser($user, $mode = 0, $list = 0, $socid = 0, $filter = '')
@@ -1944,12 +1944,12 @@ class Project extends CommonObject
 			}
 			//print "$this->date_start + $tasktoshiftdate->date_start - $old_project_dt_start";exit;
 
-			//Calcultate new task start date with difference between old proj start date and origin task start date
+			//Calculate new task start date with difference between old proj start date and origin task start date
 			if (!empty($tasktoshiftdate->date_start)) {
 				$task->date_start = $this->date_start + ($tasktoshiftdate->date_start - $old_project_dt_start);
 			}
 
-			//Calcultate new task end date with difference between origin proj end date and origin task end date
+			//Calculate new task end date with difference between origin proj end date and origin task end date
 			if (!empty($tasktoshiftdate->date_end)) {
 				$task->date_end = $this->date_start + ($tasktoshiftdate->date_end - $old_project_dt_start);
 			}
@@ -2040,7 +2040,7 @@ class Project extends CommonObject
 	 *  Create an intervention document on disk using template defined into PROJECT_ADDON_PDF
 	 *
 	 *  @param	string		$modele			Force template to use ('' by default)
-	 *  @param	Translate	$outputlangs	Objet lang to use for translation
+	 *  @param	Translate	$outputlangs	Object lang to use for translation
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
 	 *  @param  int			$hideref        Hide ref
@@ -2058,7 +2058,7 @@ class Project extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('PROJECT_ADDON_PDF')) {
-				$modele = $conf->global->PROJECT_ADDON_PDF;
+				$modele = getDolGlobalString('PROJECT_ADDON_PDF');
 			}
 		}
 
@@ -2085,7 +2085,7 @@ class Project extends CommonObject
 		$this->weekWorkLoadPerTask = array();
 
 		if (empty($datestart)) {
-			dol_print_error('', 'Error datestart parameter is empty');
+			dol_print_error(null, 'Error datestart parameter is empty');
 		}
 
 		$sql = "SELECT ptt.rowid as taskid, ptt.element_duration, ptt.element_date, ptt.element_datehour, ptt.fk_element";
@@ -2149,7 +2149,7 @@ class Project extends CommonObject
 		$this->monthWorkLoadPerTask = array();
 
 		if (empty($datestart)) {
-			dol_print_error('', 'Error datestart parameter is empty');
+			dol_print_error(null, 'Error datestart parameter is empty');
 		}
 
 		$sql = "SELECT ptt.rowid as taskid, ptt.element_duration, ptt.element_date, ptt.element_datehour, ptt.fk_element";
@@ -2203,7 +2203,7 @@ class Project extends CommonObject
 	/**
 	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 * @param	User	$user   Objet user
+	 * @param	User	$user   Object user
 	 * @return WorkboardResponse|int Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user)
@@ -2211,7 +2211,7 @@ class Project extends CommonObject
 		// phpcs:enable
 		global $conf, $langs;
 
-		// For external user, no check is done on company because readability is managed by public status of project and assignement.
+		// For external user, no check is done on company because readability is managed by public status of project and assignment.
 		//$socid=$user->socid;
 
 		$response = new WorkboardResponse();
@@ -2227,7 +2227,7 @@ class Project extends CommonObject
 		$sql .= " FROM (".MAIN_DB_PREFIX."projet as p";
 		$sql .= ")";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-		// For external user, no check is done on company permission because readability is managed by public status of project and assignement.
+		// For external user, no check is done on company permission because readability is managed by public status of project and assignment.
 		//if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 		$sql .= " WHERE p.fk_statut = 1";
 		$sql .= " AND p.entity IN (".getEntity('project').')';
@@ -2246,7 +2246,7 @@ class Project extends CommonObject
 
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
-		// For external user, no check is done on company permission because readability is managed by public status of project and assignement.
+		// For external user, no check is done on company permission because readability is managed by public status of project and assignment.
 		//if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id).") OR (s.rowid IS NULL))";
 
 		//print $sql;
@@ -2293,15 +2293,13 @@ class Project extends CommonObject
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Charge indicateurs this->nb pour le tableau de bord
+	 * Load indicators this->nb for the state board
 	 *
 	 * @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $user;
 
 		$this->nb = array();
@@ -2353,7 +2351,7 @@ class Project extends CommonObject
 
 
 	/**
-	 *	Charge les informations d'ordre info dans l'objet commande
+	 *	Charge les information d'ordre info dans l'objet commande
 	 *
 	 *	@param  int		$id       Id of order
 	 *	@return	void
@@ -2431,7 +2429,7 @@ class Project extends CommonObject
 	 *  @param 	string	$addr_bcc           Email bcc
 	 *  @param 	int		$deliveryreceipt	Ask a delivery receipt
 	 *  @param	int		$msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
-	 *  @param	string	$errors_to			erros to
+	 *  @param	string	$errors_to			errors to
 	 *  @param	string	$moreinheader		Add more html headers
 	 *  @since V18
 	 *  @return	int							Return integer <0 if KO, >0 if OK

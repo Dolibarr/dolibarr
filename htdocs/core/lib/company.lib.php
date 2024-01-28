@@ -29,7 +29,7 @@
 
 /**
  *	\file       htdocs/core/lib/company.lib.php
- *	\brief      Ensemble de fonctions de base pour le module societe
+ *	\brief      Ensemble de functions de base pour le module societe
  *	\ingroup    societe
  */
 
@@ -71,6 +71,7 @@ function societe_prepare_head(Societe $object)
 				$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 				$sql .= $hookmanager->resPrint;
 				$sql .= " WHERE p.fk_soc = ".((int) $object->id);
+				$sql .= " AND entity IN (".getEntity($object->element).")";
 				// Add where from hooks
 				$parameters = array('contacttab' => true);
 				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -463,7 +464,7 @@ function societe_prepare_head2($object)
 
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array   	        head array with tabs
  */
@@ -517,17 +518,17 @@ function societe_admin_prepare_head()
 /**
  *    Return country label, code or id from an id, code or label
  *
- *    @param      int		$searchkey      Id or code of country to search
- *    @param      string	$withcode   	'0'=Return label,
+ *    @param	int|string	$searchkey      Id or code of country to search
+ *    @param    string		$withcode   	'0'=Return label,
  *    										'1'=Return code + label,
  *    										'2'=Return code from id,
  *    										'3'=Return id from code,
  * 	   										'all'=Return array('id'=>,'code'=>,'label'=>)
- *    @param      DoliDB	$dbtouse       	Database handler (using in global way may fail because of conflicts with some autoload features)
- *    @param      Translate	$outputlangs	Langs object for output translation
- *    @param      int		$entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
- *    @param      int		$searchlabel    Label of country to search (warning: searching on label is not reliable)
- *    @return     mixed       				Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
+ *    @param	DoliDB		$dbtouse       	Database handler (using in global way may fail because of conflicts with some autoload features)
+ *    @param	Translate	$outputlangs	Langs object for output translation
+ *    @param	int			$entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
+ *    @param	int			$searchlabel    Label of country to search (warning: searching on label is not reliable)
+ *    @return	mixed       				Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
  */
 function getCountry($searchkey, $withcode = '', $dbtouse = 0, $outputlangs = '', $entconv = 1, $searchlabel = '')
 {
@@ -691,7 +692,7 @@ function currency_name($code_iso, $withcode = '', $outputlangs = null)
 
 	$outputlangs->load("dict");
 
-	// If there is a translation, we can send immediatly the label
+	// If there is a translation, we can send immediately the label
 	if ($outputlangs->trans("Currency".$code_iso) != "Currency".$code_iso) {
 		return ($withcode ? $code_iso.' - ' : '').$outputlangs->trans("Currency".$code_iso);
 	}
@@ -956,7 +957,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 					$i++;
 				}
 			} else {
-				print '<tr class="oddeven"><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+				print '<tr class="oddeven"><td colspan="9"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 			$db->free($result);
 		} else {
@@ -1098,7 +1099,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		}
 	}
 
-	// Initialize array of search criterias
+	// Initialize array of search criteria
 	$search = array();
 	foreach ($arrayfields as $key => $val) {
 		$queryName = 'search_'.substr($key, 2);
@@ -1156,7 +1157,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
-	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print "\n".'<table class="tagtable liste">'."\n";
 
 	$param = "socid=".urlencode($object->id);
@@ -1621,7 +1622,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
 	// Check parameters
 	if (!is_object($filterobj) && !is_object($objcon)) {
-		dol_print_error('', 'BadParameter');
+		dol_print_error(null, 'BadParameter');
 	}
 
 	$out = '';
@@ -1872,7 +1873,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 					$result = $contactaction->fetchResources();
 					if ($result < 0) {
 						dol_print_error($db);
-						setEventMessage("company.lib::show_actions_done Error fetch ressource", 'errors');
+						setEventMessage("company.lib::show_actions_done Error fetch resource", 'errors');
 					}
 
 					//if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
@@ -2360,7 +2361,7 @@ function addEventTypeSQL(&$sql, $actioncode, $sqlANDOR = "AND")
  *		@param	string		$sql		    $sql modified
  * 		@param	string		$donetodo		donetodo
  * 		@param	string		$now		    now
- * 		@param	string		$filters		array
+ * 		@param	array		$filters		array
  * 		@return	string      sql request
  */
 function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)

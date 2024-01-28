@@ -97,6 +97,7 @@ if (isModEnabled('socialnetworks')) {
 	}
 }
 $search_priv = GETPOST("search_priv", 'alpha');
+$search_sale = GETPOSTINT('search_sale');
 $search_categ = GETPOST("search_categ", 'int');
 $search_categ_thirdparty = GETPOST("search_categ_thirdparty", 'int');
 $search_categ_supplier = GETPOST("search_categ_supplier", 'int');
@@ -383,6 +384,7 @@ if (empty($reshook)) {
 		$search_stcomm = '';
 		$search_level = '';
 		$search_status = -1;
+		$search_sale = '';
 		$search_categ = '';
 		$search_categ_thirdparty = '';
 		$search_categ_supplier = '';
@@ -416,6 +418,10 @@ if (empty($reshook)) {
 if ($search_priv < 0) {
 	$search_priv = '';
 }
+// the user has not right to see other third-party than their own
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
+}
 
 
 /*
@@ -441,7 +447,7 @@ if (getDolGlobalString('THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES'))
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
-// Select every potentiels, and note each potentiels which fit in search parameters
+// Select every potentials, and note each potentials which fit in search parameters
 $tab_level = array();
 $sql = "SELECT code, label, sortorder";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_prospectcontactlevel";
@@ -495,18 +501,12 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = p.fk_pays";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_stcommcontact as st ON st.id = p.fk_stcommcontact";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-}
 
 // Add fields from hooks - ListFrom
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= ' WHERE p.entity IN ('.getEntity('contact').')';
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) { //restriction
-	$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR p.fk_soc IS NULL)";
-}
 if (!empty($userid)) {    // propre au commercial
 	$sql .= " AND p.fk_user_creat=".((int) $userid);
 }
@@ -529,6 +529,14 @@ if ($search_priv != '0' && $search_priv != '1') {
 	}
 }
 
+// Search on sale representative
+if (!empty($search_sale) && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".$db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".$db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
 
 // Search Contact Categories
 $searchCategoryContactList = $search_categ ? array($search_categ) : array();
@@ -823,6 +831,9 @@ if ($optioncss != '') {
 }
 $param .= '&begin='.urlencode($begin).'&userid='.urlencode($userid).'&contactname='.urlencode($search_all);
 $param .= '&type='.urlencode($type).'&view='.urlencode($view);
+if (!empty($search_sale) && $search_sale != '-1') {
+	$param .= '&search_sale='.urlencode($search_sale);
+}
 if (!empty($search_categ) && $search_categ != '-1') {
 	$param .= '&search_categ='.urlencode($search_categ);
 }
@@ -981,6 +992,16 @@ if ($search_firstlast_only) {
 }
 
 $moreforfilter = '';
+
+// If the user can view third-party other than their own
+if ($user->hasRight('societe', 'client', 'voir')) {
+	$langs->load('commercial');
+	$moreforfilter .= '<div class="divsearchfield">';
+	$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
+	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth250 widthcentpercentminusx', 1);
+	$moreforfilter .= '</div>';
+}
+
 if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
@@ -1389,6 +1410,8 @@ while ($i < $imaxinloop) {
 	$contactstatic->import_key = $obj->import_key;
 	$contactstatic->photo = $obj->photo;
 	$contactstatic->fk_prospectlevel = $obj->fk_prospectlevel;
+
+	$object = $contactstatic;
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {

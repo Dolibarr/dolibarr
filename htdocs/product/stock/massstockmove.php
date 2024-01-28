@@ -296,7 +296,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 					}
 				}
 			} else {
-				// dol_print_error('',"Bad value saved into sessions");
+				// dol_print_error(null,"Bad value saved into sessions");
 				$error++;
 			}
 		}
@@ -526,7 +526,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
 	} else {
 		setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
-	Header('Location: '.$_SERVER["PHP_SELF"]);
+	header('Location: '.$_SERVER["PHP_SELF"]);
 	exit;
 }
 
@@ -585,7 +585,7 @@ $out = (!getDolGlobalString('MAIN_UPLOAD_DOC') ? ' disabled' : '');
 print '<input type="submit" class="button small smallpaddingimp" value="'.$langs->trans("ImportFromCSV").'"'.$out.' name="sendit">';
 $out = '';
 if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
-	$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
+	$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
 	$maxphp = @ini_get('upload_max_filesize'); // In unknown
 	if (preg_match('/k$/i', $maxphp)) {
 		$maxphp = preg_replace('/k$/i', '', $maxphp);
@@ -688,7 +688,7 @@ if (getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 if (getDolGlobalInt('PRODUIT_LIMIT_SIZE') <= 0) {
 	$limit = '';
 } else {
-	$limit = $conf->global->PRODUIT_LIMIT_SIZE;
+	$limit = getDolGlobalString('PRODUIT_LIMIT_SIZE');
 }
 
 print img_picto($langs->trans("Product"), 'product', 'class="paddingright"');

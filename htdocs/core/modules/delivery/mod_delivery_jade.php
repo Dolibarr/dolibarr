@@ -21,7 +21,7 @@
 /**
  *   \file       htdocs/core/modules/delivery/mod_delivery_jade.php
  *   \ingroup    delivery
- *   \brief      Fichier contenant la classe du modele de numerotation de reference de bon de livraison Jade
+ *   \brief      Fichier contenant la class du modele de numerotation de reference de bon de livraison Jade
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
 
 /**
  *  \class      mod_delivery_jade
- *  \brief      Classe du modele de numerotation de reference de bon de livraison Jade
+ *  \brief      Class du modele de numerotation de reference de bon de livraison Jade
  */
 
 class mod_delivery_jade extends ModeleNumRefDeliveryOrder
@@ -157,7 +157,7 @@ class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 		if (empty($date)) {
 			$date = dol_now();
 		}
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
