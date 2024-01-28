@@ -1108,7 +1108,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  numbering model defined within COMMANDE_SUPPLIER_ADDON_NUMBER
 	 *
 	 *  @param	    Societe		$soc  		company object
-	 *  @return     string|int              free reference for the invoice
+	 *  @return     string|int              free reference for the invoice. '', -1 or -2 if error.
 	 */
 	public function getNextNumRef($soc)
 	{
