@@ -14,6 +14,17 @@ jobs:
       - name: Install required tools
         run: sudo apt-get update && sudo apt-get install cppcheck
         if: false
+
+      # The next uses the git API because there is no clone yet.
+      # This is faster for a big repo.
+      - name: Get all changed php files (if PR)
+        id: changed-php
+        uses: tj-actions/changed-files@v42
+        if: github.event_name == 'pull_request'
+        with:
+          files: |
+             **.php
+
       # Checkout git sources to analyze
       - uses: actions/checkout@v4
       # Action setup-python needs a requirements.txt or pyproject.toml
@@ -42,6 +53,24 @@ jobs:
           set -o pipefail
           pre-commit gc
           pre-commit run --show-diff-on-failure --color=always --all-files | tee ${RAW_LOG}
+
+      # The next uses git, which is slow for a bit repo.
+      # - name: Get all changed php files (if PR)
+      #   id: changed-php
+      #   uses: tj-actions/changed-files@v42
+      #   if: github.event_name == 'pull_request'
+      #   with:
+      #     files: |
+      #        **.php
+
+      - name: Run some pre-commit hooks on selected changed files only
+        if: steps.changed-php.outputs.any_changed == 'true'
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
+        run: |
+          set -o pipefail
+          pre-commit run php-cs ${ALL_CHANGED_FILES} | tee -a ${RAW_LOG}
+
       # If error, we convert log in the checkstyle format
       - name: Convert Raw Log to CheckStyle format
         if: ${{ failure() }}

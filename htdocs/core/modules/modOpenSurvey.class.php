@@ -38,8 +38,6 @@ class modOpenSurvey extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
-
 		$this->db = $db;
 
 		// Id for module (must be unique).
@@ -181,8 +179,6 @@ class modOpenSurvey extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $langs;
-
 		$result = $this->_load_tables('/install/mysql/', 'opensurvey');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
