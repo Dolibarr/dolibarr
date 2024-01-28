@@ -1632,12 +1632,15 @@ class Website extends CommonObject
 
 		$sourcedir = $conf->website->dir_output."/".$website->ref;
 
-		$fichierEtat = $sourcedir . '/etat_fichiers.txt';
+		$fichierEtat = $sourcedir . '/filelist-lastwrite-doctemplates.txt';
 
+		// Get array with hash of files
 		$etatPrecedent = $this->checkPreviousState($fichierEtat);
 
+		// Get list of all source files of the website
 		$arraySourcedir = dol_dir_list($sourcedir);
 
+		// Get list of modified files
 		$modifications = [];
 		foreach ($arraySourcedir as $file) {
 			if (substr($file['name'], -4) === '.old') {
@@ -1650,12 +1653,12 @@ class Website extends CommonObject
 				$modifications[] = $file;
 			}
 
-			$etatPrecedent[$file['name']] = $hashActuel;
+			$etatPrecedent[$file['name']] = $hashActuel;	// we store he new hash to record it later on disk.
 		}
 
-		// listed modified files
-
-		$destdir = DOL_DOCUMENT_ROOT . '/install/doctemplates/websites/'.$website->name_template;
+		// Replace modified files into the doctemplates directory.
+		$destdirrel = 'install/doctemplates/websites/'.$website->name_template;
+		$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
 		$arraydestdir = dol_dir_list($destdir, "all", 1);
 		$differences = [];
 		$names = array_column($arraydestdir, 'name');
@@ -1736,7 +1739,7 @@ class Website extends CommonObject
 									$result = $this->replaceLignEUsingNum($destFile['fullname'], $differences[$nomFichierModifie]);
 									if ($result !== false) {
 										if ($result == -2) {
-											setEventMessages("No permissions to write in file <b>".$nomFichierModifie."</b> from the template <b>".$website->name_template."</b>", null, 'errors');
+											setEventMessages("No permissions to write into file <b>".$destdirrel.'/'.$nomFichierModifie."</b> from the current website <b>".$website->name_template."</b>", null, 'errors');
 											header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
 											exit();
 										}
@@ -1753,7 +1756,7 @@ class Website extends CommonObject
 								$result = $this->replaceLignEUsingNum($differences[$nomFichierModifie]['file_destination']['fullname'], $differences[$nomFichierModifie]);
 								if ($result !== false) {
 									if ($result == -2) {
-										setEventMessages("No permissions to write in file <b>".$differences[$nomFichierModifie]['file_destination']['name']."</b> from the template <b>".$website->name_template."</b>", null, 'errors');
+										setEventMessages("No permissions to write into file <b>".$destdirrel.'/'.$differences[$nomFichierModifie]['file_destination']['name']."</b> from the current website <b>".$website->name_template."</b>", null, 'errors');
 										header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
 										exit();
 									}
@@ -1765,7 +1768,7 @@ class Website extends CommonObject
 				}
 			}
 			if ($succes>0) {
-				// save state file
+				// Save the state file filelist.txt
 				$this->saveState($etatPrecedent, $fichierEtat);
 				setEventMessages("file <b>".$differences[$nomFichierModifie]['file_destination']['name']."</b> was modified in template <b>".$website->name_template."</b>", null, 'warnings');
 				header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
@@ -1852,7 +1855,7 @@ class Website extends CommonObject
 	 */
 	public function initFilesStatus($sourcedir)
 	{
-		$fichierEtat = $sourcedir . '/etat_fichiers.txt';
+		$fichierEtat = $sourcedir . '/filelist-lastwrite-doctemplates.txt';
 
 		$etatPrecedent = $this->checkPreviousState($fichierEtat);
 
