@@ -85,7 +85,7 @@ if (!defined('WEBPORTAL_NOREQUIRETRAN') || (!defined('WEBPORTAL_NOLOGIN') && !em
 		}
 		$langs->setDefaultLang($langcode);
 	}
-	$langs->loadLangs(array('webportal@webportal', 'main'));
+	$langs->loadLangs(array('website', 'main'));
 }
 
 /*
@@ -227,7 +227,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 								$langs = new Translate("", $conf);
 								$langs->setDefaultLang($logged_thirdparty->default_lang);
 							}
-							$langs->loadLangs(array('webportal@webportal', 'main'));
+							$langs->loadLangs(array('website', 'main'));
 						}
 
 						$context->logged_user = $logged_user;

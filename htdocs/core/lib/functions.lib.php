@@ -966,6 +966,7 @@ function GETPOSTINT($paramname, $method = 0)
  *  @param  string          $paramname      Name of the $_GET or $_POST parameter
  *  @param  string|int      $rounding       Type of rounding ('', 'MU', 'MT, 'MS', 'CU', 'CT', integer) {@see price2num()}
  *  @return float                           Value converted into float
+ *  @since	Dolibarr V20
  */
 function GETPOSTFLOAT($paramname, $rounding = '')
 {
@@ -4387,7 +4388,7 @@ function getPictoForType($key)
  */
 function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2)
 {
-	global $conf, $langs;
+	global $conf;
 
 	// We forge fullpathpicto for image to $path/img/$picto. By default, we take DOL_URL_ROOT/theme/$conf->theme/img/$picto
 	$url = DOL_URL_ROOT;
@@ -4496,7 +4497,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
 				'uncheck', 'url', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
 				'conferenceorbooth', 'eventorganization',
-				'stamp', 'signature'
+				'stamp', 'signature',
+				'webportal'
 			))) {
 			$fakey = $pictowithouttext;
 			$facolor = '';
@@ -4548,7 +4550,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'uncheck'=>'times', 'uparrow'=>'share', 'url'=>'external-link-alt', 'vat'=>'money-check-alt', 'vcard'=>'arrow-alt-circle-down',
 				'jabber'=>'comment-o',
 				'website'=>'globe-americas', 'workstation'=>'pallet', 'webhook'=>'bullseye', 'world'=>'globe', 'private'=>'user-lock',
-				'conferenceorbooth'=>'chalkboard-teacher', 'eventorganization'=>'project-diagram'
+				'conferenceorbooth'=>'chalkboard-teacher', 'eventorganization'=>'project-diagram',
+				'webportal'=>'door-open'
 			);
 			if ($conf->currency == 'EUR') {
 				$arrayconvpictotofa['currency'] = 'euro-sign';

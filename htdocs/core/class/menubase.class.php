@@ -497,8 +497,8 @@ class Menubase
 		$this->module = 'specimen';
 		$this->type = 'top';
 		$this->mainmenu = '';
-		$this->fk_menu = '0';
-		$this->position = '';
+		$this->fk_menu = 0;
+		$this->position = 0;
 		$this->url = 'http://dummy';
 		$this->target = '';
 		$this->title = 'Specimen menu';
@@ -506,8 +506,8 @@ class Menubase
 		$this->leftmenu = '';
 		$this->perms = '';
 		$this->enabled = '';
-		$this->user = '';
-		$this->tms = '';
+		$this->user = 0;
+		$this->tms = dol_now();
 	}
 
 

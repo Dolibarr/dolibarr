@@ -208,3 +208,6 @@ ALTER TABLE llx_categorie ADD COLUMN position integer DEFAULT 0 AFTER color;
 ALTER TABLE llx_product DROP COLUMN onportal;
 
 ALTER TABLE llx_knowledgemanagement_knowledgerecord MODIFY COLUMN answer longtext;
+
+-- Rename const to add customer categories on not customer/prospect third-party if enabled
+UPDATE llx_const SET name = 'THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT' WHERE name = 'THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER';

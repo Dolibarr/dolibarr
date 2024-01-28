@@ -1239,8 +1239,13 @@ class FormSetupItem
 	 */
 	public function generateOutputFieldColor()
 	{
+		global $langs;
 		$this->fieldAttr['disabled']=null;
-		return $this->generateInputField();
+		$color = colorArrayToHex(colorStringToArray($this->fieldValue, array()), '');
+		if ($color) {
+			return '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
+		}
+		return $langs->trans("Default");
 	}
 	/**
 	 * generateInputFieldColor
@@ -1250,7 +1255,10 @@ class FormSetupItem
 	public function generateInputFieldColor()
 	{
 		$this->fieldAttr['type']= 'color';
-		return $this->generateInputFieldText();
+		$default = $this->defaultFieldValue;
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+		$formother = new FormOther($this->db);
+		return $formother->selectColor(colorArrayToHex(colorStringToArray($this->fieldAttr['value'], array()), ''), $this->fieldAttr['name'], '', 1, array(), '', '', $default).' ';
 	}
 
 	/**
