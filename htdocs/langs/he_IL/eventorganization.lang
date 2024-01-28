@@ -166,4 +166,4 @@ EmailCompanyForInvoice=דוא"ל החברה (לחשבונית, אם שונה מ�
 ErrorSeveralCompaniesWithEmailContactUs=נמצאו מספר חברות עם כתובת הדוא"ל הזו ולכן לא ניתן לאשר את ההרשמה אוטומטית. נא ליצור קשר איתנו ב-%s לאישור ידני.
 ErrorSeveralCompaniesWithNameContactUs=נמצאו מספר חברות עם השם הזה ולכן לא ניתן לאשר את ההרשמה אוטומטית. נא ליצור קשר איתנו ב-%s לאישור ידני.
 NoPublicActionsAllowedForThisEvent=אין פעולות ציבוריות פתוחות לציבור עבור אירוע זה.
-
+MaxNbOfAttendees=מספר משתתפים מקסימלי
