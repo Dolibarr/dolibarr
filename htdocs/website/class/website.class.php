@@ -1662,7 +1662,7 @@ class Website extends CommonObject
 				if ($nomFichierModifie == basename($fichierEtat)) {
 					continue;
 				}
-				$succes = 0;
+				$success = 0;
 
 				//check if it is a new file
 				if ((!preg_match('/^page\d+\.tpl\.php$/', $nomFichierModifie)) && (!in_array($nomFichierModifie, $names))) {
@@ -1701,9 +1701,9 @@ class Website extends CommonObject
 											}
 											$diff = $this->showDifferences(file_get_contents($destdir.'/containers/'."page" . $nextpage . ".tpl.php"), file_get_contents($file['fullname']), array($nextpage,$this->extractNumberFromFilename($file['name'])));
 											if ($diff != -1) {
-												$replace = $this->replaceLignEUsingNum($destdir.'/containers/'."page" . $nextpage . ".tpl.php", $diff);
+												$replace = $this->replaceLineUsingNum($destdir.'/containers/'."page" . $nextpage . ".tpl.php", $diff);
 												if ($replace !== false) {
-													setEventMessages("Copy file <b>page".$nextpage.".tpl.php</b> in template <b>".$this->name_template."</b> with succes", null, 'warnings');
+													setEventMessages("Copy file <b>page".$nextpage.".tpl.php</b> in template <b>".$this->name_template."</b> with success", null, 'warnings');
 												}
 											}
 										}
@@ -1727,7 +1727,7 @@ class Website extends CommonObject
 							if ($sourceContent !== $destContent) {
 								$differences[$nomFichierModifie] = $this->showDifferences($destContent, $sourceContent);
 								if (count($differences[$nomFichierModifie]) > 0) {
-									$result = $this->replaceLignEUsingNum($destFile['fullname'], $differences[$nomFichierModifie]);
+									$result = $this->replaceLineUsingNum($destFile['fullname'], $differences[$nomFichierModifie]);
 									if ($result !== false) {
 										if ($result == -2) {
 											setEventMessages("No permissions to write in file <b>".$nomFichierModifie."</b> from template <b>".$website->name_template."</b>", null, 'errors');
@@ -1744,21 +1744,21 @@ class Website extends CommonObject
 						if (preg_match('/page(\d+)\.tpl\.php/', $nomFichierModifie)) {
 							$differences[$nomFichierModifie] = $this->compareFichierModifie($sourcedir, $destdir, $fichierModifie);
 							if (count($differences[$nomFichierModifie]) > 0) {
-								$result = $this->replaceLignEUsingNum($differences[$nomFichierModifie]['file_destination']['fullname'], $differences[$nomFichierModifie]);
+								$result = $this->replaceLineUsingNum($differences[$nomFichierModifie]['file_destination']['fullname'], $differences[$nomFichierModifie]);
 								if ($result !== false) {
 									if ($result == -2) {
 										setEventMessages("No permissions to write in file <b>".$differences[$nomFichierModifie]['file_destination']['name']."</b> from template <b>".$website->name_template."</b>", null, 'errors');
 										header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
 										exit();
 									}
-									$succes++;
+									$success++;
 								}
 							}
 						}
 					}
 				}
 			}
-			if ($succes>0) {
+			if ($success>0) {
 				// save state file
 				$this->saveState($etatPrecedent, $fichierEtat);
 				setEventMessages("file <b>".$differences[$nomFichierModifie]['file_destination']['name']."</b> was modified in template <b>".$website->name_template."</b>", null, 'warnings');
@@ -1848,7 +1848,7 @@ class Website extends CommonObject
 
 		$etatPrecedent = $this->checkPreviousState($fichierEtat);
 
-		// for first save state when ceate file
+		// for first save state when create file
 		if (empty($etatPrecedent)) {
 			$arraySourcedir = dol_dir_list($sourcedir, "files");
 			$etatFichiers = [];
@@ -1968,7 +1968,7 @@ class Website extends CommonObject
 	 * show difference between to string
 	 * @param string  $str1   first string
 	 * @param string  $str2   seconde string
-	 * @param array  $exceptNumPge    num of page files we dont want to change
+	 * @param array  $exceptNumPge    num of page files we don't want to change
 	 * @return array|int      -1 if KO, array if OK
 	 */
 	protected function showDifferences($str1, $str2, $exceptNumPge = array())
@@ -2055,12 +2055,12 @@ class Website extends CommonObject
 	}
 
 	/**
-	 * Replace ligne by ligne in file using num of ligne
+	 * Replace line by line in file using num of line
 	 * @param string $desfFile   path of file dest
 	 * @param array $differences array of differences between files
-	 * @return false|int  false if we cant replace
+	 * @return false|int  false if we can't replace
 	 */
-	protected function replaceLignEUsingNum($desfFile, $differences)
+	protected function replaceLineUsingNum($desfFile, $differences)
 	{
 		$userId = fileowner($desfFile);
 		if ($userId !== false) {
@@ -2095,7 +2095,7 @@ class Website extends CommonObject
 				unset($contentDest[$numLigne]);
 			}
 		}
-		//Reindex the table keys
+		// Reindex the table keys
 		$contentDest = array_values($contentDest);
 		$stringreplacement = implode("\n", $contentDest);
 		file_put_contents($desfFile, $stringreplacement);
