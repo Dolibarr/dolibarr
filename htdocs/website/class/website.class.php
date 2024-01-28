@@ -1610,7 +1610,7 @@ class Website extends CommonObject
 	/**
 	 * Overite template by copying all files
 	 *
-	 * @return int			<0 if KO, >0 if OK
+	 * @return int			Return integer <0 if KO, >0 if OK
 	 */
 	public function overwriteTemplate()
 	{
