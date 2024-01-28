@@ -482,7 +482,7 @@ if (($action == "create") || ($action == "edit")) {
 	} else {
 		$input .= ' />';
 	}
-	$input .= "<label for=\"frequency_month\">".$langs->trans('Monthly')."</label>";
+	$input .= "<label for=\"frequency_month\">".$langs->trans('Months')."</label>";
 	print $input;
 
 	print "</td>";

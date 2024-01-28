@@ -23,53 +23,15 @@
  */
 
 // Load Dolibarr environment
-$res = 0;
-// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
-	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"] . "/main.inc.php";
-}
-// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME'];
-$tmp2 = realpath(__FILE__);
-$i = strlen($tmp) - 1;
-$j = strlen($tmp2) - 1;
-while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
-	$i--;
-	$j--;
-}
-if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1)) . "/main.inc.php")) {
-	$res = @include substr($tmp, 0, ($i + 1)) . "/main.inc.php";
-}
-if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1))) . "/main.inc.php")) {
-	$res = @include dirname(substr($tmp, 0, ($i + 1))) . "/main.inc.php";
-}
-// Try main.inc.php using relative path
-if (!$res && file_exists("../../main.inc.php")) {
-	$res = @include "../../main.inc.php";
-}
-if (!$res && file_exists("../../../main.inc.php")) {
-	$res = @include "../../../main.inc.php";
-}
-if (!$res) {
-	die("Include of main fails");
-}
-
-global $conf, $db, $hookmanager, $langs, $user;
-
-// Libraries
+require_once "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
-dol_include_once('/webportal/lib/webportal.lib.php');
+require_once DOL_DOCUMENT_ROOT . "/webportal/lib/webportal.lib.php";
 
 // Translations
-$langs->loadLangs(array("admin", "webportal"));
+$langs->loadLangs(array("admin", "webportal", "website"));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('webportalsetup', 'globalsetup'));
-
-// Access control
-if (!$user->admin) {
-	accessforbidden();
-}
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
@@ -81,9 +43,13 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'myobject';
 
-
 $error = 0;
 $setupnotempty = 0;
+
+// Access control
+if (!$user->admin) {
+	accessforbidden();
+}
 
 // Set this to 1 to use the factory to manage constants. Warning, the generated module will be compatible with version v15+ only
 $useFormSetup = 1;
@@ -100,13 +66,10 @@ $item->fieldAttr = array('placeholder' => 'https://');
 $item->helpText = $langs->transnoentities('WebPortalRootUrlHelp');
 require_once __DIR__ . '/../class/context.class.php';
 $context = Context::getInstance();
-$item->fieldOutputOverride = '<a target="_blank" href="'.Context::getRootConfigUrl().'" ><i class="fa fa-arrow-right" ></i>  '.Context::getRootConfigUrl().'</a>';
+//$item->fieldOutputOverride = '<a target="_blank" href="'.Context::getRootConfigUrl().'" >'.img_picto('', 'globe', 'class="pictofixedwidth"').Context::getRootConfigUrl().'</a>';
 
 
 $formSetup->newItem('WEBPORTAL_TITLE')->defaultFieldValue = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
-
-
-
 
 
 // Enable access for the membership record
@@ -256,6 +219,11 @@ if ($action == 'updateMask') {
 	}
 }
 
+// Force always edit mode
+if (empty($action) || $action == 'update') {
+	$action = 'edit';
+}
+
 
 /*
  * View
@@ -264,7 +232,7 @@ if ($action == 'updateMask') {
 $form = new Form($db);
 
 $help_url = '';
-$title = "Setup";
+$title = "WebPortalSetup";
 
 llxHeader('', $langs->trans($title), $help_url);
 
@@ -275,10 +243,34 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 
 // Configuration header
 $head = webportalAdminPrepareHead();
-print dol_get_fiche_head($head, 'settings', $langs->trans($title), -1, "webportal@webportal");
+print dol_get_fiche_head($head, 'settings', $langs->trans($title), -1, "webportal");
+
+print '<br>';
+
+// URL For webportal
+print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('WebPortalURL').'</span><br>';
+if (isModEnabled('multicompany')) {
+	$entity_qr = '?entity='.((int) $conf->entity);
+} else {
+	$entity_qr = '';
+}
+
+// Define $urlwithroot
+$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+print '<div class="urllink">';
+print '<input type="text" id="publicurlmember" class="quatrevingtpercentminusx" value="'.$urlwithroot.'/public/webportal/index.php'.$entity_qr.'">';
+print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/webportal/index.php'.$entity_qr.'">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
+print '</div>';
+print ajax_autoselect('publicurlmember');
+//print '<a target="_blank" href="'.Context::getRootConfigUrl().'" >'.img_picto('', 'globe', 'class="pictofixedwidth"').Context::getRootConfigUrl().'</a>';
 
 // Setup page goes here
-echo '<span class="opacitymedium">' . $langs->trans("SetupPage") . ' : ' . $langs->trans('UserAccountForWebPortalAreInThirdPartyTabHelp') .'</span>.<br><br>';
+print info_admin($langs->trans("UserAccountForWebPortalAreInThirdPartyTabHelp"));
+
+print '<br>';
 
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);
