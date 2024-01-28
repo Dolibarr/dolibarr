@@ -1105,7 +1105,7 @@ if ($num) {
 				$idValue = 'tr-' . implode('-', $idParts) . '-' . $rowid;
 				print '<tr class="oddeven nohover'.$nobottomClass.'" id="'.$idValue.'">';
 				print '<td colspan="10">';
-				
+
 				if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 					$fieldsforcontent[] = 'content_lines';
 				}
