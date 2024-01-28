@@ -1154,7 +1154,8 @@ class Website extends CommonObject
 		$filename = $conf->website->dir_temp.'/'.$website->ref.'/website_'.$website->ref.'-'.dol_print_date(dol_now(), 'dayhourlog').'-V'.((float) DOL_VERSION).'.zip';
 
 		dol_delete_file($fileglob, 0);
-		$result = dol_compress_file($filedir, $filename, 'zip');
+
+		$result = dol_compress_dir($filedir, $filename, 'zip');
 
 		if ($result > 0) {
 			return $filename;
