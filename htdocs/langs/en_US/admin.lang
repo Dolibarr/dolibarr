@@ -2437,3 +2437,5 @@ ParametersForTestEnvironment=Parameters for test environment
 TryToKeepOnly=Try to keep only %s
 RecommendedForProduction=Recommended for Production
 RecommendedForDebug=Recommended for Debug
+UrlPublicInterfaceLabelAdmin=Alternative URL for public interface
+UrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface with another URL (the virtual host server must act as a proxy on the standard URL)
