@@ -140,6 +140,10 @@ class Website extends CommonObject
 	 */
 	public $lines;
 
+	/**
+	 * @var string name of template
+	 */
+	public $name_template;
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -330,7 +334,8 @@ class Website extends CommonObject
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.date_creation,";
-		$sql .= " t.tms as date_modification";
+		$sql .= " t.tms as date_modification,";
+		$sql .= " t.name_template";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		$sql .= " WHERE t.entity IN (".getEntity('website').")";
 		if (!empty($ref)) {
@@ -361,6 +366,7 @@ class Website extends CommonObject
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
+				$this->name_template = $obj->name_template;
 			}
 			$this->db->free($resql);
 
@@ -952,7 +958,6 @@ class Website extends CommonObject
 		}
 
 		$destdir = $conf->website->dir_temp.'/'.$website->ref;
-
 		dol_syslog("Clear temp dir ".$destdir);
 		$count = 0;
 		$countreallydeleted = 0;
@@ -1174,7 +1179,6 @@ class Website extends CommonObject
 		$error = 0;
 
 		$pathtofile = dol_sanitizePathName($pathtofile);
-
 		$object = $this;
 		if (empty($object->ref)) {
 			$this->error = 'Function importWebSite called on object not loaded (object->ref is empty)';
@@ -1310,7 +1314,7 @@ class Website extends CommonObject
 		// Regenerate index page to point to the new index page
 		$pathofwebsite = $conf->website->dir_output.'/'.$object->ref;
 		dolSaveIndexPage($pathofwebsite, $pathofwebsite.'/index.php', $pathofwebsite.'/page'.$object->fk_default_home.'.tpl.php', $pathofwebsite.'/wrapper.php', $object);
-
+		$this->initFilesStatus($pathofwebsite);
 		if ($error) {
 			$this->db->rollback();
 			return -1;
@@ -1601,5 +1605,504 @@ class Website extends CommonObject
 		$out .= '</ul>';
 
 		return $out;
+	}
+
+	/**
+	 * Overite template by copy and past all files
+	 * @return void
+	 */
+	public function overwriteTemplate()
+	{
+		global $conf;
+
+		$website = $this;
+		if (empty($website->id) || empty($website->ref)) {
+			setEventMessages("Website id or ref is not defined", null, 'errors');
+			return false;
+		}
+		if (!is_writable($conf->website->dir_temp)) {
+			setEventMessages("Temporary dir ".$conf->website->dir_temp." is not writable", null, 'errors');
+			return '';
+		}
+
+		$sourcedir = $conf->website->dir_output."/".$website->ref;
+
+		$fichierEtat = $sourcedir . '/etat_fichiers.txt';
+
+		$etatPrecedent = $this->checkPreviousState($fichierEtat);
+
+		$arraySourcedir = dol_dir_list($sourcedir);
+
+		$modifications = [];
+		foreach ($arraySourcedir as $file) {
+			if (substr($file['name'], -4) === '.old') {
+				continue;
+			}
+			$hashActuel = hash_file('md5', $file['fullname']);
+
+			// Check whether the file is new or has been modified
+			if (!isset($etatPrecedent[$file['name']]) || $etatPrecedent[$file['name']] !== $hashActuel) {
+				$modifications[] = $file;
+			}
+
+			$etatPrecedent[$file['name']] = $hashActuel;
+		}
+
+		// listed modified files
+
+		$destdir = DOL_DOCUMENT_ROOT . '/install/doctemplates/websites/'.$website->name_template;
+		$arraydestdir = dol_dir_list($destdir, "all", 1);
+		$differences = [];
+		$names = array_column($arraydestdir, 'name');
+		$namesSource = array_column($arraySourcedir, 'name');
+
+		if (count($modifications) > 1) {
+			foreach ($modifications as $fichierModifie) {
+				$nomFichierModifie = $fichierModifie['name'];
+				if ($nomFichierModifie == basename($fichierEtat)) {
+					continue;
+				}
+				$succes = 0;
+
+				//check if it is a new file
+				if ((!preg_match('/^page\d+\.tpl\.php$/', $nomFichierModifie)) && (!in_array($nomFichierModifie, $names))) {
+					if (file_exists($fichierModifie['fullname']) && dol_is_dir($destdir.'/containers')) {
+						$cp = dol_copy($fichierModifie['fullname'], $destdir.'/containers/'.$nomFichierModifie, '0664');
+						if ($cp > 0) {
+							if (file_exists($destdir.'/containers/'.$nomFichierModifie)) {
+								$tabnumpage = array();
+								foreach ($arraydestdir as $fileDest) {
+									if ($this->extractNumberFromFilename($fileDest['name']) !== -1) {
+										$tabnumpage[] = $this->extractNumberFromFilename($fileDest['name']);
+									}
+								}
+								$getContentSource = file_get_contents($destdir.'/containers/'.$nomFichierModifie);
+								$nextpage = max($tabnumpage) + 1;
+								$chaineModifiee = preg_replace('/page\d+\.tpl\.php/', 'page' . $nextpage . '.tpl.php', $getContentSource);
+								$write = file_put_contents($destdir.'/containers/'.$nomFichierModifie, $chaineModifiee);
+								if ($write !== false) {
+									if (!touch($destdir.'/containers/'."page" . $nextpage . ".tpl.php")) {
+										setEventMessages("Please check permission to create  <b>page" . $nextpage . ".tpl.php</b> in template <b>".$website->name_template."</b>", null, 'errors');
+									}
+									$fileFounded = '';
+									foreach ($arraySourcedir as $file) {
+										if ($file['name'] == $nomFichierModifie) {
+											$fileContent = file_get_contents($file['fullname']);
+											if (preg_match("/page\d+\.tpl\.php/", $fileContent, $matches)) {
+												$fileFounded = $matches[0];
+												break;
+											}
+										}
+									}
+									foreach ($arraySourcedir as $file) {
+										if ($file['name'] == $fileFounded) {
+											if (!is_writable($file['fullname'])) {
+												dolChmod($file['fullname'], '0664');
+											}
+											$diff = $this->showDifferences(file_get_contents($destdir.'/containers/'."page" . $nextpage . ".tpl.php"), file_get_contents($file['fullname']), array($nextpage,$this->extractNumberFromFilename($file['name'])));
+											if ($diff != -1) {
+												$replace = $this->replaceLignEUsingNum($destdir.'/containers/'."page" . $nextpage . ".tpl.php", $diff);
+												if ($replace !== false) {
+													setEventMessages("Copy file <b>page".$nextpage.".tpl.php</b> in template <b>".$this->name_template."</b> with succes", null, 'warnings');
+												}
+											}
+										}
+									}
+								}
+							}
+							$this->saveState($etatPrecedent, $fichierEtat);
+							setEventMessages("file <b>".$nomFichierModifie."</b> was created in template <b>".$website->name_template."</b>", null, 'warnings');
+							header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
+							exit();
+						}
+					}
+				}
+				// Find the corresponding file in the destination folder
+				if (in_array($nomFichierModifie, $namesSource)) {
+					foreach ($arraydestdir as $destFile) {
+						if ($destFile['name'] == $nomFichierModifie) {
+							$sourceContent = file_get_contents($fichierModifie['fullname']);
+							$destContent = file_get_contents($destFile['fullname']);
+
+							if ($sourceContent !== $destContent) {
+								$differences[$nomFichierModifie] = $this->showDifferences($destContent, $sourceContent);
+								if (count($differences[$nomFichierModifie]) > 0) {
+									$result = $this->replaceLignEUsingNum($destFile['fullname'], $differences[$nomFichierModifie]);
+									if ($result !== false) {
+										if ($result == -2) {
+											setEventMessages("No permissions to write in file <b>".$nomFichierModifie."</b> from template <b>".$website->name_template."</b>", null, 'errors');
+											header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
+											exit();
+										}
+										setEventMessages("file <b>".$nomFichierModifie."</b> was modified in template <b>".$website->name_template."</b>", null, 'warnings');
+									} else {
+										setEventMessages("file ".$nomFichierModifie." was not modified", null, 'errors');
+									}
+								}
+							}
+						}
+						if (preg_match('/page(\d+)\.tpl\.php/', $nomFichierModifie)) {
+							$differences[$nomFichierModifie] = $this->compareFichierModifie($sourcedir, $destdir, $fichierModifie);
+							if (count($differences[$nomFichierModifie]) > 0) {
+								$result = $this->replaceLignEUsingNum($differences[$nomFichierModifie]['file_destination']['fullname'], $differences[$nomFichierModifie]);
+								if ($result !== false) {
+									if ($result == -2) {
+										setEventMessages("No permissions to write in file <b>".$differences[$nomFichierModifie]['file_destination']['name']."</b> from template <b>".$website->name_template."</b>", null, 'errors');
+										header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
+										exit();
+									}
+									$succes++;
+								}
+							}
+						}
+					}
+				}
+			}
+			if ($succes>0) {
+				// save state file
+				$this->saveState($etatPrecedent, $fichierEtat);
+				setEventMessages("file <b>".$differences[$nomFichierModifie]['file_destination']['name']."</b> was modified in template <b>".$website->name_template."</b>", null, 'warnings');
+				header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
+				exit();
+			}
+		} else {
+			setEventMessages("No file has been modified", null, 'errors');
+		}
+		// save state file
+		$this->saveState($etatPrecedent, $fichierEtat);
+		header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
+		exit();
+	}
+
+	/**
+	 * extract num of page
+	 * @param  string  $filename   name of file
+	 * @return int 1 if OK, -1 if KO
+	 */
+	protected function extractNumberFromFilename($filename)
+	{
+		$matches = [];
+		if (preg_match('/page(\d+)\.tpl\.php/', $filename, $matches)) {
+			return (int) $matches[1];
+		}
+		return -1;
+	}
+
+	/**
+	 * update name_template in table after import template
+	 * @param  string    $name_template   name of template
+	 * @return int     1 if OK, -1 if KO
+	 */
+	public function setTemplateName($name_template)
+	{
+		$sql = "UPDATE ".$this->db->prefix()."website SET";
+		$sql .= " name_template = '".$this->db->escape($name_template)."'";
+		$sql .= " WHERE rowid = ".(int) $this->id;
+		$result = $this->db->query($sql);
+
+		if ($result) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
+	 * check previous state for file
+	 * @param  string   $pathname  path of file
+	 * @return  array|mixed
+	 */
+	public function checkPreviousState($pathname)
+	{
+		if (!file_exists($pathname)) {
+			if (touch($pathname)) {
+				dolChmod($pathname, '0664');
+			}
+			return [];
+		}
+		return unserialize(file_get_contents($pathname));
+	}
+
+
+	/**
+	 * Save state for File
+	 * @param mixed $etat   state
+	 * @param mixed $pathname  path of file
+	 * @return int|false
+	 */
+	public function saveState($etat, $pathname)
+	{
+		return file_put_contents($pathname, serialize($etat));
+	}
+
+	/**
+	 * create file for save state of all files in folder
+	 * @param string  $sourcedir   path of folder
+	 * @return void
+	 */
+	public function initFilesStatus($sourcedir)
+	{
+		$fichierEtat = $sourcedir . '/etat_fichiers.txt';
+
+		$etatPrecedent = $this->checkPreviousState($fichierEtat);
+
+		// for first save state when ceate file
+		if (empty($etatPrecedent)) {
+			$arraySourcedir = dol_dir_list($sourcedir, "files");
+			$etatFichiers = [];
+
+			foreach ($arraySourcedir as $file) {
+				// Ignore .old files and the status file itself
+				if (substr($file['name'], -4) === '.old' || $file['name'] === basename($fichierEtat)) {
+					continue;
+				}
+
+				$hashActuel = hash_file('md5', $file['fullname']);
+				$etatFichiers[$file['name']] = $hashActuel;
+			}
+			$this->saveState($etatFichiers, $fichierEtat);
+		}
+	}
+
+	/**
+	 * Compare two files has not same name but same content
+	 * @param  string   $dossierSource        filepath of folder source
+	 * @param  string   $dossierDestination   filepath of folder dest
+	 * @param  mixed   $fichierModifie       files modified
+	 * @return array    empty if KO, array if OK
+	 */
+	public function compareFichierModifie($dossierSource, $dossierDestination, $fichierModifie)
+	{
+
+		$fichiersSource = [];
+		$fichiersDestination = [];
+
+		$fichierWithNoPage = [];
+		$fichierWithNoPageInDest = [];
+
+		//  filter files source
+		foreach (dol_dir_list($dossierSource, "files") as $file) {
+			if (preg_match('/^page\d+/', $file['name']) && !str_contains($file['name'], '.old')) {
+				$fichiersSource[] = $file;
+			} else {
+				$fichierWithNoPage[] = $file;
+			}
+		}
+
+		//  filter files destination
+		foreach (dol_dir_list($dossierDestination, "all", 1) as $file) {
+			if (preg_match('/^page\d+/', $file['name']) && !str_contains($file['name'], '.old')) {
+				$fichiersDestination[] = $file;
+			} else {
+				$fichierWithNoPageInDest[] = $file;
+			}
+		}
+
+		// find index source and search it in folder destination
+		$numOfPageSource = 0;
+		foreach ($fichiersSource as $index => $file) {
+			if ($file['name'] == basename($fichierModifie['fullname'])) {
+				$numOfPageSource = $this->extractNumberFromFilename($file['name']);
+				break;
+			}
+		}
+
+		//search numPage where was declared
+		$fileFounded = array();
+		foreach ($fichierWithNoPage as $filesource) {
+			$fileContent = file_get_contents($filesource['fullname']);
+			if (strpos($fileContent, "require './page".$numOfPageSource.".tpl.php'") !== false) {
+				$fileFounded = $filesource;
+				break;
+			}
+		}
+		// find file with same name and extract num page in destination folder
+		$numPageFounded = '';
+		foreach ($fichierWithNoPageInDest as $filedest) {
+			if ($filedest['name'] === $fileFounded['name']) {
+				$fileContent = file_get_contents($filedest['fullname']);
+				if (preg_match("/page\d+\.tpl\.php/", $fileContent, $matches)) {
+					$numPageFounded = $matches[0];
+					break;
+				}
+			}
+		}
+		//search file with the number of page founded
+		$fileNeeded = array();
+		foreach ($fichiersDestination as $index => $file) {
+			if ($file['name'] == $numPageFounded) {
+				$fileNeeded = $file;
+				break;
+			}
+		}
+
+		if (isset($fileNeeded)) {
+			$sourceContent = file_get_contents($fichierModifie['fullname']);
+			if (file_exists($fileNeeded['fullname'])) {
+				$destContent = file_get_contents($fileNeeded['fullname']);
+
+				$numOfPageDest = $this->extractNumberFromFilename($fileNeeded['name']);
+				$differences = $this->showDifferences($destContent, $sourceContent, array($numOfPageDest,$numOfPageSource));
+				$differences['file_destination'] = $fileNeeded;
+			}
+			return $differences;
+		}
+		return array();
+	}
+
+	/**
+	 * remove espace in string
+	 * @param   string   $str    string
+	 * @return string
+	 */
+	private function normalizeString($str)
+	{
+		$str = str_replace("\r\n", "\n", $str);
+		$str = str_replace("\r", "\n", $str);
+		return $str;
+	}
+
+	/**
+	 * show difference between to string
+	 * @param string  $str1   first string
+	 * @param string  $str2   seconde string
+	 * @param array  $exceptNumPge    num of page files we dont want to change
+	 * @return array|int      -1 if KO, array if OK
+	 */
+	protected function showDifferences($str1, $str2, $exceptNumPge = array())
+	{
+		$diff = array();
+		$str1 = $this->normalizeString($str1);
+		$str2 = $this->normalizeString($str2);
+
+		$lines1 = explode("\n", $str1);
+		$lines2 = explode("\n", $str2);
+
+		$linesShouldnChange = array();
+		$linesShouldnNotChange = array();
+		$linefound = array();
+		$countNumPage = count($exceptNumPge);
+
+		for ($i = 0;$i< $countNumPage; $i++) {
+			$linefound[$i]['meta'] = '/content="' . preg_quote($exceptNumPge[$i], '/') . '" \/>/';
+			$linefound[$i]['output'] = '/dolWebsiteOutput\(\$tmp, "html", ' . preg_quote($exceptNumPge[$i], '/') . '\);/';
+		}
+
+		$maxLines = max(count($lines1), count($lines2));
+		for ($lineNum = 0; $lineNum < $maxLines; $lineNum++) {
+			$lineContent1 = $lines1[$lineNum] ?? '';
+			$lineContent2 = $lines2[$lineNum] ?? '';
+			if (preg_match($linefound[0]['output'], $lineContent1)) {
+				$linesShouldnChange[] = $lineContent1;
+			}
+			if (preg_match($linefound[0]['meta'], $lineContent1)) {
+				$linesShouldnChange[] = $lineContent1;
+			}
+			if (preg_match($linefound[1]['output'], $lineContent2)) {
+				$linesShouldnNotChange[] = $lineContent2;
+			}
+			if (preg_match($linefound[1]['meta'], $lineContent2)) {
+				$linesShouldnNotChange[] = $lineContent2;
+			}
+			if ($lineContent1 !== $lineContent2) {
+				if (isset($lines1[$lineNum]) && !isset($lines2[$lineNum])) {
+					// Ligne deleted de la source
+					$diff["Supprimée à la ligne " . ($lineNum + 1)] = $lineContent1;
+				} elseif (!isset($lines1[$lineNum]) && isset($lines2[$lineNum])) {
+					// Nouvelle ligne added dans la destination
+					$diff["Ajoutée à la ligne " . ($lineNum + 1)] = $lineContent2;
+				} else {
+					// Différence found it
+					$diff["Modifiée à la ligne " . ($lineNum + 1)] = $lineContent2;
+				}
+			}
+		}
+
+
+		if (empty($linesShouldnChange)) {
+			$linesShouldnChange[0] = '<meta name="dolibarr:pageid" content="'.$exceptNumPge[0].'" />';
+			$linesShouldnChange[1] = '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "html", '.$exceptNumPge[0].');';
+		}
+
+		$pairesRemplacement = array();
+		if (!empty($linesShouldnNotChange)) {
+			$i =0;
+			foreach ($linesShouldnNotChange as $numLigne => $ligneRemplacement) {
+				if (isset($linesShouldnChange[$numLigne])) {
+					$pairesRemplacement[$ligneRemplacement] = $linesShouldnChange[$numLigne];
+				} else {
+					$pairesRemplacement[$ligneRemplacement] = $linesShouldnChange[$i];
+				}
+				$i++;
+			}
+			$diff['lignes_dont_change'] = $pairesRemplacement;
+		}
+		// search path of image and replace it with the correcte path
+		$pattern = '/medias\/image\/'.$this->ref.'\/([^\'"\s]+)/';
+
+		foreach ($diff as $key => $value) {
+			// Assurez-vous que la valeur est une chaîne
+			if (is_string($value)) {
+				if (preg_match($pattern, $value)) {
+					$newValue = preg_replace($pattern, 'medias/image/'.$this->name_template.'/$1', $value);
+					$diff[$key] = $newValue;
+				}
+			}
+		}
+		return $diff;
+	}
+
+	/**
+	 * Replace ligne by ligne in file using num of ligne
+	 * @param string $desfFile   path of file dest
+	 * @param array $differences array of differences between files
+	 * @return false|int  false if we cant replace
+	 */
+	protected function replaceLignEUsingNum($desfFile, $differences)
+	{
+		$userId = fileowner($desfFile);
+		if ($userId !== false) {
+			// Obtain user information from the ID
+			if (function_exists('posix_getpwuid')&& function_exists('posix_getpwuid')) {
+				$uid = posix_geteuid();
+				$userInfoM = posix_getpwuid($uid);
+
+				$userInfo = posix_getpwuid($userId);
+				if ($userInfo['uid'] !== $userInfoM['uid']) {
+					return -2;
+				}
+			}
+		}
+		if (file_exists($desfFile)) {
+			dolChmod($desfFile, '0664');
+		}
+		unset($differences['file_destination']);
+		$contentDest = file($desfFile, FILE_IGNORE_NEW_LINES);
+		foreach ($differences as $key => $ligneSource) {
+			if (preg_match('/(Ajoutée|Modifiée) à la ligne (\d+)/', $key, $matches)) {
+				$typeModification = $matches[1];
+				$numLigne = (int) $matches[2] - 1;
+
+				if ($typeModification === 'Ajoutée') {
+					array_splice($contentDest, $numLigne, 0, $ligneSource);
+				} elseif ($typeModification === 'Modifiée') {
+					$contentDest[$numLigne] = $ligneSource;
+				}
+			} elseif (preg_match('/Supprimée à la ligne (\d+)/', $key, $matches)) {
+				$numLigne = (int) $matches[1] - 1;
+				unset($contentDest[$numLigne]);
+			}
+		}
+		//Reindex the table keys
+		$contentDest = array_values($contentDest);
+		$stringreplacement = implode("\n", $contentDest);
+		file_put_contents($desfFile, $stringreplacement);
+		foreach ($differences['lignes_dont_change'] as $linechanged => $line) {
+			if (in_array($linechanged, $contentDest)) {
+				dolReplaceInFile($desfFile, array($linechanged => $line));
+			}
+		}
 	}
 }
