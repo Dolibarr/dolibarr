@@ -147,6 +147,7 @@ UPDATE llx_product set stockable_product = 0 WHERE type = 1;
 
 ALTER TABLE llx_prelevement_lignes ADD COLUMN fk_user integer NULL;
 
+ALTER TABLE llx_hrm_evaluation ADD COLUMN last_main_doc varchar(255);
 ALTER TABLE llx_hrm_evaluationdet ADD COLUMN comment TEXT;
 
 ALTER TABLE llx_resource ADD COLUMN address varchar(255) DEFAULT NULL AFTER fk_code_type_resource;
