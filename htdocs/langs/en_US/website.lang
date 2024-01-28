@@ -232,3 +232,4 @@ WebPortalErrorFetchLoggedUser = Error when loading user (Id : %s)
 WebPortalErrorFetchLoggedThirdParty = Error when loading third-party (Id : %s)
 WebPortalErrorFetchLoggedMember = Error when loading member (Id : %s)
 WebPortalErrorFetchLoggedPartnership = Error when loading partnership (Third-party Id : %s, Member Id : %s)
+ExportIntoGIT=Export into sources
