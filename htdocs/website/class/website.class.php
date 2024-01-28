@@ -1608,8 +1608,9 @@ class Website extends CommonObject
 	}
 
 	/**
-	 * Overite template by copy and past all files
-	 * @return void
+	 * Overite template by copying all files
+	 *
+	 * @return int			<0 if KO, >0 if OK
 	 */
 	public function overwriteTemplate()
 	{
@@ -1618,11 +1619,15 @@ class Website extends CommonObject
 		$website = $this;
 		if (empty($website->id) || empty($website->ref)) {
 			setEventMessages("Website id or ref is not defined", null, 'errors');
-			return false;
+			return -1;
+		}
+		if (empty($website->name_template)) {
+			setEventMessages("To export the website template into the GIT sources directory, the name of the directory/template must be know. For this website, the variable 'name_template' is unknown, so export in GIT sources is not possible.", null, 'errors');
+			return -1;
 		}
 		if (!is_writable($conf->website->dir_temp)) {
 			setEventMessages("Temporary dir ".$conf->website->dir_temp." is not writable", null, 'errors');
-			return '';
+			return -1;
 		}
 
 		$sourcedir = $conf->website->dir_output."/".$website->ref;
@@ -1717,6 +1722,7 @@ class Website extends CommonObject
 						}
 					}
 				}
+
 				// Find the corresponding file in the destination folder
 				if (in_array($nomFichierModifie, $namesSource)) {
 					foreach ($arraydestdir as $destFile) {
@@ -1730,7 +1736,7 @@ class Website extends CommonObject
 									$result = $this->replaceLignEUsingNum($destFile['fullname'], $differences[$nomFichierModifie]);
 									if ($result !== false) {
 										if ($result == -2) {
-											setEventMessages("No permissions to write in file <b>".$nomFichierModifie."</b> from template <b>".$website->name_template."</b>", null, 'errors');
+											setEventMessages("No permissions to write in file <b>".$nomFichierModifie."</b> from the template <b>".$website->name_template."</b>", null, 'errors');
 											header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
 											exit();
 										}
@@ -1747,7 +1753,7 @@ class Website extends CommonObject
 								$result = $this->replaceLignEUsingNum($differences[$nomFichierModifie]['file_destination']['fullname'], $differences[$nomFichierModifie]);
 								if ($result !== false) {
 									if ($result == -2) {
-										setEventMessages("No permissions to write in file <b>".$differences[$nomFichierModifie]['file_destination']['name']."</b> from template <b>".$website->name_template."</b>", null, 'errors');
+										setEventMessages("No permissions to write in file <b>".$differences[$nomFichierModifie]['file_destination']['name']."</b> from the template <b>".$website->name_template."</b>", null, 'errors');
 										header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
 										exit();
 									}
@@ -1768,8 +1774,10 @@ class Website extends CommonObject
 		} else {
 			setEventMessages("No file has been modified", null, 'errors');
 		}
+
 		// save state file
 		$this->saveState($etatPrecedent, $fichierEtat);
+
 		header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
 		exit();
 	}
