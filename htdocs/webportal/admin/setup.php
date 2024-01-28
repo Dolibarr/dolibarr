@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT . "/webportal/lib/webportal.lib.php";
 
 // Translations
-$langs->loadLangs(array("admin", "webportal"));
+$langs->loadLangs(array("admin", "webportal", "website"));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('webportalsetup', 'globalsetup'));
@@ -37,10 +37,6 @@ $hookmanager->initHooks(array('webportalsetup', 'globalsetup'));
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 $modulepart = GETPOST('modulepart', 'aZ09');    // Used by actions_setmoduleoptions.inc.php
-
-if (empty($action)) {
-	$action = 'edit';
-}
 
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
@@ -70,7 +66,7 @@ $item->fieldAttr = array('placeholder' => 'https://');
 $item->helpText = $langs->transnoentities('WebPortalRootUrlHelp');
 require_once __DIR__ . '/../class/context.class.php';
 $context = Context::getInstance();
-$item->fieldOutputOverride = '<a target="_blank" href="'.Context::getRootConfigUrl().'" >'.img_picto('', 'globe', 'class="pictofixedwidth"').Context::getRootConfigUrl().'</a>';
+//$item->fieldOutputOverride = '<a target="_blank" href="'.Context::getRootConfigUrl().'" >'.img_picto('', 'globe', 'class="pictofixedwidth"').Context::getRootConfigUrl().'</a>';
 
 
 $formSetup->newItem('WEBPORTAL_TITLE')->defaultFieldValue = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
@@ -228,6 +224,7 @@ if (empty($action) || $action == 'update') {
 	$action = 'edit';
 }
 
+
 /*
  * View
  */
@@ -248,8 +245,32 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 $head = webportalAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans($title), -1, "webportal");
 
+print '<br>';
+
+// URL For webportal
+print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('WebPortalURL').'</span><br>';
+if (isModEnabled('multicompany')) {
+	$entity_qr = '?entity='.((int) $conf->entity);
+} else {
+	$entity_qr = '';
+}
+
+// Define $urlwithroot
+$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+print '<div class="urllink">';
+print '<input type="text" id="publicurlmember" class="quatrevingtpercentminusx" value="'.$urlwithroot.'/public/webportal/index.php'.$entity_qr.'">';
+print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/webportal/index.php'.$entity_qr.'">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
+print '</div>';
+print ajax_autoselect('publicurlmember');
+//print '<a target="_blank" href="'.Context::getRootConfigUrl().'" >'.img_picto('', 'globe', 'class="pictofixedwidth"').Context::getRootConfigUrl().'</a>';
+
 // Setup page goes here
 print info_admin($langs->trans("UserAccountForWebPortalAreInThirdPartyTabHelp"));
+
+print '<br>';
 
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);

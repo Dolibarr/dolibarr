@@ -115,9 +115,9 @@ class ActionsDatapolicy extends CommonHookActions
 				$object->fax = '';
 				$object->state = '';
 				$object->country = '';
-				$object->state_id = '';
+				$object->state_id = 0;
 				$object->socialnetworks = '';
-				$object->country_id = '';
+				$object->country_id = 0;
 				$object->note_private = dol_concatdesc($object->note_private, $langs->trans('ANONYMISER_AT', dol_print_date(dol_now())));
 
 				if ($object->update($object->id, $user, 0)) {

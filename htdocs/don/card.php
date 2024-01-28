@@ -185,19 +185,19 @@ if (empty($reshook)) {
 		if (!$error) {
 			$object->fetch($id);
 
-			$object->firstname = (string) GETPOST("firstname", 'alpha');
-			$object->lastname = (string) GETPOST("lastname", 'alpha');
-			$object->societe = (string) GETPOST("societe", 'alpha');
-			$object->address = (string) GETPOST("address", 'alpha');
-			$object->amount = price2num(GETPOST("amount", 'alpha'), '', 2);
-			$object->town = (string) GETPOST("town", 'alpha');
-			$object->zip = (string) GETPOST("zipcode", 'alpha');
-			$object->country_id = (int) GETPOST('country_id', 'int');
-			$object->email = (string) GETPOST("email", 'alpha');
+			$object->firstname = GETPOST("firstname", 'alpha');
+			$object->lastname = GETPOST("lastname", 'alpha');
+			$object->societe = GETPOST("societe", 'alpha');
+			$object->address = GETPOST("address", 'alpha');
+			$object->amount = GETPOSTFLOAT("amount");
+			$object->town = GETPOST("town", 'alpha');
+			$object->zip = GETPOST("zipcode", 'alpha');
+			$object->country_id = GETPOSTINT('country_id');
+			$object->email = GETPOST("email", 'alpha');
 			$object->date = $donation_date;
 			$object->public = $public_donation;
-			$object->fk_project = (int) GETPOST("fk_project", 'int');
-			$object->modepaymentid = (int) GETPOST('modepayment', 'int');
+			$object->fk_project = GETPOSTINT("fk_project");
+			$object->modepaymentid = GETPOSTINT('modepayment');
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');

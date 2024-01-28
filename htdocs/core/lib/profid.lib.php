@@ -155,7 +155,7 @@ function isValidTinForBE($str)
 	$str = trim($str);
 	$str = preg_replace('/(\s)/', '', $str);
 
-	if (preg_match('/(^[0-9]{4}\.[0-9]{3}\.[0-9]{3}$)/', $str)) {
+	if (preg_match('/(^[0-1]{1}[0-9]{3}\.[0-9]{3}\.[0-9]{3}$)/', $str)) {
 		return true;
 	} else {
 		return false;
