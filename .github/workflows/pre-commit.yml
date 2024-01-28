@@ -63,6 +63,14 @@ jobs:
       #     files: |
       #        **.php
 
+      - name: Setup PHPCS
+        uses: shivammathur/setup-php@v2
+        if: steps.changed-php.outputs.any_changed == 'true'
+        with:
+          php-version: 8.1
+          coverage: none  # disable xdebug, pcov
+          tools: phpcs
+
       - name: Run some pre-commit hooks on selected changed files only
         if: steps.changed-php.outputs.any_changed == 'true'
         env:
