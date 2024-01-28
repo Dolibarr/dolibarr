@@ -3,7 +3,7 @@ Module Web Portal
 
 This is a module to provide a ready to use Web Portal for your customers, suppliers, partners or members of the mebership module.
 
-Accounts (login and pass) to acces this portal can be created for any thirdparty (from the tab "Web site accounts").
+Accounts (login and pass) to access this portal can be created for any thirdparty (from the tab "Web site accounts").
 
 It is better to have a standalone web server with its own virtual host and domain name to use this module, so using the web portal does not
 reaveal the domain and url of your backoffice installation. 
@@ -15,8 +15,8 @@ If the Thirdparty module is enabled:
 * Read/modify Name, phone, email, addresses of thirdparty
 
 If the Patnership module is enabled:
-* Read properties (status, stard date, end date) of its partnership.
- 
+* Read properties (status, start date, end date) of its partnership.
+
 If the Proposal module is enabled:
 * Read its orders
 
@@ -41,5 +41,3 @@ Documentation
 -------------
 
 [Module Web Portal](https://wiki.dolibarr.org/index.php/Module_Web_Portal)
-
- 
