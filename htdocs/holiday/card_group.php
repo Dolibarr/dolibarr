@@ -173,7 +173,7 @@ if (empty($reshook)) {
 			$date_fin_gmt = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'), 1);
 			$starthalfday = GETPOST('starthalfday');
 			$endhalfday = GETPOST('endhalfday');
-			$type = GETPOST('type');
+			$type = GETPOSTINT('type');
 
 			$halfday = 0;
 			if ($starthalfday == 'afternoon' && $endhalfday == 'morning') {

@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT . "/webportal/lib/webportal.lib.php";
 
 // Translations
-$langs->loadLangs(array("admin", "hrm", "other"));
+$langs->loadLangs(array("admin", "hrm", "other", "website"));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('webportalsetup', 'globalsetup'));
