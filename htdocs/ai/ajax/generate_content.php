@@ -52,7 +52,7 @@ $rawData = file_get_contents('php://input');
 $jsonData = json_decode($rawData, true);
 
 if (is_null($jsonData)) {
-	dol_print_error('data with format JSON valide.');
+	dol_print_error(null, 'data with format JSON valide.');
 }
 $chatGPT = new Ai($db);
 
