@@ -162,6 +162,7 @@ CalcModeVATDebt=Modus <b>%s USt. auf Engagement Rechnungslegung %s</b>.
 CalcModeVATEngagement=Modus <b>%sTVA auf  Einnahmen-Ausgaben%s</b>.
 CalcModeDebt=Analyse der erfassten Belege
 CalcModeEngagement=Analyse der erfassten Zahlungen
+CalcModePayment=Analyse der erfassten Zahlungen
 CalcModeBookkeeping=Analyse der im Hauptbuch protokollierten Daten.
 CalcModeNoBookKeeping=Auch wenn sie noch nicht im Hauptbuch verbucht sind
 CalcModeLT1= Modus <b>%sRE auf Kundenrechnungen - Lieferantenrechnungen%s</b>

@@ -2358,7 +2358,7 @@ class Product extends CommonObject
 					$price_min_ttc = 0;
 				}
 			} else {
-				$price = price2num($newprice, 'MU');
+				$price = (float) price2num($newprice, 'MU');
 				$price_ttc = ($newnpr != 1) ? (float) price2num($newprice) * (1 + ($newvat / 100)) : $price;
 				$price_ttc = price2num($price_ttc, 'MU');
 
@@ -2905,8 +2905,8 @@ class Product extends CommonObject
 					if ($price_result >= 0) {
 						$this->price = $price_result;
 						// Calculate the VAT
-						$this->price_ttc = price2num($this->price) * (1 + ($this->tva_tx / 100));
-						$this->price_ttc = price2num($this->price_ttc, 'MU');
+						$this->price_ttc = (float) price2num($this->price) * (1 + ($this->tva_tx / 100));
+						$this->price_ttc = (float) price2num($this->price_ttc, 'MU');
 					}
 				}
 
@@ -5084,7 +5084,7 @@ class Product extends CommonObject
 	/**
 	 * Return if loaded product is a variant
 	 *
-	 * @return int
+	 * @return bool|int		Return true if the product is a variant, false if not, -1 if error
 	 */
 	public function isVariant()
 	{
@@ -5609,7 +5609,7 @@ class Product extends CommonObject
 	/**
 	 *  Retour label of nature of product
 	 *
-	 * @return string        Label
+	 * @return string|int        Return label or ''. -1 if error
 	 */
 	public function getLibFinished()
 	{
@@ -5946,7 +5946,6 @@ class Product extends CommonObject
 			$this->stock_theorique += ($stock_commande_fournisseur - $stock_reception_fournisseur);
 		}
 
-		$hookmanager->initHooks(array('productdao'));
 		$parameters = array('id'=>$this->id, 'includedraftpoforvirtual' => $includedraftpoforvirtual);
 		// Note that $action and $object may have been modified by some hooks
 		$reshook = $hookmanager->executeHooks('loadvirtualstock', $parameters, $this, $action);

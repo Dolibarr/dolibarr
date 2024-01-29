@@ -54,6 +54,9 @@ require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
 $version = constant('DOL_VERSION');
 $error = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */

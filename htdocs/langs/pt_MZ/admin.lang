@@ -215,7 +215,6 @@ ExternalResources=Fontes externas
 SocialNetworks=Redes Sociais
 SocialNetworkId=ID da rede social
 ForDocumentationSeeWiki=Para documentação de usuário ou desenvolvedor (Doc, FAQs...), <br> dê uma olhada no Dolibarr Wiki: <br> <b> <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a> </b>
-ForAnswersSeeForum=Para qualquer outra dúvida/ajuda, você pode usar o fórum Dolibarr: <br> <b> <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a> </b>
 CurrentMenuHandler=Gestor atual de menu
 MeasuringUnit=Unidade de medida
 FontSize=Tamanho da fonte
@@ -270,8 +269,6 @@ LastActivationIP=Último IP de ativação
 LastActivationVersion=Versão de ativação mais recente
 UpdateServerOffline=Atualização de servidor off-line
 WithCounter=Gerenciar um contador
-GenericMaskCodes=Você pode inserir qualquer máscara de numeração. Nesta máscara, as seguintes tags podem ser usadas: <br> <b> {000000} </b> corresponde a um número que será incrementado em cada %s. Insira tantos zeros quanto o comprimento desejado do contador. O contador será completado por zeros da esquerda para ter tantos zeros quanto a máscara. <br> <b> {000000+000} </b> o mesmo que o anterior, mas um deslocamento correspondente ao número à direita do sinal + é aplicado a partir do primeiro %s. <br> <b> {000000 @ x} </b> mesmo que o anterior, mas o contador é zerado quando o mês x é atingido (x entre 1 e 12, ou 0 para usar os primeiros meses do ano fiscal definido em sua configuração, ou 99 a redefinir para zero todos os meses). Se esta opção for usada e x for 2 ou superior, a sequência {yy} {mm} ou {yyyy} {mm} também é necessária. <br> <b> {dd} </b> dia (01 a 31). <br> <b> {mm} </b> mês (01 a 12). <br> <b> {yy} </b>, <b> {yyyy} </b> ou <b> {y} ano a09a4b7fz0, números de 439 ou 417837fz0, ano 217a4b7 <br>
-GenericMaskCodes2=<b> {cccc} </b> o código do cliente em n caracteres <br> <b> {cccc000} a09a4b739f o código do cliente é seguido por um cliente n8z739f dedicado ao código n8z17f. Este contador dedicado ao cliente é zerado ao mesmo tempo que o contador global. <br> <b> {tttt} </b> O código do tipo de terceiro em n caracteres (consulte o menu Página inicial - Configuração - Dicionário - Tipos de terceiros). Se você adicionar esta tag, o contador será diferente para cada tipo de terceiro. <br>
 GenericMaskCodes3=Não é permitido espaços. <br>Mascara fixa, basta colocar uma letra ou número sem <b>{}</b> ex:<b>CLI</b>,<b>FOR</b></b><br>
 GenericMaskCodes3EAN=Todos os outros caracteres na máscara permanecerão intactos (exceto * ou ? na 13ª posição em EAN13). <br> Espaços não são permitidos. <br> Em EAN13, o último caractere após o último } na 13ª posição deve ser * ou ? . Ela será substituída pela chave calculada. <br>
 GenericNumRefModelDesc=Retorna um número costomizado de acordo com a mascara definida.

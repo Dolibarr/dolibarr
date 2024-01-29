@@ -56,6 +56,13 @@ $version = DOL_VERSION;
 $error = 0;
 $forcecommit = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
+/*
+ * Main
+ */
+
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - dir=".DOL_DATA_ROOT." *****\n";
 dol_syslog($script_file." launched with arg ".join(',', $argv));
 

@@ -408,7 +408,6 @@ ThisLimitIsDefinedInSetup=Límite Dolibarr (Menú inicio-configuración-segurida
 CurrentMenuManager=Administrador de menú actual
 Layout=Diseño
 DisabledModules=Deshabilitar módulos
-DateOfSignature=Fecha de firma
 HidePassword=Mostrar comándos con contraseña escondida
 UnHidePassword=Mostrar comando real con contraseña visible
 RootOfMedias=Carpeta raíz de medios públicos (/medios)

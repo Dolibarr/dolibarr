@@ -52,6 +52,9 @@ $error = 0;
 $forcecommit = 0;
 $confirmed = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */

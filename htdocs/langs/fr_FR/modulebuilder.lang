@@ -183,3 +183,7 @@ DictionaryDeleted=Dictionnaire <b> %s </b> supprimé avec succès
 PropertyModuleUpdated=La propriété <b> %s </b> a été mise à jour avec succès
 InfoForApiFile=* Lorsque vous générez fichier pour la première fois, toutes les méthodes seront créées <strong> pour chaque objet. </strong><br>* Lorsque vous cliquez sur <strong>supprimer</strong> vous supprimez simplement toutes les méthodes pour <strong>l'objet sélectionné</strong>.
 SetupFile=Page de configuration du module
+EmailingSelectors=Sélecteurs d'e-mailings
+EmailingSelectorDesc=Vous pouvez générer et modifier ici les fichiers de classe afin de fournir de nouveaux sélecteurs de cibles d'e-mail pour le module d'e-mailing de masse.
+EmailingSelectorFile=Fichier de sélection des e-mails
+NoEmailingSelector=Aucun fichier de sélection d'e-mails

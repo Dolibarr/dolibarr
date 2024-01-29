@@ -52,6 +52,8 @@ $langs->load("main");
 $version = DOL_VERSION;
 $error = 0;
 
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main

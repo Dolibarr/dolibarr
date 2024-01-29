@@ -1,2 +1,4 @@
 # Dolibarr language file - Source file is en_US - propal
+PropalStatusCanceledShort=Cancelled
+PropalStatusValidatedShort=Validated (open)
 DefaultModelPropalCreate=Default template creation
