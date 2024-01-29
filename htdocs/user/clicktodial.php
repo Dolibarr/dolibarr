@@ -159,7 +159,7 @@ if ($id > 0) {
 			print '<tr><td class="">ClickToDial URL</td>';
 			print '<td class="valeur">';
 			if (getDolGlobalString('CLICKTODIAL_URL')) {
-				$url = $conf->global->CLICKTODIAL_URL;
+				$url = getDolGlobalString('CLICKTODIAL_URL');
 			}
 			if (!empty($object->clicktodial_url)) {
 				$url = $object->clicktodial_url;
@@ -207,7 +207,7 @@ if ($id > 0) {
 	 */
 	print '<div class="tabsAction">';
 
-	if (!empty($user->admin) && $action <> 'edit') {
+	if (!empty($user->admin) && $action != 'edit') {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 	}
 

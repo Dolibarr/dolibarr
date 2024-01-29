@@ -85,31 +85,31 @@ if (empty($conf->clicktodial->enabled)) {
 
 
 // Define Asterisk setup
-if (!isset($conf->global->ASTERISK_HOST)) {
+if (!getDolGlobalString('ASTERISK_HOST')) {
 	$conf->global->ASTERISK_HOST = "127.0.0.1";
 }
-if (!isset($conf->global->ASTERISK_TYPE)) {
+if (!getDolGlobalString('ASTERISK_TYPE')) {
 	$conf->global->ASTERISK_TYPE = "SIP/";
 }
-if (!isset($conf->global->ASTERISK_INDICATIF)) {
+if (!getDolGlobalString('ASTERISK_INDICATIF')) {
 	$conf->global->ASTERISK_INDICATIF = "0";
 }
-if (!isset($conf->global->ASTERISK_PORT)) {
+if (!getDolGlobalString('ASTERISK_PORT')) {
 	$conf->global->ASTERISK_PORT = 5038;
 }
 if (getDolGlobalString('ASTERISK_INDICATIF') == 'NONE') {
 	$conf->global->ASTERISK_INDICATIF = '';
 }
-if (!isset($conf->global->ASTERISK_CONTEXT)) {
+if (!getDolGlobalString('ASTERISK_CONTEXT')) {
 	$conf->global->ASTERISK_CONTEXT = "from-internal";
 }
-if (!isset($conf->global->ASTERISK_WAIT_TIME)) {
+if (!getDolGlobalString('ASTERISK_WAIT_TIME')) {
 	$conf->global->ASTERISK_WAIT_TIME = "30";
 }
-if (!isset($conf->global->ASTERISK_PRIORITY)) {
+if (!getDolGlobalString('ASTERISK_PRIORITY')) {
 	$conf->global->ASTERISK_PRIORITY = "1";
 }
-if (!isset($conf->global->ASTERISK_MAX_RETRY)) {
+if (!getDolGlobalString('ASTERISK_MAX_RETRY')) {
 	$conf->global->ASTERISK_MAX_RETRY = "2";
 }
 
@@ -120,29 +120,29 @@ $caller = GETPOST('caller', 'alphanohtml');
 $called = GETPOST('called', 'alphanohtml');
 
 // IP address of Asterisk server
-$strHost = $conf->global->ASTERISK_HOST;
+$strHost = getDolGlobalString('ASTERISK_HOST');
 
 // Specify the type of extension through which your extension is connected.
 // ex: SIP/, IAX2/, ZAP/, etc
-$channel = $conf->global->ASTERISK_TYPE;
+$channel = getDolGlobalString('ASTERISK_TYPE');
 
 // Outgoing call sign
-$prefix = $conf->global->ASTERISK_INDICATIF;
+$prefix = getDolGlobalString('ASTERISK_INDICATIF');
 
 // Asterisk Port
-$port = $conf->global->ASTERISK_PORT;
+$port = getDolGlobalString('ASTERISK_PORT');
 
 // Context ( generalement from-internal )
-$strContext = $conf->global->ASTERISK_CONTEXT;
+$strContext = getDolGlobalString('ASTERISK_CONTEXT');
 
 // Waiting time before hanging up
-$strWaitTime = $conf->global->ASTERISK_WAIT_TIME;
+$strWaitTime = getDolGlobalString('ASTERISK_WAIT_TIME');
 
 // Priority
-$strPriority = $conf->global->ASTERISK_PRIORITY;
+$strPriority = getDolGlobalString('ASTERISK_PRIORITY');
 
 // Number of call attempts
-$strMaxRetry = $conf->global->ASTERISK_MAX_RETRY;
+$strMaxRetry = getDolGlobalString('ASTERISK_MAX_RETRY');
 
 
 /*

@@ -7,6 +7,7 @@
  * Copyright (C) 2013       Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016-2018  Charlie Benke			<charlie@patas-monkey.com>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
 /**
  *  \file       htdocs/fichinter/class/fichinterrec.class.php
  *  \ingroup    fichinter
- *  \brief      Fichier de la classe des factures recurentes
+ *  \brief      File for class to manage recurring interventions
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
@@ -34,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
 
 /**
- *	Classe de gestion des factures recurrentes/Modeles
+ * Class to manage recurring interventions
  */
 class FichinterRec extends Fichinter
 {
@@ -145,7 +146,7 @@ class FichinterRec extends Fichinter
 	 *
 	 *  @param      User    $user       User object
 	 *  @param      int     $notrigger  no trigger
-	 *  @return     int                 <0 if KO, id of fichinter if OK
+	 *  @return     int                 Return integer <0 if KO, id of fichinter if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -229,7 +230,7 @@ class FichinterRec extends Fichinter
 				$num = count($fichintsrc->lines);
 				for ($i = 0; $i < $num; $i++) {
 					//var_dump($fichintsrc->lines[$i]);
-					$result_insert = $this->addline(
+					$result_insert = $this->addLineRec(
 						$fichintsrc->lines[$i]->desc,
 						$fichintsrc->lines[$i]->duration,
 						$fichintsrc->lines[$i]->date,
@@ -458,28 +459,28 @@ class FichinterRec extends Fichinter
 
 
 	/**
-	 *  Add a line to fichinter rec
+	 *  Add line to a recurring intervention
 	 *
-	 *  @param		string		$desc               Description de la ligne
-	 *  @param		integer		$duration           Durée
-	 *  @param		string	    $date				Date
-	 *  @param	    int			$rang			    Position of line
-	 *  @param		double		$pu_ht			    Unit price without tax (> 0 even for credit note)
-	 *  @param		double		$qty			 	Quantity
-	 *  @param		double		$txtva		   	    Forced VAT rate, otherwise -1
-	 *  @param		int			$fk_product	  	    Id of predefined product/service
-	 *  @param		double		$remise_percent  	Percentage of discount on line
+	 *  @param		string		$desc				Line description
+	 *  @param		integer		$duration			Duration
+	 *  @param		string		$date				Date
+	 *  @param		int			$rang				Position of line
+	 *  @param		double		$pu_ht				Unit price without tax (> 0 even for credit note)
+	 *  @param		double		$qty				Quantity
+	 *  @param		double		$txtva				Forced VAT rate, otherwise -1
+	 *  @param		int			$fk_product			Id of predefined product/service
+	 *  @param		double		$remise_percent		Percentage of discount for line
 	 *  @param		string		$price_base_type	HT or TTC
 	 *  @param		int			$info_bits			Bits for type of lines
-	 *  @param		int			$fk_remise_except   Id discount
-	 *  @param		double		$pu_ttc			    Unit price with tax (> 0 even for credit note)
+	 *  @param		int			$fk_remise_except	Id discount (not used)
+	 *  @param		double		$pu_ttc				Unit price with tax (> 0 even for credit note)
 	 *  @param		int			$type				Type of line (0=product, 1=service)
 	 *  @param		int			$special_code		Special code
 	 *  @param		string		$label				Label of the line
 	 *  @param		string		$fk_unit			Unit
-	 *  @return		int			 				    <0 if KO, Id of line if OK
+	 *  @return		int			 					if KO: <0 || if OK: Id of line
 	 */
-	public function addline($desc, $duration, $date, $rang = -1, $pu_ht = 0, $qty = 0, $txtva = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = '', $pu_ttc = 0, $type = 0, $special_code = 0, $label = '', $fk_unit = null)
+	public function addLineRec($desc, $duration, $date, $rang = -1, $pu_ht = 0, $qty = 0, $txtva = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $special_code = 0, $label = '', $fk_unit = null)
 	{
 		global $mysoc;
 
@@ -557,13 +558,12 @@ class FichinterRec extends Fichinter
 			$sql .= ", ".(!empty($desc) ? "'".$this->db->escape($desc)."'" : "null");
 			$sql .= ", ".(!empty($date) ? "'".$this->db->idate($date)."'" : "null");
 			$sql .= ", ".$duration;
-			//$sql.= ", ".price2num($pu_ht);
 			//$sql.= ", ".(!empty($qty)? $qty :(!empty($duration)? $duration :"null"));
 			//$sql.= ", ".price2num($txtva);
 			$sql .= ", ".(!empty($fk_product) ? $fk_product : "null");
 			$sql .= ", ".$product_type;
 			$sql .= ", ".(!empty($remise_percent) ? $remise_percent : "null");
-			$sql.= ", '".price2num($pu_ht)."'";
+			$sql .= ", '".price2num($pu_ht)."'";
 			$sql .= ", '".price2num($total_ht)."'";
 			$sql .= ", '".price2num($total_tva)."'";
 			$sql .= ", '".price2num($total_ttc)."'";
@@ -572,7 +572,7 @@ class FichinterRec extends Fichinter
 			$sql .= ", ".(!empty($fk_unit) ? $fk_unit : "null");
 			$sql .= ")";
 
-			dol_syslog(get_class($this)."::addline", LOG_DEBUG);
+			dol_syslog(get_class($this)."::addLineRec", LOG_DEBUG);
 			if ($this->db->query($sql)) {
 				return 1;
 			} else {
@@ -768,7 +768,7 @@ class FichinterRec extends Fichinter
 	public function setNextDate($date, $increment_nb_gen_done = 0)
 	{
 		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setNextDate was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setNextDate was called on object with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
@@ -800,7 +800,7 @@ class FichinterRec extends Fichinter
 	public function setMaxPeriod($nb)
 	{
 		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setMaxPeriod was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setMaxPeriod was called on object with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 

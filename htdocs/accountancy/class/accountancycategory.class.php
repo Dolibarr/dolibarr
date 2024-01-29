@@ -140,7 +140,7 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDb		$db      Database handler
+	 *  @param      DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -624,9 +624,9 @@ class AccountancyCategory // extends CommonObject
 	 * @param string 	$date_end			Date end
 	 * @param int 		$sens 				Sens of the account:  0: credit - debit (use this by default), 1: debit - credit
 	 * @param string	$thirdparty_code	Thirdparty code
-	 * @param int       $month 				Specifig month - Can be empty
-	 * @param int       $year 				Specifig year - Can be empty
-	 * @return integer 						<0 if KO, >= 0 if OK
+	 * @param int       $month 				Specific month - Can be empty
+	 * @param int       $year 				Specific year - Can be empty
+	 * @return integer 						Return integer <0 if KO, >= 0 if OK
 	 */
 	public function getSumDebitCredit($cpt, $date_start, $date_end, $sens, $thirdparty_code = 'nofilter', $month = 0, $year = 0)
 	{
@@ -781,7 +781,7 @@ class AccountancyCategory // extends CommonObject
 		global $conf, $mysoc;
 
 		if (empty($mysoc->country_id)) {
-			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
+			dol_print_error(null, 'Call to select_accounting_account with mysoc country not yet defined');
 			exit();
 		}
 
@@ -846,7 +846,7 @@ class AccountancyCategory // extends CommonObject
 		$sql = '';
 
 		if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
-			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
+			dol_print_error(null, 'Call to select_accounting_account with mysoc country not yet defined');
 			exit();
 		}
 

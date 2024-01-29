@@ -2,6 +2,7 @@
 /*
  * Copyright (C) 2013-2015 Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/db/Database.interface.php';
  */
 abstract class DoliDB implements Database
 {
-	/** @var string Force subclass to implement VERSIONMIN */
-	const VERSIONMIN=self::VERSIONMIN;
+	/** Force subclass to implement VERSIONMIN*/
+	const VERSIONMIN = self::VERSIONMIN;
+
 	/** @var bool|resource|mysqli|SQLite3|PgSql\Connection Database handler */
 	public $db;
 	/** @var string Database type */
@@ -91,8 +93,8 @@ abstract class DoliDB implements Database
 	 *	Format a SQL IF
 	 *
 	 *	@param	string	$test           Test string (example: 'cd.statut=0', 'field IS NULL')
-	 *	@param	string	$resok          resultat si test egal
-	 *	@param	string	$resko          resultat si test non egal
+	 *	@param	string	$resok          resultat si test equal
+	 *	@param	string	$resko          resultat si test non equal
 	 *	@return	string          		SQL string
 	 */
 	public function ifsql($test, $resok, $resko)
@@ -116,18 +118,18 @@ abstract class DoliDB implements Database
 	/**
 	 *	Format a SQL REGEXP
 	 *
-	 *	@param	string	$subject        string tested
+	 *	@param	string	$subject        Field name to test
 	 *	@param	string  $pattern        SQL pattern to match
-	 *	@param	string	$sqlstring      whether or not the string being tested is an SQL expression
+	 *	@param	int		$sqlstring      0=the string being tested is a hard coded string, 1=the string is a field
 	 *	@return	string          		SQL string
 	 */
-	public function regexpsql($subject, $pattern, $sqlstring = false)
+	public function regexpsql($subject, $pattern, $sqlstring = 0)
 	{
 		if ($sqlstring) {
-			return "(". $subject ." REGEXP '" . $pattern . "')";
+			return "(". $subject ." REGEXP '" . $this->escape($pattern) . "')";
 		}
 
-		return "('". $subject ."' REGEXP '" . $pattern . "')";
+		return "('". $this->escape($subject) ."' REGEXP '" . $this->escape($pattern) . "')";
 	}
 
 
@@ -136,7 +138,7 @@ abstract class DoliDB implements Database
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
 	 *
 	 *   @param	    int		$param      Date TMS to convert
-	 *	 @param		mixed	$gm			'gmt'=Input informations are GMT values, 'tzserver'=Local to server TZ
+	 *	 @param		mixed	$gm			'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
 	 *   @return	string      		Date in a string YYYY-MM-DD HH:MM:SS
 	 */
 	public function idate($param, $gm = 'tzserver')
@@ -160,19 +162,20 @@ abstract class DoliDB implements Database
 	 *
 	 * @param   string 	$stringtosanitize 	String to escape
 	 * @param   int		$allowsimplequote 	1=Allow simple quotes in string. When string is used as a list of SQL string ('aa', 'bb', ...)
-	 * @param	string	$allowsequals		1=Allow equals sign
+	 * @param	int		$allowsequals		1=Allow equals sign
+	 * @param	int		$allowsspace		1=Allow space char
 	 * @return  string                      String escaped
 	 */
-	public function sanitize($stringtosanitize, $allowsimplequote = 0, $allowsequals = 0)
+	public function sanitize($stringtosanitize, $allowsimplequote = 0, $allowsequals = 0, $allowsspace = 0)
 	{
-		return preg_replace('/[^a-z0-9_\-\.,'.($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').']/i', '', $stringtosanitize);
+		return preg_replace('/[^a-z0-9_\-\.,'.($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/i', '', $stringtosanitize);
 	}
 
 	/**
 	 * Start transaction
 	 *
 	 * @param	string	$textinlog		Add a small text into log. '' by default.
-	 * @return	int         			1 if transaction successfuly opened or already opened, 0 if error
+	 * @return	int         			1 if transaction successfully opened or already opened, 0 if error
 	 */
 	public function begin($textinlog = '')
 	{
@@ -219,7 +222,7 @@ abstract class DoliDB implements Database
 	 *	Cancel a transaction and go back to initial data values
 	 *
 	 * 	@param	string			$log		Add more log to default log line
-	 * 	@return	resource|int         		1 if cancelation is ok or transaction not open, 0 if error
+	 * 	@return	resource|int         		1 if cancellation is ok or transaction not open, 0 if error
 	 */
 	public function rollback($log = '')
 	{
@@ -282,7 +285,7 @@ abstract class DoliDB implements Database
 	 * Define sort criteria of request
 	 *
 	 * @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
-	 * @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC'. Note: If the quantity fo sortorder values is lower than sortfield, we used the last value for missing values.
+	 * @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC'. Note: If the quantity for sortorder values is lower than sortfield, we used the last value for missing values.
 	 * @return	string						String to provide syntax of a sort sql string
 	 */
 	public function order($sortfield = '', $sortorder = '')
@@ -339,7 +342,7 @@ abstract class DoliDB implements Database
 	 * 	19700101020000 -> 7200 whaterver is server TZ if $gm='gmt'
 	 *
 	 * 	@param	string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	@param	mixed				$gm			'gmt'=Input informations are GMT values, 'tzserver'=Local to server TZ
+	 *	@param	mixed				$gm			'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
 	 *	@return	int|string						Date TMS or ''
 	 */
 	public function jdate($string, $gm = 'tzserver')
@@ -367,7 +370,7 @@ abstract class DoliDB implements Database
 	/**
 	 * Return first result from query as object
 	 * Note : This method executes a given SQL query and retrieves the first row of results as an object. It should only be used with SELECT queries
-	 * Dont add LIMIT to your query, it will be added by this method
+	 * Don't add LIMIT to your query, it will be added by this method
 	 *
 	 * @param 	string 				$sql 	The sql query string
 	 * @return 	bool|int|object    			False on failure, 0 on empty, object on success
@@ -392,7 +395,7 @@ abstract class DoliDB implements Database
 	/**
 	 * Return all results from query as an array of objects
 	 * Note : This method executes a given SQL query and retrieves all row of results as an array of objects. It should only be used with SELECT queries
-	 * be carefull with this method use it only with some limit of results to avoid performences loss.
+	 * be careful with this method use it only with some limit of results to avoid performances loss.
 	 *
 	 * @param 	string 		$sql 		The sql query string
 	 * @return 	bool|array				Result

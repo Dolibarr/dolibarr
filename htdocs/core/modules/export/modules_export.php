@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 /**
  *	Parent class for export modules
  */
-class ModeleExports extends CommonDocGenerator    // This class can't be abstract as there is instance propreties loaded by listOfAvailableExportFormat
+class ModeleExports extends CommonDocGenerator    // This class can't be abstract as there is instance properties loaded by listOfAvailableExportFormat
 {
 	/**
 	 * @var string Error code (or message)
@@ -84,6 +84,8 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 */
 	public function listOfAvailableExportFormat($db, $maxfilenamelength = 0)
 	{
+		global $langs;
+
 		dol_syslog(get_class($this)."::listOfAvailableExportFormat");
 
 		$dir = DOL_DOCUMENT_ROOT."/core/modules/export/";
@@ -113,6 +115,11 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 						$this->picto[$module->id] = $module->picto;
 						// Driver properties
 						$this->driverlabel[$module->id] = $module->getDriverLabel().(empty($module->disabled) ? '' : ' __(Disabled)__'); // '__(Disabled)__' is a key
+						if (method_exists($module, 'getDriverLabelBis')) {
+							if ($module->getDriverLabelBis()) {
+								$this->driverlabel[$module->id] .= ' <span class="opacitymedium">('.$module->getDriverLabelBis().')</span>';
+							}
+						}
 						$this->driverdesc[$module->id] = $module->getDriverDesc();
 						$this->driverversion[$module->id] = $module->getDriverVersion();
 						// If use an external lib

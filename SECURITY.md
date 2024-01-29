@@ -48,12 +48,16 @@ Reports are processed around once a month.
 
 ONLY vulnerabilities discovered, when the following setup on test platform is used, are "valid":
 
-* The version to analyze must be the last version available in the "develop" branch or in the last stable "vX.Y" released version. Reports on vulnerabilities already fixed (so already reported) in the develop branch will not be validated.   
+* The version to analyze must be the last version available in the "develop" branch. Reports on vulnerabilities already fixed (so already reported) in the develop branch will not be validated.   
 * $dolibarr_main_prod must be set to 1 in conf.php
 * $dolibarr_nocsrfcheck must be kept to the value 0 in conf.php (this is the default value)
 * $dolibarr_main_force_https must be set to something else than 0.
-* The constant MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 3 in the backoffice menu Home - Setup - Other (this protection should be set to 3 soon by default). CSRF attacks are accepted but
- double check that you have set MAIN_SECURITY_CSRF_WITH_TOKEN to value 3.
+* Some constant must be set in the backoffice menu Home - Setup - Other
+  - MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 3 
+  - MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1
+  - MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1
+  - MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1 
+  CSRF attacks and HTML injections are accepted but double check this setup that is experimental setup that already fix a lot of case and soon enabled by default.
 * ONLY security reports on modules provided by default and with the "stable" status are valid (troubles in "experimental", "development" or external modules are not valid vulnerabilities).
 * The root of web server must link to htdocs and the documents directory must be outside of the web server root (this is the default when using the default installer but may differs with external installer).
 * The web server setup must be done so that only the documents directory is in write mode. The root directory called htdocs must be read-only.
@@ -82,18 +86,15 @@ Scope is the web application (backoffice) and the APIs.
 ## Examples of vulnerabilities that are Non-qualified for reporting.
 
 * "Self" XSS
-* SSL/TLS best practices
-* Denial of Service attacks
 * Clickjacking/UI redressing
-* Physical or social engineering attempts or issues that require physical access to a victim’s computer/device
 * Presence of autocomplete attribute on web forms
-* Vulnerabilities affecting outdated browsers or platforms, or vulnerabilities inside browsers themself.
 * Logout and other instances of low-severity Cross-Site Request Forgery
-* Missing security-related HTTP headers which do not lead directly to a vulnerability
 * Reports from automated web vulnerability scanners (Acunetix, Vega, etc.) that have not been validated
-* Invalid or missing SPF (Sender Policy Framework) records (Incomplete or missing SPF/DKIM/DMARC)
-* Reports on features flagged as "experimental" or "development"
-* Software version or private IP disclosure when logged-in user is admin
-* Stack traces or path disclosure when logged-in user is admin
+* Reports on features on modules flagged as "deprecated", "experimental" or "development" if the module needs to be enabled for that (this is not the case on production).
+* Software or libraries versions, private IP disclosure, Stack traces or path disclosure when logged-in user is admin.
 * Any vulnerabilities due to a configuration different than the one defined in chapter "Scope for qualified vulnerabilities".
-* Brute force attacks on login page, password forgotten page or any public pages (/public/*) are not qualified if the fail2ban recommended fail2ban rules were not installed.  
+* Vulnerabilities affecting outdated browsers or platforms, or vulnerabilities inside browsers themself.
+* Brute force attacks on login page, password forgotten page or any public pages (/public/*) are not qualified if the recommended fail2ban rules were not installed.  
+* SSL/TLS best practices
+* Invalid or missing SPF (Sender Policy Framework) records (Incomplete or missing SPF/DKIM/DMARC)
+* Physical or social engineering attempts or issues that require physical access to a victim’s computer/device

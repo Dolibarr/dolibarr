@@ -54,6 +54,9 @@ require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
 $version = constant('DOL_VERSION');
 $error = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */
@@ -63,8 +66,7 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 /*
- * if (! $conf->global->LDAP_SYNCHRO_ACTIVE)
- * {
+ * if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE')) {
  * print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
  * exit(-1);
  * }
@@ -107,7 +109,7 @@ if ($resql) {
 			$info = $membertype->_load_ldap_info();
 			$dn = $membertype->_load_ldap_dn($info);
 
-			$result = $ldap->add($dn, $info, $user); // Wil fail if already exists
+			$result = $ldap->add($dn, $info, $user); // Will fail if already exists
 			$result = $ldap->update($dn, $info, $user, $olddn);
 			if ($result > 0) {
 				print " - ".$langs->trans("OK");

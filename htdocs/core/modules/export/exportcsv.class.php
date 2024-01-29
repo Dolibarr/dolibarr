@@ -134,7 +134,7 @@ class ExportCsv extends ModeleExports
 	 *
 	 *	@param		string		$file			Path of filename to generate
 	 * 	@param		Translate	$outputlangs	Output language object
-	 *	@return		int							<0 if KO, >=0 if OK
+	 *	@return		int							Return integer <0 if KO, >=0 if OK
 	 */
 	public function open_file($file, $outputlangs)
 	{
@@ -185,7 +185,7 @@ class ExportCsv extends ModeleExports
 		// phpcs:enable
 		global $conf;
 
-		$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
+		$outputlangs->charset_output = getDolGlobalString('EXPORT_CSV_FORCE_CHARSET');
 
 		$selectlabel = array();
 
@@ -223,7 +223,7 @@ class ExportCsv extends ModeleExports
 		// phpcs:enable
 		global $conf;
 
-		$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
+		$outputlangs->charset_output = getDolGlobalString('EXPORT_CSV_FORCE_CHARSET');
 
 		$this->col = 0;
 
@@ -236,7 +236,7 @@ class ExportCsv extends ModeleExports
 				$alias = substr($code, strpos($code, ' as ') + 4);
 			}
 			if (empty($alias)) {
-				dol_print_error('', 'Bad value for field with key='.$code.'. Try to redefine export.');
+				dol_print_error(null, 'Bad value for field with key='.$code.'. Try to redefine export.');
 			}
 
 			$newvalue = $outputlangs->convToOutputCharset($objp->$alias); // objp->$alias must be utf8 encoded as any var in memory	// newvalue is now $outputlangs->charset_output encoded

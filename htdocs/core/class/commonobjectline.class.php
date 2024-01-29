@@ -154,7 +154,7 @@ abstract class CommonObjectLine extends CommonObject
 	 *  A langs->trans() must be called on result to get translated value.
 	 *
 	 * 	@param	string $type 	Label type ('long', 'short' or 'code'). This can be a translation key.
-	 *	@return	string|int 		<0 if KO, label if OK (Example: 'long', 'short' or 'unitCODE')
+	 *	@return	string|int 		Return integer <0 if KO, label if OK (Example: 'long', 'short' or 'unitCODE')
 	 */
 	public function getLabelOfUnit($type = 'long')
 	{
@@ -195,7 +195,7 @@ abstract class CommonObjectLine extends CommonObject
 	}
 
 	/**
-	 * Empty function to prevent errors on call of this function must be overload if usefull
+	 * Empty function to prevent errors on call of this function must be overload if useful
 	 *
 	 * @param string $sortorder Sort Order
 	 * @param string $sortfield Sort field

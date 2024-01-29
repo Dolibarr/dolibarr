@@ -85,7 +85,7 @@ if ($id > 0 || $ref) {
 
 $permissiontoread = $user->rights->tax->charges->lire;
 $permissiontoadd = $user->rights->tax->charges->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->tax->charges->supprimer || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissiontodelete = $user->rights->tax->charges->supprimer || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_UNPAID);
 $permissionnote = $user->rights->tax->charges->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->tax->charges->creer; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->tax->multidir_output[isset($object->entity) ? $object->entity : 1];
@@ -201,6 +201,7 @@ if (empty($reshook)) {
 			$object->label = GETPOST('label', 'alpha');
 			$object->date_ech = $dateech;
 			$object->periode = $dateperiod;
+			$object->period = $dateperiod;
 			$object->amount = $amount;
 			$object->fk_user			= $fk_user;
 			$object->mode_reglement_id = (int) GETPOST('mode_reglement_id', 'int');
@@ -236,6 +237,7 @@ if (empty($reshook)) {
 
 			$object->date_ech = $dateech;
 			$object->periode = $dateperiod;
+			$object->period = $dateperiod;
 			$object->amount = $amount;
 			$object->fk_user = $fk_user;
 
@@ -271,6 +273,7 @@ if (empty($reshook)) {
 
 			if (GETPOST('clone_for_next_month', 'int')) {	// This can be true only if TAX_ADD_CLONE_FOR_NEXT_MONTH_CHECKBOX has been set
 				$object->periode = dol_time_plus_duree($object->periode, 1, 'm');
+				$object->period = dol_time_plus_duree($object->periode, 1, 'm');
 				$object->date_ech = dol_time_plus_duree($object->date_ech, 1, 'm');
 			} else {
 				// Note date_ech is often a little bit higher than dateperiod
@@ -278,6 +281,7 @@ if (empty($reshook)) {
 				$newdateech = dol_mktime(0, 0, 0, GETPOST('clone_date_echmonth', 'int'), GETPOST('clone_date_echday', 'int'), GETPOST('clone_date_echyear', 'int'));
 				if ($newdateperiod) {
 					$object->periode = $newdateperiod;
+					$object->period = $newdateperiod;
 					if (empty($newdateech)) {
 						$object->date_ech = $object->periode;
 					}
@@ -288,6 +292,7 @@ if (empty($reshook)) {
 						// TODO We can here get dol_get_last_day of previous month:
 						// $object->periode = dol_get_last_day(year of $object->date_ech - 1m, month or $object->date_ech -1m)
 						$object->periode = $object->date_ech;
+						$object->period = $object->date_ech;
 					}
 				}
 			}
@@ -400,7 +405,7 @@ if ($action == 'create') {
 	print '<tr><td>';
 	print $langs->trans('Employee');
 	print '</td>';
-	print '<td>'.img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($fk_user, 'userid', 1).'</td></tr>';
+	print '<td>'.img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers('', 'userid', 1).'</td></tr>';
 
 	// Project
 	if (isModEnabled('project')) {
@@ -567,7 +572,7 @@ if ($id > 0) {
 
 		$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '', 0, $morehtmlright);
 
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
@@ -687,7 +692,7 @@ if ($id > 0) {
 			$i = 0;
 			$total = 0;
 
-			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 			print '<table class="noborder paymenttable">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("RefPayment").'</td>';
@@ -714,7 +719,7 @@ if ($id > 0) {
 					print '</td>';
 
 					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
-					$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
+					$labeltype = $langs->trans("PaymentType".$objp->type_code) != "PaymentType".$objp->type_code ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 					print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
 					if (isModEnabled("banque")) {
 						$bankaccountstatic->id = $objp->baid;
@@ -879,7 +884,7 @@ if ($id > 0) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	} else {
 		/* Social contribution not found */
-		dol_print_error('', $object->error);
+		dol_print_error(null, $object->error);
 	}
 }
 

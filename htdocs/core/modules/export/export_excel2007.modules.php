@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +57,7 @@ class ExportExcel2007 extends ModeleExports
 
 	public $version_lib;
 
+	/** @var Spreadsheet */
 	public $workbook; // Handle file
 
 	public $worksheet; // Handle sheet
@@ -76,7 +78,7 @@ class ExportExcel2007 extends ModeleExports
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs;
+		global $langs;
 		$this->db = $db;
 
 		$this->id = 'excel2007'; // Same value then xxx in file name export_xxx.modules.php
@@ -116,6 +118,18 @@ class ExportExcel2007 extends ModeleExports
 	public function getDriverLabel()
 	{
 		return $this->label;
+	}
+
+	/**
+	 * getDriverLabel
+	 *
+	 * @return 	string			Return driver label
+	 */
+	public function getDriverLabelBis()
+	{
+		global $langs;
+		$langs->load("errors");
+		return $langs->trans("NumberOfLinesLimited");
 	}
 
 	/**
@@ -175,16 +189,12 @@ class ExportExcel2007 extends ModeleExports
 	 *
 	 * 	@param		string		$file			File name to generate
 	 *  @param		Translate	$outputlangs	Output language object
-	 *	@return		int							<0 if KO, >=0 if OK
+	 *	@return		int							Return integer <0 if KO, >=0 if OK
 	 */
 	public function open_file($file, $outputlangs)
 	{
 		// phpcs:enable
 		global $user, $conf, $langs;
-
-		if (getDolGlobalString('MAIN_USE_PHP_WRITEEXCEL')) {
-			$outputlangs->charset_output = 'ISO-8859-1'; // Because Excel 5 format is ISO
-		}
 
 		dol_syslog(get_class($this)."::open_file file=".$file);
 		$this->file = $file;
@@ -256,38 +266,28 @@ class ExportExcel2007 extends ModeleExports
 		$selectlabel = array();
 
 		$this->col = 1;
-		if (getDolGlobalString('MAIN_USE_PHP_WRITEEXCEL')) {
-			$this->col = 0;
-		}
+
 		foreach ($array_selected_sorted as $code => $value) {
 			$alias = $array_export_fields_label[$code];
 			//print "dd".$alias;
 			if (empty($alias)) {
-				dol_print_error('', 'Bad value for field with code='.$code.'. Try to redefine export.');
+				dol_print_error(null, 'Bad value for field with code='.$code.'. Try to redefine export.');
 			}
 			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
 
 			if (preg_match('/^Select:/i', $typefield) && $typefield = substr($typefield, 7)) {
 				$selectlabel[$code."_label"] = $alias."_label";
 			}
-			if (getDolGlobalString('MAIN_USE_PHP_WRITEEXCEL')) {
-				$this->worksheet->write($this->row, $this->col, $outputlangs->transnoentities($alias), $formatheader);
-			} else {
-				$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $outputlangs->transnoentities($alias));
-				if (!empty($array_types[$code]) && in_array($array_types[$code], array('Date', 'Numeric', 'TextAuto'))) {		// Set autowidth for some types
-					$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($this->col + 1))->setAutoSize(true);
-				}
+			$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $outputlangs->transnoentities($alias));
+			if (!empty($array_types[$code]) && in_array($array_types[$code], array('Date', 'Numeric', 'TextAuto'))) {		// Set autowidth for some types
+				$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($this->col + 1))->setAutoSize(true);
 			}
 			$this->col++;
 		}
 		foreach ($selectlabel as $key => $value) {
-			if (getDolGlobalString('MAIN_USE_PHP_WRITEEXCEL')) {
-				$this->worksheet->write($this->row, $this->col, $outputlangs->transnoentities($value), $formatheader);
-			} else {
-				$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $outputlangs->transnoentities($value));
-				if (!empty($array_types[$code]) && in_array($array_types[$code], array('Date', 'Numeric', 'TextAuto'))) {		// Set autowidth for some types
-					$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($this->col + 1))->setAutoSize(true);
-				}
+			$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $outputlangs->transnoentities($value));
+			if (!empty($array_types[$code]) && in_array($array_types[$code], array('Date', 'Numeric', 'TextAuto'))) {		// Set autowidth for some types
+				$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($this->col + 1))->setAutoSize(true);
 			}
 			$this->col++;
 		}
@@ -312,9 +312,6 @@ class ExportExcel2007 extends ModeleExports
 
 		// Define first row
 		$this->col = 1;
-		if (getDolGlobalString('MAIN_USE_PHP_WRITEEXCEL')) {
-			$this->col = 0;
-		}
 
 		$reg = array();
 		$selectlabelvalues = array();
@@ -325,7 +322,7 @@ class ExportExcel2007 extends ModeleExports
 				$alias = substr($code, strpos($code, ' as ') + 4);
 			}
 			if (empty($alias)) {
-				dol_print_error('', 'Bad value for field with code='.$code.'. Try to redefine export.');
+				dol_print_error(null, 'Bad value for field with code='.$code.'. Try to redefine export.');
 			}
 			$newvalue = $objp->$alias;
 
@@ -655,11 +652,11 @@ class ExportExcel2007 extends ModeleExports
 	/**
 	 * Set a value cell and merging it by giving a starting cell and a length
 	 *
-	 * @param string $val       Cell value
-	 * @param string $startCell Starting cell
-	 * @param int    $length    Length
-	 * @param int    $offset    Starting offset
-	 * @return string Coordinate or -1 if KO
+	 * @param	string		$val		Cell value
+	 * @param	string		$startCell	Starting cell
+	 * @param	int			$length		Length
+	 * @param	int			$offset		Starting offset
+	 * @return	int|string				Coordinate or if KO: -1
 	 */
 	public function setMergeCellValueByLength($val, $startCell, $length, $offset = 0)
 	{

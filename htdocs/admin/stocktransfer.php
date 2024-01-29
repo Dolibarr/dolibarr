@@ -247,6 +247,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 		print load_fiche_titre($langs->trans("NumberingModules", $myTmpObjectKey), '', '');
 
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Name").'</td>';
@@ -343,7 +344,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 				}
 			}
 		}
-		print "</table><br>\n";
+		print "</table></div><br>\n";
 	}
 
 	if ($myTmpObjectArray['includedocgeneration']) {
@@ -374,6 +375,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			dol_print_error($db);
 		}
 
+		print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder centpercent">'."\n";
 		print '<tr class="liste_titre">'."\n";
 		print '<td>'.$langs->trans("Name").'</td>';
@@ -486,7 +488,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			}
 		}
 
-		print '</table>';
+		print '</table></div>';
 	}
 }
 

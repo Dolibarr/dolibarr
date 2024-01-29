@@ -235,7 +235,7 @@ if ($id > 0 || !empty($ref)) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$shownav = 1;
-		if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+		if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 			$shownav = 0;
 		}
 
@@ -321,7 +321,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$nbofsubsubproducts = count($prods_arbo); // This include sub sub product into nb
 		$prodschild = $object->getChildsArbo($id, 1);
-		$nbofsubproducts = count($prodschild); // This include only first level of childs
+		$nbofsubproducts = count($prodschild); // This include only first level of children
 
 
 		print '<div class="fichecenter">';
@@ -389,6 +389,10 @@ if ($id > 0 || !empty($ref)) {
 		if (isModEnabled('stock')) {
 			print '<td class="right">'.$langs->trans('Stock').'</td>';
 		}
+		// Hook fields
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
 		// Qty in kit
 		print '<td class="right">'.$langs->trans('Qty').'</td>';
 		// Stoc inc/dev
@@ -467,6 +471,11 @@ if ($id > 0 || !empty($ref)) {
 						print '<td class="right">'.$value['stock'].'</td>'; // Real stock
 					}
 
+					// Hook fields
+					$parameters = array();
+					$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
+
 					// Qty + IncDec
 					if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 						print '<td class="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" class="right width40" /></td>';
@@ -516,6 +525,11 @@ if ($id > 0 || !empty($ref)) {
 					if (isModEnabled('stock')) {
 						print '<td></td>'; // Real stock
 					}
+
+					// Hook fields
+					$parameters = array();
+					$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
 
 					// Qty in kit
 					print '<td class="right">'.dol_escape_htmltag($value['nb']).'</td>';

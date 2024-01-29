@@ -154,7 +154,7 @@ class PaymentVAT extends CommonObject
 	 *
 	 *  @param      User	$user   				User making payment
 	 *	@param		int		$closepaidvat			1=Also close paid contributions to paid, 0=Do nothing more
-	 *  @return     int     						<0 if KO, id of payment if OK
+	 *  @return     int     						Return integer <0 if KO, id of payment if OK
 	 */
 	public function create($user, $closepaidvat = 0)
 	{
@@ -166,7 +166,7 @@ class PaymentVAT extends CommonObject
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
-		// Validate parametres
+		// Validate parameters
 		if (!$this->datepaye) {
 			$this->error = 'ErrorBadValueForParameterCreatePaymentVAT';
 			return -1;
@@ -233,7 +233,7 @@ class PaymentVAT extends CommonObject
 				// Insert table of amounts / invoices
 				foreach ($this->amounts as $key => $amount) {
 					$contribid = $key;
-					if (is_numeric($amount) && $amount <> 0) {
+					if (is_numeric($amount) && $amount != 0) {
 						$amount = price2num($amount);
 
 						// If we want to closed paid invoices
@@ -533,13 +533,12 @@ class PaymentVAT extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-
 		$this->fk_tva = 0;
 		$this->datec = '';
 		$this->tms = '';
 		$this->datep = '';
 		$this->amount = '';
-		$this->fk_typepaiement = '';
+		$this->fk_typepaiement = 0;
 		$this->num_payment = '';
 		$this->note_private = '';
 		$this->note_public = '';

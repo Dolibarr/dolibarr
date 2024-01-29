@@ -56,7 +56,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 *      @param  User      $user   Object user
 	 *      @param  Translate $langs  Object langs
 	 *      @param  conf      $conf   Object conf
-	 *      @return int                     <0 if KO, 0 if no triggered ran, >0 if OK
+	 *      @return int                     Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
@@ -110,7 +110,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 								$message = dol_nl2br($message);
 
 								if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
-									$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
+									$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
 									$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 								}
 								include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -348,7 +348,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$trackid = 'tic'.$object->id;
 
 		if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
-			$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
+			$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
 			$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';

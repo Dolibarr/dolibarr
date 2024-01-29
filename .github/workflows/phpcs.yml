@@ -1,6 +1,7 @@
 name: "PHPCS"
 
 on:
+  push:
   pull_request:
     paths:
       - "**.php"
@@ -11,6 +12,7 @@ jobs:
   phpcs:
     runs-on: ubuntu-latest
     steps:
+      # Get git sources
       - uses: actions/checkout@v4
         with:
           fetch-depth: 50 # important!

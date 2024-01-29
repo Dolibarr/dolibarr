@@ -579,7 +579,7 @@ function CreateServerFolder($folderPath, $lastFolder = null)
 
 	// Check if the parent exists, or create it.
 	if (!empty($sParent) && !file_exists($sParent)) {
-		//prevents agains infinite loop when we can't create root folder
+		//prevents against infinite loop when we can't create root folder
 		if (!is_null($lastFolder) && $lastFolder === $sParent) {
 			return "Can't create $folderPath directory";
 		}
@@ -649,7 +649,7 @@ function GetRootPath()
 
 	// This can check only that this script isn't run from a virtual dir
 	// But it avoids the problems that arise if it isn't checked
-	if ($position === false || $position <> strlen($sRealPath) - strlen($sSelfPath)) {
+	if ($position === false || $position != strlen($sRealPath) - strlen($sSelfPath)) {
 		SendError(1, 'Sorry, can\'t map "UserFilesPath" to a physical path. You must set the "UserFilesAbsolutePath" value in "editor/filemanager/connectors/php/config.inc.php".');
 	}
 
@@ -678,7 +678,7 @@ function Server_MapPath($path)
  * Is Allowed Extension
  *
  * @param   string $sExtension      File extension
- * @param   string $resourceType    ressource type
+ * @param   string $resourceType    resource type
  * @return  boolean                 true or false
  */
 function IsAllowedExt($sExtension, $resourceType)
@@ -702,7 +702,7 @@ function IsAllowedExt($sExtension, $resourceType)
 /**
  * Is Allowed Type
  *
- * @param   string $resourceType    ressource type
+ * @param   string $resourceType    resource type
  * @return  boolean                 true or false
  */
 function IsAllowedType($resourceType)
@@ -926,14 +926,14 @@ function ConvertToXmlAttribute($value)
 	}
 
 	if (strtoupper(substr($os, 0, 3)) === 'WIN' || FindBadUtf8($value)) {
-		return (utf8_encode(htmlspecialchars($value)));
+		return (mb_convert_encoding(htmlspecialchars($value), 'UTF-8', 'ISO-8859-1'));
 	} else {
 		return (htmlspecialchars($value));
 	}
 }
 
 /**
- * Check whether given extension is in html etensions list
+ * Check whether given extension is in html extensions list
  *
  * @param 	string 		$ext				Extension
  * @param 	array 		$formExtensions		Array of extensions

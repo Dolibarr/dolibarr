@@ -63,7 +63,7 @@ class Invoices extends DolibarrApi
 	/**
 	 * Get properties of a invoice object
 	 *
-	 * Return an array with invoice informations
+	 * Return an array with invoice information
 	 *
 	 * @param	int		$id				ID of invoice
 	 * @param   int     $contact_list	0:Return array contains all properties, 1:Return array contains just id, -1: Do not return contacts/adddesses
@@ -79,7 +79,7 @@ class Invoices extends DolibarrApi
 	/**
 	 * Get properties of an invoice object by ref
 	 *
-	 * Return an array with invoice informations
+	 * Return an array with invoice information
 	 *
 	 * @param   string		$ref			Ref of object
 	 * @param   int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
@@ -97,7 +97,7 @@ class Invoices extends DolibarrApi
 	/**
 	 * Get properties of an invoice object by ref_ext
 	 *
-	 * Return an array with invoice informations
+	 * Return an array with invoice information
 	 *
 	 * @param   string		$ref_ext		External reference of object
 	 * @param   int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
@@ -115,7 +115,7 @@ class Invoices extends DolibarrApi
 	/**
 	 * Get properties of an invoice object
 	 *
-	 * Return an array with invoice informations
+	 * Return an array with invoice information
 	 *
 	 * @param   int         $id				ID of order
 	 * @param	string		$ref			Ref of object
@@ -171,7 +171,7 @@ class Invoices extends DolibarrApi
 	 * @param string	$thirdparty_ids	  Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string	$status			  Filter by invoice status : draft | unpaid | paid | cancelled
 	 * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                      Array of invoice objects
 	 *
 	 * @throws RestException 404 Not found
@@ -197,27 +197,20 @@ class Invoices extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
-			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."facture AS t LEFT JOIN ".MAIN_DB_PREFIX."facture_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
-
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
-		}
-
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture AS t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('invoice').')';
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
-			$sql .= " AND t.fk_soc = sc.fk_soc";
-		}
 		if ($socids) {
 			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
 		}
-
-		if ($search_sale > 0) {
-			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
+		// Search on sale representative
+		if ($search_sale && $search_sale != '-1') {
+			if ($search_sale == -2) {
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+			} elseif ($search_sale > 0) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			}
 		}
-
 		// Filter by status
 		if ($status == 'draft') {
 			$sql .= " AND t.fk_statut IN (0)";
@@ -230,10 +223,6 @@ class Invoices extends DolibarrApi
 		}
 		if ($status == 'cancelled') {
 			$sql .= " AND t.fk_statut IN (3)";
-		}
-		// Insert sale filter
-		if ($search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		// Add sql filters
 		if ($sqlfilters) {
@@ -281,9 +270,7 @@ class Invoices extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve invoice list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No invoice found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -302,6 +289,12 @@ class Invoices extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->invoice->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->invoice->$field = $value;
 		}
 		if (!array_key_exists('date', $request_data)) {
@@ -356,6 +349,47 @@ class Invoices extends DolibarrApi
 		}
 
 		$result = $this->invoice->createFromOrder($order, DolibarrApiAccess::$user);
+		if ($result < 0) {
+			throw new RestException(405, $this->invoice->error);
+		}
+		$this->invoice->fetchObjectLinked();
+		return $this->_cleanObjectDatas($this->invoice);
+	}
+
+	/**
+	* Create an invoice using a contract.
+	*
+	* @param int   $contractid       Id of the contract
+	* @return     Object                          Object with cleaned properties
+	*
+	* @url     POST /createfromcontract/{contractid}
+	*
+	* @throws RestException 400
+	* @throws RestException 401
+	* @throws RestException 404
+	* @throws RestException 405
+	*/
+	public function createInvoiceFromContract($contractid)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+
+		if (!DolibarrApiAccess::$user->hasRight('contrat', 'lire')) {
+			throw new RestException(401);
+		}
+		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+			throw new RestException(401);
+		}
+		if (empty($contractid)) {
+			throw new RestException(400, 'Contract ID is mandatory');
+		}
+
+		$contract = new Contrat($this->db);
+		$result = $contract->fetch($contractid);
+		if (!$result) {
+			throw new RestException(404, 'Contract not found');
+		}
+
+		$result = $this->invoice->createFromContract($contract, DolibarrApiAccess::$user);
 		if ($result < 0) {
 			throw new RestException(405, $this->invoice->error);
 		}
@@ -623,7 +657,18 @@ class Invoices extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->invoice->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->invoice->$field = $value;
+
+			// If cond reglement => update date lim reglement
+			if ($field == 'cond_reglement_id') {
+				$this->invoice->date_lim_reglement = $this->invoice->calculate_date_lim_reglement();
+			}
 		}
 
 		// update bank account
@@ -678,7 +723,7 @@ class Invoices extends DolibarrApi
 	/**
 	 * Add a line to a given invoice
 	 *
-	 * Exemple of POST query :
+	 * Example of POST query :
 	 * {
 	 *     "desc": "Desc", "subprice": "1.00000000", "qty": "1", "tva_tx": "20.000", "localtax1_tx": "0.000", "localtax2_tx": "0.000",
 	 *     "fk_product": "1", "remise_percent": "0", "date_start": "", "date_end": "", "fk_code_ventilation": 0,  "info_bits": "0",
@@ -771,7 +816,7 @@ class Invoices extends DolibarrApi
 	 * Adds a contact to an invoice
 	 *
 	 * @param   int		$id					Order ID
-	 * @param   int		$fk_socpeople			Id of thirdparty contact (if source = 'external') or id of user (if souce = 'internal') to link
+	 * @param   int		$fk_socpeople			Id of thirdparty contact (if source = 'external') or id of user (if source = 'internal') to link
 	 * @param   string	$type_contact           Type of contact (code). Must a code found into table llx_c_type_contact. For example: BILLING
 	 * @param   string  $source					external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
 	 * @param   int     $notrigger              Disable all triggers
@@ -1099,10 +1144,10 @@ class Invoices extends DolibarrApi
 
 		$canconvert = 0;
 		if ($this->invoice->type == Facture::TYPE_DEPOSIT && empty($discountcheck->id)) {
-			$canconvert = 1; // we can convert deposit into discount if deposit is payed (completely, partially or not at all) and not already converted (see real condition into condition used to show button converttoreduc)
+			$canconvert = 1; // we can convert deposit into discount if deposit is paid (completely, partially or not at all) and not already converted (see real condition into condition used to show button converttoreduc)
 		}
 		if (($this->invoice->type == Facture::TYPE_CREDIT_NOTE || $this->invoice->type == Facture::TYPE_STANDARD) && $this->invoice->paye == 0 && empty($discountcheck->id)) {
-			$canconvert = 1; // we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
+			$canconvert = 1; // we can convert credit note into discount if credit note is not paid back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
 		}
 		if ($canconvert) {
 			$this->db->begin();
@@ -1204,7 +1249,7 @@ class Invoices extends DolibarrApi
 
 			if (empty($error)) {
 				if ($this->invoice->type != Facture::TYPE_DEPOSIT) {
-					// Classe facture
+					// Set the invoice as paid
 					$result = $this->invoice->setPaid(DolibarrApiAccess::$user);
 					if ($result >= 0) {
 						$this->db->commit();
@@ -1422,10 +1467,10 @@ class Invoices extends DolibarrApi
 		// Clean parameters amount if payment is for a credit note
 		if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
 			$resteapayer = price2num($resteapayer, 'MT');
-			$amounts[$id] = -$resteapayer;
+			$amounts[$id] = price2num(-1 * $resteapayer, 'MT');
 			// Multicurrency
 			$newvalue = price2num($this->invoice->multicurrency_total_ttc, 'MT');
-			$multicurrency_amounts[$id] = -$newvalue;
+			$multicurrency_amounts[$id] = price2num(-1 * $newvalue, 'MT');
 		} else {
 			$resteapayer = price2num($resteapayer, 'MT');
 			$amounts[$id] = $resteapayer;
@@ -1568,7 +1613,7 @@ class Invoices extends DolibarrApi
 			}
 
 			if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
-				$amount = -$amount;
+				$amount = price2num(-1 * $amount, 'MT');
 			}
 
 			if ($is_multicurrency) {
@@ -1711,7 +1756,7 @@ class Invoices extends DolibarrApi
 	/**
 	 * Get properties of a template invoice object
 	 *
-	 * Return an array with invoice informations
+	 * Return an array with invoice information
 	 *
 	 * @param	int		$id				ID of template invoice
 	 * @param   int     $contact_list	0:Return array contains all properties, 1:Return array contains just id, -1: Do not return contacts/adddesses
@@ -1729,7 +1774,7 @@ class Invoices extends DolibarrApi
 	/**
 	 * Get properties of an invoice object
 	 *
-	 * Return an array with invoice informations
+	 * Return an array with invoice information
 	 *
 	 * @param   int         $id				ID of order
 	 * @param	string		$ref			Ref of object

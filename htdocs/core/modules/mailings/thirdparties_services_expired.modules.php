@@ -81,7 +81,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	 *  This is the main function that returns the array of emails
 	 *
 	 *  @param	int		$mailing_id    	Id of mailing. No need to use it.
-	 *  @return int           			<0 if error, number of emails added if ok
+	 *  @return int           			Return integer <0 if error, number of emails added if ok
 	 */
 	public function add_to_target($mailing_id)
 	{
@@ -129,7 +129,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 			$old = '';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email) {
+				if ($old != $obj->email) {
 					$cibles[$j] = array(
 					'email' => $obj->email,
 					'lastname' => $obj->name, // For thirdparties, lastname must be name

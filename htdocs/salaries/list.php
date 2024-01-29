@@ -100,7 +100,7 @@ $filtre = GETPOST("filtre", 'restricthtml');
 
 $childids = $user->getAllChildIds(1);
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -476,7 +476,7 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
@@ -646,6 +646,8 @@ while ($i < $imaxinloop) {
 	$salstatic->ref = $obj->rowid;
 	$salstatic->label = $obj->label;
 	$salstatic->paye = $obj->paye;
+	$salstatic->status = $obj->paye;
+	$salstatic->alreadypaid = $obj->alreadypayed;
 	$salstatic->datesp = $obj->datesp;
 	$salstatic->dateep = $obj->dateep;
 	$salstatic->amount = $obj->amount;
@@ -774,7 +776,7 @@ while ($i < $imaxinloop) {
 		}
 		$totalarray['val']['totalttcfield'] += $obj->amount;
 
-		print '<td class="nowraponall right">'.$salstatic->LibStatut($obj->paye, 5, $obj->alreadypayed).'</td>';
+		print '<td class="nowraponall right">'.$salstatic->getLibStatut(5, $obj->alreadypayed).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

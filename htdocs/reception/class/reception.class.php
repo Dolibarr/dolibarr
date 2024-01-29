@@ -30,7 +30,7 @@
 /**
  *  \file       htdocs/reception/class/reception.class.php
  *  \ingroup    reception
- *  \brief      Fichier de la classe de gestion des receptions
+ *  \brief      File for class to manage receptions
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -97,7 +97,7 @@ class Reception extends CommonObject
 	public $size_units;
 	public $user_author_id;
 
-	public $date_delivery; // Date delivery planed
+	public $date_delivery; // Date delivery planned
 
 	/**
 	 * @var integer|string Effective delivery date
@@ -170,7 +170,7 @@ class Reception extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('RECEPTION_ADDON_NUMBER') . ".php";
-			$classname = $conf->global->RECEPTION_ADDON_NUMBER;
+			$classname = getDolGlobalString('RECEPTION_ADDON_NUMBER');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -183,7 +183,7 @@ class Reception extends CommonObject
 			}
 
 			if (!$mybool) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -207,9 +207,9 @@ class Reception extends CommonObject
 	/**
 	 *  Create reception en base
 	 *
-	 *  @param	User	$user       Objet du user qui cree
+	 *  @param	User	$user       Object du user qui cree
 	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return int 				<0 si erreur, id reception creee si ok
+	 *  @return int 				Return integer <0 si erreur, id reception creee si ok
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -414,7 +414,7 @@ class Reception extends CommonObject
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
 				$this->date = $this->db->jdate($obj->date_reception); // TODO deprecated
 				$this->date_reception = $this->db->jdate($obj->date_reception); // Date real
-				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planed
+				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planned
 				$this->model_pdf            = $obj->model_pdf;
 				$this->shipping_method_id = $obj->fk_shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
@@ -489,7 +489,7 @@ class Reception extends CommonObject
 	 *
 	 *  @param      User		$user       Object user that validate
 	 *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return     int						<0 if OK, >0 if KO
+	 *  @return     int						Return integer <0 if OK, >0 if KO
 	 */
 	public function valid($user, $notrigger = 0)
 	{
@@ -546,7 +546,7 @@ class Reception extends CommonObject
 			$error++;
 		}
 
-		// If stock increment is done on reception (recommanded choice)
+		// If stock increment is done on reception (recommended choice)
 		if (!$error && isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION')) {
 			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
@@ -618,22 +618,24 @@ class Reception extends CommonObject
 			}
 		}
 
-		// Change status of order to "reception in process" or "totally received"
-		$status = $this->getStatusDispatch();
-		if ($status < 0) {
-			$error++;
-		} else {
-			$trigger_key = '';
-			if ($status == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
-				$ret = $this->commandeFournisseur->Livraison($user, dol_now(), 'tot', '');
-				if ($ret < 0) {
-					$error++;
-					$this->errors = array_merge($this->errors, $this->commandeFournisseur->errors);
-				}
+		if (!$error) {
+			// Change status of order to "reception in process" or "totally received"
+			$status = $this->getStatusDispatch();
+			if ($status < 0) {
+				$error++;
 			} else {
-				$ret = $this->setStatut($status, $this->origin_id, 'commande_fournisseur', $trigger_key);
-				if ($ret < 0) {
-					$error++;
+				$trigger_key = '';
+				if ($status == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
+					$ret = $this->commandeFournisseur->Livraison($user, dol_now(), 'tot', '');
+					if ($ret < 0) {
+						$error++;
+						$this->errors = array_merge($this->errors, $this->commandeFournisseur->errors);
+					}
+				} else {
+					$ret = $this->setStatut($status, $this->origin_id, 'commande_fournisseur', $trigger_key);
+					if ($ret < 0) {
+						$error++;
+					}
 				}
 			}
 		}
@@ -715,7 +717,7 @@ class Reception extends CommonObject
 	/**
 	 * Get status from all dispatched lines
 	 *
-	 * @return		int		                        <0 if KO, Status of reception if OK
+	 * @return		int		                        Return integer <0 if KO, Status of reception if OK
 	 */
 	public function getStatusDispatch()
 	{
@@ -812,14 +814,14 @@ class Reception extends CommonObject
 	 * @param 	int			$id					Id of source line (supplier order line)
 	 * @param 	int			$qty				Quantity
 	 * @param	array		$array_options		extrafields array
-	 * @param	string		$comment				Comment for stock movement
-	 * @param	integer		$eatby					eat-by date
-	 * @param	integer		$sellby					sell-by date
-	 * @param	string		$batch					Lot number
+	 * @param	string		$comment			Comment for stock movement
+	 * @param	int			$eatby				eat-by date
+	 * @param	int			$sellby				sell-by date
+	 * @param	string		$batch				Lot number
 	 * @param	double		$cost_price			Line cost
-	 * @return	int							<0 if KO, index of line if OK
+	 * @return	int							Return integer <0 if KO, index of line if OK
 	 */
-	public function addline($entrepot_id, $id, $qty, $array_options = 0, $comment = '', $eatby = '', $sellby = '', $batch = '', $cost_price = 0)
+	public function addline($entrepot_id, $id, $qty, $array_options = [], $comment = '', $eatby = null, $sellby = null, $batch = '', $cost_price = 0)
 	{
 		global $conf, $langs, $user;
 
@@ -859,6 +861,19 @@ class Reception extends CommonObject
 				return -1;
 			} elseif (empty($product->status_batch) && !empty($batch)) {
 				$this->error = $langs->trans('ErrorProductDoesNotNeedBatchNumber', $product->ref);
+				return -1;
+			}
+
+			// check sell-by / eat-by date is mandatory
+			$errorMsgArr = Productlot::checkSellOrEatByMandatoryFromProductAndDates($product, $sellby, $eatby);
+			if (!empty($errorMsgArr)) {
+				$errorMessage = '<b>' . $product->ref . '</b> : ';
+				$errorMessage .= '<ul>';
+				foreach ($errorMsgArr as $errorMsg) {
+					$errorMessage .= '<li>' . $errorMsg . '</li>';
+				}
+				$errorMessage .= '</ul>';
+				$this->error = $errorMessage;
 				return -1;
 			}
 		}
@@ -1251,7 +1266,8 @@ class Reception extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = 0, $max = 0, $short = 0, $notooltip = 0)
 	{
-		global $conf, $langs, $hookmanager;
+		global $langs, $hookmanager;
+
 		$result = '';
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Reception").'</u>';
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
@@ -1357,6 +1373,43 @@ class Reception extends CommonObject
 	}
 
 	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<div class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', 'order');
+		$return .= '</div>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+			$return .= '<br><div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
+		}
+		/*if (property_exists($this, 'total_ht')) {
+			$return .= '<div class="info-box-ref amount">'.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency).' '.$langs->trans('HT').'</div>';
+		}*/
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<div class="info-box-status">'.$this->getLibStatut(3).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+
+		return $return;
+	}
+
+	/**
 	 *  Initialise an instance with random values.
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
@@ -1376,7 +1429,7 @@ class Reception extends CommonObject
 		$order = new CommandeFournisseur($this->db);
 		$order->initAsSpecimen();
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
@@ -1417,7 +1470,7 @@ class Reception extends CommonObject
 	/**
 	 *	Set the planned delivery date
 	 *
-	 *	@param      User			$user        		Objet utilisateur qui modifie
+	 *	@param      User			$user        		Object utilisateur qui modifie
 	 *	@param      integer 		$delivery_date     Delivery date
 	 *	@return     int         						Return integer <0 if KO, >0 if OK
 	 */
@@ -1476,7 +1529,7 @@ class Reception extends CommonObject
 	 *  @param  int      $id     only this carrier, all if none
 	 *  @return void
 	 */
-	public function list_delivery_methods($id = '')
+	public function list_delivery_methods($id = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -1486,7 +1539,7 @@ class Reception extends CommonObject
 
 		$sql = "SELECT em.rowid, em.code, em.libelle, em.description, em.tracking, em.active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
-		if ($id != '') {
+		if (!empty($id)) {
 			$sql .= " WHERE em.rowid = ".((int) $id);
 		}
 
@@ -1670,15 +1723,17 @@ class Reception extends CommonObject
 			$this->db->commit();
 			return 1;
 		} else {
+			$this->statut = self::STATUS_VALIDATED;
+			$this->status = self::STATUS_VALIDATED;
 			$this->db->rollback();
 			return -1;
 		}
 	}
 
 	/**
-	 *	Classify the reception as invoiced (used for exemple by trigger when WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE is on)
+	 *	Classify the reception as invoiced (used for example by trigger when WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE is on)
 	 *
-	 *	@return     int     <0 if ko, >0 if ok
+	 *	@return     int     Return integer <0 if ko, >0 if ok
 	 */
 	public function setBilled()
 	{
@@ -1722,7 +1777,7 @@ class Reception extends CommonObject
 	/**
 	 *	Classify the reception as validated/opened
 	 *
-	 *	@return     int     <0 if ko, >0 if ok
+	 *	@return     int     Return integer <0 if ko, >0 if ok
 	 */
 	public function reOpen()
 	{
@@ -2013,7 +2068,7 @@ class Reception extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('RECEPTION_ADDON_PDF')) {
-				$modele = $conf->global->RECEPTION_ADDON_PDF;
+				$modele = getDolGlobalString('RECEPTION_ADDON_PDF');
 			}
 		}
 

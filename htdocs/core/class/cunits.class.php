@@ -51,7 +51,7 @@ class CUnits extends CommonDict
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDb		$db      Database handler
+	 *  @param      DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -402,7 +402,7 @@ class CUnits extends CommonDict
 	 * @param string $code code of unit
 	 * @param string $mode 0= id , short_label=Use short label as value, code=use code
 	 * @param string $unit_type weight,size,surface,volume,qty,time...
-	 * @return int            <0 if KO, Id of code if OK
+	 * @return int            Return integer <0 if KO, Id of code if OK
 	 */
 	public function getUnitFromCode($code, $mode = 'code', $unit_type = '')
 	{
@@ -424,7 +424,7 @@ class CUnits extends CommonDict
 	 */
 	public function unitConverter($value, $fk_unit, $fk_new_unit = 0)
 	{
-		$value = floatval(price2num($value));
+		$value = (float) price2num($value);
 		$fk_unit = intval($fk_unit);
 
 		// Calcul en unité de base
@@ -460,13 +460,13 @@ class CUnits extends CommonDict
 			// TODO : add base col into unit dictionary table
 			$unit = $this->db->fetch_object($sql);
 			if ($unit) {
-				// TODO : if base exists in unit dictionary table, remove this convertion exception and update convertion infos in database.
+				// TODO : if base exists in unit dictionary table, remove this conversion exception and update conversion infos in database.
 				// Example time hour currently scale 3600 will become scale 2 base 60
 				if ($unit->unit_type == 'time') {
-					return floatval($unit->scale);
+					return (float) $unit->scale;
 				}
 
-				return pow($base, floatval($unit->scale));
+				return pow($base, (float) $unit->scale);
 			}
 		}
 

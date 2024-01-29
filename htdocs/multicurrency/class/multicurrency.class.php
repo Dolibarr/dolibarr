@@ -97,7 +97,7 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -108,10 +108,10 @@ class MultiCurrency extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      	User that creates
-	 * @param  bool $trigger 	true=launch triggers after, false=disable triggers
+	 * @param  int 	$notrigger 	0=launch triggers after, 1=disable triggers
 	 * @return int 				Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $trigger = true)
+	public function create(User $user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -160,7 +160,7 @@ class MultiCurrency extends CommonObject
 			$this->date_create = $now;
 			$this->fk_user = $user->id;
 
-			if ($trigger) {
+			if (empty($notrigger)) {
 				$result = $this->call_trigger('CURRENCY_CREATE', $user);
 				if ($result < 0) {
 					$error++;
@@ -237,7 +237,7 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Load all rates in object from the database
 	 *
-	 * @return int <0 if KO, >=0 if OK
+	 * @return int Return integer <0 if KO, >=0 if OK
 	 */
 	public function fetchAllCurrencyRate()
 	{
@@ -274,10 +274,10 @@ class MultiCurrency extends CommonObject
 	 * Update object into database
 	 *
 	 * @param  User $user      	User that modifies
-	 * @param  bool $trigger 	true=launch triggers after, false=disable triggers
+	 * @param  int 	$notrigger 	0=launch triggers after, 1=disable triggers
 	 * @return int 				Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $trigger = true)
+	public function update(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -310,7 +310,7 @@ class MultiCurrency extends CommonObject
 			dol_syslog('MultiCurrency::update '.join(',', $this->errors), LOG_ERR);
 		}
 
-		if (!$error && $trigger) {
+		if (!$error && empty($notrigger)) {
 			$result = $this->call_trigger('CURRENCY_MODIFY', $user);
 			if ($result < 0) {
 				$error++;
@@ -333,10 +333,10 @@ class MultiCurrency extends CommonObject
 	 * Delete object in database
 	 *
 	 * @param	User	$user		User making the deletion
-	 * @param 	bool 	$trigger 	true=launch triggers after, false=disable triggers
+	 * @param  	int 	$notrigger 	0=launch triggers after, 1=disable triggers
 	 * @return 	int 				Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($user, $trigger = true)
+	public function delete(User $user, $notrigger = 0)
 	{
 		dol_syslog('MultiCurrency::delete', LOG_DEBUG);
 
@@ -344,7 +344,7 @@ class MultiCurrency extends CommonObject
 
 		$this->db->begin();
 
-		if ($trigger) {
+		if (empty($notrigger)) {
 			$result = $this->call_trigger('CURRENCY_DELETE', $user);
 			if ($result < 0) {
 				$error++;
@@ -409,10 +409,12 @@ class MultiCurrency extends CommonObject
 	 */
 	public function addRate($rate)
 	{
+		global $user;
+
 		$currencyRate = new CurrencyRate($this->db);
 		$currencyRate->rate = price2num($rate);
 
-		if ($currencyRate->create($this->id) > 0) {
+		if ($currencyRate->create($user, $this->id) > 0) {
 			$this->rate = $currencyRate;
 			return 1;
 		} else {
@@ -630,7 +632,7 @@ class MultiCurrency extends CommonObject
 				return 1;
 			}
 
-			return -1; // Alternate souce not found
+			return -1; // Alternate source not found
 		}
 
 		return 0; // Nothing to do
@@ -775,7 +777,7 @@ class CurrencyRate extends CommonObjectLine
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -785,13 +787,14 @@ class CurrencyRate extends CommonObjectLine
 	/**
 	 * Create object into database
 	 *
-	 * @param  int	$fk_multicurrency	Id of currency
-	 * @param  bool	$trigger			true=launch triggers after, false=disable triggers
-	 * @return int 						Return integer <0 if KO, Id of created object if OK
+	 * @param	User	$user				User making the deletion
+	 * @param  	int		$fk_multicurrency	Id of currency
+	 * @param  	int 	$notrigger 			0=launch triggers after, 1=disable triggers
+	 * @return 	int 						Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create($fk_multicurrency, $trigger = true)
+	public function create(User $user, int $fk_multicurrency, $notrigger = 0)
 	{
-		global $conf, $user;
+		global $conf;
 
 		dol_syslog('CurrencyRate::create', LOG_DEBUG);
 
@@ -832,7 +835,7 @@ class CurrencyRate extends CommonObjectLine
 			$this->fk_multicurrency = $fk_multicurrency;
 			$this->date_sync = $now;
 
-			if ($trigger) {
+			if (empty($notrigger)) {
 				$result = $this->call_trigger('CURRENCYRATE_CREATE', $user);
 				if ($result < 0) {
 					$error++;
@@ -897,13 +900,12 @@ class CurrencyRate extends CommonObjectLine
 	/**
 	 * Update object into database
 	 *
-	 * @param  bool $trigger	true=launch triggers after, false=disable triggers
-	 * @return int 				Return integer <0 if KO, >0 if OK
+	 * @param	User	$user		User making the deletion
+	 * @param  	int 	$notrigger 	0=launch triggers after, 1=disable triggers
+	 * @return 	int 				Return integer <0 if KO, >0 if OK
 	 */
-	public function update($trigger = true)
+	public function update(User $user, $notrigger = 0)
 	{
-		global $user;
-
 		$error = 0;
 
 		dol_syslog('CurrencyRate::update', LOG_DEBUG);
@@ -931,7 +933,7 @@ class CurrencyRate extends CommonObjectLine
 			dol_syslog('CurrencyRate::update '.join(',', $this->errors), LOG_ERR);
 		}
 
-		if (!$error && $trigger) {
+		if (!$error && empty($notrigger)) {
 			$result = $this->call_trigger('CURRENCYRATE_MODIFY', $user);
 			if ($result < 0) {
 				$error++;
@@ -954,10 +956,10 @@ class CurrencyRate extends CommonObjectLine
 	 * Delete object in database
 	 *
 	 * @param	User	$user		User making the deletion
-	 * @param 	bool 	$trigger 	true=launch triggers after, false=disable triggers
+	 * @param  	int 	$notrigger 	0=launch triggers after, 1=disable triggers
 	 * @return 	int 				Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($user, $trigger = true)
+	public function delete(User $user, $notrigger = 0)
 	{
 		dol_syslog('CurrencyRate::delete', LOG_DEBUG);
 
@@ -965,7 +967,7 @@ class CurrencyRate extends CommonObjectLine
 
 		$this->db->begin();
 
-		if ($trigger) {
+		if (empty($notrigger)) {
 			$result = $this->call_trigger('CURRENCYRATE_DELETE', $user);
 			if ($result < 0) {
 				$error++;

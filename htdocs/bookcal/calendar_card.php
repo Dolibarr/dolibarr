@@ -17,7 +17,7 @@
  */
 
 /**
- *   	\file       calendar_card.php
+ *   	\file       htdocs/bookcal/calendar_card.php
  *		\ingroup    bookcal
  *		\brief      Page to create/edit/view calendar
  */
@@ -113,7 +113,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {

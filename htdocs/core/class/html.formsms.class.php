@@ -20,13 +20,13 @@
 /**
  *       \file       htdocs/core/class/html.formsms.class.php
  *       \ingroup    core
- *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
+ *       \brief      Fichier de la class permettant la generation du formulaire html d'envoi de mail unitaire
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
 /**
- *      Classe permettant la generation du formulaire d'envoi de Sms
+ *      Class permettant la generation du formulaire d'envoi de Sms
  *      Usage: $formsms = new FormSms($db)
  *             $formsms->proprietes=1 ou chaine ou tableau de valeurs
  *             $formsms->show_form() affiche le formulaire
@@ -105,7 +105,7 @@ class FormSms
 	 *	Show the form to input an sms.
 	 *
 	 *	@param	string	$morecss Class on first column td
-	 *  @param int $showform Show form tags and submit button (recommanded is to use with value 0)
+	 *  @param int $showform Show form tags and submit button (recommended is to use with value 0)
 	 *	@return	void
 	 */
 	public function show_form($morecss = 'titlefield', $showform = 1)
@@ -207,7 +207,7 @@ function limitChars(textarea, limit, infodiv)
 							$sms->error = 'The SMS manager "'.$classfile.'" defined into SMS setup MAIN_MODULE_'.strtoupper($sendmode).'_SMS is not found';
 						}
 					} catch (Exception $e) {
-						dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
+						dol_print_error(null, 'Error to get list of senders: '.$e->getMessage());
 						exit;
 					}
 				} else {
@@ -223,7 +223,7 @@ function limitChars(textarea, limit, infodiv)
 					}
 					print '</select>';
 				} else {
-					print '<span class="error">'.$langs->trans("SmsNoPossibleSenderFound");
+					print '<span class="error wordbreak">'.$langs->trans("SmsNoPossibleSenderFound");
 					if (is_object($sms) && !empty($sms->error)) {
 						print ' '.$sms->error;
 					}
@@ -244,7 +244,7 @@ function limitChars(textarea, limit, infodiv)
 			if ($this->withtoreadonly) {
 				print (!is_array($this->withto) && !is_numeric($this->withto)) ? $this->withto : "";
 			} else {
-				print '<input size="16" id="sendto" name="sendto" value="'.dol_escape_htmltag(!is_array($this->withto) && $this->withto != '1' ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "+").'">';
+				print '<input class="width150" id="sendto" name="sendto" value="'.dol_escape_htmltag(!is_array($this->withto) && $this->withto != '1' ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "+").'">';
 				if (!empty($this->withtosocid) && $this->withtosocid > 0) {
 					$liste = array();
 					foreach ($soc->thirdparty_and_contact_phone_array() as $key => $value) {
@@ -254,7 +254,7 @@ function limitChars(textarea, limit, infodiv)
 					//var_dump($_REQUEST);exit;
 					print $form->selectarray("receiver", $liste, GETPOST("receiver"), 1);
 				}
-				print ' <span class="opacitymedium">'.$langs->trans("SmsInfoNumero").'</span>';
+				print '<span class="opacitymedium hideonsmartphone"> '.$langs->trans("SmsInfoNumero").'</span>';
 			}
 			print "</td></tr>\n";
 		}

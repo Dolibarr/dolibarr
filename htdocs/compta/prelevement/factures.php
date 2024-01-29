@@ -21,7 +21,7 @@
 /**
  *     \file       htdocs/compta/prelevement/factures.php
  *     \ingroup    prelevement
- *     \brief      Page list of invoice paied by direct debit or credit transfer
+ *     \brief      Page list of invoice paid by direct debit or credit transfer
  */
 
 // Load Dolibarr environment
@@ -96,6 +96,7 @@ llxHeader('', $langs->trans("WithdrawalsReceipts"));
 if ($id > 0 || $ref) {
 	if ($object->fetch($id, $ref) >= 0) {
 		$head = prelevement_prepare_head($object);
+
 		print dol_get_fiche_head($head, 'invoices', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/orders_list.php?restore_lastsearch_values=1'.($object->type != 'bank-transfer' ? '' : '&type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
@@ -293,11 +294,12 @@ if ($resql) {
 	print '<input type="hidden" name="id" value="'.$id.'">';
 
 	$massactionbutton = '';
+	$title = ($salaryBonPl ? $langs->trans("Salaries") : ($object->type == 'bank-transfer' ? $langs->trans("SupplierInvoices") : $langs->trans("Invoices")));
 
-	print_barre_liste(($salaryBonPl ? $langs->trans("Salaries") : $langs->trans("Invoices")), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 	print"\n<!-- debut table -->\n";
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre(($salaryBonPl ? "Salary" : "Bill"), $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
@@ -308,7 +310,6 @@ if ($resql) {
 	print_liste_field_titre(($salaryBonPl ? "AmountSalary" : "AmountInvoice"), $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "pl.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre('');
 	print "</tr>\n";
 
 	$totalinvoices = 0;
@@ -340,9 +341,8 @@ if ($resql) {
 
 		print '<tr class="oddeven">';
 
-
 		print '<td class="nowraponall">';
-		print($salaryBonPl ? $salarytmp->getNomUrl(1) : $invoicetmp->getNomUrl(1));
+		print ($salaryBonPl ? $salarytmp->getNomUrl(1) : $invoicetmp->getNomUrl(1));
 		print "</td>\n";
 
 		if ($object->type == 'bank-transfer' && !$salaryBonPl) {
@@ -376,8 +376,6 @@ if ($resql) {
 		}
 		print "</td>";
 
-		print "<td></td>";
-
 		print "</tr>\n";
 
 		$totalinvoices += $obj->total_ttc;
@@ -402,7 +400,6 @@ if ($resql) {
 		}
 		print price($totalamount_requested);
 		print "</td>\n";
-		print '<td>&nbsp;</td>';
 		print '<td>&nbsp;</td>';
 		print "</tr>\n";
 	}

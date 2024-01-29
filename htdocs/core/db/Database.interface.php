@@ -65,7 +65,7 @@ interface Database
 	 * Start transaction
 	 *
 	 * @param	string	$textinlog		Add a small text into log. '' by default.
-	 * @return  int      				1 if transaction successfuly opened or already opened, 0 if error
+	 * @return  int      				1 if transaction successfully opened or already opened, 0 if error
 	 */
 	public function begin($textinlog = '');
 
@@ -228,7 +228,7 @@ interface Database
 	 *    Canceling a transaction and returning to old values
 	 *
 	 * @param	string $log Add more log to default log line
-	 * @return  int                1 if cancelation ok or transaction not open, 0 if error
+	 * @return  int                1 if cancellation ok or transaction not open, 0 if error
 	 */
 	public function rollback($log = '');
 
@@ -245,7 +245,7 @@ interface Database
 	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0);
 
 	/**
-	 *    Connexion to server
+	 *    Connection to server
 	 *
 	 * @param   string $host database server host
 	 * @param   string $login login
@@ -317,7 +317,7 @@ interface Database
 	/**
 	 * Return generic error code of last operation.
 	 *
-	 * @return    string        Error code (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
+	 * @return    string        Error code (Examples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
 	 */
 	public function errno();
 
@@ -332,7 +332,7 @@ interface Database
 	 * @param        array 	$unique_keys 	Associative array Name of fields that will be unique key => value
 	 * @param        array 	$fulltext_keys 	Field name table that will be indexed in fulltext
 	 * @param        array $keys 			Table of key fields names => value
-	 * @return       int                    <0 if KO, >=0 if OK
+	 * @return       int                    Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null);
 	// phpcs:enable
@@ -342,7 +342,7 @@ interface Database
 	 * Drop a table into database
 	 *
 	 * @param        string $table 			Name of table
-	 * @return       int                    <0 if KO, >=0 if OK
+	 * @return       int                    Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLDropTable($table);
 	// phpcs:enable
@@ -430,7 +430,7 @@ interface Database
 	 * @param    string $dolibarr_main_db_user 	Username to create
 	 * @param    string $dolibarr_main_db_pass 	User password to create
 	 * @param    string $dolibarr_main_db_name 	Database name where user must be granted
-	 * @return   int                            <0 if KO, >=0 if OK
+	 * @return   int                            Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateUser(
 		$dolibarr_main_db_host,
@@ -446,7 +446,7 @@ interface Database
 	 * 19700101020000 -> 7200 whaterver is TZ if gmt=1
 	 *
 	 * @param	string			$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 * @param	bool			$gm			1=Input informations are GMT values, otherwise local to server TZ
+	 * @param	bool			$gm			1=Input information are GMT values, otherwise local to server TZ
 	 * @return	int|string					Date TMS or ''
 	 */
 	public function jdate($string, $gm = false);
@@ -488,9 +488,9 @@ interface Database
 	public function free($resultset = null);
 
 	/**
-	 * Close database connexion
+	 * Close database connection
 	 *
-	 * @return  boolean     					True if disconnect successfull, false otherwise
+	 * @return  boolean     					True if disconnect successful, false otherwise
 	 * @see     connect()
 	 */
 	public function close();
@@ -504,9 +504,9 @@ interface Database
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return connexion ID
+	 * Return connection ID
 	 *
-	 * @return  string      Id connexion
+	 * @return  string      Id connection
 	 */
 	public function DDLGetConnectId();
 	// phpcs:enable
@@ -516,7 +516,7 @@ interface Database
 	 * Returns the current line (as an object) for the resultset cursor
 	 *
 	 * @param   resource|PgSql\Connection		$resultset 		Handler of the desired request
-	 * @return  Object                  				Object result line or false if KO or end of cursor
+	 * @return  Object|false                    				Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset);
 	// phpcs:enable

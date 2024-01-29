@@ -49,6 +49,9 @@ $version = constant('DOL_VERSION');
 $error = 0;
 $confirmed = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */
@@ -90,7 +93,7 @@ print "----- To LDAP database:\n";
 print "host=" . getDolGlobalString('LDAP_SERVER_HOST')."\n";
 print "port=" . getDolGlobalString('LDAP_SERVER_PORT')."\n";
 print "login=" . getDolGlobalString('LDAP_ADMIN_DN')."\n";
-print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
+print "pass=".preg_replace('/./i', '*', getDolGlobalString('LDAP_ADMIN_PASS'))."\n";
 print "DN target=" . getDolGlobalString('LDAP_MEMBER_DN')."\n";
 print "\n";
 
@@ -104,8 +107,7 @@ if (!$confirmed) {
 }
 
 /*
- * if (! $conf->global->LDAP_MEMBER_ACTIVE)
- * {
+ * if (getDolGlobalString('LDAP_MEMBER_ACTIVE') {
  * print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
  * exit(-1);
  * }
@@ -149,7 +151,7 @@ if ($resql) {
 		$info = $member->_load_ldap_info();
 		$dn = $member->_load_ldap_dn($info);
 
-		$result = $ldap->add($dn, $info, $user); // Wil fail if already exists
+		$result = $ldap->add($dn, $info, $user); // Will fail if already exists
 		$result = $ldap->update($dn, $info, $user, $olddn);
 		if ($result > 0) {
 			print " - ".$langs->transnoentities("OK");

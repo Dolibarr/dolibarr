@@ -30,6 +30,11 @@ $maxwidthmini = 128;
 $maxheightmini = 72; // 16/9eme
 $quality = 80;
 
+if (!defined('IMAGETYPE_WEBP')) {
+	define('IMAGETYPE_WEBP', 18);
+}
+
+
 /**
  *      Return default values for image sizes
  *
@@ -56,12 +61,10 @@ function getDefaultImageSizes()
  *      Return if a filename is file name of a supported image format
  *
  *      @param	int		$acceptsvg	0=Default (depends on setup), 1=Always accept SVG as image files
- *      @return string				Return list fo image format
+ *      @return string				Return list of image formats
  */
 function getListOfPossibleImageExt($acceptsvg = 0)
 {
-	global $conf;
-
 	$regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm'; // See also into product.class.php
 	if ($acceptsvg || getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_IMAGES')) {
 		$regeximgext .= '|\.svg'; // Not allowed by default. SVG can contains javascript
@@ -118,7 +121,7 @@ function image_format_supported($file, $acceptsvg = 0)
 	}
 	if ($imgfonction) {
 		if (!function_exists($imgfonction)) {
-			// Fonctions of conversion not available in this PHP
+			// Functions of conversion not available in this PHP
 			return 0;
 		}
 
@@ -194,7 +197,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		// Si le fichier n'a pas ete indique
 		return 'Bad parameter file';
 	} elseif (!file_exists($file)) {
-		// Si le fichier passe en parametre n'existe pas
+		// Si le fichier passe en parameter n'existe pas
 		return $langs->trans("ErrorFileNotFound", $file);
 	} elseif (image_format_supported($file) < 0) {
 		return 'This filename '.$file.' does not seem to be an image filename.';
@@ -250,7 +253,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	}
 	if ($imgfonction) {
 		if (!function_exists($imgfonction)) {
-			// Fonctions de conversion non presente dans ce PHP
+			// Functions de conversion non presente dans ce PHP
 			return 'Read of image not possible. This PHP does not support GD functions '.$imgfonction;
 		}
 	}
@@ -278,7 +281,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		}
 		if ($imgfonction) {
 			if (!function_exists($imgfonction)) {
-				// Fonctions de conversion non presente dans ce PHP
+				// Functions de conversion non presente dans ce PHP
 				return 'Write of image not possible. This PHP does not support GD functions '.$imgfonction;
 			}
 		}
@@ -330,7 +333,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	$trans_colour = -1;	// By default, undefined
 	switch ($newExt) {
 		case 'gif':	// Gif
-			$trans_colour = imagecolorallocate($imgTarget, 255, 255, 255); // On procede autrement pour le format GIF
+			$trans_colour = imagecolorallocate($imgTarget, 255, 255, 255); // The method is different for the GIF format
 			imagecolortransparent($imgTarget, $trans_colour);
 			break;
 		case 'jpg':	// Jpg
@@ -338,7 +341,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 			$trans_colour = imagecolorallocatealpha($imgTarget, 255, 255, 255, 0);
 			break;
 		case 'png':	// Png
-			imagealphablending($imgTarget, false); // Pour compatibilite sur certain systeme
+			imagealphablending($imgTarget, false); // For compatibility with certain systems
 			$trans_colour = imagecolorallocatealpha($imgTarget, 255, 255, 255, 127); // Keep transparent channel
 			break;
 		case 'bmp':	// Bmp
@@ -445,10 +448,10 @@ function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
 						break;
 				}
 				if ($deg) {
-					if ($infoImg[2] === 'IMAGETYPE_PNG') { // In fact there is no exif on PNG but just in case
+					if ($infoImg[2] === IMAGETYPE_PNG) { // In fact there is no exif on PNG but just in case
 						imagealphablending($img, false);
 						imagesavealpha($img, true);
-						$img = imagerotate($img, $deg, imageColorAllocateAlpha($img, 0, 0, 0, 127));
+						$img = imagerotate($img, $deg, imagecolorallocatealpha($img, 0, 0, 0, 127));
 						imagealphablending($img, false);
 						imagesavealpha($img, true);
 					} else {
@@ -583,6 +586,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		case IMAGETYPE_WBMP:	// 15
 			$imgfonction = 'imagecreatefromwbmp';
 			break;
+		case IMAGETYPE_WEBP:	// 18
+			$imgfonction = 'imagecreatefromwebp';
+			break;
 	}
 	if ($imgfonction) {
 		if (!function_exists($imgfonction)) {
@@ -600,11 +606,11 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	switch ($infoImg[2]) {
 		case IMAGETYPE_GIF:	    // 1
 			$img = imagecreatefromgif($filetoread);
-			$extImg = '.gif'; // Extension de l'image
+			$extImg = '.gif';
 			break;
 		case IMAGETYPE_JPEG:    // 2
 			$img = imagecreatefromjpeg($filetoread);
-			$extImg = (preg_match('/\.jpeg$/', $file) ? '.jpeg' : '.jpg'); // Extension de l'image
+			$extImg = (preg_match('/\.jpeg$/', $file) ? '.jpeg' : '.jpg');
 			break;
 		case IMAGETYPE_PNG:	    // 3
 			$img = imagecreatefrompng($filetoread);
@@ -617,6 +623,10 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		case IMAGETYPE_WBMP:	// 15
 			$img = imagecreatefromwbmp($filetoread);
 			$extImg = '.bmp';
+			break;
+		case IMAGETYPE_WEBP:	// 18
+			$img = imagecreatefromwebp($filetoread);
+			$extImg = '.webp';
 			break;
 	}
 
@@ -653,7 +663,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		if ($infoImg[2] === 'IMAGETYPE_PNG') { // In fact there is no exif on PNG but just in case
 			imagealphablending($img, false);
 			imagesavealpha($img, true);
-			$rotated = imagerotate($img, $exifAngle, imageColorAllocateAlpha($img, 0, 0, 0, 127));
+			$rotated = imagerotate($img, $exifAngle, imagecolorallocatealpha($img, 0, 0, 0, 127));
 			imagealphablending($rotated, false);
 			imagesavealpha($rotated, true);
 		} else {
@@ -746,6 +756,11 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			$extImgTarget = '.bmp';
 			$newquality = 'NU';
 			break;
+		case IMAGETYPE_WEBP:	// 18
+			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
+			$extImgTarget = '.webp';
+			$newquality = $quality;
+			break;
 	}
 	if (function_exists("imagefill")) {
 		imagefill($imgThumb, 0, 0, $trans_colour);
@@ -781,6 +796,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			break;
 		case IMAGETYPE_WBMP:    // 15
 			imagewbmp($imgThumb, $imgThumbName);
+			break;
+		case IMAGETYPE_WEBP:    // 18
+			imagewebp($imgThumb, $imgThumbName, $newquality);
 			break;
 	}
 

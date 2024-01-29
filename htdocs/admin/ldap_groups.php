@@ -79,7 +79,7 @@ if ($action == 'setvalue' && $user->admin) {
 	$valkey = '';
 	$key = GETPOST("key");
 	if ($key) {
-		$valkey = $conf->global->$key;
+		$valkey = getDolGlobalString($key);
 	}
 	if (!dolibarr_set_const($db, 'LDAP_KEY_GROUPS', $valkey, 'chaine', 0, '', $conf->entity)) {
 		$error++;
@@ -109,7 +109,7 @@ print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 
 $head = ldap_prepare_head();
 
-// Test si fonction LDAP actives
+// Test if the LDAP functionality is available
 if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
@@ -130,7 +130,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("LDAPSynchronizeGroups").'</td>';
 print "</tr>\n";
 
-// DN pour les groupes
+// DN (Domain Name) for the groups
 print '<!-- LDAP_GROUP_DN -->';
 print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPGroupDn").'</span></td><td>';
 print '<input size="48" type="text" name="group" value="'.getDolGlobalString('LDAP_GROUP_DN').'">';
@@ -217,7 +217,7 @@ print '</form>';
 
 
 /*
- * Test de la connexion
+ * Test the connection
  */
 if (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 	$butlabel = $langs->trans("LDAPTestSynchroGroup");
@@ -238,7 +238,7 @@ if (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 
 if (function_exists("ldap_connect")) {
 	if ($action == 'testgroup') {
-		// Creation objet
+		// Create object
 		$object = new UserGroup($db);
 		$object->initAsSpecimen();
 
@@ -284,7 +284,7 @@ if (function_exists("ldap_connect")) {
 	}
 
 	if ($action == 'testsearchgroup') {
-		// TODO Mutualize code following with other ldap_xxxx.php pages
+		// TODO Mutualize code below with other ldap_xxxx.php pages
 
 		// Test synchro
 		$ldap = new Ldap();

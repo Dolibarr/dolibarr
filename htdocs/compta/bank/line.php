@@ -55,9 +55,9 @@ if (isModEnabled('salaries')) {
 
 
 $id = GETPOST('rowid', 'int');
-$rowid = GETPOST("rowid", 'int');
-$accountoldid = GETPOST('account', 'int');		// GETPOST('account') is old account id
-$accountid = GETPOST('accountid', 'int');		// GETPOST('accountid') is new account id
+$rowid = GETPOSTINT('rowid');
+$accountoldid = GETPOSTINT('account');		// GETPOST('account') is old account id
+$accountid = GETPOSTINT('accountid');		// GETPOST('accountid') is new account id
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -258,25 +258,38 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
 		}
 		$sql .= " WHERE rowid = ".((int) $rowid);
 
-		dol_syslog("line.php", LOG_DEBUG);
+		$updatePathFile = true;
+		$update_dir = true;
+
+		dol_syslog("line.php update bank line to set the new bank receipt number", LOG_DEBUG);
+
 		$result = $db->query($sql);
+
+		// We must not rename the directory of the bank receipt when we change 1 line of bank receipt. Other lines may share the same old ref.
+		// Renaming can be done when we rename globally a bank receipt but not when changing 1 line from one receipt into another one.
+		/*
 		if ($result) {
-			$oldfilepath = dol_sanitizePathName("bank/".((int) $id)."/statement/".$oldNum_rel);
-			$filepath = dol_sanitizePathName("bank/".((int) $id)."/statement/".$num_rel);
+			if ($oldNum_rel) {
+				if ($num_rel) {
+					$oldfilepath = dol_sanitizePathName("bank/".((int) $id)."/statement/".$oldNum_rel);
+					$filepath = dol_sanitizePathName("bank/".((int) $id)."/statement/".$num_rel);
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_files";
-			$sql .= " SET filepath = '".$db->escape($filepath)."'";
-			$sql .= " WHERE filepath = '".$db->escape($oldfilepath)."'";
-			$updatePathFile = $db->query($sql);
+					$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_files";
+					$sql .= " SET filepath = '".$db->escape($filepath)."'";
+					$sql .= " WHERE filepath = '".$db->escape($oldfilepath)."'";
+					$updatePathFile = $db->query($sql);
 
-			$srcdir = dol_sanitizePathName(DOL_DATA_ROOT."/bank/".((int) $id)."/statement/".$oldNum_rel);
-			$destdir = dol_sanitizePathName(DOL_DATA_ROOT."/bank/".((int) $id)."/statement/".$num_rel);
+					$srcdir = dol_sanitizePathName(DOL_DATA_ROOT."/bank/".((int) $id)."/statement/".$oldNum_rel);
+					$destdir = dol_sanitizePathName(DOL_DATA_ROOT."/bank/".((int) $id)."/statement/".$num_rel);
 
-			$update_dir = true;
-			if (dol_is_dir($srcdir)) {
-				$update_dir = dol_move_dir($srcdir, $destdir, 1);
+					if (dol_is_dir($srcdir)) {
+						$update_dir = dol_move_dir($srcdir, $destdir, 1);
+					}
+				}
 			}
 		}
+		*/
+
 		if ($result && $updatePathFile && $update_dir) {
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$db->commit();
@@ -456,7 +469,7 @@ if ($result) {
 					print img_object($langs->trans('Donation'), 'payment').' ';
 					print $langs->trans("DonationPayment");
 					print '</a>';
-				} elseif ($links[$key]['type'] == 'banktransfert') {	// transfert between 1 local account and another local account
+				} elseif ($links[$key]['type'] == 'banktransfert') {	// transfer between 1 local account and another local account
 					print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('Transaction'), 'payment').' ';
 					print $langs->trans("TransactionOnTheOtherAccount");

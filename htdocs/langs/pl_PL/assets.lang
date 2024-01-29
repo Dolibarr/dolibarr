@@ -22,8 +22,8 @@ AccountancyCodeDepreciationAsset=Kod księgowości (rachunek aktywów amortyzacy
 AccountancyCodeDepreciationExpense=Kod księgowości (rachunek kosztów amortyzacji)
 AssetsLines=Majątek
 DeleteType=Usuń
-DeleteAnAssetType=Delete an asset model
-ConfirmDeleteAssetType=Are you sure you want to delete this asset model?
+DeleteAnAssetType=Usuń model aktywów
+ConfirmDeleteAssetType=Czy na pewno chcesz usunąć ten model aktywów?
 ShowTypeCard=Pokaż model '%s'
 
 # Module label 'ModuleAssetsName'
@@ -41,7 +41,7 @@ ExtraFieldsAssetModel=Complementary attributes (Asset's model)
 AssetsType=Model kapitału
 AssetsTypeId=Asset model id
 AssetsTypeLabel=Asset model label
-AssetsTypes=Assets models
+AssetsTypes=Modele aktywów
 ASSET_ACCOUNTANCY_CATEGORY=Fixed asset accounting group
 
 #
@@ -49,7 +49,7 @@ ASSET_ACCOUNTANCY_CATEGORY=Fixed asset accounting group
 #
 MenuAssets=Majątek
 MenuNewAsset=Nowy majątek
-MenuAssetModels=Model assets
+MenuAssetModels=Aktywa modelowe
 MenuListAssets=Lista
 MenuNewAssetModel=New asset's model
 MenuListAssetModels=Lista
@@ -57,14 +57,14 @@ MenuListAssetModels=Lista
 #
 # Module
 #
-ConfirmDeleteAsset=Do you really want to remove this asset?
+ConfirmDeleteAsset=Czy na pewno chcesz usunąć ten aktyw?
 
 #
 # Tab
 #
-AssetDepreciationOptions=Depreciation options
+AssetDepreciationOptions=Opcje amortyzacji
 AssetAccountancyCodes=Konta księgowe
-AssetDepreciation=Depreciation
+AssetDepreciation=Amortyzacja
 
 #
 # Asset
@@ -138,7 +138,7 @@ AssetDepreciationOptionTotalAmountLastDepreciationHT=Total amount last depreciat
 #
 AssetAccountancyCodeDepreciationEconomic=Economic depreciation
 AssetAccountancyCodeAsset=Kapitał
-AssetAccountancyCodeDepreciationAsset=Depreciation
+AssetAccountancyCodeDepreciationAsset=Amortyzacja
 AssetAccountancyCodeDepreciationExpense=Depreciation expense
 AssetAccountancyCodeValueAssetSold=Value of asset disposed
 AssetAccountancyCodeReceivableOnAssignment=Receivable on disposal
@@ -168,7 +168,7 @@ AssetDepreciationReversal=Reversal
 #
 # Errors
 #
-AssetErrorAssetOrAssetModelIDNotProvide=Id of the asset or the model sound has not been provided
+AssetErrorAssetOrAssetModelIDNotProvide=Id of the asset or the model found has not been provided
 AssetErrorFetchAccountancyCodesForMode=Error when retrieving the accounting accounts for the '%s' depreciation mode
 AssetErrorDeleteAccountancyCodesForMode=Error when deleting accounting accounts from the '%s' depreciation mode
 AssetErrorInsertAccountancyCodesForMode=Error when inserting the accounting accounts of the depreciation mode '%s'

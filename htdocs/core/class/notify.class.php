@@ -188,7 +188,7 @@ class Notify
 	 * @param	Object	$object			Object the notification is about (need it to check threshold value of some notifications)
 	 * @param	int		$userid         Id of user or 0 for all users or -1 for no users
 	 * @param   array   $scope          Scope where to search
-	 * @return	array|int				<0 if KO, array of notifications to send if OK
+	 * @return	array|int				Return integer <0 if KO, array of notifications to send if OK
 	 */
 	public function getNotificationsArray($notifcode, $socid = 0, $object = null, $userid = 0, $scope = array('thirdparty', 'user', 'global'))
 	{
@@ -352,7 +352,7 @@ class Notify
 	 *	@param 	array	$filename_list		List of files to attach (full path of filename on file system)
 	 *	@param 	array	$mimetype_list		List of MIME type of attached files
 	 *	@param 	array	$mimefilename_list	List of attached file name in message
-	 *	@return	int							<0 if KO, or number of changes if OK
+	 *	@return	int							Return integer <0 if KO, or number of changes if OK
 	 */
 	public function send($notifcode, $object, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array())
 	{
@@ -395,7 +395,7 @@ class Notify
 		// Define some vars
 		$application = 'Dolibarr';
 		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-			$application = $conf->global->MAIN_APPLICATION_TITLE;
+			$application = getDolGlobalString('MAIN_APPLICATION_TITLE');
 		}
 		$replyto = $conf->notification->email_from;
 		$object_type = '';
@@ -507,7 +507,7 @@ class Notify
 								$link = '<a href="'.$urlwithroot.'/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->commande->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'commande');
 								$object_type = 'order';
-								$labeltouse = $conf->global->ORDER_CLOSE_TEMPLATE;
+								$labeltouse = getDolGlobalString('ORDER_CLOSE_TEMPLATE');
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextOrderClose", $link);
 								break;
 							case 'PROPAL_VALIDATE':
@@ -520,7 +520,7 @@ class Notify
 								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
 								$object_type = 'propal';
-								$labeltouse = $conf->global->PROPAL_CLOSE_REFUSED_TEMPLATE;
+								$labeltouse = getDolGlobalString('PROPAL_CLOSE_REFUSED_TEMPLATE');
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedRefused", $link);
 								if (!empty($object->context['closedfromonlinesignature'])) {
 									$mesg .= ' - From online page';

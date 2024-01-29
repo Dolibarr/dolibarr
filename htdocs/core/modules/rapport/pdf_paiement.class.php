@@ -66,7 +66,7 @@ class pdf_paiement extends CommonDocGenerator
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDb		$db      Database handler
+	 *  @param      DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -226,7 +226,7 @@ class pdf_paiement extends CommonDocGenerator
 					$sql .= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
 				}
 				$sql .= " ".MAIN_DB_PREFIX."societe as s";
-				if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+				if (!$user->hasRight('societe', 'client', 'voir')) {
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				}
 				$sql .= " WHERE f.fk_soc = s.rowid AND pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
@@ -235,7 +235,7 @@ class pdf_paiement extends CommonDocGenerator
 				}
 				$sql .= " AND f.entity IN (".getEntity('invoice').")";
 				$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year, $month))."' AND '".$this->db->idate(dol_get_last_day($year, $month))."'";
-				if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+				if (!$user->hasRight('societe', 'client', 'voir')) {
 					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
 				if (!empty($socid)) {
@@ -264,7 +264,7 @@ class pdf_paiement extends CommonDocGenerator
 					$sql .= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
 				}
 				$sql .= " ".MAIN_DB_PREFIX."societe as s";
-				if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+				if (!$user->hasRight('societe', 'client', 'voir')) {
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				}
 				$sql .= " WHERE f.fk_soc = s.rowid AND pf.fk_facturefourn = f.rowid AND pf.fk_paiementfourn = p.rowid";
@@ -273,7 +273,7 @@ class pdf_paiement extends CommonDocGenerator
 				}
 				$sql .= " AND f.entity IN (".getEntity('invoice').")";
 				$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year, $month))."' AND '".$this->db->idate(dol_get_last_day($year, $month))."'";
-				if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+				if (!$user->hasRight('societe', 'client', 'voir')) {
 					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
 				if (!empty($socid)) {
@@ -400,7 +400,7 @@ class pdf_paiement extends CommonDocGenerator
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		$title = $conf->global->MAIN_INFO_SOCIETE_NOM;
+		$title = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 		switch ($this->doc_type) {
 			case "client":
 				$title .= ' - '.$outputlangs->transnoentities("ListOfCustomerPayments");
@@ -490,7 +490,7 @@ class pdf_paiement extends CommonDocGenerator
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$yp = 0;
 			}
-			if ($oldprowid <> $lines[$j][7]) {
+			if ($oldprowid != $lines[$j][7]) {
 				if ($yp > $this->tab_height - 15) {
 					$pdf->SetFillColor(255, 255, 255);
 					$pdf->Rect($this->marge_gauche + 1, $this->tab_top + 10 + $yp, $this->posxpaymentamount - $this->marge_droite - 3, $this->line_height, 'F', array(), array());
@@ -547,7 +547,7 @@ class pdf_paiement extends CommonDocGenerator
 			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount, $this->line_height, $lines[$j][6], 0, 'R', 0);
 			$yp = $yp + 5;
 
-			if ($oldprowid <> $lines[$j][7]) {
+			if ($oldprowid != $lines[$j][7]) {
 				$oldprowid = $lines[$j][7];
 			}
 

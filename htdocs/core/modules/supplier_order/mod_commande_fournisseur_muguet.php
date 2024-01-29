@@ -20,14 +20,14 @@
 /**
  *    	\file       htdocs/core/modules/supplier_order/mod_commande_fournisseur_muguet.php
  *		\ingroup    commande
- *		\brief      Fichier contenant la classe du modele de numerotation de reference de commande fournisseur Muguet
+ *		\brief      Fichier contenant la class du modele de numerotation de reference de commande fournisseur Muguet
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_order/modules_commandefournisseur.php';
 
 
 /**
- *	Classe du modele de numerotation de reference de commande fournisseur Muguet
+ *	Class du modele de numerotation de reference de commande fournisseur Muguet
  */
 class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 {
@@ -160,7 +160,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 		if (empty($date)) {
 			$date = $object->date; // Creation date is order date for suppliers orders
 		}
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is

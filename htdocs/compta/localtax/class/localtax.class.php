@@ -342,7 +342,7 @@ class Localtax extends CommonObject
 
 
 	/**
-	 *	Hum la fonction s'appelle 'Solde' elle doit a mon avis calcluer le solde de localtax, non ?
+	 *	Hum la function s'appelle 'Solde' elle doit a mon avis calcluer le solde de localtax, non ?
 	 *
 	 *	@param	int		$year		Year
 	 *	@return	int					???
@@ -467,7 +467,7 @@ class Localtax extends CommonObject
 	 *	Add a payment of localtax
 	 *
 	 *	@param		User	$user		Object user that insert
-	 *	@return		int					<0 if KO, rowid in localtax table if OK
+	 *	@return		int					Return integer <0 if KO, rowid in localtax table if OK
 	 */
 	public function addPayment($user)
 	{
@@ -570,7 +570,7 @@ class Localtax extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Update the link betwen localtax payment and the line into llx_bank
+	 *	Update the link between localtax payment and the line into llx_bank
 	 *
 	 *	@param		int		$id		Id bank account
 	 *	@return		int				Return integer <0 if KO, >0 if OK

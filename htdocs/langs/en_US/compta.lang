@@ -162,6 +162,7 @@ CalcModeVATDebt=Mode <b>%sVAT on commitment accounting%s</b>.
 CalcModeVATEngagement=Mode <b>%sVAT on incomes-expenses%s</b>.
 CalcModeDebt=Analysis of known recorded documents
 CalcModeEngagement=Analysis of known recorded payments
+CalcModePayment=Analysis of known recorded payments
 CalcModeBookkeeping=Analysis of data journalized in Bookkeeping Ledger table.
 CalcModeNoBookKeeping=Even if they are not yet accounted in Ledger
 CalcModeLT1= Mode <b>%sRE on customer invoices - suppliers invoices%s</b>

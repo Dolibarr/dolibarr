@@ -218,7 +218,7 @@ if (empty($reshook)) {
 	// assujetissement a la TVA
 	if ($action == 'setassujtva' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
-		$object->tva_assuj = GETPOST('assujtva_value');
+		$object->tva_assuj = GETPOSTINT('assujtva_value');
 		$result = $object->update($object->id);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -513,7 +513,7 @@ if ($object->id > 0) {
 
 	if ($object->client) {
 		if (isModEnabled('commande') && getDolGlobalString('ORDER_MANAGE_MIN_AMOUNT')) {
-			print '<!-- Minimim amount for orders -->'."\n";
+			print '<!-- Minimum amount for orders -->'."\n";
 			print '<tr class="nowrap">';
 			print '<td>';
 			print $form->editfieldkey("OrderMinAmount", 'order_min_amount', $object->order_min_amount, $object, $user->hasRight('societe', 'creer'));
@@ -538,8 +538,8 @@ if ($object->id > 0) {
 		print '</td><td>';
 		print $object->price_level;
 		$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$object->price_level;
-		if (!empty($conf->global->$keyforlabel)) {
-			print ' - '.$langs->trans($conf->global->$keyforlabel);
+		if (getDolGlobalString($keyforlabel)) {
+			print ' - '.$langs->trans(getDolGlobalString($keyforlabel));
 		}
 		print "</td>";
 		print '</tr>';
@@ -693,7 +693,7 @@ if ($object->id > 0) {
 	$boxstat = '';
 
 	// Nbre max d'elements des petites listes
-	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+	$MAXLIST = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
 
 	// Lien recap
 	$boxstat .= '<div class="box divboxtable box-halfright">';

@@ -57,7 +57,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 	 * @param User		    $user       Object user
 	 * @param Translate 	$langs      Object langs
 	 * @param conf		    $conf       Object conf
-	 * @return int         				<0 if KO, 0 if no triggered ran, >0 if OK
+	 * @return int         				Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
@@ -91,7 +91,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 					//For compatibility with Samba 4 AD
 					if ($ldap->serverType == "activedirectory") {
-						$info['userAccountControl'] = $conf->global->LDAP_USERACCOUNTCONTROL;
+						$info['userAccountControl'] = getDolGlobalString('LDAP_USERACCOUNTCONTROL');
 					}
 
 					$result = $ldap->add($dn, $info, $user);
@@ -260,7 +260,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 				}
 			}
 		} elseif ($action == 'USERGROUP_CREATE') {
-			// Groupes
+			// Groups
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE') && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				$ldap = new Ldap();

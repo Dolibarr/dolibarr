@@ -75,5 +75,6 @@ CreationOfPaymentModeMustBeDoneFromStripeInterface=Aufgrund strenger Kundenauthe
 STRIPE_CARD_PRESENT='Card present' für Stripe-Terminals
 TERMINAL_LOCATION=Standort (Adresse) für Stripe-Terminals
 RequestDirectDebitWithStripe=Lastschrift über Stripe anfordern
+RequesCreditTransferWithStripe=Anfrage für eine Stripe-Guthabenauszahlung
 STRIPE_SEPA_DIRECT_DEBIT=Aktivieren Sie die Lastschriftzahlungen über Stripe
-
+StripeConnect_Mode=Stripe Connect-Modus

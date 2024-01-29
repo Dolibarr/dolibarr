@@ -56,7 +56,7 @@ $currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/
  * Load the credential for the service
  */
 
-/** @var $serviceFactory \OAuth\ServiceFactory An OAuth service factory. */
+/** @var \OAuth\ServiceFactory $serviceFactory  An OAuth service factory. */
 $serviceFactory = new \OAuth\ServiceFactory();
 $httpClient = new \OAuth\Common\Http\Client\CurlClient();
 // TODO Set options for proxy and timeout
@@ -128,7 +128,7 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 
 		//$token = $apiService->requestAccessToken(GETPOST('code'), $state);
 		$token = $apiService->requestAccessToken(GETPOST('code'));
-		// Github is a service that does not need state to be stored as second paramater of requestAccessToken
+		// Github is a service that does not need state to be stored as second parameter of requestAccessToken
 
 		// Into constructor of GitHub, the call
 		// parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri)

@@ -78,7 +78,7 @@ class PriceGlobalVariableUpdater
 	/**
 	 *  Constructor
 	 *
-	 *  @param  DoliDb      $db      Database handler
+	 *  @param  DoliDB      $db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -154,7 +154,7 @@ class PriceGlobalVariableUpdater
 	 *  Load object in memory from the database
 	 *
 	 *  @param		int		$id    	Id object
-	 *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 if OK
+	 *  @return		int			    Return integer < 0 if KO, 0 if OK but not found, > 0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -445,7 +445,7 @@ class PriceGlobalVariableUpdater
 	/**
 	 *  Handles the processing of this updater
 	 *
-	 *  @return	int					 <0 if KO, 0 if OK but no global variable found, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, 0 if OK but no global variable found, >0 if OK
 	 */
 	public function process()
 	{

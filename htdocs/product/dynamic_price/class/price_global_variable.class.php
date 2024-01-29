@@ -25,7 +25,7 @@
 
 
 /**
- *	Class for accesing price global variables table
+ *	Class for accessing price global variables table
  */
 class PriceGlobalVariable
 {
@@ -66,7 +66,7 @@ class PriceGlobalVariable
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -138,7 +138,7 @@ class PriceGlobalVariable
 	 *  Load object in memory from the database
 	 *
 	 *  @param		int		$id    	Id object
-	 *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 if OK
+	 *  @return		int			    Return integer < 0 if KO, 0 if OK but not found, > 0 if OK
 	 */
 	public function fetch($id)
 	{

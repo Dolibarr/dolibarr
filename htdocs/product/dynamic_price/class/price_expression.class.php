@@ -25,7 +25,7 @@
 
 
 /**
- *	Class for accesing price expression table
+ *	Class for accessing price expression table
  */
 class PriceExpression
 {
@@ -49,7 +49,14 @@ class PriceExpression
 	 */
 	public $id;
 
+	/**
+	 * @var string title
+	 */
 	public $title;
+
+	/**
+	 * @var string math expression
+	 */
 	public $expression;
 
 	/**
@@ -60,7 +67,7 @@ class PriceExpression
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -75,7 +82,7 @@ class PriceExpression
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
 	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create($user, $notrigger = 0)
+	public function create(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -127,7 +134,7 @@ class PriceExpression
 	 *  Load object in memory from the database
 	 *
 	 *  @param		int		$id    	Id object
-	 *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 if OK
+	 *  @return		int			    Return integer < 0 if KO, 0 if OK but not found, > 0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -163,7 +170,7 @@ class PriceExpression
 	/**
 	 *    List all price expressions
 	 *
-	 *    @return	array|int				Array of price expressions, <0 if ko
+	 *    @return	PriceExpression[]|int				Array of price expressions, <0 if ko
 	 */
 	public function list_price_expression()
 	{
@@ -198,8 +205,8 @@ class PriceExpression
 	/**
 	 *  Returns any existing rowid with specified title
 	 *
-	 *  @param		String	$title  Title of expression
-	 *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 rowid
+	 *  @param		string	$title  Title of expression
+	 *  @return		int			    Return integer < 0 if KO, 0 if OK but not found, > 0 rowid
 	 */
 	public function find_title($title)
 	{
@@ -231,7 +238,7 @@ class PriceExpression
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
-	public function update($user = 0, $notrigger = 0)
+	public function update(User $user, $notrigger = 0)
 	{
 		$error = 0;
 

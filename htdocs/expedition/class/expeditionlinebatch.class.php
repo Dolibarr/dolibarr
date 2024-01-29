@@ -44,7 +44,7 @@ class ExpeditionLineBatch extends CommonObject
 	public $qty;
 	public $dluo_qty; // deprecated, use qty
 	public $entrepot_id;
-	public $fk_origin_stock;		// rowid in llx_product_batch table (not usefull)
+	public $fk_origin_stock;		// rowid in llx_product_batch table (not useful)
 	public $fk_warehouse;			// warehouse ID
 	public $fk_expeditiondet;
 
@@ -52,7 +52,7 @@ class ExpeditionLineBatch extends CommonObject
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -105,7 +105,7 @@ class ExpeditionLineBatch extends CommonObject
 	 * @param	int		$id_line_expdet		rowid of expedtiondet record
 	 * @param	User	$f_user				User that create
 	 * @param	int		$notrigger			1 = disable triggers
-	 * @return	int							<0 if KO, Id of record (>0) if OK
+	 * @return	int							Return integer <0 if KO, Id of record (>0) if OK
 	 */
 	public function create($id_line_expdet, $f_user = null, $notrigger = 0)
 	{

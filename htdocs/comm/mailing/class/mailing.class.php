@@ -211,7 +211,7 @@ class Mailing extends CommonObject
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDb      $db      Database handler
+	 *  @param      DoliDB      $db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -308,7 +308,7 @@ class Mailing extends CommonObject
 	 *
 	 *  @param  User	$user 		Object of user making change
 	 * 	@param	int		$notrigger	Disable triggers
-	 *  @return int				    < 0 if KO, > 0 if OK
+	 *  @return int				    Return integer < 0 if KO, > 0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -558,7 +558,7 @@ class Mailing extends CommonObject
 	/**
 	 *  Validate emailing
 	 *
-	 *  @param	User	$user      	Objet user qui valide
+	 *  @param	User	$user      	Object user qui valide
 	 * 	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function valid($user)
@@ -660,7 +660,7 @@ class Mailing extends CommonObject
 	/**
 	 *  Change status of each recipient
 	 *
-	 *	@param	User	$user      	Objet user qui valide
+	 *	@param	User	$user      	Object user qui valide
 	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function reset_targets_status($user)

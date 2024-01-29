@@ -2,6 +2,7 @@
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
 -- when current version is 18.0.0 or higher.
+
 --
 -- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
@@ -32,12 +33,14 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
--- v17
+-- Missing in v17 or lower
 
 -- VMYSQL4.3 ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 -- VMYSQL4.3 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN `rank` rankorder integer;
 -- VPGSQL8.2 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN rank rankorder integer;
+
+ALTER TABLE llx_projet_task ADD COLUMN fk_user_modif integer after fk_user_creat;
 
 ALTER TABLE llx_accounting_system CHANGE COLUMN fk_pays fk_country integer;
 
@@ -85,7 +88,6 @@ ALTER TABLE llx_payment_salary MODIFY COLUMN datep datetime;
 
 INSERT INTO llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1179, 117, 'I-28'  , 28,   0, '0',   0, '0', 0, 'IGST',      1);
 INSERT INTO llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1176, 117, 'C+S-18',  0,   9, '1',   9, '1', 0, 'CGST+SGST - Same state sales', 1);
-
 
 ALTER TABLE llx_user ADD COLUMN flagdelsessionsbefore datetime DEFAULT NULL;
 
