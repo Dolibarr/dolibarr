@@ -1002,7 +1002,7 @@ class FormMail extends Form
 				$out .= '<td colspan="2">';
 				if ($this->withbodyreadonly) {
 					$out .= nl2br($defaultmessage);
-					$out .= '<input type="hidden" id="message" disabled value="'.$defaultmessage.'" />';
+					$out .= '<input type="hidden" id="message" name="message" disabled value="'.$defaultmessage.'" />';
 				} else {
 					if (!isset($this->ckeditortoolbar)) {
 						$this->ckeditortoolbar = 'dolibarr_mailings';
