@@ -399,6 +399,42 @@ if (empty($reshook)) {
 		}
 	}
 
+	if ($action == 'set_opp_status' && $user->rights->projet->creer) {
+		$error = 0;
+		if (GETPOSTISSET('opp_status')) {
+			$object->opp_status   = $opp_status;
+		}
+		if (GETPOSTISSET('opp_percent')) {
+			$object->opp_percent  = $opp_percent;
+		}
+
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			if ($object->opp_amount && ($object->opp_status <= 0)) {
+				$error++;
+				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+			}
+		}
+
+		if (!$error) {
+			$result = $object->update($user);
+			if ($result < 0) {
+				$error++;
+				if ($result == -4) {
+					setEventMessages($langs->trans("ErrorRefAlreadyExists"), null, 'errors');
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			} 
+		}
+
+		if ($error) {
+			$db->rollback();
+			$action = 'edit';
+		} else {
+			$db->commit();
+		}
+	}
+
 	// Build doc
 	if ($action == 'builddoc' && $permissiontoadd) {
 		// Save last template used to generate document
