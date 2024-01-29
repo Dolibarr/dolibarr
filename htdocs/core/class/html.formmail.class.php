@@ -1386,7 +1386,7 @@ class FormMail extends Form
 	{
 		global $langs, $form;
 
-		$out = '<tr id="ai_input" style="display:none;">';
+		$out = '<tr id="ai_input">';
 		$out .= '<td>';
 		$out .= $form->textwithpicto($langs->trans('helpWithAi'), $langs->trans("YouCanMakeSomeInstructionForEmail"));
 		$out .= '</td>';
@@ -1454,20 +1454,21 @@ class FormMail extends Form
 	{
 
 		global $langs, $form;
-
 		$out = '<tr>';
 		$out .= '<td>';
 		$out .= $form->textwithpicto($langs->trans('ModelTemplate'), $langs->trans("YouCanChooseAModelForYouMailContent"));
 		$out .= '</td>';
 		$out .= '<td>';
-		$out .= '<div id="template-selector" class="template-container">
-		<div class="template-option" data-template="empty"><i class="far fa-file"></i><span class="template-option-text">Empty template</span></div>
-		<div class="template-option" data-template="basic">Basic</div>
-		<div class="template-option" data-template="news">News</div>
-		<div class="template-option" data-template="commerce">Commerce</div>
-		<div class="template-option" data-template="text">Text</div>
-		<div class="template-option" data-template="ai"><i class="fas fa-edit"></i><span class="template-option-text">Generate with AI</span></div>
-	 	</div>';
+		$out .= '<div id="template-selector" class="template-container">';
+		$templates = array('empty', 'basic', 'news', 'commerce', 'text');
+		foreach ($templates as $template) {
+			$out .= '<div class="template-option" data-template="'.$template.'">';
+			$out .= '<img alt="Gray rectangle" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />';
+			$out .= ucfirst($template); // Capitalize the first letter of the template name
+			$out .= '</div>';
+		}
+		$out .= '<div class="template-option" data-template="ai"><i class="fas fa-edit"></i>Generate with AI</div>';
+		$out .= '</div>';
 		$out .= '</td></tr>';
 		$out .= "<script type='text/javascript'>
 				var cssLink = document.createElement('link');

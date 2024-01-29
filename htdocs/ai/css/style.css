@@ -67,10 +67,23 @@
   }
 
   .template-option i {
-    font-size: 46px; 
+    font-size: 42px; 
     margin-bottom: 5px;
    
 }
 .template-option-text {
-  font-size: 16px; 
+  padding-top: 5px;
+  font-size: 12px; 
+}
+
+#ai_input {
+  display: none;
+}
+
+.template-option img {
+  display: block; 
+  width: 100%; 
+  height: 100%; 
+  margin: 0 5px;
+ padding: auto;
 }
