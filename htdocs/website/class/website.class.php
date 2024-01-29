@@ -3,7 +3,7 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2070,7 +2070,7 @@ class Website extends CommonObject
 	 * Replace line by line in file using num of line
 	 * @param string $desfFile   path of file dest
 	 * @param array $differences array of differences between files
-	 * @return false|int  false if we can't replace
+	 * @return boolean|int  Return false if we can't replace or int < 0 if error
 	 */
 	protected function replaceLineUsingNum($desfFile, $differences)
 	{
@@ -2116,5 +2116,7 @@ class Website extends CommonObject
 				dolReplaceInFile($desfFile, array($linechanged => $line));
 			}
 		}
+
+		return true;
 	}
 }
