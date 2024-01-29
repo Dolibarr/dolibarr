@@ -470,6 +470,30 @@ class Societe extends CommonObject
 	public $idprof6;
 
 	/**
+	 * Professional ID 7
+	 * @var string
+	 */
+	public $idprof7;
+
+	/**
+	 * Professional ID 8
+	 * @var string
+	 */
+	public $idprof8;
+
+	/**
+	 * Professional ID 9
+	 * @var string
+	 */
+	public $idprof9;
+
+	/**
+	 * Professional ID 10
+	 * @var string
+	 */
+	public $idprof10;
+
+	/**
 	 * Social object of the company
 	 * @var string
 	 */

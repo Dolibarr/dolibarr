@@ -2440,3 +2440,4 @@ ParametersForTestEnvironment=Paramètres pour l'environnement de test
 TryToKeepOnly=Essayez de ne conserver que %s
 RecommendedForProduction=Recommandé pour la production
 RecommendedForDebug=Recommandé pour le débogage
+UrlPublicInterfaceHelpAdmin=Il est possible de définir un alias vers le serveur et de rendre ainsi l'interface publique accessible avec une autre URL (le serveur doit agir comme un proxy sur cette nouvelle URL)

@@ -187,15 +187,8 @@ NEW: updating for display Help title when try to delete Don (issue  #25314)
 NEW: Upgrade in module builder in menu section
 NEW: use account address in sepa mandate (#23642)
 NEW: VAT rate - Add entity
-<<<<<<< HEAD
-NEW: webportal site account
 NEW: When an user unset the batch management of products, transformation of each batch stock movement in global stock movement
-
-FIX: #25828 wrong odt style naming
-=======
-NEW: When an user unset the batch management of products, transformation of each batch stock mouvement in global stock mouvement
 NEW: PDF Generation for each Human Resource Evaluations. 
->>>>>>> branch '19.0' of git@github.com:Dolibarr/dolibarr.git
 
 SEC: #25512 applicative anti bruteforce - security on too many login attempts (#25520)
 SEC: Add action confirm_... as sensitive to need a CSRF token
