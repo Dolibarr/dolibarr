@@ -1344,18 +1344,16 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opportunity)) {
 			// Opportunity status
-			print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
-			$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
-			if ($code) {
-				print $langs->trans("OppStatus".$code);
+			print '<tr><td>'.$langs->trans("OpportunityStatus");
+			if ($action != 'edit_opp_status' && $user->hasRight('projet', 'creer')) {
+				print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_opp_status&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
 			}
-
-			// Opportunity percent
-			print ' <span title="'.$langs->trans("OpportunityProbability").'"> / ';
-			if (strcmp($object->opp_percent, '')) {
-				print price($object->opp_percent, 0, $langs, 1, 0).' %';
-			}
-			print '</span></td></tr>';
+			print '</td><td>';
+			$html_name_status 	= ($action == 'edit_opp_status') ? 'opp_status' : 'none';
+			$html_name_percent 	= ($action == 'edit_opp_status') ? 'opp_percent' : 'none';
+			$percent_value = (GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ? vatrate($object->opp_percent) : ''));
+			$formproject->formOpportunityStatus($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->opp_status, $percent_value, $html_name_status, $html_name_percent);
+			print '</td></tr>';
 
 			// Opportunity Amount
 			print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
