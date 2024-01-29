@@ -558,6 +558,8 @@ class Account extends CommonObject
 	 */
 	public function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur = '', $banque = '', $accountancycode = '', $datev = null, $num_releve = '', $amount_main_currency = null)
 	{
+		global $langs;
+
 		// Deprecation warning
 		if (is_numeric($oper)) {
 			dol_syslog(__METHOD__.": using numeric operations is deprecated", LOG_WARNING);
@@ -590,11 +592,11 @@ class Account extends CommonObject
 
 		// Check parameters
 		if (!$oper) {
-			$this->error = "Operation code not defined";
+			$this->error = $langs->trans("OperNotDefined");
 			return -1;
 		}
 		if (!$this->id) {
-			$this->error = "this->id not defined";
+			$this->error = $langs->trans("ThisIdNotDefined");
 			return -2;
 		}
 		if ($this->courant == Account::TYPE_CASH && $oper != 'LIQ') {
@@ -1346,16 +1348,14 @@ class Account extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load the indicators this->nb for the state board
 	 *
 	 *		@param		int			$filteraccountid	To get info for a particular account id
 	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board($filteraccountid = 0)
+	public function loadStateBoard($filteraccountid = 0)
 	{
-		// phpcs:enable
 		global $user;
 
 		if ($user->socid) {
@@ -2092,7 +2092,7 @@ class AccountLine extends CommonObjectLine
 				$this->fk_user_rappro = $obj->fk_user_rappro;
 
 				$this->fk_type = $obj->fk_type; // Type of transaction
-				$this->rappro = $obj->rappro;
+				$this->rappro = (int) $obj->rappro;
 				$this->num_releve = $obj->num_releve;
 
 				$this->num_chq = $obj->num_chq;

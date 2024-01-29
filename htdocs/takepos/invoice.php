@@ -3,6 +3,7 @@
  * Copyright (C) 2018    	Andreu Bisquerra   	<jove@bisquerra.com>
  * Copyright (C) 2021    	Nicolas ZABOURI    	<info@inovea-conseil.com>
  * Copyright (C) 2022-2023	Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +83,7 @@ if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->la
 
 
 /**
- * Abort invoice creationg with a given error message
+ * Abort invoice creation with a given error message
  *
  * @param   string  $message        Message explaining the error to the user
  * @return	void
@@ -174,15 +175,15 @@ if (empty($reshook)) {
 		$error = 0;
 
 		if (getDolGlobalString('TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT')) {
-			$bankaccount = GETPOST('accountid', 'int');
+			$bankaccount = GETPOSTINT('accountid');
 		} else {
 			if ($pay == 'LIQ') {
-				$bankaccount = getDolGlobalString('CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]);            // For backward compatibility
+				$bankaccount = getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]);            // For backward compatibility
 			} elseif ($pay == "CHQ") {
-				$bankaccount = getDolGlobalString('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]);    // For backward compatibility
+				$bankaccount = getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]);    // For backward compatibility
 			} else {
 				$accountname = "CASHDESK_ID_BANKACCOUNT_".$pay.$_SESSION["takeposterminal"];
-				$bankaccount = getDolGlobalString($accountname);
+				$bankaccount = getDolGlobalInt($accountname);
 			}
 		}
 
@@ -434,7 +435,7 @@ if (empty($reshook)) {
 			$line->fk_parent_line = $fk_parent_line;
 
 			$line->subprice = -$line->subprice; // invert price for object
-			$line->pa_ht = $line->pa_ht; // we choosed to have buy/cost price always positive, so no revert of sign here
+			$line->pa_ht = $line->pa_ht; // we chose to have the buy/cost price always positive, so no inversion of the sign here
 			$line->total_ht = -$line->total_ht;
 			$line->total_tva = -$line->total_tva;
 			$line->total_ttc = -$line->total_ttc;
@@ -446,7 +447,7 @@ if (empty($reshook)) {
 			$line->multicurrency_total_tva = -$line->multicurrency_total_tva;
 			$line->multicurrency_total_ttc = -$line->multicurrency_total_ttc;
 
-			$result = $line->insert(0, 1); // When creating credit note with same lines than source, we must ignore error if discount alreayd linked
+			$result = $line->insert(0, 1); // When creating credit note with same lines than source, we must ignore error if discount already linked
 
 			$creditnote->lines[] = $line; // insert new line in current object
 
@@ -487,7 +488,7 @@ if (empty($reshook)) {
 
 	// If we add a line and no invoice yet, we create the invoice
 	if (($action == "addline" || $action == "freezone") && $placeid == 0 && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
-		$invoice->socid = getDolGlobalString($constforcompanyid);
+		$invoice->socid = getDolGlobalInt($constforcompanyid);
 		$invoice->date = dol_now('tzuserrel');		// We use the local date, only the day will be saved.
 		$invoice->module_source = 'takepos';
 		$invoice->pos_source =  isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' ;
@@ -618,7 +619,7 @@ if (empty($reshook)) {
 					} // If this line is sended to printer create new line
 					// check if qty in stock
 					if (getDolGlobalString('TAKEPOS_QTY_IN_STOCK') && (($line->qty + $qty) > $prod->stock_reel)) {
-						$invoice->error = $langs->trans('NotEnoughInStock');
+						$invoice->error = $langs->trans("ErrorStockIsNotEnough");
 						dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 						$err++;
 						break;
@@ -676,7 +677,7 @@ if (empty($reshook)) {
 
 				// check if qty in stock
 				if (getDolGlobalString('TAKEPOS_QTY_IN_STOCK') && $qty > $prod->stock_reel) {
-					$invoice->error = $langs->trans('NotEnoughInStock');
+					$invoice->error = $langs->trans("ErrorStockIsNotEnough");
 					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 					$err++;
 				}
@@ -766,7 +767,7 @@ if (empty($reshook)) {
 
 	// Action to delete or discard an invoice
 	if ($action == "delete" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
-		// $placeid is the invoice id (it differs from place) and is defined if the place is set and the ref of invoice is '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')', so the fetch at begining of page works.
+		// $placeid is the invoice id (it differs from place) and is defined if the place is set and the ref of invoice is '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')', so the fetch at beginning of page works.
 		if ($placeid > 0) {
 			$result = $invoice->fetch($placeid);
 
@@ -1287,12 +1288,15 @@ function TakeposConnector(id){
 	return true;
 }
 
+// Call the ajax to execute the print.
+// With some external module another method may be called.
 function DolibarrTakeposPrinting(id) {
-	console.log("DolibarrTakeposPrinting Printing invoice ticket " + id)
+	console.log("DolibarrTakeposPrinting Printing invoice ticket " + id);
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
 		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&token='.newToken().'&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
+
 	});
 	return true;
 }
@@ -1460,17 +1464,17 @@ $( document ).ready(function() {
 
 <?php
 if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
-		echo "function CustomerDisplay(){";
-		echo "var line1='".$CUSTOMER_DISPLAY_line1."'.substring(0,20);";
-		echo "line1=line1.padEnd(20);";
-		echo "var line2='".$CUSTOMER_DISPLAY_line2."'.substring(0,20);";
-		echo "line2=line2.padEnd(20);";
-		echo "$.ajax({
+	echo "function CustomerDisplay(){";
+	echo "var line1='".$CUSTOMER_DISPLAY_line1."'.substring(0,20);";
+	echo "line1=line1.padEnd(20);";
+	echo "var line2='".$CUSTOMER_DISPLAY_line2."'.substring(0,20);";
+	echo "line2=line2.padEnd(20);";
+	echo "$.ajax({
 		type: 'GET',
 		data: { text: line1+line2 },
 		url: '".getDolGlobalString('TAKEPOS_PRINT_SERVER')."/display/index.php',
 	});";
-		echo "}";
+	echo "}";
 }
 ?>
 

@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/bookcal/booking_list.php
  *	\ingroup    bookcal
- *	\brief      Management of direct debit order or credit tranfer of invoices
+ *	\brief      Management of direct debit order or credit transfer of invoices
  */
 
 // Load Dolibarr environment

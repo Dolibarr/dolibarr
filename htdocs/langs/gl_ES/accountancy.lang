@@ -90,13 +90,13 @@ AccountancyAreaDescProd=PASO %s: define as contas de contabilidade nos seus prod
 
 AccountancyAreaDescBind=PASO %s: Mire que as ligazóns entre as liñas %s existentes e as contas contables son correctos, para que a aplicación poda rexistrar as transaccións no Libro Maior nun só clic. Complete as ligazóns que falten. Para iso, utilice a entrada de menú %s.
 AccountancyAreaDescWriteRecords=PASO %s: Escribir as transaccións no Libro Maior. Para iso, entre no menú <strong>%s</strong>, e faga clic no botón <strong>%s</strong>.
-AccountancyAreaDescAnalyze=PASO %s: Engadir ou editar transaccións existentes, xerar informes e exportacións.
-
-AccountancyAreaDescClosePeriod=PASO %s: Pechar periodo, polo que non poderá facer modificacións nun futuro.
+AccountancyAreaDescAnalyze=PASO %s: ler informes ou xerar ficheiros de exportación para outras contanilidades.
+AccountancyAreaDescClosePeriod=PASO %s: Pecha o período para que non poidamos transferir máis datos do mesmo período nun futuro.
 
 TheFiscalPeriodIsNotDefined=Non se completou un paso obrigatorio na configuración (o período fiscal non está definido)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Non foi completado un paso obrigatorio na configuración (conta contable non definida en todas as contas bancarias)
 Selectchartofaccounts=Seleccione un plan contable activo
+CurrentChartOfAccount=Plan contable activo actualmente
 ChangeAndLoad=Cambiar e cargar
 Addanaccount=Engadir unha conta contable
 AccountAccounting=Conta contable
@@ -343,7 +343,7 @@ AccountingJournalType3=Compras
 AccountingJournalType4=Banco
 AccountingJournalType5=Informes de gastos
 AccountingJournalType8=Inventario
-AccountingJournalType9=Retained earnings
+AccountingJournalType9=Garantías retidas
 GenerationOfAccountingEntries=Xeración de asentos contables
 ErrorAccountingJournalIsAlreadyUse=Este diario xa está a ser utilizado
 AccountingAccountForSalesTaxAreDefinedInto=Nota: A conta contable do IVE nas vendas defínese no menú <b> %s</b> - <b> %s</b>
@@ -447,15 +447,15 @@ AccountancyUnletteringModifiedSuccessfully=%s desconciliación modificada correc
 
 ## Closure
 AccountancyClosureStep1=Paso 1: validar e bloquear os movementos
-AccountancyClosureStep2=Paso 2: peche do período fiscal
+AccountancyClosureStep2=Paso 2: Peche do período fiscal
 AccountancyClosureStep3=Paso 3: extraer entradas (opcional)
 AccountancyClosureClose=Pechar período fiscal
-AccountancyClosureAccountingReversal=Extract and record "Retained earnings" entries
+AccountancyClosureAccountingReversal=Extraeres e rexistrar as entradas de "Garantíass retidas".
 AccountancyClosureStep3NewFiscalPeriod=Próximo período fiscal
-AccountancyClosureGenerateClosureBookkeepingRecords=Generate "Retained earnings" entries on the next fiscal period
-AccountancyClosureSeparateAuxiliaryAccounts=When generating the "Retained earnings" entries, detail the sub-ledger accounts
+AccountancyClosureGenerateClosureBookkeepingRecords=Xera as entradas de "Garantías retidas" no vindeiro período fiscal
+AccountancyClosureSeparateAuxiliaryAccounts=Ao xerar as entradas de "Garantías retidas", detalle as contas do Libro Maior
 AccountancyClosureCloseSuccessfully=O período fiscal pechouse con éxito
-AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping entries for "Retained earnings" has been inserted successfully
+AccountancyClosureInsertAccountingReversalSuccessfully=Inseríronse correctamente as entradas de contabilidade para "Garantías retidas".
 
 ## Confirm box
 ConfirmMassUnletteringAuto=Confirmación masiva de desconciliación automática
@@ -464,7 +464,7 @@ ConfirmMassUnletteringQuestion=Esta certo de querer anular a conciliación do(s)
 ConfirmMassDeleteBookkeepingWriting=Confirmación borrado masivo
 ConfirmMassDeleteBookkeepingWritingQuestion=Isto eliminará a transacción da contabilidade (eliminaranse todas as entradas de liña relacionadas coa mesma transacción). Está certo de querer eliminar as entradas seleccionadas %s?
 AccountancyClosureConfirmClose=Está certo de querer pechar o período fiscal actual? <span class="warning">Entendes que pechar o período fiscal é unha acción irreversible e que bloqueará permanentemente calquera modificación ou eliminación de entradas durante este período</span> .
-AccountancyClosureConfirmAccountingReversal=Are you sure you want to record entries for the "Retained earnings" ?
+AccountancyClosureConfirmAccountingReversal=Está certo de querer rexistrar as entradas para as "Garantías retidas"?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Algúns pasos precisos da configuración non foron realizados, prégase completalos.

@@ -236,24 +236,24 @@ class Propal extends CommonObject
 	public $address;
 
 	/**
-	 * @var int availabilty ID
+	 * @var int availability ID
 	 */
 	public $availability_id;
 
 	/**
-	 * @var int availabilty ID
+	 * @var int availability ID
 	 * @deprecated
 	 * @see $availability_id
 	 */
 	public $fk_availability;
 
 	/**
-	 * @var string availabilty code
+	 * @var string availability code
 	 */
 	public $availability_code;
 
 	/**
-	 * @var string availabilty label
+	 * @var string availability label
 	 */
 	public $availability;
 
@@ -304,7 +304,7 @@ class Propal extends CommonObject
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
 	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
@@ -430,7 +430,7 @@ class Propal extends CommonObject
 	 * 	@param  int		$remise_percent  	Discount effected on Product
 	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 *
-	 *	TODO	Replace calls to this function by generation objet Ligne
+	 *	TODO	Replace calls to this function by generation object Ligne
 	 */
 	public function add_product($idproduct, $qty, $remise_percent = 0)
 	{
@@ -786,7 +786,7 @@ class Propal extends CommonObject
 					}
 				}
 
-				// Mise a jour informations denormalisees au niveau de la propale meme
+				// Mise a jour information denormalisees au niveau de la propale meme
 				if (empty($noupdateafterinsertline)) {
 					$result = $this->update_price(1, 'auto', 0, $mysoc); // This method is designed to add line from user input so total calculation must be done using 'auto' mode.
 				}
@@ -824,7 +824,7 @@ class Propal extends CommonObject
 	 *  @param	  	float		$txlocaltax2		Local tax 2 rate
 	 *  @param      string		$desc            	Description
 	 *	@param	  	string		$price_base_type	HT or TTC
-	 *	@param      int			$info_bits        	Miscellaneous informations
+	 *	@param      int			$info_bits        	Miscellaneous information
 	 *	@param		int			$special_code		Special code (also used by externals modules!)
 	 * 	@param		int			$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
 	 * 	@param		int			$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
@@ -1614,7 +1614,7 @@ class Propal extends CommonObject
 			}
 			$sql .= " AND p.ref='".$this->db->escape($ref)."'";
 		} else {
-			// Dont't use entity if you use rowid
+			// Don't use entity if you use rowid
 			$sql .= " WHERE p.rowid = ".((int) $rowid);
 		}
 
@@ -1987,7 +1987,7 @@ class Propal extends CommonObject
 
 		// Protection
 		if ($this->statut == self::STATUS_VALIDATED) {
-			dol_syslog(get_class($this)."::valid action abandonned: already validated", LOG_WARNING);
+			dol_syslog(get_class($this)."::valid action abandoned: already validated", LOG_WARNING);
 			return 0;
 		}
 
@@ -2981,7 +2981,7 @@ class Propal extends CommonObject
 	 *    @param	int		$shortlist			0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref,name=>name)
 	 *    @param	int		$draft				0=not draft, 1=draft
 	 *    @param	int		$notcurrentuser		0=all user, 1=not current user
-	 *    @param    int		$socid				Id third pary
+	 *    @param    int		$socid				Id third party
 	 *    @param    int		$limit				For pagination
 	 *    @param    int		$offset				For pagination
 	 *    @param    string	$sortfield			Sort criteria
@@ -3082,14 +3082,14 @@ class Propal extends CommonObject
 
 		$this->fetchObjectLinked($id, $this->element);
 		foreach ($this->linkedObjectsIds as $objecttype => $objectid) {
-			// Nouveau système du comon object renvoi des rowid et non un id linéaire de 1 à n
+			// Nouveau système du common object renvoi des rowid et non un id linéaire de 1 à n
 			// On parcourt donc une liste d'objets en tant qu'objet unique
 			foreach ($objectid as $key => $object) {
 				// Cas des factures liees directement
 				if ($objecttype == 'facture') {
 					$linkedInvoices[] = $object;
 				} else {
-					// Cas des factures liees par un autre objet (ex: commande)
+					// Cas des factures liees par un autre object (ex: commande)
 					$this->fetchObjectLinked($object, $objecttype);
 					foreach ($this->linkedObjectsIds as $subobjecttype => $subobjectid) {
 						foreach ($subobjectid as $subkey => $subobject) {
@@ -3623,7 +3623,7 @@ class Propal extends CommonObject
 			}
 		}
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->ref_client = 'NEMICEPS';
@@ -3685,15 +3685,13 @@ class Propal extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Charge indicateurs this->nb de tableau de bord
+	 *      Load the indicators this->nb for the state board
 	 *
 	 *      @return     int         Return integer <0 if ko, >0 if ok
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $user;
 
 		$this->nb = array();
@@ -3763,7 +3761,7 @@ class Propal extends CommonObject
 			}
 
 			if (!$mybool) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -3854,7 +3852,7 @@ class Propal extends CommonObject
 	 *
 	 *	@param      int		$withpicto		          Add picto into link
 	 *	@param      string	$option			          Where point the link ('expedition', 'document', ...)
-	 *	@param      string	$get_params    	          Parametres added to url
+	 *	@param      string	$get_params    	          Parameters added to url
 	 *  @param	    int   	$notooltip		          1=Disable tooltip
 	 *  @param      int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @param      int     $addlinktonotes           -1=Disable, 0=Just add label show notes, 1=Add private note (only internal user), 2=Add public note (internal or external user), 3=Add private (internal user) and public note (internal and external user)
@@ -4156,14 +4154,14 @@ class PropaleLigne extends CommonObjectLine
 	public $marge_tx;
 	public $marque_tx;
 
-	public $special_code; // Tag for special lines (exlusive tags)
+	public $special_code; // Tag for special lines (exclusive tags)
 	// 1: frais de port
 	// 2: ecotaxe
 	// 3: option line (when qty = 0)
 
 	public $info_bits = 0; // Some other info:
-	// Bit 0: 	0 si TVA normal - 1 si TVA NPR
-	// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
+	// Bit 0: 	0 si TVA normal - 1 if TVA NPR
+	// Bit 1:	0 ligne normal - 1 if line with fixed discount
 
 	public $total_ht; // Total HT  de la ligne toute quantite et incluant la remise ligne
 	public $total_tva; // Total TVA  de la ligne toute quantite et incluant la remise ligne
@@ -4246,7 +4244,7 @@ class PropaleLigne extends CommonObjectLine
 
 
 	/**
-	 * 	Class line Contructor
+	 * 	Class line Constructor
 	 *
 	 * 	@param	DoliDB	$db	Database handler
 	 */

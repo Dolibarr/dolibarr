@@ -559,7 +559,7 @@ class PaymentExpenseReport extends CommonObject
 			);
 
 			// Update fk_bank in llx_paiement.
-			// So we wil know the payment that have generated the bank transaction
+			// So we will know the payment that has generated the bank transaction
 			if ($bank_line_id > 0) {
 				$result = $this->update_fk_bank($bank_line_id);
 				if ($result <= 0) {

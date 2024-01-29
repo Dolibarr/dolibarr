@@ -70,7 +70,8 @@ class Categories extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
+
 		$this->db = $db;
 		$this->category = new Categorie($this->db);
 	}
@@ -78,7 +79,7 @@ class Categories extends DolibarrApi
 	/**
 	 * Get properties of a category object
 	 *
-	 * Return an array with category informations
+	 * Return an array with category information
 	 *
 	 * @param	int		$id ID of category
 	 * @param	bool	$include_childs Include child categories list (true or false)
@@ -126,15 +127,13 @@ class Categories extends DolibarrApi
 	 * @param int		$page		Page number
 	 * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of category objects
 	 *
 	 * @throws RestException
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->rights->categorie->lire) {
@@ -198,12 +197,12 @@ class Categories extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		// Check mandatory fields
-		$result = $this->_validate($request_data);
+		// Check mandatory fields (throw an exception if wrong)
+		$this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->category->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -243,7 +242,7 @@ class Categories extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->category->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -666,15 +665,15 @@ class Categories extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   Categorie  $object    Object to clean
-	 * @return  Object     Object with cleaned properties
+	 * @param   Categorie  $object  Object to clean
+	 * @return  Object     			Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
 
-		// Remove fields not relevent to categories
+		// Remove fields not relevant to categories
 		unset($object->MAP_CAT_FK);
 		unset($object->MAP_CAT_TABLE);
 		unset($object->MAP_OBJ_CLASS);
@@ -722,8 +721,8 @@ class Categories extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param array|null    $data    Data to validate
-	 * @return array
+	 * @param array|null    $data   Data to validate
+	 * @return array				Return array with validated mandatory fields and their value
 	 *
 	 * @throws RestException
 	 */

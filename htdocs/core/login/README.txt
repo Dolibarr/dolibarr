@@ -1,6 +1,6 @@
-README (english)
+README (English)
 ---------------------------------------------
-Decription of htdocs/core/login directory
+Description of htdocs/core/login directory
 ---------------------------------------------
 
 This directory contains files that handle the way to validate passwords.

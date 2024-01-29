@@ -223,7 +223,7 @@ if ($action == "setvatinlist") {
 	}
 }
 
-//Activate Set adress in list
+//Activate Set address in list
 if ($action == "setaddadressinlist") {
 	$val = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "COMPANY_SHOW_ADDRESS_SELECTLIST", $val, 'yesno', 0, '', $conf->entity);

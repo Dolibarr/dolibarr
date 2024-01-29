@@ -52,6 +52,9 @@ $error = 0;
 $forcecommit = 0;
 $confirmed = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */
@@ -192,7 +195,7 @@ if ($result >= 0) {
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_MEMBER_ACTIVE = 0;
 
-	$ldaprecords = $ldap->getRecords('*', getDolGlobalString('LDAP_MEMBER_DN'), getDolGlobalString('LDAP_KEY_MEMBERS'), $required_fields, 'member'); // Fiter on 'member' filter param
+	$ldaprecords = $ldap->getRecords('*', getDolGlobalString('LDAP_MEMBER_DN'), getDolGlobalString('LDAP_KEY_MEMBERS'), $required_fields, 'member'); // Filter on 'member' filter param
 	if (is_array($ldaprecords)) {
 		$db->begin();
 
@@ -304,11 +307,11 @@ if ($result >= 0) {
 		}
 		print "\n";
 	} else {
-		dol_print_error('', $ldap->error);
+		dol_print_error(null, $ldap->error);
 		$error++;
 	}
 } else {
-	dol_print_error('', $ldap->error);
+	dol_print_error(null, $ldap->error);
 	$error++;
 }
 

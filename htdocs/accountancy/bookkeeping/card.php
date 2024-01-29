@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2017  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2017  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -43,9 +43,9 @@ $cancel = GETPOST('cancel', 'aZ09');
 
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
-$id = GETPOST('id', 'int'); // id of record
+$id = GETPOSTINT('id'); // id of record
 $mode = GETPOST('mode', 'aZ09'); // '' or '_tmp'
-$piece_num = GETPOST("piece_num", 'int'); // id of transaction (several lines share the same transaction id)
+$piece_num = GETPOSTINT("piece_num"); // id of transaction (several lines share the same transaction id)
 
 $accountingaccount = new AccountingAccount($db);
 $accountingjournal = new AccountingJournal($db);
@@ -65,8 +65,8 @@ if ($subledger_account == -1) {
 $subledger_label = GETPOST('subledger_label', 'alphanohtml');
 
 $label_operation = GETPOST('label_operation', 'alphanohtml');
-$debit = price2num(GETPOST('debit', 'alpha'));
-$credit = price2num(GETPOST('credit', 'alpha'));
+$debit = (float) price2num(GETPOST('debit', 'alpha'));
+$credit = (float) price2num(GETPOST('credit', 'alpha'));
 
 $save = GETPOST('save', 'alpha');
 if (!empty($save)) {
@@ -252,7 +252,7 @@ if ($action == "confirm_update") {
 		$object->credit = 0;
 		$object->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
 		$object->doc_type = GETPOST('doc_type', 'alpha');
-		$object->piece_num = GETPOST('next_num_mvt', 'alpha');
+		$object->piece_num = GETPOSTINT('next_num_mvt');
 		$object->doc_ref = GETPOST('doc_ref', 'alpha');
 		$object->code_journal = $journal_code;
 		$object->journal_label = $journal_label;
@@ -334,8 +334,8 @@ $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
 $title = $langs->trans("CreateMvts");
-
-llxHeader('', $title);
+$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double';
+llxHeader('', $title, $help_url);
 
 // Confirmation to delete the command
 if ($action == 'delete') {
@@ -350,7 +350,7 @@ if ($action == 'create') {
 	$next_num_mvt = $object->getNextNumMvt('_tmp');
 
 	if (empty($next_num_mvt)) {
-		dol_print_error('', 'Failed to get next piece number');
+		dol_print_error(null, 'Failed to get next piece number');
 	}
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" name="create_mvt" method="POST">';
@@ -663,7 +663,7 @@ if ($action == 'create') {
 				if (!empty($object->linesmvt[0])) {
 					$tmpline = $object->linesmvt[0];
 					if (!empty($tmpline->numero_compte)) {
-						$line = new BookKeepingLine();
+						$line = new BookKeepingLine($db);
 						$object->linesmvt[] = $line;
 					}
 				}

@@ -3,7 +3,7 @@
  * Copyright (C) 2018-2021 Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2018 	   Juanjo Menent  <jmenent@2byte.es>
  * Copyright (C) 2019 	   Ferran Marcet  <fmarcet@2byte.es>
- * Copyright (C) 2019-2021 Frédéric France <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024 Frédéric France <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -319,7 +319,7 @@ if (!$error && $massaction == 'confirm_presend') {
 
 				if (empty($sendto)) {
 					if ($objectobj->element == 'societe') {
-						$objectobj->thirdparty = $objectobj; // Hack so following code is comaptible when objectobj is a thirdparty
+						$objectobj->thirdparty = $objectobj; // Hack so following code is compatible when objectobj is a thirdparty
 					}
 
 					//print "No recipient for thirdparty ".$objectobj->thirdparty->name;
@@ -334,7 +334,7 @@ if (!$error && $massaction == 'confirm_presend') {
 
 				if (GETPOST('addmaindocfile')) {
 					// TODO Use future field $objectobj->fullpathdoc to know where is stored default file
-					// TODO If not defined, use $objectobj->model_pdf (or defaut invoice config) to know what is template to use to regenerate doc.
+					// TODO If not defined, use $objectobj->model_pdf (or default invoice config) to know what is template to use to regenerate doc.
 					$filename = dol_sanitizeFileName($objectobj->ref).'.pdf';
 					$subdir = '';
 					// TODO Set subdir to be compatible with multi levels dir trees
@@ -674,7 +674,7 @@ if (!$error && $massaction == 'confirm_presend') {
 		$resaction .= $langs->trans("NbSent").': '.($nbsent ? $nbsent : 0)."\n<br>";
 
 		if ($nbsent) {
-			$action = ''; // Do not show form post if there was at least one successfull sent
+			$action = ''; // Do not show form post if there was at least one successful sent
 			//setEventMessages($langs->trans("EMailSentToNRecipients", $nbsent.'/'.count($toselect)), null, 'mesgs');
 			setEventMessages($langs->trans("EMailSentForNElements", $nbsent.'/'.count($toselect)), null, 'mesgs');
 			setEventMessages($resaction, null, 'mesgs');
@@ -1034,11 +1034,8 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 		} else {
 			$db->rollback();
 		}
-		//var_dump($listofobjectthirdparties);exit;
 	}
 }
-
-//var_dump($_POST);var_dump($massaction);exit;
 
 // Delete record from mass action (massaction = 'delete' for direct delete, action/confirm='delete'/'yes' with a confirmation step before)
 if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 'yes')) && $permissiontodelete) {
@@ -1085,9 +1082,14 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 				}
 			}
 
-			if (in_array($objecttmp->element, array('societe', 'member'))) {
+			if ($objecttmp->element == 'societe') {
+				/** @var Societe $objecttmp */
 				$result = $objecttmp->delete($objecttmp->id, $user, 1);
-			} elseif (in_array($objecttmp->element, array('action'))) {
+			} elseif ($objecttmp->element == 'member') {
+				/** @var Adherent $objecttmp */
+				$result = $objecttmp->delete($objecttmp->id, $user, 0);
+			} elseif ($objecttmp->element == 'action') {
+				/** @var ActionComm $objecttmp */
 				$result = $objecttmp->delete();	// TODO Add User $user as first param
 			} else {
 				$result = $objecttmp->delete($user);
@@ -1215,7 +1217,7 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 		setEventMessage('CategTypeNotFound', 'errors');
 	}
 	if (!empty($affecttag_type_array)) {
-		//check if tag type submited exists into Tag Map categorie class
+		//check if tag type submitted exists into Tag Map categorie class
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$categ = new Categorie($db);
 		$to_affecttag_type_array=array();
@@ -1586,7 +1588,7 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 
 				// If no SQL error, we redirect to the request form
 				if (!$error) {
-					// Calculcate number of days consumed
+					// Calculate number of days consumed
 					$nbopenedday = num_open_day($objecttmp->date_debut_gmt, $objecttmp->date_fin_gmt, 0, 1, $objecttmp->halfday);
 					$soldeActuel = $objecttmp->getCpforUser($objecttmp->fk_user, $objecttmp->fk_type);
 					$newSolde = ($soldeActuel - $nbopenedday);
@@ -1749,7 +1751,7 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 		}
 
 		if (!$error) {
-			$clone_task->fk_project = GETPOST('projectid', 'int');
+			$clone_task->fk_project = GETPOSTINT('projectid');
 			$clone_task->ref = $defaultref;
 			$clone_task->label = $origin_task->label;
 			$clone_task->description = $origin_task->description;

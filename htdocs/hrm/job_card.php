@@ -61,7 +61,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -166,7 +166,8 @@ if (empty($reshook)) {
 		$object->fetch($id);
 		$skillRequire = $object->getSkillRankForJob($originalId);
 		if ($object->id > 0) {
-			$object->id = $object->ref = null;
+			$object->id = 0;
+			$object->ref = '';
 
 			if (GETPOST('clone_label', 'alphanohtml')) {
 				$object->label = GETPOST('clone_label', 'alphanohtml');

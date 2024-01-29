@@ -96,7 +96,7 @@ if ($action == 'convert') {
 			if ($vat_src_code_old) {
 				$sql .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
 			} else {
-				" AND default_vat_code = IS NULL";
+				$sql .= " AND default_vat_code = IS NULL";
 			}
 
 			$resql = $db->query($sql);

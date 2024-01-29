@@ -21,7 +21,7 @@
 /**
  * \file scripts/user/sync_users_dolibarr2ldap.php
  * \ingroup ldap core
- * \brief Script de mise a jour des users dans LDAP depuis base Dolibarr
+ * \brief Script to update users in LDAP from Dolibarr DB
  */
 
 if (!defined('NOSESSION')) {
@@ -51,6 +51,9 @@ require_once DOL_DOCUMENT_ROOT."/user/class/user.class.php";
 // Global variables
 $version = DOL_VERSION;
 $error = 0;
+
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main
@@ -96,7 +99,7 @@ if ($resql) {
 		$info = $fuser->_load_ldap_info();
 		$dn = $fuser->_load_ldap_dn($info);
 
-		$result = $ldap->add($dn, $info, $user); // Wil fail if already exists
+		$result = $ldap->add($dn, $info, $user); // Will fail if already exists
 		$result = $ldap->update($dn, $info, $user, $olddn);
 		if ($result > 0) {
 			print " - ".$langs->trans("OK");

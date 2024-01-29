@@ -235,6 +235,25 @@ function isModEnabled($module)
 }
 
 /**
+ * isDolTms check if a timestamp is valid.
+ *
+ * @param  int|string|null $timestamp timestamp to check
+ * @return bool
+ */
+function isDolTms($timestamp)
+{
+	if ($timestamp === '') {
+		dol_syslog('Using empty string for a timestamp is deprecated, prefer use of null when calling page '.$_SERVER["PHP_SELF"], LOG_NOTICE);
+		return false;
+	}
+	if (is_null($timestamp) || !is_numeric($timestamp)) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
  * Return a DoliDB instance (database handler).
  *
  * @param   string	$type		Type of database (mysql, pgsql...)
@@ -250,8 +269,8 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
 	require_once DOL_DOCUMENT_ROOT."/core/db/".$type.'.class.php';
 
 	$class = 'DoliDB'.ucfirst($type);
-	$dolidb = new $class($type, $host, $user, $pass, $name, $port);
-	return $dolidb;
+	$db = new $class($type, $host, $user, $pass, $name, $port);
+	return $db;
 }
 
 /**
@@ -927,17 +946,32 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 }
 
 /**
- *  Return value of a param into GET or POST supervariable.
+ *  Return the value of a $_GET or $_POST supervariable, converted into integer.
  *  Use the property $user->default_values[path]['creatform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
  *  Note: The property $user->default_values is loaded by main.php when loading the user.
  *
- *  @param  string  $paramname   Name of parameter to found
- *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
- *  @return int                  Value found (int)
+ *  @param  string  $paramname   Name of the $_GET or $_POST parameter
+ *  @param  int     $method      Type of method (0 = $_GET then $_POST, 1 = only $_GET, 2 = only $_POST, 3 = $_POST then $_GET)
+ *  @return int                  Value converted into integer
  */
 function GETPOSTINT($paramname, $method = 0)
 {
 	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
+}
+
+
+/**
+ *  Return the value of a $_GET or $_POST supervariable, converted into float.
+ *
+ *  @param  string          $paramname      Name of the $_GET or $_POST parameter
+ *  @param  string|int      $rounding       Type of rounding ('', 'MU', 'MT, 'MS', 'CU', 'CT', integer) {@see price2num()}
+ *  @return float                           Value converted into float
+ *  @since	Dolibarr V20
+ */
+function GETPOSTFLOAT($paramname, $rounding = '')
+{
+	// price2num() is used to sanitize any valid user input (such as "1 234.5", "1 234,5", "1'234,5", "1·234,5", "1,234.5", etc.)
+	return (float) price2num(GETPOST($paramname), $rounding, 2);
 }
 
 
@@ -1072,7 +1106,8 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 			}
 			break;
 		default:
-			dol_syslog("Error, you call sanitizeVal() with a bad value for the check type. Data can't be sanitized.", LOG_ERR);
+			dol_syslog("Error, you call sanitizeVal() with a bad value for the check type. Data will be sanitized with alphanohtml.", LOG_ERR);
+			$out = GETPOST($out, 'alphanohtml');
 			break;
 	}
 
@@ -1351,6 +1386,7 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 	$tmp = str_replace('..', '', $tmp);
 	return $tmp;
 }
+
 
 /**
  *	Clean a string to use it as a path name. Similare to dol_sanitizeFileName but accept / and \ chars.
@@ -2686,7 +2722,7 @@ function dol_bc($var, $moreclass = '')
  *      @return string						Formatted string
  *      @see dol_print_address()
  */
-function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs = '', $mode = 0, $extralangcode = '')
+function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs = null, $mode = 0, $extralangcode = '')
 {
 	global $conf, $langs, $hookmanager;
 
@@ -2775,15 +2811,15 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
  *
  *	@param	string	$fmt		Format of strftime function (http://php.net/manual/fr/function.strftime.php)
  *  @param	int		$ts			Timestamp (If is_gmt is true, timestamp is already includes timezone and daylight saving offset, if is_gmt is false, timestamp is a GMT timestamp and we must compensate with server PHP TZ)
- *  @param	int		$is_gmt		See comment of timestamp parameter
+ *  @param	bool	$is_gmt		See comment of timestamp parameter
  *	@return	string				A formatted string
  */
 function dol_strftime($fmt, $ts = false, $is_gmt = false)
 {
 	if ((abs($ts) <= 0x7FFFFFFF)) { // check if number in 32-bit signed range
-		return ($is_gmt) ? @gmstrftime($fmt, $ts) : @strftime($fmt, $ts);
+		return dol_print_date($ts, $fmt, $is_gmt);
 	} else {
-		return 'Error date into a not supported range';
+		return 'Error date outside supported range';
 	}
 }
 
@@ -2798,7 +2834,7 @@ function dol_strftime($fmt, $ts = false, $is_gmt = false)
  *										"%d/%m/%Y %H:%M:%S",
  *                                      "%B"=Long text of month, "%A"=Long text of day, "%b"=Short text of month, "%a"=Short text of day
  *										"day", "daytext", "dayhour", "dayhourldap", "dayhourtext", "dayrfc", "dayhourrfc", "...inputnoreduce", "...reduceformat"
- * 	@param	string		$tzoutput		true or 'gmt' => string is for Greenwich location
+ * 	@param	string|bool	$tzoutput		true or 'gmt' => string is for Greenwich location
  * 										false or 'tzserver' => output string is for local PHP server TZ usage
  * 										'tzuser' => output string is for user TZ (current browser TZ with current dst) => In a future, we should have same behaviour than 'tzuserrel'
  *                                      'tzuserrel' => output string is for user TZ (current browser TZ with dst or not, depending on date position)
@@ -2808,7 +2844,7 @@ function dol_strftime($fmt, $ts = false, $is_gmt = false)
  *
  *  @see        dol_mktime(), dol_stringtotime(), dol_getdate(), selectDate()
  */
-function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = '', $encodetooutput = false)
+function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = null, $encodetooutput = false)
 {
 	global $conf, $langs;
 
@@ -2926,7 +2962,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	// Analyze date
 	$reg = array();
 	if (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg)) {	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
-		dol_print_error('', "Functions.lib::dol_print_date function called with a bad value from page ".(empty($_SERVER["PHP_SELF"]) ? 'unknown' : $_SERVER["PHP_SELF"]));
+		dol_print_error(null, "Functions.lib::dol_print_date function called with a bad value from page ".(empty($_SERVER["PHP_SELF"]) ? 'unknown' : $_SERVER["PHP_SELF"]));
 		return '';
 	} elseif (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $time, $reg)) {    // Still available to solve problems in extrafields of type date
 		// This part of code should not be used anymore.
@@ -3104,7 +3140,7 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
  *										'tzuserrel' = local to user TZ taking dst into account at the given date. Use this one to convert date input from user into a GMT date.
  *										'tz,TimeZone' = use specified timezone
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
- *	@return	int|string					Date as a timestamp, '' or false if error
+ *	@return	int|string					Date as a timestamp, '' if error
  * 	@see 								dol_print_date(), dol_stringtotime(), dol_getdate()
  */
 function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', $check = 1)
@@ -4002,7 +4038,7 @@ function dol_user_country()
  *
  *  @param	string	$address    Address string, already formatted with dol_format_address()
  *  @param  int		$htmlid     Html ID (for example 'gmap')
- *  @param  int		$element    'thirdparty'|'contact'|'member'|'other'
+ *  @param  int		$element    'thirdparty'|'contact'|'member'|'user'|'other'
  *  @param  int		$id         Id of object
  *  @param	int		$noprint	No output. Result is the function return
  *  @param  string  $charfornl  Char to use instead of nl2br. '' means we use a standad nl2br.
@@ -4039,6 +4075,9 @@ function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $char
 			if ($element == 'member' && isModEnabled('google') && getDolGlobalString('GOOGLE_ENABLE_GMAPS_MEMBERS')) {
 				$showgmap = 1;
 			}
+			if ($element == 'user' && isModEnabled('google') && getDolGlobalString('GOOGLE_ENABLE_GMAPS_USERS')) {
+				$showgmap = 1;
+			}
 			if (($element == 'thirdparty' || $element == 'societe') && isModEnabled('openstreetmap') && getDolGlobalString('OPENSTREETMAP_ENABLE_MAPS')) {
 				$showomap = 1;
 			}
@@ -4046,6 +4085,9 @@ function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $char
 				$showomap = 1;
 			}
 			if ($element == 'member' && isModEnabled('openstreetmap') && getDolGlobalString('OPENSTREETMAP_ENABLE_MAPS_MEMBERS')) {
+				$showomap = 1;
+			}
+			if ($element == 'user' && isModEnabled('openstreetmap') && getDolGlobalString('OPENSTREETMAP_ENABLE_MAPS_USERS')) {
 				$showomap = 1;
 			}
 			if ($showgmap) {
@@ -4346,7 +4388,7 @@ function getPictoForType($key)
  */
 function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2)
 {
-	global $conf, $langs;
+	global $conf;
 
 	// We forge fullpathpicto for image to $path/img/$picto. By default, we take DOL_URL_ROOT/theme/$conf->theme/img/$picto
 	$url = DOL_URL_ROOT;
@@ -4455,7 +4497,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
 				'uncheck', 'url', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
 				'conferenceorbooth', 'eventorganization',
-				'stamp', 'signature'
+				'stamp', 'signature',
+				'webportal'
 			))) {
 			$fakey = $pictowithouttext;
 			$facolor = '';
@@ -4507,7 +4550,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'uncheck'=>'times', 'uparrow'=>'share', 'url'=>'external-link-alt', 'vat'=>'money-check-alt', 'vcard'=>'arrow-alt-circle-down',
 				'jabber'=>'comment-o',
 				'website'=>'globe-americas', 'workstation'=>'pallet', 'webhook'=>'bullseye', 'world'=>'globe', 'private'=>'user-lock',
-				'conferenceorbooth'=>'chalkboard-teacher', 'eventorganization'=>'project-diagram'
+				'conferenceorbooth'=>'chalkboard-teacher', 'eventorganization'=>'project-diagram',
+				'webportal'=>'door-open'
 			);
 			if ($conf->currency == 'EUR') {
 				$arrayconvpictotofa['currency'] = 'euro-sign';
@@ -5326,13 +5370,13 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
  *  This function must be called when a blocking technical error is encountered.
  *  However, one must try to call it only within php pages, classes must return their error through their property "error".
  *
- *	@param	 	DoliDB|string   $db      	Database handler
+ *	@param	 	DoliDB|null     $db      	Database handler
  *	@param  	string|string[] $error		String or array of errors strings to show
- *  @param		array           $errors		Array of errors
+ *  @param		string[]|null   $errors		Array of errors
  *	@return 	void
  *  @see    	dol_htmloutput_errors()
  */
-function dol_print_error($db = '', $error = '', $errors = null)
+function dol_print_error($db = null, $error = '', $errors = null)
 {
 	global $conf, $langs, $argv;
 	global $dolibarr_main_prod;
@@ -5833,11 +5877,11 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 			if ($cpt >= 1) {
 				if (empty($pagenavastextinput)) {
-					$pagelist .= '<li class="pagination"><a href="'.$file.'?page=0'.$options.'">1</a></li>';
+					$pagelist .= '<li class="pagination"><a class="reposition" href="'.$file.'?page=0'.$options.'">1</a></li>';
 					if ($cpt > 2) {
 						$pagelist .= '<li class="pagination"><span class="inactive">...</span></li>';
 					} elseif ($cpt == 2) {
-						$pagelist .= '<li class="pagination"><a href="'.$file.'?page=1'.$options.'">2</a></li>';
+						$pagelist .= '<li class="pagination"><a class="reposition" href="'.$file.'?page=1'.$options.'">2</a></li>';
 					}
 				}
 			}
@@ -5852,7 +5896,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 					if ($cpt == $page) {
 						$pagelist .= '<li class="pagination"><span class="active">'.($page + 1).'</span></li>';
 					} else {
-						$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.$cpt.$options.'">'.($cpt + 1).'</a></li>';
+						$pagelist .= '<li class="pagination"><a class="reposition" href="'.$file.'?page='.$cpt.$options.'">'.($cpt + 1).'</a></li>';
 					}
 				}
 				$cpt++;
@@ -5863,13 +5907,13 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 					if ($cpt < $nbpages - 2) {
 						$pagelist .= '<li class="pagination"><span class="inactive">...</span></li>';
 					} elseif ($cpt == $nbpages - 2) {
-						$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.($nbpages - 2).$options.'">'.($nbpages - 1).'</a></li>';
+						$pagelist .= '<li class="pagination"><a class="reposition" href="'.$file.'?page='.($nbpages - 2).$options.'">'.($nbpages - 1).'</a></li>';
 					}
-					$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.($nbpages - 1).$options.'">'.$nbpages.'</a></li>';
+					$pagelist .= '<li class="pagination"><a class="reposition" href="'.$file.'?page='.($nbpages - 1).$options.'">'.$nbpages.'</a></li>';
 				}
 			} else {
 				//var_dump($page.' '.$cpt.' '.$nbpages);
-				$pagelist .= '<li class="pagination paginationlastpage"><a href="'.$file.'?page='.($nbpages - 1).$options.'">'.$nbpages.'</a></li>';
+				$pagelist .= '<li class="pagination paginationlastpage"><a class="reposition" href="'.$file.'?page='.($nbpages - 1).$options.'">'.$nbpages.'</a></li>';
 			}
 		} else {
 			$pagelist .= '<li class="pagination"><span class="active">'.($page + 1)."</li>";
@@ -5975,7 +6019,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 			print '</li>';
 		}
 		if ($page > 0) {
-			print '<li class="pagination paginationpage paginationpageleft"><a class="paginationprevious" href="'.$file.'?page='.($page - 1).$options.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
+			print '<li class="pagination paginationpage paginationpageleft"><a class="paginationprevious reposition" href="'.$file.'?page='.($page - 1).$options.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
 		}
 		if ($betweenarrows) {
 			print '<!--<div class="betweenarrows nowraponall inline-block">-->';
@@ -5983,7 +6027,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 			print '<!--</div>-->';
 		}
 		if ($nextpage > 0) {
-			print '<li class="pagination paginationpage paginationpageright"><a class="paginationnext" href="'.$file.'?page='.($page + 1).$options.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
+			print '<li class="pagination paginationpage paginationpageright"><a class="paginationnext reposition" href="'.$file.'?page='.($page + 1).$options.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
 		}
 		if ($afterarrows) {
 			print '<li class="paginationafterarrows">';
@@ -6724,7 +6768,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 				$found = 1;
 			}
 		} else {
-			// TODO Read default product vat according to product and another countrycode.
+			// TODO Read default product vat according to product and an other countrycode.
 			// Vat for couple anothercountrycode/product is data that is not managed and store yet, so we will fallback on next rule.
 		}
 	}
@@ -8131,6 +8175,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MYCOMPANY_PROFID4__' => $mysoc->idprof4,
 			'__MYCOMPANY_PROFID5__' => $mysoc->idprof5,
 			'__MYCOMPANY_PROFID6__' => $mysoc->idprof6,
+			'__MYCOMPANY_PROFID7__' => $mysoc->idprof7,
+			'__MYCOMPANY_PROFID8__' => $mysoc->idprof8,
+			'__MYCOMPANY_PROFID9__' => $mysoc->idprof9,
+			'__MYCOMPANY_PROFID10__' => $mysoc->idprof10,
 			'__MYCOMPANY_CAPITAL__' => $mysoc->capital,
 			'__MYCOMPANY_FULLADDRESS__' => (method_exists($mysoc, 'getFullAddress') ? $mysoc->getFullAddress(1, ', ') : ''),	// $mysoc may be stdClass
 			'__MYCOMPANY_ADDRESS__' => $mysoc->address,
@@ -8173,6 +8221,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_IDPROF4__'] = '__THIRDPARTY_IDPROF4__';
 				$substitutionarray['__THIRDPARTY_IDPROF5__'] = '__THIRDPARTY_IDPROF5__';
 				$substitutionarray['__THIRDPARTY_IDPROF6__'] = '__THIRDPARTY_IDPROF6__';
+				$substitutionarray['__MYCOMPANY_PROFID7__'] = '__MYCOMPANY_PROFID7__';
+				$substitutionarray['__MYCOMPANY_PROFID8__'] = '__MYCOMPANY_PROFID8__';
+				$substitutionarray['__MYCOMPANY_PROFID9__'] = '__MYCOMPANY_PROFID9__';
+				$substitutionarray['__MYCOMPANY_PROFID10__'] = '__MYCOMPANY_PROFID10__';
 				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = '__THIRDPARTY_TVAINTRA__';
 				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = '__THIRDPARTY_NOTE_PUBLIC__';
 				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = '__THIRDPARTY_NOTE_PRIVATE__';
@@ -8948,7 +9000,7 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
  *    @param	Translate	$outputlangs   Output language
  *    @return	void
  */
-function print_date_range($date_start, $date_end, $format = '', $outputlangs = '')
+function print_date_range($date_start, $date_end, $format = '', $outputlangs = null)
 {
 	print get_date_range($date_start, $date_end, $format, $outputlangs);
 }
@@ -8963,7 +9015,7 @@ function print_date_range($date_start, $date_end, $format = '', $outputlangs = '
  *    @param	integer		$withparenthesis	1=Add parenthesis, 0=no parenthesis
  *    @return	string							String
  */
-function get_date_range($date_start, $date_end, $format = '', $outputlangs = '', $withparenthesis = 1)
+function get_date_range($date_start, $date_end, $format = '', $outputlangs = null, $withparenthesis = 1)
 {
 	global $langs;
 
@@ -9091,7 +9143,7 @@ function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '', $no
 		}
 		if (empty($messagekey) || empty($_COOKIE["DOLHIDEMESSAGE".$messagekey])) {
 			if (!in_array((string) $style, array('mesgs', 'warnings', 'errors'))) {
-				dol_print_error('', 'Bad parameter style='.$style.' for setEventMessages');
+				dol_print_error(null, 'Bad parameter style='.$style.' for setEventMessages');
 			}
 			if (empty($mesgs)) {
 				setEventMessage($mesg, $style, $noduplicate);
@@ -10847,8 +10899,6 @@ function ajax_autoselect($htmlname, $addlink = '', $textonlink = 'Link')
  */
 function dolIsAllowedForPreview($file)
 {
-	global $conf;
-
 	// Check .noexe extension in filename
 	if (preg_match('/\.noexe$/i', $file)) {
 		return 0;
@@ -11880,6 +11930,9 @@ function getElementProperties($element_type)
 		$module = 'societe';
 		$subelement = 'contact';
 		$table_element = 'socpeople';
+	} elseif ($element_type == 'inventory') {
+		$module = 'product';
+		$classpath = 'product/inventory/class';
 	} elseif ($element_type == 'stock') {
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
@@ -12441,6 +12494,7 @@ function jsonOrUnserialize($stringtodecode)
  * @param	int			$nopar		1=Do not add the perenthesis around the condition string.
  * @param	int			$noerror	1=If search criteria is not valid, does not return an error string but invalidate the SQL
  * @return	string					Return forged SQL string
+ * @see dolSqlDateFilter()
  */
 function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 0, $nopar = 0, $noerror = 0)
 {
@@ -12733,7 +12787,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 
 	// Check parameters
 	if (!is_object($filterobj) && !is_object($objcon)) {
-		dol_print_error('', 'BadParameter');
+		dol_print_error(null, 'BadParameter');
 	}
 
 	$histo = array();
@@ -12783,7 +12837,11 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
 
-		$force_filter_contact = false;
+		if (get_class($filterobj) !== 'User') {
+			$force_filter_contact = false;
+		} else {
+			$force_filter_contact = true;
+		}
 		if (is_object($objcon) && $objcon->id > 0) {
 			$force_filter_contact = true;
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as r ON a.id = r.fk_actioncomm";
@@ -12848,6 +12906,8 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			}
+		} else {
+			$sql .= " AND u.rowid = ". ((int) $filterobj->id);
 		}
 
 		// Condition on actioncode
@@ -12936,7 +12996,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 					$result = $contactaction->fetchResources();
 					if ($result < 0) {
 						dol_print_error($db);
-						setEventMessage("actions.lib::show_actions_messaging Error fetch ressource", 'errors');
+						setEventMessage("actions.lib::show_actions_messaging Error fetch resource", 'errors');
 					}
 
 					//if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
@@ -13037,8 +13097,10 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 		} else {
 			$out .= '<input type="hidden" name="id" value="'.$filterobj->id.'" />';
 		}
-		if ($filterobj && get_class($filterobj) == 'Societe') {
+		if (($filterobj && get_class($filterobj) == 'Societe')) {
 			$out .= '<input type="hidden" name="socid" value="'.$filterobj->id.'" />';
+		} else {
+			$out .= '<input type="hidden" name="userid" value="'.$filterobj->id.'" />';
 		}
 
 		$out .= "\n";
@@ -13096,11 +13158,17 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			if (get_class($filterobj) == 'Societe') {
 				$tmp .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&socid='.$filterobj->id.'&status=done">';
 			}
+			if (get_class($filterobj) == 'User') {
+				$tmp .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&socid='.$filterobj->id.'&status=done">';
+			}
 			$tmp .= ($donetodo != 'done' ? $langs->trans("ActionsToDoShort") : '');
 			$tmp .= ($donetodo != 'done' && $donetodo != 'todo' ? ' / ' : '');
 			$tmp .= ($donetodo != 'todo' ? $langs->trans("ActionsDoneShort") : '');
 			//$out.=$langs->trans("ActionsToDoShort").' / '.$langs->trans("ActionsDoneShort");
 			if (get_class($filterobj) == 'Societe') {
+				$tmp .= '</a>';
+			}
+			if (get_class($filterobj) == 'User') {
 				$tmp .= '</a>';
 			}
 			$out .= getTitleFieldOfList($tmp);

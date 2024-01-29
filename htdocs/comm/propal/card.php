@@ -437,19 +437,19 @@ if (empty($reshook)) {
 					$object->datep = $datep;
 					$object->date = $datep;
 					$object->delivery_date = $date_delivery;
-					$object->availability_id = GETPOST('availability_id');
-					$object->demand_reason_id = GETPOST('demand_reason_id');
-					$object->fk_delivery_address = GETPOST('fk_address', 'int');
-					$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
-					$object->warehouse_id = GETPOST('warehouse_id', 'int');
+					$object->availability_id = GETPOSTINT('availability_id');
+					$object->demand_reason_id = GETPOSTINT('demand_reason_id');
+					$object->fk_delivery_address = GETPOSTINT('fk_address');
+					$object->shipping_method_id = GETPOSTINT('shipping_method_id');
+					$object->warehouse_id = GETPOSTINT('warehouse_id');
 					$object->duree_validite = $duration;
-					$object->cond_reglement_id = GETPOST('cond_reglement_id');
+					$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
 					$object->deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
-					$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
-					$object->fk_account = GETPOST('fk_account', 'int');
-					$object->socid = GETPOST('socid', 'int');
-					$object->contact_id = GETPOST('contactid', 'int');
-					$object->fk_project = GETPOST('projectid', 'int');
+					$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
+					$object->fk_account = GETPOSTINT('fk_account');
+					$object->socid = GETPOSTINT('socid');
+					$object->contact_id = GETPOSTINT('contactid');
+					$object->fk_project = GETPOSTINT('projectid');
 					$object->model_pdf = GETPOST('model', 'alphanohtml');
 					$object->author = $user->id; // deprecated
 					$object->user_author_id = $user->id;
@@ -457,7 +457,7 @@ if (empty($reshook)) {
 					$object->note_public = GETPOST('note_public', 'restricthtml');
 					$object->statut = Propal::STATUS_DRAFT;
 					$object->status = Propal::STATUS_DRAFT;
-					$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+					$object->fk_incoterms = GETPOSTINT('incoterm_id');
 					$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				} else {
 					setEventMessages($langs->trans("ErrorFailedToCopyProposal", GETPOST('copie_propal')), null, 'errors');
@@ -468,27 +468,27 @@ if (empty($reshook)) {
 				$object->datep = $datep;
 				$object->date = $datep;
 				$object->delivery_date = $date_delivery;
-				$object->availability_id = GETPOST('availability_id', 'int');
-				$object->demand_reason_id = GETPOST('demand_reason_id', 'int');
-				$object->fk_delivery_address = GETPOST('fk_address', 'int');
-				$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
-				$object->warehouse_id = GETPOST('warehouse_id', 'int');
+				$object->availability_id = GETPOSTINT('availability_id');
+				$object->demand_reason_id = GETPOSTINT('demand_reason_id');
+				$object->fk_delivery_address = GETPOSTINT('fk_address');
+				$object->shipping_method_id = GETPOSTINT('shipping_method_id');
+				$object->warehouse_id = GETPOSTINT('warehouse_id');
 				$object->duree_validite = price2num(GETPOST('duree_validite', 'alpha'));
-				$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
+				$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
 				$object->deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
-				$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
-				$object->fk_account = GETPOST('fk_account', 'int');
-				$object->contact_id = GETPOST('contactid', 'int');
-				$object->fk_project = GETPOST('projectid', 'int');
+				$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
+				$object->fk_account = GETPOSTINT('fk_account');
+				$object->contact_id = GETPOSTINT('contactid');
+				$object->fk_project = GETPOSTINT('projectid');
 				$object->model_pdf = GETPOST('model');
 				$object->author = $user->id; // deprecated
 				$object->note_private = GETPOST('note_private', 'restricthtml');
 				$object->note_public = GETPOST('note_public', 'restricthtml');
-				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+				$object->fk_incoterms = GETPOSTINT('incoterm_id');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
 				$object->origin = GETPOST('origin');
-				$object->origin_id = GETPOST('originid');
+				$object->origin_id = GETPOSTINT('originid');
 
 				// Multicurrency
 				if (isModEnabled("multicurrency")) {
@@ -799,10 +799,14 @@ if (empty($reshook)) {
 		if ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED || $object->statut == Propal::STATUS_CANCELED) {
 			$db->begin();
 
-			$result = $object->reopen($user, !getDolGlobalString('PROPAL_SKIP_ACCEPT_REFUSE'));
+			$newstatus = (getDolGlobalInt('PROPAL_SKIP_ACCEPT_REFUSE') ? Propal::STATUS_DRAFT : Propal::STATUS_VALIDATED);
+			$result = $object->reopen($user, $newstatus);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
+			} else {
+				$object->statut = $newstatus;
+				$object->status = $newstatus;
 			}
 
 			if (!$error) {
@@ -1186,6 +1190,10 @@ if (empty($reshook)) {
 				if (!empty($price_ht) || (string) $price_ht === '0') {
 					$pu_ht = price2num($price_ht, 'MU');
 					$pu_ttc = price2num($pu_ht * (1 + ((float) $tmpvat / 100)), 'MU');
+				} elseif (!empty($price_ht_devise) || (string) $price_ht_devise === '0') {
+					$pu_ht_devise = price2num($price_ht_devise, 'MU');
+					$pu_ht = '';
+					$pu_ttc = '';
 				} elseif (!empty($price_ttc) || (string) $price_ttc === '0') {
 					$pu_ttc = price2num($price_ttc, 'MU');
 					$pu_ht = price2num($pu_ttc / (1 + ((float) $tmpvat / 100)), 'MU');
@@ -1220,7 +1228,7 @@ if (empty($reshook)) {
 					$desc = $prod->description;
 				}
 
-				//If text set in desc is the same as product description (as now it's preloaded) whe add it only one time
+				//If text set in desc is the same as product description (as now it's preloaded) we add it only one time
 				if ($product_desc==$desc && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
 					$product_desc='';
 				}
@@ -1306,7 +1314,7 @@ if (empty($reshook)) {
 
 			// Margin
 			$fournprice = price2num(GETPOST('fournprice'.$predef) ? GETPOST('fournprice'.$predef) : '');
-			$buyingprice = price2num(GETPOST('buying_price'.$predef) != '' ? GETPOST('buying_price'.$predef) : ''); // If buying_price is '0', we muste keep this value
+			$buyingprice = price2num(GETPOST('buying_price'.$predef) != '' ? GETPOST('buying_price'.$predef) : ''); // If buying_price is '0', we must keep this value
 
 			$date_start = dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start'.$predef.'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 			$date_end = dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
@@ -1435,7 +1443,7 @@ if (empty($reshook)) {
 
 		// Add buying price
 		$fournprice = price2num(GETPOST('fournprice') ? GETPOST('fournprice') : '');
-		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : ''); // If buying_price is '0', we muste keep this value
+		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : ''); // If buying_price is '0', we must keep this value
 
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
 		$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
@@ -1612,7 +1620,7 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'updateline' && $usercancreate && GETPOST('cancel', 'alpha')) {
-		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // Pour reaffichage de la fiche en cours d'edition
+		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); //  To re-display card in edit mode
 		exit();
 	} elseif ($action == 'classin' && $usercancreate) {
 		// Set project
@@ -1650,14 +1658,15 @@ if (empty($reshook)) {
 		$result = $object->setWarehouse(GETPOST('warehouse_id', 'int'));
 	} elseif ($action == 'update_extras') {
 		$object->oldcopy = dol_clone($object, 2);
+		$attribute_name = GETPOST('attribute', 'restricthtml');
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 		if (!$error) {
-			$result = $object->insertExtraFields('PROPAL_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'PROPAL_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
@@ -1904,7 +1913,7 @@ if ($action == 'create') {
 			print '<td class="valuefieldcreate">';
 			$filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';
 			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
-			// reload page to retrieve customer informations
+			// reload page to retrieve customer information
 			if (!getDolGlobalString('RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED')) {
 				print '<script>
 				$(document).ready(function() {
@@ -2515,8 +2524,8 @@ if ($action == 'create') {
 
 		// Link for thirdparty discounts
 		if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
-			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
-			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
+			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
 		} else {
 			$filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
 			$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";

@@ -2081,6 +2081,12 @@ class Form
 		if (getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX') || $notdisabled) {
 			$sql .= " AND u.statut <> 0";
 		}
+		if (!empty($conf->global->USER_HIDE_NONEMPLOYEE_IN_COMBOBOX) || $notdisabled) {
+			$sql .= " AND u.employee <> 0";
+		}
+		if (!empty($conf->global->USER_HIDE_EXTERNAL_IN_COMBOBOX) || $notdisabled) {
+			$sql .= " AND u.fk_soc IS NULL";
+		}
 		if (!empty($morefilter)) {
 			$sql .= " " . $morefilter;
 		}
@@ -2425,7 +2431,7 @@ class Form
 
 			$events = array();
 			$out .= img_picto('', 'resource', 'class="pictofixedwidth"');
-			$out .= $formresources->select_resource_list('', $htmlname, '', 1, 1, 0, $events, '', 2, null);
+			$out .= $formresources->select_resource_list(0, $htmlname, '', 1, 1, 0, $events, '', 2, null);
 			//$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
 			$out .= ' <input type="submit" disabled class="button valignmiddle smallpaddingimp reposition" id="' . $action . 'assignedtoresource" name="' . $action . 'assignedtoresource" value="' . dol_escape_htmltag($langs->trans("Add")) . '">';
 			$out .= '<br>';
@@ -2439,29 +2445,29 @@ class Form
 	/**
 	 *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_list
 	 *
-	 * @param int 			$selected 				Preselected products
-	 * @param string 		$htmlname 				Name of HTML select field (must be unique in page).
-	 * @param int|string 	$filtertype 			Filter on product type (''=nofilter, 0=product, 1=service)
-	 * @param int 			$limit 					Limit on number of returned lines
-	 * @param int 			$price_level 			Level of price to show
-	 * @param int 			$status 				Sell status -1=Return all products, 0=Products not on sell, 1=Products on sell
-	 * @param int 			$finished 				2=all, 1=finished, 0=raw material
-	 * @param string 		$selected_input_value 	Value of preselected input text (for use with ajax)
-	 * @param int 			$hidelabel 				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
-	 * @param array 		$ajaxoptions 			Options for ajax_autocompleter
-	 * @param int 			$socid 					Thirdparty Id (to get also price dedicated to this customer)
-	 * @param string 		$showempty 				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
-	 * @param int 			$forcecombo 			Force to use combo box
-	 * @param string 		$morecss 				Add more css on select
-	 * @param int 			$hidepriceinlabel 		1=Hide prices in label
-	 * @param string 		$warehouseStatus 		Warehouse status filter to count the quantity in stock. Following comma separated filter options can be used
-	 *                                				'warehouseopen' = count products from open warehouses,
-	 *                                				'warehouseclosed' = count products from closed warehouses,
-	 *                               				'warehouseinternal' = count products from warehouses for internal correct/transfer only
-	 * @param array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
-	 * @param int	 		$nooutput 				No print, return the output into a string
-	 * @param int 			$status_purchase 		Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
-	 * @return        void|string
+	 *  @param		int			$selected				Preselected products
+	 *  @param		string		$htmlname				Name of HTML select field (must be unique in page).
+	 *  @param		int|string	$filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
+	 *  @param		int			$limit					Limit on number of returned lines
+	 *  @param		int			$price_level			Level of price to show
+	 *  @param		int			$status					Sell status: -1=No filter on sell status, 0=Products not on sell, 1=Products on sell
+	 *  @param		int			$finished				2=all, 1=finished, 0=raw material
+	 *  @param		string		$selected_input_value	Value of preselected input text (for use with ajax)
+	 *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
+	 *  @param		array		$ajaxoptions			Options for ajax_autocompleter
+	 *  @param      int			$socid					Thirdparty Id (to get also price dedicated to this customer)
+	 *  @param		string		$showempty				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * 	@param		int			$forcecombo				Force to use combo box
+	 *  @param      string      $morecss                Add more css on select
+	 *  @param      int         $hidepriceinlabel       1=Hide prices in label
+	 *  @param      string      $warehouseStatus        Warehouse status filter to count the quantity in stock. Following comma separated filter options can be used
+	 *										            'warehouseopen' = count products from open warehouses,
+	 *										            'warehouseclosed' = count products from closed warehouses,
+	 *										            'warehouseinternal' = count products from warehouses for internal correct/transfer only
+	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
+	 *  @param		string		$nooutput				No print, return the output into a string
+	 *  @param		int			$status_purchase		Purchase status: -1=No filter on purchase status, 0=Products not on purchase, 1=Products on purchase
+	 *  @return		void|string
 	 */
 	public function select_produits($selected = 0, $htmlname = 'productid', $filtertype = '', $limit = 0, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = null, $nooutput = 0, $status_purchase = -1)
 	{
@@ -2858,12 +2864,10 @@ class Form
 		if ($finished == 0) {
 			$sql .= " AND p.finished = " . ((int) $finished);
 		} elseif ($finished == 1) {
-			$sql .= " AND p.finished = " . ((int) $finished);
-			if ($status >= 0) {
-				$sql .= " AND p.tosell = " . ((int) $status);
-			}
-		} elseif ($status >= 0) {
-			$sql .= " AND p.tosell = " . ((int) $status);
+			$sql .= " AND p.finished = ".((int) $finished);
+		}
+		if ($status >= 0) {
+			$sql .= " AND p.tosell = ".((int) $status);
 		}
 		if ($status_purchase >= 0) {
 			$sql .= " AND p.tobuy = " . ((int) $status_purchase);
@@ -6372,10 +6376,10 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *  Load into the cache vat rates of a country
+	 *  Load into the cache ->cache_vatrates, all the vat rates of a country
 	 *
-	 * @param 	string 	$country_code 		Country code with quotes ("'CA'", or "'CA,IN,...'")
-	 * @return  int                         Nb of loaded lines, 0 if already loaded, <0 if KO
+	 *  @param	string	$country_code		Country code with quotes ("'CA'", or "'CA,IN,...'")
+	 *  @return	int							Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
 	public function load_cache_vatrates($country_code)
 	{
@@ -6389,8 +6393,8 @@ class Form
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = "SELECT DISTINCT t.rowid, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly";
-		$sql .= " FROM " . $this->db->prefix() . "c_tva as t, " . $this->db->prefix() . "c_country as c";
+		$sql = "SELECT t.rowid, t.type_vat, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly";
+		$sql .= " FROM ".$this->db->prefix()."c_tva as t, ".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid";
 		$sql .= " AND t.active > 0";
 		$sql .= " AND t.entity IN (".getEntity('c_tva').")";
@@ -6403,17 +6407,19 @@ class Form
 			if ($num) {
 				for ($i = 0; $i < $num; $i++) {
 					$obj = $this->db->fetch_object($resql);
-					$this->cache_vatrates[$i]['rowid'] = $obj->rowid;
-					$this->cache_vatrates[$i]['code'] = $obj->code;
-					$this->cache_vatrates[$i]['txtva'] = $obj->taux;
-					$this->cache_vatrates[$i]['nprtva'] = $obj->recuperableonly;
-					$this->cache_vatrates[$i]['localtax1'] = $obj->localtax1;
-					$this->cache_vatrates[$i]['localtax1_type'] = $obj->localtax1_type;
-					$this->cache_vatrates[$i]['localtax2'] = $obj->localtax2;
-					$this->cache_vatrates[$i]['localtax2_type'] = $obj->localtax1_type;
 
-					$this->cache_vatrates[$i]['label'] = $obj->taux . '%' . ($obj->code ? ' (' . $obj->code . ')' : ''); // Label must contains only 0-9 , . % or *
-					$this->cache_vatrates[$i]['labelallrates'] = $obj->taux . '/' . ($obj->localtax1 ? $obj->localtax1 : '0') . '/' . ($obj->localtax2 ? $obj->localtax2 : '0') . ($obj->code ? ' (' . $obj->code . ')' : ''); // Must never be used as key, only label
+					$tmparray = array();
+					$tmparray['rowid']			= $obj->rowid;
+					$tmparray['type_vat']		= $obj->type_vat;
+					$tmparray['code']			= $obj->code;
+					$tmparray['txtva']			= $obj->taux;
+					$tmparray['nprtva']			= $obj->recuperableonly;
+					$tmparray['localtax1']	    = $obj->localtax1;
+					$tmparray['localtax1_type']	= $obj->localtax1_type;
+					$tmparray['localtax2']	    = $obj->localtax2;
+					$tmparray['localtax2_type']	= $obj->localtax1_type;
+					$tmparray['label']			= $obj->taux . '%' . ($obj->code ? ' (' . $obj->code . ')' : ''); // Label must contains only 0-9 , . % or *
+					$tmparray['labelallrates']	= $obj->taux . '/' . ($obj->localtax1 ? $obj->localtax1 : '0') . '/' . ($obj->localtax2 ? $obj->localtax2 : '0') . ($obj->code ? ' (' . $obj->code . ')' : ''); // Must never be used as key, only label
 					$positiverates = '';
 					if ($obj->taux) {
 						$positiverates .= ($positiverates ? '/' : '') . $obj->taux;
@@ -6427,7 +6433,9 @@ class Form
 					if (empty($positiverates)) {
 						$positiverates = '0';
 					}
-					$this->cache_vatrates[$i]['labelpositiverates'] = $positiverates . ($obj->code ? ' (' . $obj->code . ')' : ''); // Must never be used as key, only label
+					$tmparray['labelpositiverates'] = $positiverates . ($obj->code ? ' (' . $obj->code . ')' : ''); // Must never be used as key, only label
+
+					$this->cache_vatrates[$obj->rowid] = $tmparray;
 				}
 
 				return $num;
@@ -6456,24 +6464,25 @@ class Form
 	 *  Output an HTML select vat rate.
 	 *  The name of this function should be selectVat. We keep bad name for compatibility purpose.
 	 *
-	 * @param string $htmlname Name of HTML select field
-	 * @param float|string $selectedrate Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
-	 * @param Societe $societe_vendeuse Thirdparty seller
-	 * @param Societe $societe_acheteuse Thirdparty buyer
-	 * @param int $idprod Id product. O if unknown of NA.
-	 * @param int $info_bits Miscellaneous information on line (1 for NPR)
-	 * @param int|string $type ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
-	 *                         If seller not subject to VAT, default VAT=0. End of rule.
-	 *                         If (seller country==buyer country), then default VAT=product's VAT. End of rule.
-	 *                         If (seller and buyer in EU) and sold product = new means of transportation (car, boat, airplane), default VAT =0 (VAT must be paid by the buyer to his country's tax office and not the seller). End of rule.
-	 *                         If (seller and buyer in EU) and buyer=private person, then default VAT=VAT of sold product.  End of rule.
-	 *                         If (seller and buyer in EU) and buyer=company then default VAT =0. End of rule.
-	 *                         Else, default proposed VAT==0. End of rule.
-	 * @param bool $options_only Return HTML options lines only (for ajax treatment)
-	 * @param int $mode 0=Use vat rate as key in combo list, 1=Add VAT code after vat rate into key, -1=Use id of vat line as key
-	 * @return    string
+	 *  @param	string	      $htmlname           Name of HTML select field
+	 *  @param  float|string  $selectedrate       Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
+	 *  @param  Societe	      $societe_vendeuse   Thirdparty seller
+	 *  @param  Societe	      $societe_acheteuse  Thirdparty buyer
+	 *  @param  int		      $idprod             Id product. O if unknown of NA.
+	 *  @param  int		      $info_bits          Miscellaneous information on line (1 for NPR)
+	 *  @param  int|string    $type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
+	 *                                            If seller not subject to VAT, default VAT=0. End of rule.
+	 *                                            If (seller country==buyer country), then default VAT=product's VAT. End of rule.
+	 *                                            If (seller and buyer in EU) and sold product = new means of transportation (car, boat, airplane), default VAT =0 (VAT must be paid by the buyer to his country's tax office and not the seller). End of rule.
+	 *                                            If (seller and buyer in EU) and buyer=private person, then default VAT=VAT of sold product.  End of rule.
+	 *                                            If (seller and buyer in EU) and buyer=company then default VAT =0. End of rule.
+	 *                                            Else, default proposed VAT==0. End of rule.
+	 *  @param	bool	     $options_only		  Return HTML options lines only (for ajax treatment)
+	 *  @param  int          $mode                0=Use vat rate as key in combo list, 1=Add VAT code after vat rate into key, -1=Use id of vat line as key
+	 *  @param  int          $type_vat            0=All type, 1=VAT rate sale, 2=VAT rate purchase
+	 *  @return	string
 	 */
-	public function load_tva($htmlname = 'tauxtva', $selectedrate = '', $societe_vendeuse = null, $societe_acheteuse = null, $idprod = 0, $info_bits = 0, $type = '', $options_only = false, $mode = 0)
+	public function load_tva($htmlname = 'tauxtva', $selectedrate = '', $societe_vendeuse = null, $societe_acheteuse = null, $idprod = 0, $info_bits = 0, $type = '', $options_only = false, $mode = 0, $type_vat = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf, $mysoc;
@@ -6517,14 +6526,31 @@ class Form
 		}
 		if (getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC')) {    // If option to have vat for end customer for services is on
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
-			if (!isInEEC($societe_vendeuse) && (!is_object($societe_acheteuse) || (isInEEC($societe_acheteuse) && !$societe_acheteuse->isACompany()))) {
+			// If SERVICE_ARE_ECOMMERCE_200238EC=1 combo list vat rate of purchaser and seller countries
+			// If SERVICE_ARE_ECOMMERCE_200238EC=2 combo list only the vat rate of the purchaser country
+			$selectVatComboMode = getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC');
+			if (isInEEC($societe_vendeuse) && isInEEC($societe_acheteuse) && !$societe_acheteuse->isACompany()) {
 				// We also add the buyer country code
 				if (is_numeric($type)) {
 					if ($type == 1) { // We know product is a service
-						$code_country .= ",'" . $societe_acheteuse->country_code . "'";
+						switch ($selectVatComboMode) {
+							case '1':
+								$code_country .= ",'" . $societe_acheteuse->country_code . "'";
+								break;
+							case '2':
+								$code_country = "'" . $societe_acheteuse->country_code . "'";
+								break;
+						}
 					}
 				} elseif (!$idprod) {  // We don't know type of product
-					$code_country .= ",'" . $societe_acheteuse->country_code . "'";
+					switch ($selectVatComboMode) {
+						case '1':
+							$code_country .= ",'" . $societe_acheteuse->country_code . "'";
+							break;
+						case '2':
+							$code_country = "'" . $societe_acheteuse->country_code . "'";
+							break;
+					}
 				} else {
 					$prodstatic = new Product($this->db);
 					$prodstatic->fetch($idprod);
@@ -6535,8 +6561,18 @@ class Form
 			}
 		}
 
-		// Now we get list
-		$num = $this->load_cache_vatrates($code_country); // If no vat defined, return -1 with message into this->error
+		// Now we load the list of VAT
+		$this->load_cache_vatrates($code_country); // If no vat defined, return -1 with message into this->error
+
+		// Keep only the VAT qualified for $type_vat
+		$arrayofvatrates = array();
+		foreach ($this->cache_vatrates as $cachevalue) {
+			if (empty($cachevalue['type_vat']) || $cachevalue['type_vat'] != $type_vat) {
+				$arrayofvatrates[] = $cachevalue;
+			}
+		}
+
+		$num = count($arrayofvatrates);
 
 		if ($num > 0) {
 			// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
@@ -6560,7 +6596,7 @@ class Form
 			if ($defaulttx < 0 || dol_strlen($defaulttx) == 0) {
 				if (!getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS')) {
 					// We take the last one found in list
-					$defaulttx = $this->cache_vatrates[$num - 1]['txtva'];
+					$defaulttx = $arrayofvatrates[$num - 1]['txtva'];
 				} else {
 					// We will use the rate defined into MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS
 					$defaulttx = '';
@@ -6591,7 +6627,7 @@ class Form
 			}
 
 			$selectedfound = false;
-			foreach ($this->cache_vatrates as $rate) {
+			foreach ($arrayofvatrates as $rate) {
 				// Keep only 0 if seller is not subject to VAT
 				if ($disabled && $rate['txtva'] != 0) {
 					continue;
@@ -8494,10 +8530,6 @@ class Form
 			$out .= ajax_combobox($idname, array(), 0, 0, 'resolve', (((int) $show_empty) < 0 ? (string) $show_empty : '-1'), $morecss);
 		}
 
-
-
-
-
 		return $out;
 	}
 
@@ -8760,10 +8792,16 @@ class Form
 		}
 
 		$useenhancedmultiselect = 0;
-		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') || defined('REQUIRE_JQUERY_MULTISELECT')) {
-			$useenhancedmultiselect = 1;
+		if (!empty($conf->use_javascript_ajax) && (getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') || defined('REQUIRE_JQUERY_MULTISELECT'))) {
+			if ($addjscombo) {
+				$useenhancedmultiselect = 1;	// Use the js multiselect in one line. Possible only if $addjscombo not 0.
+			}
 		}
 
+		// We need a hidden field because when using the multiselect, if we unselect all, there is no
+		// variable submitted at all, so no way to make a difference between variable not submitted and variable
+		// submitted to nothing.
+		$out .= '<input type="hidden" name="'.$htmlname.'_multiselect" value="1">';
 		// Output select component
 		$out .= '<select id="' . $htmlname . '" class="multiselect' . ($useenhancedmultiselect ? ' multiselectononeline' : '') . ($morecss ? ' ' . $morecss : '') . '" multiple name="' . $htmlname . '[]"' . ($moreattrib ? ' ' . $moreattrib : '') . ($width ? ' style="width: ' . (preg_match('/%/', $width) ? $width : $width . 'px') . '"' : '') . '>' . "\n";
 		if (is_array($array) && !empty($array)) {
@@ -9036,11 +9074,11 @@ class Form
 	/**
 	 *  Show linked object block.
 	 *
-	 * @param CommonObject $object Object we want to show links to
-	 * @param string $morehtmlright More html to show on right of title
-	 * @param array $compatibleImportElementsList Array of compatibles elements object for "import from" action
-	 * @param string $title Title
-	 * @return    int                                                Return integer <0 if KO, >=0 if OK
+	 * @param 	CommonObject 	$object 						Object we want to show links to
+	 * @param 	string 			$morehtmlright 					More html to show on right of title
+	 * @param 	array 			$compatibleImportElementsList 	Array of compatibles elements object for "import from" action
+	 * @param 	string 			$title 							Title
+	 * @return  int                                             Return integer <0 if KO, >=0 if OK
 	 */
 	public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = array(), $title = 'RelatedObjects')
 	{
@@ -9783,20 +9821,21 @@ class Form
 	}
 
 	/**
-	 *        Return HTML code to output a photo
+	 * Return HTML code to output a photo
 	 *
-	 * @param string $modulepart Key to define module concerned ('societe', 'userphoto', 'memberphoto')
-	 * @param object $object Object containing data to retrieve file name
-	 * @param int $width Width of photo
-	 * @param int $height Height of photo (auto if 0)
-	 * @param int $caneditfield Add edit fields
-	 * @param string $cssclass CSS name to use on img for photo
-	 * @param string $imagesize 'mini', 'small' or '' (original)
-	 * @param int $addlinktofullsize Add link to fullsize image
-	 * @param int $cache 1=Accept to use image in cache
-	 * @param string $forcecapture '', 'user' or 'environment'. Force parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
-	 * @param int $noexternsourceoverwrite No overwrite image with extern source (like 'gravatar' or other module)
-	 * @return string                            HTML code to output photo
+	 * @param string 	$modulepart 				Key to define module concerned ('societe', 'userphoto', 'memberphoto')
+	 * @param object 	$object 					Object containing data to retrieve file name
+	 * @param int 		$width 						Width of photo
+	 * @param int 		$height 					Height of photo (auto if 0)
+	 * @param int 		$caneditfield 				Add edit fields
+	 * @param string 	$cssclass 					CSS name to use on img for photo
+	 * @param string 	$imagesize 					'mini', 'small' or '' (original)
+	 * @param int 		$addlinktofullsize 			Add link to fullsize image
+	 * @param int 		$cache 						1=Accept to use image in cache
+	 * @param string 	$forcecapture 				'', 'user' or 'environment'. Force parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
+	 * @param int		$noexternsourceoverwrite 	No overwrite image with extern source (like 'gravatar' or other module)
+	 * @return string                            	HTML code to output photo
+	 * @see getImagePublicURLOfObject()
 	 */
 	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0)
 	{
@@ -10336,7 +10375,8 @@ class Form
 		global $langs;
 
 		$out = '';
-		$sql = "SELECT id, code, label FROM " . $this->db->prefix() . "c_type_fees";
+		$sql = "SELECT id, code, label";
+		$sql .= " FROM ".$this->db->prefix()."c_type_fees";
 		$sql .= " WHERE active = 1";
 
 		$resql = $this->db->query($sql);
@@ -10359,6 +10399,8 @@ class Form
 				$out .= '<option ' . ($selected == $obj->{$field} ? 'selected="selected"' : '') . ' value="' . $obj->{$field} . '">' . ($key != $obj->code ? $key : $obj->label) . '</option>';
 			}
 			$out .= '</select>';
+
+			$out .= ajax_combobox('select_'.$htmlname);
 		} else {
 			dol_print_error($this->db);
 		}

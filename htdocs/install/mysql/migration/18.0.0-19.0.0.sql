@@ -38,6 +38,8 @@
 
 ALTER TABLE llx_product_perentity ADD COLUMN pmp double(24,8);
 
+ALTER TABLE llx_projet_task ADD COLUMN fk_user_modif integer after fk_user_creat;
+
 
 -- v19
 
@@ -145,6 +147,7 @@ UPDATE llx_product set stockable_product = 0 WHERE type = 1;
 
 ALTER TABLE llx_prelevement_lignes ADD COLUMN fk_user integer NULL;
 
+ALTER TABLE llx_hrm_evaluation ADD COLUMN last_main_doc varchar(255);
 ALTER TABLE llx_hrm_evaluationdet ADD COLUMN comment TEXT;
 
 ALTER TABLE llx_resource ADD COLUMN address varchar(255) DEFAULT NULL AFTER fk_code_type_resource;
@@ -203,3 +206,5 @@ ALTER TABLE llx_expensereport DROP INDEX idx_expensereport_fk_refuse, ADD INDEX 
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (1,'66','Société publique locale');
 
 ALTER TABLE llx_prelevement_lignes ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+ALTER TABLE llx_bom_bomline ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;

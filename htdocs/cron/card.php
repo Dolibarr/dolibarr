@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'cron', 'members', 'bills'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
@@ -89,7 +89,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodelete) {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'edit';
 	} else {
-		Header("Location: ".DOL_URL_ROOT.'/cron/list.php');
+		header("Location: ".DOL_URL_ROOT.'/cron/list.php');
 		exit;
 	}
 }
@@ -141,8 +141,8 @@ if ($action == 'add' && $permissiontoadd) {
 	$object->priority = GETPOST('priority', 'int');
 	$object->datenextrun = dol_mktime(GETPOST('datenextrunhour', 'int'), GETPOST('datenextrunmin', 'int'), 0, GETPOST('datenextrunmonth', 'int'), GETPOST('datenextrunday', 'int'), GETPOST('datenextrunyear', 'int'));
 	$object->unitfrequency = GETPOST('unitfrequency', 'int');
-	$object->frequency = GETPOST('nbfrequency', 'int');
-	$object->maxrun = GETPOST('maxrun', 'int');
+	$object->frequency = GETPOSTINT('nbfrequency');
+	$object->maxrun = GETPOSTINT('maxrun');
 	$object->email_alert = GETPOST('email_alert');
 
 	// Add cron task
@@ -176,8 +176,8 @@ if ($action == 'update' && $permissiontoadd) {
 	$object->priority = GETPOST('priority', 'int');
 	$object->datenextrun = dol_mktime(GETPOST('datenextrunhour', 'int'), GETPOST('datenextrunmin', 'int'), 0, GETPOST('datenextrunmonth', 'int'), GETPOST('datenextrunday', 'int'), GETPOST('datenextrunyear', 'int'));
 	$object->unitfrequency = GETPOST('unitfrequency', 'int');
-	$object->frequency = GETPOST('nbfrequency', 'int');
-	$object->maxrun = GETPOST('maxrun', 'int');
+	$object->frequency = GETPOSTINT('nbfrequency');
+	$object->maxrun = GETPOSTINT('maxrun');
 	$object->email_alert = GETPOST('email_alert');
 
 	// Add cron task
@@ -482,7 +482,7 @@ if (($action == "create") || ($action == "edit")) {
 	} else {
 		$input .= ' />';
 	}
-	$input .= "<label for=\"frequency_month\">".$langs->trans('Monthly')."</label>";
+	$input .= "<label for=\"frequency_month\">".$langs->trans('Months')."</label>";
 	print $input;
 
 	print "</td>";

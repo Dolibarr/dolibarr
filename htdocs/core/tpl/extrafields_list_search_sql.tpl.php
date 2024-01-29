@@ -10,7 +10,7 @@ if (empty($extrafieldsobjectkey) && is_object($object)) {
 	$extrafieldsobjectkey = $object->table_element;
 }
 
-// Loop to complete the sql search criterias from extrafields
+// Loop to complete the sql search criteria from extrafields
 if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($search_array_options)) {	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
 	if (empty($extrafieldsobjectprefix)) {
 		$extrafieldsobjectprefix = 'ef.';

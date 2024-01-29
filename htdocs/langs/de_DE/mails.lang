@@ -184,3 +184,5 @@ EmailOptedOut=Der Inhaber der E-Mail-Adresse hat darum gebeten, ihn nicht mehr �
 EvenUnsubscribe=Auch als Opt-Out markierte E-Mail-Adressen hinzufügen
 EvenUnsubscribeDesc=Schließen Sie auch E-Mail-Adressen mit Opt-out-Status ein, wenn Sie E-Mail-Empfänger auswählen. Nützlich zum Beispiel für obligatorische Service-E-Mails.
 XEmailsDoneYActionsDone=%s E-Mails vorqualifiziert, %s E-Mails erfolgreich verarbeitet (für %s Aufzeichnung(en)/Aktion(en) durchgeführt)
+helpWithAi=Anweisungen hinzufügen
+YouCanMakeSomeInstructionForEmail=Sie können einige Anweisungen für Ihre E-Mail geben (Beispiel: Bild in E-Mail-Vorlage generieren...)

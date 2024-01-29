@@ -84,7 +84,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 
 $permissiontoread = $user->rights->tax->charges->lire;
 $permissiontoadd = $user->rights->tax->charges->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->tax->charges->supprimer || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissiontodelete = $user->rights->tax->charges->supprimer || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_UNPAID);
 $permissionnote = $user->rights->tax->charges->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->tax->charges->creer; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->tax->multidir_output[isset($object->entity) ? $object->entity : 1].'/vat';
@@ -172,7 +172,7 @@ if (empty($reshook)) {
 	if ($action == 'add' && !$cancel) {
 		$error = 0;
 
-		$object->fk_account = GETPOST("accountid", 'int');
+		$object->fk_account = GETPOSTINT("accountid");
 		$object->type_payment = GETPOST("type_payment", 'alphanohtml');
 		$object->num_payment = GETPOST("num_payment", 'alphanohtml');
 
@@ -329,7 +329,8 @@ if (empty($reshook)) {
 		$object->fetch($id);
 
 		if ($object->id > 0) {
-			$object->id = $object->ref = null;
+			$object->id = 0;
+			$object->ref = null;
 			$object->paye = 0;
 
 			if (GETPOST('amount', 'alphanohtml')) {

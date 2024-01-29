@@ -7,7 +7,7 @@
  * Copyright (C) 2015-2020 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
  * Copyright (C) 2018-2024 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2023      William Mead         <william.mead@manchenumerique.fr>
+ * Copyright (C) 2023-2024      William Mead         <william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 /**
  * 	\file       htdocs/fichinter/class/fichinter.class.php
  * 	\ingroup    fichinter
- * 	\brief      Fichier de la classe des gestion des fiches interventions
+ * 	\brief      File for class to manage interventions
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
@@ -83,7 +83,7 @@ class Fichinter extends CommonObject
 	public $fk_element = 'fk_fichinter';
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = 'fichinterdet';
 
@@ -212,15 +212,13 @@ class Fichinter extends CommonObject
 		$this->db = $db;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load indicators into this->nb for board
 	 *
 	 *  @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $user;
 
 		$this->nb = array();
@@ -253,7 +251,7 @@ class Fichinter extends CommonObject
 	/**
 	 *	Create an intervention into data base
 	 *
-	 *  @param		User	$user 		Objet user that make creation
+	 *  @param		User	$user 		Object user that make creation
 	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
@@ -388,7 +386,7 @@ class Fichinter extends CommonObject
 	/**
 	 *	Update an intervention
 	 *
-	 *	@param		User	$user 		Objet user that make creation
+	 *	@param		User	$user 		Object user that make creation
 	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
@@ -748,7 +746,7 @@ class Fichinter extends CommonObject
 	/**
 	 *  Close intervention
 	 *
-	 * 	@param      User	$user       Objet user that close
+	 * 	@param      User	$user       Object user that close
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *	@return		int					Return integer <0 if KO, >0 if OK
 	 */
@@ -817,7 +815,7 @@ class Fichinter extends CommonObject
 			$amount += ($line->duration / 60 / 60 * $thm);
 		}
 
-		return price2num($amount, 'MT');
+		return (float) price2num($amount, 'MT');
 	}
 
 
@@ -1047,7 +1045,7 @@ class Fichinter extends CommonObject
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -1352,8 +1350,8 @@ class Fichinter extends CommonObject
 				$this->socid = $objsoc->id;
 				//$this->cond_reglement_id	= (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
 				//$this->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-				$this->fk_project = '';
-				$this->fk_delivery_address = '';
+				$this->fk_project = 0;
+				$this->fk_delivery_address = 0;
 			}
 
 			// TODO Change product price if multi-prices
@@ -1470,7 +1468,7 @@ class Fichinter extends CommonObject
 
 		$now = dol_now();
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->ref_client = 'SPECIMEN CLIENT';
@@ -1765,7 +1763,7 @@ class FichinterLigne extends CommonObjectLine
 	/**
 	 *	Insert the line into database
 	 *
-	 *	@param		User	$user 		Objet user that make creation
+	 *	@param		User	$user 		Object user that make creation
 	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		Return integer <0 if ko, >0 if ok
 	 */
@@ -1854,7 +1852,7 @@ class FichinterLigne extends CommonObjectLine
 	/**
 	 *	Update intervention into database
 	 *
-	 *	@param		User	$user 		Objet user that make creation
+	 *	@param		User	$user 		Object user that make creation
 	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		Return integer <0 if ko, >0 if ok
 	 */
@@ -1965,7 +1963,7 @@ class FichinterLigne extends CommonObjectLine
 	/**
 	 *	Delete a intervention line
 	 *
-	 *	@param		User	$user 		Objet user that make creation
+	 *	@param		User	$user 		Object user that make creation
 	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return     int		>0 if ok, <0 if ko
 	 */

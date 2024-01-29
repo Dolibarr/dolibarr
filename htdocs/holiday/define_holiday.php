@@ -291,7 +291,7 @@ print "</div><br>\n";
 
 $filters = '';
 
-// Filter on array of ids of all childs
+// Filter on array of ids of all children
 $userchilds = array();
 if (!$user->hasRight('holiday', 'readall')) {
 	$userchilds = $user->getAllChildIds(1);

@@ -296,7 +296,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 					}
 				}
 			} else {
-				// dol_print_error('',"Bad value saved into sessions");
+				// dol_print_error(null,"Bad value saved into sessions");
 				$error++;
 			}
 		}
@@ -526,7 +526,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
 	} else {
 		setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
-	Header('Location: '.$_SERVER["PHP_SELF"]);
+	header('Location: '.$_SERVER["PHP_SELF"]);
 	exit;
 }
 

@@ -35,7 +35,7 @@ MINPHPVERSION="7.0"
 
 echo "***** run-php-cs-fixer.sh *****"
 
-if [ "x$1" = "x" ]; then
+if [ "$1" = "" ]; then
 	echo "Syntax: run-php-cs-fixer.sh check|fix  [path_from_root_project]"
 	exit 1;
 fi
@@ -60,7 +60,7 @@ PHP_CS_FIXER="${COMPOSER_VENDOR_DIR}/bin/php-cs-fixer"
 if [ ! -r "${PHP_CS_FIXER}" ] ; then
 	[[ ! -e "${COMPOSER_VENDOR_DIR}" ]] && ${COMPOSER_CMD} install
 	[[ -e "${COMPOSER_VENDOR_DIR}" ]] && ${COMPOSER_CMD} update
-	php${MINPHPVERSION} ${COMPOSER_CMD} require --dev friendsofphp/php-cs-fixer
+	"php${MINPHPVERSION}" "${COMPOSER_CMD}" require --dev friendsofphp/php-cs-fixer
 	echo
 fi
 

@@ -141,7 +141,6 @@ AmountOfSubscriptions=Monto recaudado de las contribuciones
 TurnoverOrBudget=Facturación (para una empresa) o Presupuesto (para una fundación)
 CanEditAmountDetail=El visitante puede elegir/editar el monto de su contribución independientemente del tipo de miembro
 MembersStatisticsByProperties=Estadísticas de miembros por naturaleza
-VATToUseForSubscriptions=Tasa de IVA a utilizar para las contribuciones
 NoVatOnSubscription=Sin IVA por contribuciones
 ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Producto utilizado para la línea de contribución en la factura: %s
 SubscriptionRecorded=Contribución registrada

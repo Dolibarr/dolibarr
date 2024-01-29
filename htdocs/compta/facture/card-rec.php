@@ -57,8 +57,8 @@ $toselect   = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'invoicetemplatelist'; // To manage different context of search
 
 // Security check
-$id = (GETPOST('facid', 'int') ? GETPOST('facid', 'int') : GETPOST('id', 'int'));
-$lineid = GETPOST('lineid', 'int');
+$id = (GETPOSTINT('facid') ? GETPOSTINT('facid') : GETPOSTINT('id'));
+$lineid = GETPOSTINT('lineid');
 $ref = GETPOST('ref', 'alpha');
 if ($user->socid) {
 	$socid = $user->socid;
@@ -67,13 +67,13 @@ $objecttype = 'facture_rec';
 if ($action == "create" || $action == "add") {
 	$objecttype = '';
 }
-$projectid = GETPOST('projectid', 'int');
+$projectid = GETPOSTINT('projectid');
 
 $year_date_when = GETPOST('year_date_when');
 $month_date_when = GETPOST('month_date_when');
 $selectedLines = GETPOST('toselect', 'array');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -181,16 +181,16 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		$frequency = GETPOST('frequency', 'int');
-		$reyear = GETPOST('reyear', 'int');
-		$remonth = GETPOST('remonth', 'int');
-		$reday = GETPOST('reday', 'int');
-		$rehour = GETPOST('rehour', 'int');
-		$remin = GETPOST('remin', 'int');
-		$nb_gen_max = GETPOST('nb_gen_max', 'int');
+		$frequency = GETPOSTINT('frequency');
+		$reyear = GETPOSTINT('reyear');
+		$remonth = GETPOSTINT('remonth');
+		$reday = GETPOSTINT('reday');
+		$rehour = GETPOSTINT('rehour');
+		$remin = GETPOSTINT('remin');
+		$nb_gen_max = GETPOSTINT('nb_gen_max');
 		//if (empty($nb_gen_max)) $nb_gen_max =0;
 
-		if (GETPOST('frequency', 'int')) {
+		if (GETPOSTINT('frequency')) {
 			if (empty($reyear) || empty($remonth) || empty($reday)) {
 				setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
 				$action = "create";
@@ -204,21 +204,21 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$object->subtype               = GETPOST('subtype');
+			$object->subtype               = GETPOSTINT('subtype');
 			$object->title                 = GETPOST('title', 'alphanohtml');
 			$object->note_private          = GETPOST('note_private', 'restricthtml');
 			$object->note_public           = GETPOST('note_public', 'restricthtml');
 			$object->model_pdf             = GETPOST('modelpdf', 'alphanohtml');
 			$object->usenewprice           = GETPOST('usenewprice', 'alphanohtml');
 
-			$object->mode_reglement_id     = GETPOST('mode_reglement_id', 'int');
-			$object->cond_reglement_id     = GETPOST('cond_reglement_id', 'int');
+			$object->mode_reglement_id     = GETPOSTINT('mode_reglement_id');
+			$object->cond_reglement_id     = GETPOSTINT('cond_reglement_id');
 
 			$object->frequency             = $frequency;
 			$object->unit_frequency        = GETPOST('unit_frequency', 'alpha');
 			$object->nb_gen_max            = $nb_gen_max;
-			$object->auto_validate         = GETPOST('auto_validate', 'int');
-			$object->generate_pdf          = GETPOST('generate_pdf', 'int');
+			$object->auto_validate         = GETPOSTINT('auto_validate');
+			$object->generate_pdf          = GETPOSTINT('generate_pdf');
 			$object->fk_project            = $projectid;
 
 			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
@@ -230,9 +230,9 @@ if (empty($reshook)) {
 			}
 
 			// Get first contract linked to invoice used to generate template (facid is id of source invoice)
-			if (GETPOST('facid', 'int') > 0) {
+			if (GETPOSTINT('facid') > 0) {
 				$srcObject = new Facture($db);
-				$srcObject->fetch(GETPOST('facid', 'int'));
+				$srcObject->fetch(GETPOSTINT('facid'));
 
 				$srcObject->fetchObjectLinked();
 
@@ -248,7 +248,7 @@ if (empty($reshook)) {
 			$db->begin();
 
 			$oldinvoice = new Facture($db);
-			$oldinvoice->fetch(GETPOST('facid', 'int'));
+			$oldinvoice->fetch(GETPOSTINT('facid'));
 
 			$onlylines = GETPOST('toselect', 'array');
 
@@ -292,15 +292,15 @@ if (empty($reshook)) {
 	if ($action == 'setconditions' && $user->hasRight('facture', 'creer')) {
 		// Set condition
 		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("PaymentTerm"));
-		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
+		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'));
 	} elseif ($action == 'setmode' && $user->hasRight('facture', 'creer')) {
 		// Set mode
 		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("PaymentMode"));
-		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
+		$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
 	} elseif ($action == 'classin' && $user->hasRight('facture', 'creer')) {
 		// Set project
 		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("Project"));
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	} elseif ($action == 'setref' && $user->hasRight('facture', 'creer')) {
 		// Set bank account
 		$object->context['actionmsg'] = $langs->trans("FieldXModifiedFromYToZ", $langs->transnoentitiesnoconv("Title"), $object->title, $ref);
@@ -1006,7 +1006,7 @@ if ($action == 'create') {
 		// Invoice subtype
 		if (getDolGlobalInt('INVOICE_SUBTYPE_ENABLED')) {
 			print "<tr><td>".$langs->trans("InvoiceSubtype")."</td><td>";
-			print $form->getSelectInvoiceSubtype(GETPOSTISSET('subtype') ? GETPOST('subtype') : $object->subtype, 'subtype', -1, 0, 0, '');
+			print $form->getSelectInvoiceSubtype(GETPOSTISSET('subtype') ? GETPOST('subtype') : $object->subtype, 'subtype', 0, 0, '');
 			print "</td></tr>";
 		}
 
@@ -1204,7 +1204,7 @@ if ($action == 'create') {
 
 		print "</form>\n";
 	} else {
-		dol_print_error('', "Error, no invoice ".$object->id);
+		dol_print_error(null, "Error, no invoice ".$object->id);
 	}
 } else {
 	/*
@@ -1595,17 +1595,17 @@ if ($action == 'create') {
 		print '</td>';
 		print '</tr>';
 
-		// Status of generated invoices
+		// Status of auto generated invoices
 		print '<tr><td>';
 		if ($action == 'auto_validate' || $object->frequency > 0) {
-			print $form->editfieldkey($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->hasRight('facture', 'creer'));
+			print $form->editfieldkey($langs->trans("StatusOfAutoGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->hasRight('facture', 'creer'));
 		} else {
-			print $langs->trans("StatusOfGeneratedInvoices");
+			print $langs->trans("StatusOfAutoGeneratedInvoices");
 		}
 		print '</td><td>';
 		$select = 'select;0:'.$langs->trans('BillStatusDraft').',1:'.$langs->trans('BillStatusValidated');
 		if ($action == 'auto_validate' || $object->frequency > 0) {
-			print $form->editfieldval($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->hasRight('facture', 'creer'), $select);
+			print $form->editfieldval($langs->trans("StatusOfAutoGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->hasRight('facture', 'creer'), $select);
 		}
 		print '</td>';
 		// Auto generate documents

@@ -301,8 +301,9 @@ if (!$found) {
 	// There is no subdir that compose the main url root or autodetect fails (Ie: when using apache alias that point outside default DOCUMENT_ROOT).
 	$tmp = $dolibarr_main_url_root;
 } else {
-	$tmp = 'http'.(((empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on') && (empty($_SERVER["SERVER_PORT"]) || $_SERVER["SERVER_PORT"] != 443)) ? '' : 's').'://'.$_SERVER["SERVER_NAME"].((empty($_SERVER["SERVER_PORT"]) || $_SERVER["SERVER_PORT"] == 80 || $_SERVER["SERVER_PORT"] == 443) ? '' : ':'.$_SERVER["SERVER_PORT"]).($tmp3 ? (preg_match('/^\//', $tmp3) ? '' : '/').$tmp3 : '');
+	$tmp = 'http'.((!isHTTPS() && (empty($_SERVER["SERVER_PORT"]) || $_SERVER["SERVER_PORT"] != 443)) ? '' : 's').'://'.$_SERVER["SERVER_NAME"].((empty($_SERVER["SERVER_PORT"]) || $_SERVER["SERVER_PORT"] == 80 || $_SERVER["SERVER_PORT"] == 443) ? '' : ':'.$_SERVER["SERVER_PORT"]).($tmp3 ? (preg_match('/^\//', $tmp3) ? '' : '/').$tmp3 : '');
 }
+
 //print "tmp1=".$tmp1." tmp2=".$tmp2." tmp3=".$tmp3." tmp=".$tmp."\n";
 if (!empty($dolibarr_main_force_https)) {
 	$tmp = preg_replace('/^http:/i', 'https:', $tmp);
@@ -324,7 +325,7 @@ define('MAIN_DB_PREFIX', $dolibarr_main_db_prefix);
 
 /*
  * Define PATH to external libraries
- * To use other version than embeded libraries, define here constant to path. Use '' to use include class path autodetect.
+ * To use other version than embedded libraries, define here constant to path. Use '' to use include class path autodetect.
  */
 // Path to root libraries
 if (!defined('TCPDF_PATH')) {

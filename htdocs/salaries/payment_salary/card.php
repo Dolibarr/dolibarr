@@ -194,7 +194,7 @@ print dol_get_fiche_end();
 
 
 /*
- * List of salaries payed
+ * List of salaries paid
  */
 
 $disable_delete = 0;
@@ -213,7 +213,7 @@ if ($resql) {
 	$total = 0;
 	print '<br>';
 
-	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Salary').'</td>';
@@ -239,7 +239,7 @@ if ($resql) {
 			print '<td class="right">'.price($objp->sc_amount).'</td>';
 			// Status
 			print '<td class="center">'.$salary->getLibStatut(4, $objp->amount).'</td>';
-			// Amount payed
+			// Amount paid
 			print '<td class="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
 			if ($objp->paye == 1) {

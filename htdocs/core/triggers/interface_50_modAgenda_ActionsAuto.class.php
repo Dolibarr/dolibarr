@@ -1385,7 +1385,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			// TODO Merge all previous cases into this generic one
 			// $action = PASSWORD, BILL_DELETE, TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, CONTACT_SENTBYMAIL, RECRUITMENTCANDIDATURE_MODIFY, ...
 			// Can also be a value defined by an external module like SENTBYSMS, COMPANY_SENTBYSMS, MEMBER_SENTBYSMS, ...
-			// Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function).
+			// Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at beginning of this function).
 			// Note that these key can be set in agenda setup, only if defined into llx_c_action_trigger
 			if (!empty($object->context['actionmsg']) && empty($object->actionmsg)) {	// For description
 				$object->actionmsg = $object->context['actionmsg'];
@@ -1476,9 +1476,9 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$now = dol_now();
 
 		if (isset($_SESSION['listofnames-'.$object->trackid])) {
-			$attachs = $_SESSION['listofnames-'.$object->trackid];
-			if ($attachs && strpos($action, 'SENTBYMAIL')) {
-				$object->actionmsg = dol_concatdesc($object->actionmsg, "\n".$langs->transnoentities("AttachedFiles").': '.$attachs);
+			$attachments = $_SESSION['listofnames-'.$object->trackid];
+			if ($attachments && strpos($action, 'SENTBYMAIL')) {
+				$object->actionmsg = dol_concatdesc($object->actionmsg, "\n".$langs->transnoentities("AttachedFiles").': '.$attachments);
 			}
 		}
 

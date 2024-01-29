@@ -228,8 +228,8 @@ if (empty($reshook) && $action == 'add') {
 			$thirdparty->address = GETPOST('address');
 			$thirdparty->zip = GETPOST('zip');
 			$thirdparty->town = GETPOST('town');
-			$thirdparty->country_id = GETPOST('country_id', 'int');
-			$thirdparty->state_id = GETPOST('state_id');
+			$thirdparty->country_id = GETPOSTINT('country_id');
+			$thirdparty->state_id = GETPOSTINT('state_id');
 			$thirdparty->client = $thirdparty::PROSPECT;
 			$thirdparty->code_client = 'auto';
 			$thirdparty->code_fournisseur = 'auto';
@@ -419,7 +419,7 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		$db->commit();
 
-		Header("Location: ".$urlback);
+		header("Location: ".$urlback);
 		exit;
 	} else {
 		$db->rollback();

@@ -10,7 +10,7 @@
  * Copyright (C) 2018-2022 	Philippe Grand       	<philippe.grand@atoo-net.com>
  * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2023       Benjamin Grembi         <benjamin@oarces.fr>
- * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 $mesg = GETPOST('msg', 'alpha');
 $origin = GETPOST('origin', 'alpha');
-$originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
+$originid = (GETPOSTINT('originid') ? GETPOSTINT('originid') : GETPOSTINT('origin_id')); // For backward compatibility
 $note_public = GETPOST('note_public', 'restricthtml');
 $note_private = GETPOST('note_private', 'restricthtml');
 $lineid = GETPOST('line_id', 'int');
@@ -96,7 +96,7 @@ if ($id > 0 || !empty($ref)) {
 		$ret = $object->fetch_thirdparty();
 	}
 	if ($ret < 0) {
-		dol_print_error('', $object->error);
+		dol_print_error(null, $object->error);
 	}
 }
 
@@ -1128,7 +1128,7 @@ if ($action == 'create') {
 
 	// Confirm validation
 	if ($action == 'validate') {
-		// on verifie si l'objet est en numerotation provisoire
+		// Verify if the object's number os temporary
 		$ref = substr($object->ref, 1, 4);
 		if ($ref == 'PROV') {
 			$numref = $object->getNextNumRef($soc);
@@ -1140,6 +1140,12 @@ if ($action == 'create') {
 			$numref = $object->ref;
 		}
 		$text = $langs->trans('ConfirmValidateIntervention', $numref);
+		if (isModEnabled('notification')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+			$notify = new Notify($db);
+			$text .= '<br>';
+			$text .= $notify->confirmMessage('FICHINTER_VALIDATE', $object->socid, $object);
+		}
 
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate', '', 1, 1);
 	}

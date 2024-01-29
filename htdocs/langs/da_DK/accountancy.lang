@@ -90,13 +90,13 @@ AccountancyAreaDescProd=TRIN %s: Definer regnskabskonti på dine produkter/tjene
 
 AccountancyAreaDescBind=Trin %s: Tjek Bogføringer mellem eksisterende linjer for %s og regnskabskonto er udført, så systemet kan bogføre transaktionerne med et enkelt klik. Færdiggør manglende bogføringer. Dette gøres via menuen %s.
 AccountancyAreaDescWriteRecords=Trin %s: Bogfør transaktioner. Dette gøres via menuen <strong>%s</strong>, ved at klikke på knapen <strong>%s</strong>.
-AccountancyAreaDescAnalyze=Trin %s: Tilføj eller rediger eksisterende transaktioner og generer rapporter og eksport af data.
-
-AccountancyAreaDescClosePeriod=Trin %s: Luk periode, så vi kan ikke foretage ændringer i fremtiden.
+AccountancyAreaDescAnalyze=TRIN %s: Læs rapporter eller generer eksportfiler til andre bogholdere.
+AccountancyAreaDescClosePeriod=TRIN %s: Luk periode, så vi ikke kan overføre flere data i samme periode i fremtiden.
 
 TheFiscalPeriodIsNotDefined=Et obligatorisk trin i opsætningen er ikke blevet gennemført (regnskabsperiode er ikke defineret)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Et obligatorisk trin i opsætningen er ikke afsluttet (regnskabskodejournal ikke defineret for alle bankkonti)
 Selectchartofaccounts=Vælg aktiv kontoplan
+CurrentChartOfAccount=Aktuel aktiv kontoplan
 ChangeAndLoad=Ret og indlæs
 Addanaccount=Tilføj en regnskabskonto
 AccountAccounting=Regnskabskonto
@@ -343,7 +343,7 @@ AccountingJournalType3=Køb
 AccountingJournalType4=Bank
 AccountingJournalType5=Udgiftsrapporter
 AccountingJournalType8=Beholdning
-AccountingJournalType9=Retained earnings
+AccountingJournalType9=Overført overskud
 GenerationOfAccountingEntries=Generering af regnskabsposteringer
 ErrorAccountingJournalIsAlreadyUse=Denne kladde er allerede i brug
 AccountingAccountForSalesTaxAreDefinedInto=Bemærk: Regnskabskonto for salgsmoms er defineret i menuen <b> %s </b> - <b> %s </b>
@@ -446,16 +446,16 @@ AccountancyOneUnletteringModifiedSuccessfully=Én afstemning blev ændret med su
 AccountancyUnletteringModifiedSuccessfully=%s afstemning blev ændret med succes
 
 ## Closure
-AccountancyClosureStep1=Trin 1: Valider og lås bevægelser
+AccountancyClosureStep1=Trin 1: Valider og lås bevægelserne
 AccountancyClosureStep2=Trin 2: Luk regnskabsperioden
 AccountancyClosureStep3=Trin 3: Udpak poster (valgfrit)
 AccountancyClosureClose=Luk regnskabsperiode
-AccountancyClosureAccountingReversal=Extract and record "Retained earnings" entries
+AccountancyClosureAccountingReversal=Udtræk og registrer "Overført indtjening"-poster
 AccountancyClosureStep3NewFiscalPeriod=Næste regnskabsperiode
-AccountancyClosureGenerateClosureBookkeepingRecords=Generate "Retained earnings" entries on the next fiscal period
-AccountancyClosureSeparateAuxiliaryAccounts=When generating the "Retained earnings" entries, detail the sub-ledger accounts
+AccountancyClosureGenerateClosureBookkeepingRecords=Generer "Overført indtjening"-poster i den næste regnskabsperiode
+AccountancyClosureSeparateAuxiliaryAccounts=Når du genererer "Overført indtjening"-posteringer, skal du detaljere underreskonti
 AccountancyClosureCloseSuccessfully=Regnskabsperioden er afsluttet med succes
-AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping entries for "Retained earnings" has been inserted successfully
+AccountancyClosureInsertAccountingReversalSuccessfully=Bogføringsposter for "Overført indtjening" er blevet indsat
 
 ## Confirm box
 ConfirmMassUnletteringAuto=Bekræftelse af automatisk afstemning af bulk
@@ -464,7 +464,7 @@ ConfirmMassUnletteringQuestion=Er du sikker på, at du vil afstemme de valgte %s
 ConfirmMassDeleteBookkeepingWriting=Bekræftelse på massesletning
 ConfirmMassDeleteBookkeepingWritingQuestion=Dette vil slette transaktionen fra regnskabet (alle linjeposter relateret til den samme transaktion slettes). Er du sikker på, at du vil slette de %s valgte poster?
 AccountancyClosureConfirmClose=Er du sikker på, at du vil lukke den nuværende regnskabsperiode? <span class="warning">Du forstår, at lukning af regnskabsperioden er en irreversibel handling og vil permanent blokere enhver ændring eller sletning af poster i denne periode</span> .
-AccountancyClosureConfirmAccountingReversal=Are you sure you want to record entries for the "Retained earnings" ?
+AccountancyClosureConfirmAccountingReversal=Er du sikker på, at du vil registrere poster for "Overført indtjening"?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Visse obligatoriske trin i opsætningen blev ikke udført. Gør venligst dette

@@ -163,6 +163,8 @@ ALTER TABLE llx_usergroup_extrafields ADD UNIQUE INDEX uk_usergroup_extrafields 
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_SIGN','Intervention is signed','Executed when a intervention is signed','ficheinter',31);
 
 
+ALTER TABLE llx_website ADD COLUMN name_template varchar(255) NULL;
+
 UPDATE llx_categorie SET date_creation = tms, tms = tms WHERE date_creation IS NULL AND tms IS NOT NULL;
 
 ALTER TABLE llx_product_price ADD COLUMN price_label varchar(255) AFTER fk_user_author;
@@ -202,3 +204,14 @@ CREATE TABLE llx_c_product_thirdparty_relation_type
     active tinyint default 1 NOT NULL
 ) ENGINE = innodb;
 
+
+ALTER TABLE llx_c_tva ADD COLUMN type_vat smallint NOT NULL DEFAULT 0 AFTER fk_pays;
+
+ALTER TABLE llx_categorie ADD COLUMN position integer DEFAULT 0 AFTER color;
+
+ALTER TABLE llx_product DROP COLUMN onportal;
+
+ALTER TABLE llx_knowledgemanagement_knowledgerecord MODIFY COLUMN answer longtext;
+
+-- Rename const to add customer categories on not customer/prospect third-party if enabled
+UPDATE llx_const SET name = 'THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT' WHERE name = 'THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER';

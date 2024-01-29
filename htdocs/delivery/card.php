@@ -102,7 +102,7 @@ if ($action == 'add') {
 	$object->note          = GETPOST("note", 'restricthtml');
 	$object->note_private  = GETPOST("note", 'restricthtml');
 	$object->commande_id   = GETPOST("commande_id", 'int');
-	$object->fk_incoterms  = GETPOST('incoterm_id', 'int');
+	$object->fk_incoterms  = GETPOSTINT('incoterm_id');
 
 	/* ->entrepot_id seems to not exists
 	if (!getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && isModEnabled('stock')) {
@@ -696,11 +696,11 @@ if ($action == 'create') {
 			print '</div></div>';
 		} else {
 			/* Expedition non trouvee */
-			print "Expedition inexistante ou acces refuse";
+			print "Expedition inexistante ou access refuse";
 		}
 	} else {
 		/* Expedition non trouvee */
-		print "Expedition inexistante ou acces refuse";
+		print "Expedition inexistante ou access refuse";
 	}
 }
 

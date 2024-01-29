@@ -177,14 +177,14 @@ into
 	
 * Removed useless directories ("examples", "tools")
 
-* Optionnaly, removed all fonts except
-    dejavusans* (used by greek, arab, persan, romanian, turkish),
+* Optionally, removed all fonts except
+    dejavusans* (used by greek, arab, person, romanian, turkish),
     freemono* (russian),
     cid*+msungstdlight+stsongstdlight+uni2cid* (chinese),
     helvetica* (all other languages),
     zapfdingbats.php (for special chars like form checkboxes)
 
-* Optionnaly, made freemono the default monotype font if we removed courier
+* Optionally, made freemono the default monotype font if we removed courier
 In htdocs/includes/tecnickcom/tcpdf/tcpdf.php
 -       protected $default_monospaced_font = 'courier';
 +       protected $default_monospaced_font = 'freemono';
