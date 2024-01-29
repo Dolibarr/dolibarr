@@ -37,8 +37,8 @@ class Cstate extends CommonDict
 
 	/**
 	 * @var string      The code of the state
-	 *                  (ex: LU0011, MA12, 07, 0801, etc.)  
-	 */	
+	 *                  (ex: LU0011, MA12, 07, 0801, etc.)
+	 */
 	public $code_departement;
 
 	/**
