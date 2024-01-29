@@ -890,7 +890,7 @@ class FormMail extends Form
 			//input prompt AI
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 			if (isModEnabled('ai')) {
-				$out .= $this->getHtmlForInstruction();
+				$out .= $this->getModelEmailTemplate();
 			}
 			// Message
 			if (!empty($this->withbody)) {
@@ -1386,15 +1386,17 @@ class FormMail extends Form
 	{
 		global $langs, $form;
 
-		$out = '<tr>';
+		$out = '<tr id="ai_input" style="display:none;">';
 		$out .= '<td>';
 		$out .= $form->textwithpicto($langs->trans('helpWithAi'), $langs->trans("YouCanMakeSomeInstructionForEmail"));
 		$out .= '</td>';
 
 		$out .= '<td>';
-		$out .= '<input type="text" class="quatrevingtpercent" id="ai_instructions" name="instruction" placeholder="message with AI"/>';
+		$out .= '<input type="text" class="quatrevingtpercent" id="ai_instructions" name="instruction" placeholder="message with AI" />';
 		$out .= '<input id="generate_button" type="button" class="button smallpaddingimp"  value="'.$langs->trans('Generate').'"/>';
 		$out .= "</td></tr>\n";
+
+
 		$out .= "<script type='text/javascript'>
 			$(document).ready(function() {
 
@@ -1443,6 +1445,54 @@ class FormMail extends Form
 		return $out;
 	}
 
+	/**
+	 * get models template email in boxes
+	 * @return 	string      HTML for model email boxes
+
+	 */
+	public function getModelEmailTemplate()
+	{
+
+		global $langs, $form;
+
+		$out = '<tr>';
+		$out .= '<td>';
+		$out .= $form->textwithpicto($langs->trans('ModelTemplate'), $langs->trans("YouCanChooseAModelForYouMailContent"));
+		$out .= '</td>';
+		$out .= '<td>';
+		$out .= '<div id="template-selector" class="template-container">
+		<div class="template-option" data-template="empty"><i class="far fa-file"></i><span class="template-option-text">Empty template</span></div>
+		<div class="template-option" data-template="basic">Basic</div>
+		<div class="template-option" data-template="news">News</div>
+		<div class="template-option" data-template="commerce">Commerce</div>
+		<div class="template-option" data-template="text">Text</div>
+		<div class="template-option" data-template="ai"><i class="fas fa-edit"></i><span class="template-option-text">Generate with AI</span></div>
+	 	</div>';
+		$out .= '</td></tr>';
+		$out .= "<script type='text/javascript'>
+				var cssLink = document.createElement('link');
+				cssLink.href = '".DOL_URL_ROOT."/ai/css/style.css';
+				cssLink.rel = 'stylesheet';
+				cssLink.type = 'text/css';
+				document.head.appendChild(cssLink);</script>";
+		$out .= "<script type='text/javascript'>
+				$(document).ready(function() {
+					$('.template-option').click(function() {
+						$('.template-option').removeClass('selected');
+						$(this).addClass('selected');
+
+						var template = $(this).data('template');
+						if(template === 'ai') {
+							$('#ai_input').show();
+						} else {
+							$('#ai_input').hide();
+						}
+					});
+				});
+		</script>";
+		$out .= $this->getHtmlForInstruction();
+		return $out;
+	}
 
 
 	/**
