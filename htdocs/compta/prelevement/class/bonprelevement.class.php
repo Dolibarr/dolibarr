@@ -1359,6 +1359,7 @@ class BonPrelevement extends CommonObject
 					$this->context['factures_prev'] = $factures_prev;
 					// Generation of direct debit or credit transfer file $this->filename (May be a SEPA file for european countries)
 					// This also set the property $this->total with amount that is included into file
+					$userid = 0;
 					if ($sourcetype == 'salary') {
 						$userid = $this->context['factures_prev'][0][2];
 					}
@@ -1671,10 +1672,10 @@ class BonPrelevement extends CommonObject
 	 * @param 	int 	$executiondate		Timestamp date to execute transfer
 	 * @param	string	$type				'direct-debit' or 'bank-transfer'
 	 * @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
-	 * @param   int  	$user_dest          User id for bankaccount when if it is salary invoice
+	 * @param   int  	$forsalary          If the SEPA is to pay salaries
 	 * @return	int							>=0 if OK, <0 if KO
 	 */
-	public function generate($format = 'ALL', $executiondate = 0, $type = 'direct-debit', $fk_bank_account = 0, $user_dest = 0)
+	public function generate($format = 'ALL', $executiondate = 0, $type = 'direct-debit', $fk_bank_account = 0, $forsalary = 0)
 	{
 		global $conf, $langs, $mysoc;
 
@@ -1845,7 +1846,7 @@ class BonPrelevement extends CommonObject
 				/*
 				 * Section Creditor (sepa Crediteurs block lines)
 				 */
-				if (!empty($user_dest)) {
+				if (!empty($forsalary)) {
 					$sql = "SELECT u.rowid as userId, u.address, u.zip, u.town, c.code as country_code, CONCAT(u.firstname,' ',u.lastname) as nom,";
 					$sql .= " pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
 					$sql .= " s.ref as reffac, p.fk_salary as idfac,";
@@ -1900,7 +1901,7 @@ class BonPrelevement extends CommonObject
 
 						$daterum = (!empty($obj->date_rum)) ? $this->db->jdate($obj->date_rum) : $this->db->jdate($obj->datec);
 						$refobj = $obj->reffac;
-						if (empty($refobj) && !empty($user_dest)) {	// If ref of salary not defined, we force a value
+						if (empty($refobj) && !empty($forsalary)) {	// If ref of salary not defined, we force a value
 							$refobj = "SAL".$obj->idfac;
 						}
 
