@@ -279,7 +279,7 @@ class Dolresource extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
 		if ($id) {
-			$sql .= " WHERE t.rowid = ".((int) $id);
+			$sql .= " WHERE t.rowid = ".($id);
 		} else {
 			$sql .= " WHERE t.ref = '".$this->db->escape($ref)."'";
 		}
@@ -436,8 +436,8 @@ class Dolresource extends CommonObject
 	/**
 	 * Load data of resource links into memory from database
 	 *
-	 * @param	int	$id		Id of link element_resources
-	 * @return	int			if KO: <0 || if OK: >0
+	 * @param	int		$id		Id of link element_resources
+	 * @return	int				if KO: <0 || if OK: >0
 	 */
 	public function fetchElementResource(int $id): int
 	{
@@ -452,7 +452,7 @@ class Dolresource extends CommonObject
 		$sql .= " t.fk_user_create,";
 		$sql .= " t.tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as t";
-		$sql .= " WHERE t.rowid = ".((int) $id);
+		$sql .= " WHERE t.rowid = ".($id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -494,7 +494,7 @@ class Dolresource extends CommonObject
 	 */
 	public function delete(int $rowid, int $notrigger = 0): int
 	{
-		global $user, $langs, $conf;
+		global $user, $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error = 0;
@@ -741,7 +741,7 @@ class Dolresource extends CommonObject
 		// Links between objects are stored in this table
 		$sql = 'SELECT rowid, resource_id, resource_type, busy, mandatory';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'element_resources';
-		$sql .= " WHERE element_id=".((int) $element_id)." AND element_type='".$this->db->escape($element)."'";
+		$sql .= " WHERE element_id=".($element_id)." AND element_type='".$this->db->escape($element)."'";
 		if ($resource_type) {
 			$sql .= " AND resource_type LIKE '%".$this->db->escape($resource_type)."%'";
 		}
@@ -782,7 +782,7 @@ class Dolresource extends CommonObject
 	{
 		$resources = $this->getElementResources($elementType, $elementId);
 		$i = 0;
-		foreach ($resources as $nb => $resource) {
+		foreach ($resources as $resource) {
 			$this->lines[$i] = fetchObjectByElement($resource['resource_id'], $resource['resource_type']);
 			$i++;
 		}
@@ -916,7 +916,7 @@ class Dolresource extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ?: 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
