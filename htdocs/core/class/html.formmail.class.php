@@ -1463,11 +1463,11 @@ class FormMail extends Form
 		$templates = array('empty', 'basic', 'news', 'commerce', 'text');
 		foreach ($templates as $template) {
 			$out .= '<div class="template-option" data-template="'.$template.'">';
-			$out .= '<img alt="Gray rectangle" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />';
-			$out .= ucfirst($template);
+			$out .= '<img alt="'.$template.'" src="'.DOL_URL_ROOT.'/theme/common/mailtemplate/'.$template.'.png" />';
+			$out .= '<span class="template-option-text">'.ucfirst($template).'</span>';
 			$out .= '</div>';
 		}
-		$out .= '<div class="template-option" data-template="ai"><i class="fas fa-edit"></i>Generate with AI</div>';
+		$out .= '<div class="template-option" data-template="ai"><i class="fas fa-edit"></i><span >Generate with AI</span></div>';
 		$out .= '</div>';
 		$out .= '</td></tr>';
 		$out .= "<script type='text/javascript'>
