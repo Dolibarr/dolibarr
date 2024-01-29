@@ -1679,7 +1679,7 @@ while ($i < $imaxinloop) {
 		$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 		$companystatic->fk_prospectlevel = $obj->fk_prospectlevel;
-		$companystatic->fk_parent = $obj->fk_parent;
+		$companystatic->parent = $obj->fk_parent;
 		$companystatic->entity = $obj->entity;
 
 		$object = $companystatic;
@@ -2010,8 +2010,8 @@ while ($i < $imaxinloop) {
 		// Parent company
 		if (!empty($arrayfields['s2.nom']['checked'])) {
 			print '<td class="center tdoverflowmax100">';
-			if ($companystatic->fk_parent > 0) {
-				$companyparent->fetch($companystatic->fk_parent);
+			if ($companystatic->parent > 0) {
+				$companyparent->fetch($companystatic->parent);
 				print $companyparent->getNomUrl(1);
 			}
 			print "</td>";

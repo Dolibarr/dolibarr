@@ -2,8 +2,9 @@
 
 ## Features
 
-Provides an api key for chatchpt for use it in other modules
+Provides AI (Artificial Intelligence) features in different part of the application. Need external AI API. 
 
+## Licenses
 
 ### Main code
 

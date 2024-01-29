@@ -89,6 +89,8 @@ ShippingSentByEMail=Bon d'expédition %s envoyé par email
 ShippingValidated= Expédition %s validée
 InterventionSentByEMail=Intervention %s envoyé par email
 ProjectSentByEMail=Projet %s envoyé par email
+ProjectDeletedInDolibarr=Projet %s supprimé
+ProjectClosedInDolibarr=Projet %s fermé
 ProposalDeleted=Proposition commerciale supprimée
 OrderDeleted=Commande supprimée
 InvoiceDeleted=Facture supprimée
@@ -129,6 +131,7 @@ MRP_MO_DELETEInDolibarr=OF supprimé
 MRP_MO_CANCELInDolibarr=OF annulé
 PAIDInDolibarr=%s payé
 ENABLEDISABLEInDolibarr=Utilisateur activé ou désactivé
+CANCELInDolibarr=Annulé
 ##### End agenda events #####
 AgendaModelModule=Modèle de document pour les événements
 DateActionStart=Date de début

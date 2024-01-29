@@ -470,6 +470,30 @@ class Societe extends CommonObject
 	public $idprof6;
 
 	/**
+	 * Professional ID 7
+	 * @var string
+	 */
+	public $idprof7;
+
+	/**
+	 * Professional ID 8
+	 * @var string
+	 */
+	public $idprof8;
+
+	/**
+	 * Professional ID 9
+	 * @var string
+	 */
+	public $idprof9;
+
+	/**
+	 * Professional ID 10
+	 * @var string
+	 */
+	public $idprof10;
+
+	/**
 	 * Social object of the company
 	 * @var string
 	 */
@@ -3119,6 +3143,7 @@ class Societe extends CommonObject
 		$sql = "SELECT rowid, email, statut as status, phone_mobile, lastname, poste, firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople";
 		$sql .= " WHERE fk_soc = ".((int) $this->id);
+		$sql .= " AND entity IN (".getEntity($this->element).")";
 		$sql .= " ORDER BY lastname, firstname";
 
 		$resql = $this->db->query($sql);

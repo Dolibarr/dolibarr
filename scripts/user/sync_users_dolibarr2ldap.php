@@ -52,6 +52,9 @@ require_once DOL_DOCUMENT_ROOT."/user/class/user.class.php";
 $version = DOL_VERSION;
 $error = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */

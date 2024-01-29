@@ -70,7 +70,8 @@ class Categories extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
+
 		$this->db = $db;
 		$this->category = new Categorie($this->db);
 	}
@@ -133,8 +134,6 @@ class Categories extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->rights->categorie->lire) {
@@ -198,8 +197,8 @@ class Categories extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		// Check mandatory fields
-		$result = $this->_validate($request_data);
+		// Check mandatory fields (throw an exception if wrong)
+		$this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -666,8 +665,8 @@ class Categories extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   Categorie  $object    Object to clean
-	 * @return  Object     Object with cleaned properties
+	 * @param   Categorie  $object  Object to clean
+	 * @return  Object     			Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -722,8 +721,8 @@ class Categories extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param array|null    $data    Data to validate
-	 * @return array
+	 * @param array|null    $data   Data to validate
+	 * @return array				Return array with validated mandatory fields and their value
 	 *
 	 * @throws RestException
 	 */

@@ -2218,6 +2218,10 @@ if (empty($reshook)) {
 				if (!empty($price_ht) || $price_ht === '0') {
 					$pu_ht = price2num($price_ht, 'MU');
 					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+				} elseif (!empty($price_ht_devise) || $price_ht_devise === '0') {
+					$pu_ht_devise = price2num($price_ht_devise, 'MU');
+					$pu_ht = '';
+					$pu_ttc = '';
 				} elseif (!empty($price_ttc) || $price_ttc === '0') {
 					$pu_ttc = price2num($price_ttc, 'MU');
 					$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
@@ -2309,8 +2313,10 @@ if (empty($reshook)) {
 				$type = $prod->type;
 				$fk_unit = $prod->fk_unit;
 			} else {
-				$pu_ht = price2num($price_ht, 'MU');
-				$pu_ttc = price2num($price_ttc, 'MU');
+				if (!empty($price_ht)) $pu_ht = price2num($price_ht, 'MU');
+				else $pu_ht = '';
+				if (!empty($price_ttc)) $pu_ttc = price2num($price_ttc, 'MU');
+				else $pu_ttc = '';
 				$tva_npr = (preg_match('/\*/', $tva_tx) ? 1 : 0);
 				$tva_tx = str_replace('*', '', $tva_tx);
 				if (empty($tva_tx)) {
@@ -2336,8 +2342,8 @@ if (empty($reshook)) {
 			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $mysoc, $tva_npr);
 			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc, $tva_npr);
 
-			$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
-			$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
+			$pu_ht_devise = price2num($price_ht_devise, '', 2);
+			$pu_ttc_devise = price2num($price_ttc_devise, '', 2);
 
 			// Prepare a price equivalent for minimum price check
 			$pu_equivalent = $pu_ht;
@@ -5926,7 +5932,7 @@ if ($action == 'create') {
 				print dolGetButtonAction($htmltooltip, $langs->trans('Delete'), 'delete', $deleteHref, '', $enableDelete, $params);
 			} else {
 				$params['attr']['title'] = '';
-				print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', '#', '', false);
+				print dolGetButtonAction($htmltooltip, $langs->trans('Delete'), 'delete', '#', '', false);
 			}
 		}
 		print '</div>';
@@ -5986,6 +5992,14 @@ if ($action == 'create') {
 
 		// Show online payment link
 		$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
+
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('doShowOnlinePaymentUrl', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			if (isset($hookmanager->resArray['showonlinepaymenturl'])) {
+				$useonlinepayment = $hookmanager->resArray['showonlinepaymenturl'];
+			}
+		}
 
 		if ($object->status != Facture::STATUS_DRAFT && $useonlinepayment) {
 			print '<br><!-- Link to pay -->'."\n";

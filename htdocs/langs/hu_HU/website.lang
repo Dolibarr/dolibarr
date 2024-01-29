@@ -11,7 +11,7 @@ WEBSITE_ALIASALT=Alternatív oldalnevek/álnevek
 WEBSITE_ALIASALTDesc=Használja itt a többi név/álnevek listáját, hogy az oldal más nevek/álnevek használatával is elérhető legyen (például a régi név az álnév átnevezése után, hogy a régi link/név visszamutató hivatkozása működjön). A szintaxis:<br>alternatívnév1, alternatívnév2, ...
 WEBSITE_CSS_URL=A külső CSS-fájl URL-je
 WEBSITE_CSS_INLINE=CSS-fájltartalom (minden oldalon közös)
-WEBSITE_JS_INLINE=Javascript fájltartalom (minden oldalon közös)
+WEBSITE_JS_INLINE=JavaScript file content (common to all pages)
 WEBSITE_HTML_HEADER=Kiegészítés a HTML-fejléc alján (minden oldalon közös)
 WEBSITE_ROBOT=Robot fájl (robots.txt)
 WEBSITE_HTACCESS=Webhely .htaccess fájl
@@ -25,7 +25,7 @@ EditTheWebSiteForACommonHeader=Megjegyzés: Ha személyre szabott fejlécet szer
 MediaFiles=Médiakönyvtár
 EditCss=Webhely tulajdonságainak szerkesztése
 EditMenu=Szerkesztés menü
-EditMedias=Média szerkesztése
+EditMedias=Edit media
 EditPageMeta=Oldal/tároló tulajdonságainak szerkesztése
 EditInLine=Szerkesztés soron belül
 AddWebsite=Webhely hozzáadása
@@ -60,10 +60,11 @@ NoPageYet=Még nincsenek oldalak
 YouCanCreatePageOrImportTemplate=Létrehozhat egy új oldalt vagy importálhat egy teljes webhelysablont
 SyntaxHelp=Súgó adott szintaktikai tippekhez
 YouCanEditHtmlSourceckeditor=A HTML forráskódot a szerkesztő "Forrás" gombjával szerkesztheti.
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> A PHP kódot a <strong>&lt;?php ?&gt;</strong> címkék használatával helyezheti el ebbe a forrásba. A következő globális változók állnak rendelkezésre: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></ span> Másik oldal/tároló tartalma is szerepelhet a következő szintaxissal:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> A következő szintaxissal átirányíthat egy másik oldalra/tárolóra (Megjegyzés: ne adjon ki tartalmat átirányítás előtt):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> Egy másik oldalra mutató hivatkozás hozzáadásához használja a következő szintaxist:<br><strong>&lt;a href ="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> A <strong>letöltési link</strong> hozzáadása a <strong>documents</strong> könyvtárban tárolt fájl esetén használja a <strong>document.php</strong> wrappert:<br>Például egy dokumentumokba/ecm-be (naplózni kell) a szintaxis :<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Dokumentumokba/médiákba helyezhető fájlokhoz (könyvtár megnyitása nyilvános hozzáférés), szintaxisa:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>A következővel megosztott fájl esetén megosztási hivatkozás (nyílt hozzáférés a fájl megosztási hash kulcsával), szintaxisa:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br ><span class="fa fa-picture-o"></span> <strong>kép</strong> felvételéhez a <strong>documents</strong> könyvtárban tárolva használja a <strong>viewimage.php</strong> wrappert:<br>Például egy dokumentumokba/médiákba helyezett kép esetén (nyitott könyvtár nyilvános hozzáféréshez) a szintaxis a következő: <br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
-#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper.<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=Megosztási hivatkozással megosztott kép esetén (nyílt hozzáférés a fájl megosztási hash kulcsával) a szintaxis:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt ;</strong><br>
-YouCanEditHtmlSourceMore=<br>A HTML-re vagy a dinamikus kódra további példák érhetők el a <a href="%s" target="_blank" rel="noopener noreferrer external">wiki dokumentációjában</a><br>.
+YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentation</a>.<br>
 ClonePage=Oldal/tároló klónozása
 CloneSite=Webhely klónozása
 SiteAdded=Webhely hozzáadva
@@ -91,7 +92,7 @@ SorryWebsiteIsCurrentlyOffLine=Sajnos ez a webhely jelenleg nem elérhető. Kér
 WEBSITE_USE_WEBSITE_ACCOUNTS=A webhely fióktáblázatának engedélyezése
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Engedélyezze a táblázatban a webhelyfiókok (bejelentkezési/belépési) tárolását minden egyes webhelyhez/harmadik félhez
 YouMustDefineTheHomePage=Először meg kell határoznia az alapértelmezett kezdőlapot
-OnlyEditionOfSourceForGrabbedContentFuture=Figyelmeztetés: Weboldal létrehozása külső weboldal importálásával csak tapasztalt felhasználók számára van fenntartva. A forrásoldal összetettségétől függően az importálás eredménye eltérhet az eredetitől. Továbbá, ha a forrásoldal általános CSS-stílusokat vagy ütköző JavaScript-kódokat használ, az megzavarhatja a Webhely-szerkesztő megjelenését vagy szolgáltatásait, amikor ezen az oldalon dolgozik. Ezzel a módszerrel gyorsabban hozhat létre oldalt, de ajánlatos az új oldalt a semmiből vagy egy javasolt oldalsablonból létrehozni.<br>Ne feledje, hogy előfordulhat, hogy a beágyazott szerkesztő nem működik megfelelően, ha egy megragadott külső oldalon használják.
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor may not works correctty when used on a grabbed external page.
 OnlyEditionOfSourceForGrabbedContent=Csak a HTML-forrás kiadása lehetséges, ha a tartalmat egy külső webhelyről szerezték be
 GrabImagesInto=A css-ben és az oldalon talált képeket is megragadja.
 ImagesShouldBeSavedInto=A képeket a könyvtárba kell menteni
@@ -112,13 +113,13 @@ GoTo=Ugrás ide
 DynamicPHPCodeContainsAForbiddenInstruction=Dinamikus PHP-kódot ad hozzá, amely tartalmazza az alapértelmezés szerint tiltott '<strong>%s</strong> PHP utasítást dinamikus tartalomként (lásd a WEBSITE_PHP_ALLOW_xxx rejtett opciókat az engedélyezett parancsok listájának növeléséhez).
 NotAllowedToAddDynamicContent=Nincs jogosultsága PHP dinamikus tartalom hozzáadására vagy szerkesztésére a webhelyeken. Kérjen engedélyt, vagy csak tartsa módosítatlanul a kódot a php címkékbe.
 ReplaceWebsiteContent=Webhelytartalom keresése vagy cseréje
-DeleteAlsoJs=Törli az ehhez a webhelyhez tartozó összes javascript fájlt is?
-DeleteAlsoMedias=Törli az ehhez a webhelyhez tartozó összes médiafájlt is?
+DeleteAlsoJs=Delete also all JavaScript files specific to this website?
+DeleteAlsoMedias=Delete also all media files specific to this website?
 MyWebsitePages=Saját weboldalaim
 SearchReplaceInto=Keresés | Cserélje be
 ReplaceString=Új karakterlánc
 CSSContentTooltipHelp=Írja be ide a CSS-tartalmat. Az alkalmazás CSS-jével való ütközés elkerülése érdekében ügyeljen arra, hogy az összes deklaráció elé fűzze a .bodywebsite osztályt. Például:<br><br>#mycssselector, input.myclass:hover { ... <br>kell<br>.bodywebsite #mycssselector, .bodywebsite input.myclass:hover { ... <br> <br>Megjegyzés: Ha van egy nagy fájlja ennek az előtagnak a nélkül, a 'lessc' segítségével konvertálhatja, és mindenhol hozzáfűzheti a .bodywebsite előtagot.
-LinkAndScriptsHereAreNotLoadedInEditor=Figyelmeztetés: Ez a tartalom csak akkor jelenik meg, ha a webhelyet egy szerverről érik el. Szerkesztés módban nem használatos, így ha szerkesztés módban is be kell töltenie a javascript fájlokat, csak adja hozzá a 'script src=...' címkét az oldalhoz.
+LinkAndScriptsHereAreNotLoadedInEditor=Warning: This content is output only when site is accessed from a server. It is not used in Edit mode so if you need to load JavaScript files also in edit mode, just add your tag 'script src=...' into the page.
 Dynamiccontent=Példa egy dinamikus tartalommal rendelkező oldalról
 ImportSite=Webhelysablon importálása
 EditInLineOnOff=A 'Inline szerkesztés' mód %s
@@ -160,3 +161,6 @@ PagesViewedTotal=Pages viewed (total)
 Visibility=Láthatóság
 Everyone=Everyone
 AssignedContacts=Hozzárendelt névjegyek
+WebsiteTypeLabel=Type of Web site
+WebsiteTypeDolibarrWebsite=Web site (CMS Dolibarr)
+WebsiteTypeDolibarrPortal=Native Dolibarr portal

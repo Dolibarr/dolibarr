@@ -90,13 +90,13 @@ AccountancyAreaDescProd=ΒΗΜΑ %s: Ορίστε λογαριασμούς λο�
 
 AccountancyAreaDescBind=ΒΗΜΑ %s: Ελέγξτε ότι η δέσμευση μεταξύ των υφιστάμενων %s γραμμών και του  λογαριασμού λογιστικής έχει ολοκληρωθεί, έτσι ώστε η εφαρμογή να είναι σε θέση να καταγράφει τις συναλλαγές στο Καθολικό με ένα κλικ. Συμπληρώστε τις δεσμεύσεις που λείπουν. Για αυτό, χρησιμοποιήστε την καταχώρηση μενού %s.
 AccountancyAreaDescWriteRecords=ΒΗΜΑ %s: Εγγραφή συναλλαγών στο Καθολικό. Για αυτό, μεταβείτε στο μενού <strong>%s</strong> και πατήστε το κουμπί <strong>%s</strong> .
-AccountancyAreaDescAnalyze=ΒΗΜΑ%s: Προσθέστε ή επεξεργαστείτε υπάρχουσες συναλλαγές και δημιουργήστε αναφορές και εξαγωγές.
-
-AccountancyAreaDescClosePeriod=ΒΗΜΑ %s: Κλείσιμο περιόδου, ώστε να μην μπορούμε να κάνουμε τροποποίηση στο μέλλον.
+AccountancyAreaDescAnalyze=ΒΗΜΑ %s: Διαβάστε αναφορές ή δημιουργήστε αρχεία εξαγωγής για άλλους λογιστές.
+AccountancyAreaDescClosePeriod=ΒΗΜΑ %s: Κλείστε την περίοδο, ώστε να μην μπορούμε να μεταφέρουμε άλλα δεδομένα στην ίδια περίοδο στο μέλλον.
 
 TheFiscalPeriodIsNotDefined=Ένα υποχρεωτικό βήμα στη διαδικασία εγκατάστασης δεν έχει ολοκληρωθεί (Η οικονομική περίοδος δεν έχει καθοριστεί)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Ένα υποχρεωτικό βήμα στη ρύθμιση δεν έχει ολοκληρωθεί (το ημερολόγιο κωδικών λογιστικής δεν έχει καθοριστεί για όλους τους τραπεζικούς λογαριασμούς)
 Selectchartofaccounts=Επιλέξτε ενεργό λογιστικό σχέδιο
+CurrentChartOfAccount=Τρέχον ενεργό λογιστικό σχέδιο
 ChangeAndLoad=Αλλαγή και φόρτωση
 Addanaccount=Προσθέστε ένα λογαριασμό λογιστικής
 AccountAccounting=Λογαριασμός λογιστικής
@@ -343,7 +343,7 @@ AccountingJournalType3=Αγορές
 AccountingJournalType4=Τράπεζα
 AccountingJournalType5=Αναφορές εξόδων
 AccountingJournalType8=Απογραφή
-AccountingJournalType9=Retained earnings
+AccountingJournalType9=Παρακρατηθέντα κέρδη
 GenerationOfAccountingEntries=Δημιουργία λογιστικών εγγραφών
 ErrorAccountingJournalIsAlreadyUse=Αυτό το ημερολόγιο χρησιμοποιείται ήδη
 AccountingAccountForSalesTaxAreDefinedInto=Σημείωση: Ο λογαριασμός λογιστικής για τον φόρο πωλήσεων ορίζεται στο μενού <b>%s</b> - <b>%s</b>
@@ -450,12 +450,12 @@ AccountancyClosureStep1=Βήμα 1 : Επικύρωση και κλείδωμα 
 AccountancyClosureStep2=Βήμα 2: Κλείσιμο φορολογικής περιόδου
 AccountancyClosureStep3=Βήμα 3: Εξαγωγή εγγραφών (Προαιρετικό)
 AccountancyClosureClose=Κλείσιμο φορολογικής περιόδου
-AccountancyClosureAccountingReversal=Extract and record "Retained earnings" entries
+AccountancyClosureAccountingReversal=Εξάγετε και καταγράψτε τις καταχωρήσεις "Παρακρατηθέντων κερδών"
 AccountancyClosureStep3NewFiscalPeriod=Επόμενη φορολογική περίοδος
-AccountancyClosureGenerateClosureBookkeepingRecords=Generate "Retained earnings" entries on the next fiscal period
-AccountancyClosureSeparateAuxiliaryAccounts=When generating the "Retained earnings" entries, detail the sub-ledger accounts
+AccountancyClosureGenerateClosureBookkeepingRecords=Δημιουργήστε εγγραφές "Παρακρατηθέντων κερδών" για την επόμενη οικονομική περίοδο
+AccountancyClosureSeparateAuxiliaryAccounts=Κατά τη δημιουργία των καταχωρήσεων "Παρακρατηθέντων κερδών", ενημερώστε τους λογαριασμούς του βοηθητικού καθολικού
 AccountancyClosureCloseSuccessfully=Η φορολογική περίοδος έχει κλείσει με επιτυχία
-AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping entries for "Retained earnings" has been inserted successfully
+AccountancyClosureInsertAccountingReversalSuccessfully=Οι καταχωρήσεις λογιστικής για τα "Παρακρατηθέντα κέρδη" έχουν εισαχθεί με επιτυχία.
 
 ## Confirm box
 ConfirmMassUnletteringAuto=Επιβεβαίωση αυτόματης μαζικής αναίρεσης λογιστικής συμφωνίας
@@ -464,7 +464,7 @@ ConfirmMassUnletteringQuestion=Είστε σίγουροι ότι θέλετε �
 ConfirmMassDeleteBookkeepingWriting=Επιβεβαίωση μαζικής διαγραφής
 ConfirmMassDeleteBookkeepingWritingQuestion=Αυτό θα διαγράψει τη συναλλαγή από τη λογιστική (όλες οι εγγραφές γραμμής που σχετίζονται με την ίδια συναλλαγή θα διαγραφούν). Είστε σίγουροι ότι θέλετε να διαγράψετε τις %s επιλεγμένες καταχωρήσεις;
 AccountancyClosureConfirmClose=Είστε σίγουροι ότι θέλετε να κλείσετε την τρέχουσα φορολογική περίοδο; <span class="warning">Το κλείσιμο της φορολογικής περιόδου είναι μια μη αναστρέψιμη ενέργεια και θα αποκλείσει μόνιμα οποιαδήποτε τροποποίηση ή διαγραφή καταχωρήσεων για αυτήν την περίοδο</span>.
-AccountancyClosureConfirmAccountingReversal=Are you sure you want to record entries for the "Retained earnings" ?
+AccountancyClosureConfirmAccountingReversal=Είστε σίγουροι ότι θέλετε να δημιουργήσετε εγγραφές για τα "Παρακρατηθέντα κέρδη" ;
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Ορισμένα υποχρεωτικά βήματα της ρύθμισης δεν έγιναν, παρακαλούμε ολοκληρώστε τα

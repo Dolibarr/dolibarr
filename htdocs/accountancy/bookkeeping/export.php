@@ -644,7 +644,7 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 
 					// TODO Merge update for each line into one global using rowid IN (list of movement ids)
 					foreach ($object->lines as $movement) {
-						// Upate the line to set date_export and/or date_validated (if not already set !)
+						// Update the line to set date_export and/or date_validated (if not already set !)
 						$now = dol_now();
 
 						$setfields = '';

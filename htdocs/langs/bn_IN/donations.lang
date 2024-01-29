@@ -33,3 +33,4 @@ DONATION_ART978=আপনি উদ্বিগ্ন হলে CGI থেকে
 DonationPayment=অনুদান প্রদান
 DonationValidated=দান %s বৈধ
 DonationUseThirdparties=দাতার ঠিকানা হিসাবে একটি বিদ্যমান তৃতীয় পক্ষের ঠিকানা ব্যবহার করুন
+DonationsStatistics=অনুদানের পরিসংখ্যান

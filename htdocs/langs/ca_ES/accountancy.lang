@@ -90,13 +90,13 @@ AccountancyAreaDescProd=PAS %s: defineix els comptes de comptabilitat als teus p
 
 AccountancyAreaDescBind=PAS %s: Comproveu que els enllaços entre les línies %s existents i els comptes comptables és correcta, de manera que l'aplicació podrà registrar els assentaments al Llibre Major en un sol clic. Completa les unions que falten. Per això, utilitzeu l'entrada del menú %s.
 AccountancyAreaDescWriteRecords=PAS %s: Escriu els assentaments al Llibre Major. Per això, aneu al menú <strong>%s</strong>, i feu clic al botó <strong>%s</strong>.
-AccountancyAreaDescAnalyze=PAS %s: Afegir o editar transaccions existents i generar informes i exportacions.
-
-AccountancyAreaDescClosePeriod=PAS %s: Tancar el període de forma que no pot fer modificacions en un futur.
+AccountancyAreaDescAnalyze=STEP %s: Read reportings or generate export files for other bookkeepers.
+AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't transfer anymore data in the same period in a future.
 
 TheFiscalPeriodIsNotDefined=No s'ha completat un pas obligatori de configuració (el període fiscal no està definit)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=No s'ha completat un pas obligatori en la configuració (no s'ha definit el codi comptable diari per a tots els comptes bancaris)
 Selectchartofaccounts=Seleccionar el pla de comptes actiu
+CurrentChartOfAccount=Pla comptable actiu actual
 ChangeAndLoad=Canviar i carregar
 Addanaccount=Afegir un compte comptable
 AccountAccounting=Compte comptable
@@ -343,7 +343,7 @@ AccountingJournalType3=Compres
 AccountingJournalType4=Banc
 AccountingJournalType5=Informes de despeses
 AccountingJournalType8=Inventari
-AccountingJournalType9=Retained earnings
+AccountingJournalType9=Beneficis retinguts
 GenerationOfAccountingEntries=Generació d'assentaments comptables
 ErrorAccountingJournalIsAlreadyUse=Aquest diari ja està en ús
 AccountingAccountForSalesTaxAreDefinedInto=Nota: El compte comptable per a l'impost de vendes es defineix al menú <b>%s</b> - <b>%s</b>
@@ -446,8 +446,8 @@ AccountancyOneUnletteringModifiedSuccessfully=S'ha desfet correctament una conci
 AccountancyUnletteringModifiedSuccessfully=%s conciliació desfeta correctament
 
 ## Closure
-AccountancyClosureStep1=Pas 1: validar i bloquejar els moviments
-AccountancyClosureStep2=Pas 2: Tancament de l'exercici fiscal
+AccountancyClosureStep1=Step 1 : Validate and lock the movements
+AccountancyClosureStep2=Step 2 : Close the fiscal period
 AccountancyClosureStep3=Pas 3: extreu les entrades (opcional)
 AccountancyClosureClose=Tancament del període fiscal
 AccountancyClosureAccountingReversal=Extract and record "Retained earnings" entries
