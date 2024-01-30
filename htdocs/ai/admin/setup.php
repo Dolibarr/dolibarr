@@ -67,8 +67,6 @@ foreach ($arrayofia as $ia) {
 	$item->defaultFieldValue = '';
 }
 
-// Retrieve existing API Key
-//$apiKey = dolibarr_get_const($db, 'MAIN_AI_CHATGPT_API_KEY');
 
 $setupnotempty =+ count($formSetup->items);
 
