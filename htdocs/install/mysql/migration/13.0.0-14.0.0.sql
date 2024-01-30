@@ -797,7 +797,7 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) value
 
 -- Product/service managed in stock
 ALTER TABLE llx_product ADD COLUMN stockable_product integer DEFAULT 1 NOT NULL;
-UPDATE llx_product set stockable_product = 0 WHERE type = 1;
+UPDATE llx_product set stockable_product = 0 WHERE fk_product_type = 1;
 
 -- Prelevement / SEPA
 ALTER TABLE llx_prelevement_bons ADD COLUMN fk_account integer DEFAULT NULL AFTER credite;
