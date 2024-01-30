@@ -9,7 +9,6 @@ Permission56005=Ver tickets de todos los terceros (no efectivo para usuarios ext
 Permission56006=Exportar boletos
 Tickets=Entradas
 TicketDictType=Entrada - Tipos
-TicketDictCategory=Entrada - Grupos
 TicketDictSeverity=Ticket - Severidades
 TicketTypeShortCOM=Cuestión comercial
 ErrorBadEmailAddress=Campo '%s' incorrecto

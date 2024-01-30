@@ -7277,7 +7277,7 @@ abstract class CommonObject
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
-				$out = $doleditor->Create(1);
+				$out = $doleditor->Create(1, '', true, '', '', '', $morecss);
 			} else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
@@ -7314,10 +7314,8 @@ abstract class CommonObject
 				$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
 			}
 
-			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
-			if ((!isset($this->fields[$key]['default'])) || ($this->fields[$key]['notnull'] != 1)) {
-				$out .= '<option value="0">&nbsp;</option>';
-			}
+			$tmpselect = '';
+			$nbchoice = 0;
 			foreach ($param['options'] as $keyb => $valb) {
 				if ((string) $keyb == '') {
 					continue;
@@ -7325,11 +7323,18 @@ abstract class CommonObject
 				if (strpos($valb, "|") !== false) {
 					list($valb, $parent) = explode('|', $valb);
 				}
-				$out .= '<option value="'.$keyb.'"';
-				$out .= (((string) $value == (string) $keyb) ? ' selected' : '');
-				$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
-				$out .= '>'.$valb.'</option>';
+				$nbchoice++;
+				$tmpselect .= '<option value="'.$keyb.'"';
+				$tmpselect .= (((string) $value == (string) $keyb) ? ' selected' : '');
+				$tmpselect .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
+				$tmpselect .= '>'.$valb.'</option>';
 			}
+
+			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
+			if ((!isset($this->fields[$key]['default'])) || ($this->fields[$key]['notnull'] != 1) || $nbchoice >= 2) {
+				$out .= '<option value="0">&nbsp;</option>';
+			}
+			$out .= $tmpselect;
 			$out .= '</select>';
 		} elseif ($type == 'sellist') {
 			$out = '';
@@ -7814,7 +7819,7 @@ abstract class CommonObject
 			$form = new Form($this->db);
 		}
 
-		$label = empty($val['label']) ? '' : $val['label'];
+		//$label = empty($val['label']) ? '' : $val['label'];
 		$type  = empty($val['type']) ? '' : $val['type'];
 		$size  = empty($val['css']) ? '' : $val['css'];
 		$reg = array();
@@ -8217,7 +8222,8 @@ abstract class CommonObject
 				$value = '';
 			}
 		} elseif ($type == 'password') {
-			$value = preg_replace('/./i', '*', $value);
+			$value = '<span class="opacitymedium">'.$langs->trans("Encrypted").'</span>';
+			//$value = preg_replace('/./i', '*', $value);
 		} elseif ($type == 'array') {
 			$value = implode('<br>', $value);
 		} else {	// text|html|varchar
@@ -8964,7 +8970,7 @@ abstract class CommonObject
 	 * @param float		$unitPrice		 Product unit price
 	 * @param float		$discountPercent Line discount percent
 	 * @param int		$fk_product		 Product id
-	 * @return	float                    Return integer <0 if KO, buyprice if OK
+	 * @return float|int                 Return buy price if OK, integer <0 if KO
 	 */
 	public function defineBuyPrice($unitPrice = 0.0, $discountPercent = 0.0, $fk_product = 0)
 	{

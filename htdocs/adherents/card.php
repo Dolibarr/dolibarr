@@ -2068,6 +2068,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Show online payment link
 			$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
 
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('doShowOnlinePaymentUrl', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			} else {
+				$useonlinepayment = $reshook;
+			}
+
 			if ($useonlinepayment) {
 				print '<br>';
 				if (empty($amount)) {   // Take the maximum amount among what the member is supposed to pay / has paid in the past

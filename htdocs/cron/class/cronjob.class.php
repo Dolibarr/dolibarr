@@ -184,6 +184,11 @@ class Cronjob extends CommonObject
 	 */
 	public $autodelete;
 
+	/**
+	 * @var array 			Cronjob
+	 */
+	public $lines;
+
 
 	const STATUS_DISABLED = 0;
 	const STATUS_ENABLED = 1;
@@ -512,7 +517,6 @@ class Cronjob extends CommonObject
 
 	/**
 	 *  Load list of cron jobs in a memory array from the database
-	 *  @TODO Use object CronJob and not CronJobLine.
 	 *
 	 *  @param	string		$sortorder		sort order
 	 *  @param	string		$sortfield		sort field
@@ -1283,7 +1287,7 @@ class Cronjob extends CommonObject
 			}
 
 			if (!$error) {
-				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params."); !!! Log for job may be into a different log file...", LOG_DEBUG);
+				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params."); (Note: Log for cron jobs may be into a different log file)", LOG_DEBUG);
 
 				// Create Object for the called module
 				$nameofclass = $this->objectname;

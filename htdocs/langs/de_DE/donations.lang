@@ -32,4 +32,5 @@ DONATION_ART238=Zeige Artikel 238 des CGI, falls Sie betroffen sind
 DONATION_ART978=Artikel 978 im CGI (französisches Recht) anzeigen, wenn Sie betroffen sind
 DonationPayment=Spendenzahlung
 DonationValidated=Spende %s freigegeben
-DonationUseThirdparties=Einen bestehenden Geschäftspartner als Grundlage der Spenderdaten verwenden
+DonationUseThirdparties=Die Adresse eines bestehenden Geschäftspartners als Adresse des Spenders verwenden
+DonationsStatistics=Statistik zu Spenden 

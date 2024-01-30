@@ -14,79 +14,79 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Module label 'ModuledatapolicyName'
-Module4100Name = Data Privacy Policy
+Module4100Name = ডেটা গোপনীয়তা নীতি
 # Module description 'ModuledatapolicyDesc'
-Module4100Desc = Module to manage Data Privacy (Conformity with the GDPR)
+Module4100Desc = ডেটা গোপনীয়তা পরিচালনা করার মডিউল (জিডিপিআরের সাথে সামঞ্জস্যপূর্ণ)
 
 #
 # Administration page
 #
-datapolicySetup = Module Data Privacy Policy Setup
-Deletion = Deletion of data
-datapolicySetupPage = Depending of laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding that necessary for the purposes for which they were collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without event (the duration which you will have indicated below).
-NB_MONTHS = %s months
-ONE_YEAR = 1 year
-NB_YEARS = %s years
-DATAPOLICY_TIERS_CLIENT = Customer
-DATAPOLICY_TIERS_PROSPECT = Prospect
-DATAPOLICY_TIERS_PROSPECT_CLIENT = Prospect/Customer
-DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Nor prospect/Nor customer
-DATAPOLICY_TIERS_FOURNISSEUR = Supplier
-DATAPOLICY_CONTACT_CLIENT = Customer
-DATAPOLICY_CONTACT_PROSPECT = Prospect
-DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospect/Customer
-DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Nor prospect/Nor customer
-DATAPOLICY_CONTACT_FOURNISSEUR = Supplier
-DATAPOLICY_ADHERENT = Member
-DATAPOLICY_Tooltip_SETUP = Type of contact - Indicate your choices for each type.
-DATAPOLICYMail = Emails Setup
-DATAPOLICYSUBJECTMAIL = Subject of email
-DATAPOLICYCONTENTMAIL = Content of the email
-DATAPOLICYSUBSITUTION = You can use the following variables in your email (LINKACCEPT allows to create a link recording the agreement of the person, LINKREFUSED makes it possible to record the refusal of the person):
-DATAPOLICYACCEPT = Message after agreement
-DATAPOLICYREFUSE = Message after desagreement
-SendAgreementText = You can send a GDPR email to all your relevant contacts (who have not yet received an email and for which you have not registered anything about their GDPR agreement). To do this, use the following button.
-SendAgreement = Send emails
-AllAgreementSend = All emails have been sent
-TXTLINKDATAPOLICYACCEPT = Text for the link "agreement"
-TXTLINKDATAPOLICYREFUSE = Text for the link "desagreement"
+datapolicySetup = মডিউল ডেটা গোপনীয়তা নীতি সেটআপ
+Deletion = ডেটা মুছে ফেলা
+datapolicySetupPage = আপনার দেশের আইনের উপর নির্ভর করে (উদাহরণ <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">GDPR এর অনুচ্ছেদ 5</a>), ব্যক্তিগত ডেটা নির্দিষ্ট সময়ের জন্য রাখতে হবে সংরক্ষণাগারের উদ্দেশ্যে ব্যতীত যে উদ্দেশ্যে এগুলি সংগ্রহ করা হয়েছিল তার জন্য প্রয়োজনীয়তা অতিক্রম করে৷<br>বিনা ইভেন্ট (যে সময়কালটি আপনি নির্দেশ করবেন) একটি নির্দিষ্ট সময়ের পরে স্বয়ংক্রিয়ভাবে মুছে ফেলা হবে নিচে).
+NB_MONTHS = %s মাস
+ONE_YEAR = 1 বছর
+NB_YEARS = %s বছর
+DATAPOLICY_TIERS_CLIENT = ক্রেতা
+DATAPOLICY_TIERS_PROSPECT = সম্ভাবনা
+DATAPOLICY_TIERS_PROSPECT_CLIENT = প্রত্যাশা গ্রাহক
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = না সম্ভাবনা/না গ্রাহক
+DATAPOLICY_TIERS_FOURNISSEUR = সরবরাহকারী
+DATAPOLICY_CONTACT_CLIENT = ক্রেতা
+DATAPOLICY_CONTACT_PROSPECT = সম্ভাবনা
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = প্রত্যাশা গ্রাহক
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = না সম্ভাবনা/না গ্রাহক
+DATAPOLICY_CONTACT_FOURNISSEUR = সরবরাহকারী
+DATAPOLICY_ADHERENT = সদস্য
+DATAPOLICY_Tooltip_SETUP = যোগাযোগের ধরন - প্রতিটি প্রকারের জন্য আপনার পছন্দগুলি নির্দেশ করুন৷
+DATAPOLICYMail = ইমেল সেটআপ
+DATAPOLICYSUBJECTMAIL = ইমেইলের বিষয়
+DATAPOLICYCONTENTMAIL = ইমেইলের বিষয়বস্তু
+DATAPOLICYSUBSITUTION = আপনি আপনার ইমেলে নিম্নলিখিত ভেরিয়েবলগুলি ব্যবহার করতে পারেন (LINKACCEPT ব্যক্তির চুক্তি রেকর্ড করে একটি লিঙ্ক তৈরি করতে দেয়, LINKREFUSED ব্যক্তির অস্বীকৃতি রেকর্ড করা সম্ভব করে তোলে):
+DATAPOLICYACCEPT = চুক্তির পর বার্তা
+DATAPOLICYREFUSE = অসম্মতির পর বার্তা
+SendAgreementText = আপনি আপনার সমস্ত প্রাসঙ্গিক পরিচিতিদের একটি GDPR ইমেল পাঠাতে পারেন (যারা এখনও একটি ইমেল পাননি এবং যার জন্য আপনি তাদের GDPR চুক্তি সম্পর্কে কিছু নিবন্ধন করেননি)। এটি করতে, নিম্নলিখিত বোতামটি ব্যবহার করুন।
+SendAgreement = ইমেইল পাঠান
+AllAgreementSend = সব ইমেইল পাঠানো হয়েছে
+TXTLINKDATAPOLICYACCEPT = লিঙ্কের জন্য পাঠ্য "চুক্তি"
+TXTLINKDATAPOLICYREFUSE = লিঙ্কের জন্য পাঠ্য "অসম্মতি"
 
 
 #
 # Extrafields
 #
-DATAPOLICY_BLOCKCHECKBOX = GDPR : Processing of personal data
-DATAPOLICY_consentement = Consent obtained for the processing of personal data
-DATAPOLICY_opposition_traitement = Opposes the processing of his personal data
-DATAPOLICY_opposition_prospection = Opposes the processing of his personal data for the purposes of prospecting
+DATAPOLICY_BLOCKCHECKBOX = জিডিপিআর: ব্যক্তিগত তথ্য প্রক্রিয়াকরণ
+DATAPOLICY_consentement = ব্যক্তিগত তথ্য প্রক্রিয়াকরণের জন্য সম্মতি প্রাপ্ত
+DATAPOLICY_opposition_traitement = তার ব্যক্তিগত তথ্য প্রক্রিয়াকরণের বিরোধিতা করে
+DATAPOLICY_opposition_prospection = প্রত্যাশার উদ্দেশ্যে তার ব্যক্তিগত ডেটা প্রক্রিয়াকরণের বিরোধিতা করে
 
 #
 # Popup
 #
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonymize a thirdparty
-DATAPOLICY_POPUP_ANONYME_TEXTE = You can not delete this contact from Dolibarr because there are related items. In accordance with the GDPR, you will make all this data anonymous to respect your obligations. Would you like to continue ?
+DATAPOLICY_POPUP_ANONYME_TITLE = একটি তৃতীয় পক্ষ বেনামী
+DATAPOLICY_POPUP_ANONYME_TEXTE = আপনি Dolibarr থেকে এই পরিচিতি মুছে ফেলতে পারবেন না কারণ সেখানে সম্পর্কিত আইটেম আছে। জিডিপিআর অনুসারে, আপনি আপনার বাধ্যবাধকতাগুলিকে সম্মান করতে এই সমস্ত ডেটা বেনামী করে দেবেন। আপনি কি অবিরত করতে চান ?
 
 #
 # Button for portability
 #
-DATAPOLICY_PORTABILITE = Portability GDPR
-DATAPOLICY_PORTABILITE_TITLE = Export of personal data
-DATAPOLICY_PORTABILITE_CONFIRMATION = You want to export the personal data of this contact. Are you sure ?
+DATAPOLICY_PORTABILITE = পোর্টেবিলিটি জিডিপিআর
+DATAPOLICY_PORTABILITE_TITLE = ব্যক্তিগত তথ্য রপ্তানি
+DATAPOLICY_PORTABILITE_CONFIRMATION = আপনি এই পরিচিতির ব্যক্তিগত ডেটা রপ্তানি করতে চান৷ তুমি কি নিশ্চিত ?
 
 #
 # Notes added during an anonymization
 #
-ANONYMISER_AT = Anonymised the %s
+ANONYMISER_AT = বেনামী %s
 
 # V2
-DATAPOLICYReturn = GDPR Validation
-DATAPOLICY_date = Date of agreement/desagreement GDPR
-DATAPOLICY_send = Date sending agreement email
-DATAPOLICYReturn = GDPR Validation
-DATAPOLICY_SEND = Send GDPR email
-MailSent = Email has been sent
+DATAPOLICYReturn = জিডিপিআর বৈধতা
+DATAPOLICY_date = চুক্তি/অসম্মতির তারিখ GDPR
+DATAPOLICY_send = চুক্তি ইমেল পাঠানোর তারিখ
+DATAPOLICYReturn = জিডিপিআর বৈধতা
+DATAPOLICY_SEND = GDPR ইমেল পাঠান
+MailSent = ইমেল পাঠানো হয়েছে
 
 # ERROR
-ErrorSubjectIsRequired = Error : The subject of email is required. Indicate it in the module setup
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to send us your choice.
-NUMBER_MONTH_BEFORE_DELETION = Number of month before deletion
+ErrorSubjectIsRequired = ত্রুটি: ইমেলের বিষয় প্রয়োজন। মডিউল সেটআপে এটি নির্দেশ করুন
+=একটি প্রযুক্তিগত সমস্যার কারণে, আমরা আপনার পছন্দ নিবন্ধন করতে অক্ষম ছিল. এর জন্য আমরা ক্ষমাপ্রার্থী। আমাদের আপনার পছন্দ পাঠাতে আমাদের সাথে যোগাযোগ করুন.
+NUMBER_MONTH_BEFORE_DELETION = মুছে ফেলার আগে মাসের সংখ্যা

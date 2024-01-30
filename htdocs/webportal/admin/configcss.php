@@ -24,57 +24,29 @@
  */
 
 // Load Dolibarr environment
-$res = 0;
-// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
-	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"] . "/main.inc.php";
-}
-// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME'];
-$tmp2 = realpath(__FILE__);
-$i = strlen($tmp) - 1;
-$j = strlen($tmp2) - 1;
-while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
-	$i--;
-	$j--;
-}
-if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1)) . "/main.inc.php")) {
-	$res = @include substr($tmp, 0, ($i + 1)) . "/main.inc.php";
-}
-if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1))) . "/main.inc.php")) {
-	$res = @include dirname(substr($tmp, 0, ($i + 1))) . "/main.inc.php";
-}
-// Try main.inc.php using relative path
-if (!$res && file_exists("../../main.inc.php")) {
-	$res = @include "../../main.inc.php";
-}
-if (!$res && file_exists("../../../main.inc.php")) {
-	$res = @include "../../../main.inc.php";
-}
-if (!$res) {
-	die("Include of main fails");
-}
-
-global $conf, $db, $hookmanager, $langs, $user;
-
-// Libraries
-require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
-dol_include_once('/webportal/lib/webportal.lib.php');
+require_once "../../main.inc.php";
+require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT . "/webportal/lib/webportal.lib.php";
 
 // Translations
-$langs->loadLangs(array("admin", "hrm", "other"));
+$langs->loadLangs(array("admin", "hrm", "other", "website"));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('webportalsetup', 'globalsetup'));
+
+// Parameters
+$action = GETPOST('action', 'aZ09');
+$backtopage = GETPOST('backtopage', 'alpha');
+
+if (empty($action)) {
+	$action = 'edit';
+}
 
 // Access control
 if (!$user->admin) {
 	accessforbidden();
 }
 
-// Parameters
-$action = GETPOST('action', 'aZ09');
-$backtopage = GETPOST('backtopage', 'alpha');
 
 /*
  * Actions
@@ -106,7 +78,7 @@ if ($action == 'updatecss') {
  * View
  */
 
-$title = "WebPortalCSS";
+$title = "WebPortalSetup";
 
 $wikihelp = 'EN:First_setup|FR:Premiers_param&eacute;trages|ES:Primeras_configuraciones';
 
@@ -132,7 +104,7 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 
 // Configuration header
 $head = webportalAdminPrepareHead();
-print dol_get_fiche_head($head, 'css', $langs->trans($title), -1, "webportal@webportal");
+print dol_get_fiche_head($head, 'css', $langs->trans($title), -1, "webportal");
 
 // Setup page goes here
 echo '<span class="opacitymedium">' . $langs->trans("WebPortalCSS") . '</span><br><br>';
@@ -165,7 +137,7 @@ print '</div>';
 
 print '<div class="center">';
 print '<input class="button button-save reposition buttonforacesave" type="submit" name="submit" value="' . $langs->trans("Save") . '">';
-print '<input class="button button-cancel reposition" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '">';
+//print '<input class="button button-cancel reposition" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '">';
 print '</div>';
 
 print '</form>';

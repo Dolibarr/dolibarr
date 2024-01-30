@@ -23,8 +23,9 @@
  *		\brief      Page to website view/edit
  */
 
-define('NOSCANPOSTFORINJECTION', 1);
-define('NOSTYLECHECK', 1);
+// We allow POST of rich content with js and style, but only for this php file and if into some given POST variable
+define('NOSCANPOSTFORINJECTION', array('PAGE_CONTENT', 'WEBSITE_JS_INLINE', 'WEBSITE_HTML_HEADER'));
+
 define('USEDOLIBARREDITOR', 1);
 define('FORCE_CKEDITOR', 1); // We need CKEditor, even if module is off.
 if (!defined('DISABLE_JS_GRAHP')) {
@@ -2405,7 +2406,6 @@ if ($action == 'exportsite' && $user->hasRight('website', 'export')) {
 
 	if ($fileofzip) {
 		$file_name = basename($fileofzip);
-
 		header("Content-Type: application/zip");
 		header("Content-Disposition: attachment; filename=".$file_name);
 		header("Content-Length: ".filesize($fileofzip));
@@ -2418,6 +2418,12 @@ if ($action == 'exportsite' && $user->hasRight('website', 'export')) {
 	}
 }
 
+// Overwrite site
+if ($action == 'overwritesite' && $user->hasRight('website', 'export')) {
+	if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
+		$fileofzip = $object->overwriteTemplate();
+	}
+}
 // Regenerate site
 if ($action == 'regeneratesite' && $usercanedit) {
 	// Check symlink to medias and restore it if ko. Recreate also dir of website if not found.
@@ -2518,6 +2524,9 @@ if ($action == 'importsiteconfirm' && $usercanedit) {
 				}
 
 				if (!$error && GETPOSTISSET('templateuserfile')) {
+					$templatewithoutzip = preg_replace('/\.zip$/i', '', GETPOST('templateuserfile'));
+					$object->setTemplateName($templatewithoutzip);
+
 					$result = $object->importWebSite($fileofzip);
 
 					if ($result < 0) {
@@ -3013,6 +3022,11 @@ if (!GETPOST('hide_websitemenu')) {
 
 			// Export web site
 			print '<input type="submit" class="button bordertransp"'.$disabledexport.' value="'.dol_escape_htmltag($exportlabel).'" name="exportsite">';
+
+			if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
+				// Overwrite template in sources
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=overwritesite&website='.urlencode($website->ref).'" class="button bordertransp">'.dol_escape_htmltag($langs->trans("ExportIntoGIT")).'</a>';
+			}
 
 			// Clone web site
 			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
