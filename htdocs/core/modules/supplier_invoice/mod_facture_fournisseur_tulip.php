@@ -48,13 +48,6 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Tulip';
-
-	/**
 	 * @var string model name
 	 */
 	public $name = 'Tulip';

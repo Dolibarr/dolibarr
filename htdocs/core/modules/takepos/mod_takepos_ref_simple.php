@@ -53,7 +53,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	 * Name
 	 * @var string
 	 */
-	public $nom = 'Simple';
+	public $name = 'Simple';
 
 	/**
 	 *  Return description of numbering module

@@ -42,13 +42,6 @@ class mod_contract_serpis extends ModelNumRefContracts
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Serpis';
-
-	/**
 	 * @var string model name
 	 */
 	public $name = 'Serpis';

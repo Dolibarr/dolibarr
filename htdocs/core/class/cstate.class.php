@@ -47,14 +47,6 @@ class Cstate extends CommonDict
 	public $name = '';
 
 	/**
-	 * @var string
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = '';
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param      DoliDB		$db      Database handler

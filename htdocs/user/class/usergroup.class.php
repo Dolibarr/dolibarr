@@ -66,13 +66,6 @@ class UserGroup extends CommonObject
 	public $entity;
 
 	/**
-	 * @var string
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom;
-
-	/**
 	 * @var string name
 	 */
 	public $name; // Name of group

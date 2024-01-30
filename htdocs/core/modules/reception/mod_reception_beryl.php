@@ -31,7 +31,10 @@ class mod_reception_beryl extends ModelNumRefReception
 	public $version = 'dolibarr';
 	public $prefix = 'RCP';
 	public $error = '';
-	public $nom = 'Beryl';
+	/**
+	 * @var string Model name
+	 */
+	public $name = 'Beryl';
 
 
 	/**

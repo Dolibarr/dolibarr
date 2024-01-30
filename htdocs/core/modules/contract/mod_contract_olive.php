@@ -33,13 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
 class mod_contract_olive extends ModelNumRefContracts
 {
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Olive';
-
-	/**
 	 * @var string model name
 	 */
 	public $name = 'Olive';

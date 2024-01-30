@@ -45,13 +45,6 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Saphir';
-
-	/**
 	 * @var string model name
 	 */
 	public $name = 'Saphir';

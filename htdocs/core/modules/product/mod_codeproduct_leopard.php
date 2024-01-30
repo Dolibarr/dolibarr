@@ -39,13 +39,6 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	 */
 
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Leopard';
-
-	/**
 	 * @var string model name
 	 */
 	public $name = 'Leopard';

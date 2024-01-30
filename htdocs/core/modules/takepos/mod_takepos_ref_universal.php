@@ -49,7 +49,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	 * Name
 	 * @var string
 	 */
-	public $nom = 'Universal';
+	public $name = 'Universal';
 
 	/**
 	 *  return description of the numbering model

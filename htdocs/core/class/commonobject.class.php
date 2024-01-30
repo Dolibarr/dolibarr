@@ -574,6 +574,13 @@ abstract class CommonObject
 	public $name;
 
 	/**
+	 * @var string 		The name
+	 * @deprecated
+	 * @see $name
+	 */
+	private $nom;
+
+	/**
 	 * @var string 		The lastname
 	 */
 	public $lastname;
@@ -777,11 +784,16 @@ abstract class CommonObject
 	 */
 	public function __get($property)
 	{
+		$bt = debug_backtrace();
+		$caller = array_shift($bt);
+
 		if ($property == 'statut') {
-			$bt = debug_backtrace();
-			$caller = array_shift($bt);
 			dol_syslog('Reading property '.get_class($this).'::'.$property.' from '.$caller['file'].' at line '.$caller['line'].' is deprecated', LOG_NOTICE);
 			return $this->status ?? $this->statut;
+		}
+		if ($property == 'nom') {
+			dol_syslog('Reading property '.get_class($this).'::'.$property.' from '.$caller['file'].' at line '.$caller['line'].' is deprecated', LOG_NOTICE);
+			return $this->name ?? $this->nom;
 		}
 	}
 
@@ -794,13 +806,17 @@ abstract class CommonObject
 	 */
 	public function __set($property, $value)
 	{
+		$bt = debug_backtrace();
+		$caller = array_shift($bt);
 		if ($property == 'statut') {
-			$bt = debug_backtrace();
-			$caller = array_shift($bt);
-			// var_dump($bt);
 			dol_syslog('Setting property '.get_class($this).'::'.$property.' from '.$caller['file'].' at line '.$caller['line'].' is deprecated', LOG_NOTICE);
 			$this->statut = $value;
 			$this->status = $value;
+		}
+		if ($property == 'nom') {
+			dol_syslog('Setting property '.get_class($this).'::'.$property.' from '.$caller['file'].' at line '.$caller['line'].' is deprecated', LOG_NOTICE);
+			$this->nom = $value;
+			$this->name = $value;
 		}
 	}
 

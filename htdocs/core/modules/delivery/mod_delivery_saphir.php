@@ -43,13 +43,6 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Saphir';
-
-	/**
 	 * @var string model name
 	 */
 	public $name = 'Saphir';

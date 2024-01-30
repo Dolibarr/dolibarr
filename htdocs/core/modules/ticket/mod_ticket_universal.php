@@ -41,13 +41,6 @@ class mod_ticket_universal extends ModeleNumRefTicket
 	public $error = '';
 
 	/**
-	 *  @var string Nom du modele
-	 *  @deprecated
-	 *  @see $name
-	 */
-	public $nom = 'Universal';
-
-	/**
 	 *  @var string model name
 	 */
 	public $name = 'Universal';

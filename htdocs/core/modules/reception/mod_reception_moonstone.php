@@ -32,7 +32,11 @@ class mod_reception_moonstone extends ModelNumRefReception
 {
 	public $version = 'dolibarr';
 	public $error = '';
-	public $nom = 'Moonstone';
+
+	/**
+	 * @var string Model name
+	 */
+	public $name = 'Moonstone';
 
 	/**
 	 *  Return default description of numbering model

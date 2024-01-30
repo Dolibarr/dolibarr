@@ -45,13 +45,6 @@ class mod_project_simple extends ModeleNumRefProjects
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Simple';
-
-	/**
 	 * @var string model name
 	 */
 	public $name = 'Simple';

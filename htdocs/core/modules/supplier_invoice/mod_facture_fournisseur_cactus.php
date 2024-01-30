@@ -45,13 +45,6 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Cactus';
-
-	/**
 	 * @var string model name
 	 */
 	public $name = 'Cactus';

@@ -45,13 +45,6 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Marbre';
-
-	/**
 	 * @var string model name
 	 */
 	public $name = 'Marbre';

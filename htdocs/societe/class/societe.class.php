@@ -281,14 +281,6 @@ class Societe extends CommonObject
 	public $entity;
 
 	/**
-	 * Thirdparty name
-	 * @var string
-	 * @deprecated Use $name instead
-	 * @see $name
-	 */
-	public $nom;
-
-	/**
 	 * @var string Thirdparty name
 	 */
 	public $name;
