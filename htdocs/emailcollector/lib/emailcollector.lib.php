@@ -162,7 +162,7 @@ function getFileData($jk, $fpos, $type, $mbox)
 /**
  * Save the attached file into a directory with a given name
  *
- * @param 	string 		$path 		Path to original file
+ * @param 	string 		$path 		Path to file
  * @param 	string 		$filename 	Name of file
  * @param 	mixed 		$data 		Content to save
  * @return 	string|-1 				Return the path to the saved file, or -1 if error
