@@ -1501,7 +1501,7 @@ class FormMail extends Form
 						if (editorInstance) {
 							editorInstance.setData(contentHtml);
 						}
-						// display input for gnerate with IA
+						// display input for generate with IA
 						if(template === 'ai') {
 							$('#ai_input').show();
 						} else {
