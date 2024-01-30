@@ -76,7 +76,7 @@ class Cstate extends CommonDict
 			$this->name = trim($this->name);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
 		// Check parameters
@@ -185,7 +185,7 @@ class Cstate extends CommonDict
 			$this->name = trim($this->name);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
 		// Check parameters
