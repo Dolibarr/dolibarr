@@ -1689,7 +1689,7 @@ class Adherent extends CommonObject
 
 		$error = 0;
 
-		$this->invoice = null; // This will contains invoice if an invoice is created
+		$this->invoice = new Facture($this->db); // This will contains invoice if an invoice is created
 
 		dol_syslog("subscriptionComplementaryActions subscriptionid=".$subscriptionid." option=".$option." accountid=".$accountid." datesubscription=".$datesubscription." paymentdate=".
 			$paymentdate." label=".$label." amount=".$amount." num_chq=".$num_chq." autocreatethirdparty=".$autocreatethirdparty);
@@ -2623,7 +2623,7 @@ class Adherent extends CommonObject
 		$this->ref = 'ABC001';
 		$this->entity = 1;
 		$this->specimen = 1;
-		$this->civility_id = 0;
+		$this->civility_id = 'MR';
 		$this->lastname = 'DOLIBARR';
 		$this->firstname = 'SPECIMEN';
 		$this->gender = 'man';
