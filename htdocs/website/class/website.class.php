@@ -2078,7 +2078,7 @@ class Website extends CommonObject
 		$userId = fileowner($desfFile);
 		if ($userId !== false) {
 			// Obtain user information from the ID
-			if (function_exists('posix_getpwuid')&& function_exists('posix_getpwuid')) {
+			if (function_exists('posix_geteuid') && function_exists('posix_getpwuid')) {
 				$uid = posix_geteuid();
 				$userInfoM = posix_getpwuid($uid);
 
