@@ -2116,5 +2116,6 @@ class Website extends CommonObject
 				dolReplaceInFile($desfFile, array($linechanged => $line));
 			}
 		}
+		return 1;
 	}
 }
