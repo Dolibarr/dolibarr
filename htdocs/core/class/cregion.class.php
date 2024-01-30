@@ -94,7 +94,7 @@ class Cregion extends CommonDict
 			$this->cheflieu = trim($this->cheflieu);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
 		// Check parameters
@@ -224,7 +224,7 @@ class Cregion extends CommonDict
 			$this->cheflieu = trim($this->cheflieu);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
 
