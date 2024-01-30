@@ -442,7 +442,7 @@ class ActionComm extends CommonObject
 
 		// Clean parameters
 		$this->label = dol_trunc(trim($this->label), 128);
-		$this->location = dol_trunc(trim($this->location), 128);
+		$this->location = (!empty($this->location) ? dol_trunc(trim($this->location), 128) : "");
 		$this->note_private = dol_htmlcleanlastbr(trim(empty($this->note_private) ? $this->note : $this->note_private));
 		if (empty($this->percentage)) {
 			$this->percentage = 0;

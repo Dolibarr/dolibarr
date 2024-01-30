@@ -2068,9 +2068,10 @@ class Website extends CommonObject
 
 	/**
 	 * Replace line by line in file using num of line
-	 * @param string $desfFile   path of file dest
-	 * @param array $differences array of differences between files
-	 * @return false|int  false if we can't replace
+	 *
+	 * @param 	string 		$desfFile   	path of file dest
+	 * @param 	array 		$differences 	array of differences between files
+	 * @return 	int  						0 if we can't replace
 	 */
 	protected function replaceLineUsingNum($desfFile, $differences)
 	{
@@ -2093,6 +2094,7 @@ class Website extends CommonObject
 		unset($differences['file_destination']);
 		$contentDest = file($desfFile, FILE_IGNORE_NEW_LINES);
 		foreach ($differences as $key => $ligneSource) {
+			$matches = array();
 			if (preg_match('/(Ajoutée|Modifiée) à la ligne (\d+)/', $key, $matches)) {
 				$typeModification = $matches[1];
 				$numLigne = (int) $matches[2] - 1;
@@ -2116,5 +2118,7 @@ class Website extends CommonObject
 				dolReplaceInFile($desfFile, array($linechanged => $line));
 			}
 		}
+
+		return 0;
 	}
 }
