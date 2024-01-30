@@ -117,7 +117,7 @@ if (!function_exists('str_contains')) {
  *
  * @param CommonObject 	$object 	Dolibarr common object
  * @param string 		$module 	Override object element, for example to use 'mycompany' instead of 'societe'
- * @return string|void				The path of the relative directory of the module
+ * @return string|null				The path of the relative directory of the module
  * @since Dolibarr V18
  */
 function getMultidirOutput($object, $module = '')
@@ -9879,7 +9879,7 @@ function picto_from_langcode($codelang, $moreatt = '', $notitlealt = 0)
  * Return null if not found.
  *
  * @param 	string 	$countrycode	Country code like 'US', 'FR', 'CA', 'ES', 'IN', 'MX', ...
- * @return	string					Value of locale like 'en_US', 'fr_FR', ... or null if not found
+ * @return	string|null				Value of locale like 'en_US', 'fr_FR', ... or null if not found
  */
 function getLanguageCodeFromCountryCode($countrycode)
 {
@@ -11369,7 +11369,8 @@ function isVisibleToUserType($type_user, &$menuentry, &$listofmodulesforexternal
  */
 function roundUpToNextMultiple($n, $x = 5)
 {
-	return (ceil($n) % $x === 0) ? ceil($n) : round(($n + $x / 2) / $x) * $x;
+	$result = (ceil($n) % $x === 0) ? ceil($n) : round(($n + $x / 2) / $x) * $x;
+	return (int) $result;
 }
 
 /**

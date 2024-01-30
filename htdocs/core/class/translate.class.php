@@ -30,20 +30,67 @@
  */
 class Translate
 {
-	public $dir; // Directories that contains /langs subdirectory
+	/**
+	 * @var string      Directory containing the /langs subdirectory
+	 */
+	public $dir;
 
-	public $defaultlang; // Current language for current user
-	public $shortlang; // Short language for current user
-	public $charset_output = 'UTF-8'; // Codage used by "trans" method outputs
+	/**
+	 * @var string      Current language for current user
+	 */
+	public $defaultlang;
 
-	public $tab_translate = array(); // Array of all translations key=>value
-	private $_tab_loaded = array(); // Array to store result after loading each language file
+	/**
+	 * @var string      Short language code for current user
+	 */
+	public $shortlang;
 
-	public $cache_labels = array(); // Cache for labels return by getLabelFromKey method
-	public $cache_currencies = array(); // Cache to store currency symbols
+	/**
+	 * @var string      Codage used by "trans" method outputs
+	 */
+	public $charset_output = 'UTF-8';
+
+
+	/**
+	 * @var array       Array of all translations key=>value
+	 */
+	public $tab_translate = array();
+
+	/**
+	 * @var array       Array to store result after loading each language file
+	 */
+	private $_tab_loaded = array();
+
+	/**
+	 * @var array       Cache for labels returned by getLabelFromKey method
+	 */
+	public $cache_labels = array();
+
+	/**
+	 * @var array       Cache to store currency symbols
+	 */
+	public $cache_currencies = array();
+
+	/**
+	 * @var bool        True if all currencies have been loaded in this->cache_currencies
+	 * @see $cache_currencies
+	 */
 	private $cache_currencies_all_loaded = false;
+
+	/**
+	 * @var string      Language to use
+	 */
 	public $origlang;
+
+	/**
+	 * @var string      Error message
+	 * @see $errors
+	 */
 	public $error;
+
+	/**
+	 * @var string[]    Array of error messages
+	 */
 	public $errors = array();
 
 
