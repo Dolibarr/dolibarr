@@ -72,8 +72,8 @@ class Cstate extends CommonDict
 		if (isset($this->code_departement)) {
 			$this->code_departement = trim($this->code_departement);
 		}
-		if (isset($this->nom)) {
-			$this->nom = trim($this->nom);
+		if (isset($this->name)) {
+			$this->name = trim($this->name);
 		}
 		if (isset($this->active)) {
 			$this->active = trim($this->active);
@@ -91,7 +91,7 @@ class Cstate extends CommonDict
 		$sql .= ") VALUES (";
 		$sql .= " ".(!isset($this->rowid) ? 'NULL' : "'".$this->db->escape($this->rowid)."'").",";
 		$sql .= " ".(!isset($this->code_departement) ? 'NULL' : "'".$this->db->escape($this->code_departement)."'").",";
-		$sql .= " ".(!isset($this->nom) ? 'NULL' : "'".$this->db->escape($this->nom)."'").",";
+		$sql .= " ".(!isset($this->name) ? 'NULL' : "'".$this->db->escape($this->name)."'").",";
 		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'");
 		$sql .= ")";
 
@@ -135,7 +135,7 @@ class Cstate extends CommonDict
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.code_departement,";
-		$sql .= " t.nom,";
+		$sql .= " t.nom as name,";
 		$sql .= " t.active";
 		$sql .= " FROM ".$this->db->prefix()."c_departements as t";
 		if ($id) {
@@ -153,8 +153,7 @@ class Cstate extends CommonDict
 				$this->id = $obj->rowid;
 				$this->code_departement = $obj->code_departement; //deprecated
 				$this->code = $obj->code_departement;
-				$this->nom = $obj->nom; //deprecated
-				$this->name = $obj->nom;
+				$this->name = $obj->name;
 				$this->active = $obj->active;
 			}
 			$this->db->free($resql);
