@@ -160,12 +160,12 @@ function getFileData($jk, $fpos, $type, $mbox)
 }
 
 /**
- * Save joined file into a directory with a given name
+ * Save the attached file into a directory with a given name
  *
- * @param 	string 		$path 		Path to file
+ * @param 	string 		$path 		Path to original file
  * @param 	string 		$filename 	Name of file
- * @param 	mixed 		$data 		contenu à sauvegarder
- * @return 	string 					emplacement du fichier
+ * @param 	mixed 		$data 		Content to save
+ * @return 	string|-1 				Return the path to the saved file, or -1 if error
  **/
 function saveAttachment($path, $filename, $data)
 {
