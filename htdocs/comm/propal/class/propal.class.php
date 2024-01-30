@@ -592,7 +592,7 @@ class Propal extends CommonObject
 
 		dol_syslog(get_class($this)."::addline propalid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type, fk_remise_except=".$fk_remise_except);
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 			// Clean parameters
@@ -868,7 +868,7 @@ class Propal extends CommonObject
 			return -1;
 		}
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			$this->db->begin();
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
@@ -1012,7 +1012,7 @@ class Propal extends CommonObject
 	{
 		global $user;
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			$this->db->begin();
 
 			$line = new PropaleLigne($this->db);
@@ -1485,7 +1485,7 @@ class Propal extends CommonObject
 		$object->id = 0;
 		$object->ref = '';
 		$object->entity = (!empty($forceentity) ? $forceentity : $object->entity);
-		$object->statut = self::STATUS_DRAFT;
+		$object->status = self::STATUS_DRAFT;
 
 		// Clear fields
 		$object->user_author = $user->id;
@@ -1644,7 +1644,6 @@ class Propal extends CommonObject
 				$this->note_public          = $obj->note_public;
 
 				$this->status               = (int) $obj->fk_statut;
-				$this->statut               = $this->status; // deprecated
 
 				$this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
 				$this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
@@ -1775,7 +1774,7 @@ class Propal extends CommonObject
 		$sql .= " localtax2=".(isset($this->total_localtax2) ? $this->total_localtax2 : "null").",";
 		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
-		$sql .= " fk_statut=".(isset($this->statut) ? $this->statut : "null").",";
+		$sql .= " fk_statut=".(isset($this->status) ? $this->status : "null").",";
 		$sql .= " fk_user_author=".(isset($this->user_author_id) ? $this->user_author_id : "null").",";
 		$sql .= " fk_user_valid=".(isset($this->user_validation_id) ? $this->user_validation_id : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
@@ -1978,7 +1977,7 @@ class Propal extends CommonObject
 		$error = 0;
 
 		// Protection
-		if ($this->statut == self::STATUS_VALIDATED) {
+		if ($this->status == self::STATUS_VALIDATED) {
 			dol_syslog(get_class($this)."::valid action abandoned: already validated", LOG_WARNING);
 			return 0;
 		}
@@ -2294,7 +2293,7 @@ class Propal extends CommonObject
 	public function set_availability($user, $id, $notrigger = 0)
 	{
 		// phpcs:enable
-		if ($user->hasRight('propal', 'creer') && $this->statut >= self::STATUS_DRAFT) {
+		if ($user->hasRight('propal', 'creer') && $this->status >= self::STATUS_DRAFT) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2337,7 +2336,7 @@ class Propal extends CommonObject
 				return -1 * $error;
 			}
 		} else {
-			$error_str = 'Propal status do not meet requirement '.$this->statut;
+			$error_str = 'Propal status do not meet requirement '.$this->status;
 			dol_syslog(__METHOD__.$error_str, LOG_ERR);
 			$this->error = $error_str;
 			$this->errors[] = $this->error;
@@ -2357,7 +2356,7 @@ class Propal extends CommonObject
 	public function set_demand_reason($user, $id, $notrigger = 0)
 	{
 		// phpcs:enable
-		if ($user->hasRight('propal', 'creer') && $this->statut >= self::STATUS_DRAFT) {
+		if ($user->hasRight('propal', 'creer') && $this->status >= self::STATUS_DRAFT) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2402,7 +2401,7 @@ class Propal extends CommonObject
 				return -1 * $error;
 			}
 		} else {
-			$error_str = 'Propal status do not meet requirement '.$this->statut;
+			$error_str = 'Propal status do not meet requirement '.$this->status;
 			dol_syslog(__METHOD__.$error_str, LOG_ERR);
 			$this->error = $error_str;
 			$this->errors[] = $this->error;
@@ -2756,8 +2755,8 @@ class Propal extends CommonObject
 				$this->db->commit();
 				return 1;
 			} else {
-				$this->statut = $this->oldcopy->statut;
-				$this->status = $this->oldcopy->statut;
+				$this->statut = $this->oldcopy->status;
+				$this->status = $this->oldcopy->status;
 				$this->date_signature = $this->oldcopy->date_signature;
 				$this->note_private = $this->oldcopy->note_private;
 
@@ -2829,7 +2828,7 @@ class Propal extends CommonObject
 			}
 
 			$this->oldcopy = clone $this;
-			$this->statut = self::STATUS_BILLED;
+			$this->status = self::STATUS_BILLED;
 			$this->date_cloture = $now;
 			$this->note_private = $newprivatenote;
 		}
@@ -2885,7 +2884,7 @@ class Propal extends CommonObject
 			}
 
 			if (!$error) {
-				$this->statut = self::STATUS_CANCELED;
+				$this->status = self::STATUS_CANCELED;
 				$this->db->commit();
 				return 1;
 			} else {
@@ -2917,7 +2916,7 @@ class Propal extends CommonObject
 		$error = 0;
 
 		// Protection
-		if ($this->statut <= self::STATUS_DRAFT) {
+		if ($this->status <= self::STATUS_DRAFT) {
 			return 0;
 		}
 
@@ -3266,7 +3265,7 @@ class Propal extends CommonObject
 	{
 		global $user;
 
-		if ($this->statut >= self::STATUS_DRAFT) {
+		if ($this->status >= self::STATUS_DRAFT) {
 			$error = 0;
 
 			$this->db->begin();
@@ -3308,7 +3307,7 @@ class Propal extends CommonObject
 				return -1 * $error;
 			}
 		} else {
-			$error_str = 'Propal status do not meet requirement '.$this->statut;
+			$error_str = 'Propal status do not meet requirement '.$this->status;
 			dol_syslog(__METHOD__.$error_str, LOG_ERR);
 			$this->error = $error_str;
 			$this->errors[] = $this->error;
@@ -3372,7 +3371,7 @@ class Propal extends CommonObject
 				return -1 * $error;
 			}
 		} else {
-			$error_str = 'Propal status do not meet requirement '.$this->statut;
+			$error_str = 'Propal status do not meet requirement '.$this->status;
 			dol_syslog(__METHOD__.$error_str, LOG_ERR);
 			$this->error = $error_str;
 			$this->errors[] = $this->error;
@@ -3434,7 +3433,7 @@ class Propal extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3794,7 +3793,7 @@ class Propal extends CommonObject
 		}
 		if ($user->hasRight('propal', 'lire')) {
 			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Proposal").'</u>';
-			if (isset($this->statut)) {
+			if (isset($this->status)) {
 				$datas['status'] = ' '.$this->getLibStatut(5);
 			}
 			if (!empty($this->ref)) {
