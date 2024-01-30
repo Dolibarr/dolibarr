@@ -8,6 +8,7 @@
  * Copyright (C) 2018    	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2021-2023  Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2022		Charlène Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
