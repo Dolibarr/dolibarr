@@ -83,7 +83,7 @@ if (empty($origin_id)) {
 	$origin_id  = GETPOST('object_id', 'int'); // Id of order or propal
 }
 $ref = GETPOST('ref', 'alpha');
-$line_id = GETPOST('lineid', 'int') ? GETPOST('lineid', 'int') : '';
+$line_id = GETPOSTINT('lineid');
 $facid = GETPOST('facid', 'int');
 
 $action		= GETPOST('action', 'alpha');
@@ -771,8 +771,8 @@ if (empty($reshook)) {
 							$stockLocation = "entl".$line_id;
 							$qty = "qtyl".$line_id;
 							$line->id = $line_id;
-							$line->entrepot_id = GETPOST($stockLocation, 'int');
-							$line->qty = GETPOST($qty, 'int');
+							$line->entrepot_id = GETPOSTINT($stockLocation);
+							$line->qty = GETPOSTFLOAT($qty);
 							if ($line->update($user) < 0) {
 								setEventMessages($line->error, $line->errors, 'errors');
 								$error++;
@@ -785,11 +785,11 @@ if (empty($reshook)) {
 								if (!$error) {
 									$stockLocation = "entl".$detail_entrepot->line_id;
 									$qty = "qtyl".$detail_entrepot->line_id;
-									$warehouse = GETPOST($stockLocation, 'int');
+									$warehouse = GETPOSTINT($stockLocation);
 									if (!empty($warehouse)) {
 										$line->id = $detail_entrepot->line_id;
 										$line->entrepot_id = $warehouse;
-										$line->qty = GETPOST($qty, 'int');
+										$line->qty = GETPOSTFLOAT($qty);
 										if ($line->update($user) < 0) {
 											setEventMessages($line->error, $line->errors, 'errors');
 											$error++;
@@ -804,7 +804,7 @@ if (empty($reshook)) {
 						} elseif (!isModEnabled('stock') && empty($conf->productbatch->enabled)) { // both product batch and stock are not activated.
 							$qty = "qtyl".$line_id;
 							$line->id = $line_id;
-							$line->qty = GETPOST($qty, 'int');
+							$line->qty = GETPOSTFLOAT($qty);
 							$line->entrepot_id = 0;
 							if ($line->update($user) < 0) {
 								setEventMessages($line->error, $line->errors, 'errors');
@@ -818,7 +818,7 @@ if (empty($reshook)) {
 						// Product no predefined
 						$qty = "qtyl".$line_id;
 						$line->id = $line_id;
-						$line->qty = GETPOST($qty, 'int');
+						$line->qty = GETPOSTFLOAT($qty);
 						$line->entrepot_id = 0;
 						if ($line->update($user) < 0) {
 							setEventMessages($line->error, $line->errors, 'errors');
