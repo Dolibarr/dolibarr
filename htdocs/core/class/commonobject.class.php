@@ -309,7 +309,7 @@ abstract class CommonObject
 	 * @deprecated
 	 * @see setStatut()
 	 */
-	public $statut;
+	private $statut;
 
 	/**
 	 * @var int 		The object's status
@@ -769,6 +769,40 @@ abstract class CommonObject
 
 	// No constructor as it is an abstract class
 
+	/**
+	 * __get
+	 *
+	 * @param  string   $property
+	 * @return void
+	 */
+	public function __get($property)
+	{
+		if ($property == 'statut') {
+			$bt = debug_backtrace();
+			$caller = array_shift($bt);
+			dol_syslog('Reading property '.get_class($this).'::'.$property.' from '.$caller['file'].' at line '.$caller['line'].' is deprecated', LOG_NOTICE);
+			return $this->status ?? $this->statut;
+		}
+	}
+
+	/**
+	 * __set
+	 *
+	 * @param  string   $property
+	 * @param  mixed    $value
+	 * @return void
+	 */
+	public function __set($property, $value)
+	{
+		if ($property == 'statut') {
+			$bt = debug_backtrace();
+			$caller = array_shift($bt);
+			// var_dump($bt);
+			dol_syslog('Setting property '.get_class($this).'::'.$property.' from '.$caller['file'].' at line '.$caller['line'].' is deprecated', LOG_NOTICE);
+			$this->statut = $value;
+			$this->status = $value;
+		}
+	}
 
 	/**
 	 * Check if an object id or ref exists

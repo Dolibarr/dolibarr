@@ -88,15 +88,6 @@ class User extends CommonObject
 	public $oldcopy;
 
 	/**
-	 * @var int
-	 * @deprecated
-	 * @see $status
-	 */
-	public $statut;
-
-	public $status;
-
-	/**
 	 * @var string		Open ID
 	 */
 	public $openid;
