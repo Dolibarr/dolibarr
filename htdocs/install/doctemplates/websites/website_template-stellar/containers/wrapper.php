@@ -193,7 +193,8 @@ elseif ($modulepart == "mycompany" && preg_match('/^\/?logos\//', $original_file
 } else {
 	// Find the subdirectory name as the reference
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $refname);
+	global $user;
+	$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname);
 	$accessallowed              = $check_access['accessallowed'];
 	$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 	$fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
