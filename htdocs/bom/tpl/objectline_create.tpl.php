@@ -241,7 +241,6 @@ jQuery(document).ready(function() {
 			}).done(function(data) {
 
 				console.log(data);
-				var data = JSON.parse(data);
 				$("#fk_unit").val(data).change();
 			});
 
