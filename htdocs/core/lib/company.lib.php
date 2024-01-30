@@ -243,10 +243,7 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	if (
-		((isModEnabled('website') && getDolGlobalString('WEBSITE_USE_WEBSITE_ACCOUNTS')) || isModEnabled('webportal'))
-		&& $user->hasRight('societe', 'lire')
-	) {
+	if ((isModEnabled('website') || isModEnabled('webportal')) && $user->hasRight('societe', 'lire')) {
 		$site_filter_list = array();
 		if (isModEnabled('website')) {
 			$site_filter_list[] = 'dolibarr_website';
