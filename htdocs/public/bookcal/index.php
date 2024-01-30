@@ -50,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 $langs->loadLangs(array("main", "other", "dict", "agenda", "errors", "companies"));
 
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $id_availability = GETPOST('id_availability', 'int');
 
 $year = GETPOST("year", "int") ? GETPOST("year", "int") : date("Y");
@@ -236,7 +236,7 @@ if ($action == 'add') {
 		$actioncomm->label = $langs->trans("BookcalBookingTitle");
 		$actioncomm->type = 'AC_RDV';
 		$actioncomm->type_id = 5;
-		$actioncomm->datep = GETPOST("datetimebooking", 'int');
+		$actioncomm->datep = GETPOSTINT("datetimebooking");
 		$actioncomm->datef = $dateend;
 		$actioncomm->note_private = GETPOST("description");
 		$actioncomm->percentage = -1;

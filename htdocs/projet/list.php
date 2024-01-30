@@ -1807,7 +1807,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['p.opp_amount']['checked'])) {
 			print '<td class="right">';
 			//if ($obj->opp_status_code)
-			if (strcmp($obj->opp_amount, '')) {
+			if (isset($obj->opp_amount) && strcmp($obj->opp_amount, '')) {
 				print '<span class="amount">'.price($obj->opp_amount, 1, $langs, 1, -1, -1, '').'</span>';
 				if (!isset($totalarray['val']['p.opp_amount'])) {
 					$totalarray['val']['p.opp_amount'] = $obj->opp_amount;

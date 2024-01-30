@@ -47,6 +47,8 @@ License: MIT License
 """
 
 import argparse
+import datetime as dt
+import json
 import os
 import re
 import sys
@@ -64,27 +66,149 @@ def remove_prefix(string, prefix):
     return string
 
 
-def convert_to_checkstyle(messages, root_path=None):
+def convert_notices_to_checkstyle(notices, root_path=None):
     """
-    Convert provided message to CheckStyle format.
+    Convert annotation list to CheckStyle xml string
     """
     root = ET.Element("checkstyle")
-    for message in messages:
-        fields = parse_message(message)
-        if fields:
-            add_error_entry(root, **fields, root_path=root_path)
+    for fields in notices:
+        add_error_entry(root, **fields, root_path=root_path)
     return ET.tostring(root, encoding="utf_8").decode("utf_8")
 
 
-def convert_text_to_checkstyle(text, root_path=None):
+def convert_lines_to_notices(lines):
     """
     Convert provided message to CheckStyle format.
     """
-    root = ET.Element("checkstyle")
-    for fields in parse_file(text):
+    notices = []
+    for line in lines:
+        fields = parse_message(line)
         if fields:
-            add_error_entry(root, **fields, root_path=root_path)
-    return ET.tostring(root, encoding="utf_8").decode("utf_8")
+            notices.append(fields)
+    return notices
+
+
+def convert_text_to_notices(text):
+    """
+    Convert provided message to CheckStyle format.
+    """
+    return parse_file(text)
+
+
+# Initial version for Checkrun from:
+# https://github.com/tayfun/flake8-your-pr/blob/50a175cde4dd26a656734c5b64ba1e5bb27151cb/src/main.py#L7C1-L123C36
+# MIT Licence
+class CheckRun:
+    """
+    Represents the check run
+    """
+
+    GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", None)
+    GITHUB_EVENT_PATH = os.environ.get("GITHUB_EVENT_PATH", None)
+
+    URI = "https://api.github.com"
+    API_VERSION = "2022-11-28"
+    ACCEPT_HEADER_VALUE = "application/vnd.github+json"
+    AUTH_HEADER_VALUE = f"Bearer {GITHUB_TOKEN}"
+    # This is the max annotations Github API accepts in one go.
+    MAX_ANNOTATIONS = 50
+
+    def __init__(self):
+        """
+        Initialise Check Run object with information from checkrun
+        """
+        self.read_event_file()
+        self.read_meta_data()
+
+    def read_event_file(self):
+        """
+        Read the event file to get the event information later.
+        """
+        if self.GITHUB_EVENT_PATH is None:
+            raise ValueError("Not running in github workflow")
+        with open(self.GITHUB_EVENT_PATH, encoding="utf_8") as event_file:
+            self.event = json.loads(event_file.read())
+
+    def read_meta_data(self):
+        """
+        Get meta data from event information
+        """
+        self.repo_full_name = self.event["repository"]["full_name"]
+        pull_request = self.event.get("pull_request")
+        print("%r", self.event)
+        if pull_request:
+            self.head_sha = pull_request["head"]["sha"]
+        else:
+            print("%r", self.event)
+            check_suite = self.event.get("check_suite", None)
+            if check_suite is not None:
+                self.head_sha = check_suite["pull_requests"][0]["base"]["sha"]
+            else:
+                self.head_sha = None  # Can't annotate?
+
+    def submit(  # pylint: disable=too-many-arguments
+        self,
+        notices,
+        title=None,
+        summary=None,
+        text=None,
+        conclusion=None,
+    ):
+        """
+        Submit annotations to github
+
+        See:
+        https://docs.github.com/en/rest/checks/runs?apiVersion=2022-11-28
+              #update-a-check-run
+
+        :param conclusion: success, failure
+        """
+        # pylint: disable=import-outside-toplevel
+        import requests  # Import here to not impose presence of module
+
+        if self.head_sha is None:
+            return
+
+        output = {
+            "annotations": notices[: CheckRun.MAX_ANNOTATIONS],
+        }
+        if title is not None:
+            output["title"] = title
+        if summary is not None:
+            output["summary"] = summary
+        if text is not None:
+            output["text"] = text
+        if conclusion is None:
+            # action_required, cancelled, failure, neutral, success
+            # skipped, stale, timed_out
+            if bool(notices):
+                conclusion = "failure"
+            else:
+                conclusion = "success"
+
+        payload = {
+            "name": "log-to-pr-annotation",
+            "head_sha": self.head_sha,
+            "status": "completed",  # queued, in_progress, completed
+            "conclusion": conclusion,
+            # "started_at": dt.datetime.now(dt.timezone.utc).isoformat(),
+            "completed_at": dt.datetime.now(dt.timezone.utc).isoformat(),
+            "output": output,
+        }
+
+        # Create the check-run
+        response = requests.post(
+            f"{self.URI}/repos/{self.repo_full_name}/check-runs",
+            headers={
+                "Accept": self.ACCEPT_HEADER_VALUE,
+                "Authorization": self.AUTH_HEADER_VALUE,
+                "X-GitHub-Api-Version": self.API_VERSION,
+            },
+            json=payload,
+            timeout=30,
+        )
+        print(response.content)
+        response.raise_for_status()
 
 
 ANY_REGEX = r".*?"
@@ -123,6 +247,12 @@ PATTERNS = [
     re.compile(r"^##(?P<file_endgroup>\[endgroup\])$"),  # End file group
     #  File socks4echo.sh: error: indent/outdent mismatch: -2.
     re.compile(f"^File {FILE_REGEX}:{SEVERITY_REGEX}: {MSG_REGEX}$"),
+    # Emacs style
+    #  path/to/file:845:5: error - Expected 1 space after closing brace
+    re.compile(
+        rf"^{FILE_REGEX}:{LINE_REGEX}:{COLUMN_REGEX}:{SEVERITY_REGEX}"
+        rf"-?\s{MSG_REGEX}$"
+    ),
     # ESLint (JavaScript Linter), RoboCop, shellcheck
     #  path/to/file.js:10:2: Some linting issue
     #  path/to/file.rb:10:5: Style/Indentation: Incorrect indentation detected
@@ -162,6 +292,23 @@ PATTERNS = [
     ),
 ]
 
+# Exceptionnaly some regexes match messages that are not error.
+# This pattern matches those exceptions
+EXCLUDE_MSG_PATTERN = re.compile(
+    r"^("
+    r"Placeholder pattern"  # To remove on first message pattern
+    r")"
+)
+
+# Exceptionnaly some regexes match messages that are not error.
+# This pattern matches those exceptions
+EXCLUDE_FILE_PATTERN = re.compile(
+    r"^("
+    # Codespell:  (appears as a file name):
+    r"Used config files\b"
+    r")"
+)
+
 # Severities available in CodeSniffer report format
 SEVERITY_NOTICE = "notice"
 SEVERITY_WARNING = "warning"
@@ -181,7 +328,7 @@ def parse_file(text):
 
     Returns the fields in a dict.
     """
-    # pylint: disable=too-many-branches
+    # pylint: disable=too-many-branches,too-many-statements
     # regex required to allow same group names
     try:
         import regex  # pylint: disable=import-outside-toplevel
@@ -198,7 +345,7 @@ def parse_file(text):
     results = []
 
     for fields in regex.finditer(
-        full_regex, strip_ansi(text), regex.MULTILINE
+        full_regex, strip_ansi(text), regex.MULTILINE | regex.IGNORECASE
     ):
         if not fields:
             continue
@@ -212,6 +359,7 @@ def parse_file(text):
         confidence = result.pop("confidence", None)
         new_file_group = result.pop("file_group", None)
         file_endgroup = result.pop("file_endgroup", None)
+        message = result.get("message", None)
 
         if new_file_group is not None:
             # Start of file_group, just store file
@@ -228,6 +376,15 @@ def parse_file(text):
                 result["file_name"] = file_name
             else:
                 # No filename, skip
+                continue
+        else:
+            if EXCLUDE_FILE_PATTERN.search(file_name):
+                # This file_name is excluded
+                continue
+
+        if message is not None:
+            if EXCLUDE_MSG_PATTERN.search(message):
+                # This message is excluded
                 continue
 
         if confidence is not None:
@@ -264,7 +421,7 @@ def parse_message(message):
     Returns the fields in a dict.
     """
     for pattern in PATTERNS:
-        fields = pattern.match(message)
+        fields = pattern.match(message, re.IGNORECASE)
         if not fields:
             continue
         result = fields.groupdict()
@@ -378,6 +535,14 @@ def main():
         "  Defaults to working directory.",
         default=os.getcwd(),
     )
+    parser.add_argument(
+        "--github-annotate",
+        action=argparse.BooleanOptionalAction,
+        help="Annotate when in Github workflow.",
+        # Currently disabled,
+        #  Future: (os.environ.get("GITHUB_EVENT_PATH", None) is not None),
+        default=False,
+    )
 
     args = parser.parse_args()
 
@@ -397,11 +562,13 @@ def main():
     root_path = os.path.join(args.root, "")
 
     try:
-        checkstyle_xml = convert_text_to_checkstyle(text, root_path=root_path)
+        notices = convert_text_to_notices(text)
     except ImportError:
-        checkstyle_xml = convert_to_checkstyle(
-            re.split(r"[\r\n]+", text), root_path=root_path
-        )
+        notices = convert_lines_to_notices(re.split(r"[\r\n]+", text))
+
+    checkstyle_xml = convert_notices_to_checkstyle(
+        notices, root_path=root_path
+    )
 
     if args.output == "-" and args.output_named:
         with open(args.output_named, "w", encoding="utf_8") as output_file:
@@ -411,6 +578,10 @@ def main():
             output_file.write(checkstyle_xml)
     else:
         print(checkstyle_xml)
+
+    if args.github_annotate:
+        checkrun = CheckRun()
+        checkrun.submit(notices)
 
 
 if __name__ == "__main__":
