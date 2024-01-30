@@ -34,16 +34,25 @@ class Cregion extends CommonDict
 	//public $element = 'cregion'; //!< Id that identify managed objects
 	//public $table_element = 'c_regions'; //!< Name of table without prefix where object is stored
 
+	/**
+	 * @var int         The code of the region
+	 */
 	public $code_region;
+
+	/**
+	 * @var int         The ID of the country of the region
+	 */
 	public $fk_pays;
 
 	/**
-	 * @var string Region name
+	 * @var string      The name of the region
 	 */
 	public $name;
 
 	/**
-	 * @var string Region chef lieu
+	 * @var string      The reference of the "chef-lieu" of the region
+	 *                  A.k.a. the administrative headquarter of the region
+	 *                  (examples: HU33, PT9, 97601)
 	 */
 	public $cheflieu;
 
@@ -73,13 +82,13 @@ class Cregion extends CommonDict
 
 		// Clean parameters
 		if (isset($this->code_region)) {
-			$this->code_region = trim($this->code_region);
+			$this->code_region = (int) $this->code_region;
 		}
 		if (isset($this->fk_pays)) {
-			$this->fk_pays = trim($this->fk_pays);
+			$this->fk_pays = (int) $this->fk_pays;
 		}
-		if (isset($this->nom)) {
-			$this->nom = trim($this->nom);
+		if (isset($this->name)) {
+			$this->name = trim($this->name);
 		}
 		if (isset($this->cheflieu)) {
 			$this->cheflieu = trim($this->cheflieu);
@@ -139,12 +148,12 @@ class Cregion extends CommonDict
 	/**
 	 *  Load object in memory from database
 	 *
-	 *  @param      int		$id           Id object
-	 *  @param	string	        $code_region  Code
-	 *  @param	string	        $fk_pays      Country Id
+	 *  @param      int		        $id           Id object
+	 *  @param      string	        $code_region  Code
+	 *  @param      int	            $fk_pays      Country Id
 	 *  @return     int          	>0 if OK, 0 if not found, <0 if KO
 	 */
-	public function fetch($id, $code_region = '', $fk_pays = '')
+	public function fetch($id, $code_region = '', $fk_pays = 0)
 	{
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -203,10 +212,10 @@ class Cregion extends CommonDict
 
 		// Clean parameters
 		if (isset($this->code_region)) {
-			$this->code_region = trim($this->code_region);
+			$this->code_region = (int) $this->code_region;
 		}
 		if (isset($this->fk_pays)) {
-			$this->fk_pays = trim($this->fk_pays);
+			$this->fk_pays = (int) $this->fk_pays;
 		}
 		if (isset($this->name)) {
 			$this->name = trim($this->name);
