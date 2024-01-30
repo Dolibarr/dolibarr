@@ -29,6 +29,8 @@
  *       \brief      Fichier de la class permettant la generation du formulaire html d'envoi de mail unitaire
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/modelemail.lib.php';
+
 
 
 /**
@@ -1460,9 +1462,19 @@ class FormMail extends Form
 		$out .= '</td>';
 		$out .= '<td>';
 		$out .= '<div id="template-selector" class="template-container">';
-		$templates = array('empty', 'basic', 'news', 'commerce', 'text');
-		foreach ($templates as $template) {
-			$out .= '<div class="template-option" data-template="'.$template.'">';
+		$templates = array(
+			'empty' => 'empty_template',
+			'basic' => 'basic_template',
+			'news'  => 'news_template',
+			'commerce' => 'commerce_template',
+			'text' => 'text_template'
+		);
+
+		foreach ($templates as $template => $templateFunction) {
+			if (function_exists($templateFunction)) {
+				$contentHtml = $templateFunction();
+			}
+			$out .= '<div class="template-option" data-template="'.$template.'" data-content="'.htmlentities($contentHtml).'">';
 			$out .= '<img alt="'.$template.'" src="'.DOL_URL_ROOT.'/theme/common/mailtemplate/'.$template.'.png" />';
 			$out .= '<span class="template-option-text">'.ucfirst($template).'</span>';
 			$out .= '</div>';
@@ -1483,6 +1495,13 @@ class FormMail extends Form
 						$(this).addClass('selected');
 
 						var template = $(this).data('template');
+						var contentHtml = $(this).data('content');
+						
+						var editorInstance = CKEDITOR.instances.message;
+						if (editorInstance) {
+							editorInstance.setData(contentHtml);
+						}
+						// display input for gnerate with IA
 						if(template === 'ai') {
 							$('#ai_input').show();
 						} else {
@@ -1494,6 +1513,7 @@ class FormMail extends Form
 		$out .= $this->getHtmlForInstruction();
 		return $out;
 	}
+
 
 
 	/**
