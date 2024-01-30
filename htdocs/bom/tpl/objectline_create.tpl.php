@@ -254,9 +254,7 @@ jQuery(document).ready(function() {
 					,'idproduct' : idproduct
 				}
 			}).done(function(data) {
-				var data = JSON.parse(data);
 				$('#idworkstations').val(data.defaultWk).select2();
-
 			});
 	});
 	<?php } ?>
