@@ -100,9 +100,9 @@ class Cregion extends CommonDict
 		$sql .= "cheflieu,";
 		$sql .= "active";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->rowid) ? 'NULL' : "'".$this->db->escape($this->rowid)."'").",";
-		$sql .= " ".(!isset($this->code_region) ? 'NULL' : "'".$this->db->escape($this->code_region)."'").",";
-		$sql .= " ".(!isset($this->fk_pays) ? 'NULL' : "'".$this->db->escape($this->fk_pays)."'").",";
+		$sql .= " ".(!isset($this->rowid) ? 'NULL' : (int) $this->rowid).",";
+		$sql .= " ".(!isset($this->code_region) ? 'NULL' : (int) $this->code_region).",";
+		$sql .= " ".(!isset($this->fk_pays) ? 'NULL' : (int) $this->fk_pays).",";
 		$sql .= " ".(!isset($this->name) ? 'NULL' : "'".$this->db->escape($this->name)."'").",";
 		$sql .= " ".(!isset($this->cheflieu) ? 'NULL' : "'".$this->db->escape($this->cheflieu)."'").",";
 		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'");
