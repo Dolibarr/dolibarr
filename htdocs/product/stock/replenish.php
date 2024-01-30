@@ -839,12 +839,12 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		if ($usevirtualstock) {
 			// If option to increase/decrease is not on an object validation, virtual stock may differs from physical stock.
 			$stock = $prod->stock_theorique;
-            if (!empty($conf->global->STOCK_ALLOW_VIRTUAL_STOCK_PER_WAREHOUSE)) { //if conf active, stock virtual by warehouse is calculated
-                $stockwarehouse = $prod->stock_warehouse[$fk_entrepot]->virtual;
-            }
+			if (!empty($conf->global->STOCK_ALLOW_VIRTUAL_STOCK_PER_WAREHOUSE)) { //if conf active, stock virtual by warehouse is calculated
+				$stockwarehouse = $prod->stock_warehouse[$fk_entrepot]->virtual;
+			}
 		} else {
 			$stock = $prod->stock_reel;
-            $stockwarehouse = $prod->stock_warehouse[$fk_entrepot]->real;
+			$stockwarehouse = $prod->stock_warehouse[$fk_entrepot]->real;
 		}
 
 		// Force call prod->load_stats_xxx to choose status to count (otherwise it is loaded by load_stock function)
