@@ -127,7 +127,7 @@ function testSqlAndScriptInject($val, $type)
 		// If $val has changed after removing non valid UTF8 chars, it means we have an evil string.
 		$inj += 1;
 	}
-	//print 'type='.$type.'-val='.$val.'-newval='.$newval."-inj=".$inj."\n";
+	//print 'inj='.$inj.'-type='.$type.'-val='.$val.'-newval='.$newval."\n";
 
 	// For SQL Injection (only GET are used to scan for such injection strings)
 	if ($type == 1 || $type == 3) {
@@ -213,14 +213,20 @@ function testSqlAndScriptInject($val, $type)
  * Return true if security check on parameters are OK, false otherwise.
  *
  * @param		string|array	$var		Variable name
- * @param		string			$type		1=GET, 0=POST, 2=PHP_SELF
- * @return		boolean|null				true if there is no injection. Stop code if injection found.
+ * @param		int				$type		1=GET, 0=POST, 2=PHP_SELF
+ * @param		int				$stopcode	0=No stop code, 1=Stop code (default) if injection found
+ * @return		boolean|null				True if there is no injection.
  */
-function analyseVarsForSqlAndScriptsInjection(&$var, $type)
+function analyseVarsForSqlAndScriptsInjection(&$var, $type, $stopcode = 1)
 {
 	if (is_array($var)) {
 		foreach ($var as $key => $value) {	// Warning, $key may also be used for attacks
-			if (analyseVarsForSqlAndScriptsInjection($key, $type) && analyseVarsForSqlAndScriptsInjection($value, $type)) {
+			// Exclude check for some variable keys
+			if ($type === 0 && defined('NOSCANPOSTFORINJECTION') && is_array(constant('NOSCANPOSTFORINJECTION')) && in_array($key, constant('NOSCANPOSTFORINJECTION'))) {
+				continue;
+			}
+
+			if (analyseVarsForSqlAndScriptsInjection($key, $type, $stopcode) && analyseVarsForSqlAndScriptsInjection($value, $type, $stopcode)) {
 				//$var[$key] = $value;	// This is useless
 			} else {
 				http_response_code(403);
@@ -228,29 +234,33 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 				// Get remote IP: PS: We do not use getRemoteIP(), function is not yet loaded and we need a value that can't be spoofed
 				$ip = (empty($_SERVER['REMOTE_ADDR']) ? 'unknown' : $_SERVER['REMOTE_ADDR']);
 
-				$errormessage = 'Access refused to '.htmlentities($ip, ENT_COMPAT, 'UTF-8').' by SQL or Script injection protection in main.inc.php:analyseVarsForSqlAndScriptsInjection type='.htmlentities($type, ENT_COMPAT, 'UTF-8');
+				if ($stopcode) {
+					$errormessage = 'Access refused to '.htmlentities($ip, ENT_COMPAT, 'UTF-8').' by SQL or Script injection protection in main.inc.php:analyseVarsForSqlAndScriptsInjection type='.htmlentities($type, ENT_COMPAT, 'UTF-8');
 
-				$errormessage2 = 'paramkey='.htmlentities($key, ENT_COMPAT, 'UTF-8');
-				$errormessage2 .= ' paramvalue='.htmlentities($value, ENT_COMPAT, 'UTF-8');
-				$errormessage2 .= ' page='.htmlentities($_SERVER["REQUEST_URI"], ENT_COMPAT, 'UTF-8');
+					$errormessage2 = 'page='.htmlentities($_SERVER["REQUEST_URI"], ENT_COMPAT, 'UTF-8');
+					$errormessage2 .= ' paramkey='.htmlentities($key, ENT_COMPAT, 'UTF-8');
+					$errormessage2 .= ' paramvalue='.htmlentities($value, ENT_COMPAT, 'UTF-8');
 
-				print $errormessage;
-				print "<br>\n";
-				print 'Try to go back, fix data of your form and resubmit it. You can contact also your technical support.';
+					print $errormessage;
+					print "<br>\n";
+					print 'Try to go back, fix data of your form and resubmit it. You can contact also your technical support.';
 
-				print '<!--'."\n";
-				print $errormessage2;
-				print "\n".'-->';
+					print "\n".'<!--'."\n";
+					print $errormessage2;
+					print "\n".'-->';
 
-				// Add entry into error the PHP server error log
-				if (function_exists('error_log')) {
-					error_log($errormessage.' '.$errormessage2);
+					// Add entry into the PHP server error log
+					if (function_exists('error_log')) {
+						error_log($errormessage.' '.substr($errormessage2, 2000));
+					}
+
+					// Note: No addition into security audit table is done because we don't want to execute code in such a case.
+					// Detection of too many such requests can be done with a fail2ban rule on 403 error code or into the PHP server error log.
+
+					exit;
+				} else {
+					return false;
 				}
-
-				// Note: No addition into security audit table is done because we don't want to execute code in such a case.
-				// Detection of too many such requests can be done with a fail2ban rule on 403 error code or into the PHP server error log.
-
-				exit;
 			}
 		}
 		return true;
@@ -262,7 +272,7 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 // To disable the WAF for GET and POST and PHP_SELF, uncomment this
 //define('NOSCANPHPSELFFORINJECTION', 1);
 //define('NOSCANGETFORINJECTION', 1);
-//define('NOSCANPOSTFORINJECTION', 1);
+//define('NOSCANPOSTFORINJECTION', 1 or 2);
 
 // Check consistency of NOREQUIREXXX DEFINES
 if ((defined('NOREQUIREDB') || defined('NOREQUIRETRAN')) && !defined('NOREQUIREMENU')) {
@@ -288,7 +298,7 @@ if (!defined('NOSCANGETFORINJECTION') && !empty($_SERVER["QUERY_STRING"])) {
 	analyseVarsForSqlAndScriptsInjection($morevaltochecklikeget, 1);
 }
 // Sanity check on POST
-if (!defined('NOSCANPOSTFORINJECTION')) {
+if (!defined('NOSCANPOSTFORINJECTION') || is_array(constant('NOSCANPOSTFORINJECTION'))) {
 	analyseVarsForSqlAndScriptsInjection($_POST, 0);
 }
 
@@ -609,7 +619,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 					print " into setup).\n";
 				}
 			}
-				die;
+			die;
 		}
 	}
 

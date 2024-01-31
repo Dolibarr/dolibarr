@@ -63,7 +63,7 @@ class Tva extends CommonObject
 	public $num_payment;
 
 	/**
-	 * @var DateTime
+	 * @var int     Creation date
 	 */
 	public $datec;
 
@@ -81,11 +81,6 @@ class Tva extends CommonObject
 	 * @var int
 	 */
 	public $rappro;
-
-	/**
-	 * @var integer|string totalpaid
-	 */
-	public $totalpaid;
 
 	/**
 	 * @var string label
@@ -426,9 +421,9 @@ class Tva extends CommonObject
 		$this->amount = '';
 		$this->label = '';
 		$this->note = '';
-		$this->fk_bank = '';
-		$this->fk_user_creat = '';
-		$this->fk_user_modif = '';
+		$this->fk_bank = 0;
+		$this->fk_user_creat = 0;
+		$this->fk_user_modif = 0;
 	}
 
 
