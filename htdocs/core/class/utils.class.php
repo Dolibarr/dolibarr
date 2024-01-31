@@ -52,7 +52,7 @@ class Utils
 	public $output;
 
 	/**
-	 * @var array{'commandbackuplastdone': string, 'commandbackuptorun': string}      Used by Cron method to return data
+	 * @var array{commandbackuplastdone:string,commandbackuptorun:string}	Used by Cron method to return data
 	 */
 	public $result;
 
