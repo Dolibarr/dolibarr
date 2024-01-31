@@ -2421,7 +2421,13 @@ if ($action == 'exportsite' && $user->hasRight('website', 'export')) {
 // Overwrite site
 if ($action == 'overwritesite' && $user->hasRight('website', 'export')) {
 	if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
-		$fileofzip = $object->overwriteTemplate();
+		$fileofzip = $object->exportWebSite();
+
+		if ($fileofzip) {
+			$object->overwriteTemplate($fileofzip);
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 }
 // Regenerate site

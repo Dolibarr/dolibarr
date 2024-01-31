@@ -1611,11 +1611,14 @@ class Website extends CommonObject
 	/**
 	 * Overite template by copying all files
 	 *
-	 * @return int			Return integer <0 if KO, >0 if OK
+	 * @param	string	$pathtotmpzip		Path to the tmp zip file
+	 * @return 	int							Return integer <0 if KO, >0 if OK
 	 */
-	public function overwriteTemplate()
+	public function overwriteTemplate(string $pathtotmpzip)
 	{
 		global $conf;
+
+		//$error = 0;
 
 		$website = $this;
 		if (empty($website->id) || empty($website->ref)) {
@@ -1631,11 +1634,28 @@ class Website extends CommonObject
 			return -1;
 		}
 
+		// Replace modified files into the doctemplates directory.
+		if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE') == '1') {
+			$destdirrel = 'install/doctemplates/websites/'.$website->name_template;
+			$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
+		} else {
+			$destdirrel = basename(dirname(getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE'))).'/'.basename(getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE'));
+			$destdir = getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE');
+		}
+
+		// Export on target sources
+		$resultarray = dol_uncompress($pathtotmpzip, $destdir);
+		if (!empty($resultarray)) {
+			setEventMessages("Error, failed to unzip the export into target dir", null, 'errors');
+		} else {
+			setEventMessages("Website content written into ".$destdirrel, null, 'mesgs');
+		}
+
+		/*
 		$sourcedir = $conf->website->dir_output."/".$website->ref;
 
-		$fichierEtat = $sourcedir . '/filelist-lastwrite-doctemplates.txt';
-
-		// Get array with hash of files
+		// Get array with hash of files (for the last sync)
+		$fichierEtat = $sourcedir . '/filelist-'.dol_sanitizeFileName($destdir).'.txt';
 		$etatPrecedent = $this->checkPreviousState($fichierEtat);
 
 		// Get list of all source files of the website
@@ -1655,15 +1675,6 @@ class Website extends CommonObject
 			}
 
 			$etatPrecedent[$file['name']] = $hashActuel;	// we store he new hash to record it later on disk.
-		}
-
-		// Replace modified files into the doctemplates directory.
-		$destdirrel = 'install/doctemplates/websites/'.$website->name_template;
-
-		if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE') == '1') {
-			$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
-		} else {
-			$destdir = getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE');
 		}
 
 		$arraydestdir = dol_dir_list($destdir, "all", 1);
@@ -1703,6 +1714,7 @@ class Website extends CommonObject
 									foreach ($arraySourcedir as $file) {
 										if ($file['name'] == $nomFichierModifie) {
 											$fileContent = file_get_contents($file['fullname']);
+											$matches = array();
 											if (preg_match("/page\d+\.tpl\.php/", $fileContent, $matches)) {
 												$fileFounded = $matches[0];
 												break;
@@ -1725,16 +1737,22 @@ class Website extends CommonObject
 									}
 								}
 							}
+
 							$this->saveState($etatPrecedent, $fichierEtat);
 							setEventMessages("file <b>".$nomFichierModifie."</b> was created in template <b>".$website->name_template."</b>", null, 'warnings');
+
 							header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
 							exit();
 						}
+					} else {
+						setEventMessages("Error, target dir containers not found", null, 'errors');
+						$error = 1;
+						break;
 					}
 				}
 
 				// Find the corresponding file in the destination folder
-				if (in_array($nomFichierModifie, $namesSource)) {
+				if (!$error && in_array($nomFichierModifie, $namesSource)) {
 					foreach ($arraydestdir as $destFile) {
 						if ($destFile['name'] == $nomFichierModifie) {
 							$sourceContent = file_get_contents($fichierModifie['fullname']);
@@ -1744,19 +1762,21 @@ class Website extends CommonObject
 								$differences[$nomFichierModifie] = $this->showDifferences($destContent, $sourceContent);
 								if (count($differences[$nomFichierModifie]) > 0) {
 									$result = $this->replaceLineUsingNum($destFile['fullname'], $differences[$nomFichierModifie]);
-									if ($result !== false) {
+									if ($result >= 0) {
+										setEventMessages("file <b>".$nomFichierModifie."</b> was modified in template <b>".$website->name_template."</b>", null, 'warnings');
+									} else {
 										if ($result == -2) {
 											setEventMessages("No permissions to write into file <b>".$destdirrel.'/'.$nomFichierModifie."</b> from the current website <b>".$website->name_template."</b>", null, 'errors');
+
 											header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
 											exit();
 										}
-										setEventMessages("file <b>".$nomFichierModifie."</b> was modified in template <b>".$website->name_template."</b>", null, 'warnings');
-									} else {
 										setEventMessages("file ".$nomFichierModifie." was not modified", null, 'errors');
 									}
 								}
 							}
 						}
+
 						if (preg_match('/page(\d+)\.tpl\.php/', $nomFichierModifie)) {
 							$differences[$nomFichierModifie] = $this->compareFichierModifie($sourcedir, $destdir, $fichierModifie);
 							if (count($differences[$nomFichierModifie]) > 0) {
@@ -1778,6 +1798,7 @@ class Website extends CommonObject
 				// Save the state file filelist.txt
 				$this->saveState($etatPrecedent, $fichierEtat);
 				setEventMessages("file <b>".$differences[$nomFichierModifie]['file_destination']['name']."</b> was modified in template <b>".$website->name_template."</b>", null, 'warnings');
+
 				header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
 				exit();
 			}
@@ -1786,7 +1807,10 @@ class Website extends CommonObject
 		}
 
 		// save state file
-		$this->saveState($etatPrecedent, $fichierEtat);
+		if (!$error) {
+			$this->saveState($etatPrecedent, $fichierEtat);
+		}
+		*/
 
 		header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
 		exit();
@@ -2077,26 +2101,17 @@ class Website extends CommonObject
 	 *
 	 * @param 	string 		$desfFile   	path of file dest
 	 * @param 	array 		$differences 	array of differences between files
-	 * @return 	int  						0 if we can't replace
+	 * @return 	int  						Return 0 if we can replace, <0 if not (-2=not writable)
 	 */
 	protected function replaceLineUsingNum($desfFile, $differences)
 	{
-		$userId = fileowner($desfFile);
-		if ($userId !== false) {
-			// Obtain user information from the ID
-			if (function_exists('posix_geteuid') && function_exists('posix_getpwuid')) {
-				$uid = posix_geteuid();
-				$userInfoM = posix_getpwuid($uid);
-
-				$userInfo = posix_getpwuid($userId);
-				if ($userInfo['uid'] !== $userInfoM['uid']) {
-					return -2;
-				}
-			}
-		}
 		if (file_exists($desfFile)) {
 			dolChmod($desfFile, '0664');
 		}
+		if (!is_writable($desfFile)) {
+			return -2;
+		}
+
 		unset($differences['file_destination']);
 		$contentDest = file($desfFile, FILE_IGNORE_NEW_LINES);
 		foreach ($differences as $key => $ligneSource) {
