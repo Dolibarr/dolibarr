@@ -30,6 +30,11 @@
 // $object = Object fetched;
 // $sendto
 // $withmaindocfilemail
+if(!empty($sall) || !empty($search_all)) {
+	$sall = empty($sall) ? $search_all : $sall;
+
+	print '<input type="hidden" name="sall" value="'.$sall.'">';
+}
 
 if ($massaction == 'predeletedraft') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDraftDeletion"), $langs->trans("ConfirmMassDeletionQuestion", count($toselect)), "delete", null, '', 0, 200, 500, 1);
