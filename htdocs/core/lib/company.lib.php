@@ -1850,9 +1850,16 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		}
 	}
 
-	//TODO Add limit in nb of results
 	if ($sql) {
+		//TODO Add navigation with this limits...
+		$offset = 0;
+		$limit = 1000;
+
+		// Complete request and execute it with limit
 		$sql .= $db->order($sortfield_new, $sortorder);
+		if ($limit) {
+			$sql .= $db->plimit($limit + 1, $offset);
+		}
 
 		dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
 
@@ -1861,7 +1868,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$i = 0;
 			$num = $db->num_rows($resql);
 
-			while ($i < $num) {
+			$imaxinloop = ($limit ? min($num, $limit) : $num);
+			while ($i < $imaxinloop) {
 				$obj = $db->fetch_object($resql);
 
 				if ($obj->type == 'action') {

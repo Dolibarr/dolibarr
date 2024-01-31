@@ -1393,18 +1393,26 @@ function show_actions_done_user($conf, $langs, $db, $filterobj, $objcon = null, 
 		}
 	}
 
-	//TODO Add limit in nb of results
 	if ($sql) {
-		$sql .= $db->order($sortfield_new, $sortorder);
+		//TODO Add navigation with this limits...
+		$offset = 0;
+		$limit = 1000;
 
-		dol_syslog("usergroups.lib::show_actions_dones", LOG_DEBUG);
+		// Complete request and execute it with limit
+		$sql .= $db->order($sortfield_new, $sortorder);
+		if ($limit) {
+			$sql .= $db->plimit($limit + 1, $offset);
+		}
+
+		dol_syslog("usergroups.lib::show_actions_done_user", LOG_DEBUG);
 
 		$resql = $db->query($sql);
 		if ($resql) {
 			$i = 0;
 			$num = $db->num_rows($resql);
 
-			while ($i < $num) {
+			$imaxinloop = ($limit ? min($num, $limit) : $num);
+			while ($i < $imaxinloop) {
 				$obj = $db->fetch_object($resql);
 
 				if ($obj->type == 'action') {
@@ -1413,7 +1421,7 @@ function show_actions_done_user($conf, $langs, $db, $filterobj, $objcon = null, 
 					$result = $contactaction->fetchResources();
 					if ($result < 0) {
 						dol_print_error($db);
-						setEventMessage("user.lib::show_actions_done Error fetch resource", 'errors');
+						setEventMessage("user.lib::show_actions_done_user Error fetch resource", 'errors');
 					}
 
 					//if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";

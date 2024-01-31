@@ -5806,7 +5806,9 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	$savlimit = $limit;
 	$savtotalnboflines = $totalnboflines;
-	$totalnboflines = abs((int) $totalnboflines);
+	if (is_numeric($totalnboflines)) {
+		$totalnboflines = abs($totalnboflines);
+	}
 
 	$page = (int) $page;
 
@@ -5840,7 +5842,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	print '<td class="nobordernopadding valignmiddle col-title">';
 	print '<div class="titre inline-block">'.$titre;
 	if (!empty($titre) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') {
-		print '<span class="opacitymedium colorblack paddingleft">('.$totalnboflines.')</span>';
+		print 'eeee<span class="opacitymedium colorblack paddingleft">('.$totalnboflines.')</span>';
 	}
 	print '</div></td>';
 
@@ -12972,15 +12974,22 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 		$sql2 .= " AND mc.fk_mailing=m.rowid";
 	}
 
-	if (!empty($sql) && !empty($sql2)) {
-		$sql = $sql." UNION ".$sql2;
-	} elseif (empty($sql) && !empty($sql2)) {
-		$sql = $sql2;
-	}
+	if ($sql || $sql2) {	// May not be defined if module Agenda is not enabled and mailing module disabled too
+		if (!empty($sql) && !empty($sql2)) {
+			$sql = $sql." UNION ".$sql2;
+		} elseif (empty($sql) && !empty($sql2)) {
+			$sql = $sql2;
+		}
 
-	// TODO Add limit in nb of results
-	if ($sql) {	// May not be defined if module Agenda is not enabled and mailing module disabled too
+		//TODO Add navigation with this limits...
+		$offset = 0;
+		$limit = 1000;
+
+		// Complete request and execute it with limit
 		$sql .= $db->order($sortfield_new, $sortorder);
+		if ($limit) {
+			$sql .= $db->plimit($limit + 1, $offset);
+		}
 
 		dol_syslog("function.lib::show_actions_messaging", LOG_DEBUG);
 		$resql = $db->query($sql);
@@ -12988,7 +12997,8 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			$i = 0;
 			$num = $db->num_rows($resql);
 
-			while ($i < $num) {
+			$imaxinloop = ($limit ? min($num, $limit) : $num);
+			while ($i < $imaxinloop) {
 				$obj = $db->fetch_object($resql);
 
 				if ($obj->type == 'action') {
