@@ -1659,7 +1659,13 @@ class Website extends CommonObject
 
 		// Replace modified files into the doctemplates directory.
 		$destdirrel = 'install/doctemplates/websites/'.$website->name_template;
-		$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
+
+		if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE') == '1') {
+			$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
+		} else {
+			$destdir = getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE');
+		}
+
 		$arraydestdir = dol_dir_list($destdir, "all", 1);
 		$differences = [];
 		$names = array_column($arraydestdir, 'name');
