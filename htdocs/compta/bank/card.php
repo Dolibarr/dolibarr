@@ -835,7 +835,7 @@ if ($action == 'create') {
 			}
 
 			if (isModEnabled('paymentbybanktransfer')) {
-				if (getDolGlobalString("SEPA_USE_IDS")) {	// ICS is not used with bank transfer !
+				if (getDolGlobalString("SEPA_USE_IDS")) {	// Use another ICS for bank transfer
 					print '<tr><td>'.$form->textwithpicto($langs->trans("IDS"), $langs->trans("IDS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("BankTransfer")).')').'</td>';
 					print '<td>'.$object->ics_transfer.'</td>';
 					print '</tr>';
