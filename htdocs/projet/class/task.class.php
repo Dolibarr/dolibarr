@@ -101,8 +101,14 @@ class Task extends CommonObjectLine
 
 	/**
 	 * @var int ID
+	 * @deprecated use status instead
 	 */
 	public $fk_statut;
+
+	/**
+	 * @var int ID
+	 */
+	public $status;
 
 	public $priority;
 
