@@ -1659,7 +1659,13 @@ class Website extends CommonObject
 
 		// Replace modified files into the doctemplates directory.
 		$destdirrel = 'install/doctemplates/websites/'.$website->name_template;
-		$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
+
+		if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE') == '1') {
+			$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
+		} else {
+			$destdir = getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE');
+		}
+
 		$arraydestdir = dol_dir_list($destdir, "all", 1);
 		$differences = [];
 		$names = array_column($arraydestdir, 'name');
@@ -2068,16 +2074,17 @@ class Website extends CommonObject
 
 	/**
 	 * Replace line by line in file using num of line
-	 * @param string $desfFile   path of file dest
-	 * @param array $differences array of differences between files
-	 * @return false|int  false if we can't replace
+	 *
+	 * @param 	string 		$desfFile   	path of file dest
+	 * @param 	array 		$differences 	array of differences between files
+	 * @return 	int  						0 if we can't replace
 	 */
 	protected function replaceLineUsingNum($desfFile, $differences)
 	{
 		$userId = fileowner($desfFile);
 		if ($userId !== false) {
 			// Obtain user information from the ID
-			if (function_exists('posix_getpwuid')&& function_exists('posix_getpwuid')) {
+			if (function_exists('posix_geteuid') && function_exists('posix_getpwuid')) {
 				$uid = posix_geteuid();
 				$userInfoM = posix_getpwuid($uid);
 
@@ -2093,6 +2100,7 @@ class Website extends CommonObject
 		unset($differences['file_destination']);
 		$contentDest = file($desfFile, FILE_IGNORE_NEW_LINES);
 		foreach ($differences as $key => $ligneSource) {
+			$matches = array();
 			if (preg_match('/(Ajoutée|Modifiée) à la ligne (\d+)/', $key, $matches)) {
 				$typeModification = $matches[1];
 				$numLigne = (int) $matches[2] - 1;
@@ -2116,5 +2124,7 @@ class Website extends CommonObject
 				dolReplaceInFile($desfFile, array($linechanged => $line));
 			}
 		}
+
+		return 0;
 	}
 }

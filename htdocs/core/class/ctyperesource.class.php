@@ -80,7 +80,7 @@ class Ctyperesource extends CommonDict
 			$this->label = trim($this->label);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
 		// Insert request
@@ -277,7 +277,7 @@ class Ctyperesource extends CommonDict
 			$this->label = trim($this->label);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
 		// Check parameters
@@ -433,7 +433,7 @@ class Ctyperesource extends CommonDict
 
 		$this->code = '';
 		$this->label = '';
-		$this->active = '';
+		$this->active = 0;
 	}
 }
 
