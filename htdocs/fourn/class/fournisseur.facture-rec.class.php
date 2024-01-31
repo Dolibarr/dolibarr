@@ -520,6 +520,8 @@ class FactureFournisseurRec extends CommonInvoice
 		$sql .= " auto_validate = ". (!empty($this->auto_validate) ? ((int) $this->auto_validate) : 0);
 		$sql .= " WHERE rowid = ". (int) $this->id;
 
+		$this->db->begin();
+
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
