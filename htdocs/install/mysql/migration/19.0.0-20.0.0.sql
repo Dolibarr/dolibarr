@@ -213,4 +213,3 @@ ALTER TABLE llx_knowledgemanagement_knowledgerecord MODIFY COLUMN answer longtex
 UPDATE llx_const SET name = 'THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT' WHERE name = 'THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER';
 
 ALTER TABLE llx_fichinter ADD COLUMN signed boolean DEFAULT NULL AFTER duree;
-INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_SIGN','Intervention is signed','Executed when a intervention is signed','ficheinter',31);
