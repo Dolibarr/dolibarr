@@ -185,7 +185,7 @@ $morehtmlright = '';
 
 $messagingUrl = DOL_URL_ROOT.'/user/messaging.php?userid='.$object->id;
 $morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
-$messagingUrl = DOL_URL_ROOT.'/user/info.php?id='.$object->id;
+$messagingUrl = DOL_URL_ROOT.'/user/agenda.php?id='.$object->id;
 $morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
 
 if (isModEnabled('agenda')) {

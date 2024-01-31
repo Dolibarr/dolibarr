@@ -185,7 +185,7 @@ function user_prepare_head(User $object)
 		$head[$h][2] = 'document';
 		$h++;
 
-		$head[$h][0] = DOL_URL_ROOT.'/user/info.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/user/agenda.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Events");
 		if (isModEnabled('agenda')&& ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 			$nbEvent = 0;
