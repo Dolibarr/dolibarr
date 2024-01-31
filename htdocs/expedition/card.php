@@ -758,8 +758,8 @@ if (empty($reshook)) {
 							$stockLocation = 0;
 							$qty = "qtyl".$line_id;
 							$line->id = $line_id;
-							$line->entrepot_id = GETPOST($stockLocation, 'int');
-							$line->qty = GETPOST($qty, 'int');
+							$line->entrepot_id = GETPOSTINT($stockLocation);
+							$line->qty = GETPOSTFLOAT($qty);
 							if ($line->update($user) < 0) {
 								setEventMessages($line->error, $line->errors, 'errors');
 								$error++;

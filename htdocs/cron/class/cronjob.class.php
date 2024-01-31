@@ -110,7 +110,7 @@ class Cronjob extends CommonObject
 	public $datelastresult = '';
 
 	/**
-	 * @var string 			Last result from end job execution
+	 * @var int 			Last result from end job execution
 	 */
 	public $lastresult;
 
@@ -263,10 +263,10 @@ class Cronjob extends CommonObject
 			$this->unitfrequency = trim($this->unitfrequency);
 		}
 		if (isset($this->frequency)) {
-			$this->frequency = trim($this->frequency);
+			$this->frequency = (int) $this->frequency;
 		}
 		if (isset($this->status)) {
-			$this->status = trim($this->status);
+			$this->status = (int) $this->status;
 		}
 		if (isset($this->note_private)) {
 			$this->note_private = trim($this->note_private);
@@ -710,10 +710,10 @@ class Cronjob extends CommonObject
 			$this->unitfrequency = trim($this->unitfrequency);
 		}
 		if (isset($this->frequency)) {
-			$this->frequency = trim($this->frequency);
+			$this->frequency = (int) $this->frequency;
 		}
 		if (isset($this->status)) {
-			$this->status = trim($this->status);
+			$this->status = (int) $this->status;
 		}
 		if (isset($this->note_private)) {
 			$this->note_private = trim($this->note_private);
@@ -945,7 +945,7 @@ class Cronjob extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-		$this->ref = 0;
+		$this->ref = '';
 		$this->entity = 0;
 		$this->tms = '';
 		$this->datec = '';
@@ -967,7 +967,7 @@ class Cronjob extends CommonObject
 		$this->lastoutput = '';
 		$this->lastresult = '';
 		$this->unitfrequency = '';
-		$this->frequency = '';
+		$this->frequency = 0;
 		$this->status = 0;
 		$this->processing = 0;
 		$this->pid = null;
@@ -975,7 +975,7 @@ class Cronjob extends CommonObject
 		$this->fk_user_author = 0;
 		$this->fk_user_mod = 0;
 		$this->note_private = '';
-		$this->nbrun = '';
+		$this->nbrun = 0;
 		$this->maxrun = 100;
 		$this->libname = '';
 	}

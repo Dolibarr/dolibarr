@@ -88,7 +88,7 @@ class CUnits extends CommonDict
 			$this->active = trim($this->unit_type);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 		if (isset($this->scale)) {
 			$this->scale = trim($this->scale);
@@ -318,7 +318,7 @@ class CUnits extends CommonDict
 			$this->scale = trim($this->scale);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
 		// Check parameters
