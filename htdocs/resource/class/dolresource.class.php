@@ -507,7 +507,7 @@ class Dolresource extends CommonObject
 		dol_syslog(get_class($this), LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_resources";
-			$sql .= " WHERE element_type='resource' AND resource_id = ".($rowid);
+			$sql .= " WHERE element_type='resource' AND resource_id = ".((int) $rowid);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -741,7 +741,7 @@ class Dolresource extends CommonObject
 		// Links between objects are stored in this table
 		$sql = 'SELECT rowid, resource_id, resource_type, busy, mandatory';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'element_resources';
-		$sql .= " WHERE element_id=".($element_id)." AND element_type='".$this->db->escape($element)."'";
+		$sql .= " WHERE element_id=".((int) $element_id)." AND element_type='".$this->db->escape($element)."'";
 		if ($resource_type) {
 			$sql .= " AND resource_type LIKE '%".$this->db->escape($resource_type)."%'";
 		}
