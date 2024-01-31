@@ -63,6 +63,11 @@ abstract class CommonObject
 	public $id;
 
 	/**
+	 * @var int			Another ID that is the $id but with an offset so that ID of the website start at 1
+	 */
+	public $newid;
+
+	/**
 	 * @var int 		The environment ID when using a multicompany module
 	 */
 	public $entity;
