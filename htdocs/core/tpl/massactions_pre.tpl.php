@@ -30,10 +30,10 @@
 // $object = Object fetched;
 // $sendto
 // $withmaindocfilemail
-if(!empty($sall) || !empty($search_all)) {
-	$sall = empty($sall) ? $search_all : $sall;
+if (!empty($sall) || !empty($search_all)) {
+	$search_all = empty($sall) ? $search_all : $sall;
 
-	print '<input type="hidden" name="sall" value="'.$sall.'">';
+	print '<input type="hidden" name="search_all" value="'.$search_all.'">';
 }
 
 if ($massaction == 'predeletedraft') {
