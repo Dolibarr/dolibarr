@@ -508,7 +508,7 @@ if (!defined('NOLOGIN') && !defined('NOIPCHECK') && !empty($dolibarr_main_restri
 	}
 }
 
-	// Loading of additional presentation includes
+// Loading of additional presentation includes
 if (!defined('NOREQUIREHTML')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php'; // Need 660ko memory (800ko in 2.2)
 }
@@ -516,16 +516,22 @@ if (!defined('NOREQUIREAJAX')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php'; // Need 22ko memory
 }
 
-	// If install or upgrade process not done or not completely finished, we call the install page.
+// If install or upgrade process not done or not completely finished, we call the install page.
 if (getDolGlobalString('MAIN_NOT_INSTALLED') || getDolGlobalString('MAIN_NOT_UPGRADED')) {
 	dol_syslog("main.inc: A previous install or upgrade was not complete. Redirect to install page.", LOG_WARNING);
 	header("Location: ".DOL_URL_ROOT."/install/index.php");
 	exit;
 }
-	// If an upgrade process is required, we call the install page.
-if ((getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') && ($conf->global->MAIN_VERSION_LAST_UPGRADE != DOL_VERSION))
-		|| (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') && getDolGlobalString('MAIN_VERSION_LAST_INSTALL') && ($conf->global->MAIN_VERSION_LAST_INSTALL != DOL_VERSION))) {
-	$versiontocompare = !getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') ? $conf->global->MAIN_VERSION_LAST_INSTALL : $conf->global->MAIN_VERSION_LAST_UPGRADE;
+// If an upgrade process is required, we call the install page.
+$checkifupgraderequired = false;
+if (getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') && getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') != DOL_VERSION) {
+	$checkifupgraderequired = true;
+}
+if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') && getDolGlobalString('MAIN_VERSION_LAST_INSTALL') && getDolGlobalString('MAIN_VERSION_LAST_INSTALL') != DOL_VERSION) {
+	$checkifupgraderequired = true;
+}
+if ($checkifupgraderequired) {
+	$versiontocompare = getDolGlobalString('MAIN_VERSION_LAST_UPGRADE', getDolGlobalString('MAIN_VERSION_LAST_INSTALL'));
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 	$dolibarrversionlastupgrade = preg_split('/[.-]/', $versiontocompare);
 	$dolibarrversionprogram = preg_split('/[.-]/', DOL_VERSION);
