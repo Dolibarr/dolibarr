@@ -81,7 +81,7 @@ if ($id > 0 || !empty($ref)) {
 $hookmanager->initHooks(array('agendathirdparty', 'globalcard'));
 
 // Security check
-$userid = GETPOST('userid', 'int');
+$userid = GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('id');
 if ($user->id) {
 	$userId = $user->id;
 }
