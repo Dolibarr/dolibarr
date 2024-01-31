@@ -303,7 +303,6 @@ class Ldap
 
 	// Connection handling methods -------------------------------------------
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Connect and bind
 	 * 	Use this->server, this->serverPort, this->ldapProtocolVersion, this->serverType, this->searchUser, this->searchPassword
@@ -311,9 +310,8 @@ class Ldap
 	 *
 	 *	@return		int		if KO: <0 || if bind anonymous: 1 || if bind auth: 2
 	 */
-	public function connect_bind()
+	public function connectBind()
 	{
-		// phpcs:enable
 		global $dolibarr_main_auth_ldap_debug;
 
 		$connected = 0;

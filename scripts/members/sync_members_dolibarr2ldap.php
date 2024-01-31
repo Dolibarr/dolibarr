@@ -122,7 +122,7 @@ if ($resql) {
 	$i = 0;
 
 	$ldap = new Ldap();
-	$ldap->connect_bind();
+	$ldap->connectBind();
 
 	while ($i < $num) {
 		$ldap->error = "";
