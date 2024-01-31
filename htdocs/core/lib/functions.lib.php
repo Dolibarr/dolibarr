@@ -5842,7 +5842,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	print '<td class="nobordernopadding valignmiddle col-title">';
 	print '<div class="titre inline-block">'.$titre;
 	if (!empty($titre) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') {
-		print 'eeee<span class="opacitymedium colorblack paddingleft">('.$totalnboflines.')</span>';
+		print '<span class="opacitymedium colorblack paddingleft">('.$totalnboflines.')</span>';
 	}
 	print '</div></td>';
 
