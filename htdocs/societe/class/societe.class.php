@@ -4588,11 +4588,12 @@ class Societe extends CommonObject
 	{
 		// phpcs:enable
 		global $langs;
-
-		$lib = $langs->trans("ProspectLevel".$fk_prospectlevel);
-		// If lib not found in language file, we get label from cache/database
-		if ($lib == "ProspectLevel".$fk_prospectlevel) {
-			$lib = $langs->getLabelFromKey($this->db, $fk_prospectlevel, 'c_prospectlevel', 'code', 'label');
+		if ($fk_prospectlevel != '') {
+			$lib = $langs->trans("ProspectLevel".$fk_prospectlevel);
+			// If lib not found in language file, we get label from cache/database
+			if ($lib == "ProspectLevel".$fk_prospectlevel) {
+				$lib = $langs->getLabelFromKey($this->db, $fk_prospectlevel, 'c_prospectlevel', 'code', 'label');
+			}
 		}
 		return $lib;
 	}

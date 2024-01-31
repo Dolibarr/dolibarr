@@ -619,7 +619,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 					print " into setup).\n";
 				}
 			}
-				die;
+			die;
 		}
 	}
 
