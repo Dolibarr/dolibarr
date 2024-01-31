@@ -349,6 +349,10 @@ if (empty($reshook)) {
 			$res = $adht->fetch($tmpmember->typeid);
 			if ($res > 0) {
 				$amount = $adht->amount;
+				if (!empty($tmpmember->last_subscription_amount) && !GETPOSTISSET('newamount') && is_numeric($amount)) {
+					$amount = max($tmpmember->last_subscription_amount, $amount);
+				}
+				$amount = max(0, getDolGlobalString('MEMBER_MIN_AMOUNT'), $amount);
 				$result = $tmpmember->subscription($now, $amount);
 				if ($result < 0) {
 					$error++;
@@ -778,7 +782,7 @@ $modelmail = "member";
 $objecttmp = new Adherent($db);
 $trackid = 'mem'.$object->id;
 if ($massaction == 'createsubscription') {
-	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassSubsriptionCreation"), $langs->trans("ConfirmMassSubsriptionCreationQuestion", count($toselect)), "createsubscription", $formquestion, '', 0, 200, 500, 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassSubsriptionCreation"), $langs->trans("ConfirmMassSubsriptionCreationQuestion", count($toselect)), "createsubscription", '', '', 0, 200, 500, 1);
 }
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
