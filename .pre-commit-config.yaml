@@ -38,7 +38,7 @@ repos:
   # For instance to update the license in edited files, you could add to local.sh:
   #
   #   ```shell
-  #   #!/bin/bash
+  #  #!/bin/bash
   #   MYDIR=$(dirname "$0")
   #   CHANGED_INTERNALS=$(git diff --name-only | grep -v includes)
   #   "$MYDIR/dev/tools/updatelicense.php" $CHANGED_INTERNALS
@@ -52,16 +52,19 @@ repos:
         pass_filenames: false
 
   # Check PHP syntax
-  - repo: https://github.com/bolovsky/pre-commit-php
-    rev: 1.5.1
+  - repo: https://github.com/mdeweerd/pre-commit-php
+    rev: v1.6.3
     hooks:
       - id: php-cbf
         files: \.(php)$
         args: [--standard=dev/setup/codesniffer/ruleset.xml]
       - id: php-cs
         files: \.(php)$
-        args: [--standard=dev/setup/codesniffer/ruleset.xml,--report=emacs]
+        args: [--standard=dev/setup/codesniffer/ruleset.xml, --report=emacs]
       - id: php-lint
+      - id: php-stan
+        stages: [manual]
+        files: \.(php)$
 
   # Prettier (format code, only for non common files)
   - repo: https://github.com/pre-commit/mirrors-prettier
@@ -132,7 +135,7 @@ repos:
           - -L
           - informations,medias,uptodate,reenable,crypted,developpers
           - -L
-          - "creat,unitl,alltime,datas,referers"
+          - creat,unitl,alltime,datas,referers
           - -I
           - dev/tools/codespell/codespell-ignore.txt
           - -x
