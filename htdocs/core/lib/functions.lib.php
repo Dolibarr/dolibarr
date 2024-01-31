@@ -3498,7 +3498,15 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 				$htmllink .= ($link ? ' '.$link : '');
 			}
 		} else {
-			if (!empty($dictsocialnetworks[$type]['url'])) {
+			$networkconstname = 'MAIN_INFO_SOCIETE_'.strtoupper($type).'_URL';
+			if (getDolGlobalString($networkconstname)) {
+				$link = str_replace('{socialid}', $value, getDolGlobalString($networkconstname));
+				if (preg_match('/^https?:\/\//i', $link)) {
+					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 0).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+				} else {
+					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 1).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+				}
+			} elseif (!empty($dictsocialnetworks[$type]['url'])) {
 				$tmpvirginurl = preg_replace('/\/?{socialid}/', '', $dictsocialnetworks[$type]['url']);
 				if ($tmpvirginurl) {
 					$value = preg_replace('/^www\.'.preg_quote($tmpvirginurl, '/').'\/?/', '', $value);
