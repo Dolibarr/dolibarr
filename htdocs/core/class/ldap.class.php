@@ -804,7 +804,6 @@ class Ldap
 		return -1;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Build an LDAP message
 	 *
@@ -812,9 +811,8 @@ class Ldap
 	 *	@param	array		$info		Attributes array
 	 *	@return	string					Content of file
 	 */
-	public function dump_content($dn, $info)
+	public function dumpContent($dn, $info)
 	{
-		// phpcs:enable
 		$content = '';
 
 		// Create file content
@@ -854,7 +852,7 @@ class Ldap
 		global $conf;
 		$ldapDirTemp = $conf->ldap->dir_temp;
 		// Create content
-		$content = $this->dump_content($dn, $info);
+		$content = $this->dumpContent($dn, $info);
 
 		//Create directory & file
 		$result = dol_mkdir($ldapDirTemp);
