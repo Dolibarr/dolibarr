@@ -17,9 +17,9 @@
  */
 
 /**
- *      \file       htdocs/user/info.php
+ *      \file       htdocs/user/agenda.php
  *      \ingroup    core
- *		\brief      Page des information d'un utilisateur
+ *		\brief      Page for user events
  */
 
 // Load Dolibarr environment
@@ -172,9 +172,9 @@ if ((!empty($objUser->id) || !empty($objcon->id)) && $permok) {
 
 $morehtmlright = '';
 
-$messagingUrl = DOL_URL_ROOT.'/societe/messaging.php?userid='.$object->id;
+$messagingUrl = DOL_URL_ROOT.'/user/messaging.php?userid='.$object->id;
 $morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
-$messagingUrl = DOL_URL_ROOT.'/user/info.php?id='.$object->id;
+$messagingUrl = DOL_URL_ROOT.'/user/agenda.php?id='.$object->id;
 $morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
 
 if (isModEnabled('agenda')) {
@@ -195,14 +195,14 @@ if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') ||
 	// Try to know count of actioncomm from cache
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 	$cachekey = 'count_events_user_'.$object->id;
-	$nbEvent = dol_getcache($cachekey);
+	//$nbEvent = dol_getcache($cachekey);	// TODO Add nb into badge in menu so we can get it from cache also here
 
 	$titlelist = $langs->trans("ActionsOnCompany").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
 	if (!empty($conf->dol_optimize_smallscreen)) {
 		$titlelist = $langs->trans("Actions").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
 	}
 
-	print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
+	print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', -1, '', '', 0, $morehtmlright, '', 0, 1, 0);
 
 	// List of all actions
 	$filters = array();

@@ -234,7 +234,7 @@ if (empty($reshook)) {
 		foreach ($toselect as $key => $idselect) {
 			$result = $objecttmp->fetch($idselect);
 			if ($result > 0) {
-				$objecttmp->status = GETPOST("statusmassaction", 'int');
+				$objecttmp->status = GETPOSTINT("statusmassaction");
 				$result = $objecttmp->update($user);
 				if ($result <= 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');

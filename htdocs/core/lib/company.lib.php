@@ -71,6 +71,7 @@ function societe_prepare_head(Societe $object)
 				$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 				$sql .= $hookmanager->resPrint;
 				$sql .= " WHERE p.fk_soc = ".((int) $object->id);
+				$sql .= " AND entity IN (".getEntity($object->element).")";
 				// Add where from hooks
 				$parameters = array('contacttab' => true);
 				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -242,10 +243,7 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	if (
-		((isModEnabled('website') && getDolGlobalString('WEBSITE_USE_WEBSITE_ACCOUNTS')) || isModEnabled('webportal'))
-		&& $user->hasRight('societe', 'lire')
-	) {
+	if ((isModEnabled('website') || isModEnabled('webportal')) && $user->hasRight('societe', 'lire')) {
 		$site_filter_list = array();
 		if (isModEnabled('website')) {
 			$site_filter_list[] = 'dolibarr_website';
@@ -1621,7 +1619,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
 	// Check parameters
 	if (!is_object($filterobj) && !is_object($objcon)) {
-		dol_print_error('', 'BadParameter');
+		dol_print_error(null, 'BadParameter');
 	}
 
 	$out = '';
@@ -1852,9 +1850,16 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		}
 	}
 
-	//TODO Add limit in nb of results
 	if ($sql) {
+		//TODO Add navigation with this limits...
+		$offset = 0;
+		$limit = 1000;
+
+		// Complete request and execute it with limit
 		$sql .= $db->order($sortfield_new, $sortorder);
+		if ($limit) {
+			$sql .= $db->plimit($limit + 1, $offset);
+		}
 
 		dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
 
@@ -1863,7 +1868,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$i = 0;
 			$num = $db->num_rows($resql);
 
-			while ($i < $num) {
+			$imaxinloop = ($limit ? min($num, $limit) : $num);
+			while ($i < $imaxinloop) {
 				$obj = $db->fetch_object($resql);
 
 				if ($obj->type == 'action') {

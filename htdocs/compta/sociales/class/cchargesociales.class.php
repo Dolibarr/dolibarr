@@ -519,13 +519,12 @@ class Cchargesociales
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-
 		$this->libelle = '';
 		$this->label = '';
 		$this->deductible = '';
 		$this->active = '';
 		$this->code = '';
-		$this->fk_pays = '';
+		$this->fk_pays = 0;
 		$this->module = '';
 		$this->accountancy_code = '';
 	}

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013-2015	Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2023		William Mead		<william.mead@manchenumerique.fr>
+/* Copyright (C) 2013-2015		Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2023-2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ class Dolresource extends CommonObject
 	public $town;
 
 	/**
-	 * @var int ID
+	 * @var string ID
 	 */
 	public $fk_code_type_resource;
 
@@ -104,7 +104,7 @@ class Dolresource extends CommonObject
 	public $tms;
 
 	/**
-	 * Used by fetch_element_resource() to return an object
+	 * Used by fetchElementResource() to return an object
 	 */
 	public $objelement;
 
@@ -634,14 +634,14 @@ class Dolresource extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		if (isset($this->resource_id)) {
-			$this->resource_id = trim($this->resource_id);
+		if (!is_numeric($this->resource_id)) {
+			$this->resource_id = 0;
 		}
 		if (isset($this->resource_type)) {
 			$this->resource_type = trim($this->resource_type);
 		}
-		if (isset($this->element_id)) {
-			$this->element_id = trim($this->element_id);
+		if (!is_numeric($this->element_id)) {
+			$this->element_id = 0;
 		}
 		if (isset($this->element_type)) {
 			$this->element_type = trim($this->element_type);
@@ -655,14 +655,13 @@ class Dolresource extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."element_resources SET";
-		$sql .= " resource_id=".(isset($this->resource_id) ? "'".$this->db->escape($this->resource_id)."'" : "null").",";
-		$sql .= " resource_type=".(isset($this->resource_type) ? "'".$this->db->escape($this->resource_type)."'" : "null").",";
-		$sql .= " element_id=".(isset($this->element_id) ? $this->element_id : "null").",";
-		$sql .= " element_type=".(isset($this->element_type) ? "'".$this->db->escape($this->element_type)."'" : "null").",";
-		$sql .= " busy=".(isset($this->busy) ? $this->busy : "null").",";
-		$sql .= " mandatory=".(isset($this->mandatory) ? $this->mandatory : "null").",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null');
-
+		$sql .= " resource_id = ".(isset($this->resource_id) ? (int) $this->resource_id : "null").",";
+		$sql .= " resource_type = ".(isset($this->resource_type) ? "'".$this->db->escape($this->resource_type)."'" : "null").",";
+		$sql .= " element_id = ".(isset($this->element_id) ? (int) $this->element_id : "null").",";
+		$sql .= " element_type = ".(isset($this->element_type) ? "'".$this->db->escape($this->element_type)."'" : "null").",";
+		$sql .= " busy = ".(isset($this->busy) ? (int) $this->busy : "null").",";
+		$sql .= " mandatory = ".(isset($this->mandatory) ? (int) $this->mandatory : "null").",";
+		$sql .= " tms = ".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null');
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();

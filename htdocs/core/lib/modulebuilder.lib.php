@@ -47,7 +47,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 	}
 
 	if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
-		dol_print_error('', 'Bad parameter addfieldentry with a property arrayofkeyval defined but that is not an array.');
+		dol_print_error(null, 'Bad parameter addfieldentry with a property arrayofkeyval defined but that is not an array.');
 		return -7;
 	}
 

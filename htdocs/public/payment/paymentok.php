@@ -317,7 +317,7 @@ if (isModEnabled('paypal')) {
 				$ErrorShortMsg = "Session expired";
 
 				dol_syslog($ErrorLongMsg, LOG_WARNING, 0, '_payment');
-				dol_print_error('', 'Session expired');
+				dol_print_error(null, 'Session expired');
 			}
 		} else {
 			$ErrorCode = "PAYPALTOKENNOTDEFINED";
@@ -325,7 +325,7 @@ if (isModEnabled('paypal')) {
 			$ErrorShortMsg = "Parameter PAYPALTOKEN not defined";
 
 			dol_syslog($ErrorLongMsg, LOG_WARNING, 0, '_payment');
-			dol_print_error('', 'PAYPALTOKEN not defined');
+			dol_print_error(null, 'PAYPALTOKEN not defined');
 		}
 	}
 }
@@ -436,13 +436,13 @@ if ($ispaymentok) {
 		if ($result1 > 0 && $result2 > 0) {
 			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
-				$paymentTypeId = getDolGlobalString('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'paypal') {
-				$paymentTypeId = getDolGlobalString('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'stripe') {
-				$paymentTypeId = getDolGlobalString('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if (empty($paymentTypeId)) {
 				dol_syslog("paymentType = ".$paymentType, LOG_DEBUG, 0, '_payment');
@@ -843,13 +843,13 @@ if ($ispaymentok) {
 
 			$paymentTypeId = 0;
 			if ($paymentmethod === 'paybox') {
-				$paymentTypeId = getDolGlobalString('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod === 'paypal') {
-				$paymentTypeId = getDolGlobalString('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod === 'stripe') {
-				$paymentTypeId = getDolGlobalString('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if (empty($paymentTypeId)) {
 				dol_syslog("paymentType = ".$paymentType, LOG_DEBUG, 0, '_payment');
@@ -969,13 +969,13 @@ if ($ispaymentok) {
 
 			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
-				$paymentTypeId = getDolGlobalString('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'paypal') {
-				$paymentTypeId = getDolGlobalString('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'stripe') {
-				$paymentTypeId = getDolGlobalString('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if (empty($paymentTypeId)) {
 				dol_syslog("paymentType = ".$paymentType, LOG_DEBUG, 0, '_payment');
@@ -1103,13 +1103,13 @@ if ($ispaymentok) {
 		if ($result) {
 			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
-				$paymentTypeId = getDolGlobalString('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'paypal') {
-				$paymentTypeId = getDolGlobalString('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('global->PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'stripe') {
-				$paymentTypeId = getDolGlobalString('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if (empty($paymentTypeId)) {
 				dol_syslog("paymentType = ".$paymentType, LOG_DEBUG, 0, '_payment');
@@ -1235,13 +1235,13 @@ if ($ispaymentok) {
 		if ($result) {
 			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
-				$paymentTypeId = getDolGlobalString('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'paypal') {
-				$paymentTypeId = getDolGlobalString('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'stripe') {
-				$paymentTypeId = getDolGlobalString('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if (empty($paymentTypeId)) {
 				dol_syslog("paymentType = ".$paymentType, LOG_DEBUG, 0, '_payment');
@@ -1465,13 +1465,13 @@ if ($ispaymentok) {
 
 			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
-				$paymentTypeId = getDolGlobalString('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'paypal') {
-				$paymentTypeId = getDolGlobalString('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'stripe') {
-				$paymentTypeId = getDolGlobalString('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if (empty($paymentTypeId)) {
 				dol_syslog("paymentType = ".$paymentType, LOG_DEBUG, 0, '_payment');
@@ -1674,13 +1674,13 @@ if ($ispaymentok) {
 
 			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
-				$paymentTypeId = getDolGlobalString('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'paypal') {
-				$paymentTypeId = getDolGlobalString('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'stripe') {
-				$paymentTypeId = getDolGlobalString('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if (empty($paymentTypeId)) {
 				dol_syslog("paymentType = ".$paymentType, LOG_DEBUG, 0, '_payment');

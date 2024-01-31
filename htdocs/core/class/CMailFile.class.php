@@ -163,7 +163,7 @@ class CMailFile
 	 *	@param 	string	$errors_to      	 Email for errors-to
 	 *	@param	string	$css                 Css option
 	 *	@param	string	$trackid             Tracking string (contains type and id of related element)
-	 *  @param  string  $moreinheader        More in header. $moreinheader must contains the "\r\n" (TODO not supported for other MAIL_SEND_MODE different than 'mail' and 'smtps' for the moment)
+	 *  @param  string  $moreinheader        More in header. $moreinheader must contains the "\r\n" at end of each line
 	 *  @param  string  $sendcontext      	 'standard', 'emailing', 'ticket', 'password', ... (used to define which sending mode and parameters to use)
 	 *  @param	string	$replyto			 Reply-to email (will be set to same value than From by default if not provided)
 	 *  @param	string	$upload_dir_tmp		 Temporary directory (used to convert images embedded as img src=data:image)
@@ -198,6 +198,15 @@ class CMailFile
 		}
 		if (empty($this->sendmode)) {
 			$this->sendmode = (getDolGlobalString('MAIN_MAIL_SENDMODE') ? $conf->global->MAIN_MAIL_SENDMODE : 'mail');
+		}
+
+		// Add a Feedback-ID. Must be used for stats on spam report only.
+		if ($trackid) {
+			//Examples:
+			// LinkedIn – Feedback-ID: accept_invite_04:linkedin
+			// Twitter – Feedback-ID: 0040162518f58f41d1f0:15491f3b2ee48656f8e7fb2fac:none:twitterESP
+			// Amazon.com : Feedback-ID: 1.eu-west-1.kjoQSiqb8G+7lWWiDVsxjM2m0ynYd4I6yEFlfoox6aY=:AmazonSES
+			$moreinheader .= "Feedback-ID: ".$trackid.':'.dol_getprefix('email').":dolib\r\n";
 		}
 
 		// We define end of line (RFC 821).
@@ -432,6 +441,7 @@ class CMailFile
 		} elseif ($this->sendmode == 'smtps') {
 			// Use SMTPS library
 			// ------------------------------------------
+			$host = dol_getprefix('email');
 
 			require_once DOL_DOCUMENT_ROOT.'/core/class/smtps.class.php';
 			$smtps = new SMTPs();
@@ -448,6 +458,8 @@ class CMailFile
 			$smtps->setFrom($this->getValidAddress($this->addr_from, 0, 1));
 			$smtps->setTrackId($this->trackid);
 			$smtps->setReplyTo($this->getValidAddress($this->reply_to, 0, 1));
+
+			//X-Dolibarr-TRACKID is generated inside the smtps->getHeader
 
 			if (!empty($moreinheader)) {
 				$smtps->setMoreInHeader($moreinheader);
@@ -492,12 +504,12 @@ class CMailFile
 				$smtps->setOptions(array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true)));
 			}
 
-			$host = dol_getprefix('email');
 			$this->msgid = time().'.SMTPs-dolibarr-'.$this->trackid.'@'.$host;
 
 			$this->smtps = $smtps;
 		} elseif ($this->sendmode == 'swiftmailer') {
 			// Use Swift Mailer library
+			// ------------------------------------------
 			$host = dol_getprefix('email');
 
 			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lexer/lib/Doctrine/Common/Lexer/AbstractLexer.php';
@@ -519,7 +531,16 @@ class CMailFile
 			$msgid = $headers->get('Message-ID');
 			$msgid->setId($headerID);
 			$headers->addIdHeader('References', $headerID);
-			// TODO if (!empty($moreinheader)) ...
+
+			if (!empty($moreinheader)) {
+				$moreinheaderarray = preg_split('/[\r\n]+/', $moreinheader);
+				foreach ($moreinheaderarray as $moreinheaderval) {
+					$moreinheadervaltmp = explode(':', $moreinheaderval, 2);
+					if (!empty($moreinheadervaltmp[0]) && !empty($moreinheadervaltmp[1])) {
+						$headers->addTextHeader($moreinheadervaltmp[0], $moreinheadervaltmp[1]);
+					}
+				}
+			}
 
 			// Give the message a subject
 			try {
@@ -1283,7 +1304,7 @@ class CMailFile
 	public function dump_mail()
 	{
 		// phpcs:enable
-		global $conf, $dolibarr_main_data_root;
+		global $dolibarr_main_data_root;
 
 		if (@is_writeable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
 			$outputfile = $dolibarr_main_data_root."/dolibarr_mail.log";
@@ -1296,6 +1317,7 @@ class CMailFile
 			} elseif ($this->sendmode == 'smtps') {
 				fputs($fp, $this->smtps->log); // this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on
 			} elseif ($this->sendmode == 'swiftmailer') {
+				fputs($fp, "smtpheader=\n".$this->message->getHeaders()->toString()."\n");
 				fputs($fp, $this->logger->dump()); // this->logger is filled only if MAIN_MAIL_DEBUG was set to on
 			}
 
@@ -1418,9 +1440,7 @@ class CMailFile
 	public function write_smtpheaders()
 	{
 		// phpcs:enable
-		global $conf;
 		$out = "";
-
 		$host = dol_getprefix('email');
 
 		// Sender
@@ -1624,9 +1644,9 @@ class CMailFile
 		$filename_list_size = count($filename_list);
 		for ($i = 0; $i < $filename_list_size; $i++) {
 			if ($filename_list[$i]) {
-				dol_syslog("CMailFile::write_files: i=$i");
+				dol_syslog("CMailFile::write_files: i=$i ".$filename_list[$i]);
 				$encoded = $this->_encode_file($filename_list[$i]);
-				if ($encoded >= 0) {
+				if ($encoded !== -1) {
 					if ($mimefilename_list[$i]) {
 						$filename_list[$i] = $mimefilename_list[$i];
 					}

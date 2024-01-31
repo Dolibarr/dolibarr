@@ -247,7 +247,6 @@ YouCanSetDefaultValueInModuleSetup=Der Standardwert für neue Einträge wird in 
 CurrentTheme=Aktuelle Oberfläche
 Screen=Bildschirm
 Signature=E-Mail-Signatur
-DateOfSignature=Unterschriftsdatum
 RootOfMedias=Stammverzeichnis für öffentliche Bilder (/medias)
 Notes=Hinweise
 FreeLineOfType=Freitext vom Typ

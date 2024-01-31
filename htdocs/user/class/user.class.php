@@ -14,6 +14,7 @@
  * Copyright (C) 2018-2021       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -277,7 +278,7 @@ class User extends CommonObject
 	public $clicktodial_poste;
 
 	/**
-	 * @var string 	0 by default, 1 if click to dial data were already loaded for this user
+	 * @var int 	0 by default, 1 if click to dial data were already loaded for this user
 	 */
 	public $clicktodial_loaded;
 
@@ -294,6 +295,10 @@ class User extends CommonObject
 	 * @var string photo filename
 	 */
 	public $photo;
+
+	/**
+	 * @var string default language
+	 */
 	public $lang;
 
 	/**
@@ -746,7 +751,7 @@ class User extends CommonObject
 	 *  You can use it like this: if ($user->hasRight('module', 'level11')).
 	 *  It replaces old syntax: if ($user->rights->module->level1)
 	 *
-	 * 	@param	int		$module			Module of permission to check
+	 * 	@param	string	$module			Module of permission to check
 	 *  @param  string	$permlevel1		Permission level1 (Example: 'read', 'write', 'delete')
 	 *  @param  string	$permlevel2		Permission level2
 	 *  @return int						1 if user has permission, 0 if not.
@@ -2810,6 +2815,7 @@ class User extends CommonObject
 	 *  @param	string	$cssclass		Force a css class
 	 * 	@param	string	$imagesize		'mini', 'small' or '' (original)
 	 *	@return	string					String with URL link
+	 * 	@see getImagePublicURLOfObject()
 	 */
 	public function getPhotoUrl($width, $height, $cssclass = '', $imagesize = '')
 	{
@@ -2823,7 +2829,7 @@ class User extends CommonObject
 	/**
 	 * Return array of data to show into tooltips
 	 *
-	 * @param array $params ex option, infologin
+	 * @param array $params 	Array with options, infologin
 	 * @since v18
 	 * @return array
 	 */

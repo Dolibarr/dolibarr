@@ -127,8 +127,8 @@ if (empty($reshook)) {
 
 		$object->ref = dol_string_nospecial(trim(GETPOST('ref', 'alpha')));
 		$object->label = trim(GETPOST("label", 'alphanohtml'));
-		$object->courant = GETPOST("type");
-		$object->clos = GETPOST("clos");
+		$object->courant = GETPOSTINT("type");
+		$object->clos = GETPOSTINT("clos");
 		$object->rappro = (GETPOST("norappro", 'alpha') ? 0 : 1);
 		$object->url = trim(GETPOST("url", 'alpha'));
 
@@ -157,24 +157,24 @@ if (empty($reshook)) {
 		} else {
 			$object->account_number = $account_number;
 		}
-		$fk_accountancy_journal = GETPOST('fk_accountancy_journal', 'int');
+		$fk_accountancy_journal = GETPOSTINT('fk_accountancy_journal');
 		if ($fk_accountancy_journal <= 0) {
 			$object->fk_accountancy_journal = '';
 		} else {
 			$object->fk_accountancy_journal = $fk_accountancy_journal;
 		}
 
-		$object->solde = price2num(GETPOST("solde", 'alpha'));
-		$object->balance = price2num(GETPOST("solde", 'alpha'));
+		$object->solde = GETPOSTFLOAT("solde");
+		$object->balance = GETPOSTFLOAT("solde");
 		$object->date_solde = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST('reday', 'int'), GETPOST("reyear", 'int'));
 
 		$object->currency_code = trim(GETPOST("account_currency_code"));
 
-		$object->state_id = GETPOST("account_state_id", 'int');
-		$object->country_id = GETPOST("account_country_id", 'int');
+		$object->state_id = GETPOSTINT("account_state_id");
+		$object->country_id = GETPOSTINT("account_country_id");
 
-		$object->min_allowed = GETPOST("account_min_allowed", 'int');
-		$object->min_desired = GETPOST("account_min_desired", 'int');
+		$object->min_allowed = GETPOSTFLOAT("account_min_allowed");
+		$object->min_desired = GETPOSTFLOAT("account_min_desired");
 		$object->comment = trim(GETPOST("account_comment", 'restricthtml'));
 
 		$object->fk_user_author = $user->id;
@@ -240,8 +240,8 @@ if (empty($reshook)) {
 
 		$object->ref = dol_string_nospecial(trim(GETPOST('ref', 'alpha')));
 		$object->label = trim(GETPOST("label", 'alphanohtml'));
-		$object->courant = GETPOST("type");
-		$object->clos = GETPOST("clos");
+		$object->courant = GETPOSTINT("type");
+		$object->clos = GETPOSTINT("clos");
 		$object->rappro = (GETPOST("norappro", 'alpha') ? 0 : 1);
 		$object->url = trim(GETPOST("url", 'alpha'));
 
@@ -270,7 +270,7 @@ if (empty($reshook)) {
 		} else {
 			$object->account_number = $account_number;
 		}
-		$fk_accountancy_journal = GETPOST('fk_accountancy_journal', 'int');
+		$fk_accountancy_journal = GETPOSTINT('fk_accountancy_journal');
 		if ($fk_accountancy_journal <= 0) {
 			$object->fk_accountancy_journal = '';
 		} else {
@@ -279,11 +279,11 @@ if (empty($reshook)) {
 
 		$object->currency_code = trim(GETPOST("account_currency_code"));
 
-		$object->state_id = GETPOST("account_state_id", 'int');
-		$object->country_id = GETPOST("account_country_id", 'int');
+		$object->state_id = GETPOSTINT("account_state_id");
+		$object->country_id = GETPOSTINT("account_country_id");
 
-		$object->min_allowed = GETPOST("account_min_allowed", 'int');
-		$object->min_desired = GETPOST("account_min_desired", 'int');
+		$object->min_allowed = GETPOSTFLOAT("account_min_allowed");
+		$object->min_desired = GETPOSTFLOAT("account_min_desired");
 		$object->comment = trim(GETPOST("account_comment", 'restricthtml'));
 
 		if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($object->account_number)) {
@@ -835,7 +835,7 @@ if ($action == 'create') {
 			}
 
 			if (isModEnabled('paymentbybanktransfer')) {
-				if (getDolGlobalString("SEPA_USE_IDS")) {	// ICS is not used with bank transfer !
+				if (getDolGlobalString("SEPA_USE_IDS")) {	// Use another ICS for bank transfer
 					print '<tr><td>'.$form->textwithpicto($langs->trans("IDS"), $langs->trans("IDS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("BankTransfer")).')').'</td>';
 					print '<td>'.$object->ics_transfer.'</td>';
 					print '</tr>';

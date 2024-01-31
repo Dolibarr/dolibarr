@@ -9821,20 +9821,21 @@ class Form
 	}
 
 	/**
-	 *        Return HTML code to output a photo
+	 * Return HTML code to output a photo
 	 *
-	 * @param string $modulepart Key to define module concerned ('societe', 'userphoto', 'memberphoto')
-	 * @param object $object Object containing data to retrieve file name
-	 * @param int $width Width of photo
-	 * @param int $height Height of photo (auto if 0)
-	 * @param int $caneditfield Add edit fields
-	 * @param string $cssclass CSS name to use on img for photo
-	 * @param string $imagesize 'mini', 'small' or '' (original)
-	 * @param int $addlinktofullsize Add link to fullsize image
-	 * @param int $cache 1=Accept to use image in cache
-	 * @param string $forcecapture '', 'user' or 'environment'. Force parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
-	 * @param int $noexternsourceoverwrite No overwrite image with extern source (like 'gravatar' or other module)
-	 * @return string                            HTML code to output photo
+	 * @param string 	$modulepart 				Key to define module concerned ('societe', 'userphoto', 'memberphoto')
+	 * @param object 	$object 					Object containing data to retrieve file name
+	 * @param int 		$width 						Width of photo
+	 * @param int 		$height 					Height of photo (auto if 0)
+	 * @param int 		$caneditfield 				Add edit fields
+	 * @param string 	$cssclass 					CSS name to use on img for photo
+	 * @param string 	$imagesize 					'mini', 'small' or '' (original)
+	 * @param int 		$addlinktofullsize 			Add link to fullsize image
+	 * @param int 		$cache 						1=Accept to use image in cache
+	 * @param string 	$forcecapture 				'', 'user' or 'environment'. Force parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
+	 * @param int		$noexternsourceoverwrite 	No overwrite image with extern source (like 'gravatar' or other module)
+	 * @return string                            	HTML code to output photo
+	 * @see getImagePublicURLOfObject()
 	 */
 	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0)
 	{
@@ -10374,7 +10375,8 @@ class Form
 		global $langs;
 
 		$out = '';
-		$sql = "SELECT id, code, label FROM " . $this->db->prefix() . "c_type_fees";
+		$sql = "SELECT id, code, label";
+		$sql .= " FROM ".$this->db->prefix()."c_type_fees";
 		$sql .= " WHERE active = 1";
 
 		$resql = $this->db->query($sql);
@@ -10397,6 +10399,8 @@ class Form
 				$out .= '<option ' . ($selected == $obj->{$field} ? 'selected="selected"' : '') . ' value="' . $obj->{$field} . '">' . ($key != $obj->code ? $key : $obj->label) . '</option>';
 			}
 			$out .= '</select>';
+
+			$out .= ajax_combobox('select_'.$htmlname);
 		} else {
 			dol_print_error($this->db);
 		}

@@ -125,6 +125,9 @@ class FactureFournisseurRec extends CommonInvoice
 	public $cond_reglement_doc;
 	public $cond_reglement_id;
 
+	/**
+	 * @var int Deadline for payment
+	 */
 	public $date_lim_reglement;
 
 	public $usenewprice = 0;

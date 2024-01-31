@@ -205,7 +205,7 @@ if (GETPOST('reset')) {
  */
 
 if (!isset($_SESSION['description']) && !isset($_SESSION['mail'])) {
-	dol_print_error('', $langs->trans('ErrorOpenSurveyFillFirstSection'));
+	dol_print_error(null, $langs->trans('ErrorOpenSurveyFillFirstSection'));
 	exit;
 }
 

@@ -62,7 +62,7 @@ class BookKeeping extends CommonObject
 	public $id;
 
 	/**
-	 * @var string Date of source document, in db date NOT NULL
+	 * @var int	Date of source document, in db date NOT NULL
 	 */
 	public $doc_date;
 
@@ -285,7 +285,7 @@ class BookKeeping extends CommonObject
 			$this->journal_label = trim($this->journal_label);
 		}
 		if (isset($this->piece_num)) {
-			$this->piece_num = trim($this->piece_num);
+			$this->piece_num = (int) $this->piece_num;
 		}
 		if (empty($this->debit)) {
 			$this->debit = 0.0;
@@ -614,18 +614,6 @@ class BookKeeping extends CommonObject
 		if (isset($this->label_operation)) {
 			$this->label_operation = trim($this->label_operation);
 		}
-		if (isset($this->debit)) {
-			$this->debit = trim($this->debit);
-		}
-		if (isset($this->credit)) {
-			$this->credit = trim($this->credit);
-		}
-		if (isset($this->montant)) {
-			$this->montant = trim($this->montant);
-		}
-		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
-		}
 		if (isset($this->sens)) {
 			$this->sens = trim($this->sens);
 		}
@@ -639,7 +627,7 @@ class BookKeeping extends CommonObject
 			$this->journal_label = trim($this->journal_label);
 		}
 		if (isset($this->piece_num)) {
-			$this->piece_num = trim($this->piece_num);
+			$this->piece_num = (int) $this->piece_num;
 		}
 		if (empty($this->debit)) {
 			$this->debit = 0;
@@ -663,9 +651,9 @@ class BookKeeping extends CommonObject
 			return -1;
 		}
 
-		$this->debit = price2num($this->debit, 'MT');
-		$this->credit = price2num($this->credit, 'MT');
-		$this->montant = price2num($this->montant, 'MT');
+		$this->debit = (float) price2num($this->debit, 'MT');
+		$this->credit = (float) price2num($this->credit, 'MT');
+		$this->montant = (float) price2num($this->montant, 'MT');
 
 		$now = dol_now();
 
@@ -1348,15 +1336,6 @@ class BookKeeping extends CommonObject
 		if (isset($this->label_operation)) {
 			$this->label_operation = trim($this->label_operation);
 		}
-		if (isset($this->debit)) {
-			$this->debit = trim($this->debit);
-		}
-		if (isset($this->credit)) {
-			$this->credit = trim($this->credit);
-		}
-		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
-		}
 		if (isset($this->sens)) {
 			$this->sens = trim($this->sens);
 		}
@@ -1370,7 +1349,7 @@ class BookKeeping extends CommonObject
 			$this->journal_label = trim($this->journal_label);
 		}
 		if (isset($this->piece_num)) {
-			$this->piece_num = trim($this->piece_num);
+			$this->piece_num = (int) $this->piece_num;
 		}
 
 		$result = $this->canModifyBookkeeping($this->id);
@@ -1385,8 +1364,9 @@ class BookKeeping extends CommonObject
 			return -1;
 		}
 
-		$this->debit = price2num($this->debit, 'MT');
-		$this->credit = price2num($this->credit, 'MT');
+		$this->debit = (float) price2num($this->debit, 'MT');
+		$this->credit = (float) price2num($this->credit, 'MT');
+		$this->montant = (float) price2num($this->montant, 'MT');
 
 		// Check parameters
 		// Put here code to add a control on parameters values
@@ -1785,7 +1765,7 @@ class BookKeeping extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT piece_num, doc_date,code_journal, journal_label, doc_ref, doc_type,";
+		$sql = "SELECT piece_num, doc_date, code_journal, journal_label, doc_ref, doc_type,";
 		$sql .= " date_creation, tms as date_modification, date_validated as date_validation";
 		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
 		if ($mode != "_tmp") {
@@ -1822,10 +1802,10 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Return next number movement
+	 * Return next movement number
 	 *
-	 * @param	string	$mode	Mode
-	 * @return	string			Next numero to use
+	 * @param	string	$mode		Mode
+	 * @return	int<1, max>|-1		Return next movement number or -1 if error
 	 */
 	public function getNextNumMvt($mode = '')
 	{
@@ -2126,7 +2106,7 @@ class BookKeeping extends CommonObject
 	 * @param int		$select_in	Value is a aa.rowid (0 default) or aa.account_number (1)
 	 * @param int		$select_out	Set value returned by select 0=rowid (default), 1=account_number
 	 * @param string	$aabase		Set accounting_account base class to display empty=all or from 1 to 8 will display only account beginning by this number
-	 * @return string	String with HTML select
+	 * @return string|int	String with HTML select or -1 if KO
 	 */
 	public function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $aabase = '')
 	{
@@ -2152,7 +2132,7 @@ class BookKeeping extends CommonObject
 		if (!$resql) {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(get_class($this)."::select_account ".$this->error, LOG_ERR);
-			return -1;
+			return "-1";
 		}
 
 		$out = ajax_combobox($htmlname, $event);
@@ -2232,7 +2212,7 @@ class BookKeeping extends CommonObject
 	 * Description of accounting account
 	 *
 	 * @param	string	$account	Accounting account
-	 * @return	string				Account desc
+	 * @return	string|int				Account desc or -1 if KO
 	 */
 	public function get_compte_desc($account = null)
 	{
@@ -2264,7 +2244,7 @@ class BookKeeping extends CommonObject
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(__METHOD__." ".$this->error, LOG_ERR);
-			return -1;
+			return "-1";
 		}
 	}
 
@@ -2273,7 +2253,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param 	string		$alias		Bookkeeping alias table
 	 * @param 	bool		$force		Force reload
-	 * @return 	string					SQL filter
+	 * @return 	string|null				SQL filter or null if error
 	 */
 	public function getCanModifyBookkeepingSQL($alias = '', $force = false)
 	{
@@ -2595,6 +2575,56 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
+	 *  Define accounting result
+	 *
+	 * @param	int		$date_start		Date start
+	 * @param	int		$date_end		Date end
+	 * @return	string					Accounting result
+	 */
+	public function accountingResult($date_start, $date_end)
+	{
+		global $conf;
+
+		$this->db->begin();
+
+		$income_statement_amount = 0;
+
+		if (getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT')) {
+			$accounting_groups_used_for_income_statement = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT'))), 'strlen');
+
+			foreach ($accounting_groups_used_for_income_statement as $item) {
+				$pcg_type_filter[] = "'" . $this->db->escape($item) . "'";
+			}
+
+			$sql = 'SELECT';
+			$sql .= " t.numero_compte,";
+			$sql .= " aa.pcg_type,";
+			$sql .= " (SUM(t.credit) - SUM(t.debit)) as accounting_result";
+			$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
+			$sql .= ' LEFT JOIN  ' . MAIN_DB_PREFIX . 'accounting_account as aa ON aa.account_number = t.numero_compte';
+			$sql .= ' WHERE t.entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
+			$sql .= " AND aa.entity = " . ((int) $conf->entity);
+			$sql .= ' AND aa.fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid = ' . ((int) getDolGlobalInt('CHARTOFACCOUNTS')) . ')';
+			$sql .= ' AND aa.pcg_type IN (' . $this->db->sanitize(implode(',', $pcg_type_filter), 1) . ')';
+			$sql .= " AND DATE(t.doc_date) >= '" . $this->db->idate($date_start) . "'";
+			$sql .= " AND DATE(t.doc_date) <= '" . $this->db->idate($date_end) . "'";
+			$sql .= ' GROUP BY t.numero_compte, aa.pcg_type';
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->errors[] = 'Error ' . $this->db->lasterror();
+				dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			} else {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$income_statement_amount += $obj->accounting_result;
+				}
+			}
+		}
+
+		return (string) $income_statement_amount;
+	}
+
+	/**
 	 *  Close fiscal period
 	 *
 	 * @param 	int		$fiscal_period_id				Fiscal year ID
@@ -2731,7 +2761,7 @@ class BookKeeping extends CommonObject
 
 							$bookkeeping = new BookKeeping($this->db);
 							$bookkeeping->doc_date = $new_fiscal_period->date_start;
-							$bookkeeping->date_lim_reglement = '';
+							$bookkeeping->date_lim_reglement = 0;
 							$bookkeeping->doc_ref = $new_fiscal_period->label;
 							$bookkeeping->date_creation = $now;
 							$bookkeeping->doc_type = 'closure';
@@ -2778,7 +2808,7 @@ class BookKeeping extends CommonObject
 
 						$bookkeeping = new BookKeeping($this->db);
 						$bookkeeping->doc_date = $new_fiscal_period->date_start;
-						$bookkeeping->date_lim_reglement = '';
+						$bookkeeping->date_lim_reglement = 0;
 						$bookkeeping->doc_ref = $new_fiscal_period->label;
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'closure';
@@ -2984,7 +3014,7 @@ class BookKeepingLine extends CommonObjectLine
 	 */
 	public $id;
 
-	public $doc_date = '';
+	public $doc_date = null;
 	public $doc_type;
 	public $doc_ref;
 
@@ -3024,7 +3054,7 @@ class BookKeepingLine extends CommonObjectLine
 	public $multicurrency_amount;
 
 	/**
-	 * @var float 	Multicurrency code
+	 * @var string 	Multicurrency code
 	 */
 	public $multicurrency_code;
 
