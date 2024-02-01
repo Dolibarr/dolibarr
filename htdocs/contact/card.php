@@ -99,13 +99,10 @@ $triggermodname = 'CONTACT_MODIFY';
 $permissiontoadd = $user->hasRight('societe', 'contact', 'creer');
 
 // Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
 if ($object->priv && $object->user_creation->id != $user->id) {
 	accessforbidden();
 }
-$result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
+restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
 
 
 /*
