@@ -954,7 +954,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->author				= $obj->fk_user_author;	// deprecated
 				$this->user_validation_id   = $obj->fk_user_valid;
 				$this->fk_facture_source	= $obj->fk_facture_source;
-				$this->vat_reverse_charge	= empty($obj->vat_reverse_charge) ? false : true;
+				$this->vat_reverse_charge	= empty($obj->vat_reverse_charge) ? 0 : 1;
 				$this->fk_fac_rec_source	= $obj->fk_fac_rec_source;
 				$this->fk_project           = $obj->fk_project;
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
