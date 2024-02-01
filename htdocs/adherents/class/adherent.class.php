@@ -104,7 +104,7 @@ class Adherent extends CommonObject
 
 	/**
 	 * @var string
-  	 * @deprecated
+	 * @deprecated
 	 * @see $civility_code
 	 */
 	public $civility_id;
