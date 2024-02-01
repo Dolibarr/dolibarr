@@ -66,7 +66,7 @@ class Contracts extends DolibarrApi
 	public function get($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->contrat->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->contract->fetch($id);
@@ -106,7 +106,7 @@ class Contracts extends DolibarrApi
 		global $db, $conf;
 
 		if (!DolibarrApiAccess::$user->rights->contrat->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -224,7 +224,7 @@ class Contracts extends DolibarrApi
 	public function getLines($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->contrat->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->contract->fetch($id);
@@ -256,7 +256,7 @@ class Contracts extends DolibarrApi
 	public function postLine($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->contrat->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->contract->fetch($id);
@@ -314,7 +314,7 @@ class Contracts extends DolibarrApi
 	public function putLine($id, $lineid, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->contrat->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->contract->fetch($id);
@@ -377,7 +377,7 @@ class Contracts extends DolibarrApi
 	public function activateLine($id, $lineid, $datestart, $dateend = null, $comment = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->contrat->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->contract->fetch($id);
@@ -415,7 +415,7 @@ class Contracts extends DolibarrApi
 	public function unactivateLine($id, $lineid, $datestart, $comment = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->contrat->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->contract->fetch($id);
@@ -455,7 +455,7 @@ class Contracts extends DolibarrApi
 	public function deleteLine($id, $lineid)
 	{
 		if (!DolibarrApiAccess::$user->rights->contrat->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->contract->fetch($id);
@@ -488,7 +488,7 @@ class Contracts extends DolibarrApi
 	public function put($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->contrat->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->contract->fetch($id);
@@ -617,7 +617,7 @@ class Contracts extends DolibarrApi
 	public function close($id, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->contrat->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$result = $this->contract->fetch($id);
 		if (!$result) {
