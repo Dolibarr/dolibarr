@@ -802,8 +802,6 @@ class Export
 	 */
 	public function create($user)
 	{
-		global $conf;
-
 		dol_syslog("Export.class.php::create");
 
 		$this->db->begin();
