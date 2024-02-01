@@ -346,6 +346,15 @@ class CMailFile
 			}
 		}
 
+		// We always use a replyto
+		if (empty($replyto)) {
+			$replyto = dol_sanitizeEmail($from);
+		}
+		// We can force the from
+		if (getDolGlobalString('MAIN_MAIL_FORCE_FROM')) {
+			$from = getDolGlobalString('MAIN_MAIL_FORCE_FROM');
+		}
+
 		$this->subject = $subject;
 		$this->addr_to = dol_sanitizeEmail($to);
 		$this->addr_from = dol_sanitizeEmail($from);
@@ -353,9 +362,6 @@ class CMailFile
 		$this->addr_cc = dol_sanitizeEmail($addr_cc);
 		$this->addr_bcc = dol_sanitizeEmail($addr_bcc);
 		$this->deliveryreceipt = $deliveryreceipt;
-		if (empty($replyto)) {
-			$replyto = dol_sanitizeEmail($from);
-		}
 		$this->reply_to = dol_sanitizeEmail($replyto);
 		$this->errors_to = dol_sanitizeEmail($errors_to);
 		$this->trackid = $trackid;
@@ -366,7 +372,7 @@ class CMailFile
 		$this->cid_list = $cid_list;
 
 		if (getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')) {
-			$this->addr_to = dol_sanitizeEmail($conf->global->MAIN_MAIL_FORCE_SENDTO);
+			$this->addr_to = dol_sanitizeEmail(getDolGlobalString('MAIN_MAIL_FORCE_SENDTO'));
 			$this->addr_cc = '';
 			$this->addr_bcc = '';
 		}
