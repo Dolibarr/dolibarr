@@ -1124,7 +1124,7 @@ if ($step == 5 && $datatoexport) {
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table width="100%" class="border tableforfield">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';

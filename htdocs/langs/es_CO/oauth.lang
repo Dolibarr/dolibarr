@@ -5,7 +5,6 @@ TokenManager=Administrador de tokens
 IsTokenGenerated=¿Se genera el token?
 HasAccessToken=Se generó un token y se guardó en la base de datos local
 ToCheckDeleteTokenOnProvider=Haga clic aquí para verificar / eliminar la autorización guardada por un proveedor de OAuth %s
-UseTheFollowingUrlAsRedirectURI=Utilice la siguiente URL como URI de redireccionamiento al crear sus credenciales con su proveedor de OAuth:
 SeePreviousTab=Ver pestaña anterior
 OAuthProvider=proveedor de OAuth
 OAuthIDSecret=ID y secreto de OAuth

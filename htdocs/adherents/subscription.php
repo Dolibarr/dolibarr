@@ -825,6 +825,14 @@ if (($action != 'addsubscription' && $action != 'create_thirdparty')) {
 	// Shon online payment link
 	$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
 
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('doShowOnlinePaymentUrl', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+	if ($reshook > 0) {
+		if (isset($hookmanager->resArray['showonlinepaymenturl'])) {
+			$useonlinepayment = $hookmanager->resArray['showonlinepaymenturl'];
+		}
+	}
+
 	if ($useonlinepayment) {
 		print '<br>';
 

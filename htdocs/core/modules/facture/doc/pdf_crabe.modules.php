@@ -264,11 +264,11 @@ class pdf_crabe extends ModelePDFFactures
 
 			// Definition of $dir and $file
 			if ($object->specimen) {
-				$dir = empty($conf->facture->multidir_output[$conf->entity]) ? $conf->facture->dir_output : $conf->facture->multidir_output[$conf->entity];
+				$dir = empty($conf->facture->multidir_output[$object->entity]) ? $conf->facture->dir_output : $conf->facture->multidir_output[$object->entity];
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = (empty($conf->facture->multidir_output[$conf->entity]) ? $conf->facture->dir_output : $conf->facture->multidir_output[$conf->entity])."/".$objectref;
+				$dir = (empty($conf->facture->multidir_output[$object->entity]) ? $conf->facture->dir_output : $conf->facture->multidir_output[$object->entity])."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 			if (!file_exists($dir)) {
@@ -1111,7 +1111,7 @@ class pdf_crabe extends ModelePDFFactures
 	protected function _tableau_info(&$pdf, $object, $posy, $outputlangs, $outputlangsbis)
 	{
 		// phpcs:enable
-		global $conf, $mysoc;
+		global $conf, $mysoc, $hookmanager;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -1237,6 +1237,14 @@ class pdf_crabe extends ModelePDFFactures
 					}
 					if (isModEnabled('paybox')) {
 						$useonlinepayment++;
+					}
+					$parameters = array();
+					$action = '';
+					$reshook = $hookmanager->executeHooks('doShowOnlinePaymentUrl', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+					if ($reshook > 0) {
+						if (isset($hookmanager->resArray['showonlinepaymenturl'])) {
+							$useonlinepayment += $hookmanager->resArray['showonlinepaymenturl'];
+						}
 					}
 				}
 

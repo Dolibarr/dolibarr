@@ -2,8 +2,7 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
-
-***** ChangeLog for 19.0.0 compared to 18.0.0 *****
+***** ChangeLog for 20.0.0 compared to 19.0.0 *****
 
 For users:
 ----------
@@ -18,6 +17,7 @@ WARNING:
 --------
 
 The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* Ldap class methods connect_bind() & dump_content() have been renamed
 * More class properties (with old name in french) are now deprecated in favor of the property name in english.
 * Some API HTTP return code were moved from 401 to 403 to better follow REST specification.
 
@@ -28,7 +28,6 @@ The following changes may create regressions for some external modules, but were
 For users:
 ----------
 NEW: Compatibility with PHP 8.2
-NEW: Module for Advanced stock transfer is now stable (#26594)
 NEW: Module Workstation (used to enhance the module BOM and Manufacturing Order) is now stable
 NEW: Add a confirmation popup when deleting extrafields
 NEW: Add type 'icon' type for extrafields
@@ -188,10 +187,8 @@ NEW: updating for display Help title when try to delete Don (issue  #25314)
 NEW: Upgrade in module builder in menu section
 NEW: use account address in sepa mandate (#23642)
 NEW: VAT rate - Add entity
-NEW: webportal site account
 NEW: When an user unset the batch management of products, transformation of each batch stock movement in global stock movement
-
-FIX: #25828 wrong odt style naming
+NEW: PDF Generation for each Human Resource Evaluations. 
 
 SEC: #25512 applicative anti bruteforce - security on too many login attempts (#25520)
 SEC: Add action confirm_... as sensitive to need a CSRF token
@@ -264,6 +261,8 @@ WARNING:
 --------
 
 The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* Recheck the setup of your module Workflow to see if you need to enable the new setting to have shipment set to billed automatically when
+  an invoice from a shipment is validated (and if your process is to make invoice on shipment and not on order), because this setup has changed.
 * The hook changeHelpURL is replaced by llxHeader
 * The property ->brouillon has been removed from all classes. It was not reliable and was a duplicate of ->status == self::STATUS_DRAFT.
 * The duplicated and deprecated property ->date_livraison that was renamed into ->delivery_date has been completely removed.
@@ -272,17 +271,16 @@ The following changes may create regressions for some external modules, but were
 * The property ->user_creation to store ID of user of creation has been renamed into ->user_creation_id.
 * The property ->user_modification to store ID of user of modification has been renamed into ->user_modification_id.
 * The private array ->status_short, ->statuts and ->status_long are now array ->labelStatusShort and ->labelStatus everywhere.
-* The duplicate property ->user_creat, ->date_creat, ->date_valid has been removed (use instead user_creation, date_creation, date_validation). 
+* The duplicate property ->user_creat, ->date_creat, ->date_valid have been removed (use instead user_creation, date_creation, date_validation). 
 * The method get_substitutionarray_shipment_lines() has been removed. Use the generic get_substitutionarray_lines() instead.
 * The method ProductcustomerPrice->fetch_all_log() has been renamed into camel case ->fetchAllLog()
-* Recheck the setup of your module Workflow to see if you need to enable the new setting to have shipment set to billed automatically when
-  an invoice from a shipment is validated (and if your process is to make invoice on shipment and not on order), because this setup has changed.
 * It was possible to use a variable $soc or $right inside a PHP code condition of some extrafields properties, this is no more true (this 2 variables are no more global variables).
 * New hook files of modules actions_mymodule.class.php should now "extends CommonHookActions"
 * Endpoint for API /partnershipapi and /recruitment has been renamed into /partnerships and /recruitments to follow name conventions.
-* Hidden option ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USEr_ON_SALARY_BANK_PAYMENT has been renamed into ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USER_ON_SALARY_BANK_PAYMENT
+* Hidden option ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USER_ON_SALARY_BANK_PAYMENT has been renamed into ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USER_ON_SALARY_BANK_PAYMENT
 * The delete() method of AdherentType, Contact, Delivery, MultiCurrency, CurrencyRate now need $user as first parameter.
 * A very high number of class properties (with old name in french) are now deprecated in favor of the property name in english.
+* The load of hook context productdao has been removed before calling loadvirtualstock. Modules must use the context of main parent page or 'all' for all cases.
 
 
 ***** ChangeLog for 18.0.4 compared to 18.0.3 *****

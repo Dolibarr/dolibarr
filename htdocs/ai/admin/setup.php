@@ -31,11 +31,6 @@ global $langs, $user;
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once '../lib/ai.lib.php';
 
-// Access control
-if (!$user->admin) {
-	accessforbidden();
-}
-
 // Parameters
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -46,9 +41,14 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'myobject';
 
-
 $error = 0;
 $setupnotempty = 0;
+
+// Access control
+if (!$user->admin) {
+	accessforbidden();
+}
+
 
 // Set this to 1 to use the factory to manage constants. Warning, the generated module will be compatible with version v15+ only
 $useFormSetup = 1;
@@ -59,20 +59,14 @@ if (!class_exists('FormSetup')) {
 
 $formSetup = new FormSetup($db);
 
-// Setup conf AI_PUBLIC_INTERFACE_TOPIC
-$item = $formSetup->newItem('AI_KEY_API_CHATGPT');
-$item->defaultFieldValue = '';
+$arrayofia = array('chatgpt');
 
-
-// Save API Key
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$apiKey = GETPOST('api_key', 'alpha');
-	// Validate and clean $apiKey here
-	dolibarr_set_const($db, 'MAIN_AI_CHATGPT_API_KEY', $apiKey, 'chaine', 0, '', $conf->entity);
+foreach ($arrayofia as $ia) {
+	// Setup conf AI_PUBLIC_INTERFACE_TOPIC
+	$item = $formSetup->newItem('AI_KEY_API_'.strtoupper($ia));
+	$item->defaultFieldValue = '';
 }
 
-// Retrieve existing API Key
-$apiKey = dolibarr_get_const($db, 'MAIN_AI_CHATGPT_API_KEY');
 
 $setupnotempty =+ count($formSetup->items);
 
@@ -83,11 +77,6 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 /*
  * Actions
  */
-
-// For retrocompatibility Dolibarr < 15.0
-if (versioncompare(explode('.', DOL_VERSION), array(15)) < 0 && $action == 'update' && !empty($user->admin)) {
-	$formSetup->saveConfFromPost();
-}
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
