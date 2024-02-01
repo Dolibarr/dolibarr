@@ -1673,9 +1673,9 @@ class Expedition extends CommonObject
 				$line->length         	= $obj->length;
 				$line->length_units   	= $obj->length_units;
 				$line->width           = $obj->width;
-                $line->width_units     = $obj->width_units;
-                $line->height           = $obj->height;
-                $line->height_units     = $obj->height_units;
+				$line->width_units     = $obj->width_units;
+				$line->height           = $obj->height;
+				$line->height_units     = $obj->height_units;
 				$line->surface        	= $obj->surface;
 				$line->surface_units = $obj->surface_units;
 				$line->volume         	= $obj->volume;
@@ -2720,42 +2720,43 @@ class ExpeditionLigne extends CommonObjectLine
 	public $product_type = 0;
 
 	/**
-	 * @var int rang of line
-	 */
+	* @var int rang of line
+	*/
 	public $rang;
 
 	/**
-	 * @var float weight
-	 */
+	* @var float weight
+ 	*/
 	public $weight;
 	public $weight_units;
 
 	/**
-	 * @var float lenght
-	 */
+	* @var float lenght
+	*/
 	public $length;
 	public $length_units;
-	
-     /**
-	 * @var float width
-	 */
+
+	/**
+ 	* @var float width
+  	*/
 	public $width;
     public $width_units;
-     /**
-	 * @var float height
-	 */
+
+	/**
+	* @var float height
+	*/
     public $height;
     public $height_units;
 
 	/**
-	 * @var float surface
-	 */
+	* @var float surface
+	*/
 	public $surface;
 	public $surface_units;
 
 	/**
-	 * @var float volume
-	 */
+	* @var float volume
+	*/
 	public $volume;
 	public $volume_units;
 
