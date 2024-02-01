@@ -4717,7 +4717,6 @@ if ($module == 'initmodule') {
 					print '<br>';
 				}
 
-				print '<!-- tab=objects -->'."\n";
 				$head3 = array();
 				$h = 0;
 
@@ -4793,7 +4792,6 @@ if ($module == 'initmodule') {
 					print_liste_field_titre("Rowid", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 					print_liste_field_titre("Condition", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 					print_liste_field_titre("", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-
 					print "</tr>\n";
 
 					if (!empty($dicts) && is_array($dicts) && !empty($dicts['tabname']) && is_array($dicts['tabname'])) {
@@ -4912,7 +4910,7 @@ if ($module == 'initmodule') {
 							$i++;
 						}
 					} else {
-						print '<tr><td colspan="10"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+						print '<tr><td colspan="11"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 					}
 
 					print '</table>';
@@ -5383,7 +5381,7 @@ if ($module == 'initmodule') {
 						print '</tr>';
 					}
 				} else {
-					print '<tr><td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+					print '<tr><td colspan="14"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 				}
 
 				print '</table>';

@@ -679,7 +679,7 @@ Module3300Desc=Një mjet RAD (Rapid Application Development - me kod të ulët d
 Module3400Name=Rrjete sociale
 Module3400Desc=Aktivizo fushat e Rrjeteve Sociale në palët e treta dhe adresat (skype, twitter, facebook, ...).
 Module4000Name=HRM
-Module4000Desc=Menaxhimi i burimeve njerëzore (menaxhimi i departamentit, kontratat e punonjësve dhe ndjenjat)
+Module4000Desc=Menaxhimi i burimeve njerëzore (menaxhimi i departamentit, kontratat e punonjësve, menaxhimi i aftësive dhe intervista)
 Module5000Name=Shumë-kompani
 Module5000Desc=Ju lejon të menaxhoni kompani të shumta
 Module6000Name=Rrjedha e punës ndërmodule
@@ -1123,6 +1123,7 @@ VATIsUsedDesc=Si parazgjedhje kur krijohen prospekte, fatura, porosi etj. shkall
 VATIsNotUsedDesc=Si parazgjedhje, taksa e propozuar e shitjeve është 0, e cila mund të përdoret për raste si shoqata, individë ose kompani të vogla.
 VATIsUsedExampleFR=Në Francë, do të thotë kompani ose organizata që kanë një sistem fiskal të vërtetë (real i thjeshtuar ose real normal). Një sistem në të cilin deklarohet TVSH.
 VATIsNotUsedExampleFR=Në Francë, do të thotë shoqata që nuk janë deklaruar për tatimin mbi shitjen ose kompani, organizata ose profesione liberale që kanë zgjedhur sistemin fiskal të mikrondërmarrjes (Taksa e shitjes në ekskluzivitet) dhe kanë paguar një taksë të shitjes ekskluzive pa asnjë deklaratë tatimore mbi shitjen. Kjo zgjedhje do të shfaqë referencën "Taksa e papranueshme e shitjeve - art-293B e CGI" në fatura.
+VATType=Lloji i TVSH-së
 ##### Local Taxes #####
 TypeOfSaleTaxes=Lloji i taksës së shitjes
 LTRate=Vlerësoni
@@ -1429,6 +1430,8 @@ DisableForgetPasswordLinkOnLogonPage=Mos e shfaq lidhjen "Fjalëkalimi i harruar
 UsersSetup=Konfigurimi i modulit të përdoruesve
 UserMailRequired=Kërkohet email për të krijuar një përdorues të ri
 UserHideInactive=Fshih përdoruesit joaktivë nga të gjitha listat e kombinuara të përdoruesve (Nuk rekomandohet: kjo mund të thotë që nuk do të mund të filtrosh ose të kërkosh përdorues të vjetër në disa faqe)
+UserHideExternal=Hide external users (not linked to a third party) from all combo lists of users (Not recommended: this may means you won't be able to filter or search on external users on some pages)
+UserHideNonEmployee=Hide non employee users from all combo lists of users (Not recommended: this may means you won't be able to filter or search on non employee users on some pages)
 UsersDocModules=Modelet e dokumenteve për dokumentet e krijuara nga të dhënat e përdoruesit
 GroupsDocModules=Modelet e dokumenteve për dokumentet e krijuara nga një rekord grupi
 ##### HRM setup #####
@@ -1877,7 +1880,8 @@ CashDeskBankAccountForSell=Llogaria e parazgjedhur për t'u përdorur për të m
 CashDeskBankAccountForCheque=Llogaria e parazgjedhur për t'u përdorur për të marrë pagesa me çek
 CashDeskBankAccountForCB=Llogaria e parazgjedhur për t'u përdorur për të marrë pagesa me karta krediti
 CashDeskBankAccountForSumup=Llogaria bankare e parazgjedhur për t'u përdorur për të marrë pagesa nga SumUp
-CashDeskDoNotDecreaseStock=Çaktivizoni uljen e aksioneve kur një shitje kryhet nga pika e shitjes (nëse "jo", ulja e stokut bëhet për çdo shitje të bërë nga POS, pavarësisht nga opsioni i vendosur në modulin Stoqet).
+CashDeskDoNotDecreaseStock=Çaktivizoni uljen e stokut kur një shitje kryhet nga pika e shitjes
+CashDeskDoNotDecreaseStockHelp=Nëse "jo", ulja e stokut bëhet për çdo shitje të bërë nga POS, pavarësisht nga opsioni i vendosur në modulin Stock.
 CashDeskIdWareHouse=Detyroni dhe kufizoni depon për t'u përdorur për uljen e stokut
 StockDecreaseForPointOfSaleDisabled=Ulja e stokut nga pika e shitjes është e çaktivizuar
 StockDecreaseForPointOfSaleDisabledbyBatch=Ulja e aksioneve në POS nuk është e përputhshme me modulin e menaxhimit serial/lot (aktualisht aktiv) kështu që ulja e stokut është e çaktivizuar.
@@ -2041,7 +2045,7 @@ YouUseLastStableVersion=Ju përdorni versionin më të fundit të qëndrueshëm
 TitleExampleForMajorRelease=Shembull i mesazhit që mund të përdorni për të shpallur këtë version të madh (mos ngurroni ta përdorni atë në faqet tuaja të internetit)
 TitleExampleForMaintenanceRelease=Shembull i mesazhit që mund të përdorni për të shpallur këtë version të mirëmbajtjes (mos ngurroni ta përdorni në faqet tuaja të internetit)
 ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s është i disponueshëm. Versioni %s është një version kryesor me shumë veçori të reja si për përdoruesit ashtu edhe për zhvilluesit. Mund ta shkarkoni nga zona e shkarkimit të portalit https://www.dolibarr.org (versionet e qëndrueshme të nëndirektorisë). Mund të lexoni <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> për listën e plotë të ndryshimeve.
-ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s është i disponueshëm. Versioni %s është një version mirëmbajtjeje, kështu që përmban vetëm rregullime të gabimeve. Ne rekomandojmë të gjithë përdoruesit të përmirësojnë në këtë version. Një version i mirëmbajtjes nuk paraqet veçori të reja ose ndryshime në bazën e të dhënave. Mund ta shkarkoni nga zona e shkarkimit të portalit https://www.dolibar.org (versionet e qëndrueshme të nëndirektorisë). Ju mund të lexoni <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> për listën e plotë të ndryshimeve.
+ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s është i disponueshëm. Versioni %s është një version mirëmbajtjeje, kështu që përmban vetëm rregullime të gabimeve. Ne rekomandojmë të gjithë përdoruesit të përmirësojnë në këtë version. Një version i mirëmbajtjes nuk paraqet veçori të reja ose ndryshime në bazën e të dhënave. Mund ta shkarkoni nga zona e shkarkimit të portalit https://www.dolibarr.org (versionet e qëndrueshme të nëndirektorisë). Ju mund të lexoni <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> për listën e plotë të ndryshimeve.
 MultiPriceRuleDesc=Kur aktivizohet opsioni "Disa nivele çmimesh për produkt/shërbim", ju mund të përcaktoni çmime të ndryshme (një për nivel çmimi) për çdo produkt. Për të kursyer kohë, këtu mund të vendosni një rregull për të llogaritur automatikisht një çmim për çdo nivel bazuar në çmimin e nivelit të parë, kështu që do t'ju duhet të vendosni vetëm një çmim për nivelin e parë për çdo produkt. Kjo faqe është krijuar për t'ju kursyer kohë, por është e dobishme vetëm nëse çmimet tuaja për çdo nivel janë në raport me nivelin e parë. Ju mund ta injoroni këtë faqe në shumicën e rasteve.
 ModelModulesProduct=Modelet për dokumentet e produktit
 WarehouseModelModules=Modelet për dokumentet e depove
@@ -2431,6 +2435,8 @@ SpecialCharActivation=Aktivizo butonin për të hapur një tastierë virtuale p�
 DeleteExtrafield=Fshi ekstrafield
 ConfirmDeleteExtrafield=A e konfirmoni fshirjen e fushës %s ? Të gjitha të dhënat e ruajtura në këtë fushë do të fshihen patjetër
 ExtraFieldsSupplierInvoicesRec=Atributet plotësuese (faturat e shablloneve)
-ExtraFieldsSupplierInvoicesLinesRec=Atributet plotësuese (linjat e faturave)
+ExtraFieldsSupplierInvoicesLinesRec=Atributet plotësuese (shabllon linjat e faturës)
 ParametersForTestEnvironment=Parametrat për mjedisin e testimit
 TryToKeepOnly=Mundohuni të mbani vetëm %s
+RecommendedForProduction=Rekomandohet për prodhim
+RecommendedForDebug=Rekomandohet për korrigjimin e gabimeve

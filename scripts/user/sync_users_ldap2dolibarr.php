@@ -52,6 +52,9 @@ $forcecommit = 0;
 $excludeuser = array();
 $confirmed = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */

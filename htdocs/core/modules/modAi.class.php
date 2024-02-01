@@ -39,7 +39,7 @@ class modAi extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
+		global $conf;
 
 		$this->db = $db;
 
@@ -52,7 +52,7 @@ class modAi extends DolibarrModules
 
 		// Family can be 'base' (core modules),'crm','financial','hr','projects','products','ecm','technic' (transverse modules),'interface' (link with external tools),'other','...'
 		// It is used to group modules by family in module setup page
-		$this->family = "mailings";
+		$this->family = "technic";
 
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
 		$this->module_position = '50';
@@ -65,7 +65,7 @@ class modAi extends DolibarrModules
 		// Module description, used if translation string 'ModuleAiDesc' not found (Ai is name of module).
 		$this->description = "AiDescription";
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "AiDescription";
+		$this->descriptionlong = "AiDescriptionLong";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 		$this->version = 'development';

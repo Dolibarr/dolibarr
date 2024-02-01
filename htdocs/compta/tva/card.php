@@ -172,7 +172,7 @@ if (empty($reshook)) {
 	if ($action == 'add' && !$cancel) {
 		$error = 0;
 
-		$object->fk_account = GETPOST("accountid", 'int');
+		$object->fk_account = GETPOSTINT("accountid");
 		$object->type_payment = GETPOST("type_payment", 'alphanohtml');
 		$object->num_payment = GETPOST("num_payment", 'alphanohtml');
 
@@ -329,7 +329,8 @@ if (empty($reshook)) {
 		$object->fetch($id);
 
 		if ($object->id > 0) {
-			$object->id = $object->ref = null;
+			$object->id = 0;
+			$object->ref = null;
 			$object->paye = 0;
 
 			if (GETPOST('amount', 'alphanohtml')) {

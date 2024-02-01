@@ -104,9 +104,9 @@ class ExpenseReportStats extends Stats
 
 
 	/**
-	 * 	Renvoie le nombre de facture par mois pour une annee donnee
+	 * 	Return the quantity of invoices per month for a given year
 	 *
-	 *	@param	string	$year		Year to scan
+	 *	@param	int		$year		Year to scan
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 *	@return	array				Array of values
 	 */

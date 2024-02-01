@@ -391,5 +391,4 @@ ConfirmDeleteRepeatableInvoice=¿Está seguro de que desea eliminar la factura d
 BillCreated=%s factura(s) generada
 SituationTotalRayToRest=Restante a pagar sin impuestos
 SearchValidatedInvoicesWithDate=Buscar facturas pendientes de pago con una fecha de validación =%s
-InvoiceSubtype=Subtipo de factura
 SalaryInvoice=Sueldo

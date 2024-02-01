@@ -370,10 +370,10 @@ if ($search_type_id) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
-if ($search_ref) {
+if ($search_ref != '') {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
-if ($search_user > 0) {
+if ($search_user != '') {
 	$param .= '&search_user='.urlencode($search_user);
 }
 if ($search_label) {

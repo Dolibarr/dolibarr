@@ -63,6 +63,11 @@ abstract class CommonObject
 	public $id;
 
 	/**
+	 * @var int			Another ID that is the $id but with an offset so that ID of the website start at 1
+	 */
+	public $newid;
+
+	/**
 	 * @var int 		The environment ID when using a multicompany module
 	 */
 	public $entity;
@@ -758,7 +763,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var string 		Populated by setRetainedWarrantyPaymentTerms()
+	 * @var int 		Populated by setRetainedWarrantyPaymentTerms()
 	 */
 	public $retained_warranty_fk_cond_reglement;
 
@@ -1008,7 +1013,7 @@ abstract class CommonObject
 	 * @param	string	$modulepart			Module related to document
 	 * @param	int		$initsharekey		Init the share key if it was not yet defined
 	 * @param	int		$relativelink		0=Return full external link, 1=Return link relative to root of file
-	 * @return	string						Link or empty string if there is no download link
+	 * @return	string|-1					Returns the link, or an empty string if no link was found, or -1 if error.
 	 */
 	public function getLastMainDocLink($modulepart, $initsharekey = 0, $relativelink = 0)
 	{
@@ -1492,7 +1497,7 @@ abstract class CommonObject
 	 *      @param  int		$option     0=Return array id->label, 1=Return array code->label
 	 *      @param  int		$activeonly 0=all status of contact, 1=only the active
 	 *		@param	string	$code		Type of contact (Example: 'CUSTOMER', 'SERVICE')
-	 *      @return array       		Array list of type of contacts (id->label if option=0, code->label if option=1)
+	 *      @return array|null          Array list of type of contacts (id->label if option=0, code->label if option=1), or null if error
 	 */
 	public function liste_type_contact($source = 'internal', $order = 'position', $option = 0, $activeonly = 0, $code = '')
 	{
@@ -1555,7 +1560,7 @@ abstract class CommonObject
 	 *		@param	string	$code				Type of contact (Example: 'CUSTOMER', 'SERVICE')
 	 *		@param	string	$element			Filter on 1 element type
 	 *      @param	string	$excludeelement		Exclude 1 element type. Example: 'agenda'
-	 *      @return array       				Array list of type of contacts (id->label if option=0, code->label if option=1)
+	 *      @return array|null     				Array list of type of contacts (id->label if option=0, code->label if option=1), or null if error
 	 */
 	public function listeTypeContacts($source = 'internal', $option = 0, $activeonly = 0, $code = '', $element = '', $excludeelement = '')
 	{
@@ -1643,7 +1648,7 @@ abstract class CommonObject
 	 *		@param	string	$source		'external' or 'internal'
 	 *		@param	string	$code		'BILLING', 'SHIPPING', 'SALESREPFOLL', ...
 	 *		@param	int		$status		limited to a certain status
-	 *      @return array       		List of id for such contacts
+	 *      @return array|null     		List of id for such contacts, or null if error
 	 */
 	public function getIdContact($source, $code, $status = 0)
 	{
@@ -1970,7 +1975,7 @@ abstract class CommonObject
 	 *  @param	string	$field		Field selected
 	 *  @param	string	$key		Import key
 	 *  @param	string	$element	Element name
-	 *	@return	int					Return integer <0 if KO, >0 if OK
+	 *	@return	int|false			Return -1 or false if KO, >0 if OK
 	 */
 	public function fetchObjectFrom($table, $field, $key, $element = null)
 	{
@@ -1993,12 +1998,12 @@ abstract class CommonObject
 			// Test for avoid error -1
 			if ($obj) {
 				if (method_exists($this, 'fetch')) {
-					return $this->fetch($obj->rowid);
+					$result = $this->fetch($obj->rowid);
 				} else {
 					$this->error = 'fetch() method not implemented on '.get_class($this);
 					dol_syslog(get_class($this).'::fetchOneLike Error='.$this->error, LOG_ERR);
 					array_push($this->errors, $this->error);
-					return -1;
+					$result = -1;
 				}
 			}
 		}
@@ -4826,7 +4831,7 @@ abstract class CommonObject
 	/**
 	 * Function that returns the total amount HT of discounts applied for all lines.
 	 *
-	 * @return 	float|string			Total amount of discount
+	 * @return 	float|null			Total amount of discount, or null if $table_element_line is empty
 	 */
 	public function getTotalDiscount()
 	{
@@ -4857,7 +4862,7 @@ abstract class CommonObject
 			}
 
 			//print $total_discount; exit;
-			return price2num($total_discount);
+			return (float) price2num($total_discount);
 		}
 
 		return null;
@@ -7277,7 +7282,7 @@ abstract class CommonObject
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
-				$out = $doleditor->Create(1);
+				$out = $doleditor->Create(1, '', true, '', '', '', $morecss);
 			} else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
@@ -7314,10 +7319,8 @@ abstract class CommonObject
 				$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
 			}
 
-			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
-			if ((!isset($this->fields[$key]['default'])) || ($this->fields[$key]['notnull'] != 1)) {
-				$out .= '<option value="0">&nbsp;</option>';
-			}
+			$tmpselect = '';
+			$nbchoice = 0;
 			foreach ($param['options'] as $keyb => $valb) {
 				if ((string) $keyb == '') {
 					continue;
@@ -7325,11 +7328,18 @@ abstract class CommonObject
 				if (strpos($valb, "|") !== false) {
 					list($valb, $parent) = explode('|', $valb);
 				}
-				$out .= '<option value="'.$keyb.'"';
-				$out .= (((string) $value == (string) $keyb) ? ' selected' : '');
-				$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
-				$out .= '>'.$valb.'</option>';
+				$nbchoice++;
+				$tmpselect .= '<option value="'.$keyb.'"';
+				$tmpselect .= (((string) $value == (string) $keyb) ? ' selected' : '');
+				$tmpselect .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
+				$tmpselect .= '>'.$valb.'</option>';
 			}
+
+			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
+			if ((!isset($this->fields[$key]['default'])) || ($this->fields[$key]['notnull'] != 1) || $nbchoice >= 2) {
+				$out .= '<option value="0">&nbsp;</option>';
+			}
+			$out .= $tmpselect;
 			$out .= '</select>';
 		} elseif ($type == 'sellist') {
 			$out = '';
@@ -7814,7 +7824,7 @@ abstract class CommonObject
 			$form = new Form($this->db);
 		}
 
-		$label = empty($val['label']) ? '' : $val['label'];
+		//$label = empty($val['label']) ? '' : $val['label'];
 		$type  = empty($val['type']) ? '' : $val['type'];
 		$size  = empty($val['css']) ? '' : $val['css'];
 		$reg = array();
@@ -8217,7 +8227,8 @@ abstract class CommonObject
 				$value = '';
 			}
 		} elseif ($type == 'password') {
-			$value = preg_replace('/./i', '*', $value);
+			$value = '<span class="opacitymedium">'.$langs->trans("Encrypted").'</span>';
+			//$value = preg_replace('/./i', '*', $value);
 		} elseif ($type == 'array') {
 			$value = implode('<br>', $value);
 		} else {	// text|html|varchar
@@ -8964,7 +8975,7 @@ abstract class CommonObject
 	 * @param float		$unitPrice		 Product unit price
 	 * @param float		$discountPercent Line discount percent
 	 * @param int		$fk_product		 Product id
-	 * @return	float                    Return integer <0 if KO, buyprice if OK
+	 * @return float|int                 Return buy price if OK, integer <0 if KO
 	 */
 	public function defineBuyPrice($unitPrice = 0.0, $discountPercent = 0.0, $fk_product = 0)
 	{
@@ -9543,7 +9554,7 @@ abstract class CommonObject
 
 		// If there is no 'ref' field, we force property ->ref to ->id for a better compatibility with common functions.
 		if (!isset($this->fields['ref']) && isset($this->id)) {
-			$this->ref = $this->id;
+			$this->ref = (string) $this->id;
 		}
 	}
 
@@ -10383,7 +10394,8 @@ abstract class CommonObject
 
 	/**
 	 * Load comments linked with current task
-	 *	@return boolean	1 if ok
+	 *
+	 * @return int<0,max>|-1        Returns the number of comments if OK, -1 if error
 	 */
 	public function fetchComments()
 	{

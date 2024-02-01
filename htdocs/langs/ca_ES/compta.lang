@@ -162,6 +162,7 @@ CalcModeVATDebt=Mode d'<b>%sIVA sobre comptabilitat de compromís%s </b>.
 CalcModeVATEngagement=Mode d'<b>%sIVA sobre ingressos-despeses%s</b>.
 CalcModeDebt=Anàlisi de documents registrats coneguts
 CalcModeEngagement=Anàlisi dels pagaments registrats coneguts
+CalcModePayment=Anàlisi dels pagaments registrats coneguts
 CalcModeBookkeeping=Anàlisi de dades publicades a la taula de compilació de llibres.
 CalcModeNoBookKeeping=Fins i tot si encara no es comptabilitzen a Ledger
 CalcModeLT1= Metode <b>%sRE factures a client - factures de proveïdor%s</b>

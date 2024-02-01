@@ -569,13 +569,12 @@ class dolReceiptPrinter extends Printer
 	/**
 	 *  Function to Send Test page to Printer
 	 *
-	 *  @param    int       $printerid      Printer id
-	 *  @return  int                        0 if OK; >0 if KO
+	 *  @param  int     $printerid      	Printer id
+	 *  @param	int		$addimgandbarcode	Add image and barcode into the test
+	 *  @return int                        	0 if OK; >0 if KO
 	 */
-	public function sendTestToPrinter($printerid)
+	public function sendTestToPrinter($printerid, $addimgandbarcode = 0)
 	{
-		global $conf;
-
 		$error = 0;
 		$img = EscposImage::load(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo_bw.png');
 		//$this->profile = CapabilityProfile::load("TM-T88IV");
@@ -584,11 +583,16 @@ class dolReceiptPrinter extends Printer
 			setEventMessages($this->error, $this->errors, 'errors');
 		} else {
 			try {
-				$this->printer->bitImage($img);
+				if ($addimgandbarcode) {
+					$this->printer->bitImage($img);
+				}
 				$this->printer->text("Hello World!\n");
-				$testStr = "1234567890";
-				$this->printer->barcode($testStr);
-				//$this->printer->qrcode($testStr, Printer::QR_ECLEVEL_M, 5, Printer::QR_MODEL_1);
+				if ($addimgandbarcode) {
+					$testStr = "1234567890";
+					$this->printer->barcode($testStr);
+					//$this->printer->qrcode($testStr, Printer::QR_ECLEVEL_M, 5, Printer::QR_MODEL_1);
+				}
+				$this->printer->text("\n");
 				$this->printer->text("Most simple example\n");
 				$this->printer->feed();
 				$this->printer->cut();
@@ -598,6 +602,7 @@ class dolReceiptPrinter extends Printer
 					$data = $this->printer->connector->getData();
 					dol_syslog($data);
 				}
+				// Close and print
 				$this->printer->close();
 			} catch (Exception $e) {
 				$this->errors[] = $e->getMessage();
