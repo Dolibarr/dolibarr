@@ -2726,7 +2726,7 @@ class ExpeditionLigne extends CommonObjectLine
 
 	/**
 	* @var float weight
- 	*/
+	*/
 	public $weight;
 	public $weight_units;
 
@@ -2737,14 +2737,14 @@ class ExpeditionLigne extends CommonObjectLine
 	public $length_units;
 
 	/**
- 	* @var float width
-  	*/
+	* @var float width
+	*/
 	public $width;
 	public $width_units;
 
 	/**
- 	* @var float height
- 	*/
+	* @var float height
+	*/
 	public $height;
 	public $height_units;
 
