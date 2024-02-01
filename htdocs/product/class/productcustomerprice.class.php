@@ -134,7 +134,7 @@ class ProductCustomerPrice extends CommonObject
 			$this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->fk_soc)) {
-			$this->fk_soc = (int) trim($this->fk_soc;
+			$this->fk_soc = (int) $this->fk_soc;
 		}
 		if (isset($this->ref_customer)) {
 			$this->ref_customer = trim($this->ref_customer);
