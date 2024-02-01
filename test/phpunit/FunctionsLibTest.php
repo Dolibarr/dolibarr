@@ -1797,4 +1797,29 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
 		return true;
 	}
+
+
+	/**
+	 * testRoundUpToNextMultiple
+	 *
+	 * @return void;
+	 */
+	public function testRoundUpToNextMultiple()
+	{
+		$this->assertEquals(roundUpToNextMultiple(39.5), 40);
+		$this->assertEquals(roundUpToNextMultiple(40), 40);
+		$this->assertEquals(roundUpToNextMultiple(40.4), 45);
+		$this->assertEquals(roundUpToNextMultiple(40.5), 45);
+		$this->assertEquals(roundUpToNextMultiple(44.5), 45);
+
+		$this->assertEquals(roundUpToNextMultiple(39.5, 10), 40);
+		$this->assertEquals(roundUpToNextMultiple(40, 10), 40);
+		$this->assertEquals(roundUpToNextMultiple(40.5, 10), 50);
+		$this->assertEquals(roundUpToNextMultiple(44.5, 10), 50);
+
+		$this->assertEquals(roundUpToNextMultiple(39.5, 6), 42);
+		$this->assertEquals(roundUpToNextMultiple(40, 6), 42);
+		$this->assertEquals(roundUpToNextMultiple(40.5, 6), 42);
+		$this->assertEquals(roundUpToNextMultiple(44.5, 6), 48);
+	}
 }

@@ -529,7 +529,7 @@ class Contracts extends DolibarrApi
 	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('contrat', 'supprimer')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$result = $this->contract->fetch($id);
 		if (!$result) {
@@ -537,7 +537,7 @@ class Contracts extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->contract->delete(DolibarrApiAccess::$user)) {
@@ -570,8 +570,8 @@ class Contracts extends DolibarrApi
 	 */
 	public function validate($id, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->contrat->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('contrat', 'creer')) {
+			throw new RestException(403);
 		}
 		$result = $this->contract->fetch($id);
 		if (!$result) {
@@ -579,7 +579,7 @@ class Contracts extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->contract->validate(DolibarrApiAccess::$user, '', $notrigger);
