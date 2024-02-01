@@ -31,8 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 $langs->loadLangs(array("admin", "products", "productbatch"));
 
 // Security check
-if (!$user->admin || (empty($conf->productbatch->enabled)))
+if (!$user->admin || (empty($conf->productbatch->enabled))) {
 	accessforbidden();
+}
 
 $action = GETPOST('action', 'alpha');
 $value = GETPOST('value', 'alpha');
@@ -55,7 +56,9 @@ if ($action == 'updateMaskLot') {
 
 	if ($maskconstbatch && preg_match('/_MASK$/', $maskconstbatch)) {
 		$res = dolibarr_set_const($db, $maskconstbatch, $maskbatch, 'chaine', 0, '', $conf->entity);
-		if ($res <= 0) $error++;
+		if ($res <= 0) {
+			$error++;
+		}
 	}
 
 	if (!$error) {
@@ -69,7 +72,9 @@ if ($action == 'updateMaskLot') {
 
 	if ($maskconstbatch && preg_match('/_MASK$/', $maskconstbatch)) {
 		$res = dolibarr_set_const($db, $maskconstbatch, $maskbatch, 'chaine', 0, '', $conf->entity);
-		if ($res <= 0) $error++;
+		if ($res <= 0) {
+			$error++;
+		}
 	}
 
 	if (!$error) {
@@ -83,12 +88,12 @@ if ($action == 'updateMaskLot') {
 	dolibarr_set_const($db, "PRODUCTBATCH_SN_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'setmaskslot') {
 	dolibarr_set_const($db, "PRODUCTBATCH_LOT_USE_PRODUCT_MASKS", $value, 'bool', 0, '', $conf->entity);
-	if ($value == '1' && $conf->global->PRODUCTBATCH_LOT_ADDONS !== 'mod_lot_advanced') {
+	if ($value == '1' && getDolGlobalString('PRODUCTBATCH_LOT_ADDONS') !== 'mod_lot_advanced') {
 		dolibarr_set_const($db, "PRODUCTBATCH_LOT_ADDON", 'mod_lot_advanced', 'chaine', 0, '', $conf->entity);
 	}
 } elseif ($action == 'setmaskssn') {
 	dolibarr_set_const($db, "PRODUCTBATCH_SN_USE_PRODUCT_MASKS", $value, 'bool', 0, '', $conf->entity);
-	if ($value == '1' && $conf->global->PRODUCTBATCH_SN_ADDONS !== 'mod_sn_advanced') {
+	if ($value == '1' && getDolGlobalString('PRODUCTBATCH_SN_ADDONS') !== 'mod_sn_advanced') {
 		dolibarr_set_const($db, "PRODUCTBATCH_SN_ADDON", 'mod_sn_advanced', 'chaine', 0, '', $conf->entity);
 	}
 } elseif ($action == 'set') {
@@ -171,7 +176,7 @@ print dol_get_fiche_head($head, 'settings', $langs->trans("Batch"), -1, 'lot');
 
 
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-	// The feature to define the numbering module of lot or serial is no enabled bcause it is not used anywhere in Dolibarr code: You can set it
+	// The feature to define the numbering module of lot or serial is no enabled because it is not used anywhere in Dolibarr code: You can set it
 	// but the numbering module is not used.
 	// TODO Use it on lot creation page, when you create a lot and when the lot number is kept empty to define the lot according
 	// to the selected product.
@@ -209,8 +214,12 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						$module = new $file($db);
 
 						// Show modules according to features level
-						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+							continue;
+						}
+						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+							continue;
+						}
 
 						if ($module->isEnabled()) {
 							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
@@ -220,9 +229,13 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							// Show example of numbering model
 							print '<td class="nowrap">';
 							$tmp = $module->getExample();
-							if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
-							elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
-							else print $tmp;
+							if (preg_match('/^Error/', $tmp)) {
+								print '<div class="error">'.$langs->trans($tmp).'</div>';
+							} elseif ($tmp == 'NotConfigured') {
+								print $langs->trans($tmp);
+							} else {
+								print $tmp;
+							}
 							print '</td>'."\n";
 
 							print '<td class="center">';
@@ -245,8 +258,9 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
 								$htmltooltip .= ''.$langs->trans("NextValue").': ';
 								if ($nextval) {
-									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
 										$nextval = $langs->trans($nextval);
+									}
 									$htmltooltip .= $nextval.'<br>';
 								} else {
 									$htmltooltip .= $langs->trans($module->error).'<br>';
@@ -301,8 +315,12 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						$module = new $file($db);
 
 						// Show modules according to features level
-						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+							continue;
+						}
+						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+							continue;
+						}
 
 						if ($module->isEnabled()) {
 							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
@@ -312,9 +330,13 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							// Show example of numbering model
 							print '<td class="nowrap">';
 							$tmp = $module->getExample();
-							if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
-							elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
-							else print $tmp;
+							if (preg_match('/^Error/', $tmp)) {
+								print '<div class="error">'.$langs->trans($tmp).'</div>';
+							} elseif ($tmp == 'NotConfigured') {
+								print $langs->trans($tmp);
+							} else {
+								print $tmp;
+							}
 							print '</td>'."\n";
 
 							print '<td class="center">';
@@ -337,8 +359,9 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
 								$htmltooltip .= ''.$langs->trans("NextValue").': ';
 								if ($nextval) {
-									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
 										$nextval = $langs->trans($nextval);
+									}
 									$htmltooltip .= $nextval.'<br>';
 								} else {
 									$htmltooltip .= $langs->trans($module->error).'<br>';
@@ -419,16 +442,16 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								$modulequalified = 0;
 							}
 
 							if ($modulequalified) {
 								print '<tr class="oddeven"><td width="100">';
-								print (empty($module->name) ? $name : $module->name);
+								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
 									print $module->info($langs);
@@ -450,7 +473,7 @@ foreach ($dirmodels as $reldir) {
 									print "</td>";
 								}
 
-								// Defaut
+								// Default
 								print '<td class="center">';
 								if (getDolGlobalString('PRODUCT_BATCH_ADDON_PDF') == $name) {
 									print img_picto($langs->trans("Default"), 'on');

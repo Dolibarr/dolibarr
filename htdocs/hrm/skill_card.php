@@ -62,7 +62,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -124,7 +124,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$triggermodname = 'hrm_SKILL_MODIFY'; // Name of trigger action code to execute when we modify record
+	$triggermodname = 'HRM_SKILL_MODIFY'; // Name of trigger action code to execute when we modify record
 
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
@@ -175,6 +175,16 @@ if (empty($reshook)) {
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_SKILL_TO';
 	$trackid = 'skill' . $object->id;
 	include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
+
+	if ($action == 'confirm_clone' && $confirm != 'yes') {
+		$action = '';
+	}
+
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
+		$id = $result->id;
+		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+		exit;
+	}
 }
 
 
@@ -198,7 +208,7 @@ if ($action == 'create') {
 	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
 	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="add">';
-	$backtopage .= (strpos($backtopage, '?') > 0 ? '&' : '?' ) ."objecttype=job";
+	$backtopage .= (strpos($backtopage, '?') > 0 ? '&' : '?') ."objecttype=job";
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
 	}
@@ -304,7 +314,7 @@ if (($id || $ref) && $action == 'edit') {
 				//              if (!empty($val['help'])) {
 				//                  print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 				//              } else {
-					print $langs->trans($val['label']).'&nbsp;'.$langs->trans('rank').'&nbsp;'.$sk->rankorder;
+				print $langs->trans($val['label']).'&nbsp;'.$langs->trans('rank').'&nbsp;'.$sk->rankorder;
 				//              }
 				print '</td>';
 				print '<td class="valuefieldcreate">';
@@ -323,7 +333,7 @@ if (($id || $ref) && $action == 'edit') {
 					$check = 'restricthtml';
 				}
 
-					$skilldetArray = GETPOST("descriptionline", "array");
+				$skilldetArray = GETPOST("descriptionline", "array");
 				if (empty($skilldetArray)) {
 					$value = GETPOSTISSET($key) ? GETPOST($key, $check) : $sk->$key;
 				} else {
@@ -377,11 +387,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
 	}
-	// Clone confirmation
-	if ($action == 'clone') {
-		// Create an array for form
-		$formquestion = array();
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+	// Confirmation clone
+	if ($action === 'clone') {
+		$formquestion = array(
+			array('type' => 'text', 'name' => 'clone_label', 'label' => $langs->trans("Label"), 'value' => $langs->trans("CopyOf").' '.$object->label),
+		);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->label), 'confirm_clone', $formquestion, 'yes', 1, 280);
 	}
 
 	// Confirmation of action xxxx
@@ -465,6 +476,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=edit&token=' . newToken(), '', $permissiontoadd);
 
+			// Clone
+			if ($permissiontoadd) {
+				print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.$object->id, '');
+			}
 			// Delete (need delete permission, or if draft, just need create/modify permission)
 			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete&token=' . newToken(), '', $permissiontodelete);
 		}
@@ -525,7 +540,7 @@ if ($action != "create" && $action != "edit") {
 		$sortorder = "ASC";
 	}
 
-	// Initialize array of search criterias
+	// Initialize array of search criteria
 	$search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 	$search = array();
 	foreach ($objectline->fields as $key => $val) {
@@ -578,7 +593,7 @@ if ($action != "create" && $action != "edit") {
 	$title = $langs->transnoentitiesnoconv("Skilldets");
 	$morejs = array();
 	$morecss = array();
-	$nbtotalofrecords = 0;
+	$nbtotalofrecords = '';
 
 	// Build and execute select
 	// --------------------------------------------------------------------
@@ -611,7 +626,7 @@ if ($action != "create" && $action != "edit") {
 		print '<input type="hidden" name="id" value="' . $id . '">';
 	}
 
-	$param_fk = "&fk_skill=" . $id . "&fk_user_creat=" . (!empty($user->rowid) ? $user->rowid :0);
+	$param_fk = "&fk_skill=" . $id . "&fk_user_creat=" . (!empty($user->rowid) ? $user->rowid : 0);
 	$backtopage = dol_buildpath('/hrm/skill_card.php', 1) . '?id=' . $id;
 	$param = "";
 	$massactionbutton = "";
@@ -656,7 +671,7 @@ if ($action != "create" && $action != "edit") {
 	//  $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 	//  $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
-	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="tagtable nobottomiftotal liste' . ($moreforfilter ? " listwithfilterbefore" : "") . '">' . "\n";
 
 
@@ -724,7 +739,7 @@ if ($action != "create" && $action != "edit") {
 			//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
 
 			if (!empty($arrayfields['t.' . $key]['checked'])) {
-				print '<td' . ($cssforfield ? ' class="' . $cssforfield . '"' : '') . '>';
+				print '<td' . (empty($cssforfield) ? '' : ' class="' . $cssforfield . '"') . '>';
 				if ($key == 'status') {
 					print $objectline->getLibStatut(5);
 				} elseif ($key == 'rowid') {
@@ -801,7 +816,9 @@ if ($action != "create" && $action != "edit") {
 		print '<tr><td colspan="' . $colspan . '"><span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span></td></tr>';
 	}
 
-	if (!empty($resql)) $db->free($resql);
+	if (!empty($resql)) {
+		$db->free($resql);
+	}
 
 	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $objectline); // Note that $action and $objectline may have been modified by hook
@@ -812,7 +829,7 @@ if ($action != "create" && $action != "edit") {
 
 	print '</form>' . "\n";
 
-	//  if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
+	//  if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
 	//      $hidegeneratedfilelistifempty = 1;
 	//      if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
 	//          $hidegeneratedfilelistifempty = 0;

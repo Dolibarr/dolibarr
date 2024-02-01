@@ -30,7 +30,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modWebsite extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -38,8 +37,6 @@ class modWebsite extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
-
 		$this->db = $db;
 		$this->numero = 10000;
 
@@ -64,7 +61,7 @@ class modWebsite extends DolibarrModules
 		$this->config_page_url = array('website.php');
 
 		// Dependencies
-		$this->hidden = !empty($conf->global->MODULE_WEBSITE_DISABLED); // A condition to disable module
+		$this->hidden = getDolGlobalString('MODULE_WEBSITE_DISABLED'); // A condition to disable module
 		$this->depends = array('modFckeditor'); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with

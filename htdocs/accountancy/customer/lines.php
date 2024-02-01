@@ -65,7 +65,7 @@ $search_country = GETPOST('search_country', 'alpha');
 $search_tvaintra = GETPOST('search_tvaintra', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : getDolGlobalString('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -79,7 +79,7 @@ if (!$sortfield) {
 	$sortfield = "f.datef, f.ref, fd.rowid";
 }
 if (!$sortorder) {
-	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE > 0) {
+	if (getDolGlobalInt('ACCOUNTING_LIST_SORT_VENTILATION_DONE') > 0) {
 		$sortorder = "DESC";
 	} else {
 		$sortorder = "ASC";
@@ -175,7 +175,9 @@ if (GETPOST('sortfield') == 'f.datef, f.ref, fd.rowid') {
 $form = new Form($db);
 $formother = new FormOther($db);
 
-llxHeader('', $langs->trans("CustomersVentilation").' - '.$langs->trans("Dispatched"));
+$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
+
+llxHeader('', $langs->trans("CustomersVentilation").' - '.$langs->trans("Dispatched"), $help_url);
 
 print '<script type="text/javascript">
 			$(function () {
@@ -200,7 +202,7 @@ print '<script type="text/javascript">
 $sql = "SELECT f.rowid as facid, f.ref as ref, f.type as ftype, f.situation_cycle_ref, f.datef, f.ref_client,";
 $sql .= " fd.rowid, fd.description, fd.product_type as line_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.vat_src_code, fd.total_ttc, fd.situation_percent,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client,";
-if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " spe.accountancy_code_customer as code_compta_client,";
 	$sql .= " spe.accountancy_code_supplier as code_compta_fournisseur,";
 } else {
@@ -208,7 +210,7 @@ if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 	$sql .= " s.code_compta_fournisseur,";
 }
 $sql .= " p.rowid as product_id, p.fk_product_type as product_type, p.ref as product_ref, p.label as product_label, p.tobuy, p.tosell,";
-if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 	$sql .= " ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export,";
 } else {
 	$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
@@ -222,20 +224,20 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = fd.fk_product";
-if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 }
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
-if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = s.fk_pays ";
 $sql .= " WHERE fd.fk_code_ventilation > 0";
 $sql .= " AND f.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
 $sql .= " AND f.fk_statut > 0";
-if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$sql .= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_SITUATION.")";
 } else {
 	$sql .= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_DEPOSIT.",".Facture::TYPE_SITUATION.")";
@@ -400,10 +402,10 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth25" name="search_lineid" value="'.dol_escape_htmltag($search_lineid).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="'.dol_escape_htmltag($search_invoice).'"></td>';
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -506,7 +508,7 @@ if ($result) {
 
 		print '<td class="tdoverflowonsmartphone small">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description, 1));
-		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
+		$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);
 		print '</td>';
 

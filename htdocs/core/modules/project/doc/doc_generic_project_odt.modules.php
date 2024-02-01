@@ -124,7 +124,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // Par defaut, si n'etait pas defini
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // Par default, si n'etait pas defini
 		}
 	}
 
@@ -446,7 +446,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 		// Scan directories
 		$nbofiles = count($listoffiles);
-		if (!empty($conf->global->PROJECT_ADDON_PDF_ODT_PATH)) {
+		if (getDolGlobalString('PROJECT_ADDON_PDF_ODT_PATH')) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= $nbofiles;
@@ -592,7 +592,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				// Recipient name
 				$contactobject = null;
 				if (!empty($usecontact)) {
-					// if we have a PROJECTLEADER contact and we dont use it as recipient we store the contact object for later use
+					// if we have a PROJECTLEADER contact and we don't use it as recipient we store the contact object for later use
 					$contactobject = $object->contact;
 				}
 
@@ -661,8 +661,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
-						} else // Text
-						{
+						} else { // Text
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {
@@ -743,7 +742,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 							}
 						}
 
-						//Time ressources
+						//Time resources
 						$sql = "SELECT t.rowid, t.element_date as task_date, t.element_duration as task_duration, t.fk_user, t.note";
 						$sql .= ", u.lastname, u.firstname, t.thm";
 						$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t";
@@ -971,13 +970,13 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'title' => "ListSupplierOrdersAssociatedProject",
 						'table' => 'commande_fournisseur',
 						'class' => 'CommandeFournisseur',
-						'test' => (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire)
+						'test' => (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->rights->fournisseur->commande->lire) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire)
 					),
 					'invoice_supplier' => array(
 						'title' => "ListSupplierInvoicesAssociatedProject",
 						'table' => 'facture_fourn',
 						'class' => 'FactureFournisseur',
-						'test' => (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire)
+						'test' => (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->rights->fournisseur->facture->lire) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire)
 					),
 					'contract' => array(
 						'title' => "ListContractAssociatedProject",
@@ -1035,7 +1034,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'title' => "ListMouvementStockProject",
 						'class' => 'MouvementStock',
 						'table' => 'stock_mouvement',
-						'test' => (isModEnabled('stock') && $user->rights->stock->mouvement->lire && !empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW))
+						'test' => (isModEnabled('stock') && $user->rights->stock->mouvement->lire && getDolGlobalString('STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW'))
 					),
 					'agenda' => array(
 						'title' => "ListActionsAssociatedProject",
@@ -1146,7 +1145,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 
 				// Write new file
-				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
+				if (getDolGlobalString('MAIN_ODT_AS_PDF')) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {

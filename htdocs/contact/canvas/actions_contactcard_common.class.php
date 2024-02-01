@@ -18,12 +18,12 @@
 /**
  *	\file       htdocs/contact/canvas/actions_contactcard_common.class.php
  *	\ingroup    thirdparty
- *	\brief      Fichier de la classe Thirdparty contact card controller (common)
+ *	\brief      File for the class Thirdparty contact card controller (common)
  */
 
 /**
  *	\class      ActionsContactCardCommon
- *	\brief      Classe permettant la gestion des contacts par defaut
+ *	\brief      Common Abstract Class for contact managmeent
  */
 abstract class ActionsContactCardCommon
 {
@@ -70,7 +70,7 @@ abstract class ActionsContactCardCommon
 		}
 		else
 		{*/
-			$object = new Contact($this->db);
+		$object = new Contact($this->db);
 		if (!empty($id)) {
 			$object->fetch($id);
 		}
@@ -129,7 +129,7 @@ abstract class ActionsContactCardCommon
 			$this->tpl['select_civility'] = $formcompany->select_civility($this->object->civility_id);
 
 			// Predefined with third party
-			if ((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) {
+			if ((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) {
 				if (dol_strlen(trim($this->object->address)) == 0) {
 					$this->tpl['address'] = $objsoc->address;
 				}

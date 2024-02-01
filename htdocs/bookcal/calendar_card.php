@@ -17,7 +17,7 @@
  */
 
 /**
- *   	\file       calendar_card.php
+ *   	\file       htdocs/bookcal/calendar_card.php
  *		\ingroup    bookcal
  *		\brief      Page to create/edit/view calendar
  */
@@ -51,7 +51,8 @@ if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
 while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
-	$i--; $j--;
+	$i--;
+	$j--;
 }
 if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) {
 	$res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
@@ -112,7 +113,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -353,36 +354,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
-	if ($action == 'generate') {
-		print '<i> Link : </i> <strong> <a href="'. DOL_URL_ROOT.'/public/bookcal/index.php?id='.$object->id . '">Public page</a></strong>'		 ;
-	}
-
-	// Confirmation of action xxxx (You can use it for xxx = 'close', xxx = 'reopen', ...)
-	if ($action == 'xxx') {
-		$text = $langs->trans('ConfirmActionCalendar', $object->ref);
-		/*if (isModEnabled('notification'))
-		{
-			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
-			$notify = new Notify($db);
-			$text .= '<br>';
-			$text .= $notify->confirmMessage('MYOBJECT_CLOSE', $object->socid, $object);
-		}*/
-
-		$formquestion = array();
-
-		/*
-		$forcecombo=0;
-		if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
-		$formquestion = array(
-			// 'text' => $langs->trans("ConfirmClone"),
-			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-			// array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
-		);
-		*/
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
-	}
-
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -452,6 +423,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
+	// Link to public page
+	print '<tr><td>Link</td>';
+	print '<td><a href="'. DOL_URL_ROOT.'/public/bookcal/index.php?id='.$object->id.'" target="_blank">Public page</a>';
+	print '</td></tr>';
+
 	print '</table>';
 	print '</div>';
 	print '</div>';
@@ -497,9 +473,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-				if (empty($reshook))
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				if (empty($reshook)) {
 					$object->formAddObjectLine(1, $mysoc, $soc);
+				}
 			}
 		}
 
@@ -524,9 +503,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		if (empty($reshook)) {
 			// Send
-			if (empty($user->socid)) {
+			/*if (empty($user->socid)) {
 				print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle');
-			}
+			}*/
 
 			// Back to draft
 			if ($object->status == $object::STATUS_VALIDATED) {
@@ -547,13 +526,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid)?'&socid='.$object->socid:'').'&action=clone&token='.newToken(), '', $permissiontoadd);
+				print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=clone&token='.newToken(), '', $permissiontoadd);
 			}
 
-			// Generate link
-			if ($object->status == Calendar::STATUS_VALIDATED) {
-				print dolGetButtonAction($langs->trans('generateLink'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=generate', '', $permissiontoadd);
-			}
 			/*
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_ENABLED) {
@@ -584,6 +559,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$action = 'presend';
 	}
 
+	/*
 	if ($action != 'presend') {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 		print '<a name="builddoc"></a>'; // ancre
@@ -632,6 +608,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$trackid = 'calendar'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+	*/
 }
 
 // End of page

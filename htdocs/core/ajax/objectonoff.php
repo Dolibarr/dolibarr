@@ -18,7 +18,7 @@
 /**
  *       \file       htdocs/core/ajax/objectonoff.php
  *       \brief      File to set status for an object. Called when ajax_object_onoff() is used.
- *       			 This Ajax service is oftenly called when option MAIN_DIRECT_STATUS_UPDATE is set.
+ *       			 This Ajax service is often called when option MAIN_DIRECT_STATUS_UPDATE is set.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -35,9 +35,6 @@ if (!defined('NOREQUIREAJAX')) {
 }
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
-}
-if (!defined('NOREQUIRETRAN')) {
-	define('NOREQUIRETRAN', '1');
 }
 
 // Load Dolibarr environment

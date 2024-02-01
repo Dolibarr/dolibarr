@@ -45,7 +45,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'societe', '', '');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -139,7 +139,7 @@ $object = new Societe($db);
 $result = $object->fetch($socid);
 
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Notification");
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->name.' - '.$langs->trans("Notification");
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -169,7 +169,7 @@ if ($result > 0) {
 	print '</td></tr>';
 
 	// Prefix
-	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+	if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
 		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 	}
 
@@ -516,7 +516,7 @@ if ($result > 0) {
 
 	print '</form>';
 } else {
-	dol_print_error('', 'RecordNotFound');
+	dol_print_error(null, 'RecordNotFound');
 }
 
 // End of page

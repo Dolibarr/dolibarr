@@ -22,9 +22,11 @@ div.mainmenu.menu {
 	background-image: none;
 }
 
+/*
 div.mainmenu.menu::before {
 	content: "\f0c9";
 }
+*/
 
 div.mainmenu.generic1::before {
 	content: "\f249";

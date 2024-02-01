@@ -29,6 +29,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class ProductCustomerPrice extends CommonObject
 {
 	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array(
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'showoncombobox'=>'1', 'noteditable'=>1),
+		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:0', 'label'=>'Product', 'enabled'=>'$conf->product->enabled', 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'comment'=>"Product to produce", 'css'=>'maxwidth300', 'csslist'=>'tdoverflowmax100', 'picto'=>'product'),
+		'ref_customer' => array('type'=>'varchar(128)', 'label'=>'RefCustomer', 'enabled'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1,),
+		'datec' => array('type'=>'datetime', 'label'=>'AppliedPricesFrom', 'enabled'=>1, 'visible'=>1, 'position'=>500, 'notnull'=>1,),
+		'price_base_type' => array('type' => 'varchar(255)', 'label' => 'PriceBase', 'enabled' => 1, 'visible' => 1, 'position' => 11, 'notnull' => -1, 'comment' => 'Price Base Type'),
+		'tva_tx' => array('type' => 'decimal(20,6)', 'label' => 'VAT', 'enabled' => 1, 'visible' => 1, 'position' => 12, 'notnull' => -1, 'comment' => 'TVA Tax Rate'),
+		'price' => array('type' => 'decimal(20,6)', 'label' => 'HT', 'enabled' => 1, 'visible' => 1, 'position' => 8, 'notnull' => -1, 'comment' => 'Price HT'),
+		'price_ttc' => array('type' => 'decimal(20,6)', 'label' => 'TTC', 'enabled' => 1, 'visible' => 1, 'position' => 8, 'notnull' => -1, 'comment' => 'Price TTC'),
+		'price_min' => array('type' => 'decimal(20,6)', 'label' => 'MinPriceHT', 'enabled' => 1, 'visible' => 1, 'position' => 9, 'notnull' => -1, 'comment' => 'Minimum Price'),
+		'price_min_ttc' => array('type' => 'decimal(20,6)', 'label' => 'MinPriceTTC', 'enabled' => 1, 'visible' => 1, 'position' => 10, 'notnull' => -1, 'comment' => 'Minimum Price TTC'),
+		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>1, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'user.rowid', 'csslist'=>'tdoverflowmax100'),
+	);
+
+	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'product_customer_price';
@@ -88,7 +105,7 @@ class ProductCustomerPrice extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db handler
+	 * @param DoliDB $db handler
 	 */
 	public function __construct($db)
 	{
@@ -101,11 +118,10 @@ class ProductCustomerPrice extends CommonObject
 	 * @param User $user that creates
 	 * @param int $notrigger triggers after, 1=disable triggers
 	 * @param int $forceupdateaffiliate update price on each soc child
-	 * @return int <0 if KO, Id of created object if OK
+	 * @return int Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0, $forceupdateaffiliate = 0)
 	{
-
 		global $conf, $langs;
 		$error = 0;
 
@@ -157,8 +173,8 @@ class ProductCustomerPrice extends CommonObject
 			$this->import_key = trim($this->import_key);
 		}
 
-			// Check parameters
-			// Put here code to add control on parameters values
+		// Check parameters
+		// Put here code to add control on parameters values
 
 		if ($this->price != '' || $this->price == 0) {
 			if ($this->price_base_type == 'TTC') {
@@ -279,7 +295,7 @@ class ProductCustomerPrice extends CommonObject
 	 * Load object in memory from the database
 	 *
 	 * @param 	int 	$id 	ID of customer price
-	 * @return 	int 			<0 if KO, 0 if not found, >0 if OK
+	 * @return 	int 			Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -357,7 +373,7 @@ class ProductCustomerPrice extends CommonObject
 	 * @param 	int 	$limit 		page
 	 * @param 	int 	$offset 	offset
 	 * @param 	array 	$filter 	Filter for select
-	 * @return 	int 				<0 if KO, >0 if OK
+	 * @return 	int 				Return integer <0 if KO, >0 if OK
 	 * @since dolibarr v17
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
@@ -475,7 +491,7 @@ class ProductCustomerPrice extends CommonObject
 	 * @param 	int 	$limit 		page
 	 * @param 	int 	$offset 	offset
 	 * @param 	array 	$filter 	Filter for sql request
-	 * @return 	int 			<0 if KO, >0 if OK
+	 * @return 	int 			Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAllLog($sortorder, $sortfield, $limit, $offset, $filter = array())
 	{
@@ -580,11 +596,10 @@ class ProductCustomerPrice extends CommonObject
 	 * @param User $user that modifies
 	 * @param int $notrigger triggers after, 1=disable triggers
 	 * @param int $forceupdateaffiliate update price on each soc child
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
-	public function update($user = 0, $notrigger = 0, $forceupdateaffiliate = 0)
+	public function update(User $user, $notrigger = 0, $forceupdateaffiliate = 0)
 	{
-
 		global $conf, $langs;
 		$error = 0;
 
@@ -636,8 +651,8 @@ class ProductCustomerPrice extends CommonObject
 			$this->import_key = trim($this->import_key);
 		}
 
-			// Check parameters
-			// Put here code to add a control on parameters values
+		// Check parameters
+		// Put here code to add a control on parameters values
 
 		if ($this->price != '' || $this->price == 0) {
 			if ($this->price_base_type == 'TTC') {
@@ -796,13 +811,13 @@ class ProductCustomerPrice extends CommonObject
 	 *
 	 * @param 	User $user 					User that modifies
 	 * @param 	int $forceupdateaffiliate 	update price on each soc child
-	 * @return 	int 						<0 if KO, 0 = action disabled, >0 if OK
+	 * @return 	int 						Return integer <0 if KO, 0 = action disabled, >0 if OK
 	 */
 	public function setPriceOnAffiliateThirdparty($user, $forceupdateaffiliate)
 	{
 		global $conf;
 
-		if (!empty($conf->global->PRODUCT_DISABLE_PROPAGATE_CUSTOMER_PRICES_ON_CHILD_COMPANIES)) {
+		if (getDolGlobalString('PRODUCT_DISABLE_PROPAGATE_CUSTOMER_PRICES_ON_CHILD_COMPANIES')) {
 			return 0;
 		}
 
@@ -891,7 +906,7 @@ class ProductCustomerPrice extends CommonObject
 	 *
 	 * @param User $user that deletes
 	 * @param int $notrigger triggers after, 1=disable triggers
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -990,7 +1005,6 @@ class ProductCustomerPrice extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-
 		$this->id = 0;
 
 		$this->entity = '';

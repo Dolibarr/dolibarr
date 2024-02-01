@@ -165,7 +165,7 @@ if ($object->id) {
 	}
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
@@ -176,7 +176,7 @@ if ($object->id) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/productlot_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$shownav = 1;
-	if ($user->socid && !in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+	if ($user->socid && !in_array('batch', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 		$shownav = 0;
 	}
 

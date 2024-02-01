@@ -17,9 +17,9 @@ printBatch=Лот/Серійний номер: %s
 printEatby=Споживання: %s
 printSellby=Продавець: %s
 printQty=Кількість: %d
-printPlannedWarehouse=Warehouse: %s
+printPlannedWarehouse=Склад: %s
 AddDispatchBatchLine=Додайте рядок для відправлення терміну придатності
-WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, automatic stock decrease  is forced to '%s' and automatic increase mode is forced to '%s'. Some choices may be not available. Other options can be defined as you want.
+WhenProductBatchModuleOnOptionAreForced=Коли модуль Lot/Serial увімкнено, автоматичне зменшення запасів стає '%s' , а режим автоматичного збільшення '%s'. Деякі варіанти можуть бути недоступними. Інші параметри можна визначити за бажанням.
 ProductDoesNotUseBatchSerial=Цей продукт не використовує партію/серійний номер
 ProductLotSetup=Налаштування лоту/серійного модуля
 ShowCurrentStockOfLot=Показати поточний запас для пари продуктів/партії
@@ -45,3 +45,5 @@ OutOfOrder=Вийшов з ладу
 InWorkingOrder=В робочому стані
 ToReplace=Замінити
 CantMoveNonExistantSerial=Помилка. Ви просите перенести платівку для серіалу, який більше не існує. Можливо, ви берете один і той же серійний номер на тому самому складі кілька разів в одній відправці або він використовувався іншим відправленням. Видаліть цю відправку та підготуйте іншу.
+TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Таблиця lot незавершила відновлення з параметром '...repair.php?standard=confirmed'
+IlligalQtyForSerialNumbers= Потрібна корекція запасу через унікальний серійний номер.

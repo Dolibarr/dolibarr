@@ -90,7 +90,7 @@ ob_start();
                                                     </ul>
                                                 </div>
                                                 <div class="plan-btn plan-picker">
-                                                    <a href="plan-a.php" class="btn btn-rect btn-primary d-block d-md-inline-block" id="plana">Subcribe</a>
+                                                    <a href="plan-a.php" class="btn btn-rect btn-primary d-block d-md-inline-block" id="plana">Subscribe</a>
                                                 </div>
                                             </div>  
                                     </div>

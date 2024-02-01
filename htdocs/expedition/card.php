@@ -14,6 +14,7 @@
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2022       Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +64,7 @@ if (isModEnabled('project')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("sendings", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal'));
+$langs->loadLangs(array("sendings", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal', 'productbatch'));
 
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
@@ -72,8 +73,8 @@ if (isModEnabled('productbatch')) {
 	$langs->load('productbatch');
 }
 
-$origin = GETPOST('origin', 'alpha') ?GETPOST('origin', 'alpha') : 'expedition'; // Example: commande, propal
-$origin_id = GETPOST('id', 'int') ?GETPOST('id', 'int') : '';
+$origin = GETPOST('origin', 'alpha') ? GETPOST('origin', 'alpha') : 'expedition'; // Example: commande, propal
+$origin_id = GETPOST('id', 'int') ? GETPOST('id', 'int') : '';
 $id = $origin_id;
 if (empty($origin_id)) {
 	$origin_id  = GETPOST('origin_id', 'int'); // Id of order or propal
@@ -82,7 +83,7 @@ if (empty($origin_id)) {
 	$origin_id  = GETPOST('object_id', 'int'); // Id of order or propal
 }
 $ref = GETPOST('ref', 'alpha');
-$line_id = GETPOST('lineid', 'int') ?GETPOST('lineid', 'int') : '';
+$line_id = GETPOSTINT('lineid');
 $facid = GETPOST('facid', 'int');
 
 $action		= GETPOST('action', 'alpha');
@@ -90,9 +91,9 @@ $confirm	= GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
 //PDF
-$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
-$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
-$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
 
 $object = new Expedition($db);
 $objectorder = new Commande($db);
@@ -246,7 +247,7 @@ if (empty($reshook)) {
 		$object->socid = $objectsrc->socid;
 		$object->ref_customer = GETPOST('ref_customer', 'alpha');
 		$object->model_pdf = GETPOST('model');
-		$object->date_delivery = $date_delivery; // Date delivery planed
+		$object->date_delivery = $date_delivery; // Date delivery planned
 		$object->fk_delivery_address = $objectsrc->fk_delivery_address;
 		$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 		$object->tracking_number = GETPOST('tracking_number', 'alpha');
@@ -318,7 +319,7 @@ if (empty($reshook)) {
 					// No detail were provided for lots, so if a qty was provided, we can throw an error.
 					if (GETPOST($qty)) {
 						// We try to set an amount
-						// Case we dont use the list of available qty for each warehouse/lot
+						// Case we don't use the list of available qty for each warehouse/lot
 						// GUI does not allow this yet
 						setEventMessages($langs->trans("StockIsRequiredToChooseWhichLotToUse").' ('.$langs->trans("Line").' '.GETPOST($idl, 'int').')', null, 'errors');
 						$error++;
@@ -389,7 +390,7 @@ if (empty($reshook)) {
 						if (GETPOST($qty, 'int') > 0 || getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {
 							$ent = "entl".$i;
 							$idl = "idl".$i;
-							$entrepot_id = is_numeric(GETPOST($ent, 'int')) ?GETPOST($ent, 'int') : GETPOST('entrepot_id', 'int');
+							$entrepot_id = is_numeric(GETPOST($ent, 'int')) ? GETPOST($ent, 'int') : GETPOST('entrepot_id', 'int');
 							if ($entrepot_id < 0) {
 								$entrepot_id = '';
 							}
@@ -462,8 +463,8 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
-		((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'creer'))
-		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'shipping_advance', 'validate')))
+		((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'creer'))
+		|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'shipping_advance', 'validate')))
 	) {
 		$object->fetch_thirdparty();
 
@@ -473,7 +474,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -537,7 +538,7 @@ if (empty($reshook)) {
 		|| $action == 'settrueDepth'
 		|| $action == 'setshipping_method_id')
 		&& $user->hasRight('expedition', 'creer')
-		) {
+	) {
 		// Action update
 		$error = 0;
 
@@ -555,8 +556,8 @@ if (empty($reshook)) {
 			$object->trueWidth = trim(GETPOST('trueWidth', 'int'));
 		}
 		if ($action == 'settrueHeight') {
-						$object->trueHeight = trim(GETPOST('trueHeight', 'int'));
-						$object->size_units = GETPOST('size_units', 'int');
+			$object->trueHeight = trim(GETPOST('trueHeight', 'int'));
+			$object->size_units = GETPOST('size_units', 'int');
 		}
 		if ($action == 'settrueDepth') {
 			$object->trueDepth = trim(GETPOST('trueDepth', 'int'));
@@ -752,13 +753,26 @@ if (empty($reshook)) {
 				} else {
 					if ($lines[$i]->fk_product > 0) {
 						// line without lot
-						if ($lines[$i]->entrepot_id > 0) {
+						if ($lines[$i]->entrepot_id == 0) {
+							// single warehouse shipment line
+							$stockLocation = 0;
+							$qty = "qtyl".$line_id;
+							$line->id = $line_id;
+							$line->entrepot_id = GETPOSTINT($stockLocation);
+							$line->qty = GETPOSTFLOAT($qty);
+							if ($line->update($user) < 0) {
+								setEventMessages($line->error, $line->errors, 'errors');
+								$error++;
+							}
+							unset($_POST[$stockLocation]);
+							unset($_POST[$qty]);
+						} elseif ($lines[$i]->entrepot_id > 0) {
 							// single warehouse shipment line
 							$stockLocation = "entl".$line_id;
 							$qty = "qtyl".$line_id;
 							$line->id = $line_id;
-							$line->entrepot_id = GETPOST($stockLocation, 'int');
-							$line->qty = GETPOST($qty, 'int');
+							$line->entrepot_id = GETPOSTINT($stockLocation);
+							$line->qty = GETPOSTFLOAT($qty);
 							if ($line->update($user) < 0) {
 								setEventMessages($line->error, $line->errors, 'errors');
 								$error++;
@@ -771,11 +785,11 @@ if (empty($reshook)) {
 								if (!$error) {
 									$stockLocation = "entl".$detail_entrepot->line_id;
 									$qty = "qtyl".$detail_entrepot->line_id;
-									$warehouse = GETPOST($stockLocation, 'int');
+									$warehouse = GETPOSTINT($stockLocation);
 									if (!empty($warehouse)) {
 										$line->id = $detail_entrepot->line_id;
 										$line->entrepot_id = $warehouse;
-										$line->qty = GETPOST($qty, 'int');
+										$line->qty = GETPOSTFLOAT($qty);
 										if ($line->update($user) < 0) {
 											setEventMessages($line->error, $line->errors, 'errors');
 											$error++;
@@ -790,7 +804,7 @@ if (empty($reshook)) {
 						} elseif (!isModEnabled('stock') && empty($conf->productbatch->enabled)) { // both product batch and stock are not activated.
 							$qty = "qtyl".$line_id;
 							$line->id = $line_id;
-							$line->qty = GETPOST($qty, 'int');
+							$line->qty = GETPOSTFLOAT($qty);
 							$line->entrepot_id = 0;
 							if ($line->update($user) < 0) {
 								setEventMessages($line->error, $line->errors, 'errors');
@@ -804,7 +818,7 @@ if (empty($reshook)) {
 						// Product no predefined
 						$qty = "qtyl".$line_id;
 						$line->id = $line_id;
-						$line->qty = GETPOST($qty, 'int');
+						$line->qty = GETPOSTFLOAT($qty);
 						$line->entrepot_id = 0;
 						if ($line->update($user) < 0) {
 							setEventMessages($line->error, $line->errors, 'errors');
@@ -826,7 +840,7 @@ if (empty($reshook)) {
 		unset($_POST["lineid"]);
 
 		if (!$error) {
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
@@ -861,6 +875,7 @@ if (empty($reshook)) {
 	}
 	$triggersendname = 'SHIPPING_SENTBYMAIL';
 	$paramname = 'id';
+	$autocopy = 'MAIN_MAIL_AUTOCOPY_SHIPMENT_TO';
 	$mode = 'emailfromshipment';
 	$trackid = 'shi'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
@@ -898,7 +913,9 @@ if ($action == 'create2') {
 	print load_fiche_titre($langs->trans("CreateShipment"), '', 'dolly');
 
 	print '<br>'.$langs->trans("ShipmentCreationIsDoneFromOrder");
-	$action = ''; $id = ''; $ref = '';
+	$action = '';
+	$id = '';
+	$ref = '';
 }
 
 // Mode creation.
@@ -973,7 +990,7 @@ if ($action == 'create') {
 
 			// Project
 			if (isModEnabled('project')) {
-				$projectid = GETPOST('projectid', 'int') ?GETPOST('projectid', 'int') : 0;
+				$projectid = GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : 0;
 				if (empty($projectid) && !empty($object->fk_project)) {
 					$projectid = $object->fk_project;
 				}
@@ -1003,7 +1020,7 @@ if ($action == 'create') {
 			// Note Public
 			print '<tr><td>'.$langs->trans("NotePublic").'</td>';
 			print '<td colspan="3">';
-			$doleditor = new DolEditor('note_public', $object->note_public, '', 60, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_public', $object->note_public, '', 60, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			print "</td></tr>";
 
@@ -1011,7 +1028,7 @@ if ($action == 'create') {
 			if ($object->note_private && !$user->socid) {
 				print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
 				print '<td colspan="3">';
-				$doleditor = new DolEditor('note_private', $object->note_private, '', 60, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
+				$doleditor = new DolEditor('note_private', $object->note_private, '', 60, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 				print $doleditor->Create(1);
 				print "</td></tr>";
 			}
@@ -1150,6 +1167,9 @@ if ($action == 'create') {
 						print '<td class="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Batch").' ('.$langs->trans("Stock").')</td>';
 					}
 				}
+				if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+					print '<td class="left">'.$langs->trans('StockEntryDate').'</td>';
+				}
 				print "</tr>\n";
 			}
 
@@ -1248,7 +1268,7 @@ if ($action == 'create') {
 
 					// unit of order
 					$unit_order = '';
-					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+					if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 						$unit_order = measuringUnitString($line->fk_unit);
 					}
 
@@ -1267,7 +1287,7 @@ if ($action == 'create') {
 
 					// Qty to ship
 					$quantityAsked = $line->qty;
-					if ($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+					if ($line->product_type == 1 && !getDolGlobalString('STOCK_SUPPORTS_SERVICES') && !getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
 						$quantityToBeDelivered = 0;
 					} else {
 						if (is_numeric($quantityDelivered)) {
@@ -1282,19 +1302,23 @@ if ($action == 'create') {
 						print '<!-- Case warehouse already known or product not a predefined product -->';
 						//ship from preselected location
 						$stock = + (isset($product->stock_warehouse[$warehouse_id]->real) ? $product->stock_warehouse[$warehouse_id]->real : 0); // Convert to number
-						$deliverableQty = min($quantityToBeDelivered, $stock);
+						if (getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+							$deliverableQty = $quantityToBeDelivered;
+						} else {
+							$deliverableQty = min($quantityToBeDelivered, $stock);
+						}
 						if ($deliverableQty < 0) {
 							$deliverableQty = 0;
 						}
 						if (empty($conf->productbatch->enabled) || !$product->hasbatch()) {
 							// Quantity to send
 							print '<td class="center">';
-							if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
 								if (GETPOST('qtyl'.$indiceAsked, 'int')) {
 									$deliverableQty = GETPOST('qtyl'.$indiceAsked, 'int');
 								}
 								print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-								print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" class="qtyl center" type="text" size="4" value="'.$deliverableQty.'">';
+								print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" class="qtyl right" type="text" size="4" value="'.$deliverableQty.'">';
 							} else {
 								if (getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {
 									print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
@@ -1308,11 +1332,11 @@ if ($action == 'create') {
 							// Stock
 							if (isModEnabled('stock')) {
 								print '<td class="left">';
-								if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {   // Type of product need stock change ?
+								if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {   // Type of product need stock change ?
 									// Show warehouse combo list
 									$ent = "entl".$indiceAsked;
 									$idl = "idl".$indiceAsked;
-									$tmpentrepot_id = is_numeric(GETPOST($ent, 'int')) ?GETPOST($ent, 'int') : $warehouse_id;
+									$tmpentrepot_id = is_numeric(GETPOST($ent, 'int')) ? GETPOST($ent, 'int') : $warehouse_id;
 									if ($line->fk_product > 0) {
 										print '<!-- Show warehouse selection -->';
 
@@ -1330,15 +1354,17 @@ if ($action == 'create') {
 										}
 									}
 								} else {
-									print $langs->trans("Service");
+									print '<span class="opacitymedium">('.$langs->trans("Service").')</span><input name="entl'.$indiceAsked.'" id="entl'.$indiceAsked.'" type="hidden" value="0">';
 								}
 								print '</td>';
 							}
-
+							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+								print '<td></td>';
+							} //StockEntrydate
 							print "</tr>\n";
 
 							// Show subproducts of product
-							if (!empty($conf->global->PRODUIT_SOUSPRODUITS) && $line->fk_product > 0) {
+							if (getDolGlobalString('PRODUIT_SOUSPRODUITS') && $line->fk_product > 0) {
 								$product->get_sousproduits_arbo();
 								$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
 								if (count($prods_arbo) > 0) {
@@ -1351,13 +1377,21 @@ if ($action == 'create') {
 										print "<tr class=\"oddeven\"><td>&nbsp; &nbsp; &nbsp; ->
 											<a href=\"".DOL_URL_ROOT."/product/card.php?id=".$value['id']."\">".$value['fullpath']."
 											</a> (".$value['nb'].")</td><td class=\"center\"> ".$value['nb_total']."</td><td>&nbsp;</td><td>&nbsp;</td>
-											<td class=\"center\">".$value['stock']." ".$img."</td></tr>";
+											<td class=\"center\">".$value['stock']." ".$img."</td>";
+										if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+											print '<td></td>';
+										} //StockEntrydate
+										print "</tr>";
 									}
 								}
 							}
 						} else {
 							// Product need lot
-							print '<td></td><td></td></tr>'; // end line and start a new one for lot/serial
+							print '<td></td><td></td>';
+							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+								print '<td></td>';
+							} //StockEntrydate
+							print '</tr>'; // end line and start a new one for lot/serial
 							print '<!-- Case product need lot -->';
 
 							$staticwarehouse = new Entrepot($db);
@@ -1381,7 +1415,7 @@ if ($action == 'create') {
 									$deliverableQty = min($quantityToBeDelivered, $batchStock);
 									print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? 'oddeven' : '').'>';
 									print '<td colspan="3" ></td><td class="center">';
-									print '<input class="qtyl" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
+									print '<input class="qtyl right" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
 									print '</td>';
 
 									print '<!-- Show details of lot -->';
@@ -1393,10 +1427,10 @@ if ($action == 'create') {
 
 									$detail = '';
 									$detail .= $langs->trans("Batch").': '.$dbatch->batch;
-									if (empty($conf->global->PRODUCT_DISABLE_SELLBY) && !empty($dbatch->sellby)) {
+									if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY') && !empty($dbatch->sellby)) {
 										$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
 									}
-									if (empty($conf->global->PRODUCT_DISABLE_EATBY) && !empty($dbatch->eatby)) {
+									if (!getDolGlobalString('PRODUCT_DISABLE_EATBY') && !empty($dbatch->eatby)) {
 										$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
 									}
 									$detail .= ' - '.$langs->trans("Qty").': '.$dbatch->qty;
@@ -1408,24 +1442,36 @@ if ($action == 'create') {
 										$quantityToBeDelivered = 0;
 									}
 									$subj++;
-									print '</td></tr>';
+									print '</td>';
+									if (getDolGlobalInt('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+										print '<td>'.dol_print_date($dbatch->context['stock_entry_date'], 'day').'</td>'; //StockEntrydate
+									}
+									print '</tr>';
 								}
 							} else {
 								print '<!-- Case there is no details of lot at all -->';
 								print '<tr class="oddeven"><td colspan="3"></td><td class="center">';
-								print '<input class="qtyl" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0" disabled="disabled"> ';
+								print '<input class="qtyl right" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0" disabled="disabled"> ';
 								print '</td>';
 
 								print '<td class="left">';
 								print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $staticwarehouse->label);
-								print '</td></tr>';
+								print '</td>';
+								if (getDolGlobalInt('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+									print '<td></td>';
+								} //StockEntrydate
+								print '</tr>';
 							}
 						}
 					} else {
 						// ship from multiple locations
 						if (empty($conf->productbatch->enabled) || !$product->hasbatch()) {
 							print '<!-- Case warehouse not already known and product does not need lot -->';
-							print '<td></td><td></td></tr>'."\n"; // end line and start a new one for each warehouse
+							print '<td></td><td></td>';
+							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+								print '<td></td>';
+							}//StockEntrydate
+							print '</tr>'."\n"; // end line and start a new one for each warehouse
 
 							print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 							$subj = 0;
@@ -1453,7 +1499,7 @@ if ($action == 'create') {
 									// Quantity to send
 									print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? 'oddeven' : '').'>';
 									print '<td colspan="3" ></td><td class="center"><!-- qty to ship (no lot management for product line indiceAsked='.$indiceAsked.') -->';
-									if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+									if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
 										if (isset($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
 											$deliverableQty = min($quantityToBeDelivered, $stock - $alreadyQtySetted[$line->fk_product][intval($warehouse_id)]);
 										} else {
@@ -1464,7 +1510,9 @@ if ($action == 'create') {
 											$deliverableQty = min($quantityToBeDelivered, $stock);
 										}
 
-										if ($deliverableQty < 0) $deliverableQty = 0;
+										if ($deliverableQty < 0) {
+											$deliverableQty = 0;
+										}
 
 										$tooltip = '';
 										if (!empty($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
@@ -1480,7 +1528,7 @@ if ($action == 'create') {
 											$deliverableQty = GETPOST($inputName, 'int');
 										}
 
-										print '<input '.$tooltip.' class="qtyl" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
+										print '<input '.$tooltip.' class="qtyl right" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
 										print '<input name="ent1'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$warehouse_id.'">';
 									} else {
 										if (getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {
@@ -1494,13 +1542,13 @@ if ($action == 'create') {
 									// Stock
 									if (isModEnabled('stock')) {
 										print '<td class="left">';
-										if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+										if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 											print $tmpwarehouseObject->getNomUrl(0).' ';
 
 											print '<!-- Show details of stock -->';
 											print '('.$stock.')';
 										} else {
-											print $langs->trans("Service");
+											print '<span class="opacitymedium">('.$langs->trans("Service").')</span>';
 										}
 										print '</td>';
 									}
@@ -1509,11 +1557,14 @@ if ($action == 'create') {
 										$quantityToBeDelivered = 0;
 									}
 									$subj++;
+									if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+										print '<td></td>';
+									}//StockEntrydate
 									print "</tr>\n";
 								}
 							}
-							// Show subproducts of product (not recommanded)
-							if (!empty($conf->global->PRODUIT_SOUSPRODUITS) && $line->fk_product > 0) {
+							// Show subproducts of product (not recommended)
+							if (getDolGlobalString('PRODUIT_SOUSPRODUITS') && $line->fk_product > 0) {
 								$product->get_sousproduits_arbo();
 								$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
 								if (count($prods_arbo) > 0) {
@@ -1528,13 +1579,20 @@ if ($action == 'create') {
 										<a href=\"".DOL_URL_ROOT."/product/card.php?id=".$value['id']."\">".$value['fullpath']."
 										</a> (".$value['nb'].")</td><td class=\"center\"> ".$value['nb_total']."</td><td>&nbsp;</td><td>&nbsp;</td>
 										<td class=\"center\">".$value['stock']." ".$img."</td>";
+										if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+											print '<td></td>';
+										}//StockEntrydate
 										print "</tr>";
 									}
 								}
 							}
 						} else {
 							print '<!-- Case warehouse not already known and product need lot -->';
-							print '<td></td><td></td></tr>'; // end line and start a new one for lot/serial
+							print '<td></td><td></td>';
+							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+								print '<td></td>';
+							}//StockEntrydate
+							print '</tr>'; // end line and start a new one for lot/serial
 
 							$subj = 0;
 							print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
@@ -1575,7 +1633,9 @@ if ($action == 'create') {
 											$deliverableQty = min($quantityToBeDelivered, $batchStock);
 										}
 
-										if ($deliverableQty < 0) $deliverableQty = 0;
+										if ($deliverableQty < 0) {
+											$deliverableQty = 0;
+										}
 
 										$inputName = 'qtyl'.$indiceAsked.'_'.$subj;
 										if (GETPOSTISSET($inputName)) {
@@ -1591,8 +1651,8 @@ if ($action == 'create') {
 										}
 										$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = $deliverableQty + $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
 
-										print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ?'oddeven' : '').'><td colspan="3"></td><td class="center">';
-										print '<input class="qtyl '.$tooltipClass.'" title="'.$tooltipTitle.'" name="'.$inputName.'" id="'.$inputName.'" type="text" size="4" value="'.$deliverableQty.'">';
+										print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? 'oddeven' : '').'><td colspan="3"></td><td class="center">';
+										print '<input class="qtyl right '.$tooltipClass.'" title="'.$tooltipTitle.'" name="'.$inputName.'" id="'.$inputName.'" type="text" size="4" value="'.$deliverableQty.'">';
 										print '</td>';
 
 										print '<td class="left">';
@@ -1608,12 +1668,12 @@ if ($action == 'create') {
 										if ($result > 0) {
 											print $productlotObject->getNomUrl(1);
 										} else {
-											print 'TableLotIncompleteRunRepairWithParamStandardEqualConfirmed';
+											print $langs->trans("TableLotIncompleteRunRepairWithParamStandardEqualConfirmed");
 										}
-										if (empty($conf->global->PRODUCT_DISABLE_SELLBY) && !empty($dbatch->sellby)) {
+										if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY') && !empty($dbatch->sellby)) {
 											print ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
 										}
-										if (empty($conf->global->PRODUCT_DISABLE_EATBY) && !empty($dbatch->eatby)) {
+										if (!getDolGlobalString('PRODUCT_DISABLE_EATBY') && !empty($dbatch->eatby)) {
 											print ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
 										}
 										print ' ('.$dbatch->qty.')';
@@ -1623,7 +1683,11 @@ if ($action == 'create') {
 										}
 										//dol_syslog('deliverableQty = '.$deliverableQty.' batchStock = '.$batchStock);
 										$subj++;
-										print '</td></tr>';
+										print '</td>';
+										if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+											print '<td class="left">'.dol_print_date($dbatch->context['stock_entry_date'], 'day').'</td>';
+										}
+										print '</tr>';
 									}
 								}
 							}
@@ -1634,7 +1698,7 @@ if ($action == 'create') {
 							print '<!-- line not shown yet, we show it -->';
 							print '<tr class="oddeven"><td colspan="3"></td><td class="center">';
 
-							if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
 								$disabled = '';
 								if (isModEnabled('productbatch') && $product->hasbatch()) {
 									$disabled = 'disabled="disabled"';
@@ -1642,14 +1706,14 @@ if ($action == 'create') {
 								if ($warehouse_selected_id <= 0) {		// We did not force a given warehouse, so we won't have no warehouse to change qty.
 									$disabled = 'disabled="disabled"';
 								}
-								print '<input class="qtyl" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0"'.($disabled ? ' '.$disabled : '').'> ';
+								print '<input class="qtyl right" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0"'.($disabled ? ' '.$disabled : '').'> ';
 							} else {
 								print $langs->trans("NA");
 							}
 							print '</td>';
 
 							print '<td class="left">';
-							if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 								if ($warehouse_selected_id > 0) {
 									$warehouseObject = new Entrepot($db);
 									$warehouseObject->fetch($warehouse_selected_id);
@@ -1662,9 +1726,12 @@ if ($action == 'create') {
 									}
 								}
 							} else {
-								print $langs->trans("Service");
+								print '<span class="opacitymedium">('.$langs->trans("Service").')</span>';
 							}
 							print '</td>';
+							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+								print '<td></td>';
+							}//StockEntrydate
 							print '</tr>';
 						}
 					}
@@ -1716,7 +1783,8 @@ if ($action == 'create') {
 		$typeobject = $object->origin;
 		$origin = $object->origin;
 		$origin_id = $object->origin_id;
-		$object->fetch_origin(); // Load property $object->commande, $object->propal, ...
+
+		$object->fetch_origin(); // Load property $object->origin_object (old $object->commande, $object->propal, ...)
 	}
 
 	$soc = new Societe($db);
@@ -1729,10 +1797,10 @@ if ($action == 'create') {
 
 	$formconfirm = '';
 
-	// Confirm deleteion
+	// Confirm deletion
 	if ($action == 'delete') {
 		$formquestion = array();
-		if ($object->statut == Expedition::STATUS_CLOSED && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
+		if ($object->statut == Expedition::STATUS_CLOSED && getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
 			$formquestion = array(
 					array(
 						'label' => $langs->trans('ShipmentIncrementStockOnDelete'),
@@ -1778,7 +1846,7 @@ if ($action == 'create') {
 
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('ValidateSending'), $text, 'confirm_valid', '', 0, 1, 250);
 	}
-	// Confirm cancelation
+	// Confirm cancellation
 	if ($action == 'cancel') {
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('CancelSending'), $langs->trans("ConfirmCancelSending", $object->ref), 'confirm_cancel', '', 0, 1);
 	}
@@ -1801,12 +1869,11 @@ if ($action == 'create') {
 	$totalWeight = $tmparray['weight'];
 	$totalVolume = $tmparray['volume'];
 
-
-	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
+	if (!empty($typeobject) && $typeobject === 'commande' && is_object($object->$typeobject) && $object->$typeobject->id && isModEnabled('commande')) {
 		$objectsrc = new Commande($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
+	if (!empty($typeobject) && $typeobject === 'propal' && is_object($object->$typeobject) && $object->$typeobject->id && isModEnabled("propal")) {
 		$objectsrc = new Propal($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}
@@ -1853,7 +1920,7 @@ if ($action == 'create') {
 	print '<table class="border tableforfield centpercent">';
 
 	// Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
+	if (!empty($typeobject) && $typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
 		print '<tr><td>';
 		print $langs->trans("RefOrder").'</td>';
 		print '<td colspan="3">';
@@ -1861,7 +1928,7 @@ if ($action == 'create') {
 		print "</td>\n";
 		print '</tr>';
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
+	if (!empty($typeobject) && $typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
 		print '<tr><td>';
 		print $langs->trans("RefProposal").'</td>';
 		print '<td colspan="3">';
@@ -2095,7 +2162,7 @@ if ($action == 'create') {
 	print '<thead>';
 	print '<tr class="liste_titre">';
 	// Adds a line numbering column
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+	if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 		print '<td width="5" class="center linecolnum">&nbsp;</td>';
 	}
 	// Product/Service
@@ -2152,7 +2219,7 @@ if ($action == 'create') {
 
 	$outputlangs = $langs;
 
-	if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+	if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 		$object->fetch_thirdparty();
 		$newlang = '';
 		if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -2224,14 +2291,14 @@ if ($action == 'create') {
 			print '<tr class="oddeven" id="row-'.$lines[$i]->id.'" data-id="'.$lines[$i]->id.'" data-element="'.$lines[$i]->element.'" >';
 
 			// #
-			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+			if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 				print '<td class="center linecolnum">'.($i + 1).'</td>';
 			}
 
 			// Predefined product or service
 			if ($lines[$i]->fk_product > 0) {
 				// Define output language
-				if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 					$prod = new Product($db);
 					$prod->fetch($lines[$i]->fk_product);
 					$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product_label;
@@ -2291,7 +2358,7 @@ if ($action == 'create') {
 			}
 
 			$unit_order = '';
-			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				$unit_order = measuringUnitString($lines[$i]->fk_unit);
 			}
 
@@ -2345,13 +2412,13 @@ if ($action == 'create') {
 					foreach ($lines[$i]->detail_batch as $detail_batch) {
 						print '<tr>';
 						// Qty to ship or shipped
-						print '<td><input class="qtyl" name="qtyl'.$detail_batch->fk_expeditiondet.'_'.$detail_batch->id.'" id="qtyl'.$line_id.'_'.$detail_batch->id.'" type="text" size="4" value="'.$detail_batch->qty.'"></td>';
-						// Batch number managment
+						print '<td><input class="qtyl right" name="qtyl'.$detail_batch->fk_expeditiondet.'_'.$detail_batch->id.'" id="qtyl'.$line_id.'_'.$detail_batch->id.'" type="text" size="4" value="'.$detail_batch->qty.'"></td>';
+						// Batch number management
 						if ($lines[$i]->entrepot_id == 0) {
 							// only show lot numbers from src warehouse when shipping from multiple warehouses
 							$line->fetch($detail_batch->fk_expeditiondet);
 						}
-						$entrepot_id = !empty($detail_batch->entrepot_id)?$detail_batch->entrepot_id:$lines[$i]->entrepot_id;
+						$entrepot_id = !empty($detail_batch->entrepot_id) ? $detail_batch->entrepot_id : $lines[$i]->entrepot_id;
 						print '<td>'.$formproduct->selectLotStock($detail_batch->fk_origin_stock, 'batchl'.$detail_batch->fk_expeditiondet.'_'.$detail_batch->fk_origin_stock, '', 1, 0, $lines[$i]->fk_product, $entrepot_id).'</td>';
 						print '</tr>';
 					}
@@ -2359,7 +2426,7 @@ if ($action == 'create') {
 					print '<tr>';
 					// Qty to ship or shipped
 					print '<td><input class="qtyl" name="qtyl'.$line_id.'_0" id="qtyl'.$line_id.'_0" type="text" size="4" value="0"></td>';
-					// Batch number managment
+					// Batch number management
 					print '<td>'.$formproduct->selectLotStock('', 'batchl'.$line_id.'_0', '', 1, 0, $lines[$i]->fk_product).'</td>';
 					print '</tr>';
 				} elseif (isModEnabled('stock')) {
@@ -2368,10 +2435,10 @@ if ($action == 'create') {
 							print '<!-- case edit 2 -->';
 							print '<tr>';
 							// Qty to ship or shipped
-							print '<td><input class="qtyl" name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'">'.$unit_order.'</td>';
+							print '<td><input class="qtyl right" name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'">'.$unit_order.'</td>';
 							// Warehouse source
 							print '<td>'.$formproduct->selectWarehouses($lines[$i]->entrepot_id, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
-							// Batch number managment
+							// Batch number management
 							print '<td> - '.$langs->trans("NA").'</td>';
 							print '</tr>';
 						} elseif (count($lines[$i]->details_entrepot) > 1) {
@@ -2379,36 +2446,44 @@ if ($action == 'create') {
 							foreach ($lines[$i]->details_entrepot as $detail_entrepot) {
 								print '<tr>';
 								// Qty to ship or shipped
-								print '<td><input class="qtyl" name="qtyl'.$detail_entrepot->line_id.'" id="qtyl'.$detail_entrepot->line_id.'" type="text" size="4" value="'.$detail_entrepot->qty_shipped.'">'.$unit_order.'</td>';
+								print '<td><input class="qtyl right" name="qtyl'.$detail_entrepot->line_id.'" id="qtyl'.$detail_entrepot->line_id.'" type="text" size="4" value="'.$detail_entrepot->qty_shipped.'">'.$unit_order.'</td>';
 								// Warehouse source
 								print '<td>'.$formproduct->selectWarehouses($detail_entrepot->entrepot_id, 'entl'.$detail_entrepot->line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
-								// Batch number managment
+								// Batch number management
 								print '<td> - '.$langs->trans("NA").'</td>';
 								print '</tr>';
 							}
-						} else {
+						} elseif ($lines[$i]->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
 							print '<!-- case edit 4 -->';
-							print '<tr><td colspan="3">'.$langs->trans("NotEnoughStock").'</td></tr>';
+							print '<tr>';
+							// Qty to ship or shipped
+							print '<td><input class="qtyl right" name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'"></td>';
+							print '<td><span class="opacitymedium">('.$langs->trans("Service").')</span></td>';
+							print '<td></td>';
+							print '</tr>';
+						} else {
+							print '<!-- case edit 5 -->';
+							print '<tr><td colspan="3">'.$langs->trans("ErrorStockIsNotEnough").'</td></tr>';
 						}
 					} else {
-						print '<!-- case edit 5 -->';
+						print '<!-- case edit 6 -->';
 						print '<tr>';
 						// Qty to ship or shipped
-						print '<td><input class="qtyl" name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'">'.$unit_order.'</td>';
+						print '<td><input class="qtyl right" name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'">'.$unit_order.'</td>';
 						// Warehouse source
 						print '<td></td>';
-						// Batch number managment
+						// Batch number management
 						print '<td></td>';
 						print '</tr>';
 					}
 				} elseif (!isModEnabled('stock') && empty($conf->productbatch->enabled)) { // both product batch and stock are not activated.
-					print '<!-- case edit 6 -->';
+					print '<!-- case edit 7 -->';
 					print '<tr>';
 					// Qty to ship or shipped
-					print '<td><input class="qtyl" name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'"></td>';
+					print '<td><input class="qtyl right" name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'"></td>';
 					// Warehouse source
 					print '<td></td>';
-					// Batch number managment
+					// Batch number management
 					print '<td></td>';
 					print '</tr>';
 				}
@@ -2421,7 +2496,9 @@ if ($action == 'create') {
 				// Warehouse source
 				if (isModEnabled('stock')) {
 					print '<td class="linecolwarehousesource tdoverflowmax200">';
-					if ($lines[$i]->entrepot_id > 0) {
+					if ($lines[$i]->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+						print '<span class="opacitymedium">('.$langs->trans("Service").')</span>';
+					} elseif ($lines[$i]->entrepot_id > 0) {
 						$entrepot = new Entrepot($db);
 						$entrepot->fetch($lines[$i]->entrepot_id);
 						print $entrepot->getNomUrl(1);
@@ -2439,7 +2516,7 @@ if ($action == 'create') {
 					print '</td>';
 				}
 
-				// Batch number managment
+				// Batch number management
 				if (isModEnabled('productbatch')) {
 					if (isset($lines[$i]->detail_batch)) {
 						print '<!-- Detail of lot -->';
@@ -2448,10 +2525,10 @@ if ($action == 'create') {
 							$detail = '';
 							foreach ($lines[$i]->detail_batch as $dbatch) {	// $dbatch is instance of ExpeditionLineBatch
 								$detail .= $langs->trans("Batch").': '.$dbatch->batch;
-								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+								if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 									$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
 								}
-								if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+								if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 									$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
 								}
 								$detail .= ' - '.$langs->trans("Qty").': '.$dbatch->qty;
@@ -2565,11 +2642,11 @@ if ($action == 'create') {
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-																									   // modified by hook
+		// modified by hook
 		if (empty($reshook)) {
 			if ($object->statut == Expedition::STATUS_DRAFT && $num_prod > 0) {
-				if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'creer'))
-				 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'shipping_advance', 'validate'))) {
+				if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'creer'))
+				 || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'shipping_advance', 'validate'))) {
 					print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=valid&token='.newToken().'&id='.$object->id, '');
 				} else {
 					print dolGetButtonAction($langs->trans('NotAllowed'), $langs->trans('Validate'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
@@ -2591,7 +2668,7 @@ if ($action == 'create') {
 			// Send
 			if (empty($user->socid)) {
 				if ($object->statut > 0) {
-					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->hasRight('expedition', 'shipping_advance', 'send')) {
+					if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight('expedition', 'shipping_advance', 'send')) {
 						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
 					} else {
 						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
@@ -2620,7 +2697,7 @@ if ($action == 'create') {
 					if (!$object->billed && getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT') !== '0') {
 						print dolGetButtonAction('', $langs->trans('ClassifyBilled'), 'default', $_SERVER["PHP_SELF"].'?action=classifybilled&token='.newToken().'&id='.$object->id, '');
 					}
-					print dolGetButtonAction('', $langs->trans("Close"), 'default', $_SERVER["PHP_SELF"].'?action='. $paramaction .'&token='.newToken().'&id='.$object->id, '');
+					print dolGetButtonAction('', $langs->trans("Close"), 'default', $_SERVER["PHP_SELF"].'?action=close&token='.newToken().'&id='.$object->id, '');
 				}
 			}
 

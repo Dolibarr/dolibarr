@@ -9,6 +9,7 @@
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2018  Charlie Benke           <charlie@patas-monkey.com>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +52,7 @@ if (isModEnabled('contrat')) {
 $langs->loadLangs(array("interventions", "admin", "compta", "bills"));
 
 // Security check
-$id = (GETPOST('fichinterid', 'int') ?GETPOST('fichinterid', 'int') : GETPOST('id', 'int'));
+$id = (GETPOST('fichinterid', 'int') ? GETPOST('fichinterid', 'int') : GETPOST('id', 'int'));
 $ref = GETPOST('ref', 'alpha');
 $date_next_execution = GETPOST('date_next_execution', 'alpha');
 $action = GETPOST('action', 'aZ09');
@@ -141,13 +142,13 @@ if ($action == 'add') {
 	}
 
 	// gestion des fréquences et des échéances
-	$frequency = GETPOST('frequency', 'int');
+	$frequency = GETPOSTINT('frequency');
 	$reyear = GETPOST('reyear');
 	$remonth = GETPOST('remonth');
 	$reday = GETPOST('reday');
 	$rehour = GETPOST('rehour');
 	$remin = GETPOST('remin');
-	$nb_gen_max = (GETPOST('nb_gen_max', 'int') ?GETPOST('nb_gen_max', 'int') : 0);
+	$nb_gen_max = (GETPOST('nb_gen_max', 'int') ? GETPOST('nb_gen_max', 'int') : 0);
 	if (GETPOST('frequency')) {
 		if (empty($reyear) || empty($remonth) || empty($reday)) {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
@@ -167,14 +168,14 @@ if ($action == 'add') {
 		$object->id_origin = $id;
 		$object->title			= GETPOST('titre', 'alpha');
 		$object->description	= GETPOST('description', 'restricthtml');
-		$object->socid			= GETPOST('socid', 'alpha');
-		$object->fk_project		= GETPOST('projectid', 'int');
-		$object->fk_contract	= GETPOST('contractid', 'int');
+		$object->socid			= GETPOSTINT('socid');
+		$object->fk_project		= GETPOSTINT('projectid');
+		$object->fk_contrat		= GETPOSTINT('contractid');
 
 		$object->frequency = $frequency;
 		$object->unit_frequency = GETPOST('unit_frequency', 'alpha');
 		$object->nb_gen_max = $nb_gen_max;
-		$object->auto_validate = GETPOST('auto_validate', 'int');
+		$object->auto_validate = GETPOSTINT('auto_validate');
 
 		$object->date_when = $date_next_execution;
 
@@ -189,16 +190,16 @@ if ($action == 'add') {
 } elseif ($action == 'createfrommodel') {
 	$newinter = new Fichinter($db);
 
-	// on récupère les enregistrements
+	// Fetch the stored data
 	$object->fetch($id);
 	$res = $object->fetch_lines();
-	// on transfert les données de l'un vers l'autre
+	// Transfer the data from one to the other
 	if ($object->socid > 0) {
 		$newinter->socid = $object->socid;
 		$newinter->fk_project = $object->fk_project;
 		$newinter->fk_contrat = $object->fk_contrat;
 	} else {
-		$newinter->socid = GETPOST("socid");
+		$newinter->socid = GETPOSTINT("socid");
 	}
 
 	$newinter->entity = $object->entity;
@@ -332,7 +333,7 @@ if ($action == 'create') {
 		// Author
 		print "<tr><td>".$langs->trans("Author")."</td><td>".$user->getFullName($langs)."</td></tr>";
 
-		if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) {
+		if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
 			// Duration
 			print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
 			print '<td colspan="3">'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
@@ -343,7 +344,7 @@ if ($action == 'create') {
 		if (isModEnabled('project')) {
 			$formproject = new FormProjets($db);
 			print "<tr><td>".$langs->trans("Project")."</td><td>";
-			$projectid = GETPOST('projectid') ?GETPOST('projectid') : $object->fk_project;
+			$projectid = GETPOST('projectid') ? GETPOST('projectid') : $object->fk_project;
 
 			$numprojet = $formproject->select_projects($object->thirdparty->id, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, '');
 			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->thirdparty->id;
@@ -357,7 +358,7 @@ if ($action == 'create') {
 		if (isModEnabled('contrat')) {
 			$formcontract = new FormContract($db);
 			print "<tr><td>".$langs->trans("Contract")."</td><td>";
-			$contractid = GETPOST('contractid') ? GETPOST('contractid') : (!empty($object->fk_contract) ? $object->fk_contract : 0) ;
+			$contractid = GETPOST('contractid') ? GETPOST('contractid') : (!empty($object->fk_contrat) ? $object->fk_contrat : 0) ;
 			$numcontract = $formcontract->select_contract($object->thirdparty->id, $contractid, 'contracttid');
 			print "</td></tr>";
 		}
@@ -377,7 +378,7 @@ if ($action == 'create') {
 		print $form->textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency'));
 		print "</td><td>";
 		print '<input type="text" name="frequency" value="'.GETPOST('frequency', 'int').'" size="4">&nbsp;';
-		print $form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency') ?GETPOST('unit_frequency') : 'm'));
+		print $form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency') ? GETPOST('unit_frequency') : 'm'));
 		print "</td></tr>";
 
 		// First date of execution for cron
@@ -466,7 +467,7 @@ if ($action == 'create') {
 
 		print "</form>\n";
 	} else {
-		dol_print_error('', "Error, no fichinter ".$object->id);
+		dol_print_error(null, "Error, no fichinter ".$object->id);
 	}
 } elseif ($action == 'selsocforcreatefrommodel') {
 	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'intervention');
@@ -554,7 +555,7 @@ if ($action == 'create') {
 
 			print "<tr><td>".$langs->trans("Author").'</td><td colspan="3">'.$author->getFullName($langs)."</td></tr>";
 
-			if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) {
+			if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
 				// Duration
 				print '<tr><td class="titlefield">'.$langs->trans("TotalDuration").'</td>';
 				print '<td colspan="3">';
@@ -606,7 +607,7 @@ if ($action == 'create') {
 
 			print '<table class="border centpercent">';
 
-			// if "frequency" is empty or = 0, the reccurence is disabled
+			// if "frequency" is empty or = 0, the recurrence is disabled
 			print '<tr><td class="titlefield">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('Frequency');
@@ -783,7 +784,7 @@ if ($action == 'create') {
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter_rec as f";
 		$sql .= " , ".MAIN_DB_PREFIX."societe as s ";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE f.fk_soc = s.rowid";
@@ -791,12 +792,14 @@ if ($action == 'create') {
 		if (!empty($socid)) {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}
-		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
+		/*
 		if (!empty($search_ref)) {
 			$sql .= natural_search('f.titre', $search_ref);
 		}
+		*/
 		if (!empty($search_societe)) {
 			$sql .= natural_search('s.nom', $search_societe);
 		}

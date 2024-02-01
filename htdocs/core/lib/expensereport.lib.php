@@ -59,7 +59,7 @@ function expensereport_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$nbNote = 0;
 		if (!empty($object->note_private)) {
 			$nbNote++;
@@ -124,7 +124,7 @@ function payment_expensereport_prepare_head(PaymentExpenseReport $object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array   	        head array with tabs
  */
@@ -150,7 +150,7 @@ function expensereport_admin_prepare_head()
 	$head[$h][2] = 'expenserules';
 	$h++;
 
-	if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+	if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/expensereport_ik.php";
 		$head[$h][1] = $langs->trans("ExpenseReportsIk");
 		$head[$h][2] = 'expenseik';

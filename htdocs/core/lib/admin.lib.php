@@ -162,9 +162,9 @@ function versiondolibarrarray()
  *  @param		int			$nocommentremoval			Do no try to remove comments (in such a case, we consider that each line is a request, so use also $linelengthlimit=0)
  *  @param		int			$offsetforchartofaccount	Offset to use to load chart of account table to update sql on the fly to add offset to rowid and account_parent value
  *  @param		int			$colspan					2=Add a colspan=2 on td
- *  @param		int			$onlysqltoimportwebsite		Only sql resquests used to import a website template are allowed
+ *  @param		int			$onlysqltoimportwebsite		Only sql requests used to import a website template are allowed
  *  @param		string		$database					Database (replace __DATABASE__ with this value)
- * 	@return		int										<=0 if KO, >0 if OK
+ * 	@return		int										Return integer <=0 if KO, >0 if OK
  */
 function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler = '', $okerror = 'default', $linelengthlimit = 32768, $nocommentremoval = 0, $offsetforchartofaccount = 0, $colspan = 0, $onlysqltoimportwebsite = 0, $database = '')
 {
@@ -218,8 +218,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 							if (!count($versionrequest) || !count($versionarray) || versioncompare($versionrequest, $versionarray) > 0) {
 								$qualified = 0;
 							}
-						} else // This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
-						{
+						} else { // This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
 							$dbcollation = strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation));
 							//var_dump($reg[2]);
 							//var_dump($dbcollation);
@@ -243,7 +242,9 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 				if (empty($nocommentremoval)) {
 					$buf = preg_replace('/([,;ERLT\)])\s*--.*$/i', '\1', $buf); //remove comment from a line that not start with -- before add it to the buffer
 				}
-				if ($buffer) $buffer .= ' ';
+				if ($buffer) {
+					$buffer .= ' ';
+				}
 				$buffer .= trim($buf);
 			}
 
@@ -555,7 +556,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
  *	@param	    DoliDB		$db         Database handler
  *	@param	    string|int	$name		Name of constant or rowid of line
  *	@param	    int			$entity		Multi company id, -1 for all entities
- *	@return     int         			<0 if KO, >0 if OK
+ *	@return     int         			Return integer <0 if KO, >0 if OK
  *
  *	@see		dolibarr_get_const(), dolibarr_set_const(), dol_set_user_param()
  */
@@ -564,7 +565,7 @@ function dolibarr_del_const($db, $name, $entity = 1)
 	global $conf;
 
 	if (empty($name)) {
-		dol_print_error('', 'Error call dolibar_del_const with parameter name empty');
+		dol_print_error(null, 'Error call dolibar_del_const with parameter name empty');
 		return -1;
 	}
 
@@ -843,7 +844,7 @@ function security_prepare_head()
 	$sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
 	$sql .= " AND entity = ".((int) $conf->entity);
 	$sql .= " AND bydefault = 1";
-	if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+	if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 		$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
 	}
 	$resql = $db->query($sql);
@@ -859,7 +860,7 @@ function security_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
 	$head[$h][1] = $langs->trans("DefaultRights");
 	if ($nbPerms > 0) {
-		$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>' : '');
+		$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>' : '');
 	}
 	$head[$h][2] = 'default';
 	$h++;
@@ -869,16 +870,17 @@ function security_prepare_head()
 
 /**
  * Prepare array with list of tabs
- * @param object $object descriptor class
+ *
+ * @param 	object 	$object 	Descriptor class
  * @return  array				Array of tabs to show
  */
 function modulehelp_prepare_head($object)
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 	$h = 0;
 	$head = array();
 
-	// FIX for compatibity habitual tabs
+	// FIX for compatibility habitual tabs
 	$object->id = $object->numero;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$object->id.'&mode=desc';
@@ -912,7 +914,7 @@ function modulehelp_prepare_head($object)
  */
 function translation_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 	$h = 0;
 	$head = array();
 
@@ -1158,7 +1160,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 
 	$const_name = $objMod->const_name;
 	if ($noconfverification == 0) {
-		if (!empty($conf->global->$const_name)) {
+		if (getDolGlobalString($const_name)) {
 			return $ret;
 		}
 	}
@@ -1215,7 +1217,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 			}
 
 			if (isset($objMod->conflictwith) && is_array($objMod->conflictwith) && !empty($objMod->conflictwith)) {
-				// Desactivation des modules qui entrent en conflit
+				// Deactivation des modules qui entrent en conflict
 				$num = count($objMod->conflictwith);
 				for ($i = 0; $i < $num; $i++) {
 					foreach ($modulesdir as $dir) {
@@ -1230,7 +1232,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 
 	if (!count($ret['errors'])) {
 		$ret['nbmodules']++;
-		$ret['nbperms'] += (is_array($objMod->rights)?count($objMod->rights):0);
+		$ret['nbperms'] += (is_array($objMod->rights) ? count($objMod->rights) : 0);
 	}
 
 	return $ret;
@@ -1277,8 +1279,7 @@ function unActivateModule($value, $requiredby = 1)
 		if ($result <= 0) {
 			$ret = $objMod->error;
 		}
-	} else // We come here when we try to unactivate a module when module does not exists anymore in sources
-	{
+	} else { // We come here when we try to unactivate a module when module does not exists anymore in sources
 		//print $dir.$modFile;exit;
 		// TODO Replace this after DolibarrModules is moved as abstract class with a try catch to show module we try to disable has not been found or could not be loaded
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -1325,7 +1326,7 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 {
 	global $db, $modules, $conf, $langs;
 
-	dol_syslog("complete_dictionary_with_modules Search external modules to complete the list of dictionnary tables", LOG_DEBUG, 1);
+	dol_syslog("complete_dictionary_with_modules Search external modules to complete the list of dictionary tables", LOG_DEBUG, 1);
 
 	// Search modules
 	$modulesdir = dolGetModulesDirs();
@@ -1376,10 +1377,12 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 								}
 							}
 
+							// phpcs:disable
 							// Complete the arrays &$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond
-							if (empty($objMod->dictionaries) && !empty($objMod->dictionnaries)) {
-								$objMod->dictionaries = $objMod->dictionnaries; // For backward compatibility
+							if (empty($objMod->dictionaries) && !empty($objMod->{"dictionnaries"})) {
+								$objMod->dictionaries = $objMod->{"dictionnaries"}; // For backward compatibility
 							}
+							// phpcs:enable
 
 							if (!empty($objMod->dictionaries)) {
 								//var_dump($objMod->dictionaries['tabname']);
@@ -1514,13 +1517,13 @@ function activateModulesRequiredByCountry($country_code)
 						// We discard modules according to features level (PS: if module is activated we always show it)
 						$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 
-						if ($objMod->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+						if ($objMod->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							$modulequalified = 0;
 						}
-						if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+						if ($objMod->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 							$modulequalified = 0;
 						}
-						if (!empty($conf->global->$const_name)) {
+						if (getDolGlobalString($const_name)) {
 							$modulequalified = 0; // already activated
 						}
 
@@ -1595,14 +1598,14 @@ function complete_elementList_with_modules(&$elementList)
 
 						// We discard modules according to features level (PS: if module is activated we always show it)
 						$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-						if ($objMod->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && getDolGlobalString($const_name)) {
+						if ($objMod->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && getDolGlobalString($const_name)) {
 							$modulequalified = 0;
 						}
-						if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && getDolGlobalString($const_name)) {
+						if ($objMod->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && getDolGlobalString($const_name)) {
 							$modulequalified = 0;
 						}
-						//If module is not activated disqualified
-						if (empty($conf->global->$const_name)) {
+						// If module is not activated disqualified
+						if (!getDolGlobalString($const_name)) {
 							$modulequalified = 0;
 						}
 
@@ -1667,7 +1670,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 	$form = new Form($db);
 
 	if (empty($strictw3c)) {
-		dol_syslog("Warning: Function form_constantes is calle with parameter strictw3c = 0, this is deprecated. Value must be 2 now.", LOG_DEBUG);
+		dol_syslog("Warning: Function 'form_constantes' was called with parameter strictw3c = 0, this is deprecated. Value must be 2 now.", LOG_DEBUG);
 	}
 	if (!empty($strictw3c) && $strictw3c == 1) {
 		print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -1745,7 +1748,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 			if (!empty($tableau[$key]['tooltip'])) {
 				print $form->textwithpicto($label ? $label : $langs->trans('Desc'.$const), $tableau[$key]['tooltip']);
 			} else {
-				print ($label ? $label : $langs->trans('Desc'.$const));
+				print($label ? $label : $langs->trans('Desc'.$const));
 			}
 
 			if ($const == 'ADHERENT_MAILMAN_URL') {
@@ -1870,7 +1873,7 @@ function showModulesExludedForExternal($modules)
 	global $conf, $langs;
 
 	$text = $langs->trans("OnlyFollowingModulesAreOpenedToExternalUsers");
-	$listofmodules = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);	// List of modules qualified for external user management
+	$listofmodules = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));	// List of modules qualified for external user management
 
 	$i = 0;
 	if (!empty($modules)) {
@@ -1913,7 +1916,7 @@ function showModulesExludedForExternal($modules)
  *	@param		string	$type			Model type
  *	@param		string	$label			Model label
  *	@param		string	$description	Model description
- *	@return		int						<0 if KO, >0 if OK
+ *	@return		int						Return integer <0 if KO, >0 if OK
  */
 function addDocumentModel($name, $type, $label = '', $description = '')
 {
@@ -1944,7 +1947,7 @@ function addDocumentModel($name, $type, $label = '', $description = '')
  *
  *	@param		string	$name			Model name
  *	@param		string	$type			Model type
- *	@return		int						<0 if KO, >0 if OK
+ *	@return		int						Return integer <0 if KO, >0 if OK
  */
 function delDocumentModel($name, $type)
 {
@@ -2000,7 +2003,7 @@ function phpinfo_array()
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array   	    		    head array with tabs
  */
@@ -2039,7 +2042,7 @@ function company_admin_prepare_head()
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array   	    		    head array with tabs
  */

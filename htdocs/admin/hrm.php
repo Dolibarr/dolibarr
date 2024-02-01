@@ -81,7 +81,9 @@ if ($action == 'update') {
 		$TAllSkills = $static_skill->fetchAll();
 		if (is_array($TAllSkills)) {
 			foreach ($TAllSkills as &$skill) {
-				if (empty($skill->lines)) $skill->fetchLines();
+				if (empty($skill->lines)) {
+					$skill->fetchLines();
+				}
 				if (count($skill->lines) < $conf->global->HRM_MAXRANK) {
 					$skill->createSkills(count($skill->lines) + 1);
 				}
@@ -112,7 +114,9 @@ if ($action == 'update') {
 	$tmpobject->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/hrm/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
@@ -155,7 +159,7 @@ if ($action == 'update') {
 		$tmpobjectkey = GETPOST('object');
 		if (!empty($tmpobjectkey)) {
 			$constforval = 'HRMTEST_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
-			if ($conf->global->$constforval == "$value") {
+			if (getDolGlobalString($constforval) == "$value") {
 				dolibarr_del_const($db, $constforval, $conf->entity);
 			}
 		}
@@ -248,10 +252,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							$module = new $file($db);
 
 							// Show modules according to features level
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								continue;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								continue;
 							}
 
@@ -386,16 +390,16 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 									$module = new $classname($db);
 
 									$modulequalified = 1;
-									if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 										$modulequalified = 0;
 									}
-									if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+									if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 										$modulequalified = 0;
 									}
 
 									if ($modulequalified) {
 										print '<tr class="oddeven"><td width="100">';
-										print (empty($module->name) ? $name : $module->name);
+										print(empty($module->name) ? $name : $module->name);
 										print "</td><td>\n";
 										if (method_exists($module, 'info')) {
 											print $module->info($langs);
@@ -470,7 +474,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 print load_fiche_titre($langs->trans('OtherOptions'), '', '');
 
-if (empty($conf->global->HRM_MAXRANK)) {
+if (!getDolGlobalString('HRM_MAXRANK')) {
 	$conf->global->HRM_MAXRANK = Skill::DEFAULT_MAX_RANK_PER_SKILL;
 }
 
@@ -545,7 +549,7 @@ if ($action == 'edit') {
 				print dolJSToSetRandomPassword($constname, 'generate_token' . $constname);
 			} elseif ($val['type'] == 'product') {
 				if (isModEnabled('product') || isModEnabled('service')) {
-					$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
+					$selected = getDolGlobalString($constname);
 					$form->select_produits($selected, $constname, '', 0);
 				}
 			} else {
@@ -598,7 +602,7 @@ if ($action == 'edit') {
 					if ($result < 0) {
 						setEventMessages(null, $c->errors, 'errors');
 					}
-					$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
+					$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
 					$toprint = array();
 					foreach ($ways as $way) {
 						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';

@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 $langs->loadlangs(array('users', 'other', 'holiday', 'hrm'));
 
 $action = GETPOST('action', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'defineholidaylist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'defineholidaylist';
 $massaction = GETPOST('massaction', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('optioncss', 'aZ');
@@ -44,7 +44,7 @@ $search_name = GETPOST('search_name', 'alpha');
 $search_supervisor = GETPOST('search_supervisor', 'int');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
@@ -99,7 +99,8 @@ $arrayfields = array(
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -290,7 +291,7 @@ print "</div><br>\n";
 
 $filters = '';
 
-// Filter on array of ids of all childs
+// Filter on array of ids of all children
 $userchilds = array();
 if (!$user->hasRight('holiday', 'readall')) {
 	$userchilds = $user->getAllChildIds(1);
@@ -533,7 +534,7 @@ if (count($typeleaves) == 0) {
 		foreach ($arrayfields as $key => $val) {
 			if (!empty($val['checked'])) {
 				if ($key == 'cp.nbHoliday') {
-					foreach ($typeleaves as $key => $val) {
+					foreach ($typeleaves as $leave_key => $leave_val) {
 						$colspan++;
 					}
 				} else {

@@ -157,18 +157,18 @@ llxHeader('', $title, $help_url);
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Mode vue et edition                                                         */
+/* Card view and edit mode                                                       */
 /*                                                                             */
 /* *************************************************************************** */
 
 if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref) > 0) {
-		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK) && method_exists($object, 'fetchComments') && empty($object->comments)) {
+		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 			$object->fetchComments();
 		}
 		$id = $object->id; // So when doing a search from ref, id is also set correctly.
 
-		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
+		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
 			$projectstatic->fetchComments();
 		}
 		if (!empty($projectstatic->socid)) {
@@ -203,7 +203,7 @@ if ($id > 0 || !empty($ref)) {
 			// Define a complementary filter for search of next/prev ref.
 			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-				$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+				$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 			}
 
 			dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -215,24 +215,24 @@ if ($id > 0 || !empty($ref)) {
 			print '<table class="border tableforfield centpercent">';
 
 			// Usage
-			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
+			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') || !getDolGlobalString('PROJECT_HIDE_TASKS') || isModEnabled('eventorganization')) {
 				print '<tr><td class="tdtop">';
 				print $langs->trans("Usage");
 				print '</td>';
 				print '<td>';
-				if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+				if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 					print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_opportunity ? ' checked="checked"' : '')).'"> ';
 					$htmltext = $langs->trans("ProjectFollowOpportunity");
 					print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
 					print '<br>';
 				}
-				if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+				if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 					print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_task ? ' checked="checked"' : '')).'"> ';
 					$htmltext = $langs->trans("ProjectFollowTasks");
 					print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
 					print '<br>';
 				}
-				if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
+				if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_BILL_TIME_SPENT')) {
 					print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_bill_time ? ' checked="checked"' : '')).'"> ';
 					$htmltext = $langs->trans("ProjectBillTimeDescription");
 					print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
@@ -259,7 +259,7 @@ if ($id > 0 || !empty($ref)) {
 
 			// Budget
 			print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-			if (strcmp($projectstatic->budget_amount, '')) {
+			if (isset($projectstatic->budget_amount) && strcmp($projectstatic->budget_amount, '')) {
 				print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
 			}
 			print '</td></tr>';
@@ -267,10 +267,10 @@ if ($id > 0 || !empty($ref)) {
 			// Date start - end project
 			print '<tr><td>'.$langs->trans("Dates").'</td><td>';
 			$start = dol_print_date($projectstatic->date_start, 'day');
-			print ($start ? $start : '?');
+			print($start ? $start : '?');
 			$end = dol_print_date($projectstatic->date_end, 'day');
 			print ' - ';
-			print ($end ? $end : '?');
+			print($end ? $end : '?');
 			if ($projectstatic->hasDelay()) {
 				print img_warning("Late");
 			}

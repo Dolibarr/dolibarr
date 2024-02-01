@@ -91,7 +91,7 @@ if (GETPOST('removAll', 'alpha')) {
 	foreach ($listofpaths as $key => $value) {
 		$pathtodelete = $value;
 		$filetodelete = $listofnames[$key];
-		$result = dol_delete_file($pathtodelete, 1); // Delete uploded Files
+		$result = dol_delete_file($pathtodelete, 1); // Delete uploaded Files
 
 		$langs->load("other");
 		setEventMessages($langs->trans("FileWasRemoved", $filetodelete), null, 'mesgs');
@@ -155,7 +155,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				}
 			}
 		} else {
-			dol_print_error('', "Use actions_sendmails.in.php for an element/object '".$object->element."' that is not supported");
+			dol_print_error(null, "Use actions_sendmails.in.php for an element/object '".$object->element."' that is not supported");
 		}
 
 		if (is_object($hookmanager)) {
@@ -210,7 +210,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			}
 		}
 
-		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+		if (getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')) {
 			$receiveruser = GETPOST('receiveruser', 'alphawithlgt');
 			if (is_array($receiveruser) && count($receiveruser) > 0) {
 				$fuserdest = new User($db);
@@ -251,7 +251,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				}
 			}
 		}
-		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+		if (getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')) {
 			$receiverccuser = GETPOST('receiverccuser', 'alphawithlgt');
 
 			if (is_array($receiverccuser) && count($receiverccuser) > 0) {
@@ -286,7 +286,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				$tmp = explode(',', $user->email_aliases);
 				$from = trim($tmp[($reg[1] - 1)]);
 			} elseif (preg_match('/global_aliases_(\d+)/', $fromtype, $reg)) {
-				$tmp = explode(',', $conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
+				$tmp = explode(',', getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'));
 				$from = trim($tmp[($reg[1] - 1)]);
 			} elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
 				$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile';
@@ -328,7 +328,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			$deliveryreceipt = GETPOST('deliveryreceipt');
 
 			if ($action == 'send' || $action == 'relance') {
-				$actionmsg2 = $langs->transnoentities('MailSentBy').' '.CMailFile::getValidAddress($from, 4, 0, 1).' '.$langs->transnoentities('To').' '.CMailFile::getValidAddress($sendto, 4, 0, 1);
+				$actionmsg2 = $langs->transnoentities('MailSentByTo', CMailFile::getValidAddress($from, 4, 0, 1), CMailFile::getValidAddress($sendto, 4, 0, 1));
 				/*if ($message) {
 					$actionmsg = $langs->transnoentities('MailFrom').': '.dol_escape_htmltag($from);
 					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTo').': '.dol_escape_htmltag($sendto));
@@ -378,7 +378,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				$action = 'presend';
 			} else {
 				$result = $mailfile->sendfile();
-				if ($result >= 0) {
+				if ($result) {
 					// Initialisation of datas of object to call trigger
 					if (is_object($object)) {
 						if (empty($actiontypecode)) {
@@ -390,7 +390,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 						$object->actionmsg = $message; // Long text
 						$object->actionmsg2 = $actionmsg2; // Short text ($langs->transnoentities('MailSentBy')...);
-						if (!empty($conf->global->MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT)) {
+						if (getDolGlobalString('MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT')) {
 							$object->actionmsg2		= $subject; // Short text
 						}
 
@@ -400,7 +400,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						if (is_array($attachedfiles) && count($attachedfiles) > 0) {
 							$object->attachedfiles = $attachedfiles;
 						}
-						if (is_array($sendtouserid) && count($sendtouserid) > 0 && !empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+						if (is_array($sendtouserid) && count($sendtouserid) > 0 && getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')) {
 							$object->sendtouserid = $sendtouserid;
 						}
 
@@ -411,7 +411,6 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						$object->email_tocc = $sendtocc;
 						$object->email_tobcc = $sendtobcc;
 						$object->email_subject = $subject;
-						$object->email_msgid = $mailfile->msgid;
 
 						// Call of triggers (you should have set $triggersendname to execute trigger. $trigger_name is deprecated)
 						if (!empty($triggersendname) || !empty($trigger_name)) {
@@ -452,10 +451,10 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						}
 					} else {
 						$mesg .= $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($from), dol_escape_htmltag($sendto));
-						if (!empty($conf->global->MAIN_DISABLE_ALL_MAILS)) {
+						if (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 							$mesg .= '<br>Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
 						} else {
-							$mesg .= '<br>Unkown Error, please refers to your administrator';
+							$mesg .= '<br>Unknown Error, please refer to your administrator';
 						}
 					}
 					$mesg .= '</div>';

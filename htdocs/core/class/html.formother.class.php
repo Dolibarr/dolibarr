@@ -28,12 +28,12 @@
 /**
  *	\file       htdocs/core/class/html.formother.class.php
  *  \ingroup    core
- *	\brief      Fichier de la classe des fonctions predefinie de composants html autre
+ *	\brief      Fichier de la class des functions predefinie de composants html autre
  */
 
 
 /**
- *	Classe permettant la generation de composants html autre
+ *	Class permettant la generation de composants html autre
  *	Only common components are here.
  */
 class FormOther
@@ -87,11 +87,12 @@ class FormOther
 		$stringaddbarcode = $langs->trans("QtyToAddAfterBarcodeScan", "tmphtml");
 		$htmltoreplaceby = '<select name="selectaddorreplace"><option selected value="add">'.$langs->trans("Add").'</option><option value="replace">'.$langs->trans("ToReplace").'</option></select>';
 		$stringaddbarcode = str_replace("tmphtml", $htmltoreplaceby, $stringaddbarcode);
-		$out .= $stringaddbarcode.' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
+		$out .= $stringaddbarcode.': <input type="text" name="barcodeproductqty" class="width40 right" value="1"><br>';
 		if ($warehouseselect > 0) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($this->db);
 			$formproduct->loadWarehouses();
+			$out .= img_picto('', 'stock', 'class="pictofixedwidth"');
 			$out .= $formproduct->selectWarehouses('', "warehousenew", '', 0, 0, 0, '', 0, 1);
 			$out .= '<br>';
 			$out .= '<br>';
@@ -149,7 +150,7 @@ class FormOther
 		$sql = "SELECT rowid, label, fk_user";
 		$sql .= " FROM ".$this->db->prefix()."export_model";
 		$sql .= " WHERE type = '".$this->db->escape($type)."'";
-		if (empty($conf->global->EXPORTS_SHARE_MODELS)) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
+		if (!getDolGlobalString('EXPORTS_SHARE_MODELS')) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
 			$sql .= " AND fk_user IN (0, ".((int) $fk_user).")";
 		}
 		$sql .= " ORDER BY label";
@@ -211,7 +212,7 @@ class FormOther
 		$sql = "SELECT rowid, label, fk_user";
 		$sql .= " FROM ".$this->db->prefix()."import_model";
 		$sql .= " WHERE type = '".$this->db->escape($type)."'";
-		if (empty($conf->global->EXPORTS_SHARE_MODELS)) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
+		if (!getDolGlobalString('EXPORTS_SHARE_MODELS')) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
 			$sql .= " AND fk_user IN (0, ".((int) $fk_user).")";
 		}
 		$sql .= " ORDER BY label";
@@ -370,7 +371,7 @@ class FormOther
 	public function select_percent($selected = 0, $htmlname = 'percent', $disabled = 0, $increment = 5, $start = 0, $end = 100, $showempty = 0)
 	{
 		// phpcs:enable
-		$return = '<select class="flat maxwidth75" name="'.$htmlname.'" '.($disabled ? 'disabled' : '').'>';
+		$return = '<select class="flat maxwidth75 right" name="'.$htmlname.'" '.($disabled ? 'disabled' : '').'>';
 		if ($showempty) {
 			$return .= '<option value="-1"'.(($selected == -1 || $selected == '') ? ' selected' : '').'>&nbsp;</option>';
 		}
@@ -521,8 +522,17 @@ class FormOther
 		if (!empty($user->socid)) {
 			$sql_usr .= " AND u.fk_soc = ".((int) $user->socid);
 		}
+		if (!empty($conf->global->USER_HIDE_NONEMPLOYEE_IN_COMBOBOX)) {
+			$sql_usr .= " AND u.employee <> 0";
+		}
+		if (!empty($conf->global->USER_HIDE_EXTERNAL_IN_COMBOBOX)) {
+			$sql_usr .= " AND u.fk_soc IS NULL";
+		}
+		if (!empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) {
+			$sql_usr .= " AND u.statut <> 0";
+		}
 
-		//Add hook to filter on user (for exemple on usergroup define in custom modules)
+		//Add hook to filter on user (for example on usergroup define in custom modules)
 		if (!empty($reshook)) {
 			$sql_usr .= $hookmanager->resArray[0];
 		}
@@ -545,13 +555,13 @@ class FormOther
 
 			$sql_usr .= " AND u2.rowid = sc.fk_user AND sc.fk_soc = ".((int) $user->socid);
 
-			//Add hook to filter on user (for exemple on usergroup define in custom modules)
+			//Add hook to filter on user (for example on usergroup define in custom modules)
 			if (!empty($reshook)) {
 				$sql_usr .= $hookmanager->resArray[1];
 			}
 		}
 
-		if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) {	// MAIN_FIRSTNAME_NAME_POSITION is 0 means firstname+lastname
+		if (!getDolGlobalString('MAIN_FIRSTNAME_NAME_POSITION')) {	// MAIN_FIRSTNAME_NAME_POSITION is 0 means firstname+lastname
 			$sql_usr .= " ORDER BY status DESC, firstname ASC, lastname ASC";
 		} else {
 			$sql_usr .= " ORDER BY status DESC, lastname ASC, firstname ASC";
@@ -595,7 +605,7 @@ class FormOther
 				$out .= $labeltoshow;
 				// Complete name with more info
 				$moreinfo = 0;
-				if (!empty($conf->global->MAIN_SHOW_LOGIN)) {
+				if (getDolGlobalString('MAIN_SHOW_LOGIN')) {
 					$out .= ($moreinfo ? ' - ' : ' (').$obj_usr->login;
 					$moreinfo++;
 				}
@@ -839,12 +849,12 @@ class FormOther
 	 *  @param	int			$showcolorbox			1=Show color code and color box, 0=Show only color code
 	 *  @param 	array		$arrayofcolors			Array of possible colors to choose in the selector. All colors are possible if empty. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
 	 *  @param	string		$morecss				Add css style into input field
-	 *  @param	string		$setpropertyonselect	Set this property after selecting a color
+	 *  @param	string		$setpropertyonselect	Set this CSS property after selecting a color
 	 *  @param	string		$default				Default color
 	 *  @return	string
 	 *  @see showColor()
 	 */
-	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '', $morecss = '', $setpropertyonselect = '', $default = '')
+	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = array(), $morecss = '', $setpropertyonselect = '', $default = '')
 	{
 		// Deprecation warning
 		if ($form_name) {
@@ -995,7 +1005,7 @@ class FormOther
 
 		$file = $conf->$module->dir_temp.'/'.$name.'.png';
 
-		// On cree le repertoire contenant les icones
+		// We create temp directory
 		if (!file_exists($conf->$module->dir_temp)) {
 			dol_mkdir($conf->$module->dir_temp);
 		}
@@ -1005,16 +1015,16 @@ class FormOther
 
 		$color = substr($color, 1, 6);
 
-		$rouge = hexdec(substr($color, 0, 2)); //conversion du canal rouge
-		$vert  = hexdec(substr($color, 2, 2)); //conversion du canal vert
-		$bleu  = hexdec(substr($color, 4, 2)); //conversion du canal bleu
+		$red = hexdec(substr($color, 0, 2));    // Red channel conversion
+		$green  = hexdec(substr($color, 2, 2)); // Green channel conversion
+		$blue  = hexdec(substr($color, 4, 2));  // Blue channel conversion
 
-		$couleur = imagecolorallocate($image, $rouge, $vert, $bleu);
-		//print $rouge.$vert.$bleu;
-		imagefill($image, 0, 0, $couleur); //on remplit l'image
-		// On cree la couleur et on l'attribue a une variable pour ne pas la perdre
-		ImagePng($image, $file); //renvoie une image sous format png
-		ImageDestroy($image);
+		$couleur = imagecolorallocate($image, $red, $green, $blue);
+		//print $red.$green.$blue;
+		imagefill($image, 0, 0, $couleur); // Fill the image
+		// Create the colr and store it in a variable to maintain it
+		imagepng($image, $file); // Returns an image in PNG format
+		imagedestroy($image);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1215,10 +1225,10 @@ class FormOther
 		$confuserzone = 'MAIN_BOXES_'.$areacode;
 
 		// $boxactivated will be array of boxes enabled into global setup
-		// $boxidactivatedforuser will be array of boxes choosed by user
+		// $boxidactivatedforuser will be array of boxes chose by user
 
 		$selectboxlist = '';
-		$boxactivated = InfoBox::listBoxes($db, 'activated', $areacode, (empty($user->conf->$confuserzone) ?null:$user), array(), 0); // Search boxes of common+user (or common only if user has no specific setup)
+		$boxactivated = InfoBox::listBoxes($db, 'activated', $areacode, (empty($user->conf->$confuserzone) ? null : $user), array(), 0); // Search boxes of common+user (or common only if user has no specific setup)
 
 		$boxidactivatedforuser = array();
 		foreach ($boxactivated as $box) {
@@ -1316,7 +1326,7 @@ class FormOther
 			if (!count($arrayboxtoactivatelabel)) {
 				$selectboxlist .= 'jQuery("#boxcombo").hide();';
 			}
-				$selectboxlist .= '
+			$selectboxlist .= '
 
 	        	jQuery("#boxhalfleft, #boxhalfright").sortable({
 	    	    	handle: \'.boxhandle\',
@@ -1362,8 +1372,8 @@ class FormOther
 
 			// Define $box_max_lines
 			$box_max_lines = 5;
-			if (!empty($conf->global->MAIN_BOXES_MAXLINES)) {
-				$box_max_lines = $conf->global->MAIN_BOXES_MAXLINES;
+			if (getDolGlobalString('MAIN_BOXES_MAXLINES')) {
+				$box_max_lines = getDolGlobalString('MAIN_BOXES_MAXLINES');
 			}
 
 			$ii = 0;
@@ -1468,7 +1478,7 @@ class FormOther
 					} else {
 						print '<option value="'.$obj->{$keyfield}.'">';
 					}
-					$label = ($langs->trans($dictionarytable.$obj->{$keyfield}) != ($dictionarytable.$obj->{$labelfield}) ? $langs->trans($dictionarytable.$obj->{$keyfield}) : $obj->{$labelfield});
+					$label = ($langs->trans($dictionarytable.$obj->{$keyfield}) != $dictionarytable.$obj->{$labelfield} ? $langs->trans($dictionarytable.$obj->{$keyfield}) : $obj->{$labelfield});
 					print $label;
 					print '</option>';
 					$i++;

@@ -74,9 +74,9 @@ class AdherentType extends CommonObject
 
 	public $duration;
 
-	/*
-	* type expiration
-	*/
+	/**
+	 * type expiration
+	 */
 	public $duration_value;
 
 	/**
@@ -85,7 +85,7 @@ class AdherentType extends CommonObject
 	public $duration_unit;
 
 	/**
-	 * @var int Subsription required (0 or 1)
+	 * @var int Subscription required (0 or 1)
 	 */
 	public $subscription;
 
@@ -95,7 +95,7 @@ class AdherentType extends CommonObject
 	public $amount;
 
 	/**
-	 * @var int Amount can be choosen by the visitor during subscription (0 or 1)
+	 * @var int Amount can be chosen by the visitor during subscription (0 or 1)
 	 */
 	public $caneditamount;
 
@@ -159,7 +159,7 @@ class AdherentType extends CommonObject
 	/**
 	 * Load array this->multilangs
 	 *
-	 * @return int        <0 if KO, >0 if OK
+	 * @return int        Return integer <0 if KO, >0 if OK
 	 */
 	public function getMultiLangs()
 	{
@@ -195,11 +195,11 @@ class AdherentType extends CommonObject
 	 * Update or add a translation for this member type
 	 *
 	 * @param  User $user Object user making update
-	 * @return int        <0 if KO, >0 if OK
+	 * @return int        Return integer <0 if KO, >0 if OK
 	 */
 	public function setMultiLangs($user)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 0, 2);
 		$current_lang = $langs->getDefaultLang();
@@ -276,12 +276,12 @@ class AdherentType extends CommonObject
 		return 1;
 	}
 
-	   /**
+	/**
 		* Delete a language for this member type
 		*
 		* @param string $langtodelete 	Language code to delete
 		* @param User   $user         	Object user making delete
-		* @return int                   <0 if KO, >0 if OK
+		* @return int                   Return integer <0 if KO, >0 if OK
 		*/
 	public function delMultiLangs($langtodelete, $user)
 	{
@@ -316,7 +316,7 @@ class AdherentType extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $langs, $conf;
+		global $conf;
 
 		$error = 0;
 
@@ -379,7 +379,7 @@ class AdherentType extends CommonObject
 	 */
 	public function update($user, $notrigger = 0)
 	{
-		global $langs, $conf, $hookmanager;
+		global $langs;
 
 		$error = 0;
 
@@ -401,7 +401,7 @@ class AdherentType extends CommonObject
 		$sql .= "caneditamount = ".((int) $this->caneditamount).",";
 		$sql .= "duration = '".$this->db->escape($this->duration_value.$this->duration_unit)."',";
 		$sql .= "note = '".$this->db->escape($this->note_public)."',";
-		$sql .= "vote = ".(integer) $this->db->escape($this->vote).",";
+		$sql .= "vote = ".(int) $this->db->escape($this->vote).",";
 		$sql .= "mail_valid = '".$this->db->escape($this->mail_valid)."'";
 		$sql .= " WHERE rowid =".((int) $this->id);
 
@@ -416,8 +416,6 @@ class AdherentType extends CommonObject
 					return -2;
 				}
 			}
-
-			$action = 'update';
 
 			// Actions on extra fields
 			if (!$error) {
@@ -453,14 +451,12 @@ class AdherentType extends CommonObject
 
 	/**
 	 *	Function to delete the member's status
-	 *  TODO Add param "User $user"
 	 *
-	 *  @return		int		> 0 if OK, 0 if not found, < 0 if KO
+	 *	@param	User	$user		User making the deletion
+	 *  @return	int					> 0 if OK, 0 if not found, < 0 if KO
 	 */
-	public function delete()
+	public function delete($user)
 	{
-		global $user;
-
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type";
@@ -471,7 +467,9 @@ class AdherentType extends CommonObject
 			// Call trigger
 			$result = $this->call_trigger('MEMBER_TYPE_DELETE', $user);
 			if ($result < 0) {
-				$error++; $this->db->rollback(); return -2;
+				$error++;
+				$this->db->rollback();
+				return -2;
 			}
 			// End call triggers
 
@@ -488,12 +486,10 @@ class AdherentType extends CommonObject
 	 *  Function that retrieves the properties of a membership type
 	 *
 	 *  @param 		int		$rowid			Id of member type to load
-	 *  @return		int						<0 if KO, >0 if OK
+	 *  @return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
-		global $langs, $conf;
-
 		$sql = "SELECT d.rowid, d.libelle as label, d.morphy, d.statut as status, d.duration, d.subscription, d.amount, d.caneditamount, d.mail_valid, d.note as note_public, d.vote";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 		$sql .= " WHERE d.rowid = ".(int) $rowid;
@@ -547,7 +543,7 @@ class AdherentType extends CommonObject
 	public function liste_array($status = -1)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		$adherenttypes = array();
 
@@ -585,8 +581,6 @@ class AdherentType extends CommonObject
 	 */
 	public function amountByType($status = null)
 	{
-		global $conf, $langs;
-
 		$amountbytype = array();
 
 		$sql = "SELECT rowid, amount";
@@ -627,8 +621,6 @@ class AdherentType extends CommonObject
 	 */
 	public function listMembersForMemberType($excludefilter = '', $mode = 0)
 	{
-		global $conf, $user;
-
 		$ret = array();
 
 		$sql = "SELECT a.rowid";
@@ -696,7 +688,7 @@ class AdherentType extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs, $user;
+		global $langs;
 
 		$langs->load('members');
 
@@ -734,8 +726,6 @@ class AdherentType extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $langs;
-
 		$result = '';
 		$option = '';
 
@@ -767,7 +757,7 @@ class AdherentType extends CommonObject
 			}
 		}
 		$linkstart = '<a href="'.$url.'"';
-		$linkstart .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+		$linkstart .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 		$linkstart .= $dataparams.' class="'.$classfortooltip.'">';
 
 		$linkend = '</a>';
@@ -777,7 +767,7 @@ class AdherentType extends CommonObject
 			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (' class="'.(($withpicto != 2) ? 'paddingright' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
-			$result .= ($maxlen ?dol_trunc($this->label, $maxlen) : $this->label);
+			$result .= ($maxlen ? dol_trunc($this->label, $maxlen) : $this->label);
 		}
 		$result .= $linkend;
 
@@ -838,13 +828,12 @@ class AdherentType extends CommonObject
 	public function _load_ldap_dn($info, $mode = 0)
 	{
 		// phpcs:enable
-		global $conf;
 		$dn = '';
 		if ($mode == 0) {
 			$dn = getDolGlobalString('LDAP_KEY_MEMBERS_TYPES') . "=".$info[getDolGlobalString('LDAP_KEY_MEMBERS_TYPES')]."," . getDolGlobalString('LDAP_MEMBER_TYPE_DN');
 		}
 		if ($mode == 1) {
-			$dn = $conf->global->LDAP_MEMBER_TYPE_DN;
+			$dn = getDolGlobalString('LDAP_MEMBER_TYPE_DN');
 		}
 		if ($mode == 2) {
 			$dn = getDolGlobalString('LDAP_KEY_MEMBERS_TYPES') . "=".$info[getDolGlobalString('LDAP_KEY_MEMBERS_TYPES')];
@@ -858,30 +847,28 @@ class AdherentType extends CommonObject
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
-	 *	@return		array		Tableau info des attributs
+	 *	@return		array		Tableau info des attributes
 	 */
 	public function _load_ldap_info()
 	{
 		// phpcs:enable
-		global $conf, $langs;
-
 		$info = array();
 
 		// Object classes
-		$info["objectclass"] = explode(',', $conf->global->LDAP_MEMBER_TYPE_OBJECT_CLASS);
+		$info["objectclass"] = explode(',', getDolGlobalString('LDAP_MEMBER_TYPE_OBJECT_CLASS'));
 
 		if (empty($this->note_public) && !empty($this->note)) {		// For backward compatibility
 			$this->note_public = $this->note;
 		}
 
 		// Champs
-		if ($this->label && !empty($conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME)) {
+		if ($this->label && getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_FULLNAME')) {
 			$info[getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_FULLNAME')] = $this->label;
 		}
-		if ($this->note_public && !empty($conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION)) {
+		if ($this->note_public && getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_DESCRIPTION')) {
 			$info[getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_DESCRIPTION')] = dol_string_nohtmltag($this->note_public, 0, 'UTF-8', 1);
 		}
-		if (!empty($conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS)) {
+		if (getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS')) {
 			$valueofldapfield = array();
 			foreach ($this->members as $key => $val) {    // This is array of users for group into dolibarr database.
 				$member = new Adherent($this->db);
@@ -905,7 +892,7 @@ class AdherentType extends CommonObject
 	{
 		global $user;
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'MTSPEC';
 		$this->specimen = 1;
@@ -1025,7 +1012,7 @@ class AdherentType extends CommonObject
 			}
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

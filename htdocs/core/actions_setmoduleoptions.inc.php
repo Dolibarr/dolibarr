@@ -41,12 +41,14 @@ if ($action == 'update' && is_array($arrayofparameters) && !empty($user->admin))
 	foreach ($arrayofparameters as $key => $val) {
 		// Modify constant only if key was posted (avoid resetting key to the null value)
 		if (GETPOSTISSET($key)) {
-			if (preg_match('/category:/', $val['type'])) {
+			if (!empty($val['type']) && preg_match('/category:/', $val['type'])) {
 				if (GETPOST($key, 'int') == '-1') {
 					$val_const = '';
 				} else {
 					$val_const = GETPOST($key, 'int');
 				}
+			} else if ($val['type'] == 'html') {
+				$val_const = GETPOST($key, 'restricthtml');
 			} else {
 				$val_const = GETPOST($key, 'alpha');
 			}

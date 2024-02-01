@@ -72,7 +72,7 @@ $workflowcodes = array(
 		'enabled'=>(isModEnabled('commande') && isModEnabled('facture')),
 		'picto'=>'bill'
 	),
-	'WORKFLOW_TICKET_CREATE_INTERVENTION' => array (
+	'WORKFLOW_TICKET_CREATE_INTERVENTION' => array(
 		'family'=>'create',
 		'position'=>25,
 		'enabled'=>(isModEnabled('ticket') && isModEnabled('ficheinter')),
@@ -131,7 +131,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION'=>array(
 		'family'=>'classify_supplier_order',
 		'position'=>63,
-		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && isModEnabled("reception") && isModEnabled('supplier_order')),
+		'enabled'=>(getDolGlobalString('MAIN_FEATURES_LEVEL') && isModEnabled("reception") && isModEnabled('supplier_order')),
 		'picto'=>'supplier_order',
 		'warning'=>''
 	),
@@ -139,7 +139,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED'=>array(
 		'family'=>'classify_supplier_order',
 		'position'=>64,
-		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && isModEnabled("reception") && isModEnabled('supplier_order')),
+		'enabled'=>(getDolGlobalString('MAIN_FEATURES_LEVEL') && isModEnabled("reception") && isModEnabled('supplier_order')),
 		'picto'=>'supplier_order',
 		'warning'=>''
 	),
@@ -315,7 +315,7 @@ foreach ($workflowcodes as $key => $params) {
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff($key);
 	} else {
-		if (!empty($conf->global->$key)) {
+		if (getDolGlobalString($key)) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del'.$key.'&token='.newToken().'">';
 			print img_picto($langs->trans("Activated"), 'switch_on');
 			print '</a>';

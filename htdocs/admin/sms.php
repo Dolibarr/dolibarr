@@ -234,7 +234,7 @@ if ($action == 'edit') {
 	// From
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
 	print '<td>'.getDolGlobalString('MAIN_MAIL_SMS_FROM');
-	if (!empty($conf->global->MAIN_MAIL_SMS_FROM) && !isValidPhone($conf->global->MAIN_MAIL_SMS_FROM)) {
+	if (getDolGlobalString('MAIN_MAIL_SMS_FROM') && !isValidPhone($conf->global->MAIN_MAIL_SMS_FROM)) {
 		print ' '.img_warning($langs->trans("ErrorBadPhone"));
 	}
 	print '</td></tr>';
@@ -283,7 +283,7 @@ if ($action == 'edit') {
 		$formsms->withcancel = 1;
 		// Tableau des substitutions
 		$formsms->substit = $substitutionarrayfortest;
-		// Tableau des parametres complementaires du post
+		// Tableau des parameters complementaires du post
 		$formsms->param["action"] = "send";
 		$formsms->param["models"] = "body";
 		$formsms->param["smsid"] = 0;

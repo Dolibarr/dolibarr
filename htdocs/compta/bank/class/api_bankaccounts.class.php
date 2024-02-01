@@ -23,7 +23,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 /**
  * API class for accounts
  *
- * @property DoliDB db
+ * @property DoliDB $db
  * @access protected
  * @class DolibarrApiAccess {@requires user,external}
  */
@@ -32,7 +32,7 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * array $FIELDS Mandatory fields, checked when creating an object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'ref',
 		'label',
 		'type',
@@ -58,7 +58,7 @@ class BankAccounts extends DolibarrApi
 	 * @param int       $page       Page number
 	 * @param  int		$category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.import_key:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                List of account objects
 	 *
 	 * @throws RestException
@@ -158,6 +158,12 @@ class BankAccounts extends DolibarrApi
 
 		$account = new Account($this->db);
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$account->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$account->$field = $this->_checkValForAPI($field, $value, $account);
 		}
 		// Date of the initial balance (required to create an account).
@@ -239,7 +245,7 @@ class BankAccounts extends DolibarrApi
 		$result = 0;
 		$user = DolibarrApiAccess::$user;
 
-		// By default, electronic transfert from bank to bank
+		// By default, electronic transfer from bank to bank
 		$typefrom = 'PRE';
 		$typeto = 'VIR';
 
@@ -333,6 +339,12 @@ class BankAccounts extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$account->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$account->$field = $this->_checkValForAPI($field, $value, $account);
 		}
 
@@ -565,5 +577,38 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(503, 'Error when adding link to account line: '.$account->error);
 		}
 		return $result;
+	}
+
+	/**
+	 * Get the list of links for a line of the account.
+	 *
+	 * @param int    $id    		ID of account
+	 * @param int    $line_id       ID of account line
+	 * @return array Array of links
+	 *
+	 * @throws RestException
+	 *
+	 * @url GET {id}/lines/{line_id}/links
+	 *
+	 */
+	public function getLinks($id, $line_id)
+	{
+		$list = array();
+
+		if (!DolibarrApiAccess::$user->rights->banque->lire) {
+			throw new RestException(401);
+		}
+
+		$account = new Account($this->db);
+		$result = $account->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'account not found');
+		}
+		$links = $account->get_url($line_id); // Get an array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> )
+		foreach ($links as &$link) {
+			unset($link[0], $link[1], $link[2], $link[3]); // Remove the numeric keys
+		}
+
+		return $links;
 	}
 }

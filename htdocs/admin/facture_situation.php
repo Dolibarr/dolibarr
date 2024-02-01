@@ -61,7 +61,7 @@ $form = new Form($db);
 $formSetup = new FormSetup($db);
 
 
-// Setup conf MYMODULE_MYPARAM4 : exemple of quick define write style
+// Setup conf MYMODULE_MYPARAM4 : example of quick define write style
 $formSetup->newItem('INVOICE_USE_SITUATION')
 	->setAsYesNo()
 	->nameText = $langs->trans('UseSituationInvoices');
@@ -86,7 +86,7 @@ $arrayAvailableType = array(
 if ($action == 'edit') {
 	$item->fieldInputOverride = $form->selectarray('INVOICE_USE_RETAINED_WARRANTY', $arrayAvailableType, $conf->global->INVOICE_USE_RETAINED_WARRANTY, 1);
 } else {
-	$item->fieldOutputOverride= isset($arrayAvailableType[getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')])?$arrayAvailableType[getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')]:'';
+	$item->fieldOutputOverride= isset($arrayAvailableType[getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')]) ? $arrayAvailableType[getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')] : '';
 }
 
 //$item = $formSetup->newItem('INVOICE_RETAINED_WARRANTY_LIMITED_TO_SITUATION')->setAsYesNo();
@@ -111,7 +111,7 @@ $item->fieldAttr = array(
 $item = $formSetup->newItem('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID');
 $item->nameText = $langs->trans('PaymentConditionsShortRetainedWarranty');
 $form->load_cache_conditions_paiements();
-if (!empty($conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID) && isset($form->cache_conditions_paiements[getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID')]['label'])) {
+if (getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID') && isset($form->cache_conditions_paiements[getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID')]['label'])) {
 	$item->fieldOutputOverride = $form->cache_conditions_paiements[getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID')]['label'];
 }
 $item->fieldInputOverride = $form->getSelectConditionsPaiements($conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID, 'INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID', -1, 1);

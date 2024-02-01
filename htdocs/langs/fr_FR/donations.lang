@@ -32,4 +32,9 @@ DONATION_ART238=Afficher article 238 du CGI si vous êtes concernés
 DONATION_ART978=Afficher article 978 du CGI si vous êtes concernés
 DonationPayment=Paiement du don
 DonationValidated=Don %s validé
-DonationUseThirdparties=Utiliser un tiers existant comme coordonnées des donateurs
+
+DonationsReglement=	Règlements reçus pour les dons
+
+DonationUseThirdparties=Utiliser un tiers existant comme coordonnées du donateur
+DonationsStatistics=Statistiques des dons
+

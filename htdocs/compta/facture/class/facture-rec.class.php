@@ -6,7 +6,8 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2017-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2017-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,12 +87,16 @@ class FactureRec extends CommonInvoice
 	 */
 	public $titre;
 
+	/**
+	 * @var double
+	 */
+	public $multicurrency_subprice;
 	public $socid;
 	public $number;
 	public $date;
-	public $remise;
-	public $remise_absolue;
-	public $remise_percent;
+	//public $remise;
+	//public $remise_absolue;
+	//public $remise_percent;
 
 	/**
 	 * @deprecated
@@ -127,6 +132,9 @@ class FactureRec extends CommonInvoice
 
 	public $usenewprice = 0;
 
+	/**
+	 * @var int Deadline for payment
+	 */
 	public $date_lim_reglement;
 	public $cond_reglement_code; // Code in llx_c_paiement
 	public $mode_reglement_code; // Code in llx_c_paiement
@@ -148,7 +156,7 @@ class FactureRec extends CommonInvoice
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
 	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
@@ -170,11 +178,8 @@ class FactureRec extends CommonInvoice
 		'titre' =>array('type'=>'varchar(100)', 'label'=>'Titre', 'enabled'=>1, 'showoncombobox' => 1, 'visible'=>-1, 'position'=>15),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>20, 'index'=>1),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'notnull'=>1, 'position'=>25),
-		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
-		//'amount' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
-		'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
-		//'remise_percent' =>array('type'=>'double', 'label'=>'Remise percent', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-		//'remise_absolue' =>array('type'=>'double', 'label'=>'Remise absolue', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
+		'subtype' =>array('type'=>'smallint(6)', 'label'=>'InvoiceSubtype', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>30),
+		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
 		'total_tva' =>array('type'=>'double(24,8)', 'label'=>'Tva', 'enabled'=>1, 'visible'=>-1, 'position'=>55, 'isameasure'=>1),
 		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'Localtax1', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'isameasure'=>1),
 		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'Localtax2', 'enabled'=>1, 'visible'=>-1, 'position'=>65, 'isameasure'=>1),
@@ -233,7 +238,7 @@ class FactureRec extends CommonInvoice
 	 * 	@param		int		$facid		Id of source invoice
 	 *  @param		int		$notrigger	No trigger
 	 *  @param		array	$onlylines	Only the lines of the array
-	 *	@return		int					<0 if KO, id of invoice created if OK
+	 *	@return		int					Return integer <0 if KO, id of invoice created if OK
 	 */
 	public function create($user, $facid, $notrigger = 0, $onlylines = array())
 	{
@@ -268,15 +273,16 @@ class FactureRec extends CommonInvoice
 		$facsrc = new Facture($this->db);
 		$result = $facsrc->fetch($facid);
 		if ($result > 0) {
-			$this->fk_soc = $facsrc->socid;
+			$this->socid = $facsrc->socid;
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_rec (";
 			$sql .= "titre";
 			$sql .= ", fk_soc";
+			$sql .= ", subtype";
 			$sql .= ", entity";
 			$sql .= ", datec";
 			$sql .= ", amount";
-			$sql .= ", remise";
+			//$sql .= ", remise";
 			$sql .= ", note_private";
 			$sql .= ", note_public";
 			$sql .= ", modelpdf";
@@ -300,11 +306,12 @@ class FactureRec extends CommonInvoice
 			$sql .= ", suspended";
 			$sql .= ") VALUES (";
 			$sql .= "'".$this->db->escape($this->titre ? $this->titre : $this->title)."'";
-			$sql .= ", ".((int) $this->fk_soc);
+			$sql .= ", ".((int) $this->socid);
+			$sql .= ", ".($this->subtype ? "'".$this->db->escape($this->subtype)."'" : "null");
 			$sql .= ", ".((int) $conf->entity);
 			$sql .= ", '".$this->db->idate($now)."'";
 			$sql .= ", ".(!empty($facsrc->total_ttc) ? ((float) $facsrc->total_ttc) : '0');
-			$sql .= ", ".(!empty($facsrc->remise_absolue) ? ((float) $this->remise_absolue) : '0');
+			//$sql .= ", ".(!empty($facsrc->remise_absolue) ? ((float) $this->remise_absolue) : '0');
 			$sql .= ", ".(!empty($this->note_private) ? ("'".$this->db->escape($this->note_private)."'") : "NULL");
 			$sql .= ", ".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
 			$sql .= ", ".(!empty($this->model_pdf) ? ("'".$this->db->escape($this->model_pdf)."'") : "NULL");
@@ -428,8 +435,7 @@ class FactureRec extends CommonInvoice
 									$error++;
 								}
 							}
-						} else // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
-						{
+						} else { // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
 							$origin_id = $tmp_origin_id;
 							$ret = $this->add_object_linked($origin, $origin_id);
 							if (!$ret) {
@@ -481,7 +487,7 @@ class FactureRec extends CommonInvoice
 	 *
 	 *  @param		User	$user					User
 	 *  @param		int		$notrigger				No trigger
-	 *	@return    	int             				<0 if KO, Id of line if OK
+	 *	@return    	int             				Return integer <0 if KO, Id of line if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -496,8 +502,7 @@ class FactureRec extends CommonInvoice
 		$sql .= " localtax1 = ".((float) $this->total_localtax1).",";
 		$sql .= " localtax2 = ".((float) $this->total_localtax2).",";
 		$sql .= " total_ht = ".((float) $this->total_ht).",";
-		$sql .= " total_ttc = ".((float) $this->total_ttc).",";
-		$sql .= " remise_percent = ".((float) $this->remise_percent);
+		$sql .= " total_ttc = ".((float) $this->total_ttc);
 		// TODO Add missing fields
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -538,14 +543,15 @@ class FactureRec extends CommonInvoice
 	 *	@param      int		$rowid       	Id of object to load
 	 * 	@param		string	$ref			Reference of recurring invoice
 	 * 	@param		string	$ref_ext		External reference of invoice
+	 *  @param		int		$noextrafields	0=Default to load extrafields, 1=No extrafields
+	 *  @param		int		$nolines		0=Default to load lines, 1=No lines
 	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
 	 */
-	public function fetch($rowid, $ref = '', $ref_ext = '')
+	public function fetch($rowid, $ref = '', $ref_ext = '', $noextrafields = 0, $nolines = 0)
 	{
 		dol_syslog('FactureRec::fetch', LOG_DEBUG);
 
-		$sql = 'SELECT f.rowid, f.entity, f.titre as title, f.suspended, f.fk_soc, f.total_tva, f.localtax1, f.localtax2, f.total_ht, f.total_ttc';
-		$sql .= ', f.remise_percent, f.remise_absolue, f.remise';
+		$sql = 'SELECT f.rowid, f.entity, f.titre as title, f.suspended, f.fk_soc, f.subtype, f.total_tva, f.localtax1, f.localtax2, f.total_ht, f.total_ttc';
 		$sql .= ', f.date_lim_reglement as dlr';
 		$sql .= ', f.note_private, f.note_public, f.fk_user_author';
 		$sql .= ', f.modelpdf as model_pdf';
@@ -583,10 +589,8 @@ class FactureRec extends CommonInvoice
 				$this->titre                  = $obj->title; // deprecated
 				$this->title                  = $obj->title;
 				$this->ref                    = $obj->title;
+				$this->subtype				  = $obj->subtype;
 				$this->suspended              = $obj->suspended;
-				$this->remise_percent         = $obj->remise_percent;
-				$this->remise_absolue         = $obj->remise_absolue;
-				$this->remise                 = $obj->remise;
 				$this->total_ht               = $obj->total_ht;
 				$this->total_tva              = $obj->total_tva;
 				$this->total_localtax1        = $obj->localtax1;
@@ -628,16 +632,23 @@ class FactureRec extends CommonInvoice
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
-				$this->fetch_optionals();
-
-				/*
-				 * Lines
-				 */
-				$result = $this->fetch_lines();
-				if ($result < 0) {
-					$this->error = $this->db->lasterror();
-					return -3;
+				if (empty($noextrafields)) {
+					$result = $this->fetch_optionals();
+					if ($result < 0) {
+						$this->error = $this->db->lasterror();
+						return -4;
+					}
 				}
+
+				// Retrieve lines
+				if (empty($nolines)) {
+					$result = $this->fetch_lines();
+					if ($result < 0) {
+						$this->error = $this->db->lasterror();
+						return -3;
+					}
+				}
+
 				return 1;
 			} else {
 				$this->error = 'Bill with id '.$rowid.' or ref '.$ref.' not found';
@@ -780,7 +791,7 @@ class FactureRec extends CommonInvoice
 	 *	@param     	User	$user          	User that delete.
 	 *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@param		int		$idwarehouse	Id warehouse to use for stock change.
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0, $idwarehouse = -1)
 	{
@@ -863,9 +874,9 @@ class FactureRec extends CommonInvoice
 	 * 	@param		int			$fk_fournprice		Supplier price id (to calculate margin) or ''
 	 * 	@param		int			$pa_ht				Buying price of line (to calculate margin) or ''
 	 *  @param		int			$fk_parent_line		Id of parent line
-	 *	@return    	int             				<0 if KO, Id of line if OK
+	 *	@return    	int             				Return integer <0 if KO, Id of line if OK
 	 */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = '', $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0)
 	{
 		global $mysoc;
 
@@ -1070,9 +1081,9 @@ class FactureRec extends CommonInvoice
 	 * 	@param		int			$fk_fournprice		Id of origin supplier price
 	 * 	@param		int			$pa_ht				Price (without tax) of product for margin calculation
 	 *  @param		int			$fk_parent_line		Id of parent line
-	 *	@return    	int             				<0 if KO, Id of line if OK
+	 *	@return    	int             				Return integer <0 if KO, Id of line if OK
 	 */
-	public function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = '', $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0)
+	public function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0)
 	{
 		global $mysoc;
 
@@ -1264,7 +1275,7 @@ class FactureRec extends CommonInvoice
 	 *  Create all recurrents invoices (for all entities if multicompany is used).
 	 *  A result may also be provided into this->output.
 	 *
-	 *  WARNING: This method change temporarly context $conf->entity to be in correct context for each recurring invoice found.
+	 *  WARNING: This method change temporarily context $conf->entity to be in correct context for each recurring invoice found.
 	 *
 	 *  @param	int		$restrictioninvoiceid		0=All qualified template invoices found. > 0 = restrict action on invoice ID
 	 *  @param	int		$forcevalidation		1=Force validation of invoice whatever is template auto_validate flag.
@@ -1341,6 +1352,7 @@ class FactureRec extends CommonInvoice
 					$facture->fk_fac_rec_source = $facturerec->id; // We will create $facture from this recurring invoice
 
 					$facture->type = self::TYPE_STANDARD;
+					$facture->subtype = $facturerec->subtype;
 					$facture->statut = self::STATUS_DRAFT;	// deprecated
 					$facture->status = self::STATUS_DRAFT;
 					$facture->date = (empty($facturerec->date_when) ? $now : $facturerec->date_when); // We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
@@ -1438,13 +1450,13 @@ class FactureRec extends CommonInvoice
 	 * @param  int		$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 * @return string 			         			String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1)
 	{
 		global $langs, $hookmanager;
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("RepeatableInvoice").'</u>';
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("RepeatableInvoice").'</u>';
 		if (!empty($this->ref)) {
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		}
@@ -1681,18 +1693,11 @@ class FactureRec extends CommonInvoice
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
-				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
 
+				$this->id = $obj->rowid;
+
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
 			}
@@ -1790,8 +1795,7 @@ class FactureRec extends CommonInvoice
 					$line->total_ttc = 59.8;
 					$line->total_tva = 9.8;
 					$line->remise_percent = 50;
-				} else // (product line)
-				{
+				} else { // (product line)
 					$prodid = mt_rand(1, $num_prods);
 					$line->fk_product = $prodids[$prodid];
 					$line->total_ht = 100;
@@ -1871,19 +1875,19 @@ class FactureRec extends CommonInvoice
 	 *	@param     	int		$frequency		value of frequency
 	 *	@param     	string	$unit 			unit of frequency  (d, m, y)
 	 *	@param     	int 	$notrigger 		Disable the trigger
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setFrequencyAndUnit($frequency, $unit, $notrigger = 0)
 	{
 		global $user;
 
 		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setFrequencyAndUnit was called on object with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 
 		if (!empty($frequency) && empty($unit)) {
-			dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with params frequency defined but unit not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setFrequencyAndUnit was called on object with params frequency defined but unit not defined", LOG_ERR);
 			return -2;
 		}
 
@@ -1923,15 +1927,14 @@ class FactureRec extends CommonInvoice
 	 *	@param     	datetime	$date					date of execution
 	 *	@param     	int			$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
 	 *	@param     	int 	    $notrigger		 		Disable the trigger
-	 *	@return		int									<0 if KO, >0 if OK
+	 *	@return		int									Return integer <0 if KO, >0 if OK
 	 */
 	public function setNextDate($date, $increment_nb_gen_done = 0, $notrigger = 0)
 	{
-
 		global $user;
 
 		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setNextDate was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setNextDate was called on object with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
@@ -1968,15 +1971,14 @@ class FactureRec extends CommonInvoice
 	 *
 	 *	@param     	int		$nb		number of maximum period
 	 *	@param     	int 	$notrigger Disable the trigger
-	 *	@return		int				<0 if KO, >0 if OK
+	 *	@return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function setMaxPeriod($nb, $notrigger = 0)
 	{
-
 		global $user;
 
 		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setMaxPeriod was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setMaxPeriod was called on object with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 
@@ -2013,14 +2015,14 @@ class FactureRec extends CommonInvoice
 	 *
 	 *	@param     	int		$validate		0 to create in draft, 1 to create and validate invoice
 	 *	@param     	int 	$notrigger 		Disable the trigger
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setAutoValidate($validate, $notrigger = 0)
 	{
 		global $user;
 
 		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setAutoValidate was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setAutoValidate was called on object with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 
@@ -2053,14 +2055,14 @@ class FactureRec extends CommonInvoice
 	 *
 	 *	@param     	int		$validate		0 no document, 1 to generate document
 	 *	@param     	int 	$notrigger 		Disable the trigger
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setGeneratePdf($validate, $notrigger = 0)
 	{
 		global $user;
 
 		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setGeneratePdf was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setGeneratePdf was called on object with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 
@@ -2093,13 +2095,13 @@ class FactureRec extends CommonInvoice
 	 *
 	 *  @param     	string		$model		model of document generator
 	 *	@param     	int 	$notrigger 		Disable the trigger
-	 *  @return		int						<0 if KO, >0 if OK
+	 *  @return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setModelPdf($model, $notrigger = 0)
 	{
 		global $user;
 		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setModelPdf was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setModelPdf was called on object with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 
@@ -2171,9 +2173,9 @@ class FactureLigneRec extends CommonInvoiceLine
 	 *
 	 *  @param		User	$user		Object user
 	 *  @param		int		$notrigger	Disable triggers
-	 *	@return		int					<0 if KO, >0 if OK
+	 *	@return		int					Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -2310,7 +2312,7 @@ class FactureLigneRec extends CommonInvoiceLine
 	 *
 	 *  @param		User	$user					User
 	 *  @param		int		$notrigger				No trigger
-	 *	@return    	int             				<0 if KO, Id of line if OK
+	 *	@return    	int             				Return integer <0 if KO, Id of line if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{

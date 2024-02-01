@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2013-2016 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2023 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2016-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
+ * Copyright (C) 2016-2018  Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,8 @@ $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
 $massaction = GETPOST('massaction', 'aZ09');
 $optioncss = GETPOST('optioncss', 'alpha');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'accountingaccountlist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'accountingaccountlist'; // To manage different context of search
+$mode = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 $search_account = GETPOST('search_account', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
@@ -48,7 +49,7 @@ $search_accountparent = GETPOST('search_accountparent', 'alpha');
 $search_pcgtype = GETPOST('search_pcgtype', 'alpha');
 $search_import_key = GETPOST('search_import_key', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $confirm = GETPOST('confirm', 'alpha');
 
 $chartofaccounts = GETPOST('chartofaccounts', 'int');
@@ -65,7 +66,7 @@ if (!$user->hasRight('accounting', 'chartofaccount')) {
 }
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -90,7 +91,7 @@ $arrayfields = array(
 	'aa.pcg_type'=>array('label'=>"Pcgtype", 'checked'=>1, 'help'=>'PcgtypeDesc'),
 	'categories'=>array('label'=>"AccountingCategories", 'checked'=>-1, 'help'=>'AccountingCategoriesDesc'),
 	'aa.reconcilable'=>array('label'=>"Reconcilable", 'checked'=>1),
-	'aa.import_key'=>array('label'=>"ImportId", 'checked'=>-1),
+	'aa.import_key'=>array('label'=>"ImportId", 'checked'=>-1, 'help'=>''),
 	'aa.active'=>array('label'=>"Activated", 'checked'=>1)
 );
 
@@ -110,7 +111,8 @@ $hookmanager->initHooks(array('accountancyadminaccount'));
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha')) {
 	$massaction = '';
@@ -224,7 +226,9 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-llxHeader('', $langs->trans("ListAccounts"));
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
+
+llxHeader('', $langs->trans("ListAccounts"), $help_url);
 
 if ($action == 'delete') {
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('DeleteAccount'), $langs->trans('ConfirmDeleteAccount'), 'confirm_delete', '', 0, 1);
@@ -372,7 +376,7 @@ if ($resql) {
 			<script type="text/javascript">
 			$(document).ready(function () {
 		    	$("#change_chart").on("click", function (e) {
-					console.log("chartofaccounts seleted = "+$("#chartofaccounts").val());
+					console.log("chartofaccounts selected = "+$("#chartofaccounts").val());
 					// reload page
 					window.location.href = "'.$_SERVER["PHP_SELF"].'?valid_change_chart=1&chartofaccounts="+$("#chartofaccounts").val();
 			    });
@@ -665,7 +669,7 @@ if ($resql) {
 				print '<!-- obj->account_parent = '.$obj->account_parent.' obj->rowid2 = '.$obj->rowid2.' -->';
 				$accountparent->id = $obj->rowid2;
 				$accountparent->label = $obj->label2;
-				$accountparent->account_number = $obj->account_number2; // Sotre an account number for output
+				$accountparent->account_number = $obj->account_number2; // Store an account number for output
 				print $accountparent->getNomUrl(1);
 				print "</td>\n";
 				if (!$i) {

@@ -30,12 +30,12 @@ Permission56006=Export tickets
 
 Tickets=Tickets
 TicketDictType=Ticket - Types
-TicketDictCategory=Ticket - Groupes
+TicketDictCategory=Ticket - Groups
 TicketDictSeverity=Ticket - Severities
 TicketDictResolution=Ticket - Resolution
 
 TicketTypeShortCOM=Commercial question
-TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortHELP=Request for functional help
 TicketTypeShortISSUE=Issue or bug
 TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Change or enhancement request
@@ -107,8 +107,6 @@ TicketsShowProgressionHelp=Enable this option to hide the progress of the ticket
 TicketCreateThirdPartyWithContactIfNotExist=Ask name and company name for unknown emails.
 TicketCreateThirdPartyWithContactIfNotExistHelp=Check if a third party or a contact exists for the email entered. If not, ask a name and a company name to create a third party with contact.
 PublicInterface=Public interface
-TicketUrlPublicInterfaceLabelAdmin=Alternative URL for public interface
-TicketUrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface with another URL (the server must act as a proxy on this new URL)
 TicketPublicInterfaceTextHomeLabelAdmin=Welcome text of the public interface
 TicketPublicInterfaceTextHome=You can create a support ticket or view existing from its identifier tracking ticket.
 TicketPublicInterfaceTextHomeHelpAdmin=The text defined here will appear on the home page of the public interface.

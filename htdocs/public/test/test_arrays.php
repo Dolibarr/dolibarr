@@ -68,27 +68,27 @@ if (empty($usedolheader)) {
 
 	<?php
 } else {
-	$arraycss = array();
-	$arrayjs = array();
-	/*
-	$arraycss=array('/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css',
-			'/includes/jquery/plugins/datatables/extensions/ColReorder/css/colReorder.dataTables.min.css'
-	);
-	$arrayjs=array('/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/dataTables.buttons.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.colVis.min.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.flash.min.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.print.min.js',
-			'/includes/jquery/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js',
-			'/includes/jszip/jszip.min.js',
-			'/includes/pdfmake/pdfmake.min.js',
-			'/includes/pdfmake/vfs_fonts.js'
-	);
-	*/
+		$arraycss = array();
+		$arrayjs = array();
+		/*
+		$arraycss=array('/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css',
+				'/includes/jquery/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css',
+				'/includes/jquery/plugins/datatables/extensions/ColReorder/css/colReorder.dataTables.min.css'
+		);
+		$arrayjs=array('/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js',
+				'/includes/jquery/plugins/datatables/extensions/Buttons/js/dataTables.buttons.js',
+				'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.colVis.min.js',
+				'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js',
+				'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.flash.min.js',
+				'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.print.min.js',
+				'/includes/jquery/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js',
+				'/includes/jszip/jszip.min.js',
+				'/includes/pdfmake/pdfmake.min.js',
+				'/includes/pdfmake/vfs_fonts.js'
+		);
+		*/
 
-	llxHeader('', '', '', '', 0, 0, $arrayjs, $arraycss);
+		llxHeader('', '', '', '', 0, 0, $arrayjs, $arraycss);
 }
 
 
@@ -107,7 +107,7 @@ This page is a sample of page using tables. It is designed to make test with<br>
 </div>
 
 
-<br><hr><br>Example 0a : Table with div+div+div containg a select that should be overflowed and truncated => Use this to align text or form<br>
+<br><hr><br>Example 0a : Table with div+div+div containing a select that should be overflowed and truncated => Use this to align text or form<br>
 
 <div class="tagtable centpercent">
 	<div class="tagtr">
@@ -120,7 +120,7 @@ This page is a sample of page using tables. It is designed to make test with<br>
 	</div>
 </div>
 
-<br><hr><br>Example 0b: Table with div+form+div containg a select that should be overflowed and truncated => Use this to align text or form<br>
+<br><hr><br>Example 0b: Table with div+form+div containing a select that should be overflowed and truncated => Use this to align text or form<br>
 
 <div class="tagtable centpercent">
 	<form action="xxx" method="POST" class="tagtr">
@@ -133,7 +133,7 @@ This page is a sample of page using tables. It is designed to make test with<br>
 	</form>
 </div>
 
-<br><hr><br>Example 0c: Table with table+tr+td containg a select that should be overflowed and truncated => Use this to align text or form<br>
+<br><hr><br>Example 0c: Table with table+tr+td containing a select that should be overflowed and truncated => Use this to align text or form<br>
 
 <table class="centpercent">
 	<tr>

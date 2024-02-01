@@ -2,7 +2,6 @@
 
 namespace Dolibarr\Rector\Renaming;
 
-
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Scalar\String_;
@@ -36,10 +35,13 @@ class UserRightsToFunction extends AbstractRector
 			[new CodeSample(
 				'$user->rights->module->permission',
 				'$user->hasRight(\'module\', \'permission\')'
-			)]);
+			)]
+		);
 	}
 
 	/**
+	 * Return a node type from https://github.com/rectorphp/php-parser-nodes-docs/
+	 *
 	 * @return string[]
 	 */
 	public function getNodeTypes(): array
@@ -60,7 +62,6 @@ class UserRightsToFunction extends AbstractRector
 	 */
 	public function refactor(Node $node)
 	{
-
 		if ($node instanceof Node\Stmt\ClassMethod) {
 			$excludeMethods = ['getrights', 'hasRight'];
 			/** @var \PHPStan\Analyser\MutatingScope $scope */
@@ -120,7 +121,7 @@ class UserRightsToFunction extends AbstractRector
 			return null;
 		}
 		// Add a test to avoid rector error on html.formsetup.class.php
-		if (! $node->name instanceof Node\Expr\Variable && is_null($this->getName($node))) {
+		if (!$node->name instanceof Node\Expr\Variable && is_null($this->getName($node))) {
 			//var_dump($node);
 			return null;
 			//exit;

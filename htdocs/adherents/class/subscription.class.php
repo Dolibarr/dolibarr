@@ -134,10 +134,10 @@ class Subscription extends CommonObject
 	 *	Function who permitted creation of the subscription
 	 *
 	 *	@param	User	$user			User that create
-	 *	@param  bool 	$notrigger 		false=launch triggers after, true=disable triggers
-	 *	@return	int						<0 if KO, Id subscription created if OK
+	 *	@param  int 	$notrigger 		0=launch triggers after, 1=disable triggers
+	 *	@return	int						Return integer <0 if KO, Id subscription created if OK
 	 */
-	public function create($user, $notrigger = false)
+	public function create($user, $notrigger = 0)
 	{
 		global $langs;
 
@@ -209,7 +209,7 @@ class Subscription extends CommonObject
 	 *  Method to load a subscription
 	 *
 	 *  @param	int		$rowid		Id subscription
-	 *  @return	int					<0 if KO, =0 if not found, >0 if OK
+	 *  @return	int					Return integer <0 if KO, =0 if not found, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -256,7 +256,7 @@ class Subscription extends CommonObject
 	 *
 	 *	@param	User	$user			User who updated
 	 *	@param 	int		$notrigger		0=Disable triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -320,10 +320,10 @@ class Subscription extends CommonObject
 	 *	Delete a subscription
 	 *
 	 *	@param	User	$user		User that delete
-	 *	@param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
-	 *	@return	int					<0 if KO, 0 if not found, >0 if OK
+	 *	@param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 *	@return	int					Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function delete($user, $notrigger = false)
+	public function delete($user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -532,8 +532,9 @@ class Subscription extends CommonObject
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">';
 		$return .= $this->getNomUrl(-1);
 		$return .= '</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'dateh') || property_exists($this, 'datef')) {
 			$return .= '<br><span class="info-box-status opacitymedium small">'.dol_print_date($this->dateh, 'day').' - '.dol_print_date($this->datef, 'day').'</span>';
 		}

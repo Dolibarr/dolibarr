@@ -58,11 +58,11 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 	foreach ($object->fields as $key => $val) {
 		if ($object->fields[$key]['type'] == 'duration') {
 			if (GETPOST($key.'hour') == '' && GETPOST($key.'min') == '') {
-				continue; // The field was not submited to be saved
+				continue; // The field was not submitted to be saved
 			}
 		} else {
 			if (!GETPOSTISSET($key) && !preg_match('/^chkbxlst:/', $object->fields[$key]['type'])) {
-				continue; // The field was not submited to be saved
+				continue; // The field was not submitted to be saved
 			}
 		}
 		// Ignore special fields
@@ -95,7 +95,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		} elseif ($object->fields[$key]['type'] == 'datetime') {
 			$value = dol_mktime(GETPOST($key.'hour', 'int'), GETPOST($key.'min', 'int'), GETPOST($key.'sec', 'int'), GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'), 'tzuserrel');
 		} elseif ($object->fields[$key]['type'] == 'duration') {
-			$value = 60 * 60 * GETPOST($key.'hour', 'int') + 60 * GETPOST($key.'min', 'int');
+			$value = 60 * 60 * GETPOSTINT($key.'hour') + 60 * GETPOSTINT($key.'min');
 		} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
 			$value = price2num(GETPOST($key, 'alphanohtml')); // To fix decimal separator according to lang setup
 		} elseif ($object->fields[$key]['type'] == 'boolean') {
@@ -111,7 +111,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			}
 		} else {
 			if ($key == 'lang') {
-				$value = GETPOST($key, 'aZ09') ?GETPOST($key, 'aZ09') : "";
+				$value = GETPOST($key, 'aZ09') ? GETPOST($key, 'aZ09') : "";
 			} else {
 				$value = GETPOST($key, 'alphanohtml');
 			}
@@ -123,18 +123,24 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			$value = ''; // This is an explicit foreign key field
 		}
 
-		//var_dump($key.' '.$value.' '.$object->fields[$key]['type']);
+		//var_dump($key.' '.$value.' '.$object->fields[$key]['type'].' '.$object->fields[$key]['notnull']);
+
 		$object->$key = $value;
 		if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && isset($val['default']) && $val['default'] == '(PROV)') {
 			$object->$key = '(PROV)';
 		}
-		if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && !isset($val['default'])) {
-			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+		if ($key == 'pass_crypted') {
+			$object->pass = GETPOST("pass", "none");
+			// TODO Manadatory for password not yet managed
+		} else {
+			if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && !isset($val['default'])) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+			}
 		}
 
 		// Validation of fields values
-		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || getDolGlobalString('MAIN_ACTIVATE_VALIDATION_RESULT')) {
 			if (!$error && !empty($val['validate']) && is_callable(array($object, 'validateField'))) {
 				if (!$object->validateField($object->fields, $key, $value)) {
 					$error++;
@@ -191,10 +197,10 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 // Action to update record
 if ($action == 'update' && !empty($permissiontoadd)) {
 	foreach ($object->fields as $key => $val) {
-		// Check if field was submited to be edited
+		// Check if field was submitted to be edited
 		if ($object->fields[$key]['type'] == 'duration') {
 			if (!GETPOSTISSET($key.'hour') || !GETPOSTISSET($key.'min')) {
-				continue; // The field was not submited to be saved
+				continue; // The field was not submitted to be saved
 			}
 		} elseif ($object->fields[$key]['type'] == 'boolean') {
 			if (!GETPOSTISSET($key)) {
@@ -203,7 +209,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			}
 		} else {
 			if (!GETPOSTISSET($key) && !preg_match('/^chkbxlst:/', $object->fields[$key]['type']) && $object->fields[$key]['type']!=='checkbox') {
-				continue; // The field was not submited to be saved
+				continue; // The field was not submitted to be saved
 			}
 		}
 		// Ignore special fields
@@ -274,7 +280,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		}
 
 		// Validation of fields values
-		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || getDolGlobalString('MAIN_ACTIVATE_VALIDATION_RESULT')) {
 			if (!$error && !empty($val['validate']) && is_callable(array($object, 'validateField'))) {
 				if (!$object->validateField($object->fields, $key, $value)) {
 					$error++;
@@ -378,21 +384,31 @@ if ($action == "update_extras" && GETPOST('id', 'int') > 0 && !empty($permission
 // Action to delete
 if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 	if (!($object->id > 0)) {
-		dol_print_error('', 'Error, object must be fetched before being deleted');
+		dol_print_error(null, 'Error, object must be fetched before being deleted');
 		exit;
 	}
+
+	$db->begin();
 
 	$result = $object->delete($user);
 
 	if ($result > 0) {
+		$db->commit();
+
 		// Delete OK
 		setEventMessages("RecordDeleted", null, 'mesgs');
 
 		if (empty($noback)) {
+			if (empty($backurlforlist)) {
+				print 'Error backurlforlist is not defined';
+				exit;
+			}
 			header("Location: " . $backurlforlist);
 			exit;
 		}
 	} else {
+		$db->rollback();
+
 		$error++;
 		if (!empty($object->errors)) {
 			setEventMessages(null, $object->errors, 'errors');
@@ -425,7 +441,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			if (method_exists($object, 'generateDocument')) {
 				$ret = $object->fetch($object->id); // Reload to get new records
 				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -456,7 +472,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
 
 	if ($result >= 0) {
 		// Define output language
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			if (method_exists($object, 'generateDocument')) {
 				$outputlangs = $langs;
 				$newlang = '';
@@ -493,7 +509,7 @@ if ($action == 'confirm_close' && $confirm == 'yes' && $permissiontoadd) {
 	$result = $object->cancel($user);
 	if ($result >= 0) {
 		// Define output language
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			if (method_exists($object, 'generateDocument')) {
 				$outputlangs = $langs;
 				$newlang = '';
@@ -537,7 +553,7 @@ if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
 	$result = $object->reopen($user);
 	if ($result >= 0) {
 		// Define output language
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			if (method_exists($object, 'generateDocument')) {
 				$outputlangs = $langs;
 				$newlang = '';

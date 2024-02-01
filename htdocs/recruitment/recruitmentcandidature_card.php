@@ -40,7 +40,7 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'recruitmentcandidaturecard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'recruitmentcandidaturecard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $lineid = GETPOST('lineid', 'int');
@@ -56,7 +56,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -348,7 +348,7 @@ if (($id || $ref) && $action == 'edit') {
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$res = $object->fetch_optionals();
 
-	$head = recruitmentcandidaturePrepareHead($object);
+	$head = recruitmentCandidaturePrepareHead($object);
 	print dol_get_fiche_head($head, 'card', $langs->trans("RecruitmentCandidature"), -1, $object->picto);
 
 	$formconfirm = '';
@@ -394,6 +394,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$text = '';
 
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'confirm_closeas', $formquestion, '', 1, 250);
+	}
+
+	if ($action == 'close') {
+		$langs->load("propal");
+
+		//Form to close proposal (signed or not)
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ConfirmClose'), $langs->trans('ConfirmCloseAsk'), 'confirm_close', $formquestion, '', 1, 250);
 	}
 
 	// Confirm create user

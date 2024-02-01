@@ -131,7 +131,7 @@ class Fiscalyear extends CommonObject
 	 *	Create object in database
 	 *
 	 *	@param		User	$user   User making creation
-	 *	@return 	int				<0 if KO, >0 if OK
+	 *	@return 	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -186,7 +186,7 @@ class Fiscalyear extends CommonObject
 	 *	Update record
 	 *
 	 *	@param	User	$user		User making update
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user)
 	{
@@ -223,7 +223,7 @@ class Fiscalyear extends CommonObject
 	 * Load an object from database
 	 *
 	 * @param	int		$id		Id of record to load
-	 * @return	int				<0 if KO, >0 if OK
+	 * @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -255,7 +255,7 @@ class Fiscalyear extends CommonObject
 	 *	Delete record
 	 *
 	 *	@param	int		$id		Id of record to delete
-	 *	@return	int				<0 if KO, >0 if OK
+	 *	@return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($id)
 	{
@@ -358,7 +358,7 @@ class Fiscalyear extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip) && $user->hasRight('accounting', 'fiscalyear', 'write')) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("FiscalYear");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -446,7 +446,9 @@ class Fiscalyear extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
+
 				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
@@ -461,9 +463,9 @@ class Fiscalyear extends CommonObject
 	/**
 	 *  Return the number of entries by fiscal year
 	 *
-	 *	@param	int		$datestart	Date start to scan
-	 *	@param	int		$dateend	Date end to scan
-	 *	@return	string				Number of entries
+	 *	@param	int|string		$datestart	Date start to scan
+	 *	@param	int|string		$dateend	Date end to scan
+	 *	@return	string			Number of entries
 	 */
 	public function getAccountancyEntriesByFiscalYear($datestart = '', $dateend = '')
 	{
@@ -495,8 +497,8 @@ class Fiscalyear extends CommonObject
 	/**
 	 *  Return the number of movements by fiscal year
 	 *
-	 *  @param	int		$datestart	Date start to scan
-	 *  @param	int		$dateend	Date end to scan
+	 *  @param	int|string		$datestart	Date start to scan
+	 *  @param	int|string		$dateend	Date end to scan
 	 *  @return	string				Number of movements
 	 */
 	public function getAccountancyMovementsByFiscalYear($datestart = '', $dateend = '')

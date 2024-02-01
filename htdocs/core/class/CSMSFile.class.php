@@ -69,6 +69,8 @@ class CSMSFile
 
 	public $fk_project;
 
+	public $deliveryreceipt;
+
 
 	/**
 	 *	CSMSFile
@@ -85,7 +87,7 @@ class CSMSFile
 	{
 		global $conf;
 
-		// On definit fin de ligne
+		// Define the line ending (TODO: Why not use PHP_EOL?)
 		$this->eol = "\n";
 		if (preg_match('/^win/i', PHP_OS)) {
 			$this->eol = "\r\n";
@@ -94,7 +96,7 @@ class CSMSFile
 			$this->eol = "\r";
 		}
 
-		// If ending method not defined
+		// If SMS sending method not defined
 		if (!getDolGlobalString('MAIN_SMS_SENDMODE')) {
 			$this->error = 'No SMS Engine defined';
 			throw new Exception('No SMS Engine defined');
@@ -103,28 +105,29 @@ class CSMSFile
 		dol_syslog("CSMSFile::CSMSFile: MAIN_SMS_SENDMODE=".getDolGlobalString('MAIN_SMS_SENDMODE')." charset=".$conf->file->character_set_client." from=".$from.", to=".$to.", msg length=".strlen($msg), LOG_DEBUG);
 		dol_syslog("CSMSFile::CSMSFile: deferred=".$deferred." priority=".$priority." class=".$class, LOG_DEBUG);
 
-		// Action according to choosed sending method
+		// Action according to chosen sending method
 		$this->addr_from = $from;
 		$this->addr_to = $to;
 		$this->deferred = $deferred;
 		$this->priority = $priority;
 		$this->class = $class;
+		$this->deliveryreceipt = $deliveryreceipt;
 		$this->message = $msg;
 		$this->nostop = false;
 	}
 
 
 	/**
-	 * Send sms that was prepared by constructor
+	 * Send SMS that was prepared by constructor
 	 *
-	 * @return    boolean     True if sms sent, false otherwise
+	 * @return    boolean     True if SMS sent, false otherwise
 	 */
 	public function sendfile()
 	{
 		global $conf;
 
 		$errorlevel = error_reporting();
-		error_reporting($errorlevel ^ E_WARNING); // Desactive warnings
+		error_reporting($errorlevel ^ E_WARNING); // Disable warnings
 
 		$res = false;
 
@@ -133,12 +136,12 @@ class CSMSFile
 
 		$this->message = stripslashes($this->message);
 
-		if (!empty($conf->global->MAIN_SMS_DEBUG)) {
+		if (getDolGlobalString('MAIN_SMS_DEBUG')) {
 			$this->dump_sms();
 		}
 
-		if (empty($conf->global->MAIN_DISABLE_ALL_SMS)) {
-			// Action according to the choosed sending method
+		if (!getDolGlobalString('MAIN_DISABLE_ALL_SMS')) {
+			// Action according to the chose sending method
 			if (getDolGlobalString('MAIN_SMS_SENDMODE')) {
 				$sendmode = getDolGlobalString('MAIN_SMS_SENDMODE');	// $conf->global->MAIN_SMS_SENDMODE looks like a value 'module'
 				$classmoduleofsender = getDolGlobalString('MAIN_MODULE_'.strtoupper($sendmode).'_SMS', $sendmode);	// $conf->global->MAIN_MODULE_XXX_SMS looks like a value 'class@module'
@@ -161,6 +164,7 @@ class CSMSFile
 						$sms->class = $this->class;
 						$sms->message = $this->message;
 						$sms->nostop = $this->nostop;
+						$sms->deliveryreceipt = $this->deliveryreceipt;
 
 						$sms->socid = $this->socid;
 						$sms->contact_id = $this->contact_id;
@@ -176,7 +180,7 @@ class CSMSFile
 						} else {
 							dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
 							//var_dump($res);        // 1973128
-							if (!empty($conf->global->MAIN_SMS_DEBUG)) {
+							if (getDolGlobalString('MAIN_SMS_DEBUG')) {
 								$this->dump_sms_result($res);
 							}
 						}
@@ -185,7 +189,7 @@ class CSMSFile
 						$sms->error = 'The SMS manager "'.$classfile.'" defined into SMS setup MAIN_MODULE_'.strtoupper($sendmode).'_SMS is not found';
 					}
 				} catch (Exception $e) {
-					dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
+					dol_print_error(null, 'Error to get list of senders: '.$e->getMessage());
 				}
 			} else {
 				// Send sms method not correctly defined
@@ -226,6 +230,7 @@ class CSMSFile
 			fputs($fp, "Class: ".$this->class."\n");
 			fputs($fp, "Deferred: ".$this->deferred."\n");
 			fputs($fp, "DisableStop: ".$this->nostop."\n");
+			fputs($fp, "DeliveryReceipt: ".$this->deliveryreceipt."\n");
 			fputs($fp, "Message:\n".$this->message);
 
 			fclose($fp);

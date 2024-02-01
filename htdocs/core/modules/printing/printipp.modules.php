@@ -158,7 +158,7 @@ class printing_printipp extends PrintingDriver
 				// Set number of copy
 				$ipp->setCopies($obj->copy);
 			} else {
-				if (!empty($conf->global->PRINTIPP_URI_DEFAULT)) {
+				if (getDolGlobalString('PRINTIPP_URI_DEFAULT')) {
 					dol_syslog("Will use default printer conf->global->PRINTIPP_URI_DEFAULT = ".getDolGlobalString('PRINTIPP_URI_DEFAULT'));
 					$ipp->setPrinterURI(getDolGlobalString('PRINTIPP_URI_DEFAULT'));
 				} else {
@@ -228,7 +228,7 @@ class printing_printipp extends PrintingDriver
 			//$html.= '<td>'.$printer_det->device_uri->_value0.'</td>';
 			$html .= '<td>'.$printer_det->media_default->_value0.'</td>';
 			$html .= '<td>'.$langs->trans('MEDIA_IPP_'.$printer_det->media_type_supported->_value1).'</td>';
-			// Defaut
+			// Default
 			$html .= '<td class="center">';
 			if ($conf->global->PRINTIPP_URI_DEFAULT == $value) {
 				$html .= img_picto($langs->trans("Default"), 'on');

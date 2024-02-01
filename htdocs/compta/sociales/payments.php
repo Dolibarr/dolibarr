@@ -54,7 +54,7 @@ $year = GETPOST("year", 'int');
 $search_sc_type = GETPOST('search_sc_type', 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -177,7 +177,7 @@ if (preg_match('/^cs\./', $sortfield)
 	|| preg_match('/^pct\./', $sortfield)
 	|| preg_match('/^u\./', $sortfield)
 	|| preg_match('/^ba\./', $sortfield)) {
-		$sql .= $db->order($sortfield, $sortorder);
+	$sql .= $db->order($sortfield, $sortorder);
 }
 
 // Count total nb of records
@@ -288,7 +288,7 @@ while ($i < min($num, $limit)) {
 	print $socialcontrib->getNomUrl(1, '');
 	print '</td>';
 	// Type
-	print '<td title="'.dol_escape_htmltag($obj->label_sc).'" class="tdoverflowmax300">'.$obj->label_sc.'</td>';
+	print '<td title="'.dol_escape_htmltag($obj->type_label).'" class="tdoverflowmax300">'.$obj->type_label.'</td>';
 	// Date
 	$date = $obj->periode;
 	if (empty($date)) {

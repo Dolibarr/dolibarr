@@ -46,7 +46,7 @@ class mod_contract_olive extends ModelNumRefContracts
 
 	public $code_modifiable = 1; // Code modifiable
 
-	public $code_modifiable_invalide = 1; // Code modifiable si il est invalide
+	public $code_modifiable_invalide = 1; // Code modifiable si il est invalid
 
 	public $code_modifiable_null = 1; // Code modifiables si il est null
 
@@ -121,9 +121,9 @@ class mod_contract_olive extends ModelNumRefContracts
 		$result = 0;
 		$code = strtoupper(trim($code));
 
-		if (empty($code) && $this->code_null && empty($conf->global->MAIN_CONTRACT_CODE_ALWAYS_REQUIRED)) {
+		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_CONTRACT_CODE_ALWAYS_REQUIRED')) {
 			$result = 0;
-		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_CONTRACT_CODE_ALWAYS_REQUIRED))) {
+		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_CONTRACT_CODE_ALWAYS_REQUIRED'))) {
 			$result = -2;
 		}
 

@@ -57,16 +57,16 @@ class ActionsStripeconnect extends CommonHookActions
 	/**
 	 * formObjectOptions
 	 *
-	 * @param	array	$parameters		Parameters
-	 * @param	Object	$object			Object
-	 * @param	string	$action			Action
-	 * @return bool
+	 * @param	array			$parameters		Parameters
+	 * @param	CommonObject	$object			Object
+	 * @param	string			$action			Action
+	 * @return int
 	 */
 	public function formObjectOptions($parameters, &$object, &$action)
 	{
 		global $conf, $langs;
 
-		if (isModEnabled('stripe') && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+		if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
 			$service = 'StripeTest';
 			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
 		} else {
@@ -165,7 +165,7 @@ class ActionsStripeconnect extends CommonHookActions
 		global $conf, $langs;
 
 		if (is_object($object) && $object->element == 'facture') {
-			// On verifie si la facture a des paiements
+			// Verify if the invoice has payments
 			$sql = 'SELECT pf.amount';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
 			$sql .= ' WHERE pf.fk_facture = '.((int) $object->id);

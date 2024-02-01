@@ -169,7 +169,7 @@ class modMyModule extends DolibarrModules
 			'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
 		)*/
 
-		if (!isset($conf->mymodule) || !isset($conf->mymodule->enabled)) {
+		if (!isModEnabled("mymodule")) {
 			$conf->mymodule = new stdClass();
 			$conf->mymodule->enabled = 0;
 		}
@@ -189,7 +189,7 @@ class modMyModule extends DolibarrModules
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
 		// 'order'            to add a tab in sale order view
 		// 'order_supplier'   to add a tab in supplier order view
@@ -321,7 +321,7 @@ class modMyModule extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=mymodule',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',                          // This is a Left menu entry
 			'titre'=>'MyObject',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
+			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth valignmiddle paddingright"'),
 			'mainmenu'=>'mymodule',
 			'leftmenu'=>'myobject',
 			'url'=>'/mymodule/mymoduleindex.php',

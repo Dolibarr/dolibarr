@@ -63,13 +63,13 @@ class FormContract
 	 *  @param	string	$morecss	More CSS
 	 *	@return int         		Nbr of contract if OK, <0 if KO
 	 */
-	public function select_contract($socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0, $noouput = 0, $morecss = 'minwidth150')
+	public function select_contract($socid = -1, $selected = 0, $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0, $noouput = 0, $morecss = 'minwidth150')
 	{
 		// phpcs:enable
 		global $user, $conf, $langs;
 
 		$hideunselectables = false;
-		if (!empty($conf->global->CONTRACT_HIDE_UNSELECTABLES)) {
+		if (getDolGlobalString('CONTRACT_HIDE_UNSELECTABLES')) {
 			$hideunselectables = true;
 		}
 
@@ -83,9 +83,9 @@ class FormContract
 		//if ($contratListId) $sql.= " AND c.rowid IN (".$this->db->sanitize($contratListId).")";
 		if ($socid > 0) {
 			// CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
-			if (empty($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY)) {
+			if (!getDolGlobalString('CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY')) {
 				$sql .= " AND (c.fk_soc=".((int) $socid)." OR c.fk_soc IS NULL)";
-			} elseif ($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all') {
+			} elseif (getDolGlobalString('CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY') != 'all') {
 				$sql .= " AND (c.fk_soc IN (".$this->db->sanitize(((int) $socid).",".((int) $conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY)).")";
 				$sql .= " OR c.fk_soc IS NULL)";
 			}
@@ -132,7 +132,7 @@ class FormContract
 								$disabled = 1;
 								$labeltoshow .= ' ('.$langs->trans("Draft").')';
 							}
-							if (empty($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY) && $socid > 0 && (!empty($obj->fk_soc) && $obj->fk_soc != $socid)) {
+							if (!getDolGlobalString('CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY') && $socid > 0 && (!empty($obj->fk_soc) && $obj->fk_soc != $socid)) {
 								$disabled = 1;
 								$labeltoshow .= ' - '.$langs->trans("LinkedToAnotherCompany");
 							}
@@ -190,7 +190,7 @@ class FormContract
 	 *  @param	int		$noouput	1=Return the output instead of display
 	 *  @return string|void         html string
 	 */
-	public function formSelectContract($page, $socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0, $noouput = 0)
+	public function formSelectContract($page, $socid = -1, $selected = 0, $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0, $noouput = 0)
 	{
 		global $langs;
 

@@ -35,7 +35,7 @@ $show_files = GETPOST('show_files', 'int');
 $confirm 	= GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
 $toselect 	= GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'bookmarklist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bookmarklist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $optioncss 	= GETPOST('optioncss', 'alpha');
 $mode 		= GETPOST('mode', 'aZ');
@@ -358,7 +358,14 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container">';
 		}
 		// Output Kanban
-		print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+		$selected = -1;
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+		}
+		print $object->getKanbanView('', array('selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

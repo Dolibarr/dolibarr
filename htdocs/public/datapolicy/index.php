@@ -18,7 +18,7 @@
 /**
  * \file    htdocs/public/datapolicy/index.php
  * \ingroup datapolicy
- * \brief   Page to show the result of updating it Data policiy preferences after an email campaign using sendMailDataPolicyContact()
+ * \brief   Page to show the result of updating it Data policy preferences after an email campaign using sendMailDataPolicyContact()
  */
 
 if (!defined('NOLOGIN')) {
@@ -54,7 +54,7 @@ $langs->load('datapolicy', 0, 0, $l);
  */
 
 if (empty($action) || (empty($idc) && empty($ids) && empty($ida))) {
-	print 'Missing paramater s, c or a';
+	print 'Missing parameter s, c or a';
 	return 0;
 } elseif (!empty($idc)) {
 	$contact = new Contact($db);

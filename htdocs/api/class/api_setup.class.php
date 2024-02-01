@@ -24,6 +24,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/cstate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/cregion.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ccountry.class.php';
@@ -62,7 +63,9 @@ class Setup extends DolibarrApi
 	 *
 	 * @return array [List of ordering methods]
 	 *
-	 * @throws RestException 400
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	503		Error retrieving list of ordering methods
 	 */
 	public function getOrderingMethods($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
 	{
@@ -80,7 +83,7 @@ class Setup extends DolibarrApi
 			$errormessage = '';
 			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
 			if ($errormessage) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
 
@@ -105,7 +108,7 @@ class Setup extends DolibarrApi
 				$list[] = $this->db->fetch_object($result);
 			}
 		} else {
-			throw new RestException(400, $this->db->lasterror());
+			throw new RestException(503, $this->db->lasterror());
 		}
 
 		return $list;
@@ -124,7 +127,9 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/ordering_origins
 	 *
-	 * @throws RestException 400
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	503		Error retrieving list of ordering origins
 	 */
 	public function getOrderingOrigins($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
 	{
@@ -167,7 +172,7 @@ class Setup extends DolibarrApi
 				$list[] = $this->db->fetch_object($result);
 			}
 		} else {
-			throw new RestException(400, $this->db->lasterror());
+			throw new RestException(503, $this->db->lasterror());
 		}
 
 		return $list;
@@ -187,7 +192,9 @@ class Setup extends DolibarrApi
 	 *
 	 * @return array [List of payment types]
 	 *
-	 * @throws RestException 400
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	503		Error retrieving list of payment types
 	 */
 	public function getPaymentTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
 	{
@@ -231,7 +238,7 @@ class Setup extends DolibarrApi
 				$list[] = $this->db->fetch_object($result);
 			}
 		} else {
-			throw new RestException(400, $this->db->lasterror());
+			throw new RestException(503, $this->db->lasterror());
 		}
 
 		return $list;
@@ -252,7 +259,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/regions
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	503		Error retrieving list of regions
 	 */
 	public function getListOfRegions($sortfield = "code_region", $sortorder = 'ASC', $limit = 100, $page = 0, $country = 0, $filter = '', $sqlfilters = '')
 	{
@@ -315,7 +323,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/regions/{id}
 	 *
-	 * @throws RestException
+	 * @throws	RestException	404		Region not found
+	 * @throws	RestException	503		Error retrieving region
 	 */
 	public function getRegionByID($id)
 	{
@@ -330,7 +339,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/regions/byCode/{code}
 	 *
-	 * @throws RestException
+	 * @throws	RestException	404		Region not found
+	 * @throws	RestException	503		Error when retrieving region
 	 */
 	public function getRegionByCode($code)
 	{
@@ -356,7 +366,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/states
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	503		Error retrieving list of states
 	 */
 	public function getListOfStates($sortfield = "code_departement", $sortorder = 'ASC', $limit = 100, $page = 0, $country = 0, $filter = '', $sqlfilters = '')
 	{
@@ -421,7 +432,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/states/{id}
 	 *
-	 * @throws RestException
+	 * @throws	RestException	404		State not found
+	 * @throws	RestException	503		Error retrieving state
 	 */
 	public function getStateByID($id)
 	{
@@ -436,7 +448,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/states/byCode/{code}
 	 *
-	 * @throws RestException
+	 * @throws	RestException	404		State not found
+	 * @throws	RestException	503		Error retrieving state
 	 */
 	public function getStateByCode($code)
 	{
@@ -462,7 +475,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/countries
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	503		Error retrieving list of countries
 	 */
 	public function getListOfCountries($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $filter = '', $lang = '', $sqlfilters = '')
 	{
@@ -526,7 +540,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/countries/{id}
 	 *
-	 * @throws RestException
+	 * @throws	RestException	404		Country not found
+	 * @throws	RestException	503		Error retrieving country
 	 */
 	public function getCountryByID($id, $lang = '')
 	{
@@ -542,7 +557,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/countries/byCode/{code}
 	 *
-	 * @throws RestException
+	 * @throws	RestException	404		Country not found
+	 * @throws	RestException	503		Error retrieving country
 	 */
 	public function getCountryByCode($code, $lang = '')
 	{
@@ -558,7 +574,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/countries/byISO/{iso}
 	 *
-	 * @throws RestException
+	 * @throws	RestException	404		Country not found
+	 * @throws	RestException	503		Error retrieving country
 	 */
 	public function getCountryByISO($iso, $lang = '')
 	{
@@ -653,7 +670,9 @@ class Setup extends DolibarrApi
 	 *
 	 * @return array [List of availability]
 	 *
-	 * @throws RestException 400
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	503		Error when retrieving list of availabilities
 	 */
 	public function getAvailability($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
 	{
@@ -696,7 +715,7 @@ class Setup extends DolibarrApi
 				$list[] = $this->db->fetch_object($result);
 			}
 		} else {
-			throw new RestException(400, $this->db->lasterror());
+			throw new RestException(503, $this->db->lasterror());
 		}
 
 		return $list;
@@ -726,7 +745,7 @@ class Setup extends DolibarrApi
 	 * @param object   $object    Object with label to translate
 	 * @param string   $lang      Code of the language the name of the object must be translated to
 	 * @param string   $prefix 	  Prefix for translation key
-	 * @param array    $dict      Array of dictionnary for translation
+	 * @param array    $dict      Array of dictionary for translation
 	 * @return void
 	 */
 	private function translateLabel($object, $lang, $prefix = 'Country', $dict = array('dict'))
@@ -765,7 +784,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/event_types
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	503		Error when retrieving list of events types
 	 */
 	public function getListOfEventTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $module = '', $active = 1, $sqlfilters = '')
 	{
@@ -831,7 +851,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/expensereport_types
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	503		Error when retrieving list of expense report types
 	 */
 	public function getListOfExpenseReportsTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $module = '', $active = 1, $sqlfilters = '')
 	{
@@ -896,7 +917,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/contact_types
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	503		Error when retrieving list of contacts types
 	 */
 	public function getListOfContactTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $module = '', $active = 1, $lang = '', $sqlfilters = '')
 	{
@@ -964,7 +986,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/civilities
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	503		Error when retrieving list of civilities
 	 */
 	public function getListOfCivilities($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $module = '', $active = 1, $lang = '', $sqlfilters = '')
 	{
@@ -1028,7 +1051,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/currencies
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	503		Error when retrieving list of currencies
 	 */
 	public function getListOfCurrencies($multicurrency = 0, $sortfield = "code_iso", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
 	{
@@ -1097,7 +1121,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET extrafields
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	503		Error when retrieving list of extra fields
 	 */
 	public function getListOfExtrafields($sortfield = "t.pos", $sortorder = 'ASC', $type = '', $sqlfilters = '')
 	{
@@ -1155,10 +1180,6 @@ class Setup extends DolibarrApi
 			throw new RestException(503, 'Error when retrieving list of extra fields : '.$this->db->lasterror());
 		}
 
-		if (!count($list)) {
-			throw new RestException(404, 'No extrafield found');
-		}
-
 		return $list;
 	}
 
@@ -1178,7 +1199,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/towns
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	503		Error when retrieving list of towns
 	 */
 	public function getListOfTowns($sortfield = "zip,town", $sortorder = 'ASC', $limit = 100, $page = 0, $zipcode = '', $town = '', $active = 1, $sqlfilters = '')
 	{
@@ -1243,7 +1265,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @return array List of payment terms
 	 *
-	 * @throws RestException 400
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	503		Error when retrieving list of payments terms
 	 */
 	public function getPaymentTerms($sortfield = "sortorder", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
 	{
@@ -1287,7 +1310,7 @@ class Setup extends DolibarrApi
 				$list[] = $this->db->fetch_object($result);
 			}
 		} else {
-			throw new RestException(400, $this->db->lasterror());
+			throw new RestException(503, $this->db->lasterror());
 		}
 
 		return $list;
@@ -1306,7 +1329,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @return array List of shipping methods
 	 *
-	 * @throws RestException 400
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	503		Error when retrieving list of shipping modes
 	 */
 	public function getShippingModes($limit = 100, $page = 0, $active = 1, $lang = '', $sqlfilters = '')
 	{
@@ -1348,7 +1372,7 @@ class Setup extends DolibarrApi
 				$list[] = $method;
 			}
 		} else {
-			throw new RestException(400, $this->db->lasterror());
+			throw new RestException(503, $this->db->lasterror());
 		}
 
 		return $list;
@@ -1367,7 +1391,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/units
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	503		Error when retrieving list of measuring units
 	 */
 	public function getListOfMeasuringUnits($sortfield = "rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
 	{
@@ -1426,7 +1451,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/legal_form
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	503		Error when retrieving list of legal form
 	 */
 	public function getListOfLegalForm($sortfield = "rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $country = 0, $active = 1, $sqlfilters = '')
 	{
@@ -1487,7 +1513,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/staff
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	503		Error when retrieving list of staff
 	 */
 	public function getListOfStaff($sortfield = "id", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
 	{
@@ -1545,7 +1572,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/socialnetworks
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	503		Error when retrieving list of social networks
 	 */
 	public function getListOfsocialNetworks($sortfield = "rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
 	{
@@ -1597,22 +1625,23 @@ class Setup extends DolibarrApi
 		return $list;
 	}
 
-	 /**
-	  * Get the list of tickets categories.
-	  *
-	  * @param string    $sortfield  Sort field
-	  * @param string    $sortorder  Sort order
-	  * @param int       $limit      Number of items per page
-	  * @param int       $page       Page number (starting from zero)
-	  * @param int       $active     Payment term is active or not {@min 0} {@max 1}
-	  * @param string    $lang       Code of the language the label of the category must be translated to
-	  * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
-	  * @return array				List of ticket categories
-	  *
-	  * @url     GET dictionary/ticket_categories
-	  *
-	  * @throws RestException
-	  */
+	/**
+	 * Get the list of tickets categories.
+	 *
+	 * @param string    $sortfield  Sort field
+	 * @param string    $sortorder  Sort order
+	 * @param int       $limit      Number of items per page
+	 * @param int       $page       Page number (starting from zero)
+	 * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+	 * @param string    $lang       Code of the language the label of the category must be translated to
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+	 * @return array				List of ticket categories
+	 *
+	 * @url     GET dictionary/ticket_categories
+	 *
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	503		Error when retrieving list of tickets categories
+	 */
 	public function getTicketsCategories($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $lang = '', $sqlfilters = '')
 	{
 		$list = array();
@@ -1673,7 +1702,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/ticket_severities
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	503		Error when retrieving list of tickets severities
 	 */
 	public function getTicketsSeverities($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $lang = '', $sqlfilters = '')
 	{
@@ -1735,7 +1765,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/ticket_types
 	 *
-	 * @throws RestException
+	 * @throws RestException 400 Bad value for sqlfilters
+	 * @throws RestException 503 Error when retrieving list of tickets types
 	 */
 	public function getTicketsTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $lang = '', $sqlfilters = '')
 	{
@@ -1798,7 +1829,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/incoterms
 	 *
-	 * @throws RestException
+	 * @throws RestException 503 Error when retrieving list of incoterms types
 	 */
 	public function getListOfIncoterms($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $lang = '', $sqlfilters = '')
 	{
@@ -1860,8 +1891,8 @@ class Setup extends DolibarrApi
 		global $conf, $mysoc;
 
 		if (!DolibarrApiAccess::$user->admin
-			&& (empty($conf->global->API_LOGINS_ALLOWED_FOR_GET_COMPANY) || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_GET_COMPANY)) {
-				throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_COMPANY');
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_COMPANY') || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_GET_COMPANY)) {
+			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_COMPANY');
 		}
 
 		unset($mysoc->pays);
@@ -1908,7 +1939,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET /establishments
 	 *
-	 * @throws RestException
+	 * @throws RestException 503 Error when retrieving list of establishments
 	 */
 	public function getEstablishments()
 	{
@@ -1946,7 +1977,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET establishments/{id}
 	 *
-	 * @throws RestException
+	 * @throws RestException 404 Establishment not found
+	 * @throws RestException 503 Error when retrieving establishment
 	 */
 	public function getEtablishmentByID($id)
 	{
@@ -1972,8 +2004,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET conf/{constantname}
 	 *
+	 * @throws RestException 400 Error Bad or unknown value for constantname
 	 * @throws RestException 403 Forbidden
-	 * @throws RestException 404 Error Bad or unknown value for constantname
 	 */
 	public function getConf($constantname)
 	{
@@ -1985,10 +2017,10 @@ class Setup extends DolibarrApi
 		}
 
 		if (!preg_match('/^[a-zA-Z0-9_]+$/', $constantname) || !isset($conf->global->$constantname)) {
-			throw new RestException(404, 'Error Bad or unknown value for constantname');
+			throw new RestException(400, 'Error Bad or unknown value for constantname');
 		}
 		if (isASecretKey($constantname)) {
-			throw new RestException(403, 'Forbidden. This parameter cant be read with APIs');
+			throw new RestException(403, 'Forbidden. This parameter can not be read with APIs');
 		}
 
 		return getDolGlobalString($constantname);
@@ -2005,14 +2037,13 @@ class Setup extends DolibarrApi
 	 * @throws RestException 403 Forbidden
 	 * @throws RestException 404 Signature file not found
 	 * @throws RestException 500 Technical error
-	 * @throws RestException 503 Forbidden
 	 */
 	public function getCheckIntegrity($target)
 	{
 		global $langs, $conf;
 
 		if (!DolibarrApiAccess::$user->admin
-			&& (empty($conf->global->API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK) || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK)) {
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK') || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK)) {
 			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK');
 		}
 
@@ -2028,16 +2059,16 @@ class Setup extends DolibarrApi
 		$file_list = array('missing' => array(), 'updated' => array());
 
 		// Local file to compare to
-		$xmlshortfile = dol_sanitizeFileName(GETPOST('xmlshortfile', 'alpha') ? GETPOST('xmlshortfile', 'alpha') : 'filelist-'.DOL_VERSION.(empty($conf->global->MAIN_FILECHECK_LOCAL_SUFFIX) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml'.(empty($conf->global->MAIN_FILECHECK_LOCAL_EXT) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_EXT));
+		$xmlshortfile = dol_sanitizeFileName(GETPOST('xmlshortfile', 'alpha') ? GETPOST('xmlshortfile', 'alpha') : 'filelist-'.DOL_VERSION.(!getDolGlobalString('MAIN_FILECHECK_LOCAL_SUFFIX') ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml'.(!getDolGlobalString('MAIN_FILECHECK_LOCAL_EXT') ? '' : $conf->global->MAIN_FILECHECK_LOCAL_EXT));
 		$xmlfile = DOL_DOCUMENT_ROOT.'/install/'.$xmlshortfile;
 		// Remote file to compare to
 		$xmlremote = ($target == 'default' ? '' : $target);
-		if (empty($xmlremote) && !empty($conf->global->MAIN_FILECHECK_URL)) {
-			$xmlremote = $conf->global->MAIN_FILECHECK_URL;
+		if (empty($xmlremote) && getDolGlobalString('MAIN_FILECHECK_URL')) {
+			$xmlremote = getDolGlobalString('MAIN_FILECHECK_URL');
 		}
 		$param = 'MAIN_FILECHECK_URL_'.DOL_VERSION;
-		if (empty($xmlremote) && !empty($conf->global->$param)) {
-			$xmlremote = $conf->global->$param;
+		if (empty($xmlremote) && getDolGlobalString($param)) {
+			$xmlremote = getDolGlobalString($param);
 		}
 		if (empty($xmlremote)) {
 			$xmlremote = 'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
@@ -2049,6 +2080,12 @@ class Setup extends DolibarrApi
 		if ($xmlremote && !preg_match('/\.xml$/', $xmlremote)) {
 			$langs->load("errors");
 			throw new RestException(500, $langs->trans("ErrorURLMustEndWith", $xmlremote, '.xml'));
+		}
+
+		if (LIBXML_VERSION < 20900) {
+			// Avoid load of external entities (security problem).
+			// Required only if LIBXML_VERSION < 20900
+			libxml_disable_entity_loader(true);
 		}
 
 		if ($target == 'local') {
@@ -2096,8 +2133,8 @@ class Setup extends DolibarrApi
 					$constvalue = (empty($constvalue) ? '0' : $constvalue);
 					// Value found
 					$value = '';
-					if ($constname && $conf->global->$constname != '') {
-						$value = $conf->global->$constname;
+					if ($constname && getDolGlobalString($constname) != '') {
+						$value = getDolGlobalString($constname);
 					}
 					$valueforchecksum = (empty($value) ? '0' : $value);
 
@@ -2141,7 +2178,7 @@ class Setup extends DolibarrApi
 					}
 				}
 
-				// Files missings
+				// Files missing
 				$out .= load_fiche_titre($langs->trans("FilesMissing"));
 
 				$out .= '<div class="div-table-responsive-no-min">';
@@ -2318,7 +2355,7 @@ class Setup extends DolibarrApi
 		global $conf;
 
 		if (!DolibarrApiAccess::$user->admin
-			&& (empty($conf->global->API_LOGINS_ALLOWED_FOR_GET_MODULES) || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_GET_MODULES)) {
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES') || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_GET_MODULES)) {
 			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_MODULES');
 		}
 

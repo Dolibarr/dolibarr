@@ -106,6 +106,8 @@ if (!$base) {
 			$i = 0;
 			while ($i < $num) {
 				$row = $db->fetch_row($resql);
+				//var_dump($row);
+
 				print '<tr class="oddeven">';
 				print "<td>".$row[0]."</td>";
 				print "<td>".$row[1]."</td>";
@@ -116,9 +118,10 @@ if (!$base) {
 				print "<td>".(empty($row[7]) ? '' : $row[7])."</td>";
 
 				print "<td>".(isset($link[$row[0]][0]) ? $link[$row[0]][0] : '').".";
-				print (isset($link[$row[0]][1]) ? $link[$row[0]][1] : '')."</td>";
+				print(isset($link[$row[0]][1]) ? $link[$row[0]][1] : '')."</td>";
 
-				print '<!-- ALTER ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' COLLATE utf8_unicode_ci; -->';
+				print '<!-- ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' COLLATE utf8_unicode_ci; -->';
+				print '<!-- ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' CHARACTER SET utf8; -->';
 				print '</tr>';
 				$i++;
 			}

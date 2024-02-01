@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 
 if (isModEnabled('accounting')) {
-		include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
 // Load translation files required by the page
@@ -56,7 +56,7 @@ $refund = GETPOST("refund", "int");
 if (GETPOSTISSET('auto_create_paiement') || $action === 'add') {
 	$auto_create_payment = GETPOST("auto_create_paiement", "int");
 } else {
-	$auto_create_payment = empty($conf->global->CREATE_NEW_VAT_WITHOUT_AUTO_PAYMENT);
+	$auto_create_payment = !getDolGlobalString('CREATE_NEW_VAT_WITHOUT_AUTO_PAYMENT');
 }
 
 if (empty($refund)) {
@@ -84,7 +84,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 
 $permissiontoread = $user->rights->tax->charges->lire;
 $permissiontoadd = $user->rights->tax->charges->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->tax->charges->supprimer || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissiontodelete = $user->rights->tax->charges->supprimer || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_UNPAID);
 $permissionnote = $user->rights->tax->charges->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->tax->charges->creer; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->tax->multidir_output[isset($object->entity) ? $object->entity : 1].'/vat';
@@ -172,7 +172,7 @@ if (empty($reshook)) {
 	if ($action == 'add' && !$cancel) {
 		$error = 0;
 
-		$object->fk_account = GETPOST("accountid", 'int');
+		$object->fk_account = GETPOSTINT("accountid");
 		$object->type_payment = GETPOST("type_payment", 'alphanohtml');
 		$object->num_payment = GETPOST("num_payment", 'alphanohtml');
 
@@ -181,7 +181,7 @@ if (empty($reshook)) {
 
 		$amount = price2num(GETPOST("amount", 'alpha'));
 		if ($refund == 1) {
-			$amount = -$amount;
+			$amount = price2num(-1 * $amount);
 		}
 		$object->amount = $amount;
 		$object->label = GETPOST("label", 'alpha');
@@ -329,7 +329,8 @@ if (empty($reshook)) {
 		$object->fetch($id);
 
 		if ($object->id > 0) {
-			$object->id = $object->ref = null;
+			$object->id = 0;
+			$object->ref = null;
 			$object->paye = 0;
 
 			if (GETPOST('amount', 'alphanohtml')) {
@@ -561,7 +562,7 @@ if ($id > 0) {
 		print '<input type="hidden" name="action" value="update">';
 	}
 	// Call Hook formConfirm
-	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
+	$parameters = array('formConfirm' => $formconfirm);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$formconfirm .= $hookmanager->resPrint;
@@ -692,7 +693,7 @@ if ($id > 0) {
 		$i = 0;
 		$total = 0;
 
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder paymenttable">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("RefPayment").'</td>';
@@ -713,7 +714,7 @@ if ($id > 0) {
 				print '<a href="'.DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a>';
 				print '</td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
-				$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
+				$labeltype = $langs->trans("PaymentType".$objp->type_code) != "PaymentType".$objp->type_code ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 				print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
 				if (isModEnabled("banque")) {
 					$bankaccountstatic->id = $objp->baid;

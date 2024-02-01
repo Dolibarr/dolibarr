@@ -479,9 +479,9 @@ tr.selected, tr.selected td {
 }
 
 .centerinmiddle {
-	transform: translate(0,-50%);
 	position: relative;
-	top: 50%;
+	/* transform: translate(0,-50%);
+	top: 50%; */
 }
 .trunc {
 	white-space: nowrap;
@@ -572,10 +572,11 @@ div.description_content {
 .topnav-left a {
 	padding: 7px 4px 7px 4px;
 	margin: 8px;
-	margin-left: 4px;
+	margin-left: 5px;
+	margin-right: 5px;
 	border-radius: 3px;
 }
-.topnav-left a:hover, .topnav .login_block_other a:hover {
+.topnav-left a:hover:not(.nohover), .topnav .login_block_other a:hover:not(.nohover) {
 	background-color: #ddd;
 	color: black;
 }
@@ -973,7 +974,8 @@ if (!getDolGlobalString('TAKEPOS_USE_ARROW_ON_NAVBAR')) {
 	display: none;
 }
 
-<?php } else { ?>
+	<?php
+} else { ?>
 .indicator {
 	background: #00000042;
 	padding: 15px 5px;

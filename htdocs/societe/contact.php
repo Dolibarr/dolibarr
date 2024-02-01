@@ -68,7 +68,7 @@ $action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
 $cancel 	= GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm 	= GETPOST('confirm');
-$socid 		= GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('id', 'int');
+$socid 		= GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int');
 
 if ($user->socid) {
 	$socid = $user->socid;
@@ -146,12 +146,12 @@ $formcompany = new FormCompany($db);
 if ($socid > 0 && empty($object->id)) {
 	$result = $object->fetch($socid);
 	if ($result <= 0) {
-		dol_print_error('', $object->error);
+		dol_print_error(null, $object->error);
 	}
 }
 
 $title = $langs->trans("ThirdParty");
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->name." - ".$langs->trans('ContactsAddresses');
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -180,7 +180,7 @@ print '<br>';
 
 if ($action != 'presend') {
 	// Contacts list
-	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+	if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 		$result = show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1);
 	}
 }

@@ -43,7 +43,7 @@ if (isModEnabled('project')) {
 $langs->loadLangs(array('propal', 'compta', 'other', 'bills', 'companies'));
 
 
-$id = (GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
@@ -126,7 +126,7 @@ if ($id > 0 || !empty($ref)) {
 		$totalpaid = $object->getSommePaiement();
 
 		// Build file list
-		$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+		$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 		$totalsize = 0;
 		foreach ($filearray as $key => $file) {
 			$totalsize += $file['size'];
@@ -139,8 +139,8 @@ if ($id > 0 || !empty($ref)) {
 
 		$morehtmlref = '<div class="refidno">';
 		// Ref customer
-		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_customer, $object, 0, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_customer, $object, 0, 'string', '', null, null, '', 1);
 		// Thirdparty
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
 		// Project

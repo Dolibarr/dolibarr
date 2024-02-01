@@ -32,7 +32,7 @@ $out .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline
 $out .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
 $events = array();
 $out .= img_picto('', 'resource', 'class="pictofixedwidth"');
-$out .= $formresources->select_resource_list('', 'fk_resource', '', 1, 1, 0, $events, '', 2, null);
+$out .= $formresources->select_resource_list(0, 'fk_resource', '', 1, 1, 0, $events, '', 2, null);
 $out .= '</div>';
 
 $out .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block marginleftonly"><label for="resbusy">'.$langs->trans('Busy').'</label> ';

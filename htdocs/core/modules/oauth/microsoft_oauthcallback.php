@@ -57,7 +57,7 @@ $currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/
  * Load the credential for the service
  */
 
-/** @var $serviceFactory \OAuth\ServiceFactory An OAuth service factory. */
+/** @var \OAuth\ServiceFactory $serviceFactory An OAuth service factory. */
 $serviceFactory = new \OAuth\ServiceFactory();
 $httpClient = new \OAuth\Common\Http\Client\CurlClient();
 // TODO Set options for proxy and timeout
@@ -163,7 +163,7 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 
 			//$token = $apiService->requestAccessToken(GETPOST('code'), $state);
 			$token = $apiService->requestAccessToken(GETPOST('code'));
-			// Microsoft is a service that does not need state to be stored as second paramater of requestAccessToken
+			// Microsoft is a service that does not need state to be stored as second parameter of requestAccessToken
 
 			//print $token->getAccessToken().'<br><br>';
 			//print $token->getExtraParams()['id_token'].'<br>';

@@ -2,6 +2,7 @@
 /* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,11 +33,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'trips'));
 
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $amounts = array();
-$accountid = GETPOST('accountid', 'int');
+$accountid = GETPOSTINT('accountid');
 $cancel = GETPOST('cancel');
 
 // Security check
@@ -110,8 +111,8 @@ if ($action == 'add_payment') {
 			$payment->datep       	 = $datepaid;
 			$payment->amounts		 = $amounts; // Tableau de montant
 			$payment->total          = $total;
-			$payment->fk_typepayment = GETPOST("fk_typepayment", 'int');
-			$payment->num_payment    = GETPOST("num_payment", 'alphanothtml');
+			$payment->fk_typepayment = GETPOSTINT("fk_typepayment");
+			$payment->num_payment    = GETPOST("num_payment", 'alphanohtml');
 			$payment->note_public    = GETPOST("note_public", 'restricthtml');
 			$payment->fk_bank        = $accountid;
 
@@ -236,7 +237,7 @@ if ($action == 'create' || empty($action)) {
 
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
-	$datepayment = ($datepaid == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datepaid);
+	$datepayment = ($datepaid == '' ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $datepaid);
 	print $form->selectDate($datepayment, '', '', '', 0, "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
@@ -302,7 +303,7 @@ if ($action == 'create' || empty($action)) {
 			$namef = "amount_".$objp->id;
 			$nameRemain = "remain_".$objp->id; // autofill remainder amount
 			if (!empty($conf->use_javascript_ajax)) { // autofill remainder amount
-					print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->total_ttc - $sumpaid)."'"); // autofill remainder amount
+				print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->total_ttc - $sumpaid)."'"); // autofill remainder amount
 			}
 			$remaintopay = $objp->total_ttc - $sumpaid; // autofill remainder amount
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">'; // autofill remainder amount

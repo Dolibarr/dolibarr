@@ -18,7 +18,7 @@
 /**
  * 	\file       htdocs/public/agenda/agendaexport.php
  * 	\ingroup    agenda
- * 	\brief      Page to export agenda
+ * 	\brief      Page to export agenda into a vcal, ical or rss
  * 				http://127.0.0.1/dolibarr/public/agenda/agendaexport.php?format=vcal&exportkey=cle
  * 				http://127.0.0.1/dolibarr/public/agenda/agendaexport.php?format=ical&type=event&exportkey=cle
  * 				http://127.0.0.1/dolibarr/public/agenda/agendaexport.php?format=rss&exportkey=cle
@@ -86,7 +86,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 $object = new ActionComm($db);
 
 // Not older than
-if (!isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) {
+if (!getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY')) {
 	$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY = 100; // default limit
 }
 
@@ -131,7 +131,7 @@ if (GETPOST("actiontype", 'alpha')) {
 if (GETPOST("notolderthan", 'int')) {
 	$filters['notolderthan'] = GETPOST("notolderthan", "int");
 } else {
-	$filters['notolderthan'] = $conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY;
+	$filters['notolderthan'] = getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY');
 }
 if (GETPOST("module", 'alpha')) {
 	$filters['module'] = GETPOST("module", 'alpha');
@@ -151,8 +151,10 @@ if (!isModEnabled('agenda')) {
  */
 
 // Check config
-if (empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY)) {
+if (!getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) {
 	$user->getrights();
+
+	top_httphead();
 
 	llxHeaderVierge();
 	print '<div class="error">Module Agenda was not configured properly.</div>';
@@ -165,6 +167,8 @@ $hookmanager->initHooks(array('agendaexport'));
 
 $reshook = $hookmanager->executeHooks('doActions', $filters); // Note that $action and $object may have been modified by some
 if ($reshook < 0) {
+	top_httphead();
+
 	llxHeaderVierge();
 	if (!empty($hookmanager->errors) && is_array($hookmanager->errors)) {
 		print '<div class="error">'.implode('<br>', $hookmanager->errors).'</div>';
@@ -174,8 +178,10 @@ if ($reshook < 0) {
 	llxFooterVierge();
 } elseif (empty($reshook)) {
 	// Check exportkey
-	if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_GET["exportkey"]) {
+	if (empty($_GET["exportkey"]) || getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY') != $_GET["exportkey"]) {
 		$user->getrights();
+
+		top_httphead();
 
 		llxHeaderVierge();
 		print '<div class="error">Bad value for key.</div>';
@@ -227,16 +233,22 @@ foreach ($filters as $key => $value) {
 }
 // Add extension
 if ($format == 'vcal') {
-	$shortfilename .= '.vcs'; $filename .= '.vcs';
+	$shortfilename .= '.vcs';
+	$filename .= '.vcs';
 }
 if ($format == 'ical') {
-	$shortfilename .= '.ics'; $filename .= '.ics';
+	$shortfilename .= '.ics';
+	$filename .= '.ics';
 }
 if ($format == 'rss') {
-	$shortfilename .= '.rss'; $filename .= '.rss';
+	$shortfilename .= '.rss';
+	$filename .= '.rss';
 }
 if ($shortfilename == 'dolibarrcalendar') {
 	$langs->load("errors");
+
+	top_httphead();
+
 	llxHeaderVierge();
 	print '<div class="error">'.$langs->trans("ErrorWrongValueForParameterX", 'format').'</div>';
 	llxFooterVierge();
@@ -246,8 +258,8 @@ if ($shortfilename == 'dolibarrcalendar') {
 $agenda = new ActionComm($db);
 
 $cachedelay = 0;
-if (!empty($conf->global->MAIN_AGENDA_EXPORT_CACHE)) {
-	$cachedelay = $conf->global->MAIN_AGENDA_EXPORT_CACHE;
+if (getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE')) {
+	$cachedelay = getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE');
 }
 
 $exportholidays = GETPOST('includeholidays', 'int');
@@ -281,6 +293,8 @@ if ($format == 'ical' || $format == 'vcal') {
 			header('Cache-Control: private, must-revalidate');
 		}
 
+		header("X-Frame-Options: SAMEORIGIN"); // By default, frames allowed only if on same domain (stop some XSS attacks)
+
 		// Clean parameters
 		$outputfile = $conf->agenda->dir_temp.'/'.$filename;
 		$result = readfile($outputfile);
@@ -291,6 +305,8 @@ if ($format == 'ical' || $format == 'vcal') {
 		//header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 		exit;
 	} else {
+		top_httphead();
+
 		print 'Error '.$agenda->error;
 
 		exit;
@@ -328,6 +344,8 @@ if ($format == 'rss') {
 			header('Cache-Control: private, must-revalidate');
 		}
 
+		header("X-Frame-Options: SAMEORIGIN"); // By default, frames allowed only if on same domain (stop some XSS attacks)
+
 		// Clean parameters
 		$outputfile = $conf->agenda->dir_temp.'/'.$filename;
 		$result = readfile($outputfile);
@@ -338,12 +356,16 @@ if ($format == 'rss') {
 		// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 		exit;
 	} else {
+		top_httphead();
+
 		print 'Error '.$agenda->error;
 
 		exit;
 	}
 }
 
+
+top_httphead();
 
 llxHeaderVierge();
 print '<div class="error">'.$agenda->error.'</div>';

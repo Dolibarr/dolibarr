@@ -170,7 +170,7 @@ class Functions2LibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testIsValidMailDomain()
 	{
-		$mail = 'bidon@unvalid.unvalid';
+		$mail = 'bidon@invalid.invalid';
 		$result = isValidMailDomain($mail);
 		$this->assertEquals(0, $result, 'Email isValidMailDomain('.$mail.') should return 0 (not valid) but returned '.$result);
 

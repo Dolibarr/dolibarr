@@ -6,7 +6,7 @@
 
 if (empty($keyforselect) || empty($keyforelement) || empty($keyforaliasextra)) {
 	//print $keyforselet.' - '.$keyforelement.' - '.$keyforaliasextra;
-	dol_print_error('', 'include of file extrafieldsinimport.inc.php was done but var $keyforselect or $keyforelement or $keyforaliasextra was not set');
+	dol_print_error(null, 'include of file extrafieldsinimport.inc.php was done but var $keyforselect or $keyforelement or $keyforaliasextra was not set');
 	exit;
 }
 
@@ -38,7 +38,7 @@ if ($resql) {    // This can fail when class is used on old database (during mig
 				break;
 			case 'checkbox':
 			case 'select':
-				if (!empty($conf->global->EXPORT_LABEL_FOR_SELECT)) {
+				if (getDolGlobalString('EXPORT_LABEL_FOR_SELECT')) {
 					$tmpparam = jsonOrUnserialize($obj->param); // $tmpparam may be array with 'options' = array(key1=>val1, key2=>val2 ...)
 					if ($tmpparam['options'] && is_array($tmpparam['options'])) {
 						$typeFilter = "Select:".$obj->param;

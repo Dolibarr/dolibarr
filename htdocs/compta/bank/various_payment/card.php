@@ -55,7 +55,7 @@ $amount = price2num(GETPOST("amount", "alpha"));
 $paymenttype = GETPOST("paymenttype", "aZ09");
 $accountancy_code = GETPOST("accountancy_code", "alpha");
 $projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
-if (isModEnabled('accounting') && !empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+if (isModEnabled('accounting') && getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
 	$subledger_account = GETPOST("subledger_account", "alpha") > 0 ? GETPOST("subledger_account", "alpha") : '';
 } else {
 	$subledger_account = GETPOST("subledger_account", "alpha");
@@ -412,13 +412,13 @@ if ($action == 'create') {
 	// Date payment
 	print '<tr><td class="titlefieldcreate">';
 	print $form->editfieldkey('DatePayment', 'datep', '', $object, 0, 'string', '', 1).'</td><td>';
-	print $form->selectDate((empty($datep) ?-1 : $datep), "datep", '', '', '', 'add', 1, 1);
+	print $form->selectDate((empty($datep) ? -1 : $datep), "datep", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
 	// Date value for bank
 	print '<tr><td>';
 	print $form->editfieldkey('DateValue', 'datev', '', $object, 0).'</td><td>';
-	print $form->selectDate((empty($datev) ?-1 : $datev), "datev", '', '', '', 'add', 1, 1);
+	print $form->selectDate((empty($datev) ? -1 : $datev), "datev", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
 	// Label
@@ -485,7 +485,7 @@ if ($action == 'create') {
 	if (isModEnabled('accounting')) {
 		print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
 		print '<td>';
-		if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+		if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
 			print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1, '');
 		} else {
 			print '<input type="text" class="maxwidth200 maxwidthonsmartphone" name="subledger_account" value="'.$subledger_account.'">';
@@ -586,7 +586,17 @@ if ($id) {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (property_exists($object, 'socid') ? $object->socid : 0), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			if ($action == 'classify') {
+				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+				$morehtmlref .= $formproject->select_projects(-1, $object->fk_project, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
+				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				$morehtmlref .= '</form>';
+			} else {
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (property_exists($object, 'socid') ? $object->socid : 0), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			}
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);

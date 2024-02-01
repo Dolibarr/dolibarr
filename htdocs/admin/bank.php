@@ -88,7 +88,8 @@ if ($action == 'setbankcolorizemovement') {
 if ($actionsave) {
 	$db->begin();
 
-	$i = 1; $errorsaved = 0;
+	$i = 1;
+	$errorsaved = 0;
 	$error = 0;
 
 	// Save colors
@@ -289,7 +290,7 @@ if ($resql) {
 }
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';"\n";
+print '<table class="noborder centpercent">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td class="minwidth100">'.$langs->trans("Description").'</td>';
@@ -324,10 +325,10 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								$modulequalified = 0;
 							}
 
@@ -409,7 +410,7 @@ print '<br><br>';
 print load_fiche_titre($langs->trans("BankColorizeMovement"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';"\n";
+print '<table class="noborder centpercent">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td colspan="4">'.$langs->trans("Name").'</td>';
 print '<td align="center" width="75">'.$langs->trans("Value").'</td>'."\n";
@@ -445,7 +446,7 @@ if (getDolGlobalInt('BANK_COLORIZE_MOVEMENT')) {
 		print '<td colspan="4" width="180" class="nowrap">'.$langs->trans("BankColorizeMovementName".$key)."</td>";
 		// Color
 		print '<td class="nowrap right">';
-		print $formother->selectColor((GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) ?GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) : $conf->global->$color), "BANK_COLORIZE_MOVEMENT_COLOR".$key, 'bankmovementcolorconfig', 1, '', 'right hideifnotset');
+		print $formother->selectColor((GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) ? GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) : $conf->global->$color), "BANK_COLORIZE_MOVEMENT_COLOR".$key, 'bankmovementcolorconfig', 1, '', 'right hideifnotset');
 		print '</td>';
 		print "</tr>";
 		$i++;
@@ -464,7 +465,7 @@ print '<br><br>';
 print load_fiche_titre($langs->trans("Other"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';"\n";
+print '<table class="noborder centpercent">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';

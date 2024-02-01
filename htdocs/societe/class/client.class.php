@@ -48,15 +48,13 @@ class Client extends Societe
 		$this->fournisseur = 0;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load indicators into this->nb for board
 	 *
-	 *  @return     int         <0 if KO, >0 if OK
+	 *  @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $user, $hookmanager;
 
 		$this->nb = array("prospects" => 0, "customers" => 0);
@@ -64,7 +62,7 @@ class Client extends Societe
 
 		$sql = "SELECT count(s.rowid) as nb, s.client";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -102,7 +100,7 @@ class Client extends Societe
 	 *  Load array of prospect status
 	 *
 	 *  @param	int		$active     1=Active only, 0=Not active only, -1=All
-	 *  @return int					<0 if KO, >0 if OK
+	 *  @return int					Return integer <0 if KO, >0 if OK
 	 */
 	public function loadCacheOfProspStatus($active = 1)
 	{

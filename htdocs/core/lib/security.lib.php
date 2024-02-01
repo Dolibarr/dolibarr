@@ -92,7 +92,7 @@ function dol_decode($chain, $key = '1')
 }
 
 /**
- * Return a string of random bytes (hexa string) with length = $length fro cryptographic purposes.
+ * Return a string of random bytes (hexa string) with length = $length for cryptographic purposes.
  *
  * @param 	int			$length		Length of random string
  * @return	string					Random string
@@ -107,7 +107,7 @@ function dolGetRandomBytes($length)
 }
 
 /**
- *	Encode a string with a symetric encryption. Used to encrypt sensitive data into database.
+ *	Encode a string with a symmetric encryption. Used to encrypt sensitive data into database.
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *  This function is called for example by dol_set_const() when saving a sensible data into database configuration table llx_const.
  *
@@ -130,7 +130,7 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
 
 	$reg = array();
 	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
-		// The $chain is already a crypted string
+		// The $chain is already a encrypted string
 		return $chain;
 	}
 
@@ -169,7 +169,7 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
 }
 
 /**
- *	Decode a string with a symetric encryption. Used to decrypt sensitive data saved into database.
+ *	Decode a string with a symmetric encryption. Used to decrypt sensitive data saved into database.
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *
  *	@param   string		$chain		string to decode
@@ -223,25 +223,25 @@ function dolDecrypt($chain, $key = '')
 
 /**
  * 	Returns a hash (non reversible encryption) of a string.
- *  If constant MAIN_SECURITY_HASH_ALGO is defined, we use this function as hashing function (recommanded value is 'password_hash')
- *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorightm is something else than 'password_hash').
+ *  If constant MAIN_SECURITY_HASH_ALGO is defined, we use this function as hashing function (recommended value is 'password_hash')
+ *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorithm is something else than 'password_hash').
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256, '6':password_hash). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
+ * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256, '6':password_hash).
+ * 										Use 'md5' if hash is not needed for security purpose. For security need, prefer 'auto'.
+ * 	@param 		int 		$nosalt		Do not include any salt
  * 	@return		string					Hash of string
  *  @see getRandomPassword(), dol_verifyHash()
  */
-function dol_hash($chain, $type = '0')
+function dol_hash($chain, $type = '0', $nosalt = 0)
 {
-	global $conf;
-
 	// No need to add salt for password_hash
-	if (($type == '0' || $type == 'auto') && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_hash')) {
+	if (($type == '0' || $type == 'auto') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_hash')) {
 		return password_hash($chain, PASSWORD_DEFAULT);
 	}
 
 	// Salt value
-	if (!empty($conf->global->MAIN_SECURITY_SALT) && $type != '4' && $type !== 'openldap') {
+	if (getDolGlobalString('MAIN_SECURITY_SALT') && $type != '4' && $type !== 'openldap' && empty($nosalt)) {
 		$chain = getDolGlobalString('MAIN_SECURITY_SALT') . $chain;
 	}
 
@@ -249,7 +249,7 @@ function dol_hash($chain, $type = '0')
 		return sha1($chain);
 	} elseif ($type == '2' || $type == 'sha1md5') {
 		return sha1(md5($chain));
-	} elseif ($type == '3' || $type == 'md5') {
+	} elseif ($type == '3' || $type == 'md5') {		// For hashing with no need of security
 		return md5($chain);
 	} elseif ($type == '4' || $type == 'openldap') {
 		return dolGetLdapPasswordHash($chain, getDolGlobalString('LDAP_PASSWORD_HASH_TYPE', 'md5'));
@@ -281,9 +281,7 @@ function dol_hash($chain, $type = '0')
  */
 function dol_verifyHash($chain, $hash, $type = '0')
 {
-	global $conf;
-
-	if ($type == '0' && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_verify')) {
+	if ($type == '0' && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_verify')) {
 		if (! empty($hash[0]) && $hash[0] == '$') {
 			return password_verify($chain, $hash);
 		} elseif (dol_strlen($hash) == 32) {
@@ -359,13 +357,13 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  *  @param  string				$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional). Can use '' if NA.
  *  @param  string				$dbt_select     Field rowid name, for select into tableandshare if not "rowid". Not used if objectid is null (optional)
  *  @param	int					$isdraft		1=The object with id=$objectid is a draft
- *  @param	int					$mode			Mode (0=default, 1=return without dieing)
+ *  @param	int					$mode			Mode (0=default, 1=return without dying)
  * 	@return	int									If mode = 0 (default): Always 1, die process if not allowed. If mode = 1: Return 0 if access not allowed.
  *  @see dol_check_secure_access_document(), checkUserAccessToObject()
  */
 function restrictedArea(User $user, $features, $object = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0, $mode = 0)
 {
-	global $db, $conf;
+	global $conf;
 	global $hookmanager;
 
 	// Define $objectid
@@ -389,7 +387,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 
 	$parentfortableentity = '';
 
-	// Fix syntax of $features param
+	// Fix syntax of $features param to support non standard module names.
 	$originalfeatures = $features;
 	if ($features == 'agenda') {
 		$tableandshare = 'actioncomm&societe';
@@ -481,7 +479,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$feature2 = explode("|", $feature2);
 	}
 
-	$listofmodules = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	$listofmodules = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 
 	// Check read permission from module
 	$readok = 1;
@@ -494,7 +492,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		if ($featureforlistofmodule == 'supplier_proposal') {
 			$featureforlistofmodule = 'supplierproposal';
 		}
-		if (!empty($user->socid) && !empty($conf->global->MAIN_MODULES_FOR_EXTERNAL) && !in_array($featureforlistofmodule, $listofmodules)) {	// If limits on modules for external users, module must be into list of modules for external users
+		if (!empty($user->socid) && getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL') && !in_array($featureforlistofmodule, $listofmodules)) {	// If limits on modules for external users, module must be into list of modules for external users
 			$readok = 0;
 			$nbko++;
 			continue;
@@ -741,7 +739,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				}
 			} elseif ($feature == 'payment') {
 				if (!$user->hasRight('facture', 'paiement')) {
-						$deleteok = 0;
+					$deleteok = 0;
 				}
 			} elseif ($feature == 'payment_sc') {
 				if (!$user->hasRight('tax', 'charges', 'creer')) {
@@ -925,7 +923,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 			if (($feature == 'user' || $feature == 'usergroup') && isModEnabled('multicompany')) {	// Special for multicompany
-				if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+				if (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 					if ($conf->entity == 1 && $user->admin && !$user->entity) {
 						$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 						$sql .= " AND dbt.entity IS NOT NULL";
@@ -1052,7 +1050,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			// If external user: Check permission for external users
 			if ($user->socid > 0) {
 				if (empty($dbt_keyfield)) {
-					dol_print_error('', 'Param dbt_keyfield is required but not defined');
+					dol_print_error(null, 'Param dbt_keyfield is required but not defined');
 				}
 				$sql = "SELECT COUNT(dbt.".$dbt_keyfield.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -1062,7 +1060,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				// If internal user without permission to see all thirdparties: Check permission for internal users that are restricted on their objects
 				if ($feature != 'ticket') {
 					if (empty($dbt_keyfield)) {
-						dol_print_error('', 'Param dbt_keyfield is required but not defined');
+						dol_print_error(null, 'Param dbt_keyfield is required but not defined');
 					}
 					$sql = "SELECT COUNT(sc.fk_soc) as nb";
 					$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -1109,7 +1107,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$useridtocheck = 0;
 			if ($feature == 'holiday') {
 				$useridtocheck = $object->fk_user;
-				if (!in_array($object->fk_user, $childids) && !in_array($object->fk_validator, $childids)) {
+				if (!$user->hasRight('holiday', 'readall') && !in_array($useridtocheck, $childids) && !in_array($object->fk_validator, $childids)) {
 					return false;
 				}
 			}
@@ -1161,7 +1159,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
  *  @return	void
  *  @see accessforbidden()
  */
-function httponly_accessforbidden($message = 1, $http_response_code = 403, $stringalreadysanitized = 0)
+function httponly_accessforbidden($message = '1', $http_response_code = 403, $stringalreadysanitized = 0)
 {
 	top_httphead();
 	http_response_code($http_response_code);
@@ -1256,9 +1254,8 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
  */
 function getMaxFileSizeArray()
 {
-	global $conf;
+	$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
 
-	$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
 	$maxphp = @ini_get('upload_max_filesize'); // In unknown
 	if (preg_match('/k$/i', $maxphp)) {
 		$maxphp = preg_replace('/k$/i', '', $maxphp);
