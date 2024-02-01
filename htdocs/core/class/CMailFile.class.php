@@ -355,6 +355,46 @@ class CMailFile
 			}
 		}
 
+		// Verify if $to, $addr_cc and addr_bcc have unwanted addresses
+		if (getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO')) {
+			//Verify for $to
+			$tabto = explode(",", $to);
+			$listofemailstonotsendto = explode(',', getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO'));
+			foreach ($tabto as $key => $addrto) {
+				if (in_array($addrto, $listofemailstonotsendto)) {
+					unset($tabto[$key]);
+				}
+			}
+			if (empty($tabto) && !getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE')) {
+				$tabto[] = getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE');
+			}
+			$to = implode(',', $tabto);
+
+			//Verify for $addr_cc
+			$tabcc = explode(',', $addr_cc);
+			foreach ($tabcc as $key => $cc) {
+				if (in_array($cc, $tabcc)) {
+					unset($tabcc[$key]);
+				}
+			}
+			if (empty($addr_cc) && !getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE')) {
+				$addr_cc[] = getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE');
+			}
+			$addr_cc = implode(',', $tabcc);
+
+			//Verify for $addr_bcc
+			$tabbcc = explode(',', $addr_bcc);
+			foreach ($tabbcc as $key => $bcc) {
+				if (in_array($bcc, $tabbcc)) {
+					unset($tabbcc[$key]);
+				}
+			}
+			if (empty($tabbcc) && !getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE')) {
+				$tabbcc[] = getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE');
+			}
+			$addr_bcc = implode(',', $tabbcc);
+		}
+
 		// We always use a replyto
 		if (empty($replyto)) {
 			$replyto = dol_sanitizeEmail($from);
