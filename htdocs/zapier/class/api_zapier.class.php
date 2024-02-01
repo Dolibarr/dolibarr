@@ -76,7 +76,7 @@ class Zapier extends DolibarrApi
 	public function get($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->zapier->read) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->hook->fetch($id);
@@ -104,7 +104,7 @@ class Zapier extends DolibarrApi
 	public function getModulesChoices()
 	{
 		if (!DolibarrApiAccess::$user->rights->zapier->read) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$arraychoices = array(
@@ -146,7 +146,7 @@ class Zapier extends DolibarrApi
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		if (!DolibarrApiAccess::$user->rights->zapier->read) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -228,7 +228,7 @@ class Zapier extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->zapier->write) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		dol_syslog("API Zapier create hook receive : ".print_r($request_data, true), LOG_DEBUG);
@@ -271,7 +271,7 @@ class Zapier extends DolibarrApi
 	/*public function put($id, $request_data = null)
 	{
 		if (! DolibarrApiAccess::$user->rights->zapier->write) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->hook->fetch($id);
@@ -308,7 +308,7 @@ class Zapier extends DolibarrApi
 	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->zapier->delete) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->hook->fetch($id);

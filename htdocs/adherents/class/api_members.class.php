@@ -545,14 +545,14 @@ class Members extends DolibarrApi
 	 *
 	 * @url GET {id}/categories
 	 *
-	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		Category not found
 	 * @throws	RestException	503		Error when retrieving Category list
 	 */
 	public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->categorie->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$categories = new Categorie($this->db);
