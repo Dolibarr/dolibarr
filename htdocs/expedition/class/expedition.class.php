@@ -2740,13 +2740,13 @@ class ExpeditionLigne extends CommonObjectLine
  	* @var float width
   	*/
 	public $width;
-    public $width_units;
+	public $width_units;
 
 	/**
-	* @var float height
-	*/
-    public $height;
-    public $height_units;
+ 	* @var float height
+ 	*/
+	public $height;
+	public $height_units;
 
 	/**
 	* @var float surface
