@@ -954,7 +954,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->author				= $obj->fk_user_author;	// deprecated
 				$this->user_validation_id   = $obj->fk_user_valid;
 				$this->fk_facture_source	= $obj->fk_facture_source;
-				$this->vat_reverse_charge	= empty($obj->vat_reverse_charge) ? '0' : '1';
+				$this->vat_reverse_charge	= empty($obj->vat_reverse_charge) ? 0 : 1;
 				$this->fk_fac_rec_source	= $obj->fk_fac_rec_source;
 				$this->fk_project           = $obj->fk_project;
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
@@ -1144,22 +1144,22 @@ class FactureFournisseur extends CommonInvoice
 			$this->ref_ext = trim($this->ref_ext);
 		}
 		if (isset($this->entity)) {
-			$this->entity = trim($this->entity);
+			$this->entity = (int) $this->entity;
 		}
 		if (isset($this->type)) {
-			$this->type = trim($this->type);
+			$this->type = (int) $this->type;
 		}
 		if (isset($this->subtype)) {
-			$this->subtype = trim($this->subtype);
+			$this->subtype = (int) $this->subtype;
 		}
 		if (isset($this->socid)) {
-			$this->socid = trim($this->socid);
+			$this->socid = (int) $this->socid;
 		}
 		if (isset($this->label)) {
 			$this->label = trim($this->label);
 		}
 		if (isset($this->paye)) {
-			$this->paye = trim($this->paye);
+			$this->paye = (int) $this->paye;
 		}
 		if (isset($this->close_code)) {
 			$this->close_code = trim($this->close_code);
@@ -1182,7 +1182,7 @@ class FactureFournisseur extends CommonInvoice
 		//	if (isset($this->total_localtax1)) $this->total_localtax1=trim($this->total_localtax1);
 		//	if (isset($this->total_localtax2)) $this->total_localtax2=trim($this->total_localtax2);
 		if (isset($this->total_ttc)) {
-			$this->total_ttc = trim($this->total_ttc);
+			$this->total_ttc = (float) $this->total_ttc;
 		}
 		if (isset($this->statut)) {
 			$this->statut = (int) $this->statut;
@@ -1197,7 +1197,7 @@ class FactureFournisseur extends CommonInvoice
 			$this->fk_user_valid = trim($this->fk_user_valid);
 		}
 		if (isset($this->fk_facture_source)) {
-			$this->fk_facture_source = trim($this->fk_facture_source);
+			$this->fk_facture_source = (int) $this->fk_facture_source;
 		}
 		if (isset($this->fk_project)) {
 			if (empty($this->fk_project)) {
@@ -1207,7 +1207,7 @@ class FactureFournisseur extends CommonInvoice
 			}
 		}
 		if (isset($this->cond_reglement_id)) {
-			$this->cond_reglement_id = trim($this->cond_reglement_id);
+			$this->cond_reglement_id = (int) $this->cond_reglement_id;
 		}
 		if (isset($this->note_private)) {
 			$this->note = trim($this->note_private);
@@ -2341,7 +2341,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$pu = price2num($pu);
 		$qty = price2num($qty);
-		$remise_percent = price2num($remise_percent);
+		$remise_percent = (float) price2num($remise_percent);
 		$pu_devise = price2num($pu_devise);
 
 		// Check parameters
@@ -2367,8 +2367,8 @@ class FactureFournisseur extends CommonInvoice
 			$txlocaltax2 = 0;
 		}
 
-		$txlocaltax1 = price2num($txlocaltax1);
-		$txlocaltax2 = price2num($txlocaltax2);
+		$txlocaltax1 = (float) price2num($txlocaltax1);
+		$txlocaltax2 = (float) price2num($txlocaltax2);
 
 		// Calcul du total TTC et de la TVA pour la ligne a partir de
 		// qty, pu, remise_percent et txtva
@@ -2942,7 +2942,7 @@ class FactureFournisseur extends CommonInvoice
 	 *
 	 *      @param	   Societe		$soc		Thirdparty object
 	 *      @param    string		$mode		'next' for next value or 'last' for last value
-	 *      @return   string					free ref or last ref
+	 *      @return   string|-1					Returns free reference or last reference, or '' or -1 if error
 	 */
 	public function getNextNumRef($soc, $mode = 'next')
 	{
@@ -3929,10 +3929,10 @@ class SupplierInvoiceLine extends CommonObjectLine
 			$this->localtax2_tx = 0;
 		}
 		if (empty($this->localtax1_type)) {
-			$this->localtax1_type = '0';
+			$this->localtax1_type = 0.0;
 		}
 		if (empty($this->localtax2_type)) {
-			$this->localtax2_type = '0';
+			$this->localtax2_type = 0.0;
 		}
 		if (empty($this->total_tva)) {
 			$this->total_tva = 0;

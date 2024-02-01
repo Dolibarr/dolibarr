@@ -375,7 +375,7 @@ class EvalMath
 	 *
 	 * @param array $tokens      	Expression
 	 * @param array $vars       	Array
-	 * @return string 				Output
+	 * @return string|false			Output or false if error
 	 */
 	private function pfx($tokens, $vars = array())
 	{
@@ -462,7 +462,7 @@ class EvalMath
 	 * @param string $code		   	Code
 	 * @param string $msg			Msg
 	 * @param string|null $info		String
-	 * @return boolean 				False
+	 * @return false
 	 */
 	public function trigger($code, $msg, $info = null)
 	{
