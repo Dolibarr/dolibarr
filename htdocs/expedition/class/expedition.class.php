@@ -2731,7 +2731,7 @@ class ExpeditionLigne extends CommonObjectLine
 	public $weight_units;
 
 	/**
-	* @var float lenght
+	* @var float length
 	*/
 	public $length;
 	public $length_units;
