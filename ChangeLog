@@ -2,6 +2,22 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 20.0.0 compared to 19.0.0 *****
+
+For users:
+----------
+NEW: Compatibility with PHP 8.3
+...
+
+For developers or integrators:
+------------------------------
+...
+
+WARNING:
+--------
+
+The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* Ldap class methods connect_bind() & dump_content() have been renamed
 
 ***** ChangeLog for 19.0.0 compared to 18.0.0 *****
 

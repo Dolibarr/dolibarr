@@ -304,11 +304,12 @@ class Ldap
 	// Connection handling methods -------------------------------------------
 
 	/**
-	 *	Connect and bind
-	 * 	Use this->server, this->serverPort, this->ldapProtocolVersion, this->serverType, this->searchUser, this->searchPassword
-	 * 	After return, this->connection and $this->bind are defined
+	 * Connect and bind
+	 * Use this->server, this->serverPort, this->ldapProtocolVersion, this->serverType, this->searchUser, this->searchPassword
+	 * After return, this->connection and $this->bind are defined
 	 *
-	 *	@return		int		if KO: <0 || if bind anonymous: 1 || if bind auth: 2
+	 * @see connect_bind renamed
+	 * @return		int		if KO: <0 || if bind anonymous: 1 || if bind auth: 2
 	 */
 	public function connectBind()
 	{
@@ -805,11 +806,12 @@ class Ldap
 	}
 
 	/**
-	 * 	Build an LDAP message
+	 * Build an LDAP message
 	 *
-	 *	@param	string		$dn			DN entry key
-	 *	@param	array		$info		Attributes array
-	 *	@return	string					Content of file
+	 * @see dump_content renamed
+	 * @param	string		$dn			DN entry key
+	 * @param	array		$info		Attributes array
+	 * @return	string					Content of file
 	 */
 	public function dumpContent($dn, $info)
 	{
