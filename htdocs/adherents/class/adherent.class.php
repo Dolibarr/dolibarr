@@ -270,7 +270,7 @@ class Adherent extends CommonObject
 	public $partnerships = array();
 
 	/**
-	 * @var Facture		To store the created invoice into subscriptionComplementaryActions()
+	 * @var Facture|null		To store the created invoice into subscriptionComplementaryActions()
 	 */
 	public $invoice;
 
@@ -1689,7 +1689,7 @@ class Adherent extends CommonObject
 
 		$error = 0;
 
-		$this->invoice = new Facture($this->db); // This will contains invoice if an invoice is created
+		$this->invoice = null; // This will contains invoice if an invoice is created
 
 		dol_syslog("subscriptionComplementaryActions subscriptionid=".$subscriptionid." option=".$option." accountid=".$accountid." datesubscription=".$datesubscription." paymentdate=".
 			$paymentdate." label=".$label." amount=".$amount." num_chq=".$num_chq." autocreatethirdparty=".$autocreatethirdparty);
