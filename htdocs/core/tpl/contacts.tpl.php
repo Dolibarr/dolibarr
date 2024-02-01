@@ -128,7 +128,7 @@ if ($permission) {
 		<?php
 	}
 
-	if ($module == 'project') {
+	if (empty($hideaddcontactforgroups) && $module == 'project') {
 		?>
 		<form class="tagtr impair nohover" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
 		<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
