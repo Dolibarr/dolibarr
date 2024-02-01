@@ -225,12 +225,12 @@ class FactureFournisseur extends CommonInvoice
 	public $fk_account;		// default bank account
 
 	/**
-	 * @var int transport mode id
+	 * @var int Transport mode id
 	 */
 	public $transport_mode_id;
 
 	/**
-	 * @var boolean VAT reverse charge can be used on the invoice
+	 * @var int VAT reverse charge can be used on the invoice
 	 */
 	public $vat_reverse_charge;
 
