@@ -128,6 +128,33 @@ if ($permission) {
 		<?php
 	}
 
+	if ($module == 'project') {
+		?>
+		<form class="tagtr impair nohover" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
+		<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
+		<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
+		<input type="hidden" name="action" value="addcontact" />
+		<input type="hidden" name="source" value="internal" />
+		<input type="hidden" name="page_y" value="" />
+		<?php if (!empty($withproject)) {
+			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+		} ?>
+		<div class="tagtd"><?php echo $conf->global->MAIN_INFO_SOCIETE_NOM; ?></div>
+		<!--  <div class="nowrap tagtd"><?php echo img_object('', 'group').' '.$langs->trans("Groups"); ?></div> -->
+		<div class="tagtd maxwidthonsmartphone"><?php echo img_object('', 'group', 'class="pictofixedwidth"').$form->select_dolgroups(0, 'groupid', 0, '', 0, '', array(), '0', false, 'minwidth100imp widthcentpercentminusxx maxwidth400'); ?></div>
+		<div class="tagtd maxwidthonsmartphone">
+		<?php
+		$tmpobject = $object;
+		if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
+			$tmpobject = $objectsrc;
+		}
+		$formcompany->selectTypeContact($tmpobject, '', 'type', 'internal', 'position', 0, 'minwidth125imp widthcentpercentminusx maxwidth400'); ?></div>
+		<div class="tagtd">&nbsp;</div>
+		<div class="tagtd center"><input type="submit" class="button small" value="<?php echo $langs->trans("Add"); ?>"></div>
+	</form>
+		<?php
+	}
+
 	if (empty($hideaddcontactforthirdparty)) {
 		?>
 
