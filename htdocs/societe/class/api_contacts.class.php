@@ -404,10 +404,10 @@ class Contacts extends DolibarrApi
 		}
 
 		if (!DolibarrApiAccess::$user->rights->societe->contact->lire) {
-			throw new RestException(401, 'No permission to read contacts');
+			throw new RestException(403, 'No permission to read contacts');
 		}
 		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
-			throw new RestException(401, 'No permission to create user');
+			throw new RestException(403, 'No permission to create user');
 		}
 
 		$contact = new Contact($this->db);
@@ -417,7 +417,7 @@ class Contacts extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('contact', $contact->id, 'socpeople&societe')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		// Check mandatory fields
