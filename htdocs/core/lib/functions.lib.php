@@ -117,7 +117,7 @@ if (!function_exists('str_contains')) {
  *
  * @param CommonObject 	$object 	Dolibarr common object
  * @param string 		$module 	Override object element, for example to use 'mycompany' instead of 'societe'
- * @return string|void				The path of the relative directory of the module
+ * @return string|null				The path of the relative directory of the module
  * @since Dolibarr V18
  */
 function getMultidirOutput($object, $module = '')
@@ -3498,7 +3498,15 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 				$htmllink .= ($link ? ' '.$link : '');
 			}
 		} else {
-			if (!empty($dictsocialnetworks[$type]['url'])) {
+			$networkconstname = 'MAIN_INFO_SOCIETE_'.strtoupper($type).'_URL';
+			if (getDolGlobalString($networkconstname)) {
+				$link = str_replace('{socialid}', $value, getDolGlobalString($networkconstname));
+				if (preg_match('/^https?:\/\//i', $link)) {
+					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 0).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+				} else {
+					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 1).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+				}
+			} elseif (!empty($dictsocialnetworks[$type]['url'])) {
 				$tmpvirginurl = preg_replace('/\/?{socialid}/', '', $dictsocialnetworks[$type]['url']);
 				if ($tmpvirginurl) {
 					$value = preg_replace('/^www\.'.preg_quote($tmpvirginurl, '/').'\/?/', '', $value);
@@ -5806,7 +5814,9 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	$savlimit = $limit;
 	$savtotalnboflines = $totalnboflines;
-	$totalnboflines = abs((int) $totalnboflines);
+	if (is_numeric($totalnboflines)) {
+		$totalnboflines = abs($totalnboflines);
+	}
 
 	$page = (int) $page;
 
@@ -9807,6 +9817,11 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 		$error = 'dol_eval try/catch error : ';
 		$error .= $e->getMessage();
 		dol_syslog($error, LOG_WARNING);
+		if ($returnvalue) {
+			return 'Exception during evaluation: '.$s;
+		} else {
+			return '';
+		}
 	}
 }
 
@@ -9879,7 +9894,7 @@ function picto_from_langcode($codelang, $moreatt = '', $notitlealt = 0)
  * Return null if not found.
  *
  * @param 	string 	$countrycode	Country code like 'US', 'FR', 'CA', 'ES', 'IN', 'MX', ...
- * @return	string					Value of locale like 'en_US', 'fr_FR', ... or null if not found
+ * @return	string|null				Value of locale like 'en_US', 'fr_FR', ... or null if not found
  */
 function getLanguageCodeFromCountryCode($countrycode)
 {
@@ -11369,7 +11384,8 @@ function isVisibleToUserType($type_user, &$menuentry, &$listofmodulesforexternal
  */
 function roundUpToNextMultiple($n, $x = 5)
 {
-	return (ceil($n) % $x === 0) ? ceil($n) : round(($n + $x / 2) / $x) * $x;
+	$result = (ceil($n) % $x === 0) ? ceil($n) : (round(($n + $x / 2) / $x) * $x);
+	return (int) $result;
 }
 
 /**
@@ -12971,15 +12987,22 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 		$sql2 .= " AND mc.fk_mailing=m.rowid";
 	}
 
-	if (!empty($sql) && !empty($sql2)) {
-		$sql = $sql." UNION ".$sql2;
-	} elseif (empty($sql) && !empty($sql2)) {
-		$sql = $sql2;
-	}
+	if ($sql || $sql2) {	// May not be defined if module Agenda is not enabled and mailing module disabled too
+		if (!empty($sql) && !empty($sql2)) {
+			$sql = $sql." UNION ".$sql2;
+		} elseif (empty($sql) && !empty($sql2)) {
+			$sql = $sql2;
+		}
 
-	// TODO Add limit in nb of results
-	if ($sql) {	// May not be defined if module Agenda is not enabled and mailing module disabled too
+		//TODO Add navigation with this limits...
+		$offset = 0;
+		$limit = 1000;
+
+		// Complete request and execute it with limit
 		$sql .= $db->order($sortfield_new, $sortorder);
+		if ($limit) {
+			$sql .= $db->plimit($limit + 1, $offset);
+		}
 
 		dol_syslog("function.lib::show_actions_messaging", LOG_DEBUG);
 		$resql = $db->query($sql);
@@ -12987,7 +13010,8 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			$i = 0;
 			$num = $db->num_rows($resql);
 
-			while ($i < $num) {
+			$imaxinloop = ($limit ? min($num, $limit) : $num);
+			while ($i < $imaxinloop) {
 				$obj = $db->fetch_object($resql);
 
 				if ($obj->type == 'action') {

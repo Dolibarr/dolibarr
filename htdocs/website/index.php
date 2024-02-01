@@ -23,8 +23,9 @@
  *		\brief      Page to website view/edit
  */
 
-define('NOSCANPOSTFORINJECTION', 1);
-define('NOSTYLECHECK', 1);
+// We allow POST of rich content with js and style, but only for this php file and if into some given POST variable
+define('NOSCANPOSTFORINJECTION', array('PAGE_CONTENT', 'WEBSITE_JS_INLINE', 'WEBSITE_HTML_HEADER'));
+
 define('USEDOLIBARREDITOR', 1);
 define('FORCE_CKEDITOR', 1); // We need CKEditor, even if module is off.
 if (!defined('DISABLE_JS_GRAHP')) {
@@ -2420,7 +2421,13 @@ if ($action == 'exportsite' && $user->hasRight('website', 'export')) {
 // Overwrite site
 if ($action == 'overwritesite' && $user->hasRight('website', 'export')) {
 	if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
-		$fileofzip = $object->overwriteTemplate();
+		$fileofzip = $object->exportWebSite();
+
+		if ($fileofzip) {
+			$object->overwriteTemplate($fileofzip);
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 }
 // Regenerate site
@@ -3024,7 +3031,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 			if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
 				// Overwrite template in sources
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=overwritesite&website='.urlencode($website->ref).'" class="button bordertransp">'.dol_escape_htmltag($langs->trans("ExportIntoGIT")).'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=overwritesite&website='.urlencode($website->ref).'" class="button bordertransp" title="'.dol_escape_htmltag($langs->trans("ExportIntoGIT").". Directory ".getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')).'">'.dol_escape_htmltag($langs->trans("ExportIntoGIT")).'</a>';
 			}
 
 			// Clone web site
