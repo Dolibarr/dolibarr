@@ -726,14 +726,16 @@ class FormProjets
 	/**
 	 *  Output html select to select opportunity status
 	 *
-	 *  @param	string	$page       	Page
-	 *  @param  string	$selected   	Id preselected
-	 *  @param  string	$htmlname		Name of HTML select
-	 *  @param  string	$filter         optional filters criteras
-	 *  @param  int     $nooutput       No print output. Return it only.
+	 *  @param	string $page       		Page
+	 *  @param  string $selected   		Id preselected
+	 *  @param 	int    $percent_value		percentage of the opportunity
+	 *  @param	string $htmlname_status	name of HTML element for status select
+	 *  @param	string $htmlname_percent	name of HTML element for percent input
+	 *  @param  string $filter         	optional filters criteras
+	 *  @param  int    $nooutput       	No print output. Return it only.
 	 *  @return	void|string
 	 */
-	public function formOpportunityStatus($page, $selected = '', $percent_value = 0, $htmlname_status = 'none',$htmlname_percent = 'none', $filter = '', $nooutput = 0)
+	public function formOpportunityStatus($page, $selected = '', $percent_value = 0, $htmlname_status = 'none', $htmlname_percent = 'none', $filter = '', $nooutput = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;
