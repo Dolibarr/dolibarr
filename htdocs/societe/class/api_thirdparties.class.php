@@ -479,7 +479,7 @@ class Thirdparties extends DolibarrApi
 	public function addRepresentative($id, $representative_id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$result = $this->company->fetch($id);
 		if (!$result) {
@@ -510,7 +510,7 @@ class Thirdparties extends DolibarrApi
 	public function deleteRepresentative($id, $representative_id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'supprimer')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$result = $this->company->fetch($id);
 		if (!$result) {
