@@ -110,7 +110,7 @@ class Cronjob extends CommonObject
 	public $datelastresult = '';
 
 	/**
-	 * @var int 			Last result from end job execution
+	 * @var string			Last result from end job execution
 	 */
 	public $lastresult;
 
