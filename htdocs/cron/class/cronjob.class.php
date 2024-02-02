@@ -804,9 +804,9 @@ class Cronjob extends CommonObject
 		$sql .= " datelastresult=".(dol_strlen($this->datelastresult) != 0 ? "'".$this->db->idate($this->datelastresult)."'" : 'null').",";
 		$sql .= " lastresult=".(isset($this->lastresult) ? "'".$this->db->escape($this->lastresult)."'" : "null").",";
 		$sql .= " lastoutput=".(isset($this->lastoutput) ? "'".$this->db->escape($this->lastoutput)."'" : "null").",";
-		$sql .= " unitfrequency=".(isset($this->unitfrequency) ? $this->unitfrequency : "null").",";
-		$sql .= " frequency=".(isset($this->frequency) ? $this->frequency : "null").",";
-		$sql .= " status=".(isset($this->status) ? $this->status : "null").",";
+		$sql .= " unitfrequency=".(isset($this->unitfrequency) ?: "null").",";
+		$sql .= " frequency=".(isset($this->frequency) ?: "null").",";
+		$sql .= " status=".(isset($this->status) ?: "null").",";
 		$sql .= " processing=".((isset($this->processing) && $this->processing > 0) ? $this->processing : "0").",";
 		$sql .= " pid=".(isset($this->pid) ? ((int) $this->pid) : "null").",";
 		$sql .= " email_alert = ".(isset($this->email_alert) ? "'".$this->db->escape($this->email_alert)."'" : "null").",";
@@ -987,7 +987,7 @@ class Cronjob extends CommonObject
 	 * @since v18
 	 * @return	array
 	 */
-	public function getTooltipContentArray(array $params): array
+	public function getTooltipContentArray($params): array
 	{
 		global $langs;
 
@@ -1036,7 +1036,7 @@ class Cronjob extends CommonObject
 	 */
 	public function getNomUrl(int $withpicto = 0, string $option = '', int $notooltip = 0, string $morecss = '', int $save_lastsearch_value = -1): string
 	{
-		global $db, $conf, $langs;
+		global $conf, $langs;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -1089,7 +1089,7 @@ class Cronjob extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ?: 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
