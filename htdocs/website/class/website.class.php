@@ -1667,6 +1667,7 @@ class Website extends CommonObject
 
 		// Export on target sources
 		$resultarray = dol_uncompress($pathtotmpzip, $destdir);
+
 		if (!empty($resultarray)) {
 			setEventMessages("Error, failed to unzip the export into target dir", null, 'errors');
 		} else {

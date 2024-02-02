@@ -2325,7 +2325,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
  */
 function dol_uncompress($inputfile, $outputdir)
 {
-	global $conf, $langs, $db;
+	global $langs, $db;
 
 	$fileinfo = pathinfo($inputfile);
 	$fileinfo["extension"] = strtolower($fileinfo["extension"]);
@@ -2353,6 +2353,12 @@ function dol_uncompress($inputfile, $outputdir)
 						$langs->load("errors");
 						$ok = 0;
 						$errmsg = $langs->trans("ErrorFailToCreateDir", $val['filename']);
+						break;
+					}
+					if ($val['status'] == 'write_protected') {
+						$langs->load("errors");
+						$ok = 0;
+						$errmsg = $langs->trans("ErrorFailToCreateFile", $val['filename']);
 						break;
 					}
 				}

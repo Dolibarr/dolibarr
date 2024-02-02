@@ -763,7 +763,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var string 		Populated by setRetainedWarrantyPaymentTerms()
+	 * @var int 		Populated by setRetainedWarrantyPaymentTerms()
 	 */
 	public $retained_warranty_fk_cond_reglement;
 
@@ -1013,7 +1013,7 @@ abstract class CommonObject
 	 * @param	string	$modulepart			Module related to document
 	 * @param	int		$initsharekey		Init the share key if it was not yet defined
 	 * @param	int		$relativelink		0=Return full external link, 1=Return link relative to root of file
-	 * @return	string						Link or empty string if there is no download link
+	 * @return	string|-1					Returns the link, or an empty string if no link was found, or -1 if error.
 	 */
 	public function getLastMainDocLink($modulepart, $initsharekey = 0, $relativelink = 0)
 	{
@@ -1497,7 +1497,7 @@ abstract class CommonObject
 	 *      @param  int		$option     0=Return array id->label, 1=Return array code->label
 	 *      @param  int		$activeonly 0=all status of contact, 1=only the active
 	 *		@param	string	$code		Type of contact (Example: 'CUSTOMER', 'SERVICE')
-	 *      @return array       		Array list of type of contacts (id->label if option=0, code->label if option=1)
+	 *      @return array|null          Array list of type of contacts (id->label if option=0, code->label if option=1), or null if error
 	 */
 	public function liste_type_contact($source = 'internal', $order = 'position', $option = 0, $activeonly = 0, $code = '')
 	{
@@ -1560,7 +1560,7 @@ abstract class CommonObject
 	 *		@param	string	$code				Type of contact (Example: 'CUSTOMER', 'SERVICE')
 	 *		@param	string	$element			Filter on 1 element type
 	 *      @param	string	$excludeelement		Exclude 1 element type. Example: 'agenda'
-	 *      @return array       				Array list of type of contacts (id->label if option=0, code->label if option=1)
+	 *      @return array|null     				Array list of type of contacts (id->label if option=0, code->label if option=1), or null if error
 	 */
 	public function listeTypeContacts($source = 'internal', $option = 0, $activeonly = 0, $code = '', $element = '', $excludeelement = '')
 	{
@@ -1648,7 +1648,7 @@ abstract class CommonObject
 	 *		@param	string	$source		'external' or 'internal'
 	 *		@param	string	$code		'BILLING', 'SHIPPING', 'SALESREPFOLL', ...
 	 *		@param	int		$status		limited to a certain status
-	 *      @return array       		List of id for such contacts
+	 *      @return array|null     		List of id for such contacts, or null if error
 	 */
 	public function getIdContact($source, $code, $status = 0)
 	{
@@ -1975,7 +1975,7 @@ abstract class CommonObject
 	 *  @param	string	$field		Field selected
 	 *  @param	string	$key		Import key
 	 *  @param	string	$element	Element name
-	 *	@return	int					Return integer <0 if KO, >0 if OK
+	 *	@return	int|false			Return -1 or false if KO, >0 if OK
 	 */
 	public function fetchObjectFrom($table, $field, $key, $element = null)
 	{
@@ -1998,12 +1998,12 @@ abstract class CommonObject
 			// Test for avoid error -1
 			if ($obj) {
 				if (method_exists($this, 'fetch')) {
-					return $this->fetch($obj->rowid);
+					$result = $this->fetch($obj->rowid);
 				} else {
 					$this->error = 'fetch() method not implemented on '.get_class($this);
 					dol_syslog(get_class($this).'::fetchOneLike Error='.$this->error, LOG_ERR);
 					array_push($this->errors, $this->error);
-					return -1;
+					$result = -1;
 				}
 			}
 		}
@@ -4831,7 +4831,7 @@ abstract class CommonObject
 	/**
 	 * Function that returns the total amount HT of discounts applied for all lines.
 	 *
-	 * @return 	float|string			Total amount of discount
+	 * @return 	float|null			Total amount of discount, or null if $table_element_line is empty
 	 */
 	public function getTotalDiscount()
 	{
@@ -4862,7 +4862,7 @@ abstract class CommonObject
 			}
 
 			//print $total_discount; exit;
-			return price2num($total_discount);
+			return (float) price2num($total_discount);
 		}
 
 		return null;
@@ -9510,7 +9510,7 @@ abstract class CommonObject
 
 		foreach ($this->fields as $field => $info) {
 			if ($this->isDate($info)) {
-				if (is_null($obj->$field) || $obj->$field === '' || $obj->$field === '0000-00-00 00:00:00' || $obj->$field === '1000-01-01 00:00:00') {
+				if (!isset($obj->$field) || is_null($obj->$field) || $obj->$field === '' || $obj->$field === '0000-00-00 00:00:00' || $obj->$field === '1000-01-01 00:00:00') {
 					$this->$field = '';
 				} else {
 					$this->$field = $db->jdate($obj->$field);
@@ -9526,7 +9526,7 @@ abstract class CommonObject
 							$this->$field = (float) $obj->$field;
 						}
 					} else {
-						if (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+						if (isset($obj->$field) && !is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1)) {
 							$this->$field = (int) $obj->$field;
 						} else {
 							$this->$field = null;
@@ -9541,7 +9541,7 @@ abstract class CommonObject
 						$this->$field = (float) $obj->$field;
 					}
 				} else {
-					if (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+					if (isset($obj->$field) && !is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1)) {
 						$this->$field = (float) $obj->$field;
 					} else {
 						$this->$field = null;
@@ -9554,7 +9554,7 @@ abstract class CommonObject
 
 		// If there is no 'ref' field, we force property ->ref to ->id for a better compatibility with common functions.
 		if (!isset($this->fields['ref']) && isset($this->id)) {
-			$this->ref = $this->id;
+			$this->ref = (string) $this->id;
 		}
 	}
 
@@ -10394,7 +10394,8 @@ abstract class CommonObject
 
 	/**
 	 * Load comments linked with current task
-	 *	@return boolean	1 if ok
+	 *
+	 * @return int<0,max>|-1        Returns the number of comments if OK, -1 if error
 	 */
 	public function fetchComments()
 	{

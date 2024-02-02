@@ -103,10 +103,17 @@ class Adherent extends CommonObject
 	public $fullname;
 
 	/**
-	 * @var string The civility code, not an integer
+	 * @var string
+	 * @deprecated
+	 * @see $civility_code
 	 */
 	public $civility_id;
+
+	/**
+	 * @var string The civility code, not an integer (ex: 'MR', 'MME', 'MLE', etc.)
+	 */
 	public $civility_code;
+
 	public $civility;
 
 	/**
@@ -270,7 +277,7 @@ class Adherent extends CommonObject
 	public $partnerships = array();
 
 	/**
-	 * @var Facture		To store the created invoice into subscriptionComplementaryActions()
+	 * @var Facture|null		To store the created invoice into subscriptionComplementaryActions()
 	 */
 	public $invoice;
 
@@ -2623,7 +2630,7 @@ class Adherent extends CommonObject
 		$this->ref = 'ABC001';
 		$this->entity = 1;
 		$this->specimen = 1;
-		$this->civility_id = 0;
+		$this->civility_id = 'MR';
 		$this->lastname = 'DOLIBARR';
 		$this->firstname = 'SPECIMEN';
 		$this->gender = 'man';

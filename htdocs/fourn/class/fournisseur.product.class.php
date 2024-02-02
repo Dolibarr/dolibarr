@@ -40,19 +40,22 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/productfournisseurprice.class.php
 class ProductFournisseur extends Product
 {
 	/**
-	 * @var DoliDB Database handler.
+	 * @var DoliDB		Database handler.
 	 */
 	public $db;
 
 	/**
-	 * @var string Error code (or message)
+	 * @var string		Error code (or message)
 	 */
 	public $error = '';
 
-	public $product_fourn_price_id; // id of ligne product-supplier
+	/**
+	 * @var int			ID of ligne product-supplier
+	 */
+	public $product_fourn_price_id;
 
 	/**
-	 * @var int ID
+	 * @var int			ID
 	 */
 	public $id;
 
@@ -62,31 +65,84 @@ class ProductFournisseur extends Product
 	 */
 	public $fourn_ref;
 
+	/**
+	 * @var int			The product lead time in days.
+	 */
 	public $delivery_time_days;
-	public $ref_supplier; // ref supplier (can be set by get_buyprice)
+
+	/**
+	 * @var string		The product reference of the supplier. Can be set by get_buyprice().
+	 */
+	public $ref_supplier;
+
+	/**
+	 * @var string		The product description of the supplier.
+	 */
 	public $desc_supplier;
-	public $vatrate_supplier; // default vat rate for this supplier/qty/product (can be set by get_buyprice)
+
+	/**
+	 * @var float		The VAT rate by default for this {supplier, qty, product}. Can be set by get_buyprice().
+	 */
+	public $vatrate_supplier;
 
 	/**
 	 * @deprecated
 	 * @see $product_id
 	 */
 	public $fk_product;
+
+	/**
+	 * @var int			The product ID.
+	 */
 	public $product_id;
+
+	/**
+	 * @var string		The product reference.
+	 */
 	public $product_ref;
 
-	public $fourn_id; //supplier id
-	public $fourn_name;	// supplier name
-	public $fourn_qty; // quantity for price (can be set by get_buyprice)
-	public $fourn_pu; // unit price for quantity (can be set by get_buyprice)
+	/**
+	 * @var int			The supplier ID.
+	 */
+	public $fourn_id;
 
-	public $fourn_price; // price for quantity
-	public $fourn_remise_percent; // discount for quantity (percent)
-	public $fourn_remise; // discount for quantity (amount)
+	/**
+	 * @var string		The supplier name.
+	 */
+	public $fourn_name;
+
+	/**
+	 * @var float		The Minimum Order Quantity (MOQ) for a given unit price. Can be set by get_buyprice().
+	 */
+	public $fourn_qty;
+
+	/**
+	 * @var float		The unit price for a given Minimum Order Quantity (MOQ). Can be set by get_buyprice().
+	 */
+	public $fourn_pu;
+
+	/**
+	 * @var float		The total price for a given Minimum Order Quantity (MOQ).
+	 */
+	public $fourn_price;
+
+	/**
+	 * @var float		The discount in percentage for a given Minimum Order Quantity (MOQ).
+	 */
+	public $fourn_remise_percent;
+
+	/**
+	 * @var float		The discount in value for a given Minimum Order Quantity (MOQ).
+	 */
+	public $fourn_remise;
 
 	public $fourn_charges;	// when getDolGlobalString('PRODUCT_CHARGES') is set
 
-	public $product_fourn_id; // product-supplier id
+	/**
+	 * @var int		product-supplier id
+	 */
+	public $product_fourn_id;
+
 	public $product_fourn_entity;
 
 	/**
@@ -323,7 +379,7 @@ class ProductFournisseur extends Product
 			$supplier_reputation = '';
 		}
 		if ($delivery_time_days != '' && !is_numeric($delivery_time_days)) {
-			$delivery_time_days = '';
+			$delivery_time_days = 0;
 		}
 		if ($price_base_type == 'TTC') {
 			$ttx = $tva_tx;
@@ -836,18 +892,18 @@ class ProductFournisseur extends Product
 			return 0;
 		}
 
-		$this->product_fourn_price_id = '';
-		$this->product_fourn_id       = '';
+		$this->product_fourn_price_id = 0;
+		$this->product_fourn_id       = 0;
 		$this->fourn_ref              = '';
 		$this->fourn_price            = '';
 		$this->fourn_qty              = '';
 		$this->fourn_remise_percent   = '';
 		$this->fourn_remise           = '';
 		$this->fourn_unitprice        = '';
-		$this->fourn_id               = '';
+		$this->fourn_id               = 0;
 		$this->fourn_name             = '';
-		$this->delivery_time_days = '';
-		$this->id                     = '';
+		$this->delivery_time_days     = 0;
+		$this->id                     = 0;
 
 		$this->fourn_multicurrency_price       = '';
 		$this->fourn_multicurrency_unitprice   = '';
