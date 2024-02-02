@@ -13,6 +13,7 @@
  * Copyright (C) 2018-2022  Ferran Marcet         	<fmarcet@2byte.es>
  * Copyright (C) 2021       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1202,9 +1203,10 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param	User	$user			Object user
 	 *	@param	int		$idwarehouse	Id of warhouse for stock change
 	 *  @param	int		$secondlevel	0=Standard approval, 1=Second level approval (used when option SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set)
+	 *  @param	int		$selfapprove	1=Self approval
 	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
-	public function approve($user, $idwarehouse = 0, $secondlevel = 0)
+	public function approve($user, $idwarehouse = 0, $secondlevel = 0, $selfapprove = 0)
 	{
 		global $langs, $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1213,7 +1215,7 @@ class CommandeFournisseur extends CommonOrder
 
 		dol_syslog(get_class($this)."::approve");
 
-		if ($user->hasRight("fournisseur", "commande", "approuver")) {
+		if ($user->hasRight("fournisseur", "commande", "approuver") || $selfapprove) {
 			$now = dol_now();
 
 			$this->db->begin();

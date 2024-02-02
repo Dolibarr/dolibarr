@@ -12,6 +12,7 @@
  * Copyright (C) 2022      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023 	   Joachim Kueter       <git-jk@bloxera.com>
+ * Copyright (C) 2023      Christian Foellmann  <christian@foellmann.de>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under	the	terms of the GNU General Public	License	as published by
@@ -153,6 +154,19 @@ if (empty($conf->reception->enabled)) {
 } else {
 	$usercanreceive = $user->hasRight("reception", "creer");
 }
+if ( empty($usercanapprove) ) {
+	if ($object->total_ht <= getDolGlobalString('SUPPLIER_ORDER_APPROVE_LVL1')) {
+		$usercanapprove = $user->hasRight("fournisseur", "commande", "selfapprovelvl1") ? $user->hasRight("fournisseur", "commande", "selfapprovelvl1") : 0;
+		$selfapprove = 1;
+	} elseif ($object->total_ht <= getDolGlobalString('SUPPLIER_ORDER_APPROVE_LVL2')) {
+		$usercanapprove = $user->hasRight("fournisseur", "commande", "selfapprovelvl2") ? $user->hasRight("fournisseur", "commande", "selfapprovelvl2") : 0;
+		$selfapprove = 2;
+	} elseif ($object->total_ht <= getDolGlobalString('SUPPLIER_ORDER_APPROVE_LVL3')) {
+		$usercanapprove = $user->hasRight("fournisseur", "commande", "selfapprovelvl3") ? $user->hasRight("fournisseur", "commande", "selfapprovelvl3") : 0;
+		$selfapprove = 3;
+	}
+}
+
 
 // Permissions for includes
 $permissionnote		= $usercancreate; // Used by the include of actions_setnotes.inc.php
@@ -1005,7 +1019,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$result = $object->approve($user, $idwarehouse, ($action == 'confirm_approve2' ? 1 : 0));
+			$result = $object->approve($user, $idwarehouse, ($action == 'confirm_approve2' ? 1 : 0), $selfapprove);
 			if ($result > 0) {
 				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					$outputlangs = $langs;

@@ -6,6 +6,7 @@
 * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
 * Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
 * Copyright (C) 2011-2018 Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2023      Christian Foellmann  <christian@foellmann.de>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -157,8 +158,15 @@ if ($action == 'specimen') {  // For orders
 	$doubleapproval = GETPOST('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED', 'alpha');
 	$doubleapproval = price2num($doubleapproval);
 
+	$approval_lvl1 = GETPOST('SUPPLIER_ORDER_APPROVE_LVL1', 'alpha');
+	$approval_lvl2 = GETPOST('SUPPLIER_ORDER_APPROVE_LVL2', 'alpha');
+	$approval_lvl3 = GETPOST('SUPPLIER_ORDER_APPROVE_LVL3', 'alpha');
+
 	$res1 = dolibarr_set_const($db, "SUPPLIER_ORDER_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 	$res2 = dolibarr_set_const($db, "SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED", $doubleapproval, 'chaine', 0, '', $conf->entity);
+	$res3 = dolibarr_set_const($db, "SUPPLIER_ORDER_APPROVE_LVL1", $approval_lvl1, 'chaine', 0, '', $conf->entity);
+	$res4 = dolibarr_set_const($db, "SUPPLIER_ORDER_APPROVE_LVL2", $approval_lvl2, 'chaine', 0, '', $conf->entity);
+	$res5 = dolibarr_set_const($db, "SUPPLIER_ORDER_APPROVE_LVL3", $approval_lvl3, 'chaine', 0, '', $conf->entity);
 
 	// TODO We add/delete permission here until permission can have a condition on a global var
 	include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
@@ -543,6 +551,28 @@ if (isModEnabled('reception')) {
 }
 print "</td>\n";
 print "</tr>\n";
+
+// Add approval levels by netto amount.
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("Approval Amount Levels");
+print '<table class="nobordernopadding">';
+print '<tr><td><label for="SUPPLIER_ORDER_APPROVE_LVL1">Level 1</label></td>';
+print '<td><input type="text" title="'.$langs->trans("SUPPLIER_ORDER_APPROVE_LVL1").'" size="6" name="SUPPLIER_ORDER_APPROVE_LVL1" value="'.$conf->global->SUPPLIER_ORDER_APPROVE_LVL1.'">';
+print ' <label for="SUPPLIER_ORDER_APPROVE_LVL1">Euro (netto)</label>';
+print '</td></tr>';
+print '<tr><td><label for="SUPPLIER_ORDER_APPROVE_LVL2">Level 2</label></td>';
+print '<td><input type="text" title="'.$langs->trans("SUPPLIER_ORDER_APPROVE_LVL2").'" size="6" name="SUPPLIER_ORDER_APPROVE_LVL2" value="'.$conf->global->SUPPLIER_ORDER_APPROVE_LVL2.'">';
+print ' <label for="SUPPLIER_ORDER_APPROVE_LVL2">Euro (netto)</label>';
+print '</td></tr>';
+print '<tr><td><label for="SUPPLIER_ORDER_APPROVE_LVL3">Level 3</label></td>';
+print '<td><input type="text" title="'.$langs->trans("SUPPLIER_ORDER_APPROVE_LVL3").'" size="6" name="SUPPLIER_ORDER_APPROVE_LVL3" value="'.$conf->global->SUPPLIER_ORDER_APPROVE_LVL3.'">';
+print ' <label for="SUPPLIER_ORDER_APPROVE_LVL3">Euro (netto)</label>';
+print '</td></tr>';
+print '</table>';
+print '</td><td></td>';
+print '<td class="right">';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
 
 print '</table></div><br>';
 
