@@ -160,7 +160,7 @@ if ($object->id > 0) {
 
 	print dol_get_fiche_head($head, 'agenda', $langs->trans("Contract"), -1, 'contract');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '';
 	if (!empty($modCodeContract->code_auto)) {
@@ -250,6 +250,10 @@ if ($object->id > 0) {
 		if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 			$backtopage = $_SERVER['PHP_SELF'].'?id='.$object->id;
 			$out = '&origin='.$object->element.'&originid='.$object->id.'&backtopage='.urlencode($backtopage);
+			$messagingUrl = DOL_URL_ROOT.'/contrat/messaging.php?id='.$object->id;
+			$newcardbutton .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
+			$messagingUrl = DOL_URL_ROOT.'/contrat/agenda.php?id='.$object->id;
+			$newcardbutton .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
 		}
 	}

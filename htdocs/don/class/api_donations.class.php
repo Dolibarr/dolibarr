@@ -63,7 +63,7 @@ class Donations extends DolibarrApi
 	public function get($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->don->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->don->fetch($id);
@@ -101,10 +101,8 @@ class Donations extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
 		if (!DolibarrApiAccess::$user->rights->don->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -219,7 +217,7 @@ class Donations extends DolibarrApi
 	public function put($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->don->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->don->fetch($id);
@@ -259,7 +257,7 @@ class Donations extends DolibarrApi
 	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->don->supprimer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->don->fetch($id);
@@ -299,7 +297,7 @@ class Donations extends DolibarrApi
 	 * @url POST    {id}/validate
 	 *
 	 * @throws RestException 304
-	 * @throws RestException 401
+	 * @throws RestException 403
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
 	 *
@@ -308,7 +306,7 @@ class Donations extends DolibarrApi
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->don->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->don->fetch($id);

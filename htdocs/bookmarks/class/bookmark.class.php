@@ -50,8 +50,7 @@ class Bookmark extends CommonObject
 	public $picto = 'bookmark';
 
 	/**
-	 * Last error code on a local method
-	 * @var int		Error number
+	 * @var string Last error number. For example: 'DB_ERROR_RECORD_ALREADY_EXISTS', '12345', ...
 	 */
 	public $errno;
 
