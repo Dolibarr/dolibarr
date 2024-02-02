@@ -719,7 +719,7 @@ class Cronjob extends CommonObject
 			$this->note_private = trim($this->note_private);
 		}
 		if (isset($this->nbrun)) {
-			$this->nbrun = trim($this->nbrun);
+			$this->nbrun = (is_numeric($this->nbrun)) ? (int) trim($this->nbrun) : 0;
 		}
 		if (isset($this->libname)) {
 			$this->libname = trim($this->libname);
