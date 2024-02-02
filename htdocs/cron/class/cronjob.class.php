@@ -1520,18 +1520,18 @@ class Cronjob extends CommonObject
 	/**
 	 *  Return label of status of user (active, inactive)
 	 *
-	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return	string 			       Label of status
+	 *  @param	int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string					Label of status
 	 */
-	public function getLibStatut($mode = 0)
+	public function getLibStatut(int $mode = 0): string
 	{
-		return $this->LibStatus($this->status, $mode, $this->processing, $this->lastresult);
+		return $this->libStatus($this->status, $mode, $this->processing, $this->lastresult);
 	}
 
 	/**
 	 * Return label of a giver status
 	 *
-	 * @param	int		$status				Id statut
+	 * @param	int		$status				Id status
 	 * @param	int		$mode				0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 * @param	int		$processing			0=Not running, 1=Running
 	 * @param	string	$lastResult			Value of last result (''=no error, error otherwise)
@@ -1546,15 +1546,15 @@ class Cronjob extends CommonObject
 			global $langs;
 			$langs->load('users');
 
-			$moretext = '';
+			$moreText = '';
 			if ($processing) {
-				$moretext = ' ('.$langs->trans("Running").')';
+				$moreText = ' ('.$langs->trans("Running").')';
 			} elseif ($lastResult) {
-				$moretext .= ' ('.$langs->trans("Error").')';
+				$moreText .= ' ('.$langs->trans("Error").')';
 			}
 
-			$this->labelStatus[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled').$moretext;
-			$this->labelStatus[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Scheduled').$moretext;
+			$this->labelStatus[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled').$moreText;
+			$this->labelStatus[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Scheduled').$moreText;
 			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
 			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Scheduled');
 		}
@@ -1572,13 +1572,4 @@ class Cronjob extends CommonObject
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
-}
-
-
-/**
- * Crob Job line class
- * @TODO Deprecated, to delete very soon
- */
-class Cronjobline extends Cronjob
-{
 }
