@@ -541,7 +541,7 @@ class Facture extends CommonInvoice
 
 			// Fields coming from GUI.
 			// @TODO Value of template should be used as default value on the form on the GUI, and we should here always use the value from GUI
-			// set by posted page wth $object->xxx = ... and this section should be removed.
+			// set by posted page with $object->xxx = ... and this section should be removed.
 			$this->fk_project        = GETPOST('projectid', 'int') > 0 ? GETPOSTINT('projectid') : $_facrec->fk_project;
 			$this->note_public       = GETPOSTISSET('note_public') ? GETPOST('note_public', 'restricthtml') : $_facrec->note_public;
 			$this->note_private      = GETPOSTISSET('note_private') ? GETPOST('note_private', 'restricthtml') : $_facrec->note_private;
