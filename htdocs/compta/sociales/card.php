@@ -400,7 +400,7 @@ if ($action == 'create') {
 	print '<tr><td>';
 	print $langs->trans('Employee');
 	print '</td>';
-	print '<td>'.img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($fk_user, 'userid', 1).'</td></tr>';
+	print '<td>'.img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers('', 'userid', 1).'</td></tr>';
 
 	// Project
 	if (isModEnabled('project')) {
