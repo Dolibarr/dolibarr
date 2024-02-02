@@ -199,7 +199,7 @@ class Cronjob extends CommonObject
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDB		$db			Database handler
+	 *  @param	DoliDB		$db		Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -208,11 +208,11 @@ class Cronjob extends CommonObject
 
 
 	/**
-	 *  Create object into database
+	 * Create object into database
 	 *
-	 *  @param	User	$user        User that creates
-	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
+	 * @param	User	$user		User that creates
+	 * @param  int		$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int					if KO: <0 || if OK: Id of created object
 	 */
 	public function create(User $user, int $notrigger = 0): int
 	{
@@ -222,7 +222,6 @@ class Cronjob extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-
 		if (isset($this->label)) {
 			$this->label = trim($this->label);
 		}
@@ -411,12 +410,12 @@ class Cronjob extends CommonObject
 
 
 	/**
-	 *  Load object in memory from the database
+	 * Load object in memory from the database
 	 *
-	 *  @param	int		$id    			Id object
-	 *  @param	string	$objectname		Object name
-	 *  @param	string	$methodname		Method name
-	 *  @return int          			Return integer <0 if KO, >0 if OK
+	 * @param	int			$id				Id object
+	 * @param	string		$objectname		Object name
+	 * @param	string		$methodname		Method name
+	 * @return	int							if KO: <0 || if OK: >0
 	 */
 	public function fetch(int $id, string $objectname = '', string $methodname = ''): int
 	{
@@ -516,16 +515,16 @@ class Cronjob extends CommonObject
 	}
 
 	/**
-	 *  Load list of cron jobs in a memory array from the database
+	 * Load list of cron jobs in a memory array from the database
 	 *
-	 *  @param	string		$sortorder		sort order
-	 *  @param	string		$sortfield		sort field
-	 *  @param	int			$limit			limit page
-	 *  @param	int			$offset			page
-	 *  @param	int			$status			display active or not
-	 *  @param	array		$filter			filter output
-	 *  @param	int			$processing		Processing or not
-	 *  @return	int							Return integer <0 if KO, >0 if OK
+	 * @param	string		$sortorder		sort order
+	 * @param	string		$sortfield		sort field
+	 * @param	int			$limit			limit page
+	 * @param	int			$offset			page
+	 * @param	int			$status			display active or not
+	 * @param	array		$filter			filter output
+	 * @param	int			$processing		Processing or not
+	 * @return	int							if KO: <0 || if OK: >0
 	 */
 	public function fetchAll(string $sortorder = 'DESC', string $sortfield = 't.rowid', int $limit = 0, int $offset = 0, int $status = 1, array $filter = [], int $processing = -1): int
 	{
@@ -655,11 +654,11 @@ class Cronjob extends CommonObject
 
 
 	/**
-	 *  Update object into database
+	 * Update object into database
 	 *
-	 *  @param	User|null	$user        User that modifies
-	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
+	 * @param	User|null	$user		User that modifies
+	 * @param	int			$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int						if KO: <0 || if OK: >0
 	 */
 	public function update(User $user = null, int $notrigger = 0): int
 	{
@@ -844,11 +843,11 @@ class Cronjob extends CommonObject
 
 
 	/**
-	 *  Delete object in database
+	 * Delete object in database
 	 *
-	 *	@param  User	$user        User that deletes
-	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 Return integer <0 if KO, >0 if OK
+	 * @param	User	$user		User that deletes
+	 * @param	int		$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int					if KO: <0 || if OK: >0
 	 */
 	public function delete(User $user, int $notrigger = 0): int
 	{
@@ -883,11 +882,11 @@ class Cronjob extends CommonObject
 
 
 	/**
-	 *	Load an object from its id and create a new one in database
+	 * Load an object from its id and create a new one in database
 	 *
-	 *  @param	User	$user		User making the clone
-	 *	@param	int		$fromid     Id of object to clone
-	 * 	@return	int					New id of clone
+	 * @param	User	$user		User making the clone
+	 * @param	int		$fromid		Id of object to clone
+	 * @return	int					New id of clone
 	 */
 	public function createFromClone(User $user, int $fromid): int
 	{
@@ -937,10 +936,10 @@ class Cronjob extends CommonObject
 
 
 	/**
-	 *	Initialise object with example values
-	 *	Id must be 0 if object instance is a specimen
+	 * Initialise object with example values
+	 * Id must be 0 if object instance is a specimen
 	 *
-	 *	@return	void
+	 * @return	void
 	 */
 	public function initAsSpecimen()
 	{
@@ -983,9 +982,10 @@ class Cronjob extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
+	 *
+	 * @param	array		$params		params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return	array
 	 */
 	public function getTooltipContentArray(array $params): array
 	{
@@ -1025,14 +1025,14 @@ class Cronjob extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the object card (with optionally the picto)
+	 * Return a link to the object card (with optionally the picto)
 	 *
-	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option						On what the link point to ('nolink', ...)
-	 *  @param	int  	$notooltip					1=Disable tooltip
-	 *  @param  string  $morecss            		Add more css on link
-	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string								String with URL
+	 * @param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 * @param	string	$option						On what the link point to ('nolink', ...)
+	 * @param	int		$notooltip					1=Disable tooltip
+	 * @param	string	$morecss					Add more css on link
+	 * @param	int		$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @return	string								String with URL
 	 */
 	public function getNomUrl(int $withpicto = 0, string $option = '', int $notooltip = 0, string $morecss = '', int $save_lastsearch_value = -1): string
 	{
@@ -1102,10 +1102,10 @@ class Cronjob extends CommonObject
 
 
 	/**
-	 *	Load object information
+	 * Load object information
 	 *
-	 *  @param	int		$id		ID
-	 *	@return	int				Return integer <0 if KO, >0 if OK
+	 * @param	int		$id		ID
+	 * @return	int				if KO: <0 || if OK: >0
 	 */
 	public function info(int $id): int
 	{
@@ -1143,8 +1143,8 @@ class Cronjob extends CommonObject
 	 * Once job is finished, status and nb of run is updated.
 	 * This function does not plan the next run. This is done by function ->reprogram_jobs
 	 *
-	 * @param   string		$userlogin    	User login
-	 * @return	int					 		Return integer <0 if KO, >0 if OK
+	 * @param	string		$userlogin		User login
+	 * @return	int					 		if KO: <0 || if OK: >0
 	 */
 	public function run_jobs(string $userlogin): int
 	{
@@ -1432,9 +1432,9 @@ class Cronjob extends CommonObject
 	/**
 	 * Reprogram a job
 	 *
-	 * @param  string		$userlogin      User login
-	 * @param  integer      $now            Date returned by dol_now()
-	 * @return int					        Return integer <0 if KO, >0 if OK
+	 * @param	string		$userlogin		User login
+	 * @param	integer		$now			Date returned by dol_now()
+	 * @return	int							if KO: <0 || if OK: >0
 	 */
 	public function reprogram_jobs(string $userlogin, int $now): int
 	{
@@ -1507,10 +1507,10 @@ class Cronjob extends CommonObject
 	}
 
 	/**
-	 *  Return label of status of user (active, inactive)
+	 * Return label of status of user (active, inactive)
 	 *
-	 *  @param	int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return	string					Label of status
+	 * @param	int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return	string					Label of status
 	 */
 	public function getLibStatut(int $mode = 0): string
 	{
