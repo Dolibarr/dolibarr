@@ -1530,15 +1530,15 @@ class Cronjob extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Return label of a giver status
+	 * Return label of a giver status
 	 *
-	 *  @param	int		$status        	Id statut
-	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *	@param	int		$processing		0=Not running, 1=Running
-	 *  @param	int		$lastresult		Value of last result (0=no error, error otherwise)
-	 *  @return string 			       	Label of status
+	 * @param	int		$status				Id statut
+	 * @param	int		$mode				0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @param	int		$processing			0=Not running, 1=Running
+	 * @param	string	$lastresult			Value of last result (''=no error, error otherwise)
+	 * @return	string						Label of status
 	 */
-	public function LibStatut($status, $mode = 0, $processing = 0, $lastresult = 0)
+	public function LibStatut($status, $mode = 0, $processing = 0, $lastresult = '')
 	{
 		// phpcs:enable
 		$this->labelStatus = array(); // Force reset o array because label depends on other fields
