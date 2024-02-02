@@ -1155,7 +1155,6 @@ class Cronjob extends CommonObject
 
 		$now = dol_now();
 		$error = 0;
-		$retval = '';
 
 		$langs->load('cron');
 
@@ -1229,8 +1228,7 @@ class Cronjob extends CommonObject
 				$this->error = $langs->transnoentitiesnoconv('CronMethodNotAllowed', $this->methodename, $this->objectname);
 				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 				$this->lastoutput = $this->error;
-				$this->lastresult = -1;
-				$retval = $this->lastresult;
+				$this->lastresult = '-1';
 				$error++;
 			}
 
@@ -1245,8 +1243,7 @@ class Cronjob extends CommonObject
 					}
 					dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 					$this->lastoutput = $this->error;
-					$this->lastresult = -1;
-					$retval = $this->lastresult;
+					$this->lastresult = '-1';
 					$error++;
 				}
 			}
@@ -1257,16 +1254,14 @@ class Cronjob extends CommonObject
 					$this->error = $langs->transnoentitiesnoconv('CronMethodDoesNotExists', $this->objectname, $this->methodename);
 					dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 					$this->lastoutput = $this->error;
-					$this->lastresult = -1;
-					$retval = $this->lastresult;
+					$this->lastresult = '-1';
 					$error++;
 				}
 				if (in_array(strtolower(trim($this->methodename)), array('executecli'))) {
 					$this->error = $langs->transnoentitiesnoconv('CronMethodNotAllowed', $this->methodename, $this->objectname);
 					dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 					$this->lastoutput = $this->error;
-					$this->lastresult = -1;
-					$retval = $this->lastresult;
+					$this->lastresult = '-1';
 					$error++;
 				}
 			}
@@ -1280,8 +1275,7 @@ class Cronjob extends CommonObject
 					dol_syslog(get_class($this)."::run_jobs Cannot load module lang file - ".$langs->error, LOG_ERR);
 					$this->error = $langs->error;
 					$this->lastoutput = $this->error;
-					$this->lastresult = -1;
-					$retval = $this->lastresult;
+					$this->lastresult = '-1';
 					$error++;
 				}
 			}
@@ -1325,14 +1319,12 @@ class Cronjob extends CommonObject
 
 					$this->error = $errmsg;
 					$this->lastoutput = dol_substr((empty($object->output) ? "" : $object->output."\n").$errmsg, 0, $this::MAXIMUM_LENGTH_FOR_LASTOUTPUT_FIELD, 'UTF-8', 1);
-					$this->lastresult = is_numeric($result) ? $result : -1;
-					$retval = $this->lastresult;
+					$this->lastresult = is_numeric($result) ? var_export($result, true) : '-1';
 					$error++;
 				} else {
 					dol_syslog(get_class($this)."::run_jobs END");
 					$this->lastoutput = dol_substr((empty($object->output) ? "" : $object->output."\n"), 0, $this::MAXIMUM_LENGTH_FOR_LASTOUTPUT_FIELD, 'UTF-8', 1);
 					$this->lastresult = var_export($result, true);
-					$retval = $this->lastresult;
 				}
 			}
 		}
@@ -1370,13 +1362,11 @@ class Cronjob extends CommonObject
 				dol_syslog(get_class($this)."::run_jobs result=".$result, LOG_ERR);
 				$this->error = $langs->trans('ErrorUnknown');
 				$this->lastoutput = $this->error;
-				$this->lastresult = is_numeric($result) ? $result : -1;
-				$retval = $this->lastresult;
+				$this->lastresult = is_numeric($result) ? var_export($result, true) : '-1';
 				$error++;
 			} else {
 				$this->lastoutput = var_export($result, true);
 				$this->lastresult = var_export($result, true); // Return code
-				$retval = $this->lastresult;
 			}
 		}
 
@@ -1404,7 +1394,6 @@ class Cronjob extends CommonObject
 					$utils = new Utils($this->db);
 					$arrayresult = $utils->executeCLI($this->command, $outputfile);
 
-					$retval = $arrayresult['result'];
 					$this->error      = $arrayresult['error'];
 					$this->lastoutput = $arrayresult['output'];
 					$this->lastresult = $arrayresult['result'];
