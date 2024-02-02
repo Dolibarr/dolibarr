@@ -132,7 +132,7 @@ class Context
 			$this->controller = 'default';
 		}
 
-		$this->appliName = !empty($conf->global->WEBPORTAL_TITLE) ? $conf->global->WEBPORTAL_TITLE : $conf->global->MAIN_INFO_SOCIETE_NOM;
+		$this->appliName = getDolGlobalString('WEBPORTAL_TITLE', getDolGlobalString('MAIN_INFO_SOCIETE_NOM'));
 
 		//$this->generateNewToken();
 

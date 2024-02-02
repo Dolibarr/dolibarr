@@ -254,6 +254,7 @@ if (empty($reshook)) {
 			$object->fk_project 				= $projectid;
 			$object->fk_contract 				= GETPOST('fk_contract', 'int');
 
+			$object->context['contact_id'] = GETPOSTINT('contact_id');
 
 			$id = $object->create($user);
 			if ($id <= 0) {
@@ -494,6 +495,7 @@ if (empty($reshook)) {
 
 			$url = 'card.php?track_id='.GETPOST('track_id', 'alpha');
 			header("Location: ".$url);
+			exit;
 		} else {
 			$action = '';
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -503,12 +505,15 @@ if (empty($reshook)) {
 	if ($action == "confirm_public_close" && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoadd) {
 		$object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
 		if ($_SESSION['email_customer'] == $object->origin_email || $_SESSION['email_customer'] == $object->thirdparty->email) {
+			$object->context['contact_id'] = GETPOSTINT('contact_id');
+
 			$object->close($user);
 
 			setEventMessages('<div class="confirm">'.$langs->trans('TicketMarkedAsClosed').'</div>', null, 'mesgs');
 
 			$url = 'card.php?track_id='.GETPOST('track_id', 'alpha');
 			header("Location: ".$url);
+			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';

@@ -888,7 +888,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate) {
 		$db->begin();
 
-		$result = $object->deleteline($lineid);
+		$result = $object->deleteLine($lineid);
 		if ($result > 0) {
 			// reorder lines
 			$object->line_order(true);

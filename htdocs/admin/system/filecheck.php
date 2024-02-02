@@ -79,7 +79,7 @@ print '<br>';
 $file_list = array('missing' => array(), 'updated' => array());
 
 // Local file to compare to
-$xmlshortfile = dol_sanitizeFileName(GETPOST('xmlshortfile', 'alpha') ? GETPOST('xmlshortfile', 'alpha') : 'filelist-'.DOL_VERSION.(!getDolGlobalString('MAIN_FILECHECK_LOCAL_SUFFIX') ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml'.(!getDolGlobalString('MAIN_FILECHECK_LOCAL_EXT') ? '' : $conf->global->MAIN_FILECHECK_LOCAL_EXT));
+$xmlshortfile = dol_sanitizeFileName(GETPOST('xmlshortfile', 'alpha') ? GETPOST('xmlshortfile', 'alpha') : 'filelist-'.DOL_VERSION.getDolGlobalString('MAIN_FILECHECK_LOCAL_SUFFIX').'.xml'.getDolGlobalString('MAIN_FILECHECK_LOCAL_EXT'));
 
 $xmlfile = DOL_DOCUMENT_ROOT.'/install/'.$xmlshortfile;
 if (!preg_match('/\.zip$/i', $xmlfile) && dol_is_file($xmlfile.'.zip')) {

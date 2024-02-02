@@ -386,7 +386,7 @@ class ExpenseReports extends DolibarrApi
 
 	  // TODO Check the lineid $lineid is a line of object
 
-	  $updateRes = $this->expensereport->deleteline($lineid);
+	  $updateRes = $this->expensereport->deleteLine($lineid);
 	  if ($updateRes == 1) {
 		return $this->get($id);
 	  }

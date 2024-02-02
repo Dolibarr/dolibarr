@@ -403,7 +403,7 @@ class Receptions extends DolibarrApi
 
 		// TODO Check the lineid $lineid is a line of object
 
-		$updateRes = $this->reception->deleteline(DolibarrApiAccess::$user, $lineid);
+		$updateRes = $this->reception->deleteLine(DolibarrApiAccess::$user, $lineid);
 		if ($updateRes < 0) {
 			throw new RestException(405, $this->reception->error);
 		}
