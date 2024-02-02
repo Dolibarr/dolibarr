@@ -335,7 +335,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 
 
 // Reload variants
-$productCombinations = $prodcomb->fetchAllByFkProductParent($object->id);
+$productCombinations = $prodcomb->fetchAllByFkProductParent($object->id, true);
 
 if ($action === 'confirm_deletecombination') {
 	if ($prodcomb->fetch($valueid) > 0) {
