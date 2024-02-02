@@ -89,7 +89,7 @@ if ($disableSellBy == 0 || $disableEatBy == 0) {
 			var disableEatBy = '.$disableSellBy.';
 			jQuery("#batch_number").change(function(event) {
 				var batch = jQuery(this).val();
-				jQuery.getJSON("'.DOL_URL_ROOT.'/product/ajax/product_lot.php?action=search&token='.newToken().'&product_id='.$id.'&batch="+batch, function(data) {
+				jQuery.getJSON("'.DOL_URL_ROOT.'/product/ajax/product_lot.php?action=search&token='.currentToken().'&product_id='.$id.'&batch="+batch, function(data) {
 					if (data.length > 0) {
 						var productLot = data[0];
 						if (disableSellBy == 0) {

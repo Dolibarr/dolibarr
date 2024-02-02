@@ -56,7 +56,7 @@ function getDolGlobalString($key)
 {
 	global $conf;
 	// return $conf->global->$key ?? '';
-	return (string) (empty($conf->global->$key) ? '' : $conf->global->$key);
+	return (string) (isset($conf->global->$key) ? $conf->global->$key : '');
 }
 */
 // Code remplacé
@@ -77,7 +77,7 @@ function getDolGlobalInt($key)
 {
 	global $conf;
 	// return $conf->global->$key ?? 0;
-	return (int) (empty($conf->global->$key) ? 0 : $conf->global->$key);
+	return (int) (isset($conf->global->$key) ? $conf->global->$key : 0);
 }
 
 /**

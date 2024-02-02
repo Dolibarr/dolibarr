@@ -91,12 +91,12 @@ class Productlot extends CommonObject
 		'batch'         => array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>1, 'notnull'=>0, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'comment'=>'Batch', 'searchall'=>1),
 		'entity'        => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>20),
 		'sellby'        => array('type'=>'date', 'label'=>'SellByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_SELLBY)?1:0', 'visible'=>1, 'notnull'=>0, 'position'=>60),
+		'eatby'         => array('type'=>'date', 'label'=>'EatByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_EATBY)?1:0', 'visible'=>1, 'notnull'=>0, 'position'=>62),
 		'eol_date'        => array('type'=>'date', 'label'=>'EndOfLife', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_TRACEABILITY)?0:1', 'visible'=>5, 'position'=>70),
 		'manufacturing_date' => array('type'=>'date', 'label'=>'ManufacturingDate', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_TRACEABILITY)?0:1', 'visible'=>5, 'position'=>80),
 		'scrapping_date'     => array('type'=>'date', 'label'=>'DestructionDate', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_TRACEABILITY)?0:1', 'visible'=>5, 'position'=>90),
 		//'commissionning_date'        => array('type'=>'date', 'label'=>'FirstUseDate', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_TRACEABILITY)?0:1', 'visible'=>5, 'position'=>100),
 		//'qc_frequency'        => array('type'=>'varchar(6)', 'label'=>'QCFrequency', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_QUALITYCONTROL)?1:0', 'visible'=>5, 'position'=>110),
-		'eatby'         => array('type'=>'date', 'label'=>'EatByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_EATBY)?1:0', 'visible'=>1, 'notnull'=>0, 'position'=>62),
 		'model_pdf'		=> array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 215),
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'visible' => -1, 'position' => 310),
 		'datec'         => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500),
@@ -160,7 +160,7 @@ class Productlot extends CommonObject
 	{
 		global $conf;
 
-		if (!empty($conf->global->PRODUCT_DISABLE_SELLBY) && !empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+		if (getDolGlobalString('PRODUCT_DISABLE_SELLBY') && getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 			return 0;
 		}
 
@@ -198,7 +198,7 @@ class Productlot extends CommonObject
 	{
 		global $conf, $db;
 
-		if (!empty($conf->global->PRODUCT_DISABLE_SELLBY) && !empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+		if (getDolGlobalString('PRODUCT_DISABLE_SELLBY') && getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 			return null;
 		}
 
@@ -232,7 +232,7 @@ class Productlot extends CommonObject
 	{
 		global $conf, $langs;
 
-		if ($alreadyCheckConf === false && !empty($conf->global->PRODUCT_DISABLE_SELLBY) && !empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+		if ($alreadyCheckConf === false && getDolGlobalString('PRODUCT_DISABLE_SELLBY') && getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 			return null;
 		}
 
