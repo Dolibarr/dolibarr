@@ -1525,22 +1525,20 @@ class Cronjob extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status, $mode, $this->processing, $this->lastresult);
+		return $this->LibStatus($this->status, $mode, $this->processing, $this->lastresult);
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return label of a giver status
 	 *
 	 * @param	int		$status				Id statut
 	 * @param	int		$mode				0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 * @param	int		$processing			0=Not running, 1=Running
-	 * @param	string	$lastresult			Value of last result (''=no error, error otherwise)
+	 * @param	string	$lastResult			Value of last result (''=no error, error otherwise)
 	 * @return	string						Label of status
 	 */
-	public function LibStatut($status, $mode = 0, $processing = 0, $lastresult = '')
+	public function libStatus(int $status, int $mode = 0, int $processing = 0, string $lastResult = ''): string
 	{
-		// phpcs:enable
 		$this->labelStatus = array(); // Force reset o array because label depends on other fields
 		$this->labelStatusShort = array();
 
@@ -1551,7 +1549,7 @@ class Cronjob extends CommonObject
 			$moretext = '';
 			if ($processing) {
 				$moretext = ' ('.$langs->trans("Running").')';
-			} elseif ($lastresult) {
+			} elseif ($lastResult) {
 				$moretext .= ' ('.$langs->trans("Error").')';
 			}
 
