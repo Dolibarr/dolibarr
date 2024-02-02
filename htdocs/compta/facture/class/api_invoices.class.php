@@ -623,7 +623,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(404, 'Invoice not found');
 		}
 
-		$updateRes = $this->invoice->deleteline($lineid, $id);
+		$updateRes = $this->invoice->deleteLine($lineid, $id);
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {

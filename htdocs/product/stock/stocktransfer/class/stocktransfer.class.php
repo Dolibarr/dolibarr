@@ -233,10 +233,6 @@ class StockTransfer extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
-		$model_pdf = GETPOST('model');
-		if (!empty($model_pdf)) {
-			$this->model_pdf = $model_pdf;
-		}
 		$this->status = (int) $this->status;
 		if ($this->fk_warehouse_source <= 0) {
 			$this->fk_warehouse_source = 0;

@@ -242,22 +242,32 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					'core/class/html.formsms.class.php',
 					'core/class/html.formticket.class.php',
 					'core/class/utils.class.php',
+					'fourn/class/fournisseur.facture.class.php',
+					'societe/canvas/actions_card_common.class.php',
+					'societe/canvas/individual/actions_card_individual.class.php',
+					'ticket/class/actions_ticket.class.php',
+					'ticket/class/ticket.class.php',
+					'webportal/class/context.class.php',
+					'webportal/class/html.formcardwebportal.class.php',
+					'webportal/class/html.formlistwebportal.class.php',
+					'webportal/controllers/document.controller.class.php',
+					'workstation/class/workstation.class.php',
 				))) {
 					// Must not find GETPOST
-					$ok=true;
-					$matches=array();
+					$ok = true;
+					$matches = array();
 					// Check string GETPOSTFLOAT a class.php file (should not be found into classes)
 					preg_match_all('/GETPOST\(["\'](....)/', $filecontent, $matches, PREG_SET_ORDER);
 					foreach ($matches as $key => $val) {
-						if (in_array($val[1], array('lang', 'forc'))) {
+						if (in_array($val[1], array('lang', 'forc', 'mass', 'conf'))) {
 							continue;
 						}
 						//var_dump($val);
-						$ok=false;
+						$ok = false;
 						break;
 					}
 					//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-					//$this->assertTrue($ok, 'Found string GETPOST into a .class.php file in '.$file['relativename'].'.');
+					$this->assertTrue($ok, 'Found string GETPOST into a .class.php file in '.$file['relativename'].'.');
 				}
 			} else {
 				// Check into Include files

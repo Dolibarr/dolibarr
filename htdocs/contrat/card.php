@@ -822,7 +822,7 @@ if (empty($reshook)) {
 			$db->rollback();
 		}
 	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->hasRight('contrat', 'creer')) {
-		$result = $object->deleteline(GETPOST('lineid', 'int'), $user);
+		$result = $object->deleteLine(GETPOST('lineid', 'int'), $user);
 
 		if ($result >= 0) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);

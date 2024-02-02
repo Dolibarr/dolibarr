@@ -539,7 +539,7 @@ class Facture extends CommonInvoice
 			}
 			$this->entity            = $_facrec->entity; // Invoice created in same entity than template
 
-			// Fields coming from GUI (priority on template).
+			// Fields coming from GUI.
 			// @TODO Value of template should be used as default value on the form on the GUI, and we should here always use the value from GUI
 			// set by posted page wth $object->xxx = ... and this section should be removed.
 			$this->fk_project        = GETPOST('projectid', 'int') > 0 ? GETPOSTINT('projectid') : $_facrec->fk_project;
@@ -4353,7 +4353,7 @@ class Facture extends CommonInvoice
 	 *  @param		int		$id			Id of object (for a check)
 	 *	@return		int					Return integer <0 if KO, >0 if OK
 	 */
-	public function deleteline($rowid, $id = 0)
+	public function deleteLine($rowid, $id = 0)
 	{
 		global $user;
 

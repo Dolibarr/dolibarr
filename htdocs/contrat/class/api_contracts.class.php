@@ -469,7 +469,7 @@ class Contracts extends DolibarrApi
 
 		// TODO Check the lineid $lineid is a line of object
 
-		$updateRes = $this->contract->deleteline($lineid, DolibarrApiAccess::$user);
+		$updateRes = $this->contract->deleteLine($lineid, DolibarrApiAccess::$user);
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {
