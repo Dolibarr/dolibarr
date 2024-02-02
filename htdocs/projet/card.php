@@ -207,23 +207,23 @@ if (empty($reshook)) {
 
 			$db->begin();
 
-			$object->ref             = GETPOST('ref', 'alphanohtml');
-			$object->fk_project      = GETPOST('fk_project', 'int');
-			$object->title           = GETPOST('title', 'alphanohtml');
-			$object->socid           = GETPOST('socid', 'int');
-			$object->description     = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
-			$object->public          = GETPOST('public', 'alphanohtml');
-			$object->opp_amount      = price2num(GETPOST('opp_amount', 'alphanohtml'));
-			$object->budget_amount   = price2num(GETPOST('budget_amount', 'alphanohtml'));
-			$object->date_c = dol_now();
-			$object->date_start      = $date_start;
-			$object->date_end        = $date_end;
-			$object->date_start_event = $date_start_event;
-			$object->date_end_event   = $date_end_event;
-			$object->location        = $location;
-			$object->statut          = $status;
-			$object->opp_status      = $opp_status;
-			$object->opp_percent     = $opp_percent;
+			$object->ref                  = GETPOST('ref', 'alphanohtml');
+			$object->fk_project           = GETPOSTINT('fk_project');
+			$object->title                = GETPOST('title', 'alphanohtml');
+			$object->socid                = GETPOST('socid', 'int');
+			$object->description          = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
+			$object->public               = GETPOST('public', 'alphanohtml');
+			$object->opp_amount           = GETPOSTFLOAT('opp_amount');
+			$object->budget_amount        = GETPOSTFLOAT('budget_amount');
+			$object->date_c               = dol_now();
+			$object->date_start           = $date_start;
+			$object->date_end             = $date_end;
+			$object->date_start_event     = $date_start_event;
+			$object->date_end_event       = $date_end_event;
+			$object->location             = $location;
+			$object->statut               = $status;
+			$object->opp_status           = $opp_status;
+			$object->opp_percent          = $opp_percent;
 			$object->usage_opportunity    = (GETPOST('usage_opportunity', 'alpha') == 'on' ? 1 : 0);
 			$object->usage_task           = (GETPOST('usage_task', 'alpha') == 'on' ? 1 : 0);
 			$object->usage_bill_time      = (GETPOST('usage_bill_time', 'alpha') == 'on' ? 1 : 0);

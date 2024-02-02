@@ -125,7 +125,7 @@ repos:
         # Only for translations with specialised exceptions
         # -D contains predefined conversion dictionaries
         # -L is to ignore some words
-        id: codespell
+        id: codespell-lang-en_US
         files: ^htdocs/langs/en_US/.*$
         args:
           - -D
