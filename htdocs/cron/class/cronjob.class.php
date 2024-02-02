@@ -199,9 +199,9 @@ class Cronjob extends CommonObject
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDB		$db      Database handler
+	 *  @param	DoliDB		$db			Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 	}
@@ -214,7 +214,7 @@ class Cronjob extends CommonObject
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
 	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create($user, $notrigger = 0)
+	public function create(User $user, int $notrigger = 0): int
 	{
 		global $conf, $langs;
 		$error = 0;
@@ -418,7 +418,7 @@ class Cronjob extends CommonObject
 	 *  @param	string	$methodname		Method name
 	 *  @return int          			Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch($id, $objectname = '', $methodname = '')
+	public function fetch(int $id, string $objectname = '', string $methodname = ''): int
 	{
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -527,7 +527,7 @@ class Cronjob extends CommonObject
 	 *  @param	int			$processing		Processing or not
 	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder = 'DESC', $sortfield = 't.rowid', $limit = 0, $offset = 0, $status = 1, $filter = [], $processing = -1)
+	public function fetchAll(string $sortorder = 'DESC', string $sortfield = 't.rowid', int $limit = 0, int $offset = 0, int $status = 1, array $filter = [], int $processing = -1): int
 	{
 		$this->lines = array();
 
@@ -657,11 +657,11 @@ class Cronjob extends CommonObject
 	/**
 	 *  Update object into database
 	 *
-	 *  @param	User	$user        User that modifies
+	 *  @param	User|null	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
-	public function update($user = null, $notrigger = 0)
+	public function update(User $user = null, int $notrigger = 0): int
 	{
 		global $conf, $langs;
 
@@ -850,7 +850,7 @@ class Cronjob extends CommonObject
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($user, $notrigger = 0)
+	public function delete(User $user, int $notrigger = 0): int
 	{
 		$error = 0;
 
@@ -889,7 +889,7 @@ class Cronjob extends CommonObject
 	 *	@param	int		$fromid     Id of object to clone
 	 * 	@return	int					New id of clone
 	 */
-	public function createFromClone(User $user, $fromid)
+	public function createFromClone(User $user, int $fromid): int
 	{
 		global $langs;
 
@@ -987,7 +987,7 @@ class Cronjob extends CommonObject
 	 * @since v18
 	 * @return array
 	 */
-	public function getTooltipContentArray($params)
+	public function getTooltipContentArray(array $params): array
 	{
 		global $langs;
 
@@ -1034,7 +1034,7 @@ class Cronjob extends CommonObject
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl(int $withpicto = 0, string $option = '', int $notooltip = 0, string $morecss = '', int $save_lastsearch_value = -1): string
 	{
 		global $db, $conf, $langs;
 
@@ -1107,7 +1107,7 @@ class Cronjob extends CommonObject
 	 *  @param	int		$id		ID
 	 *	@return	int				Return integer <0 if KO, >0 if OK
 	 */
-	public function info($id)
+	public function info(int $id): int
 	{
 		$sql = "SELECT";
 		$sql .= " f.rowid, f.datec, f.tms, f.fk_user_mod, f.fk_user_author";
@@ -1146,7 +1146,7 @@ class Cronjob extends CommonObject
 	 * @param   string		$userlogin    	User login
 	 * @return	int					 		Return integer <0 if KO, >0 if OK
 	 */
-	public function run_jobs($userlogin)
+	public function run_jobs(string $userlogin): int
 	{
 		// phpcs:enable
 		global $langs, $conf, $hookmanager;
@@ -1436,7 +1436,7 @@ class Cronjob extends CommonObject
 	 * @param  integer      $now            Date returned by dol_now()
 	 * @return int					        Return integer <0 if KO, >0 if OK
 	 */
-	public function reprogram_jobs($userlogin, $now)
+	public function reprogram_jobs(string $userlogin, int $now): int
 	{
 		// phpcs:enable
 		dol_syslog(get_class($this)."::reprogram_jobs userlogin:$userlogin", LOG_DEBUG);
