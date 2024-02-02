@@ -63,7 +63,7 @@ class modStockTransfer extends DolibarrModules
 		// Used only if file README.md and README-LL.md not found.
 		$this->descriptionlong = "Advanced management of stock transfer orders with generation of stock transfer sheets";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'dolibarr';
+		$this->version = 'experimental';
 		// Url to the file with your last numberversion of this module
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
@@ -468,7 +468,7 @@ class modStockTransfer extends DolibarrModules
 	{
 		// Get free id for insert
 		$newid = 0;
-		$sql = "SELECT max(rowid) newid from ".MAIN_DB_PREFIX."c_type_contact";
+		$sql = "SELECT MAX(rowid) newid from ".MAIN_DB_PREFIX."c_type_contact";
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);

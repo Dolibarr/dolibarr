@@ -47,7 +47,7 @@ class Users extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 
 		$this->db = $db;
 		$this->useraccount = new User($this->db);
@@ -71,10 +71,8 @@ class Users extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '0', $category = 0, $sqlfilters = '', $properties = '')
 	{
-		global $conf;
-
-		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
-			throw new RestException(401, "You are not allowed to read list of users");
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin)) {
+			throw new RestException(403, "You are not allowed to read list of users");
 		}
 
 		$obj_ret = array();
@@ -354,7 +352,7 @@ class Users extends DolibarrApi
 	 * @param	array		$request_data		Datas
 	 * @return	array|mixed						Record after update
 	 *
-	 * @throws RestException 401 Not allowed
+	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
 	 * @throws RestException 500 System error
 	 */
@@ -362,7 +360,7 @@ class Users extends DolibarrApi
 	{
 		// Check user authorization
 		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
-			throw new RestException(401, "User update not allowed");
+			throw new RestException(403, "User update not allowed");
 		}
 
 		$result = $this->useraccount->fetch($id);
@@ -474,7 +472,7 @@ class Users extends DolibarrApi
 	 * @param   int     $entity    Entity ID (valid only for superadmin in multicompany transverse mode)
 	 * @return  int                1 if success
 	 *
-	 * @throws RestException 401 Not allowed
+	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 User not found
 	 * @throws RestException 500 System error
 	 *
@@ -485,7 +483,7 @@ class Users extends DolibarrApi
 		global $conf;
 
 		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->useraccount->fetch($id);
@@ -494,7 +492,7 @@ class Users extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && !empty(DolibarrApiAccess::$user->admin) && empty(DolibarrApiAccess::$user->entity)) {
@@ -529,6 +527,7 @@ class Users extends DolibarrApi
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of User objects
 	 *
+	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 User not found
 	 * @throws RestException 503 Error
 	 */
@@ -540,7 +539,7 @@ class Users extends DolibarrApi
 
 		if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) ||
 			getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && empty(DolibarrApiAccess::$user->rights->user->group_advance->read) && empty(DolibarrApiAccess::$user->admin)) {
-			throw new RestException(401, "You are not allowed to read groups");
+			throw new RestException(403, "You are not allowed to read groups");
 		}
 
 		// case of external user, $societe param is ignored and replaced by user's socid
@@ -603,7 +602,7 @@ class Users extends DolibarrApi
 	 * @param int       $load_members     Load members list or not {@min 0} {@max 1}
 	 * @return  object               object of User objects
 	 *
-	 * @throws RestException 401 Not allowed
+	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 User not found
 	 */
 	public function infoGroups($group, $load_members = 0)
@@ -612,7 +611,7 @@ class Users extends DolibarrApi
 
 		if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) ||
 			getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && empty(DolibarrApiAccess::$user->rights->user->group_advance->read) && empty(DolibarrApiAccess::$user->admin)) {
-			throw new RestException(401, "You are not allowed to read groups");
+			throw new RestException(403, "You are not allowed to read groups");
 		}
 
 		$group_static = new UserGroup($this->db);
@@ -631,13 +630,13 @@ class Users extends DolibarrApi
 	 * @param   int     $id Account ID
 	 * @return  array
 	 *
-	 * @throws RestException 401 Not allowed
+	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 User not found
 	 */
 	public function delete($id)
 	{
 		if (empty(DolibarrApiAccess::$user->rights->user->user->supprimer) && empty(DolibarrApiAccess::$user->admin)) {
-			throw new RestException(401, 'Not allowed');
+			throw new RestException(403, 'Not allowed');
 		}
 		$result = $this->useraccount->fetch($id);
 		if (!$result) {
@@ -645,7 +644,7 @@ class Users extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->useraccount->oldcopy = clone $this->useraccount;
 

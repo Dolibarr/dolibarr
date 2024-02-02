@@ -67,7 +67,7 @@ class Don extends CommonObject
 	public $picto = 'donation';
 
 	/**
-	 * @var string Date of the donation
+	 * @var int|string Date of the donation
 	 */
 	public $date;
 
@@ -326,7 +326,7 @@ class Don extends CommonObject
 			$err++;
 		}
 
-		$this->amount = trim($this->amount);
+		$this->amount = (float) $this->amount;
 
 		$map = range(0, 9);
 		$len = dol_strlen($this->amount);
@@ -381,7 +381,7 @@ class Don extends CommonObject
 		$this->town = ($this->town > 0 ? $this->town : $this->town);
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
 		$this->country = ($this->country ? $this->country : $this->country);
-		$this->amount = price2num($this->amount);
+		$this->amount = (float) price2num($this->amount);
 
 		// Check parameters
 		if ($this->amount < 0) {
@@ -498,7 +498,7 @@ class Don extends CommonObject
 		$this->town = ($this->town > 0 ? $this->town : $this->town);
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
 		$this->country = ($this->country ? $this->country : $this->country);
-		$this->amount = price2num($this->amount);
+		$this->amount = (float) price2num($this->amount);
 
 		// Check parameters
 		if ($this->amount < 0) {
@@ -877,15 +877,13 @@ class Don extends CommonObject
 		return $result;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Load the indicators this->nb for the state board
 	 *
 	 *	@return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		$this->nb = array();
 
 		$sql = "SELECT count(d.rowid) as nb";
@@ -1123,9 +1121,9 @@ class Don extends CommonObject
 	}
 
 	/**
-	 * Function to get reamain to pay for a donation
+	 * Function to get remaining amount to pay for a donation
 	 *
-	 * @return   int      					Return integer <0 if KO, > reamain to pay if  OK
+	 * @return   float|int<-2,-1>      					Return integer <0 if KO, > remaining amount to pay if  OK
 	 */
 	public function getRemainToPay()
 	{
@@ -1145,7 +1143,7 @@ class Don extends CommonObject
 			return -2;
 		} else {
 			$sum_amount = (float) $this->db->fetch_object($resql)->sum_amount;
-			return (float) $this->amount - $sum_amount;
+			return (float) ($this->amount - $sum_amount);
 		}
 	}
 

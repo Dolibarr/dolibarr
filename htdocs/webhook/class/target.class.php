@@ -223,7 +223,7 @@ class Target extends CommonObject
 	public function create(User $user, $notrigger = 0)
 	{
 		$resultcreate = $this->createCommon($user, $notrigger);
-		$this->ref = $this->id;
+		$this->ref = (string) $this->id;
 
 		if ($resultcreate <= 0) {
 			return $resultcreate;
@@ -341,7 +341,7 @@ class Target extends CommonObject
 	{
 		$result = $this->fetchCommon($id, $ref);
 		if (empty($this->ref)) {
-			$this->ref = $this->id;
+			$this->ref = (string) $this->id;
 		}
 
 		return $result;
@@ -949,7 +949,7 @@ class Target extends CommonObject
 		}
 
 		if ($mybool === false) {
-			dol_print_error('', "Failed to include file ".$file);
+			dol_print_error(null, "Failed to include file ".$file);
 			return '';
 		}
 

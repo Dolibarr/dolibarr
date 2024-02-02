@@ -77,7 +77,7 @@ class FormAccounting extends Form
 	 * @param	string	$morecss	More css non HTML object
 	 * @param	string	$usecache	Key to use to store result into a cache. Next call with same key will reuse the cache.
 	 * @param   int     $disabledajaxcombo Disable ajax combo box.
-	 * @return	string				String with HTML select
+	 * @return	string|int				String with HTML select, or -1 if error
 	 */
 	public function select_journal($selectid, $htmlname = 'journal', $nature = 0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss = 'maxwidth300 maxwidthonsmartphone', $usecache = '', $disabledajaxcombo = 0)
 	{
@@ -157,7 +157,7 @@ class FormAccounting extends Form
 	 * @param	string	$morecss			More css non HTML object
 	 * @param	string	$usecache			Key to use to store result into a cache. Next call with same key will reuse the cache.
 	 * @param   int     $disabledajaxcombo 	Disable ajax combo box.
-	 * @return	string						String with HTML select
+	 * @return	string|int						String with HTML select, or -1 if error
 	 */
 	public function multi_select_journal($selectedIds = array(), $htmlname = 'journal', $nature = 0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss = '', $usecache = '', $disabledajaxcombo = 0)
 	{
@@ -242,7 +242,7 @@ class FormAccounting extends Form
 		global $langs, $mysoc;
 
 		if (empty($mysoc->country_id) && empty($mysoc->country_code) && empty($allcountries)) {
-			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
+			dol_print_error(null, 'Call to select_accounting_account with mysoc country not yet defined');
 			exit;
 		}
 
@@ -319,7 +319,7 @@ class FormAccounting extends Form
 	 *
 	 * @param string $htmlname         Name of select field
 	 * @param string $selectedkey      Value
-	 * @return string                  HTML edit field
+	 * @return string|int              HTML edit field, or -1 if error
 	 */
 	public function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey = '')
 	{
@@ -359,7 +359,7 @@ class FormAccounting extends Form
 	 * @param string   		$morecss           	More css non HTML object
 	 * @param string   		$usecache          	Key to use to store result into a cache. Next call with same key will reuse the cache.
 	 * @param string		$active				Filter on status active or not: '0', '1' or '' for no filter
-	 * @return string       	               	String with HTML select
+	 * @return string|int      	               	String with HTML select, or -1 if error
 	 */
 	public function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss = 'minwidth100 maxwidth300 maxwidthonsmartphone', $usecache = '', $active = '1')
 	{
@@ -467,7 +467,7 @@ class FormAccounting extends Form
 	 * @param string   		$morecss        More css
 	 * @param string   		$usecache       Key to use to store result into a cache. Next call with same key will reuse the cache.
 	 * @param string		$labelhtmlname	HTML name of label for autofill of account from name.
-	 * @return string       	   			String with HTML select
+	 * @return string|int      	   			String with HTML select, or -1 if error
 	 */
 	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'minwidth100 maxwidth300 maxwidthonsmartphone', $usecache = '', $labelhtmlname = '')
 	{
@@ -560,7 +560,7 @@ class FormAccounting extends Form
 	 * @param string 	$htmlname 		Name of HTML select object
 	 * @param int 		$useempty 		Affiche valeur vide dans liste
 	 * @param string 	$output_format 	(html/option (for option html only)/array (to return options arrays
-	 * @return string|array				HTML select component or array of select options
+	 * @return string|array|int			HTML select component || array of select options || - 1 if error
 	 */
 	public function selectyear_accountancy_bookkepping($selected = '', $htmlname = 'yearid', $useempty = 0, $output_format = 'html')
 	{

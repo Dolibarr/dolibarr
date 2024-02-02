@@ -124,7 +124,7 @@ if ($action == 'uploadfile') {
 		}
 		$action = '';
 	} else {
-		dol_print_error('', $mesg);
+		dol_print_error(null, $mesg);
 	}
 }
 
@@ -148,7 +148,7 @@ if ($action == 'addfolder') {
 		}
 		$action = '';
 	} else {
-		dol_print_error('', $mesg);
+		dol_print_error(null, $mesg);
 	}
 }
 
@@ -193,7 +193,7 @@ if ($action == 'confirm_deletefile' && GETPOST('confirm') == 'yes') {
 
 		$action = '';
 	} else {
-		dol_print_error('', $mesg);
+		dol_print_error(null, $mesg);
 	}
 }
 
@@ -232,7 +232,7 @@ if (GETPOST("const", 'array') && GETPOST("delete") && GETPOST("delete") == $lang
 			}
 		}
 	} else {
-		dol_print_error('', $mesg);
+		dol_print_error(null, $mesg);
 	}
 }
 
@@ -262,7 +262,7 @@ if ($action == 'confirm_deletesection' && $confirm == 'yes') {
 
 		$action = '';
 	} else {
-		dol_print_error('', $mesg);
+		dol_print_error(null, $mesg);
 	}
 }
 
@@ -321,7 +321,7 @@ if ($action == 'download') {
 			setEventMessages($langs->transnoentitiesnoconv('FailedToGetFile', $file), null, 'errors');
 		}
 	} else {
-		dol_print_error('', $mesg);
+		dol_print_error(null, $mesg);
 	}
 
 	//ftp_close($conn_id);	Close later

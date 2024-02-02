@@ -491,7 +491,7 @@ class BonPrelevement extends CommonObject
 				// Add payment of withdrawal into bank
 				$fk_bank_account = $this->fk_bank_account;
 				if (empty($fk_bank_account)) {
-					$fk_bank_account = ($this->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+					$fk_bank_account = ($this->type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
 				}
 
 				$facs = array();
@@ -878,8 +878,6 @@ class BonPrelevement extends CommonObject
 	public function NbFactureAPrelever($type = 'direct-debit', $forsalary = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		if ($forsalary == 1) {
 			$sql = "SELECT count(s.rowid) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
@@ -977,7 +975,7 @@ class BonPrelevement extends CommonObject
 
 		// Clean params
 		if (empty($fk_bank_account)) {
-			$fk_bank_account = ($type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+			$fk_bank_account = ($type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
 		}
 
 		$error = 0;
@@ -1351,7 +1349,7 @@ class BonPrelevement extends CommonObject
 						$this->emetteur_iban               = $account->iban;
 						$this->emetteur_bic                = $account->bic;
 
-						$this->emetteur_ics = ($type == 'bank-transfer' ? $account->ics_transfer : $account->ics);
+						$this->emetteur_ics = (($type == 'bank-transfer' && getDolGlobalString("SEPA_USE_IDS")) ? $account->ics_transfer : $account->ics);	// Example "FR78ZZZ123456"
 
 						$this->raison_sociale = $account->proprio;
 					}
@@ -1359,6 +1357,7 @@ class BonPrelevement extends CommonObject
 					$this->context['factures_prev'] = $factures_prev;
 					// Generation of direct debit or credit transfer file $this->filename (May be a SEPA file for european countries)
 					// This also set the property $this->total with amount that is included into file
+					$userid = 0;
 					if ($sourcetype == 'salary') {
 						$userid = $this->context['factures_prev'][0][2];
 					}
@@ -1671,10 +1670,10 @@ class BonPrelevement extends CommonObject
 	 * @param 	int 	$executiondate		Timestamp date to execute transfer
 	 * @param	string	$type				'direct-debit' or 'bank-transfer'
 	 * @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
-	 * @param   int  	$user_dest          User id for bankaccount when if it is salary invoice
+	 * @param   int  	$forsalary          If the SEPA is to pay salaries
 	 * @return	int							>=0 if OK, <0 if KO
 	 */
-	public function generate($format = 'ALL', $executiondate = 0, $type = 'direct-debit', $fk_bank_account = 0, $user_dest = 0)
+	public function generate($format = 'ALL', $executiondate = 0, $type = 'direct-debit', $fk_bank_account = 0, $forsalary = 0)
 	{
 		global $conf, $langs, $mysoc;
 
@@ -1682,7 +1681,7 @@ class BonPrelevement extends CommonObject
 
 		// Clean params
 		if (empty($fk_bank_account)) {
-			$fk_bank_account = ($type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+			$fk_bank_account = ($type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
 		}
 
 		$result = 0;
@@ -1845,7 +1844,7 @@ class BonPrelevement extends CommonObject
 				/*
 				 * Section Creditor (sepa Crediteurs block lines)
 				 */
-				if (!empty($user_dest)) {
+				if (!empty($forsalary)) {
 					$sql = "SELECT u.rowid as userId, u.address, u.zip, u.town, c.code as country_code, CONCAT(u.firstname,' ',u.lastname) as nom,";
 					$sql .= " pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
 					$sql .= " s.ref as reffac, p.fk_salary as idfac,";
@@ -1900,7 +1899,7 @@ class BonPrelevement extends CommonObject
 
 						$daterum = (!empty($obj->date_rum)) ? $this->db->jdate($obj->date_rum) : $this->db->jdate($obj->datec);
 						$refobj = $obj->reffac;
-						if (empty($refobj) && !empty($user_dest)) {	// If ref of salary not defined, we force a value
+						if (empty($refobj) && !empty($forsalary)) {	// If ref of salary not defined, we force a value
 							$refobj = "SAL".$obj->idfac;
 						}
 
@@ -2372,8 +2371,6 @@ class BonPrelevement extends CommonObject
 	public function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf = '\n', $format = 'FRST', $type = 'direct-debit', $fk_bank_account = 0)
 	{
 		// phpcs:enable
-		// SEPA INITIALISATION
-		global $conf;
 
 		// Clean parameters
 		$dateTime_YMD = dol_print_date($ladate, '%Y%m%d');
@@ -2382,7 +2379,7 @@ class BonPrelevement extends CommonObject
 
 		// Clean params
 		if (empty($fk_bank_account)) {
-			$fk_bank_account = ($type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+			$fk_bank_account = ($type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
 		}
 
 		// Get data of bank account
@@ -2396,7 +2393,7 @@ class BonPrelevement extends CommonObject
 			$this->emetteur_iban = $account->iban;
 			$this->emetteur_bic = $account->bic;
 
-			$this->emetteur_ics = ($type == 'bank-transfer' ? $account->ics_transfer : $account->ics);  // Ex: PRELEVEMENT_ICS = "FR78ZZZ123456";
+			$this->emetteur_ics = (($type == 'bank-transfer' && getDolGlobalString("SEPA_USE_IDS")) ? $account->ics_transfer : $account->ics);  // Ex: PRELEVEMENT_ICS = "FR78ZZZ123456";
 
 			$this->raison_sociale = $account->proprio;
 		}

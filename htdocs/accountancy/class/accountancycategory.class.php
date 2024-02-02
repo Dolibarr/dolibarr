@@ -781,7 +781,7 @@ class AccountancyCategory // extends CommonObject
 		global $conf, $mysoc;
 
 		if (empty($mysoc->country_id)) {
-			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
+			dol_print_error(null, 'Call to select_accounting_account with mysoc country not yet defined');
 			exit();
 		}
 
@@ -846,7 +846,7 @@ class AccountancyCategory // extends CommonObject
 		$sql = '';
 
 		if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
-			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
+			dol_print_error(null, 'Call to select_accounting_account with mysoc country not yet defined');
 			exit();
 		}
 

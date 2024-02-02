@@ -437,3 +437,4 @@ ModifyValueExtrafields = Modifier la valeur d'un extrafield
 OrProductsWithCategories=Ou des produits avec des tags/catégories
 WarningTransferBatchStockMouvToGlobal = Si vous souhaitez désérialiser ce produit, tout son stock sérialisé sera transformé en stock global
 WarningConvertFromBatchToSerial=Si vous disposez actuellement d'une quantité supérieure ou égale à 2 pour le produit, passer à ce choix signifie que vous aurez toujours un produit avec différents objets du même lot (alors que vous souhaitez un numéro de série unique). Le doublon restera jusqu'à ce qu'un inventaire ou un mouvement de stock manuel soit effectué pour résoudre ce problème.
+ConfirmSetToDraftInventory=Êtes-vous sûr de vouloir revenir à l'état de brouillon ?<br>Les quantités actuellement définies dans l'inventaire seront réinitialisées.

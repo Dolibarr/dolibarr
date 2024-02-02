@@ -49,6 +49,9 @@ $version = constant('DOL_VERSION');
 $error = 0;
 $confirmed = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */
@@ -119,7 +122,7 @@ if ($resql) {
 	$i = 0;
 
 	$ldap = new Ldap();
-	$ldap->connect_bind();
+	$ldap->connectBind();
 
 	while ($i < $num) {
 		$ldap->error = "";

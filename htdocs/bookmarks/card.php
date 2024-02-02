@@ -40,8 +40,8 @@ $title = (string) GETPOST("title", "alpha");
 $url = (string) GETPOST("url", "alpha");
 $urlsource = GETPOST("urlsource", "alpha");
 $target = GETPOST("target", "int");
-$userid = GETPOST("userid", "int");
-$position = GETPOST("position", "int");
+$userid = GETPOSTINT("userid");
+$position = GETPOSTINT("position");
 $backtopage = GETPOST('backtopage', 'alpha');
 
 

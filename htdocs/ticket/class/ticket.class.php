@@ -189,27 +189,27 @@ class Ticket extends CommonObject
 	/**
 	 * @var int Creation date
 	 */
-	public $datec = '';
+	public $datec;
 
 	/**
 	 * @var int Last modification date
 	 */
-	public $tms = '';
+	public $tms;
 
 	/**
 	 * @var int Read date
 	 */
-	public $date_read = '';
+	public $date_read;
 
 	/**
 	 * @var int Last message date
 	 */
-	public $date_last_msg_sent = '';
+	public $date_last_msg_sent;
 
 	/**
 	 * @var int Close ticket date
 	 */
-	public $date_close = '';
+	public $date_close;
 
 	/**
 	 * @var array cache_types_tickets
@@ -446,7 +446,7 @@ class Ticket extends CommonObject
 		}
 
 		if (isset($this->progress)) {
-			$this->progress = trim($this->progress);
+			$this->progress = (int) $this->progress;
 		}
 
 		if (isset($this->timing)) {
@@ -634,7 +634,7 @@ class Ticket extends CommonObject
 		// Check parameters
 		if (empty($id) && empty($ref) && empty($track_id) && empty($email_msgid)) {
 			$this->error = 'ErrorWrongParameters';
-			dol_print_error('', get_class($this)."::fetch ".$this->error);
+			dol_print_error(null, get_class($this)."::fetch ".$this->error);
 			return -1;
 		}
 
@@ -1004,7 +1004,7 @@ class Ticket extends CommonObject
 		}
 
 		if (isset($this->progress)) {
-			$this->progress = trim($this->progress);
+			$this->progress = (int) $this->progress;
 		}
 
 		if (isset($this->timing)) {
@@ -1246,16 +1246,16 @@ class Ticket extends CommonObject
 		$this->message = 'Message of ticket';
 		$this->status = 0;
 		$this->resolution = '1';
-		$this->progress = '10';
+		$this->progress = 10;
 		//$this->timing = '30';
 		$this->type_code = 'TYPECODE';
 		$this->category_code = 'CATEGORYCODE';
 		$this->severity_code = 'SEVERITYCODE';
-		$this->datec = '';
-		$this->date_read = '';
-		$this->date_last_msg_sent = '';
-		$this->date_close = '';
-		$this->tms = '';
+		$this->datec = dol_now();
+		$this->date_read = dol_now();
+		$this->date_last_msg_sent = dol_now();
+		$this->date_close = dol_now();
+		$this->tms = dol_now();
 		return 1;
 	}
 
@@ -2659,7 +2659,7 @@ class Ticket extends CommonObject
 						if (!empty($sendto)) {
 							$appli = getDolGlobalString('MAIN_APPLICATION_TITLE', $mysoc->name);
 
-							$subject = '['.$appli.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
+							$subject = '['.$appli.'- ticket #'.$object->track_id.'] '.$this->subject;
 
 							// Message send
 							$message = $langs->trans('TicketMessageMailIntroText');
@@ -2951,7 +2951,7 @@ class Ticket extends CommonObject
 
 				$moreinheader = 'X-Dolibarr-Info: sendTicketMessageByEmail'."\r\n";
 				if (!empty($this->email_msgid)) {
-					$moreinheader .= 'References <'.$this->email_msgid.'>'."\r\n";
+					$moreinheader .= 'References: <'.$this->email_msgid.'>'."\r\n";
 				}
 
 				$mailfile = new CMailFile($subject, $receiver, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid, $moreinheader, 'ticket', '', $upload_dir_tmp);
@@ -3054,16 +3054,14 @@ class Ticket extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load indicator this->nb of global stats widget
 	 *
 	 *      @return     int         Return integer <0 if ko, >0 if ok
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
-		global $conf, $user;
+		global $user;
 
 		$this->nb = array();
 		$clause = "WHERE";

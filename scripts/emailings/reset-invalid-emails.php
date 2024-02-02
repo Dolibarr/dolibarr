@@ -62,6 +62,8 @@ if (!isModEnabled('mailing')) {
 	exit(-1);
 }
 
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main

@@ -38,7 +38,7 @@ if ($action == 'addcomment') {
 	if (!empty($description)) {
 		$comment->description = $description;
 		$comment->datec = dol_now();
-		$comment->fk_element = GETPOST('id', 'int');
+		$comment->fk_element = GETPOSTINT('id');
 		$comment->element_type = GETPOST('comment_element_type', 'alpha');
 		$comment->fk_user_author = $user->id;
 		$comment->entity = $conf->entity;

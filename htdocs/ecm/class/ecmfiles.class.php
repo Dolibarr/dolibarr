@@ -662,7 +662,7 @@ class EcmFiles extends CommonObject
 			$this->share = trim($this->share);
 		}
 		if (isset($this->entity)) {
-			$this->entity = trim($this->entity);
+			$this->entity = (int) $this->entity;
 		}
 		if (isset($this->filename)) {
 			$this->filename = preg_replace('/\.noexe$/', '', trim($this->filename));
@@ -690,7 +690,7 @@ class EcmFiles extends CommonObject
 			$this->extraparams = trim($this->extraparams);
 		}
 		if (isset($this->fk_user_m)) {
-			$this->fk_user_m = trim($this->fk_user_m);
+			$this->fk_user_m = (int) $this->fk_user_m;
 		}
 		if (isset($this->acl)) {
 			$this->acl = trim($this->acl);
@@ -979,7 +979,7 @@ class EcmFiles extends CommonObject
 		$this->date_c = (dol_now() - 3600 * 24 * 10);
 		$this->date_m = '';
 		$this->fk_user_c = $user->id;
-		$this->fk_user_m = '';
+		$this->fk_user_m = $user->id;
 		$this->acl = '';
 		$this->src_object_type = 'product';
 		$this->src_object_id = 1;

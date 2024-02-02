@@ -22,7 +22,7 @@
 
 /**
  *	\file       htdocs/core/modules/fichinter/mod_arctic.php
- *	\ingroup    fiche intervention
+ *	\ingroup    Intervention card
  *	\brief      File with Arctic numbering module for interventions
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';

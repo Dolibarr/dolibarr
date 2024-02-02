@@ -130,14 +130,16 @@ class FormSetup
 
 
 	/**
-	 * generateOutput
+	 * Generate the form (in read or edit mode depending on $editMode)
 	 *
 	 * @param 	bool 	$editMode 	true will display output on edit mod
-	 * @return 	string				html output
+	 * @param	bool	$hideTitle	True to hide the first title line
+	 * @return 	string				Html output
 	 */
-	public function generateOutput($editMode = false)
+	public function generateOutput($editMode = false, $hideTitle = false)
 	{
-		global $hookmanager, $action, $langs;
+		global $hookmanager, $action;
+
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 		$parameters = array(
@@ -166,7 +168,7 @@ class FormSetup
 			}
 
 			// generate output table
-			$out .= $this->generateTableOutput($editMode);
+			$out .= $this->generateTableOutput($editMode, $hideTitle);
 
 
 			$reshook = $hookmanager->executeHooks('formSetupBeforeGenerateOutputButton', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
@@ -177,12 +179,12 @@ class FormSetup
 			if ($reshook > 0) {
 				return $hookmanager->resPrint;
 			} elseif ($editMode) {
-				$out .= '<br>'; // Todo : remove this <br/> by adding style to form-setup-button-container css class in all themes
 				$out .= '<div class="form-setup-button-container center">'; // Todo : remove .center by adding style to form-setup-button-container css class in all themes
 				$out.= $this->htmlOutputMoreButton;
 				$out .= '<input class="button button-save" type="submit" value="' . $this->langs->trans("Save") . '">'; // Todo fix dolibarr style for <button and use <button instead of input
-				$out .= ' &nbsp;&nbsp; ';
-				$out .= '<a class="button button-cancel" type="submit" href="' . $this->formAttributes['action'] . '">'.$langs->trans('Cancel').'</a>';
+				/*$out .= ' &nbsp;&nbsp; ';
+				$out .= '<a class="button button-cancel" type="submit" href="' . $this->formAttributes['action'] . '">'.$this->langs->trans('Cancel').'</a>';
+				*/
 				$out .= '</div>';
 			}
 
@@ -199,10 +201,11 @@ class FormSetup
 	/**
 	 * generateTableOutput
 	 *
-	 * @param 	bool 	$editMode 	true will display output on edit mod
-	 * @return 	string				html output
+	 * @param 	bool 	$editMode 	True will display output on edit modECM
+	 * @param	bool	$hideTitle	True to hide the first title line
+	 * @return 	string				Html output
 	 */
-	public function generateTableOutput($editMode = false)
+	public function generateTableOutput($editMode = false, $hideTitle = false)
 	{
 		global $hookmanager, $action;
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -219,12 +222,14 @@ class FormSetup
 			return $hookmanager->resPrint;
 		} else {
 			$out = '<table class="noborder centpercent">';
-			$out .= '<thead>';
-			$out .= '<tr class="liste_titre">';
-			$out .= '	<td>' . $this->langs->trans("Parameter") . '</td>';
-			$out .= '	<td>' . $this->langs->trans("Value") . '</td>';
-			$out .= '</tr>';
-			$out .= '</thead>';
+			if (empty($hideTitle)) {
+				$out .= '<thead>';
+				$out .= '<tr class="liste_titre">';
+				$out .= '	<td>' . $this->langs->trans("Parameter") . '</td>';
+				$out .= '	<td>' . $this->langs->trans("Value") . '</td>';
+				$out .= '</tr>';
+				$out .= '</thead>';
+			}
 
 			// Sort items before render
 			$this->sortingItems();
@@ -444,12 +449,12 @@ class FormSetup
 
 	/**
 	 * Create a new item
-	 * the tagret is useful with hooks : that allow externals modules to add setup items on good place
+	 * The target is useful with hooks : that allow externals modules to add setup items on good place
 	 *
 	 * @param string	$confKey 				the conf key used in database
 	 * @param string	$targetItemKey    		target item used to place the new item beside
 	 * @param bool		$insertAfterTarget		insert before or after target item ?
-	 * @return FormSetupItem the new setup item created
+	 * @return FormSetupItem 					the new setup item created
 	 */
 	public function newItem($confKey, $targetItemKey = '', $insertAfterTarget = false)
 	{
@@ -685,7 +690,7 @@ class FormSetupItem
 	}
 
 	/**
-	 * reload conf value from databases is an alias of loadValueFromConf
+	 * Reload conf value from databases is an alias of loadValueFromConf
 	 *
 	 * @deprecated
 	 * @return bool
@@ -887,6 +892,11 @@ class FormSetupItem
 				$selected = (empty($this->fieldValue) ? '' : $this->fieldValue);
 				$out.= $this->form->select_produits($selected, $this->confKey, '', 0, 0, 1, 2, '', 0, array(), 0, '1', 0, $this->cssClass, 0, '', null, 1);
 			}
+		} elseif ($this->type == 'selectBankAccount') {
+			if (isModEnabled("bank")) {
+				$selected = (empty($this->fieldValue) ? '' : $this->fieldValue);
+				$out.= $this->form->select_comptes($selected, $this->confKey, 0, '', 0, '', 0, '', 1);
+			}
 		} else {
 			$out.= $this->generateInputFieldText();
 		}
@@ -901,7 +911,7 @@ class FormSetupItem
 	 */
 	public function generateInputFieldText()
 	{
-		if (empty($this->fieldAttr)) {
+		if (empty($this->fieldAttr) || empty($this->fieldAttr['class'])) {
 			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass);
 		}
 		return '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
@@ -935,6 +945,7 @@ class FormSetupItem
 
 	/**
 	 * generate input field for categories
+	 *
 	 * @return string
 	 */
 	public function generateInputFieldCategories()
@@ -945,7 +956,12 @@ class FormSetupItem
 
 		$tmp = explode(':', $this->type);
 		$out = img_picto('', 'category', 'class="pictofixedwidth"');
-		$out .= $formother->select_categories($tmp[1], $this->fieldValue, $this->confKey, 0, $this->langs->trans('CustomersProspectsCategoriesShort'));
+
+		$label = 'Categories';
+		if ($this->type == 'customer') {
+			$label = 'CustomersProspectsCategoriesShort';
+		}
+		$out .= $formother->select_categories($tmp[1], $this->fieldValue, $this->confKey, 0, $this->langs->trans($label));
 
 		return $out;
 	}
@@ -1175,6 +1191,16 @@ class FormSetupItem
 			} elseif ($resprod < 0) {
 				$this->setErrors($product->errors);
 			}
+		} elseif ($this->type == 'selectBankAccount') {
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+			$bankaccount = new Account($this->db);
+			$resbank = $bankaccount->fetch($this->fieldValue);
+			if ($resbank > 0) {
+				$out.= $bankaccount->label;
+			} elseif ($resbank < 0) {
+				$this->setErrors($bankaccount->errors);
+			}
 		} else {
 			$out.= $this->fieldValue;
 		}
@@ -1213,8 +1239,13 @@ class FormSetupItem
 	 */
 	public function generateOutputFieldColor()
 	{
+		global $langs;
 		$this->fieldAttr['disabled']=null;
-		return $this->generateInputField();
+		$color = colorArrayToHex(colorStringToArray($this->fieldValue, array()), '');
+		if ($color) {
+			return '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
+		}
+		return $langs->trans("Default");
 	}
 	/**
 	 * generateInputFieldColor
@@ -1224,7 +1255,10 @@ class FormSetupItem
 	public function generateInputFieldColor()
 	{
 		$this->fieldAttr['type']= 'color';
-		return $this->generateInputFieldText();
+		$default = $this->defaultFieldValue;
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+		$formother = new FormOther($this->db);
+		return $formother->selectColor(colorArrayToHex(colorStringToArray($this->fieldAttr['value'], array()), ''), $this->fieldAttr['name'], '', 1, array(), '', '', $default).' ';
 	}
 
 	/**
@@ -1425,6 +1459,17 @@ class FormSetupItem
 	public function setAsSelectUser()
 	{
 		$this->type = 'selectUser';
+		return $this;
+	}
+
+	/**
+	 * Set type of input as a simple title. No data to store
+	 *
+	 * @return self
+	 */
+	public function setAsSelectBankAccount()
+	{
+		$this->type = 'selectBankAccount';
 		return $this;
 	}
 }

@@ -616,6 +616,9 @@ abstract class CommonDocGenerator
 			$resarray[$array_key.'_bank_label'] = (empty($bank_account) ? '' : $bank_account->label);
 			$resarray[$array_key.'_bank_number'] = (empty($bank_account) ? '' : $bank_account->number);
 			$resarray[$array_key.'_bank_proprio'] =(empty($bank_account) ? '' : $bank_account->proprio);
+			$resarray[$array_key.'_bank_address'] =(empty($bank_account) ? '' : $bank_account->address);
+			$resarray[$array_key.'_bank_state'] =(empty($bank_account) ? '' : $bank_account->state);
+			$resarray[$array_key.'_bank_country'] =(empty($bank_account) ? '' : $bank_account->country);
 		}
 
 		if (method_exists($object, 'getTotalDiscount') && in_array(get_class($object), array('Propal', 'Proposal', 'Commande', 'Facture', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur'))) {
@@ -808,10 +811,11 @@ abstract class CommonDocGenerator
 		} else {
 			// Set unused placeholders as blank
 			$extrafields->fetch_name_optionals_label("product");
-			$extralabels = $extrafields->attributes["product"]['label'];
-
-			foreach ($extralabels as $key => $label) {
-				$resarray['line_product_options_'.$key] = '';
+			if ($extrafields->attributes["product"]['count'] > 0) {
+				$extralabels = $extrafields->attributes["product"]['label'];
+				foreach ($extralabels as $key => $label) {
+					$resarray['line_product_options_'.$key] = '';
+				}
 			}
 		}
 
@@ -946,7 +950,7 @@ abstract class CommonDocGenerator
 		// phpcs:enable
 		global $conf;
 
-		if (is_array($extrafields->attributes[$object->table_element]['label'])) {
+		if ($extrafields->attributes[$object->table_element]['count'] > 0) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
 				$formatedarrayoption = $object->array_options;
 

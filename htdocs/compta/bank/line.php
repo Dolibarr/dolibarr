@@ -55,9 +55,9 @@ if (isModEnabled('salaries')) {
 
 
 $id = GETPOST('rowid', 'int');
-$rowid = GETPOST("rowid", 'int');
-$accountoldid = GETPOST('account', 'int');		// GETPOST('account') is old account id
-$accountid = GETPOST('accountid', 'int');		// GETPOST('accountid') is new account id
+$rowid = GETPOSTINT('rowid');
+$accountoldid = GETPOSTINT('account');		// GETPOST('account') is old account id
+$accountid = GETPOSTINT('accountid');		// GETPOST('accountid') is new account id
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');

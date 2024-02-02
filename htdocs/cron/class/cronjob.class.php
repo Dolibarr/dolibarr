@@ -110,7 +110,7 @@ class Cronjob extends CommonObject
 	public $datelastresult = '';
 
 	/**
-	 * @var string 			Last result from end job execution
+	 * @var int 			Last result from end job execution
 	 */
 	public $lastresult;
 
@@ -184,10 +184,16 @@ class Cronjob extends CommonObject
 	 */
 	public $autodelete;
 
+	/**
+	 * @var array 			Cronjob
+	 */
+	public $lines;
+
 
 	const STATUS_DISABLED = 0;
 	const STATUS_ENABLED = 1;
 	const STATUS_ARCHIVED = 2;
+	const MAXIMUM_LENGTH_FOR_LASTOUTPUT_FIELD = 65535;
 
 
 	/**
@@ -257,10 +263,10 @@ class Cronjob extends CommonObject
 			$this->unitfrequency = trim($this->unitfrequency);
 		}
 		if (isset($this->frequency)) {
-			$this->frequency = trim($this->frequency);
+			$this->frequency = (int) $this->frequency;
 		}
 		if (isset($this->status)) {
-			$this->status = trim($this->status);
+			$this->status = (int) $this->status;
 		}
 		if (isset($this->note_private)) {
 			$this->note_private = trim($this->note_private);
@@ -511,7 +517,6 @@ class Cronjob extends CommonObject
 
 	/**
 	 *  Load list of cron jobs in a memory array from the database
-	 *  @TODO Use object CronJob and not CronJobLine.
 	 *
 	 *  @param	string		$sortorder		sort order
 	 *  @param	string		$sortfield		sort field
@@ -558,6 +563,7 @@ class Cronjob extends CommonObject
 		$sql .= " t.fk_user_mod,";
 		$sql .= " t.note as note_private,";
 		$sql .= " t.nbrun,";
+		$sql .= " t.maxrun,";
 		$sql .= " t.libname,";
 		$sql .= " t.test";
 		$sql .= " FROM ".MAIN_DB_PREFIX."cronjob as t";
@@ -586,12 +592,6 @@ class Cronjob extends CommonObject
 			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
-		$sqlwhere = array();
-
-		if (count($sqlwhere) > 0) {
-			$sql .= " WHERE ".implode(' AND ', $sqlwhere);
-		}
-
 		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -600,45 +600,46 @@ class Cronjob extends CommonObject
 
 			if ($num) {
 				while ($i < $num) {
-					$line = new Cronjobline();
-
 					$obj = $this->db->fetch_object($resql);
+					$cronjob_obj = new Cronjob($this->db);
 
-					$line->id = $obj->rowid;
-					$line->ref = $obj->rowid;
-					$line->entity = $obj->entity;
-					$line->tms = $this->db->jdate($obj->tms);
-					$line->datec = $this->db->jdate($obj->datec);
-					$line->label = $obj->label;
-					$line->jobtype = $obj->jobtype;
-					$line->command = $obj->command;
-					$line->classesname = $obj->classesname;
-					$line->objectname = $obj->objectname;
-					$line->methodename = $obj->methodename;
-					$line->params = $obj->params;
-					$line->md5params = $obj->md5params;
-					$line->module_name = $obj->module_name;
-					$line->priority = $obj->priority;
-					$line->datelastrun = $this->db->jdate($obj->datelastrun);
-					$line->datenextrun = $this->db->jdate($obj->datenextrun);
-					$line->dateend = $this->db->jdate($obj->dateend);
-					$line->datestart = $this->db->jdate($obj->datestart);
-					$line->lastresult = $obj->lastresult;
-					$line->datelastresult = $this->db->jdate($obj->datelastresult);
-					$line->lastoutput = $obj->lastoutput;
-					$line->unitfrequency = $obj->unitfrequency;
-					$line->frequency = $obj->frequency;
-					$line->status = $obj->status;
-					$line->processing = $obj->processing;
-					$line->pid = $obj->pid;
-					$line->email_alert = $obj->email_alert;
-					$line->fk_user_author = $obj->fk_user_author;
-					$line->fk_user_mod = $obj->fk_user_mod;
-					$line->note_private = $obj->note_private;
-					$line->nbrun = $obj->nbrun;
-					$line->libname = $obj->libname;
-					$line->test = $obj->test;
-					$this->lines[] = $line;
+					$cronjob_obj->id = $obj->rowid;
+					$cronjob_obj->ref = $obj->rowid;
+					$cronjob_obj->entity = $obj->entity;
+					$cronjob_obj->tms = $this->db->jdate($obj->tms);
+					$cronjob_obj->datec = $this->db->jdate($obj->datec);
+					$cronjob_obj->label = $obj->label;
+					$cronjob_obj->jobtype = $obj->jobtype;
+					$cronjob_obj->command = $obj->command;
+					$cronjob_obj->classesname = $obj->classesname;
+					$cronjob_obj->objectname = $obj->objectname;
+					$cronjob_obj->methodename = $obj->methodename;
+					$cronjob_obj->params = $obj->params;
+					$cronjob_obj->md5params = $obj->md5params;
+					$cronjob_obj->module_name = $obj->module_name;
+					$cronjob_obj->priority = $obj->priority;
+					$cronjob_obj->datelastrun = $this->db->jdate($obj->datelastrun);
+					$cronjob_obj->datenextrun = $this->db->jdate($obj->datenextrun);
+					$cronjob_obj->dateend = $this->db->jdate($obj->dateend);
+					$cronjob_obj->datestart = $this->db->jdate($obj->datestart);
+					$cronjob_obj->lastresult = $obj->lastresult;
+					$cronjob_obj->lastoutput = $obj->lastoutput;
+					$cronjob_obj->datelastresult = $this->db->jdate($obj->datelastresult);
+					$cronjob_obj->unitfrequency = $obj->unitfrequency;
+					$cronjob_obj->frequency = $obj->frequency;
+					$cronjob_obj->status = $obj->status;
+					$cronjob_obj->processing = $obj->processing;
+					$cronjob_obj->pid = $obj->pid;
+					$cronjob_obj->email_alert = $obj->email_alert;
+					$cronjob_obj->fk_user_author = $obj->fk_user_author;
+					$cronjob_obj->fk_user_mod = $obj->fk_user_mod;
+					$cronjob_obj->note_private = $obj->note_private;
+					$cronjob_obj->nbrun = $obj->nbrun;
+					$cronjob_obj->maxrun = $obj->maxrun;
+					$cronjob_obj->libname = $obj->libname;
+					$cronjob_obj->test = $obj->test;
+
+					$this->lines[] = $cronjob_obj;
 
 					$i++;
 				}
@@ -709,10 +710,10 @@ class Cronjob extends CommonObject
 			$this->unitfrequency = trim($this->unitfrequency);
 		}
 		if (isset($this->frequency)) {
-			$this->frequency = trim($this->frequency);
+			$this->frequency = (int) $this->frequency;
 		}
 		if (isset($this->status)) {
-			$this->status = trim($this->status);
+			$this->status = (int) $this->status;
 		}
 		if (isset($this->note_private)) {
 			$this->note_private = trim($this->note_private);
@@ -944,7 +945,7 @@ class Cronjob extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-		$this->ref = 0;
+		$this->ref = '';
 		$this->entity = 0;
 		$this->tms = '';
 		$this->datec = '';
@@ -966,7 +967,7 @@ class Cronjob extends CommonObject
 		$this->lastoutput = '';
 		$this->lastresult = '';
 		$this->unitfrequency = '';
-		$this->frequency = '';
+		$this->frequency = 0;
 		$this->status = 0;
 		$this->processing = 0;
 		$this->pid = null;
@@ -974,7 +975,7 @@ class Cronjob extends CommonObject
 		$this->fk_user_author = 0;
 		$this->fk_user_mod = 0;
 		$this->note_private = '';
-		$this->nbrun = '';
+		$this->nbrun = 0;
 		$this->maxrun = 100;
 		$this->libname = '';
 	}
@@ -1286,7 +1287,7 @@ class Cronjob extends CommonObject
 			}
 
 			if (!$error) {
-				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params."); !!! Log for job may be into a different log file...", LOG_DEBUG);
+				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params."); (Note: Log for cron jobs may be into a different log file)", LOG_DEBUG);
 
 				// Create Object for the called module
 				$nameofclass = $this->objectname;
@@ -1323,13 +1324,13 @@ class Cronjob extends CommonObject
 					dol_syslog(get_class($this)."::run_jobs END result=".$result." error=".$errmsg, LOG_ERR);
 
 					$this->error = $errmsg;
-					$this->lastoutput = (!empty($object->output) ? $object->output."\n" : "").$errmsg;
+					$this->lastoutput = dol_substr((empty($object->output) ? "" : $object->output."\n").$errmsg, 0, $this::MAXIMUM_LENGTH_FOR_LASTOUTPUT_FIELD, 'UTF-8', 1);
 					$this->lastresult = is_numeric($result) ? $result : -1;
 					$retval = $this->lastresult;
 					$error++;
 				} else {
 					dol_syslog(get_class($this)."::run_jobs END");
-					$this->lastoutput = (!empty($object->output) ? $object->output : "");
+					$this->lastoutput = dol_substr((empty($object->output) ? "" : $object->output."\n"), 0, $this::MAXIMUM_LENGTH_FOR_LASTOUTPUT_FIELD, 'UTF-8', 1);
 					$this->lastresult = var_export($result, true);
 					$retval = $this->lastresult;
 				}
@@ -1577,76 +1578,9 @@ class Cronjob extends CommonObject
 
 
 /**
- *	Crob Job line class
+ * Crob Job line class
+ * @TODO Deprecated, to delete very soon
  */
-class Cronjobline
+class Cronjobline extends Cronjob
 {
-	/**
-	 * @var int ID
-	 */
-	public $id;
-
-	public $entity;
-
-	/**
-	 * @var string Ref
-	 */
-	public $ref;
-
-	public $tms = '';
-	public $datec = '';
-
-	/**
-	 * @var string Cron Job Line label
-	 */
-	public $label;
-
-	public $jobtype;
-	public $command;
-	public $classesname;
-	public $objectname;
-	public $methodename;
-	public $params;
-	public $md5params;
-	public $module_name;
-	public $priority;
-	public $datelastrun = '';
-	public $datenextrun = '';
-	public $dateend = '';
-	public $datestart = '';
-	public $datelastresult = '';
-	public $lastresult = '';
-	public $lastoutput;
-	public $unitfrequency;
-	public $frequency;
-	public $processing;
-
-	/**
-	 * @var int Status
-	 */
-	public $status;
-
-	/**
-	 * @var int ID
-	 */
-	public $fk_user_author;
-
-	/**
-	 * @var int ID
-	 */
-	public $fk_user_mod;
-
-	public $note;
-	public $note_private;
-	public $nbrun;
-	public $libname;
-	public $test;
-
-	/**
-	 *  Constructor
-	 *
-	 */
-	public function __construct()
-	{
-	}
 }
