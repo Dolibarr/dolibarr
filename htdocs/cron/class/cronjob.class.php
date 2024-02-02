@@ -140,7 +140,7 @@ class Cronjob extends CommonObject
 	public $processing;
 
 	/**
-	 * @var int 			The job current PID
+	 * @var int|null		The job current PID
 	 */
 	public $pid;
 
