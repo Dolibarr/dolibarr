@@ -64,7 +64,7 @@ class Setup extends DolibarrApi
 	 * @return array [List of ordering methods]
 	 *
 	 * @throws	RestException	400		Bad value for sqlfilters
-	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	503		Error retrieving list of ordering methods
 	 */
 	public function getOrderingMethods($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
@@ -72,7 +72,7 @@ class Setup extends DolibarrApi
 		$list = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$sql = "SELECT rowid, code, libelle as label, module";
@@ -128,7 +128,7 @@ class Setup extends DolibarrApi
 	 * @url     GET dictionary/ordering_origins
 	 *
 	 * @throws	RestException	400		Bad value for sqlfilters
-	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	503		Error retrieving list of ordering origins
 	 */
 	public function getOrderingOrigins($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
@@ -136,7 +136,7 @@ class Setup extends DolibarrApi
 		$list = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$sql = "SELECT rowid, code, label, module";
@@ -193,7 +193,7 @@ class Setup extends DolibarrApi
 	 * @return array [List of payment types]
 	 *
 	 * @throws	RestException	400		Bad value for sqlfilters
-	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	503		Error retrieving list of payment types
 	 */
 	public function getPaymentTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
@@ -201,7 +201,7 @@ class Setup extends DolibarrApi
 		$list = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire') && !DolibarrApiAccess::$user->hasRight('commande', 'lire') && !DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$sql = "SELECT id, code, type, libelle as label, module";
@@ -671,7 +671,7 @@ class Setup extends DolibarrApi
 	 * @return array [List of availability]
 	 *
 	 * @throws	RestException	400		Bad value for sqlfilters
-	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	503		Error when retrieving list of availabilities
 	 */
 	public function getAvailability($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
@@ -679,7 +679,7 @@ class Setup extends DolibarrApi
 		$list = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$sql = "SELECT rowid, code, label";
@@ -1266,6 +1266,7 @@ class Setup extends DolibarrApi
 	 * @return array List of payment terms
 	 *
 	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	503		Error when retrieving list of payments terms
 	 */
 	public function getPaymentTerms($sortfield = "sortorder", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
@@ -1273,7 +1274,7 @@ class Setup extends DolibarrApi
 		$list = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire') && !DolibarrApiAccess::$user->hasRight('commande', 'lire') && !DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$sql = "SELECT rowid as id, code, sortorder, libelle as label, libelle_facture as descr, type_cdr, nbjour, decalage, module";
