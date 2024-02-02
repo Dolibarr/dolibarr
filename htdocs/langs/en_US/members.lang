@@ -249,3 +249,4 @@ ConfirmMassSubsriptionCreationQuestion=Are you sure you want to create the %s se
 XSubsriptionCreated=%s subscription(s) created
 XSubsriptionErrors=%s subscription(s) where in error
 CreateSubscription=Create subscription
+WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
