@@ -85,27 +85,27 @@ class Cronjob extends CommonObject
 	public $priority;
 
 	/**
-	 * @var string|int     Date for last job execution
+	 * @var string|int|null		Date for last job execution
 	 */
 	public $datelastrun = '';
 
 	/**
-	 * @var string|int     Date for next job execution
+	 * @var string|int			Date for next job execution
 	 */
 	public $datenextrun = '';
 
 	/**
-	 * @var string|int     Date for end job execution
+	 * @var string|int			Date for end job execution
 	 */
 	public $dateend = '';
 
 	/**
-	 * @var string|int     Date for first start job execution
+	 * @var string|int			Date for first start job execution
 	 */
 	public $datestart = '';
 
 	/**
-	 * @var string|int     Date for last result job execution
+	 * @var string|int|null		Date for last result job execution
 	 */
 	public $datelastresult = '';
 
