@@ -305,7 +305,11 @@ if ($action == 'valid' && $user->rights->facture->creer) {
 
 			if ($pay != "delayed") {
 				$payment->create($user);
-				$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
+				$res = $payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
+				if ($res < 0) {
+					$error++;
+					dol_htmloutput_errors($langs->trans('ErrorNoPaymentDefined'), $payment->errors, 1);
+				}
 				$remaintopay = $invoice->getRemainToPay(); // Recalculate remain to pay after the payment is recorded
 			}
 		}
