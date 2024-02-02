@@ -185,7 +185,7 @@ class Cronjob extends CommonObject
 	public $autodelete;
 
 	/**
-	 * @var array 			Cronjob
+	 * @var CommonObjectLine[] 			Cronjob
 	 */
 	public $lines;
 
