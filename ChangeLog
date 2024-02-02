@@ -159,7 +159,6 @@ NEW: TakePOS - add constant to choose contact instead of customer (#24807)
 NEW: TakePOS - amount label with or without tax in free product (#24829)
 NEW: TakePOS compatibility with lots and serials
 NEW: TakePOS compatibility with lots and serials (#26426)
-NEW: Tooltips are using ajax by default
 NEW: Top menu support picto of modules that are font awesome picto.
 NEW: updating by adding massactions for delete projects in societe tab
 NEW: updating by adding tooltip for api section in Modulebuilder

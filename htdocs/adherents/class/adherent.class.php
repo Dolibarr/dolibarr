@@ -2210,7 +2210,7 @@ class Adherent extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$langs->loadLangs(['members', 'companies']);
 		$nofetch = !empty($params['nofetch']);
