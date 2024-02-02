@@ -206,7 +206,7 @@ if (empty($reshook)) {
 		}
 
 		$object->entity = (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : $conf->entity);
-		$object->socid = GETPOST("socid", 'int');
+		$object->socid = $socid;
 		$object->lastname = (string) GETPOST("lastname", 'alpha');
 		$object->firstname = (string) GETPOST("firstname", 'alpha');
 		$object->civility_code = (string) GETPOST("civility_code", 'alpha');
@@ -404,7 +404,7 @@ if (empty($reshook)) {
 
 			$object->oldcopy = clone $object;
 
-			$object->socid = GETPOST("socid", 'int');
+			$object->socid = $socid;
 			$object->lastname = (string) GETPOST("lastname", 'alpha');
 			$object->firstname = (string) GETPOST("firstname", 'alpha');
 			$object->civility_code = (string) GETPOST("civility_code", 'alpha');
