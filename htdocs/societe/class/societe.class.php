@@ -4897,7 +4897,7 @@ class Societe extends CommonObject
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *	@param	string		$modele			Generator to use. Caller must set it to obj->model_pdf or GETPOST('model','alpha') for example.
+	 *	@param	string		$modele			Generator to use. Caller must set it to obj->model_pdf.
 	 *	@param	Translate	$outputlangs	object lang a utiliser pour traduction
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description

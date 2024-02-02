@@ -97,14 +97,16 @@ switch ($_SERVER['REQUEST_METHOD']) {
 		break;
 	case 'POST':
 		if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
-			$upload_handler->delete();
+			$file = GETPOST('file');
+			$upload_handler->delete($file);
 		} else {
 			$upload_handler->post();
 			// Note: even if this return an error on 1 file in post(), we will return http code 200 because error must be managed by the caller (some files may be ok and some in error)
 		}
 		break;
 	case 'DELETE':
-		$upload_handler->delete();
+		$file = GETPOST('file');
+		$upload_handler->delete($file);
 		break;
 	default:
 		header('HTTP/1.0 405 Method Not Allowed');

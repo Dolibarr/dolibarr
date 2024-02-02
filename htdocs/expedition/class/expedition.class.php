@@ -1769,7 +1769,7 @@ class Expedition extends CommonObject
 	 *  @param		int		$lineid			Id of line to delete
 	 *  @return     int         			>0 if OK, <0 if KO
 	 */
-	public function deleteline($user, $lineid)
+	public function deleteLine($user, $lineid)
 	{
 		global $user;
 
