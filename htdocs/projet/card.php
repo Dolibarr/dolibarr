@@ -424,7 +424,7 @@ if (empty($reshook)) {
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
-			} 
+			}
 		}
 
 		if ($error) {
