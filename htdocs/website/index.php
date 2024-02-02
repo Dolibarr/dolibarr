@@ -2421,7 +2421,13 @@ if ($action == 'exportsite' && $user->hasRight('website', 'export')) {
 // Overwrite site
 if ($action == 'overwritesite' && $user->hasRight('website', 'export')) {
 	if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
-		$fileofzip = $object->overwriteTemplate();
+		$fileofzip = $object->exportWebSite();
+
+		if ($fileofzip) {
+			$object->overwriteTemplate($fileofzip);
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 }
 // Regenerate site
@@ -3025,7 +3031,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 			if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
 				// Overwrite template in sources
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=overwritesite&website='.urlencode($website->ref).'" class="button bordertransp">'.dol_escape_htmltag($langs->trans("ExportIntoGIT")).'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=overwritesite&website='.urlencode($website->ref).'" class="button bordertransp" title="'.dol_escape_htmltag($langs->trans("ExportIntoGIT").". Directory ".getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')).'">'.dol_escape_htmltag($langs->trans("ExportIntoGIT")).'</a>';
 			}
 
 			// Clone web site

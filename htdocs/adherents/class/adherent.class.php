@@ -103,10 +103,17 @@ class Adherent extends CommonObject
 	public $fullname;
 
 	/**
-	 * @var string The civility code, not an integer
+	 * @var string
+	 * @deprecated
+	 * @see $civility_code
 	 */
 	public $civility_id;
+
+	/**
+	 * @var string The civility code, not an integer (ex: 'MR', 'MME', 'MLE', etc.)
+	 */
 	public $civility_code;
+
 	public $civility;
 
 	/**

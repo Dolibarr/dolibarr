@@ -505,18 +505,17 @@ class Societe extends CommonObject
 	public $prefix_comm;
 
 	/**
-	 * @var int Vat concerned
+	 * @var int 	Vat concerned
 	 */
 	public $tva_assuj = 1;
 
 	/**
-	 * Intracommunitary VAT ID
-	 * @var string
+	 * @var string	Intracommunitary VAT ID
 	 */
 	public $tva_intra;
 
 	/**
-	 * @var int Vat reverse-charge concerned
+	 * @var int 	Vat reverse-charge concerned
 	 */
 	public $vat_reverse_charge = 0;
 
