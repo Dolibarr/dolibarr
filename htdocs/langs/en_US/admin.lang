@@ -2337,7 +2337,6 @@ ExportUseLowMemoryModeHelp=Use the low memory mode to generate the dump file (co
 ModuleWebhookName = Webhook
 ModuleWebhookDesc = Interface to catch dolibarr triggers and send data of the event to an URL
 WebhookSetup = Webhook setup
-Settings = Settings
 WebhookSetupPage = Webhook setup page
 ShowQuickAddLink=Show a button to quickly add an element in top right menu
 ShowSearchAreaInTopMenu=Show the search area in the top menu
