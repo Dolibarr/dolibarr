@@ -169,7 +169,7 @@ class WebPortalPropal extends Propal
 		$datas = [];
 
 		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-			return ['optimize' => $langs->trans("ShowWebPortalPropal")];
+			return ['optimize' => $langs->trans("WebPortalPropal")];
 		}
 		$datas['picto'] = img_picto('', $this->picto) . ' <u>' . $langs->trans("WebPortalPropal") . '</u>';
 		if (isset($this->status)) {

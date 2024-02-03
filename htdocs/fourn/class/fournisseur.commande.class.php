@@ -612,7 +612,6 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function fetch_lines($only_product = 0)
 	{
-		global $conf;
 		// phpcs:enable
 
 		$this->lines = array();
@@ -753,7 +752,7 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function valid($user, $idwarehouse = 0, $notrigger = 0)
 	{
-		global $langs, $conf;
+		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error = 0;
@@ -888,7 +887,7 @@ class CommandeFournisseur extends CommonOrder
 	public function LibStatut($status, $mode = 0, $billed = 0)
 	{
 		// phpcs:enable
-		global $conf, $langs, $hookmanager;
+		global $langs, $hookmanager;
 
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			$langs->load('orders');
@@ -1021,7 +1020,7 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0)
 	{
-		global $langs, $conf, $user, $hookmanager;
+		global $langs, $user, $hookmanager;
 
 		$result = '';
 		$params = [
@@ -1112,7 +1111,7 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function getNextNumRef($soc)
 	{
-		global $db, $langs, $conf;
+		global $langs, $conf;
 		$langs->load("orders");
 
 		if (getDolGlobalString('COMMANDE_SUPPLIER_ADDON_NUMBER')) {
@@ -2315,7 +2314,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param	int		$notrigger	1=Disable call to triggers
 	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
-	public function deleteline($idline, $notrigger = 0)
+	public function deleteLine($idline, $notrigger = 0)
 	{
 		if ($this->statut == 0) {
 			$line = new CommandeFournisseurLigne($this->db);
@@ -3306,7 +3305,7 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function getInputMethod()
 	{
-		global $db, $langs;
+		global $langs;
 
 		if ($this->methode_commande_id > 0) {
 			$sql = "SELECT rowid, code, libelle as label";
@@ -3435,18 +3434,18 @@ class CommandeFournisseur extends CommonOrder
 	/**
 	 * Function used to replace a product id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old product id
-	 * @param int $dest_id New product id
+	 * @param DoliDB 	$dbs 		Database handler
+	 * @param int 		$origin_id 	Old product id
+	 * @param int 		$dest_id 	New product id
 	 * @return bool
 	 */
-	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceProduct(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'commande_fournisseurdet'
 		);
 
-		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceProduct($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -3489,6 +3488,8 @@ class CommandeFournisseur extends CommonOrder
 	{
 		global $conf, $langs;
 
+		$langs->load('orders');
+
 		$text = '';
 
 		if ($this->statut == self::STATUS_ORDERSENT || $this->statut == self::STATUS_RECEIVED_PARTIALLY) {
@@ -3518,8 +3519,6 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function calcAndSetStatusDispatch(User $user, $closeopenorder = 1, $comment = '')
 	{
-		global $conf, $langs;
-
 		if (isModEnabled("supplier_order")) {
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 
@@ -3568,7 +3567,7 @@ class CommandeFournisseur extends CommonOrder
 					if (count($diff_array) == 0 && count($keysinwishednotindelivered) == 0 && count($keysindeliverednotinwished) == 0) { //No diff => mean everything is received
 						if ($closeopenorder) {
 							//$ret=$this->setStatus($user,5);
-							$ret = $this->Livraison($user, $date_liv, 'tot', $comment); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+							$ret = $this->Livraison($user, $date_liv, 'tot', $comment); // $type is 'tot', 'par', 'nev', 'can'
 							if ($ret < 0) {
 								return -1;
 							}
@@ -3576,7 +3575,7 @@ class CommandeFournisseur extends CommonOrder
 						} else {
 							//Diff => received partially
 							//$ret=$this->setStatus($user,4);
-							$ret = $this->Livraison($user, $date_liv, 'par', $comment); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+							$ret = $this->Livraison($user, $date_liv, 'par', $comment); // $type is 'tot', 'par', 'nev', 'can'
 							if ($ret < 0) {
 								return -1;
 							}
@@ -3603,14 +3602,14 @@ class CommandeFournisseur extends CommonOrder
 						if ($close == count($diff_array)) {
 							//all the products are received equal or more than the wished quantity
 							if ($closeopenorder) {
-								$ret = $this->Livraison($user, $date_liv, 'tot', $comment); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+								$ret = $this->Livraison($user, $date_liv, 'tot', $comment); // $type is 'tot', 'par', 'nev', 'can'
 								if ($ret < 0) {
 									return -1;
 								}
 								return 5;
 							} else {
 								//Diff => received partially
-								$ret = $this->Livraison($user, $date_liv, 'par', $comment); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+								$ret = $this->Livraison($user, $date_liv, 'par', $comment); // $type is 'tot', 'par', 'nev', 'can'
 								if ($ret < 0) {
 									return -1;
 								}
@@ -3618,7 +3617,7 @@ class CommandeFournisseur extends CommonOrder
 							}
 						} else {
 							//all the products are not received
-							$ret = $this->Livraison($user, $date_liv, 'par', $comment); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+							$ret = $this->Livraison($user, $date_liv, 'par', $comment); // $type is 'tot', 'par', 'nev', 'can'
 							if ($ret < 0) {
 								return -1;
 							}
@@ -3626,7 +3625,7 @@ class CommandeFournisseur extends CommonOrder
 						}
 					} else {
 						//Diff => received partially
-						$ret = $this->Livraison($user, $date_liv, 'par', $comment); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+						$ret = $this->Livraison($user, $date_liv, 'par', $comment); // $type is 'tot', 'par', 'nev', 'can'
 						if ($ret < 0) {
 							return -1;
 						}
@@ -3817,8 +3816,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 */
 	public function fetch($rowid)
 	{
-		global $conf;
-
 		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.product_type, cd.description, cd.qty, cd.tva_tx, cd.special_code,';
 		$sql .= ' cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.ref as ref_supplier,';
 		$sql .= ' cd.remise, cd.remise_percent, cd.subprice,';

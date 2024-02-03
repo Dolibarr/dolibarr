@@ -230,7 +230,7 @@ class FactureFournisseur extends CommonInvoice
 	public $transport_mode_id;
 
 	/**
-	 * @var int VAT reverse charge can be used on the invoice
+	 * @var int<0,1>  VAT reverse charge can be used on the invoice
 	 */
 	public $vat_reverse_charge;
 
@@ -429,7 +429,9 @@ class FactureFournisseur extends CommonInvoice
 
 			$this->entity = $_facrec->entity; // Invoice created in same entity than template
 
-			// Fields coming from GUI (priority on template). TODO Value of template should be used as default value on GUI so we can use here always value from GUI
+			// Fields coming from GUI
+			// @TODO Value of template should be used as default value on the form on the GUI, and we should here always use the value from GUI
+			// set by posted page with $object->xxx = ... and this section should be removed.
 			$this->fk_project = GETPOST('projectid', 'int') > 0 ? ((int) GETPOST('projectid', 'int')) : $_facrec->fk_project;
 			$this->note_public = GETPOST('note_public', 'restricthtml') ? GETPOST('note_public', 'restricthtml') : $_facrec->note_public;
 			$this->note_private = GETPOST('note_private', 'restricthtml') ? GETPOST('note_private', 'restricthtml') : $_facrec->note_private;
@@ -2489,7 +2491,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 * 	@return	int						Return integer <0 if KO, >0 if OK
 	 */
-	public function deleteline($rowid, $notrigger = 0)
+	public function deleteLine($rowid, $notrigger = 0)
 	{
 		if (!$rowid) {
 			$rowid = $this->id;

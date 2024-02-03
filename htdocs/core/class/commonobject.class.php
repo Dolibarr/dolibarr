@@ -5573,7 +5573,7 @@ abstract class CommonObject
 	 * Common function for all objects extending CommonObject for generating documents
 	 *
 	 * @param 	string 		$modelspath 	Relative folder where generators are placed
-	 * @param 	string 		$modele 		Generator to use. Caller must set it to obj->model_pdf or GETPOST('model_pdf','alpha') for example.
+	 * @param 	string 		$modele 		Generator to use. Caller must set it to obj->model_pdf or $_POST for example.
 	 * @param 	Translate 	$outputlangs 	Output language to use
 	 * @param 	int 		$hidedetails 	1 to hide details. 0 by default
 	 * @param 	int 		$hidedesc 		1 to hide product description. 0 by default
@@ -5952,7 +5952,7 @@ abstract class CommonObject
 	 **/
 	public function getDefaultCreateValueFor($fieldname, $alternatevalue = null, $type = 'alphanohtml')
 	{
-		global $conf, $_POST;
+		global $_POST;
 
 		// If param here has been posted, we use this value first.
 		if (GETPOSTISSET($fieldname)) {
@@ -9028,6 +9028,45 @@ abstract class CommonObject
 			}
 		}
 		return $buyPrice;
+	}
+
+	/**
+	 * getDataToShowPhoto
+	 *
+	 * @param 	string	$modulepart		Module part
+	 * @param 	string	$imagesize		Image size
+	 * @return 	array					Array of data to show photo
+	 */
+	public function getDataToShowPhoto($modulepart, $imagesize)
+	{
+		global $conf;
+
+		$newmodulepart = $modulepart;
+		if ($modulepart == 'unknown' && !empty($this->module)) {
+			$newmodulepart = $this->module;
+		}
+
+		$id = $this->id;
+
+		$dir = $conf->$newmodulepart->dir_output;
+		if (!empty($this->photo)) {
+			if (dolIsAllowedForPreview($this->photo)) {
+				if ((string) $imagesize == 'mini') {
+					$file = get_exdir(0, 0, 0, 0, $this, $newmodulepart) . 'photos/' . dol_sanitizeFileName(getImageFileNameForSize($this->photo, '_mini'));
+				} elseif ((string) $imagesize == 'small') {
+					$file = get_exdir(0, 0, 0, 0, $this, $newmodulepart) . 'photos/' . dol_sanitizeFileName(getImageFileNameForSize($this->photo, '_small'));
+				} else {
+					$file = get_exdir(0, 0, 0, 0, $this, $newmodulepart) . 'photos/' . dol_sanitizeFileName($this->photo);
+				}
+				$originalfile = get_exdir(0, 0, 0, 0, $this, $newmodulepart) . 'photos/' . dol_sanitizeFileName($this->photo);
+			}
+		}
+
+		$altfile = '';
+		$email = empty($this->email) ? '' : $this->email;
+		$capture = '';
+
+		return array('dir' => $dir, 'file' => $file, 'originalfile' => $originalfile, 'altfile' => $altfile, 'email' => $email, 'capture' => $capture);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

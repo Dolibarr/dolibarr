@@ -202,7 +202,7 @@ class WebPortalPartnership extends Partnership
 		$datas = [];
 
 		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-			return ['optimize' => $langs->trans("ShowWebPortalPartnership")];
+			return ['optimize' => $langs->trans("WebPortalPartnership")];
 		}
 		$datas['picto'] = img_picto('', $this->picto) . ' <u>' . $langs->trans("WebPortalPartnership") . '</u>';
 		if (isset($this->status)) {

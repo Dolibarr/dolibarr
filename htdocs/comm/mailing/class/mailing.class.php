@@ -47,6 +47,11 @@ class Mailing extends CommonObject
 	public $picto = 'email';
 
 	/**
+	 * @var string Type of message ('email', 'sms')
+	 */
+	public $messtype;
+
+	/**
 	 * @var string title
 	 */
 	public $title;
