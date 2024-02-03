@@ -1247,7 +1247,7 @@ if (empty($reshook)) {
 		$total_ht = $object_ligne->total_ht;
 		$total_tva = $object_ligne->total_tva;
 
-		$result = $object->deleteline(GETPOST("rowid", 'int'), $user);
+		$result = $object->deleteLine(GETPOST("rowid", 'int'), $user);
 		if ($result >= 0) {
 			if ($result > 0) {
 				// Define output language

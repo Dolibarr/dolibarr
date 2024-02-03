@@ -408,7 +408,7 @@ class Shipments extends DolibarrApi
 
 		// TODO Check the lineid $lineid is a line of object
 
-		$updateRes = $this->shipment->deleteline(DolibarrApiAccess::$user, $lineid);
+		$updateRes = $this->shipment->deleteLine(DolibarrApiAccess::$user, $lineid);
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {
