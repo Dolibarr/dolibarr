@@ -152,7 +152,7 @@ print '</div><div class="fichetwothirdright">';
  * List of last emailings
  */
 $limit = 10;
-$sql  = "SELECT m.rowid, m.titre, m.nbemail, m.statut, m.date_creat";
+$sql  = "SELECT m.rowid, m.titre as title, m.nbemail, m.statut as status, m.date_creat";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 $sql .= " WHERE m.entity = ".$conf->entity;
 $sql .= " ORDER BY m.date_creat DESC";
@@ -182,7 +182,7 @@ if ($result) {
 			print '<td>'.(!empty($obj->title) ? dol_trunc($obj->title, 38) : '').'</td>';
 			print '<td class="center">'.dol_print_date($db->jdate($obj->date_creat), 'day').'</td>';
 			print '<td class="center">'.($obj->nbemail ? $obj->nbemail : "0").'</td>';
-			print '<td class="right">'.$mailstatic->LibStatut($obj->statut, 5).'</td>';
+			print '<td class="right">'.$mailstatic->LibStatut($obj->status, 5).'</td>';
 			print '</tr>';
 			$i++;
 		}
