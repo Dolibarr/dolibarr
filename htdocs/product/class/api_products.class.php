@@ -307,7 +307,7 @@ class Products extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -344,7 +344,7 @@ class Products extends DolibarrApi
 		global $conf;
 
 		if (!DolibarrApiAccess::$user->rights->produit->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->product->fetch($id);
@@ -447,7 +447,7 @@ class Products extends DolibarrApi
 	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->supprimer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$result = $this->product->fetch($id);
 		if (!$result) {
@@ -492,7 +492,7 @@ class Products extends DolibarrApi
 	public function getSubproducts($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $id)) {
@@ -530,7 +530,7 @@ class Products extends DolibarrApi
 	public function addSubproducts($id, $subproduct_id, $qty, $incdec = 1)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $id)) {
@@ -560,7 +560,7 @@ class Products extends DolibarrApi
 	public function delSubproducts($id, $subproduct_id)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $id)) {
@@ -591,7 +591,7 @@ class Products extends DolibarrApi
 	public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->categorie->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$categories = new Categorie($this->db);
@@ -619,7 +619,7 @@ class Products extends DolibarrApi
 		global $conf;
 
 		if (!DolibarrApiAccess::$user->rights->produit->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
@@ -661,7 +661,7 @@ class Products extends DolibarrApi
 		global $conf;
 
 		if (!DolibarrApiAccess::$user->rights->produit->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		if (!getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
@@ -710,7 +710,7 @@ class Products extends DolibarrApi
 		global $conf;
 
 		if (!DolibarrApiAccess::$user->rights->produit->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		if (!getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY')) {
@@ -768,7 +768,7 @@ class Products extends DolibarrApi
 	public function addPurchasePrice($id, $qty, $buyprice, $price_base_type, $fourn_id, $availability, $ref_fourn, $tva_tx, $charges = 0, $remise_percent = 0, $remise = 0, $newnpr = 0, $delivery_time_days = 0, $supplier_reputation = '', $localtaxes_array = array(), $newdefaultvatcode = '', $multicurrency_buyprice = 0, $multicurrency_price_base_type = 'HT', $multicurrency_tx = 1, $multicurrency_code = '', $desc_fourn = '', $barcode = '', $fk_barcode_type = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->productsupplier->fetch($id);
@@ -826,7 +826,7 @@ class Products extends DolibarrApi
 	public function deletePurchasePrice($id, $priceid)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->supprimer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$result = $this->productsupplier->fetch($id);
 		if (!$result) {
@@ -865,7 +865,7 @@ class Products extends DolibarrApi
 		global $db, $conf;
 
 		if (!DolibarrApiAccess::$user->rights->produit->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -1026,7 +1026,7 @@ class Products extends DolibarrApi
 	public function getAttributes($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$sql = "SELECT t.rowid, t.ref, t.ref_ext, t.label, t.position, t.entity";
@@ -1088,7 +1088,7 @@ class Products extends DolibarrApi
 	public function getAttributeById($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$prodattr = new ProductAttribute($this->db);
@@ -1131,7 +1131,7 @@ class Products extends DolibarrApi
 	public function getAttributesByRef($ref)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$ref = trim($ref);
@@ -1181,7 +1181,7 @@ class Products extends DolibarrApi
 	public function getAttributesByRefExt($ref_ext)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$ref_ext = trim($ref_ext);
@@ -1233,7 +1233,7 @@ class Products extends DolibarrApi
 	public function addAttributes($ref, $label, $ref_ext = '')
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$prodattr = new ProductAttribute($this->db);
@@ -1265,7 +1265,7 @@ class Products extends DolibarrApi
 	public function putAttributes($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$prodattr = new ProductAttribute($this->db);
@@ -1317,7 +1317,7 @@ class Products extends DolibarrApi
 	public function deleteAttributes($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->supprimer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$prodattr = new ProductAttribute($this->db);
@@ -1345,7 +1345,7 @@ class Products extends DolibarrApi
 	public function getAttributeValueById($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$sql = "SELECT rowid, fk_product_attribute, ref, value FROM ".$this->db->prefix()."product_attribute_value WHERE rowid = ".(int) $id." AND entity IN (".getEntity('product').")";
@@ -1353,7 +1353,7 @@ class Products extends DolibarrApi
 		$query = $this->db->query($sql);
 
 		if (!$query) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		if (!$this->db->num_rows($query)) {
@@ -1386,7 +1386,7 @@ class Products extends DolibarrApi
 	public function getAttributeValueByRef($id, $ref)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$ref = trim($ref);
@@ -1397,7 +1397,7 @@ class Products extends DolibarrApi
 		$query = $this->db->query($sql);
 
 		if (!$query) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		if (!$this->db->num_rows($query)) {
@@ -1429,7 +1429,7 @@ class Products extends DolibarrApi
 	public function deleteAttributeValueByRef($id, $ref)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->supprimer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$ref = trim($ref);
@@ -1439,7 +1439,7 @@ class Products extends DolibarrApi
 		$query = $this->db->query($sql);
 
 		if (!$query) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		if (!$this->db->num_rows($query)) {
@@ -1472,7 +1472,7 @@ class Products extends DolibarrApi
 	public function getAttributeValues($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$objectval = new ProductAttributeValue($this->db);
@@ -1503,7 +1503,7 @@ class Products extends DolibarrApi
 	public function getAttributeValuesByRef($ref)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$ref = trim($ref);
@@ -1545,11 +1545,11 @@ class Products extends DolibarrApi
 	public function addAttributeValue($id, $ref, $value)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		if (empty($ref) || empty($value)) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$objectval = new ProductAttributeValue($this->db);
@@ -1578,7 +1578,7 @@ class Products extends DolibarrApi
 	public function putAttributeValue($id, $request_data)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$objectval = new ProductAttributeValue($this->db);
@@ -1630,7 +1630,7 @@ class Products extends DolibarrApi
 	public function deleteAttributeValueById($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->supprimer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$objectval = new ProductAttributeValue($this->db);
@@ -1657,7 +1657,7 @@ class Products extends DolibarrApi
 	public function getVariants($id, $includestock = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$prodcomb = new ProductCombination($this->db);
@@ -1693,7 +1693,7 @@ class Products extends DolibarrApi
 	public function getVariantsByProdRef($ref)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->product->fetch('', $ref);
@@ -1736,7 +1736,7 @@ class Products extends DolibarrApi
 	public function addVariant($id, $weight_impact, $price_impact, $price_impact_is_percent, $features, $reference = '', $ref_ext = '')
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		if (empty($id)) {
@@ -1797,11 +1797,11 @@ class Products extends DolibarrApi
 	public function addVariantByProductRef($ref, $weight_impact, $price_impact, $price_impact_is_percent, $features)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		if (empty($ref) || empty($features) || !is_array($features)) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$weight_impact = price2num($weight_impact);
@@ -1851,7 +1851,7 @@ class Products extends DolibarrApi
 	public function putVariant($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$prodcomb = new ProductCombination($this->db);
@@ -1891,7 +1891,7 @@ class Products extends DolibarrApi
 	public function deleteVariant($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->supprimer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$prodcomb = new ProductCombination($this->db);
@@ -1920,7 +1920,7 @@ class Products extends DolibarrApi
 	public function getStock($id, $selected_warehouse_id = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->lire || !DolibarrApiAccess::$user->rights->stock->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $id)) {

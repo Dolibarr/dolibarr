@@ -112,6 +112,10 @@ if (!empty($backtopagejsfields)) {
 
 $socid = GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int');
 if ($user->socid) {
+	if (in_array($action, ['add', 'create', 'merge', 'confirm_merge', 'delete', 'confirm_delete'])) {
+		accessforbidden();
+	}
+
 	$socid = $user->socid;
 }
 if (empty($socid) && $action == 'view') {

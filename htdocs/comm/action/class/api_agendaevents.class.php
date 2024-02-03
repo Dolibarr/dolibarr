@@ -232,7 +232,7 @@ class AgendaEvents extends DolibarrApi
 	 * @param int   $id             Id of Agenda Event to update
 	 * @param array $request_data   Datas
 	 *
-	 * @return int
+	 * @return Object|false			Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
 	{

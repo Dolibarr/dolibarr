@@ -233,7 +233,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate) {
 		// Remove a product line
-		$result = $object->deleteline($user, $lineid);
+		$result = $object->deleteLine($user, $lineid);
 		if ($result > 0) {
 			// reorder lines
 			$object->line_order(true);
