@@ -224,7 +224,7 @@ class WebPortalMember extends Adherent
 		$datas = [];
 
 		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-			return ['optimize' => $langs->trans("ShowWebPortalMember")];
+			return ['optimize' => $langs->trans("WebPortalMember")];
 		}
 		$datas['picto'] = img_picto('', $this->picto) . ' <u>' . $langs->trans("WebPortalMember") . '</u>';
 		if (isset($this->status)) {
