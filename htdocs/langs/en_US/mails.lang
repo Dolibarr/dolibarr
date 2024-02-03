@@ -2,6 +2,7 @@
 Mailing=EMailing
 EMailing=EMailing
 EMailings=EMailings
+SMSings=SMSings
 AllEMailings=All eMailings
 MailCard=EMailing card
 MailRecipients=Recipients
@@ -24,6 +25,7 @@ BodyNotIn=Not in Body
 ShowEMailing=Show emailing
 ListOfEMailings=List of emailings
 NewMailing=New emailing
+NewSMSing=New smsing
 EditMailing=Edit emailing
 ResetMailing=Resend emailing
 DeleteMailing=Delete emailing
