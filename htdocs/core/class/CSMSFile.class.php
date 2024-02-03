@@ -124,8 +124,6 @@ class CSMSFile
 	 */
 	public function sendfile()
 	{
-		global $conf;
-
 		$errorlevel = error_reporting();
 		error_reporting($errorlevel ^ E_WARNING); // Disable warnings
 
@@ -155,8 +153,12 @@ class CSMSFile
 				dol_include_once('/'.$module.'/class/'.strtolower($classfile).'.class.php');
 				try {
 					$classname = ucfirst($classfile);
+
+					dol_syslog("CSMSFile::sendfile: try to include class ".$classname);
+
 					if (class_exists($classname)) {
 						$sms = new $classname($this->db);
+
 						$sms->expe = $this->addr_from;
 						$sms->dest = $this->addr_to;
 						$sms->deferred = $this->deferred;
@@ -177,6 +179,10 @@ class CSMSFile
 						$this->errors = $sms->errors;
 						if ($res <= 0) {
 							dol_syslog("CSMSFile::sendfile: sms send error=".$this->error, LOG_ERR);
+							if (getDolGlobalString('MAIN_SMS_DEBUG')) {
+								$this->dump_sms_result($res);
+							}
+							$res = false;
 						} else {
 							dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
 							//var_dump($res);        // 1973128
@@ -194,8 +200,8 @@ class CSMSFile
 			} else {
 				// Send sms method not correctly defined
 				// --------------------------------------
-
-				return 'Bad value for MAIN_SMS_SENDMODE constant';
+				$sms->error = 'Bad value for MAIN_SMS_SENDMODE constant';
+				$res = false;
 			}
 		} else {
 			$this->error = 'No sms sent. Feature is disabled by option MAIN_DISABLE_ALL_SMS';
@@ -249,13 +255,13 @@ class CSMSFile
 	public function dump_sms_result($result)
 	{
 		// phpcs:enable
-		global $conf, $dolibarr_main_data_root;
+		global $dolibarr_main_data_root;
 
 		if (@is_writeable($dolibarr_main_data_root)) {    // Avoid fatal error on fopen with open_basedir
 			$outputfile = $dolibarr_main_data_root."/dolibarr_sms.log";
 			$fp = fopen($outputfile, "a+");
 
-			fputs($fp, "\nResult id=".$result);
+			fputs($fp, "\nResult of SmsSend = ".$result);
 
 			fclose($fp);
 			dolChmod($outputfile);
