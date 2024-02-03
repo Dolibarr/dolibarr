@@ -94,7 +94,7 @@ $arrayfields = array(
 	'c.code'			=> array('label'=>"Type", 'checked'=>1, 'position'=>40),
 	'pd.num_paiement'	=> array('label'=>"Numero", 'checked'=>1, 'position'=>50, 'tooltip'=>"ChequeOrTransferNumber"),
 	'transaction'		=> array('label'=>"BankTransactionLine", 'checked'=>1, 'position'=>60, 'enabled'=>(isModEnabled("banque"))),
-	'ba.label'			=> array('label'=>"Account", 'checked'=>1, 'position'=>70, 'enabled'=>(isModEnabled("banque"))),
+	'ba.label'			=> array('label'=>"BankAccount", 'checked'=>1, 'position'=>70, 'enabled'=>(isModEnabled("banque"))),
 	'pd.amount'			=> array('label'=>"Amount", 'checked'=>1, 'position'=>80),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
