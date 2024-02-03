@@ -117,7 +117,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dol_buildpath('/mrp/mo_list.php', 1);
+	$backurlforlist = DOL_URL_ROOT.'/mrp/mo_list.php';
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		//var_dump($backurlforlist);exit;
@@ -133,7 +133,7 @@ if (empty($reshook)) {
 		$also_cancel_consumed_and_produced_lines = (GETPOST('alsoCancelConsumedAndProducedLines', 'alpha') ? 1 : 0);
 		$result = $object->cancel($user, 0, $also_cancel_consumed_and_produced_lines);
 		if ($result > 0) {
-			header("Location: " . dol_buildpath('/mrp/mo_card.php?id=' . $object->id, 1));
+			header("Location: " . DOL_URL_ROOT.'/mrp/mo_card.php?id=' . $object->id);
 			exit;
 		} else {
 			$action = '';

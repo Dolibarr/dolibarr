@@ -127,7 +127,7 @@ if (!getDolGlobalString('LDAP_GROUP_DN')) {
 }
 
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result >= 0) {
 	$justthese = array();
 

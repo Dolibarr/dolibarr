@@ -1907,7 +1907,7 @@ class FichinterLigne extends CommonObjectLine
 	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return     int		>0 if ok, <0 if ko
 	 */
-	public function deleteline($user, $notrigger = 0)
+	public function deleteLine($user, $notrigger = 0)
 	{
 		$error = 0;
 

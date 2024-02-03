@@ -213,3 +213,5 @@ ALTER TABLE llx_knowledgemanagement_knowledgerecord MODIFY COLUMN answer longtex
 UPDATE llx_const SET name = 'THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT' WHERE name = 'THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER';
 
 ALTER TABLE llx_fichinter ADD COLUMN signed integer DEFAULT NULL AFTER duree;
+
+ALTER TABLE llx_mailing ADD COLUMN messtype	varchar(16) DEFAULT 'email' after rowid;

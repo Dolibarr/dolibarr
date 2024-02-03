@@ -92,14 +92,14 @@ $navGroupMenu = array(
 		'id' => 'administrative',
 		'rank' => -1, // negative value for undefined, it will be set by the min item rank for this group
 		'url' => '',
-		'name' => $langs->trans('GroupMenuAdministrative'),
+		'name' => $langs->trans('WebPortalGroupMenuAdmin'),
 		'children' => array()
 	),
 	'technical' => array(
 		'id' => 'technical',
 		'rank' => -1, // negative value for undefined, it will be set by the min item rank for this group
 		'url' => '',
-		'name' => $langs->trans('GroupMenuTechnical'),
+		'name' => $langs->trans('WebPortalGroupMenuTechnical'),
 		'children' => array()
 	),
 );

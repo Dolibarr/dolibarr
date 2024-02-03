@@ -193,9 +193,9 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				if (!getDolGlobalString('TICKET_DISABLE_CUSTOMER_MAILS') && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create) {
 					$sendto = '';
 
-					//if contact selected send to email's contact else send to email's thirdparty
+					// if contact selected send to email's contact else send to email's thirdparty
 
-					$contactid = GETPOST('contactid', 'alpha');
+					$contactid = empty($object->context['contactid']) ? 0 : $object->context['contactid'];
 					$res = 0;
 
 					if (!empty($contactid)) {
@@ -253,7 +253,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						$linked_contacts[] = $object->thirdparty->email;
 					}
 
-					$contactid = GETPOST('contactid', 'int');
+					$contactid = empty($object->context['contactid']) ? 0 : $object->context['contactid'];
 					$res = 0;
 
 					if ($contactid > 0) {

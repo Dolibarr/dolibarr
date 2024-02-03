@@ -63,13 +63,13 @@ class Partnerships extends DolibarrApi
 	 *
 	 * @url	GET partnerships/{id}
 	 *
-	 * @throws RestException 401 Not allowed
+	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
 	 */
 	public function get($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->partnership->read) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->partnership->fetch($id);
@@ -104,13 +104,11 @@ class Partnerships extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
 		$obj_ret = array();
 		$tmpobject = new Partnership($this->db);
 
 		if (!DolibarrApiAccess::$user->rights->partnership->read) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : 0;
@@ -191,7 +189,7 @@ class Partnerships extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->partnership->write) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		// Check mandatory fields
@@ -230,7 +228,7 @@ class Partnerships extends DolibarrApi
 	public function put($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->partnership->write) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->partnership->fetch($id);
@@ -278,7 +276,7 @@ class Partnerships extends DolibarrApi
 	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->partnership->delete) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$result = $this->partnership->fetch($id);
 		if (!$result) {

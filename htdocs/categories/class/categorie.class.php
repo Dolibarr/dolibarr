@@ -386,7 +386,7 @@ class Categorie extends CommonObject
 				$this->position    	= $res['position'];
 				$this->socid		= (int) $res['fk_soc'];
 				$this->visible = (int) $res['visible'];
-				$this->type = (int) $res['type'];
+				$this->type = $res['type'];
 				$this->ref_ext = $res['ref_ext'];
 				$this->entity = (int) $res['entity'];
 				$this->date_creation = $this->db->jdate($res['date_creation']);
@@ -446,7 +446,7 @@ class Categorie extends CommonObject
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
 		$this->color = trim($this->color);
-		$this->position = trim($this->position);
+		$this->position = (int) $this->position;
 		$this->import_key = trim($this->import_key);
 		$this->ref_ext = trim($this->ref_ext);
 		if (empty($this->visible)) {

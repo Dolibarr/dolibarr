@@ -2427,9 +2427,16 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
 		}
 
 		if (isModEnabled('mailing')) {
-			$newmenu->add("/comm/mailing/index.php?leftmenu=mailing", $langs->trans("EMailings"), 0, $user->hasRight('mailing', 'lire'), '', $mainmenu, 'mailing', 0, '', '', '', img_picto('', 'email', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/comm/mailing/card.php?leftmenu=mailing&amp;action=create", $langs->trans("NewMailing"), 1, $user->hasRight('mailing', 'creer'));
-			$newmenu->add("/comm/mailing/list.php?leftmenu=mailing", $langs->trans("List"), 1, $user->hasRight('mailing', 'lire'));
+			$titleindex = $langs->trans("EMailings");
+			$titlenew = $langs->trans("NewMailing");
+			$titlelist = $langs->trans("List");
+			if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
+				$titleindex .= ' | '.$langs->trans("SMSings");
+				$titlenew .= ' | '.$langs->trans("NewSMSing");
+			}
+			$newmenu->add("/comm/mailing/index.php?leftmenu=mailing", $titleindex, 0, $user->hasRight('mailing', 'lire'), '', $mainmenu, 'mailing', 0, '', '', '', img_picto('', 'email', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/comm/mailing/card.php?leftmenu=mailing&amp;action=create", $titlenew, 1, $user->hasRight('mailing', 'creer'));
+			$newmenu->add("/comm/mailing/list.php?leftmenu=mailing", $titlelist, 1, $user->hasRight('mailing', 'lire'));
 		}
 
 		if (isModEnabled('export')) {
