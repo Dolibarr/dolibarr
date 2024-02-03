@@ -233,3 +233,5 @@ WebPortalMember=Membership
 WebPortalOrder=Sale Order
 WebPortalPartnership=Partnership
 WebPortalPropal=Proposal
+WebPortalGroupMenuAdmin=Administration
+WebPortalGroupMenuTechnical=System
