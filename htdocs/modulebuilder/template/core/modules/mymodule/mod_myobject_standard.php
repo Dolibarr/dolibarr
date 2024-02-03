@@ -117,7 +117,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 	 * 	Return next free value
 	 *
 	 *  @param  Object		$object		Object we need next value for
-	 *  @return string|-1               Next value if OK, <0 if KO
+	 *  @return string|-1               Next free value if OK, -1 if KO
 	 */
 	public function getNextValue($object)
 	{
