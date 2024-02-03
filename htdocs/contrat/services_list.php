@@ -108,6 +108,20 @@ if (!empty($user->socid)) {
 }
 $result = restrictedArea($user, 'contrat', $contratid);
 
+if ($search_status != '') {
+	$tmp = explode('&', $search_status);
+	if (empty($tmp[1])) {
+		$filter = '';
+	} else {
+		if ($tmp[1] == 'filter=notexpired') {
+			$filter = 'notexpired';
+		}
+		if ($tmp[1] == 'filter=expired') {
+			$filter = 'expired';
+		}
+	}
+}
+
 $staticcontrat = new Contrat($db);
 $staticcontratligne = new ContratLigne($db);
 $companystatic = new Societe($db);
