@@ -192,7 +192,7 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		if (is_object($object->user_creation)) {
+		if (! empty($object->user_creation) && is_object($object->user_creation)) {	// deprecated mode
 			if ($object->user_creation->id) {
 				print $object->user_creation->getNomUrl(-1, '', 0, 0, 0);
 			} else {
