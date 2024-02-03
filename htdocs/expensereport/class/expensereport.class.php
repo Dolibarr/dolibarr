@@ -2291,7 +2291,7 @@ class ExpenseReport extends CommonObject
 	 * @param   int     $notrigger      1=No trigger
 	 * @return  int                 	Return integer <0 if KO, >0 if OK
 	 */
-	public function deleteline($rowid, $fuser = '', $notrigger = 0)
+	public function deleteLine($rowid, $fuser = '', $notrigger = 0)
 	{
 		$error=0;
 

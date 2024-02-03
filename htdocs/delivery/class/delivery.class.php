@@ -657,7 +657,7 @@ class Delivery extends CommonObject
 	 *	@param	int		$lineid		Line id
 	 *	@return	integer				Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
-	public function deleteline($lineid)
+	public function deleteLine($lineid)
 	{
 		if ($this->statut == 0) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
