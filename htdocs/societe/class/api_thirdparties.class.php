@@ -468,6 +468,68 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
+	 * Add a customer representative to a thirdparty
+	 *
+	 * @param int		$id					Id of thirdparty
+	 * @param int       $representative_id	Id of representative
+	 * @return Object|void
+	 *
+	 * @url POST {id}/representative/{representative_id}
+	 */
+	public function addRepresentative($id, $representative_id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
+			throw new RestException(403);
+		}
+		$result = $this->company->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Thirdparty not found');
+		}
+		$usertmp = new User($this->db);
+		$result = $usertmp->fetch($representative_id);
+		if (!$result) {
+			throw new RestException(404, 'User not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		$result = $this->company->add_commercial(DolibarrApiAccess::$user, $representative_id);
+
+		return $result;
+	}
+
+	/**
+	 * Delete a customer representative to a thirdparty
+	 *
+	 * @param int		$id					Id of thirdparty
+	 * @param int       $representative_id	Id of representative
+	 * @return Object|void
+	 *
+	 * @url DELETE {id}/representative/{representative_id}
+	 */
+	public function deleteRepresentative($id, $representative_id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'supprimer')) {
+			throw new RestException(403);
+		}
+		$result = $this->company->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Thirdparty not found');
+		}
+		$usertmp = new User($this->db);
+		$result = $usertmp->fetch($representative_id);
+		if (!$result) {
+			throw new RestException(404, 'User not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		$result = $this->company->del_commercial(DolibarrApiAccess::$user, $representative_id);
+
+		return $result;
+	}
+
+	/**
 	 * Get customer categories for a thirdparty
 	 *
 	 * @param int		$id         ID of thirdparty
