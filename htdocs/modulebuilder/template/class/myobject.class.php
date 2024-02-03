@@ -497,7 +497,7 @@ class MyObject extends CommonObject
 					if (strpos($value, '%') === false) {
 						$sqlwhere[] = $key . " = '" . $this->db->sanitize($this->db->escape($value)) . "'";
 					} else {
-						$sqlwhere[] = $key . " LIKE '%" . $this->db->escapeforlike($this->db->escape($value)) . "%'";
+						$sqlwhere[] = $key . " LIKE '%" . $this->db->escape($this->db->escapeforlike($value)) . "%'";
 					}
 				}
 			}
