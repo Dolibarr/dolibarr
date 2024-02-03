@@ -1181,7 +1181,6 @@ ConfirmAffectUserQuestion=Are you sure you want to assign users to the %s select
 ConfirmSetSupervisorQuestion=Are you sure you want to set supervisor to the %s selected record(s)?
 ConfirmUpdatePriceQuestion=Are you sure you want to update the price of the %s selected record(s)?
 CategTypeNotFound=No tag type found for type of records
-Rate=Rate
 SupervisorNotFound=Supervisor not found
 CopiedToClipboard=Copied to clipboard
 InformationOnLinkToContract=This amount is only the total of all the lines of the contract. No notion of time is taken into consideration.
