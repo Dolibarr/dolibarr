@@ -31,7 +31,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'mymodule@mymodule';
+	public $picto = 'fa-file';
 
 	/**
 	 * @var DoliDB Database handler.
