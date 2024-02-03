@@ -2664,7 +2664,7 @@ class Societe extends CommonObject
 	 *
 	 *	@param	User	$user		Object user
 	 *	@param	int		$commid		Id of user
-	 *	@return	void
+	 *	@return	int					Return <0 if KO, >0 if OK
 	 */
 	public function del_commercial(User $user, $commid)
 	{
@@ -2682,8 +2682,15 @@ class Societe extends CommonObject
 			$sql .= " WHERE fk_soc = ".((int) $this->id)." AND fk_user = ".((int) $commid);
 
 			if (!$this->db->query($sql)) {
+				$error++;
 				dol_syslog(get_class($this)."::del_commercial Erreur");
 			}
+		}
+
+		if ($error) {
+			return -1;
+		} else {
+			return 1;
 		}
 	}
 
