@@ -328,7 +328,7 @@ if ($resql) {
 			$workstation = new Workstation($this->db);
 			$res = $workstation->fetch($sub_bom_product->fk_default_workstation);
 			if ($res > 0) {
-				$sub_bom_line->total_cost = price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
+				$sub_bom_line->total_cost = (float) price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
 			}
 
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom_line->total_cost, 'MT')).'</span></td>';

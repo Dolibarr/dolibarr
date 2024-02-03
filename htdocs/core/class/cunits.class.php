@@ -85,7 +85,7 @@ class CUnits extends CommonDict
 			$this->libelle = trim($this->short_label);
 		}
 		if (isset($this->unit_type)) {
-			$this->active = trim($this->unit_type);
+			$this->active = (int) $this->unit_type;
 		}
 		if (isset($this->active)) {
 			$this->active = (int) $this->active;
@@ -406,12 +406,9 @@ class CUnits extends CommonDict
 	 */
 	public function getUnitFromCode($code, $mode = 'code', $unit_type = '')
 	{
-		if ($mode == 'short_label') {
-			return dol_getIdFromCode($this->db, $code, 'c_units', 'short_label', 'rowid', 0, " AND unit_type = '".$this->db->escape($unit_type)."'");
-		} elseif ($mode == 'code') {
-			return dol_getIdFromCode($this->db, $code, 'c_units', 'code', 'rowid', 0, " AND unit_type = '". $this->db->escape($unit_type) ."'");
+		if ($mode == 'short_label' || $mode == 'code') {
+			return dol_getIdFromCode($this->db, $code, 'c_units', $mode, 'rowid', 0, " AND unit_type = '".$this->db->escape($unit_type)."'");
 		}
-
 		return $code;
 	}
 
