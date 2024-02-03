@@ -495,7 +495,7 @@ class FileUpload
 		$error = 0;
 
 		if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
-			return $this->delete();
+			return $this->delete($_REQUEST['file']);
 		}
 		//var_dump($_FILES);
 
