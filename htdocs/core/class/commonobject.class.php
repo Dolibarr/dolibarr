@@ -9050,7 +9050,7 @@ abstract class CommonObject
 
 		$dir = $conf->$newmodulepart->dir_output;
 		if (!empty($this->photo)) {
-			if (dolIsAllowedForPreview($object->photo)) {
+			if (dolIsAllowedForPreview($this->photo)) {
 				if ((string) $imagesize == 'mini') {
 					$file = get_exdir(0, 0, 0, 0, $this, $newmodulepart) . 'photos/' . dol_sanitizeFileName(getImageFileNameForSize($this->photo, '_mini'));
 				} elseif ((string) $imagesize == 'small') {
