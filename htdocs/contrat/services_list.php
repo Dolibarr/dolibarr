@@ -6,7 +6,7 @@
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019      Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,6 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-$filter = GETPOST("filter", 'alpha');
 $search_name = GETPOST("search_name", 'alpha');
 $search_subprice = GETPOST("search_subprice", 'alpha');
 $search_qty = GETPOST("search_qty", 'alpha');
@@ -113,20 +112,6 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'contrat', $contratid);
-
-if ($search_status != '') {
-	$tmp = explode('&', $search_status);
-	if (!empty($tmp[1])) {
-		if ($tmp[1] == 'filter=notexpired') {
-			$search_status = $tmp[0];
-			$filter = 'notexpired';
-		}
-		if ($tmp[1] == 'filter=expired') {
-			$search_status = $tmp[0];
-			$filter = 'expired';
-		}
-	}
-}
 
 $staticcontrat = new Contrat($db);
 $staticcontratligne = new ContratLigne($db);
@@ -194,7 +179,7 @@ if (empty($reshook)) {
 		$search_total_ttc = "";
 		$search_contract = "";
 		$search_service = "";
-		$search_status = -1;
+		$search_status = "";
 		$opouvertureprevuemonth = "";
 		$opouvertureprevueday = "";
 		$opouvertureprevueyear = "";
@@ -211,7 +196,6 @@ if (empty($reshook)) {
 		$opclotureday = "";
 		$opclotureyear = "";
 		$filter_opcloture = "";
-		$filter = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -299,14 +283,14 @@ if ($search_status == "0") {
 if ($search_status == "4") {
 	$sql .= " AND cd.statut = 4";
 }
+if ($search_status == "4&filter=expired") {
+	$sql .= " AND cd.statut = 4 AND cd.date_fin_validite < '".$db->idate($now)."'";
+}
+if ($search_status == "4&filter=notexpired") {
+	$sql .= " AND cd.statut = 4 AND cd.date_fin_validite >= '".$db->idate($now)."'";
+}
 if ($search_status == "5") {
 	$sql .= " AND cd.statut = 5";
-}
-if ($filter == "expired") {
-	$sql .= " AND cd.date_fin_validite < '".$db->idate($now)."'";
-}
-if ($filter == "notexpired") {
-	$sql .= " AND cd.date_fin_validite >= '".$db->idate($now)."'";
 }
 if ($search_subprice) {
 	$sql .= natural_search("cd.subprice", $search_subprice, 1);
@@ -478,9 +462,6 @@ if ($search_service) {
 if ($search_status) {
 	$param .= '&amp;search_status='.urlencode($search_status);
 }
-if ($filter) {
-	$param .= '&amp;filter='.urlencode($filter);
-}
 if (!empty($filter_opouvertureprevue) && $filter_opouvertureprevue != -1) {
 	$param .= '&amp;filter_opouvertureprevue='.urlencode($filter_opouvertureprevue);
 }
@@ -594,7 +575,6 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 if (!empty($arrayfields['c.ref']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input type="hidden" name="filter" value="'.$filter.'">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
 	print '<input type="text" class="flat maxwidth75" name="search_contract" value="'.dol_escape_htmltag($search_contract).'">';
 	print '</td>';
