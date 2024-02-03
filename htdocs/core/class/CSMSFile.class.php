@@ -55,7 +55,14 @@ class CSMSFile
 	 */
 	public $eol;
 
+	/**
+	 * @var string address from
+	 */
 	public $addr_from;
+
+	/**
+	 * @var string address to
+	 */
 	public $addr_to;
 	public $deferred;
 	public $priority;
@@ -200,7 +207,7 @@ class CSMSFile
 			} else {
 				// Send sms method not correctly defined
 				// --------------------------------------
-				$sms->error = 'Bad value for MAIN_SMS_SENDMODE constant';
+				$this->error = 'Bad value for MAIN_SMS_SENDMODE constant';
 				$res = false;
 			}
 		} else {
