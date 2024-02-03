@@ -9844,7 +9844,6 @@ class Form
 		$entity = (empty($object->entity) ? $conf->entity : $object->entity);
 		$id = (empty($object->id) ? $object->rowid : $object->id);
 
-		$ret = '';
 		$dir = '';
 		$file = '';
 		$originalfile = '';
@@ -9922,28 +9921,24 @@ class Form
 			$capture = 'user';
 		} else {
 			// Generic case to show photos
-			$dir = $conf->$modulepart->dir_output;
-			if (!empty($object->photo)) {
-				if (dolIsAllowedForPreview($object->photo)) {
-					if ((string) $imagesize == 'mini') {
-						$file = get_exdir($id, 2, 0, 0, $object, $modulepart) . 'photos/' . getImageFileNameForSize($object->photo, '_mini');
-					} elseif ((string) $imagesize == 'small') {
-						$file = get_exdir($id, 2, 0, 0, $object, $modulepart) . 'photos/' . getImageFileNameForSize($object->photo, '_small');
-					} else {
-						$file = get_exdir($id, 2, 0, 0, $object, $modulepart) . 'photos/' . $object->photo;
-					}
-					$originalfile = get_exdir($id, 2, 0, 0, $object, $modulepart) . 'photos/' . $object->photo;
-				}
+			// TODO Implement this method in previous objects so we can always use this generic method.
+			if (method_exists($object, 'getDataToShowPhoto')) {
+				$tmpdata = $object->getDataToShowPhoto($modulepart, $imagesize);
+
+				$dir = $tmpdata['dir'];
+				$file = $tmpdata['file'];
+				$originalfile = $tmpdata['originalfile'];
+				$altfile = $tmpdata['altfile'];
+				$email = $tmpdata['email'];
+				$capture = $tmpdata['capture'];
 			}
-			if (getDolGlobalString('MAIN_OLD_IMAGE_LINKS')) {
-				$altfile = $object->id . ".jpg"; // For backward compatibility
-			}
-			$email = $object->email;
 		}
 
 		if ($forcecapture) {
 			$capture = $forcecapture;
 		}
+
+		$ret = '';
 
 		if ($dir) {
 			if ($file && file_exists($dir . "/" . $file)) {
