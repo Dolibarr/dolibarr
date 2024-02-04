@@ -80,9 +80,9 @@ class WebPortalTheme
 
 		$outColor = '';
 
-		if (!empty($conf->global->WEBPORTAL_PRIMARY_COLOR)) {
-			$outColor = $conf->global->WEBPORTAL_PRIMARY_COLOR;
-		} elseif (!empty($conf->global->THEME_ELDY_TOPMENU_BACK1)) {
+		if (getDolGlobalString('WEBPORTAL_PRIMARY_COLOR')) {
+			$outColor = getDolGlobalString('WEBPORTAL_PRIMARY_COLOR');
+		} elseif (getDolGlobalString('THEME_ELDY_TOPMENU_BACK1')) {
 			$outColor = '#' . colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1));
 		}
 

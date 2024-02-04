@@ -54,7 +54,7 @@ $result = restrictedArea($user, 'commande', $id, '');
 
 $usercancreate  =  $user->hasRight("commande", "creer");
 
-$permissionnote = $user->rights->commande->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('commande', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 
 $object = new Commande($db);

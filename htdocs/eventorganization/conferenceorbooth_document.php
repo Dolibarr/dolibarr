@@ -91,11 +91,11 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Permissions
-$permissiontoread = $user->rights->eventorganization->read;
-$permissiontoadd = $user->rights->eventorganization->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontoread = $user->hasRight('eventorganization', 'read');
+$permissiontoadd = $user->hasRight('eventorganization', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->eventorganization->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissionnote = $user->rights->eventorganization->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->eventorganization->write; // Used by the include of actions_dellink.inc.php
+$permissionnote = $user->hasRight('eventorganization', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('eventorganization', 'write'); // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->eventorganization->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check

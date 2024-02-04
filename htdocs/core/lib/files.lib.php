@@ -3201,11 +3201,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif ($modulepart == 'export' && !empty($conf->export->dir_temp)) {
 		// Wrapping for export module
 		// Note that a test may not be required because we force the dir of download on the directory of the user that export
-		$accessallowed = $user->rights->export->lire;
+		$accessallowed = $user->hasRight('export', 'lire');
 		$original_file = $conf->export->dir_temp.'/'.$fuser->id.'/'.$original_file;
 	} elseif ($modulepart == 'import' && !empty($conf->import->dir_temp)) {
 		// Wrapping for import module
-		$accessallowed = $user->rights->import->run;
+		$accessallowed = $user->hasRight('import', 'run');
 		$original_file = $conf->import->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'recruitment' && !empty($conf->recruitment->dir_output)) {
 		// Wrapping for recruitment module

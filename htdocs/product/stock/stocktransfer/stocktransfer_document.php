@@ -80,7 +80,7 @@ if ($id > 0 || !empty($ref)) {
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'stocktransfer', $object->id);
 
-$permissiontoadd = $user->rights->stocktransfer->stocktransfer->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd = $user->hasRight('stocktransfer', 'stocktransfer', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 
 
