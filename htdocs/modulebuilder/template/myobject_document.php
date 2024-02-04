@@ -251,12 +251,7 @@ print '</div>';
 print dol_get_fiche_end();
 
 $modulepart = 'mymodule';
-//$permissiontoadd = $user->hasRight('mymodule', 'myobject', 'write');
-$permissiontoadd = 1;
-//$permtoedit = $user->hasRight('mymodule', 'myobject', 'write');
-$permtoedit = 1;
 $param = '&id='.$object->id;
-
 //$relativepathwithnofile='myobject/' . dol_sanitizeFileName($object->id).'/';
 $relativepathwithnofile = 'myobject/'.dol_sanitizeFileName($object->ref).'/';
 
