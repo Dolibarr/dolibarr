@@ -199,7 +199,7 @@ class MultiCurrencies extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->multicurrency->currency->create) {
+		if (!DolibarrApiAccess::$user->hasRight('multicurrency', 'currency', 'create')) {
 			throw new RestException(401, "Insufficient rights to create currency");
 		}
 
@@ -243,7 +243,7 @@ class MultiCurrencies extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->multicurrency->currency->create) {
+		if (!DolibarrApiAccess::$user->hasRight('multicurrency', 'currency', 'create')) {
 			throw new RestException(401, "Insufficient rights to update currency");
 		}
 
@@ -282,7 +282,7 @@ class MultiCurrencies extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->multicurrency->currency->delete) {
+		if (!DolibarrApiAccess::$user->hasRight('multicurrency', 'currency', 'delete')) {
 			throw new RestException(401, "Insufficient rights to delete currency");
 		}
 
@@ -316,7 +316,7 @@ class MultiCurrencies extends DolibarrApi
 	 */
 	public function updateRate($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->multicurrency->currency->create) {
+		if (!DolibarrApiAccess::$user->hasRight('multicurrency', 'currency', 'create')) {
 			throw new RestException(401, "Insufficient rights to update currency rate");
 		}
 

@@ -449,7 +449,7 @@ class ExpenseReports extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->expensereport->supprimer) {
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'supprimer')) {
 			throw new RestException(403);
 		}
 
@@ -459,7 +459,7 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->expensereport->delete(DolibarrApiAccess::$user)) {

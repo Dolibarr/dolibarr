@@ -254,7 +254,7 @@ class Mos extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->mrp->delete) {
+		if (!DolibarrApiAccess::$user->hasRight('mrp', 'delete')) {
 			throw new RestException(403);
 		}
 		$result = $this->mo->fetch($id);
@@ -263,7 +263,7 @@ class Mos extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('mrp', $this->mo->id, 'mrp_mo')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->mo->delete(DolibarrApiAccess::$user)) {
