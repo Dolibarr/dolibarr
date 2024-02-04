@@ -2600,9 +2600,6 @@ class Ticket extends CommonObject
 			if (!$error && $id > 0) {
 				setEventMessages($langs->trans('TicketMessageSuccessfullyAdded'), null, 'mesgs');
 
-				//var_dump($_SESSION);
-				//var_dump($listofpaths);exit;
-
 				if (!empty($public_area)) {
 					/*
 					 * Message created from the Public interface
@@ -3142,6 +3139,39 @@ class Ticket extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
+
 		return $return;
+	}
+		/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 *  @param	    string		$modele			Force template to use ('' to not force)
+	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
+	{
+		global $langs;
+
+		$langs->load("ticket");
+		$outputlangs->load("ticket");
+
+		if (!dol_strlen($modele)) {
+			$modele = 'generic_ticket_odt';
+
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
+			} elseif (getDolGlobalString('TICKET_ADDON_PDF')) {
+				$modele = getDolGlobalString('TICKET_ADDON_PDF');
+			}
+		}
+
+		$modelpath = "core/modules/ticket/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 }
