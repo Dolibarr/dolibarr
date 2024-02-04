@@ -177,9 +177,9 @@ if ($project_ref) {
 	$search_fk_project = $projectid;
 }
 
-$permissiontoread = $user->rights->ticket->read;
-$permissiontoadd = $user->rights->ticket->write;
-$permissiontodelete = $user->rights->ticket->delete;
+$permissiontoread = $user->hasRight('ticket', 'read');
+$permissiontoadd = $user->hasRight('ticket', 'write');
+$permissiontodelete = $user->hasRight('ticket', 'delete');
 
 $error = 0;
 

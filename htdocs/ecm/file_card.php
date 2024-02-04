@@ -103,9 +103,9 @@ if ($result < 0) {
 }
 
 // Permissions
-$permissiontoread = $user->rights->ecm->read;
-$permissiontoadd = $user->rights->ecm->setup;
-$permissiontoupload = $user->rights->ecm->upload;
+$permissiontoread = $user->hasRight('ecm', 'read');
+$permissiontoadd = $user->hasRight('ecm', 'setup');
+$permissiontoupload = $user->hasRight('ecm', 'upload');
 
 if (!$permissiontoread) {
 	accessforbidden();

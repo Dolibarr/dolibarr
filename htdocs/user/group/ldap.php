@@ -53,7 +53,7 @@ if (isModEnabled('multicompany') && $conf->entity > 1 && getDolGlobalString('MUL
 
 $canreadperms = true;
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$canreadperms = (!empty($user->admin) || !empty($user->rights->user->group_advance->read));
+	$canreadperms = (!empty($user->admin) || $user->hasRight('user', 'group_advance', 'read'));
 }
 
 

@@ -75,6 +75,7 @@ class UserRightsToFunction extends AbstractRector
 			}
 		}
 
+
 		if ($node instanceof Node\Expr\Assign) {
 			// var is left of = and expr is right
 			if (!isset($node->var)) {
@@ -98,37 +99,46 @@ class UserRightsToFunction extends AbstractRector
 			return $node;
 		}
 
+		$caseok = false;	// Will be tru if we can make the replacement. We must not do it for assignement like when $user->right->aaa->bbb = ...
 		$isInverse = false;
 		if ($node instanceof Node\Expr\BooleanNot) {
 			if (!$node->expr instanceof Node\Expr\Empty_) {
 				return null;
 			}
 			$node = $node->expr->expr;
+			$caseok = true;
 		}
 		if ($node instanceof Node\Expr\Empty_) {
 			$node = $node->expr;
 			$isInverse = true;
+			$caseok = true;
 		}
 		if ($node instanceof Node\Expr\Isset_) {
 			// Take first arg for isset (No code found with multiple isset).
 			$node = $node->vars[0];
+			$caseok = true;
 		}
 		if (!$node instanceof Node\Expr\PropertyFetch) {
-			return;
+			return null;
 		}
-		$data = $this->getRights($node);
-		if (!isset($data)) {
-			return;
+
+		if ($caseok) {
+			$data = $this->getRights($node);
+			if (!isset($data)) {
+				return;
+			}
+			$args = [new Arg($data['module']), new Arg($data['perm1'])];
+			if (!empty($data['perm2'])) {
+				$args[] = new Arg($data['perm2']);
+			}
+			$method = $this->nodeFactory->createMethodCall($data['user'], 'hasRight', $args);
+			if ($isInverse) {
+				return new Node\Expr\BooleanNot($method);
+			}
+			return $method;
+		} else {
+			return null;
 		}
-		$args = [new Arg($data['module']), new Arg($data['perm1'])];
-		if (!empty($data['perm2'])) {
-			$args[] = new Arg($data['perm2']);
-		}
-		$method = $this->nodeFactory->createMethodCall($data['user'], 'hasRight', $args);
-		if ($isInverse) {
-			return new Node\Expr\BooleanNot($method);
-		}
-		return $method;
 	}
 
 	/**
