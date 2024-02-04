@@ -366,7 +366,7 @@ class Contacts extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->contact->supprimer) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'supprimer')) {
 			throw new RestException(401, 'No permission to delete contacts');
 		}
 		$result = $this->contact->fetch($id);

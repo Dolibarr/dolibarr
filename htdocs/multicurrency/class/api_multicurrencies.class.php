@@ -57,7 +57,7 @@ class MultiCurrencies extends DolibarrApi
 	{
 		global $db;
 
-		if (!DolibarrApiAccess::$user->rights->multicurrency->currency->read) {
+		if (!DolibarrApiAccess::$user->hasRight('multicurrency', 'currency', 'read')) {
 			throw new RestException(401, "Insufficient rights to read currency");
 		}
 
@@ -123,7 +123,7 @@ class MultiCurrencies extends DolibarrApi
 			throw new RestException(404, 'Currency not found');
 		}
 
-		if (!DolibarrApiAccess::$user->rights->multicurrency->currency->read) {
+		if (!DolibarrApiAccess::$user->hasRight('multicurrency', 'currency', 'read')) {
 			throw new RestException(401, "Insufficient rights to read currency");
 		}
 
@@ -148,7 +148,7 @@ class MultiCurrencies extends DolibarrApi
 			throw new RestException(404, 'Currency not found');
 		}
 
-		if (!DolibarrApiAccess::$user->rights->multicurrency->currency->read) {
+		if (!DolibarrApiAccess::$user->hasRight('multicurrency', 'currency', 'read')) {
 			throw new RestException(401, "Insufficient rights to read currency");
 		}
 
@@ -173,7 +173,7 @@ class MultiCurrencies extends DolibarrApi
 			throw new RestException(404, 'Currency not found');
 		}
 
-		if (!DolibarrApiAccess::$user->rights->multicurrency->currency->read) {
+		if (!DolibarrApiAccess::$user->hasRight('multicurrency', 'currency', 'read')) {
 			throw new RestException(401, "Insufficient rights to read currency rates");
 		}
 

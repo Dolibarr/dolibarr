@@ -68,7 +68,7 @@ class Partnerships extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->partnership->read) {
+		if (!DolibarrApiAccess::$user->hasRight('partnership', 'read')) {
 			throw new RestException(403);
 		}
 
@@ -107,7 +107,7 @@ class Partnerships extends DolibarrApi
 		$obj_ret = array();
 		$tmpobject = new Partnership($this->db);
 
-		if (!DolibarrApiAccess::$user->rights->partnership->read) {
+		if (!DolibarrApiAccess::$user->hasRight('partnership', 'read')) {
 			throw new RestException(403);
 		}
 
@@ -188,7 +188,7 @@ class Partnerships extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->partnership->write) {
+		if (!DolibarrApiAccess::$user->hasRight('partnership', 'write')) {
 			throw new RestException(403);
 		}
 
@@ -227,7 +227,7 @@ class Partnerships extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->partnership->write) {
+		if (!DolibarrApiAccess::$user->hasRight('partnership', 'write')) {
 			throw new RestException(403);
 		}
 
