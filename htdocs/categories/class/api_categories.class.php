@@ -89,7 +89,7 @@ class Categories extends DolibarrApi
 	 */
 	public function get($id, $include_childs = false)
 	{
-		if (!DolibarrApiAccess::$user->rights->categorie->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -136,7 +136,7 @@ class Categories extends DolibarrApi
 	{
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->categorie->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -193,7 +193,7 @@ class Categories extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->categorie->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -224,7 +224,7 @@ class Categories extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->categorie->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -362,7 +362,7 @@ class Categories extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		if (!DolibarrApiAccess::$user->rights->categorie->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -442,7 +442,7 @@ class Categories extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		if (!DolibarrApiAccess::$user->rights->categorie->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -522,7 +522,7 @@ class Categories extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		if (!DolibarrApiAccess::$user->rights->categorie->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -600,7 +600,7 @@ class Categories extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		if (!DolibarrApiAccess::$user->rights->categorie->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -753,7 +753,7 @@ class Categories extends DolibarrApi
 	{
 		dol_syslog("getObjects($id, $type, $onlyids)", LOG_DEBUG);
 
-		if (!DolibarrApiAccess::$user->rights->categorie->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
 			throw new RestException(403);
 		}
 
