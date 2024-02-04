@@ -31,6 +31,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -729,6 +730,7 @@ if (empty($reshook)) {
 
 $userstat = new User($db);
 $form = new Form($db);
+$formfile = new FormFile($db);
 $formticket = new FormTicket($db);
 if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
@@ -1613,6 +1615,16 @@ if ($action == 'create' || $action == 'presend') {
 		if ($action != 'presend' && $action != 'presend_addmessage' && $action != 'add_message') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
+			/*
+			 * Generated documents
+			 */
+			$filename = dol_sanitizeFileName($object->ref);
+			$filedir = $upload_dir."/".dol_sanitizeFileName($object->ref);
+			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+			$genallowed = $permissiontoadd;
+			$delallowed = $permissiontodelete;
+
+			print $formfile->showdocuments('ticket', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $thirdparty->default_lang);
 
 			// Show links to link elements
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('ticket'));
