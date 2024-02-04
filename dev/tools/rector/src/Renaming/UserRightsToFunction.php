@@ -74,9 +74,30 @@ class UserRightsToFunction extends AbstractRector
 				}
 			}
 		}
+
 		if ($node instanceof Node\Expr\Assign) {
-			return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
+			// var is left of = and expr is right
+			if (!isset($node->var)) {
+				return;
+			}
+
+			if (!$node->expr instanceof Node\Expr\PropertyFetch) {
+				return;
+			}
+
+			$data = $this->getRights($node->expr);
+			if (!isset($data)) {
+				return;
+			}
+			$args = [new Arg($data['module']), new Arg($data['perm1'])];
+			if (!empty($data['perm2'])) {
+				$args[] = new Arg($data['perm2']);
+			}
+			$node->expr = $this->nodeFactory->createMethodCall($data['user'], 'hasRight', $args);
+
+			return $node;
 		}
+
 		$isInverse = false;
 		if ($node instanceof Node\Expr\BooleanNot) {
 			if (!$node->expr instanceof Node\Expr\Empty_) {
