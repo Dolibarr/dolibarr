@@ -49,12 +49,13 @@ return static function (RectorConfig $rectorConfig): void {
 	$rectorConfig->rule(Rector\CodeQuality\Rector\FuncCall\FloatvalToTypeCastRector::class);
 	$rectorConfig->rule(Rector\CodeQuality\Rector\FuncCall\BoolvalToTypeCastRector::class);
 	$rectorConfig->rule(Rector\CodeQuality\Rector\NotEqual\CommonNotEqualRector::class);
-	//$rectorconfig->rule(Rector\CodeQuality\Rector\If_\CompleteMissingIfElseBracketRector::class);
+	//Not yet ready: $rectorconfig->rule(Rector\CodeQuality\Rector\If_\CompleteMissingIfElseBracketRector::class);
 	$rectorConfig->rule(Rector\CodeQuality\Rector\For_\ForRepeatedCountToOwnVariableRector::class);
 
 	$rectorConfig->rule(Dolibarr\Rector\Renaming\GlobalToFunction::class);
 	$rectorConfig->rule(Dolibarr\Rector\Renaming\UserRightsToFunction::class);
 	$rectorConfig->rule(Dolibarr\Rector\Renaming\EmptyGlobalToFunction::class);
+	$rectorConfig->rule(Dolibarr\Rector\Renaming\EmptyUserRightsToFunction::class);
 
 	// Add all predefined rules to migrate to up to php 71.
 	// Warning this break tab spacing of arrays on several lines
