@@ -404,7 +404,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'set_opp_status' && $user->rights->projet->creer) {
+	if ($action == 'set_opp_status' && $user->hasRight('projet', 'creer')) {
 		$error = 0;
 		if (GETPOSTISSET('opp_status')) {
 			$object->opp_status   = $opp_status;

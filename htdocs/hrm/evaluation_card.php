@@ -83,7 +83,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 // Permissions
 $permissiontoread = $user->hasRight('hrm', 'evaluation', 'read');
 $permissiontoadd = $user->hasRight('hrm', 'evaluation', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontovalidate = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->rights->hrm->evaluation_advance->validate) || (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $permissiontoadd);
+$permissiontovalidate = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('hrm', 'evaluation_advance', 'validate')) || (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $permissiontoadd);
 $permissiontoClose = $user->hasRight('hrm', 'evaluation', 'write');
 $permissiontodelete = $user->hasRight('hrm', 'evaluation', 'delete')/* || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT)*/;
 $permissiondellink = $user->hasRight('hrm', 'evaluation', 'write'); // Used by the include of actions_dellink.inc.php
