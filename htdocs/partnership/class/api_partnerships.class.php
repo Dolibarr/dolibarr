@@ -68,7 +68,7 @@ class Partnerships extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->partnership->read) {
+		if (!DolibarrApiAccess::$user->hasRight('partnership', 'read')) {
 			throw new RestException(403);
 		}
 
@@ -107,7 +107,7 @@ class Partnerships extends DolibarrApi
 		$obj_ret = array();
 		$tmpobject = new Partnership($this->db);
 
-		if (!DolibarrApiAccess::$user->rights->partnership->read) {
+		if (!DolibarrApiAccess::$user->hasRight('partnership', 'read')) {
 			throw new RestException(403);
 		}
 

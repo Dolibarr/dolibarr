@@ -67,7 +67,7 @@ class BankAccounts extends DolibarrApi
 	{
 		$list = array();
 
-		if (!DolibarrApiAccess::$user->rights->banque->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -129,7 +129,7 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -150,7 +150,7 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->configurer) {
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'configurer')) {
 			throw new RestException(403);
 		}
 		// Check mandatory fields
@@ -201,7 +201,7 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function transfer($bankaccount_from_id = 0, $bankaccount_to_id = 0, $date = null, $description = "", $amount = 0.0, $amount_to = 0.0)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->configurer) {
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'configurer')) {
 			throw new RestException(403);
 		}
 
@@ -325,7 +325,7 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->configurer) {
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'configurer')) {
 			throw new RestException(403);
 		}
 
@@ -363,7 +363,7 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->configurer) {
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'configurer')) {
 			throw new RestException(403);
 		}
 		$account = new Account($this->db);
@@ -436,7 +436,7 @@ class BankAccounts extends DolibarrApi
 	{
 		$list = array();
 
-		if (!DolibarrApiAccess::$user->rights->banque->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -595,7 +595,7 @@ class BankAccounts extends DolibarrApi
 	{
 		$list = array();
 
-		if (!DolibarrApiAccess::$user->rights->banque->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire')) {
 			throw new RestException(403);
 		}
 
