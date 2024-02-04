@@ -245,10 +245,6 @@ print '</div>';
 print dol_get_fiche_end();
 
 $modulepart = 'bookcal';
-//$permissiontoadd = $user->rights->bookcal->calendar->write;
-$permissiontoadd = 1;
-//$permtoedit = $user->rights->bookcal->calendar->write;
-$permtoedit = 1;
 $param = '&id='.$object->id;
 
 //$relativepathwithnofile='calendar/' . dol_sanitizeFileName($object->id).'/';

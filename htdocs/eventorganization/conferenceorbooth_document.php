@@ -395,10 +395,6 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'eventorganization';
-	//$permission = $user->rights->eventorganization->conferenceorbooth->write;
-	$permission = 1;
-	//$permtoedit = $user->rights->eventorganization->conferenceorbooth->write;
-	$permtoedit = 1;
 	$param = '&id='.$object->id;
 	//$param = '';
 	if ($withproject) {

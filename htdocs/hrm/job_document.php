@@ -158,9 +158,6 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'hrm';
-	//$permissiontoadd = $user->rights->hrm->job->write;
-	//$permtoedit = $user->rights->hrm->job->write;
-	$permtoedit = $permissiontoadd;
 	$param = '&id='.$object->id;
 
 	//$relativepathwithnofile='job/' . dol_sanitizeFileName($object->id).'/';
