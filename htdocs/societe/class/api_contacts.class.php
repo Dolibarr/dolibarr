@@ -71,7 +71,7 @@ class Contacts extends DolibarrApi
 	 */
 	public function get($id, $includecount = 0, $includeroles = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->contact->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'lire')) {
 			throw new RestException(401, 'No permission to read contacts');
 		}
 
@@ -119,7 +119,7 @@ class Contacts extends DolibarrApi
 	 */
 	public function getByEmail($email, $includecount = 0, $includeroles = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->contact->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'lire')) {
 			throw new RestException(401, 'No permission to read contacts');
 		}
 
@@ -177,7 +177,7 @@ class Contacts extends DolibarrApi
 
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->societe->contact->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'lire')) {
 			throw new RestException(401, 'No permission to read contacts');
 		}
 
@@ -276,7 +276,7 @@ class Contacts extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->contact->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'creer')) {
 			throw new RestException(401, 'No permission to create/update contacts');
 		}
 		// Check mandatory fields
@@ -315,7 +315,7 @@ class Contacts extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->contact->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'creer')) {
 			throw new RestException(401, 'No permission to create/update contacts');
 		}
 
@@ -403,7 +403,7 @@ class Contacts extends DolibarrApi
 			throw new RestException(400, "password field missing");
 		}
 
-		if (!DolibarrApiAccess::$user->rights->societe->contact->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'lire')) {
 			throw new RestException(403, 'No permission to read contacts');
 		}
 		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
@@ -479,7 +479,7 @@ class Contacts extends DolibarrApi
 	 */
 	public function addCategory($id, $category_id)
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->contact->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'creer')) {
 			throw new RestException(401, 'Insufficient rights');
 		}
 
@@ -519,7 +519,7 @@ class Contacts extends DolibarrApi
 	 */
 	public function deleteCategory($id, $category_id)
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->contact->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'creer')) {
 			throw new RestException(401, 'Insufficient rights');
 		}
 

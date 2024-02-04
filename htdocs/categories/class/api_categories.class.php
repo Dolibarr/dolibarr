@@ -320,7 +320,7 @@ class Categories extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		if ($type == Categorie::TYPE_PRODUCT && !DolibarrApiAccess::$user->rights->produit->lire && !DolibarrApiAccess::$user->rights->service->lire) {
+		if ($type == Categorie::TYPE_PRODUCT && !DolibarrApiAccess::$user->hasRight('produit', 'lire') && !DolibarrApiAccess::$user->hasRight('service', 'lire')) {
 			throw new RestException(403);
 		} elseif ($type == Categorie::TYPE_CONTACT && !DolibarrApiAccess::$user->rights->contact->lire) {
 			throw new RestException(403);
@@ -372,7 +372,7 @@ class Categories extends DolibarrApi
 		}
 
 		if ($type === Categorie::TYPE_PRODUCT) {
-			if (!DolibarrApiAccess::$user->rights->produit->creer && !DolibarrApiAccess::$user->rights->service->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('produit', 'creer') && !DolibarrApiAccess::$user->hasRight('service', 'creer')) {
 				throw new RestException(403);
 			}
 			$object = new Product($this->db);
@@ -387,7 +387,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Societe($this->db);
 		} elseif ($type === Categorie::TYPE_CONTACT) {
-			if (!DolibarrApiAccess::$user->rights->societe->contact->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'creer')) {
 				throw new RestException(403);
 			}
 			$object = new Contact($this->db);
@@ -452,7 +452,7 @@ class Categories extends DolibarrApi
 		}
 
 		if ($type === Categorie::TYPE_PRODUCT) {
-			if (!DolibarrApiAccess::$user->rights->produit->creer && !DolibarrApiAccess::$user->rights->service->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('produit', 'creer') && !DolibarrApiAccess::$user->hasRight('service', 'creer')) {
 				throw new RestException(403);
 			}
 			$object = new Product($this->db);
@@ -467,7 +467,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Societe($this->db);
 		} elseif ($type === Categorie::TYPE_CONTACT) {
-			if (!DolibarrApiAccess::$user->rights->societe->contact->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'creer')) {
 				throw new RestException(403);
 			}
 			$object = new Contact($this->db);
@@ -532,7 +532,7 @@ class Categories extends DolibarrApi
 		}
 
 		if ($type === Categorie::TYPE_PRODUCT) {
-			if (!DolibarrApiAccess::$user->rights->produit->creer && !DolibarrApiAccess::$user->rights->service->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('produit', 'creer') && !DolibarrApiAccess::$user->hasRight('service', 'creer')) {
 				throw new RestException(403);
 			}
 			$object = new Product($this->db);
@@ -547,7 +547,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Societe($this->db);
 		} elseif ($type === Categorie::TYPE_CONTACT) {
-			if (!DolibarrApiAccess::$user->rights->societe->contact->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'creer')) {
 				throw new RestException(403);
 			}
 			$object = new Contact($this->db);
@@ -610,7 +610,7 @@ class Categories extends DolibarrApi
 		}
 
 		if ($type === Categorie::TYPE_PRODUCT) {
-			if (!DolibarrApiAccess::$user->rights->produit->creer && !DolibarrApiAccess::$user->rights->service->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('produit', 'creer') && !DolibarrApiAccess::$user->hasRight('service', 'creer')) {
 				throw new RestException(403);
 			}
 			$object = new Product($this->db);
@@ -625,7 +625,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Societe($this->db);
 		} elseif ($type === Categorie::TYPE_CONTACT) {
-			if (!DolibarrApiAccess::$user->rights->societe->contact->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'creer')) {
 				throw new RestException(403);
 			}
 			$object = new Contact($this->db);

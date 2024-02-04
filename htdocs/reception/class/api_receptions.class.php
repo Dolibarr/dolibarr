@@ -179,7 +179,7 @@ class Receptions extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->reception->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
 			throw new RestException(401, "Insuffisant rights");
 		}
 		// Check mandatory fields
@@ -255,7 +255,7 @@ class Receptions extends DolibarrApi
 	/*
 	public function postLine($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->reception->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -323,7 +323,7 @@ class Receptions extends DolibarrApi
 	/*
 	public function putLine($id, $lineid, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->reception->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -388,7 +388,7 @@ class Receptions extends DolibarrApi
 	 */
 	public function deleteLine($id, $lineid)
 	{
-		if (!DolibarrApiAccess::$user->rights->reception->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -425,7 +425,7 @@ class Receptions extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->reception->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -510,7 +510,7 @@ class Receptions extends DolibarrApi
 	 */
 	public function validate($id, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->reception->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
 			throw new RestException(403);
 		}
 		$result = $this->reception->fetch($id);
@@ -556,7 +556,7 @@ class Receptions extends DolibarrApi
 	public function setinvoiced($id)
 	{
 
-		if (!DolibarrApiAccess::$user->rights->reception->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
 				throw new RestException(403);
 		}
 		if (empty($id)) {
@@ -598,7 +598,7 @@ class Receptions extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->reception->lire) {
 				throw new RestException(403);
 		}
-		if (!DolibarrApiAccess::$user->rights->reception->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
 				throw new RestException(403);
 		}
 		if (empty($proposalid)) {
@@ -632,7 +632,7 @@ class Receptions extends DolibarrApi
 	*/
 	public function close($id, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->reception->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
 			throw new RestException(403);
 		}
 
