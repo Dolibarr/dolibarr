@@ -1912,7 +1912,7 @@ class Products extends DolibarrApi
 	 * @return array
 	 *
 	 * @throws RestException 500	System error
-	 * @throws RestException 401
+	 * @throws RestException 403
 	 * @throws RestException 404
 	 *
 	 * @url GET {id}/stock
@@ -1924,7 +1924,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$product_model = new Product($this->db);
@@ -2001,7 +2001,7 @@ class Products extends DolibarrApi
 
 		unset($object->supplierprices);	// Must use another API to get them
 
-		if (empty(DolibarrApiAccess::$user->rights->stock->lire)) {
+		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
 			unset($object->stock_reel);
 			unset($object->stock_theorique);
 			unset($object->stock_warehouse);

@@ -63,7 +63,7 @@ class SupplierProposals extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->supplier_proposal->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('supplier_proposal', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -96,7 +96,7 @@ class SupplierProposals extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->supplier_proposal->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('supplier_proposal', 'lire')) {
 			throw new RestException(403);
 		}
 

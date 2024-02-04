@@ -678,7 +678,7 @@ class Orders extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->supprimer) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'supprimer')) {
 			throw new RestException(403);
 		}
 		$result = $this->commande->fetch($id);
@@ -992,7 +992,7 @@ class Orders extends DolibarrApi
 	public function getOrderShipments($id)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-		if (!DolibarrApiAccess::$user->rights->expedition->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
 			throw new RestException(403);
 		}
 		$obj_ret = array();
@@ -1048,7 +1048,7 @@ class Orders extends DolibarrApi
 	public function createOrderShipment($id, $warehouse_id)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-		if (!DolibarrApiAccess::$user->rights->expedition->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
 			throw new RestException(403);
 		}
 		if ($warehouse_id <= 0) {
