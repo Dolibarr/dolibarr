@@ -127,16 +127,18 @@ class UserRightsToFunction extends AbstractRector
 				}
 			}
 
-			$args = [new Arg($data['module']), new Arg($data['perm1'])];
-			if (!empty($data['perm2'])) {
-				$args[] = new Arg($data['perm2']);
-			}
+			if (isset($data)) {
+				$args = [new Arg($data['module']), new Arg($data['perm1'])];
+				if (!empty($data['perm2'])) {
+					$args[] = new Arg($data['perm2']);
+				}
 
-			if ($mustprocesstheleft) {
-				$node->left = $this->nodeFactory->createMethodCall($data['user'], 'hasRight', $args);
-			}
-			if ($mustprocesstheright) {
-				$node->right = $this->nodeFactory->createMethodCall($data['user'], 'hasRight', $args);
+				if ($mustprocesstheleft && !empty($data['module'])) {
+					$node->left = $this->nodeFactory->createMethodCall($data['user'], 'hasRight', $args);
+				}
+				if ($mustprocesstheright && !empty($data['module'])) {
+					$node->right = $this->nodeFactory->createMethodCall($data['user'], 'hasRight', $args);
+				}
 			}
 
 			return $node;

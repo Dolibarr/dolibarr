@@ -2672,7 +2672,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $dolibarr_main_data_root.'/doctemplates/'.$original_file;
 	} elseif ($modulepart == 'doctemplateswebsite' && !empty($dolibarr_main_data_root)) {
 		// Wrapping for doctemplates of websites
-		$accessallowed = ($fuser->rights->website->write && preg_match('/\.jpg$/i', basename($original_file)));
+		$accessallowed = ($fuser->hasRight('website', 'write') && preg_match('/\.jpg$/i', basename($original_file)));
 		$original_file = $dolibarr_main_data_root.'/doctemplates/websites/'.$original_file;
 	} elseif ($modulepart == 'packages' && !empty($dolibarr_main_data_root)) {	// To download zip of modules
 		// Wrapping for *.zip package files, like when used with url http://.../document.php?modulepart=packages&file=module_myfile.zip
