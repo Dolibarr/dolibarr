@@ -125,8 +125,8 @@ if ($user->socid) {
 
 $result = restrictedArea($user, 'expedition', $object->id, '');
 
-$permissiondellink = $user->rights->expedition->delivery->creer; // Used by the include of actions_dellink.inc.php
-$permissiontoadd = $user->rights->expedition->creer;
+$permissiondellink = $user->hasRight('expedition', 'delivery', 'creer'); // Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->hasRight('expedition', 'creer');
 
 
 /*
@@ -2730,8 +2730,8 @@ if ($action == 'create') {
 
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
-		$genallowed = $user->rights->expedition->lire;
-		$delallowed = $user->rights->expedition->creer;
+		$genallowed = $user->hasRight('expedition', 'lire');
+		$delallowed = $user->hasRight('expedition', 'creer');
 
 		print $formfile->showdocuments('expedition', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 

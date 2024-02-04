@@ -522,13 +522,13 @@ class FormOther
 		if (!empty($user->socid)) {
 			$sql_usr .= " AND u.fk_soc = ".((int) $user->socid);
 		}
-		if (!empty($conf->global->USER_HIDE_NONEMPLOYEE_IN_COMBOBOX)) {
+		if (getDolGlobalString('USER_HIDE_NONEMPLOYEE_IN_COMBOBOX')) {
 			$sql_usr .= " AND u.employee <> 0";
 		}
-		if (!empty($conf->global->USER_HIDE_EXTERNAL_IN_COMBOBOX)) {
+		if (getDolGlobalString('USER_HIDE_EXTERNAL_IN_COMBOBOX')) {
 			$sql_usr .= " AND u.fk_soc IS NULL";
 		}
-		if (!empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) {
+		if (getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX')) {
 			$sql_usr .= " AND u.statut <> 0";
 		}
 

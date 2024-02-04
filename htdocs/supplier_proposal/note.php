@@ -61,7 +61,7 @@ $usercancreate = $user->hasRight("supplier_propal", "write");
  * Actions
  */
 
-$permissionnote = $user->rights->supplier_proposal->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('supplier_proposal', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks

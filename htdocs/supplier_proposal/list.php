@@ -204,8 +204,8 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
-$permissiontoread = $user->rights->supplier_proposal->lire;
-$permissiontodelete = $user->rights->supplier_proposal->supprimer;
+$permissiontoread = $user->hasRight('supplier_proposal', 'lire');
+$permissiontodelete = $user->hasRight('supplier_proposal', 'supprimer');
 
 
 /*
@@ -1358,8 +1358,8 @@ if ($resql) {
 
 	$filedir = $diroutputmassaction;
 
-	$genallowed = $user->rights->supplier_proposal->lire;
-	$delallowed = $user->rights->supplier_proposal->creer;
+	$genallowed = $user->hasRight('supplier_proposal', 'lire');
+	$delallowed = $user->hasRight('supplier_proposal', 'creer');
 
 	print $formfile->showdocuments('massfilesarea_supplier_proposal', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 } else {

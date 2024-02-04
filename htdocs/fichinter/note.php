@@ -49,7 +49,7 @@ $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 $object = new Fichinter($db);
 $object->fetch($id, $ref);
 
-$permissionnote = $user->rights->ficheinter->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('ficheinter', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 /*
  * Actions

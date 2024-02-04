@@ -80,7 +80,7 @@ $modulepart = 'resource';
 
 $result = restrictedArea($user, 'resource', $object->id, 'resource');
 
-$permissiontoadd = $user->rights->resource->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+$permissiontoadd = $user->hasRight('resource', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 
 
 /*
@@ -146,7 +146,7 @@ if ($object->id > 0) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'dolresource';
-	$permissiontoadd = $user->rights->resource->write;
+	$permissiontoadd = $user->hasRight('resource', 'write');
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

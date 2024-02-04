@@ -148,9 +148,9 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 
-$permissiontoread = $user->rights->salaries->read;
-$permissiontoadd = $user->rights->salaries->write;
-$permissiontodelete = $user->rights->salaries->delete;
+$permissiontoread = $user->hasRight('salaries', 'read');
+$permissiontoadd = $user->hasRight('salaries', 'write');
+$permissiontodelete = $user->hasRight('salaries', 'delete');
 
 // Security check
 $socid = GETPOST("socid", "int");
