@@ -62,7 +62,7 @@ class Donations extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->don->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('don', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -101,7 +101,7 @@ class Donations extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->don->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('don', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -175,7 +175,7 @@ class Donations extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->don->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('don', 'creer')) {
 			throw new RestException(401, "Insuffisant rights");
 		}
 
@@ -216,7 +216,7 @@ class Donations extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->don->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('don', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -256,7 +256,7 @@ class Donations extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->don->supprimer) {
+		if (!DolibarrApiAccess::$user->hasRight('don', 'supprimer')) {
 			throw new RestException(403);
 		}
 
@@ -305,7 +305,7 @@ class Donations extends DolibarrApi
 	 */
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->don->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('don', 'creer')) {
 			throw new RestException(403);
 		}
 
