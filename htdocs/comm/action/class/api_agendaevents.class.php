@@ -63,7 +63,7 @@ class AgendaEvents extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->agenda->myactions->read) {
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'read')) {
 			throw new RestException(401, "Insufficient rights to read an event");
 		}
 		if ($id === 0) {
@@ -109,7 +109,7 @@ class AgendaEvents extends DolibarrApi
 
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->agenda->myactions->read) {
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'read')) {
 			throw new RestException(401, "Insufficient rights to read events");
 		}
 
