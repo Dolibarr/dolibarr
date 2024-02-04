@@ -133,9 +133,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-/*$permissiontoread = $user->rights->emailcollector->read;
-$permissiontoadd = $user->rights->emailcollector->write;
-$permissiontodelete = $user->rights->emailcollector->delete;*/
 $permissiontoread = $user->admin;
 $permissiontoadd = $user->admin;
 $permissiontodelete = $user->admin;

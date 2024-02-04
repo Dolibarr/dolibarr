@@ -71,7 +71,7 @@ class Projects extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->projet->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -107,7 +107,7 @@ class Projects extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $properties = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->projet->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -118,7 +118,7 @@ class Projects extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -193,7 +193,7 @@ class Projects extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->projet->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
 			throw new RestException(401, "Insuffisant rights");
 		}
 		// Check mandatory fields
@@ -234,7 +234,7 @@ class Projects extends DolibarrApi
 	 */
 	public function getLines($id, $includetimespent = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->projet->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -274,7 +274,7 @@ class Projects extends DolibarrApi
 	{
 		global $db;
 
-		if (!DolibarrApiAccess::$user->rights->projet->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -317,7 +317,7 @@ class Projects extends DolibarrApi
 	/*
 	public function postLine($id, $request_data = null)
 	{
-		if(! DolibarrApiAccess::$user->rights->projet->creer) {
+		if(! DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -384,7 +384,7 @@ class Projects extends DolibarrApi
 	/*
 	public function putLine($id, $lineid, $request_data = null)
 	{
-		if(! DolibarrApiAccess::$user->rights->projet->creer) {
+		if(! DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -445,7 +445,7 @@ class Projects extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->projet->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -486,7 +486,7 @@ class Projects extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->projet->supprimer) {
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'supprimer')) {
 			throw new RestException(403);
 		}
 		$result = $this->project->fetch($id);
@@ -530,7 +530,7 @@ class Projects extends DolibarrApi
 	 */
 	public function validate($id, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->projet->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
 			throw new RestException(403);
 		}
 		$result = $this->project->fetch($id);

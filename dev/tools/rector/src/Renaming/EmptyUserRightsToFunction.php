@@ -26,7 +26,7 @@ use Rector\Strict\Rector\BooleanNot\BooleanInBooleanNotRuleFixerRector;
 /**
  * Class with Rector custom rule to fix code
  */
-class EmptyGlobalToFunction extends AbstractRector
+class EmptyUserRightsToFunction extends AbstractRector
 {
 	/**
 	 * @var \Rector\Core\NodeManipulator\BinaryOpManipulator
@@ -52,11 +52,11 @@ class EmptyGlobalToFunction extends AbstractRector
 	public function getRuleDefinition(): RuleDefinition
 	{
 		return new RuleDefinition(
-			'Change empty($conf->global->...) to getDolGlobal',
+			'Change empty(\$user->rights->module->permission) to !\$user->hasRight(\'module\', \'permission\')',
 			[new CodeSample(
-				'empty($conf->global->CONSTANT)',
-				'!getDolGlobalInt(\'CONSTANT\')'
-			)]
+				'empty($user->rights->module->permission)',
+				'!$user->hasRight(\'module\', \'permission\')'
+				)]
 		);
 	}
 
@@ -83,62 +83,88 @@ class EmptyGlobalToFunction extends AbstractRector
 				return null;
 			}
 			// node is !empty(...) so we set newnode to ...
-			$newnode = $node->expr->expr;		// newnode is conf->global->...
+			$newnode = $node->expr->expr;
 
-			$tmpglobal = $newnode->var;			// tmpglobal is global->...
-			if (is_null($tmpglobal)) {
-				return null;
-			}
-			if (!$this->isName($tmpglobal, 'global')) {
+			$tmpperm = $newnode->var;		//name of tmpperm is modulex
+			if (is_null($tmpperm)) {
 				return null;
 			}
 
-			$tmpconf = $tmpglobal->var;			// tmpconf is conf->
-			if (!$this->isName($tmpconf, 'conf')) {
+			$tmprights = $tmpperm->var;		// name of tmprights is 'rights'
+			if (is_null($tmprights)) {
+				return null;
+			}
+			if (!$this->isName($tmprights, 'rights')) {
+				$tmprights2 = $tmprights->var;	// name of tmprights is 'rights'
+				if (is_null($tmprights2)) {
+					return null;
+				}
+				if (!$this->isName($tmprights2, 'rights')) {
+					return null;
+				}
+				$tmprights = $tmprights2;
+			}
+
+			$tmpuser = $tmprights->var;			// name of tmpuser is 'user'
+			if (!$this->isName($tmpuser, 'user')) {
 				return null;
 			}
 
-			$nameforconst = $this->getName($newnode);
-			if (is_null($nameforconst)) {
-				return null;
+			$data = $this->getRights($newnode);
+			if (!isset($data)) {
+				return;
 			}
-			$constName = new String_($nameforconst);
 
-			// We found a node !empty(conf->global->XXX)
-			return new FuncCall(
-				new Name('getDolGlobalString'),
-				[new Arg($constName)]
-			);
+			$args = [new Arg($data['module']), new Arg($data['perm1'])];
+			if (!empty($data['perm2'])) {
+				$args[] = new Arg($data['perm2']);
+			}
+			$method = $this->nodeFactory->createMethodCall($data['user'], 'hasRight', $args);
+
+			return $method;
 		}
-
 
 		if ($node instanceof Node\Expr\Empty_) {
 			// node is empty(...) so we set newnode to ...
-			$newnode = $node->expr;			// newnode is conf->global->...
+			$newnode = $node->expr;			// name of node is perm
 
-			$tmpglobal = $newnode->var;		// tmpglobal is global->...
-			if (is_null($tmpglobal)) {
-				return null;
-			}
-			if (!$this->isName($tmpglobal, 'global')) {
+			$tmpperm = $newnode->var;		//name of tmpperm is modulex
+			if (is_null($tmpperm)) {
 				return null;
 			}
 
-			$tmpconf = $tmpglobal->var;		// tmpconf is conf->
-			if (!$this->isName($tmpconf, 'conf')) {
+			$tmprights = $tmpperm->var;		// name of tmprights is 'rights'
+			if (is_null($tmprights)) {
+				return null;
+			}
+			if (!$this->isName($tmprights, 'rights')) {
+				$tmprights2 = $tmprights->var;	// name of tmprights is 'rights'
+				if (is_null($tmprights2)) {
+					return null;
+				}
+				if (!$this->isName($tmprights2, 'rights')) {
+					return null;
+				}
+				$tmprights = $tmprights2;
+			}
+
+			$tmpuser = $tmprights->var;			// name of tmpuser is 'user'
+			if (!$this->isName($tmpuser, 'user')) {
 				return null;
 			}
 
-			$nameforconst = $this->getName($newnode);
-			if (is_null($nameforconst)) {
-				return null;
+			$data = $this->getRights($newnode);
+			if (!isset($data)) {
+				return;
 			}
-			$constName = new String_($nameforconst);
 
-			return new BooleanNot(new FuncCall(
-				new Name('getDolGlobalString'),
-				[new Arg($constName)]
-			));
+			$args = [new Arg($data['module']), new Arg($data['perm1'])];
+			if (!empty($data['perm2'])) {
+				$args[] = new Arg($data['perm2']);
+			}
+			$method = $this->nodeFactory->createMethodCall($data['user'], 'hasRight', $args);
+
+			return new Node\Expr\BooleanNot($method);
 		}
 
 		return null;
@@ -212,5 +238,46 @@ class EmptyGlobalToFunction extends AbstractRector
 			return;
 		}
 		return new String_($name);
+	}
+
+	/**
+	 * @param \PhpParser\Node\Expr\PropertyFetch $node node
+	 * @return array|null
+	 */
+	private function getRights(Node\Expr\PropertyFetch $node)
+	{
+		$perm2 = '';
+		if (!$node->var instanceof Node\Expr\PropertyFetch) {
+			return null;
+		}
+		// Add a test to avoid rector error on html.formsetup.class.php
+		if (!$node->name instanceof Node\Expr\Variable && is_null($this->getName($node))) {
+			//var_dump($node);
+			return null;
+			//exit;
+		}
+		$perm1 = $node->name instanceof Node\Expr\Variable ? $node->name : new String_($this->getName($node));
+		$moduleNode = $node->var;
+		if (!$moduleNode instanceof Node\Expr\PropertyFetch) {
+			return null;
+		}
+		if (!$moduleNode->var instanceof Node\Expr\PropertyFetch) {
+			return null;
+		}
+		if (!$this->isName($moduleNode->var, 'rights')) {
+			$perm2 = $perm1;
+			$perm1 = $moduleNode->name instanceof Node\Expr\Variable ? $moduleNode->name : new String_($this->getName($moduleNode));
+			$moduleNode = $moduleNode->var;
+		}
+		$module = $moduleNode->name instanceof Node\Expr\Variable ? $moduleNode->name : new String_($this->getName($moduleNode));
+		$rights = $moduleNode->var;
+		if (!$this->isName($rights, 'rights') || !isset($perm1) || !isset($module)) {
+			return null;
+		}
+		if (!$rights->var instanceof Node\Expr\Variable) {
+			return null;
+		}
+		$user = $rights->var;
+		return compact('user', 'module', 'perm1', 'perm2');
 	}
 }

@@ -57,7 +57,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'don', $object->id, '');
 
-$permissionnote = $user->rights->don->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('don', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 
 /*

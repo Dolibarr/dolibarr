@@ -35,7 +35,7 @@ $action = GETPOST('action', 'aZ09');
 
 
 // Security check
-// if (! $user->rights->bookcal->myobject->read) {
+// if (! $user->hasRight('bookcal', 'myobject', 'read')) {
 // 	accessforbidden();
 // }
 $socid = GETPOST('socid', 'int');

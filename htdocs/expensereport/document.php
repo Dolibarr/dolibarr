@@ -95,7 +95,7 @@ if ($object->id > 0) {
 	}
 }
 
-$permissiontoadd = $user->rights->expensereport->creer;	// Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->hasRight('expensereport', 'creer');	// Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -156,8 +156,8 @@ if ($object->id) {
 
 
 	$modulepart = 'expensereport';
-	$permissiontoadd = $user->rights->expensereport->creer;
-	$permtoedit = $user->rights->expensereport->creer;
+	$permissiontoadd = $user->hasRight('expensereport', 'creer');
+	$permtoedit = $user->hasRight('expensereport', 'creer');
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

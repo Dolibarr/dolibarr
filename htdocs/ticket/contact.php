@@ -78,7 +78,7 @@ if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $
 	accessforbidden();
 }
 
-$permissiontoadd = $user->rights->ticket->write;
+$permissiontoadd = $user->hasRight('ticket', 'write');
 
 
 /*
@@ -268,7 +268,7 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 
 		//print '<br>';
 
-		$permission = $user->rights->ticket->write;
+		$permission = $user->hasRight('ticket', 'write');
 
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
 		$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
