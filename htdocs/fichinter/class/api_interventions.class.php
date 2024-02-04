@@ -305,7 +305,7 @@ class Interventions extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->ficheinter->supprimer) {
+		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'supprimer')) {
 			throw new RestException(403);
 		}
 		$result = $this->fichinter->fetch($id);
