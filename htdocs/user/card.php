@@ -948,7 +948,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					login = "";
 					if(lastname) {
 						if(firstname) {
-							login = firstname + ".";
+							login = firstname + "'. getDolGlobalString("MAIN_USER_SEPARATOR_CHAR_FOR_GENERATED_LOGIN", "").'";
 						}
 						login += lastname;					
 					}
