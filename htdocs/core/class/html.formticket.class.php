@@ -794,7 +794,7 @@ class FormTicket
 	}
 
 	/**
-	 *      Return html list of ticket anaytic codes
+	 *      Return html list of ticket analytic codes
 	 *
 	 *      @param  string 		$selected   		Id pre-selected category
 	 *      @param  string 		$htmlname   		Name of select component

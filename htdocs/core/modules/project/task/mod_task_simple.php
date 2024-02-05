@@ -124,7 +124,7 @@ class mod_task_simple extends ModeleNumRefTask
 	 *
 	 *  @param   Societe	$objsoc		Object third party
 	 *  @param   Task	$object		Object Task
-	 *  @return	string				Value if OK, 0 if KO
+	 *  @return	string|-1			Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -169,7 +169,7 @@ class mod_task_simple extends ModeleNumRefTask
 	 *
 	 *  @param  Societe	$objsoc     Object third party
 	 *  @param  Task	$object     Object task
-	 *  @return string              Next not used reference
+	 *  @return string|-1           Next not used reference, -1 if KO
 	 */
 	public function task_get_num($objsoc = 0, $object = '')
 	{
