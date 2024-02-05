@@ -1423,30 +1423,39 @@ class Ticket extends CommonObject
 		// phpcs:enable
 		global $langs, $hookmanager;
 
-		$labelStatus = $this->labelStatus[$status];
-		$labelStatusShort = $this->labelStatusShort[$status];
+		$labelStatus = !empty($status) ? $this->labelStatus[$status] : '';
+		$labelStatusShort = !empty($status) ? $this->labelStatusShort[$status] : '';
 
-		if ($status == self::STATUS_NOT_READ) {
-			$statusType = 'status0';
-		} elseif ($status == self::STATUS_READ) {
-			$statusType = 'status1';
-		} elseif ($status == self::STATUS_ASSIGNED) {
-			$statusType = 'status2';
-		} elseif ($status == self::STATUS_IN_PROGRESS) {
-			$statusType = 'status4';
-		} elseif ($status == self::STATUS_WAITING) {
-			$statusType = 'status7';
-		} elseif ($status == self::STATUS_NEED_MORE_INFO) {
-			$statusType = 'status3';
-		} elseif ($status == self::STATUS_CANCELED) {
-			$statusType = 'status9';
-		} elseif ($status == self::STATUS_CLOSED) {
-			$statusType = 'status6';
-		} else {
-			$labelStatus = 'Unknown';
-			$labelStatusShort = 'Unknown';
-			$statusType = 'status0';
-			$mode = 0;
+		switch ($status) {
+			case self::STATUS_NOT_READ:
+				$statusType = 'status0';
+				break;
+			case self::STATUS_READ:
+				$statusType = 'status1';
+				break;
+			case self::STATUS_ASSIGNED:
+				$statusType = 'status2';
+				break;
+			case self::STATUS_IN_PROGRESS:
+				$statusType = 'status4';
+				break;
+			case self::STATUS_WAITING:
+				$statusType = 'status7';
+				break;
+			case self::STATUS_NEED_MORE_INFO:
+				$statusType = 'status3';
+				break;
+			case self::STATUS_CANCELED:
+				$statusType = 'status9';
+				break;
+			case self::STATUS_CLOSED:
+				$statusType = 'status6';
+				break;
+			default:
+				$labelStatus = 'Unknown';
+				$labelStatusShort = 'Unknown';
+				$statusType = 'status0';
+				$mode = 0;
 		}
 
 		$parameters = array(
