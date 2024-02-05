@@ -345,6 +345,7 @@ class Ticket extends CommonObject
 		'progress' => array('type'=>'integer', 'label'=>'Progression', 'visible'=>-1, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'css'=>'right', 'help'=>"", 'isameasure'=>2, 'csslist'=>'width50'),
 		'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>'getDolGlobalString("TICKET_ENABLE_RESOLUTION")', 'position'=>550, 'notnull'=>1),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'PDFTemplate', 'enabled'=>1, 'visible'=>0, 'position'=>560),
+		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>570),
 		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'TicketAnswered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'SolvedClosed', 9 => 'Deleted')),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
 	);
@@ -669,6 +670,7 @@ class Ticket extends CommonObject
 		$sql .= " t.date_close,";
 		$sql .= " t.tms,";
 		$sql .= " t.model_pdf,";
+		$sql .= " t.extraparams,";
 		$sql .= " t.ip,";
 		$sql .= " type.label as type_label, category.label as category_label, severity.label as severity_label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
@@ -711,6 +713,7 @@ class Ticket extends CommonObject
 				$this->subject = $obj->subject;
 				$this->message = $obj->message;
 				$this->model_pdf = $obj->model_pdf;
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 				$this->ip = $obj->ip;
 
 				$this->status = $obj->status;

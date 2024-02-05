@@ -708,7 +708,6 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-	//var_dump($action);exit;
 
 	// Actions to send emails
 	$triggersendname = 'TICKET_SENTBYMAIL';
@@ -813,8 +812,7 @@ if ($action == 'create' || $action == 'presend') {
 	print $form->buttonsSaveCancel();
 
 	print '</form>'; */
-} elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'presend' || $action == 'presend_addmessage' || $action == 'close' || $action == 'abandon' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'categories' || $action == 'reopen'
-	|| $action== 'edit_contrat' || $action == 'editsubject' || $action == 'edit_extras' || $action == 'update_extras' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink') {
+} elseif (empty($action) || in_array($action, ['builddoc', 'view', 'addlink', 'dellink', 'presend', 'presend_addmessage', 'close', 'abandon', 'delete', 'editcustomer', 'progression', 'categories', 'reopen', 'edit_contrat', 'editsubject', 'edit_extras', 'update_extras', 'edit_extrafields', 'set_extrafields', 'classify', 'sel_contract', 'edit_message_init', 'set_status', 'dellink'])) {
 	if ($res > 0) {
 		// or for unauthorized internals users
 		if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $object->fk_user_assign != $user->id) && !$user->hasRight('ticket', 'manage')) {
