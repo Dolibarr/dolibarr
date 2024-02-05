@@ -398,7 +398,7 @@ function getDomainFromURL($url, $mode = 0)
  */
 function getRootURLFromURL($url)
 {
-	return preg_replace('/(.*:\/\/[^\/]*).*/', '$1', $url);
+	return preg_replace('/^([a-z]*:\/\/[^\/]*).*/i', '$1', $url);
 }
 
 /**
