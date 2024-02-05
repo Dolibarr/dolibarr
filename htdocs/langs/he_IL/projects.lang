@@ -287,4 +287,5 @@ ProjectTasksWithoutTimeSpent=משימות בפרויקט שאין עליהן ז�
 FormForNewLeadDesc=תודה על מילוי הטופס הבא כדי ליצור איתנו קשר. ניתן גם לשלוח אלינו אימייל ישירות ל-<b>%s</b>.
 ProjectsHavingThisContact=פרויקטים המכילים איש קשר זה
 StartDateCannotBeAfterEndDate=תאריך ההתחלה לא יכול להיות אחרי תאריך הסיום
+Parent=פרוייקט אב
 
