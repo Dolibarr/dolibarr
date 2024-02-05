@@ -196,10 +196,6 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'bookcal';
-	//$permissiontoadd = $user->hasRight('bookcal', 'availabilities', 'write');
-	$permissiontoadd = 1;
-	//$permtoedit = $user->hasRight('bookcal', 'availabilities', 'write');
-	$permtoedit = 1;
 	$param = '&id='.$object->id;
 
 	//$relativepathwithnofile='availabilities/' . dol_sanitizeFileName($object->id).'/';

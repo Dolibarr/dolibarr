@@ -85,7 +85,7 @@ if (!empty($section)) {
 	}
 }
 
-$permissiontoread = $user->rights->ecm->read;
+$permissiontoread = $user->hasRight('ecm', 'read');
 
 if (!$permissiontoread) {
 	accessforbidden();

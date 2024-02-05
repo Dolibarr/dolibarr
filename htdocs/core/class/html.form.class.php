@@ -2081,10 +2081,10 @@ class Form
 		if (getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX') || $notdisabled) {
 			$sql .= " AND u.statut <> 0";
 		}
-		if (!empty($conf->global->USER_HIDE_NONEMPLOYEE_IN_COMBOBOX) || $notdisabled) {
+		if (getDolGlobalString('USER_HIDE_NONEMPLOYEE_IN_COMBOBOX') || $notdisabled) {
 			$sql .= " AND u.employee <> 0";
 		}
-		if (!empty($conf->global->USER_HIDE_EXTERNAL_IN_COMBOBOX) || $notdisabled) {
+		if (getDolGlobalString('USER_HIDE_EXTERNAL_IN_COMBOBOX') || $notdisabled) {
 			$sql .= " AND u.fk_soc IS NULL";
 		}
 		if (!empty($morefilter)) {
@@ -9489,16 +9489,16 @@ class Form
 	/**
 	 *    Return an html string with a select combo box to choose yes or no
 	 *
-	 * @param string $htmlname Name of html select field
-	 * @param string $value Pre-selected value
-	 * @param int $option 0 return yes/no, 1 return 1/0
-	 * @param bool $disabled true or false
-	 * @param int $useempty 1=Add empty line
-	 * @param int $addjscombo 1=Add js beautifier on combo box
-	 * @param string $morecss More CSS
-	 * @param string $labelyes Label for Yes
-	 * @param string $labelno Label for No
-	 * @return    string                        See option
+	 * @param string 	$htmlname 		Name of html select field
+	 * @param string 	$value 			Pre-selected value
+	 * @param int 		$option 		0 return yes/no, 1 return 1/0
+	 * @param bool 		$disabled 		true or false
+	 * @param int 		$useempty 		1=Add empty line
+	 * @param int 		$addjscombo 	1=Add js beautifier on combo box
+	 * @param string 	$morecss 		More CSS
+	 * @param string 	$labelyes 		Label for Yes
+	 * @param string 	$labelno 		Label for No
+	 * @return    string                See option
 	 */
 	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0, $morecss = '', $labelyes = 'Yes', $labelno = 'No')
 	{

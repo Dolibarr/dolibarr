@@ -84,11 +84,11 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque', '', 'fk_user_author', $fieldname);
 
-$usercanread = $user->rights->banque->cheque;
-$usercancreate = $user->rights->banque->cheque;
-$usercandelete = $user->rights->banque->cheque;
+$usercanread = $user->hasRight('banque', 'cheque');
+$usercancreate = $user->hasRight('banque', 'cheque');
+$usercandelete = $user->hasRight('banque', 'cheque');
 
-$permissiontodelete = $user->rights->banque->cheque;
+$permissiontodelete = $user->hasRight('banque', 'cheque');
 
 // List of payment mode to support
 // Example: BANK_PAYMENT_MODES_FOR_DEPOSIT_MANAGEMENT = 'CHQ','TRA'
