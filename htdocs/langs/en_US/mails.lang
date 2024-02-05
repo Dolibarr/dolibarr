@@ -191,4 +191,4 @@ XEmailsDoneYActionsDone=%s emails pre-qualified, %s emails successfully processe
 helpWithAi=Generate message from AI
 YouCanMakeSomeInstructionForEmail=You can make some instructions for your Email (Example: generate image in email template...)
 ModelTemplate=Email template
-YouCanChooseAModelForYouMailContent= You can shoose one of models or generate one with Ai
+YouCanChooseAModelForYouMailContent= You can choose one of template models or generate one with AI
