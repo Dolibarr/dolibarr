@@ -416,7 +416,7 @@ class Categories extends DolibarrApi
 			return array(
 				'success' => array(
 					'code' => 200,
-					'message' => 'Objects succefully linked to the category'
+					'message' => 'Objects successfully linked to the category'
 				)
 			);
 		}
@@ -496,7 +496,7 @@ class Categories extends DolibarrApi
 			return array(
 				'success' => array(
 					'code' => 200,
-					'message' => 'Objects succefully linked to the category'
+					'message' => 'Objects successfully linked to the category'
 				)
 			);
 		}
@@ -574,7 +574,7 @@ class Categories extends DolibarrApi
 			return array(
 				'success' => array(
 					'code' => 200,
-					'message' => 'Objects succefully unlinked from the category'
+					'message' => 'Objects successfully unlinked from the category'
 				)
 			);
 		}
@@ -652,7 +652,7 @@ class Categories extends DolibarrApi
 			return array(
 				'success' => array(
 					'code' => 200,
-					'message' => 'Objects succefully unlinked from the category'
+					'message' => 'Objects successfully unlinked from the category'
 				)
 			);
 		}

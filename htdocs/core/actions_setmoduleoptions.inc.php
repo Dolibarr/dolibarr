@@ -47,7 +47,7 @@ if ($action == 'update' && is_array($arrayofparameters) && !empty($user->admin))
 				} else {
 					$val_const = GETPOST($key, 'int');
 				}
-			} else if ($val['type'] == 'html') {
+			} elseif ($val['type'] == 'html') {
 				$val_const = GETPOST($key, 'restricthtml');
 			} else {
 				$val_const = GETPOST($key, 'alpha');

@@ -171,6 +171,7 @@ if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString
 	function ValidateReduction()
 	{
 		console.log('ValidateReduction');
+		reductionTotal = jQuery('#reduction_total').val();
 
 		if (reductionTotal.length <= 0) {
 			console.error('Error no reduction');
