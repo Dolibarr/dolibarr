@@ -173,7 +173,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	 *
 	 *  @param	Societe		$objsoc     Object third party
 	 * 	@param	string		$objforref	Object for number to search
-	 *  @return string      			Next free value
+	 *  @return string|-1      			Next free value, -1 if KO
 	 */
 	public function commande_get_num($objsoc, $objforref)
 	{
