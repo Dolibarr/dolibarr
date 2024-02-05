@@ -126,8 +126,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoadd = $user->rights->banque->modifier;
-$permissiontodelete = $user->rights->banque->configurer;
+$permissiontoadd = $user->hasRight('banque', 'modifier');
+$permissiontodelete = $user->hasRight('banque', 'configurer');
 
 $allowed = 0;
 if ($user->hasRight('accounting', 'chartofaccount')) {

@@ -146,6 +146,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			if (!$error && !empty($val['validate']) && is_callable(array($object, 'validateField'))) {
 				if (!$object->validateField($object->fields, $key, $value)) {
 					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 		}
@@ -187,7 +188,6 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			}
 		} else {
 			$db->rollback();
-
 			$error++;
 			// Creation KO
 			if (!empty($object->errors)) {

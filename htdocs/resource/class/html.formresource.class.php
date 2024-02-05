@@ -347,7 +347,7 @@ class FormResource
 
 						// If translation exists use it, otherwise use default name
 						if (
-							!empty($conf->global->MAIN_SHOW_STATE_CODE) &&
+							getDolGlobalString('MAIN_SHOW_STATE_CODE') &&
 							(getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 1 || getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 2 || $conf->global->MAIN_SHOW_STATE_CODE === 'all')
 						) {
 							if (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1) {

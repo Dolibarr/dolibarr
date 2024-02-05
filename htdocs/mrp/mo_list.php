@@ -139,9 +139,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->mrp->read;
-$permissiontoadd = $user->rights->mrp->write;
-$permissiontodelete = $user->rights->mrp->delete;
+$permissiontoread = $user->hasRight('mrp', 'read');
+$permissiontoadd = $user->hasRight('mrp', 'write');
+$permissiontodelete = $user->hasRight('mrp', 'delete');
 
 // Security check
 if ($user->socid > 0) {
