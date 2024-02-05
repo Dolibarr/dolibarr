@@ -2325,7 +2325,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
  */
 function dol_uncompress($inputfile, $outputdir)
 {
-	global $conf, $langs, $db;
+	global $langs, $db;
 
 	$fileinfo = pathinfo($inputfile);
 	$fileinfo["extension"] = strtolower($fileinfo["extension"]);
@@ -2353,6 +2353,12 @@ function dol_uncompress($inputfile, $outputdir)
 						$langs->load("errors");
 						$ok = 0;
 						$errmsg = $langs->trans("ErrorFailToCreateDir", $val['filename']);
+						break;
+					}
+					if ($val['status'] == 'write_protected') {
+						$langs->load("errors");
+						$ok = 0;
+						$errmsg = $langs->trans("ErrorFailToCreateFile", $val['filename']);
 						break;
 					}
 				}
@@ -2666,7 +2672,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $dolibarr_main_data_root.'/doctemplates/'.$original_file;
 	} elseif ($modulepart == 'doctemplateswebsite' && !empty($dolibarr_main_data_root)) {
 		// Wrapping for doctemplates of websites
-		$accessallowed = ($fuser->rights->website->write && preg_match('/\.jpg$/i', basename($original_file)));
+		$accessallowed = ($fuser->hasRight('website', 'write') && preg_match('/\.jpg$/i', basename($original_file)));
 		$original_file = $dolibarr_main_data_root.'/doctemplates/websites/'.$original_file;
 	} elseif ($modulepart == 'packages' && !empty($dolibarr_main_data_root)) {	// To download zip of modules
 		// Wrapping for *.zip package files, like when used with url http://.../document.php?modulepart=packages&file=module_myfile.zip
@@ -3195,11 +3201,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif ($modulepart == 'export' && !empty($conf->export->dir_temp)) {
 		// Wrapping for export module
 		// Note that a test may not be required because we force the dir of download on the directory of the user that export
-		$accessallowed = $user->rights->export->lire;
+		$accessallowed = $user->hasRight('export', 'lire');
 		$original_file = $conf->export->dir_temp.'/'.$fuser->id.'/'.$original_file;
 	} elseif ($modulepart == 'import' && !empty($conf->import->dir_temp)) {
 		// Wrapping for import module
-		$accessallowed = $user->rights->import->run;
+		$accessallowed = $user->hasRight('import', 'run');
 		$original_file = $conf->import->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'recruitment' && !empty($conf->recruitment->dir_output)) {
 		// Wrapping for recruitment module

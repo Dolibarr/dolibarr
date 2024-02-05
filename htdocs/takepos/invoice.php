@@ -294,6 +294,10 @@ if (empty($reshook)) {
 				if ($pay != "delayed") {
 					$payment->create($user);
 					$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
+					if ($res < 0) {
+						$error++;
+						dol_htmloutput_errors($langs->trans('ErrorNoPaymentDefined'), $payment->errors, 1);
+					}
 					$remaintopay = $invoice->getRemainToPay(); // Recalculate remain to pay after the payment is recorded
 				} elseif (getDolGlobalInt("TAKEPOS_DELAYED_TERMS")) {
 					$invoice->setPaymentTerms(getDolGlobalInt("TAKEPOS_DELAYED_TERMS"));
@@ -743,14 +747,14 @@ if (empty($reshook)) {
 		}*/
 
 		if ($idline > 0 && $placeid > 0) { // If invoice exists and line selected. To avoid errors if deleted from another device or no line selected.
-			$invoice->deleteline($idline);
+			$invoice->deleteLine($idline);
 			$invoice->fetch($placeid);
 		} elseif ($placeid > 0) {             // If invoice exists but no line selected, proceed to delete last line.
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facturedet where fk_facture = ".((int) $placeid)." ORDER BY rowid DESC";
 			$resql = $db->query($sql);
 			$row = $db->fetch_array($resql);
 			$deletelineid = $row[0];
-			$invoice->deleteline($deletelineid);
+			$invoice->deleteLine($deletelineid);
 			$invoice->fetch($placeid);
 		}
 
@@ -777,7 +781,7 @@ if (empty($reshook)) {
 				// We delete the lines
 				$resdeletelines = 1;
 				foreach ($invoice->lines as $line) {
-					$tmpres = $invoice->deleteline($line->id);
+					$tmpres = $invoice->deleteLine($line->id);
 					if ($tmpres < 0) {
 						$resdeletelines = 0;
 						break;
@@ -834,7 +838,7 @@ if (empty($reshook)) {
 				$prod->fetch($line->fk_product);
 				$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
 				$price_min = $datapriceofproduct['price_min'];
-				$usercanproductignorepricemin = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && empty($user->rights->produit->ignore_price_min_advance)) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
+				$usercanproductignorepricemin = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('produit', 'ignore_price_min_advance')) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
 				$pu_ht = price2num($number / (1 + ($line->tva_tx / 100)), 'MU');
 				//Check min price
 				if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($pu_ht) * (1 - price2num($line->remise_percent) / 100) < price2num($price_min)))) {
@@ -878,7 +882,7 @@ if (empty($reshook)) {
 
 				$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
 				$price_min = $datapriceofproduct['price_min'];
-				$usercanproductignorepricemin = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && empty($user->rights->produit->ignore_price_min_advance)) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
+				$usercanproductignorepricemin = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('produit', 'ignore_price_min_advance')) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
 
 				$pu_ht = price2num($line->subprice / (1 + ($line->tva_tx / 100)), 'MU');
 

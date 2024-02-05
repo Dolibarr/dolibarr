@@ -21,6 +21,7 @@
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
 			$action = 'transfert';
 			$ensemblereponses = $obj->reponses;
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Payement").'</span> : <span class="info-box-label">'.$this->type_payment.'</span>';
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses, date_creation)';
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses, ip, date_creation)';
 			$sql = 'SELECT s.reponses';
@@ -61,5 +62,6 @@ $usercandelete = $user->rights->stock->mouvement->creer;
 $usercandelete = (($user->rights->stock->mouvement->supprimer));
 $usercanread = $user->rights->stock->mouvement->lire;
 $usercanread = (($user->rights->stock->mouvement->lire));
+* The private array ->status_short, ->statuts and ->status_long are now array ->labelStatusShort and ->labelStatus everywhere.
 if (!$user->hasRight('stock', 'mouvement', 'lire')) {
 if ($action == "transfert") {

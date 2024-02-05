@@ -473,7 +473,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					$height_note = 0;
 				}
 
-				// Use new auto collum system
+				// Use new auto column system
 				$this->prepareArrayColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
 				$nexY = $tab_top + $this->tabTitleHeight;

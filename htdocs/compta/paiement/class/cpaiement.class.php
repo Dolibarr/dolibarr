@@ -95,7 +95,7 @@ class Cpaiement extends CommonDict
 			$this->type = trim($this->type);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 		if (isset($this->accountancy_code)) {
 			$this->accountancy_code = trim($this->accountancy_code);
@@ -250,7 +250,7 @@ class Cpaiement extends CommonDict
 			$this->type = trim($this->type);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 		if (isset($this->accountancy_code)) {
 			$this->accountancy_code = trim($this->accountancy_code);
@@ -365,12 +365,11 @@ class Cpaiement extends CommonDict
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-
 		$this->code = '';
 		$this->libelle = '';
 		$this->label = '';
 		$this->type = '';
-		$this->active = '';
+		$this->active = 0;
 		$this->accountancy_code = '';
 		$this->module = '';
 	}

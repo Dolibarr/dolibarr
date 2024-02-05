@@ -267,7 +267,7 @@ if (empty($reshook)) {
 	$objectlabel = 'Events';
 	$uploaddir = true;
 	// Only users that can delete any event can remove records.
-	$permissiontodelete = $user->rights->agenda->allactions->delete;
+	$permissiontodelete = $user->hasRight('agenda', 'allactions', 'delete');
 	$permissiontoadd = $user->hasRight('agenda', 'myactions', 'create');
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

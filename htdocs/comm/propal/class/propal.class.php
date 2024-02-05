@@ -1016,7 +1016,7 @@ class Propal extends CommonObject
 	 *  @param		int		$id				Id of object (for a check)
 	 *  @return     int         			>0 if OK, <0 if KO
 	 */
-	public function deleteline($lineid, $id = 0)
+	public function deleteLine($lineid, $id = 0)
 	{
 		global $user;
 

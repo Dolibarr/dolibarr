@@ -51,13 +51,13 @@ class MembersTypes extends DolibarrApi
 	 * @param   int     $id				ID of member type
 	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		No Member Type found
 	 */
 	public function get($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$membertype = new AdherentType($this->db);
@@ -86,7 +86,7 @@ class MembersTypes extends DolibarrApi
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of member type objects
 	 *
-	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		No Member Type found
 	 * @throws	RestException	503		Error when retrieving Member list
 	 */
@@ -97,7 +97,7 @@ class MembersTypes extends DolibarrApi
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$sql = "SELECT t.rowid";
@@ -149,13 +149,13 @@ class MembersTypes extends DolibarrApi
 	 * @param array $request_data   Request data
 	 * @return int  ID of member type
 	 *
-	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	500		Error when creating Member Type
 	 */
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'configurer')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -183,14 +183,14 @@ class MembersTypes extends DolibarrApi
 	 * @param array $request_data   Datas
 	 * @return int
 	 *
-	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		No Member Type found
 	 * @throws	RestException	500		Error when updating Member Type
 	 */
 	public function put($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'configurer')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$membertype = new AdherentType($this->db);
@@ -233,14 +233,14 @@ class MembersTypes extends DolibarrApi
 	 * @param int $id   member type ID
 	 * @return array
 	 *
-	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		No Member Type found
 	 * @throws	RestException	500		Error when deleting Member Type
 	 */
 	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'configurer')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$membertype = new AdherentType($this->db);
 		$result = $membertype->fetch($id);

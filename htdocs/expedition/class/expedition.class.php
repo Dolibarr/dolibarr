@@ -1595,7 +1595,7 @@ class Expedition extends CommonObject
 		$sql .= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc, cd.rang";
 		$sql .= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
 		$sql .= ", p.ref as product_ref, p.label as product_label, p.fk_product_type, p.barcode as product_barcode";
-		$sql .= ", p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch";
+		$sql .= ", p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
 		$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
@@ -1672,6 +1672,10 @@ class Expedition extends CommonObject
 				$line->weight_units   	= $obj->weight_units;
 				$line->length         	= $obj->length;
 				$line->length_units   	= $obj->length_units;
+				$line->width           = $obj->width;
+				$line->width_units     = $obj->width_units;
+				$line->height           = $obj->height;
+				$line->height_units     = $obj->height_units;
 				$line->surface        	= $obj->surface;
 				$line->surface_units = $obj->surface_units;
 				$line->volume         	= $obj->volume;
@@ -1769,7 +1773,7 @@ class Expedition extends CommonObject
 	 *  @param		int		$lineid			Id of line to delete
 	 *  @return     int         			>0 if OK, <0 if KO
 	 */
-	public function deleteline($user, $lineid)
+	public function deleteLine($user, $lineid)
 	{
 		global $user;
 
@@ -2716,31 +2720,43 @@ class ExpeditionLigne extends CommonObjectLine
 	public $product_type = 0;
 
 	/**
-	 * @var int rang of line
-	 */
+	* @var int rang of line
+	*/
 	public $rang;
 
 	/**
-	 * @var float weight
-	 */
+	* @var float weight
+	*/
 	public $weight;
 	public $weight_units;
 
 	/**
-	 * @var float weight
-	 */
+	* @var float length
+	*/
 	public $length;
 	public $length_units;
 
 	/**
-	 * @var float weight
-	 */
+	* @var float width
+	*/
+	public $width;
+	public $width_units;
+
+	/**
+	* @var float height
+	*/
+	public $height;
+	public $height_units;
+
+	/**
+	* @var float surface
+	*/
 	public $surface;
 	public $surface_units;
 
 	/**
-	 * @var float weight
-	 */
+	* @var float volume
+	*/
 	public $volume;
 	public $volume_units;
 

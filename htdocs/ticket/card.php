@@ -254,6 +254,7 @@ if (empty($reshook)) {
 			$object->fk_project 				= $projectid;
 			$object->fk_contract 				= GETPOST('fk_contract', 'int');
 
+			$object->context['contact_id'] = GETPOSTINT('contact_id');
 
 			$id = $object->create($user);
 			if ($id <= 0) {
@@ -494,6 +495,7 @@ if (empty($reshook)) {
 
 			$url = 'card.php?track_id='.GETPOST('track_id', 'alpha');
 			header("Location: ".$url);
+			exit;
 		} else {
 			$action = '';
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -503,12 +505,15 @@ if (empty($reshook)) {
 	if ($action == "confirm_public_close" && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoadd) {
 		$object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
 		if ($_SESSION['email_customer'] == $object->origin_email || $_SESSION['email_customer'] == $object->thirdparty->email) {
+			$object->context['contact_id'] = GETPOSTINT('contact_id');
+
 			$object->close($user);
 
 			setEventMessages('<div class="confirm">'.$langs->trans('TicketMarkedAsClosed').'</div>', null, 'mesgs');
 
 			$url = 'card.php?track_id='.GETPOST('track_id', 'alpha');
 			header("Location: ".$url);
+			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
@@ -755,7 +760,7 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->withcancel = 1;
 
 	$formticket->showForm(1, 'create', 0, null, $action);
-	/*} elseif ($action == 'edit' && $user->rights->ticket->write && $object->status < Ticket::STATUS_CLOSED) {
+	/*} elseif ($action == 'edit' && $user->hasRight('ticket', 'write') && $object->status < Ticket::STATUS_CLOSED) {
 	$formticket = new FormTicket($db);
 
 	$head = ticket_prepare_head($object);
@@ -964,7 +969,7 @@ if ($action == 'create' || $action == 'presend') {
 			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByPublicPortal"), $htmltooptip, 1, 'help', '', 0, 3, 'tooltip').'</small>';
 		}
 
-		$permissiontoedit = $object->status < 8 && !$user->socid && $user->rights->ticket->write;
+		$permissiontoedit = $object->status < 8 && !$user->socid && $user->hasRight('ticket', 'write');
 		//$permissiontoedit = 0;
 
 		// Thirdparty

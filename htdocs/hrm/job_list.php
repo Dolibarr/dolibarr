@@ -133,9 +133,9 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Permissions
-$permissiontoread = $user->rights->hrm->all->read;
-$permissiontoadd  = $user->rights->hrm->all->write;
-$permissiontodelete = $user->rights->hrm->all->delete;
+$permissiontoread = $user->hasRight('hrm', 'all', 'read');
+$permissiontoadd  = $user->hasRight('hrm', 'all', 'write');
+$permissiontodelete = $user->hasRight('hrm', 'all', 'delete');
 
 // Security check (enable the most restrictive one)
 if ($user->socid > 0) {

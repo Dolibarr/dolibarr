@@ -505,18 +505,17 @@ class Societe extends CommonObject
 	public $prefix_comm;
 
 	/**
-	 * @var int Vat concerned
+	 * @var int 	Vat concerned
 	 */
 	public $tva_assuj = 1;
 
 	/**
-	 * Intracommunitary VAT ID
-	 * @var string
+	 * @var string	Intracommunitary VAT ID
 	 */
 	public $tva_intra;
 
 	/**
-	 * @var int Vat reverse-charge concerned
+	 * @var int 	Vat reverse-charge concerned
 	 */
 	public $vat_reverse_charge = 0;
 
@@ -2665,7 +2664,7 @@ class Societe extends CommonObject
 	 *
 	 *	@param	User	$user		Object user
 	 *	@param	int		$commid		Id of user
-	 *	@return	void
+	 *	@return	int					Return <0 if KO, >0 if OK
 	 */
 	public function del_commercial(User $user, $commid)
 	{
@@ -2683,8 +2682,15 @@ class Societe extends CommonObject
 			$sql .= " WHERE fk_soc = ".((int) $this->id)." AND fk_user = ".((int) $commid);
 
 			if (!$this->db->query($sql)) {
+				$error++;
 				dol_syslog(get_class($this)."::del_commercial Erreur");
 			}
+		}
+
+		if ($error) {
+			return -1;
+		} else {
+			return 1;
 		}
 	}
 
@@ -4033,7 +4039,7 @@ class Societe extends CommonObject
 				$isACompany = 1;
 			}
 		}
-		return boolval($isACompany);
+		return (bool) $isACompany;
 	}
 
 	/**
@@ -4898,7 +4904,7 @@ class Societe extends CommonObject
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *	@param	string		$modele			Generator to use. Caller must set it to obj->model_pdf or GETPOST('model','alpha') for example.
+	 *	@param	string		$modele			Generator to use. Caller must set it to obj->model_pdf.
 	 *	@param	Translate	$outputlangs	object lang a utiliser pour traduction
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description

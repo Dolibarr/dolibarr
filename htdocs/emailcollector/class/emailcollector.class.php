@@ -821,7 +821,7 @@ class EmailCollector extends CommonObject
 	 * Convert str to UTF-7 imap. Used to forge mailbox names.
 	 *
 	 * @param 	string $str			String to encode
-	 * @return 	string				Encode string
+	 * @return 	string|false		Encoded string, or false if error
 	 */
 	public function getEncodedUtf7($str)
 	{
@@ -1894,7 +1894,7 @@ class EmailCollector extends CommonObject
 
 				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 					$fromstring = $overview['from'];
-					//$replytostring = empty($overview['reply-to']) ? '' : $overview['reply-to'];
+					$replytostring = empty($overview['in_reply-to']) ? $headers['Reply-To'] : $overview['in_reply-to'];
 
 					$sender = $overview['sender'];
 					$to = $overview['to'];
@@ -1905,7 +1905,7 @@ class EmailCollector extends CommonObject
 					$subject = $overview['subject'];
 				} else {
 					$fromstring = $overview[0]->from;
-					//$replytostring = empty($overview[0]->replyto) ? '' : $overview[0]->replyto;
+					$replytostring = empty($overview['in_reply-to']) ? $headers['Reply-To'] : $overview['in_reply-to'];
 
 					$sender = !empty($overview[0]->sender) ? $overview[0]->sender : '';
 					$to = $overview[0]->to;
@@ -2257,13 +2257,16 @@ class EmailCollector extends CommonObject
 						$description = $descriptiontitle = $descriptionmeta = $descriptionfull = '';
 
 						$descriptiontitle = $langs->trans("RecordCreatedByEmailCollector", $this->ref, $msgid);
-
+						//TODO: Reply-to
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTopic").' : '.dol_escape_htmltag($subject));
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailFrom").($langs->trans("MailFrom") != 'From' ? ' (From)' : '').' : '.dol_escape_htmltag($fromstring));
 						if ($sender) {
 							$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("Sender").($langs->trans("Sender") != 'Sender' ? ' (Sender)' : '').' : '.dol_escape_htmltag($sender));
 						}
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTo").($langs->trans("MailTo") != 'To' ? ' (To)' : '').' : '.dol_escape_htmltag($to));
+						if ($replyto) {
+							$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailReply").($langs->trans("MailReply") != 'Reply to' ? ' (Reply to)' : '').' : '.dol_escape_htmltag($replyto));
+						}
 						if ($sendtocc) {
 							$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailCC").($langs->trans("MailCC") != 'CC' ? ' (CC)' : '').' : '.dol_escape_htmltag($sendtocc));
 						}
@@ -2669,7 +2672,7 @@ class EmailCollector extends CommonObject
 											if (!dol_is_dir($destdir)) {
 												dol_mkdir($destdir);
 											}
-											if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+											if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 												foreach ($attachments as $attachment) {
 													$attachment->save($destdir.'/');
 												}
@@ -2893,7 +2896,7 @@ class EmailCollector extends CommonObject
 
 								$projecttocreate->title = $subject;
 								$projecttocreate->date_start = $date;	// date of email
-								$projecttocreate->date_end = '';
+								$projecttocreate->date_end = 0;
 								$projecttocreate->opp_status = $id_opp_status;
 								$projecttocreate->opp_percent = $percent_opp_status;
 								$projecttocreate->description = dol_concatdesc(dolGetFirstLineOfText(dol_string_nohtmltag($description, 2), 10), '...'.$langs->transnoentities("SeePrivateNote").'...');

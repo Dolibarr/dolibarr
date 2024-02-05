@@ -87,7 +87,7 @@ if ($resql) {
 	$i = 0;
 
 	$ldap = new Ldap();
-	$result = $ldap->connect_bind();
+	$result = $ldap->connectBind();
 
 	if ($result > 0) {
 		while ($i < $num) {

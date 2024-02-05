@@ -166,6 +166,7 @@ class Asset extends CommonObject
 	 * @var AssetDepreciationOptions	Used for computed fields of depreciation options class.
 	 */
 	public $asset_depreciation_options;
+	public $asset_accountancy_codes;
 	/**
 	 * @var array	List of depreciation lines for each mode (sort by depreciation date).
 	 */

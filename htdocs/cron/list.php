@@ -90,10 +90,10 @@ if (!$user->hasRight('cron', 'read')) {
 	accessforbidden();
 }
 
-$permissiontoread = $user->rights->cron->read;
+$permissiontoread = $user->hasRight('cron', 'read');
 $permissiontoadd = $user->rights->cron->create ? $user->rights->cron->create : $user->rights->cron->write;
-$permissiontodelete = $user->rights->cron->delete;
-$permissiontoexecute = $user->rights->cron->execute;
+$permissiontodelete = $user->hasRight('cron', 'delete');
+$permissiontoexecute = $user->hasRight('cron', 'execute');
 
 
 /*

@@ -495,7 +495,7 @@ class FileUpload
 		$error = 0;
 
 		if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
-			return $this->delete();
+			return $this->delete($_REQUEST['file']);
 		}
 		//var_dump($_FILES);
 
@@ -560,11 +560,12 @@ class FileUpload
 	/**
 	 * Delete uploaded file
 	 *
+	 * @param	string	$file	File
 	 * @return	int
 	 */
-	public function delete()
+	public function delete($file)
 	{
-		$file_name = GETPOST('file') ? basename(GETPOST('file')) : null;
+		$file_name = $file ? basename($file) : null;
 		$file_path = $this->options['upload_dir'].dol_sanitizeFileName($file_name);
 		$success = dol_is_file($file_path) && $file_name[0] !== '.' && unlink($file_path);
 		if ($success) {

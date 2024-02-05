@@ -789,7 +789,7 @@ class User extends CommonObject
 		}
 
 		$moduleRightsMapping = array(
-			'product' => 'produit',	// We must check $user->rights->produit...
+			'product' => 'produit',
 			'margin' => 'margins',
 			'comptabilite' => 'compta'
 		);
@@ -799,7 +799,7 @@ class User extends CommonObject
 			$rightsPath = $moduleRightsMapping[$rightsPath];
 		}
 
-		// If module is abc@module, we check permission user->rights->module->abc->permlevel1
+		// If module is abc@module, we check permission user->hasRight(module, abc, permlevel1)
 		$tmp = explode('@', $rightsPath, 2);
 		if (!empty($tmp[1])) {
 			if (strpos($module, '@') !== false) {

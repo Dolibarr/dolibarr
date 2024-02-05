@@ -2373,9 +2373,9 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	if (class_exists("Imagick")) {
 		if ($object->element == 'expensereport' || $object->element == 'propal' || $object->element == 'commande' || $object->element == 'facture' || $object->element == 'supplier_proposal') {
 			$modulepart = $object->element;
-		} elseif ($object->element == 'fichinter') {
+		} elseif ($object->element == 'fichinter' || $object->element == 'intervention') {
 			$modulepart = 'ficheinter';
-		} elseif ($object->element == 'contrat') {
+		} elseif ($object->element == 'contrat' || $object->element == 'contract') {
 			$modulepart = 'contract';
 		} elseif ($object->element == 'order_supplier') {
 			$modulepart = 'supplier_order';
@@ -2455,7 +2455,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 	} else {
 		if ($showimage) {
-			if ($modulepart != 'unknown') {
+			if ($modulepart != 'unknown' || method_exists($object, 'getDataToShowPhoto')) {
 				$phototoshow = '';
 				// Check if a preview file is available
 				if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter', 'contract', 'supplier_order', 'supplier_proposal', 'supplier_invoice', 'expensereport')) && class_exists("Imagick")) {
@@ -9558,7 +9558,7 @@ function dol_osencode($str)
  * 		@param	string	$fieldid		Field to get
  *      @param  int		$entityfilter	Filter by entity
  *      @param	string	$filters		Filters to add. WARNING: string must be escaped for SQL and not coming from user input.
- *      @return int						Return integer <0 if KO, Id of code if OK
+ *      @return int<-1,max>				ID of code if OK, 0 if key empty, -1 if KO
  *      @see $langs->getLabelFromKey
  */
 function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid = 'id', $entityfilter = 0, $filters = '')
@@ -9567,7 +9567,7 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 
 	// If key empty
 	if ($key == '') {
-		return '';
+		return 0;
 	}
 
 	// Check in cache
@@ -9698,8 +9698,8 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 			$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $s);	// accept parenthesis in '...->method(...'
 			$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
 			$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-			$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
-			$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
+			$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
+			$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
 			$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);	// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
 			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
 			if (strpos($scheck, '(') !== false) {
@@ -9725,8 +9725,8 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 			$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $s);	// accept parenthesis in '...->method(...'
 			$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
 			$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-			$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
-			$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
+			$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
+			$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
 			$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);		// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
 			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
 			if (strpos($scheck, '(') !== false) {
@@ -12658,7 +12658,7 @@ function dolForgeCriteriaCallback($matches)
 		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
 			$tmpescaped = $regbis[1];
 		}
-		//$tmpescaped = "'".$db->escapeforlike($db->escape($regbis[1]))."'";
+		//$tmpescaped = "'".$db->escape($db->escapeforlike($regbis[1]))."'";
 		$tmpescaped = "'".$db->escape($tmpescaped)."'";	// We do not escape the _ and % so the like will works
 	} elseif (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
 		$tmpescaped = "'".$db->escape($regbis[1])."'";

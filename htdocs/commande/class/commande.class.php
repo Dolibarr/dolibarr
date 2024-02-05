@@ -776,8 +776,8 @@ class Commande extends CommonOrder
 
 		$error = 0;
 
-		$usercanclose = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->commande->creer))
-			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->commande->order_advance->close)));
+		$usercanclose = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'creer'))
+			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'order_advance', 'close')));
 
 		if ($usercanclose) {
 			if ($this->statut == self::STATUS_CLOSED) {
@@ -2392,7 +2392,7 @@ class Commande extends CommonOrder
 	 *  @param		int		$id			Id of object (for a check)
 	 *  @return     int        		 	>0 if OK, 0 if nothing to do, <0 if KO
 	 */
-	public function deleteline($user = null, $lineid = 0, $id = 0)
+	public function deleteLine($user = null, $lineid = 0, $id = 0)
 	{
 		if ($this->statut == self::STATUS_DRAFT) {
 			$this->db->begin();

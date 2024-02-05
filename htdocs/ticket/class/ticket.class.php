@@ -189,27 +189,27 @@ class Ticket extends CommonObject
 	/**
 	 * @var int Creation date
 	 */
-	public $datec = '';
+	public $datec;
 
 	/**
 	 * @var int Last modification date
 	 */
-	public $tms = '';
+	public $tms;
 
 	/**
 	 * @var int Read date
 	 */
-	public $date_read = '';
+	public $date_read;
 
 	/**
 	 * @var int Last message date
 	 */
-	public $date_last_msg_sent = '';
+	public $date_last_msg_sent;
 
 	/**
 	 * @var int Close ticket date
 	 */
-	public $date_close = '';
+	public $date_close;
 
 	/**
 	 * @var array cache_types_tickets
@@ -344,7 +344,7 @@ class Ticket extends CommonObject
 		'email_date' => array('type'=>'datetime', 'label'=>'EmailDate', 'visible'=>-2, 'enabled'=>1, 'position'=>541),
 		'progress' => array('type'=>'integer', 'label'=>'Progression', 'visible'=>-1, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'css'=>'right', 'help'=>"", 'isameasure'=>2, 'csslist'=>'width50'),
 		'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>'getDolGlobalString("TICKET_ENABLE_RESOLUTION")', 'position'=>550, 'notnull'=>1),
-		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'SolvedClosed', 9 => 'Deleted')),
+		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'TicketAnswered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'SolvedClosed', 9 => 'Deleted')),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
 	);
 	// END MODULEBUILDER PROPERTIES
@@ -446,7 +446,7 @@ class Ticket extends CommonObject
 		}
 
 		if (isset($this->progress)) {
-			$this->progress = trim($this->progress);
+			$this->progress = (int) $this->progress;
 		}
 
 		if (isset($this->timing)) {
@@ -1004,7 +1004,7 @@ class Ticket extends CommonObject
 		}
 
 		if (isset($this->progress)) {
-			$this->progress = trim($this->progress);
+			$this->progress = (int) $this->progress;
 		}
 
 		if (isset($this->timing)) {
@@ -1246,16 +1246,16 @@ class Ticket extends CommonObject
 		$this->message = 'Message of ticket';
 		$this->status = 0;
 		$this->resolution = '1';
-		$this->progress = '10';
+		$this->progress = 10;
 		//$this->timing = '30';
 		$this->type_code = 'TYPECODE';
 		$this->category_code = 'CATEGORYCODE';
 		$this->severity_code = 'SEVERITYCODE';
-		$this->datec = '';
-		$this->date_read = '';
-		$this->date_last_msg_sent = '';
-		$this->date_close = '';
-		$this->tms = '';
+		$this->datec = dol_now();
+		$this->date_read = dol_now();
+		$this->date_last_msg_sent = dol_now();
+		$this->date_close = dol_now();
+		$this->tms = dol_now();
 		return 1;
 	}
 

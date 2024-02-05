@@ -159,7 +159,7 @@ if ($object->id > 0) {
 
 	print dol_get_fiche_end();
 
-	$user->rights->stocktransfer->write = $user->rights->stocktransfer->stocktransfer->write;
+	$user->rights->stocktransfer->write = $user->hasRight('stocktransfer', 'stocktransfer', 'write');
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 	foreach ($dirtpls as $reldir) {

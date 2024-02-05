@@ -124,7 +124,7 @@ class mod_partnership_advanced extends ModeleNumRefPartnership
 	 * 	Return next free value
 	 *
 	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @return string|0                Next value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{

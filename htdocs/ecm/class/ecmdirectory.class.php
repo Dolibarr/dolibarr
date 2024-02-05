@@ -457,7 +457,7 @@ class EcmDirectory extends CommonObject
 		$this->id = 0;
 
 		$this->label = 'MyDirectory';
-		$this->fk_parent = '0';
+		$this->fk_parent = 0;
 		$this->description = 'This is a directory';
 	}
 

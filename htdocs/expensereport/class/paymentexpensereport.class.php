@@ -134,13 +134,13 @@ class PaymentExpenseReport extends CommonObject
 
 		// Clean parameters
 		if (isset($this->fk_expensereport)) {
-			$this->fk_expensereport = trim($this->fk_expensereport);
+			$this->fk_expensereport = (int) $this->fk_expensereport;
 		}
 		if (isset($this->amount)) {
 			$this->amount = trim($this->amount);
 		}
 		if (isset($this->fk_typepayment)) {
-			$this->fk_typepayment = trim($this->fk_typepayment);
+			$this->fk_typepayment = (int) $this->fk_typepayment;
 		}
 		if (isset($this->num_payment)) {
 			$this->num_payment = trim($this->num_payment);
@@ -290,13 +290,13 @@ class PaymentExpenseReport extends CommonObject
 		// Clean parameters
 
 		if (isset($this->fk_expensereport)) {
-			$this->fk_expensereport = trim($this->fk_expensereport);
+			$this->fk_expensereport = (int) $this->fk_expensereport;
 		}
 		if (isset($this->amount)) {
 			$this->amount = trim($this->amount);
 		}
 		if (isset($this->fk_typepayment)) {
-			$this->fk_typepayment = trim($this->fk_typepayment);
+			$this->fk_typepayment = (int) $this->fk_typepayment;
 		}
 		if (isset($this->num_payment)) {
 			$this->num_payment = trim($this->num_payment);
@@ -305,13 +305,13 @@ class PaymentExpenseReport extends CommonObject
 			$this->note = trim($this->note);
 		}
 		if (isset($this->fk_bank)) {
-			$this->fk_bank = trim($this->fk_bank);
+			$this->fk_bank = (int) $this->fk_bank;
 		}
 		if (isset($this->fk_user_creat)) {
-			$this->fk_user_creat = trim($this->fk_user_creat);
+			$this->fk_user_creat = (int) $this->fk_user_creat;
 		}
 		if (isset($this->fk_user_modif)) {
-			$this->fk_user_modif = trim($this->fk_user_modif);
+			$this->fk_user_modif = (int) $this->fk_user_modif;
 		}
 
 
@@ -500,17 +500,17 @@ class PaymentExpenseReport extends CommonObject
 	{
 		$this->id = 0;
 
-		$this->fk_expensereport = '';
+		$this->fk_expensereport = 0;
 		$this->datec = '';
 		$this->tms = '';
 		$this->datep = '';
 		$this->amount = '';
-		$this->fk_typepayment = '';
+		$this->fk_typepayment = 0;
 		$this->num_payment = '';
 		$this->note = '';
-		$this->fk_bank = '';
-		$this->fk_user_creat = '';
-		$this->fk_user_modif = '';
+		$this->fk_bank = 0;
+		$this->fk_user_creat = 0;
+		$this->fk_user_modif = 0;
 	}
 
 
@@ -754,7 +754,7 @@ class PaymentExpenseReport extends CommonObject
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Type").'</span> : <span class="info-box-label">'.$this->fk_typepayment.'</span>';
 		}
 		if (property_exists($this, 'fk_bank') && !is_null($this->fk_bank)) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("Account").'</span> : <span class="info-box-label">'.$this->fk_bank.'</span>';
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("BankAccount").'</span> : <span class="info-box-label">'.$this->fk_bank.'</span>';
 		}
 		if (property_exists($this, 'amount')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
