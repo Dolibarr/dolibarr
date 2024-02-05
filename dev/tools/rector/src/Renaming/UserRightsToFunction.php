@@ -144,7 +144,7 @@ class UserRightsToFunction extends AbstractRector
 			return $node;
 		}
 
-		$caseok = false;	// Will be tru if we can make the replacement. We must not do it for assignement like when $user->right->aaa->bbb = ...
+		$caseok = false;	// Will be tru if we can make the replacement. We must not do it for assignment like when $user->right->aaa->bbb = ...
 		$isInverse = false;
 		if ($node instanceof Node\Expr\BooleanNot) {
 			if (!$node->expr instanceof Node\Expr\Empty_) {
