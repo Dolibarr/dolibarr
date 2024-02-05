@@ -10,6 +10,10 @@ use Rector\Core\PhpParser\Node\NodeFactory;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use PhpParser\Node\Expr\BinaryOp\BooleanAnd;
+use PhpParser\Node\Expr\BinaryOp\Concat;
+use PhpParser\Node\Expr\BinaryOp\Equal;
+
 
 /**
  * Class to refactor User rights
@@ -50,6 +54,7 @@ class UserRightsToFunction extends AbstractRector
 			Node\Expr\Assign::class,
 			Node\Expr\PropertyFetch::class,
 			Node\Expr\BooleanNot::class,
+			Node\Expr\BinaryOp\BooleanAnd::class,
 			Node\Expr\Empty_::class,
 			Node\Expr\Isset_::class,
 			Node\Stmt\ClassMethod::class
@@ -75,9 +80,8 @@ class UserRightsToFunction extends AbstractRector
 			}
 		}
 
-
 		if ($node instanceof Node\Expr\Assign) {
-			// var is left of = and expr is right
+			// var is left of = and expr is right of =
 			if (!isset($node->var)) {
 				return;
 			}
@@ -95,6 +99,47 @@ class UserRightsToFunction extends AbstractRector
 				$args[] = new Arg($data['perm2']);
 			}
 			$node->expr = $this->nodeFactory->createMethodCall($data['user'], 'hasRight', $args);
+
+			return $node;
+		}
+
+		if ($node instanceof Node\Expr\BinaryOp\BooleanAnd) {
+			/*$nodes = $this->resolveTwoNodeMatch($node);
+			 if (!isset($nodes)) {
+			 return;
+			 }
+
+			 $node = $nodes->getFirstExpr();
+			 */
+			$mustprocesstheleft = false;
+			$mustprocesstheright = false;
+
+			if ($node->left instanceof Node\Expr\PropertyFetch) {
+				$data = $this->getRights($node->left);
+				if (isset($data)) {
+					$mustprocesstheleft = true;
+				}
+			}
+			if (empty($mustprocesstheleft) && $node->right instanceof Node\Expr\PropertyFetch) {
+				$data = $this->getRights($node->right);
+				if (isset($data)) {
+					$mustprocesstheright = true;
+				}
+			}
+
+			if (isset($data)) {
+				$args = [new Arg($data['module']), new Arg($data['perm1'])];
+				if (!empty($data['perm2'])) {
+					$args[] = new Arg($data['perm2']);
+				}
+
+				if ($mustprocesstheleft && !empty($data['module'])) {
+					$node->left = $this->nodeFactory->createMethodCall($data['user'], 'hasRight', $args);
+				}
+				if ($mustprocesstheright && !empty($data['module'])) {
+					$node->right = $this->nodeFactory->createMethodCall($data['user'], 'hasRight', $args);
+				}
+			}
 
 			return $node;
 		}
@@ -180,5 +225,35 @@ class UserRightsToFunction extends AbstractRector
 		}
 		$user = $rights->var;
 		return compact('user', 'module', 'perm1', 'perm2');
+	}
+
+	/**
+	 * Get nodes with check empty
+	 *
+	 * @param BooleanAnd $booleanAnd A BooleandAnd
+	 * @return    TwoNodeMatch|null
+	 */
+	private function resolveTwoNodeMatch(BooleanAnd $booleanAnd): ?TwoNodeMatch
+	{
+		return $this->binaryOpManipulator->matchFirstAndSecondConditionNode(
+			$booleanAnd,
+			// Function to check if we are in the case $conf->global->... == $value
+			function (Node $node): bool {
+				if (!$node instanceof Equal) {
+					return \false;
+				}
+				return $this->isGlobalVar($node->left);
+			},
+			// !empty(...) || isset(...)
+			function (Node $node): bool {
+				if ($node instanceof BooleanNot && $node->expr instanceof Empty_) {
+					return $this->isGlobalVar($node->expr->expr);
+				}
+				if (!$node instanceof Isset_) {
+					return $this->isGlobalVar($node);
+				}
+				return \true;
+			}
+			);
 	}
 }

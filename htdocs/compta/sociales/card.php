@@ -843,7 +843,6 @@ if ($id > 0) {
 				$relativepath = $objref.'/'.$objref.'.pdf';
 				$filedir = $conf->tax->dir_output.'/'.$objref;
 				$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-				//$genallowed = $user->rights->tax->charges->lire; // If you can read, you can build the PDF to read content
 				$genallowed = 0;
 				$delallowed = $user->hasRight('tax', 'charges', 'creer'); // If you can create/edit, you can remove a file on card
 				print $formfile->showdocuments('tax', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);

@@ -196,10 +196,6 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'partnership';
-	//$permission = $user->rights->partnership->write;
-	$permission = 1;
-	//$permtoedit = $user->rights->partnership->write;
-	$permtoedit = 1;
 	$param = '&id='.$object->id;
 
 	//$relativepathwithnofile='partnership/' . dol_sanitizeFileName($object->id).'/';

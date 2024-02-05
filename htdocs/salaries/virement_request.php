@@ -104,7 +104,7 @@ if ($id > 0 || !empty($ref)) {
 
 $permissiontoread = $user->hasRight('salaries', 'read');
 $permissiontoadd = $user->hasRight('salaries', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
-$permissiontodelete = $user->rights->salaries->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_UNPAID);
+$permissiontodelete = $user->hasRight('salaries', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_UNPAID);
 
 $moreparam = '';
 if ($type == 'bank-transfer') {
