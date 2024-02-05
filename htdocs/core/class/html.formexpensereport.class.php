@@ -51,7 +51,7 @@ class FormExpenseReport
 
 	/**
 	 *    Return the combobox for the different statuses of an expense report
-	 *    The list values are the ids for the table c_expensereport_statuts
+	 *    The list values are the ids from the labelStatus.
 	 *
 	 *    @param    int     $selected       preselect status
 	 *    @param    string  $htmlname       Name of HTML select
