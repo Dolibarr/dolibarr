@@ -23,7 +23,7 @@
 /**
  *      \file       public/emailing/mailing-unsubscribe.php
  *      \ingroup    mailing
- *      \brief      Script use to update unsubcribe status of an email
+ *      \brief      Script use to update unsubscribe status of an email
  *                  https://myserver/public/emailing/mailing-unsubscribe.php?unsuscrib=1&securitykey=securitykey&tag=abcdefghijklmn
  */
 

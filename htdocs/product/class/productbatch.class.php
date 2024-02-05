@@ -372,7 +372,7 @@ class Productbatch extends CommonObject
 	}
 
 	/**
-	 *  Find first detail record that match eather eat-by or sell-by or batch within given warehouse
+	 *  Find first detailed record that match either eat-by, sell-by or batch within the warehouse
 	 *
 	 *  @param	int			$fk_product_stock   id product_stock for object
 	 *  @param	integer		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
