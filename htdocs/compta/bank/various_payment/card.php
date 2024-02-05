@@ -674,7 +674,7 @@ if ($id) {
 	print $form->editfieldkey('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $permissiontoadd), 'string', '', 0);
 	print '</td><td>';
 	if ($action == 'editsubledger_account' && (!$alreadyaccounted && $permissiontoadd)) {
-		if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+		if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
 			print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->subledger_account, 'subledger_account', 1, 1, '', 1);
 		} else {
 			print $form->editfieldval('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $permissiontoadd), 'string', '', 0, null, '', 1, 'lengthAccounta');
