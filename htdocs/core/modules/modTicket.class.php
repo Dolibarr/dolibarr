@@ -376,7 +376,7 @@ class modTicket extends DolibarrModules
 		//ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/tickets/template_ticket.odt';
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/tickets';
-		$dest = $dirodt.'/template_order.odt';
+		$dest = $dirodt.'/template_ticket.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
