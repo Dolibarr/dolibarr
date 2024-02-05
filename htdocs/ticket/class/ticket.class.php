@@ -344,6 +344,7 @@ class Ticket extends CommonObject
 		'email_date' => array('type'=>'datetime', 'label'=>'EmailDate', 'visible'=>-2, 'enabled'=>1, 'position'=>541),
 		'progress' => array('type'=>'integer', 'label'=>'Progression', 'visible'=>-1, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'css'=>'right', 'help'=>"", 'isameasure'=>2, 'csslist'=>'width50'),
 		'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>'getDolGlobalString("TICKET_ENABLE_RESOLUTION")', 'position'=>550, 'notnull'=>1),
+		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'PDFTemplate', 'enabled'=>1, 'visible'=>0, 'position'=>560),
 		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'TicketAnswered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'SolvedClosed', 9 => 'Deleted')),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
 	);
@@ -526,6 +527,7 @@ class Ticket extends CommonObject
 			$sql .= "date_close,";
 			$sql .= "entity,";
 			$sql .= "notify_tiers_at_create,";
+			$sql .= "model_pdf,";
 			$sql .= "ip";
 			$sql .= ") VALUES (";
 			$sql .= " ".(!isset($this->ref) ? '' : "'".$this->db->escape($this->ref)."'").",";
@@ -552,6 +554,7 @@ class Ticket extends CommonObject
 			$sql .= " ".(!isset($this->date_close) || dol_strlen($this->date_close) == 0 ? 'NULL' : "'".$this->db->idate($this->date_close)."'");
 			$sql .= ", ".((int) $this->entity);
 			$sql .= ", ".(!isset($this->notify_tiers_at_create) ? '1' : "'".$this->db->escape($this->notify_tiers_at_create)."'");
+			$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 			$sql .= ", ".(!isset($this->ip) ? 'NULL' : "'".$this->db->escape($this->ip)."'");
 			$sql .= ")";
 
@@ -665,6 +668,7 @@ class Ticket extends CommonObject
 		$sql .= " t.date_last_msg_sent,";
 		$sql .= " t.date_close,";
 		$sql .= " t.tms,";
+		$sql .= " t.model_pdf,";
 		$sql .= " t.ip,";
 		$sql .= " type.label as type_label, category.label as category_label, severity.label as severity_label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
@@ -706,6 +710,7 @@ class Ticket extends CommonObject
 				$this->email_date = $this->db->jdate($obj->email_date);
 				$this->subject = $obj->subject;
 				$this->message = $obj->message;
+				$this->model_pdf = $obj->model_pdf;
 				$this->ip = $obj->ip;
 
 				$this->status = $obj->status;
@@ -1022,7 +1027,9 @@ class Ticket extends CommonObject
 		if (isset($this->severity_code)) {
 			$this->timing = trim($this->severity_code);
 		}
-
+		if (isset($this->model_pdf)) {
+			$this->model_pdf = trim($this->model_pdf);
+		}
 		// Check parameters
 		// Put here code to add a control on parameters values
 		// Update request
@@ -1047,6 +1054,7 @@ class Ticket extends CommonObject
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " date_read=".(dol_strlen($this->date_read) != 0 ? "'".$this->db->idate($this->date_read)."'" : 'null').",";
 		$sql .= " date_last_msg_sent=".(dol_strlen($this->date_last_msg_sent) != 0 ? "'".$this->db->idate($this->date_last_msg_sent)."'" : 'null').",";
+		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " date_close=".(dol_strlen($this->date_close) != 0 ? "'".$this->db->idate($this->date_close)."'" : 'null');
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -3142,7 +3150,8 @@ class Ticket extends CommonObject
 
 		return $return;
 	}
-		/**
+
+	/**
 	 *  Create a document onto disk according to template module.
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
