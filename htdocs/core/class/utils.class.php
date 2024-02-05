@@ -1380,7 +1380,7 @@ class Utils
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$this->error = strval($error);
+		$this->error = "Error sending backp file ".((string) $error);
 		$this->output = $output;
 
 		if ($result) {
