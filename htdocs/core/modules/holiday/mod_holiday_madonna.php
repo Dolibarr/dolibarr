@@ -170,7 +170,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 *
 	 *	@param	User		$fuser     	User object
 	 *	@param	Object		$objforref	Holiday object
-	 *	@return string      			Value if OK, 0 if KO
+	 *	@return string|-1      			Value if OK, -1 if KO
 	 */
 	public function holiday_get_num($fuser, $objforref)
 	{
