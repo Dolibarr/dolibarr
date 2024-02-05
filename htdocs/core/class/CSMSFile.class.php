@@ -55,7 +55,14 @@ class CSMSFile
 	 */
 	public $eol;
 
+	/**
+	 * @var string address from
+	 */
 	public $addr_from;
+
+	/**
+	 * @var string address to
+	 */
 	public $addr_to;
 	public $deferred;
 	public $priority;
