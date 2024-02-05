@@ -153,9 +153,9 @@ if (getDolGlobalString('INVOICE_DISALLOW_REOPEN')) {
 $usercanunvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($usercancreate)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('facture', 'invoice_advance', 'unvalidate')));
 
 $usermustrespectpricemin = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('produit', 'ignore_price_min_advance')) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
-$usercancreatemargin = ($user->hasRight('margins', 'creer') ? $user->rights->margins->creer : 0);
-$usercanreadallmargin = ($user->hasRight('margins', 'liretous') ? $user->rights->margins->liretous : 0);
-$usercancreatewithdrarequest = ($user->hasRight('prelevement', 'bons', 'creer') ? $user->rights->prelevement->bons->creer : 0);
+$usercancreatemargin = $user->hasRight('margins', 'creer');
+$usercanreadallmargin = $user->hasRight('margins', 'liretous');
+$usercancreatewithdrarequest = $user->hasRight('prelevement', 'bons', 'creer');
 
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php

@@ -861,15 +861,6 @@ if (!empty($id) || !empty($ref)) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 		// List of mass actions available
-		/*
-		$arrayofmassactions =  array(
-			'presend'=>$langs->trans("SendByMail"),
-			'builddoc'=>$langs->trans("PDFMerge"),
-		);
-		if ($user->rights->product->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-		if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
-		$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
-		*/
 
 		$aaa = '';
 		if (count($productCombinations)) {

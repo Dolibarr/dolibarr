@@ -89,7 +89,7 @@ $permissiontoaddbankaccount = ($user->hasRight('salaries', 'write') || $user->ha
 $permissiontoreadhr = $user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write');
 $permissiontowritehr = $user->hasRight('hrm', 'write_personal_information', 'write');
 
-// Ok if user->rights->salaries->read or user->rights->hrm->read
+// Ok if user->hasRight('salaries', 'read') or user->hasRight('hrm', 'read')
 //$result = restrictedArea($user, 'salaries|hrm', $object->id, 'user&user', $feature2);
 $ok = false;
 if ($user->id == $id) {
