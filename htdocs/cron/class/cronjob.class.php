@@ -257,7 +257,7 @@ class Cronjob extends CommonObject
 			$this->lastoutput = trim($this->lastoutput);
 		}
 		if (isset($this->lastresult)) {
-			$this->lastresult = trim($this->lastresult);
+			$this->lastresult = (int) $this->lastresult;
 		}
 		if (isset($this->unitfrequency)) {
 			$this->unitfrequency = trim($this->unitfrequency);
@@ -704,7 +704,7 @@ class Cronjob extends CommonObject
 			$this->lastoutput = trim($this->lastoutput);
 		}
 		if (isset($this->lastresult)) {
-			$this->lastresult = trim($this->lastresult);
+			$this->lastresult = (int) $this->lastresult;
 		}
 		if (isset($this->unitfrequency)) {
 			$this->unitfrequency = trim($this->unitfrequency);
@@ -719,7 +719,7 @@ class Cronjob extends CommonObject
 			$this->note_private = trim($this->note_private);
 		}
 		if (isset($this->nbrun)) {
-			$this->nbrun = trim($this->nbrun);
+			$this->nbrun = (int) $this->nbrun;
 		}
 		if (isset($this->libname)) {
 			$this->libname = trim($this->libname);
@@ -907,7 +907,7 @@ class Cronjob extends CommonObject
 		$object->status = self::STATUS_DISABLED;
 		$object->label = $langs->trans("CopyOf").' '.$langs->trans($object->label);
 		$object->datelastrun = null;
-		$object->lastresult = '';
+		$object->lastresult = 0;
 		$object->datelastresult = null;
 		$object->lastoutput = '';
 		$object->nbrun = 0;
@@ -965,7 +965,7 @@ class Cronjob extends CommonObject
 		$this->datestart = '';
 		$this->datelastresult = '';
 		$this->lastoutput = '';
-		$this->lastresult = '';
+		$this->lastresult = 0;
 		$this->unitfrequency = '';
 		$this->frequency = 0;
 		$this->status = 0;
@@ -1211,7 +1211,7 @@ class Cronjob extends CommonObject
 		$this->datelastrun = $now;
 		$this->datelastresult = null;
 		$this->lastoutput = '';
-		$this->lastresult = '';
+		$this->lastresult = 0;
 		$this->processing = 1; // To know job was started
 		$this->pid = function_exists('getmypid') ? getmypid() : null; // Avoid dol_getmypid to get null if the function is not available
 		$this->nbrun = $this->nbrun + 1;
