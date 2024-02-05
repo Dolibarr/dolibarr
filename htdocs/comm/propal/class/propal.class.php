@@ -1496,7 +1496,7 @@ class Propal extends CommonObject
 		$object->statut = self::STATUS_DRAFT;
 
 		// Clear fields
-		$object->user_author = $user;
+		$object->user_creation_id = $user->id;
 		$object->user_validation_id = 0;
 		$object->date = $now;
 		$object->datep = $now; // deprecated
