@@ -63,7 +63,7 @@ class Receptions extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->reception->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -100,7 +100,7 @@ class Receptions extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->reception->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -221,7 +221,7 @@ class Receptions extends DolibarrApi
 	/*
 	public function getLines($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->reception->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -465,7 +465,7 @@ class Receptions extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->reception->supprimer) {
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'supprimer')) {
 			throw new RestException(403);
 		}
 		$result = $this->reception->fetch($id);
@@ -595,7 +595,7 @@ class Receptions extends DolibarrApi
 
 		require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 
-		if (!DolibarrApiAccess::$user->rights->reception->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'lire')) {
 				throw new RestException(403);
 		}
 		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {

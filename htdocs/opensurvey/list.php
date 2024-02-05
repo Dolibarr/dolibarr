@@ -107,10 +107,10 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->opensurvey->read;
-$permissiontoadd = $user->rights->opensurvey->write;
+$permissiontoread = $user->hasRight('opensurvey', 'read');
+$permissiontoadd = $user->hasRight('opensurvey', 'write');
 // permission delete doesn't exists
-$permissiontodelete = $user->rights->opensurvey->write;
+$permissiontodelete = $user->hasRight('opensurvey', 'write');
 
 
 /*

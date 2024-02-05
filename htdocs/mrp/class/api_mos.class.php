@@ -63,7 +63,7 @@ class Mos extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->mrp->read) {
+		if (!DolibarrApiAccess::$user->hasRight('mrp', 'read')) {
 			throw new RestException(403);
 		}
 
@@ -97,7 +97,7 @@ class Mos extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->mrp->read) {
+		if (!DolibarrApiAccess::$user->hasRight('mrp', 'read')) {
 			throw new RestException(403);
 		}
 
@@ -177,7 +177,7 @@ class Mos extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->mrp->write) {
+		if (!DolibarrApiAccess::$user->hasRight('mrp', 'write')) {
 			throw new RestException(403);
 		}
 		// Check mandatory fields
@@ -211,7 +211,7 @@ class Mos extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->mrp->write) {
+		if (!DolibarrApiAccess::$user->hasRight('mrp', 'write')) {
 			throw new RestException(403);
 		}
 
@@ -254,7 +254,7 @@ class Mos extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->mrp->delete) {
+		if (!DolibarrApiAccess::$user->hasRight('mrp', 'delete')) {
 			throw new RestException(403);
 		}
 		$result = $this->mo->fetch($id);
@@ -263,7 +263,7 @@ class Mos extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('mrp', $this->mo->id, 'mrp_mo')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->mo->delete(DolibarrApiAccess::$user)) {
@@ -304,7 +304,7 @@ class Mos extends DolibarrApi
 
 		$error = 0;
 
-		if (!DolibarrApiAccess::$user->rights->mrp->write) {
+		if (!DolibarrApiAccess::$user->hasRight('mrp', 'write')) {
 			throw new RestException(401, 'Not enough permission');
 		}
 		$result = $this->mo->fetch($id);

@@ -47,7 +47,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->propal->lire);
+		$this->hidden = !$user->hasRight('propal', 'lire');
 	}
 
 	/**

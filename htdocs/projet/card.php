@@ -404,7 +404,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'set_opp_status' && $user->rights->projet->creer) {
+	if ($action == 'set_opp_status' && $user->hasRight('projet', 'creer')) {
 		$error = 0;
 		if (GETPOSTISSET('opp_status')) {
 			$object->opp_status   = $opp_status;
@@ -413,7 +413,7 @@ if (empty($reshook)) {
 			$object->opp_percent  = $opp_percent;
 		}
 
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			if ($object->opp_amount && ($object->opp_status <= 0)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');

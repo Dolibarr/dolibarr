@@ -495,9 +495,6 @@ if ($result) {
 			print '</td></tr>';
 		}
 
-		//$user->rights->banque->modifier=false;
-		//$user->rights->banque->consolidate=true;
-
 		// Type of payment / Number
 		print "<tr><td>".$langs->trans("Type")." / ".$langs->trans("Numero");
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';

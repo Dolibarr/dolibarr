@@ -109,7 +109,7 @@ if (empty($upload_dir)) {
 
 $permissiontoread = $usercanread;
 $permissiontoadd = $usercancreate;
-$permtoedit = $user->rights->produit->creer;
+$permtoedit = $user->hasRight('produit', 'creer');
 //$permissiontodelete = $usercandelete;
 
 // Security check

@@ -243,8 +243,8 @@ class Context
 		global $conf;
 
 		// Init de l'url de base
-		if (!empty($conf->global->WEBPORTAL_ROOT_URL)) {
-			$rootUrl = $conf->global->WEBPORTAL_ROOT_URL;
+		if (getDolGlobalString('WEBPORTAL_ROOT_URL')) {
+			$rootUrl = getDolGlobalString('WEBPORTAL_ROOT_URL');
 			if (substr($rootUrl, -1) !== '/') {
 				$rootUrl .= '/';
 			}

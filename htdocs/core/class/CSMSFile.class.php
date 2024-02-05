@@ -191,8 +191,7 @@ class CSMSFile
 							}
 						}
 					} else {
-						$sms = new stdClass();
-						$sms->error = 'The SMS manager "'.$classfile.'" defined into SMS setup MAIN_MODULE_'.strtoupper($sendmode).'_SMS is not found';
+						$this->error = 'The SMS manager "'.$classfile.'" defined into SMS setup MAIN_MODULE_'.strtoupper($sendmode).'_SMS is not found';
 					}
 				} catch (Exception $e) {
 					dol_print_error(null, 'Error to get list of senders: '.$e->getMessage());
@@ -200,7 +199,7 @@ class CSMSFile
 			} else {
 				// Send sms method not correctly defined
 				// --------------------------------------
-				$sms->error = 'Bad value for MAIN_SMS_SENDMODE constant';
+				$this->error = 'Bad value for MAIN_SMS_SENDMODE constant';
 				$res = false;
 			}
 		} else {
