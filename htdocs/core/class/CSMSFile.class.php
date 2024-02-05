@@ -55,7 +55,14 @@ class CSMSFile
 	 */
 	public $eol;
 
+	/**
+	 * @var string address from
+	 */
 	public $addr_from;
+
+	/**
+	 * @var string address to
+	 */
 	public $addr_to;
 	public $deferred;
 	public $priority;
@@ -191,8 +198,7 @@ class CSMSFile
 							}
 						}
 					} else {
-						$sms = new stdClass();
-						$sms->error = 'The SMS manager "'.$classfile.'" defined into SMS setup MAIN_MODULE_'.strtoupper($sendmode).'_SMS is not found';
+						$this->error = 'The SMS manager "'.$classfile.'" defined into SMS setup MAIN_MODULE_'.strtoupper($sendmode).'_SMS is not found';
 					}
 				} catch (Exception $e) {
 					dol_print_error(null, 'Error to get list of senders: '.$e->getMessage());

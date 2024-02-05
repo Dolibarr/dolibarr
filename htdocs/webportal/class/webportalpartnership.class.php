@@ -265,7 +265,7 @@ class WebPortalPartnership extends Partnership
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowPartnership");
 				$linkclose .= ' alt="' . dol_escape_htmltag($label, 1) . '"';
 			}

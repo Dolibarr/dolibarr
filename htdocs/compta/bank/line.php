@@ -495,9 +495,6 @@ if ($result) {
 			print '</td></tr>';
 		}
 
-		//$user->rights->banque->modifier=false;
-		//$user->rights->banque->consolidate=true;
-
 		// Type of payment / Number
 		print "<tr><td>".$langs->trans("Type")." / ".$langs->trans("Numero");
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
@@ -654,7 +651,7 @@ if ($result) {
 		print "</table>";
 
 		// Code to adjust value date with plus and less picto using an Ajax call instead of a full reload of page
-		/* Not yet ready. We must manage inline replacemet of input date field
+		/* Not yet ready. We must manage inline replacement of input date field
 		$urlajax = DOL_URL_ROOT.'/core/ajax/bankconciliate.php?token='.currentToken();
 		print '
 			<script type="text/javascript">

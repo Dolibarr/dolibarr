@@ -122,9 +122,9 @@ $arrayfields = array(
 	//'m.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500)
 );
 
-$usercanread = (($user->rights->stock->mouvement->lire));
-$usercancreate = (($user->rights->stock->mouvement->creer));
-$usercandelete = (($user->rights->stock->mouvement->supprimer));
+$usercanread = (($user->hasRight('stock', 'mouvement', 'lire')));
+$usercancreate = (($user->hasRight('stock', 'mouvement', 'creer')));
+$usercandelete = (($user->hasRight('stock', 'mouvement', 'supprimer')));
 
 
 
@@ -400,15 +400,15 @@ if ($action == "transfert_stock" && !$cancel) {
 // The builddoc action for object of a movement must be on the movement card
 // Actions to build doc
 $upload_dir = $conf->stock->dir_output."movement/";
-$permissiontoadd = $user->rights->stock->creer;
+$permissiontoadd = $user->hasRight('stock', 'creer');
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
 if (empty($reshook) && $action != 'remove_file') {
 	$objectclass = 'MouvementStock';
 	$objectlabel = 'Movements';
-	$permissiontoread = $user->rights->stock->lire;
-	$permissiontodelete = $user->rights->stock->supprimer;
+	$permissiontoread = $user->hasRight('stock', 'lire');
+	$permissiontodelete = $user->hasRight('stock', 'supprimer');
 	$uploaddir = $conf->stock->dir_output."/movement/";
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -1199,8 +1199,8 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete' && $id > 0) 
 	$genallowed = $usercanread;
 	$delallowed = $usercancreate;
 
-	$genallowed = $user->rights->stock->lire;
-	$delallowed = $user->rights->stock->creer;
+	$genallowed = $user->hasRight('stock', 'lire');
+	$delallowed = $user->hasRight('stock', 'creer');
 
 	print $formfile->showdocuments($modulepart, $objectref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
 	$somethingshown = $formfile->numoffiles;

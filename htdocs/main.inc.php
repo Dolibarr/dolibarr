@@ -1780,7 +1780,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		// Displays title
 		$appli = constant('DOL_APPLICATION_TITLE');
 		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-			$appli = $conf->global->MAIN_APPLICATION_TITLE;
+			$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
 		}
 
 		print '<title>';
@@ -1848,7 +1848,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			print '<!-- Includes CSS for JQuery (Ajax library) -->'."\n";
 			$jquerytheme = 'base';
 			if (getDolGlobalString('MAIN_USE_JQUERY_THEME')) {
-				$jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
+				$jquerytheme = getDolGlobalString('MAIN_USE_JQUERY_THEME');
 			}
 			if (constant('JS_JQUERY_UI')) {
 				print '<link rel="stylesheet" type="text/css" href="'.JS_JQUERY_UI.'css/'.$jquerytheme.'/jquery-ui.min.css'.($ext ? '?'.$ext : '').'">'."\n"; // Forced JQuery
@@ -2158,7 +2158,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		// Define link to login card
 		$appli = constant('DOL_APPLICATION_TITLE');
 		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-			$appli = $conf->global->MAIN_APPLICATION_TITLE;
+			$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
 			if (preg_match('/\d\.\d/', $appli)) {
 				if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
 					$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
@@ -2515,7 +2515,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	// Define version to show
 	$appli = constant('DOL_APPLICATION_TITLE');
 	if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-		$appli = $conf->global->MAIN_APPLICATION_TITLE;
+		$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
 		if (preg_match('/\d\.\d/', $appli)) {
 			if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
 				$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
@@ -3160,7 +3160,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		}
 		$selected = -1;
 		if (!getDolGlobalString('MAIN_USE_TOP_MENU_SEARCH_DROPDOWN')) {
-			// Select into select2 is awfull on smartphone. TODO Is this still true with select2 v4 ?
+			// Select with select2 is awful on smartphone. TODO Is this still true with select2 v4 ?
 			if ($conf->browser->layout == 'phone') {
 				$conf->global->MAIN_USE_OLD_SEARCH_FORM = 1;
 			}
@@ -3271,7 +3271,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 
 			$appli = constant('DOL_APPLICATION_TITLE');
 			if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-				$appli = $conf->global->MAIN_APPLICATION_TITLE; $doliurl = '';
+				$appli = getDolGlobalString('MAIN_APPLICATION_TITLE'); $doliurl = '';
 				if (preg_match('/\d\.\d/', $appli)) {
 					if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
 						$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
@@ -3337,7 +3337,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 				$bugbaseurl .= urlencode("\n");
 				$bugbaseurl .= urlencode("## Report\n");
 			} elseif (getDolGlobalString('MAIN_BUGTRACK_ENABLELINK')) {
-				$bugbaseurl = $conf->global->MAIN_BUGTRACK_ENABLELINK;
+				$bugbaseurl = getDolGlobalString('MAIN_BUGTRACK_ENABLELINK');
 			} else {
 				$bugbaseurl = "";
 			}
@@ -3405,7 +3405,7 @@ function main_area($title = '')
 	print $hookmanager->resPrint;
 
 	if (getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')) {
-		print info_admin($langs->trans("WarningYouAreInMaintenanceMode", $conf->global->MAIN_ONLY_LOGIN_ALLOWED), 0, 0, 1, 'warning maintenancemode');
+		print info_admin($langs->trans("WarningYouAreInMaintenanceMode", getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')), 0, 0, 1, 'warning maintenancemode');
 	}
 
 	// Permit to add user company information on each printed document by setting SHOW_SOCINFO_ON_PRINT
