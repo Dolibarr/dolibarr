@@ -989,7 +989,7 @@ class FormOther
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Creae an image for color
+	 *	Create an image for color
 	 *
 	 *	@param	string	$color		Color of image
 	 *	@param	string	$module 	Name of module
