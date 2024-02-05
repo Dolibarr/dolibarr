@@ -828,7 +828,7 @@ class FormSetupItem
 		$out = (($this->langs->trans($this->confKey) != $this->confKey) ? $this->langs->trans($this->confKey) : $this->langs->trans('MissingTranslationForConfKey', $this->confKey));
 
 		// if conf defined on entity 0, prepend a picto to indicate it will apply across all entities
-		if ($this->entity == 0) $out = $out . '<span class="fas fa-globe-americas pictofixedwidth" style="color: #aaa;"></span> ';
+		if (isModEnabled('multicompany') && $this->entity == 0) img_picto($this->langs->trans('AllEntities'), 'fa-globe-americas em088 opacityhigh') . '&nbsp;' . $out;
 
 		return $out;
 	}
