@@ -1025,7 +1025,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 	if ($user->hasRight("project", "read")) {
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-		$permission = $user->rights->projet->creer;
+		$permission = $user->hasRight('projet', 'creer');
 
 		$objects = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($objects < 0) {

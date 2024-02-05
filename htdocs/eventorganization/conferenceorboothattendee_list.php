@@ -143,9 +143,9 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Permissions
-$permissiontoread = $user->rights->eventorganization->read;
-$permissiontoadd = $user->rights->eventorganization->write;
-$permissiontodelete = $user->rights->eventorganization->delete;
+$permissiontoread = $user->hasRight('eventorganization', 'read');
+$permissiontoadd = $user->hasRight('eventorganization', 'write');
+$permissiontodelete = $user->hasRight('eventorganization', 'delete');
 
 // Security check
 if (empty($conf->eventorganization->enabled)) {

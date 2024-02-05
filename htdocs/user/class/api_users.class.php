@@ -148,7 +148,7 @@ class Users extends DolibarrApi
 	 */
 	public function get($id, $includepermissions = 0)
 	{
-		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin) && $id != 0 && DolibarrApiAccess::$user->id != $id) {
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin) && $id != 0 && DolibarrApiAccess::$user->id != $id) {
 			throw new RestException(401, 'Not allowed');
 		}
 
@@ -191,7 +191,7 @@ class Users extends DolibarrApi
 			throw new RestException(400, 'Bad parameters');
 		}
 
-		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin) && DolibarrApiAccess::$user->login != $login) {
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin) && DolibarrApiAccess::$user->login != $login) {
 			throw new RestException(401, 'Not allowed');
 		}
 
@@ -230,7 +230,7 @@ class Users extends DolibarrApi
 			throw new RestException(400, 'Bad parameters');
 		}
 
-		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin) && DolibarrApiAccess::$user->email != $email) {
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin) && DolibarrApiAccess::$user->email != $email) {
 			throw new RestException(401, 'Not allowed');
 		}
 
@@ -263,7 +263,7 @@ class Users extends DolibarrApi
 	 */
 	public function getInfo($includepermissions = 0)
 	{
-		if (empty(DolibarrApiAccess::$user->rights->user->self->creer) && empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
+		if (!DolibarrApiAccess::$user->hasRights('user', 'self', 'creer') && !DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(401, 'Not allowed');
 		}
 
@@ -304,7 +304,7 @@ class Users extends DolibarrApi
 	public function post($request_data = null)
 	{
 		// Check user authorization
-		if (empty(DolibarrApiAccess::$user->rights->user->creer) && empty(DolibarrApiAccess::$user->admin)) {
+		if (!DolibarrApiAccess::$user->hasRight('user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(401, "User creation not allowed for login ".DolibarrApiAccess::$user->login);
 		}
 
@@ -328,7 +328,7 @@ class Users extends DolibarrApi
 				continue;
 			}
 			/*if ($field == 'pass') {
-				if (empty(DolibarrApiAccess::$user->rights->user->user->password)) {
+				if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'password')) {
 					throw new RestException(401, 'You are not allowed to modify/set password of other users');
 					continue;
 				}
@@ -381,10 +381,10 @@ class Users extends DolibarrApi
 				continue;
 			}
 			if ($field == 'pass') {
-				if ($this->useraccount->id != DolibarrApiAccess::$user->id && empty(DolibarrApiAccess::$user->rights->user->user->password)) {
+				if ($this->useraccount->id != DolibarrApiAccess::$user->id && !DolibarrApiAccess::$user->hasRight('user', 'user', 'password')) {
 					throw new RestException(401, 'You are not allowed to modify password of other users');
 				}
-				if ($this->useraccount->id == DolibarrApiAccess::$user->id && empty(DolibarrApiAccess::$user->rights->user->self->password)) {
+				if ($this->useraccount->id == DolibarrApiAccess::$user->id && !DolibarrApiAccess::$user->hasRight('user', 'self', 'password')) {
 					throw new RestException(401, 'You are not allowed to modify your own password');
 				}
 			}
@@ -442,7 +442,7 @@ class Users extends DolibarrApi
 	 */
 	public function getGroups($id)
 	{
-		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(403);
 		}
 
@@ -537,8 +537,8 @@ class Users extends DolibarrApi
 
 		$obj_ret = array();
 
-		if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) ||
-			getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && empty(DolibarrApiAccess::$user->rights->user->group_advance->read) && empty(DolibarrApiAccess::$user->admin)) {
+		if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin)) ||
+			getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !DolibarrApiAccess::$user->hasRight('user', 'group_advance', 'read') && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(403, "You are not allowed to read groups");
 		}
 
@@ -609,8 +609,8 @@ class Users extends DolibarrApi
 	{
 		global $db, $conf;
 
-		if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) ||
-			getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && empty(DolibarrApiAccess::$user->rights->user->group_advance->read) && empty(DolibarrApiAccess::$user->admin)) {
+		if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin)) ||
+			getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !DolibarrApiAccess::$user->hasRight('user', 'group_advance', 'read') && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(403, "You are not allowed to read groups");
 		}
 
@@ -635,7 +635,7 @@ class Users extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (empty(DolibarrApiAccess::$user->rights->user->user->supprimer) && empty(DolibarrApiAccess::$user->admin)) {
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'supprimer') && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(403, 'Not allowed');
 		}
 		$result = $this->useraccount->fetch($id);
@@ -708,7 +708,7 @@ class Users extends DolibarrApi
 		unset($object->lines);
 		unset($object->model_pdf);
 
-		$canreadsalary = ((isModEnabled('salaries') && !empty(DolibarrApiAccess::$user->rights->salaries->read)) || (empty($conf->salaries->enabled)));
+		$canreadsalary = ((isModEnabled('salaries') && DolibarrApiAccess::$user->hasRight('salaries', 'read')) || !isModEnabled('salaries'));
 
 		if (!$canreadsalary) {
 			unset($object->salary);

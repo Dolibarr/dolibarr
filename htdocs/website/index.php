@@ -347,8 +347,8 @@ if ($action == 'replacesite' || $mode == 'replacesite') {
 	$listofpages = getPagesFromSearchCriterias($containertype, $algo, $searchkey, 1000, $sortfield, $sortorder, $langcode, $otherfilters, -1);
 }
 
-$usercanedit = $user->rights->website->write;
-$permissiontoadd = $user->rights->website->write;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+$usercanedit = $user->hasRight('website', 'write');
+$permissiontoadd = $user->hasRight('website', 'write');	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 $permissiontodelete = $user->hasRight('website', 'delete');
 
 

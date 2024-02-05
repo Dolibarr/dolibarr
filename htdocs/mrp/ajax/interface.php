@@ -32,7 +32,7 @@ $action = GETPOST('action', 'alphanohtml');
 
 $result = restrictedArea($user, 'mrp');
 
-$permissiontoproduce = $user->rights->mrp->write;
+$permissiontoproduce = $user->hasRight('mrp', 'write');
 
 
 

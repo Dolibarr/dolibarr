@@ -4039,7 +4039,7 @@ class Societe extends CommonObject
 				$isACompany = 1;
 			}
 		}
-		return boolval($isACompany);
+		return (bool) $isACompany;
 	}
 
 	/**

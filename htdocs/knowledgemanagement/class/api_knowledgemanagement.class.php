@@ -101,7 +101,7 @@ class KnowledgeManagement extends DolibarrApi
 	 */
 	public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->categorie->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -149,7 +149,7 @@ class KnowledgeManagement extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if ($restrictonsocid && !DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) {
+		if ($restrictonsocid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 

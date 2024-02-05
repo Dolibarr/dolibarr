@@ -25,8 +25,8 @@
  * $conf
  * $langs
  * $forceall (0 by default, 1 for supplier invoices/orders)
- * $element     (used to test $user->rights->$element->creer)
- * $permtoedit  (used to replace test $user->rights->$element->creer)
+ * $element     (used to test $user->hasRight($element, 'creer'))
+ * $permtoedit  (used to replace test $user->hasRight($element, 'creer'))
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  * $object_rights->creer initialized from = $object->getRights()
  * $disableedit, $disablemove, $disableremove
