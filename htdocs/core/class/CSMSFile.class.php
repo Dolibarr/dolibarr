@@ -200,8 +200,7 @@ class CSMSFile
 			} else {
 				// Send sms method not correctly defined
 				// --------------------------------------
-				$sms = new stdClass();
-				$sms->error = 'Bad value for MAIN_SMS_SENDMODE constant';
+				$this->error = 'Bad value for MAIN_SMS_SENDMODE constant';
 				$res = false;
 			}
 		} else {
