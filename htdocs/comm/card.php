@@ -845,7 +845,7 @@ if ($object->id > 0) {
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
-				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->id.'">'.$langs->trans("AllPropals").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllPropals").'</span><span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
 				print '</tr></table></td>';
 				print '</tr>';
@@ -859,7 +859,8 @@ if ($object->id > 0) {
 				print '<td class="nowraponall">';
 				$propal_static->id = $objp->propalid;
 				$propal_static->ref = $objp->ref;
-				$propal_static->ref_client = $objp->ref_client;
+				$propal_static->ref_client = $objp->ref_client;	// deprecated
+				$propal_static->ref_customer = $objp->ref_client;
 				$propal_static->total_ht = $objp->total_ht;
 				$propal_static->total_tva = $objp->total_tva;
 				$propal_static->total_ttc = $objp->total_ttc;
@@ -898,7 +899,7 @@ if ($object->id > 0) {
 					print " ".img_warning();
 				}
 				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
-				print '<td class="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
+				print '<td class="right nowraponall">'.price($objp->total_ht).'</td>';
 				print '<td class="right" style="min-width: 60px" class="nowrap">'.$propal_static->LibStatut($objp->fk_statut, 5).'</td></tr>';
 				$i++;
 			}
@@ -956,7 +957,7 @@ if ($object->id > 0) {
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
-				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomerOrders", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomerOrders", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllOrders").'</span><span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
 				print '</tr></table></td>';
 				print '</tr>';
@@ -1009,7 +1010,7 @@ if ($object->id > 0) {
 				print '</td>';
 
 				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->dc), 'day')."</td>\n";
-				print '<td class="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
+				print '<td class="right nowraponall">'.price($objp->total_ht).'</td>';
 				print '<td class="right" style="min-width: 60px" class="nowrap">'.$commande_static->LibStatut($objp->fk_statut, $objp->facture, 5).'</td></tr>';
 				$i++;
 			}
@@ -1055,7 +1056,7 @@ if ($object->id > 0) {
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
-				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSendings", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expedition/list.php?socid='.$object->id.'">'.$langs->trans("AllSendings").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+				print '<td colspan="4"><table class="centpercent nobordernopadding"><tr><td>'.$langs->trans("LastSendings", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expedition/list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllSendings").'</span><span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/expedition/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
 				print '</tr></table></td>';
 				print '</tr>';
@@ -1107,7 +1108,7 @@ if ($object->id > 0) {
 					print '<td class="right"><b>!!!</b></td>';
 				}
 
-				print '<td class="nowrap right" width="100" >'.$sendingstatic->LibStatut($objp->statut, 5).'</td>';
+				print '<td class="nowrap right centpercent">'.$sendingstatic->LibStatut($objp->statut, 5).'</td>';
 				print "</tr>\n";
 				$i++;
 			}
@@ -1251,7 +1252,7 @@ if ($object->id > 0) {
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
-				print '<td colspan="3"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastInterventions", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fichinter/list.php?socid='.$object->id.'">'.$langs->trans("AllInterventions").'<span class="badge marginleftonlyshort">'.$num.'</span></td>';
+				print '<td colspan="3"><table class="centpercent nobordernopadding"><tr><td>'.$langs->trans("LastInterventions", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fichinter/list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllInterventions").'</span><span class="badge marginleftonlyshort">'.$num.'</span></td>';
 				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/fichinter/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
 				print '</tr></table></td>';
 				print '</tr>';
@@ -1347,10 +1348,16 @@ if ($object->id > 0) {
 			if ($num > 0) {
 				print '<div class="div-table-responsive-no-min">';
 				print '<table class="noborder centpercent lastrecordtable">';
-
 				print '<tr class="liste_titre">';
-				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LatestCustomerTemplateInvoices", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php?socid='.$object->id.'">'.$langs->trans("AllCustomerTemplateInvoices").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
-				print '</tr></table></td>';
+				$colspan = 4;
+				if (getDolGlobalString('MAIN_SHOW_PRICE_WITH_TAX_IN_SUMMARIES')) {
+					$colspan++;
+				}
+				print '<td colspan="'.$colspan.'">';
+				print '<table class="centpercent nobordernopadding"><tr>';
+				print '<td>'.$langs->trans("LatestCustomerTemplateInvoices", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllCustomerTemplateInvoices").'</span><span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+				print '</tr></table>';
+				print '</td>';
 				print '</tr>';
 			}
 
@@ -1383,12 +1390,12 @@ if ($object->id > 0) {
 						print '<td class="right"><b>!!!</b></td>';
 					}
 				}
-				print '<td class="right" style="min-width: 60px">';
+				print '<td class="right nowraponall">';
 				print price($objp->total_ht);
 				print '</td>';
 
 				if (getDolGlobalString('MAIN_SHOW_PRICE_WITH_TAX_IN_SUMMARIES')) {
-					print '<td class="right" style="min-width: 60px">';
+					print '<td class="right nowraponall">';
 					print price($objp->total_ttc);
 					print '</td>';
 				}
@@ -1440,11 +1447,16 @@ if ($object->id > 0) {
 			if ($num > 0) {
 				print '<div class="div-table-responsive-no-min">';
 				print '<table class="noborder centpercent lastrecordtable">';
-
 				print '<tr class="liste_titre">';
-				print '<td colspan="5"><table class="centpercent nobordernopadding"><tr><td>'.$langs->trans("LastCustomersBills", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllBills").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+				$colspan = 5;
+				if (getDolGlobalString('MAIN_SHOW_PRICE_WITH_TAX_IN_SUMMARIES')) {
+					$colspan++;
+				}
+				print '<td colspan="'.$colspan.'">';
+				print '<table class="centpercent nobordernopadding"><tr><td>'.$langs->trans("LastCustomersBills", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllBills").'</span><span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
-				print '</tr></table></td>';
+				print '</tr></table>';
+				print '</td>';
 				print '</tr>';
 			}
 
@@ -1462,6 +1474,7 @@ if ($object->id > 0) {
 				$facturestatic->status = $objp->status;
 				$facturestatic->paye = $objp->paye;
 				$facturestatic->alreadypaid = $objp->am;
+				$facturestatic->totalpaid = $objp->am;
 				$facturestatic->date = $db->jdate($objp->df);
 				$facturestatic->date_lim_reglement = $db->jdate($objp->dl);
 
@@ -1508,12 +1521,12 @@ if ($object->id > 0) {
 				} else {
 					print '<td><b>!!!</b></td>';
 				}
-				print '<td class="right" style="min-width: 60px">';
+				print '<td class="right nowraponall">';
 				print price($objp->total_ht);
 				print '</td>';
 
 				if (getDolGlobalString('MAIN_SHOW_PRICE_WITH_TAX_IN_SUMMARIES')) {
-					print '<td class="right" style="min-width: 60px">';
+					print '<td class="right nowraponall">';
 					print price($objp->total_ttc);
 					print '</td>';
 				}
