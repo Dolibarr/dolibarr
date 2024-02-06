@@ -53,7 +53,7 @@ if (empty($htmlname)) {
 	httponly_accessforbidden('Bad value for param htmlname');
 }
 
-if (!empty($objectfield)) {
+if (!empty($objectfield && empty($objectdesc))) {
 	// Recommended method to call selectobject.
 	// $objectfield is Object:Field that contains the definition (in table $fields or extrafield). Example: 'Societe:t.ddd' or 'Societe:options_xxx'
 

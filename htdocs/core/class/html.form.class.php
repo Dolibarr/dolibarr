@@ -8037,7 +8037,7 @@ class Form
 		$objecttmp = null;
 		$InfoFieldList = array();
 
-		if ($objectfield) {	// We must retreive the objectdesc from the field or extrafield
+		if ($objectfield && empty($objectdesc)) {	// We must retreive the objectdesc if empty from the field or extrafield
 			// Example: $objectfield = 'product:options_package'
 			$tmparray = explode(':', $objectfield);
 			$objectdesc = '';
