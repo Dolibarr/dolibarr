@@ -1596,7 +1596,7 @@ class ExtraFields
 			$element = $extrafieldsobjectkey;		// $extrafieldsobjectkey comes from $object->table_element but we need $object->element
 			if ($element == 'socpeople') {
 				$element = 'contact';
-			} else if ( $element == 'projet' ) {
+			} elseif ( $element == 'projet' ) {
 				$element = 'project';
 			}
 
