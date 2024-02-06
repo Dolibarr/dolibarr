@@ -11470,22 +11470,22 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 	$return = '';
 	$dolGetBadgeParams = array();
 	$parameters = array(
-	    'statusLabel' => $statusLabel,
-	    'statusLabelShort' => $statusLabelShort,
-	    'html' => $html,
-	    'statusType' => $statusType,
-	    'displayMode' => $displayMode,
-	    'params' => $params,
+		'statusLabel' => $statusLabel,
+		'statusLabelShort' => $statusLabelShort,
+		'html' => $html,
+		'statusType' => $statusType,
+		'displayMode' => $displayMode,
+		'params' => $params,
 	);
 
 	$reshook = $hookmanager->executeHooks('dolGetStatus', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-   	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-  
-   	if (empty($reshook)) { 	
-   		if (!empty($params['badgeParams'])) {
+	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+	if (empty($reshook)) {
+		if (!empty($params['badgeParams'])) {
 			$dolGetBadgeParams = $params['badgeParams'];
 		}
-    	if ($displayMode == 0) {
+		if ($displayMode == 0) {
 			$return = !empty($html) ? $html : (empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort));
 		} elseif ($displayMode == 1) {
 			$return = !empty($html) ? $html : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
@@ -11552,9 +11552,9 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 				$return = dolGetBadge((empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort)), $html, $statusType, '', $url, $dolGetBadgeParams);
 			}
 		}
-   	} else {
-   		return $hookmanager->resPrint;
-   	}
+	} else {
+		return $hookmanager->resPrint;
+	}
 
 	return $return;
 }
