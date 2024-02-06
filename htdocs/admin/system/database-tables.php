@@ -195,7 +195,7 @@ if (!$base) {
 		print "</tr>\n";
 
 		$sql = "SELECT relname, seq_tup_read, idx_tup_fetch, n_tup_ins, n_tup_upd, n_tup_del";
-		$sql .= " FROM pg_stat_user_tables";
+		$sql .= " FROM pg_stat_user_tables ORDER BY relname";
 
 		$resql = $db->query($sql);
 		if ($resql) {
