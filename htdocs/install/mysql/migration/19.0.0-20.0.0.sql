@@ -219,3 +219,4 @@ ALTER TABLE llx_mailing ADD COLUMN messtype	varchar(16) DEFAULT 'email' after ro
 ALTER TABLE llx_ticket ADD COLUMN model_pdf varchar(255);
 ALTER TABLE llx_ticket ADD COLUMN last_main_doc varchar(255);
 ALTER TABLE llx_ticket ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_product ADD COLUMN last_main_doc varchar(255);
