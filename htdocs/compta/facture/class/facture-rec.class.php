@@ -1263,7 +1263,7 @@ class FactureRec extends CommonInvoice
 	 * Format string to output with by striking the string if max number of generation was reached
 	 *
 	 * @param	string		$ret	Default value to output
-	 * @return	string				html formated string
+	 * @return	string				html formatted string
 	 */
 	public function strikeIfMaxNbGenReached($ret)
 	{
