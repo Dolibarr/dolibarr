@@ -9086,7 +9086,7 @@ abstract class CommonObject
 
 		foreach ($this->fields as $field => $info) {
 			if ($this->isDate($info)) {
-				if (is_null($obj->{$field}) || $obj->{$field} === '' || $obj->{$field} === '0000-00-00 00:00:00' || $obj->{$field} === '1000-01-01 00:00:00') {
+				if (!isset($obj->{$field}) || is_null($obj->{$field}) || $obj->{$field} === '' || $obj->{$field} === '0000-00-00 00:00:00' || $obj->{$field} === '1000-01-01 00:00:00') {
 					$this->{$field} = '';
 				} else {
 					$this->{$field} = $db->jdate($obj->{$field});
@@ -9102,7 +9102,7 @@ abstract class CommonObject
 							$this->{$field} = (double) $obj->{$field};
 						}
 					} else {
-						if (!is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+						if (isset($obj->{$field}) && (!is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1))) {
 							$this->{$field} = (int) $obj->{$field};
 						} else {
 							$this->{$field} = null;
@@ -9117,7 +9117,7 @@ abstract class CommonObject
 						$this->{$field} = (double) $obj->{$field};
 					}
 				} else {
-					if (!is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+					if (isset($obj->{$field}) && (!is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1))) {
 						$this->{$field} = (double) $obj->{$field};
 					} else {
 						$this->{$field} = null;
