@@ -18,7 +18,8 @@
 
 /**
  *       \file      htdocs/core/class/fileupload.class.php
- *       \brief     File to return Ajax response on common file upload.
+ *       \brief     File to return the ajax response of core/ajax/fileupload.php for common file upload.
+ *       			Security is check by the ajax component.
  *       			For large files, see flowjs-server.php
  */
 
@@ -219,6 +220,7 @@ class FileUpload
 			$file->mime = dol_mimetype($file_name, '', 2);
 			$file->size = filesize($file_path);
 			$file->url = $this->options['upload_url'].urlencode($file->name);
+
 			foreach ($this->options['image_versions'] as $version => $options) {
 				if (dol_is_file($options['upload_dir'].$file_name)) {
 					$tmp = explode('.', $file->name);
@@ -472,18 +474,19 @@ class FileUpload
 	 *
 	 * @return	void
 	 */
-	public function get()
+	/*public function get()
 	{
-		$file_name = isset($_REQUEST['file']) ?
-		basename(stripslashes($_REQUEST['file'])) : null;
+		$file_name = isset($_REQUEST['file']) ? basename(stripslashes($_REQUEST['file'])) : null;
 		if ($file_name) {
 			$info = $this->getFileObject($file_name);
 		} else {
 			$info = $this->getFileObjects();
 		}
+
 		header('Content-type: application/json');
 		echo json_encode($info);
 	}
+	*/
 
 	/**
 	 * Output data
@@ -494,13 +497,12 @@ class FileUpload
 	{
 		$error = 0;
 
-		if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
-			return $this->delete();
-		}
+		/*if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
+			return $this->delete(GETPOST('file'));
+		}*/
 		//var_dump($_FILES);
 
-		$upload = isset($_FILES[$this->options['param_name']]) ?
-		$_FILES[$this->options['param_name']] : null;
+		$upload = isset($_FILES[$this->options['param_name']]) ? $_FILES[$this->options['param_name']] : null;
 		$info = array();
 		if ($upload && is_array($upload['tmp_name'])) {
 			// param_name is an array identifier like "files[]",
@@ -563,6 +565,7 @@ class FileUpload
 	 * @param	string	$file	File
 	 * @return	int
 	 */
+	/*
 	public function delete($file)
 	{
 		$file_name = $file ? basename($file) : null;
@@ -582,4 +585,5 @@ class FileUpload
 
 		return 0;
 	}
+	*/
 }
