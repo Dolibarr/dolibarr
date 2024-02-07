@@ -53,12 +53,12 @@ $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
-$facid = GETPOSTINT('facid');
-$socid = GETPOSTINT('socid');
-$accountid = GETPOSTINT('accountid');
-$day = GETPOSTINT('day');
-$month = GETPOSTINT('month');
-$year = GETPOSTINT('year');
+$facid = GETPOST('facid', 'int');
+$socid = GETPOST('socid', 'int');
+$accountid = GETPOST('accountid', 'int');
+$day = GETPOST('day', 'int');
+$month = GETPOST('month', 'int');
+$year = GETPOST('year', 'int');
 
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_account = GETPOST('search_account', 'int');
@@ -67,10 +67,10 @@ $search_amount = GETPOST('search_amount', 'alpha'); // alpha because we must be 
 $search_company = GETPOST('search_company', 'alpha');
 $search_payment_num = GETPOST('search_payment_num', 'alpha');
 
-$limit = GETPOSTINT('limit') ? GETPOST('limit') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -315,10 +315,10 @@ if (empty($reshook)) {
 			$paiement->multicurrency_amounts = $multicurrency_amounts;
 			$paiement->multicurrency_code = $multicurrency_code; // Array with all currency of payments dispatching
 			$paiement->multicurrency_tx = $multicurrency_tx; // Array with all currency tx of payments dispatching
-			$paiement->paiementid   = GETPOSTINT('paiementid');
+			$paiement->paiementid   = GETPOST('paiementid', 'int');
 			$paiement->num_payment  = GETPOST('num_paiement', 'alphanohtml');
 			$paiement->note_private = GETPOST('comment', 'alpha');
-			$paiement->fk_account   = GETPOSTINT('accountid');
+			$paiement->fk_account   = GETPOST('accountid', 'int');
 
 			if (!$error) {
 				// Create payment and update this->multicurrency_amounts if this->amounts filled or

@@ -96,7 +96,6 @@ $filter = GETPOST("search_filter", 'alpha', 3) ? GETPOST("search_filter", 'alpha
 $filtert = GETPOST("search_filtert", "int", 3) ? GETPOST("search_filtert", "int", 3) : GETPOST("filtert", "int", 3);
 $usergroup = GETPOST("search_usergroup", "int", 3) ? GETPOST("search_usergroup", "int", 3) : GETPOST("usergroup", "int", 3);
 $showbirthday = empty($conf->use_javascript_ajax) ? (GETPOST("search_showbirthday", "int") ? GETPOST("search_showbirthday", "int") : GETPOST("showbirthday", "int")) : 1;
-$search_categ_cus = GETPOST("search_categ_cus", "int", 3) ? GETPOST("search_categ_cus", "int", 3) : 0;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new ActionComm($db);
@@ -268,7 +267,7 @@ if (empty($reshook)) {
 	$objectlabel = 'Events';
 	$uploaddir = true;
 	// Only users that can delete any event can remove records.
-	$permissiontodelete = $user->hasRight('agenda', 'allactions', 'delete');
+	$permissiontodelete = $user->rights->agenda->allactions->delete;
 	$permissiontoadd = $user->hasRight('agenda', 'myactions', 'create');
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -389,10 +388,6 @@ if (GETPOST('dateend_dtendyear', 'int')) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
-if ($search_categ_cus != 0) {
-	$param .= '&search_categ_cus='.urlencode($search_categ_cus);
-}
-
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -574,15 +569,6 @@ if ($dateend_dtend > 0) {
 	$sql .= " AND a.datep2 <= '".$db->idate($dateend_dtend)."'";
 }
 
-// Search in categories, -1 is all and -2 is no categories
-if ($search_categ_cus != -1) {
-	if ($search_categ_cus == -2) {
-		$sql .= " AND NOT EXISTS (SELECT ca.fk_actioncomm FROM ".MAIN_DB_PREFIX."categorie_actioncomm as ca WHERE ca.fk_actioncomm = a.id)";
-	} elseif ($search_categ_cus > 0) {
-		$sql .= " AND EXISTS (SELECT ca.fk_actioncomm FROM ".MAIN_DB_PREFIX."categorie_actioncomm as ca WHERE ca.fk_actioncomm = a.id AND ca.fk_categorie IN (".$db->sanitize($search_categ_cus)."))";
-	}
-}
-
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
@@ -751,7 +737,7 @@ if ($massactionbutton) {
 $i = 0;
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
-print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
+print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
 print '</div>';
 
 print '<div class="div-table-responsive">';

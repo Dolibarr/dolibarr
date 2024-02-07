@@ -98,11 +98,11 @@ if ($id > 0 || !empty($ref)) {
 }
 
 if (empty($conf->reception->enabled)) {
-	$permissiontoreceive = $user->hasRight('fournisseur', 'commande', 'receptionner');
-	$permissiontocontrol = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('fournisseur', 'commande', 'receptionner')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('fournisseur', 'commande_advance', 'check')));
+	$permissiontoreceive = $user->rights->fournisseur->commande->receptionner;
+	$permissiontocontrol = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->fournisseur->commande->receptionner)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->fournisseur->commande_advance->check)));
 } else {
-	$permissiontoreceive = $user->hasRight('reception', 'creer');
-	$permissiontocontrol = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'reception_advance', 'validate')));
+	$permissiontoreceive = $user->rights->reception->creer;
+	$permissiontocontrol = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->creer)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->reception_advance->validate)));
 }
 
 // $id is id of a reception
@@ -205,7 +205,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 								$error++;
 							}
 
-							// If module stock is enabled and the stock decrease is done on edition of this page
+							// If module stock is enabled and the stock decrease is done on edtion of this page
 							/*
 							if (!$error && GETPOST($ent, 'int') > 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
 								$mouv = new MouvementStock($db);

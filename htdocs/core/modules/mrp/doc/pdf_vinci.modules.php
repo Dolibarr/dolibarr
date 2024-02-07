@@ -399,7 +399,7 @@ class pdf_vinci extends ModelePDFMo
 
 				$nexY = $tab_top + 5;
 
-				// Use new auto column system
+				// Use new auto collum system
 				$this->prepareArrayColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
 				// Loop on each lines

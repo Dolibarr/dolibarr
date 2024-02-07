@@ -183,6 +183,10 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'knowledgemanagement';
+	//$permission = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write');
+	$permission = 1;
+	//$permtoedit = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write');
+	$permtoedit = 1;
 	$param = '&id='.$object->id;
 
 	//$relativepathwithnofile='knowledgerecord/' . dol_sanitizeFileName($object->id).'/';

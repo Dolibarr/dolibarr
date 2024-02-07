@@ -60,50 +60,18 @@ class PaymentVarious extends CommonObject
 	 * @var int timestamp
 	 */
 	public $tms;
-
-	/**
-	 * @var int timestamp
-	 */
 	public $datep;
-
-	/**
-	 * @var int timestamp
-	 */
 	public $datev;
 
 	/**
-	 * @var int<0,1> Payment direction (debit or credit)
+	 * @var int sens of operation
 	 */
 	public $sens;
-
-	/**
-	 * @var float
-	 */
 	public $amount;
-
-	/**
-	 * @var int Payment type (fk_typepayment)
-	 */
 	public $type_payment;
-
-	/**
-	 * @var string Payment reference
-	 */
 	public $num_payment;
-
-	/**
-	 * @var string Name of cheque writer
-	 */
 	public $chqemetteur;
-
-	/**
-	 * @var string Bank of cheque writer
-	 */
 	public $chqbank;
-
-	/**
-	 * @var int Category id
-	 */
 	public $category_transaction;
 
 	/**
@@ -531,7 +499,7 @@ class PaymentVarious extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_various");
-			$this->ref = (string) $this->id;
+			$this->ref = $this->id;
 
 			if ($this->id > 0) {
 				if (isModEnabled("banque") && !empty($this->amount)) {

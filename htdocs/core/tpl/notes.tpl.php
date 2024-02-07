@@ -34,7 +34,7 @@ if ($module == "product") {
 }
 $colwidth = (isset($colwidth) ? $colwidth : (empty($cssclass) ? '25' : ''));
 // Set $permission from the $permissionnote var defined on calling page
-$permission = (isset($permissionnote) ? $permissionnote : (isset($permission) ? $permission : ($user->hasRight($module, 'create') ? $user->rights->$module->create : ($user->hasRight($module, 'creer') ? $user->rights->$module->creer : 0))));
+$permission = (isset($permissionnote) ? $permissionnote : (isset($permission) ? $permission : (isset($user->rights->$module->create) ? $user->rights->$module->create : (isset($user->rights->$module->creer) ? $user->rights->$module->creer : 0))));
 $moreparam = (isset($moreparam) ? $moreparam : '');
 $value_public = $object->note_public;
 $value_private = $object->note_private;

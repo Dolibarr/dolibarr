@@ -964,19 +964,19 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'title' => "ListSupplierProposalsAssociatedProject",
 						'class' => 'SupplierProposal',
 						'table' => 'supplier_proposal',
-						'test' => isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire')
+						'test' => isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire
 					),
 					'order_supplier' => array(
 						'title' => "ListSupplierOrdersAssociatedProject",
 						'table' => 'commande_fournisseur',
 						'class' => 'CommandeFournisseur',
-						'test' => (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'commande', 'lire')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire'))
+						'test' => (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->rights->fournisseur->commande->lire) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire)
 					),
 					'invoice_supplier' => array(
 						'title' => "ListSupplierInvoicesAssociatedProject",
 						'table' => 'facture_fourn',
 						'class' => 'FactureFournisseur',
-						'test' => (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'facture', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
+						'test' => (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->rights->fournisseur->facture->lire) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire)
 					),
 					'contract' => array(
 						'title' => "ListContractAssociatedProject",
@@ -996,52 +996,52 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'class' => 'Expedition',
 						'table' => 'expedition',
 						'disableamount' => 1,
-						'test' => isModEnabled('expedition') && $user->hasRight('expedition', 'lire')
+						'test' => isModEnabled('expedition') && $user->rights->expedition->lire
 					),
 					'trip' => array(
 						'title' => "ListTripAssociatedProject",
 						'class' => 'Deplacement',
 						'table' => 'deplacement',
 						'disableamount' => 1,
-						'test' => isModEnabled('deplacement') && $user->hasRight('deplacement', 'lire')
+						'test' => isModEnabled('deplacement') && $user->rights->deplacement->lire
 					),
 					'expensereport' => array(
 						'title' => "ListExpenseReportsAssociatedProject",
 						'class' => 'ExpenseReportLine',
 						'table' => 'expensereport_det',
-						'test' => isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire')
+						'test' => isModEnabled('expensereport') && $user->rights->expensereport->lire
 					),
 					'donation' => array(
 						'title' => "ListDonationsAssociatedProject",
 						'class' => 'Don',
 						'table' => 'don',
-						'test' => isModEnabled('don') && $user->hasRight('don', 'lire')
+						'test' => isModEnabled('don') && $user->rights->don->lire
 					),
 					'loan' => array(
 						'title' => "ListLoanAssociatedProject",
 						'class' => 'Loan',
 						'table' => 'loan',
-						'test' => isModEnabled('loan') && $user->hasRight('loan', 'read')
+						'test' => isModEnabled('loan') && $user->rights->loan->read
 					),
 					'chargesociales' => array(
 						'title' => "ListSocialContributionAssociatedProject",
 						'class' => 'ChargeSociales',
 						'table' => 'chargesociales',
 						'urlnew' => DOL_URL_ROOT.'/compta/sociales/card.php?action=create&projectid='.$object->id,
-						'test' => isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')
+						'test' => isModEnabled('tax') && $user->rights->tax->charges->lire
 					),
 					'stock_mouvement' => array(
 						'title' => "ListMouvementStockProject",
 						'class' => 'MouvementStock',
 						'table' => 'stock_mouvement',
-						'test' => (isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'lire') && getDolGlobalString('STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW'))
+						'test' => (isModEnabled('stock') && $user->rights->stock->mouvement->lire && getDolGlobalString('STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW'))
 					),
 					'agenda' => array(
 						'title' => "ListActionsAssociatedProject",
 						'class' => 'ActionComm',
 						'table' => 'actioncomm',
 						'disableamount' => 1,
-						'test' => isModEnabled('agenda') && $user->hasRight('agenda', 'allactions', 'lire')
+						'test' => isModEnabled('agenda') && $user->rights->agenda->allactions->lire
 					),
 				);
 

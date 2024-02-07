@@ -122,6 +122,8 @@ $morehtmlref .= '</a>';
 $urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
 $morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
+//dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
+
 
 print '<div class="fichecenter">';
 

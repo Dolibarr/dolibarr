@@ -61,10 +61,10 @@ $hookmanager->initHooks(array('surveycard', 'globalcard'));
 
 $expiredate = dol_mktime(0, 0, 0, GETPOST('expiremonth'), GETPOST('expireday'), GETPOST('expireyear'));
 
-$permissiontoread = $user->hasRight('opensurvey', 'read');
-$permissiontoadd = $user->hasRight('opensurvey', 'write');
+$permissiontoread = $user->rights->opensurvey->read;
+$permissiontoadd = $user->rights->opensurvey->write;
 // permission delete doesn't exists
-$permissiontodelete = $user->hasRight('opensurvey', 'write');
+$permissiontodelete = $user->rights->opensurvey->write;
 
 
 /*

@@ -2664,7 +2664,7 @@ class Societe extends CommonObject
 	 *
 	 *	@param	User	$user		Object user
 	 *	@param	int		$commid		Id of user
-	 *	@return	int					Return <0 if KO, >0 if OK
+	 *	@return	void
 	 */
 	public function del_commercial(User $user, $commid)
 	{
@@ -2682,15 +2682,8 @@ class Societe extends CommonObject
 			$sql .= " WHERE fk_soc = ".((int) $this->id)." AND fk_user = ".((int) $commid);
 
 			if (!$this->db->query($sql)) {
-				$error++;
 				dol_syslog(get_class($this)."::del_commercial Erreur");
 			}
-		}
-
-		if ($error) {
-			return -1;
-		} else {
-			return 1;
 		}
 	}
 
@@ -4039,7 +4032,7 @@ class Societe extends CommonObject
 				$isACompany = 1;
 			}
 		}
-		return (bool) $isACompany;
+		return boolval($isACompany);
 	}
 
 	/**
@@ -5087,10 +5080,11 @@ class Societe extends CommonObject
 		}
 
 		/**
-		 * llx_societe_extrafields table must not be here because we don't care about the old thirdparty data
-		 * Do not include llx_societe because it will be replaced later
+		 * llx_societe_extrafields table must not be here because we don't care about the old thirdparty extrafields that are managed directly into mergeCompany.
+		 * Do not include llx_societe because it will be replaced later.
 		 */
 		$tables = array(
+			'societe_account',
 			'societe_commerciaux',
 			'societe_prices',
 			'societe_remise',
@@ -5301,10 +5295,12 @@ class Societe extends CommonObject
 	 */
 	public function mergeCompany($soc_origin_id)
 	{
-		global $conf, $langs, $hookmanager, $user, $action;
+		global $langs, $hookmanager, $user, $action;
 
 		$error = 0;
 		$soc_origin = new Societe($this->db);		// The thirdparty that we will delete
+
+		dol_syslog("mergeCompany merge thirdparty id=".$soc_origin_id." (will be deleted) into the thirdparty id=".$this->id);
 
 		if (!$error && $soc_origin->fetch($soc_origin_id) < 1) {
 			$this->error = $langs->trans('ErrorRecordNotFound');
@@ -5321,9 +5317,9 @@ class Societe extends CommonObject
 				'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'fax', 'email', 'socialnetworks', 'url', 'barcode',
 				'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
 				'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
-				'stcomm_id', 'outstanding_limit', 'order_min_amount', 'supplier_order_min_amount', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
+				'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
 				'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
-				'model_pdf', 'webservices_url', 'webservices_key', 'accountancy_code_sell', 'accountancy_code_buy'
+				'model_pdf',
 			);
 			foreach ($listofproperties as $property) {
 				if (empty($this->$property)) {
@@ -5388,8 +5384,9 @@ class Societe extends CommonObject
 			if (!$error) {
 				$objects = array(
 					'Adherent' => '/adherents/class/adherent.class.php',
+					'Don' => array('file' => '/don/class/don.class.php', 'enabled' => isModEnabled('don')),
 					'Societe' => '/societe/class/societe.class.php',
-					//'Categorie' => '/categories/class/categorie.class.php',	// Already processed previously
+					//'Categorie' => '/categories/class/categorie.class.php',
 					'ActionComm' => '/comm/action/class/actioncomm.class.php',
 					'Propal' => '/comm/propal/class/propal.class.php',
 					'Commande' => '/commande/class/commande.class.php',
@@ -5400,6 +5397,7 @@ class Societe extends CommonObject
 					'Contact' => '/contact/class/contact.class.php',
 					'Contrat' => '/contrat/class/contrat.class.php',
 					'Expedition' => '/expedition/class/expedition.class.php',
+					'Fichinter' => '/fichinter/class/fichinter.class.php',
 					'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
 					'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
 					'FactureFournisseurRec' => '/fourn/class/fournisseur.facture-rec.class.php',
@@ -5409,22 +5407,11 @@ class Societe extends CommonObject
 					'Delivery' => '/delivery/class/delivery.class.php',
 					'Product' => '/product/class/product.class.php',
 					'Project' => '/projet/class/project.class.php',
+					'Ticket' => array('file' => '/ticket/class/ticket.class.php', 'enabled' => isModEnabled('ticket')),
 					'User' => '/user/class/user.class.php',
 					'Account' => '/compta/bank/class/account.class.php',
 					'ConferenceOrBoothAttendee' => '/eventorganization/class/conferenceorboothattendee.class.php'
 				);
-				if ($this->db->DDLListTables($conf->db->name, $this->db->prefix().'don')) {
-					$objects['Don'] = '/don/class/don.class.php';
-				}
-				if ($this->db->DDLListTables($conf->db->name, $this->db->prefix().'partnership')) {
-					$objects['PartnerShip'] = '/partnership/class/partnership.class.php';
-				}
-				if ($this->db->DDLListTables($conf->db->name, $this->db->prefix().'fichinter')) {
-					$objects['Fichinter'] = '/fichinter/class/fichinter.class.php';
-				}
-				if ($this->db->DDLListTables($conf->db->name, $this->db->prefix().'ticket')) {
-					$objects['Ticket'] = '/ticket/class/ticket.class.php';
-				}
 
 				//First, all core objects must update their tables
 				foreach ($objects as $object_name => $object_file) {

@@ -486,7 +486,7 @@ class Localtax extends CommonObject
 			return -4;
 		}
 		if (isModEnabled("banque") && (empty($this->accountid) || $this->accountid <= 0)) {
-			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("BankAccount"));
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
 			return -5;
 		}
 		if (isModEnabled("banque") && (empty($this->paymenttype) || $this->paymenttype <= 0)) {

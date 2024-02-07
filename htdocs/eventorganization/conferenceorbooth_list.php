@@ -134,9 +134,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->hasRight('eventorganization', 'read');
-$permissiontoadd = $user->hasRight('eventorganization', 'write');
-$permissiontodelete = $user->hasRight('eventorganization', 'delete');
+$permissiontoread = $user->rights->eventorganization->read;
+$permissiontoadd = $user->rights->eventorganization->write;
+$permissiontodelete = $user->rights->eventorganization->delete;
 
 // Security check
 if (!isModEnabled('eventorganization')) {

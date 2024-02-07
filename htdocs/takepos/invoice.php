@@ -295,7 +295,7 @@ if (empty($reshook)) {
 
 				if ($pay != "delayed") {
 					$payment->create($user);
-					$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
+					$res = $payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 					if ($res < 0) {
 						$error++;
 						dol_htmloutput_errors($langs->trans('ErrorNoPaymentDefined'), $payment->errors, 1);
@@ -840,7 +840,7 @@ if (empty($reshook)) {
 				$prod->fetch($line->fk_product);
 				$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
 				$price_min = $datapriceofproduct['price_min'];
-				$usercanproductignorepricemin = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('produit', 'ignore_price_min_advance')) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
+				$usercanproductignorepricemin = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && empty($user->rights->produit->ignore_price_min_advance)) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
 				$pu_ht = price2num($number / (1 + ($line->tva_tx / 100)), 'MU');
 				//Check min price
 				if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($pu_ht) * (1 - price2num($line->remise_percent) / 100) < price2num($price_min)))) {
@@ -884,7 +884,7 @@ if (empty($reshook)) {
 
 				$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
 				$price_min = $datapriceofproduct['price_min'];
-				$usercanproductignorepricemin = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('produit', 'ignore_price_min_advance')) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
+				$usercanproductignorepricemin = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && empty($user->rights->produit->ignore_price_min_advance)) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
 
 				$pu_ht = price2num($line->subprice / (1 + ($line->tva_tx / 100)), 'MU');
 

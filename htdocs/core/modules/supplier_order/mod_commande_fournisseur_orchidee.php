@@ -123,7 +123,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	 *
 	 *  @param	Societe		$objsoc     Object third party
 	 *  @param  Object	    $object		Object
-	 *  @return string|0      			Value if OK, 0 if KO
+	 *  @return string      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc = 0, $object = '')
 	{

@@ -119,7 +119,7 @@ if (GETPOST("rel") == 'prev') {
 	$found = true;
 }
 
-$permissiontoadd = $user->hasRight('banque', 'modifier');	// Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->rights->banque->modifier;	// Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -184,8 +184,8 @@ if ($id > 0 || !empty($ref)) {
 
 
 		$modulepart = 'bank';
-		$permissiontoadd = $user->hasRight('banque', 'modifier');
-		$permtoedit = $user->hasRight('banque', 'modifier');
+		$permissiontoadd = $user->rights->banque->modifier;
+		$permtoedit = $user->rights->banque->modifier;
 		$param = '&id='.$object->id.'&num='.urlencode($numref);
 		$moreparam = '&num='.urlencode($numref);
 		$relativepathwithnofile = $id."/statement/".dol_sanitizeFileName($numref)."/";

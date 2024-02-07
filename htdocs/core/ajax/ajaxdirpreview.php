@@ -293,7 +293,7 @@ if ($type == 'directory') {
 		$filter = preg_quote($search_doc_ref, '/');
 		$filearray = dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting, 1);
 
-		$perm = $user->hasRight('ecm', 'upload');
+		$perm = $user->rights->ecm->upload;
 
 		$formfile->list_of_autoecmfiles($upload_dir, $filearray, $module, $param, 1, '', $perm, 1, $textifempty, $maxlengthname, $url, 1);
 	} else {

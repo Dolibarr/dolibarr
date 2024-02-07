@@ -882,8 +882,9 @@ class CMailFile
 				if ($res) {
 					$additionnalparam = ''; // By default
 					if (getDolGlobalString('MAIN_MAIL_ALLOW_SENDMAIL_F')) {
-						// le "Return-Path" (retour des messages bounced) dans les header ne fonctionne pas avec tous les MTA
-						// Le forcage de la valeur grace à l'option -f de sendmail est donc possible si la constante MAIN_MAIL_ALLOW_SENDMAIL_F est definie.
+						// When using the phpmail function, the mail command may force the from to the user of the login, for example: linuxuser@myserver.mydomain.com
+						// You can try to set this option to have the command use the From. if it does not work, you can also try the MAIN_MAIL_SENDMAIL_FORCE_BA.
+						// So forcing using the option -f of sendmail is possible if constant MAIN_MAIL_ALLOW_SENDMAIL_F is defined.
 						// Having this variable defined may create problems with some sendmail (option -f refused)
 						// Having this variable not defined may create problems with some other sendmail (option -f required)
 						$additionnalparam .= ($additionnalparam ? ' ' : '').(getDolGlobalString('MAIN_MAIL_ERRORS_TO') ? '-f'.$this->getValidAddress($conf->global->MAIN_MAIL_ERRORS_TO, 2) : ($this->addr_from != '' ? '-f'.$this->getValidAddress($this->addr_from, 2) : ''));

@@ -359,7 +359,7 @@ class SimpleOpenID
 	 * Get openid server
 	 *
 	 * @param	string	$url	Url to found endpoint
-	 * @return 	string|false	Endpoint, of false if error
+	 * @return 	string			Endpoint
 	 */
 	public function GetOpenIDServer($url = '')
 	{
@@ -485,7 +485,7 @@ class SimpleOpenID
 	 * Get XRDS response and set possible servers.
 	 *
 	 * @param	string	$url	Url of endpoint to request
-	 * @return 	string|false	First endpoint OpenID server found. False if it failed to found.
+	 * @return 	string			First endpoint OpenID server found. False if it failed to found.
 	 */
 	public function sendDiscoveryRequestToGetXRDS($url = '')
 	{
