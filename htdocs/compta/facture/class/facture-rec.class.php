@@ -1267,7 +1267,7 @@ class FactureRec extends CommonInvoice
 	 */
 	public function strikeIfMaxNbGenReached($ret)
 	{
-		return $this->isMaxNbGenReached() ? '<strike>'.$ret.'</strike>' : $ret; 
+		return $this->isMaxNbGenReached() ? '<strike>'.$ret.'</strike>' : $ret;
 	}
 
 	/**
