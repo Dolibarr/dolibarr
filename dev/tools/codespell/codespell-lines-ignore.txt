@@ -1,55 +1,55 @@
-								$objMod->dictionaries = $objMod->{"dictionnaries"}; // For backward compatibility
-							if (empty($objMod->dictionaries) && !empty($objMod->{"dictionnaries"})) {
-							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">';
-						$reponsesadd = str_split($obj->reponses);
-						$sql .= " SET reponses = '".$db->escape($reponsesadd)."'";
-						$sql .= " SET reponses = '0".$db->escape($obj->reponses)."'";
-						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
-					GETPOST("mouvement", 'int'),
-					jQuery("#mouvement option").removeAttr("selected").change();
-					jQuery("#mouvement option[value=0]").attr("selected","selected").trigger("change");
-					jQuery("#mouvement option[value=1]").attr("selected","selected").trigger("change");
-					jQuery("#mouvement").trigger("change");
-				$action = 'transfert';
-				$this->category->childs[] = $this->_cleanObjectDatas($cat);
-				$tmp = array('id_users'=>$obj->id_users, 'nom'=>$obj->name, 'reponses'=>$obj->reponses);
-				//si les reponses ne concerne pas la colonne effacée, on concatenate
-				GETPOST("mouvement", "int"),
-				GETPOST("mouvement", 'alpha'),
-				GETPOST("mouvement", 'int'),
-				if (jQuery("#mouvement").val() == \'0\') jQuery("#unitprice").removeAttr("disabled");
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
-			$action = 'transfert';
-			$ensemblereponses = $obj->reponses;
-			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses, date_creation)';
-			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses, ip, date_creation)';
-			$sql = 'SELECT s.reponses';
-			$sql2 .= " SET reponses = '".$db->escape($newcar)."'";
-			$this->category->childs = array();
-			// mise a jour des reponses utilisateurs dans la base
-			if ($user->hasRight('stock', 'mouvement', 'lire')) {
-			jQuery("#mouvement").change(function() {
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
-		$action = 'transfert';
-		$ensemblereponses = $obj->reponses;
-		$sql = "SELECT id_users, nom as name, id_sondage, reponses";
-		$sql = "SELECT id_users, nom as name, reponses";
-		$test = '/javas:cript/google.com';
-		$test="<IMG SRC=\"jav&#x0D;ascript:alert('XSS');\">";	// Same
-		if ($user->hasRight('stock', 'mouvement', 'creer')) {
-	$ensemblereponses = $obj->reponses;
-	$opensurveysondage->mail_admin = $_SESSION['adresse'];
-	$pdf->SetXY($savx, $savy);
-	$savy = $pdf->getY();
-	$somethingshown = $formactions->showactions($object, 'mouvement', 0, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for product
-	$sql .= " SET reponses = '".$db->escape($nouveauchoix)."'";
-	<strong>TaskItem(<em>pID, pName, pStart, pEnd, pColor, pLink, pMile, pRes, pComp, pGroup, pParent, pOpen, pDepend, pCaption, pNotes, pGantt</em>)</strong></p>
-	if ($action == "transfert") {
-	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
-	print '<select name="mouvement" id="mouvement" class="minwidth100 valignmiddle">';
-	print ajax_combobox("mouvement");
-	public $childs = array();
-	unset($_SESSION["adresse"]);
+                                $objMod->dictionaries = $objMod->{"dictionnaries"}; // For backward compatibility
+                            if (empty($objMod->dictionaries) && !empty($objMod->{"dictionnaries"})) {
+                            print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">';
+                        $reponsesadd = str_split($obj->reponses);
+                        $sql .= " SET reponses = '".$db->escape($reponsesadd)."'";
+                        $sql .= " SET reponses = '0".$db->escape($obj->reponses)."'";
+                        print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
+                    GETPOST("mouvement", 'int'),
+                    jQuery("#mouvement option").removeAttr("selected").change();
+                    jQuery("#mouvement option[value=0]").attr("selected","selected").trigger("change");
+                    jQuery("#mouvement option[value=1]").attr("selected","selected").trigger("change");
+                    jQuery("#mouvement").trigger("change");
+                $action = 'transfert';
+                $this->category->childs[] = $this->_cleanObjectDatas($cat);
+                $tmp = array('id_users'=>$obj->id_users, 'nom'=>$obj->name, 'reponses'=>$obj->reponses);
+                //si les reponses ne concerne pas la colonne effacée, on concatenate
+                GETPOST("mouvement", "int"),
+                GETPOST("mouvement", 'alpha'),
+                GETPOST("mouvement", 'int'),
+                if (jQuery("#mouvement").val() == \'0\') jQuery("#unitprice").removeAttr("disabled");
+                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
+            $action = 'transfert';
+            $ensemblereponses = $obj->reponses;
+            $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses, date_creation)';
+            $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses, ip, date_creation)';
+            $sql = 'SELECT s.reponses';
+            $sql2 .= " SET reponses = '".$db->escape($newcar)."'";
+            $this->category->childs = array();
+            // mise a jour des reponses utilisateurs dans la base
+            if ($user->hasRight('stock', 'mouvement', 'lire')) {
+            jQuery("#mouvement").change(function() {
+            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
+        $action = 'transfert';
+        $ensemblereponses = $obj->reponses;
+        $sql = "SELECT id_users, nom as name, id_sondage, reponses";
+        $sql = "SELECT id_users, nom as name, reponses";
+        $test = '/javas:cript/google.com';
+        $test="<IMG SRC=\"jav&#x0D;ascript:alert('XSS');\">";   // Same
+        if ($user->hasRight('stock', 'mouvement', 'creer')) {
+    $ensemblereponses = $obj->reponses;
+    $opensurveysondage->mail_admin = $_SESSION['adresse'];
+    $pdf->SetXY($savx, $savy);
+    $savy = $pdf->getY();
+    $somethingshown = $formactions->showactions($object, 'mouvement', 0, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for product
+    $sql .= " SET reponses = '".$db->escape($nouveauchoix)."'";
+    <strong>TaskItem(<em>pID, pName, pStart, pEnd, pColor, pLink, pMile, pRes, pComp, pGroup, pParent, pOpen, pDepend, pCaption, pNotes, pGantt</em>)</strong></p>
+    if ($action == "transfert") {
+    print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
+    print '<select name="mouvement" id="mouvement" class="minwidth100 valignmiddle">';
+    print ajax_combobox("mouvement");
+    public $childs = array();
+    unset($_SESSION["adresse"]);
 $permissiontoadd = $user->rights->stock->mouvement->creer;
 $permissiontodelete = $user->rights->stock->mouvement->creer; // There is no deletion permission for stock movement as we should never delete
 $permissiontoread = $user->rights->stock->mouvement->lire;
