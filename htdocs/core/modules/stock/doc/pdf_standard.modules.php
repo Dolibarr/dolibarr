@@ -682,7 +682,7 @@ class pdf_standard extends ModelePDFStock
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
+	 *  @param  Entrepot	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param	string		$titlekey		Translation key to show as title of document
@@ -696,12 +696,6 @@ class pdf_standard extends ModelePDFStock
 		$outputlangs->loadLangs(array("main", "propal", "companies", "bills", "orders", "stocks"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-
-		if ($object->type == 1) {
-			$titlekey = 'ServiceSheet';
-		} else {
-			$titlekey = 'StockSheet';
-		}
 
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
