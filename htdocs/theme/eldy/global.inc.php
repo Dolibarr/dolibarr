@@ -3526,9 +3526,10 @@ div.tabBar {
 	border-top: 1px solid #BBB;
 	/* border-bottom: 1px solid #AAA; */
 	width: auto;
-}
-div.tabBar {
 	background: var(--colorbacktabcard1);
+}
+div#dragDropAreaTabBar.tabBar {
+    margin-bottom: 0;
 }
 div.tabBar tr.titre td {
 	padding-top: 20px;

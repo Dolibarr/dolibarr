@@ -44,6 +44,9 @@ CREATE TABLE llx_ticket
 	email_msgid varchar(255),				-- if ticket is created by email collector, we store here MSG ID
 	email_date datetime,					-- if ticket is created by email collector, we store here Date of message
 	ip varchar(250),
+	model_pdf     varchar(255),
+    last_main_doc varchar(255),             -- relative filepath+filename of last main generated document
+    extraparams   varchar(255),             -- to save other parameters with json format
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     import_key        varchar(14)
 )ENGINE=innodb;
