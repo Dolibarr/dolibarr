@@ -1830,12 +1830,12 @@ class BOMLine extends CommonObjectLine
 	// END MODULEBUILDER PROPERTIES
 
 	/**
-	 * @var int		Calculated cost for the BOM line
+	 * @var float		Calculated cost for the BOM line
 	 */
 	public $total_cost = 0;
 
 	/**
-	 * @var int		Line unit cost based on product cost price or pmp
+	 * @var float		Line unit cost based on product cost price or pmp
 	 */
 	public $unit_cost = 0;
 
