@@ -129,6 +129,11 @@ if ($action == 'add' && $user->hasRight('mailing', 'creer')) {		// Add recipient
 		}
 	}
 	if ($result > 0) {
+		// If status of emailing is sent completely, change to to send partially
+		if ($object->status == $object::STATUS_SENTCOMPLETELY) {
+			$object->setStatut($object::STATUS_SENTPARTIALY);
+		}
+
 		setEventMessages($langs->trans("XTargetsAdded", $result), null, 'mesgs');
 		$action = '';
 	}
@@ -400,7 +405,14 @@ if ($object->fetch($id) >= 0) {
 	print '<br>';
 
 
+	$newcardbutton = '';
 	$allowaddtarget = ($object->status == $object::STATUS_DRAFT);
+	if (GETPOST('allowaddtarget')) {
+		$allowaddtarget = 1;
+	}
+	if (!$allowaddtarget) {
+		$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&allowaddtarget=1', '', $user->hasRight('mailing', 'creer'));
+	}
 
 	// Show email selectors
 	if ($allowaddtarget && $user->hasRight('mailing', 'creer')) {
@@ -658,14 +670,14 @@ if ($object->fetch($id) >= 0) {
 		print '<input type="hidden" name="page_y" value="">';
 
 		$morehtmlcenter = '';
-		if ($allowaddtarget) {
+		if ($object->status == $object::STATUS_DRAFT) {
 			$morehtmlcenter = '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ToClearAllRecipientsClickHere").'</span> <a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition smallpaddingimp">'.$langs->trans("TargetsReset").'</a>';
 		}
 		$morehtmlcenter .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=exportcsv&token='.newToken().'&exportcsv=1&id='.$object->id.'">'.img_picto('', 'download', 'class="pictofixedwidth"').$langs->trans("Download").'</a>';
 
 		$massactionbutton = '';
 
-		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit, 0, 0, 1);
+		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 		print '</form>';
 
