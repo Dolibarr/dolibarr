@@ -1623,8 +1623,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				$relativepath = $objref.'/'.$objref.'.pdf';
 				$filedir = $conf->holiday->dir_output.'/'.$object->element.'/'.$objref;
 				$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-				$genallowed = ($user->hasRight('holiday', 'read') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'readall'); // If you can read, you can build the PDF to read content
-				$delallowed = ($user->hasRight('holiday', 'write') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'writeall_advance'); // If you can create/edit, you can remove a file on card
+				$genallowed = ($user->rights->holiday->read && $object->fk_user == $user->id) || !empty($user->rights->holiday->readall); // If you can read, you can build the PDF to read content
+				$delallowed = ($user->rights->holiday->write && $object->fk_user == $user->id) || !empty($user->rights->holiday->writeall_advance); // If you can create/edit, you can remove a file on card
 				print $formfile->showdocuments('holiday:Holiday', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 			}
 

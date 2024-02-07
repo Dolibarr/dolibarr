@@ -135,9 +135,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->hasRight('stock', 'lire');
-$permissiontodelete = $user->hasRight('stock', 'supprimer');
-$permissiontoadd = $user->hasRight('stock', 'creer');
+$permissiontoread = $user->rights->stock->lire;
+$permissiontodelete = $user->rights->stock->supprimer;
+$permissiontoadd = $user->rights->stock->creer;
 
 // Security check
 $result = restrictedArea($user, 'stock');
@@ -927,8 +927,8 @@ if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords 
 	$urlsource .= str_replace('&amp;', '&', $param);
 
 	$filedir = $diroutputmassaction;
-	$genallowed = $user->hasRight('stock', 'lire');
-	$delallowed = $user->hasRight('stock', 'creer');
+	$genallowed = $user->rights->stock->lire;
+	$delallowed = $user->rights->stock->creer;
 
 	print $formfile->showdocuments('massfilesarea_stock', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }

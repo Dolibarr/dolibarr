@@ -1862,6 +1862,9 @@ class FormMail extends Form
 			$tmparray['__OTHER3__'] = 'Other3';
 			$tmparray['__OTHER4__'] = 'Other4';
 			$tmparray['__OTHER5__'] = 'Other5';
+			$tmparray['__CHECK_READ__'] = $langs->trans('TagCheckMail');
+			$tmparray['__UNSUBSCRIBE__'] = $langs->trans('TagUnsubscribe');
+			$tmparray['__UNSUBSCRIBE_URL__'] = $langs->trans('TagUnsubscribe').' (URL)';
 
 			$onlinepaymentenabled = 0;
 			if (isModEnabled('paypal')) {
@@ -1919,7 +1922,7 @@ class FormMail extends Form
 				*/
 			}
 			if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
-				$substitutionarray['__PUBLICLINK_NEWMEMBERFORM__'] = 'BlankSubscriptionForm';
+				$tmparray['__PUBLICLINK_NEWMEMBERFORM__'] = 'BlankSubscriptionForm';
 			}
 		}
 

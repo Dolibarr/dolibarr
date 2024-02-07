@@ -525,6 +525,14 @@ class Availabilities extends CommonObject
 			return 0;
 		}
 
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('bookcal', 'availabilities', 'write'))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bookcal->availabilities->availabilities_advance->validate))))
+		 {
+		 $this->error='NotEnoughPermissions';
+		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
+		 return -1;
+		 }*/
+
 		$now = dol_now();
 
 		$this->db->begin();
@@ -643,6 +651,13 @@ class Availabilities extends CommonObject
 			return 0;
 		}
 
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bookcal->write))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bookcal->bookcal_advance->validate))))
+		 {
+		 $this->error='Permission denied';
+		 return -1;
+		 }*/
+
 		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'AVAILABILITIES_UNVALIDATE');
 	}
 
@@ -660,6 +675,13 @@ class Availabilities extends CommonObject
 			return 0;
 		}
 
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bookcal->write))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bookcal->bookcal_advance->validate))))
+		 {
+		 $this->error='Permission denied';
+		 return -1;
+		 }*/
+
 		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'AVAILABILITIES_CANCEL');
 	}
 
@@ -676,6 +698,13 @@ class Availabilities extends CommonObject
 		if ($this->status != self::STATUS_CANCELED) {
 			return 0;
 		}
+
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bookcal->write))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bookcal->bookcal_advance->validate))))
+		 {
+		 $this->error='Permission denied';
+		 return -1;
+		 }*/
 
 		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'AVAILABILITIES_REOPEN');
 	}

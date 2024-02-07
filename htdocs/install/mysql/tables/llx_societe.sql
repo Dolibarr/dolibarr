@@ -43,13 +43,13 @@ create table llx_societe
   address                  varchar(255),                        		-- company address
   zip                      varchar(25),                         		-- zipcode
   town                     varchar(50),                         		-- town
-  fk_departement           integer        DEFAULT 0,            		-- state
-  fk_pays                  integer        DEFAULT 0,            		-- country
+  fk_departement           integer        DEFAULT 0,            		--
+  fk_pays                  integer        DEFAULT 0,            		--
   fk_account               integer        DEFAULT 0,            		-- default bank account
   phone                    varchar(20),                         		-- phone number
   fax                      varchar(20),                         		-- fax number
-  url                      varchar(255),                        		-- web site
-  email                    varchar(128),                        		-- main email
+  url                      varchar(255),                        		--
+  email                    varchar(128),                        		--
 
   socialnetworks           text DEFAULT NULL,                           -- json with socialnetworks
 

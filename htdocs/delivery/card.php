@@ -92,7 +92,7 @@ $error = 0;
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);       // Note that $action and $object may have been modified by some hooks
 // Delete Link
-$permissiondellink = $user->hasRight('expedition', 'delivery', 'supprimer'); // Used by the include of actions_dellink.inc.php
+$permissiondellink = $user->rights->expedition->delivery->supprimer; // Used by the include of actions_dellink.inc.php
 include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';     // Must be include, not include_once
 
 if ($action == 'add') {
@@ -244,7 +244,7 @@ if ($action == 'update_extras_line') {
 
 // Actions to build doc
 $upload_dir = $conf->expedition->dir_output.'/receipt';
-$permissiontoadd = $user->hasRight('expedition', 'creer');
+$permissiontoadd = $user->rights->expedition->creer;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
@@ -671,8 +671,8 @@ if ($action == 'create') {
 			$filedir = $conf->expedition->dir_output."/receipt/".$objectref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
-			$genallowed = $user->hasRight('expedition', 'delivery', 'lire');
-			$delallowed = $user->hasRight('expedition', 'delivery', 'creer');
+			$genallowed = $user->rights->expedition->delivery->lire;
+			$delallowed = $user->rights->expedition->delivery->creer;
 
 			print $formfile->showdocuments('delivery', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 

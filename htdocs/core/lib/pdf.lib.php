@@ -491,7 +491,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($sourcecompany->tva_intra);
 				}
 			}
-			// Professional Ids
+			// Professionnal Ids
 			$reg = array();
 			if (getDolGlobalString('MAIN_PROFID1_IN_SOURCE_ADDRESS') && !empty($sourcecompany->idprof1)) {
 				$tmp = $outputlangs->transcountrynoentities("ProfId1", $sourcecompany->country_code);
@@ -655,7 +655,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 				}
 			}
 
-			// Professional Ids
+			// Professionnal Ids
 			if (getDolGlobalString('MAIN_PROFID1_IN_ADDRESS') && !empty($targetcompany->idprof1)) {
 				$tmp = $outputlangs->transcountrynoentities("ProfId1", $targetcompany->country_code);
 				if (preg_match('/\((.+)\)/', $tmp, $reg)) {

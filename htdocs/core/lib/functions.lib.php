@@ -2373,9 +2373,9 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	if (class_exists("Imagick")) {
 		if ($object->element == 'expensereport' || $object->element == 'propal' || $object->element == 'commande' || $object->element == 'facture' || $object->element == 'supplier_proposal') {
 			$modulepart = $object->element;
-		} elseif ($object->element == 'fichinter' || $object->element == 'intervention') {
+		} elseif ($object->element == 'fichinter') {
 			$modulepart = 'ficheinter';
-		} elseif ($object->element == 'contrat' || $object->element == 'contract') {
+		} elseif ($object->element == 'contrat') {
 			$modulepart = 'contract';
 		} elseif ($object->element == 'order_supplier') {
 			$modulepart = 'supplier_order';
@@ -2455,7 +2455,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 	} else {
 		if ($showimage) {
-			if ($modulepart != 'unknown' || method_exists($object, 'getDataToShowPhoto')) {
+			if ($modulepart != 'unknown') {
 				$phototoshow = '';
 				// Check if a preview file is available
 				if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter', 'contract', 'supplier_order', 'supplier_proposal', 'supplier_invoice', 'expensereport')) && class_exists("Imagick")) {
@@ -8718,7 +8718,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$daytext = $outputlangs->trans('Day'.$tmp['wday']);
 
 		$substitutionarray = array_merge($substitutionarray, array(
-			'__NOW_TMS__' => (int) $now,
+			'__NOW_TMS__' => (string) $now,		// Must be the string that represent the int
 			'__NOW_TMS_YMD__' => dol_print_date($now, 'day', 'auto', $outputlangs),
 			'__DAY__' => (string) $tmp['mday'],
 			'__DAY_TEXT__' => $daytext, // Monday
@@ -9558,7 +9558,7 @@ function dol_osencode($str)
  * 		@param	string	$fieldid		Field to get
  *      @param  int		$entityfilter	Filter by entity
  *      @param	string	$filters		Filters to add. WARNING: string must be escaped for SQL and not coming from user input.
- *      @return int<-1,max>				ID of code if OK, 0 if key empty, -1 if KO
+ *      @return int						Return integer <0 if KO, Id of code if OK
  *      @see $langs->getLabelFromKey
  */
 function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid = 'id', $entityfilter = 0, $filters = '')
@@ -9567,7 +9567,7 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 
 	// If key empty
 	if ($key == '') {
-		return 0;
+		return '';
 	}
 
 	// Check in cache

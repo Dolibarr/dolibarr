@@ -103,7 +103,7 @@ class Productlot extends CommonObject
 	public $fields = array(
 		'rowid'         => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id', 'css'=>'left'),
 		'fk_product'    => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>5, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'picto' => 'product', 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'maxwidth150'),
-		'batch'         => array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'comment'=>'Batch', 'searchall'=>1, 'picto'=>'lot', 'validate'=>1),
+		'batch'         => array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'comment'=>'Batch', 'searchall'=>1, 'picto'=>'lot'),
 		'entity'        => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>20),
 		'sellby'        => array('type'=>'date', 'label'=>'SellByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_SELLBY)?1:0', 'visible'=>1, 'notnull'=>0, 'position'=>60),
 		'eatby'         => array('type'=>'date', 'label'=>'EatByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_EATBY)?1:0', 'visible'=>1, 'notnull'=>0, 'position'=>62),
@@ -775,7 +775,7 @@ class Productlot extends CommonObject
 	public function loadStatsExpedition($socid = 0)
 	{
 		// phpcs:enable
-		global $user, $hookmanager, $action;
+		global $db, $conf, $user, $hookmanager, $action;
 
 		$sql = "SELECT COUNT(DISTINCT exp.fk_soc) as nb_customers, COUNT(DISTINCT exp.rowid) as nb,";
 		$sql .= " COUNT(ed.rowid) as nb_rows, SUM(edb.qty) as qty";
@@ -850,7 +850,7 @@ class Productlot extends CommonObject
 	public function loadStatsSupplierOrder($socid = 0)
 	{
 		// phpcs:enable
-		global $user, $hookmanager, $action;
+		global $db, $conf, $user, $hookmanager, $action;
 
 		$sql = "SELECT COUNT(DISTINCT cf.fk_soc) as nb_customers, COUNT(DISTINCT cf.rowid) as nb,";
 		$sql .= " COUNT(cfd.rowid) as nb_rows, SUM(cfdi.qty) as qty";
@@ -925,7 +925,7 @@ class Productlot extends CommonObject
 	public function loadStatsReception($socid = 0)
 	{
 		// phpcs:enable
-		global $user, $hookmanager, $action;
+		global $db, $conf, $user, $hookmanager, $action;
 
 		$sql = "SELECT COUNT(DISTINCT recep.fk_soc) as nb_customers, COUNT(DISTINCT recep.rowid) as nb,";
 		$sql .= " COUNT(cfdi.rowid) as nb_rows, SUM(cfdi.qty) as qty";
@@ -1072,7 +1072,7 @@ class Productlot extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		//global $langs;
+		global $langs;
 
 		//$langs->load('stocks');
 
@@ -1089,11 +1089,11 @@ class Productlot extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $langs, $user;
+		global $conf, $langs, $user;
 
 		$langs->loadLangs(['stocks', 'productbatch']);
 
-		//$option = $params['option'] ?? '';
+		$option = $params['option'] ?? '';
 
 		$datas = [];
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Batch").'</u>';
@@ -1124,7 +1124,7 @@ class Productlot extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $langs, $hookmanager;
+		global $langs, $conf, $hookmanager;
 
 		$result = '';
 		$params = [
@@ -1212,8 +1212,6 @@ class Productlot extends CommonObject
 	{
 		global $conf;
 
-		$now = dol_now();
-
 		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
@@ -1222,13 +1220,13 @@ class Productlot extends CommonObject
 		$this->entity = $conf->entity;
 		$this->fk_product = null;
 		$this->batch = '';
-		$this->eatby = $now - 100000;
-		$this->sellby = $now - 100000;
-		$this->datec = $now - 3600;
-		$this->tms = $now;
+		$this->eatby = '';
+		$this->sellby = '';
+		$this->datec = '';
+		$this->tms = '';
 		$this->fk_user_creat = null;
 		$this->fk_user_modif = null;
-		$this->import_key = '123456';
+		$this->import_key = '';
 	}
 
 	/**
@@ -1243,7 +1241,7 @@ class Productlot extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-		global $langs;
+		global $conf, $user, $langs;
 
 		$langs->loadLangs(array('stocks', 'productbatch', "products"));
 		$outputlangs->loadLangs(array('stocks', 'productbatch', "products"));
@@ -1262,26 +1260,5 @@ class Productlot extends CommonObject
 		$modelpath = "core/modules/product_batch/doc/";
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
-	}
-
-	/**
-	 * Return validation test result for a field
-	 *
-	 * @param  array   $fields	       		Array of properties of field to show
-	 * @param  string  $fieldKey            Key of attribute
-	 * @param  string  $fieldValue          value of attribute
-	 * @return bool 						Return false if fail, true on success, set $this->error for error message
-	 */
-	public function validateField($fields, $fieldKey, $fieldValue)
-	{
-		// Add your own validation rules here.
-		if ($fieldKey == 'batch') {
-			if (preg_match('/\s/', $fieldValue)) {
-				$this->error = 'ErrorABatchShouldNotContainsSpaces';
-				return false;
-			}
-		}
-
-		return parent::validateField($fields, $fieldKey, $fieldValue);
 	}
 }

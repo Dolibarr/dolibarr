@@ -472,7 +472,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 					$height_note = 0;
 				}
 
-				// Use new auto column system
+				// Use new auto collum system
 				$this->prepareArrayColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
 				$nexY = $tab_top + $this->tabTitleHeight;

@@ -50,7 +50,7 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->productlot->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
 }
 
-$permissionnote = $user->hasRight('produit', 'lire'); // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->produit->lire; // Used by the include of actions_setnotes.inc.php
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();

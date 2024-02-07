@@ -120,7 +120,7 @@ class mod_contract_magre extends ModelNumRefContracts
 	 *
 	 *	@param	Societe		$objsoc     third party object
 	 *	@param	Object		$contract	contract object
-	 *	@return string|0      			Next value if OK, 0 if KO
+	 *	@return string      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $contract)
 	{
@@ -146,7 +146,7 @@ class mod_contract_magre extends ModelNumRefContracts
 	 *
 	 *  @param	Societe		$objsoc     third party object
 	 *  @param	Object		$objforref	contract object
-	 *  @return string|0      			Value if OK, 0 if KO
+	 *  @return string      			Value if OK, 0 if KO
 	 */
 	public function contract_get_num($objsoc, $objforref)
 	{

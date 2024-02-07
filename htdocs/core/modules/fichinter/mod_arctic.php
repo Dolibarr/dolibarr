@@ -122,7 +122,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 	 *
 	 *  @param	Societe		$objsoc     Object thirdparty
 	 *  @param  Object		$object		Object we need next value for
-	 *  @return string|0      			Value if OK, 0 if KO
+	 *  @return string      			Value if KO, <0 if KO
 	 */
 	public function getNextValue($objsoc = 0, $object = '')
 	{
@@ -149,7 +149,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 	 *
 	 *  @param	Societe		$objsoc     Object third party
 	 *  @param	Object		$objforref	Object for number to search
-	 *  @return string|0      			Next free value, 0 if KO
+	 *  @return string      			Next free value
 	 */
 	public function getNumRef($objsoc, $objforref)
 	{

@@ -92,9 +92,9 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
-$usercanread = (($user->hasRight('stock', 'lire')));
-$usercancreate = (($user->hasRight('stock', 'creer')));
-$usercandelete = (($user->hasRight('stock', 'supprimer')));
+$usercanread = (($user->rights->stock->lire));
+$usercancreate = (($user->rights->stock->creer));
+$usercandelete = (($user->rights->stock->supprimer));
 
 
 /*
@@ -267,7 +267,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->stock->dir_output;
-	$permissiontoadd = $user->hasRight('stock', 'creer');
+	$permissiontoadd = $user->rights->stock->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 

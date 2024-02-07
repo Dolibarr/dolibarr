@@ -467,7 +467,7 @@ if ($event->type == 'payout.created') {
 			}
 
 			if (!$error && isModEnabled('banque')) {
-				// Search again the payment to see if it is already linked to a bank payment record (We should always find the payment that was created before).
+				// Search again the payment to see if it is already linked to a bank payment record (We should always find the payement now we have created before).
 				$ispaymentdone = 0;
 				$sql = "SELECT p.rowid, p.fk_bank FROM llx_paiement as p";
 				$sql .= " WHERE p.ext_payment_id = '".$db->escape($paiement->ext_payment_id)."'";

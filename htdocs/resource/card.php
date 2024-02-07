@@ -66,8 +66,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 
 $result = restrictedArea($user, 'resource', $object->id, 'resource');
 
-$permissiontoadd = $user->hasRight('resource', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->hasRight('resource', 'delete');
+$permissiontoadd = $user->rights->resource->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->rights->resource->delete;
 
 
 /*
@@ -264,7 +264,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '</td></tr>';
 
 		// State
-		if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
+		if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 			if ((getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
 				print '<tr><td>'.$form->editfieldkey('Region-State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
 			} else {

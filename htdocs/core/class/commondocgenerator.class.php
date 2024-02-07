@@ -193,7 +193,7 @@ abstract class CommonDocGenerator
 		// phpcs:enable
 		global $conf, $extrafields;
 
-		$logotouse = $conf->user->dir_output . '/' . get_exdir(0, 0, 0, 0, $user, 'user') . 'photos/' . getImageFileNameForSize($user->photo, '_small');
+		$logotouse = $conf->user->dir_output.'/'.get_exdir($user->id, 2, 0, 1, $user, 'user').'/'.$user->photo;
 
 		$array_user = array(
 			'myuser_lastname'=>$user->lastname,

@@ -79,7 +79,7 @@ if (!defined('WEBPORTAL_NOREQUIRETRAN') || (!defined('WEBPORTAL_NOLOGIN') && !em
 	if (!is_object($langs)) { // This can occurs when calling page with NOREQUIRETRAN defined, however we need langs for error messages.
 		include_once DOL_DOCUMENT_ROOT . '/core/class/translate.class.php';
 		$langs = new Translate("", $conf);
-		$langcode = (GETPOST('lang', 'aZ09', 1) ? GETPOST('lang', 'aZ09', 1) : (empty($logged_user->conf->MAIN_LANG_DEFAULT) ? (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT) : $logged_user->conf->MAIN_LANG_DEFAULT));
+		$langcode = (GETPOST('lang', 'aZ09', 1) ? GETPOST('lang', 'aZ09', 1) : (empty($logged_user->conf->MAIN_LANG_DEFAULT) ? (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT) : $logged_user->conf->MAIN_LANG_DEFAULT));
 		if (defined('MAIN_LANG_DEFAULT')) {
 			$langcode = constant('MAIN_LANG_DEFAULT');
 		}
@@ -143,7 +143,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 
 		if (empty($webportal_logged_thirdparty_account_id)) {
 			// Set cookie for timeout management
-			if (getDolGlobalString('MAIN_SESSION_TIMEOUT')) {
+			if (!empty($conf->global->MAIN_SESSION_TIMEOUT)) {
 				setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", null, (empty($dolibarr_main_force_https) ? false : true), true);
 			}
 

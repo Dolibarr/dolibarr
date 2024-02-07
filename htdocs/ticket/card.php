@@ -761,7 +761,7 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->withcancel = 1;
 
 	$formticket->showForm(1, 'create', 0, null, $action);
-	/*} elseif ($action == 'edit' && $user->hasRight('ticket', 'write') && $object->status < Ticket::STATUS_CLOSED) {
+	/*} elseif ($action == 'edit' && $user->rights->ticket->write && $object->status < Ticket::STATUS_CLOSED) {
 	$formticket = new FormTicket($db);
 
 	$head = ticket_prepare_head($object);
@@ -969,7 +969,7 @@ if ($action == 'create' || $action == 'presend') {
 			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByPublicPortal"), $htmltooptip, 1, 'help', '', 0, 3, 'tooltip').'</small>';
 		}
 
-		$permissiontoedit = $object->status < 8 && !$user->socid && $user->hasRight('ticket', 'write');
+		$permissiontoedit = $object->status < 8 && !$user->socid && $user->rights->ticket->write;
 		//$permissiontoedit = 0;
 
 		// Thirdparty

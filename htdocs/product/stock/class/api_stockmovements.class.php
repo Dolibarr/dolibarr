@@ -65,16 +65,16 @@ class StockMovements extends DolibarrApi
 	/*
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
+		if(! DolibarrApiAccess::$user->rights->stock->lire) {
 			throw new RestException(403);
 		}
 
 		$result = $this->stockmovement->fetch($id);
-		if (!$result ) {
+		if( ! $result ) {
 			throw new RestException(404, 'warehouse not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('warehouse',$this->stockmovement->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('warehouse',$this->stockmovement->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -100,7 +100,7 @@ class StockMovements extends DolibarrApi
 
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
+		if (!DolibarrApiAccess::$user->rights->stock->lire) {
 			throw new RestException(403);
 		}
 
@@ -175,7 +175,7 @@ class StockMovements extends DolibarrApi
 	 */
 	public function post($product_id, $warehouse_id, $qty, $type = 2, $lot = '', $movementcode = '', $movementlabel = '', $price = '', $datem = '', $dlc = '', $dluo = '', $origin_type = '', $origin_id = 0)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('stock', 'creer')) {
+		if (!DolibarrApiAccess::$user->rights->stock->creer) {
 			throw new RestException(403);
 		}
 
@@ -218,7 +218,7 @@ class StockMovements extends DolibarrApi
 	/*
 	public function put($id, $request_data = null)
 	{
-		if(! DolibarrApiAccess::$user->hasRight('stock', 'creer')) {
+		if(! DolibarrApiAccess::$user->rights->stock->creer) {
 			throw new RestException(403);
 		}
 
@@ -251,15 +251,15 @@ class StockMovements extends DolibarrApi
 	/*
 	public function delete($id)
 	{
-		if (! DolibarrApiAccess::$user->hasRight('stock', 'supprimer')) {
+		if(! DolibarrApiAccess::$user->rights->stock->supprimer) {
 			throw new RestException(403);
 		}
 		$result = $this->stockmovement->fetch($id);
-		if (! $result ) {
+		if( ! $result ) {
 			throw new RestException(404, 'stock movement not found');
 		}
 
-		if (! DolibarrApi::_checkAccessToResource('stock',$this->stockmovement->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('stock',$this->stockmovement->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 

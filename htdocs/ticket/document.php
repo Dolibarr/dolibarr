@@ -91,7 +91,7 @@ if (!$user->socid && getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $o
 	accessforbidden();
 }
 
-$permissiontoadd = $user->hasRight('ticket', 'write');	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+$permissiontoadd = $user->rights->ticket->write;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 
 
 /*
@@ -211,8 +211,8 @@ if ($object->id) {
 
 	//$object->ref = $object->track_id;	// For compatibility we use track ID for directory
 	$modulepart = 'ticket';
-	$permissiontoadd = $user->hasRight('ticket', 'write');
-	$permtoedit = $user->hasRight('ticket', 'write');
+	$permissiontoadd = $user->rights->ticket->write;
+	$permtoedit = $user->rights->ticket->write;
 	$param = '&id='.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

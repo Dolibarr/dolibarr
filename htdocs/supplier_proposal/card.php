@@ -104,16 +104,16 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Common permissions
-$usercanread = $user->hasRight('supplier_proposal', 'lire');
-$usercancreate		= $user->hasRight('supplier_proposal', 'creer');
-$usercandelete		= $user->hasRight('supplier_proposal', 'supprimer');
+$usercanread = $user->rights->supplier_proposal->lire;
+$usercancreate		= $user->rights->supplier_proposal->creer;
+$usercandelete		= $user->rights->supplier_proposal->supprimer;
 
 // Advanced permissions
-$usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($usercancreate)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('supplier_proposal', 'validate_advance')));
+$usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($usercancreate)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->supplier_proposal->validate_advance)));
 $usercansend = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->rights->supplier_proposal->send_advance);
 
 // Additional area permissions
-$usercanclose = $user->hasRight('supplier_proposal', 'cloturer');
+$usercanclose = $user->rights->supplier_proposal->cloturer;
 $usercancreateorder = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
 
 // Permissions for includes

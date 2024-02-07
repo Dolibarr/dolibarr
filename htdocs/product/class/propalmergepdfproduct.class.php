@@ -41,37 +41,17 @@ class Propalmergepdfproduct extends CommonObject
 	 */
 	public $table_element = 'propal_merge_pdf_product';
 
-	/**
-	 * @var int Id of product
-	 */
 	public $fk_product;
-
-	/**
-	 * @var string Filename
-	 */
 	public $file_name;
-
-	/**
-	 * @var int Id user
-	 */
 	public $fk_user_author;
-
-	/**
-	 * @var int Id user
-	 */
 	public $fk_user_mod;
 	public $datec = '';
 	public $tms = '';
-
-	/**
-	 * @var string lang code
-	 */
 	public $lang;
 
-	/**
-	 * @var PropalmergepdfproductLine[]
-	 */
 	public $lines = array();
+
+
 
 
 	/**
@@ -100,16 +80,16 @@ class Propalmergepdfproduct extends CommonObject
 		// Clean parameters
 
 		if (isset($this->fk_product)) {
-			$this->fk_product = (int) $this->fk_product;
+			$this->fk_product = trim($this->fk_product);
 		}
 		if (isset($this->file_name)) {
 			$this->file_name = trim($this->file_name);
 		}
 		if (isset($this->fk_user_author)) {
-			$this->fk_user_author = (int) $this->fk_user_author;
+			$this->fk_user_author = trim($this->fk_user_author);
 		}
 		if (isset($this->fk_user_mod)) {
-			$this->fk_user_mod = (int) $this->fk_user_mod;
+			$this->fk_user_mod = trim($this->fk_user_mod);
 		}
 		if (isset($this->lang)) {
 			$this->lang = trim($this->lang);
@@ -117,6 +97,7 @@ class Propalmergepdfproduct extends CommonObject
 		if (isset($this->import_key)) {
 			$this->import_key = trim($this->import_key);
 		}
+
 
 
 		// Check parameters
@@ -554,10 +535,10 @@ class Propalmergepdfproduct extends CommonObject
 	{
 		$this->id = 0;
 
-		$this->fk_product = 0;
+		$this->fk_product = '';
 		$this->file_name = '';
-		$this->fk_user_author = 0;
-		$this->fk_user_mod = 0;
+		$this->fk_user_author = '';
+		$this->fk_user_mod = '';
 		$this->datec = '';
 		$this->tms = '';
 		$this->import_key = '';
@@ -579,14 +560,7 @@ class PropalmergepdfproductLine
 	 */
 	public $fk_product;
 
-	/**
-	 * @var string Filename
-	 */
 	public $file_name;
-
-	/**
-	 * @var string Code lang
-	 */
 	public $lang;
 
 	/**

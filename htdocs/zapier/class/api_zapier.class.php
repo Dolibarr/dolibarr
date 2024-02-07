@@ -75,7 +75,7 @@ class Zapier extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('zapier', 'read')) {
+		if (!DolibarrApiAccess::$user->rights->zapier->read) {
 			throw new RestException(403);
 		}
 
@@ -103,7 +103,7 @@ class Zapier extends DolibarrApi
 	 */
 	public function getModulesChoices()
 	{
-		if (!DolibarrApiAccess::$user->hasRight('zapier', 'read')) {
+		if (!DolibarrApiAccess::$user->rights->zapier->read) {
 			throw new RestException(403);
 		}
 
@@ -145,7 +145,7 @@ class Zapier extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
-		if (!DolibarrApiAccess::$user->hasRight('zapier', 'read')) {
+		if (!DolibarrApiAccess::$user->rights->zapier->read) {
 			throw new RestException(403);
 		}
 
@@ -158,7 +158,7 @@ class Zapier extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if ($restrictonsocid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socid) {
+		if ($restrictonsocid && !DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -227,7 +227,7 @@ class Zapier extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('zapier', 'write')) {
+		if (!DolibarrApiAccess::$user->rights->zapier->write) {
 			throw new RestException(403);
 		}
 
@@ -270,7 +270,7 @@ class Zapier extends DolibarrApi
 	//  */
 	/*public function put($id, $request_data = null)
 	{
-		if (! DolibarrApiAccess::$user->hasRight('zapier', 'write')) {
+		if (! DolibarrApiAccess::$user->rights->zapier->write) {
 			throw new RestException(403);
 		}
 
@@ -307,7 +307,7 @@ class Zapier extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('zapier', 'delete')) {
+		if (!DolibarrApiAccess::$user->rights->zapier->delete) {
 			throw new RestException(403);
 		}
 

@@ -127,9 +127,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$usercanread = $user->hasRight('produit', 'lire');
-$usercancreate = $user->hasRight('produit', 'creer');
-$usercandelete = $user->hasRight('produit', 'supprimer');
+$usercanread = $user->rights->produit->lire;
+$usercancreate = $user->rights->produit->creer;
+$usercandelete = $user->rights->produit->supprimer;
 
 $upload_dir = $conf->productbatch->multidir_output[$conf->entity];
 

@@ -153,8 +153,8 @@ if ($search_type == '0') {
 	$result = restrictedArea($user, 'produit|service', '', '', '', '', '', 0);
 }
 
-$permissiontoread = $user->hasRight('intracommreport', 'read');
-$permissiontodelete = $user->hasRight('intracommreport', 'delete');
+$permissiontoread = $user->rights->intracommreport->read;
+$permissiontodelete = $user->rights->intracommreport->delete;
 
 
 /*

@@ -80,7 +80,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'tax', '', 'tva', 'charges');
 
-$permissiontoadd = $user->hasRight('tax', 'charges', 'creer');	// Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->rights->tax->charges->creer;	// Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -152,8 +152,8 @@ if ($object->id) {
 
 	print dol_get_fiche_end();
 
-	$permissiontoadd = $user->hasRight('tax', 'charges', 'creer');
-	$permtoedit = $user->hasRight('tax', 'charges', 'creer');
+	$permissiontoadd = $user->rights->tax->charges->creer;
+	$permtoedit = $user->rights->tax->charges->creer;
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

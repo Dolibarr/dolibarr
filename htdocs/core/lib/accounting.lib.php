@@ -169,7 +169,7 @@ function length_accounta($accounta)
  *	Show header of a page used to transfer/dispatch data in accounting
  *
  *	@param	string				$nom            Name of report
- *	@param 	string				$variant        Link for alternate report
+ *	@param 	string				$variante       Link for alternate report
  *	@param 	string				$period         Period of report
  *	@param 	string				$periodlink     Link to switch period
  *	@param 	string				$description    Description
@@ -180,7 +180,7 @@ function length_accounta($accounta)
  *  @param  string              $varlink        Add a variable into the address of the page
  *	@return	void
  */
-function journalHead($nom, $variant, $period, $periodlink, $description, $builddate, $exportlink = '', $moreparam = array(), $calcmode = '', $varlink = '')
+function journalHead($nom, $variante, $period, $periodlink, $description, $builddate, $exportlink = '', $moreparam = array(), $calcmode = '', $varlink = '')
 {
 	global $langs;
 
@@ -218,14 +218,14 @@ function journalHead($nom, $variant, $period, $periodlink, $description, $buildd
 	if ($calcmode) {
 		print '<tr>';
 		print '<td>'.$langs->trans("CalculationMode").'</td>';
-		if (!$variant) {
+		if (!$variante) {
 			print '<td colspan="3">';
 		} else {
 			print '<td>';
 		}
 		print $calcmode;
-		if ($variant) {
-			print '</td><td colspan="2">'.$variant;
+		if ($variante) {
+			print '</td><td colspan="2">'.$variante;
 		}
 		print '</td>';
 		print '</tr>';
