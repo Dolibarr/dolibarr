@@ -9601,7 +9601,7 @@ abstract class CommonObject
 	 *
 	 * @param 	string|int	$value			Value to protect
 	 * @param	array		$fieldsentry	Properties of field
-	 * @return 	string
+	 * @return 	string|int
 	 */
 	protected function quote($value, $fieldsentry)
 	{
