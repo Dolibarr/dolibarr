@@ -334,7 +334,7 @@ class Ticket extends CommonObject
 		'fk_contract' => array('type'=>'integer:Contrat:contrat/class/contrat.class.php', 'label'=>'Contract', 'visible'=>-1, 'enabled'=>'$conf->contract->enabled', 'position'=>53, 'notnull'=>-1, 'index'=>1, 'help'=>"LinkToContract"),
 		//'timing' => array('type'=>'varchar(20)', 'label'=>'Timing', 'visible'=>-1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'help'=>""),	// what is this ?
 		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>1, 'enabled'=>1, 'position'=>500, 'notnull'=>1, 'csslist'=>'nowraponall'),
-		'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>-1, 'enabled'=>1, 'position'=>501, 'notnull'=>1),
+		'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>-1, 'enabled'=>1, 'position'=>501, 'notnull'=>1, 'csslist'=>'nowraponall'),
 		'date_last_msg_sent' => array('type'=>'datetime', 'label'=>'TicketLastMessageDate', 'visible'=>0, 'enabled'=>1, 'position'=>502, 'notnull'=>-1),
 		'fk_user_assign' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'AssignedTo', 'visible'=>1, 'enabled'=>1, 'position'=>505, 'notnull'=>1, 'csslist'=>'tdoverflowmax100 maxwidth150onsmartphone'),
 		'date_close' => array('type'=>'datetime', 'label'=>'TicketCloseOn', 'visible'=>-1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
@@ -346,7 +346,7 @@ class Ticket extends CommonObject
 		'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>'getDolGlobalString("TICKET_ENABLE_RESOLUTION")', 'position'=>550, 'notnull'=>1),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'PDFTemplate', 'enabled'=>1, 'visible'=>0, 'position'=>560),
 		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>570),
-		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'TicketAnswered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'SolvedClosed', 9 => 'Deleted')),
+		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 2 => 'Assigned', 3 => 'InProgress', 5 => 'NeedMoreInformation', 7 => 'OnHold', 8 => 'SolvedClosed', 9 => 'Deleted')),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
 	);
 	// END MODULEBUILDER PROPERTIES
@@ -359,8 +359,6 @@ class Ticket extends CommonObject
 	 */
 	public function __construct($db)
 	{
-		global $conf;
-
 		$this->db = $db;
 
 		$this->labelStatusShort = array(
@@ -368,8 +366,8 @@ class Ticket extends CommonObject
 			self::STATUS_READ => 'Read',
 			self::STATUS_ASSIGNED => 'Assigned',
 			self::STATUS_IN_PROGRESS => 'InProgress',
-			self::STATUS_WAITING => 'OnHold',
 			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformationShort',
+			self::STATUS_WAITING => 'OnHold',
 			self::STATUS_CLOSED => 'SolvedClosed',
 			self::STATUS_CANCELED => 'Canceled'
 		);
@@ -378,11 +376,17 @@ class Ticket extends CommonObject
 			self::STATUS_READ => 'Read',
 			self::STATUS_ASSIGNED => 'Assigned',
 			self::STATUS_IN_PROGRESS => 'InProgress',
-			self::STATUS_WAITING => 'OnHold',
 			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation',
+			self::STATUS_WAITING => 'OnHold',
 			self::STATUS_CLOSED => 'SolvedClosed',
 			self::STATUS_CANCELED => 'Canceled'
 		);
+
+		if (!getDolGlobalString('TICKET_INCLUDE_SUSPENDED_STATUS')) {
+			unset($this->fields['fk_statut']['arrayofkeyval'][self::STATUS_WAITING]);
+			unset($this->labelStatusShort[self::STATUS_WAITING]);
+			unset($this->labelStatus[self::STATUS_WAITING]);
+		}
 	}
 
 	/**
@@ -1448,21 +1452,21 @@ class Ticket extends CommonObject
 		$labelStatus = $this->labelStatus[$status];
 		$labelStatusShort = $this->labelStatusShort[$status];
 
-		if ($status == self::STATUS_NOT_READ) {
+		if ($status == self::STATUS_NOT_READ) {				// Not read
 			$statusType = 'status0';
-		} elseif ($status == self::STATUS_READ) {
+		} elseif ($status == self::STATUS_READ) {			// Read
 			$statusType = 'status1';
-		} elseif ($status == self::STATUS_ASSIGNED) {
+		} elseif ($status == self::STATUS_ASSIGNED) {		// Assigned
 			$statusType = 'status2';
-		} elseif ($status == self::STATUS_IN_PROGRESS) {
+		} elseif ($status == self::STATUS_IN_PROGRESS) {	// In progress
 			$statusType = 'status4';
-		} elseif ($status == self::STATUS_WAITING) {
+		} elseif ($status == self::STATUS_WAITING) {		// Waiting
 			$statusType = 'status7';
-		} elseif ($status == self::STATUS_NEED_MORE_INFO) {
+		} elseif ($status == self::STATUS_NEED_MORE_INFO) {	// Waiting more info from requester
 			$statusType = 'status3';
-		} elseif ($status == self::STATUS_CANCELED) {
+		} elseif ($status == self::STATUS_CANCELED) {		// Cancel
 			$statusType = 'status9';
-		} elseif ($status == self::STATUS_CLOSED) {
+		} elseif ($status == self::STATUS_CLOSED) {			// Closed
 			$statusType = 'status6';
 		} else {
 			$labelStatus = 'Unknown';
