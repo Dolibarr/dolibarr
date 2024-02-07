@@ -760,7 +760,7 @@ class pdf_azur extends ModelePDFPropales
 					$already_merged = array();
 					foreach ($object->lines as $line) {
 						if (!empty($line->fk_product) && !(in_array($line->fk_product, $already_merged))) {
-							// Find the desire PDF
+							// Find the desired PDF
 							$filetomerge = new Propalmergepdfproduct($this->db);
 
 							if (getDolGlobalInt('MAIN_MULTILANGS')) {
