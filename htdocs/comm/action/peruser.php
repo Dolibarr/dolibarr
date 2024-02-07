@@ -107,6 +107,7 @@ $status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'aZ09') : GET
 $type = GETPOSTISSET("search_type") ? GETPOST("search_type", 'alpha') : GETPOST("type", 'alpha');
 $maxprint = ((GETPOST("maxprint", 'int') != '') ? GETPOST("maxprint", 'int') : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$search_categ_cus = GETPOST("search_categ_cus", "int", 3) ? GETPOST("search_categ_cus", "int", 3) : 0;
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('search_actioncode', 'array:aZ09')) {
 	$actioncode = GETPOST('search_actioncode', 'array:aZ09', 3);
@@ -322,6 +323,9 @@ if ($begin_d != '') {
 if ($end_d != '') {
 	$param .= '&end_d='.urlencode($end_d);
 }
+if ($search_categ_cus != 0) {
+	$param .= '&search_categ_cus='.urlencode($search_categ_cus);
+}
 $param .= "&maxprint=".urlencode($maxprint);
 
 $paramnoactionodate = $param;
@@ -513,7 +517,7 @@ $s = $newtitle;
 print $s;
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
-print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
 print '</div>';
 
 
@@ -649,6 +653,14 @@ if ($status == 'done' || $status == '100') {
 }
 if ($status == 'todo') {
 	$sql .= " AND (a.percent >= 0 AND a.percent < 100)";
+}
+// Search in categories, -1 is all and -2 is no categories
+if ($search_categ_cus != -1) {
+	if ($search_categ_cus == -2) {
+		$sql .= " AND NOT EXISTS (SELECT ca.fk_actioncomm FROM ".MAIN_DB_PREFIX."categorie_actioncomm as ca WHERE ca.fk_actioncomm = a.id)";
+	} elseif ($search_categ_cus > 0) {
+		$sql .= " AND EXISTS (SELECT ca.fk_actioncomm FROM ".MAIN_DB_PREFIX."categorie_actioncomm as ca WHERE ca.fk_actioncomm = a.id AND ca.fk_categorie IN (".$db->sanitize($search_categ_cus)."))";
+	}
 }
 // Sort on date
 $sql .= $db->order("fk_user_action, datep");
