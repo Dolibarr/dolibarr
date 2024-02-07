@@ -406,7 +406,8 @@ $formcompany = new FormCompany($db);
 $thirdparty = new Societe($db);
 $subtypearray = $object->getArrayOfInvoiceSubtypes(0);
 $now = dol_now();
-
+$soc = new Societe($db);
+$soc->fetch($socid);
 $title = $langs->trans("BillsSuppliers").($socid ? ' '.$soc->name : '');
 $help_url = 'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores';
 
