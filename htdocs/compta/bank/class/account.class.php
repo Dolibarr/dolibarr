@@ -178,7 +178,7 @@ class Account extends CommonObject
 	/**
 	 * Address of the bank account
 	 * @var string
-  	 * @deprecated see $address
+	 * @deprecated see $address
 	 */
 	public $domiciliation;
 
@@ -2055,7 +2055,7 @@ class AccountLine extends CommonObjectLine
 
 	/**
 	 * User author of the reconciliation
-  	 * TODO: variable used only by method info() => is it the same as $fk_user_rappro ?
+	 * TODO: variable used only by method info() => is it the same as $fk_user_rappro ?
 	 */
 	public $user_rappro;
 
