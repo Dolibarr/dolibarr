@@ -988,9 +988,9 @@ if ($action == 'create') {
 
 			// From
 			print '<tr><td class="titlefield">';
-			print $form->editfieldkey("MailFrom", 'email_from', $object->email_from, $object, $user->hasRight('mailing', 'creer') && $object->status < 3, 'string');
+			print $form->editfieldkey("MailFrom", 'email_from', $object->email_from, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
 			print '</td><td>';
-			print $form->editfieldval("MailFrom", 'email_from', $object->email_from, $object, $user->hasRight('mailing', 'creer') && $object->status < 3, 'string');
+			print $form->editfieldval("MailFrom", 'email_from', $object->email_from, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
 			$email = CMailFile::getValidAddress($object->email_from, 2);
 			if ($email && !isValidEmail($email)) {
 				$langs->load("errors");
@@ -1005,9 +1005,9 @@ if ($action == 'create') {
 			// Errors to
 			if ($object->messtype != 'sms') {
 				print '<tr><td>';
-				print $form->editfieldkey("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->hasRight('mailing', 'creer') && $object->status < 3, 'string');
+				print $form->editfieldkey("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
 				print '</td><td>';
-				print $form->editfieldval("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->hasRight('mailing', 'creer') && $object->status < 3, 'string');
+				print $form->editfieldval("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
 				$email = CMailFile::getValidAddress($object->email_errorsto, 2);
 				if ($email && !isValidEmail($email)) {
 					$langs->load("errors");
@@ -1055,19 +1055,24 @@ if ($action == 'create') {
 			print '<tr><td>';
 			print $langs->trans("MAIN_MAIL_SENDMODE");
 			print '</td><td>';
-			if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
-				$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING')];
-			} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE')) {
-				$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE')];
-			} else {
-				$text = $listofmethods['mail'];
-			}
-			print $text;
-			if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
-				if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
-					print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING').')</span>';
+			if ($object->messtype != 'sms') {
+				if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
+					$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING')];
+				} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE')) {
+					$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE')];
+				} else {
+					$text = $listofmethods['mail'];
 				}
-			} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE') != 'mail' && getDolGlobalString('MAIN_MAIL_SMTP_SERVER')) {
+				print $text;
+				if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
+					if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
+						print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING').')</span>';
+					}
+				} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE') != 'mail' && getDolGlobalString('MAIN_MAIL_SMTP_SERVER')) {
+					print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER').')</span>';
+				}
+			} else {
+				print 'SMS ';
 				print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER').')</span>';
 			}
 			print '</td></tr>';

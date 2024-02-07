@@ -5388,9 +5388,8 @@ class Societe extends CommonObject
 			if (!$error) {
 				$objects = array(
 					'Adherent' => '/adherents/class/adherent.class.php',
-					'Don' => array('file' => '/don/class/don.class.php', 'enabled' => isModEnabled('don')),
 					'Societe' => '/societe/class/societe.class.php',
-					//'Categorie' => '/categories/class/categorie.class.php',
+					//'Categorie' => '/categories/class/categorie.class.php',	// Already processed previously
 					'ActionComm' => '/comm/action/class/actioncomm.class.php',
 					'Propal' => '/comm/propal/class/propal.class.php',
 					'Commande' => '/commande/class/commande.class.php',
@@ -5401,7 +5400,6 @@ class Societe extends CommonObject
 					'Contact' => '/contact/class/contact.class.php',
 					'Contrat' => '/contrat/class/contrat.class.php',
 					'Expedition' => '/expedition/class/expedition.class.php',
-					'Fichinter' => '/fichinter/class/fichinter.class.php',
 					'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
 					'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
 					'FactureFournisseurRec' => '/fourn/class/fournisseur.facture-rec.class.php',
@@ -5411,11 +5409,22 @@ class Societe extends CommonObject
 					'Delivery' => '/delivery/class/delivery.class.php',
 					'Product' => '/product/class/product.class.php',
 					'Project' => '/projet/class/project.class.php',
-					'Ticket' => array('file' => '/ticket/class/ticket.class.php', 'enabled' => isModEnabled('ticket')),
 					'User' => '/user/class/user.class.php',
 					'Account' => '/compta/bank/class/account.class.php',
 					'ConferenceOrBoothAttendee' => '/eventorganization/class/conferenceorboothattendee.class.php'
 				);
+				if ($this->db->DDLListTables($this->db->database_name, 'don')) {
+					$objects['Don'] = '/don/class/don.class.php';
+				}
+				if ($this->db->DDLListTables($this->db->database_name, 'partnership')) {
+					$objects['PartnerShip'] = '/partnership/class/partnership.class.php';
+				}
+				if ($this->db->DDLListTables($this->db->database_name, 'fichinter')) {
+					$objects['Fichinter'] = '/fichinter/class/fichinter.class.php';
+				}
+				if ($this->db->DDLListTables($this->db->database_name, 'ticket')) {
+					$objects['Ticket'] = '/ticket/class/ticket.class.php';
+				}
 
 				//First, all core objects must update their tables
 				foreach ($objects as $object_name => $object_file) {
