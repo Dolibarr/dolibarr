@@ -1478,7 +1478,7 @@ class BOM extends CommonObject
 							$this->error = $tmpproduct->error;
 							return -1;
 						}
-						$unit_cost = (!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp
+						$unit_cost = (!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp;
 						$line->unit_cost = (float) price2num($unit_cost);
 						if (empty($line->unit_cost)) {
 							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
