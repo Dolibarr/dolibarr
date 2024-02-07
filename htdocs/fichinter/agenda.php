@@ -90,7 +90,8 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-restrictedArea($user, 'ficheinter', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+restrictedArea($user, 'ficheinter', $object->id, 'fichinter', '', 'fk_soc', 'rowid', $isdraft);
+
 
 
 /*
