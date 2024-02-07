@@ -1261,12 +1261,11 @@ class FactureRec extends CommonInvoice
 	 * Format string to output with by striking the string if max number of generation was reached
 	 *
 	 * @param	string		$ret	Default value to output
-	 * @return	boolean				False by default, True if maximum number of generation is reached
+	 * @return	string				html formatted string
 	 */
 	public function strikeIfMaxNbGenReached($ret)
 	{
-		// Special case to strike the date
-		return ($this->isMaxNbGenReached() ? '<strike>' : '').$ret.($this->isMaxNbGenReached() ? '</strike>' : '');
+		return $this->isMaxNbGenReached() ? '<strike>'.$ret.'</strike>' : $ret;
 	}
 
 	/**
@@ -1294,7 +1293,7 @@ class FactureRec extends CommonInvoice
 		$tmparray = dol_getdate($now);
 		$today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year']); // Today is last second of current day
 
-		$this->output = null;
+		$this->output = '';
 
 		dol_syslog("createRecurringInvoices restrictioninvoiceid=".$restrictioninvoiceid." forcevalidation=".$forcevalidation);
 
