@@ -1999,4 +1999,5 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $fk_user_modif;
 
 	public $fk_accounting_account;
+	public $code_ventilation;
 }
