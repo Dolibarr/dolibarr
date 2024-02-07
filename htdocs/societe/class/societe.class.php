@@ -5301,7 +5301,7 @@ class Societe extends CommonObject
 	 */
 	public function mergeCompany($soc_origin_id)
 	{
-		global $langs, $hookmanager, $user, $action;
+		global $conf, $langs, $hookmanager, $user, $action;
 
 		$error = 0;
 		$soc_origin = new Societe($this->db);		// The thirdparty that we will delete
@@ -5321,9 +5321,9 @@ class Societe extends CommonObject
 				'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'fax', 'email', 'socialnetworks', 'url', 'barcode',
 				'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
 				'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
-				'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
+				'stcomm_id', 'outstanding_limit', 'order_min_amount', 'supplier_order_min_amount', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
 				'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
-				'model_pdf',
+				'model_pdf', 'webservices_url', 'webservices_key', 'accountancy_code_sell', 'accountancy_code_buy'
 			);
 			foreach ($listofproperties as $property) {
 				if (empty($this->$property)) {
@@ -5388,9 +5388,8 @@ class Societe extends CommonObject
 			if (!$error) {
 				$objects = array(
 					'Adherent' => '/adherents/class/adherent.class.php',
-					'Don' => array('file' => '/don/class/don.class.php', 'enabled' => isModEnabled('don')),
 					'Societe' => '/societe/class/societe.class.php',
-					//'Categorie' => '/categories/class/categorie.class.php',
+					//'Categorie' => '/categories/class/categorie.class.php',	// Already processed previously
 					'ActionComm' => '/comm/action/class/actioncomm.class.php',
 					'Propal' => '/comm/propal/class/propal.class.php',
 					'Commande' => '/commande/class/commande.class.php',
@@ -5401,7 +5400,6 @@ class Societe extends CommonObject
 					'Contact' => '/contact/class/contact.class.php',
 					'Contrat' => '/contrat/class/contrat.class.php',
 					'Expedition' => '/expedition/class/expedition.class.php',
-					'Fichinter' => '/fichinter/class/fichinter.class.php',
 					'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
 					'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
 					'FactureFournisseurRec' => '/fourn/class/fournisseur.facture-rec.class.php',
@@ -5411,11 +5409,22 @@ class Societe extends CommonObject
 					'Delivery' => '/delivery/class/delivery.class.php',
 					'Product' => '/product/class/product.class.php',
 					'Project' => '/projet/class/project.class.php',
-					'Ticket' => array('file' => '/ticket/class/ticket.class.php', 'enabled' => isModEnabled('ticket')),
 					'User' => '/user/class/user.class.php',
 					'Account' => '/compta/bank/class/account.class.php',
 					'ConferenceOrBoothAttendee' => '/eventorganization/class/conferenceorboothattendee.class.php'
 				);
+				if ($this->db->DDLListTables($conf->db->name, $this->db->prefix().'don')) {
+					$objects['Don'] = '/don/class/don.class.php';
+				}
+				if ($this->db->DDLListTables($conf->db->name, $this->db->prefix().'partnership')) {
+					$objects['PartnerShip'] = '/partnership/class/partnership.class.php';
+				}
+				if ($this->db->DDLListTables($conf->db->name, $this->db->prefix().'fichinter')) {
+					$objects['Fichinter'] = '/fichinter/class/fichinter.class.php';
+				}
+				if ($this->db->DDLListTables($conf->db->name, $this->db->prefix().'ticket')) {
+					$objects['Ticket'] = '/ticket/class/ticket.class.php';
+				}
 
 				//First, all core objects must update their tables
 				foreach ($objects as $object_name => $object_file) {
