@@ -741,8 +741,6 @@ class FactureRec extends CommonInvoice
 				$line->total_tva		= $objp->total_tva;
 				$line->total_ttc		= $objp->total_ttc;
 
-				//$line->code_ventilation = $objp->fk_code_ventilation;
-
 				$line->fk_product_fournisseur_price = $objp->fk_product_fournisseur_price;
 				$line->fk_fournprice = $objp->fk_product_fournisseur_price; // For backward compatibility
 
@@ -2279,7 +2277,7 @@ class FactureLigneRec extends CommonInvoiceLine
 			$this->total_ht         = $objp->total_ht;
 			$this->total_tva        = $objp->total_tva;
 			$this->total_ttc        = $objp->total_ttc;
-			//$this->code_ventilation = $objp->fk_code_ventilation;
+
 			$this->rang = $objp->rang;
 			$this->special_code = $objp->special_code;
 			$this->fk_unit          = $objp->fk_unit;

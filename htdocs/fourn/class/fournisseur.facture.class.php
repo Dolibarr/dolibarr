@@ -1091,7 +1091,6 @@ class FactureFournisseur extends CommonInvoice
 					$line->fk_unit          = $obj->fk_unit;
 
 					// Accountancy
-					$line->code_ventilation = $obj->fk_code_ventilation;
 					$line->fk_accounting_account = $obj->fk_code_ventilation;
 
 					// Multicurrency
