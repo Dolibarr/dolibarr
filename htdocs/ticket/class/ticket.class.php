@@ -2623,7 +2623,7 @@ class Ticket extends CommonObject
 					 */
 					if (!empty($conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_ENABLED)) {
 						// Retrieve internal contact datas
-						$internal_contacts = $object->getInfosTicketExternalContact(1);
+						$internal_contacts = $object->getInfosTicketInternalContact(1);
 
 						$assigned_user_dont_have_email = '';
 
