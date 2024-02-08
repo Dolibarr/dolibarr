@@ -49,7 +49,7 @@ class InvoiceListController extends Controller
 	 * Action method is called before html output
 	 * can be used to manage security and change context
 	 *
-	 * @return  void
+	 * @return  int     Return integer < 0 on error, > 0 on success
 	 */
 	public function action()
 	{
@@ -57,7 +57,7 @@ class InvoiceListController extends Controller
 
 		$context = Context::getInstance();
 		if (!$context->controllerInstance->checkAccess()) {
-			return;
+			return -1;
 		}
 
 		dol_include_once('/webportal/class/html.formlistwebportal.class.php');
@@ -80,6 +80,8 @@ class InvoiceListController extends Controller
 		}
 
 		$this->formList = $formListWebPortal;
+
+		return 1;
 	}
 
 	/**
