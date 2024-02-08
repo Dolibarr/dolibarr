@@ -740,6 +740,7 @@ class AccountingAccount extends CommonObject
 	 */
 	public function getAccountingCodeToBind(Societe $buyer, Societe $seller, Product $product, $facture, $factureDet, $accountingAccount = array(), $type = '')
 	{
+		global $hookmanager;
 		// Instantiate hooks for external modules
 		$hookmanager->initHooks(array('accountancyBindingCalculation'));
 
