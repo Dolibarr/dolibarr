@@ -149,7 +149,7 @@ if ($object->id > 0) {
 	print dol_get_fiche_head($head, 'documents', $langs->trans("Action"), -1, 'action');
 
 	// Link to other agenda views
-	$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1">';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1">';
 	$linkback .= img_picto($langs->trans("BackToList"), 'object_calendarlist', 'class="pictoactionview pictofixedwidth"');
 	$linkback .= '<span class="hideonsmartphone">'.$langs->trans("BackToList").'</span>';
 	$linkback .= '</a>';
