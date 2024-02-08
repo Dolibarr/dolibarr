@@ -72,7 +72,7 @@ class Projects extends DolibarrApi
 	public function get($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->projet->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->project->fetch($id);
@@ -108,7 +108,7 @@ class Projects extends DolibarrApi
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $properties = '')
 	{
 		if (!DolibarrApiAccess::$user->rights->projet->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -235,7 +235,7 @@ class Projects extends DolibarrApi
 	public function getLines($id, $includetimespent = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->projet->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->project->fetch($id);
@@ -275,7 +275,7 @@ class Projects extends DolibarrApi
 		global $db;
 
 		if (!DolibarrApiAccess::$user->rights->projet->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->project->fetch($id);
@@ -318,7 +318,7 @@ class Projects extends DolibarrApi
 	public function postLine($id, $request_data = null)
 	{
 		if(! DolibarrApiAccess::$user->rights->projet->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->project->fetch($id);
@@ -385,7 +385,7 @@ class Projects extends DolibarrApi
 	public function putLine($id, $lineid, $request_data = null)
 	{
 		if(! DolibarrApiAccess::$user->rights->projet->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->project->fetch($id);
@@ -446,7 +446,7 @@ class Projects extends DolibarrApi
 	public function put($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->projet->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->project->fetch($id);
@@ -487,7 +487,7 @@ class Projects extends DolibarrApi
 	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->projet->supprimer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$result = $this->project->fetch($id);
 		if (!$result) {
@@ -531,7 +531,7 @@ class Projects extends DolibarrApi
 	public function validate($id, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->projet->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$result = $this->project->fetch($id);
 		if (!$result) {

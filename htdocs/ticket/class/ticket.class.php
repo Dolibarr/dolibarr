@@ -189,27 +189,27 @@ class Ticket extends CommonObject
 	/**
 	 * @var int Creation date
 	 */
-	public $datec = '';
+	public $datec;
 
 	/**
 	 * @var int Last modification date
 	 */
-	public $tms = '';
+	public $tms;
 
 	/**
 	 * @var int Read date
 	 */
-	public $date_read = '';
+	public $date_read;
 
 	/**
 	 * @var int Last message date
 	 */
-	public $date_last_msg_sent = '';
+	public $date_last_msg_sent;
 
 	/**
 	 * @var int Close ticket date
 	 */
-	public $date_close = '';
+	public $date_close;
 
 	/**
 	 * @var array cache_types_tickets
@@ -334,7 +334,7 @@ class Ticket extends CommonObject
 		'fk_contract' => array('type'=>'integer:Contrat:contrat/class/contrat.class.php', 'label'=>'Contract', 'visible'=>-1, 'enabled'=>'$conf->contract->enabled', 'position'=>53, 'notnull'=>-1, 'index'=>1, 'help'=>"LinkToContract"),
 		//'timing' => array('type'=>'varchar(20)', 'label'=>'Timing', 'visible'=>-1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'help'=>""),	// what is this ?
 		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>1, 'enabled'=>1, 'position'=>500, 'notnull'=>1, 'csslist'=>'nowraponall'),
-		'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>-1, 'enabled'=>1, 'position'=>501, 'notnull'=>1),
+		'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>-1, 'enabled'=>1, 'position'=>501, 'notnull'=>1, 'csslist'=>'nowraponall'),
 		'date_last_msg_sent' => array('type'=>'datetime', 'label'=>'TicketLastMessageDate', 'visible'=>0, 'enabled'=>1, 'position'=>502, 'notnull'=>-1),
 		'fk_user_assign' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'AssignedTo', 'visible'=>1, 'enabled'=>1, 'position'=>505, 'notnull'=>1, 'csslist'=>'tdoverflowmax100 maxwidth150onsmartphone'),
 		'date_close' => array('type'=>'datetime', 'label'=>'TicketCloseOn', 'visible'=>-1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
@@ -344,7 +344,9 @@ class Ticket extends CommonObject
 		'email_date' => array('type'=>'datetime', 'label'=>'EmailDate', 'visible'=>-2, 'enabled'=>1, 'position'=>541),
 		'progress' => array('type'=>'integer', 'label'=>'Progression', 'visible'=>-1, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'css'=>'right', 'help'=>"", 'isameasure'=>2, 'csslist'=>'width50'),
 		'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>'getDolGlobalString("TICKET_ENABLE_RESOLUTION")', 'position'=>550, 'notnull'=>1),
-		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'SolvedClosed', 9 => 'Deleted')),
+		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'PDFTemplate', 'enabled'=>1, 'visible'=>0, 'position'=>560),
+		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>570),
+		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 2 => 'Assigned', 3 => 'InProgress', 5 => 'NeedMoreInformation', 7 => 'OnHold', 8 => 'SolvedClosed', 9 => 'Deleted')),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
 	);
 	// END MODULEBUILDER PROPERTIES
@@ -357,8 +359,6 @@ class Ticket extends CommonObject
 	 */
 	public function __construct($db)
 	{
-		global $conf;
-
 		$this->db = $db;
 
 		$this->labelStatusShort = array(
@@ -366,8 +366,8 @@ class Ticket extends CommonObject
 			self::STATUS_READ => 'Read',
 			self::STATUS_ASSIGNED => 'Assigned',
 			self::STATUS_IN_PROGRESS => 'InProgress',
-			self::STATUS_WAITING => 'OnHold',
 			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformationShort',
+			self::STATUS_WAITING => 'OnHold',
 			self::STATUS_CLOSED => 'SolvedClosed',
 			self::STATUS_CANCELED => 'Canceled'
 		);
@@ -376,11 +376,17 @@ class Ticket extends CommonObject
 			self::STATUS_READ => 'Read',
 			self::STATUS_ASSIGNED => 'Assigned',
 			self::STATUS_IN_PROGRESS => 'InProgress',
-			self::STATUS_WAITING => 'OnHold',
 			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation',
+			self::STATUS_WAITING => 'OnHold',
 			self::STATUS_CLOSED => 'SolvedClosed',
 			self::STATUS_CANCELED => 'Canceled'
 		);
+
+		if (!getDolGlobalString('TICKET_INCLUDE_SUSPENDED_STATUS')) {
+			unset($this->fields['fk_statut']['arrayofkeyval'][self::STATUS_WAITING]);
+			unset($this->labelStatusShort[self::STATUS_WAITING]);
+			unset($this->labelStatus[self::STATUS_WAITING]);
+		}
 	}
 
 	/**
@@ -446,7 +452,7 @@ class Ticket extends CommonObject
 		}
 
 		if (isset($this->progress)) {
-			$this->progress = trim($this->progress);
+			$this->progress = (int) $this->progress;
 		}
 
 		if (isset($this->timing)) {
@@ -526,6 +532,7 @@ class Ticket extends CommonObject
 			$sql .= "date_close,";
 			$sql .= "entity,";
 			$sql .= "notify_tiers_at_create,";
+			$sql .= "model_pdf,";
 			$sql .= "ip";
 			$sql .= ") VALUES (";
 			$sql .= " ".(!isset($this->ref) ? '' : "'".$this->db->escape($this->ref)."'").",";
@@ -552,6 +559,7 @@ class Ticket extends CommonObject
 			$sql .= " ".(!isset($this->date_close) || dol_strlen($this->date_close) == 0 ? 'NULL' : "'".$this->db->idate($this->date_close)."'");
 			$sql .= ", ".((int) $this->entity);
 			$sql .= ", ".(!isset($this->notify_tiers_at_create) ? '1' : "'".$this->db->escape($this->notify_tiers_at_create)."'");
+			$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 			$sql .= ", ".(!isset($this->ip) ? 'NULL' : "'".$this->db->escape($this->ip)."'");
 			$sql .= ")";
 
@@ -665,6 +673,8 @@ class Ticket extends CommonObject
 		$sql .= " t.date_last_msg_sent,";
 		$sql .= " t.date_close,";
 		$sql .= " t.tms,";
+		$sql .= " t.model_pdf,";
+		$sql .= " t.extraparams,";
 		$sql .= " t.ip,";
 		$sql .= " type.label as type_label, category.label as category_label, severity.label as severity_label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
@@ -706,6 +716,8 @@ class Ticket extends CommonObject
 				$this->email_date = $this->db->jdate($obj->email_date);
 				$this->subject = $obj->subject;
 				$this->message = $obj->message;
+				$this->model_pdf = $obj->model_pdf;
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 				$this->ip = $obj->ip;
 
 				$this->status = $obj->status;
@@ -1004,7 +1016,7 @@ class Ticket extends CommonObject
 		}
 
 		if (isset($this->progress)) {
-			$this->progress = trim($this->progress);
+			$this->progress = (int) $this->progress;
 		}
 
 		if (isset($this->timing)) {
@@ -1022,7 +1034,9 @@ class Ticket extends CommonObject
 		if (isset($this->severity_code)) {
 			$this->timing = trim($this->severity_code);
 		}
-
+		if (isset($this->model_pdf)) {
+			$this->model_pdf = trim($this->model_pdf);
+		}
 		// Check parameters
 		// Put here code to add a control on parameters values
 		// Update request
@@ -1047,6 +1061,7 @@ class Ticket extends CommonObject
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " date_read=".(dol_strlen($this->date_read) != 0 ? "'".$this->db->idate($this->date_read)."'" : 'null').",";
 		$sql .= " date_last_msg_sent=".(dol_strlen($this->date_last_msg_sent) != 0 ? "'".$this->db->idate($this->date_last_msg_sent)."'" : 'null').",";
+		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " date_close=".(dol_strlen($this->date_close) != 0 ? "'".$this->db->idate($this->date_close)."'" : 'null');
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -1246,16 +1261,16 @@ class Ticket extends CommonObject
 		$this->message = 'Message of ticket';
 		$this->status = 0;
 		$this->resolution = '1';
-		$this->progress = '10';
+		$this->progress = 10;
 		//$this->timing = '30';
 		$this->type_code = 'TYPECODE';
 		$this->category_code = 'CATEGORYCODE';
 		$this->severity_code = 'SEVERITYCODE';
-		$this->datec = '';
-		$this->date_read = '';
-		$this->date_last_msg_sent = '';
-		$this->date_close = '';
-		$this->tms = '';
+		$this->datec = dol_now();
+		$this->date_read = dol_now();
+		$this->date_last_msg_sent = dol_now();
+		$this->date_close = dol_now();
+		$this->tms = dol_now();
 		return 1;
 	}
 
@@ -1437,21 +1452,21 @@ class Ticket extends CommonObject
 		$labelStatus = $this->labelStatus[$status];
 		$labelStatusShort = $this->labelStatusShort[$status];
 
-		if ($status == self::STATUS_NOT_READ) {
+		if ($status == self::STATUS_NOT_READ) {				// Not read
 			$statusType = 'status0';
-		} elseif ($status == self::STATUS_READ) {
+		} elseif ($status == self::STATUS_READ) {			// Read
 			$statusType = 'status1';
-		} elseif ($status == self::STATUS_ASSIGNED) {
+		} elseif ($status == self::STATUS_ASSIGNED) {		// Assigned
 			$statusType = 'status2';
-		} elseif ($status == self::STATUS_IN_PROGRESS) {
+		} elseif ($status == self::STATUS_IN_PROGRESS) {	// In progress
 			$statusType = 'status4';
-		} elseif ($status == self::STATUS_WAITING) {
+		} elseif ($status == self::STATUS_WAITING) {		// Waiting
 			$statusType = 'status7';
-		} elseif ($status == self::STATUS_NEED_MORE_INFO) {
+		} elseif ($status == self::STATUS_NEED_MORE_INFO) {	// Waiting more info from requester
 			$statusType = 'status3';
-		} elseif ($status == self::STATUS_CANCELED) {
+		} elseif ($status == self::STATUS_CANCELED) {		// Cancel
 			$statusType = 'status9';
-		} elseif ($status == self::STATUS_CLOSED) {
+		} elseif ($status == self::STATUS_CLOSED) {			// Closed
 			$statusType = 'status6';
 		} else {
 			$labelStatus = 'Unknown';
@@ -2600,9 +2615,6 @@ class Ticket extends CommonObject
 			if (!$error && $id > 0) {
 				setEventMessages($langs->trans('TicketMessageSuccessfullyAdded'), null, 'mesgs');
 
-				//var_dump($_SESSION);
-				//var_dump($listofpaths);exit;
-
 				if (!empty($public_area)) {
 					/*
 					 * Message created from the Public interface
@@ -3142,6 +3154,40 @@ class Ticket extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
+
 		return $return;
+	}
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 *  @param	    string		$modele			Force template to use ('' to not force)
+	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
+	{
+		global $langs;
+
+		$langs->load("ticket");
+		$outputlangs->load("ticket");
+
+		if (!dol_strlen($modele)) {
+			$modele = 'generic_ticket_odt';
+
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
+			} elseif (getDolGlobalString('TICKET_ADDON_PDF')) {
+				$modele = getDolGlobalString('TICKET_ADDON_PDF');
+			}
+		}
+
+		$modelpath = "core/modules/ticket/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 }

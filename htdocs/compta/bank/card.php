@@ -159,7 +159,7 @@ if (empty($reshook)) {
 		}
 		$fk_accountancy_journal = GETPOSTINT('fk_accountancy_journal');
 		if ($fk_accountancy_journal <= 0) {
-			$object->fk_accountancy_journal = '';
+			$object->fk_accountancy_journal = 0;
 		} else {
 			$object->fk_accountancy_journal = $fk_accountancy_journal;
 		}
@@ -272,7 +272,7 @@ if (empty($reshook)) {
 		}
 		$fk_accountancy_journal = GETPOSTINT('fk_accountancy_journal');
 		if ($fk_accountancy_journal <= 0) {
-			$object->fk_accountancy_journal = '';
+			$object->fk_accountancy_journal = 0;
 		} else {
 			$object->fk_accountancy_journal = $fk_accountancy_journal;
 		}

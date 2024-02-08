@@ -64,7 +64,7 @@ class Receptions extends DolibarrApi
 	public function get($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->reception->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->reception->fetch($id);
@@ -101,7 +101,7 @@ class Receptions extends DolibarrApi
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
 	{
 		if (!DolibarrApiAccess::$user->rights->reception->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -222,7 +222,7 @@ class Receptions extends DolibarrApi
 	public function getLines($id)
 	{
 		if(! DolibarrApiAccess::$user->rights->reception->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->reception->fetch($id);
@@ -256,7 +256,7 @@ class Receptions extends DolibarrApi
 	public function postLine($id, $request_data = null)
 	{
 		if(! DolibarrApiAccess::$user->rights->reception->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->reception->fetch($id);
@@ -324,7 +324,7 @@ class Receptions extends DolibarrApi
 	public function putLine($id, $lineid, $request_data = null)
 	{
 		if (! DolibarrApiAccess::$user->rights->reception->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->reception->fetch($id);
@@ -389,7 +389,7 @@ class Receptions extends DolibarrApi
 	public function deleteLine($id, $lineid)
 	{
 		if (!DolibarrApiAccess::$user->rights->reception->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->reception->fetch($id);
@@ -403,7 +403,7 @@ class Receptions extends DolibarrApi
 
 		// TODO Check the lineid $lineid is a line of object
 
-		$updateRes = $this->reception->deleteline(DolibarrApiAccess::$user, $lineid);
+		$updateRes = $this->reception->deleteLine(DolibarrApiAccess::$user, $lineid);
 		if ($updateRes < 0) {
 			throw new RestException(405, $this->reception->error);
 		}
@@ -426,7 +426,7 @@ class Receptions extends DolibarrApi
 	public function put($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->reception->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->reception->fetch($id);
@@ -466,7 +466,7 @@ class Receptions extends DolibarrApi
 	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->reception->supprimer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$result = $this->reception->fetch($id);
 		if (!$result) {
@@ -511,7 +511,7 @@ class Receptions extends DolibarrApi
 	public function validate($id, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->reception->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$result = $this->reception->fetch($id);
 		if (!$result) {
@@ -557,7 +557,7 @@ class Receptions extends DolibarrApi
 	{
 
 		if(! DolibarrApiAccess::$user->rights->reception->creer) {
-				throw new RestException(401);
+				throw new RestException(403);
 		}
 		if(empty($id)) {
 				throw new RestException(400, 'Reception ID is mandatory');
@@ -596,10 +596,10 @@ class Receptions extends DolibarrApi
 		require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 
 		if(! DolibarrApiAccess::$user->rights->reception->lire) {
-				throw new RestException(401);
+				throw new RestException(403);
 		}
 		if(! DolibarrApiAccess::$user->rights->reception->creer) {
-				throw new RestException(401);
+				throw new RestException(403);
 		}
 		if(empty($proposalid)) {
 				throw new RestException(400, 'Order ID is mandatory');
@@ -633,7 +633,7 @@ class Receptions extends DolibarrApi
 	public function close($id, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->reception->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->reception->fetch($id);

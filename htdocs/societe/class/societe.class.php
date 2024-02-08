@@ -505,18 +505,17 @@ class Societe extends CommonObject
 	public $prefix_comm;
 
 	/**
-	 * @var int Vat concerned
+	 * @var int 	Vat concerned
 	 */
 	public $tva_assuj = 1;
 
 	/**
-	 * Intracommunitary VAT ID
-	 * @var string
+	 * @var string	Intracommunitary VAT ID
 	 */
 	public $tva_intra;
 
 	/**
-	 * @var int Vat reverse-charge concerned
+	 * @var int 	Vat reverse-charge concerned
 	 */
 	public $vat_reverse_charge = 0;
 
@@ -4898,7 +4897,7 @@ class Societe extends CommonObject
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *	@param	string		$modele			Generator to use. Caller must set it to obj->model_pdf or GETPOST('model','alpha') for example.
+	 *	@param	string		$modele			Generator to use. Caller must set it to obj->model_pdf.
 	 *	@param	Translate	$outputlangs	object lang a utiliser pour traduction
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
@@ -5081,10 +5080,11 @@ class Societe extends CommonObject
 		}
 
 		/**
-		 * llx_societe_extrafields table must not be here because we don't care about the old thirdparty data
-		 * Do not include llx_societe because it will be replaced later
+		 * llx_societe_extrafields table must not be here because we don't care about the old thirdparty extrafields that are managed directly into mergeCompany.
+		 * Do not include llx_societe because it will be replaced later.
 		 */
 		$tables = array(
+			'societe_account',
 			'societe_commerciaux',
 			'societe_prices',
 			'societe_remise',
@@ -5299,6 +5299,8 @@ class Societe extends CommonObject
 
 		$error = 0;
 		$soc_origin = new Societe($this->db);		// The thirdparty that we will delete
+
+		dol_syslog("mergeCompany merge thirdparty id=".$soc_origin_id." (will be deleted) into the thirdparty id=".$this->id);
 
 		if (!$error && $soc_origin->fetch($soc_origin_id) < 1) {
 			$this->error = $langs->trans('ErrorRecordNotFound');

@@ -702,7 +702,7 @@ class SupplierInvoices extends DolibarrApi
 
 		// TODO Check the lineid $lineid is a line of object
 
-		$updateRes = $this->invoice->deleteline($lineid);
+		$updateRes = $this->invoice->deleteLine($lineid);
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {

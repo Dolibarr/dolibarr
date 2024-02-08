@@ -16,6 +16,7 @@ jobs:
         if: false
 
       # The next uses the git API because there is no clone yet.
+      # It sets the variable steps.changed-php.outputs.all_changed_files for other steps
       # This is faster for a big repo.
       - name: Get all changed php files (if PR)
         id: changed-php

@@ -825,7 +825,12 @@ class FormSetupItem
 		if (!empty($this->nameText)) {
 			return $this->nameText;
 		}
-		return (($this->langs->trans($this->confKey) != $this->confKey) ? $this->langs->trans($this->confKey) : $this->langs->trans('MissingTranslationForConfKey', $this->confKey));
+		$out = (($this->langs->trans($this->confKey) != $this->confKey) ? $this->langs->trans($this->confKey) : $this->langs->trans('MissingTranslationForConfKey', $this->confKey));
+
+		// if conf defined on entity 0, prepend a picto to indicate it will apply across all entities
+		if (isModEnabled('multicompany') && $this->entity == 0) $out = img_picto($this->langs->trans('AllEntities'), 'fa-globe-americas em088 opacityhigh') . '&nbsp;' . $out;
+
+		return $out;
 	}
 
 	/**

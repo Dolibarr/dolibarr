@@ -57,11 +57,25 @@ class Paiement extends CommonObject
 	 */
 	public $picto = 'payment';
 
+	/**
+	 * @var int							Invoice ID
+	 */
 	public $facid;
+
+	/**
+	 * @var int							Company ID
+	 */
 	public $socid;
 
+	/**
+	 * @var int
+	 */
 	public $datepaye;
-	public $date;		// same than $datepaye
+
+	/**
+	 * @var int							same than $datepaye
+	 */
+	public $date;
 
 	/**
 	 * @deprecated
@@ -75,31 +89,65 @@ class Paiement extends CommonObject
 	 */
 	public $montant;
 
-	public $amount; // Total amount of payment (in the main currency)
-	public $multicurrency_amount; // Total amount of payment (in the currency of the bank account)
-	public $amounts = array(); // array: invoice ID => amount for that invoice (in the main currency)
-	public $multicurrency_amounts = array(); // array: invoice ID => amount for that invoice (in the invoice's currency)
-	public $multicurrency_tx = array(); // array: invoice ID => currency tx for that invoice
-	public $multicurrency_code = array(); // array: invoice ID => currency code for that invoice
-
-	public $pos_change = 0; // Excess received in TakePOS cash payment
-
-	public $author;
-	public $paiementid; 	// ID of mode of payment. Is saved into fields fk_paiement on llx_paiement = id of llx_c_paiement
-	public $paiementcode; 	// Code of mode of payment.
+	/**
+	 * @var float							Total amount of payment (in the main currency)
+	 */
+	public $amount;
 
 	/**
-	 * @var string Type of payment label
+	 * @var float							Total amount of payment (in the currency of the bank account)
+	 */
+	public $multicurrency_amount;
+
+	/**
+	 * @var array<int,float>				array: invoice ID => amount for that invoice (in the main currency)
+	 */
+	public $amounts = array();
+
+	/**
+	 * @var array<int,float>				array: invoice ID => amount for that invoice (in the invoice's currency)
+	 */
+	public $multicurrency_amounts = array();
+
+	/**
+	 * @var array<int,float>				Multicurrency rate (array: invoice ID => currency rate ("taux" in French) for that invoice)
+	 */
+	public $multicurrency_tx = array();
+
+	/**
+	 * @var array<int,string>				Multicurrency code (array: invoice ID => currency code for that invoice)
+	 */
+	public $multicurrency_code = array();
+
+	/**
+	 * @var float							Excess received in TakePOS cash payment
+	 */
+	public $pos_change = 0.0;
+
+	public $author;
+
+	/**
+	 * @var int								ID of mode of payment. Is saved into fields fk_paiement on llx_paiement = id of llx_c_paiement
+	 */
+	public $paiementid;
+
+	/**
+	 * @var string							Code of mode of payment.
+	 */
+	public $paiementcode;
+
+	/**
+	 * @var string							Type of payment label
 	 */
 	public $type_label;
 
 	/**
-	 * @var string Type of payment code (seems duplicate with $paiementcode);
+	 * @var string							Type of payment code (seems duplicate with $paiementcode);
 	 */
 	public $type_code;
 
 	/**
-	 * @var string Numero du CHQ, VIR, etc...
+	 * @var string							Numero du CHQ, VIR, etc...
 	 * @deprecated
 	 * @see $num_payment
 	 */

@@ -499,7 +499,7 @@ class ExpenseReport extends CommonObject
 		// Clear fields
 		$this->fk_user_creat = $user->id;
 		$this->fk_user_author = $fk_user_author; // Note fk_user_author is not the 'author' but the guy the expense report is for.
-		$this->fk_user_valid = '';
+		$this->fk_user_valid = 0;
 		$this->date_create = '';
 		$this->date_creation = '';
 		$this->date_validation = '';
@@ -1653,7 +1653,7 @@ class ExpenseReport extends CommonObject
 	/**
 	 * Return next reference of expense report not already used
 	 *
-	 * @return    string            free ref
+	 * @return    string|int<-2,-1>            free ref, or <0 if error
 	 */
 	public function getNextNumRef()
 	{
@@ -2291,7 +2291,7 @@ class ExpenseReport extends CommonObject
 	 * @param   int     $notrigger      1=No trigger
 	 * @return  int                 	Return integer <0 if KO, >0 if OK
 	 */
-	public function deleteline($rowid, $fuser = '', $notrigger = 0)
+	public function deleteLine($rowid, $fuser = '', $notrigger = 0)
 	{
 		$error=0;
 

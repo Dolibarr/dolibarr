@@ -2144,7 +2144,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->total_localtax2 = $total_localtax2;
 			$this->line->total_ttc = $total_ttc;
 			$this->line->product_type = $type;
-			$this->line->special_code   = (!empty($this->special_code) ? $this->special_code : 0);
+			$this->line->special_code   = (!empty($special_code) ? $special_code : 0);
 			$this->line->origin = $origin;
 			$this->line->origin_id = $origin_id;
 			$this->line->fk_unit = $fk_unit;
@@ -2315,7 +2315,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param	int		$notrigger	1=Disable call to triggers
 	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
-	public function deleteline($idline, $notrigger = 0)
+	public function deleteLine($idline, $notrigger = 0)
 	{
 		if ($this->statut == 0) {
 			$line = new CommandeFournisseurLigne($this->db);
@@ -3568,7 +3568,7 @@ class CommandeFournisseur extends CommonOrder
 					if (count($diff_array) == 0 && count($keysinwishednotindelivered) == 0 && count($keysindeliverednotinwished) == 0) { //No diff => mean everything is received
 						if ($closeopenorder) {
 							//$ret=$this->setStatus($user,5);
-							$ret = $this->Livraison($user, $date_liv, 'tot', $comment); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+							$ret = $this->Livraison($user, $date_liv, 'tot', $comment); // $type is 'tot', 'par', 'nev', 'can'
 							if ($ret < 0) {
 								return -1;
 							}
@@ -3576,7 +3576,7 @@ class CommandeFournisseur extends CommonOrder
 						} else {
 							//Diff => received partially
 							//$ret=$this->setStatus($user,4);
-							$ret = $this->Livraison($user, $date_liv, 'par', $comment); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+							$ret = $this->Livraison($user, $date_liv, 'par', $comment); // $type is 'tot', 'par', 'nev', 'can'
 							if ($ret < 0) {
 								return -1;
 							}
@@ -3603,14 +3603,14 @@ class CommandeFournisseur extends CommonOrder
 						if ($close == count($diff_array)) {
 							//all the products are received equal or more than the wished quantity
 							if ($closeopenorder) {
-								$ret = $this->Livraison($user, $date_liv, 'tot', $comment); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+								$ret = $this->Livraison($user, $date_liv, 'tot', $comment); // $type is 'tot', 'par', 'nev', 'can'
 								if ($ret < 0) {
 									return -1;
 								}
 								return 5;
 							} else {
 								//Diff => received partially
-								$ret = $this->Livraison($user, $date_liv, 'par', $comment); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+								$ret = $this->Livraison($user, $date_liv, 'par', $comment); // $type is 'tot', 'par', 'nev', 'can'
 								if ($ret < 0) {
 									return -1;
 								}
@@ -3618,7 +3618,7 @@ class CommandeFournisseur extends CommonOrder
 							}
 						} else {
 							//all the products are not received
-							$ret = $this->Livraison($user, $date_liv, 'par', $comment); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+							$ret = $this->Livraison($user, $date_liv, 'par', $comment); // $type is 'tot', 'par', 'nev', 'can'
 							if ($ret < 0) {
 								return -1;
 							}
@@ -3626,7 +3626,7 @@ class CommandeFournisseur extends CommonOrder
 						}
 					} else {
 						//Diff => received partially
-						$ret = $this->Livraison($user, $date_liv, 'par', $comment); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+						$ret = $this->Livraison($user, $date_liv, 'par', $comment); // $type is 'tot', 'par', 'nev', 'can'
 						if ($ret < 0) {
 							return -1;
 						}

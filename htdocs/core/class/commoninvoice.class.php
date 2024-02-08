@@ -147,8 +147,8 @@ abstract class CommonInvoice extends CommonObject
 
 
 	/**
-	 * ! Populate by Payment module like stripe
-	 * @var string message return by Online Payment module
+	 * ! Populated by payment modules like Stripe
+	 * @var string[] 	Messages returned by an online payment module
 	 */
 	public $postactionmessages;
 
@@ -864,8 +864,8 @@ abstract class CommonInvoice extends CommonObject
 	 *  Returns an invoice payment deadline based on the invoice settlement
 	 *  conditions and billing date.
 	 *
-	 *	@param      integer	$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
-	 *  @return     integer    			       	Date limit of payment if OK, <0 if KO
+	 *	@param      int			$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
+	 *  @return     int|string    			       	Date limit of payment if OK, <0 or string if KO
 	 */
 	public function calculate_date_lim_reglement($cond_reglement = 0)
 	{

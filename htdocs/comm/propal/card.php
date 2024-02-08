@@ -258,7 +258,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate) {
 		// Remove line
-		$result = $object->deleteline($lineid);
+		$result = $object->deleteLine($lineid);
 		// reorder lines
 		if ($result > 0) {
 			$object->line_order(true);

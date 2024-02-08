@@ -63,7 +63,7 @@ if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 
 if ($action == 'dolibarr2ldap') {
 	$ldap = new Ldap();
-	$result = $ldap->connect_bind();
+	$result = $ldap->connectBind();
 
 	if ($result > 0) {
 		$info = $object->_load_ldap_info();
@@ -174,7 +174,7 @@ print '</tr>';
 
 // Lecture LDAP
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result > 0) {
 	$info = $object->_load_ldap_info();
 	$dn = $object->_load_ldap_dn($info, 1);
