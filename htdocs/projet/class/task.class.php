@@ -312,7 +312,7 @@ class Task extends CommonObjectLine
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id					Id object
-	 *  @param	int		$ref				ref object
+	 *  @param	string	$ref				ref object
 	 *  @param	int		$loadparentdata		Also load parent data
 	 *  @return int 		        		Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
@@ -1038,7 +1038,7 @@ class Task extends CommonObjectLine
 		if ($includebilltime) {
 			$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public, p.fk_statut, p.usage_bill_time,";
 			$sql .= " t.datec, t.dateo, t.datee, t.tms,";
-			$sql .= " t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut,";
+			$sql .= " t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
 			$sql .= " t.dateo, t.datee, t.planned_workload, t.rang,";
 			$sql .= " t.description, ";
 			$sql .= " t.budget_amount, ";
@@ -1199,7 +1199,7 @@ class Task extends CommonObjectLine
 		$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
 		$sql .= " WHERE pt.rowid = ec.element_id";
 		if ($userp && $filteronprojstatus > -1) {
-			$sql .= " AND pt.fk_statut = ".((int) $filteronprojstatus);
+			$sql .= " AND p.fk_statut = ".((int) $filteronprojstatus);
 		}
 		if ($usert && $filteronprojstatus > -1) {
 			$sql .= " AND pt.fk_projet = p.rowid AND p.fk_statut = ".((int) $filteronprojstatus);
@@ -1303,7 +1303,7 @@ class Task extends CommonObjectLine
 
 		// Check parameters
 		if (!is_object($user)) {
-			dol_print_error('', "Method addTimeSpent was called with wrong parameter user");
+			dol_print_error(null, "Method addTimeSpent was called with wrong parameter user");
 			return -1;
 		}
 
@@ -2337,15 +2337,13 @@ class Task extends CommonObjectLine
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load indicators this->nb for state board
 	 *
 	 *      @return     int         Return integer <0 if ko, >0 if ok
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $user;
 
 		$mine = 0;

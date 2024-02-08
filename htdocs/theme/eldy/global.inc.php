@@ -1574,6 +1574,15 @@ div.fiche {
 	/* text-align: justify; */
 }
 
+.display-flex {
+	display: flex;
+	flex-wrap: wrap;
+	  justify-content: space-between;
+}
+.flex-item {
+	flex:1;
+}
+
 .flexcontainer {
 	<?php if (in_array($conf->browser->name, array('chrome', 'firefox'))) {
 		echo 'display: inline-flex;'."\n";
@@ -3517,8 +3526,6 @@ div.tabBar {
 	border-top: 1px solid #BBB;
 	/* border-bottom: 1px solid #AAA; */
 	width: auto;
-}
-div.tabBar {
 	background: var(--colorbacktabcard1);
 }
 div.tabBar tr.titre td {

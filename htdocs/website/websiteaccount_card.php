@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2023 Lionel Vessiller	   <lvessiller@open-dsi.fr>
+ * Copyright (C) 2023-2024 Lionel Vessiller	   <lvessiller@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -281,7 +281,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	$head = websiteaccountPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("WebsiteAccount"), -1, 'websiteaccount@website');
+	print dol_get_fiche_head($head, 'card', $langs->trans("WebsiteAccount"), -1, $object->picto);
 
 	$formconfirm = '';
 

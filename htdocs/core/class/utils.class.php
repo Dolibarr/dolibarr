@@ -31,15 +31,30 @@
 class Utils
 {
 	/**
-	 * @var DoliDB Database handler.
+	 * @var DoliDB      Database handler
 	 */
 	public $db;
 
+	/**
+	 * @var string      Error message
+	 * @see             $errors
+	 */
 	public $error;
+
+	/**
+	 * @var string[]    Array of error messages
+	 */
 	public $errors;
 
-	public $output; // Used by Cron method to return message
-	public $result; // Used by Cron method to return data
+	/**
+	 * @var string      Used by Cron method to return message
+	 */
+	public $output;
+
+	/**
+	 * @var array{commandbackuplastdone:string,commandbackuptorun:string}	Used by Cron method to return data
+	 */
+	public $result;
 
 	/**
 	 *	Constructor
@@ -322,6 +337,9 @@ class Utils
 			}
 			if (GETPOST("use_mysql_quick_param", "alpha")) {
 				$param .= " --quick";
+			}
+			if (GETPOST("use_force", "alpha")) {
+				$param .= " -f";
 			}
 			if (GETPOST("sql_structure", "alpha") || $usedefault) {
 				if (GETPOST("drop", "alpha") || $usedefault) {

@@ -50,7 +50,7 @@ RUN echo 'xdebug.idekey="netbeans-xdebug"' >> ${PHP_INI_DIR}/php.ini
 # set up sendmail config, to use maildev
 RUN echo "account default" > /etc/msmtprc
 RUN echo "auth off" >> /etc/msmtprc
-RUN echo "port 25" >> /etc/msmtprc
+RUN echo "port 1025" >> /etc/msmtprc
 RUN echo "host mail" >> /etc/msmtprc
 RUN echo "from local@localdomain.com" >> /etc/msmtprc
 RUN echo "domain localhost.localdomain" >> /etc/msmtprc

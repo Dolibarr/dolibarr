@@ -1044,7 +1044,11 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 				} else {
 					$found++;
 
-					$image_path = DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($obj->share);
+					if (defined('USEDOLIBARRSERVER') || defined('USEDOLIBARREDITOR')) {
+						$image_path = DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($obj->share);
+					} else {
+						$image_path = '/wrapper.php?hashp='.urlencode($obj->share);
+					}
 					if ($extName) {
 						//getImageFileNameForSize($dir.$file, '_small')
 						$image_path .= '&extname='.urlencode($extName);
@@ -1057,12 +1061,20 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 			$i++;
 		}
 		if (!$found && $foundnotshared) {
-			$image_path = DOL_URL_ROOT.'/viewimage.php?modulepart=common&file=nophotopublic.png';
+			if (defined('USEDOLIBARRSERVER') || defined('USEDOLIBARREDITOR')) {
+				$image_path = DOL_URL_ROOT.'/viewimage.php?modulepart=common&file=nophotopublic.png';
+			} else {
+				$image_path = '/wrapper.php?modulepart=common&file=nophotopublic.png';
+			}
 		}
 	}
 
 	if (empty($image_path)) {
-		$image_path = DOL_URL_ROOT.'/viewimage.php?modulepart=common&file=nophoto.png';
+		if (defined('USEDOLIBARRSERVER') || defined('USEDOLIBARREDITOR')) {
+			$image_path = DOL_URL_ROOT.'/viewimage.php?modulepart=common&file=nophoto.png';
+		} else {
+			$image_path = '/wrapper.php?modulepart=common&file=nophoto.png';
+		}
 	}
 
 	return $image_path;

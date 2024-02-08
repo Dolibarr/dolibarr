@@ -178,8 +178,14 @@ class Account extends CommonObject
 	/**
 	 * Address of the bank account
 	 * @var string
+	 * @deprecated see $address
 	 */
-	public $domiciliation;		// deprecated, use now address
+	public $domiciliation;
+
+	/**
+	 * Address of the bank account
+	 * @var string
+	 */
 	public $address;
 	public $state_id;
 	public $state_code;
@@ -558,6 +564,8 @@ class Account extends CommonObject
 	 */
 	public function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur = '', $banque = '', $accountancycode = '', $datev = null, $num_releve = '', $amount_main_currency = null)
 	{
+		global $langs;
+
 		// Deprecation warning
 		if (is_numeric($oper)) {
 			dol_syslog(__METHOD__.": using numeric operations is deprecated", LOG_WARNING);
@@ -590,11 +598,11 @@ class Account extends CommonObject
 
 		// Check parameters
 		if (!$oper) {
-			$this->error = "Operation code not defined";
+			$this->error = $langs->trans("OperNotDefined");
 			return -1;
 		}
 		if (!$this->id) {
-			$this->error = "this->id not defined";
+			$this->error = $langs->trans("ThisIdNotDefined");
 			return -2;
 		}
 		if ($this->courant == Account::TYPE_CASH && $oper != 'LIQ') {
@@ -1255,12 +1263,12 @@ class Account extends CommonObject
 	}
 
 	/**
-	 * 	Return current sold
+	 * 	Return current balance
 	 *
-	 * 	@param	int		$option		1=Exclude future operation date (this is to exclude input made in advance and have real account sold)
-	 *	@param	int|string		$date_end	Date until we want to get bank account sold
-	 *	@param	string	$field		dateo or datev
-	 *	@return	int		current sold (value date <= today)
+	 * 	@param	int			$option		1=Exclude future operation date (this is to exclude input made in advance and have real account sold)
+	 *	@param	int|string				$date_end	Date until we want to get bank account balance
+	 *	@param	string		$field		'dateo' or 'datev'
+	 *	@return	float|-1				current balance (value date <= today), or -1 if error
 	 */
 	public function solde($option = 0, $date_end = '', $field = 'dateo')
 	{
@@ -1285,7 +1293,7 @@ class Account extends CommonObject
 			return -1;
 		}
 
-		return price2num($solde, 'MU');
+		return (float) price2num($solde, 'MU');
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1346,16 +1354,14 @@ class Account extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load the indicators this->nb for the state board
 	 *
 	 *		@param		int			$filteraccountid	To get info for a particular account id
 	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board($filteraccountid = 0)
+	public function loadStateBoard($filteraccountid = 0)
 	{
-		// phpcs:enable
 		global $user;
 
 		if ($user->socid) {
@@ -1962,31 +1968,38 @@ class AccountLine extends CommonObjectLine
 	 */
 	public $datev;
 
-	public $amount;					/* Amount of payment in the bank account currency */
-	public $amount_main_currency;	/* Amount in the currency of company if bank account use another currency */
+	/**
+	 * @var float		Amount of payment in the bank account currency
+	 */
+	public $amount;
 
 	/**
-	 * @var int ID
+	 * @var float		Amount in the currency of company if bank account use another currency
+	 */
+	public $amount_main_currency;
+
+	/**
+	 * @var int			ID
 	 */
 	public $fk_user_author;
 
 	/**
-	 * @var int ID
+	 * @var int 		ID
 	 */
 	public $fk_user_rappro;
 
 	/**
-	 * @var int ID
+	 * @var string		Type of operation (ex: "SOLD", "VIR", "CHQ", "CB", "PPL")
 	 */
 	public $fk_type;
 
 	/**
-	 * @var int ID of cheque receipt
+	 * @var int 		ID of cheque receipt
 	 */
 	public $fk_bordereau;
 
 	/**
-	 * @var int ID of bank account
+	 * @var int 		ID of bank account
 	 */
 	public $fk_account;
 
@@ -2010,20 +2023,39 @@ class AccountLine extends CommonObjectLine
 	 */
 	public $emetteur;
 
-	public $rappro; // Is it conciliated
-	public $num_releve; // If conciliated, what is bank statement
-	public $num_chq; // Num of cheque
-	public $bank_chq; // Bank of cheque
+	/**
+	 * @var int<0,1>	1 if the line has been reconciled, 0 otherwise
+	 */
+	public $rappro;
 
 	/**
-	 * @var string bank transaction lines label
+	 * @var string		Name of the bank statement (if the line has been reconciled)
+	 */
+	public $num_releve;
+
+	/**
+	 * @var string		Cheque number
+	 */
+	public $num_chq;
+
+	/**
+	 * @var string		Bank name of the cheque
+	 */
+	public $bank_chq;
+
+	/**
+	 * @var string		Label of the bank transaction line
 	 */
 	public $label;
 
+	/**
+	 * @var string		Note
+	 */
 	public $note;
 
 	/**
-	 * User author of the rapprochement.
+	 * User author of the reconciliation
+	 * TODO: variable used only by method info() => is it the same as $fk_user_rappro ?
 	 */
 	public $user_rappro;
 
@@ -2092,7 +2124,7 @@ class AccountLine extends CommonObjectLine
 				$this->fk_user_rappro = $obj->fk_user_rappro;
 
 				$this->fk_type = $obj->fk_type; // Type of transaction
-				$this->rappro = $obj->rappro;
+				$this->rappro = (int) $obj->rappro;
 				$this->num_releve = $obj->num_releve;
 
 				$this->num_chq = $obj->num_chq;

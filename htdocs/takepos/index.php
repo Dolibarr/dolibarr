@@ -96,6 +96,8 @@ if ($conf->browser->layout == 'phone') {
 $MAXCATEG = (!getDolGlobalString('TAKEPOS_NB_MAXCATEG') ? $maxcategbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXCATEG);
 $MAXPRODUCT = (!getDolGlobalString('TAKEPOS_NB_MAXPRODUCT') ? $maxproductbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXPRODUCT);
 
+$term = empty($_SESSION['takeposterminal']) ? 1: $_SESSION['takeposterminal'];
+
 /*
  $constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
  $soc = new Societe($db);
@@ -379,8 +381,18 @@ function LoadProducts(position, issubcat) {
 				}
 				?>
 				if (data[parseInt(idata)]['price_formated']) {
-					$("#proprice"+ishow).attr("class", "productprice");
-					$("#proprice"+ishow).html(data[parseInt(idata)]['price_ttc_formated']);
+					$("#proprice" + ishow).attr("class", "productprice");
+					<?php
+					if (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT')) {
+						?>
+						$("#proprice" + ishow).html(data[parseInt(idata)]['price_formated']);
+						<?php
+					} else {
+						?>
+						$("#proprice" + ishow).html(data[parseInt(idata)]['price_ttc_formated']);
+						<?php
+					}
+					?>
 				}
 				console.log("#prodiv"+ishow+".data(rowid)="+data[idata]['id']);
 				console.log($("#prodiv"+ishow));
@@ -466,8 +478,18 @@ function MoreProducts(moreorless) {
 				$("#probutton"+ishow).html(data[parseInt(idata)]['label']);
 				$("#probutton"+ishow).show();
 				if (data[parseInt(idata)]['price_formated']) {
-					$("#proprice"+ishow).attr("class", "productprice");
-					$("#proprice"+ishow).html(data[parseInt(idata)]['price_ttc_formated']);
+					$("#proprice" + ishow).attr("class", "productprice");
+					<?php
+					if (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT')) {
+						?>
+						$("#proprice" + ishow).html(data[parseInt(idata)]['price_formated']);
+						<?php
+					} else {
+						?>
+						$("#proprice" + ishow).html(data[parseInt(idata)]['price_ttc_formated']);
+						<?php
+					}
+					?>
 				}
 				$("#proimg"+ishow).attr("src","genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
@@ -694,7 +716,17 @@ function Search2(keyCodeForEnter, moreorless) {
 					$("#probutton" + i).show();
 					if (data[i]['price_formated']) {
 						$("#proprice" + i).attr("class", "productprice");
-						$("#proprice" + i).html(data[i]['price_ttc_formated']);
+						<?php
+						if (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT')) {
+							?>
+							$("#proprice" + i).html(data[i]['price_formated']);
+							<?php
+						} else {
+							?>
+							$("#proprice" + i).html(data[i]['price_ttc_formated']);
+							<?php
+						}
+						?>
 					}
 					$("#proimg" + i).attr("title", titlestring);
 					if( undefined !== data[i]['img']) {
@@ -1022,7 +1054,7 @@ $( document ).ready(function() {
 
 	$("body").mouseup(function(){
 		pressTimer.forEach(clearInterval);
-		console.log("body");
+		console.log("body mouseup");
 	});
 
 	function scrollTo(){
@@ -1310,7 +1342,7 @@ if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 			} else {
 				$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'TakeposPrinting(placeid);');
 			}
-		} elseif (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
+		} elseif ((isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
 			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'DolibarrTakeposPrinting(placeid);');
 		} else {
 			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'Print(placeid);');
@@ -1327,7 +1359,7 @@ if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 	$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>', 'action'=>'OpenDrawer();');
 }
-if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
+if (getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0 || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
 	$menus[$r++] = array(
 		'title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>',
 		'action' => 'DolibarrOpenDrawer();',

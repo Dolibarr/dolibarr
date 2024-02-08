@@ -40,7 +40,7 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-$id = GETPOST('rowid', 'int');
+$id = GETPOSTINT('rowid');
 $action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optionscss', 'alphanohtml');
 

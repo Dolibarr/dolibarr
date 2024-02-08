@@ -57,8 +57,8 @@ $search_rate_indirect	= GETPOST('search_rate_indirect', 'alpha');
 $search_code		= GETPOST('search_code', 'alpha');
 $multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 $dateinput 			= dol_mktime(0, 0, 0, GETPOST('dateinputmonth', 'int'), GETPOST('dateinputday', 'int'), GETPOST('dateinputyear', 'int'));
-$rateinput 			= price2num(GETPOST('rateinput', 'alpha'));
-$rateindirectinput 	= price2num(GETPOST('rateinidirectinput', 'alpha'));
+$rateinput 			= (float) price2num(GETPOST('rateinput', 'alpha'));
+$rateindirectinput 	= (float) price2num(GETPOST('rateinidirectinput', 'alpha'));
 $optioncss 			= GETPOST('optioncss', 'alpha');
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield 			= GETPOST('sortfield', 'aZ09comma');
@@ -544,6 +544,7 @@ if ($resql) {
 
 	$i = 0;
 	$totalarray = array();
+	$totalarray['nbfield'] = 0;		// Prevents PHP warning
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 

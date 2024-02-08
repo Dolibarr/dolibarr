@@ -8,6 +8,7 @@
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020-2021  Udo Tamm            <dev@dolibit.de>
  * Copyright (C) 2022		Anthony Berton      <anthony.berton@bb2a.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -172,7 +173,7 @@ if (empty($reshook)) {
 			$date_fin_gmt = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'), 1);
 			$starthalfday = GETPOST('starthalfday');
 			$endhalfday = GETPOST('endhalfday');
-			$type = GETPOST('type');
+			$type = GETPOSTINT('type');
 
 			$halfday = 0;
 			if ($starthalfday == 'afternoon' && $endhalfday == 'morning') {
@@ -183,7 +184,7 @@ if (empty($reshook)) {
 				$halfday = 1;
 			}
 
-			$approverid = GETPOST('valideur', 'int');
+			$approverid = GETPOSTINT('valideur');
 			$description = trim(GETPOST('description', 'restricthtml'));
 
 			// Check that leave is for a user inside the hierarchy or advanced permission for all is set
@@ -700,7 +701,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 					dol_syslog("Expected validator has no email, so we redirect directly to finished page without sending email");
 
 					$objStd->error++;
-					$objStd->msg = $langs->trans('ErroremailTo');
+					$objStd->msg = $langs->trans('ErrorMailRecipientIsEmpty');
 					$objStd->status = 'error';
 					$objStd->style="warnings";
 					return $objStd;
@@ -782,17 +783,17 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 
 				if (!$result) {
 					$objStd->error++;
-					$objStd->msg = $langs->trans('ErroreSendmail');
+					$objStd->msg = $langs->trans('ErrorMailNotSend');
 					$objStd->style="warnings";
 					$objStd->status = 'error';
 				} else {
-					$objStd->msg = $langs->trans('mailSended');
+					$objStd->msg = $langs->trans('MailSent');
 				}
 
 				return $objStd;
 			} else {
 				$objStd->error++;
-				$objStd->msg = $langs->trans('ErroreVerif');
+				$objStd->msg = $langs->trans('ErrorVerif');
 				$objStd->status = 'error';
 				$objStd->style="errors";
 				return $objStd;

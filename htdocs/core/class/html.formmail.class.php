@@ -29,6 +29,8 @@
  *       \brief      Fichier de la class permettant la generation du formulaire html d'envoi de mail unitaire
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/modelemail.lib.php';
+
 
 
 /**
@@ -887,6 +889,11 @@ class FormMail extends Form
 				$out .= "</td></tr>\n";
 			}
 
+			//input prompt AI
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+			if (isModEnabled('ai')) {
+				$out .= $this->getModelEmailTemplate();
+			}
 			// Message
 			if (!empty($this->withbody)) {
 				$defaultmessage = GETPOST('message', 'restricthtml');
@@ -997,7 +1004,7 @@ class FormMail extends Form
 				$out .= '<td colspan="2">';
 				if ($this->withbodyreadonly) {
 					$out .= nl2br($defaultmessage);
-					$out .= '<input type="hidden" id="message" name="message" value="'.$defaultmessage.'" />';
+					$out .= '<input type="hidden" id="message" name="message" disabled value="'.$defaultmessage.'" />';
 				} else {
 					if (!isset($this->ckeditortoolbar)) {
 						$this->ckeditortoolbar = 'dolibarr_mailings';
@@ -1195,12 +1202,14 @@ class FormMail extends Form
 
 	/**
 	 * get html For WithCCC
+	 * This information is show when MAIN_EMAIL_USECCC is set.
 	 *
 	 * @return string html
 	 */
 	public function getHtmlForWithCcc()
 	{
-		global $conf, $langs, $form;
+		global $langs, $form;
+
 		$out = '<tr><td>';
 		$out .= $form->textwithpicto($langs->trans("MailCCC"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
 		$out .= '</td><td>';
@@ -1256,8 +1265,14 @@ class FormMail extends Form
 		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO') && !empty($this->param['models']) && $this->param['models'] == 'invoice_supplier_send') {
 			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO');
 		}
-		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROJECT_TO') && !empty($this->param['models']) && $this->param['models'] == 'project') {
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROJECT_TO') && !empty($this->param['models']) && $this->param['models'] == 'project') {	// don't know why there is not '_send' at end of this models name.
 			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROJECT_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SHIPMENT_TO') && !empty($this->param['models']) && $this->param['models'] == 'shipping_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SHIPMENT_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_RECEPTION_TO') && !empty($this->param['models']) && $this->param['models'] == 'reception_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_RECEPTION_TO');
 		}
 		if ($showinfobcc) {
 			$out .= ' + '.$showinfobcc;
@@ -1273,7 +1288,8 @@ class FormMail extends Form
 	 */
 	public function getHtmlForWithErrorsTo()
 	{
-		global $conf, $langs;
+		global $langs;
+
 		//if (! $this->errorstomail) $this->errorstomail=$this->frommail;
 		$errorstomail = getDolGlobalString('MAIN_MAIL_ERRORS_TO', (!empty($this->errorstomail) ? $this->errorstomail : ''));
 		if ($this->witherrorstoreadonly) {
@@ -1296,7 +1312,8 @@ class FormMail extends Form
 	 */
 	public function getHtmlForDeliveryreceipt()
 	{
-		global $conf, $langs;
+		global $langs;
+
 		$out = '<tr><td><label for="deliveryreceipt">'.$langs->trans("DeliveryReceipt").'</label></td><td>';
 
 		if (!empty($this->withdeliveryreceiptreadonly)) {
@@ -1334,7 +1351,7 @@ class FormMail extends Form
 	 */
 	public function getHtmlForTopic($arraydefaultmessage, $helpforsubstitution)
 	{
-		global $conf, $langs, $form;
+		global $langs, $form;
 
 		$defaulttopic = GETPOST('subject', 'restricthtml');
 
@@ -1362,6 +1379,142 @@ class FormMail extends Form
 		$out .= "</td></tr>\n";
 		return $out;
 	}
+
+	/**
+	 * get Html For instruction of message
+	 * @return 	string      Text for instructions
+	 */
+	public function getHtmlForInstruction()
+	{
+		global $langs, $form;
+
+		$out = '<tr id="ai_input">';
+		$out .= '<td>';
+		$out .= $form->textwithpicto($langs->trans('helpWithAi'), $langs->trans("YouCanMakeSomeInstructionForEmail"));
+		$out .= '</td>';
+
+		$out .= '<td>';
+		$out .= '<input type="text" class="quatrevingtpercent" id="ai_instructions" name="instruction" placeholder="message with AI" />';
+		$out .= '<input id="generate_button" type="button" class="button smallpaddingimp"  value="'.$langs->trans('Generate').'"/>';
+		$out .= "</td></tr>\n";
+
+
+		$out .= "<script type='text/javascript'>
+			$(document).ready(function() {
+
+				//for keydown
+				$('#ai_instructions').keydown(function(event) {
+					if (event.keyCode === 13) { 
+						event.preventDefault(); 
+						$('#generate_button').click(); 
+					}
+				});
+
+				$('#generate_button').click(function() {
+					var instructions = $('#ai_instructions').val();
+					//editor on readonly 
+        			if (CKEDITOR.instances.message) {
+						CKEDITOR.instances.message.setReadOnly(1);
+					}
+
+					$.ajax({
+						url: '". DOL_URL_ROOT."/ai/ajax/generate_content.php?token=".newToken()."',
+						type: 'POST',
+						contentType: 'application/json',
+						data: JSON.stringify({
+							'instructions': instructions,
+						}),
+						success: function(response) {
+							if (".getDolGlobalString('FCKEDITOR_ENABLE_MAIL').") {
+								CKEDITOR.instances.message.setData(response);
+							} 
+							else {
+								tinymce.get('message').setContent(response);
+							}
+							// remove readonly 
+							CKEDITOR.instances.message.setReadOnly(0);
+							$('#ai_instructions').val('');
+						},
+						error: function(xhr, status, error) {
+							console.error('error ajax', status, error);
+						}
+						
+					});
+				});
+			});
+			</script>
+			";
+		return $out;
+	}
+
+	/**
+	 * get models template email in boxes
+	 * @return 	string      HTML for model email boxes
+
+	 */
+	public function getModelEmailTemplate()
+	{
+
+		global $langs, $form;
+		$out = '<tr>';
+		$out .= '<td>';
+		$out .= $form->textwithpicto($langs->trans('ModelTemplate'), $langs->trans("YouCanChooseAModelForYouMailContent"));
+		$out .= '</td>';
+		$out .= '<td>';
+		$out .= '<div id="template-selector" class="template-container">';
+		$templates = array(
+			'empty' => 'empty_template',
+			'basic' => 'basic_template',
+			'news'  => 'news_template',
+			'commerce' => 'commerce_template',
+			'text' => 'text_template'
+		);
+
+		foreach ($templates as $template => $templateFunction) {
+			if (function_exists($templateFunction)) {
+				$contentHtml = $templateFunction();
+			}
+			$out .= '<div class="template-option" data-template="'.$template.'" data-content="'.htmlentities($contentHtml).'">';
+			$out .= '<img alt="'.$template.'" src="'.DOL_URL_ROOT.'/theme/common/mailtemplate/'.$template.'.png" />';
+			$out .= '<span class="template-option-text">'.ucfirst($template).'</span>';
+			$out .= '</div>';
+		}
+		$out .= '<div class="template-option" data-template="ai"><i class="fas fa-edit"></i><span >Generate with AI</span></div>';
+		$out .= '</div>';
+		$out .= '</td></tr>';
+		$out .= "<script type='text/javascript'>
+				var cssLink = document.createElement('link');
+				cssLink.href = '".DOL_URL_ROOT."/ai/css/style.css';
+				cssLink.rel = 'stylesheet';
+				cssLink.type = 'text/css';
+				document.head.appendChild(cssLink);</script>";
+		$out .= "<script type='text/javascript'>
+				$(document).ready(function() {
+					$('.template-option').click(function() {
+						$('.template-option').removeClass('selected');
+						$(this).addClass('selected');
+
+						var template = $(this).data('template');
+						var contentHtml = $(this).data('content');
+						
+						var editorInstance = CKEDITOR.instances.message;
+						if (editorInstance) {
+							editorInstance.setData(contentHtml);
+						}
+						// display input for generate with IA
+						if(template === 'ai') {
+							$('#ai_input').show();
+						} else {
+							$('#ai_input').hide();
+						}
+					});
+				});
+		</script>";
+		$out .= $this->getHtmlForInstruction();
+		return $out;
+	}
+
+
 
 	/**
 	 *  Return templates of email with type = $type_template or type = 'all'.
@@ -1709,6 +1862,9 @@ class FormMail extends Form
 			$tmparray['__OTHER3__'] = 'Other3';
 			$tmparray['__OTHER4__'] = 'Other4';
 			$tmparray['__OTHER5__'] = 'Other5';
+			$tmparray['__CHECK_READ__'] = $langs->trans('TagCheckMail');
+			$tmparray['__UNSUBSCRIBE__'] = $langs->trans('TagUnsubscribe');
+			$tmparray['__UNSUBSCRIBE_URL__'] = $langs->trans('TagUnsubscribe').' (URL)';
 
 			$onlinepaymentenabled = 0;
 			if (isModEnabled('paypal')) {
@@ -1766,7 +1922,7 @@ class FormMail extends Form
 				*/
 			}
 			if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
-				$substitutionarray['__PUBLICLINK_NEWMEMBERFORM__'] = 'BlankSubscriptionForm';
+				$tmparray['__PUBLICLINK_NEWMEMBERFORM__'] = 'BlankSubscriptionForm';
 			}
 		}
 

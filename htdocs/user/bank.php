@@ -118,7 +118,7 @@ if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 
 	$account->bank            = GETPOST('bank', 'alpha');
 	$account->label           = GETPOST('label', 'alpha');
-	$account->courant         = GETPOST('courant', 'alpha');
+	$account->courant         = GETPOSTINT('courant');
 	$account->code_banque     = GETPOST('code_banque', 'alpha');
 	$account->code_guichet    = GETPOST('code_guichet', 'alpha');
 	$account->number          = GETPOST('number', 'alpha');
@@ -130,8 +130,8 @@ if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 	$account->owner_address   = GETPOST('owner_address', 'alpha');
 
 	$account->currency_code = trim(GETPOST("account_currency_code"));
-	$account->state_id = GETPOST("account_state_id", 'int');
-	$account->country_id = GETPOST("account_country_id", 'int');
+	$account->state_id = GETPOSTINT("account_state_id");
+	$account->country_id = GETPOSTINT("account_country_id");
 
 	$result = $account->create($user);
 
@@ -149,7 +149,7 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 
 	$account->bank            = GETPOST('bank', 'alpha');
 	$account->label           = GETPOST('label', 'alpha');
-	$account->courant         = GETPOST('courant', 'alpha');
+	$account->courant         = GETPOSTINT('courant');
 	$account->code_banque     = GETPOST('code_banque', 'alpha');
 	$account->code_guichet    = GETPOST('code_guichet', 'alpha');
 	$account->number          = GETPOST('number', 'alpha');
@@ -161,8 +161,8 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 	$account->owner_address   = GETPOST('owner_address', 'alpha');
 
 	$account->currency_code = trim(GETPOST("account_currency_code"));
-	$account->state_id = GETPOST("account_state_id", 'int');
-	$account->country_id = GETPOST("account_country_id", 'int');
+	$account->state_id = GETPOSTINT("account_state_id");
+	$account->country_id = GETPOSTINT("account_country_id");
 
 	$result = $account->update($user);
 

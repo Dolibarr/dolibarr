@@ -129,7 +129,7 @@ class Facture extends CommonInvoice
 	public $user_valid;
 
 	/**
-	 * @var int ID
+	 * @var int|null ID
 	 */
 	public $fk_user_valid;
 
@@ -539,14 +539,16 @@ class Facture extends CommonInvoice
 			}
 			$this->entity            = $_facrec->entity; // Invoice created in same entity than template
 
-			// Fields coming from GUI (priority on template). TODO Value of template should be used as default value on GUI so we can use here always value from GUI
-			$this->fk_project        = GETPOST('projectid', 'int') > 0 ? ((int) GETPOST('projectid', 'int')) : $_facrec->fk_project;
+			// Fields coming from GUI.
+			// @TODO Value of template should be used as default value on the form on the GUI, and we should here always use the value from GUI
+			// set by posted page with $object->xxx = ... and this section should be removed.
+			$this->fk_project        = GETPOST('projectid', 'int') > 0 ? GETPOSTINT('projectid') : $_facrec->fk_project;
 			$this->note_public       = GETPOSTISSET('note_public') ? GETPOST('note_public', 'restricthtml') : $_facrec->note_public;
 			$this->note_private      = GETPOSTISSET('note_private') ? GETPOST('note_private', 'restricthtml') : $_facrec->note_private;
 			$this->model_pdf = GETPOSTISSET('model') ? GETPOST('model', 'alpha') : $_facrec->model_pdf;
-			$this->cond_reglement_id = GETPOST('cond_reglement_id', 'int') > 0 ? ((int) GETPOST('cond_reglement_id', 'int')) : $_facrec->cond_reglement_id;
-			$this->mode_reglement_id = GETPOST('mode_reglement_id', 'int') > 0 ? ((int) GETPOST('mode_reglement_id', 'int')) : $_facrec->mode_reglement_id;
-			$this->fk_account        = GETPOST('fk_account') > 0 ? ((int) GETPOST('fk_account')) : $_facrec->fk_account;
+			$this->cond_reglement_id = GETPOST('cond_reglement_id', 'int') > 0 ? GETPOSTINT('cond_reglement_id') : $_facrec->cond_reglement_id;
+			$this->mode_reglement_id = GETPOST('mode_reglement_id', 'int') > 0 ? GETPOSTINT('mode_reglement_id') : $_facrec->mode_reglement_id;
+			$this->fk_account        = GETPOST('fk_account') > 0 ? GETPOSTINT('fk_account') : $_facrec->fk_account;
 
 			// Set here to have this defined for substitution into notes, should be recalculated after adding lines to get same result
 			$this->total_ht          = $_facrec->total_ht;
@@ -2341,15 +2343,13 @@ class Facture extends CommonInvoice
 				$line->fk_product       = $objp->fk_product;
 				$line->date_start       = $this->db->jdate($objp->date_start);
 				$line->date_end         = $this->db->jdate($objp->date_end);
-				$line->date_start       = $this->db->jdate($objp->date_start);
-				$line->date_end         = $this->db->jdate($objp->date_end);
 				$line->info_bits        = $objp->info_bits;
 				$line->total_ht         = $objp->total_ht;
 				$line->total_tva        = $objp->total_tva;
 				$line->total_localtax1  = $objp->total_localtax1;
 				$line->total_localtax2  = $objp->total_localtax2;
 				$line->total_ttc        = $objp->total_ttc;
-				$line->code_ventilation = $objp->fk_code_ventilation;
+
 				$line->fk_fournprice = $objp->fk_fournprice;
 				$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
 				$line->pa_ht = $marginInfos[0];
@@ -2452,7 +2452,7 @@ class Facture extends CommonInvoice
 			$this->type = self::TYPE_STANDARD;
 		}
 		if (isset($this->subtype)) {
-			$this->subtype = trim($this->subtype);
+			$this->subtype = (int) trim($this->subtype);
 		}
 		if (isset($this->ref)) {
 			$this->ref = trim($this->ref);
@@ -3856,7 +3856,7 @@ class Facture extends CommonInvoice
 				$ref_ext = '';
 			}
 
-			$remise_percent = price2num($remise_percent);
+			$remise_percent = (float) price2num($remise_percent);
 			$qty = price2num($qty);
 			$pu_ht = price2num($pu_ht);
 			$pu_ht_devise = price2num($pu_ht_devise);
@@ -4117,7 +4117,7 @@ class Facture extends CommonInvoice
 				$ref_ext = '';
 			}
 
-			$remise_percent = price2num($remise_percent);
+			$remise_percent = (float) price2num($remise_percent);
 			$qty			= price2num($qty);
 			$pu 			= price2num($pu);
 			$pu_ht_devise = price2num($pu_ht_devise);
@@ -4125,8 +4125,8 @@ class Facture extends CommonInvoice
 			if (!preg_match('/\((.*)\)/', $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
-			$txlocaltax1	= price2num($txlocaltax1);
-			$txlocaltax2	= price2num($txlocaltax2);
+			$txlocaltax1	= (float) price2num($txlocaltax1);
+			$txlocaltax2	= (float) price2num($txlocaltax2);
 
 			// Check parameters
 			if ($type < 0) {
@@ -4351,7 +4351,7 @@ class Facture extends CommonInvoice
 	 *  @param		int		$id			Id of object (for a check)
 	 *	@return		int					Return integer <0 if KO, >0 if OK
 	 */
-	public function deleteline($rowid, $id = 0)
+	public function deleteLine($rowid, $id = 0)
 	{
 		global $user;
 
@@ -4424,7 +4424,7 @@ class Facture extends CommonInvoice
 	 *	Set percent discount
 	 *
 	 *	@param     	User	$user		User that set discount
-	 *	@param     	double	$remise		Discount
+	 *	@param     	float	$remise		Discount
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 				Return integer <0 if KO, >0 if OK
 	 *	@deprecated remise_percent is a deprecated field for object parent
@@ -4437,16 +4437,16 @@ class Facture extends CommonInvoice
 		}
 
 		if ($user->hasRight('facture', 'creer')) {
-			$remise = price2num($remise, 2);
+			$remise = (float) price2num($remise, 2);
 
 			$error = 0;
 
 			$this->db->begin();
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-			$sql .= ' SET remise_percent = '.((float) $remise);
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
+			$sql .= " SET remise_percent = ".((float) $remise);
 			$sql .= " WHERE rowid = ".((int) $this->id);
-			$sql .= ' AND fk_statut = '.self::STATUS_DRAFT;
+			$sql .= " AND fk_statut = ".((int) self::STATUS_DRAFT);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -4633,7 +4633,7 @@ class Facture extends CommonInvoice
 			}
 
 			if (!$mybool) {
-				dol_print_error('', 'Failed to include file '.$file);
+				dol_print_error(null, 'Failed to include file '.$file);
 				return '';
 			}
 
@@ -5152,15 +5152,13 @@ class Facture extends CommonInvoice
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *      @return         int     Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $conf, $user;
 
 		$this->nb = array();
@@ -6297,7 +6295,8 @@ class FactureLigne extends CommonInvoiceLine
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring) {
-			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0) {
+			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product);
+			if ($result < 0) {
 				return $result;
 			} else {
 				$this->pa_ht = $result;
@@ -6736,7 +6735,7 @@ class FactureLigne extends CommonInvoiceLine
 	 *
 	 * @param  int     $invoiceid      			Invoice id
 	 * @param  bool    $include_credit_note		Include credit note or not
-	 * @return int                     			>= 0
+	 * @return float|int                     	Reurrn previous situation percent, 0 or -1 if error
 	 */
 	public function get_prev_progress($invoiceid, $include_credit_note = true)
 	{

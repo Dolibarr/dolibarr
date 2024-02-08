@@ -19,6 +19,7 @@
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
  * Copyright (C) 2022		ButterflyOfFire         <butterflyoffire+dolibarr@protonmail.com>
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -310,8 +311,7 @@ class Societe extends CommonObject
 	public $status = 1;
 
 	/**
-	 * Id of region
-	 * @var int
+	 * @var string	region code
 	 */
 	public $region_code;
 
@@ -470,6 +470,30 @@ class Societe extends CommonObject
 	public $idprof6;
 
 	/**
+	 * Professional ID 7
+	 * @var string
+	 */
+	public $idprof7;
+
+	/**
+	 * Professional ID 8
+	 * @var string
+	 */
+	public $idprof8;
+
+	/**
+	 * Professional ID 9
+	 * @var string
+	 */
+	public $idprof9;
+
+	/**
+	 * Professional ID 10
+	 * @var string
+	 */
+	public $idprof10;
+
+	/**
 	 * Social object of the company
 	 * @var string
 	 */
@@ -481,18 +505,17 @@ class Societe extends CommonObject
 	public $prefix_comm;
 
 	/**
-	 * @var int Vat concerned
+	 * @var int 	Vat concerned
 	 */
 	public $tva_assuj = 1;
 
 	/**
-	 * Intracommunitary VAT ID
-	 * @var string
+	 * @var string	Intracommunitary VAT ID
 	 */
 	public $tva_intra;
 
 	/**
-	 * @var int Vat reverse-charge concerned
+	 * @var int 	Vat reverse-charge concerned
 	 */
 	public $vat_reverse_charge = 0;
 
@@ -533,7 +556,7 @@ class Societe extends CommonObject
 	public $transport_mode_supplier_id;
 
 	/**
-	 * @var int ID
+	 * @var string	Prospect level. ie: 'PL_LOW', 'PL...'
 	 */
 	public $fk_prospectlevel;
 
@@ -930,7 +953,7 @@ class Societe extends CommonObject
 		if ($this->code_client == -1 || $this->code_client === 'auto') {
 			$this->get_codeclient($this, 0);
 		}
-		if ($this->code_fournisseur == -1 || $this->code_fournisseur === 'auto') {
+		if ($this->code_fournisseur == '-1' || $this->code_fournisseur === 'auto') {
 			$this->get_codefournisseur($this, 1);
 		}
 
@@ -1334,17 +1357,17 @@ class Societe extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->id = $id;
-		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
-		$this->name = $this->name ? trim($this->name) : trim($this->nom);
-		$this->nom = $this->name; // For backward compatibility
-		$this->name_alias = trim($this->name_alias);
+		$this->id 			= $id;
+		$this->entity 		= ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
+		$this->name 		= $this->name ? trim($this->name) : trim($this->nom);
+		$this->nom 			= $this->name; // For backward compatibility
+		$this->name_alias 	= trim($this->name_alias);
 		$this->ref_ext		= trim($this->ref_ext);
-		$this->address		= $this->address ? trim($this->address) : trim($this->address);
-		$this->zip = $this->zip ? trim($this->zip) : trim($this->zip);
-		$this->town = $this->town ? trim($this->town) : trim($this->town);
-		$this->state_id = trim($this->state_id);
-		$this->country_id = ($this->country_id > 0) ? $this->country_id : 0;
+		$this->address		= trim($this->address);
+		$this->zip 			= trim($this->zip);
+		$this->town 		= trim($this->town);
+		$this->state_id 	= (is_numeric($this->state_id)) ? (int) trim($this->state_id) : 0;
+		$this->country_id 	= ($this->country_id > 0) ? $this->country_id : 0;
 		$this->phone		= trim($this->phone);
 		$this->phone		= preg_replace("/\s/", "", $this->phone);
 		$this->phone		= preg_replace("/\./", "", $this->phone);
@@ -1361,14 +1384,14 @@ class Societe extends CommonObject
 		$this->idprof4		= trim($this->idprof4);
 		$this->idprof5		= (!empty($this->idprof5) ? trim($this->idprof5) : '');
 		$this->idprof6		= (!empty($this->idprof6) ? trim($this->idprof6) : '');
-		$this->prefix_comm = trim($this->prefix_comm);
+		$this->prefix_comm 	= trim($this->prefix_comm);
 		$this->outstanding_limit = price2num($this->outstanding_limit);
 		$this->order_min_amount = price2num($this->order_min_amount);
 		$this->supplier_order_min_amount = price2num($this->supplier_order_min_amount);
 
-		$this->tva_assuj			= trim($this->tva_assuj);
+		$this->tva_assuj			= (is_numeric($this->tva_assuj)) ? (int) trim($this->tva_assuj) : 0;
 		$this->tva_intra			= dol_sanitizeFileName($this->tva_intra, '');
-		$this->vat_reverse_charge	= empty($this->vat_reverse_charge) ? '0' : '1';
+		$this->vat_reverse_charge	= empty($this->vat_reverse_charge) ? 0 : 1;
 		if (empty($this->status)) {
 			$this->status = 0;
 		}
@@ -1388,12 +1411,7 @@ class Societe extends CommonObject
 		$this->localtax1_value = trim($this->localtax1_value);
 		$this->localtax2_value = trim($this->localtax2_value);
 
-		if ($this->capital != '') {
-			$this->capital = price2num(trim($this->capital));
-		}
-		if (!is_numeric($this->capital)) {
-			$this->capital = ''; // '' = undef
-		}
+		$this->capital = ($this->capital != '') ? (float) price2num(trim($this->capital)) : null;
 
 		$this->effectif_id = trim($this->effectif_id);
 		$this->forme_juridique_code = trim($this->forme_juridique_code);
@@ -1405,7 +1423,7 @@ class Societe extends CommonObject
 		if ($this->code_client == -1 || $this->code_client === 'auto') {
 			$this->get_codeclient($this, 0);
 		}
-		if ($this->code_fournisseur == -1 || $this->code_fournisseur === 'auto') {
+		if ($this->code_fournisseur == '-1' || $this->code_fournisseur === 'auto') {
 			$this->get_codefournisseur($this, 1);
 		}
 
@@ -1550,7 +1568,7 @@ class Societe extends CommonObject
 				$sql .= ",localtax2_value =0.000";
 			}
 
-			$sql .= ",capital = ".($this->capital == '' ? "null" : $this->capital);
+			$sql .= ",capital = ".($this->capital === null ? "null" : $this->capital);
 
 			$sql .= ",prefix_comm = ".(!empty($this->prefix_comm) ? "'".$this->db->escape($this->prefix_comm)."'" : "null");
 
@@ -1913,7 +1931,7 @@ class Societe extends CommonObject
 				$this->state_id     = $obj->state_id;
 				$this->state_code   = $obj->state_code;
 				$this->region_id    = $obj->region_id;
-				$this->region_code = $obj->region_code;
+				$this->region_code  = $obj->region_code;
 				$this->state        = ($obj->state != '-' ? $obj->state : '');
 
 				$transcode = $langs->trans('StatusProspect'.$obj->fk_stcomm);
@@ -3119,6 +3137,7 @@ class Societe extends CommonObject
 		$sql = "SELECT rowid, email, statut as status, phone_mobile, lastname, poste, firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople";
 		$sql .= " WHERE fk_soc = ".((int) $this->id);
+		$sql .= " AND entity IN (".getEntity($this->element).")";
 		$sql .= " ORDER BY lastname, firstname";
 
 		$resql = $this->db->query($sql);
@@ -3993,30 +4012,27 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *  Return if third party is a company (Business) or an end user (Consumer)
+	 *  Check if third party is a company (Business) or an end user (Consumer)
 	 *
-	 *  @return    boolean     true=is a company, false=a and user
+	 *  @return		boolean		if a company: true || if a user: false
 	 */
 	public function isACompany()
 	{
-		global $conf;
-
 		// Define if third party is treated as company (or not) when nature is unknown
-		$isacompany = !getDolGlobalString('MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES') ? 0 : 1; // 0 by default
+		$isACompany = getDolGlobalInt('MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES');
 		if (!empty($this->tva_intra)) {
-			$isacompany = 1;
+			$isACompany = 1;
 		} elseif (!empty($this->idprof1) || !empty($this->idprof2) || !empty($this->idprof3) || !empty($this->idprof4) || !empty($this->idprof5) || !empty($this->idprof6)) {
-			$isacompany = 1;
+			$isACompany = 1;
 		} elseif (!empty($this->typent_code) && $this->typent_code != 'TE_UNKNOWN') {
 			// TODO Add a field is_a_company into dictionary
 			if (preg_match('/^TE_PRIVATE/', $this->typent_code)) {
-				$isacompany = 0;
+				$isACompany = 0;
 			} else {
-				$isacompany = 1;
+				$isACompany = 1;
 			}
 		}
-
-		return $isacompany;
+		return boolval($isACompany);
 	}
 
 	/**
@@ -4237,7 +4253,7 @@ class Societe extends CommonObject
 
 		$this->client = 1; // A member is a customer by default
 		$this->code_client = ($customercode ? $customercode : -1);
-		$this->code_fournisseur = -1;
+		$this->code_fournisseur = '-1';
 		$this->typent_code = ($member->morphy == 'phy' ? 'TE_PRIVATE' : 0);
 		$this->typent_id = $this->typent_code ? dol_getIdFromCode($this->db, $this->typent_code, 'c_typent', 'id', 'code') : 0;
 
@@ -4311,10 +4327,11 @@ class Societe extends CommonObject
 		$this->note_private = getDolGlobalString('MAIN_INFO_SOCIETE_NOTE');
 
 		// We define country_id, country_code and country
-		$country_id = $country_code = $country_label = '';
+		$country_id = 0;
+		$country_code = $country_label = '';
 		if (getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY')) {
 			$tmp = explode(':', getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'));
-			$country_id = $tmp[0];
+			$country_id =  (is_numeric($tmp[0])) ? (int) $tmp[0] : 0;
 			if (!empty($tmp[1])) {   // If $conf->global->MAIN_INFO_SOCIETE_COUNTRY is "id:code:label"
 				$country_code = $tmp[1];
 				$country_label = $tmp[2];
@@ -4397,7 +4414,7 @@ class Societe extends CommonObject
 		$this->idprof6 = getDolGlobalString('MAIN_INFO_PROFID6');
 		$this->tva_intra = getDolGlobalString('MAIN_INFO_TVAINTRA'); // VAT number, not necessarily INTRA.
 		$this->managers = getDolGlobalString('MAIN_INFO_SOCIETE_MANAGERS');
-		$this->capital = getDolGlobalString('MAIN_INFO_CAPITAL');
+		$this->capital = is_numeric(getDolGlobalString('MAIN_INFO_CAPITAL')) ? (float) price2num(getDolGlobalString('MAIN_INFO_CAPITAL')) : 0;
 		$this->forme_juridique_code = getDolGlobalString('MAIN_INFO_SOCIETE_FORME_JURIDIQUE');
 		$this->email = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL');
 		$this->default_lang = getDolGlobalString('MAIN_LANG_DEFAULT', 'auto');
@@ -4409,7 +4426,7 @@ class Societe extends CommonObject
 		$this->logo_squarred_mini = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI');
 
 		// Define if company use vat or not
-		$this->tva_assuj = getDolGlobalString('FACTURE_TVAOPTION');
+		$this->tva_assuj = getDolGlobalInt('FACTURE_TVAOPTION');
 
 		// Define if company use local taxes
 		$this->localtax1_assuj = ((isset($conf->global->FACTURE_LOCAL_TAX1_OPTION) && (getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == '1' || getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == 'localtax1on')) ? 1 : 0);
@@ -4563,18 +4580,19 @@ class Societe extends CommonObject
 	/**
 	 *  Return label of prospect level
 	 *
-	 *  @param	int		$fk_prospectlevel   	Prospect level
+	 *  @param	string	$fk_prospectlevel   	Prospect level
 	 *  @return string        					label of level
 	 */
 	public function LibProspLevel($fk_prospectlevel)
 	{
 		// phpcs:enable
 		global $langs;
-
-		$lib = $langs->trans("ProspectLevel".$fk_prospectlevel);
-		// If lib not found in language file, we get label from cache/database
-		if ($lib == $langs->trans("ProspectLevel".$fk_prospectlevel)) {
-			$lib = $langs->getLabelFromKey($this->db, $fk_prospectlevel, 'c_prospectlevel', 'code', 'label');
+		if ($fk_prospectlevel != '') {
+			$lib = $langs->trans("ProspectLevel".$fk_prospectlevel);
+			// If lib not found in language file, we get label from cache/database
+			if ($lib == "ProspectLevel".$fk_prospectlevel) {
+				$lib = $langs->getLabelFromKey($this->db, $fk_prospectlevel, 'c_prospectlevel', 'code', 'label');
+			}
 		}
 		return $lib;
 	}
@@ -4879,7 +4897,7 @@ class Societe extends CommonObject
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *	@param	string		$modele			Generator to use. Caller must set it to obj->model_pdf or GETPOST('model','alpha') for example.
+	 *	@param	string		$modele			Generator to use. Caller must set it to obj->model_pdf.
 	 *	@param	Translate	$outputlangs	object lang a utiliser pour traduction
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
@@ -5062,10 +5080,11 @@ class Societe extends CommonObject
 		}
 
 		/**
-		 * llx_societe_extrafields table must not be here because we don't care about the old thirdparty data
-		 * Do not include llx_societe because it will be replaced later
+		 * llx_societe_extrafields table must not be here because we don't care about the old thirdparty extrafields that are managed directly into mergeCompany.
+		 * Do not include llx_societe because it will be replaced later.
 		 */
 		$tables = array(
+			'societe_account',
 			'societe_commerciaux',
 			'societe_prices',
 			'societe_remise',
@@ -5280,6 +5299,8 @@ class Societe extends CommonObject
 
 		$error = 0;
 		$soc_origin = new Societe($this->db);		// The thirdparty that we will delete
+
+		dol_syslog("mergeCompany merge thirdparty id=".$soc_origin_id." (will be deleted) into the thirdparty id=".$this->id);
 
 		if (!$error && $soc_origin->fetch($soc_origin_id) < 1) {
 			$this->error = $langs->trans('ErrorRecordNotFound');

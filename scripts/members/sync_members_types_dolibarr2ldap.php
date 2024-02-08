@@ -54,6 +54,9 @@ require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
 $version = constant('DOL_VERSION');
 $error = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */
@@ -84,7 +87,7 @@ if ($resql) {
 	$i = 0;
 
 	$ldap = new Ldap();
-	$result = $ldap->connect_bind();
+	$result = $ldap->connectBind();
 
 	if ($result > 0) {
 		while ($i < $num) {

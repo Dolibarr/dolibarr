@@ -66,7 +66,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 if ($id == "" && $label == "") {
-	dol_print_error('', 'Missing parameter id');
+	dol_print_error(null, 'Missing parameter id');
 	exit();
 }
 
@@ -153,7 +153,7 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {
 
 	$result = $object->del_type($tmpobject, $elementtype);
 	if ($result < 0) {
-		dol_print_error('', $object->error);
+		dol_print_error(null, $object->error);
 	}
 }
 
@@ -299,6 +299,12 @@ print '</td></tr>';
 print '<tr><td class="notopnoleft">';
 print $langs->trans("Color").'</td><td>';
 print $formother->showColor($object->color);
+print '</td></tr>';
+
+// Position
+print '<tr><td class="titlefield notopnoleft">';
+print $langs->trans("Position").'</td><td>';
+print $object->position;
 print '</td></tr>';
 
 // Other attributes

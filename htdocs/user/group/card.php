@@ -324,7 +324,7 @@ if ($action == 'create') {
 		}
 
 		/*
-		 * Fiche en mode visu
+		 * Card in view mode
 		 */
 
 		if ($action != 'edit') {
@@ -513,7 +513,7 @@ if ($action == 'create') {
 		}
 
 		/*
-		 * Fiche en mode edition
+		 * Card in edit mode
 		 */
 
 		if ($action == 'edit' && $caneditperms) {

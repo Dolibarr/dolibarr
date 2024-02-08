@@ -233,7 +233,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate) {
 		// Remove a product line
-		$result = $object->deleteline($user, $lineid);
+		$result = $object->deleteLine($user, $lineid);
 		if ($result > 0) {
 			// reorder lines
 			$object->line_order(true);
@@ -290,24 +290,24 @@ if (empty($reshook)) {
 			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->note_public = GETPOST('note_public', 'restricthtml');
 			$object->source = GETPOST('source_id', 'int');
-			$object->fk_project = GETPOST('projectid', 'int');
+			$object->fk_project = GETPOSTINT('projectid');
 			$object->ref_client = GETPOST('ref_client', 'alpha');
 			$object->model_pdf = GETPOST('model');
-			$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
-			$object->deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
-			$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
-			$object->fk_account = GETPOST('fk_account', 'int');
-			$object->availability_id = GETPOST('availability_id');
-			$object->demand_reason_id = GETPOST('demand_reason_id', 'int');
+			$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
+			$object->deposit_percent = (float) GETPOST('cond_reglement_id_deposit_percent', 'int');
+			$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
+			$object->fk_account = GETPOSTINT('fk_account');
+			$object->availability_id = GETPOSTINT('availability_id');
+			$object->demand_reason_id = GETPOSTINT('demand_reason_id');
 			$object->delivery_date = $date_delivery;
-			$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
-			$object->warehouse_id = GETPOST('warehouse_id', 'int');
-			$object->fk_delivery_address = GETPOST('fk_address', 'int');
-			$object->contact_id = GETPOST('contactid', 'int');
-			$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
+			$object->warehouse_id = GETPOSTINT('warehouse_id');
+			$object->fk_delivery_address = GETPOSTINT('fk_address');
+			$object->contact_id = GETPOSTINT('contactid');
+			$object->fk_incoterms = GETPOSTINT('incoterm_id');
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-			$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
+			$object->multicurrency_tx = (float) price2num(GETPOST('originmulticurrency_tx'));
 			// Fill array 'array_options' with data from add form
 			if (!$error) {
 				$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -1304,7 +1304,7 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'updateline' && $usercancreate && GETPOST('cancel', 'alpha')) {
-		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // Pour reaffichage de la fiche en cours d'edition
+		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); //  To re-display card in edit mode
 		exit();
 	} elseif ($action == 'confirm_validate' && $confirm == 'yes' && $usercanvalidate) {
 		$idwarehouse = GETPOST('idwarehouse', 'int');
@@ -3090,6 +3090,15 @@ if ($action == 'create' && $usercancreate) {
 
 			// Show online payment link
 			$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
+
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('doShowOnlinePaymentUrl', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook > 0) {
+				if (isset($hookmanager->resArray['showonlinepaymenturl'])) {
+					$useonlinepayment = $hookmanager->resArray['showonlinepaymenturl'];
+				}
+			}
+
 			if (getDolGlobalString('ORDER_HIDE_ONLINE_PAYMENT_ON_ORDER')) {
 				$useonlinepayment = 0;
 			}

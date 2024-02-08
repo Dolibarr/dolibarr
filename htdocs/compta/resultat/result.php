@@ -215,7 +215,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("AnnualByAccountInputOutputMode");
-	$calcmode = $langs->trans("CalcModeEngagement");
+	$calcmode = $langs->trans("CalcModePayment");
 	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.(GETPOST("month") > 0 ? '&month='.GETPOST("month") : '').'&modecompta=CREANCES-DETTES">', '</a>').')';
 	if (isModEnabled('accounting')) {
 		$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=BOOKKEEPING">', '</a>').')';

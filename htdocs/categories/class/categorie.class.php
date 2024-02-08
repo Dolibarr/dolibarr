@@ -221,6 +221,11 @@ class Categorie extends CommonObject
 	public $color;
 
 	/**
+	 * @var int Position
+	 */
+	public $position;
+
+	/**
 	 * @var int Visible
 	 */
 	public $visible;
@@ -352,7 +357,7 @@ class Categorie extends CommonObject
 			$type = $this->MAP_ID[$type];
 		}
 
-		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type, ref_ext";
+		$sql = "SELECT rowid, fk_parent, entity, label, description, color, position, fk_soc, visible, type, ref_ext";
 		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
 		if ($id) {
@@ -378,9 +383,10 @@ class Categorie extends CommonObject
 				$this->label		= $res['label'];
 				$this->description = $res['description'];
 				$this->color    	= $res['color'];
+				$this->position    	= $res['position'];
 				$this->socid		= (int) $res['fk_soc'];
 				$this->visible = (int) $res['visible'];
-				$this->type = (int) $res['type'];
+				$this->type = $res['type'];
 				$this->ref_ext = $res['ref_ext'];
 				$this->entity = (int) $res['entity'];
 				$this->date_creation = $this->db->jdate($res['date_creation']);
@@ -440,6 +446,7 @@ class Categorie extends CommonObject
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
 		$this->color = trim($this->color);
+		$this->position = (int) $this->position;
 		$this->import_key = trim($this->import_key);
 		$this->ref_ext = trim($this->ref_ext);
 		if (empty($this->visible)) {
@@ -461,6 +468,7 @@ class Categorie extends CommonObject
 		$sql .= " label,";
 		$sql .= " description,";
 		$sql .= " color,";
+		$sql .= " position,";
 		if (getDolGlobalString('CATEGORY_ASSIGNED_TO_A_CUSTOMER')) {
 			$sql .= "fk_soc,";
 		}
@@ -476,6 +484,7 @@ class Categorie extends CommonObject
 		$sql .= "'".$this->db->escape($this->label)."', ";
 		$sql .= "'".$this->db->escape($this->description)."', ";
 		$sql .= "'".$this->db->escape($this->color)."', ";
+		$sql .= (int) $this->position.",";
 		if (getDolGlobalString('CATEGORY_ASSIGNED_TO_A_CUSTOMER')) {
 			$sql .= ($this->socid > 0 ? $this->socid : 'null').", ";
 		}
@@ -566,6 +575,7 @@ class Categorie extends CommonObject
 		$sql .= " description = '".$this->db->escape($this->description)."',";
 		$sql .= " ref_ext = '".$this->db->escape($this->ref_ext)."',";
 		$sql .= " color = '".$this->db->escape($this->color)."'";
+		$sql .= ", position = ".(int) $this->position;
 		if (getDolGlobalString('CATEGORY_ASSIGNED_TO_A_CUSTOMER')) {
 			$sql .= ", fk_soc = ".($this->socid > 0 ? $this->socid : 'null');
 		}
@@ -1028,6 +1038,7 @@ class Categorie extends CommonObject
 					$categories[$i]['label']			= $category_static->label;
 					$categories[$i]['description'] = $category_static->description;
 					$categories[$i]['color']    		= $category_static->color;
+					$categories[$i]['position']    		= $category_static->position;
 					$categories[$i]['socid']			= $category_static->socid;
 					$categories[$i]['ref_ext'] = $category_static->ref_ext;
 					$categories[$i]['visible'] = $category_static->visible;
@@ -1163,7 +1174,7 @@ class Categorie extends CommonObject
 		$current_lang = $langs->getDefaultLang();
 
 		// Init $this->cats array
-		$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.fk_parent, c.visible"; // Distinct reduce pb with old tables with duplicates
+		$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.position, c.fk_parent, c.visible"; // Distinct reduce pb with old tables with duplicates
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$sql .= ", t.label as label_trans, t.description as description_trans";
 		}
@@ -1185,6 +1196,7 @@ class Categorie extends CommonObject
 				$this->cats[$obj->rowid]['label'] = !empty($obj->label_trans) ? $obj->label_trans : $obj->label;
 				$this->cats[$obj->rowid]['description'] = !empty($obj->description_trans) ? $obj->description_trans : $obj->description;
 				$this->cats[$obj->rowid]['color'] = $obj->color;
+				$this->cats[$obj->rowid]['position'] = $obj->position;
 				$this->cats[$obj->rowid]['visible'] = $obj->visible;
 				$this->cats[$obj->rowid]['ref_ext'] = $obj->ref_ext;
 				$this->cats[$obj->rowid]['picto'] = 'category';

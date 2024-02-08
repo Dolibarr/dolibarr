@@ -279,7 +279,7 @@ if (function_exists("ldap_connect")) {
 	if ($action == 'test') {
 		$ldap = new Ldap(); // The parameters are provided and recovered through $conf
 
-		$result = $ldap->connect_bind();
+		$result = $ldap->connectBind();
 		if ($result > 0) {
 			// Test ldap connect and bind
 			print img_picto('', 'info').' ';

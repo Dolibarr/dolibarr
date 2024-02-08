@@ -49,7 +49,7 @@ $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $taskref = GETPOST('taskref', 'alpha');
 
@@ -143,7 +143,7 @@ $diroutputmassaction = $conf->project->dir_output.'/tasks/temp/massgeneration/'.
 $hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
 
 $progress = GETPOST('progress', 'int');
-$budget_amount = GETPOST('budget_amount', 'int');
+$budget_amount = GETPOSTFLOAT('budget_amount');
 $label = GETPOST('label', 'alpha');
 $description = GETPOST('description', 'restricthtml');
 $planned_workloadhour = (GETPOST('planned_workloadhour', 'int') ? GETPOST('planned_workloadhour', 'int') : 0);
@@ -331,14 +331,8 @@ if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
 
 		if (!$error) {
 			$tmparray = explode('_', GETPOST('task_parent'));
-			$projectid = $tmparray[0];
-			if (empty($projectid)) {
-				$projectid = $id; // If projectid is ''
-			}
-			$task_parent = $tmparray[1];
-			if (empty($task_parent)) {
-				$task_parent = 0; // If task_parent is ''
-			}
+			$projectid = empty($tmparray[0]) ? $id : (int) $tmparray[0];
+			$task_parent = empty($tmparray[1]) ? 0 : $tmparray[1];
 
 			$task = new Task($db);
 

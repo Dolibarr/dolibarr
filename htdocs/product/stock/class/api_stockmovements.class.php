@@ -66,7 +66,7 @@ class StockMovements extends DolibarrApi
 	public function get($id)
 	{
 		if(! DolibarrApiAccess::$user->rights->stock->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->stockmovement->fetch($id);
@@ -101,7 +101,7 @@ class StockMovements extends DolibarrApi
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->rights->stock->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$sql = "SELECT t.rowid";
@@ -176,7 +176,7 @@ class StockMovements extends DolibarrApi
 	public function post($product_id, $warehouse_id, $qty, $type = 2, $lot = '', $movementcode = '', $movementlabel = '', $price = '', $datem = '', $dlc = '', $dluo = '', $origin_type = '', $origin_id = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->stock->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		if ($qty == 0) {
@@ -219,7 +219,7 @@ class StockMovements extends DolibarrApi
 	public function put($id, $request_data = null)
 	{
 		if(! DolibarrApiAccess::$user->rights->stock->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->stockmovement->fetch($id);
@@ -252,7 +252,7 @@ class StockMovements extends DolibarrApi
 	public function delete($id)
 	{
 		if(! DolibarrApiAccess::$user->rights->stock->supprimer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$result = $this->stockmovement->fetch($id);
 		if( ! $result ) {

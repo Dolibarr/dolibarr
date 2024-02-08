@@ -467,7 +467,7 @@ class ImportXlsx extends ModeleImports
 										} else {
 											$resultload = dol_include_once($file);
 											if (empty($resultload)) {
-												dol_print_error('', 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method);
+												dol_print_error(null, 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method);
 												break;
 											}
 											$classinstance = new $class($this->db);
@@ -546,7 +546,7 @@ class ImportXlsx extends ModeleImports
 										} else {
 											$resultload = dol_include_once($file);
 											if (empty($resultload)) {
-												dol_print_error('', 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method . ', code=' . $code);
+												dol_print_error(null, 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method . ', code=' . $code);
 												break;
 											}
 											$classinstance = new $class($this->db);
@@ -582,7 +582,7 @@ class ImportXlsx extends ModeleImports
 									} else {
 										$resultload = dol_include_once($file);
 										if (empty($resultload)) {
-											dol_print_error('', 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method . ', units=' . $units);
+											dol_print_error(null, 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method . ', units=' . $units);
 											break;
 										}
 										$classinstance = new $class($this->db);
@@ -681,7 +681,7 @@ class ImportXlsx extends ModeleImports
 									$method = $objimport->array_import_convertvalue[0][$val]['method'];
 									$resultload = dol_include_once($file);
 									if (empty($resultload)) {
-										dol_print_error('', 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method);
+										dol_print_error(null, 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method);
 										break;
 									}
 									$classinstance = new $class($this->db);
@@ -850,7 +850,7 @@ class ImportXlsx extends ModeleImports
 									$method = $objimport->array_import_convertvalue[0][$fieldname]['method'];
 									$resultload = dol_include_once($file);
 									if (empty($resultload)) {
-										dol_print_error('', 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method);
+										dol_print_error(null, 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method);
 										break;
 									}
 									$classinstance = new $class($this->db);
@@ -1079,7 +1079,7 @@ class ImportXlsx extends ModeleImports
 					}
 					/*else
 					{
-						dol_print_error('','ErrorFieldListEmptyFor '.$alias."/".$tablename);
+						dol_print_error(null,'ErrorFieldListEmptyFor '.$alias."/".$tablename);
 					}*/
 				}
 

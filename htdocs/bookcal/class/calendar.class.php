@@ -1007,7 +1007,7 @@ class Calendar extends CommonObject
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 

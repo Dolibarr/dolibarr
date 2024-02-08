@@ -502,7 +502,7 @@ class MyObject extends CommonObject
 					if (strpos($value, '%') === false) {
 						$sqlwhere[] = $key . " = '" . $this->db->sanitize($this->db->escape($value)) . "'";
 					} else {
-						$sqlwhere[] = $key . " LIKE '%" . $this->db->escapeforlike($this->db->escape($value)) . "%'";
+						$sqlwhere[] = $key . " LIKE '%" . $this->db->escape($this->db->escapeforlike($value)) . "%'";
 					}
 				}
 			}
@@ -617,8 +617,8 @@ class MyObject extends CommonObject
 			return 0;
 		}
 
-		/* if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule','write'))
-		 || (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->mymodule->myobject->myobject_advance->validate))))
+		/* if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule', 'myobject', 'write'))
+		 || (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule', 'myobject_advance', 'validate')))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -1173,7 +1173,7 @@ class MyObject extends CommonObject
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 

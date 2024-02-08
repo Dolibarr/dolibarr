@@ -14,9 +14,22 @@ jobs:
       - name: Install required tools
         run: sudo apt-get update && sudo apt-get install cppcheck
         if: false
+
+      # The next uses the git API because there is no clone yet.
+      # It sets the variable steps.changed-php.outputs.all_changed_files for other steps
+      # This is faster for a big repo.
+      - name: Get all changed php files (if PR)
+        id: changed-php
+        uses: tj-actions/changed-files@v42
+        if: github.event_name == 'pull_request'
+        with:
+          files: |
+             **.php
+
       # Checkout git sources to analyze
       - uses: actions/checkout@v4
-      # ???
+      # Action setup-python needs a requirements.txt or pyproject.toml
+      # This ensures one of them exists.
       - name: Create requirements.txt if no requirements.txt or pyproject.toml
         run: |-
           [ -r requirements.txt ] || [ -r pyproject.toml ] || touch requirements.txt
@@ -27,11 +40,12 @@ jobs:
           python-version: '3.11'
       - run: python -m pip install pre-commit regex
       # Restore previous cache of precommit
-      - uses: actions/cache/restore@v3
+      - uses: actions/cache/restore@v4
         with:
           path: ~/.cache/pre-commit/
           key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
-      # Run all the precommit tools (defined into pre-commit-config.yaml). We can force exclusion of some of them here.
+      # Run all the precommit tools (defined into pre-commit-config.yaml).
+      # We can force exclusion of some of them here.
       - name: Run pre-commit hooks
         env:
           # SKIP is used by pre-commit to not execute certain hooks
@@ -40,6 +54,53 @@ jobs:
           set -o pipefail
           pre-commit gc
           pre-commit run --show-diff-on-failure --color=always --all-files | tee ${RAW_LOG}
+
+      # The next uses git, which is slow for a bit repo.
+      # - name: Get all changed php files (if PR)
+      #   id: changed-php
+      #   uses: tj-actions/changed-files@v42
+      #   if: github.event_name == 'pull_request'
+      #   with:
+      #     files: |
+      #        **.php
+
+      - name: Setup PHPCS
+        uses: shivammathur/setup-php@v2
+        # Install when we're going to run phpcs
+        if: |
+         steps.changed-php.outputs.any_changed == 'true'
+         ||
+         (
+           github.event_name == 'push'
+           && (
+                github.event.ref == 'refs/heads/develop'
+              || endsWith(github.event.ref, '.0')
+           )
+         )
+        with:
+          php-version: 8.1
+          coverage: none  # disable xdebug, pcov
+          tools: phpcs
+
+      - name: Run some pre-commit hooks on selected changed files only
+        if: steps.changed-php.outputs.any_changed == 'true'
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
+        run: |
+          set -o pipefail
+          pre-commit run php-cs --files ${ALL_CHANGED_FILES} | tee -a ${RAW_LOG}
+
+      - name: Run some pre-commit hooks on all files on push to "main" branches
+        if: |
+         github.event_name == 'push'
+         && (
+              github.event.ref == 'refs/heads/develop'
+            || endsWith(github.event.ref, '.0')
+         )
+        run: |
+          set -o pipefail
+          pre-commit run -a php-cs | tee -a ${RAW_LOG}
+
       # If error, we convert log in the checkstyle format
       - name: Convert Raw Log to CheckStyle format
         if: ${{ failure() }}
@@ -54,8 +115,8 @@ jobs:
           notices-as-warnings: true  # optional
           prepend-filename: true  # optional
       # Save the precommit cache
-      - uses: actions/cache/save@v3
-        if: ${{ always() }}
+      - uses: actions/cache/save@v4
+        if: ${{ ! cancelled() }}
         with:
           path: ~/.cache/pre-commit/
           key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml')
@@ -63,7 +124,7 @@ jobs:
       # Upload result log files of precommit into the Artifact shared store
       - name: Provide log as artifact
         uses: actions/upload-artifact@v4
-        if: ${{ always() }}
+        if: ${{ ! cancelled() }}
         with:
           name: precommit-logs
           path: |

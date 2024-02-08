@@ -3,7 +3,7 @@
  * Copyright (C) 2018-2021 Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2018 	   Juanjo Menent  <jmenent@2byte.es>
  * Copyright (C) 2019 	   Ferran Marcet  <fmarcet@2byte.es>
- * Copyright (C) 2019-2021 Frédéric France <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024 Frédéric France <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1034,11 +1034,8 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 		} else {
 			$db->rollback();
 		}
-		//var_dump($listofobjectthirdparties);exit;
 	}
 }
-
-//var_dump($_POST);var_dump($massaction);exit;
 
 // Delete record from mass action (massaction = 'delete' for direct delete, action/confirm='delete'/'yes' with a confirmation step before)
 if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 'yes')) && $permissiontodelete) {
@@ -1085,9 +1082,14 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 				}
 			}
 
-			if (in_array($objecttmp->element, array('societe', 'member'))) {
+			if ($objecttmp->element == 'societe') {
+				/** @var Societe $objecttmp */
 				$result = $objecttmp->delete($objecttmp->id, $user, 1);
-			} elseif (in_array($objecttmp->element, array('action'))) {
+			} elseif ($objecttmp->element == 'member') {
+				/** @var Adherent $objecttmp */
+				$result = $objecttmp->delete($objecttmp->id, $user, 0);
+			} elseif ($objecttmp->element == 'action') {
+				/** @var ActionComm $objecttmp */
 				$result = $objecttmp->delete();	// TODO Add User $user as first param
 			} else {
 				$result = $objecttmp->delete($user);
@@ -1749,7 +1751,7 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 		}
 
 		if (!$error) {
-			$clone_task->fk_project = GETPOST('projectid', 'int');
+			$clone_task->fk_project = GETPOSTINT('projectid');
 			$clone_task->ref = $defaultref;
 			$clone_task->label = $origin_task->label;
 			$clone_task->description = $origin_task->description;

@@ -185,7 +185,7 @@ function user_prepare_head(User $object)
 		$head[$h][2] = 'document';
 		$h++;
 
-		$head[$h][0] = DOL_URL_ROOT.'/user/info.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/user/agenda.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Events");
 		if (isModEnabled('agenda')&& ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 			$nbEvent = 0;
@@ -1211,7 +1211,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
  * 		@param	Translate	       $langs		   Object langs
  * 		@param	DoliDB		       $db			   Object db
  * 		@param	mixed			   $filterobj	   Filter on object Adherent|Societe|Project|Product|CommandeFournisseur|Dolresource|Ticket... to list events linked to an object
- * 		@param	Contact		       $objcon		   Filter on object contact to filter events on a contact
+ * 		@param	Contact|null       $objcon		   Filter on object contact to filter events on a contact
  *      @param  int			       $noprint        Return string but does not output it
  *      @param  string|string[]    $actioncode     Filter on actioncode
  *      @param  string             $donetodo       Filter on event 'done' or 'todo' or ''=nofilter (all).
@@ -1221,7 +1221,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
  *      @param	string			   $module		   You can add module name here if elementtype in table llx_actioncomm is objectkey@module
  *      @return	string|void				           Return html part or void if noprint is 1
  */
-function show_actions_done_user($conf, $langs, $db, $filterobj, $objcon = '', $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC', $module = '')
+function show_actions_done_user($conf, $langs, $db, $filterobj, $objcon = null, $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC', $module = '')
 {
 	global $user, $conf, $hookmanager;
 	global $form;
@@ -1250,7 +1250,7 @@ function show_actions_done_user($conf, $langs, $db, $filterobj, $objcon = '', $n
 
 	// Check parameters
 	if (!is_object($filterobj) && !is_object($objcon)) {
-		dol_print_error('', 'BadParameter');
+		dol_print_error(null, 'BadParameter');
 	}
 
 	$out = '';
@@ -1393,18 +1393,26 @@ function show_actions_done_user($conf, $langs, $db, $filterobj, $objcon = '', $n
 		}
 	}
 
-	//TODO Add limit in nb of results
 	if ($sql) {
-		$sql .= $db->order($sortfield_new, $sortorder);
+		//TODO Add navigation with this limits...
+		$offset = 0;
+		$limit = 1000;
 
-		dol_syslog("usergroups.lib::show_actions_dones", LOG_DEBUG);
+		// Complete request and execute it with limit
+		$sql .= $db->order($sortfield_new, $sortorder);
+		if ($limit) {
+			$sql .= $db->plimit($limit + 1, $offset);
+		}
+
+		dol_syslog("usergroups.lib::show_actions_done_user", LOG_DEBUG);
 
 		$resql = $db->query($sql);
 		if ($resql) {
 			$i = 0;
 			$num = $db->num_rows($resql);
 
-			while ($i < $num) {
+			$imaxinloop = ($limit ? min($num, $limit) : $num);
+			while ($i < $imaxinloop) {
 				$obj = $db->fetch_object($resql);
 
 				if ($obj->type == 'action') {
@@ -1413,7 +1421,7 @@ function show_actions_done_user($conf, $langs, $db, $filterobj, $objcon = '', $n
 					$result = $contactaction->fetchResources();
 					if ($result < 0) {
 						dol_print_error($db);
-						setEventMessage("user.lib::show_actions_done Error fetch resource", 'errors');
+						setEventMessage("user.lib::show_actions_done_user Error fetch resource", 'errors');
 					}
 
 					//if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";

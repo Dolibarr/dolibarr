@@ -11,6 +11,8 @@
  * Copyright (C) 2018   	Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2015-2018	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -313,7 +315,7 @@ class Contrat extends CommonObject
 			}
 
 			if (!$mybool) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -965,9 +967,9 @@ class Contrat extends CommonObject
 
 		// Now set the global properties on contract not stored into database.
 		$this->nbofservices = count($this->lines);
-		$this->total_ttc = price2num($total_ttc);
-		$this->total_tva = price2num($total_vat);
-		$this->total_ht = price2num($total_ht);
+		$this->total_ttc = (float) price2num($total_ttc);
+		$this->total_tva = (float) price2num($total_vat);
+		$this->total_ht = (float) price2num($total_ht);
 
 		return $this->lines;
 	}
@@ -1156,7 +1158,8 @@ class Contrat extends CommonObject
 				return -2;
 			}
 		} else {
-			$this->error = $langs->trans("UnknownError: ".$this->db->error()." -", LOG_DEBUG);
+			$this->error = $langs->trans("UnknownError").": ".$this->db->error();
+			dol_syslog(get_class($this)."::create - 10 - ".$this->error, LOG_ERR);
 
 			$this->db->rollback();
 			return -1;
@@ -1586,8 +1589,9 @@ class Contrat extends CommonObject
 
 			// if buy price not defined, define buyprice as configured in margin admin
 			if ($pa_ht == 0) {
-				if (($result = $this->defineBuyPrice($pu_ht, $remise_percent, $fk_product)) < 0) {
-					return $result;
+				$result = $this->defineBuyPrice($pu_ht, $remise_percent, $fk_product);
+				if ($result < 0) {
+					return -1;
 				} else {
 					$pa_ht = $result;
 				}
@@ -1621,7 +1625,7 @@ class Contrat extends CommonObject
 			$sql .= " ".price2num($remise_percent).",";
 			$sql .= " ".price2num($pu_ht).",";
 			$sql .= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_localtax1).",".price2num($total_localtax2).",".price2num($total_ttc).",";
-			$sql .= " '".$this->db->escape($info_bits)."',";
+			$sql .= " ".((int) $info_bits).",";
 			$sql .= " ".price2num($price).",".price2num($remise).",";
 			if (isset($fk_fournprice)) {
 				$sql .= ' '.((int) $fk_fournprice).',';
@@ -1783,8 +1787,9 @@ class Contrat extends CommonObject
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($pa_ht == 0) {
-			if (($result = $this->defineBuyPrice($pu, $remise_percent)) < 0) {
-				return $result;
+			$result = $this->defineBuyPrice($pu, $remise_percent);
+			if ($result < 0) {
+				return -1;
 			} else {
 				$pa_ht = $result;
 			}
@@ -1881,10 +1886,8 @@ class Contrat extends CommonObject
 	 *	@param  User	$user       User that delete
 	 *  @return int         		>0 if OK, <0 if KO
 	 */
-	public function deleteline($idline, User $user)
+	public function deleteLine($idline, User $user)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		if ($this->statut >= 0) {
@@ -2374,15 +2377,13 @@ class Contrat extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Load the indicators this->nb for state board
 	 *
 	 *   @return     int         Return integer <0 si ko, >0 si ok
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $conf, $user;
 
 		$this->nb = array();
@@ -3060,29 +3061,35 @@ class ContratLigne extends CommonObjectLine
 	public $total_ttc;
 
 	/**
-	 * @var int ID
+	 * @var int 	ID
 	 */
 	public $fk_fournprice;
 
 	public $pa_ht;
 
+	/**
+	 * @var int		Info bits
+	 */
 	public $info_bits;
 
 	/**
-	 * @var int ID
+	 * @var int 	ID of user that insert the service
 	 */
 	public $fk_user_author;
 
 	/**
-	 * @var int ID
+	 * @var int 	ID of user opening the service
 	 */
 	public $fk_user_ouverture;
 
 	/**
-	 * @var int ID
+	 * @var int 	ID of user closing the service
 	 */
 	public $fk_user_cloture;
 
+	/**
+	 * @var string	Comment
+	 */
 	public $commentaire;
 
 
@@ -3432,12 +3439,7 @@ class ContratLigne extends CommonObjectLine
 		$this->fk_remise_except = (int) $this->fk_remise_except;
 		$this->subprice = price2num($this->subprice);
 		$this->price_ht = price2num($this->price_ht);
-		$this->total_ht = trim($this->total_ht);
-		$this->total_tva = trim($this->total_tva);
-		$this->total_localtax1 = trim($this->total_localtax1);
-		$this->total_localtax2 = trim($this->total_localtax2);
-		$this->total_ttc = trim($this->total_ttc);
-		$this->info_bits = trim($this->info_bits);
+		$this->info_bits = (int) $this->info_bits;
 		$this->fk_user_author = (int) $this->fk_user_author;
 		$this->fk_user_ouverture = (int) $this->fk_user_ouverture;
 		$this->fk_user_cloture = (int) $this->fk_user_cloture;
@@ -3498,8 +3500,9 @@ class ContratLigne extends CommonObjectLine
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0) {
-			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0) {
-				return $result;
+			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product);
+			if ($result < 0) {
+				return -1;
 			} else {
 				$this->pa_ht = $result;
 			}

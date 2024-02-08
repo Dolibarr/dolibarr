@@ -3,6 +3,7 @@
  * Copyright (C) 2016		Gilles Poirier 		<glgpoirier@gmail.com>
  * Copyright (C) 2019		Josep Lluís Amador	<joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,7 +195,7 @@ if (empty($reshook)) {
 
 	// Update resource
 	if ($action == 'update_linked_resource' && $user->hasRight('resource', 'write') && !GETPOST('cancel', 'alpha')) {
-		$res = $object->fetch_element_resource($lineid);
+		$res = $object->fetchElementResource($lineid);
 		if ($res) {
 			$object->busy = $busy;
 			$object->mandatory = $mandatory;
@@ -255,7 +256,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				$result = $object->update_element_resource($user);
+				$result = $object->updateElementResource($user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -333,7 +334,7 @@ if (!$ret) {
 
 			print dol_get_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
 
-			$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1">';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1">';
 			$linkback .= img_picto($langs->trans("BackToList"), 'object_calendarlist', 'class="pictoactionview pictofixedwidth"');
 			$linkback .= '<span class="hideonsmartphone">'.$langs->trans("BackToList").'</span>';
 			$linkback .= '</a>';

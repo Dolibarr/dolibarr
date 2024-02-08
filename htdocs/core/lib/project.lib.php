@@ -1116,7 +1116,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		// Check if Extrafields is totalizable
 		if (!empty($extrafields->attributes['projet_task']['totalizable'])) {
 			foreach ($extrafields->attributes['projet_task']['totalizable'] as $key => $value) {
-				if (!empty($arrayfields['efpt.'.$key]['checked']) && $arrayfields['ef.'.$key]['checked'] == 1) {
+				if (!empty($arrayfields['efpt.'.$key]['checked']) && $arrayfields['efpt.'.$key]['checked'] == 1) {
 					print '<td class="right">';
 					if ($value == 1) {
 						print empty($totalarray['totalizable'][$key]['total']) ? '' : $totalarray['totalizable'][$key]['total'];
@@ -2217,6 +2217,10 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 			// If we want all or we have a role on task, we show it
 			if (empty($mine) || !empty($tasksrole[$lines[$i]->id])) {
 				//dol_syslog("projectLinesPerWeek Found line ".$i.", a qualified task (i have role or want to show all tasks) with id=".$lines[$i]->id." project id=".$lines[$i]->fk_project);
+
+				if ($restricteditformytask == 2 && empty($tasksrole[$lines[$i]->id])) {	// we have no role on task and we request to hide such cases
+					continue;
+				}
 
 				// Break on a new project
 				if ($parent == 0 && $lines[$i]->fk_project != $lastprojectid) {
