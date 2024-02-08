@@ -75,7 +75,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'deplacement', $id, '');
 
-$permissiontoadd = $user->hasRight('deplacement', 'creer');	// Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->rights->deplacement->creer;	// Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -129,7 +129,7 @@ if ($object->id) {
 	print '</div>';
 
 	$modulepart = 'deplacement';
-	$permissiontoadd = $user->hasRight('deplacement', 'creer');
+	$permissiontoadd = $user->rights->deplacement->creer;
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

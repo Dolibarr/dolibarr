@@ -66,7 +66,7 @@ if ($object->fetch($id) >= 0) {
 
 	$morehtmlright = '';
 	$nbtry = $nbok = 0;
-	if ($object->status == 2 || $object->status == 3) {
+	if ($object->statut == 2 || $object->statut == 3) {
 		$nbtry = $object->countNbOfTargets('alreadysent');
 		$nbko  = $object->countNbOfTargets('alreadysentko');
 

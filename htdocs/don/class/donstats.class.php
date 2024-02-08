@@ -138,6 +138,7 @@ class DonationStats extends Stats
 	{
 		$sql = "SELECT date_format(d.datedon,'%m') as dm, sum(d.".$this->field.")";
 		$sql .= " FROM ".$this->from;
+		//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE ".dolSqlDateFilter('d.datedon', 0, 0, (int) $year, 1);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -156,6 +157,7 @@ class DonationStats extends Stats
 	{
 		$sql = "SELECT date_format(d.datedon,'%m') as dm, avg(d.".$this->field.")";
 		$sql .= " FROM ".$this->from;
+		//if (empty($user->rights->societe->client->voir) && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE ".dolSqlDateFilter('d.datedon', 0, 0, (int) $year, 1);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";

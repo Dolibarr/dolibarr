@@ -291,11 +291,11 @@ if ($action == 'create') {
 
 	// Bank account
 	if (isModEnabled("banque")) {
-		print '<tr><td class="fieldrequired">'.$langs->trans("BankAccount").'</td><td>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
 		$form->select_comptes(GETPOST("accountid"), "accountid", 0, "courant=1", 1); // Show list of bank account with courant
 		print '</td></tr>';
 	} else {
-		print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
+		print '<tr><td>'.$langs->trans("Account").'</td><td>';
 		print $langs->trans("NoBankAccountDefined");
 		print '</td></tr>';
 	}

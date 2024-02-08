@@ -230,7 +230,7 @@ class FactureFournisseur extends CommonInvoice
 	public $transport_mode_id;
 
 	/**
-	 * @var int<0,1>  VAT reverse charge can be used on the invoice
+	 * @var int VAT reverse charge can be used on the invoice
 	 */
 	public $vat_reverse_charge;
 
@@ -1091,7 +1091,6 @@ class FactureFournisseur extends CommonInvoice
 					$line->fk_unit          = $obj->fk_unit;
 
 					// Accountancy
-					$line->code_ventilation = $obj->fk_code_ventilation;
 					$line->fk_accounting_account = $obj->fk_code_ventilation;
 
 					// Multicurrency

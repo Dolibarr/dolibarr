@@ -53,7 +53,7 @@ $object = new Deplacement($db);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('tripsandexpensescard', 'globalcard'));
 
-$permissionnote = $user->hasRight('deplacement', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->deplacement->creer; // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -492,7 +492,7 @@ if ($action == 'create') {
 				}
 			}
 
-			$permissiontodelete = $user->hasRight('deplacement', 'supprimer');
+			$permissiontodelete = $user->rights->deplacement->supprimer;
 			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
 
 			print '</div>';

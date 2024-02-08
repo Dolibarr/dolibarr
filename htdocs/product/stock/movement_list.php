@@ -173,13 +173,13 @@ if (!$user->hasRight('stock', 'mouvement', 'lire')) {
 
 $uploaddir = $conf->stock->dir_output.'/movements';
 
-$permissiontoread = $user->hasRight('stock', 'mouvement', 'lire');
-$permissiontoadd = $user->hasRight('stock', 'mouvement', 'creer');
-$permissiontodelete = $user->hasRight('stock', 'mouvement', 'creer'); // There is no deletion permission for stock movement as we should never delete
+$permissiontoread = $user->rights->stock->mouvement->lire;
+$permissiontoadd = $user->rights->stock->mouvement->creer;
+$permissiontodelete = $user->rights->stock->mouvement->creer; // There is no deletion permission for stock movement as we should never delete
 
-$usercanread = $user->hasRight('stock', 'mouvement', 'lire');
-$usercancreate = $user->hasRight('stock', 'mouvement', 'creer');
-$usercandelete = $user->hasRight('stock', 'mouvement', 'creer');
+$usercanread = $user->rights->stock->mouvement->lire;
+$usercancreate = $user->rights->stock->mouvement->creer;
+$usercandelete = $user->rights->stock->mouvement->creer;
 
 $error = 0;
 

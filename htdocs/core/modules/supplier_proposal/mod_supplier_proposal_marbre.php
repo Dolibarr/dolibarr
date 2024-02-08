@@ -124,7 +124,7 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	 *
 	 *  @param	Societe				$objsoc     			Object third party
 	 * 	@param	SupplierProposal	$supplier_proposal		Object commercial proposal
-	 *  @return string|-1      								Next value if OK, -1 if KO
+	 *  @return string      								Next value
 	 */
 	public function getNextValue($objsoc, $supplier_proposal)
 	{

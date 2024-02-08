@@ -314,6 +314,7 @@ StockStransferIncrementedShort=Stocks transferred
 StockStransferIncrementedShortCancel=Increase of destination warehouses canceled
 StockTransferNoBatchForProduct=Product %s doesn't use batch, clear batch on line and retry
 StockTransferSetup = Stocks Transfer module configuration
+Settings=Settings
 StockTransferSetupPage = Configuration page for stocks transfer module
 StockTransferRightRead=Read stocks transfers
 StockTransferRightCreateUpdate=Create/Update stocks transfers

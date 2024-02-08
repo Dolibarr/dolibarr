@@ -90,6 +90,7 @@ ColorTheme=Color theme
 Colorful=Colorful
 HeadBar=Head Bar
 SortProductField=Field for sorting products
+Browser=Browser
 BrowserMethodDescription=Simple and easy receipt printing. Only a few parameters to configure the receipt. Print via browser.
 TakeposConnectorMethodDescription=External module with extra features. Possibility to print from the cloud.
 PrintMethod=Print method

@@ -150,9 +150,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->hasRight('partnership', 'read');
-$permissiontoadd = $user->hasRight('partnership', 'write');
-$permissiontodelete = $user->hasRight('partnership', 'delete');
+$permissiontoread = $user->rights->partnership->read;
+$permissiontoadd = $user->rights->partnership->write;
+$permissiontodelete = $user->rights->partnership->delete;
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();

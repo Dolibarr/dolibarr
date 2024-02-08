@@ -93,7 +93,7 @@ $arrayfields = array(
 	'bc.ref'            => array('label'=>"Ref", 'checked'=>1, 'position'=>10),
 	'bc.type'			=> array('label'=>"Type", 'checked'=>1, 'position'=>20),
 	'bc.date_bordereau' => array('label'=>"DateCreation", 'checked'=>1, 'position'=>30),
-	'ba.label'			=> array('label'=>"BankAccount", 'checked'=>1, 'position'=>40),
+	'ba.label'			=> array('label'=>"Account", 'checked'=>1, 'position'=>40),
 	'bc.nbcheque'		=> array('label'=>"NbOfCheques", 'checked'=>1, 'position'=>50),
 	'bc.amount'			=> array('label'=>"Amount", 'checked'=>1, 'position'=>60),
 	'bc.statut'			=> array('label'=>"Status", 'checked'=>1, 'position'=>70)

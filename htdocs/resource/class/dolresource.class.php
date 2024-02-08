@@ -138,7 +138,7 @@ class Dolresource extends CommonObject
 	 * @param	int		$no_trigger	0=launch triggers after, 1=disable triggers
 	 * @return	int					Return integer if KO: <0, if OK: Id of created object
 	 */
-	public function create(User $user, int $no_trigger = 0): int
+	public function create(User $user, int $no_trigger = 0)
 	{
 		$error = 0;
 

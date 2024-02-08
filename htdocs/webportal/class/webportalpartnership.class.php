@@ -202,7 +202,7 @@ class WebPortalPartnership extends Partnership
 		$datas = [];
 
 		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-			return ['optimize' => $langs->trans("WebPortalPartnership")];
+			return ['optimize' => $langs->trans("ShowWebPortalPartnership")];
 		}
 		$datas['picto'] = img_picto('', $this->picto) . ' <u>' . $langs->trans("WebPortalPartnership") . '</u>';
 		if (isset($this->status)) {
@@ -265,7 +265,7 @@ class WebPortalPartnership extends Partnership
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowPartnership");
 				$linkclose .= ' alt="' . dol_escape_htmltag($label, 1) . '"';
 			}

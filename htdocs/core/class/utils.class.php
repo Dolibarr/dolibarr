@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2016		Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2021		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2022		Anthony Berton		<anthony.berton@bb2a.fr>
- * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
+/* Copyright (C) 2016	Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2021	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2022	Anthony Berton		<anthony.berton@bb2a.fr>
+ * Copyright (C) 2023	William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -337,6 +337,9 @@ class Utils
 			}
 			if (GETPOST("use_mysql_quick_param", "alpha")) {
 				$param .= " --quick";
+			}
+			if (GETPOST("use_force", "alpha")) {
+				$param .= " -f";
 			}
 			if (GETPOST("sql_structure", "alpha") || $usedefault) {
 				if (GETPOST("drop", "alpha") || $usedefault) {
@@ -1369,10 +1372,9 @@ class Utils
 			}
 		}
 
-		$result = false;
 		if (!$error) {
 			$result = $mailfile->sendfile();
-			if (!$result) {
+			if ($result <= 0) {
 				$error++;
 				$output = $mailfile->error;
 			}
@@ -1380,13 +1382,13 @@ class Utils
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$this->error = "Error sending backp file ".((string) $error);
+		$this->error = $error;
 		$this->output = $output;
 
-		if ($result) {
+		if ($result == true) {
 			return 0;
 		} else {
-			return -1;
+			return $result;
 		}
 	}
 

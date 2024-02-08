@@ -238,8 +238,8 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'ExpenseReport';
 	$objectlabel = 'ExpenseReport';
-	$permissiontoread = $user->hasRight('expensereport', 'lire');
-	$permissiontodelete = $user->hasRight('expensereport', 'supprimer');
+	$permissiontoread = $user->rights->expensereport->lire;
+	$permissiontodelete = $user->rights->expensereport->supprimer;
 	$uploaddir = $conf->expensereport->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -497,8 +497,8 @@ if ($resql) {
 
 			$childids = $user->getAllChildIds(1);
 
-			$canedit = ((in_array($user_id, $childids) && $user->hasRight('expensereport', 'creer'))
-				|| ($conf->global->MAIN_USE_ADVANCED_PERMS && $user->hasRight('expensereport', 'writeall_advance')));
+			$canedit = ((in_array($user_id, $childids) && $user->rights->expensereport->creer)
+				|| ($conf->global->MAIN_USE_ADVANCED_PERMS && $user->rights->expensereport->writeall_advance));
 
 			// Buttons for actions
 			if ($canedit) {
@@ -1010,8 +1010,8 @@ if ($resql) {
 		$urlsource .= str_replace('&amp;', '&', $param);
 
 		$filedir = $diroutputmassaction;
-		$genallowed = $user->hasRight('expensereport', 'lire');
-		$delallowed = $user->hasRight('expensereport', 'creer');
+		$genallowed = $user->rights->expensereport->lire;
+		$delallowed = $user->rights->expensereport->creer;
 
 		print $formfile->showdocuments('massfilesarea_expensereport', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 	}

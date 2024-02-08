@@ -70,7 +70,7 @@ $object->fetch($id, $ref);
 $upload_dir = $conf->bank->dir_output.'/'.dol_sanitizeFileName($object->id);
 $modulepart = 'banque';
 
-$permissiontoadd = $user->hasRight('banque', 'modifier');	// Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->rights->banque->modifier;	// Used by the include of actions_dellink.inc.php
 
 
 
@@ -153,7 +153,7 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'banque';
-	$permissiontoadd = $user->hasRight('banque', 'modifier');
+	$permissiontoadd = $user->rights->banque->modifier;
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

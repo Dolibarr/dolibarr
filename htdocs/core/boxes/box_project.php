@@ -52,7 +52,7 @@ class box_project extends ModeleBoxes
 		$this->db = $db;
 		$this->boxlabel = "OpenedProjects";
 
-		$this->hidden = !$user->hasRight('projet', 'lire');
+		$this->hidden = empty($user->rights->projet->lire);
 	}
 
 	/**

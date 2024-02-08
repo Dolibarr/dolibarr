@@ -184,7 +184,12 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'workstation';
+	//$permission = $user->rights->workstation->workstation->write;
+	$permission = 1;
+	//$permtoedit = $user->rights->workstation->workstation->write;
+	$permtoedit = 1;
 	$param = '&id='.$object->id;
+
 	//$relativepathwithnofile='workstation/' . dol_sanitizeFileName($object->id).'/';
 	$relativepathwithnofile = 'workstation/'.dol_sanitizeFileName($object->ref).'/';
 

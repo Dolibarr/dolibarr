@@ -52,10 +52,10 @@ if ($res < 0) {
 }
 
 // Permissions
-$permissiontoread = $user->hasRight('hrm', 'all', 'read');
-$permissiontoadd = $user->hasRight('hrm', 'all', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->hasRight('hrm', 'all', 'delete');
-$permissiondellink = $user->hasRight('hrm', 'all', 'write'); // Used by the include of actions_dellink.inc.php
+$permissiontoread = $user->rights->hrm->all->read;
+$permissiontoadd = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->rights->hrm->all->delete;
+$permissiondellink = $user->rights->hrm->all->write; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1] . '/position';
 
 // Security check (enable the most restrictive one)

@@ -459,7 +459,7 @@ if ($object->fetch($id) >= 0) {
 	print "</div>";
 
 	// Show email selectors
-	if ($object->status == 0 && $user->hasRight('mailing', 'creer')) {
+	if ($object->statut == 0 && $user->hasRight('mailing', 'creer')) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/advtarget.tpl.php';
 	}
 }

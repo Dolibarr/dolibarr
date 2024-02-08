@@ -122,9 +122,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = ($user->hasRight('cashdesk', 'run') || $user->hasRight('takepos', 'run'));
-$permissiontoadd = ($user->hasRight('cashdesk', 'run') || $user->hasRight('takepos', 'run'));
-$permissiontodelete = ($user->hasRight('cashdesk', 'run') || $user->hasRight('takepos', 'run'));
+$permissiontoread = (!empty($user->rights->cashdesk->run) || !empty($user->rights->takepos->run));
+$permissiontoadd = (!empty($user->rights->cashdesk->run) || !empty($user->rights->takepos->run));
+$permissiontodelete = (!empty($user->rights->cashdesk->run) || !empty($user->rights->takepos->run));
 
 // Security check
 if ($user->socid > 0) {	// Protection if external user

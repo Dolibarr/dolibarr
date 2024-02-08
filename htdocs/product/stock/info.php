@@ -36,7 +36,7 @@ $ref = GETPOST('ref', 'alpha');
 // Security check
 //$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
 $result = restrictedArea($user, 'stock');
-$usercancreate = $user->hasRight('stock', 'creer');
+$usercancreate = $user->rights->stock->creer;
 
 /*
  * View
