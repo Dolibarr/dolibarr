@@ -987,7 +987,7 @@ class Cronjob extends CommonObject
 	 * @since v18
 	 * @return	array
 	 */
-	public function getTooltipContentArray($params): array
+	public function getTooltipContentArray($params)
 	{
 		global $langs;
 
