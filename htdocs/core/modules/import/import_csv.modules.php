@@ -450,7 +450,9 @@ class ImportCsv extends ModeleImports
 												 }*/
 												$param_array = array('', $newval, 0, $arrayrecord[0]['val']); // Param to fetch parent from account, in chart.
 											}
-
+											if ($class == 'CActionComm') {
+												$param_array = array($newval); // CActionComm fetch method have same parameter for id and code
+											}
 											$result = call_user_func_array(array($classinstance, $method), $param_array);
 
 											// If duplicate record found
