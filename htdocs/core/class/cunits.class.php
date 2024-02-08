@@ -117,14 +117,14 @@ class CUnits // extends CommonObject
 		$sql .= "code,";
 		$sql .= "label,";
 		$sql .= "short_label,";
-		$sql .= "unit_type";
+		$sql .= "unit_type,";
 		$sql .= "scale";
 		$sql .= ") VALUES (";
 		$sql .= " ".(!isset($this->id) ? 'NULL' : "'".$this->db->escape($this->id)."'").",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
 		$sql .= " ".(!isset($this->short_label) ? 'NULL' : "'".$this->db->escape($this->short_label)."'").",";
-		$sql .= " ".(!isset($this->unit_type) ? 'NULL' : "'".$this->db->escape($this->unit_type)."'");
+		$sql .= " ".(!isset($this->unit_type) ? 'NULL' : "'".$this->db->escape($this->unit_type)."'").",";
 		$sql .= " ".(!isset($this->scale) ? 'NULL' : "'".$this->db->escape($this->scale)."'");
 		$sql .= ")";
 
