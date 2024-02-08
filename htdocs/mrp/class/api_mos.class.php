@@ -64,7 +64,7 @@ class Mos extends DolibarrApi
 	public function get($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->mrp->read) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->mo->fetch($id);
@@ -73,7 +73,7 @@ class Mos extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('mrp', $this->mo->id, 'mrp_mo')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->mo);
@@ -97,10 +97,8 @@ class Mos extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
 		if (!DolibarrApiAccess::$user->rights->mrp->read) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -180,7 +178,7 @@ class Mos extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->mrp->write) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -214,7 +212,7 @@ class Mos extends DolibarrApi
 	public function put($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->mrp->write) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->mo->fetch($id);
@@ -257,7 +255,7 @@ class Mos extends DolibarrApi
 	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->mrp->delete) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$result = $this->mo->fetch($id);
 		if (!$result) {

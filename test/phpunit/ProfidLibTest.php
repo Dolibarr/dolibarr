@@ -252,7 +252,7 @@ class ProfidLibTest extends PHPUnit\Framework\TestCase
 		$this->assertTrue(isValidTinForBE("0123.123.123"));
 		$this->assertTrue(isValidTinForBE("1234.123.123"));
 		// Tests NOK
-		//$this->assertFalse(isValidTinForBE("2345.123.123"));		// First digit shall be 0 or 1
+		$this->assertFalse(isValidTinForBE("2345.123.123"));		// First digit shall be 0 or 1
 		$this->assertFalse(isValidTinForBE("1234 123 123"));		// formatted with spaces instead of dots
 		$this->assertFalse(isValidTinForBE("1234123123"));			// without dots formatting
 		$this->assertFalse(isValidTinForBE("ABCD.123.123"));		// not digits only

@@ -663,7 +663,7 @@ if (empty($reshook)) {
 			dol_print_error($db);
 			exit;
 		}
-		$result = $objectline->deleteline($user);
+		$result = $objectline->deleteLine($user);
 
 		if ($object->fetch($objectline->fk_fichinter) <= 0) {
 			dol_print_error($db);

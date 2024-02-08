@@ -63,7 +63,7 @@ class Warehouses extends DolibarrApi
 	public function get($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->stock->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->warehouse->fetch($id);
@@ -101,7 +101,7 @@ class Warehouses extends DolibarrApi
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->rights->stock->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$sql = "SELECT t.rowid";
@@ -164,7 +164,7 @@ class Warehouses extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->stock->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		// Check mandatory fields
@@ -195,7 +195,7 @@ class Warehouses extends DolibarrApi
 	public function put($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->stock->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->warehouse->fetch($id);
@@ -236,7 +236,7 @@ class Warehouses extends DolibarrApi
 	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->stock->supprimer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$result = $this->warehouse->fetch($id);
 		if (!$result) {

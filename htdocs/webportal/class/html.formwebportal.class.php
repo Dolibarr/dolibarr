@@ -245,7 +245,7 @@ class FormWebPortal extends Form
 	 * @param string $filedir Full path to directory to scan
 	 * @param string $filter Filter filenames on this regex string (Example: '\.pdf$')
 	 * @param string $morecss Add more css to the download picto
-	 * @param string $allfiles 0=Only generated docs, 1=All files
+	 * @param int    $allfiles 0=Only generated docs, 1=All files
 	 * @return    string                Output string with HTML link of documents (might be empty string). This also fill the array ->infofiles
 	 */
 	public function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter = '', $morecss = '', $allfiles = 0)
@@ -699,7 +699,7 @@ class FormWebPortal extends Form
 
 				if ($type == 'datetime') {
 					//$moreparam .= ' step="1"'; to show seconds
-					$out .= ' ' . $this->inputType('time', $htmlName . '_time', $valueTime, $htmlName . '_time', $morecss, $moreparam);
+					$out .= ' ' . $this->inputType('time', $htmlName.'_time', $valueTime, $htmlId, $morecss, $moreparam);
 				}
 				break;
 

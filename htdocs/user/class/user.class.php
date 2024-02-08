@@ -14,6 +14,7 @@
  * Copyright (C) 2018-2021       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -750,7 +751,7 @@ class User extends CommonObject
 	 *  You can use it like this: if ($user->hasRight('module', 'level11')).
 	 *  It replaces old syntax: if ($user->rights->module->level1)
 	 *
-	 * 	@param	int		$module			Module of permission to check
+	 * 	@param	string	$module			Module of permission to check
 	 *  @param  string	$permlevel1		Permission level1 (Example: 'read', 'write', 'delete')
 	 *  @param  string	$permlevel2		Permission level2
 	 *  @return int						1 if user has permission, 0 if not.

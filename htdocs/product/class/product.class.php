@@ -2358,7 +2358,7 @@ class Product extends CommonObject
 					$price_min_ttc = 0;
 				}
 			} else {
-				$price = price2num($newprice, 'MU');
+				$price = (float) price2num($newprice, 'MU');
 				$price_ttc = ($newnpr != 1) ? (float) price2num($newprice) * (1 + ($newvat / 100)) : $price;
 				$price_ttc = price2num($price_ttc, 'MU');
 
@@ -2905,8 +2905,8 @@ class Product extends CommonObject
 					if ($price_result >= 0) {
 						$this->price = $price_result;
 						// Calculate the VAT
-						$this->price_ttc = price2num($this->price) * (1 + ($this->tva_tx / 100));
-						$this->price_ttc = price2num($this->price_ttc, 'MU');
+						$this->price_ttc = (float) price2num($this->price) * (1 + ($this->tva_tx / 100));
+						$this->price_ttc = (float) price2num($this->price_ttc, 'MU');
 					}
 				}
 
@@ -3525,9 +3525,10 @@ class Product extends CommonObject
 	 * @param  string 	$filtrestatut    Id statut pour filtrer sur un statut
 	 * @param  int    	$forVirtualStock Ignore rights filter for virtual stock calculation.
 	 * @param	int		$dateofvirtualstock	Date of virtual stock
+	 * @param   int $warehouseid Filter by a warehouse
 	 * @return integer                 Array of stats in $this->stats_mrptoproduce (nb=nb of order, qty=qty ordered), <0 if ko or >0 if ok
 	 */
-	public function load_stats_inproduction($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null)
+	public function load_stats_inproduction($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null, $warehouseid = 0)
 	{
 		// phpcs:enable
 		global $conf, $user, $hookmanager, $action;
@@ -3555,16 +3556,23 @@ class Product extends CommonObject
 		if (!empty($dateofvirtualstock)) {
 			$sql .= " AND m.date_valid <= '".$this->db->idate($dateofvirtualstock)."'"; // better date to code ? end of production ?
 		}
+		if (!empty($warehouseid)) {
+			$sql.= " AND m.fk_warehouse = ".((int) $warehouseid);
+		}
 		$sql .= " GROUP BY role";
 
-		$this->stats_mrptoconsume['customers'] = 0;
-		$this->stats_mrptoconsume['nb'] = 0;
-		$this->stats_mrptoconsume['rows'] = 0;
-		$this->stats_mrptoconsume['qty'] = 0;
-		$this->stats_mrptoproduce['customers'] = 0;
-		$this->stats_mrptoproduce['nb'] = 0;
-		$this->stats_mrptoproduce['rows'] = 0;
-		$this->stats_mrptoproduce['qty'] = 0;
+		if ($warehouseid) {
+			$this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'] = 0;
+		} else {
+			$this->stats_mrptoconsume['customers'] = 0;
+			$this->stats_mrptoconsume['nb'] = 0;
+			$this->stats_mrptoconsume['rows'] = 0;
+			$this->stats_mrptoconsume['qty'] = 0;
+			$this->stats_mrptoproduce['customers'] = 0;
+			$this->stats_mrptoproduce['nb'] = 0;
+			$this->stats_mrptoproduce['rows'] = 0;
+			$this->stats_mrptoproduce['qty'] = 0;
+		}
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -3582,25 +3590,39 @@ class Product extends CommonObject
 					$this->stats_mrptoconsume['qty'] -= ($obj->qty ? $obj->qty : 0);
 				}
 				if ($obj->role == 'toproduce') {
-					$this->stats_mrptoproduce['customers'] += $obj->nb_customers;
-					$this->stats_mrptoproduce['nb'] += $obj->nb;
-					$this->stats_mrptoproduce['rows'] += $obj->nb_rows;
-					$this->stats_mrptoproduce['qty'] += ($obj->qty ? $obj->qty : 0);
+					if ($warehouseid) {
+						$this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'] += ($obj->qty ? $obj->qty : 0);
+					} else {
+						$this->stats_mrptoproduce['customers'] += $obj->nb_customers;
+						$this->stats_mrptoproduce['nb'] += $obj->nb;
+						$this->stats_mrptoproduce['rows'] += $obj->nb_rows;
+						$this->stats_mrptoproduce['qty'] += ($obj->qty ? $obj->qty : 0);
+					}
 				}
 				if ($obj->role == 'produced') {
 					//$this->stats_mrptoproduce['customers'] += $obj->nb_customers;
 					//$this->stats_mrptoproduce['nb'] += $obj->nb;
 					//$this->stats_mrptoproduce['rows'] += $obj->nb_rows;
-					$this->stats_mrptoproduce['qty'] -= ($obj->qty ? $obj->qty : 0);
+					if ($warehouseid) {
+						$this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'] -= ($obj->qty ? $obj->qty : 0);
+					} else {
+						$this->stats_mrptoproduce['qty'] -= ($obj->qty ? $obj->qty : 0);
+					}
 				}
 			}
 
 			// Clean data
-			if ($this->stats_mrptoconsume['qty'] < 0) {
-				$this->stats_mrptoconsume['qty'] = 0;
-			}
-			if ($this->stats_mrptoproduce['qty'] < 0) {
-				$this->stats_mrptoproduce['qty'] = 0;
+			if ($warehouseid) {
+				if ($this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'] < 0) {
+					$this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'] = 0;
+				}
+			} else {
+				if ($this->stats_mrptoconsume['qty'] < 0) {
+					$this->stats_mrptoconsume['qty'] = 0;
+				}
+				if ($this->stats_mrptoproduce['qty'] < 0) {
+					$this->stats_mrptoproduce['qty'] = 0;
+				}
 			}
 
 			$parameters = array('socid' => $socid, 'filtrestatut' => $filtrestatut, 'forVirtualStock' => $forVirtualStock);
@@ -5062,7 +5084,7 @@ class Product extends CommonObject
 	/**
 	 * Return if loaded product is a variant
 	 *
-	 * @return int
+	 * @return bool|int		Return true if the product is a variant, false if not, -1 if error
 	 */
 	public function isVariant()
 	{
@@ -5228,7 +5250,7 @@ class Product extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user;
 
 		$langs->loadLangs(array('products', 'other'));
 
@@ -5313,29 +5335,31 @@ class Product extends CommonObject
 			}
 			$datas['duration'] .= (!empty($this->duration_unit) && isset($dur[$this->duration_unit]) ? "&nbsp;".$langs->trans($dur[$this->duration_unit]) : '');
 		}
-		if (!empty($this->pmp) && $this->pmp) {
-			$datas['pmp'] = "<br><b>".$langs->trans("PMPValue").'</b>: '.price($this->pmp, 0, '', 1, -1, -1, $conf->currency);
-		}
-
-		if (isModEnabled('accounting')) {
-			if ($this->status && isset($this->accountancy_code_sell)) {
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-				$selllabel = '<br>';
-				$selllabel .= '<br><b>'.$langs->trans('ProductAccountancySellCode').':</b> '.length_accountg($this->accountancy_code_sell);
-				$selllabel .= '<br><b>'.$langs->trans('ProductAccountancySellIntraCode').':</b> '.length_accountg($this->accountancy_code_sell_intra);
-				$selllabel .= '<br><b>'.$langs->trans('ProductAccountancySellExportCode').':</b> '.length_accountg($this->accountancy_code_sell_export);
-				$datas['accountancysell'] = $selllabel;
+		if (empty($user->socid)) {
+			if (!empty($this->pmp) && $this->pmp) {
+				$datas['pmp'] = "<br><b>".$langs->trans("PMPValue").'</b>: '.price($this->pmp, 0, '', 1, -1, -1, $conf->currency);
 			}
-			if ($this->status_buy && isset($this->accountancy_code_buy)) {
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-				$buylabel = '';
-				if (empty($this->status)) {
-					$buylabel .= '<br>';
+
+			if (isModEnabled('accounting')) {
+				if ($this->status && isset($this->accountancy_code_sell)) {
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+					$selllabel = '<br>';
+					$selllabel .= '<br><b>'.$langs->trans('ProductAccountancySellCode').':</b> '.length_accountg($this->accountancy_code_sell);
+					$selllabel .= '<br><b>'.$langs->trans('ProductAccountancySellIntraCode').':</b> '.length_accountg($this->accountancy_code_sell_intra);
+					$selllabel .= '<br><b>'.$langs->trans('ProductAccountancySellExportCode').':</b> '.length_accountg($this->accountancy_code_sell_export);
+					$datas['accountancysell'] = $selllabel;
 				}
-				$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyBuyCode').':</b> '.length_accountg($this->accountancy_code_buy);
-				$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyBuyIntraCode').':</b> '.length_accountg($this->accountancy_code_buy_intra);
-				$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyBuyExportCode').':</b> '.length_accountg($this->accountancy_code_buy_export);
-				$datas['accountancybuy'] = $buylabel;
+				if ($this->status_buy && isset($this->accountancy_code_buy)) {
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+					$buylabel = '';
+					if (empty($this->status)) {
+						$buylabel .= '<br>';
+					}
+					$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyBuyCode').':</b> '.length_accountg($this->accountancy_code_buy);
+					$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyBuyIntraCode').':</b> '.length_accountg($this->accountancy_code_buy_intra);
+					$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyBuyExportCode').':</b> '.length_accountg($this->accountancy_code_buy_export);
+					$datas['accountancybuy'] = $buylabel;
+				}
 			}
 		}
 		// show categories for this record only in ajax to not overload lists
@@ -5363,7 +5387,7 @@ class Product extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0, $morecss = '', $add_label = 0, $sep = ' - ')
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf, $langs, $hookmanager, $user;
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 		$result = '';
@@ -5587,7 +5611,7 @@ class Product extends CommonObject
 	/**
 	 *  Retour label of nature of product
 	 *
-	 * @return string        Label
+	 * @return string|int        Return label or ''. -1 if error
 	 */
 	public function getLibFinished()
 	{
@@ -5931,6 +5955,24 @@ class Product extends CommonObject
 			$this->stock_theorique = $hookmanager->resArray['stock_theorique'];
 		} elseif ($reshook == 0 && isset($hookmanager->resArray['stock_stats_hook'])) {
 			$this->stock_theorique += $hookmanager->resArray['stock_stats_hook'];
+		}
+
+		//Virtual Stock by Warehouse
+		if (!empty($this->stock_warehouse) && getDolGlobalString('STOCK_ALLOW_VIRTUAL_STOCK_PER_WAREHOUSE')) {
+			foreach ($this->stock_warehouse as $warehouseid => $stockwarehouse) {
+				if (isModEnabled('mrp')) {
+					$result = $this->load_stats_inproduction(0, '1,2', 1, $dateofvirtualstock, $warehouseid);
+					if ($result < 0) {
+						dol_print_error($this->db, $this->error);
+					}
+				}
+
+				if ($this->fk_default_warehouse == $warehouseid) {
+					$this->stock_warehouse[$warehouseid]->virtual = $this->stock_warehouse[$warehouseid]->real + $this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'] + $this->stats_commande_fournisseur['qty'] - ($this->stats_commande['qty'] + $this->stats_mrptoconsume['qty']);
+				} else {
+					$this->stock_warehouse[$warehouseid]->virtual = $this->stock_warehouse[$warehouseid]->real + $this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'];
+				}
+			}
 		}
 
 		return 1;

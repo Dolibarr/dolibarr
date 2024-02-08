@@ -166,7 +166,8 @@ if (empty($reshook)) {
 		$object->fetch($id);
 		$skillRequire = $object->getSkillRankForJob($originalId);
 		if ($object->id > 0) {
-			$object->id = $object->ref = null;
+			$object->id = 0;
+			$object->ref = '';
 
 			if (GETPOST('clone_label', 'alphanohtml')) {
 				$object->label = GETPOST('clone_label', 'alphanohtml');

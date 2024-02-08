@@ -61,14 +61,12 @@ $formSetup = new FormSetup($db);
 
 $arrayofia = array('chatgpt');
 
-foreach($arrayofia as $ia) {
+foreach ($arrayofia as $ia) {
 	// Setup conf AI_PUBLIC_INTERFACE_TOPIC
 	$item = $formSetup->newItem('AI_KEY_API_'.strtoupper($ia));
 	$item->defaultFieldValue = '';
 }
 
-// Retrieve existing API Key
-//$apiKey = dolibarr_get_const($db, 'MAIN_AI_CHATGPT_API_KEY');
 
 $setupnotempty =+ count($formSetup->items);
 

@@ -65,7 +65,7 @@ class ExpenseReports extends DolibarrApi
 	public function get($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->expensereport->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->expensereport->fetch($id);
@@ -100,7 +100,7 @@ class ExpenseReports extends DolibarrApi
 		global $db, $conf;
 
 		if (!DolibarrApiAccess::$user->rights->expensereport->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -206,7 +206,7 @@ class ExpenseReports extends DolibarrApi
 	public function getLines($id)
 	{
 		if(! DolibarrApiAccess::$user->rights->expensereport->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->expensereport->fetch($id);
@@ -240,7 +240,7 @@ class ExpenseReports extends DolibarrApi
 	public function postLine($id, $request_data = null)
 	{
 	  if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
-			  throw new RestException(401);
+			  throw new RestException(403);
 		  }
 
 	  $result = $this->expensereport->fetch($id);
@@ -308,7 +308,7 @@ class ExpenseReports extends DolibarrApi
 	public function putLine($id, $lineid, $request_data = null)
 	{
 		if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
-			  throw new RestException(401);
+			  throw new RestException(403);
 		}
 
 		$result = $this->expensereport->fetch($id);
@@ -372,7 +372,7 @@ class ExpenseReports extends DolibarrApi
 	public function deleteLine($id, $lineid)
 	{
 	  if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
-			  throw new RestException(401);
+			  throw new RestException(403);
 		  }
 
 	  $result = $this->expensereport->fetch($id);
@@ -386,7 +386,7 @@ class ExpenseReports extends DolibarrApi
 
 	  // TODO Check the lineid $lineid is a line of object
 
-	  $updateRes = $this->expensereport->deleteline($lineid);
+	  $updateRes = $this->expensereport->deleteLine($lineid);
 	  if ($updateRes == 1) {
 		return $this->get($id);
 	  }
@@ -409,7 +409,7 @@ class ExpenseReports extends DolibarrApi
 	public function put($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->expensereport->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->expensereport->fetch($id);
@@ -450,7 +450,7 @@ class ExpenseReports extends DolibarrApi
 	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->expensereport->supprimer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->expensereport->fetch($id);
@@ -493,7 +493,7 @@ class ExpenseReports extends DolibarrApi
 	public function validate($id, $idwarehouse=0)
 	{
 		if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->expensereport->fetch($id);

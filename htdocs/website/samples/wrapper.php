@@ -1,6 +1,6 @@
 <?php
 
-// BEGIN PHP File wrapper.php - DO NOT MODIFY - It is just a copy of file website/samples/wrapper.php
+// BEGIN PHP File wrapper.php used to download rss, logo, shared files - DO NOT MODIFY - It is just a copy of file website/samples/wrapper.php
 $websitekey = basename(__DIR__);
 if (strpos($_SERVER["PHP_SELF"], 'website/samples/wrapper.php')) {
 	die("Sample file for website module. Can't be called directly.");
@@ -226,7 +226,7 @@ if ($rss) {
 } else {
 	// Find the subdirectory name as the reference
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $refname);
+	$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, null, $refname);
 	$accessallowed              = empty($check_access['accessallowed']) ? '' : $check_access['accessallowed'];
 	$sqlprotectagainstexternals = empty($check_access['sqlprotectagainstexternals']) ? '' : $check_access['sqlprotectagainstexternals'];
 	$fullpath_original_file     = empty($check_access['original_file']) ? '' : $check_access['original_file']; // $fullpath_original_file is now a full path name

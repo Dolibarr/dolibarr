@@ -41,3 +41,4 @@ Documentation
 -------------
 
 [Module Web Portal](https://wiki.dolibarr.org/index.php/Module_Web_Portal)
+

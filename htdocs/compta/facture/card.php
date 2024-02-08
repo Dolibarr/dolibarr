@@ -276,7 +276,7 @@ if (empty($reshook)) {
 		$object->fetch($id);
 		$object->fetch_thirdparty();
 
-		$result = $object->deleteline(GETPOST('lineid', 'int'));
+		$result = $object->deleteLine(GETPOST('lineid', 'int'));
 		if ($result > 0) {
 			// reorder lines
 			$object->line_order(true);

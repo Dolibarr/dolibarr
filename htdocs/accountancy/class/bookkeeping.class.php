@@ -916,7 +916,7 @@ class BookKeeping extends CommonObject
 				} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
 					$sqlwhere[] = $key.'='.$value;
 				} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
-					$sqlwhere[] = $key.' LIKE \''.$this->db->escapeforlike($this->db->escape($value)).'%\'';
+					$sqlwhere[] = $key.' LIKE \''.$this->db->escape($this->db->escapeforlike($value)).'%\'';
 				} elseif ($key == 't.date_creation>=' || $key == 't.date_creation<=') {
 					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.date_export>=' || $key == 't.date_export<=') {
@@ -1802,10 +1802,10 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Return next number movement
+	 * Return next movement number
 	 *
-	 * @param	string	$mode	Mode
-	 * @return	int			Return integer <0 if KO, >0 if OK (Next numero to use)
+	 * @param	string	$mode		Mode
+	 * @return	int<1, max>|-1		Return next movement number or -1 if error
 	 */
 	public function getNextNumMvt($mode = '')
 	{
@@ -1830,7 +1830,7 @@ class BookKeeping extends CommonObject
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(get_class($this)."::getNextNumMvt ".$this->error, LOG_ERR);
-			return "-1";
+			return -1;
 		}
 	}
 
@@ -2253,7 +2253,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param 	string		$alias		Bookkeeping alias table
 	 * @param 	bool		$force		Force reload
-	 * @return 	string					SQL filter
+	 * @return 	string|null				SQL filter or null if error
 	 */
 	public function getCanModifyBookkeepingSQL($alias = '', $force = false)
 	{
@@ -2621,7 +2621,7 @@ class BookKeeping extends CommonObject
 			}
 		}
 
-		return $income_statement_amount;
+		return (string) $income_statement_amount;
 	}
 
 	/**
@@ -2761,7 +2761,7 @@ class BookKeeping extends CommonObject
 
 							$bookkeeping = new BookKeeping($this->db);
 							$bookkeeping->doc_date = $new_fiscal_period->date_start;
-							$bookkeeping->date_lim_reglement = (string) '';
+							$bookkeeping->date_lim_reglement = 0;
 							$bookkeeping->doc_ref = $new_fiscal_period->label;
 							$bookkeeping->date_creation = $now;
 							$bookkeeping->doc_type = 'closure';
@@ -2808,7 +2808,7 @@ class BookKeeping extends CommonObject
 
 						$bookkeeping = new BookKeeping($this->db);
 						$bookkeeping->doc_date = $new_fiscal_period->date_start;
-						$bookkeeping->date_lim_reglement = (string) '';
+						$bookkeeping->date_lim_reglement = 0;
 						$bookkeeping->doc_ref = $new_fiscal_period->label;
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'closure';

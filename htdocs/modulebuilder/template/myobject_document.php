@@ -130,8 +130,8 @@ if ($id > 0 || !empty($ref)) {
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = 0;
 if ($enablepermissioncheck) {
-	$permissiontoread = $user->rights->mymodule->myobject->read;
-	$permissiontoadd  = $user->rights->mymodule->myobject->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+	$permissiontoread = $user->hasRight('mymodule', 'myobject', 'read');
+	$permissiontoadd  = $user->hasRight('mymodule', 'myobject', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 } else {
 	$permissiontoread = 1;
 	$permissiontoadd  = 1;
@@ -251,12 +251,7 @@ print '</div>';
 print dol_get_fiche_end();
 
 $modulepart = 'mymodule';
-//$permissiontoadd = $user->rights->mymodule->myobject->write;
-$permissiontoadd = 1;
-//$permtoedit = $user->rights->mymodule->myobject->write;
-$permtoedit = 1;
 $param = '&id='.$object->id;
-
 //$relativepathwithnofile='myobject/' . dol_sanitizeFileName($object->id).'/';
 $relativepathwithnofile = 'myobject/'.dol_sanitizeFileName($object->ref).'/';
 

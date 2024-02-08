@@ -721,7 +721,7 @@ if (empty($reshook)) {
 		}
 
 		$ldap = new Ldap();
-		$result = $ldap->connect_bind();
+		$result = $ldap->connectBind();
 		if ($result >= 0) {
 			// Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 			$required_fields = array_unique(array_values(array_filter($required_fields, "dol_validElement")));
@@ -808,7 +808,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if (isModEnabled('ldap') && (isset($conf->global->LDAP_SYNCHRO_ACTIVE) && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_LDAP_TO_DOLIBARR)) {
 		// Show form to add an account from LDAP if sync LDAP -> Dolibarr is set
 		$ldap = new Ldap();
-		$result = $ldap->connect_bind();
+		$result = $ldap->connectBind();
 		if ($result >= 0) {
 			$required_fields = array(
 				$conf->global->LDAP_KEY_USERS,
@@ -1415,7 +1415,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		// pour recuperer passDoNotExpire et userChangePassNextLogon
 		if (isModEnabled('ldap') && !empty($object->ldap_sid)) {
 			$ldap = new Ldap();
-			$result = $ldap->connect_bind();
+			$result = $ldap->connectBind();
 			if ($result > 0) {
 				$userSearchFilter = '(' . getDolGlobalString('LDAP_FILTER_CONNECTION').'('.$ldap->getUserIdentifier().'='.$object->login.'))';
 				$entries = $ldap->fetch($object->login, $userSearchFilter);

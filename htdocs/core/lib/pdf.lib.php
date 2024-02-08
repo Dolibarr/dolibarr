@@ -996,7 +996,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 /**
  *  Show footer of page for PDF generation
  *
- *	@param	TCPDF			$pdf     		The PDF factory
+ *	@param	TCPDF		$pdf     		The PDF factory
  *  @param  Translate	$outputlangs	Object lang for output
  * 	@param	string		$paramfreetext	Constant name of free text
  * 	@param	Societe		$fromcompany	Object company
@@ -1245,7 +1245,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 				if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {   // by default
 					$pdf->MultiCell(0, 3, $line, 0, $align, 0);
 				} else {
-					$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
+					$pdf->writeHTMLCell($dims['wk'] - $dims['lm'] - $dims['rm'], $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
 				}
 				$posy -= $freetextheight;
 			}
@@ -1270,7 +1270,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			if (getDolGlobalInt('PDF_FOOTER_DISABLE_PAGEBREAK') === 1) {
 				$pdf->SetAutoPageBreak(0, 0);
 			} // Option for disable auto pagebreak
-			$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $mycustomfooterheight, $dims['lm'], $dims['hk'] - $posy, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
+			$pdf->writeHTMLCell($dims['wk'] - $dims['lm'] - $dims['rm'], $mycustomfooterheight, $dims['lm'], $dims['hk'] - $posy, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
 			if (getDolGlobalInt('PDF_FOOTER_DISABLE_PAGEBREAK') === 1) {
 				$pdf->SetAutoPageBreak(1, 0);
 			} // Restore pagebreak
@@ -1297,7 +1297,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 				if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {   // by default
 					$pdf->MultiCell(0, 3, $line, 0, $align, 0);
 				} else {
-					$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
+					$pdf->writeHTMLCell($dims['wk'] - $dims['lm'] - $dims['rm'], $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
 				}
 				$posy -= $freetextheight;
 			}
@@ -1418,9 +1418,10 @@ function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, 
  *  @param  int				$hideref       		Hide reference
  *  @param  int				$hidedesc           Hide description
  * 	@param	int				$issupplierline		Is it a line for a supplier object ?
+ *  @param	string			$align				text alignment ('L', 'C', 'R', 'J' (default))
  * 	@return	string
  */
-function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $posy, $hideref = 0, $hidedesc = 0, $issupplierline = 0)
+function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $posy, $hideref = 0, $hidedesc = 0, $issupplierline = 0, $align = 'J')
 {
 	global $db, $conf, $langs, $hookmanager;
 
@@ -1453,7 +1454,7 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 		//var_dump($labelproductservice);exit;
 
 		// Description
-		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, 'J', true);
+		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, $align, true);
 		$result .= $labelproductservice;
 	}
 	return $result;

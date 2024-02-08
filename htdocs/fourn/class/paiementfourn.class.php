@@ -236,8 +236,8 @@ class PaiementFourn extends Paiement
 		}
 
 
-		$totalamount = price2num($totalamount);
-		$totalamount_converted = price2num($totalamount_converted);
+		$totalamount = (float) price2num($totalamount);
+		$totalamount_converted = (float) price2num($totalamount_converted);
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 

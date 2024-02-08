@@ -355,6 +355,55 @@ class CMailFile
 			}
 		}
 
+		// Verify if $to, $addr_cc and addr_bcc have unwanted addresses
+		if (getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO')) {
+			//Verify for $to
+			$tabto = explode(",", $to);
+			$listofemailstonotsendto = explode(',', getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO'));
+			foreach ($tabto as $key => $addrto) {
+				if (in_array($addrto, $listofemailstonotsendto)) {
+					unset($tabto[$key]);
+				}
+			}
+			if (empty($tabto) && !getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE')) {
+				$tabto[] = getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE');
+			}
+			$to = implode(',', $tabto);
+
+			//Verify for $addr_cc
+			$tabcc = explode(',', $addr_cc);
+			foreach ($tabcc as $key => $cc) {
+				if (in_array($cc, $tabcc)) {
+					unset($tabcc[$key]);
+				}
+			}
+			if (empty($addr_cc) && !getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE')) {
+				$addr_cc[] = getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE');
+			}
+			$addr_cc = implode(',', $tabcc);
+
+			//Verify for $addr_bcc
+			$tabbcc = explode(',', $addr_bcc);
+			foreach ($tabbcc as $key => $bcc) {
+				if (in_array($bcc, $tabbcc)) {
+					unset($tabbcc[$key]);
+				}
+			}
+			if (empty($tabbcc) && !getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE')) {
+				$tabbcc[] = getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE');
+			}
+			$addr_bcc = implode(',', $tabbcc);
+		}
+
+		// We always use a replyto
+		if (empty($replyto)) {
+			$replyto = dol_sanitizeEmail($from);
+		}
+		// We can force the from
+		if (getDolGlobalString('MAIN_MAIL_FORCE_FROM')) {
+			$from = getDolGlobalString('MAIN_MAIL_FORCE_FROM');
+		}
+
 		$this->subject = $subject;
 		$this->addr_to = dol_sanitizeEmail($to);
 		$this->addr_from = dol_sanitizeEmail($from);
@@ -362,9 +411,6 @@ class CMailFile
 		$this->addr_cc = dol_sanitizeEmail($addr_cc);
 		$this->addr_bcc = dol_sanitizeEmail($addr_bcc);
 		$this->deliveryreceipt = $deliveryreceipt;
-		if (empty($replyto)) {
-			$replyto = dol_sanitizeEmail($from);
-		}
 		$this->reply_to = dol_sanitizeEmail($replyto);
 		$this->errors_to = dol_sanitizeEmail($errors_to);
 		$this->trackid = $trackid;
@@ -375,7 +421,7 @@ class CMailFile
 		$this->cid_list = $cid_list;
 
 		if (getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')) {
-			$this->addr_to = dol_sanitizeEmail($conf->global->MAIN_MAIL_FORCE_SENDTO);
+			$this->addr_to = dol_sanitizeEmail(getDolGlobalString('MAIN_MAIL_FORCE_SENDTO'));
 			$this->addr_cc = '';
 			$this->addr_bcc = '';
 		}
@@ -836,8 +882,9 @@ class CMailFile
 				if ($res) {
 					$additionnalparam = ''; // By default
 					if (getDolGlobalString('MAIN_MAIL_ALLOW_SENDMAIL_F')) {
-						// le "Return-Path" (retour des messages bounced) dans les header ne fonctionne pas avec tous les MTA
-						// Le forcage de la valeur grace à l'option -f de sendmail est donc possible si la constante MAIN_MAIL_ALLOW_SENDMAIL_F est definie.
+						// When using the phpmail function, the mail command may force the from to the user of the login, for example: linuxuser@myserver.mydomain.com
+						// You can try to set this option to have the command use the From. if it does not work, you can also try the MAIN_MAIL_SENDMAIL_FORCE_BA.
+						// So forcing using the option -f of sendmail is possible if constant MAIN_MAIL_ALLOW_SENDMAIL_F is defined.
 						// Having this variable defined may create problems with some sendmail (option -f refused)
 						// Having this variable not defined may create problems with some other sendmail (option -f required)
 						$additionnalparam .= ($additionnalparam ? ' ' : '').(getDolGlobalString('MAIN_MAIL_ERRORS_TO') ? '-f'.$this->getValidAddress($conf->global->MAIN_MAIL_ERRORS_TO, 2) : ($this->addr_from != '' ? '-f'.$this->getValidAddress($this->addr_from, 2) : ''));
@@ -1644,9 +1691,9 @@ class CMailFile
 		$filename_list_size = count($filename_list);
 		for ($i = 0; $i < $filename_list_size; $i++) {
 			if ($filename_list[$i]) {
-				dol_syslog("CMailFile::write_files: i=$i");
+				dol_syslog("CMailFile::write_files: i=$i ".$filename_list[$i]);
 				$encoded = $this->_encode_file($filename_list[$i]);
-				if ($encoded >= 0) {
+				if ($encoded !== -1) {
 					if ($mimefilename_list[$i]) {
 						$filename_list[$i] = $mimefilename_list[$i];
 					}

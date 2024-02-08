@@ -116,7 +116,7 @@ class ExtraFields
 	 *
 	 *  @param	string			$attrname           Code of attribute
 	 *  @param  string			$label              label of attribute
-	 *  @param  string			$type               Type of attribute ('boolean','int','varchar','text','html','date','datehour','price', 'pricecy', 'phone','mail','password','url','select','checkbox','separate',...)
+	 *  @param  string			$type               Type of attribute ('boolean','int','varchar','text','html','date','datetime','price', 'pricecy', 'phone','mail','password','url','select','checkbox','separate',...)
 	 *  @param  int				$pos                Position of attribute
 	 *  @param  string			$size               Size/length definition of attribute ('5', '24,8', ...). For float, it contains 2 numeric separated with a comma.
 	 *  @param  string			$elementtype        Element type. Same value than object->table_element (Example 'member', 'product', 'thirdparty', ...)
@@ -185,7 +185,7 @@ class ExtraFields
 	 *  This is a private method. For public method, use addExtraField.
 	 *
 	 *	@param	string	$attrname			code of attribute
-	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datehour','price','pricecy','phone','mail','password','url','select','checkbox', ...)
+	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime', 'price', 'pricecy', 'phone', 'mail', 'password', 'url', 'select', 'checkbox', ...)
 	 *  @param	string	$length				Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int		$unique				Is field unique or not
@@ -281,7 +281,7 @@ class ExtraFields
 	 *
 	 *	@param	string			$attrname		code of attribute
 	 *	@param	string			$label			label of attribute
-	 *  @param	string				$type			Type of attribute ('int', 'varchar', 'text', 'html', 'date', 'datehour', 'float')
+	 *  @param	string			$type			Type of attribute ('int', 'varchar', 'text', 'html', 'date', 'datehour', 'float')
 	 *  @param	int				$pos			Position of attribute
 	 *  @param	string			$size			Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string			$elementtype	Element type ('member', 'product', 'thirdparty', ...)
@@ -529,7 +529,7 @@ class ExtraFields
 	 *
 	 *  @param	string	$attrname			Name of attribute
 	 *  @param	string	$label				Label of attribute
-	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
+	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime','price','phone','mail','password','url','select','checkbox', ...)
 	 *  @param	int		$length				Length of attribute
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int		$unique				Is field unique or not
@@ -1120,11 +1120,12 @@ class ExtraFields
 				} else {
 					$checked = ' value="1" ';
 				}
-				$out = '<input type="hidden" name="'.$keyprefix.$key.$keysuffix.'_boolean" value="1">';	// A hidden field ending with "_boolean" that is always set to 1.
-				$out .= '<input type="checkbox" class="flat valignmiddle'.($morecss ? ' '.$morecss : '').' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.$checked.' '.($moreparam ? $moreparam : '').'>';
+
+				$out = '<input type="checkbox" class="flat valignmiddle'.($morecss ? ' '.$morecss : '').' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.$checked.' '.($moreparam ? $moreparam : '').'>';
 			} else {
 				$out = $form->selectyesno($keyprefix.$key.$keysuffix, $value, 1, false, 1);
 			}
+			$out .= '<input type="hidden" name="'.$keyprefix.$key.$keysuffix.'_boolean" value="1">';	// A hidden field ending with "_boolean" that is always set to 1.
 		} elseif ($type == 'price') {
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value = price($value);

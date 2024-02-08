@@ -117,7 +117,7 @@ if (!function_exists('str_contains')) {
  *
  * @param CommonObject 	$object 	Dolibarr common object
  * @param string 		$module 	Override object element, for example to use 'mycompany' instead of 'societe'
- * @return string|void				The path of the relative directory of the module
+ * @return string|null				The path of the relative directory of the module
  * @since Dolibarr V18
  */
 function getMultidirOutput($object, $module = '')
@@ -1651,6 +1651,12 @@ function dol_escape_php($stringtoescape, $stringforquotes = 2)
 		return str_replace('"', "'", $stringtoescape);
 	}
 	if ($stringforquotes == 1) {
+		// We remove the \ char.
+		// If we allow the \ char, we can have $stringtoescape =
+		// abc\';phpcodedanger;  so the escapement will become
+		// abc\\';phpcodedanger;  and injecting this into
+		// $a='...' will give $ac='abc\\';phpcodedanger;
+		$stringtoescape = str_replace('\\', '', $stringtoescape);
 		return str_replace("'", "\'", str_replace('"', "'", $stringtoescape));
 	}
 
@@ -3498,7 +3504,15 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 				$htmllink .= ($link ? ' '.$link : '');
 			}
 		} else {
-			if (!empty($dictsocialnetworks[$type]['url'])) {
+			$networkconstname = 'MAIN_INFO_SOCIETE_'.strtoupper($type).'_URL';
+			if (getDolGlobalString($networkconstname)) {
+				$link = str_replace('{socialid}', $value, getDolGlobalString($networkconstname));
+				if (preg_match('/^https?:\/\//i', $link)) {
+					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 0).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+				} else {
+					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 1).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+				}
+			} elseif (!empty($dictsocialnetworks[$type]['url'])) {
 				$tmpvirginurl = preg_replace('/\/?{socialid}/', '', $dictsocialnetworks[$type]['url']);
 				if ($tmpvirginurl) {
 					$value = preg_replace('/^www\.'.preg_quote($tmpvirginurl, '/').'\/?/', '', $value);
@@ -5806,7 +5820,9 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	$savlimit = $limit;
 	$savtotalnboflines = $totalnboflines;
-	$totalnboflines = abs((int) $totalnboflines);
+	if (is_numeric($totalnboflines)) {
+		$totalnboflines = abs($totalnboflines);
+	}
 
 	$page = (int) $page;
 
@@ -8175,6 +8191,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MYCOMPANY_PROFID4__' => $mysoc->idprof4,
 			'__MYCOMPANY_PROFID5__' => $mysoc->idprof5,
 			'__MYCOMPANY_PROFID6__' => $mysoc->idprof6,
+			'__MYCOMPANY_PROFID7__' => $mysoc->idprof7,
+			'__MYCOMPANY_PROFID8__' => $mysoc->idprof8,
+			'__MYCOMPANY_PROFID9__' => $mysoc->idprof9,
+			'__MYCOMPANY_PROFID10__' => $mysoc->idprof10,
 			'__MYCOMPANY_CAPITAL__' => $mysoc->capital,
 			'__MYCOMPANY_FULLADDRESS__' => (method_exists($mysoc, 'getFullAddress') ? $mysoc->getFullAddress(1, ', ') : ''),	// $mysoc may be stdClass
 			'__MYCOMPANY_ADDRESS__' => $mysoc->address,
@@ -8217,6 +8237,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_IDPROF4__'] = '__THIRDPARTY_IDPROF4__';
 				$substitutionarray['__THIRDPARTY_IDPROF5__'] = '__THIRDPARTY_IDPROF5__';
 				$substitutionarray['__THIRDPARTY_IDPROF6__'] = '__THIRDPARTY_IDPROF6__';
+				$substitutionarray['__MYCOMPANY_PROFID7__'] = '__MYCOMPANY_PROFID7__';
+				$substitutionarray['__MYCOMPANY_PROFID8__'] = '__MYCOMPANY_PROFID8__';
+				$substitutionarray['__MYCOMPANY_PROFID9__'] = '__MYCOMPANY_PROFID9__';
+				$substitutionarray['__MYCOMPANY_PROFID10__'] = '__MYCOMPANY_PROFID10__';
 				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = '__THIRDPARTY_TVAINTRA__';
 				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = '__THIRDPARTY_NOTE_PUBLIC__';
 				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = '__THIRDPARTY_NOTE_PRIVATE__';
@@ -8700,7 +8724,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$daytext = $outputlangs->trans('Day'.$tmp['wday']);
 
 		$substitutionarray = array_merge($substitutionarray, array(
-			'__NOW_TMS__' => (int) $now,
+			'__NOW_TMS__' => (string) $now,		// Must be the string that represent the int
 			'__NOW_TMS_YMD__' => dol_print_date($now, 'day', 'auto', $outputlangs),
 			'__DAY__' => (string) $tmp['mday'],
 			'__DAY_TEXT__' => $daytext, // Monday
@@ -9680,8 +9704,8 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 			$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $s);	// accept parenthesis in '...->method(...'
 			$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
 			$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-			$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
-			$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
+			$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
+			$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
 			$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);	// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
 			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
 			if (strpos($scheck, '(') !== false) {
@@ -9707,8 +9731,8 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 			$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $s);	// accept parenthesis in '...->method(...'
 			$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
 			$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-			$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
-			$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
+			$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
+			$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
 			$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);		// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
 			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
 			if (strpos($scheck, '(') !== false) {
@@ -9799,6 +9823,11 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 		$error = 'dol_eval try/catch error : ';
 		$error .= $e->getMessage();
 		dol_syslog($error, LOG_WARNING);
+		if ($returnvalue) {
+			return 'Exception during evaluation: '.$s;
+		} else {
+			return '';
+		}
 	}
 }
 
@@ -9871,7 +9900,7 @@ function picto_from_langcode($codelang, $moreatt = '', $notitlealt = 0)
  * Return null if not found.
  *
  * @param 	string 	$countrycode	Country code like 'US', 'FR', 'CA', 'ES', 'IN', 'MX', ...
- * @return	string					Value of locale like 'en_US', 'fr_FR', ... or null if not found
+ * @return	string|null				Value of locale like 'en_US', 'fr_FR', ... or null if not found
  */
 function getLanguageCodeFromCountryCode($countrycode)
 {
@@ -11361,7 +11390,8 @@ function isVisibleToUserType($type_user, &$menuentry, &$listofmodulesforexternal
  */
 function roundUpToNextMultiple($n, $x = 5)
 {
-	return (ceil($n) % $x === 0) ? ceil($n) : round(($n + $x / 2) / $x) * $x;
+	$result = (ceil($n) % $x === 0) ? ceil($n) : (round(($n + $x / 2) / $x) * $x);
+	return (int) $result;
 }
 
 /**
@@ -12634,7 +12664,7 @@ function dolForgeCriteriaCallback($matches)
 		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
 			$tmpescaped = $regbis[1];
 		}
-		//$tmpescaped = "'".$db->escapeforlike($db->escape($regbis[1]))."'";
+		//$tmpescaped = "'".$db->escape($db->escapeforlike($regbis[1]))."'";
 		$tmpescaped = "'".$db->escape($tmpescaped)."'";	// We do not escape the _ and % so the like will works
 	} elseif (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
 		$tmpescaped = "'".$db->escape($regbis[1])."'";
@@ -12963,15 +12993,22 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 		$sql2 .= " AND mc.fk_mailing=m.rowid";
 	}
 
-	if (!empty($sql) && !empty($sql2)) {
-		$sql = $sql." UNION ".$sql2;
-	} elseif (empty($sql) && !empty($sql2)) {
-		$sql = $sql2;
-	}
+	if ($sql || $sql2) {	// May not be defined if module Agenda is not enabled and mailing module disabled too
+		if (!empty($sql) && !empty($sql2)) {
+			$sql = $sql." UNION ".$sql2;
+		} elseif (empty($sql) && !empty($sql2)) {
+			$sql = $sql2;
+		}
 
-	// TODO Add limit in nb of results
-	if ($sql) {	// May not be defined if module Agenda is not enabled and mailing module disabled too
+		//TODO Add navigation with this limits...
+		$offset = 0;
+		$limit = 1000;
+
+		// Complete request and execute it with limit
 		$sql .= $db->order($sortfield_new, $sortorder);
+		if ($limit) {
+			$sql .= $db->plimit($limit + 1, $offset);
+		}
 
 		dol_syslog("function.lib::show_actions_messaging", LOG_DEBUG);
 		$resql = $db->query($sql);
@@ -12979,7 +13016,8 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			$i = 0;
 			$num = $db->num_rows($resql);
 
-			while ($i < $num) {
+			$imaxinloop = ($limit ? min($num, $limit) : $num);
+			while ($i < $imaxinloop) {
 				$obj = $db->fetch_object($resql);
 
 				if ($obj->type == 'action') {

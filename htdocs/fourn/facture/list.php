@@ -12,7 +12,7 @@
  * Copyright (C) 2017		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2018-2022	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2018-2020	Frédéric France			<frederic.france@netlogic.fr>
- * Copyright (C) 2019-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2019-2023	Alexandre Spangaro		<aspangaro@easya.solutions>
  * Copyright (C) 2023		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -88,7 +88,7 @@ $search_paymentcond = GETPOST('search_paymentcond', 'int');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
-$search_country = GETPOST("search_country", 'int');
+$search_country = GETPOST("search_country", 'alpha');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
@@ -407,7 +407,15 @@ $thirdparty = new Societe($db);
 $subtypearray = $object->getArrayOfInvoiceSubtypes(0);
 $now = dol_now();
 
-$title = $langs->trans("BillsSuppliers").($socid ? ' '.$soc->name : '');
+if ($socid > 0) {
+	$soc = new Societe($db);
+	$soc->fetch($socid);
+	if (empty($search_company)) {
+		$search_company = $soc->name;
+	}
+}
+
+$title = $langs->trans("BillsSuppliers").($socid ? ' - '.$soc->name : '');
 $help_url = 'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores';
 
 // Build and execute select
@@ -530,8 +538,26 @@ if ($search_zip) {
 if ($search_state) {
 	$sql .= natural_search("state.nom", $search_state);
 }
-if ($search_country) {
-	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
+if (strlen(trim($search_country))) {
+	$arrayofcode = getCountriesInEEC();
+	$country_code_in_EEC = $country_code_in_EEC_without_me = '';
+	foreach ($arrayofcode as $key => $value) {
+		$country_code_in_EEC .= ($country_code_in_EEC ? "," : "")."'".$value."'";
+		if ($value != $mysoc->country_code) {
+			$country_code_in_EEC_without_me .= ($country_code_in_EEC_without_me ? "," : "")."'".$value."'";
+		}
+	}
+	if ($search_country == 'special_allnotme') {
+		$sql .= " AND country.code <> '".$db->escape($mysoc->country_code)."'";
+	} elseif ($search_country == 'special_eec') {
+		$sql .= " AND country.code IN (".$db->sanitize($country_code_in_EEC, 1).")";
+	} elseif ($search_country == 'special_eecnotme') {
+		$sql .= " AND country.code IN (".$db->sanitize($country_code_in_EEC_without_me, 1).")";
+	} elseif ($search_country == 'special_noteec') {
+		$sql .= " AND country.code NOT IN (".$db->sanitize($country_code_in_EEC, 1).")";
+	} else {
+		$sql .= natural_search("country.code", $search_country);
+	}
 }
 if ($search_type_thirdparty != '' && $search_type_thirdparty >= 0) {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
@@ -1138,7 +1164,7 @@ if (!empty($arrayfields['state.nom']['checked'])) {
 // Country
 if (!empty($arrayfields['country.code_iso']['checked'])) {
 	print '<td class="liste_titre center">';
-	print $form->select_country($search_country, 'search_country', '', 0, 'minwidth100imp maxwidth100');
+	print $form->select_country($search_country, 'search_country', '', 0, 'minwidth150imp maxwidth150', 'code2', 1, 0, 1, null, 1);
 	print '</td>';
 }
 // Company type

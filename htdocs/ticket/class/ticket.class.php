@@ -5,6 +5,7 @@
  * Copyright (C) 2020      Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2023      Charlene Benke 	   <charlene@patas-monkey.com>
  * Copyright (C) 2023	   Benjamin Falière	   <benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -187,29 +188,34 @@ class Ticket extends CommonObject
 	public $email_from;
 
 	/**
+	 * Email to reply to
+	 */
+	public $origin_replyto;
+
+	/**
 	 * @var int Creation date
 	 */
-	public $datec = '';
+	public $datec;
 
 	/**
 	 * @var int Last modification date
 	 */
-	public $tms = '';
+	public $tms;
 
 	/**
 	 * @var int Read date
 	 */
-	public $date_read = '';
+	public $date_read;
 
 	/**
 	 * @var int Last message date
 	 */
-	public $date_last_msg_sent = '';
+	public $date_last_msg_sent;
 
 	/**
 	 * @var int Close ticket date
 	 */
-	public $date_close = '';
+	public $date_close;
 
 	/**
 	 * @var array cache_types_tickets
@@ -324,6 +330,7 @@ class Ticket extends CommonObject
 		'track_id' => array('type'=>'varchar(255)', 'label'=>'TicketTrackId', 'visible'=>-2, 'enabled'=>1, 'position'=>11, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text"),
 		'fk_user_create' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Author', 'visible'=>1, 'enabled'=>1, 'position'=>15, 'notnull'=>1, 'csslist'=>'tdoverflowmax100 maxwidth150onsmartphone'),
 		'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>-2, 'enabled'=>1, 'position'=>16, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'csslist'=>'tdoverflowmax150'),
+		'origin_replyto' => array('type'=>'mail', 'label'=>'EmailReplyto', 'visible'=>-2, 'enabled'=>1, 'position'=>17, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Email to reply to", 'csslist'=>'tdoverflowmax150'),
 		'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>18, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth200 tdoverflowmax200', 'autofocusoncreate'=>1),
 		'type_code' => array('type'=>'varchar(32)', 'label'=>'Type', 'visible'=>1, 'enabled'=>1, 'position'=>20, 'notnull'=>-1, 'help'=>"", 'csslist'=>'maxwidth125 tdoverflowmax50'),
 		'category_code' => array('type'=>'varchar(32)', 'label'=>'TicketCategory', 'visible'=>-1, 'enabled'=>1, 'position'=>21, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100 tdoverflowmax200'),
@@ -334,7 +341,7 @@ class Ticket extends CommonObject
 		'fk_contract' => array('type'=>'integer:Contrat:contrat/class/contrat.class.php', 'label'=>'Contract', 'visible'=>-1, 'enabled'=>'$conf->contract->enabled', 'position'=>53, 'notnull'=>-1, 'index'=>1, 'help'=>"LinkToContract"),
 		//'timing' => array('type'=>'varchar(20)', 'label'=>'Timing', 'visible'=>-1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'help'=>""),	// what is this ?
 		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>1, 'enabled'=>1, 'position'=>500, 'notnull'=>1, 'csslist'=>'nowraponall'),
-		'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>-1, 'enabled'=>1, 'position'=>501, 'notnull'=>1),
+		'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>-1, 'enabled'=>1, 'position'=>501, 'notnull'=>1, 'csslist'=>'nowraponall'),
 		'date_last_msg_sent' => array('type'=>'datetime', 'label'=>'TicketLastMessageDate', 'visible'=>0, 'enabled'=>1, 'position'=>502, 'notnull'=>-1),
 		'fk_user_assign' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'AssignedTo', 'visible'=>1, 'enabled'=>1, 'position'=>505, 'notnull'=>1, 'csslist'=>'tdoverflowmax100 maxwidth150onsmartphone'),
 		'date_close' => array('type'=>'datetime', 'label'=>'TicketCloseOn', 'visible'=>-1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
@@ -344,7 +351,9 @@ class Ticket extends CommonObject
 		'email_date' => array('type'=>'datetime', 'label'=>'EmailDate', 'visible'=>-2, 'enabled'=>1, 'position'=>541),
 		'progress' => array('type'=>'integer', 'label'=>'Progression', 'visible'=>-1, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'css'=>'right', 'help'=>"", 'isameasure'=>2, 'csslist'=>'width50'),
 		'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>'getDolGlobalString("TICKET_ENABLE_RESOLUTION")', 'position'=>550, 'notnull'=>1),
-		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'SolvedClosed', 9 => 'Deleted')),
+		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'PDFTemplate', 'enabled'=>1, 'visible'=>0, 'position'=>560),
+		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>570),
+		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 2 => 'Assigned', 3 => 'InProgress', 5 => 'NeedMoreInformation', 7 => 'OnHold', 8 => 'SolvedClosed', 9 => 'Deleted')),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
 	);
 	// END MODULEBUILDER PROPERTIES
@@ -357,8 +366,6 @@ class Ticket extends CommonObject
 	 */
 	public function __construct($db)
 	{
-		global $conf;
-
 		$this->db = $db;
 
 		$this->labelStatusShort = array(
@@ -366,8 +373,8 @@ class Ticket extends CommonObject
 			self::STATUS_READ => 'Read',
 			self::STATUS_ASSIGNED => 'Assigned',
 			self::STATUS_IN_PROGRESS => 'InProgress',
-			self::STATUS_WAITING => 'OnHold',
 			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformationShort',
+			self::STATUS_WAITING => 'OnHold',
 			self::STATUS_CLOSED => 'SolvedClosed',
 			self::STATUS_CANCELED => 'Canceled'
 		);
@@ -376,11 +383,17 @@ class Ticket extends CommonObject
 			self::STATUS_READ => 'Read',
 			self::STATUS_ASSIGNED => 'Assigned',
 			self::STATUS_IN_PROGRESS => 'InProgress',
-			self::STATUS_WAITING => 'OnHold',
 			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation',
+			self::STATUS_WAITING => 'OnHold',
 			self::STATUS_CLOSED => 'SolvedClosed',
 			self::STATUS_CANCELED => 'Canceled'
 		);
+
+		if (!getDolGlobalString('TICKET_INCLUDE_SUSPENDED_STATUS')) {
+			unset($this->fields['fk_statut']['arrayofkeyval'][self::STATUS_WAITING]);
+			unset($this->labelStatusShort[self::STATUS_WAITING]);
+			unset($this->labelStatus[self::STATUS_WAITING]);
+		}
 	}
 
 	/**
@@ -446,7 +459,7 @@ class Ticket extends CommonObject
 		}
 
 		if (isset($this->progress)) {
-			$this->progress = trim($this->progress);
+			$this->progress = (int) $this->progress;
 		}
 
 		if (isset($this->timing)) {
@@ -508,6 +521,7 @@ class Ticket extends CommonObject
 			$sql .= "fk_project,";
 			$sql .= "fk_contract,";
 			$sql .= "origin_email,";
+			$sql .= "origin_replyto,";
 			$sql .= "fk_user_create,";
 			$sql .= "fk_user_assign,";
 			$sql .= "email_msgid,";
@@ -526,6 +540,7 @@ class Ticket extends CommonObject
 			$sql .= "date_close,";
 			$sql .= "entity,";
 			$sql .= "notify_tiers_at_create,";
+			$sql .= "model_pdf,";
 			$sql .= "ip";
 			$sql .= ") VALUES (";
 			$sql .= " ".(!isset($this->ref) ? '' : "'".$this->db->escape($this->ref)."'").",";
@@ -534,6 +549,7 @@ class Ticket extends CommonObject
 			$sql .= " ".($this->fk_project > 0 ? $this->db->escape($this->fk_project) : "null").",";
 			$sql .= " ".($this->fk_contract > 0 ? $this->db->escape($this->fk_contract) : "null").",";
 			$sql .= " ".(!isset($this->origin_email) ? 'NULL' : "'".$this->db->escape($this->origin_email)."'").",";
+			$sql .= " ".(!isset($this->origin_replyto) ? 'NULL' : "'".$this->db->escape($this->origin_replyto)."'").",";
 			$sql .= " ".(!isset($this->fk_user_create) ? ($user->id > 0 ? $user->id : 'NULL') : ($this->fk_user_create > 0 ? $this->fk_user_create : 'NULL')).",";
 			$sql .= " ".($this->fk_user_assign > 0 ? $this->fk_user_assign : 'NULL').",";
 			$sql .= " ".(empty($this->email_msgid) ? 'NULL' : "'".$this->db->escape($this->email_msgid)."'").",";
@@ -552,6 +568,7 @@ class Ticket extends CommonObject
 			$sql .= " ".(!isset($this->date_close) || dol_strlen($this->date_close) == 0 ? 'NULL' : "'".$this->db->idate($this->date_close)."'");
 			$sql .= ", ".((int) $this->entity);
 			$sql .= ", ".(!isset($this->notify_tiers_at_create) ? '1' : "'".$this->db->escape($this->notify_tiers_at_create)."'");
+			$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 			$sql .= ", ".(!isset($this->ip) ? 'NULL' : "'".$this->db->escape($this->ip)."'");
 			$sql .= ")";
 
@@ -647,6 +664,7 @@ class Ticket extends CommonObject
 		$sql .= " t.fk_project,";
 		$sql .= " t.fk_contract,";
 		$sql .= " t.origin_email,";
+		$sql .= " t.origin_replyto,";
 		$sql .= " t.fk_user_create,";
 		$sql .= " t.fk_user_assign,";
 		$sql .= " t.email_msgid,";
@@ -665,6 +683,8 @@ class Ticket extends CommonObject
 		$sql .= " t.date_last_msg_sent,";
 		$sql .= " t.date_close,";
 		$sql .= " t.tms,";
+		$sql .= " t.model_pdf,";
+		$sql .= " t.extraparams,";
 		$sql .= " t.ip,";
 		$sql .= " type.label as type_label, category.label as category_label, severity.label as severity_label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
@@ -700,12 +720,15 @@ class Ticket extends CommonObject
 				$this->fk_project = $obj->fk_project;
 				$this->fk_contract = $obj->fk_contract;
 				$this->origin_email = $obj->origin_email;
+				$this->origin_replyto = $obj->origin_replyto;
 				$this->fk_user_create = $obj->fk_user_create;
 				$this->fk_user_assign = $obj->fk_user_assign;
 				$this->email_msgid = $obj->email_msgid;
 				$this->email_date = $this->db->jdate($obj->email_date);
 				$this->subject = $obj->subject;
 				$this->message = $obj->message;
+				$this->model_pdf = $obj->model_pdf;
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 				$this->ip = $obj->ip;
 
 				$this->status = $obj->status;
@@ -777,6 +800,7 @@ class Ticket extends CommonObject
 		$sql .= " t.fk_project,";
 		$sql .= " t.fk_contract,";
 		$sql .= " t.origin_email,";
+		$sql .= " t.origin_replyto,";
 		$sql .= " t.fk_user_create, uc.lastname as user_create_lastname, uc.firstname as user_create_firstname,";
 		$sql .= " t.fk_user_assign, ua.lastname as user_assign_lastname, ua.firstname as user_assign_firstname,";
 		$sql .= " t.subject,";
@@ -883,6 +907,7 @@ class Ticket extends CommonObject
 					$line->fk_project = $obj->fk_project;
 					$line->fk_contract = $obj->fk_contract;
 					$line->origin_email = $obj->origin_email;
+					$line->origin_replyto = $obj->origin_replyto;
 
 					$line->fk_user_create = $obj->fk_user_create;
 					$line->fk_user_assign = $obj->fk_user_assign;
@@ -1004,7 +1029,7 @@ class Ticket extends CommonObject
 		}
 
 		if (isset($this->progress)) {
-			$this->progress = trim($this->progress);
+			$this->progress = (int) $this->progress;
 		}
 
 		if (isset($this->timing)) {
@@ -1022,7 +1047,9 @@ class Ticket extends CommonObject
 		if (isset($this->severity_code)) {
 			$this->timing = trim($this->severity_code);
 		}
-
+		if (isset($this->model_pdf)) {
+			$this->model_pdf = trim($this->model_pdf);
+		}
 		// Check parameters
 		// Put here code to add a control on parameters values
 		// Update request
@@ -1033,6 +1060,7 @@ class Ticket extends CommonObject
 		$sql .= " fk_project=".(isset($this->fk_project) ? "'".$this->db->escape($this->fk_project)."'" : "null").",";
 		$sql .= " fk_contract=".(isset($this->fk_contract) ? "'".$this->db->escape($this->fk_contract)."'" : "null").",";
 		$sql .= " origin_email=".(isset($this->origin_email) ? "'".$this->db->escape($this->origin_email)."'" : "null").",";
+		$sql .= " origin_email=".(isset($this->origin_replyto) ? "'".$this->db->escape($this->origin_replyto)."'" : "null").",";
 		$sql .= " fk_user_create=".(isset($this->fk_user_create) ? $this->fk_user_create : "null").",";
 		$sql .= " fk_user_assign=".(isset($this->fk_user_assign) ? $this->fk_user_assign : "null").",";
 		$sql .= " subject=".(isset($this->subject) ? "'".$this->db->escape($this->subject)."'" : "null").",";
@@ -1047,6 +1075,7 @@ class Ticket extends CommonObject
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " date_read=".(dol_strlen($this->date_read) != 0 ? "'".$this->db->idate($this->date_read)."'" : 'null').",";
 		$sql .= " date_last_msg_sent=".(dol_strlen($this->date_last_msg_sent) != 0 ? "'".$this->db->idate($this->date_last_msg_sent)."'" : 'null').",";
+		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " date_close=".(dol_strlen($this->date_close) != 0 ? "'".$this->db->idate($this->date_close)."'" : 'null');
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -1246,16 +1275,16 @@ class Ticket extends CommonObject
 		$this->message = 'Message of ticket';
 		$this->status = 0;
 		$this->resolution = '1';
-		$this->progress = '10';
+		$this->progress = 10;
 		//$this->timing = '30';
 		$this->type_code = 'TYPECODE';
 		$this->category_code = 'CATEGORYCODE';
 		$this->severity_code = 'SEVERITYCODE';
-		$this->datec = '';
-		$this->date_read = '';
-		$this->date_last_msg_sent = '';
-		$this->date_close = '';
-		$this->tms = '';
+		$this->datec = dol_now();
+		$this->date_read = dol_now();
+		$this->date_last_msg_sent = dol_now();
+		$this->date_close = dol_now();
+		$this->tms = dol_now();
 		return 1;
 	}
 
@@ -1415,49 +1444,58 @@ class Ticket extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->fk_statut, $mode, 0, $this->progress);
+		return $this->LibStatut($this->status, $mode, 0, $this->progress);
 	}
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Return status label of object
+	 * Return status label of object
 	 *
-	 *    @param      string 	$status      Id status
-	 *    @param      int		$mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *    @param	  int		$notooltip	 1=No tooltip
-	 *    @param	  int		$progress	 Progression (0 to 100)
-	 *    @return     string     			 Label
+	 * @param	string		$status			Id status
+	 * @param	int			$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @param	int			$notooltip		1=No tooltip
+	 * @param	int			$progress		Progression (0 to 100)
+	 * @return	string						Label
 	 */
 	public function LibStatut($status, $mode = 0, $notooltip = 0, $progress = 0)
 	{
 		// phpcs:enable
 		global $langs, $hookmanager;
 
-		$labelStatus = $this->labelStatus[$status];
-		$labelStatusShort = $this->labelStatusShort[$status];
+		$labelStatus = !empty($status) ? $this->labelStatus[$status] : '';
+		$labelStatusShort = !empty($status) ? $this->labelStatusShort[$status] : '';
 
-		if ($status == self::STATUS_NOT_READ) {
-			$statusType = 'status0';
-		} elseif ($status == self::STATUS_READ) {
-			$statusType = 'status1';
-		} elseif ($status == self::STATUS_ASSIGNED) {
-			$statusType = 'status2';
-		} elseif ($status == self::STATUS_IN_PROGRESS) {
-			$statusType = 'status4';
-		} elseif ($status == self::STATUS_WAITING) {
-			$statusType = 'status7';
-		} elseif ($status == self::STATUS_NEED_MORE_INFO) {
-			$statusType = 'status3';
-		} elseif ($status == self::STATUS_CANCELED) {
-			$statusType = 'status9';
-		} elseif ($status == self::STATUS_CLOSED) {
-			$statusType = 'status6';
-		} else {
-			$labelStatus = 'Unknown';
-			$labelStatusShort = 'Unknown';
-			$statusType = 'status0';
-			$mode = 0;
+		switch ($status) {
+			case self::STATUS_NOT_READ:						// Not read
+				$statusType = 'status0';
+				break;
+			case self::STATUS_READ:							// Read
+				$statusType = 'status1';
+				break;
+			case self::STATUS_ASSIGNED:						// Assigned
+				$statusType = 'status2';
+				break;
+			case self::STATUS_IN_PROGRESS:					// In progress
+				$statusType = 'status4';
+				break;
+			case self::STATUS_WAITING:						// Waiting/pending/suspended
+				$statusType = 'status7';
+				break;
+			case self::STATUS_NEED_MORE_INFO:				// Waiting more information from the requester
+				$statusType = 'status3';
+				break;
+			case self::STATUS_CANCELED:						// Canceled
+				$statusType = 'status9';
+				break;
+			case self::STATUS_CLOSED:						// Closed
+				$statusType = 'status6';
+				break;
+			default:
+				$labelStatus = 'Unknown';
+				$labelStatusShort = 'Unknown';
+				$statusType = 'status0';
+				$mode = 0;
 		}
 
 		$parameters = array(
@@ -2600,9 +2638,6 @@ class Ticket extends CommonObject
 			if (!$error && $id > 0) {
 				setEventMessages($langs->trans('TicketMessageSuccessfullyAdded'), null, 'mesgs');
 
-				//var_dump($_SESSION);
-				//var_dump($listofpaths);exit;
-
 				if (!empty($public_area)) {
 					/*
 					 * Message created from the Public interface
@@ -2659,7 +2694,7 @@ class Ticket extends CommonObject
 						if (!empty($sendto)) {
 							$appli = getDolGlobalString('MAIN_APPLICATION_TITLE', $mysoc->name);
 
-							$subject = '['.$appli.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
+							$subject = '['.$appli.'- ticket #'.$object->track_id.'] '.$this->subject;
 
 							// Message send
 							$message = $langs->trans('TicketMessageMailIntroText');
@@ -2779,6 +2814,9 @@ class Ticket extends CommonObject
 									$object->fetch_thirdparty($object->fk_soc);
 									$array_company = array(array('firstname' => '', 'lastname' => $object->thirdparty->name, 'email' => $object->thirdparty->email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => $object->thirdparty->id));
 									$external_contacts = array_merge($external_contacts, $array_company);
+								} elseif (empty($object->fk_soc) && !empty($object->origin_replyto)) {
+									$array_external = array(array('firstname' => '', 'lastname' => $object->origin_replyto, 'email' => $object->origin_replyto, 'libelle' => $langs->transnoentities('Customer'), 'socid' => 0));
+									$external_contacts = array_merge($external_contacts, $array_external);
 								} elseif (empty($object->fk_soc) && !empty($object->origin_email)) {
 									$array_external = array(array('firstname' => '', 'lastname' => $object->origin_email, 'email' => $object->thirdparty->email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => $object->thirdparty->id));
 									$external_contacts = array_merge($external_contacts, $array_external);
@@ -3142,6 +3180,40 @@ class Ticket extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
+
 		return $return;
+	}
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 *  @param	    string		$modele			Force template to use ('' to not force)
+	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
+	{
+		global $langs;
+
+		$langs->load("ticket");
+		$outputlangs->load("ticket");
+
+		if (!dol_strlen($modele)) {
+			$modele = 'generic_ticket_odt';
+
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
+			} elseif (getDolGlobalString('TICKET_ADDON_PDF')) {
+				$modele = getDolGlobalString('TICKET_ADDON_PDF');
+			}
+		}
+
+		$modelpath = "core/modules/ticket/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 }

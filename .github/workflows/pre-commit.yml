@@ -16,6 +16,7 @@ jobs:
         if: false
 
       # The next uses the git API because there is no clone yet.
+      # It sets the variable steps.changed-php.outputs.all_changed_files for other steps
       # This is faster for a big repo.
       - name: Get all changed php files (if PR)
         id: changed-php
@@ -63,13 +64,42 @@ jobs:
       #     files: |
       #        **.php
 
+      - name: Setup PHPCS
+        uses: shivammathur/setup-php@v2
+        # Install when we're going to run phpcs
+        if: |
+         steps.changed-php.outputs.any_changed == 'true'
+         ||
+         (
+           github.event_name == 'push'
+           && (
+                github.event.ref == 'refs/heads/develop'
+              || endsWith(github.event.ref, '.0')
+           )
+         )
+        with:
+          php-version: 8.1
+          coverage: none  # disable xdebug, pcov
+          tools: phpcs
+
       - name: Run some pre-commit hooks on selected changed files only
         if: steps.changed-php.outputs.any_changed == 'true'
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
         run: |
           set -o pipefail
-          pre-commit run php-cs ${ALL_CHANGED_FILES} | tee -a ${RAW_LOG}
+          pre-commit run php-cs --files ${ALL_CHANGED_FILES} | tee -a ${RAW_LOG}
+
+      - name: Run some pre-commit hooks on all files on push to "main" branches
+        if: |
+         github.event_name == 'push'
+         && (
+              github.event.ref == 'refs/heads/develop'
+            || endsWith(github.event.ref, '.0')
+         )
+        run: |
+          set -o pipefail
+          pre-commit run -a php-cs | tee -a ${RAW_LOG}
 
       # If error, we convert log in the checkstyle format
       - name: Convert Raw Log to CheckStyle format
