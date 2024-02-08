@@ -497,11 +497,6 @@ class FileUpload
 	{
 		$error = 0;
 
-		/*if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
-			return $this->delete(GETPOST('file'));
-		}*/
-		//var_dump($_FILES);
-
 		$upload = isset($_FILES[$this->options['param_name']]) ? $_FILES[$this->options['param_name']] : null;
 		$info = array();
 		if ($upload && is_array($upload['tmp_name'])) {
