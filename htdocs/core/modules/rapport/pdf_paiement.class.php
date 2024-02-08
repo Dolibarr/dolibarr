@@ -437,7 +437,7 @@ class pdf_paiement extends CommonDocGenerator
 
 		$pdf->line($this->posxbankaccount - 1, $this->tab_top, $this->posxbankaccount - 1, $this->tab_top + $this->tab_height + 10);
 		$pdf->SetXY($this->posxbankaccount, $this->tab_top + 2);
-		$pdf->MultiCell($this->posxinvoiceamount - $this->posxbankaccount, 2, $outputlangs->transnoentities("BankAccount"), 0, 'L');
+		$pdf->MultiCell($this->posxinvoiceamount - $this->posxbankaccount, 2, $outputlangs->transnoentities("Account"), 0, 'L');
 
 
 		$pdf->line($this->posxinvoiceamount - 1, $this->tab_top, $this->posxinvoiceamount - 1, $this->tab_top + $this->tab_height + 10);

@@ -68,7 +68,7 @@ class Partnerships extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('partnership', 'read')) {
+		if (!DolibarrApiAccess::$user->rights->partnership->read) {
 			throw new RestException(403);
 		}
 
@@ -107,7 +107,7 @@ class Partnerships extends DolibarrApi
 		$obj_ret = array();
 		$tmpobject = new Partnership($this->db);
 
-		if (!DolibarrApiAccess::$user->hasRight('partnership', 'read')) {
+		if (!DolibarrApiAccess::$user->rights->partnership->read) {
 			throw new RestException(403);
 		}
 
@@ -117,7 +117,7 @@ class Partnerships extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if ($restrictonsocid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socid) {
+		if ($restrictonsocid && !DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -188,7 +188,7 @@ class Partnerships extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('partnership', 'write')) {
+		if (!DolibarrApiAccess::$user->rights->partnership->write) {
 			throw new RestException(403);
 		}
 
@@ -227,7 +227,7 @@ class Partnerships extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('partnership', 'write')) {
+		if (!DolibarrApiAccess::$user->rights->partnership->write) {
 			throw new RestException(403);
 		}
 
@@ -275,7 +275,7 @@ class Partnerships extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('partnership', 'delete')) {
+		if (!DolibarrApiAccess::$user->rights->partnership->delete) {
 			throw new RestException(403);
 		}
 		$result = $this->partnership->fetch($id);
@@ -284,7 +284,7 @@ class Partnerships extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('partnership', $this->partnership->id, 'partnership')) {
-			throw new RestException(403, 'Access to instance id='.$this->partnership->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(401, 'Access to instance id='.$this->partnership->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->partnership->delete(DolibarrApiAccess::$user)) {

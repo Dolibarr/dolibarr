@@ -112,7 +112,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 *
 	 *  @param	Societe		$objsoc     Object third party
 	 *  @param  int			$type       Client ou fournisseur (1:client, 2:fournisseur)
-	 *  @return string|-1      			Value if OK, '' if module not configured, -1 if KO
+	 *  @return string      			Value if OK, '' if module not configured, <0 if KO
 	 */
 	public function getNextValue($objsoc = 0, $type = -1)
 	{

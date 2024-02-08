@@ -262,6 +262,16 @@ class CashControl extends CommonObject
 			return 0;
 		}
 
+		/*
+		 $posmodule = $this->posmodule;
+		 if (!empty($user->rights->$posmodule->use))
+		 {
+		 $this->error='NotEnoughPermissions';
+		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
+		 return -1;
+		 }
+		 */
+
 		$now = dol_now();
 
 		// Update request

@@ -102,7 +102,7 @@ if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $
 	accessforbidden();
 }
 
-$permissiontoadd = $user->hasRight('ticket', 'write');
+$permissiontoadd = $user->rights->ticket->write;
 
 
 /*

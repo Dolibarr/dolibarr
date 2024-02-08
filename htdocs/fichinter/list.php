@@ -156,9 +156,9 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
-$permissiontoread = $user->hasRight('ficheinter', 'lire');
-$permissiontoadd = $user->hasRight('ficheinter', 'creer');
-$permissiontodelete = $user->hasRight('ficheinter', 'supprimer');
+$permissiontoread = $user->rights->ficheinter->lire;
+$permissiontoadd = $user->rights->ficheinter->creer;
+$permissiontodelete = $user->rights->ficheinter->supprimer;
 
 
 /*

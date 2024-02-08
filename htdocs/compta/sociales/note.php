@@ -53,9 +53,9 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'tax', $object->id, 'chargesociales', 'charges');
 
-$permissiontoread = $user->hasRight('tax', 'charges', 'lire');
-$permissiontoadd = $user->hasRight('tax', 'charges', 'creer');
-$permissionnote = $user->hasRight('tax', 'charges', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissiontoread = $user->rights->tax->charges->lire;
+$permissiontoadd = $user->rights->tax->charges->creer;
+$permissionnote = $user->rights->tax->charges->creer; // Used by the include of actions_setnotes.inc.php
 
 
 /*

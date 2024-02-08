@@ -910,7 +910,7 @@ class pdf_standard extends ModelePDFMovement
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "")
 	{
-		global $conf, $langs, $db, $hookmanager;
+		global $conf, $langs;
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "propal", "companies", "bills", "orders", "stocks"));
@@ -1116,6 +1116,7 @@ class pdf_standard extends ModelePDFMovement
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
 		return $top_shift;
 	}
 

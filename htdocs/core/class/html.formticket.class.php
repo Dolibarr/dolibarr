@@ -794,7 +794,7 @@ class FormTicket
 	}
 
 	/**
-	 *      Return html list of ticket analytic codes
+	 *      Return html list of ticket anaytic codes
 	 *
 	 *      @param  string 		$selected   		Id pre-selected category
 	 *      @param  string 		$htmlname   		Name of select component
@@ -1492,6 +1492,12 @@ class FormTicket
 				print '<input type="submit" class="button" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				print '</div></td>';
 			}
+
+			// From
+			$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
+			print '<tr class="email_line"><td><span class="">'.$langs->trans("MailFrom").'</span></td>';
+			print '<td><span class="">'.img_picto('', 'email', 'class="pictofixedwidth"').$from.'</span></td></tr>';
+
 			// Subject/topic
 			$topic = "";
 			foreach ($formmail->lines_model as $line) {

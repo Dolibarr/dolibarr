@@ -390,23 +390,15 @@ function getDomainFromURL($url, $mode = 0)
 /**
  * Function root url from a long url
  * For example: https://www.abc.mydomain.com/dir/page.html return 'https://www.abc.mydomain.com'
- * For example: http://www.abc.mydomain.com/ return 'https://www.abc.mydomain.com'
+ * For example: https://www.abc.mydomain.com/ return 'https://www.abc.mydomain.com'
+ * For example: http://www.abc.mydomain.com/ return 'http://www.abc.mydomain.com'
  *
  * @param	string	  $url 				    Full URL.
  * @return	string						    Returns root url
  */
 function getRootURLFromURL($url)
 {
-	$prefix = '';
-	$tmpurl = $url;
-	$reg = null;
-	if (preg_match('/^(https?:\/\/)/i', $tmpurl, $reg)) {
-		$prefix = $reg[1];
-	}
-	$tmpurl = preg_replace('/^https?:\/\//i', '', $tmpurl); // Remove http(s)://
-	$tmpurl = preg_replace('/\/.*$/i', '', $tmpurl); // Remove part after domain
-
-	return $prefix.$tmpurl;
+	return preg_replace('/^([a-z]*:\/\/[^\/]*).*/i', '$1', $url);
 }
 
 /**

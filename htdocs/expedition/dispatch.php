@@ -299,7 +299,7 @@ if ($action == 'updatelines' && $usercancreate) {
 						}
 					}
 
-					// If module stock is enabled and the stock decrease is done on edition of this page
+					// If module stock is enabled and the stock decrease is done on edtion of this page
 					/*
 					if (!$error && GETPOST($ent, 'int') > 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_DISPATCH_ORDER)) {
 						$mouv = new MouvementStock($db);

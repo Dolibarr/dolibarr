@@ -49,7 +49,7 @@ class box_boms extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !$user->hasRight('bom', 'read');
+		$this->hidden = empty($user->rights->bom->read);
 	}
 
 	/**

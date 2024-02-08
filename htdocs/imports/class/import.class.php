@@ -171,7 +171,7 @@ class Import
 						}
 
 						// Permission
-						$this->array_import_perms[$i] = $user->hasRight('import', 'run');
+						$this->array_import_perms[$i] = $user->rights->import->run;
 						// Icon
 						$this->array_import_icon[$i] = (isset($module->import_icon[$r]) ? $module->import_icon[$r] : $module->picto);
 						// Code of dataset export

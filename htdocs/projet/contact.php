@@ -165,100 +165,55 @@ if (empty($reshook)) {
 
 		$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-		$groupid = GETPOSTINT('groupid');
-		$contactarray = array();
-		$errorgroup = 0;
-		$errorgrouparray = array();
 
-		if ($groupid > 0) {
-			require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
-			$usergroup = new UserGroup($db);
-			$result = $usergroup->fetch($groupid);
-			if ($result > 0) {
-				$tmpcontactarray = $usergroup->listUsersForGroup();
-				if ($contactarray <= 0) {
-					$error++;
-				} else {
-					foreach ($tmpcontactarray as $tmpuser) {
-						$contactarray[] = $tmpuser->id;
-					}
-				}
-			} else {
-				$error++;
-			}
-		} elseif (! ($contactid > 0)) {
+		if (! ($contactid > 0)) {
 			$error++;
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Contact")), null, 'errors');
-		} else {
-			$contactarray[] = $contactid;
 		}
 
 		$result = 0;
 		$result = $object->fetch($id);
+
 		if (!$error && $result > 0 && $id > 0) {
-			foreach ($contactarray as $key => $contactid) {
-				$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
+			$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 
-				if ($result == 0) {
-					if ($groupid > 0) {
-						$errorgroup++;
-						$errorgrouparray[] = $contactid;
-					} else {
-						$langs->load("errors");
-						setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-					}
-				} elseif ($result < 0) {
-					if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-						if ($groupid > 0) {
-							$errorgroup++;
-							$errorgrouparray[] = $contactid;
-						} else {
-							$langs->load("errors");
-							setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-						}
-					} else {
-						setEventMessages($object->error, $object->errors, 'errors');
-					}
+			if ($result == 0) {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+			} elseif ($result < 0) {
+				if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
+			}
 
-				$affecttotask=GETPOST('tasksavailable', 'intcomma');
-				if (!empty($affecttotask)) {
-					require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-					$task_to_affect = explode(',', $affecttotask);
-					if (!empty($task_to_affect)) {
-						foreach ($task_to_affect as $task_id) {
-							if (GETPOSTISSET('person_'.$task_id) && GETPOST('person_'.$task_id, 'san_alpha')) {
-								$tasksToAffect = new Task($db);
-								$result=$tasksToAffect->fetch($task_id);
+			$affecttotask=GETPOST('tasksavailable', 'intcomma');
+			if (!empty($affecttotask)) {
+				require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+				$task_to_affect = explode(',', $affecttotask);
+				if (!empty($task_to_affect)) {
+					foreach ($task_to_affect as $task_id) {
+						if (GETPOSTISSET('person_'.$task_id) && GETPOST('person_'.$task_id, 'san_alpha')) {
+							$tasksToAffect = new Task($db);
+							$result=$tasksToAffect->fetch($task_id);
+							if ($result < 0) {
+								setEventMessages($tasksToAffect->error, null, 'errors');
+							} else {
+								$result = $tasksToAffect->add_contact($contactid, GETPOST('person_role_'.$task_id), GETPOST("source", 'aZ09'));
 								if ($result < 0) {
-									setEventMessages($tasksToAffect->error, null, 'errors');
-								} else {
-									$result = $tasksToAffect->add_contact($contactid, GETPOST('person_role_'.$task_id), GETPOST("source", 'aZ09'));
-									if ($result < 0) {
-										if ($tasksToAffect->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-											$langs->load("errors");
-											setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-										} else {
-											setEventMessages($tasksToAffect->error, $tasksToAffect->errors, 'errors');
-										}
+									if ($tasksToAffect->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+										$langs->load("errors");
+										setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+									} else {
+										setEventMessages($tasksToAffect->error, $tasksToAffect->errors, 'errors');
 									}
 								}
 							}
 						}
 					}
-				}
-			}
-		}
-		if ($errorgroup > 0) {
-			$langs->load("errors");
-			if ($errorgroup == count($contactarray)) {
-				setEventMessages($langs->trans("ErrorThisGroupIsAlreadyDefinedAsThisType"), null, 'errors');
-			} else {
-				$tmpuser = new User($db);
-				foreach ($errorgrouparray as $key => $value) {
-					$tmpuser->fetch($value);
-					setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", dolGetFirstLastname($tmpuser->firstname, $tmpuser->lastname)), null, 'errors');
 				}
 			}
 		}

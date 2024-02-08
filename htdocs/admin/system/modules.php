@@ -157,7 +157,7 @@ foreach ($modules as $key => $module) {
 			if (empty($rights[0])) {
 				continue;
 			}
-			$arrayofpermissions[$rights[0]] = array('label'=> 'user->hasRight(\''.$module->rights_class.'\', \''.$rights[4].'\''.(empty($rights[5]) ? '' : ', \''.$rights[5].'\'').')');
+			$arrayofpermissions[$rights[0]] = array('label'=> 'user->rights->'.$module->rights_class.'->'.$rights[4].(empty($rights[5]) ? '' : '->'.$rights[5]));
 			$permission[] = $rights[0];
 
 			array_push($rights_ids, $rights[0]);

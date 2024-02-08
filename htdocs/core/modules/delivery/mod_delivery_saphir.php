@@ -122,7 +122,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	 *
 	 *  @param	Societe		$objsoc     	Object third party
 	 *  @param  Object		$object			Object delivery
-	 *  @return string|0      				Value if OK, 0 if KO
+	 *  @return string      				Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -149,7 +149,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	 *
 	 *  @param	Societe		$objsoc     Object third party
 	 * 	@param	string		$objforref	Object for number to search
-	 *  @return string|0      			Next free value, 0 if KO
+	 *  @return string      			Next free value
 	 */
 	public function getNumRef($objsoc, $objforref)
 	{
@@ -163,7 +163,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	 *
 	 *  @param	Societe		$objsoc      	Object thirdparty
 	 *  @param  Object		$object			Object livraison
-	 *  @return string|0      				Value if OK, 0 if KO
+	 *  @return string      				Descriptive text
 	 */
 	public function delivery_get_num($objsoc = 0, $object = '')
 	{

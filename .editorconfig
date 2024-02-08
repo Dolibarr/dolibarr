@@ -22,7 +22,3 @@ indent_style = tab
 indent_style = tab
 [*.md]
 trim_trailing_whitespace = false
-[*.sql]
-indent_style = tab
-trim_trailing_whitespace = true
-indent_size = 4

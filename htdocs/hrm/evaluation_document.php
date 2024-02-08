@@ -81,8 +81,8 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Permissions
-$permissiontoadd  = $user->hasRight('hrm', 'evaluation', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
-$permissiontoread = $user->hasRight('hrm', 'evaluation', 'read');
+$permissiontoadd  = $user->rights->hrm->evaluation->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+$permissiontoread = $user->rights->hrm->evaluation->read;
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();

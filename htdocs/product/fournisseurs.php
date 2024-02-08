@@ -108,8 +108,8 @@ if ($id > 0 || $ref) {
 	$prod->fetch($id, $ref);
 }
 
-$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'lire')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
 
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
@@ -302,7 +302,7 @@ if (empty($reshook)) {
 				if (empty($packaging)) {
 					$packaging = 1;
 				}
-				/* We can have a purchase ref that need to buy 100 min for a given price and with a packaging of 50.
+				/* We can have a puchase ref that need to buy 100 min for a given price and with a packaging of 50.
 				if ($packaging < $quantity) {
 					$packaging = $quantity;
 				}*/

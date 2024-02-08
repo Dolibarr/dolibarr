@@ -105,9 +105,9 @@ if ($id > 0 || !empty($ref)) {
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = 0;
 if ($enablepermissioncheck) {
-	$permissiontoread = $user->hasRight('bookcal', 'calendar', 'read');
-	$permissiontoadd = $user->hasRight('bookcal', 'calendar', 'write');
-	$permissionnote = $user->hasRight('bookcal', 'calendar', 'write'); // Used by the include of actions_setnotes.inc.php
+	$permissiontoread = $user->rights->bookcal->calendar->read;
+	$permissiontoadd = $user->rights->bookcal->calendar->write;
+	$permissionnote = $user->rights->bookcal->calendar->write; // Used by the include of actions_setnotes.inc.php
 } else {
 	$permissiontoread = 1;
 	$permissiontoadd = 1;

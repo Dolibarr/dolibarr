@@ -56,8 +56,8 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->stocktransfer->multidir_output[$object->entity]."/".$object->id;
 }
 
-$permissionnote = $user->hasRight('stocktransfer', 'stocktransfer', 'write'); // Used by the include of actions_setnotes.inc.php
-$permissiontoadd = $user->hasRight('stocktransfer', 'stocktransfer', 'write'); // Used by the include of actions_addupdatedelete.inc.php
+$permissionnote = $user->rights->stocktransfer->stocktransfer->write; // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->rights->stocktransfer->stocktransfer->write; // Used by the include of actions_addupdatedelete.inc.php
 
 
 

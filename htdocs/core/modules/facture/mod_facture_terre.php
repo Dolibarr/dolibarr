@@ -201,7 +201,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 * @param   Societe		$objsoc		Object third party
 	 * @param   Facture		$invoice	Object invoice
 	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string|int<-1,0>       	Next ref value or last ref if $mode is 'last', -1 or 0 if KO
+	 * @return  string       			Next ref value or last ref if $mode is 'last', <= 0 if KO
 	 */
 	public function getNextValue($objsoc, $invoice, $mode = 'next')
 	{
@@ -285,7 +285,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 *  @param  Societe     $objsoc         Object third party
 	 *  @param  string      $objforref      Object for number to search
 	 *  @param   string     $mode           'next' for next value or 'last' for last value
-	 *  @return  string|int<-1,0>           Next free value, -1 or 0 if error
+	 *  @return  string                     Next free value
 	 */
 	public function getNumRef($objsoc, $objforref, $mode = 'next')
 	{

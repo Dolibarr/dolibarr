@@ -118,7 +118,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	 *
 	 *	@param	Societe		$objsoc     Third party object
 	 *	@param	Object		$shipment	Shipment object
-	 *	@return string|0      			Value if OK, 0 if KO
+	 *	@return string      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $shipment)
 	{
@@ -146,7 +146,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	 *
 	 *	@param	Societe		$objsoc     Third party object
 	 *	@param	Object		$objforref	Shipment object
-	 *	@return string|0      			Next free value, 0 if KO
+	 *	@return string      			Next free value
 	 */
 	public function expedition_get_num($objsoc, $objforref)
 	{

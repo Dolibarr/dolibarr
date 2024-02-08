@@ -39,7 +39,6 @@ create table llx_fichinter
   datee				date,						-- date de fin d'intervention
   datet				date,						-- date de terminaison de l'intervention
   duree				real,                       -- duree totale de l'intervention
-  signed            integer  DEFAULT NULL,        -- signed status
   description		text,
   note_private		text,
   note_public		text,

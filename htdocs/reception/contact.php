@@ -80,17 +80,17 @@ if ($origin == 'reception') {
 }
 
 if (isModEnabled("reception")) {
-	$permissiontoread = $user->hasRight('reception', 'lire');
-	$permissiontoadd = $user->hasRight('reception', 'creer');
-	$permissiondellink = $user->hasRight('reception', 'creer'); // Used by the include of actions_dellink.inc.php
-	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'reception_advance', 'validate')));
-	$permissiontodelete = $user->hasRight('reception', 'supprimer');
+	$permissiontoread = $user->rights->reception->lire;
+	$permissiontoadd = $user->rights->reception->creer;
+	$permissiondellink = $user->rights->reception->creer; // Used by the include of actions_dellink.inc.php
+	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->creer)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->reception_advance->validate)));
+	$permissiontodelete = $user->rights->reception->supprimer;
 } else {
-	$permissiontoread = $user->hasRight('fournisseur', 'commande', 'receptionner');
-	$permissiontoadd = $user->hasRight('fournisseur', 'commande', 'receptionner');
-	$permissiondellink = $user->hasRight('fournisseur', 'commande', 'receptionner'); // Used by the include of actions_dellink.inc.php
-	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('fournisseur', 'commande', 'receptionner')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('fournisseur', 'commande_advance', 'check')));
-	$permissiontodelete = $user->hasRight('fournisseur', 'commande', 'receptionner');
+	$permissiontoread = $user->rights->fournisseur->commande->receptionner;
+	$permissiontoadd = $user->rights->fournisseur->commande->receptionner;
+	$permissiondellink = $user->rights->fournisseur->commande->receptionner; // Used by the include of actions_dellink.inc.php
+	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->fournisseur->commande->receptionner)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->fournisseur->commande_advance->check)));
+	$permissiontodelete = $user->rights->fournisseur->commande->receptionner;
 }
 
 

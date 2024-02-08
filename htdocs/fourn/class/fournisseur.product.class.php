@@ -412,7 +412,7 @@ class ProductFournisseur extends Product
 		$qty = price2num($qty, 'MS');
 		$unitBuyPrice = price2num($buyprice / $qty, 'MU');
 
-		// We can have a purchase ref that need to buy 100 min for a given price and with a packaging of 50.
+		// We can have a puchase ref that need to buy 100 min for a given price and with a packaging of 50.
 		//$packaging = price2num(((empty($this->packaging) || $this->packaging < $qty) ? $qty : $this->packaging), 'MS');
 		$packaging = price2num((empty($this->packaging) ? $qty : $this->packaging), 'MS');
 
@@ -895,19 +895,19 @@ class ProductFournisseur extends Product
 		$this->product_fourn_price_id = 0;
 		$this->product_fourn_id       = 0;
 		$this->fourn_ref              = '';
-		$this->fourn_price            = '';
-		$this->fourn_qty              = '';
-		$this->fourn_remise_percent   = '';
-		$this->fourn_remise           = '';
-		$this->fourn_unitprice        = '';
+		$this->fourn_price            = 0;
+		$this->fourn_qty              = 0;
+		$this->fourn_remise_percent   = 0;
+		$this->fourn_remise           = 0;
+		$this->fourn_unitprice        = 0;
 		$this->fourn_id               = 0;
 		$this->fourn_name             = '';
 		$this->delivery_time_days     = 0;
 		$this->id                     = 0;
 
-		$this->fourn_multicurrency_price       = '';
-		$this->fourn_multicurrency_unitprice   = '';
-		$this->fourn_multicurrency_tx          = '';
+		$this->fourn_multicurrency_price       = 0;
+		$this->fourn_multicurrency_unitprice   = 0;
+		$this->fourn_multicurrency_tx          = 0;
 		$this->fourn_multicurrency_id          = '';
 		$this->fourn_multicurrency_code        = '';
 

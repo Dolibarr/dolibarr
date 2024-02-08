@@ -142,9 +142,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->hasRight('salaries', 'read');
-$permissiontoadd = $user->hasRight('salaries', 'write');
-$permissiontodelete = $user->hasRight('salaries', 'delete');
+$permissiontoread = $user->rights->salaries->read;
+$permissiontoadd = $user->rights->salaries->write;
+$permissiontodelete = $user->rights->salaries->delete;
 
 // Security check
 $socid = GETPOST("socid", "int");

@@ -57,7 +57,6 @@ $pagenext = $page + 1;
 // Search Fields
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_ref = GETPOST("search_ref", "alpha") ? GETPOST("search_ref", "alpha") : GETPOST("sref", "alpha");
-$search_messtype = GETPOST("search_messtype", "alpha");
 $filteremail = GETPOST('filteremail', 'alpha');
 
 // Initialize technical objects
@@ -123,7 +122,6 @@ if (empty($reshook)) {
 			$search[$key]='';
 		}*/
 		$search_ref = '';
-		$search_messtype = '';
 		$search_all = '';
 		$toselect = array();
 		$search_array_options = array();
@@ -157,7 +155,7 @@ $morecss = array();
 // Build and execute select
 // --------------------------------------------------------------------
 if ($filteremail) {
-	$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.nbemail, m.statut as status, m.date_creat as datec, m.date_envoi as date_envoi,";
+	$sql = "SELECT m.rowid, m.titre as title, m.nbemail, m.statut, m.date_creat as datec, m.date_envoi as date_envoi,";
 	$sql .= " mc.statut as sendstatut";
 
 	$sqlfields = $sql; // $sql fields to remove for count total
@@ -168,11 +166,8 @@ if ($filteremail) {
 	if ($search_ref) {
 		$sql .= " AND m.rowid = '".$db->escape($search_ref)."'";
 	}
-	if ($search_messtype) {
-		$sql .= " AND m.messtype LIKE '".$db->escape($search_messtype)."'";
-	}
 	if ($search_all) {
-		$sql .= " AND (m.titre LIKE '%".$db->escape($search_all)."%' OR m.sujet LIKE '%".$db->escape($search_all)."%' OR m.body LIKE '%".$db->escape($search_all)."%')";
+		$sql .= " AND (m.titre like '%".$db->escape($search_all)."%' OR m.sujet like '%".$db->escape($search_all)."%' OR m.body like '%".$db->escape($search_all)."%')";
 	}
 	if (!$sortorder) {
 		$sortorder = "ASC";
@@ -181,20 +176,17 @@ if ($filteremail) {
 		$sortfield = "m.rowid";
 	}
 } else {
-	$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.nbemail, m.statut as status, m.date_creat as datec, m.date_envoi as date_envoi";
+	$sql = "SELECT m.rowid, m.titre as title, m.nbemail, m.statut, m.date_creat as datec, m.date_envoi as date_envoi";
 
 	$sqlfields = $sql; // $sql fields to remove for count total
 
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
-	$sql .= " WHERE m.entity = ".((int) $conf->entity);
+	$sql .= " WHERE m.entity = ".$conf->entity;
 	if ($search_ref) {
 		$sql .= " AND m.rowid = '".$db->escape($search_ref)."'";
 	}
-	if ($search_messtype) {
-		$sql .= " AND m.messtype LIKE '".$db->escape($search_messtype)."'";
-	}
 	if ($search_all) {
-		$sql .= " AND (m.titre LIKE '%".$db->escape($search_all)."%' OR m.sujet LIKE '%".$db->escape($search_all)."%' OR m.body LIKE '%".$db->escape($search_all)."%')";
+		$sql .= " AND (m.titre like '%".$db->escape($search_all)."%' OR m.sujet like '%".$db->escape($search_all)."%' OR m.body like '%".$db->escape($search_all)."%')";
 	}
 	if (!$sortorder) {
 		$sortorder = "ASC";
@@ -284,16 +276,6 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
-if ($search_ref != '') {
-	$param .= '&search_ref='.urlencode($search_ref);
-}
-if ($search_messtype != '') {
-	$param .= '&search_type='.urlencode($search_messtype);
-}
-if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
-}
-
 if ($filteremail) {
 	$param .= '&filteremail='.urlencode($filteremail);
 }
@@ -396,12 +378,6 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print '<td class="liste_titre">';
 print '<input type="text" class="flat maxwidth50" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 print '</td>';
-// Message type
-if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat maxwidth50" name="search_messtype" value="'.dol_escape_htmltag($search_messtype).'">';
-	print '</td>';
-}
 // Title
 print '<td class="liste_titre">';
 print '<input type="text" class="flat maxwidth100 maxwidth50onsmartphone" name="search_all" value="'.dol_escape_htmltag($search_all).'">';
@@ -439,28 +415,19 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "m.rowid", $param, "", "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
-// Message type
-if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
-	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "m.messtype", $param, "", "", $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-}
 print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "m.titre", $param, "", "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
-print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "m.date_creat", $param, "", '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "m.date_creat", $param, "", 'align="center"', $sortfield, $sortorder);
 $totalarray['nbfield']++;
 if (!$filteremail) {
-	$title = $langs->trans("NbOfEMails");
-	if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
-		$title .= ' | '.$langs->trans("SMS");
-	}
-	print_liste_field_titre($title, $_SERVER["PHP_SELF"], "m.nbemail", $param, "", '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("NbOfEMails", $_SERVER["PHP_SELF"], "m.nbemail", $param, "", 'align="center"', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!$filteremail) {
-	print_liste_field_titre("DateLastSend", $_SERVER["PHP_SELF"], "m.date_envoi", $param, "", '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("DateLastSend", $_SERVER["PHP_SELF"], "m.date_envoi", $param, "", 'align="center"', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 } else {
-	print_liste_field_titre("DateSending", $_SERVER["PHP_SELF"], "mc.date_envoi", $param, "", '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("DateSending", $_SERVER["PHP_SELF"], "mc.date_envoi", $param, "", 'align="center"', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 // Extra fields
@@ -517,17 +484,9 @@ while ($i < $imaxinloop) {
 		}
 	}
 
-	// Ref
 	print '<td>';
 	print $object->getNomUrl(1);
 	print '</td>';
-
-	// Message type
-	if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
-		print '<td>';
-		print dol_escape_htmltag($obj->messtype);
-		print '</td>';
-	}
 
 	// Title
 	print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->title).'">'.dol_escape_htmltag($obj->title).'</td>';
@@ -541,7 +500,7 @@ while ($i < $imaxinloop) {
 	if (!$filteremail) {
 		print '<td class="center nowraponall">';
 		$nbemail = $obj->nbemail;
-		/*if ($obj->status != 3 && !empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
+		/*if ($obj->statut != 3 && !empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
 		{
 			$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
 			print $form->textwithpicto($nbemail,$text,1,'warning');
@@ -555,7 +514,7 @@ while ($i < $imaxinloop) {
 	}
 
 	// Last send
-	print '<td class="nowrap center">'.dol_print_date($db->jdate($obj->date_envoi), 'day').'</td>';
+	print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->date_envoi), 'day').'</td>';
 	print '</td>';
 
 	// Status
@@ -563,7 +522,7 @@ while ($i < $imaxinloop) {
 	if ($filteremail) {
 		print $object::libStatutDest($obj->sendstatut, 2);
 	} else {
-		print $object->LibStatut($obj->status, 5);
+		print $object->LibStatut($obj->statut, 5);
 	}
 	print '</td>';
 

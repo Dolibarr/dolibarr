@@ -104,11 +104,11 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 
 
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$permissiontoadd = $user->hasRight('stock', 'creer');
-	$permissiontodelete = $user->hasRight('stock', 'supprimer');
+	$permissiontoadd = $user->rights->stock->creer;
+	$permissiontodelete = $user->rights->stock->supprimer;
 } else {
-	$permissiontoadd = $user->hasRight('stock', 'inventory_advance', 'write');
-	$permissiontodelete = $user->hasRight('stock', 'inventory_advance', 'write');
+	$permissiontoadd = $user->rights->stock->inventory_advance->write;
+	$permissiontodelete = $user->rights->stock->inventory_advance->write;
 }
 
 $now = dol_now();

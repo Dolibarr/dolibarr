@@ -754,7 +754,7 @@ class PaymentExpenseReport extends CommonObject
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Type").'</span> : <span class="info-box-label">'.$this->fk_typepayment.'</span>';
 		}
 		if (property_exists($this, 'fk_bank') && !is_null($this->fk_bank)) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("BankAccount").'</span> : <span class="info-box-label">'.$this->fk_bank.'</span>';
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Account").'</span> : <span class="info-box-label">'.$this->fk_bank.'</span>';
 		}
 		if (property_exists($this, 'amount')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';

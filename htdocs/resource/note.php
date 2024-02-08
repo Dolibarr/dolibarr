@@ -51,7 +51,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 
 $result = restrictedArea($user, 'resource', $object->id, 'resource');
 
-$permissionnote = $user->hasRight('resource', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->resource->write; // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -107,7 +107,7 @@ if ($id > 0 || !empty($ref)) {
 
 	print '</div>';
 
-	$permission = $user->hasRight('resource', 'write');
+	$permission = $user->rights->resource->write;
 	$cssclass = 'titlefield';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 

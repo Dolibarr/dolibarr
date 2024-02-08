@@ -47,6 +47,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 // par de nombreux modules (banque, facture, commande a facturer, etc...) independamment
 // de l'utilisation de la compta ou non. C'est au sein de cet espace que chaque sous fonction
 // est protegee par le droit qui va bien du module concerne.
+//if (!$user->rights->compta->general->lire)
+//  accessforbidden();
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));

@@ -83,8 +83,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = 0;
 if ($enablepermissioncheck) {
-	$permissiontoread = $user->hasRight('bookcal', 'calendar', 'read');
-	$permission = $user->hasRight('bookcal', 'calendar', 'write');
+	$permissiontoread = $user->rights->bookcal->calendar->read;
+	$permission = $user->rights->bookcal->calendar->write;
 } else {
 	$permissiontoread = 1;
 	$permission = 1;

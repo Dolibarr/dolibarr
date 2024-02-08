@@ -33,13 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "stocks"));
 
-// Security check
+// Securit check
 if (!$user->admin) {
 	accessforbidden();
 }
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'stock';
@@ -48,6 +49,7 @@ $type = 'stock';
 /*
  * Action
  */
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 $reg = array();
 
@@ -196,7 +198,7 @@ if (isModEnabled('productbatch')) {
 		// STOCK_CALCULATE_ON_RECEPTION_CLOSE
 		$incmode = $langs->trans('StockOnReceptionOnClosing');
 	}
-	print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced", $descmode, $incmode));
+	print info_admin($langs->transnoentitiesnoconv("WhenProductBatchModuleOnOptionAreForced", $descmode, $incmode));
 }
 
 
