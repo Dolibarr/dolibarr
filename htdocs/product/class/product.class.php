@@ -5956,7 +5956,7 @@ class Product extends CommonObject
 		}
 
 		//Virtual Stock by Warehouse
-		if (!empty($this->stock_warehouse) && !empty(getDolGlobalString('STOCK_ALLOW_VIRTUAL_STOCK_PER_WAREHOUSE'))) {
+		if (!empty($this->stock_warehouse) && getDolGlobalString('STOCK_ALLOW_VIRTUAL_STOCK_PER_WAREHOUSE')) {
 			foreach ($this->stock_warehouse as $warehouseid => $stockwarehouse) {
 				if (isModEnabled('mrp')) {
 					$result = $this->load_stats_inproduction(0, '1,2', 1, $dateofvirtualstock, $warehouseid);
