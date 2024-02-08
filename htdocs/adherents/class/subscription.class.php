@@ -475,7 +475,6 @@ class Subscription extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
 
 		//$langs->load("members");
 
