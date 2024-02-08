@@ -941,15 +941,19 @@ if ($action == 'create' || $action == 'adduserldap') {
 		print '<script>
 			jQuery(document).ready(function() {
 				$(".createloginauto").on("change", function(){
-					lastname = $("#lastname").val();
-					firstname = $("#firstname").val();
-					if($(this).attr("id") == "firstname"){
-						firstname = firstname.toLowerCase();
-						firstname = firstname[0];
+					lastname = $("#lastname").val().toLowerCase();
+					firstname = $("#firstname").val().toLowerCase()[0];
+
+					console.log("We generate login intell we have a valid lastname");
+					login = "";
+					if(lastname) {
+						if(firstname) {
+							login = firstname + "'. getDolGlobalString("MAIN_USER_SEPARATOR_CHAR_FOR_GENERATED_LOGIN", "").'";
+						}
+						login += lastname;					
 					}
-					lastname = lastname.toLowerCase();
 					console.log("We create a login from firstname and lastname");
-					$("#login").val(firstname+lastname);
+					$("#login").val(login);
 				})
 			});
 		</script>';
