@@ -1298,7 +1298,7 @@ abstract class CommonDocGenerator
 		$pdf->setCellPaddings($colDef['content']['padding'][3], $colDef['content']['padding'][0], $colDef['content']['padding'][1], $colDef['content']['padding'][2]);
 
 		// line description
-		pdf_writelinedesc($pdf, $object, $i, $outputlangs, $colDef['width'], 3, $colDef['xStartPos'], $curY, $hideref, $hidedesc, $issupplierline, $colDef['content']['align']);
+		pdf_writelinedesc($pdf, $object, $i, $outputlangs, $colDef['width'], 3, $colDef['xStartPos'], $curY, $hideref, $hidedesc, $issupplierline, empty($colDef['content']['align']) ? 'J' : $colDef['content']['align']);
 		$posYAfterDescription = $pdf->GetY() - $colDef['content']['padding'][0];
 
 		// restore cell padding
