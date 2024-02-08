@@ -68,6 +68,17 @@
 		<severity>0</severity>
     </rule>
 
+    <!-- Lower severity on warnings we do not want to show in the pre-commit reports -->
+    <rule ref="Generic.Files.LineLength.TooLong">
+		<severity>4</severity>
+    </rule>
+    <rule ref="Generic.Metrics.CyclomaticComplexity.TooHigh">
+		<severity>4</severity>
+    </rule>
+    <rule ref="Generic.Metrics.NestingLevel.TooHigh">
+		<severity>4</severity>
+    </rule>
+
 
     <!-- Warnings on TODO -->
     <!-- Disabled: We want to keep TODO as normal
