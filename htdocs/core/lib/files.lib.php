@@ -839,7 +839,7 @@ function dol_copy($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
  *
  * @param	string	$srcfile			Source file (a directory)
  * @param	string	$destfile			Destination file (a directory)
- * @param	string	$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
+ * @param	string	$newmask			Mask for new file ('0' by default means getDolGlobalString('MAIN_UMASK')). Example: '0666'
  * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
  * @param	array<string,string>	$arrayreplacement	Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
  * @param	int		$excludesubdir		0=Do not exclude subdirectories, 1=Exclude subdirectories, 2=Exclude subdirectories if name is not a 2 chars (used for country codes subdirectories).
@@ -849,8 +849,6 @@ function dol_copy($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
  */
 function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement = null, $excludesubdir = 0, $excludefileext = null)
 {
-	global $conf;
-
 	$result = 0;
 
 	dol_syslog("files.lib.php::dolCopyDir srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwriteifexists=".$overwriteifexists);
@@ -867,7 +865,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 		umask(0);
 		$dirmaskdec = octdec($newmask);
 		if (empty($newmask) && getDolGlobalString('MAIN_UMASK')) {
-			$dirmaskdec = octdec($conf->global->MAIN_UMASK);
+			$dirmaskdec = octdec(getDolGlobalString('MAIN_UMASK'));
 		}
 		$dirmaskdec |= octdec('0200'); // Set w bit required to be able to create content for recursive subdirs files
 		dol_mkdir($destfile, '', decoct($dirmaskdec));
