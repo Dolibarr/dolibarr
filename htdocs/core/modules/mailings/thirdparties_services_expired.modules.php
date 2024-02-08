@@ -97,7 +97,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		if ($key == '0') {
 			$this->error = "Error: You must choose a filter";
 			$this->errors[] = $this->error;
-			return $this->error;
+			return -1;
 		}
 
 		$product = $this->arrayofproducts[$key];
