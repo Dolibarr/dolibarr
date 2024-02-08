@@ -1517,6 +1517,7 @@ class Cronjob extends CommonObject
 		return $this->LibStatut($this->status, $mode, $this->processing, $this->lastresult);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return label of a giver status
 	 *
@@ -1528,6 +1529,7 @@ class Cronjob extends CommonObject
 	 */
 	public function LibStatut(int $status, int $mode = 0, int $processing = 0, string $lastResult = '')
 	{
+		// phpcs:enable
 		$this->labelStatus = array(); // Force reset o array because label depends on other fields
 		$this->labelStatusShort = array();
 
