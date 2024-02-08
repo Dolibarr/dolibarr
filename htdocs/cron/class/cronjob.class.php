@@ -1224,8 +1224,8 @@ class Cronjob extends CommonObject
 		// Run a method
 		if ($this->jobtype == 'method') {
 			// Deny to launch a method from a deactivated module
-			if (!empty($this->module_name) && !isModEnabled(strtolower($this->module_name))) {
-				$this->error = $langs->transnoentitiesnoconv('CronMethodNotAllowed', $this->methodename, $this->objectname);
+			if (!empty($this->entity) && !empty($this->module_name) && !isModEnabled(strtolower($this->module_name))) {
+				$this->error = $langs->transnoentitiesnoconv('CronModuleNotEnabledInThisEntity', $this->methodename, $this->objectname);
 				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 				$this->lastoutput = $this->error;
 				$this->lastresult = '-1';

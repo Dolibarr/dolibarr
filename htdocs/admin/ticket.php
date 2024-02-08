@@ -45,7 +45,7 @@ $action = GETPOST('action', 'aZ09');
 $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
 $label = GETPOST('label', 'alpha');
-$scandir = GETPOST('scandir', 'alpha');
+$scandir = GETPOST('scan_dir', 'alpha');
 $type = 'ticket';
 
 $error = 0;

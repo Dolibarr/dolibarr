@@ -70,7 +70,7 @@ class Propal extends CommonObject
 	public $table_element = 'propal';
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = 'propaldet';
 
@@ -1411,7 +1411,7 @@ class Propal extends CommonObject
 				$object->cond_reglement_id	= (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
 				$object->deposit_percent = (!empty($objsoc->deposit_percent) ? $objsoc->deposit_percent : null);
 				$object->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-				$object->fk_delivery_address = '';
+				$object->fk_delivery_address = 0;
 
 				/*if (isModEnabled('project'))
 				{
@@ -1423,7 +1423,7 @@ class Propal extends CommonObject
 						$clonedObj->fk_project = '';
 					}
 				}*/
-				$object->fk_project = ''; // A cloned proposal is set by default to no project.
+				$object->fk_project = 0; // A cloned proposal is set by default to no project.
 			}
 
 			// reset ref_client
@@ -1496,7 +1496,7 @@ class Propal extends CommonObject
 		$object->statut = self::STATUS_DRAFT;
 
 		// Clear fields
-		$object->user_author = $user->id;
+		$object->user_creation_id = $user->id;
 		$object->user_validation_id = 0;
 		$object->date = $now;
 		$object->datep = $now; // deprecated

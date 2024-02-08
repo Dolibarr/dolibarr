@@ -58,16 +58,35 @@ class Ai
 	 * Generate response of instructions
 	 * @param   string  $instructions   instruction for generate content
 	 * @param   string  $model          model name (chat,text,image...)
+	 * @param   string  $moduleName     Name of module
 	 * @return   mixed   $response
 	 */
-	public function generateContent($instructions, $model = 'gpt-3.5-turbo')
+	public function generateContent($instructions, $model = 'gpt-3.5-turbo', $moduleName = 'MAILING')
 	{
+		global $conf;
 		try {
+			$configurationsJson = dolibarr_get_const($this->db, 'AI_CONFIGURATIONS_PROMPT', $conf->entity);
+			$configurations = json_decode($configurationsJson, true);
+
+			$prePrompt = '';
+			$postPrompt = '';
+
+			if (isset($configurations[$moduleName])) {
+				if (isset($configurations[$moduleName]['prePrompt'])) {
+					$prePrompt = $configurations[$moduleName]['prePrompt'];
+				}
+
+				if (isset($configurations[$moduleName]['postPrompt'])) {
+					$postPrompt = $configurations[$moduleName]['postPrompt'];
+				}
+			}
+			$fullInstructions = $prePrompt.' '.$instructions.' .'.$postPrompt;
+
 			$ch = curl_init($this->apiEndpoint);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
 				'messages' => [
-					['role' => 'user', 'content' => $instructions]
+					['role' => 'user', 'content' => $fullInstructions]
 				],
 				'model' => $model
 			]));
