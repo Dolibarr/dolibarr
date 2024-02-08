@@ -3557,7 +3557,7 @@ class Product extends CommonObject
 			$sql .= " AND m.date_valid <= '".$this->db->idate($dateofvirtualstock)."'"; // better date to code ? end of production ?
 		}
 		if (!empty($warehouseid)) {
-			$sql.= " AND m.fk_warehouse = '".((int) $warehouseid)."'";
+			$sql.= " AND m.fk_warehouse = ".((int) $warehouseid);
 		}
 		$sql .= " GROUP BY role";
 
