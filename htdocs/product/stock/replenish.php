@@ -839,7 +839,10 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		if ($usevirtualstock) {
 			// If option to increase/decrease is not on an object validation, virtual stock may differs from physical stock.
 			$stock = $prod->stock_theorique;
-			//TODO $stockwarehouse = $prod->stock_warehouse[$fk_entrepot]->;
+			//if conf active, stock virtual by warehouse is calculated
+			if (getDolGlobalString('STOCK_ALLOW_VIRTUAL_STOCK_PER_WAREHOUSE')) {
+				$stockwarehouse = $prod->stock_warehouse[$fk_entrepot]->virtual;
+			}
 		} else {
 			$stock = $prod->stock_reel;
 			$stockwarehouse = $prod->stock_warehouse[$fk_entrepot]->real;
