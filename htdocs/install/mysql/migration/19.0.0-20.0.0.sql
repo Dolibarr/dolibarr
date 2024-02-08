@@ -215,3 +215,4 @@ UPDATE llx_const SET name = 'THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_C
 ALTER TABLE llx_ticket ADD COLUMN model_pdf varchar(255);
 ALTER TABLE llx_ticket ADD COLUMN last_main_doc varchar(255);
 ALTER TABLE llx_ticket ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_ticket ADD COLUMN origin_replyto varchar(128);

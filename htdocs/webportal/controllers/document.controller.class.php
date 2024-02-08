@@ -240,13 +240,13 @@ class DocumentController extends Controller
 	 * Action method is called before html output
 	 * can be used to manage security and change context
 	 *
-	 * @return  void
+	 * @return  int     Return integer < 0 on error, > 0 on success
 	 */
 	public function action()
 	{
 		$context = Context::getInstance();
 		if (!$context->controllerInstance->checkAccess()) {
-			return;
+			return -1;
 		}
 
 		//$context = Context::getInstance();
@@ -255,6 +255,8 @@ class DocumentController extends Controller
 		//$context->doNotDisplayHeaderBar=1;// hide default header
 
 		$this->init();
+
+		return 1;
 	}
 
 	/**

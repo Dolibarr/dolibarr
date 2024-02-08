@@ -1534,7 +1534,9 @@ class FormTicket
 					}
 				}
 
-				if ($ticketstat->origin_email && !in_array($ticketstat->origin_email, $sendto)) {
+				if (!empty($ticketstat->origin_replyto) && !in_array($ticketstat->origin_replyto, $sendto)) {
+					$sendto[] = dol_escape_htmltag($ticketstat->origin_replyto).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
+				} elseif ($ticketstat->origin_email && !in_array($ticketstat->origin_email, $sendto)) {
 					$sendto[] = dol_escape_htmltag($ticketstat->origin_email).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
 				}
 

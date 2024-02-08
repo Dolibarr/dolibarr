@@ -66,7 +66,17 @@ jobs:
 
       - name: Setup PHPCS
         uses: shivammathur/setup-php@v2
-        if: steps.changed-php.outputs.any_changed == 'true'
+        # Install when we're going to run phpcs
+        if: |
+         steps.changed-php.outputs.any_changed == 'true'
+         ||
+         (
+           github.event_name == 'push'
+           && (
+                github.event.ref == 'refs/heads/develop'
+              || endsWith(github.event.ref, '.0')
+           )
+         )
         with:
           php-version: 8.1
           coverage: none  # disable xdebug, pcov
@@ -79,6 +89,17 @@ jobs:
         run: |
           set -o pipefail
           pre-commit run php-cs --files ${ALL_CHANGED_FILES} | tee -a ${RAW_LOG}
+
+      - name: Run some pre-commit hooks on all files on push to "main" branches
+        if: |
+         github.event_name == 'push'
+         && (
+              github.event.ref == 'refs/heads/develop'
+            || endsWith(github.event.ref, '.0')
+         )
+        run: |
+          set -o pipefail
+          pre-commit run -a php-cs | tee -a ${RAW_LOG}
 
       # If error, we convert log in the checkstyle format
       - name: Convert Raw Log to CheckStyle format
