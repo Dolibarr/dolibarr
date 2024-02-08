@@ -446,7 +446,7 @@ class modAgenda extends DolibarrModules
 			'p.ref' => 'ProjectRef',
 		);
 		// Add multicompany field
-		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
+		if (getDolGlobalString('MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED')) {
 			$nbofallowedentities = count(explode(',', getEntity('agenda')));
 			if (isModEnabled('multicompany') && $nbofallowedentities > 1) {
 				$this->export_fields_array[$r]['ac.entity'] = 'Entity';
