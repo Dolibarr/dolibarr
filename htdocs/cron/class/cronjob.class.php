@@ -214,7 +214,7 @@ class Cronjob extends CommonObject
 	 * @param  int		$notrigger	0=launch triggers after, 1=disable triggers
 	 * @return int					if KO: <0 || if OK: Id of created object
 	 */
-	public function create(User $user, int $notrigger = 0): int
+	public function create(User $user, int $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error = 0;
@@ -417,7 +417,7 @@ class Cronjob extends CommonObject
 	 * @param	string		$methodname		Method name
 	 * @return	int							if KO: <0 || if OK: >0
 	 */
-	public function fetch(int $id, string $objectname = '', string $methodname = ''): int
+	public function fetch(int $id, string $objectname = '', string $methodname = '')
 	{
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -526,7 +526,7 @@ class Cronjob extends CommonObject
 	 * @param	int			$processing		Processing or not
 	 * @return	int							if KO: <0 || if OK: >0
 	 */
-	public function fetchAll(string $sortorder = 'DESC', string $sortfield = 't.rowid', int $limit = 0, int $offset = 0, int $status = 1, array $filter = [], int $processing = -1): int
+	public function fetchAll(string $sortorder = 'DESC', string $sortfield = 't.rowid', int $limit = 0, int $offset = 0, int $status = 1, array $filter = [], int $processing = -1)
 	{
 		$this->lines = array();
 
@@ -660,7 +660,7 @@ class Cronjob extends CommonObject
 	 * @param	int			$notrigger	0=launch triggers after, 1=disable triggers
 	 * @return	int						if KO: <0 || if OK: >0
 	 */
-	public function update(User $user = null, int $notrigger = 0): int
+	public function update(User $user = null, int $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -849,7 +849,7 @@ class Cronjob extends CommonObject
 	 * @param	int		$notrigger	0=launch triggers after, 1=disable triggers
 	 * @return	int					if KO: <0 || if OK: >0
 	 */
-	public function delete(User $user, int $notrigger = 0): int
+	public function delete(User $user, int $notrigger = 0)
 	{
 		$error = 0;
 
@@ -888,7 +888,7 @@ class Cronjob extends CommonObject
 	 * @param	int		$fromid		Id of object to clone
 	 * @return	int					New id of clone
 	 */
-	public function createFromClone(User $user, int $fromid): int
+	public function createFromClone(User $user, int $fromid)
 	{
 		global $langs;
 
@@ -1107,7 +1107,7 @@ class Cronjob extends CommonObject
 	 * @param	int		$id		ID
 	 * @return	int				if KO: <0 || if OK: >0
 	 */
-	public function info(int $id): int
+	public function info(int $id)
 	{
 		$sql = "SELECT";
 		$sql .= " f.rowid, f.datec, f.tms, f.fk_user_mod, f.fk_user_author";
@@ -1146,7 +1146,7 @@ class Cronjob extends CommonObject
 	 * @param	string		$userlogin		User login
 	 * @return	int					 		if KO: <0 || if OK: >0
 	 */
-	public function run_jobs(string $userlogin): int
+	public function run_jobs(string $userlogin)
 	{
 		// phpcs:enable
 		global $langs, $conf, $hookmanager;
@@ -1436,7 +1436,7 @@ class Cronjob extends CommonObject
 	 * @param	integer		$now			Date returned by dol_now()
 	 * @return	int							if KO: <0 || if OK: >0
 	 */
-	public function reprogram_jobs(string $userlogin, int $now): int
+	public function reprogram_jobs(string $userlogin, int $now)
 	{
 		// phpcs:enable
 		dol_syslog(get_class($this)."::reprogram_jobs userlogin:$userlogin", LOG_DEBUG);
