@@ -504,7 +504,7 @@ if ($id > 0 || $ref) {
 					print '<input type="hidden" name="socid" value="'.$socid.'">';
 				} else {
 					$events = array();
-					$events[] = array('method' => 'getVatRates', 'url' => dol_buildpath('/core/ajax/vatrates.php', 1), 'htmlname' => 'tva_tx', 'params' => array());
+					//$events[] = array('method' => 'getVatRates', 'url' => dol_buildpath('/core/ajax/vatrates.php', 1), 'htmlname' => 'tva_tx', 'params' => array()); doesn't change the default VAT rate
 					$filter = '(fournisseur:=:1)';
 					print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(GETPOST("id_fourn", 'alpha'), 'id_fourn', $filter, 'SelectThirdParty', 0, 0, $events);
 
@@ -519,7 +519,7 @@ if ($id > 0 || $ref) {
 					}
 					print '<script type="text/javascript">
 					$(document).ready(function () {
-						$("#search_id_fourn").change(load_vat)
+						$("#id_fourn").change(load_vat)
 						console.log("Requesting default VAT rate for the supplier...")
 					});
 					function load_vat() {
