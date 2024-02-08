@@ -1034,7 +1034,7 @@ class Cronjob extends CommonObject
 	 * @param	int		$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 * @return	string								String with URL
 	 */
-	public function getNomUrl(int $withpicto = 0, string $option = '', int $notooltip = 0, string $morecss = '', int $save_lastsearch_value = -1): string
+	public function getNomUrl(int $withpicto = 0, string $option = '', int $notooltip = 0, string $morecss = '', int $save_lastsearch_value = -1)
 	{
 		global $conf, $langs;
 
@@ -1512,7 +1512,7 @@ class Cronjob extends CommonObject
 	 * @param	int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 * @return	string					Label of status
 	 */
-	public function getLibStatut(int $mode = 0): string
+	public function getLibStatut(int $mode = 0)
 	{
 		return $this->libStatus($this->status, $mode, $this->processing, $this->lastresult);
 	}
@@ -1526,7 +1526,7 @@ class Cronjob extends CommonObject
 	 * @param	string	$lastResult			Value of last result (''=no error, error otherwise)
 	 * @return	string						Label of status
 	 */
-	public function libStatus(int $status, int $mode = 0, int $processing = 0, string $lastResult = ''): string
+	public function libStatus(int $status, int $mode = 0, int $processing = 0, string $lastResult = '')
 	{
 		$this->labelStatus = array(); // Force reset o array because label depends on other fields
 		$this->labelStatusShort = array();
