@@ -1514,7 +1514,7 @@ class Cronjob extends CommonObject
 	 */
 	public function getLibStatut(int $mode = 0)
 	{
-		return $this->libStatus($this->status, $mode, $this->processing, $this->lastresult);
+		return $this->LibStatut($this->status, $mode, $this->processing, $this->lastresult);
 	}
 
 	/**
@@ -1526,7 +1526,7 @@ class Cronjob extends CommonObject
 	 * @param	string	$lastResult			Value of last result (''=no error, error otherwise)
 	 * @return	string						Label of status
 	 */
-	public function libStatus(int $status, int $mode = 0, int $processing = 0, string $lastResult = '')
+	public function LibStatut(int $status, int $mode = 0, int $processing = 0, string $lastResult = '')
 	{
 		$this->labelStatus = array(); // Force reset o array because label depends on other fields
 		$this->labelStatusShort = array();
