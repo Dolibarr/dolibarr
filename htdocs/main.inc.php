@@ -841,11 +841,17 @@ if (!defined('NOLOGIN')) {
 		if ($test && $goontestloop && (GETPOST('actionlogin', 'aZ09') == 'login' || $dolibarr_main_authentication != 'dolibarr')) {
 			// Loop on each test mode defined into $authmode
 			// $authmode is an array for example: array('0'=>'dolibarr', '1'=>'googleoauth');
-			if (in_array('googleoauth', $authmode)) {
-				if (GETPOST('beforeoauthloginredirect') != 'google') {
+			$oauthmodetotestarray = array('google');
+			foreach ($oauthmodetotestarray as $oauthmodetotest) {
+				if (in_array($oauthmodetotest.'oauth', $authmode) && GETPOST('beforeoauthloginredirect') != $oauthmodetotest) {
 					// If we did not click on the link to use OAuth authentication, we do not try it.
 					dol_syslog("User did not click on link for OAuth so we disable check using googleoauth");
-					unset($authmode['googleoauth']);
+					foreach ($authmode as $tmpkey => $tmpval) {
+						if ($tmpval == $oauthmodetotest.'oauth') {
+							unset($authmode[$tmpkey]);
+							break;
+						}
+					}
 				}
 			}
 
