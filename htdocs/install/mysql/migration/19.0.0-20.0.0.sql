@@ -207,6 +207,8 @@ ALTER TABLE llx_categorie ADD COLUMN position integer DEFAULT 0 AFTER color;
 
 ALTER TABLE llx_product DROP COLUMN onportal;
 
+ALTER TABLE llx_product ADD COLUMN last_main_doc varchar(255);
+
 ALTER TABLE llx_knowledgemanagement_knowledgerecord MODIFY COLUMN answer longtext;
 
 -- Rename const to add customer categories on not customer/prospect third-party if enabled

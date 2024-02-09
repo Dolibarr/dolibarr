@@ -4036,6 +4036,7 @@ if ($action == 'createsite') {
 }
 
 if ($action == 'importsite') {
+	print '<!-- action=importsite -->';
 	print '<div class="fiche">';
 
 	print '<br>';

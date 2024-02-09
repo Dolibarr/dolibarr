@@ -123,6 +123,8 @@ class modMyModule extends DolibarrModules
 			),
 			// Set this to 1 if features of module are opened to external users
 			'moduleforexternal' => 0,
+			// Set this to 1 if the module provides a website template into doctemplates/websites/website_template-mytemplate
+			'websitetemplates' => 0
 		);
 
 		// Data directories to create when module is enabled.
