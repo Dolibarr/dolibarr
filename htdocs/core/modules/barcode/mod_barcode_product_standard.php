@@ -291,8 +291,6 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 */
 	public function verif_dispo($db, $code, $product)
 	{
-		global $entity;
-
 		// phpcs:enable
 		$sql = "SELECT barcode FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE barcode = '".$db->escape($code)."'";
