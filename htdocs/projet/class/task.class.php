@@ -370,7 +370,7 @@ class Task extends CommonObjectLine
 		$sql .= " t.datee as date_end,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_valid,";
-		$sql .= " t.status,";
+		$sql .= " t.fk_status as status,";
 		$sql .= " t.progress,";
 		$sql .= " t.budget_amount,";
 		$sql .= " t.priority,";
@@ -415,6 +415,7 @@ class Task extends CommonObjectLine
 				$this->date_end				= $this->db->jdate($obj->date_end);
 				$this->fk_user_creat		= $obj->fk_user_creat;
 				$this->fk_user_valid		= $obj->fk_user_valid;
+				$this->fk_statut		    = $obj->status;
 				$this->status			    = $obj->status;
 				$this->progress				= $obj->progress;
 				$this->budget_amount		= $obj->budget_amount;
@@ -960,7 +961,7 @@ class Task extends CommonObjectLine
 			$sql .= " DISTINCT"; // We may get several time the same record if user has several roles on same project/task
 		}
 		$sql .= " p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut as projectstatus, p.usage_bill_time,";
-		$sql .= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.status as status,";
+		$sql .= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
 		$sql .= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang,";
 		$sql .= " t.description, ";
 		$sql .= " t.budget_amount, ";
@@ -1154,7 +1155,8 @@ class Task extends CommonObjectLine
 					}
 
 					$tasks[$i]->progress		= $obj->progress;
-					$tasks[$i]->status = $obj->status;
+					$tasks[$i]->fk_statut		= $obj->status;
+					$tasks[$i]->status 		    = $obj->status;
 					$tasks[$i]->public = $obj->public;
 					$tasks[$i]->date_start = $this->db->jdate($obj->date_start);
 					$tasks[$i]->date_end		= $this->db->jdate($obj->date_end);
@@ -2316,7 +2318,7 @@ class Task extends CommonObjectLine
 
 		// List of tasks (does not care about permissions. Filtering will be done later)
 		$sql = "SELECT p.rowid as projectid, p.fk_statut as projectstatus,";
-		$sql .= " t.rowid as taskid, t.progress as progress, t.status as status,";
+		$sql .= " t.rowid as taskid, t.progress as progress, t.fk_statut as status,";
 		$sql .= " t.dateo as date_start, t.datee as date_end";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
@@ -2355,6 +2357,7 @@ class Task extends CommonObjectLine
 
 				$task_static->projectstatus = $obj->projectstatus;
 				$task_static->progress = $obj->progress;
+				$task_static->fk_statut = $obj->status;
 				$task_static->status = $obj->status;
 				$task_static->date_start = $this->db->jdate($obj->date_start);
 				$task_static->date_end = $this->db->jdate($obj->date_end);
