@@ -1100,7 +1100,7 @@ textarea.centpercent {
 	white-space: nowrap;
 	display: inline-block;
 }
-.wrapimp {
+.wrapimp, .wrapimp pre {
 	white-space: normal !important;
 }
 .wordwrap {
