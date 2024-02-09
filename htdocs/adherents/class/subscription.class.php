@@ -43,6 +43,8 @@ class Subscription extends CommonObject
 	public $table_element = 'subscription';
 
 	/**
+ 	 * Does this object supports the multicompany module ?
+ 	 *
 	 * @var int|string 		0 if no test on entity, 1 if test with field entity, 'field@table' if test with link by field@table
 	 */
 	public $ismultientitymanaged = 'fk_adherent@adherent';
