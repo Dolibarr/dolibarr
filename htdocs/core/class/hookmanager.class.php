@@ -207,7 +207,7 @@ class HookManager
 		}
 
 		// Init return properties
-		$this->resPrint = '';
+		$localResPrint = '';
 		$this->resArray = array();
 		$this->resNbOfHooks = 0;
 
@@ -270,9 +270,9 @@ class HookManager
 						}
 						if (!empty($actionclassinstance->resprints)) {
 							if ($resactiontmp > 0) {
-								$this->resPrint = $actionclassinstance->resprints;
+								$localResPrint = $actionclassinstance->resprints;
 							} else {
-								$this->resPrint .= $actionclassinstance->resprints;
+								$localResPrint .= $actionclassinstance->resprints;
 							}
 						}
 					} else {
@@ -294,7 +294,7 @@ class HookManager
 							$this->resArray = array_merge($this->resArray, $actionclassinstance->results);
 						}
 						if (!empty($actionclassinstance->resprints)) {
-							$this->resPrint .= $actionclassinstance->resprints;
+							$localResPrint .= $actionclassinstance->resprints;
 						}
 						if (is_numeric($resactiontmp) && $resactiontmp < 0) {
 							$error++;
@@ -307,7 +307,7 @@ class HookManager
 						if (!is_array($resactiontmp) && !is_numeric($resactiontmp)) {
 							dol_syslog('Error: Bug into hook '.$method.' of module class '.get_class($actionclassinstance).'. Method must not return a string but an int (0=OK, 1=Replace, -1=KO) and set string into ->resprints', LOG_ERR);
 							if (empty($actionclassinstance->resprints)) {
-								$this->resPrint .= $resactiontmp;
+								$localResPrint .= $resactiontmp;
 							}
 						}
 					}
@@ -319,6 +319,8 @@ class HookManager
 				}
 			}
 		}
+
+		$this->resPrint = $localResPrint;
 
 		return ($error ? -1 : $resaction);
 	}
