@@ -121,8 +121,8 @@ abstract class CommonObject
 	public $table_element_line = '';
 
 	/**
- 	 * Does this object supports the multicompany module ?
- 	 *
+	 * Does this object supports the multicompany module ?
+	 *
 	 * @var int|string 		0 if no test on entity, 1 if test with field entity, 2 if test with link by fk_soc, 'field@table' if test with link by field@table
 	 */
 	public $ismultientitymanaged;
