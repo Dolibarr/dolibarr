@@ -282,7 +282,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 				$sepaname = '______________________________________________';
 				if ($thirdparty->id > 0) {
-					$sepaname = $thirdparty->name.($object->account_owner ? ' ('.$object->account_owner.')' : '');
+					$sepaname = $thirdparty->name.($object->proprio ? ' ('.$object->proprio.')' : '');
 				}
 				$posY = $pdf->GetY();
 				$posY += 3;
@@ -303,7 +303,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $sepavatid, 0, 'L');
 
 				$address = '______________________________________________';
-				if ($thirdparty->id > 0) {
+				if(!empty($object->owner_address)) {
+					$address = $object->owner_address;
+				} else if ($thirdparty->id > 0) {
 					$address = $thirdparty->getFullAddress();
 				}
 				$posY = $pdf->GetY();
