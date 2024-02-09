@@ -1100,7 +1100,7 @@ textarea.centpercent {
 	white-space: nowrap;
 	display: inline-block;
 }
-.wrapimp {
+.wrapimp, .wrapimp pre {
 	white-space: normal !important;
 }
 .wordwrap {
@@ -1289,7 +1289,7 @@ body[class*="colorblind-"] .text-success{
 	color : <?php print $textDanger; ?>
 }
 
-.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfielda span.fa-crop,
+.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfielda span.fa-crop, .editfielda span.fa-eye,
 .editfieldlang {
 	color: #ccc !important;
 }
@@ -4513,7 +4513,7 @@ tr.liste_titre th, tr.liste_titre td, th.liste_titre
 {
 	border-bottom: 1px solid #aaa;
 }
-/* TODO Once title line is moved under title search, make border bottom of all th black and force to whit when it's first tr */
+/* TODO Once the title line is moved under title search, make th border bottoms black and force to white when it's the first tr */
 tr:first-child th.liste_titre, tr:first-child th.liste_titre_sel {
 	border-bottom: 1px solid #FFF ! important;
 }

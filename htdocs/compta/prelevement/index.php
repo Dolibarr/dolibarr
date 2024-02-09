@@ -44,7 +44,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'prelevement', '', 'bons');
 
-$usercancreate = $user->rights->prelevement->bons->creer;
+$usercancreate = $user->hasRight('prelevement', 'bons', 'creer');
 
 
 /*

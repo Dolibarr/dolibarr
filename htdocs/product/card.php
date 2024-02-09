@@ -2638,7 +2638,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				// Description
-				print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>'.(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true)).'</td></tr>';
+				print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreakimp wrapimp">'.(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true)).'</td></tr>';
 
 				// Public URL
 				if (!getDolGlobalString('PRODUCT_DISABLE_PUBLIC_URL')) {

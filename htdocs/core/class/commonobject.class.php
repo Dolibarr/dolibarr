@@ -4519,7 +4519,7 @@ abstract class CommonObject
 	 */
 	public function setStatut($status, $elementId = null, $elementType = '', $trigkey = '', $fieldstatus = 'fk_statut')
 	{
-		global $user, $langs, $conf;
+		global $user;
 
 		$savElementId = $elementId; // To be used later to know if we were using the method using the id of this or not.
 
@@ -9029,6 +9029,45 @@ abstract class CommonObject
 			}
 		}
 		return $buyPrice;
+	}
+
+	/**
+	 * getDataToShowPhoto
+	 *
+	 * @param 	string	$modulepart		Module part
+	 * @param 	string	$imagesize		Image size
+	 * @return 	array					Array of data to show photo
+	 */
+	public function getDataToShowPhoto($modulepart, $imagesize)
+	{
+		global $conf;
+
+		$newmodulepart = $modulepart;
+		if ($modulepart == 'unknown' && !empty($this->module)) {
+			$newmodulepart = $this->module;
+		}
+
+		$id = $this->id;
+
+		$dir = $conf->$newmodulepart->dir_output;
+		if (!empty($this->photo)) {
+			if (dolIsAllowedForPreview($this->photo)) {
+				if ((string) $imagesize == 'mini') {
+					$file = get_exdir(0, 0, 0, 0, $this, $newmodulepart) . 'photos/' . dol_sanitizeFileName(getImageFileNameForSize($this->photo, '_mini'));
+				} elseif ((string) $imagesize == 'small') {
+					$file = get_exdir(0, 0, 0, 0, $this, $newmodulepart) . 'photos/' . dol_sanitizeFileName(getImageFileNameForSize($this->photo, '_small'));
+				} else {
+					$file = get_exdir(0, 0, 0, 0, $this, $newmodulepart) . 'photos/' . dol_sanitizeFileName($this->photo);
+				}
+				$originalfile = get_exdir(0, 0, 0, 0, $this, $newmodulepart) . 'photos/' . dol_sanitizeFileName($this->photo);
+			}
+		}
+
+		$altfile = '';
+		$email = empty($this->email) ? '' : $this->email;
+		$capture = '';
+
+		return array('dir' => $dir, 'file' => $file, 'originalfile' => $originalfile, 'altfile' => $altfile, 'email' => $email, 'capture' => $capture);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

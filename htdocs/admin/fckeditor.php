@@ -126,15 +126,18 @@ if (GETPOST('save', 'alpha')) {
 			$error++;
 		}
 	} else {
-		$error++;
+		$error = -1;	// -1 means a warning message
 	}
 
-	if (!$error) {
+	if ($error == 0) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} elseif ($error == -1) {
+		setEventMessages($langs->trans("EmptyMessageNotAllowedError"), null, 'warnings');
 	} else {
 		setEventMessages($langs->trans("Error").' '.$db->lasterror(), null, 'errors');
 	}
 }
+
 
 /*
  * View

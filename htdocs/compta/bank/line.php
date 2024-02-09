@@ -375,7 +375,7 @@ if ($result) {
 		$i++;
 
 		// Bank account
-		print '<tr><td class="titlefieldcreate">'.$langs->trans("Account").'</td>';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("BankAccount").'</td>';
 		print '<td>';
 		// $objp->fk_account may be not > 0 if data was lost by an old bug. In such a case, we let a chance to user to fix it.
 		if (($objp->rappro || $bankline->getVentilExportCompta()) && $objp->fk_account > 0) {
@@ -494,9 +494,6 @@ if ($result) {
 			}
 			print '</td></tr>';
 		}
-
-		//$user->rights->banque->modifier=false;
-		//$user->rights->banque->consolidate=true;
 
 		// Type of payment / Number
 		print "<tr><td>".$langs->trans("Type")." / ".$langs->trans("Numero");
@@ -654,7 +651,7 @@ if ($result) {
 		print "</table>";
 
 		// Code to adjust value date with plus and less picto using an Ajax call instead of a full reload of page
-		/* Not yet ready. We must manage inline replacemet of input date field
+		/* Not yet ready. We must manage inline replacement of input date field
 		$urlajax = DOL_URL_ROOT.'/core/ajax/bankconciliate.php?token='.currentToken();
 		print '
 			<script type="text/javascript">

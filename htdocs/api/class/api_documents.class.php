@@ -338,7 +338,7 @@ class Documents extends DolibarrApi
 			require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 			// Can get doc if has permission to read all user or if it is user itself
-			if (!DolibarrApiAccess::$user->rights->user->user->lire && DolibarrApiAccess::$user->id != $id) {
+			if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && DolibarrApiAccess::$user->id != $id) {
 				throw new RestException(403);
 			}
 
@@ -352,7 +352,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'adherent' || $modulepart == 'member') {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->adherent->lire) {
+			if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 				throw new RestException(403);
 			}
 
@@ -380,7 +380,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'supplier_proposal') {
 			require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->supplier_proposal->read) {
+			if (!DolibarrApiAccess::$user->hasRight('supplier_proposal', 'read')) {
 				throw new RestException(403);
 			}
 
@@ -410,7 +410,7 @@ class Documents extends DolibarrApi
 
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
-			if (empty(DolibarrApiAccess::$user->rights->fournisseur->commande->lire) && empty(DolibarrApiAccess::$user->rights->supplier_order->lire)) {
+			if (!DolibarrApiAccess::$user->hasRight('fournisseur', 'commande', 'lire') && !DolibarrApiAccess::$user->hasRight('supplier_order', 'lire')) {
 				throw new RestException(403);
 			}
 
@@ -424,7 +424,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'shipment' || $modulepart == 'expedition') {
 			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->expedition->lire) {
+			if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
 				throw new RestException(403);
 			}
 
@@ -468,7 +468,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'produit' || $modulepart == 'product') {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->produit->lire) {
+			if (!DolibarrApiAccess::$user->hasRight('produit', 'lire')) {
 				throw new RestException(403);
 			}
 
@@ -484,7 +484,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event') {
 			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->agenda->myactions->read && !DolibarrApiAccess::$user->rights->agenda->allactions->read) {
+			if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'read') && !DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read')) {
 				throw new RestException(403);
 			}
 
@@ -498,7 +498,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'expensereport') {
 			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->expensereport->read && !DolibarrApiAccess::$user->rights->expensereport->read) {
+			if (!DolibarrApiAccess::$user->hasRight('expensereport', 'read') && !DolibarrApiAccess::$user->hasRights('expensereport', 'read')) {
 				throw new RestException(403);
 			}
 
@@ -541,7 +541,7 @@ class Documents extends DolibarrApi
 			throw new RestException(500, 'Modulepart Ecm not implemented yet.');
 			// require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
-			// if (!DolibarrApiAccess::$user->rights->ecm->read) {
+			// if (!DolibarrApiAccess::$user->hasRight('ecm', 'read')) {
 			// 	throw new RestException(403);
 			// }
 

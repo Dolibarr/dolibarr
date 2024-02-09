@@ -412,7 +412,7 @@ class ProductFournisseur extends Product
 		$qty = price2num($qty, 'MS');
 		$unitBuyPrice = price2num($buyprice / $qty, 'MU');
 
-		// We can have a puchase ref that need to buy 100 min for a given price and with a packaging of 50.
+		// We can have a purchase ref that need to buy 100 min for a given price and with a packaging of 50.
 		//$packaging = price2num(((empty($this->packaging) || $this->packaging < $qty) ? $qty : $this->packaging), 'MS');
 		$packaging = price2num((empty($this->packaging) ? $qty : $this->packaging), 'MS');
 

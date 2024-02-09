@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2016	Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2021	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2022	Anthony Berton		<anthony.berton@bb2a.fr>
- * Copyright (C) 2023	William Mead		<william.mead@manchenumerique.fr>
+/* Copyright (C) 2016		Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2021		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2022		Anthony Berton		<anthony.berton@bb2a.fr>
+ * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1372,9 +1372,10 @@ class Utils
 			}
 		}
 
+		$result = false;
 		if (!$error) {
 			$result = $mailfile->sendfile();
-			if ($result <= 0) {
+			if (!$result) {
 				$error++;
 				$output = $mailfile->error;
 			}
@@ -1382,13 +1383,13 @@ class Utils
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$this->error = $error;
+		$this->error = "Error sending backp file ".((string) $error);
 		$this->output = $output;
 
-		if ($result == true) {
+		if ($result) {
 			return 0;
 		} else {
-			return $result;
+			return -1;
 		}
 	}
 

@@ -134,7 +134,7 @@ class mod_lot_advanced extends ModeleNumRefBatch
 	 *
 	 *  @param	Societe		$objsoc	    Object thirdparty
 	 *  @param  Productlot	$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @return string|0      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{

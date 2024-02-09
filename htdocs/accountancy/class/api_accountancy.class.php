@@ -92,7 +92,7 @@ class Accountancy extends DolibarrApi
 		global $conf, $langs;
 
 		// check rights
-		if (!DolibarrApiAccess::$user->rights->accounting->mouvements->export) {
+		if (!DolibarrApiAccess::$user->hasRight('accounting', 'mouvements', 'export')) {
 			throw new RestException(401, 'No permission to export accounting');
 		}
 

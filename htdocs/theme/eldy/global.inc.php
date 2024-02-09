@@ -847,7 +847,7 @@ textarea.centpercent {
 	white-space: nowrap;
 	display: inline-block;
 }
-.wrapimp {
+.wrapimp, .wrapimp pre {
 	white-space: normal !important;
 }
 .wordwrap {
@@ -1032,7 +1032,7 @@ body[class*="colorblind-"] .text-success{
 	color : <?php print $textDanger; ?>
 }
 
-.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfielda span.fa-crop,
+.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfielda span.fa-crop, .editfielda span.fa-eye,
 .editfieldlang {
 	color: #ccc !important;
 }

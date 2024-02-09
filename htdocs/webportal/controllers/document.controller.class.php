@@ -111,7 +111,7 @@ class DocumentController extends Controller
 		if (isset($_GET["attachment"])) {
 			$attachment = GETPOST("attachment", 'alpha') ? true : false;
 		}
-		if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) {
+		if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 			$attachment = false;
 		}
 
