@@ -294,6 +294,8 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		// phpcs:enable
 		$sql = "SELECT barcode FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE barcode = '".$db->escape($code)."'";
+		$sql .= " AND entity IN (".getEntity('product').")";
+
 		if ($product->id > 0) {
 			$sql .= " AND rowid <> ".$product->id;
 		}
