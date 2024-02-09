@@ -372,8 +372,18 @@ function LoadProducts(position, issubcat) {
 				}
 				?>
 				if (data[parseInt(idata)]['price_formated']) {
-					$("#proprice"+ishow).attr("class", "productprice");
-					$("#proprice"+ishow).html(data[parseInt(idata)]['price_ttc_formated']);
+					$("#proprice" + ishow).attr("class", "productprice");
+					<?php
+					if (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT')) {
+						?>
+						$("#proprice" + ishow).html(data[parseInt(idata)]['price_formated']);
+						<?php
+					} else {
+						?>
+						$("#proprice" + ishow).html(data[parseInt(idata)]['price_ttc_formated']);
+						<?php
+					}
+					?>
 				}
 				console.log("#prodiv"+ishow+".data(rowid)="+data[idata]['id']);
 				console.log($("#prodiv"+ishow));
@@ -458,8 +468,18 @@ function MoreProducts(moreorless) {
 				$("#probutton"+ishow).html(data[parseInt(idata)]['label']);
 				$("#probutton"+ishow).show();
 				if (data[parseInt(idata)]['price_formated']) {
-					$("#proprice"+ishow).attr("class", "productprice");
-					$("#proprice"+ishow).html(data[parseInt(idata)]['price_ttc_formated']);
+					$("#proprice" + ishow).attr("class", "productprice");
+					<?php
+					if (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT')) {
+						?>
+						$("#proprice" + ishow).html(data[parseInt(idata)]['price_formated']);
+						<?php
+					} else {
+						?>
+						$("#proprice" + ishow).html(data[parseInt(idata)]['price_ttc_formated']);
+						<?php
+					}
+					?>
 				}
 				$("#proimg"+ishow).attr("src","genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
@@ -670,7 +690,17 @@ function Search2(keyCodeForEnter, moreorless) {
 					$("#probutton" + i).show();
 					if (data[i]['price_formated']) {
 						$("#proprice" + i).attr("class", "productprice");
-						$("#proprice" + i).html(data[i]['price_ttc_formated']);
+						<?php
+						if (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT')) {
+							?>
+							$("#proprice" + i).html(data[i]['price_formated']);
+							<?php
+						} else {
+							?>
+							$("#proprice" + i).html(data[i]['price_ttc_formated']);
+							<?php
+						}
+						?>
 					}
 					$("#proimg" + i).attr("title", titlestring);
 					if( undefined !== data[i]['img']) {

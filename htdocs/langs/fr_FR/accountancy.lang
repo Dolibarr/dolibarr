@@ -119,7 +119,7 @@ MenuExpenseReportAccounts=Comptes notes de frais
 MenuLoanAccounts=Comptes emprunts
 MenuProductsAccounts=Comptes produits
 MenuClosureAccounts=Comptes de fermeture
-MenuAccountancyClosure=Cloture
+MenuAccountancyClosure=Fermeture annuelle
 MenuExportAccountancy=Export comptabilité
 MenuAccountancyValidationMovements=Valider les mouvements
 ProductsBinding=Comptes produits
@@ -448,9 +448,9 @@ AccountancyUnletteringModifiedSuccessfully=%s annulations de lettrage modifiées
 
 ## Closure
 AccountancyClosureStep1=Étape 1 : Valider et verrouiller les mouvements
-AccountancyClosureStep2=Étape 2 : Clôturer la période fiscale
+AccountancyClosureStep2=Étape 2 : Clore la période fiscale
 AccountancyClosureStep3=Étape 3 : Extourner les écritures (Optionnel)
-AccountancyClosureClose=Clôturer la période fiscale
+AccountancyClosureClose=Clore la période fiscale
 AccountancyClosureAccountingReversal=Extourner les écritures
 AccountancyClosureStep3NewFiscalPeriod=Prochaine période fiscale
 AccountancyClosureGenerateClosureBookkeepingRecords=Générer l'écriture d'à-nouveaux sur le nouvel exercice
@@ -464,7 +464,7 @@ ConfirmMassUnletteringManual=Confirmation de l'annulation du lettrage manuel
 ConfirmMassUnletteringQuestion=Voulez-vous vraiment annuler le lettrage des %s enregistrements sélectionnés ?
 ConfirmMassDeleteBookkeepingWriting=Confirmation de suppression en masse
 ConfirmMassDeleteBookkeepingWritingQuestion=Cela supprimera la transaction de la comptabilité (toutes les lignes liées à cette transaction seront supprimées). Êtes-vous sûr de vouloir supprimer les %s enregistrements sélectionnés ?
-AccountancyClosureConfirmClose=Êtes-vous sûr de vouloir clôturer la période fiscale actuelle ? <span class="warning">La clôture de la période fiscale est une action irréversible et elle bloquera de manière permanente toute modification ou suppression d'entrées au cours de cette période.</span>.
+AccountancyClosureConfirmClose=Êtes-vous sûr de vouloir clore la période fiscale actuelle ? <span class="warning">La clôture de la période fiscale est une action irréversible et elle bloquera de manière permanente toute modification ou suppression d'entrées au cours de cette période.</span>.
 AccountancyClosureConfirmAccountingReversal=Êtes-vous sûr de vouloir extourner les écritures ?
 
 ## Error

@@ -39,6 +39,8 @@
 -- VMYSQL4.3 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN `rank` rankorder integer;
 -- VPGSQL8.2 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN rank rankorder integer;
 
+ALTER TABLE llx_projet_task ADD COLUMN fk_user_modif integer after fk_user_creat;
+
 ALTER TABLE llx_accounting_system CHANGE COLUMN fk_pays fk_country integer;
 
 ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN ref varchar(128);
@@ -580,7 +582,7 @@ ALTER TABLE llx_facture ADD COLUMN fk_input_reason integer NULL DEFAULT NULL AFT
 
 -- Product/service managed in stock
 ALTER TABLE llx_product ADD COLUMN stockable_product integer DEFAULT 1 NOT NULL;
-UPDATE llx_product set stockable_product = 0 WHERE type = 1;
+UPDATE llx_product set stockable_product = 0 WHERE fk_product_type = 1;
 
 -- Rename const to add customer categories on not customer/prospect third-party if enabled
 UPDATE llx_const SET name = 'THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT' WHERE name = 'THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER';
