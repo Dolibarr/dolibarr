@@ -170,7 +170,7 @@ function check_events() {
 							body: body,
 							lang: '<?php print dol_escape_js($langs->getDefaultLang(1)); ?>',
 							tag: value.id_agenda,
-							requireInteraction: true
+							requireInteraction: true	/* wait that the user click or close the notification */
 							/* only supported for persistent notification shown using ServiceWorkerRegistration.showNotification() so disabled */
 							/* actions: [{ action: 'action1', title: 'New Button Label' }, { action: 'action2', title: 'Another Button' }] */
 						};
@@ -185,7 +185,7 @@ function check_events() {
 
 						if (noti[index]) {
 							noti[index].onclick = function (event) {
-								/* If the use has clicked on button Activate */
+								/* If the user has clicked on button Activate */
 								console.log("A click on notification on browser has been done for url="+url);
 								event.preventDefault(); // prevent the browser from focusing the Notification's tab
 								window.focus();
