@@ -106,8 +106,8 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Permissions
-$permissionnote = $user->rights->eventorganization->conferenceorboothattendee->write; // Used by the include of actions_setnotes.inc.php
-$permissiontoadd = $user->rights->eventorganization->conferenceorboothattendee->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissionnote = $user->hasRight('eventorganization', 'conferenceorboothattendee', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->hasRight('eventorganization', 'conferenceorboothattendee', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 
 

@@ -45,7 +45,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'paymentbybanktransfer', '', '');
 
-$usercancreate = $user->rights->paymentbybanktransfer->create;
+$usercancreate = $user->hasRight('paymentbybanktransfer', 'create');
 
 
 /*

@@ -498,7 +498,8 @@ class FileUpload
 		$error = 0;
 
 		$upload = isset($_FILES[$this->options['param_name']]) ? $_FILES[$this->options['param_name']] : null;
-		$info = array();
+
+    $info = array();
 		if ($upload && is_array($upload['tmp_name'])) {
 			// param_name is an array identifier like "files[]",
 			// $_FILES is a multi-dimensional array:

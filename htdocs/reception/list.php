@@ -207,9 +207,9 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Reception';
 	$objectlabel = 'Receptions';
-	$permissiontoread = $user->rights->reception->lire;
-	$permissiontoadd = $user->rights->reception->creer;
-	$permissiontodelete = $user->rights->reception->supprimer;
+	$permissiontoread = $user->hasRight('reception', 'lire');
+	$permissiontoadd = $user->hasRight('reception', 'creer');
+	$permissiontodelete = $user->hasRight('reception', 'supprimer');
 	$uploaddir = $conf->reception->multidir_output[$conf->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 

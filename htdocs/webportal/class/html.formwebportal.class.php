@@ -273,7 +273,7 @@ class FormWebPortal extends Form
 		}
 
 		// Get list of files starting with name of ref (Note: files with '^ref\.extension' are generated files, files with '^ref-...' are uploaded files)
-		if ($allfiles || !empty($conf->global->MAIN_SHOW_ALL_FILES_ON_DOCUMENT_TOOLTIP)) {
+		if ($allfiles || getDolGlobalString('MAIN_SHOW_ALL_FILES_ON_DOCUMENT_TOOLTIP')) {
 			$filterforfilesearch = '^' . preg_quote(basename($modulesubdir), '/');
 		} else {
 			$filterforfilesearch = '^' . preg_quote(basename($modulesubdir), '/') . '\.';

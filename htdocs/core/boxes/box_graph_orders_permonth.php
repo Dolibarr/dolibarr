@@ -47,7 +47,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->commande->lire);
+		$this->hidden = !$user->hasRight('commande', 'lire');
 	}
 
 	/**

@@ -86,7 +86,7 @@ $upload_dir = $conf->don->dir_output;
 // Security check
 $result = restrictedArea($user, 'don', $object->id);
 
-$permissiontoadd = $user->rights->don->creer;
+$permissiontoadd = $user->hasRight('don', 'creer');
 
 
 /*
@@ -962,8 +962,8 @@ if (!empty($id) && $action != 'edit') {
 	$filename = dol_sanitizeFileName($object->id);
 	$filedir = $conf->don->dir_output."/".dol_sanitizeFileName($object->id);
 	$urlsource = $_SERVER['PHP_SELF'].'?rowid='.$object->id;
-	$genallowed	= (($object->paid == 0 || $user->admin) && $user->rights->don->lire);
-	$delallowed	= $user->rights->don->creer;
+	$genallowed	= (($object->paid == 0 || $user->admin) && $user->hasRight('don', 'lire'));
+	$delallowed	= $user->hasRight('don', 'creer');
 
 	print $formfile->showdocuments('donation', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 

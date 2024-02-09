@@ -49,5 +49,8 @@ CREATE TABLE llx_ticket
     last_main_doc varchar(255),             -- relative filepath+filename of last main generated document
     extraparams   varchar(255),             -- to save other parameters with json format
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	model_pdf varchar(255),
+	last_main_doc varchar(255),				-- relative filepath+filename of last main generated document
+	extraparams varchar(255),				-- to save other parameters with json format
     import_key        varchar(14)
 )ENGINE=innodb;

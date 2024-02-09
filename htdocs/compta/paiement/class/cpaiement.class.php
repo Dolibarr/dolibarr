@@ -365,7 +365,6 @@ class Cpaiement extends CommonDict
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-
 		$this->code = '';
 		$this->libelle = '';
 		$this->label = '';

@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "stocks"));
 
-// Securit check
+// Security check
 if (!$user->admin) {
 	accessforbidden();
 }
