@@ -123,7 +123,7 @@ abstract class CommonObject
 	/**
  	 * Does this object supports the multicompany module ?
  	 *
-	 * @var int|string 		0 if no test on entity, 1 if test with field entity, 'field@table' if test with link by field@table
+	 * @var int|string 		0 if no test on entity, 1 if test with field entity, 2 if test with link by fk_soc, 'field@table' if test with link by field@table
 	 */
 	public $ismultientitymanaged;
 
