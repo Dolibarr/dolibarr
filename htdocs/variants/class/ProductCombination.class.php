@@ -283,16 +283,23 @@ class ProductCombination
 	/**
 	 * Retrieves all product combinations by the product parent row id
 	 *
-	 * @param int $fk_product_parent Rowid of parent product
-	 * @return int|ProductCombination[] <0 KO
+	 * @param	int							$fk_product_parent	Rowid of parent product
+	 * @param	bool						$sort_by_ref		Sort result by product child reference
+	 * @return	int|ProductCombination[]						Return integer <0 KO
 	 */
-	public function fetchAllByFkProductParent($fk_product_parent)
+	public function fetchAllByFkProductParent($fk_product_parent, $sort_by_ref = false)
 	{
 		global $conf;
 
-		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_ref_ext, variation_weight";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_attribute_combination";
-		$sql.= " WHERE fk_product_parent = ".((int) $fk_product_parent)." AND entity IN (".getEntity('product').")";
+		$sql = "SELECT pac.rowid, pac.fk_product_parent, pac.fk_product_child, pac.variation_price, pac.variation_price_percentage, pac.variation_ref_ext, pac.variation_weight";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_attribute_combination AS pac";
+		if ($sort_by_ref) {
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product AS p ON p.rowid = pac.fk_product_child";
+		}
+		$sql.= " WHERE pac.fk_product_parent = ".((int) $fk_product_parent)." AND pac.entity IN (".getEntity('product').")";
+		if ($sort_by_ref) {
+			$sql.= $this->db->order('p.ref', 'ASC');
+		}
 
 		$query = $this->db->query($sql);
 
