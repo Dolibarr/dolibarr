@@ -138,7 +138,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			// For merge event, we add a mention
 			if (!empty($object->context['mergefromname'])) {
-				$object->actionmsg = dol_concatdesc($object->actionmsg, $langs->trans("DataFromWasMerged", $object->context['mergefromname']));
+				$object->actionmsg = dol_concatdesc($object->actionmsg, $langs->trans("DataFromWasMerged", $object->context['mergefromname'].' (id='.$object->context['mergefromname'].')'));
 			}
 
 			$object->sendtoid = 0;

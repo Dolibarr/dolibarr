@@ -96,7 +96,6 @@ if (empty($action) && empty($object->id)) {
 $upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
 
 
-
 /*
  * Actions
  */
@@ -1034,9 +1033,9 @@ if ($action == 'create') {
 			$nbemail = ($object->nbemail ? $object->nbemail : 0);
 			if (is_numeric($nbemail)) {
 				$text = '';
-				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->status == 1 || ($object->status == 2 && $nbtry < $nbemail))) {
+				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < $nbemail) && ($object->statut == 1 || ($object->statut == 2 && $nbtry < $nbemail))) {
 					if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
-						$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
+						$text .= $langs->trans('LimitSendingEmailing', getDolGlobalInt('MAILING_LIMIT_SENDBYWEB'));
 					} else {
 						$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 					}

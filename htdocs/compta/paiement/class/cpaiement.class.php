@@ -369,7 +369,7 @@ class Cpaiement extends CommonDict
 		$this->libelle = '';
 		$this->label = '';
 		$this->type = '';
-		$this->active = 0;
+		$this->active = 1;
 		$this->accountancy_code = '';
 		$this->module = '';
 	}

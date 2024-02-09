@@ -25,6 +25,7 @@ CREATE TABLE llx_ticket
 	fk_project	integer DEFAULT 0,
 	fk_contract	integer DEFAULT 0,
 	origin_email   varchar(128),
+	origin_replyto   varchar(128),
 	fk_user_create	integer,
 	fk_user_assign	integer,
 	subject	varchar(255),
@@ -44,6 +45,9 @@ CREATE TABLE llx_ticket
 	email_msgid varchar(255),				-- if ticket is created by email collector, we store here MSG ID
 	email_date datetime,					-- if ticket is created by email collector, we store here Date of message
 	ip varchar(250),
+	model_pdf     varchar(255),
+    last_main_doc varchar(255),             -- relative filepath+filename of last main generated document
+    extraparams   varchar(255),             -- to save other parameters with json format
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	model_pdf varchar(255),
 	last_main_doc varchar(255),				-- relative filepath+filename of last main generated document

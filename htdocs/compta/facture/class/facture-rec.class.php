@@ -741,8 +741,6 @@ class FactureRec extends CommonInvoice
 				$line->total_tva		= $objp->total_tva;
 				$line->total_ttc		= $objp->total_ttc;
 
-				//$line->code_ventilation = $objp->fk_code_ventilation;
-
 				$line->fk_product_fournisseur_price = $objp->fk_product_fournisseur_price;
 				$line->fk_fournprice = $objp->fk_product_fournisseur_price; // For backward compatibility
 
@@ -1263,12 +1261,11 @@ class FactureRec extends CommonInvoice
 	 * Format string to output with by striking the string if max number of generation was reached
 	 *
 	 * @param	string		$ret	Default value to output
-	 * @return	boolean				False by default, True if maximum number of generation is reached
+	 * @return	string				html formatted string
 	 */
 	public function strikeIfMaxNbGenReached($ret)
 	{
-		// Special case to strike the date
-		return ($this->isMaxNbGenReached() ? '<strike>' : '').$ret.($this->isMaxNbGenReached() ? '</strike>' : '');
+		return $this->isMaxNbGenReached() ? '<strike>'.$ret.'</strike>' : $ret;
 	}
 
 	/**
@@ -1296,7 +1293,7 @@ class FactureRec extends CommonInvoice
 		$tmparray = dol_getdate($now);
 		$today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year']); // Today is last second of current day
 
-		$this->output = null;
+		$this->output = '';
 
 		dol_syslog("createRecurringInvoices restrictioninvoiceid=".$restrictioninvoiceid." forcevalidation=".$forcevalidation);
 
@@ -2279,7 +2276,7 @@ class FactureLigneRec extends CommonInvoiceLine
 			$this->total_ht         = $objp->total_ht;
 			$this->total_tva        = $objp->total_tva;
 			$this->total_ttc        = $objp->total_ttc;
-			//$this->code_ventilation = $objp->fk_code_ventilation;
+
 			$this->rang = $objp->rang;
 			$this->special_code = $objp->special_code;
 			$this->fk_unit          = $objp->fk_unit;

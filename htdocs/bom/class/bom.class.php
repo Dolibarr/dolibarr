@@ -172,6 +172,9 @@ class BOM extends CommonObject
 	 */
 	public $date_valid;
 
+	/**
+	 * @var int timestamp
+	 */
 	public $tms;
 
 	/**
@@ -1446,7 +1449,8 @@ class BOM extends CommonObject
 							$this->error = $tmpproduct->error;
 							return -1;
 						}
-						$line->unit_cost = (float) price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : (float) $tmpproduct->pmp);
+						$unit_cost = (!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp;
+						$line->unit_cost = (float) price2num($unit_cost);
 						if (empty($line->unit_cost)) {
 							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
 								if ($productFournisseur->fourn_remise_percent != "0") {

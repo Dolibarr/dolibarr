@@ -221,6 +221,7 @@ foreach (array('internal', 'external') as $source) {
 		$entry->type = $contact['libelle'];
 		$entry->nature = "";
 		$entry->nature_html = "";
+		$entry->thirdparty_id = 0;
 		$entry->thirdparty_html = "";
 		$entry->thirdparty_name = "";
 		$entry->contact_html = "";

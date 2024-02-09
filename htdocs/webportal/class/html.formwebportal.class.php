@@ -699,7 +699,7 @@ class FormWebPortal extends Form
 
 				if ($type == 'datetime') {
 					//$moreparam .= ' step="1"'; to show seconds
-					$out .= ' ' . $this->inputType('time', $htmlName . '_time', $valueTime, $htmlName . '_time', $morecss, $moreparam);
+					$out .= ' ' . $this->inputType('time', $htmlName.'_time', $valueTime, $htmlId, $morecss, $moreparam);
 				}
 				break;
 

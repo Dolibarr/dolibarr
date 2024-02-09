@@ -1418,9 +1418,10 @@ function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, 
  *  @param  int				$hideref       		Hide reference
  *  @param  int				$hidedesc           Hide description
  * 	@param	int				$issupplierline		Is it a line for a supplier object ?
+ *  @param	string			$align				text alignment ('L', 'C', 'R', 'J' (default))
  * 	@return	string
  */
-function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $posy, $hideref = 0, $hidedesc = 0, $issupplierline = 0)
+function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $posy, $hideref = 0, $hidedesc = 0, $issupplierline = 0, $align = 'J')
 {
 	global $db, $conf, $langs, $hookmanager;
 
@@ -1453,7 +1454,7 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 		//var_dump($labelproductservice);exit;
 
 		// Description
-		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, 'J', true);
+		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, $align, true);
 		$result .= $labelproductservice;
 	}
 	return $result;

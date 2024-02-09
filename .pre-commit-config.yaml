@@ -60,7 +60,7 @@ repos:
         args: [--standard=dev/setup/codesniffer/ruleset.xml]
       - id: php-cs
         files: \.(php)$
-        args: [--standard=dev/setup/codesniffer/ruleset.xml, --report=emacs]
+        args: [--standard=dev/setup/codesniffer/ruleset.xml, --report=emacs, --severity=5]
       - id: php-lint
       - id: php-stan
         stages: [manual]

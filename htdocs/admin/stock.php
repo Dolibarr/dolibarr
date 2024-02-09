@@ -40,6 +40,7 @@ if (!$user->admin) {
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'stock';
@@ -48,6 +49,7 @@ $type = 'stock';
 /*
  * Action
  */
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 $reg = array();
 
@@ -196,7 +198,7 @@ if (isModEnabled('productbatch')) {
 		// STOCK_CALCULATE_ON_RECEPTION_CLOSE
 		$incmode = $langs->trans('StockOnReceptionOnClosing');
 	}
-	print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced", $descmode, $incmode));
+	print info_admin($langs->transnoentitiesnoconv("WhenProductBatchModuleOnOptionAreForced", $descmode, $incmode));
 }
 
 
@@ -618,7 +620,7 @@ foreach ($dirmodels as $reldir) {
 
 								// Default
 								print '<td class="center">';
-								if ($conf->global->STOCK_ADDON_PDF == $name) {
+								if (getDolGlobalString('STOCK_ADDON_PDF') == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
 									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';

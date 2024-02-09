@@ -1985,17 +1985,20 @@ function is_ip($ip)
  */
 function dol_buildlogin($lastname, $firstname)
 {
-	global $conf;
-
 	//$conf->global->MAIN_BUILD_LOGIN_RULE = 'f.lastname';
+	$charforseparator = getDolGlobalString("MAIN_USER_SEPARATOR_CHAR_FOR_GENERATED_LOGIN", '.');
+	if ($charforseparator == 'none') {
+		$charforseparator = '';
+	}
+
 	if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {	// f.lastname
 		$login = strtolower(dol_string_unaccent(dol_trunc($firstname, 1, 'right', 'UTF-8', 1)));
-		$login .= ($login ? '.' : '');
+		$login .= ($login ? $charforseparator : '');
 		$login .= strtolower(dol_string_unaccent($lastname));
 		$login = dol_string_nospecial($login, ''); // For special names
 	} else {	// firstname.lastname
 		$login = strtolower(dol_string_unaccent($firstname));
-		$login .= ($login ? '.' : '');
+		$login .= ($login ? $charforseparator : '');
 		$login .= strtolower(dol_string_unaccent($lastname));
 		$login = dol_string_nospecial($login, ''); // For special names
 	}

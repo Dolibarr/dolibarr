@@ -2153,7 +2153,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if (isModEnabled('barcode')) {
 					print '<tr><td class="tdtop">'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
 					print '<td colspan="3">';
-					print img_picto('', 'barcode');
+					print img_picto('', 'barcode', 'class="pictofixedwidth"');
 					print '<input type="text" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
 					print '</td></tr>';
 				}
@@ -2185,7 +2185,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// Country
 				print '<tr><td>'.$form->editfieldkey('Country', 'selectcounty_id', '', $object, 0).'</td><td colspan="3">';
-				print img_picto('', 'globe-americas', 'class="paddingrightonly"');
+				print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
 				print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 maxwidth500 widthcentpercentminusx');
 				if ($user->admin) {
 					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);

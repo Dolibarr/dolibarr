@@ -501,7 +501,7 @@ abstract class CommonDocGenerator
 	 * Define array with couple substitution key => substitution value
 	 * Note that vars into substitutions array are formatted.
 	 *
-	 * @param   Object			$object             Main object to use as data source
+	 * @param   CommonObject	$object             Main object to use as data source
 	 * @param   Translate		$outputlangs        Lang object to use for output
 	 * @param   string		    $array_key	        Name of the key for return array
 	 * @return	array								Array of substitution
@@ -515,6 +515,7 @@ abstract class CommonDocGenerator
 		$already_payed_all = 0;
 
 		if ($object->element == 'facture') {
+			/** @var Facture $object */
 			$invoice_source = new Facture($this->db);
 			if ($object->fk_facture_source > 0) {
 				$invoice_source->fetch($object->fk_facture_source);
@@ -528,7 +529,7 @@ abstract class CommonDocGenerator
 		$date = (isset($object->element) && $object->element == 'contrat' && isset($object->date_contrat)) ? $object->date_contrat : (isset($object->date) ? $object->date : null);
 
 		if (get_class($object) == 'CommandeFournisseur') {
-			/* @var $object CommandeFournisseur*/
+			/** @var CommandeFournisseur $object*/
 			$object->date_validation =  $object->date_valid;
 			$object->date_commande = $object->date;
 		}
@@ -703,7 +704,7 @@ abstract class CommonDocGenerator
 	 *	Define array with couple substitution key => substitution value
 	 *  Note that vars into substitutions array are formatted.
 	 *
-	 *	@param  Object			$line				Object line
+	 *	@param  CommonObjectLine $line				Object line
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @param  int				$linenumber			The number of the line for the substitution of "object_line_pos"
 	 *  @return	array								Return a substitution array
@@ -926,8 +927,6 @@ abstract class CommonDocGenerator
 				}
 			}
 		}
-
-		//var_dump($array_other);
 
 		return $array_other;
 	}
@@ -1298,7 +1297,7 @@ abstract class CommonDocGenerator
 		$pdf->setCellPaddings($colDef['content']['padding'][3], $colDef['content']['padding'][0], $colDef['content']['padding'][1], $colDef['content']['padding'][2]);
 
 		// line description
-		pdf_writelinedesc($pdf, $object, $i, $outputlangs, $colDef['width'], 3, $colDef['xStartPos'], $curY, $hideref, $hidedesc, $issupplierline);
+		pdf_writelinedesc($pdf, $object, $i, $outputlangs, $colDef['width'], 3, $colDef['xStartPos'], $curY, $hideref, $hidedesc, $issupplierline, empty($colDef['content']['align']) ? 'J' : $colDef['content']['align']);
 		$posYAfterDescription = $pdf->GetY() - $colDef['content']['padding'][0];
 
 		// restore cell padding
