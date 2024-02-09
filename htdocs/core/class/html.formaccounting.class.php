@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2013-2016 Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
- * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2016-2020 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2013-2016  Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
+ * Copyright (C) 2015       Ari Elbaz (elarifr) <github@accedinfo.com>
+ * Copyright (C) 2016       Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2016-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -589,6 +589,46 @@ class FormAccounting extends Form
 			return Form::selectarray($htmlname, $out_array, $selected, $useempty, 0, 0, 'placeholder="aa"');
 		} else {
 			return $out_array;
+		}
+	}
+
+	/**
+	 *  Output html select to select accounting account
+	 *
+	 *  @param	string	$page       			Page
+	 *  @param  string	$selected   			Id preselected
+	 * 	@param	string	$htmlname				Name of HTML select object
+	 *  @param  int		$option					option (0: aggregate by general account or 1: aggregate by subaccount)
+	 *  @param  int		$useempty				Show empty value in list
+	 *  @param  string	$filter         		optional filters criteria
+	 *  @param  int		$nooutput       		No print output. Return it only.
+	 *  @return	void|string
+	 */
+	public function formAccountingAccount($page, $selected = '', $htmlname = 'none', $option = 0, $useempty = 1, $filter = '', $nooutput = 0)
+	{
+		global $langs;
+
+		$out = '';
+		if ($htmlname != "none") {
+			$out .= '<form method="post" action="' . $page . '">';
+			$out .= '<input type="hidden" name="action" value="set'.$htmlname.'">';
+			$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
+			if ($option == 0) {
+				$out .= $this->select_account($selected, $htmlname, $useempty, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
+			} else {
+				$out .= $this->select_auxaccount($selected, $htmlname, $useempty, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'subaccounts');
+			}
+			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" name="modify" value="' . $langs->trans("Modify") . '">';
+			//$out .= '<input type="submit" class="button smallpaddingimp valignmiddle button-cancel" name="cancel" value="' . $langs->trans("Cancel") . '">';
+			$out .= '</form>';
+		} else {
+			$out .= "&nbsp;";
+		}
+
+		if ($nooutput) {
+			return $out;
+		} else {
+			print $out;
 		}
 	}
 }
