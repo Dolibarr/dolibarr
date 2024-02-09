@@ -79,7 +79,7 @@ $object->fetch($id, $ref);
 $upload_dir = $conf->ficheinter->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'fichinter';
 
-$permissiontoadd = $user->hasRight('ficheinter', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->rights->ficheinter->creer; // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -164,7 +164,7 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'ficheinter';
-	$permtoedit = $user->hasRight('ficheinter', 'creer');
+	$permtoedit = $user->rights->ficheinter->creer;
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

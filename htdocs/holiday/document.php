@@ -104,7 +104,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'holiday', $object->id, 'holiday');
 
-$permissiontoadd = $user->hasRight('holiday', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->rights->holiday->write; // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -286,8 +286,8 @@ if ($object->id) {
 
 	print dol_get_fiche_end();
 
-	$permissiontoadd = $user->hasRight('holiday', 'write');
-	$permtoedit = $user->hasRight('holiday', 'write');
+	$permissiontoadd = $user->rights->holiday->write;
+	$permtoedit = $user->rights->holiday->write;
 	$param = '&id='.$object->id;
 	$relativepathwithnofile = dol_sanitizeFileName($object->ref).'/';
 	$savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';

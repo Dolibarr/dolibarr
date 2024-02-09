@@ -52,10 +52,10 @@ class EmptyGlobalToFunction extends AbstractRector
 	public function getRuleDefinition(): RuleDefinition
 	{
 		return new RuleDefinition(
-			'Change empty($conf->global->...) to getDolGlobal',
+			'Change $conf->global to getDolGlobal',
 			[new CodeSample(
-				'empty($conf->global->CONSTANT)',
-				'!getDolGlobalInt(\'CONSTANT\')'
+				'$conf->global->CONSTANT',
+				'getDolGlobalInt(\'CONSTANT\')'
 			)]
 		);
 	}
@@ -82,10 +82,10 @@ class EmptyGlobalToFunction extends AbstractRector
 			if (!$node->expr instanceof Node\Expr\Empty_) {
 				return null;
 			}
-			// node is !empty(...) so we set newnode to ...
-			$newnode = $node->expr->expr;		// newnode is conf->global->...
+			// node is !empty(...) so we set node to ...
+			$newnode = $node->expr->expr;
 
-			$tmpglobal = $newnode->var;			// tmpglobal is global->...
+			$tmpglobal = $newnode->var;
 			if (is_null($tmpglobal)) {
 				return null;
 			}
@@ -93,7 +93,7 @@ class EmptyGlobalToFunction extends AbstractRector
 				return null;
 			}
 
-			$tmpconf = $tmpglobal->var;			// tmpconf is conf->
+			$tmpconf = $tmpglobal->var;
 			if (!$this->isName($tmpconf, 'conf')) {
 				return null;
 			}
@@ -113,10 +113,10 @@ class EmptyGlobalToFunction extends AbstractRector
 
 
 		if ($node instanceof Node\Expr\Empty_) {
-			// node is empty(...) so we set newnode to ...
-			$newnode = $node->expr;			// newnode is conf->global->...
+			// node is empty(...) so we set node to ...
+			$newnode = $node->expr;
 
-			$tmpglobal = $newnode->var;		// tmpglobal is global->...
+			$tmpglobal = $newnode->var;
 			if (is_null($tmpglobal)) {
 				return null;
 			}
@@ -124,7 +124,7 @@ class EmptyGlobalToFunction extends AbstractRector
 				return null;
 			}
 
-			$tmpconf = $tmpglobal->var;		// tmpconf is conf->
+			$tmpconf = $tmpglobal->var;
 			if (!$this->isName($tmpconf, 'conf')) {
 				return null;
 			}

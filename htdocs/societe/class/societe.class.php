@@ -2664,7 +2664,7 @@ class Societe extends CommonObject
 	 *
 	 *	@param	User	$user		Object user
 	 *	@param	int		$commid		Id of user
-	 *	@return	int					Return <0 if KO, >0 if OK
+	 *	@return	void
 	 */
 	public function del_commercial(User $user, $commid)
 	{
@@ -2682,15 +2682,8 @@ class Societe extends CommonObject
 			$sql .= " WHERE fk_soc = ".((int) $this->id)." AND fk_user = ".((int) $commid);
 
 			if (!$this->db->query($sql)) {
-				$error++;
 				dol_syslog(get_class($this)."::del_commercial Erreur");
 			}
-		}
-
-		if ($error) {
-			return -1;
-		} else {
-			return 1;
 		}
 	}
 
@@ -4039,7 +4032,7 @@ class Societe extends CommonObject
 				$isACompany = 1;
 			}
 		}
-		return (bool) $isACompany;
+		return boolval($isACompany);
 	}
 
 	/**
@@ -5087,10 +5080,11 @@ class Societe extends CommonObject
 		}
 
 		/**
-		 * llx_societe_extrafields table must not be here because we don't care about the old thirdparty data
-		 * Do not include llx_societe because it will be replaced later
+		 * llx_societe_extrafields table must not be here because we don't care about the old thirdparty extrafields that are managed directly into mergeCompany.
+		 * Do not include llx_societe because it will be replaced later.
 		 */
 		$tables = array(
+			'societe_account',
 			'societe_commerciaux',
 			'societe_prices',
 			'societe_remise',
@@ -5305,6 +5299,8 @@ class Societe extends CommonObject
 
 		$error = 0;
 		$soc_origin = new Societe($this->db);		// The thirdparty that we will delete
+
+		dol_syslog("mergeCompany merge thirdparty id=".$soc_origin_id." (will be deleted) into the thirdparty id=".$this->id);
 
 		if (!$error && $soc_origin->fetch($soc_origin_id) < 1) {
 			$this->error = $langs->trans('ErrorRecordNotFound');

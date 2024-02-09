@@ -51,8 +51,8 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
-$permissiontoread = $user->hasRight('partnership', 'read');
-$permission = $user->hasRight('partnership', 'write');
+$permissiontoread = $user->rights->partnership->read;
+$permission = $user->rights->partnership->write;
 $managedfor = getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 
 // Security check - Protection if external user

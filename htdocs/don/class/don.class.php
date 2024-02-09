@@ -839,6 +839,13 @@ class Don extends CommonObject
 			return 0;
 		}
 
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->bom_advance->validate))))
+		 {
+		 $this->error='Permission denied';
+		 return -1;
+		 }*/
+
 		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'DON_REOPEN');
 	}
 

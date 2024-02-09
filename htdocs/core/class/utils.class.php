@@ -338,6 +338,9 @@ class Utils
 			if (GETPOST("use_mysql_quick_param", "alpha")) {
 				$param .= " --quick";
 			}
+			if (GETPOST("use_force", "alpha")) {
+				$param .= " -f";
+			}
 			if (GETPOST("sql_structure", "alpha") || $usedefault) {
 				if (GETPOST("drop", "alpha") || $usedefault) {
 					$param .= " --add-drop-table=TRUE";

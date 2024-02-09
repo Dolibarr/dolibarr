@@ -938,18 +938,34 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '</td></tr>';
 
 	if (!empty($conf->use_javascript_ajax)) {
+		// Add code to generate the login when creating a new user.
+		// Best rule to generate would be to use the same rule than dol_buildlogin() but currently it is a PHP function not available in js.
+		// TODO Implement a dol_buildlogin in javascript.
+		$charforseparator = getDolGlobalString("MAIN_USER_SEPARATOR_CHAR_FOR_GENERATED_LOGIN", '.');
+		if ($charforseparator == 'none') {
+			$charforseparator = '';
+		}
 		print '<script>
 			jQuery(document).ready(function() {
-				$(".createloginauto").on("change", function(){
-					lastname = $("#lastname").val();
-					firstname = $("#firstname").val();
-					if($(this).attr("id") == "firstname"){
-						firstname = firstname.toLowerCase();
-						firstname = firstname[0];
+				$(".createloginauto").on("keyup", function() {
+					console.log(".createloginauto change: We generate login when we have a lastname");
+
+					lastname = $("#lastname").val().toLowerCase();
+			';
+		if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {
+			print '			firstname = $("#firstname").val().toLowerCase()[0];';
+		} else {
+			print '			firstname = $("#firstname").val().toLowerCase();';
+		}
+		print '
+					login = "";
+					if (lastname) {
+						if (firstname) {
+							login = firstname + \''. dol_escape_js($charforseparator).'\';
+						}
+						login += lastname;
 					}
-					lastname = lastname.toLowerCase();
-					console.log("We create a login from firstname and lastname");
-					$("#login").val(firstname+lastname);
+					$("#login").val(login);
 				})
 			});
 		</script>';

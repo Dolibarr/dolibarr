@@ -744,7 +744,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->ficheinter->dir_output;
-	$permissiontoadd = $user->hasRight('ficheinter', 'creer');
+	$permissiontoadd = $user->rights->ficheinter->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'update_extras') {
@@ -1747,8 +1747,8 @@ if ($action == 'create') {
 		$filename = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->ficheinter->dir_output."/".$filename;
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-		$genallowed = $user->hasRight('ficheinter', 'lire');
-		$delallowed = $user->hasRight('ficheinter', 'creer');
+		$genallowed = $user->rights->ficheinter->lire;
+		$delallowed = $user->rights->ficheinter->creer;
 		print $formfile->showdocuments('ficheinter', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 		// Show links to link elements

@@ -273,7 +273,7 @@ class FormWebPortal extends Form
 		}
 
 		// Get list of files starting with name of ref (Note: files with '^ref\.extension' are generated files, files with '^ref-...' are uploaded files)
-		if ($allfiles || getDolGlobalString('MAIN_SHOW_ALL_FILES_ON_DOCUMENT_TOOLTIP')) {
+		if ($allfiles || !empty($conf->global->MAIN_SHOW_ALL_FILES_ON_DOCUMENT_TOOLTIP)) {
 			$filterforfilesearch = '^' . preg_quote(basename($modulesubdir), '/');
 		} else {
 			$filterforfilesearch = '^' . preg_quote(basename($modulesubdir), '/') . '\.';
@@ -699,7 +699,7 @@ class FormWebPortal extends Form
 
 				if ($type == 'datetime') {
 					//$moreparam .= ' step="1"'; to show seconds
-					$out .= ' ' . $this->inputType('time', $htmlName . '_time', $valueTime, $htmlName . '_time', $morecss, $moreparam);
+					$out .= ' ' . $this->inputType('time', $htmlName.'_time', $valueTime, $htmlId, $morecss, $moreparam);
 				}
 				break;
 

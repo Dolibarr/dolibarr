@@ -839,7 +839,7 @@ function dol_copy($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
  *
  * @param	string	$srcfile			Source file (a directory)
  * @param	string	$destfile			Destination file (a directory)
- * @param	string	$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
+ * @param	string	$newmask			Mask for new file ('0' by default means getDolGlobalString('MAIN_UMASK')). Example: '0666'
  * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
  * @param	array<string,string>	$arrayreplacement	Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
  * @param	int		$excludesubdir		0=Do not exclude subdirectories, 1=Exclude subdirectories, 2=Exclude subdirectories if name is not a 2 chars (used for country codes subdirectories).
@@ -849,8 +849,6 @@ function dol_copy($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
  */
 function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement = null, $excludesubdir = 0, $excludefileext = null)
 {
-	global $conf;
-
 	$result = 0;
 
 	dol_syslog("files.lib.php::dolCopyDir srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwriteifexists=".$overwriteifexists);
@@ -867,7 +865,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 		umask(0);
 		$dirmaskdec = octdec($newmask);
 		if (empty($newmask) && getDolGlobalString('MAIN_UMASK')) {
-			$dirmaskdec = octdec($conf->global->MAIN_UMASK);
+			$dirmaskdec = octdec(getDolGlobalString('MAIN_UMASK'));
 		}
 		$dirmaskdec |= octdec('0200'); // Set w bit required to be able to create content for recursive subdirs files
 		dol_mkdir($destfile, '', decoct($dirmaskdec));
@@ -2583,16 +2581,16 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
  * Security check when accessing to a document (used by document.php, viewimage.php and webservices to get documents).
  * TODO Replace code that set $accessallowed by a call to restrictedArea()
  *
- * @param	string	$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Example: 'medias', 'invoice', 'logs', 'tax-vat', ...
- * @param	string	$original_file		Relative path with filename, relative to modulepart.
- * @param	string	$entity				Restrict onto entity (0=no restriction)
- * @param  	User	$fuser				User object (forced)
- * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided) or for hierarchy
- * @param   string  $mode               Check permission for 'read' or 'write'
- * @return	mixed						Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' & 'original_file' (as a full path name)
+ * @param	string		$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Example: 'medias', 'invoice', 'logs', 'tax-vat', ...
+ * @param	string		$original_file		Relative path with filename, relative to modulepart.
+ * @param	string		$entity				Restrict onto entity (0=no restriction)
+ * @param  	User|null	$fuser				User object (forced)
+ * @param	string		$refname			Ref of object to check permission for external users (autodetect if not provided) or for hierarchy
+ * @param   string  	$mode               Check permission for 'read' or 'write'
+ * @return	mixed							Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' & 'original_file' (as a full path name)
  * @see restrictedArea()
  */
-function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser = '', $refname = '', $mode = 'read')
+function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser = null, $refname = '', $mode = 'read')
 {
 	global $conf, $db, $user, $hookmanager;
 	global $dolibarr_main_data_root, $dolibarr_main_document_root_alt;
@@ -2672,7 +2670,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $dolibarr_main_data_root.'/doctemplates/'.$original_file;
 	} elseif ($modulepart == 'doctemplateswebsite' && !empty($dolibarr_main_data_root)) {
 		// Wrapping for doctemplates of websites
-		$accessallowed = ($fuser->hasRight('website', 'write') && preg_match('/\.jpg$/i', basename($original_file)));
+		$accessallowed = ($fuser->rights->website->write && preg_match('/\.jpg$/i', basename($original_file)));
 		$original_file = $dolibarr_main_data_root.'/doctemplates/websites/'.$original_file;
 	} elseif ($modulepart == 'packages' && !empty($dolibarr_main_data_root)) {	// To download zip of modules
 		// Wrapping for *.zip package files, like when used with url http://.../document.php?modulepart=packages&file=module_myfile.zip
@@ -3201,11 +3199,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif ($modulepart == 'export' && !empty($conf->export->dir_temp)) {
 		// Wrapping for export module
 		// Note that a test may not be required because we force the dir of download on the directory of the user that export
-		$accessallowed = $user->hasRight('export', 'lire');
+		$accessallowed = $user->rights->export->lire;
 		$original_file = $conf->export->dir_temp.'/'.$fuser->id.'/'.$original_file;
 	} elseif ($modulepart == 'import' && !empty($conf->import->dir_temp)) {
 		// Wrapping for import module
-		$accessallowed = $user->hasRight('import', 'run');
+		$accessallowed = $user->rights->import->run;
 		$original_file = $conf->import->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'recruitment' && !empty($conf->recruitment->dir_output)) {
 		// Wrapping for recruitment module

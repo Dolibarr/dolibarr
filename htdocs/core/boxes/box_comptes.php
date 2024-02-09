@@ -58,7 +58,7 @@ class box_comptes extends ModeleBoxes
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !$user->hasRight('banque', 'lire');
+		$this->hidden = empty($user->rights->banque->lire);
 	}
 
 	/**

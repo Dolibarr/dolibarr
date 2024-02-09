@@ -65,9 +65,9 @@ $langs->loadLangs(array('bills', 'companies', 'products', 'categories'));
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
-$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id = (GETPOST('id', 'int') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
@@ -82,7 +82,6 @@ if ($contextpage == 'poslist') {
 	$optioncss = 'print';
 }
 
-$lineid = GETPOST('lineid', 'int');
 $userid = GETPOST('userid', 'int');
 $search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refcustomer = GETPOST('search_refcustomer', 'alpha');
@@ -243,10 +242,10 @@ $arrayfields = array(
 	'f.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>292),
 	'multicurrency_dynamount_payed'=>array('label'=>'MulticurrencyAlreadyPaid', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>295),
 	'multicurrency_rtp'=>array('label'=>'MulticurrencyRemainderToPay', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>296), // Not enabled by default because slow
-	'total_pa' => array('label' => ((getDolGlobalString('MARGIN_TYPE') == '1') ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? 0 : 1)),
-	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? 0 : 1)),
-	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARGIN_RATES') ? 0 : 1)),
-	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARK_RATES') ? 0 : 1)),
+	'total_pa' => array('label' => ((getDolGlobalString('MARGIN_TYPE') == '1') ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (!isModEnabled('margin') || empty($user->rights->margins->liretous) ? 0 : 1)),
+	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (!isModEnabled('margin') || empty($user->rights->margins->liretous) ? 0 : 1)),
+	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || empty($user->rights->margins->liretous) || !getDolGlobalString('DISPLAY_MARGIN_RATES') ? 0 : 1)),
+	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || empty($user->rights->margins->liretous) || !getDolGlobalString('DISPLAY_MARK_RATES') ? 0 : 1)),
 	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	'f.tms' =>array('type'=>'timestamp', 'label'=>'DateModificationShort', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>502),
 	'u.login'=>array('label'=>"UserAuthor", 'checked'=>1, 'position'=>504),
@@ -580,9 +579,19 @@ $facturestatic = new Facture($db);
 $formcompany = new FormCompany($db);
 $companystatic = new Societe($db);
 $companyparent = new Societe($db);
+
 $company_url_list = array();
 $subtypearray = $object->getArrayOfInvoiceSubtypes(0);
-$title = $langs->trans('BillsCustomers').' '.($socid > 0 ? ' '.$soc->name : '');
+
+if ($socid > 0) {
+	$soc = new Societe($db);
+	$soc->fetch($socid);
+	if (empty($search_company)) {
+		$search_company = $soc->name;
+	}
+}
+
+$title = $langs->trans('BillsCustomers').' '.($socid > 0 ? ' - '.$soc->name : '');
 $help_url = 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
@@ -969,14 +978,6 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // --------------------------------------------------------------------
 
 llxHeader('', $title, $help_url);
-
-if ($socid > 0) {
-	$soc = new Societe($db);
-	$soc->fetch($socid);
-	if (empty($search_company)) {
-		$search_company = $soc->name;
-	}
-}
 
 $param = '&socid='.urlencode($socid);
 if (!empty($mode)) {

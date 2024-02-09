@@ -279,6 +279,12 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	print '</label>';
 	print '<br>';
 
+	print '<input type="checkbox" name="use_force" value="no" id="checkbox_use_force" />';
+	print '<label for="checkbox_use_force">';
+	print $form->textwithpicto($langs->trans('ExportUseForce'), $langs->trans('ExportUseForceHelp'));
+	print '</label>';
+	print '<br>';
+
 	$execmethod = 0;
 	if (getDolGlobalString('MAIN_EXEC_USE_POPEN')) {
 		$execmethod = getDolGlobalString('MAIN_EXEC_USE_POPEN');

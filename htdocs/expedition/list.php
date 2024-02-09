@@ -207,9 +207,9 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 if (empty($reshook)) {
 	$objectclass  = 'Expedition';
 	$objectlabel  = 'Sendings';
-	$permissiontoread   = $user->hasRight('expedition', 'lire');
-	$permissiontoadd = $user->hasRight('expedition', 'creer');
-	$permissiontodelete = $user->hasRight('expedition', 'supprimer');
+	$permissiontoread   = $user->rights->expedition->lire;
+	$permissiontoadd = $user->rights->expedition->creer;
+	$permissiontodelete = $user->rights->expedition->supprimer;
 	$uploaddir = $conf->expedition->dir_output.'/sending';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -1224,8 +1224,8 @@ $urlsource  = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sorto
 $urlsource .= str_replace('&amp;', '&', $param);
 
 $filedir    = $diroutputmassaction;
-$genallowed = $user->hasRight('expedition', 'lire');
-$delallowed = $user->hasRight('expedition', 'creer');
+$genallowed = $user->rights->expedition->lire;
+$delallowed = $user->rights->expedition->creer;
 $title      = '';
 
 print $formfile->showdocuments('massfilesarea_sendings', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);

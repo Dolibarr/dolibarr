@@ -71,10 +71,10 @@ $search_amount = GETPOST('search_amount', 'alpha');
 $bon = new BonPrelevement($db);
 $hookmanager->initHooks(array('withdrawalsreceiptslist'));
 
-$usercancreate = $user->hasRight('prelevement', 'bons', 'creer');
+$usercancreate = $user->rights->prelevement->bons->creer;
 $permissiontodelete = $user->hasRight('prelevement', 'creer');
 if ($type == 'bank-transfer') {
-	$usercancreate = $user->hasRight('paymentbybanktransfer', 'create');
+	$usercancreate = $user->rights->paymentbybanktransfer->create;
 	$permissiontodelete = $user->hasRight('paymentbybanktransfer', 'create');
 }
 

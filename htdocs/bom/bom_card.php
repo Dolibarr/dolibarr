@@ -513,8 +513,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref = '<div class="refidno">';
 	/*
 	 // Ref bis
-	 $morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->hasRight('bom', 'creer'), 'string', '', 0, 1);
-	 $morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->hasRight('bom', 'creer'), 'string', '', null, null, '', 1);
+	 $morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->bom->creer, 'string', '', 0, 1);
+	 $morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->bom->creer, 'string', '', null, null, '', 1);
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 	 // Project
@@ -759,14 +759,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			/*
-			  if ($user->hasRight('bom', 'write')) {
-				  if ($object->status == 1) {
-					  print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable&token='.newToken().'">'.$langs->trans("Disable").'</a>'."\n";
-				  } else {
-					  print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Enable").'</a>'."\n";
-				  }
+			  if ($user->rights->bom->write)
+			  {
+			  if ($object->status == 1)
+			  {
+			  print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable&token='.newToken().'">'.$langs->trans("Disable").'</a>'."\n";
 			  }
-			*/
+			  else
+			  {
+			  print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Enable").'</a>'."\n";
+			  }
+			  }
+			  */
 
 			// Delete
 			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);

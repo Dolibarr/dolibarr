@@ -1492,6 +1492,12 @@ class FormTicket
 				print '<input type="submit" class="button" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				print '</div></td>';
 			}
+
+			// From
+			$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
+			print '<tr class="email_line"><td><span class="">'.$langs->trans("MailFrom").'</span></td>';
+			print '<td><span class="">'.img_picto('', 'email', 'class="pictofixedwidth"').$from.'</span></td></tr>';
+
 			// Subject/topic
 			$topic = "";
 			foreach ($formmail->lines_model as $line) {
@@ -1528,7 +1534,9 @@ class FormTicket
 					}
 				}
 
-				if ($ticketstat->origin_email && !in_array($ticketstat->origin_email, $sendto)) {
+				if (!empty($ticketstat->origin_replyto) && !in_array($ticketstat->origin_replyto, $sendto)) {
+					$sendto[] = dol_escape_htmltag($ticketstat->origin_replyto).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
+				} elseif ($ticketstat->origin_email && !in_array($ticketstat->origin_email, $sendto)) {
 					$sendto[] = dol_escape_htmltag($ticketstat->origin_email).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
 				}
 

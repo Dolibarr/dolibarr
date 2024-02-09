@@ -147,9 +147,9 @@ $objectlist->fields = dol_sort_array($objectlist->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Permissions
-$permissionnote = $user->hasRight('mrp', 'write'); // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->hasRight('mrp', 'write'); // Used by the include of actions_dellink.inc.php
-$permissiontoadd = $user->hasRight('mrp', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissionnote = $user->rights->mrp->write; // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->rights->mrp->write; // Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->rights->mrp->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->entity : 1];
 

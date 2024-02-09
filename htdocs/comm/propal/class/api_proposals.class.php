@@ -174,7 +174,7 @@ class Proposals extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
+		if (!DolibarrApiAccess::$user->rights->hasRight('societe', 'client', 'voir') && !$socids) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -247,7 +247,7 @@ class Proposals extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
+		if (!DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(401, "Insuffisant rights");
 		}
 		// Check mandatory fields
@@ -330,7 +330,7 @@ class Proposals extends DolibarrApi
 	 */
 	public function postLine($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
+		if (!DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(403);
 		}
 
@@ -396,7 +396,7 @@ class Proposals extends DolibarrApi
 	 */
 	public function postLines($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
+		if (!DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(403);
 		}
 
@@ -476,7 +476,7 @@ class Proposals extends DolibarrApi
 	 */
 	public function putLine($id, $lineid, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
+		if (!DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(403);
 		}
 
@@ -554,7 +554,7 @@ class Proposals extends DolibarrApi
 	 */
 	public function deleteLine($id, $lineid)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
+		if (!DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(403);
 		}
 
@@ -590,7 +590,7 @@ class Proposals extends DolibarrApi
 	 */
 	public function postContact($id, $contactid, $type)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
+		if (!DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(403);
 		}
 
@@ -638,7 +638,7 @@ class Proposals extends DolibarrApi
 	 */
 	public function deleteContact($id, $contactid, $type)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
+		if (!DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(403);
 		}
 
@@ -676,7 +676,7 @@ class Proposals extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
+		if (!DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(403);
 		}
 
@@ -726,7 +726,7 @@ class Proposals extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('propal', 'supprimer')) {
+		if (!DolibarrApiAccess::$user->rights->propal->supprimer) {
 			throw new RestException(403);
 		}
 		$result = $this->propal->fetch($id);
@@ -760,7 +760,7 @@ class Proposals extends DolibarrApi
 	 */
 	public function settodraft($id)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
+		if (!DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(403);
 		}
 		$result = $this->propal->fetch($id);
@@ -816,7 +816,7 @@ class Proposals extends DolibarrApi
 	 */
 	public function validate($id, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
+		if (!DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(403);
 		}
 		$result = $this->propal->fetch($id);
@@ -863,7 +863,7 @@ class Proposals extends DolibarrApi
 	 */
 	public function close($id, $status, $note_private = '', $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
+		if (!DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(403);
 		}
 		$result = $this->propal->fetch($id);
@@ -907,7 +907,7 @@ class Proposals extends DolibarrApi
 	 */
 	public function setinvoiced($id)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
+		if (!DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(403);
 		}
 		$result = $this->propal->fetch($id);

@@ -169,7 +169,7 @@ class WebPortalOrder extends Commande
 		$datas = [];
 
 		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-			return ['optimize' => $langs->trans("WebPortalOrder")];
+			return ['optimize' => $langs->trans("ShowWebPortalOrder")];
 		}
 		$datas['picto'] = img_picto('', $this->picto) . ' <u>' . $langs->trans("WebPortalOrder") . '</u>';
 		if (isset($this->status)) {
