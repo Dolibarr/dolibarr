@@ -365,7 +365,7 @@ class CMailFile
 					unset($tabto[$key]);
 				}
 			}
-			if (empty($tabto) && !getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE')) {
+			if (empty($tabto) && $to != "" && getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE')) {
 				$tabto[] = getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE');
 			}
 			$to = implode(',', $tabto);
@@ -377,8 +377,8 @@ class CMailFile
 					unset($tabcc[$key]);
 				}
 			}
-			if (empty($addr_cc) && !getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE')) {
-				$addr_cc[] = getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE');
+			if (empty($tabcc) && $addr_cc != "" && getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE')) {
+				$tabcc[] = getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE');
 			}
 			$addr_cc = implode(',', $tabcc);
 
@@ -389,7 +389,7 @@ class CMailFile
 					unset($tabbcc[$key]);
 				}
 			}
-			if (empty($tabbcc) && !getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE')) {
+			if (empty($tabbcc) && $addr_bcc != "" && getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE')) {
 				$tabbcc[] = getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE');
 			}
 			$addr_bcc = implode(',', $tabbcc);
