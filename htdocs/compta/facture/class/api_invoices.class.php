@@ -156,7 +156,7 @@ class Invoices extends DolibarrApi
 
 		$this->invoice->fetchObjectLinked();
 
-		// Add online_payment_url, copied from irder
+		// Add online_payment_url, copied from order
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 		$this->invoice->online_payment_url = getOnlinePaymentUrl(0, 'invoice', $this->invoice->ref);
 
@@ -969,7 +969,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		# copy from order
+		// copy from order
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 		$this->invoice->online_payment_url = getOnlinePaymentUrl(0, 'invoice', $this->invoice->ref);
 
