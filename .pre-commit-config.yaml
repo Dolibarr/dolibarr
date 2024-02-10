@@ -60,6 +60,7 @@ repos:
         entry: bash -c '[ ! -x local.sh ] || ./local.sh'
         pass_filenames: false
       - id: duplicate-lang-lines
+        stages: [manual]
         name: Find duplicate language lines
         files: (?x)^(htdocs/langs/en_US/.*\.lang)
         language: script
@@ -67,6 +68,7 @@ repos:
         pass_filenames: false
         args: [list]
       - id: duplicate-lang-keys
+        stages: [manual]
         name: Find duplicate language keys
         files: (?x)^(htdocs/langs/en_US/.*\.lang)
         language: script
@@ -74,6 +76,7 @@ repos:
         pass_filenames: false
         args: [list]
       - id: fix-alt-languages
+        stages: [manual]
         name: Fix alt languages
         # Selection: see fixaltlanguages.sh script
         files: (?x)^(htdocs/langs/(e[lnstu]|k[akmno]|s[lqrv]|b[nrs]|c[asy]|n[bel]|[ip]t|a[mr]|d[ae]|f[ar]|h[ei]|m[sy]|t[ag]|u[kr]|gl|ja|lo|ru|vi|zh)_[^/]*/.*\.lang)
