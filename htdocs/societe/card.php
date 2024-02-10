@@ -2218,7 +2218,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if ($conf->browser->layout == 'phone') {
 					print '</tr><tr>';
 				}
-				print '<td>'.$form->editfieldkey('PhoneMobile', 'phone_mobile', 'GETPOST('phone_mobile', 'alpha')', $object, 0).'</td>';
+				print '<td>'.$form->editfieldkey('PhoneMobile', 'phone_mobile', GETPOST('phone_mobile', 'alpha'), $object, 0).'</td>';
 				print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"').' <input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td></tr>';
 
 				print '<td>'.$form->editfieldkey('Fax', 'fax', GETPOST('fax', 'alpha'), $object, 0).'</td>';
