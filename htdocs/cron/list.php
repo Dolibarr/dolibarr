@@ -534,7 +534,7 @@ if ($num > 0) {
 		$object->status = $obj->status;
 		$object->priority = $obj->priority;
 		$object->processing = $obj->processing;
-		$object->lastresult = $obj->lastresult;
+		$object->lastresult = (string) $obj->lastresult;
 		$object->datestart = $db->jdate($obj->datestart);
 		$object->dateend = $db->jdate($obj->dateend);
 		$object->module_name = $obj->module_name;
