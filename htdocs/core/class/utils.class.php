@@ -170,8 +170,14 @@ class Utils
 						$tmpcountdeleted = 0;
 
 						$result = dol_delete_dir_recursive($filesarray[$key]['fullname'], $startcount, 1, 0, $tmpcountdeleted);
-
-						if (!in_array($filesarray[$key]['fullname'], array($conf->api->dir_temp, $conf->user->dir_temp))) {		// The 2 directories $conf->api->dir_temp and $conf->user->dir_temp are recreated at end, so we do not count them
+						$excluded = [
+							$conf->user->dir_temp,
+						];
+						if (isModEnabled('api')) {
+							$excluded[] = $conf->api->dir_temp;
+						}
+						// The 2 directories $conf->api->dir_temp and $conf->user->dir_temp are recreated at end, so we do not count them
+						if (!in_array($filesarray[$key]['fullname'], $excluded)) {
 							$count += $result;
 							$countdeleted += $tmpcountdeleted;
 						}

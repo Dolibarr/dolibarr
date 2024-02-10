@@ -398,7 +398,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 
 		$localobject->error = '';
 		$result = $localobject->setPassword($user, '$*11145678AA');
-		print __METHOD__." set a password with noo too much consecutive chars\n";
+		print __METHOD__." set a password with not too much consecutive chars\n";
 		print __METHOD__." localobject->error=".$localobject->error."\n";
 		$this->assertEquals('$*11145678AA', $result, 'We must get the password as it is valid (pass has not too much similar consecutive chars) and we did not here');
 
