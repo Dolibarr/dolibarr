@@ -2780,8 +2780,8 @@ class Societe extends CommonObject
 		if (!empty($this->url)) {
 			$datas['url'] = '<br>'.img_picto('', 'globe', 'class="pictofixedwidth"').$this->url;
 		}
-		if (!empty($this->phone) || (!empty($this->phone_mobile) || !empty($this->fax)) {
-			$phonelist = array()
+		if (!empty($this->phone) || !empty($this->phone_mobile) || !empty($this->fax)) {
+			$phonelist = array();
 			if ($this->phone) {
 				$phonelist[] = dol_print_phone($this->phone, $this->country_code, $this->id, 0, '', '&nbsp', 'phone');
 			}
