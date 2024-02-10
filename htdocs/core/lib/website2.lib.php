@@ -540,7 +540,7 @@ function dolSaveLicense($file, $content)
  */
 function showWebsiteTemplates(Website $website)
 {
-	global $conf, $langs, $db, $form, $user;
+	global $conf, $langs, $form, $user;
 
 	$dirthemes = array('/doctemplates/websites');
 	if (!empty($conf->modules_parts['websitetemplates'])) {		// Using this feature slow down application

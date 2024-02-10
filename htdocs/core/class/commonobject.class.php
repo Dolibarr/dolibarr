@@ -121,7 +121,9 @@ abstract class CommonObject
 	public $table_element_line = '';
 
 	/**
-	 * @var int 		0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 * Does this object supports the multicompany module ?
+	 *
+	 * @var int|string 		0 if no test on entity, 1 if test with field entity, 2 if test with link by fk_soc, 'field@table' if test with link by field@table
 	 */
 	public $ismultientitymanaged;
 
@@ -757,7 +759,9 @@ abstract class CommonObject
 	public $cond_reglement_supplier_id;
 
 	/**
-	 * @var string 		Populated by setPaymentTerms()
+	 * @var string      Deposit percent for payment terms.
+	 *                  Populated by setPaymentTerms().
+	 * @see setPaymentTerms()
 	 */
 	public $deposit_percent;
 

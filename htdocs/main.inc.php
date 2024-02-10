@@ -664,7 +664,7 @@ if (GETPOSTISSET('disablemodules')) {
 	$_SESSION["disablemodules"] = GETPOST('disablemodules', 'alpha');
 }
 if (!empty($_SESSION["disablemodules"])) {
-	$modulepartkeys = array('css', 'js', 'tabs', 'triggers', 'login', 'substitutions', 'menus', 'theme', 'sms', 'tpl', 'barcode', 'models', 'societe', 'hooks', 'dir', 'syslog', 'tpllinkable', 'contactelement', 'moduleforexternal');
+	$modulepartkeys = array('css', 'js', 'tabs', 'triggers', 'login', 'substitutions', 'menus', 'theme', 'sms', 'tpl', 'barcode', 'models', 'societe', 'hooks', 'dir', 'syslog', 'tpllinkable', 'contactelement', 'moduleforexternal', 'websitetemplates');
 
 	$disabled_modules = explode(',', $_SESSION["disablemodules"]);
 	foreach ($disabled_modules as $module) {

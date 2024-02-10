@@ -210,7 +210,7 @@ if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') ||
 	$filters['search_rowid'] = $search_rowid;
 
 	// TODO Replace this with same code than into list.php
-	show_actions_done_user($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, $object->module);
+	show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, $object->module);
 }
 
 // End of page
