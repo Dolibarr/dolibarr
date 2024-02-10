@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2017-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2023       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2023       Joachim Kueter     		<git-jk@bloxera.com>
@@ -42,19 +42,19 @@ if (isModEnabled('project')) {
 $langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy", "categories"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm');
 $cancel = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$accountid = GETPOST("accountid") > 0 ? GETPOST("accountid", "int") : 0;
+$accountid = GETPOSTINT("accountid") > 0 ? GETPOSTINT("accountid") : 0;
 $label = GETPOST("label", "alpha");
-$sens = GETPOST("sens", "int");
-$amount = price2num(GETPOST("amount", "alpha"));
+$sens = GETPOSTINT("sens");
+$amount = GETPOSTFLOAT("amount");
 $paymenttype = GETPOST("paymenttype", "aZ09");
 $accountancy_code = GETPOST("accountancy_code", "alpha");
-$projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
+$projectid = GETPOSTINT('projectid') ? GETPOSTINT('projectid') : GETPOSTINT('fk_project');
 if (isModEnabled('accounting') && getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
 	$subledger_account = GETPOST("subledger_account", "alpha") > 0 ? GETPOST("subledger_account", "alpha") : '';
 } else {
@@ -62,7 +62,7 @@ if (isModEnabled('accounting') && getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX'
 }
 
 // Security check
-$socid = GETPOST("socid", "int");
+$socid = GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -102,20 +102,20 @@ if (empty($reshook)) {
 	// Link to a project
 	if ($action == 'classin' && $permissiontoadd) {
 		$object->fetch($id);
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 
 	if ($action == 'add') {
 		$error = 0;
 
-		$datep = dol_mktime(12, 0, 0, GETPOST("datepmonth", 'int'), GETPOST("datepday", 'int'), GETPOST("datepyear", 'int'));
-		$datev = dol_mktime(12, 0, 0, GETPOST("datevmonth", 'int'), GETPOST("datevday", 'int'), GETPOST("datevyear", 'int'));
+		$datep = dol_mktime(12, 0, 0, GETPOSTINT("datepmonth"), GETPOSTINT("datepday"), GETPOSTINT("datepyear"));
+		$datev = dol_mktime(12, 0, 0, GETPOSTINT("datevmonth"), GETPOSTINT("datevday"), GETPOSTINT("datevyear"));
 		if (empty($datev)) {
 			$datev = $datep;
 		}
 
 		$object->ref = ''; // TODO
-		$object->accountid = GETPOST("accountid", 'int') > 0 ? GETPOST("accountid", "int") : 0;
+		$object->accountid = GETPOSTINT("accountid") > 0 ? GETPOSTINT("accountid") : 0;
 		$object->datev = $datev;
 		$object->datep = $datep;
 		$object->amount = price2num(GETPOST("amount", 'alpha'));
@@ -272,8 +272,8 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 			$object->label = $langs->trans("CopyOf").' '.$object->label;
 		}
 
-		$newdatepayment = dol_mktime(0, 0, 0, GETPOST('clone_date_paymentmonth', 'int'), GETPOST('clone_date_paymentday', 'int'), GETPOST('clone_date_paymentyear', 'int'));
-		$newdatevalue = dol_mktime(0, 0, 0, GETPOST('clone_date_valuemonth', 'int'), GETPOST('clone_date_valueday', 'int'), GETPOST('clone_date_valueyear', 'int'));
+		$newdatepayment = dol_mktime(0, 0, 0, GETPOSTINT('clone_date_paymentmonth'), GETPOSTINT('clone_date_paymentday'), GETPOSTINT('clone_date_paymentyear'));
+		$newdatevalue = dol_mktime(0, 0, 0, GETPOSTINT('clone_date_valuemonth'), GETPOSTINT('clone_date_valueday'), GETPOSTINT('clone_date_valueyear'));
 		if ($newdatepayment) {
 			$object->datep = $newdatepayment;
 		}
@@ -284,7 +284,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 		}
 
 		if (GETPOSTISSET("clone_sens")) {
-			$object->sens = GETPOST("clone_sens", 'int');
+			$object->sens = GETPOSTINT("clone_sens");
 		} else {
 			$object->sens = $object->sens;
 		}
@@ -649,10 +649,11 @@ if ($id) {
 	$editvalue = '';
 	if (isModEnabled('accounting')) {
 		print '<tr><td class="nowrap">';
-		print $form->editfieldkey('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $user->hasRight('banque', 'modifier')), 'string', '', 0);
+		print $form->editfieldkey('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $permissiontoadd), 'string', '', 0);
 		print '</td><td>';
-		if ($action == 'editaccountancy_code') {
-			print $form->editfieldval('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $user->hasRight('banque', 'modifier')), 'string', '', 0);
+		if ($action == 'editaccountancy_code' && (!$alreadyaccounted && $permissiontoadd)) {
+			//print $form->editfieldval('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $user->hasRight('banque', 'modifier')), 'string', '', 0);
+			print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->accountancy_code, 'accountancy_code', 0, 1, '', 1);
 		} else {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch('', $object->accountancy_code, 1);
@@ -672,7 +673,15 @@ if ($id) {
 	print '<tr><td class="nowrap">';
 	print $form->editfieldkey('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $permissiontoadd), 'string', '', 0);
 	print '</td><td>';
-	print $form->editfieldval('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $permissiontoadd), 'string', '', 0, null, '', 1, 'lengthAccounta');
+	if ($action == 'editsubledger_account' && (!$alreadyaccounted && $permissiontoadd)) {
+		if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
+			print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->subledger_account, 'subledger_account', 1, 1, '', 1);
+		} else {
+			print $form->editfieldval('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $permissiontoadd), 'string', '', 0, null, '', 1, 'lengthAccounta');
+		}
+	} else {
+		print length_accounta($object->subledger_account);
+	}
 	print '</td></tr>';
 
 	$bankaccountnotfound = 0;

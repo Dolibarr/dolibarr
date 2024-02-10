@@ -82,7 +82,7 @@ $type = '';
 
 $appli = constant('DOL_APPLICATION_TITLE');
 if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-	$appli = $conf->global->MAIN_APPLICATION_TITLE;
+	$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 
 //print 'Directory with '.$appli.' websites.<br>';
@@ -128,7 +128,7 @@ $original_file = $dolibarr_main_data_root.($conf->entity > 1 ? '/'.$conf->entity
 $refname = basename(dirname($original_file)."/");
 
 // Security:
-// Limite acces si droits non corrects
+// Limit access if permissions are insufficient
 if (!$accessallowed) {
 	accessforbidden();
 }

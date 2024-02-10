@@ -291,7 +291,7 @@ print "</div><br>\n";
 
 $filters = '';
 
-// Filter on array of ids of all childs
+// Filter on array of ids of all children
 $userchilds = array();
 if (!$user->hasRight('holiday', 'readall')) {
 	$userchilds = $user->getAllChildIds(1);
@@ -534,7 +534,7 @@ if (count($typeleaves) == 0) {
 		foreach ($arrayfields as $key => $val) {
 			if (!empty($val['checked'])) {
 				if ($key == 'cp.nbHoliday') {
-					foreach ($typeleaves as $key => $val) {
+					foreach ($typeleaves as $leave_key => $leave_val) {
 						$colspan++;
 					}
 				} else {

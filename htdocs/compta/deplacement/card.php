@@ -53,7 +53,7 @@ $object = new Deplacement($db);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('tripsandexpensescard', 'globalcard'));
 
-$permissionnote = $user->rights->deplacement->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('deplacement', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -97,7 +97,7 @@ if ($action == 'validate' && $user->hasRight('deplacement', 'creer')) {
 		$error = 0;
 
 		$object->date = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-		$object->km = price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formated amount
+		$object->km = price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formatted amount
 		$object->type = GETPOST('type', 'alpha');
 		$object->socid = (int) GETPOST('socid', 'int');
 		$object->fk_user = (int) GETPOST('fk_user', 'int');
@@ -141,7 +141,7 @@ if ($action == 'validate' && $user->hasRight('deplacement', 'creer')) {
 		$result = $object->fetch($id);
 
 		$object->date			= dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-		$object->km = price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formated amount
+		$object->km = price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formatted amount
 		$object->type			= GETPOST('type', 'alpha');
 		$object->socid = (int) GETPOST('socid', 'int');
 		$object->fk_user = (int) GETPOST('fk_user', 'int');
@@ -492,7 +492,7 @@ if ($action == 'create') {
 				}
 			}
 
-			$permissiontodelete = $user->rights->deplacement->supprimer;
+			$permissiontodelete = $user->hasRight('deplacement', 'supprimer');
 			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
 
 			print '</div>';

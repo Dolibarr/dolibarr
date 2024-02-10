@@ -112,7 +112,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 		// If admin login or ldap auth filter provided
 		// Code to get user in LDAP from an admin connection (may differ from user connection, done later)
 		if ($ldapadminlogin || $dolibarr_main_auth_ldap_filter) {
-			$result = $ldap->connect_bind();
+			$result = $ldap->connectBind();
 			if ($result > 0) {
 				$resultFetchLdapUser = $ldap->fetch($usertotest, $userSearchFilter);
 				//dol_syslog('functions_ldap::check_user_password_ldap resultFetchLdapUser='.$resultFetchLdapUser);
@@ -137,7 +137,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 		// Forge LDAP user and password to test with them
 		// If LDAP need a dn with login like "uid=jbloggs,ou=People,dc=foo,dc=com", default dn may work even if previous code with
-		// admin login no exectued.
+		// admin login no executed.
 		$ldap->searchUser = $ldapuserattr."=".$usertotest.",".$ldapdn; // Default dn (will work if LDAP accept a dn with login value inside)
 		// But if LDAP need a dn with name like "cn=Jhon Bloggs,ou=People,dc=foo,dc=com", previous part must have been executed to have
 		// dn detected into ldapUserDN.
@@ -148,7 +148,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 		// Test with this->seachUser and this->searchPassword
 		//print $resultFetchLdapUser."-".$ldap->ldapUserDN."-".$ldap->searchUser.'-'.$ldap->searchPassword;exit;
-		$result = $ldap->connect_bind();
+		$result = $ldap->connectBind();
 		if ($result > 0) {
 			if ($result == 2) {	// Connection is ok for user/pass into LDAP
 				$login = $usertotest;
@@ -162,32 +162,13 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-				// Note: Test on validity is done later natively with isNotIntoValidityDateRange() by core after calling checkLoginPassEntity() that call this method
-				/*
-				$tmpuser = new User($db);
-				$tmpuser->fetch('', $login, '', 1, ($entitytotest > 0 ? $entitytotest : -1));
-
-				$now = dol_now();
-				if ($tmpuser->datestartvalidity && $db->jdate($tmpuser->datestartvalidity) >= $now) {
-					$ldap->unbind();
-					// Load translation files required by the page
-					$langs->loadLangs(array('main', 'errors'));
-					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
-					return '--bad-login-validity--';
-				}
-				if ($tmpuser->dateendvalidity && $db->jdate($tmpuser->dateendvalidity) <= dol_get_first_hour($now)) {
-					$ldap->unbind();
-					// Load translation files required by the page
-					$langs->loadLangs(array('main', 'errors'));
-					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
-					return '--bad-login-validity--';
-				}*/
+				// Note: Test on date validity is done later natively with isNotIntoValidityDateRange() by core after calling checkLoginPassEntity() that call this method
 
 				// ldap2dolibarr synchronisation
 				if ($login && !empty($conf->ldap->enabled) && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') == Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {	// ldap2dolibarr synchronization
 					dol_syslog("functions_ldap::check_user_password_ldap Sync ldap2dolibarr");
 
-					// On charge les attributs du user ldap
+					// On charge les attributes du user ldap
 					if ($ldapdebug) {
 						print "DEBUG: login ldap = ".$login."<br>\n";
 					}
@@ -216,12 +197,12 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					$resultFetchUser = $usertmp->fetch('', $login, $sid, 1, ($entitytotest > 0 ? $entitytotest : -1));
 					if ($resultFetchUser > 0) {
 						dol_syslog("functions_ldap::check_user_password_ldap Sync user found user id=".$usertmp->id);
-						// On verifie si le login a change et on met a jour les attributs dolibarr
+						// Verify if the login changed and update the Dolibarr attributes
 
 						if ($usertmp->login != $ldap->login && $ldap->login) {
 							$usertmp->login = $ldap->login;
 							$usertmp->update($usertmp);
-							// TODO Que faire si update echoue car on update avec un login deja existant pour un autre compte.
+							// TODO What to do if the update fails because the login already exists for another account.
 						}
 
 						//$resultUpdate = $usertmp->update_ldap2dolibarr($ldap);

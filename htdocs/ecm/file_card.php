@@ -65,12 +65,12 @@ if (!$sortfield) {
 
 $section = GETPOST("section", 'alpha');
 if (!$section) {
-	dol_print_error('', 'Error, section parameter missing');
+	dol_print_error(null, 'Error, section parameter missing');
 	exit;
 }
 $urlfile = (string) dol_sanitizePathName(GETPOST("urlfile"), '_', 0);
 if (!$urlfile) {
-	dol_print_error('', "ErrorParamNotDefined");
+	dol_print_error(null, "ErrorParamNotDefined");
 	exit;
 }
 
@@ -103,9 +103,9 @@ if ($result < 0) {
 }
 
 // Permissions
-$permissiontoread = $user->rights->ecm->read;
-$permissiontoadd = $user->rights->ecm->setup;
-$permissiontoupload = $user->rights->ecm->upload;
+$permissiontoread = $user->hasRight('ecm', 'read');
+$permissiontoadd = $user->hasRight('ecm', 'setup');
+$permissiontoupload = $user->hasRight('ecm', 'upload');
 
 if (!$permissiontoread) {
 	accessforbidden();
@@ -424,8 +424,6 @@ if ($action != 'edit') {
 	if ($user->hasRight('ecm', 'setup')) {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.urlencode($section).'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Edit').'</a>';
 	}
-
-	//print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $user->rights->ecm->setup);
 
 	print '</div>';
 }

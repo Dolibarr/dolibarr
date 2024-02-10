@@ -107,7 +107,7 @@ This page is a sample of page using tables. It is designed to make test with<br>
 </div>
 
 
-<br><hr><br>Example 0a : Table with div+div+div containg a select that should be overflowed and truncated => Use this to align text or form<br>
+<br><hr><br>Example 0a : Table with div+div+div containing a select that should be overflowed and truncated => Use this to align text or form<br>
 
 <div class="tagtable centpercent">
 	<div class="tagtr">
@@ -120,7 +120,7 @@ This page is a sample of page using tables. It is designed to make test with<br>
 	</div>
 </div>
 
-<br><hr><br>Example 0b: Table with div+form+div containg a select that should be overflowed and truncated => Use this to align text or form<br>
+<br><hr><br>Example 0b: Table with div+form+div containing a select that should be overflowed and truncated => Use this to align text or form<br>
 
 <div class="tagtable centpercent">
 	<form action="xxx" method="POST" class="tagtr">
@@ -133,7 +133,7 @@ This page is a sample of page using tables. It is designed to make test with<br>
 	</form>
 </div>
 
-<br><hr><br>Example 0c: Table with table+tr+td containg a select that should be overflowed and truncated => Use this to align text or form<br>
+<br><hr><br>Example 0c: Table with table+tr+td containing a select that should be overflowed and truncated => Use this to align text or form<br>
 
 <table class="centpercent">
 	<tr>

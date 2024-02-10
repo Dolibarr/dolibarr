@@ -127,7 +127,7 @@ if (isModEnabled("product") || isModEnabled("service")) {
 
 	echo '</span>';
 }
-if (getDolGlobalString('BOM_SUB_BOM') && $filtertype!=1) {
+if (getDolGlobalString('BOM_SUB_BOM') && $filtertype != 1) {
 	print '<br><span class="opacitymedium">'.$langs->trans("or").'</span><br>'.$langs->trans("BOM");
 	print $form->select_bom('', 'bom_id', 0, 1, 0, '1', '', 1);
 }
@@ -185,7 +185,7 @@ if ($filtertype != 1) {
 
 	$coldisplay++;
 	print '<td class="bordertop nobottom nowrap linecolworkstation right">';
-	print '&nbsp;';
+	print $formproduct->selectWorkstations('', 'idworkstations', 1);
 	print '</td>';
 
 	$coldisplay++;
@@ -235,13 +235,25 @@ jQuery(document).ready(function() {
 				,type: 'POST'
 				,data: {
 					'action': 'getDurationUnitByProduct'
+					,'token' : "<?php echo newToken() ?>"
 					,'idproduct' : idproduct
 				}
 			}).done(function(data) {
 
 				console.log(data);
-				var data = JSON.parse(data);
 				$("#fk_unit").val(data).change();
+			});
+
+			$.ajax({
+				url : "<?php echo dol_buildpath('/bom/ajax/ajax.php', 1); ?>"
+				,type: 'POST'
+				,data: {
+					'action': 'getWorkstationByProduct'
+					,'token' :  "<?php echo newToken() ?>"
+					,'idproduct' : idproduct
+				}
+			}).done(function(data) {
+				$('#idworkstations').val(data.defaultWk).select2();
 			});
 	});
 	<?php } ?>

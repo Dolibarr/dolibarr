@@ -130,7 +130,7 @@ print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 
 $head = ldap_prepare_head();
 
-// Test si fonction LDAP actives
+// Test if the LDAP functionality is available
 if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
@@ -146,12 +146,12 @@ print dol_get_fiche_head($head, 'ldap', '', -1);
 
 print '<table class="noborder centpercent">';
 
-// Liste de synchro actives
+// List of active synchronisations
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("LDAPSynchronization").'</td>';
 print "</tr>\n";
 
-// Synchro utilisateurs/groupes active
+// Synchronise active users and groups
 
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPDnSynchroActive").'</td><td>';
 print $formldap->selectLdapDnSynchroActive(getDolGlobalInt('LDAP_SYNCHRO_ACTIVE'), 'activesynchro');
@@ -269,7 +269,7 @@ print '<br>';
 
 
 /*
- * Test de la connexion
+ * Test the connection
  */
 if (function_exists("ldap_connect")) {
 	if (getDolGlobalString('LDAP_SERVER_HOST')) {
@@ -277,9 +277,9 @@ if (function_exists("ldap_connect")) {
 	}
 
 	if ($action == 'test') {
-		$ldap = new Ldap(); // Les parametres sont passes et recuperes via $conf
+		$ldap = new Ldap(); // The parameters are provided and recovered through $conf
 
-		$result = $ldap->connect_bind();
+		$result = $ldap->connectBind();
 		if ($result > 0) {
 			// Test ldap connect and bind
 			print img_picto('', 'info').' ';
@@ -289,11 +289,11 @@ if (function_exists("ldap_connect")) {
 			if (getDolGlobalString('LDAP_ADMIN_DN') && getDolGlobalString('LDAP_ADMIN_PASS')) {
 				if ($result == 2) {
 					print img_picto('', 'info').' ';
-					print '<span class="ok">'.$langs->trans("LDAPBindOK", $ldap->connectedServer, getDolGlobalString('LDAP_SERVER_PORT'), $conf->global->LDAP_ADMIN_DN, preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</span>';
+					print '<span class="ok">'.$langs->trans("LDAPBindOK", $ldap->connectedServer, getDolGlobalString('LDAP_SERVER_PORT'), getDolGlobalString('LDAP_ADMIN_DN'), preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</span>';
 					print '<br>';
 				} else {
 					print img_picto('', 'error').' ';
-					print '<span class="error">'.$langs->trans("LDAPBindKO", $ldap->connectedServer, getDolGlobalString('LDAP_SERVER_PORT'), $conf->global->LDAP_ADMIN_DN, preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</span>';
+					print '<span class="error">'.$langs->trans("LDAPBindKO", $ldap->connectedServer, getDolGlobalString('LDAP_SERVER_PORT'), getDolGlobalString('LDAP_ADMIN_DN'), preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</span>';
 					print '<br>';
 					print $langs->trans("Error").' '.$ldap->error;
 					print '<br>';

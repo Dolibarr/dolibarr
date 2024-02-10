@@ -97,7 +97,7 @@ if (getDolGlobalString('MAIN_MOTD')) {
 	if (getDolGlobalString('MAIN_MOTD')) {
 		$substitutionarray = getCommonSubstitutionArray($langs);
 		complete_substitutions_array($substitutionarray, $langs);
-		$texttoshow = make_substitutions($conf->global->MAIN_MOTD, $substitutionarray, $langs);
+		$texttoshow = make_substitutions(getDolGlobalString('MAIN_MOTD'), $substitutionarray, $langs);
 
 		print "\n<!-- Start of welcome text -->\n";
 		print '<table width="100%" class="notopnoleftnoright"><tr><td>';
@@ -793,7 +793,7 @@ $db->close();
 
 /**
  *  Show weather logo. Logo to show depends on $totallate and values for
- *  $conf->global->MAIN_METEO_LEVELx
+ *  conf 'MAIN_METEO_LEVELx'
  *
  *  @param      int     $totallate      Nb of element late
  *  @param      string  $text           Text to show on logo
@@ -811,23 +811,20 @@ function showWeather($totallate, $text, $options, $morecss = '')
 
 
 /**
- *  get weather level
- *  $conf->global->MAIN_METEO_LEVELx
+ *  get weather status for conf 'MAIN_METEO_LEVELx'
  *
  *  @param      int     $totallate      Nb of element late
  *  @return     stdClass                Return img tag of weather
  */
 function getWeatherStatus($totallate)
 {
-	global $conf;
-
 	$weather = new stdClass();
 	$weather->picto = '';
 
 	$offset = 0;
 	$factor = 10; // By default
 
-	$used_conf = !getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE') ? 'MAIN_METEO_LEVEL' : 'MAIN_METEO_PERCENTAGE_LEVEL';
+	$used_conf = (getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE') ? 'MAIN_METEO_PERCENTAGE_LEVEL' : 'MAIN_METEO_LEVEL');
 
 	$weather->level = 0;
 	$level0 = $offset;

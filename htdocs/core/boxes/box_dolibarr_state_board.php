@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2021 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024 Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,16 +37,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 	public $boxlabel = "BoxDolibarrStateBoard";
 	public $depends = array("user");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -56,8 +47,6 @@ class box_dolibarr_state_board extends ModeleBoxes
 	 */
 	public function __construct($db, $param = '')
 	{
-		global $conf, $user;
-
 		$this->db = $db;
 	}
 
@@ -69,7 +58,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs;
 		$langs->load("boxes");
 
 		$this->max = $max;
@@ -264,7 +253,13 @@ class box_dolibarr_state_board extends ModeleBoxes
 						include_once $includes[$val]; // Loading a class cost around 1Mb
 
 						$board = new $class($this->db);
-						$board->load_state_board();
+						if (method_exists($board, 'load_state_board')) {
+							$board->load_state_board();
+						} elseif (method_exists($board, 'loadStateBoard')) {
+							$board->loadStateBoard();
+						} else {
+							$board = -1;
+						}
 						$boardloaded[$class] = $board;
 					} else {
 						$board = $boardloaded[$classkeyforcache];

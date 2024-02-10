@@ -235,7 +235,7 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 	$object->fetch($id);
 
 	if (!($object->id > 0)) {
-		dol_print_error('', 'Error, object must be fetched before being deleted');
+		dol_print_error(null, 'Error, object must be fetched before being deleted');
 		exit;
 	}
 
@@ -351,7 +351,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			} elseif ($key == 'card') {
 				$sql .= " AND cp.code = 'CB'";
 			} else {
-				dol_print_error('Value for key = '.$key.' not supported');
+				dol_print_error(null, 'Value for key = '.$key.' not supported');
 				exit;
 			}
 			if ($syear && !$smonth) {
@@ -416,7 +416,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		print '<td>';
 
 		$array = array();
-		$numterminals = max(1, $conf->global->TAKEPOS_NUM_TERMINALS);
+		$numterminals = max(1, getDolGlobalString('TAKEPOS_NUM_TERMINALS'));
 		for ($i = 1; $i <= $numterminals; $i++) {
 			$array[$i] = $i;
 		}

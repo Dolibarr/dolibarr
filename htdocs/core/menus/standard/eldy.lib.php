@@ -51,7 +51,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	$leftmenu = (empty($_SESSION["leftmenu"]) ? '' : $_SESSION["leftmenu"]);
 
 	$id = 'mainmenu';
-	$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 
 	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
 
@@ -738,8 +738,8 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 	$newmenu = $menu;
 
-	$mainmenu = ($forcemainmenu ? $forcemainmenu : $_SESSION["mainmenu"]);
-	$leftmenu = ($forceleftmenu ? '' : (empty($_SESSION["leftmenu"]) ? 'none' : $_SESSION["leftmenu"]));
+	$mainmenu = ($forcemainmenu ? $forcemainmenu : $_SESSION["mainmenu"]??'');
+	$leftmenu = ($forceleftmenu ? '' : (empty($_SESSION["leftmenu"]) ? 'none' : $_SESSION["leftmenu"]??''));
 
 	if (is_null($mainmenu)) {
 		$mainmenu = 'home';
@@ -768,7 +768,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
 
-	$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 
 	/**
 	 * We update newmenu with entries found into database
@@ -1100,7 +1100,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of user
  * @return	void
@@ -1228,7 +1228,7 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -1333,7 +1333,7 @@ function get_left_menu_thridparties($mainmenu, &$newmenu, $usemenuhider = 1, $le
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -1435,7 +1435,7 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "contracts") {
 				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=0", $langs->trans("MenuInactiveServices"), 2, $user->hasRight('contrat', 'lire'));
 				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=4", $langs->trans("MenuRunningServices"), 2, $user->hasRight('contrat', 'lire'));
-				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=4&filter=expired", $langs->trans("MenuExpiredServices"), 2, $user->hasRight('contrat', 'lire'));
+				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=4%26filter=expired", $langs->trans("MenuExpiredServices"), 2, $user->hasRight('contrat', 'lire'));
 				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=5", $langs->trans("MenuClosedServices"), 2, $user->hasRight('contrat', 'lire'));
 			}
 		}
@@ -1459,7 +1459,7 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -1488,10 +1488,10 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 
 			$newmenu->add("/compta/paiement/list.php?leftmenu=customers_bills_payment", $langs->trans("Payments"), 1, $user->hasRight('facture', 'lire'), '', $mainmenu, 'customers_bills_payment');
 
-			if (getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION')) {
-				$newmenu->add("/compta/paiement/tovalidate.php?leftmenu=customers_bills_tovalid", $langs->trans("MenuToValid"), 2, $user->hasRight('facture', 'lire'), '', $mainmenu, 'customer_bills_tovalid');
+			if (getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION') && preg_match('/customers_bills_payment/', $leftmenu)) {
+				$newmenu->add("/compta/paiement/tovalidate.php?leftmenu=customers_bills_payment_tovalid", $langs->trans("MenuToValid"), 2, $user->hasRight('facture', 'lire'), '', $mainmenu, 'customers_bills_payment_tovalid');
 			}
-			if ($usemenuhider || empty($leftmenu) || preg_match('/customers_bills/', $leftmenu)) {
+			if ($usemenuhider || empty($leftmenu) || preg_match('/customers_bills_payment/', $leftmenu)) {
 				$newmenu->add("/compta/paiement/rapport.php?leftmenu=customers_bills_payment_report", $langs->trans("Reportings"), 2, $user->hasRight('facture', 'lire'), '', $mainmenu, 'customers_bills_payment_report');
 			}
 
@@ -1548,6 +1548,7 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "donations") {
 				$newmenu->add("/don/card.php?leftmenu=donations&amp;action=create", $langs->trans("NewDonation"), 1, $user->hasRight('don', 'creer'));
 				$newmenu->add("/don/list.php?leftmenu=donations", $langs->trans("List"), 1, $user->hasRight('don', 'lire'));
+				$newmenu->add("/don/paiement/list.php?leftmenu=donations", $langs->trans("Payments"), 1, $user->hasRight('don', 'lire'));
 			}
 			// if ($leftmenu=="donations") $newmenu->add("/don/stats/index.php",$langs->trans("Statistics"), 1, $user->hasRight('don',  'lire'));
 		}
@@ -1640,7 +1641,7 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -1787,7 +1788,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 							$i++;
 						}
 					} else {
-						// Should not happend. Entries are added
+						// Should not happen. Entries are added
 						$newmenu->add('', $langs->trans("NoJournalDefined"), 2, $user->hasRight('accounting', 'comptarapport', 'lire'));
 					}
 				} else {
@@ -1901,7 +1902,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 				 $newmenu->add("/compta/stats/cumul.php?leftmenu=report","Cumule",2,$user->hasRight('compta',  'resultat', 'lire'));
 				 if (isModEnabled('propal')) {
 				 $newmenu->add("/compta/stats/prev.php?leftmenu=report","Previsionnel",2,$user->hasRight('compta',  'resultat', 'lire'));
-				 $newmenu->add("/compta/stats/comp.php?leftmenu=report","Transforme",2,$user->hasRight('compta',  'resultat', 'lire'));
+				 $newmenu->add("/compta/stats/comp.php?leftmenu=report","Transferred",2,$user->hasRight('compta',  'resultat', 'lire'));
 				 }
 				 */
 
@@ -1966,7 +1967,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -2049,7 +2050,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -2193,7 +2194,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -2227,7 +2228,7 @@ function get_left_menu_mrp($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -2247,7 +2248,7 @@ function get_left_menu_projects($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 				'perms'=>$user->hasRight('projet', 'lire'),
 				'module'=>'projet'
 			);
-			$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+			$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 			$showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 
 			$titleboth = $langs->trans("LeadsOrProjects");
@@ -2266,9 +2267,9 @@ function get_left_menu_projects($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			$newmenu->add("/projet/card.php?leftmenu=projects&action=create".($search_project_user ? '&search_project_user='.$search_project_user : ''), $titlenew, 1, $user->hasRight('projet', 'creer'));
 
 			if (!getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
-				$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user ? '&search_project_user='.$search_project_user : '').'&search_status=99', $langs->trans("List"), 1, $showmode, '', 'project', 'list');
+				$newmenu->add("/projet/list.php?leftmenu=projects".($search_project_user ? '&search_project_user='.$search_project_user : '').'&search_status=99', $langs->trans("List"), 1, $showmode, '', 'project', 'list');
 			} elseif (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') == 1) {
-				$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("List"), 1, $showmode, '', 'project', 'list');
+				$newmenu->add("/projet/list.php?leftmenu=projects".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("List"), 1, $showmode, '', 'project', 'list');
 				$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_usage_opportunity=1&search_status=99&search_opp_status=openedopp&contextpage=lead', $langs->trans("ListOpenLeads"), 2, $showmode);
 				$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_opp_status=notopenedopp&search_status=99&contextpage=project', $langs->trans("ListOpenProjects"), 2, $showmode);
 			} elseif (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') == 2) {	// 2 = leads only
@@ -2302,7 +2303,7 @@ function get_left_menu_projects($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -2410,7 +2411,7 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -2426,9 +2427,16 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
 		}
 
 		if (isModEnabled('mailing')) {
-			$newmenu->add("/comm/mailing/index.php?leftmenu=mailing", $langs->trans("EMailings"), 0, $user->hasRight('mailing', 'lire'), '', $mainmenu, 'mailing', 0, '', '', '', img_picto('', 'email', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/comm/mailing/card.php?leftmenu=mailing&amp;action=create", $langs->trans("NewMailing"), 1, $user->hasRight('mailing', 'creer'));
-			$newmenu->add("/comm/mailing/list.php?leftmenu=mailing", $langs->trans("List"), 1, $user->hasRight('mailing', 'lire'));
+			$titleindex = $langs->trans("EMailings");
+			$titlenew = $langs->trans("NewMailing");
+			$titlelist = $langs->trans("List");
+			if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
+				$titleindex .= ' | '.$langs->trans("SMSings");
+				$titlenew .= ' | '.$langs->trans("NewSMSing");
+			}
+			$newmenu->add("/comm/mailing/index.php?leftmenu=mailing", $titleindex, 0, $user->hasRight('mailing', 'lire'), '', $mainmenu, 'mailing', 0, '', '', '', img_picto('', 'email', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/comm/mailing/card.php?leftmenu=mailing&amp;action=create", $titlenew, 1, $user->hasRight('mailing', 'creer'));
+			$newmenu->add("/comm/mailing/list.php?leftmenu=mailing", $titlelist, 1, $user->hasRight('mailing', 'lire'));
 		}
 
 		if (isModEnabled('export')) {
@@ -2451,7 +2459,7 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -2478,9 +2486,6 @@ function get_left_menu_members($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			$newmenu->add("/adherents/stats/index.php?leftmenu=members", $langs->trans("MenuMembersStats"), 1, $user->hasRight('adherent', 'read'));
 
 			$newmenu->add("/adherents/cartes/carte.php?leftmenu=export", $langs->trans("MembersCards"), 1, $user->hasRight('adherent', 'export'));
-			if (getDolGlobalString('MEMBER_LINK_TO_HTPASSWDFILE') && ($usemenuhider || empty($leftmenu) || $leftmenu == 'none' || $leftmenu == "members" || $leftmenu == "export")) {
-				$newmenu->add("/adherents/htpasswd.php?leftmenu=export", $langs->trans("Filehtpasswd"), 1, $user->hasRight('adherent', 'export'));
-			}
 
 			if (isModEnabled('categorie')) {
 				$langs->load("categories");

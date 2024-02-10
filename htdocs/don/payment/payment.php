@@ -139,8 +139,8 @@ if ($action == 'add_payment') {
  */
 
 $form = new Form($db);
-
-llxHeader();
+$title = $langs->trans("Payment");
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-donation page-payment');
 
 
 $sql = "SELECT sum(p.amount) as total";

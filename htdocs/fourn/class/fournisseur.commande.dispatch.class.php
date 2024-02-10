@@ -20,7 +20,7 @@
  *  \file       htdocs/fourn/class/fournisseur.commande.dispatch.class.php
  *  \ingroup    fournisseur stock
  *  \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *              Initialy built by build_class_from_table on 2015-02-24 10:38
+ *              Initially built by build_class_from_table on 2015-02-24 10:38
  */
 
 // Put here all includes required by your class file
@@ -110,6 +110,9 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	 */
 	public $status;
 
+	/**
+	 * @var int timestamp
+	 */
 	public $tms = '';
 	public $batch;
 	public $eatby = '';
@@ -122,7 +125,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -153,28 +156,28 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		// Clean parameters
 
 		if (isset($this->fk_commande)) {
-			$this->fk_commande = trim($this->fk_commande);
+			$this->fk_commande = (int) $this->fk_commande;
 		}
 		if (isset($this->fk_product)) {
-			$this->fk_product = trim($this->fk_product);
+			$this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->fk_commandefourndet)) {
-			$this->fk_commandefourndet = trim($this->fk_commandefourndet);
+			$this->fk_commandefourndet = (int) $this->fk_commandefourndet;
 		}
 		if (isset($this->qty)) {
 			$this->qty = trim($this->qty);
 		}
 		if (isset($this->fk_entrepot)) {
-			$this->fk_entrepot = trim($this->fk_entrepot);
+			$this->fk_entrepot = (int) $this->fk_entrepot;
 		}
 		if (isset($this->fk_user)) {
-			$this->fk_user = trim($this->fk_user);
+			$this->fk_user = (int) $this->fk_user;
 		}
 		if (isset($this->comment)) {
 			$this->comment = trim($this->comment);
 		}
 		if (isset($this->status)) {
-			$this->status = trim($this->status);
+			$this->status = (int) $this->status;
 		}
 		if (isset($this->batch)) {
 			$this->batch = trim($this->batch);
@@ -352,28 +355,28 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		// Clean parameters
 
 		if (isset($this->fk_commande)) {
-			$this->fk_commande = trim($this->fk_commande);
+			$this->fk_commande = (int) $this->fk_commande;
 		}
 		if (isset($this->fk_product)) {
-			$this->fk_product = trim($this->fk_product);
+			$this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->fk_commandefourndet)) {
-			$this->fk_commandefourndet = trim($this->fk_commandefourndet);
+			$this->fk_commandefourndet = (int) $this->fk_commandefourndet;
 		}
 		if (isset($this->qty)) {
 			$this->qty = trim($this->qty);
 		}
 		if (isset($this->fk_entrepot)) {
-			$this->fk_entrepot = trim($this->fk_entrepot);
+			$this->fk_entrepot = (int) $this->fk_entrepot;
 		}
 		if (isset($this->fk_user)) {
-			$this->fk_user = trim($this->fk_user);
+			$this->fk_user = (int) $this->fk_user;
 		}
 		if (isset($this->comment)) {
 			$this->comment = trim($this->comment);
 		}
 		if (isset($this->status)) {
-			$this->status = trim($this->status);
+			$this->status = (int) $this->status;
 		}
 		if (isset($this->batch)) {
 			$this->batch = trim($this->batch);
@@ -626,16 +629,16 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	{
 		$this->id = 0;
 
-		$this->fk_commande = '';
-		$this->fk_product = '';
-		$this->fk_commandefourndet = '';
+		$this->fk_commande = 0;
+		$this->fk_product = 0;
+		$this->fk_commandefourndet = 0;
 		$this->qty = '';
-		$this->fk_entrepot = '';
-		$this->fk_user = '';
+		$this->fk_entrepot = 0;
+		$this->fk_user = 0;
 		$this->datec = '';
 		$this->comment = '';
-		$this->status = '';
-		$this->tms = '';
+		$this->status = 0;
+		$this->tms = dol_now();
 		$this->batch = '';
 		$this->eatby = '';
 		$this->sellby = '';

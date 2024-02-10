@@ -85,7 +85,7 @@ class AdherentType extends CommonObject
 	public $duration_unit;
 
 	/**
-	 * @var int Subsription required (0 or 1)
+	 * @var int Subscription required (0 or 1)
 	 */
 	public $subscription;
 
@@ -95,7 +95,7 @@ class AdherentType extends CommonObject
 	public $amount;
 
 	/**
-	 * @var int Amount can be choosen by the visitor during subscription (0 or 1)
+	 * @var int Amount can be chosen by the visitor during subscription (0 or 1)
 	 */
 	public $caneditamount;
 
@@ -125,9 +125,6 @@ class AdherentType extends CommonObject
 
 	/** @var array Array of members */
 	public $members = array();
-
-	/** @var string string other */
-	public $other = array();
 
 	/**
 	 * @var string description
@@ -199,7 +196,7 @@ class AdherentType extends CommonObject
 	 */
 	public function setMultiLangs($user)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 0, 2);
 		$current_lang = $langs->getDefaultLang();
@@ -316,7 +313,7 @@ class AdherentType extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $langs, $conf;
+		global $conf;
 
 		$error = 0;
 
@@ -379,7 +376,7 @@ class AdherentType extends CommonObject
 	 */
 	public function update($user, $notrigger = 0)
 	{
-		global $langs, $conf, $hookmanager;
+		global $langs;
 
 		$error = 0;
 
@@ -416,8 +413,6 @@ class AdherentType extends CommonObject
 					return -2;
 				}
 			}
-
-			$action = 'update';
 
 			// Actions on extra fields
 			if (!$error) {
@@ -492,8 +487,6 @@ class AdherentType extends CommonObject
 	 */
 	public function fetch($rowid)
 	{
-		global $langs, $conf;
-
 		$sql = "SELECT d.rowid, d.libelle as label, d.morphy, d.statut as status, d.duration, d.subscription, d.amount, d.caneditamount, d.mail_valid, d.note as note_public, d.vote";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 		$sql .= " WHERE d.rowid = ".(int) $rowid;
@@ -547,7 +540,7 @@ class AdherentType extends CommonObject
 	public function liste_array($status = -1)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		$adherenttypes = array();
 
@@ -585,8 +578,6 @@ class AdherentType extends CommonObject
 	 */
 	public function amountByType($status = null)
 	{
-		global $conf, $langs;
-
 		$amountbytype = array();
 
 		$sql = "SELECT rowid, amount";
@@ -627,8 +618,6 @@ class AdherentType extends CommonObject
 	 */
 	public function listMembersForMemberType($excludefilter = '', $mode = 0)
 	{
-		global $conf, $user;
-
 		$ret = array();
 
 		$sql = "SELECT a.rowid";
@@ -696,7 +685,7 @@ class AdherentType extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs, $user;
+		global $langs;
 
 		$langs->load('members');
 
@@ -734,8 +723,6 @@ class AdherentType extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $langs;
-
 		$result = '';
 		$option = '';
 
@@ -838,13 +825,12 @@ class AdherentType extends CommonObject
 	public function _load_ldap_dn($info, $mode = 0)
 	{
 		// phpcs:enable
-		global $conf;
 		$dn = '';
 		if ($mode == 0) {
 			$dn = getDolGlobalString('LDAP_KEY_MEMBERS_TYPES') . "=".$info[getDolGlobalString('LDAP_KEY_MEMBERS_TYPES')]."," . getDolGlobalString('LDAP_MEMBER_TYPE_DN');
 		}
 		if ($mode == 1) {
-			$dn = $conf->global->LDAP_MEMBER_TYPE_DN;
+			$dn = getDolGlobalString('LDAP_MEMBER_TYPE_DN');
 		}
 		if ($mode == 2) {
 			$dn = getDolGlobalString('LDAP_KEY_MEMBERS_TYPES') . "=".$info[getDolGlobalString('LDAP_KEY_MEMBERS_TYPES')];
@@ -858,17 +844,15 @@ class AdherentType extends CommonObject
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
-	 *	@return		array		Tableau info des attributs
+	 *	@return		array		Tableau info des attributes
 	 */
 	public function _load_ldap_info()
 	{
 		// phpcs:enable
-		global $conf, $langs;
-
 		$info = array();
 
 		// Object classes
-		$info["objectclass"] = explode(',', $conf->global->LDAP_MEMBER_TYPE_OBJECT_CLASS);
+		$info["objectclass"] = explode(',', getDolGlobalString('LDAP_MEMBER_TYPE_OBJECT_CLASS'));
 
 		if (empty($this->note_public) && !empty($this->note)) {		// For backward compatibility
 			$this->note_public = $this->note;
@@ -905,7 +889,7 @@ class AdherentType extends CommonObject
 	{
 		global $user;
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'MTSPEC';
 		$this->specimen = 1;
@@ -1025,7 +1009,7 @@ class AdherentType extends CommonObject
 			}
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

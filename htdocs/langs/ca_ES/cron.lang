@@ -14,7 +14,7 @@ FileToLaunchCronJobs=Línia d'ordres per a comprovar i iniciar les tasques cron 
 CronExplainHowToRunUnix=A l'entorn Unix, hauríeu d'utilitzar l'entrada crontab següent per a executar la línia d'ordres cada 5 minuts
 CronExplainHowToRunWin=A l'entorn Windows de Microsoft(tm), podeu utilitzar les eines de tasques programades per a executar la línia d'ordres cada 5 minuts
 CronMethodDoesNotExists=La classe %s no conté cap mètode %s
-CronMethodNotAllowed=El mètode %s de la classe %s es troba a la llista negra de mètodes prohibits
+CronMethodNotAllowed=El mètode %s de la classe %s es troba a la llista de mètodes prohibits
 CronJobDefDesc=Els perfils de tasques programades es defineixen al fitxer descriptor del mòdul. Quan el mòdul està activat, es carreguen i estan disponibles perquè pugueu administrar les tasques des del menú d'eines d'administració %s.
 CronJobProfiles=Llista de perfils predefinits de tasques programades
 # Menu
@@ -67,7 +67,7 @@ CronModuleHelp=Nom del directori del mòdul Dolibarr (també funciona amb el mò
 CronClassFileHelp=El camí relatiu i el nom del fitxer a carregar (el camí és relatiu al directori arrel del servidor web). <BR> Per exemple, per a cridar al mètode fetch de l'objecte Producte de Dolibarr htdocs/product/class/<u>product.class.php</u>, el valor del nom del fitxer de classe és <br><i>product/class/product.class.php</i>
 CronObjectHelp=El nom de l'objecte a carregar. <BR> Per exemple, per a cridar al mètode "fetch" de l'objecte Producte de Dolibarr /htdocs/product/class/product.class.php, el valor del nom del fitxer de classe és<br><i>Producte</i>
 CronMethodHelp=El mètode d'objecte a llançar. <BR> Per exemple, per a cridar al mètode fetch de l'objecte Producte de Dolibarr /htdocs/product/class/product.class.php, el valor del mètode és<br><i>fetch</i>
-CronArgsHelp=Els arguments del mètode. <BR> Per exemple, cridar al mètode "fetch" de l'objecte Producte de Dolibarr /htdocs/product/class/product.class.php, el valor dels paràmetres pot ser <br> <i>0, ProductRef</i>
+CronArgsHelp=Els arguments del mètode. <BR> Per exemple, per cridar al mètode fetch de l'objecte Dolibarr Product /htdocs/product/class/product.class.php, el valor dels paràmetres pot ser<br><i>0, ProductRef</i>
 CronCommandHelp=La línia d'ordres del sistema a executar.
 CronCreateJob=Crear nova tasca programada
 CronFrom=De
@@ -91,6 +91,7 @@ WarningCronDelayed=Atenció, a efectes de rendiment, sigui quina sigui la proper
 DATAPOLICYJob=Netejador de dades i anonimitzador
 JobXMustBeEnabled=La tasca %s s'ha d'activar
 EmailIfError=Correu electrònic per a advertir d'error
+JobNotFound=No s'ha trobat la feina %s a la llista de treballs (intenta desactivar/activar el mòdul)
 ErrorInBatch=Error en executar la tasca %s
 
 # Cron Boxes

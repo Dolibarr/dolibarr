@@ -38,17 +38,6 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 	public $depends = array("accounting");
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler

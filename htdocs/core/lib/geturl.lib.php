@@ -30,7 +30,7 @@
  *
  * @param	string	  $url 				    URL to call.
  * @param	string    $postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'DELETE'
- * @param	string    $param			    Parameters of URL (x=value1&y=value2) or may be a formated content with $postorget='PUTALREADYFORMATED'
+ * @param	string    $param			    Parameters of URL (x=value1&y=value2) or may be a formatted content with $postorget='PUTALREADYFORMATED'
  * @param	integer   $followlocation		0=Do not follow, 1=Follow location.
  * @param	string[]  $addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
  * @param	string[]  $allowedschemes		List of schemes that are allowed ('http' + 'https' only by default)
@@ -69,7 +69,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	}
 	curl_setopt($ch, CURLINFO_HEADER_OUT, true); // To be able to retrieve request header and log it
 
-	// By default use tls decied by PHP.
+	// By default use the TLS version decided by PHP.
 	// You can force, if supported a version like TLSv1 or TLSv1.2
 	if (getDolGlobalString('MAIN_CURL_SSLVERSION')) {
 		curl_setopt($ch, CURLOPT_SSLVERSION, $conf->global->MAIN_CURL_SSLVERSION);
@@ -239,11 +239,11 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	dol_syslog("getURLContent request=".$request);
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
-		// This may contains binary data, so we dont output reponse by default.
+		// This may contains binary data, so we don't output response by default.
 		dol_syslog("getURLContent request=".$request, LOG_DEBUG, 0, '_curl');
 		dol_syslog("getURLContent response =".$response, LOG_DEBUG, 0, '_curl');
 	}
-	dol_syslog("getURLContent response size=".strlen($response)); // This may contains binary data, so we dont output it
+	dol_syslog("getURLContent response size=".strlen($response)); // This may contains binary data, so we don't output it
 
 	$rep = array();
 	if (curl_errno($ch)) {
@@ -299,7 +299,7 @@ function isIPAllowed($iptocheck, $localurl)
 			$errormsg = 'Error bad hostname IP (IP is a local IP). Must be an external URL.';
 			return $errormsg;
 		}
-		if (getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP') && in_array($iptocheck, explode(',', $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
+		if (getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP') && in_array($iptocheck, explode(',', getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP')))) {
 			$errormsg = 'Error bad hostname IP (IP is a local IP defined into MAIN_SECURITY_SERVER_IP). Must be an external URL.';
 			return $errormsg;
 		}
@@ -310,7 +310,7 @@ function isIPAllowed($iptocheck, $localurl)
 			$errormsg = 'Error bad hostname '.$iptocheck.'. Must be a local URL.';
 			return $errormsg;
 		}
-		if (getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP') && !in_array($iptocheck, explode(',', $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
+		if (getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP') && !in_array($iptocheck, explode(',', getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP')))) {
 			$errormsg = 'Error bad hostname IP (IP is not a local IP defined into list MAIN_SECURITY_SERVER_IP). Must be a local URL in allowed list.';
 			return $errormsg;
 		}
@@ -390,23 +390,15 @@ function getDomainFromURL($url, $mode = 0)
 /**
  * Function root url from a long url
  * For example: https://www.abc.mydomain.com/dir/page.html return 'https://www.abc.mydomain.com'
- * For example: http://www.abc.mydomain.com/ return 'https://www.abc.mydomain.com'
+ * For example: https://www.abc.mydomain.com/ return 'https://www.abc.mydomain.com'
+ * For example: http://www.abc.mydomain.com/ return 'http://www.abc.mydomain.com'
  *
  * @param	string	  $url 				    Full URL.
  * @return	string						    Returns root url
  */
 function getRootURLFromURL($url)
 {
-	$prefix = '';
-	$tmpurl = $url;
-	$reg = null;
-	if (preg_match('/^(https?:\/\/)/i', $tmpurl, $reg)) {
-		$prefix = $reg[1];
-	}
-	$tmpurl = preg_replace('/^https?:\/\//i', '', $tmpurl); // Remove http(s)://
-	$tmpurl = preg_replace('/\/.*$/i', '', $tmpurl); // Remove part after domain
-
-	return $prefix.$tmpurl;
+	return preg_replace('/^([a-z]*:\/\/[^\/]*).*/i', '$1', $url);
 }
 
 /**

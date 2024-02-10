@@ -9,6 +9,7 @@ ReceiptPrinterDesc=Réglage des imprimantes de tickets
 ReceiptPrinterTemplateDesc=Réglage des modèles
 ReceiptPrinterTypeDesc=Exemple de valeurs possibles pour le champ "Paramètres" selon le type de driver
 ReceiptPrinterProfileDesc=Description des imprimantes de tickets
+ThisFeatureIsForESCPOSPrintersOnly=This feature is for ESC/POS printers only
 ListPrinters=Liste des imprimantes
 SetupReceiptTemplate=Réglage des modèles
 CONNECTOR_DUMMY=Imprimante Test

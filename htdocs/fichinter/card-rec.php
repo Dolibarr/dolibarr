@@ -9,6 +9,7 @@
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2018  Charlie Benke           <charlie@patas-monkey.com>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,7 +142,7 @@ if ($action == 'add') {
 	}
 
 	// gestion des fréquences et des échéances
-	$frequency = GETPOST('frequency', 'int');
+	$frequency = GETPOSTINT('frequency');
 	$reyear = GETPOST('reyear');
 	$remonth = GETPOST('remonth');
 	$reday = GETPOST('reday');
@@ -167,14 +168,14 @@ if ($action == 'add') {
 		$object->id_origin = $id;
 		$object->title			= GETPOST('titre', 'alpha');
 		$object->description	= GETPOST('description', 'restricthtml');
-		$object->socid			= GETPOST('socid', 'alpha');
-		$object->fk_project		= GETPOST('projectid', 'int');
-		$object->fk_contract	= GETPOST('contractid', 'int');
+		$object->socid			= GETPOSTINT('socid');
+		$object->fk_project		= GETPOSTINT('projectid');
+		$object->fk_contrat		= GETPOSTINT('contractid');
 
 		$object->frequency = $frequency;
 		$object->unit_frequency = GETPOST('unit_frequency', 'alpha');
 		$object->nb_gen_max = $nb_gen_max;
-		$object->auto_validate = GETPOST('auto_validate', 'int');
+		$object->auto_validate = GETPOSTINT('auto_validate');
 
 		$object->date_when = $date_next_execution;
 
@@ -189,16 +190,16 @@ if ($action == 'add') {
 } elseif ($action == 'createfrommodel') {
 	$newinter = new Fichinter($db);
 
-	// on récupère les enregistrements
+	// Fetch the stored data
 	$object->fetch($id);
 	$res = $object->fetch_lines();
-	// on transfert les données de l'un vers l'autre
+	// Transfer the data from one to the other
 	if ($object->socid > 0) {
 		$newinter->socid = $object->socid;
 		$newinter->fk_project = $object->fk_project;
 		$newinter->fk_contrat = $object->fk_contrat;
 	} else {
-		$newinter->socid = GETPOST("socid");
+		$newinter->socid = GETPOSTINT("socid");
 	}
 
 	$newinter->entity = $object->entity;
@@ -357,7 +358,7 @@ if ($action == 'create') {
 		if (isModEnabled('contrat')) {
 			$formcontract = new FormContract($db);
 			print "<tr><td>".$langs->trans("Contract")."</td><td>";
-			$contractid = GETPOST('contractid') ? GETPOST('contractid') : (!empty($object->fk_contract) ? $object->fk_contract : 0) ;
+			$contractid = GETPOST('contractid') ? GETPOST('contractid') : (!empty($object->fk_contrat) ? $object->fk_contrat : 0) ;
 			$numcontract = $formcontract->select_contract($object->thirdparty->id, $contractid, 'contracttid');
 			print "</td></tr>";
 		}
@@ -466,7 +467,7 @@ if ($action == 'create') {
 
 		print "</form>\n";
 	} else {
-		dol_print_error('', "Error, no fichinter ".$object->id);
+		dol_print_error(null, "Error, no fichinter ".$object->id);
 	}
 } elseif ($action == 'selsocforcreatefrommodel') {
 	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'intervention');
@@ -606,7 +607,7 @@ if ($action == 'create') {
 
 			print '<table class="border centpercent">';
 
-			// if "frequency" is empty or = 0, the reccurence is disabled
+			// if "frequency" is empty or = 0, the recurrence is disabled
 			print '<tr><td class="titlefield">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('Frequency');
@@ -783,7 +784,7 @@ if ($action == 'create') {
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter_rec as f";
 		$sql .= " , ".MAIN_DB_PREFIX."societe as s ";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE f.fk_soc = s.rowid";
@@ -791,12 +792,14 @@ if ($action == 'create') {
 		if (!empty($socid)) {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}
-		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
+		/*
 		if (!empty($search_ref)) {
 			$sql .= natural_search('f.titre', $search_ref);
 		}
+		*/
 		if (!empty($search_societe)) {
 			$sql .= natural_search('s.nom', $search_societe);
 		}

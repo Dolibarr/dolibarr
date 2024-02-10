@@ -212,8 +212,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					'translate.class.php',
 					'utils.class.php',
 					'TraceableDB.php',
-					'multicurrency.class.php',
-					'infobox.class.php'
+					'multicurrency.class.php'
 				))) {
 					// Must not find $db->
 					$ok=true;
@@ -228,6 +227,48 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					$this->assertTrue($ok, 'Found string $db-> into a .class.php file in '.$file['relativename'].'. Inside a .class file, you should use $this->db-> instead.');
 					//exit;
 				}
+
+				if (preg_match('/\.class\.php/', $file['relativename']) && ! in_array($file['relativename'], array(
+					'adherents/canvas/actions_adherentcard_common.class.php',
+					'contact/canvas/actions_contactcard_common.class.php',
+					'compta/facture/class/facture.class.php',
+					'core/class/commonobject.class.php',
+					'core/class/extrafields.class.php',
+					'core/class/html.form.class.php',
+					'core/class/html.formfile.class.php',
+					'core/class/html.formcategory.class.php',
+					'core/class/html.formmail.class.php',
+					'core/class/html.formother.class.php',
+					'core/class/html.formsms.class.php',
+					'core/class/html.formticket.class.php',
+					'core/class/utils.class.php',
+					'fourn/class/fournisseur.facture.class.php',
+					'societe/canvas/actions_card_common.class.php',
+					'societe/canvas/individual/actions_card_individual.class.php',
+					'ticket/class/actions_ticket.class.php',
+					'ticket/class/ticket.class.php',
+					'webportal/class/context.class.php',
+					'webportal/class/html.formcardwebportal.class.php',
+					'webportal/class/html.formlistwebportal.class.php',
+					'webportal/controllers/document.controller.class.php',
+					'workstation/class/workstation.class.php',
+				))) {
+					// Must not find GETPOST
+					$ok = true;
+					$matches = array();
+					// Check string GETPOSTFLOAT a class.php file (should not be found into classes)
+					preg_match_all('/GETPOST\(["\'](....)/', $filecontent, $matches, PREG_SET_ORDER);
+					foreach ($matches as $key => $val) {
+						if (in_array($val[1], array('lang', 'forc', 'mass', 'conf'))) {
+							continue;
+						}
+						//var_dump($val);
+						$ok = false;
+						break;
+					}
+					//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+					$this->assertTrue($ok, 'Found string GETPOST into a .class.php file in '.$file['relativename'].'.');
+				}
 			} else {
 				// Check into Include files
 				if (! in_array($file['name'], array(
@@ -240,7 +281,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					// Must not found $this->db->
 					$ok=true;
 					$matches=array();
-					// Check string $this->db-> into a non class.php file (it shoud be $db-> into such classes)
+					// Check string $this->db-> into a non class.php file (it should be $db-> into such classes)
 					preg_match_all('/'.preg_quote('$this->db->', '/').'/', $filecontent, $matches, PREG_SET_ORDER);
 					foreach ($matches as $key => $val) {
 						$ok=false;

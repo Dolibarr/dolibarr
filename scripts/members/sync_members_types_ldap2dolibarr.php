@@ -53,6 +53,9 @@ $error = 0;
 $forcecommit = 0;
 $confirmed = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */
@@ -62,7 +65,7 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 // List of fields to get from LDAP
-$required_fields = array($conf->global->LDAP_KEY_MEMBERS_TYPES, $conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME, $conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION, $conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS);
+$required_fields = array(getDolGlobalString('LDAP_KEY_MEMBERS_TYPES'), getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_FULLNAME'), getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_DESCRIPTION'), getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS'));
 
 // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 $required_fields = array_unique(array_values(array_filter($required_fields, "dolValidElementType")));
@@ -100,7 +103,7 @@ print "----- Synchronize all records from LDAP database:\n";
 print "host=" . getDolGlobalString('LDAP_SERVER_HOST')."\n";
 print "port=" . getDolGlobalString('LDAP_SERVER_PORT')."\n";
 print "login=" . getDolGlobalString('LDAP_ADMIN_DN')."\n";
-print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
+print "pass=".preg_replace('/./i', '*', getDolGlobalString('LDAP_ADMIN_PASS'))."\n";
 print "DN to extract=" . getDolGlobalString('LDAP_MEMBER_TYPE_DN')."\n";
 print 'Filter=(' . getDolGlobalString('LDAP_KEY_MEMBERS_TYPES').'=*)'."\n";
 print "----- To Dolibarr database:\n";
@@ -125,14 +128,14 @@ if (!getDolGlobalString('LDAP_MEMBER_TYPE_DN')) {
 }
 
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result >= 0) {
 	$justthese = array();
 
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_MEMBER_TYPE_ACTIVE = 0;
 
-	$ldaprecords = $ldap->getRecords('*', $conf->global->LDAP_MEMBER_TYPE_DN, $conf->global->LDAP_KEY_MEMBERS_TYPES, $required_fields, 0, array($conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS));
+	$ldaprecords = $ldap->getRecords('*', getDolGlobalString('LDAP_MEMBER_TYPE_DN'), getDolGlobalString('LDAP_KEY_MEMBERS_TYPES'), $required_fields, 0, array(getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS')));
 	if (is_array($ldaprecords)) {
 		$db->begin();
 
@@ -186,11 +189,11 @@ if ($result >= 0) {
 		}
 		print "\n";
 	} else {
-		dol_print_error('', $ldap->error);
+		dol_print_error(null, $ldap->error);
 		$error++;
 	}
 } else {
-	dol_print_error('', $ldap->error);
+	dol_print_error(null, $ldap->error);
 	$error++;
 }
 

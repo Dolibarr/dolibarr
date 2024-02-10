@@ -25,7 +25,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -183,7 +183,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolForgeCriteriaCallback()
 	{
-		global $conf, $langs;
+		global $conf, $langs, $db;
 
 		// An attempt for SQL injection
 		$filter='if(now()=sysdate()%2Csleep(6)%2C0)';
@@ -195,9 +195,43 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(' AND ((((statut = 1) or (entity IN (__AAA__))) and (abc < 2) and (abc <> 1.23)))', $sql);
 
+		// A real search string
 		$filter="(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.date_creation:<:'2016-01-01 12:30:00') or (t.nature:is:NULL)";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" AND ((t.ref LIKE 'SO-%') or (t.date_creation < '20160101') or (t.date_creation < 0) or (t.nature IS NULL))", $sql);
+
+		// A real search string
+		$filter = "(t.fieldstring:=:'aaa ttt')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND ((t.fieldstring = 'aaa ttt'))", $sql);
+
+
+		// Check that parenthesis are NOT allowed inside the last operand. Very important.
+		$filter = "(t.fieldint:=:(1,2))";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals("Filter syntax error - Bad syntax of the search string", $sql);
+
+		// Check that ' is escaped into the last operand
+		$filter = "(t.fieldstring:=:'aaa'ttt')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+
+		if ($db->type == 'mysqli') {
+			$this->assertEquals(" AND ((t.fieldstring = 'aaa\'ttt'))", $sql);	// with mysql
+		} else {
+			$this->assertEquals(" AND ((t.fieldstring = 'aaa''ttt'))", $sql);	// with pgsql
+		}
+
+		$filter = "(t.fk_soc:IN:1,2)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND ((t.fk_soc IN (1,2)))", $sql);
+
+		$filter = "(t.fk_soc:IN:'1','2=b')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND ((t.fk_soc IN ('1','2=b')))", $sql);
+
+		$filter = "(t.fk_soc:IN:SELECT rowid FROM llx_societe WHERE fournisseur = 1)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND ((t.fk_soc IN (SELECT rowid FROM llx_societe WHERE fournisseur = 1)))", $sql);
 
 		return true;
 	}
@@ -226,8 +260,8 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals($db->connected, 1, 'Savdb is connected');
 		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
 
-		$newproductcloned2 = dol_clone($newproduct1, 2);
-		var_dump($newproductcloned2);
+		//$newproductcloned2 = dol_clone($newproduct1, 2);
+		//var_dump($newproductcloned2);
 		//print __METHOD__." newproductcloned1->db must be null\n";
 		//$this->assertNull($newproductcloned1->db, 'newproductcloned1->db is null');
 	}
@@ -388,11 +422,11 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		*/
 
 		$result=dol_buildpath('/google/oauth2callback.php', 2);
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__." dol_buildpath result=".$result."\n";
 		$this->assertStringStartsWith('http', $result);
 
 		$result=dol_buildpath('/google/oauth2callback.php', 3);
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__." dol_buildpath result=".$result."\n";
 		$this->assertStringStartsWith('http', $result);
 	}
 
@@ -1634,13 +1668,13 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$langs->load("main");
 
 		// Try simple replacement
-		$substit = array("__AAA__"=>'Not used', "__BBB__"=>'Not used', "__CCC__"=>"C replaced", "DDD"=>"D replaced");
+		$substit = array("__AAA__"=>'Not used', "__BBB__"=>'Not used', "__CCC__"=>"C instead", "DDD"=>"D instead");
 		$substit += getCommonSubstitutionArray($langs);
 
 		$chaine = 'This is a string with theme constant __[MAIN_THEME]__ and __(DIRECTION)__ and __CCC__ and DDD and __MYCOMPANY_NAME__ and __YEAR__';
 		$newstring = make_substitutions($chaine, $substit);
 		print __METHOD__." ".$newstring."\n";
-		$this->assertEquals($newstring, 'This is a string with theme constant eldy and ltr and C replaced and D replaced and '.$mysoc->name.' and '.dol_print_date(dol_now(), '%Y', 'gmt'));
+		$this->assertEquals($newstring, 'This is a string with theme constant eldy and ltr and C instead and D instead and '.$mysoc->name.' and '.dol_print_date(dol_now(), '%Y', 'gmt'));
 
 		// Try mix HTML not HTML, no change on initial text
 		$substit = array("__NOHTML__"=>'No html', "__HTML__"=>'<b>HTML</b>');
@@ -1746,5 +1780,46 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals($result, '[1:2:3:4]');
 
 		return true;
+	}
+
+	/**
+	 * testFetchObjectByElement
+	 *
+	 * @return boolean;
+	 */
+	public function testFetchObjectByElement()
+	{
+		global $conf, $langs;
+
+		$result = fetchObjectByElement(0, 'product');
+
+		$this->assertTrue(is_object($result));
+
+		return true;
+	}
+
+
+	/**
+	 * testRoundUpToNextMultiple
+	 *
+	 * @return void;
+	 */
+	public function testRoundUpToNextMultiple()
+	{
+		$this->assertEquals(roundUpToNextMultiple(39.5), 40);
+		$this->assertEquals(roundUpToNextMultiple(40), 40);
+		$this->assertEquals(roundUpToNextMultiple(40.4), 45);
+		$this->assertEquals(roundUpToNextMultiple(40.5), 45);
+		$this->assertEquals(roundUpToNextMultiple(44.5), 45);
+
+		$this->assertEquals(roundUpToNextMultiple(39.5, 10), 40);
+		$this->assertEquals(roundUpToNextMultiple(40, 10), 40);
+		$this->assertEquals(roundUpToNextMultiple(40.5, 10), 50);
+		$this->assertEquals(roundUpToNextMultiple(44.5, 10), 50);
+
+		$this->assertEquals(roundUpToNextMultiple(39.5, 6), 42);
+		$this->assertEquals(roundUpToNextMultiple(40, 6), 42);
+		$this->assertEquals(roundUpToNextMultiple(40.5, 6), 42);
+		$this->assertEquals(roundUpToNextMultiple(44.5, 6), 48);
 	}
 }

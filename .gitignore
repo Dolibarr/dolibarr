@@ -50,6 +50,9 @@ build/yarn-error.log
 build/node_modules/
 node_modules/
 
+vendor/
+tmp/
+
 #yarn
 yarn.lock
 

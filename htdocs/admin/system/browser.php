@@ -19,7 +19,7 @@
 
 /**
  *  \file       htdocs/admin/system/browser.php
- *  \brief      Page to show Dolibarr informations
+ *  \brief      Page to show Dolibarr information
  */
 
 // Load Dolibarr environment
