@@ -48,7 +48,6 @@ class Opensurveysondage extends CommonObject
 	 */
 	public $picto = 'poll';
 
-
 	/**
 	 * @var string Description
 	 */
@@ -121,6 +120,10 @@ class Opensurveysondage extends CommonObject
 		'sujet' => array('type'=>'mediumtext', 'label'=>'Sujet', 'enabled'=>'1', 'position'=>80, 'notnull'=>0, 'visible'=>-1,),
 		'id_sondage_admin' => array('type'=>'char(24)', 'label'=>'Idsondageadmin', 'enabled'=>'1', 'position'=>85, 'notnull'=>0, 'visible'=>-1,),
 	);
+
+	/**
+	 * @var string Id sondage not an int
+	 */
 	public $id_sondage;
 	/**
 	 * @var string		Description
@@ -146,10 +149,17 @@ class Opensurveysondage extends CommonObject
 	 * @var int		Allow users see others vote
 	 */
 	public $allow_spy;
+
+	/**
+	 * @var string Subject
+	 */
 	public $sujet;
+
+	/**
+	 * @var string Id sondage admin not an int
+	 */
 	public $id_sondage_admin;
 	// END MODULEBUILDER PROPERTIES
-
 
 	/**
 	 * Draft status (not used)
@@ -469,6 +479,9 @@ class Opensurveysondage extends CommonObject
 
 		$datas = [];
 		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("ShowSurvey").'</u>';
+		if (isset($this->status)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->date_fin)) {
 			$datas['expire_date'] = '<br><b>'.$langs->trans('ExpireDate').':</b> '.dol_print_date($this->date_fin, 'day');
