@@ -163,10 +163,10 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 	 *
 	 * Check that a Reception object can be fetched from database.
 	 *
-	 * @param $id The id of an existing Reception object to fetch.
+	 * @param int	$id 	The id of an existing Reception object to fetch.
+	 * @return Reception $localobject
 	 *
 	 * @depends testReceptionCreate
-	 * @return Reception $localobject
 	 */
 	public function testReceptionFetch($id)
 	{
@@ -185,10 +185,10 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 	 *
 	 * Check that a Reception object can be updated.
 	 *
-	 * @param $localobject An existing Reception object to update.
+	 * @param Object	$localobject 	An existing Reception object to update.
+	 * @return Reception a Reception object with data fetched and name changed
 	 *
 	 * @depends testReceptionFetch
-	 * @return Reception a Reception object with data fetched and name changed
 	 */
 	public function testReceptionUpdate($localobject)
 	{
@@ -209,10 +209,10 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 	 * Check that a Reception with status == Reception::STATUS_DRAFT can be
 	 * re-opened with the Reception::reOpen() function.
 	 *
-	 * @param $localobject An existing Reception object to validate.
+	 * @param Object	$localobject 	An existing Reception object to validate.
+	 * @return Reception a Reception object with data fetched and STATUS_VALIDATED
 	 *
 	 * @depends testReceptionUpdate
-	 * @return Reception a Reception object with data fetched and STATUS_VALIDATED
 	 */
 	public function testReceptionValid($localobject)
 	{
@@ -249,10 +249,10 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 	 * Check that a Reception can be closed with the Reception::setClosed()
 	 * function, after it has been validated.
 	 *
-	 * @param $localobject An existing validated Reception object to close.
+	 * @param Object	$localobject 	An existing validated Reception object to close.
+	 * @return 							Reception a Reception object with data fetched and STATUS_CLOSED
 	 *
 	 * @depends testReceptionValid
-	 * @return Reception a Reception object with data fetched and STATUS_CLOSED
 	 */
 	public function testReceptionSetClosed($localobject)
 	{
@@ -302,10 +302,10 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 	 * Check that a Reception with status == Reception::STATUS_CLOSED can be
 	 * re-opened with the Reception::reOpen() function.
 	 *
-	 * @param $localobject An existing closed Reception object to re-open.
+	 * @param 	Object	$localobject 	An existing closed Reception object to re-open.
+	 * @return 	Reception 				A Reception object with data fetched and STATUS_VALIDATED
 	 *
 	 * @depends testReceptionSetClosed
-	 * @return Reception a Reception object with data fetched and STATUS_VALIDATED
 	 */
 	public function testReceptionReOpen($localobject)
 	{
@@ -338,10 +338,10 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 	 * Check that a Reception with status == Reception::STATUS_CLOSED can be
 	 * re-opened with the Reception::reOpen() function.
 	 *
-	 * @param $localobject An existing validated Reception object to mark as Draft.
+	 * @param 	Object	$localobject 	An existing validated Reception object to mark as Draft.
+	 * @return 	Reception 				A Reception object with data fetched and STATUS_DRAFT
 	 *
 	 * @depends testReceptionReOpen
-	 * @return Reception a Reception object with data fetched and STATUS_DRAFT
 	 */
 	public function testReceptionSetDraft($localobject)
 	{
@@ -376,10 +376,10 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 	 * Check that a Reception referencing a Societe object being merged into
 	 * another is correctly migrated to use the new Societe object.
 	 *
-	 * @param $localobject An existing validated Reception object to mark as Draft.
+	 * @param 	Object	$localobject 	An existing validated Reception object to mark as Draft.
+	 * @return 	Reception 				A Reception object with data fetched
 	 *
 	 * @depends testReceptionSetDraft
-	 * @return Reception a Reception object with data fetched
 	 */
 	public function testReceptionMergeCompanies($localobject)
 	{
@@ -405,10 +405,10 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 	 *
 	 * Check that a Reception object can be deleted.
 	 *
-	 * @param $localobject An existing Reception object to delete.
+	 * @param 	Object 	$localobject 	An existing Reception object to delete.
+	 * @return 	int 					The result of the delete operation
 	 *
 	 * @depends testReceptionReOpen
-	 * @return int the result of the delete operation
 	 */
 	public function testReceptionDelete($localobject)
 	{
