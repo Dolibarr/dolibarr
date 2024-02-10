@@ -186,7 +186,7 @@ class FormProjets extends Form
 		if ($socid > 0) {
 			if (!getDolGlobalString('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY')) {
 				$sql .= " AND (p.fk_soc=" . ((int) $socid) . " OR p.fk_soc IS NULL)";
-			} elseif ($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all') {    // PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
+			} elseif (getDolGlobalString('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY') != 'all') {    // PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
 				$sql .= " AND (p.fk_soc IN (" . $this->db->sanitize(((int) $socid) . ", " . getDolGlobalString('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY')) . ") OR p.fk_soc IS NULL)";
 			}
 		}
@@ -760,7 +760,7 @@ class FormProjets extends Form
 	}
 
 	/**
-	 *  Return combo list of differents status of a orders
+	 *  Return combo list of different statuses of orders
 	 *
 	 *  @param	string	$selected   Preselected value
 	 *  @param	int		$short		Use short labels
@@ -920,5 +920,54 @@ class FormProjets extends Form
 		}
 
 		return $out;
+	}
+
+	/**
+	 *  Output html select to select opportunity status
+	 *
+	 *  @param	string $page       		Page
+	 *  @param  string $selected   		Id preselected
+	 *  @param 	int    $percent_value		percentage of the opportunity
+	 *  @param	string $htmlname_status	name of HTML element for status select
+	 *  @param	string $htmlname_percent	name of HTML element for percent input
+	 *  @param  string $filter         	optional filters criteras
+	 *  @param  int    $nooutput       	No print output. Return it only.
+	 *  @return	void|string
+	 */
+	public function formOpportunityStatus($page, $selected = '', $percent_value = 0, $htmlname_status = 'none', $htmlname_percent = 'none', $filter = '', $nooutput = 0)
+	{
+		// phpcs:enable
+		global $conf, $langs;
+
+		$out = '';
+		if ($htmlname_status != "none" && $htmlname_percent != 'none') {
+			$out .= '<form method="post" action="' . $page . '">';
+			$out .= '<input type="hidden" name="action" value="set_opp_status">';
+			$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
+			$out .= $this-> selectOpportunityStatus($htmlname_status, $selected, 1, 0, 0, 0, 'minwidth150 inline-block valignmiddle', 1, 1);
+			$out .= ' / <span title="'.$langs->trans("OpportunityProbability").'"> ';
+			$out .= '<input class="width50 right" type="text" id="'.$htmlname_percent.'" name="'.$htmlname_percent.'" title="'.dol_escape_htmltag($langs->trans("OpportunityProbability")).'" value="'.$percent_value.'"> %';
+			$out .= '</span>';
+			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
+			$out .= '</form>';
+		} else {
+			if ($selected > 0) {
+				$code = dol_getIdFromCode($this->db, $selected, 'c_lead_status', 'rowid', 'code');
+				$out .= $langs->trans("OppStatus".$code);
+
+				// Opportunity percent
+				$out.= ' / <span title="'.$langs->trans("OpportunityProbability").'"> ';
+				$out.= price($percent_value, 0, $langs, 1, 0).' %';
+				$out.= '</span>';
+			} else {
+				$out .= "&nbsp;";
+			}
+		}
+
+		if ($nooutput) {
+			return $out;
+		} else {
+			print $out;
+		}
 	}
 }

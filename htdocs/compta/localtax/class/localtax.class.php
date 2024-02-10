@@ -342,7 +342,7 @@ class Localtax extends CommonObject
 
 
 	/**
-	 *	Hum la fonction s'appelle 'Solde' elle doit a mon avis calcluer le solde de localtax, non ?
+	 *	Hum la function s'appelle 'Solde' elle doit a mon avis calcluer le solde de localtax, non ?
 	 *
 	 *	@param	int		$year		Year
 	 *	@return	int					???
@@ -486,7 +486,7 @@ class Localtax extends CommonObject
 			return -4;
 		}
 		if (isModEnabled("banque") && (empty($this->accountid) || $this->accountid <= 0)) {
-			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("BankAccount"));
 			return -5;
 		}
 		if (isModEnabled("banque") && (empty($this->paymenttype) || $this->paymenttype <= 0)) {
@@ -570,7 +570,7 @@ class Localtax extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Update the link betwen localtax payment and the line into llx_bank
+	 *	Update the link between localtax payment and the line into llx_bank
 	 *
 	 *	@param		int		$id		Id bank account
 	 *	@return		int				Return integer <0 if KO, >0 if OK

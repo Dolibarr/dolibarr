@@ -8,7 +8,7 @@
  * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
- * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -125,17 +125,9 @@ $tabfieldinsert[31] = "pcg_version,label,fk_country";
 $tabrowid = array();
 $tabrowid[31] = "";
 
-// Condition to show dictionary in setup page
-$tabcond = array();
-$tabcond[31] = isModEnabled('accounting');
-
 // List of help for fields
 $tabhelp = array();
 $tabhelp[31] = array('pcg_version'=>$langs->trans("EnterAnyCode"));
-
-// List of check for fields (NOT USED YET)
-$tabfieldcheck = array();
-$tabfieldcheck[31] = array();
 
 
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
@@ -173,8 +165,11 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			if ($fieldnamekey == 'pcg_version') {
 				$fieldnamekey = 'Pcg_version';
 			}
-			if ($fieldnamekey == 'libelle' || ($fieldnamekey == 'label')) {
+			if ($fieldnamekey == 'label') {
 				$fieldnamekey = 'Label';
+			}
+			if ($fieldnamekey == 'country') {
+				$fieldnamekey = "Country";
 			}
 
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
@@ -195,9 +190,9 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 	// Si verif ok et action add, on ajoute la ligne
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		if ($tabrowid[$id]) {
-			// Recupere id libre pour insertion
+			// Get free id for insert
 			$newid = 0;
-			$sql = "SELECT max(".$tabrowid[$id].") newid from ".$tabname[$id];
+			$sql = "SELECT MAX(".$tabrowid[$id].") newid from ".$tabname[$id];
 			$result = $db->query($sql);
 			if ($result) {
 				$obj = $db->fetch_object($result);
@@ -406,7 +401,9 @@ if ($action == 'disable_favorite') {
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-llxHeader();
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
+
+llxHeader('', $langs->trans("Pcg_version"), $help_url);
 
 $titre = $langs->trans($tablib[$id]);
 $linkback = '';
@@ -453,6 +450,7 @@ if ($id) {
 	print '<table class="noborder centpercent">';
 
 	// Form to add a new line
+
 	if ($tabname[$id]) {
 		$fieldlist = explode(',', $tabfield[$id]);
 
@@ -461,14 +459,15 @@ if ($id) {
 		foreach ($fieldlist as $field => $value) {
 			// Determine le nom du champ par rapport aux noms possibles
 			// dans les dictionnaires de donnees
-			$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
+			$valuetoshow = ucfirst($fieldlist[$field]); // By default
 			$valuetoshow = $langs->trans($valuetoshow); // try to translate
 			$class = "left";
 			if ($fieldlist[$field] == 'code') {
 				$valuetoshow = $langs->trans("Code");
 			}
-			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') {
+			if ($fieldlist[$field] == 'label') {
 				$valuetoshow = $langs->trans("Label");
+				$class = 'minwidth300';
 			}
 			if ($fieldlist[$field] == 'country') {
 				if (in_array('region_id', $fieldlist)) {
@@ -483,6 +482,7 @@ if ($id) {
 			if ($fieldlist[$field] == 'pcg_version' || $fieldlist[$field] == 'fk_pcg_version') {
 				$valuetoshow = $langs->trans("Pcg_version");
 			}
+			//var_dump($value);
 
 			if ($valuetoshow != '') {
 				print '<td class="'.$class.'">';
@@ -568,7 +568,7 @@ if ($id) {
 		// Title line with search boxes
 		print '<tr class="liste_titre liste_titre_add">';
 		foreach ($fieldlist as $field => $value) {
-			$showfield = 1; // By defaut
+			$showfield = 1; // By default
 
 			if ($fieldlist[$field] == 'region_id' || $fieldlist[$field] == 'country_id') {
 				$showfield = 0;
@@ -625,8 +625,10 @@ if ($id) {
 						fieldListAccountModel($fieldlist, $obj, $tabname[$id], 'edit');
 					}
 
-					print '<td colspan="3" class="right"><a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
-					print '&nbsp;<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
+					print '<td colspan="3" class="right">';
+					print '<a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '&nbsp;<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+					print '</td>';
 				} else {
 					$tmpaction = 'view';
 					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
@@ -711,6 +713,8 @@ if ($id) {
 
 				$i++;
 			}
+		} else {
+			print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 		}
 	} else {
 		dol_print_error($db);
@@ -735,14 +739,13 @@ $db->close();
  * 	@param		array	$fieldlist		Array of fields
  * 	@param		Object	$obj			If we show a particular record, obj is filled with record fields
  *  @param		string	$tabname		Name of SQL table
- *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
+ *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		void
  */
-function fieldListAccountModel($fieldlist, $obj = '', $tabname = '', $context = '')
+function fieldListAccountModel($fieldlist, $obj = null, $tabname = '', $context = '')
 {
-	global $conf, $langs, $db;
+	global $langs, $db;
 	global $form;
-	global $region_id;
 	global $elementList, $sourceList;
 
 	$formadmin = new FormAdmin($db);
@@ -784,21 +787,14 @@ function fieldListAccountModel($fieldlist, $obj = '', $tabname = '', $context = 
 			print '<td><input type="text" class="flat" value="'.(!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : '').'" size="10" name="'.$fieldlist[$field].'"></td>';
 		} else {
 			print '<td>';
-			$size = '';
 			$class = '';
-			if ($fieldlist[$field] == 'code') {
-				$size = 'size="8" ';
+			if ($fieldlist[$field] == 'pcg_version') {
+				$class = 'width150';
 			}
-			if ($fieldlist[$field] == 'position') {
-				$size = 'size="4" ';
+			if ($fieldlist[$field] == 'label') {
+				$class = 'width300';
 			}
-			if ($fieldlist[$field] == 'libelle') {
-				$size = 'centpercent';
-			}
-			if ($fieldlist[$field] == 'sortorder' || $fieldlist[$field] == 'sens' || $fieldlist[$field] == 'category_type') {
-				$size = 'size="2" ';
-			}
-			print '<input type="text" '.$size.' class="flat'.($class ? ' '.$class : '').'" value="'.(isset($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : '').'" name="'.$fieldlist[$field].'">';
+			print '<input type="text" class="flat'.($class ? ' '.$class : '').'" value="'.(isset($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : '').'" name="'.$fieldlist[$field].'">';
 			print '</td>';
 		}
 	}

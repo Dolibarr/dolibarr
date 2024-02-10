@@ -82,7 +82,7 @@ print $form->selectyesno("PRODUIT_ATTRIBUTES_HIDECHILD", getDolGlobalString('PRO
 
 print '<tr class="oddeven"><td>'.$langs->trans('CombinationsSeparator').'</td>';
 if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
-	$separator = $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR;
+	$separator = getDolGlobalString('PRODUIT_ATTRIBUTES_SEPARATOR');
 } else {
 	$separator = "_";
 }

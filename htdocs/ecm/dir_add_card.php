@@ -98,9 +98,9 @@ $permissiontoadd = 0;
 $permissiontodelete = 0;
 $permissiontoupload = 0;
 if ($module == 'ecm') {
-	$permissiontoadd = $user->rights->ecm->setup;
-	$permissiontodelete = $user->rights->ecm->setup;
-	$permissiontoupload = $user->rights->ecm->upload;
+	$permissiontoadd = $user->hasRight('ecm', 'setup');
+	$permissiontodelete = $user->hasRight('ecm', 'setup');
+	$permissiontoupload = $user->hasRight('ecm', 'upload');
 }
 if ($module == 'medias') {
 	$permissiontoadd = ($user->rights->mailing->creer || $user->rights->website->write);
@@ -167,7 +167,7 @@ if ($action == 'add' && $permissiontoadd) {
 			}
 			if (empty($dirfornewdir)) {
 				$error++;
-				dol_print_error('', 'Bad value for module. Not supported.');
+				dol_print_error(null, 'Bad value for module. Not supported.');
 			}
 
 			if (!$error) {

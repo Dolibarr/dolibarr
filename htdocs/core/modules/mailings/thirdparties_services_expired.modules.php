@@ -97,7 +97,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		if ($key == '0') {
 			$this->error = "Error: You must choose a filter";
 			$this->errors[] = $this->error;
-			return $this->error;
+			return -1;
 		}
 
 		$product = $this->arrayofproducts[$key];
@@ -129,7 +129,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 			$old = '';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email) {
+				if ($old != $obj->email) {
 					$cibles[$j] = array(
 					'email' => $obj->email,
 					'lastname' => $obj->name, // For thirdparties, lastname must be name

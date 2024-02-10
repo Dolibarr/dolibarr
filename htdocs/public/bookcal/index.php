@@ -50,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 $langs->loadLangs(array("main", "other", "dict", "agenda", "errors", "companies"));
 
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $id_availability = GETPOST('id_availability', 'int');
 
 $year = GETPOST("year", "int") ? GETPOST("year", "int") : date("Y");
@@ -89,7 +89,7 @@ $next_month = $next['month'];
 $max_day_in_prev_month = date("t", dol_mktime(0, 0, 0, $prev_month, 1, $prev_year, 'gmt')); // Nb of days in previous month
 $max_day_in_month = date("t", dol_mktime(0, 0, 0, $month, 1, $year)); // Nb of days in next month
 // tmpday is a negative or null cursor to know how many days before the 1st to show on month view (if tmpday=0, 1st is monday)
-$tmpday = -date("w", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')) + 2; // date('w') is 0 fo sunday
+$tmpday = -date("w", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')) + 2; // date('w') is 0 for sunday
 $tmpday += ((isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1) - 1);
 if ($tmpday >= 1) {
 	$tmpday -= 7; // If tmpday is 0 we start with sunday, if -6, we start with monday of previous week.
@@ -236,7 +236,7 @@ if ($action == 'add') {
 		$actioncomm->label = $langs->trans("BookcalBookingTitle");
 		$actioncomm->type = 'AC_RDV';
 		$actioncomm->type_id = 5;
-		$actioncomm->datep = GETPOST("datetimebooking", 'int');
+		$actioncomm->datep = GETPOSTINT("datetimebooking");
 		$actioncomm->datef = $dateend;
 		$actioncomm->note_private = GETPOST("description");
 		$actioncomm->percentage = -1;
@@ -528,8 +528,8 @@ if ($action == 'afteradd') {
 			}
 			hour.setMinutes(hour.getMinutes() + duration);
 
-			let hours = hour.getHours().toString().padStart(2, "0"); // Formater pour obtenir deux chiffres
-			let mins = hour.getMinutes().toString().padStart(2, "0"); // Formater pour obtenir deux chiffres
+			let hours = hour.getHours().toString().padStart(2, "0"); // Formatter pour obtenir deux chiffres
+			let mins = hour.getMinutes().toString().padStart(2, "0"); // Formatter pour obtenir deux chiffres
 
 			timerange = index + " - " + `${hours}:${mins}`;
 			str += "<input class=\'button btnsubmitbooking "+(isalreadybooked == true ? "btnbookcalbooked" : "")+"\' type=\'submit\' name=\'timebooking\' value=\'"+timerange+"\' data-duration=\'"+duration+"\'><br>";

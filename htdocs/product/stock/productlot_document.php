@@ -109,7 +109,7 @@ if (empty($upload_dir)) {
 
 $permissiontoread = $usercanread;
 $permissiontoadd = $usercancreate;
-$permtoedit = $user->rights->produit->creer;
+$permtoedit = $user->hasRight('produit', 'creer');
 //$permissiontodelete = $usercandelete;
 
 // Security check
@@ -176,7 +176,7 @@ if ($object->id) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/productlot_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$shownav = 1;
-	if ($user->socid && !in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+	if ($user->socid && !in_array('batch', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 		$shownav = 0;
 	}
 

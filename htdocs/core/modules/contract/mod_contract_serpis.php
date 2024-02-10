@@ -124,7 +124,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 	 *
 	 *	@param	Societe		$objsoc     third party object
 	 *	@param	Object		$contract	contract object
-	 *	@return string      			Value if OK, 0 if KO
+	 *	@return string|-1      			Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $contract)
 	{
@@ -150,7 +150,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 		}
 
 		$date = $contract->date_contrat;
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
@@ -169,7 +169,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 	 *
 	 *	@param	Societe		$objsoc     third party object
 	 *	@param	Object		$objforref  contract object
-	 *	@return string      			Value if OK, 0 if KO
+	 *	@return string|-1      			Value if OK, -1 if KO
 	 */
 	public function contract_get_num($objsoc, $objforref)
 	{

@@ -38,7 +38,6 @@ include '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
-
 $id = GETPOST('id', 'aZ09');
 $objecttype = GETPOST('objecttype', 'aZ09arobase');	// 'module' or 'myobject@mymodule', 'mymodule_myobject'
 

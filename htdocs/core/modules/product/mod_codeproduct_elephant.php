@@ -47,7 +47,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 
 	public $code_modifiable; // Code modifiable
 
-	public $code_modifiable_invalide; // Code modifiable si il est invalide
+	public $code_modifiable_invalide; // Code modifiable si il est invalid
 
 	public $code_modifiable_null; // Code modifiables si il est null
 
@@ -142,7 +142,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return string example
 	 */
-	public function getExample($langs, $objproduct = 0, $type = -1)
+	public function getExample($langs, $objproduct = null, $type = -1)
 	{
 		$exampleproduct = $exampleservice = '';
 
@@ -181,9 +181,9 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 *
 	 * @param	Product		$objproduct     Object product
 	 * @param  	int		    $type       Produit ou service (0:product, 1:service)
-	 * @return 	string      			Value if OK, '' if module not configured, <0 if KO
+	 * @return 	string|-1      			Value if OK, '' if module not configured, -1 if KO
 	 */
-	public function getNextValue($objproduct = 0, $type = -1)
+	public function getNextValue($objproduct = null, $type = -1)
 	{
 		global $db, $conf;
 
@@ -192,9 +192,9 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		// Get Mask value
 		$mask = '';
 		if ($type == 0 && getDolGlobalString('PRODUCT_ELEPHANT_MASK_PRODUCT')) {
-			$mask = $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
+			$mask = getDolGlobalString('PRODUCT_ELEPHANT_MASK_PRODUCT');
 		} elseif ($type == 1 && getDolGlobalString('PRODUCT_ELEPHANT_MASK_SERVICE')) {
-			$mask = $conf->global->PRODUCT_ELEPHANT_MASK_SERVICE;
+			$mask = getDolGlobalString('PRODUCT_ELEPHANT_MASK_SERVICE');
 		}
 
 		if (empty($mask)) {
@@ -237,12 +237,12 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		// phpcs:enable
 		global $conf;
 
-		$mask = $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
+		$mask = getDolGlobalString('PRODUCT_ELEPHANT_MASK_PRODUCT');
 		if (preg_match('/\{pre\}/i', $mask)) {
 			return 1;
 		}
 
-		$mask = $conf->global->PRODUCT_ELEPHANT_MASK_SERVICE;
+		$mask = getDolGlobalString('PRODUCT_ELEPHANT_MASK_SERVICE');
 		if (preg_match('/\{pre\}/i', $mask)) {
 			return 1;
 		}
@@ -306,11 +306,11 @@ class mod_codeproduct_elephant extends ModeleProductCode
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi si un code est pris ou non (par autre tiers)
+	 *  Indicate if the code is available or not (by another third party)
 	 *
-	 *  @param	DoliDB		$db			Handler acces base
+	 *  @param	DoliDB		$db			Handler access base
 	 *  @param	string		$code		Code a verifier
-	 *  @param	Product		$product		Objet product
+	 *  @param	Product		$product		Object product
 	 *  @return	int						0 if available, <0 if KO
 	 */
 	public function verif_dispo($db, $code, $product)

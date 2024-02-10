@@ -43,7 +43,7 @@ $ref=GETPOST('ref', 'alpha');
 $action=GETPOST('action', 'alpha');
 
 if ($id == '' && $ref == '') {
-	dol_print_error('', 'Bad parameter');
+	dol_print_error(null, 'Bad parameter');
 	exit;
 }
 
@@ -158,7 +158,7 @@ print '<div class="underbanner clearboth"></div>';
 
 
 /*
- * Referers types
+ * Referrers types
  */
 
 $title=$langs->trans("ListTicketsLinkToContract");

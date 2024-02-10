@@ -208,11 +208,6 @@ unitSET=Set
 unitS=Second
 unitH=Hour
 unitD=Day
-unitG=Gram
-unitM=Meter
-unitLM=Linear meter
-unitM2=Square meter
-unitM3=Cubic meter
 unitL=Liter
 unitT=ton
 unitKG=kg
@@ -221,6 +216,7 @@ unitMG=mg
 unitLB=pound
 unitOZ=ounce
 unitM=Meter
+unitLM=Linear meter
 unitDM=dm
 unitCM=cm
 unitMM=mm
@@ -437,4 +433,8 @@ ModifyValueExtrafields = Modify value of an extrafield
 OrProductsWithCategories=Or products with tags/categories
 WarningTransferBatchStockMouvToGlobal = If you want to deserialize this product, all its serialized stock will be transformed into global stock
 WarningConvertFromBatchToSerial=If you currently have a quantity higher or equal to 2 for the product, switching to this choice means you will still have a product with different objects of the same batch (while you want a unique serial number). The duplicate will remain until an inventory or a manual stock movement to fix this is done.
+
 AllowStockMovementVariantParent=Allow stock movements on the variant parent
+
+ConfirmSetToDraftInventory=Are you sure you want to go back to Draft status?<br>The quantities currently set in the inventory will be reset.
+

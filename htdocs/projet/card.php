@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2023      Charlene Benke       <charlene@patas_monkey.com>
+ * Copyright (C) 2023      Christian Foellmann  <christian@foellmann.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +83,7 @@ $object = new Project($db);
 $extrafields = new ExtraFields($db);
 
 // Load object
-//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Can't use generic include because when creating a project, ref is defined and we dont want error if fetch fails from ref.
+//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Can't use generic include because when creating a project, ref is defined and we don't want error if fetch fails from ref.
 if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref); // If we create project, ref may be defined into POST but record does not yet exists into database
 	if ($ret > 0) {
@@ -99,7 +100,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Security check
 $socid = GETPOST('socid', 'int');
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 restrictedArea($user, 'projet', $object->id, 'projet&project');
 
 if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && !GETPOST("cancel"))) {
@@ -196,7 +197,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		// Create with status validated immediatly
+		// Create with status validated immediately
 		if (getDolGlobalString('PROJECT_CREATE_NO_DRAFT') && !$error) {
 			$status = Project::STATUS_VALIDATED;
 		}
@@ -206,23 +207,23 @@ if (empty($reshook)) {
 
 			$db->begin();
 
-			$object->ref             = GETPOST('ref', 'alphanohtml');
-			$object->fk_project      = GETPOST('fk_project', 'int');
-			$object->title           = GETPOST('title', 'alphanohtml');
-			$object->socid           = GETPOST('socid', 'int');
-			$object->description     = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
-			$object->public          = GETPOST('public', 'alphanohtml');
-			$object->opp_amount      = price2num(GETPOST('opp_amount', 'alphanohtml'));
-			$object->budget_amount   = price2num(GETPOST('budget_amount', 'alphanohtml'));
-			$object->date_c = dol_now();
-			$object->date_start      = $date_start;
-			$object->date_end        = $date_end;
-			$object->date_start_event = $date_start_event;
-			$object->date_end_event   = $date_end_event;
-			$object->location        = $location;
-			$object->statut          = $status;
-			$object->opp_status      = $opp_status;
-			$object->opp_percent     = $opp_percent;
+			$object->ref                  = GETPOST('ref', 'alphanohtml');
+			$object->fk_project           = GETPOSTINT('fk_project');
+			$object->title                = GETPOST('title', 'alphanohtml');
+			$object->socid                = GETPOST('socid', 'int');
+			$object->description          = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
+			$object->public               = GETPOST('public', 'alphanohtml');
+			$object->opp_amount           = GETPOSTFLOAT('opp_amount');
+			$object->budget_amount        = GETPOSTFLOAT('budget_amount');
+			$object->date_c               = dol_now();
+			$object->date_start           = $date_start;
+			$object->date_end             = $date_end;
+			$object->date_start_event     = $date_start_event;
+			$object->date_end_event       = $date_end_event;
+			$object->location             = $location;
+			$object->statut               = $status;
+			$object->opp_status           = $opp_status;
+			$object->opp_percent          = $opp_percent;
 			$object->usage_opportunity    = (GETPOST('usage_opportunity', 'alpha') == 'on' ? 1 : 0);
 			$object->usage_task           = (GETPOST('usage_task', 'alpha') == 'on' ? 1 : 0);
 			$object->usage_bill_time      = (GETPOST('usage_bill_time', 'alpha') == 'on' ? 1 : 0);
@@ -403,6 +404,42 @@ if (empty($reshook)) {
 		}
 	}
 
+	if ($action == 'set_opp_status' && $user->hasRight('projet', 'creer')) {
+		$error = 0;
+		if (GETPOSTISSET('opp_status')) {
+			$object->opp_status   = $opp_status;
+		}
+		if (GETPOSTISSET('opp_percent')) {
+			$object->opp_percent  = $opp_percent;
+		}
+
+		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
+			if ($object->opp_amount && ($object->opp_status <= 0)) {
+				$error++;
+				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+			}
+		}
+
+		if (!$error) {
+			$result = $object->update($user);
+			if ($result < 0) {
+				$error++;
+				if ($result == -4) {
+					setEventMessages($langs->trans("ErrorRefAlreadyExists"), null, 'errors');
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
+		}
+
+		if ($error) {
+			$db->rollback();
+			$action = 'edit';
+		} else {
+			$db->commit();
+		}
+	}
+
 	// Build doc
 	if ($action == 'builddoc' && $permissiontoadd) {
 		// Save last template used to generate document
@@ -503,8 +540,11 @@ if (empty($reshook)) {
 			$newobject->fetch_optionals();
 			$newobject->fetch_thirdparty(); // Load new object
 			$object = $newobject;
-			$action = 'edit';
+			$action = 'view';
 			$comefromclone = true;
+
+			setEventMessages($langs->trans("ProjectCreatedInDolibarr", $newobject->ref), "", 'mesgs');
+			//var_dump($newobject); exit;
 		}
 	}
 
@@ -727,7 +767,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		print '</td><td class="maxwidthonsmartphone">';
 		$filter = '';
 		if (getDolGlobalString('PROJECT_FILTER_FOR_THIRDPARTY_LIST')) {
-			$filter = $conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
+			$filter = getDolGlobalString('PROJECT_FILTER_FOR_THIRDPARTY_LIST');
 		}
 		$text = img_picto('', 'company').$form->select_company(GETPOST('socid', 'int'), 'socid', $filter, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 		if (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') && empty($conf->dol_use_jmobile)) {
@@ -864,7 +904,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	print '</form>';
 
 	// Change probability from status or role of project
-	// Set also dependencies between use taks and bill time
+	// Set also dependencies between use task and bill time
 	print '<script type="text/javascript">
         jQuery(document).ready(function() {
         	function change_percent()
@@ -977,7 +1017,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		// Status
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td><td>';
 		print '<select class="flat" name="status" id="status">';
-		foreach ($object->labelStatusShort as $key => $val) {
+		$statuses = $object->labelStatusShort;
+		if (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_PROJECT')) {
+			unset($statuses[$object::STATUS_DRAFT]);
+		}
+		foreach ($statuses as $key => $val) {
 			print '<option value="'.$key.'"'.((GETPOSTISSET('status') ? GETPOST('status') : $object->statut) == $key ? ' selected="selected"' : '').'>'.$langs->trans($val).'</option>';
 		}
 		print '</select>';
@@ -1114,10 +1158,10 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			print '</td><td>';
 			$filter = '';
 			if (getDolGlobalString('PROJECT_FILTER_FOR_THIRDPARTY_LIST')) {
-				$filter = $conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
+				$filter = getDolGlobalString('PROJECT_FILTER_FOR_THIRDPARTY_LIST');
 			}
 			$text = img_picto('', 'company', 'class="pictofixedwidth"');
-			$text .= $form->select_company(!empty($object->thirdparty->id)?$object->thirdparty->id:"", 'socid', $filter, 'None', 1, 0, array(), 0, 'minwidth300');
+			$text .= $form->select_company(!empty($object->thirdparty->id) ? $object->thirdparty->id : "", 'socid', $filter, 'None', 1, 0, array(), 0, 'minwidth300');
 			if (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') && empty($conf->dol_use_jmobile)) {
 				$texthelp = $langs->trans("IfNeedToUseOtherObjectKeepEmpty");
 				print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
@@ -1339,18 +1383,16 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opportunity)) {
 			// Opportunity status
-			print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
-			$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
-			if ($code) {
-				print $langs->trans("OppStatus".$code);
+			print '<tr><td>'.$langs->trans("OpportunityStatus");
+			if ($action != 'edit_opp_status' && $user->hasRight('projet', 'creer')) {
+				print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_opp_status&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
 			}
-
-			// Opportunity percent
-			print ' <span title="'.$langs->trans("OpportunityProbability").'"> / ';
-			if (strcmp($object->opp_percent, '')) {
-				print price($object->opp_percent, 0, $langs, 1, 0).' %';
-			}
-			print '</span></td></tr>';
+			print '</td><td>';
+			$html_name_status 	= ($action == 'edit_opp_status') ? 'opp_status' : 'none';
+			$html_name_percent 	= ($action == 'edit_opp_status') ? 'opp_percent' : 'none';
+			$percent_value = (GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ? vatrate($object->opp_percent) : ''));
+			$formproject->formOpportunityStatus($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->opp_status, $percent_value, $html_name_status, $html_name_percent);
+			print '</td></tr>';
 
 			// Opportunity Amount
 			print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
@@ -1422,7 +1464,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 	print '</form>';
 
-	// Set also dependencies between use taks and bill time
+	// Set also dependencies between use task and bill time
 	print '<script type="text/javascript">
         jQuery(document).ready(function() {
         	jQuery("#usage_task").change(function() {

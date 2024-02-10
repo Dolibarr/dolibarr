@@ -148,7 +148,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pc.datep", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
 	if (isModEnabled("banque")) {
-		print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+		print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 	}
 	print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pc.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 	print "</tr>\n";
@@ -184,10 +184,11 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
-		$i = 0;
+
 		$total = 0;
 		$totalpaid = 0;
 
+		$i = 0;
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 
@@ -251,15 +252,22 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 			$totalpaid = $totalpaid + $obj->totalpaid;
 			$i++;
 		}
-		print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
-		print '<td class="liste_total right"></td>'; // A total here has no sense
-		print '<td align="center" class="liste_total">&nbsp;</td>';
-		print '<td align="center" class="liste_total">&nbsp;</td>';
-		print '<td align="center" class="liste_total">&nbsp;</td>';
+		print '<tr class="liste_total">';
+
+		print '<td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
+
+		// Total here has no sens because we can have several time the same line
+		//print '<td class="liste_total right">'.price($total).'</td>';
+		print '<td class="liste_total right"></td>';
+
+		print '<td class="liste_total center">&nbsp;</td>';
+		print '<td class="liste_total center">&nbsp;</td>';
+		print '<td class="liste_total center">&nbsp;</td>';
 		if (isModEnabled("banque")) {
-			print '<td></td>';
+			print '<td class="liste_total center"></td>';
 		}
 		print '<td class="liste_total right">'.price($totalpaid)."</td>";
+
 		print "</tr>";
 	} else {
 		dol_print_error($db);
@@ -279,7 +287,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 	$sql .= " pct.code as payment_code,";
 	$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel";
 	$sql .= " FROM ".MAIN_DB_PREFIX."tva as pv";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_vat as ptva ON (ptva.fk_tva = pv.rowid)";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_vat as ptva ON ptva.fk_tva = pv.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON (ptva.fk_bank = b.rowid)";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON ptva.fk_typepaiement = pct.id";
@@ -296,8 +304,11 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 	$result = $db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
+
 		$i = 0;
 		$total = 0;
+		$totaltopay = 0;
+
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "pv.datev", "", $param, '', $sortfield, $sortorder, 'nowraponall ');
@@ -307,18 +318,20 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "ptva.datep", "", $param, 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
 		if (isModEnabled("banque")) {
-			print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+			print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 		}
 		print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "ptva.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 		print "</tr>\n";
-		$var = 1;
+
 		while ($i < $num) {
 			$obj = $db->fetch_object($result);
 
+			$totaltopay = $totaltopay + $obj->amount_tva;
 			$total = $total + $obj->amount;
 
 
 			print '<tr class="oddeven">';
+
 			print '<td class="left">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>'."\n";
 
 			$tva_static->id = $obj->id_tva;
@@ -330,7 +343,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 			// Ref payment
 			$ptva_static->id = $obj->rowid;
 			$ptva_static->ref = $obj->rowid;
-			print '<td class="left">'.$ptva_static->getNomUrl(1)."</td>\n";
+			print '<td>'.$ptva_static->getNomUrl(1)."</td>\n";
 
 			// Date
 			print '<td class="center">'.dol_print_date($db->jdate($obj->date_payment), 'day')."</td>\n";
@@ -367,16 +380,28 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 
 			$i++;
 		}
-		print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
-		print '<td>&nbsp;</td>';
-		print '<td>&nbsp;</td>';
-		print '<td>&nbsp;</td>';
-		print '<td>&nbsp;</td>';
-		print '<td>&nbsp;</td>';
-		print '<td class="right">'.price($total)."</td>";
+		print '<tr class="liste_total">';
+
+		print '<td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
+
+		// Total here has no sens because we can have several time the same line
+		//print '<td class="right">'.price($totaltopay).'</td>';
+		print '<td class="liste_total">&nbsp;</td>';
+
+		print '<td class="liste_total"></td>';
+		print '<td class="liste_total"></td>';
+		print '<td class="liste_total"></td>';
+
+		if (isModEnabled("banque")) {
+			print '<td class="liste_total"></td>';
+		}
+
+		print '<td class="liste_total right">'.price($total)."</td>";
+
 		print "</tr>";
 
 		print "</table>";
+
 		$db->free($result);
 	} else {
 		dol_print_error($db);
@@ -424,7 +449,7 @@ while ($j < $numlt) {
 		$i = 0;
 		$total = 0;
 
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "pv.datev", "", $param, 'width="120"', $sortfield, $sortorder);

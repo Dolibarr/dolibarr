@@ -116,7 +116,7 @@ class mod_sn_standard extends ModeleNumRefBatch
 	 *
 	 *  @param	Societe		$objsoc     Object thirdparty
 	 *  @param  Productlot	$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @return string|int      		String if OK, <0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -144,7 +144,7 @@ class mod_sn_standard extends ModeleNumRefBatch
 
 		//$date=time();
 		$date = dol_now();
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1;

@@ -108,8 +108,8 @@ if ($id > 0 || $ref) {
 	$prod->fetch($id, $ref);
 }
 
-$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'lire')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
 
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
@@ -302,7 +302,7 @@ if (empty($reshook)) {
 				if (empty($packaging)) {
 					$packaging = 1;
 				}
-				/* We can have a puchase ref that need to buy 100 min for a given price and with a packaging of 50.
+				/* We can have a purchase ref that need to buy 100 min for a given price and with a packaging of 50.
 				if ($packaging < $quantity) {
 					$packaging = $quantity;
 				}*/
@@ -395,7 +395,7 @@ if ($id > 0 || $ref) {
 			$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 			$shownav = 1;
-			if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+			if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 				$shownav = 0;
 			}
 
@@ -720,52 +720,49 @@ if ($id > 0 || $ref) {
 						}
 					}
 					$currencies = json_encode($currencies);
+					print "<!-- javascript to autocalculate the minimum price -->
+					<script type='text/javascript'>
+						function update_price_from_multicurrency() {
+							console.log('update_price_from_multicurrency');
+							var multicurrency_price = price2numjs($('input[name=\"multicurrency_price\"]').val());
+							var multicurrency_tx = price2numjs($('input[name=\"multicurrency_tx\"]').val());
+							if (multicurrency_tx != 0) {
+								$('input[name=\"price\"]').val(multicurrency_price / multicurrency_tx);
+								$('input[name=\"disabled_price\"]').val(multicurrency_price / multicurrency_tx);
+							} else {
+								$('input[name=\"price\"]').val('');
+								$('input[name=\"disabled_price\"]').val('');
+							}
+						}
 
-					print <<<END
-	<!-- javascript to autocalculate the minimum price -->
-    <script type="text/javascript">
-        function update_price_from_multicurrency() {
-			console.log("update_price_from_multicurrency");
-            var multicurrency_price = price2numjs($('input[name="multicurrency_price"]').val());
-            var multicurrency_tx = price2numjs($('input[name="multicurrency_tx"]').val());
-			if (multicurrency_tx != 0) {
-            	$('input[name="price"]').val(multicurrency_price / multicurrency_tx);
-            	$('input[name="disabled_price"]').val(multicurrency_price / multicurrency_tx);
-			} else {
-            	$('input[name="price"]').val('');
-            	$('input[name="disabled_price"]').val('');
-			}
-        }
+						jQuery(document).ready(function () {
+							$('input[name=\"disabled_price\"]').prop('disabled', true);
+							$('select[name=\"disabled_price_base_type\"]').prop('disabled', true);
+							update_price_from_multicurrency();
 
-        jQuery(document).ready(function () {
-            $('input[name="disabled_price"]').prop('disabled', true);
-            $('select[name="disabled_price_base_type"]').prop('disabled', true);
-            update_price_from_multicurrency();
+							$('input[name=\"multicurrency_price\"], input[name=\"multicurrency_tx\"]').keyup(function () {
+								update_price_from_multicurrency();
+							});
+							$('input[name=\"multicurrency_price\"], input[name=\"multicurrency_tx\"]').change(function () {
+								update_price_from_multicurrency();
+							});
+							$('input[name=\"multicurrency_price\"], input[name=\"multicurrency_tx\"]').on('paste', function () {
+								update_price_from_multicurrency();
+							});
 
-            $('input[name="multicurrency_price"], input[name="multicurrency_tx"]').keyup(function () {
-                update_price_from_multicurrency();
-            });
-			$('input[name="multicurrency_price"], input[name="multicurrency_tx"]').change(function () {
-                update_price_from_multicurrency();
-            });
-			$('input[name="multicurrency_price"], input[name="multicurrency_tx"]').on('paste', function () {
-                update_price_from_multicurrency();
-            });
+							$('select[name=\"multicurrency_price_base_type\"]').change(function () {
+								$('input[name=\"price_base_type\"]').val($(this).val());
+								$('select[name=\"disabled_price_base_type\"]').val($(this).val());
+							});
 
-            $('select[name="multicurrency_price_base_type"]').change(function () {
-                $('input[name="price_base_type"]').val($(this).val());
-                $('select[name="disabled_price_base_type"]').val($(this).val());
-            });
-
-            var currencies_array = $currencies;
-            $('select[name="multicurrency_code"]').change(function () {
-				console.log("We change the currency");
-                $('input[name="multicurrency_tx"]').val(currencies_array[$(this).val()]);
-                update_price_from_multicurrency();
-            });
-        });
-    </script>
-END;
+							var currencies_array = $currencies;
+							$('select[name=\"multicurrency_code\"]').change(function () {
+								console.log(\"We change the currency\");
+								$('input[name=\"multicurrency_tx\"]').val(currencies_array[$(this).val()]);
+								update_price_from_multicurrency();
+							});
+						});
+					</script>";
 				} else {
 					// Price qty min
 					print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
@@ -810,7 +807,7 @@ END;
 					print '<td>'.$langs->trans('GencodBuyPrice').'</td>';
 					print '<td>';
 					print img_picto('', 'barcode', 'class="pictofixedwidth"');
-					print $formbarcode->selectBarcodeType((GETPOSTISSET('fk_barcode_type') ? GETPOST('fk_barcode_type', 'int') : ($rowid ? $object->supplier_fk_barcode_type : getDolGlobalint("PRODUIT_DEFAULT_BARCODE_TYPE"))), 'fk_barcode_type', 1);
+					print $formbarcode->selectBarcodeType((GETPOSTISSET('fk_barcode_type') ? GETPOST('fk_barcode_type', 'int') : ($rowid ? $object->supplier_fk_barcode_type : getDolGlobalInt("PRODUIT_DEFAULT_BARCODE_TYPE"))), 'fk_barcode_type', 1);
 					print ' <input class="flat" name="barcode"  value="'.(GETPOSTISSET('barcode') ? GETPOST('barcode') : ($rowid ? $object->supplier_barcode : '')).'"></td>';
 					print '</tr>';
 				}

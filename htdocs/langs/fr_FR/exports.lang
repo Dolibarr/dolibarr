@@ -145,3 +145,4 @@ SelectImportFieldsSource = Choisissez les champs du fichier source que vous souh
 MandatoryTargetFieldsNotMapped=Certains champs cibles obligatoires ne sont pas mis en correspondance
 AllTargetMandatoryFieldsAreMapped=Tous les champs cibles qui ont besoin d'une valeur obligatoire sont affectés.
 ResultOfSimulationNoError=Résultat de la simulation : Aucune erreur
+NumberOfLinesLimited=Nombre de lignes limité

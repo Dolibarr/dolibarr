@@ -49,7 +49,7 @@ $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $taskref = GETPOST('taskref', 'alpha');
 
@@ -134,7 +134,7 @@ if (!$sortorder) {
 
 // Security check
 $socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
 $diroutputmassaction = $conf->project->dir_output.'/tasks/temp/massgeneration/'.$user->id;
@@ -143,7 +143,7 @@ $diroutputmassaction = $conf->project->dir_output.'/tasks/temp/massgeneration/'.
 $hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
 
 $progress = GETPOST('progress', 'int');
-$budget_amount = GETPOST('budget_amount', 'int');
+$budget_amount = GETPOSTFLOAT('budget_amount');
 $label = GETPOST('label', 'alpha');
 $description = GETPOST('description', 'restricthtml');
 $planned_workloadhour = (GETPOST('planned_workloadhour', 'int') ? GETPOST('planned_workloadhour', 'int') : 0);
@@ -310,8 +310,8 @@ if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
 	$error = 0;
 
 	// If we use user timezone, we must change also view/list to use user timezone everywhere
-	$date_start = dol_mktime(GETPOST('dateohour', 'int'), GETPOST('dateomin', 'int'), 0, GETPOST('dateomonth', 'int'), GETPOST('dateoday', 'int'), GETPOST('dateoyear', 'int'));
-	$date_end = dol_mktime(GETPOST('dateehour', 'int'), GETPOST('dateemin', 'int'), 0, GETPOST('dateemonth', 'int'), GETPOST('dateeday', 'int'), GETPOST('dateeyear', 'int'));
+	$date_start = dol_mktime(GETPOST('date_starthour', 'int'), GETPOST('date_startmin', 'int'), 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
+	$date_end = dol_mktime(GETPOST('date_endhour', 'int'), GETPOST('date_endmin', 'int'), 0, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
 
 	if (!$cancel) {
 		if (empty($taskref)) {
@@ -331,14 +331,8 @@ if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
 
 		if (!$error) {
 			$tmparray = explode('_', GETPOST('task_parent'));
-			$projectid = $tmparray[0];
-			if (empty($projectid)) {
-				$projectid = $id; // If projectid is ''
-			}
-			$task_parent = $tmparray[1];
-			if (empty($task_parent)) {
-				$task_parent = 0; // If task_parent is ''
-			}
+			$projectid = empty($tmparray[0]) ? $id : (int) $tmparray[0];
+			$task_parent = empty($tmparray[1]) ? 0 : $tmparray[1];
 
 			$task = new Task($db);
 
@@ -789,13 +783,13 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	// Date start task
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
 	print img_picto('', 'action', 'class="pictofixedwidth"');
-	print $form->selectDate((!empty($date_start) ? $date_start : ''), 'dateo', 1, 1, 0, '', 1, 1);
+	print $form->selectDate((!empty($date_start) ? $date_start : ''), 'date_start', 1, 1, 0, '', 1, 1);
 	print '</td></tr>';
 
 	// Date end task
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
 	print img_picto('', 'action', 'class="pictofixedwidth"');
-	print $form->selectDate((!empty($date_end) ? $date_end : -1), 'datee', -1, 1, 0, '', 1, 1);
+	print $form->selectDate((!empty($date_end) ? $date_end : -1), 'date_end', -1, 1, 0, '', 1, 1);
 	print '</td></tr>';
 
 	// Planned workload
@@ -819,7 +813,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	$cked_enabled = (getDolGlobalString('FCKEDITOR_ENABLE_SOCIETE') ? $conf->global->FCKEDITOR_ENABLE_SOCIETE : 0);
 	$nbrows = 0;
 	if (getDolGlobalString('MAIN_INPUT_DESC_HEIGHT')) {
-		$nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
+		$nbrows = getDolGlobalString('MAIN_INPUT_DESC_HEIGHT');
 	}
 	$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, $cked_enabled, $nbrows, '90%');
 	print $doleditor->Create();
@@ -1027,7 +1021,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 			print '</td>';
 		}
 	}
-	// Contacts of task, disabled because available by default jsut after
+	// Contacts of task, disabled because available by default just after
 	/*
 	if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
 		print '<td class="liste_titre"></td>';
@@ -1103,7 +1097,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 			print_liste_field_titre($arrayfields['t.billed']['label'], $_SERVER["PHP_SELF"], "t.billed", '', $param, '', $sortfield, $sortorder, 'right ');
 		}
 	}
-	// Contacts of task, disabled because available by default jsut after
+	// Contacts of task, disabled because available by default just after
 	/*
 	if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
 		print_liste_field_titre("TaskRessourceLinks", $_SERVER["PHP_SELF"], '', '', $param, $sortfield, $sortorder);

@@ -64,7 +64,6 @@ NoTypeDefinedGoToSetup=No se han definido tipos de miembros. Ir al menú "Tipos 
 WelcomeEMail=Correo electrónico de bienvenida
 SubscriptionRequired=Contribución requerida
 VoteAllowed=Voto permitido
-Reenable=Volver a habilitar
 ResiliateMember=dar de baja a un miembro
 ConfirmResiliateMember=¿Está seguro de que desea dar de baja a este miembro?
 ConfirmDeleteMember=¿Está seguro de que desea eliminar a este miembro (si elimina a un miembro, se eliminarán todas sus contribuciones)?

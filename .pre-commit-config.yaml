@@ -1,0 +1,171 @@
+---
+exclude: (?x)^( htdocs/includes/ckeditor/.* )
+repos:
+  # Several miscellaneous checks and fix (on yaml files, end of files fix)
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: no-commit-to-branch
+        args: [--branch, develop, --pattern, \d+.0]
+      - id: check-yaml
+        args: [--unsafe]
+      - id: check-json
+      - id: mixed-line-ending
+        exclude: (?x)^(htdocs/includes/tecnickcom/tcpdf/fonts/.*)$
+      - id: trailing-whitespace
+        exclude_types: [markdown]
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+        exclude:
+          (?x)^( dev/tools/dolibarr-postgres2mysql.php |test/other/test_serialize.php
+          |test/phpunit/textutf8.txt |test/phpunit/textiso.txt |htdocs/includes/.*
+          |htdocs/modulebuilder/template/.* |build/debian/dolibarr.postrm |build/debian/dolibarr.postinst
+          |build/debian/dolibarr.config )$
+      - id: fix-byte-order-marker
+      - id: check-case-conflict
+
+  # Beautify shell scripts
+  - repo: https://github.com/lovesegfault/beautysh.git
+    rev: v6.2.1
+    hooks:
+      - id: beautysh
+        exclude: (?x)^(dev/setup/git/hooks/pre-commit)$
+        args: [--tab]
+
+  # Run local script
+  #
+  # For instance to update the license in edited files, you could add to local.sh:
+  #
+  #   ```shell
+  #  #!/bin/bash
+  #   MYDIR=$(dirname "$0")
+  #   CHANGED_INTERNALS=$(git diff --name-only | grep -v includes)
+  #   "$MYDIR/dev/tools/updatelicense.php" $CHANGED_INTERNALS
+  #   ```
+  - repo: local
+    hooks:
+      - id: local-precommit-script
+        name: Run local script before commit if it exists
+        language: system
+        entry: bash -c '[ ! -x local.sh ] || ./local.sh'
+        pass_filenames: false
+
+  # Check PHP syntax
+  - repo: https://github.com/mdeweerd/pre-commit-php
+    rev: v1.6.5
+    hooks:
+      - id: php-cbf
+        files: \.(php)$
+        args: [--standard=dev/setup/codesniffer/ruleset.xml]
+      - id: php-cs
+        files: \.(php)$
+        args:
+          [
+            --standard=dev/setup/codesniffer/ruleset.xml,
+            --report=emacs,
+            --severity=5,
+          ]
+      - alias: php-cs-with-cache
+        id: php-cs
+        # Configuration for ci - run on all files with cache
+        stages: [manual]
+        args:
+          [
+            --standard=dev/setup/codesniffer/ruleset.xml,
+            --report=emacs,
+            --severity=5,
+            --cache=.cache/pre-commit/dolibarr-php-cs.cache,
+            .,
+          ]
+        pass_filenames: false # Run on all files
+      - id: php-lint
+      - id: php-stan
+        stages: [manual]
+        files: \.(php)$
+
+  # Prettier (format code, only for non common files)
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.0.3
+    hooks:
+      - id: prettier
+        stages: [manual]
+        exclude:
+          (?x)^( .*\.(phar |min\.css |lock) |htdocs/(includes|theme/common)/.*
+          )$
+        exclude_types:
+          - php
+          - executable
+          - binary
+          - shell
+          - javascript
+          - markdown
+          - html
+          - less
+          - plain-text
+          - scss
+          - css
+          - yaml
+
+  # Check format of yaml files
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.33.0
+    hooks:
+      - id: yamllint
+        args:
+          - --no-warnings
+          - -d
+          - "{extends: relaxed, rules: {line-length: {max: 120}}}"
+
+  # Execute codespell to fix typo errors (setup of codespell into dev/tools/codespell/)
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.2.6
+    hooks:
+      - id: codespell
+        # Due to a current limitation of configuration files,
+        # we can specify two dicts only on the CLI.
+        # You can update the contents of the exclude-file codespell-lines-ignore with the script
+        # dev/tools/codespell/addCodespellIgnores.sh
+        args:
+          - -D
+          - "-"
+          - -D
+          - dev/tools/codespell/codespell-dict.txt
+          - -I
+          - dev/tools/codespell/codespell-ignore.txt
+          - -x
+          - dev/tools/codespell/codespell-lines-ignore.txt
+          - --uri-ignore-words-list
+          - ned
+        exclude_types: [image]
+        exclude: (?x)^(.phan/stubs/.*)$
+        additional_dependencies: [tomli]
+      - alias: codespell-lang-en_US
+        # Only for translations with specialised exceptions
+        # -D contains predefined conversion dictionaries
+        # -L is to ignore some words
+        id: codespell
+        files: ^htdocs/langs/en_US/.*$
+        args:
+          - -D
+          - "-"
+          - -D
+          - dev/tools/codespell/codespell-dict.txt
+          - -L
+          - informations,medias,uptodate,reenable,crypted,developpers
+          - -L
+          - creat,unitl,alltime,datas,referers
+          - -I
+          - dev/tools/codespell/codespell-ignore.txt
+          - -x
+          - dev/tools/codespell/codespell-lines-ignore.txt
+          - --uri-ignore-words-list
+          - ned
+
+  # Check some shell scripts
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.9.0.6
+    hooks:
+      - id: shellcheck
+        args: [-W, "100"]

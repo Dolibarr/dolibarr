@@ -4,6 +4,7 @@ SuppliersInvoice=فاتورة مورد
 SupplierInvoices=فواتير الموردين
 ShowSupplierInvoice=عرض فاتورة المورد
 NewSupplier=مورد جديد
+NewSupplierInvoice = فاتورة مورد الجديد
 History=التاريخ
 ListOfSuppliers=قائمة الموردين
 ShowSupplier=عرض المورد

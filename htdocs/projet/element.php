@@ -150,14 +150,14 @@ if (isModEnabled('eventorganization')) {
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$datesrfc = GETPOST('datesrfc');
-$dateerfc = GETPOST('dateerfc');
+$datesrfc = GETPOST('datesrfc');	// deprecated
+$dateerfc = GETPOST('dateerfc');	// deprecated
 $dates = dol_mktime(0, 0, 0, GETPOST('datesmonth'), GETPOST('datesday'), GETPOST('datesyear'));
 $datee = dol_mktime(23, 59, 59, GETPOST('dateemonth'), GETPOST('dateeday'), GETPOST('dateeyear'));
-if (empty($dates) && !empty($datesrfc)) {
+if (empty($dates) && !empty($datesrfc)) {	// deprecated
 	$dates = dol_stringtotime($datesrfc);
 }
-if (empty($datee) && !empty($dateerfc)) {
+if (empty($datee) && !empty($dateerfc)) {	// deprecated
 	$datee = dol_stringtotime($dateerfc);
 }
 if (!GETPOSTISSET('datesrfc') && !GETPOSTISSET('datesday') && getDolGlobalString('PROJECT_LINKED_ELEMENT_DEFAULT_FILTER_YEAR')) {
@@ -185,7 +185,7 @@ if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($obj
 
 // Security check
 $socid = $object->socid;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $object->id, 'projet&project');
 
 $hookmanager->initHooks(array('projectOverview'));
@@ -376,7 +376,7 @@ print dol_get_fiche_end();
 print '<br>';
 
 /*
- * Referers types
+ * Referrer types
  */
 
 $listofreferent = array(
@@ -676,7 +676,7 @@ if (getDolGlobalString('PROJECT_ELEMENTS_FOR_PLUS_MARGIN')) {
 			unset($listofreferent[$key]['margin']);
 		}
 	}
-	$newelementforplusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_PLUS_MARGIN);
+	$newelementforplusmargin = explode(',', getDolGlobalString('PROJECT_ELEMENTS_FOR_PLUS_MARGIN'));
 	foreach ($newelementforplusmargin as $value) {
 		$listofreferent[trim($value)]['margin'] = 'add';
 	}
@@ -687,7 +687,7 @@ if (getDolGlobalString('PROJECT_ELEMENTS_FOR_MINUS_MARGIN')) {
 			unset($listofreferent[$key]['margin']);
 		}
 	}
-	$newelementforminusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN);
+	$newelementforminusmargin = explode(',', getDolGlobalString('PROJECT_ELEMENTS_FOR_MINUS_MARGIN'));
 	foreach ($newelementforminusmargin as $value) {
 		$listofreferent[trim($value)]['margin'] = 'minus';
 	}
@@ -1249,7 +1249,7 @@ foreach ($listofreferent as $key => $value) {
 				// Remove link
 				print '<td style="width: 24px">';
 				if ($tablename != 'projet_task' && $tablename != 'stock_mouvement') {
-					if (!getDolGlobalString('PROJECT_DISABLE_UNLINK_FROM_OVERVIEW') || $user->admin) {		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by defaut, so this test true
+					if (!getDolGlobalString('PROJECT_DISABLE_UNLINK_FROM_OVERVIEW') || $user->admin) {		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by default, so this test true
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=unlink&tablename='.$tablename.'&elementselect='.$element->id.($project_field ? '&projectfield='.$project_field : '').'" class="reposition">';
 						print img_picto($langs->trans('Unlink'), 'unlink');
 						print '</a>';
@@ -1616,9 +1616,6 @@ foreach ($listofreferent as $key => $value) {
 				print '<tr><td>'.$elementarray.'</td></tr>';
 			} else {
 				$colspan = 7;
-				if (in_array($tablename, array('projet_task'))) {
-					$colspan = 5;
-				}
 				if ($tablename == 'fichinter') {
 					$colspan++;
 				}

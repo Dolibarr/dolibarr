@@ -351,7 +351,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject mmm');
 
 
-		$test="Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)";
+		$test="Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submitted by CKEditor)";
 		$result=testSqlAndScriptInject($test, 0);	// result must be 0
 		$this->assertEquals(0, $result, 'Error on testSqlAndScriptInject mmm, result should be 0 and is not');
 
@@ -382,6 +382,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
 		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
+		$conf->global->MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 0;
 
 		$_COOKIE["id"]=111;
 		$_POST["param0"]='A real string with <a href="rrr" title="aa&quot;bb">aaa</a> and " and \' and &amp; inside content';
@@ -407,7 +408,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_POST["param12"]='<!DOCTYPE html><html>aaa</html>';
 		$_POST["param13"]='&#110; &#x6E; &gt; &lt; &quot; <a href=\"j&#x61;vascript:alert(document.domain)\">XSS</a>';
 		$_POST["param13b"]='&#110; &#x6E; &gt; &lt; &quot; <a href=\"j&#x61vascript:alert(document.domain)\">XSS</a>';
-		$_POST["param14"]="Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)";
+		$_POST["param14"]="Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submitted by CKEditor)";
 		$_POST["param15"]="<img onerror<=alert(document.domain)> src=>0xbeefed";
 		//$_POST["param15b"]="<html><head><title>Example HTML</title></head><body><div><p>This is a paragraph.</div><ul><li>Item 1</li><li>Item 2</li></ol></body><html>";
 		$_POST["param16"]='<a style="z-index: 1000">abc</a>';
@@ -576,7 +577,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$result=GETPOST("param14", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals("Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)", $result, 'Test 14');
+		$this->assertEquals("Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submitted by CKEditor)", $result, 'Test 14');
 
 		$result=GETPOST("param15", 'restricthtml');		// param15 = <img onerror<=alert(document.domain)> src=>0xbeefed that is a dangerous string
 		print __METHOD__." result=".$result."\n";
@@ -587,7 +588,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals('<a href="&lpar;alert(document.cookie)&rpar;">XSS</a>', $result, 'Test 19');
 
 
-		// Test with restricthtml + MAIN_RESTRICTHTML_ONLY_VALID_HTML only to test disabling of bad atrributes
+		// Test with restricthtml + MAIN_RESTRICTHTML_ONLY_VALID_HTML only to test disabling of bad attributes
 
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
@@ -614,7 +615,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		//$this->assertEquals('"c:\this is a path~1\aaan 110;" abcdef', $result);		// ... on other PHP and libxml versions, we got a HTML that has been cleaned
 
 
-		// Test with restricthtml + MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY only to test disabling of bad atrributes
+		// Test with restricthtml + MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY only to test disabling of bad attributes
 
 		if (extension_loaded('tidy') && class_exists("tidy")) {
 			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
@@ -638,7 +639,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		}
 
 
-		// Test with restricthtml + MAIN_RESTRICTHTML_ONLY_VALID_HTML + MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY to test disabling of bad atrributes
+		// Test with restricthtml + MAIN_RESTRICTHTML_ONLY_VALID_HTML + MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY to test disabling of bad attributes
 
 		if (extension_loaded('tidy') && class_exists("tidy")) {
 			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
@@ -662,7 +663,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		}
 
 
-		// Test with restricthtml + MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES to test disabling of bad atrributes
+		// Test with restricthtml + MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES to test disabling of bad attributes
 
 		unset($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML);
 		unset($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY);
@@ -721,25 +722,45 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 
 		$conf->global->MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT = 3;
-		$_POST["pagecontentwithlinks"]='<img src="aaa"><img src="bbb"><img src="ccc"><span style="background: url(/ddd)"></span>';
+		$_POST["pagecontentwithlinks"]='<img src="aaa"><img src="bbb"><img src="/ccc"><span style="background: url(/ddd)"></span>';
 		$result=GETPOST("pagecontentwithlinks", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('ErrorTooManyLinksIntoHTMLString', $result, 'Test on limit on GETPOST fails');
 
 		// Test that img src="data:..." is excluded from the count of external links
 		$conf->global->MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT = 3;
-		$_POST["pagecontentwithlinks"]='<img src="data:abc"><img src="bbb"><img src="ccc"><span style="background: url(/ddd)"></span>';
+		$_POST["pagecontentwithlinks"]='<img src="data:abc"><img src="bbb"><img src="/ccc"><span style="background: url(/ddd)"></span>';
 		$result=GETPOST("pagecontentwithlinks", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('<img src="data:abc"><img src="bbb"><img src="ccc"><span style="background: url(/ddd)"></span>', $result, 'Test on limit on GETPOST fails');
+		$this->assertEquals('<img src="data:abc"><img src="bbb"><img src="/ccc"><span style="background: url(/ddd)"></span>', $result, 'Test on limit on GETPOST fails');
+
+		$conf->global->MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 2;
 
 		// Test that no links is allowed
-		$conf->global->MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1;
-		$_POST["pagecontentwithlinks"]='<img src="data:abc"><img src="bbb"><img src="ccc"><span style="background: url(/ddd)"></span>';
+		$_POST["pagecontentwithlinks"]='<img src="data:abc"><img src="bbb"><img src="/ccc"><span style="background: url(/ddd)"></span>';
 		$result=GETPOST("pagecontentwithlinks", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('ErrorHTMLLinksNotAllowed', $result, 'Test on limit on GETPOST fails');
+		$this->assertEquals('ErrorHTMLLinksNotAllowed', $result, 'Test on limit on MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 2 (no links allowed)');
 
+		$conf->global->MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1;
+
+		// Test that links on wrapper or local url are allowed
+		$_POST["pagecontentwithnowrapperlinks"]='<img src="data:abc"><img src="bbb"><img src="/ccc"><span style="background: url(/ddd)"></span>';
+		$result=GETPOST("pagecontentwithnowrapperlinks", 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('<img src="data:abc"><img src="bbb"><img src="/ccc"><span style="background: url(/ddd)"></span>', $result, 'Test on MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1 (links on data or relative links ar allowed)');
+
+		// Test that links not on wrapper and not data are disallowed
+		$_POST["pagecontentwithnowrapperlinks"]='<img src="https://aaa">';
+		$result=GETPOST("pagecontentwithnowrapperlinks", 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('ErrorHTMLExternalLinksNotAllowed', $result, 'Test on MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1 (no links to http allowed)');
+
+		// Test that links not on wrapper and not data are disallowed
+		$_POST["pagecontentwithnowrapperlinks"]='<span style="background: url(http://ddd)"></span>';
+		$result=GETPOST("pagecontentwithnowrapperlinks", 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('ErrorHTMLExternalLinksNotAllowed', $result, 'Test on MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1 (no links to http allowed)');
 
 		return $result;
 	}
@@ -793,23 +814,23 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 	{
 		$stringtotest = '<a href="javascript:aaa">bbbڴ';
 		$decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1);
-		$this->assertEquals('<a href="aaa">bbbڴ', $decodedstring, 'Function did not sanitize correclty with test 1');
+		$this->assertEquals('<a href="aaa">bbbڴ', $decodedstring, 'Function did not sanitize correctly with test 1');
 
 		$stringtotest = '<a href="java'.chr(0).'script:aaa">bbbڴ';
 		$decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1);
-		$this->assertEquals('<a href="aaa">bbbڴ', $decodedstring, 'Function did not sanitize correclty with test 2');
+		$this->assertEquals('<a href="aaa">bbbڴ', $decodedstring, 'Function did not sanitize correctly with test 2');
 
 		$stringtotest = '<a href="javascript&colon;aaa">bbbڴ';
 		$decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1);
-		$this->assertEquals('<a href="aaa">bbbڴ', $decodedstring, 'Function did not sanitize correclty with test 3');
+		$this->assertEquals('<a href="aaa">bbbڴ', $decodedstring, 'Function did not sanitize correctly with test 3');
 
 		$stringtotest = 'text <link href="aaa"> text';
 		$decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1, 0, array(), 0);
-		$this->assertEquals('text  text', $decodedstring, 'Function did not sanitize correclty with test 4a');
+		$this->assertEquals('text  text', $decodedstring, 'Function did not sanitize correctly with test 4a');
 
 		$stringtotest = 'text <link href="aaa"> text';
 		$decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1, 0, array(), 1);
-		$this->assertEquals('text <link href="aaa"> text', $decodedstring, 'Function did not sanitize correclty with test 4b');
+		$this->assertEquals('text <link href="aaa"> text', $decodedstring, 'Function did not sanitize correctly with test 4b');
 
 		return 0;
 	}
@@ -823,12 +844,12 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 	{
 		$stringtotest = 'eée';
 		$decodedstring = dol_string_onlythesehtmlattributes($stringtotest);
-		$this->assertEquals('e&eacute;e', $decodedstring, 'Function did not sanitize correclty with test 1');
+		$this->assertEquals('e&eacute;e', $decodedstring, 'Function did not sanitize correctly with test 1');
 
 		$stringtotest = '<div onload="ee"><a href="123"><span class="abc">abc</span></a></div>';
 		$decodedstring = dol_string_onlythesehtmlattributes($stringtotest);
 		$decodedstring = preg_replace("/\n$/", "", $decodedstring);
-		$this->assertEquals('<div><a href="123"><span class="abc">abc</span></a></div>', $decodedstring, 'Function did not sanitize correclty with test 2');
+		$this->assertEquals('<div><a href="123"><span class="abc">abc</span></a></div>', $decodedstring, 'Function did not sanitize correctly with test 2');
 
 		return 0;
 	}
@@ -1161,7 +1182,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 
 
-		// For a string that is already HTML (contains HTML tags) with special tags but badly formated
+		// For a string that is already HTML (contains HTML tags) with special tags but badly formatted
 		$stringtotest = "&quot;&gt;";
 		$stringfixed = "&quot;&gt;";
 		//$result = dol_htmlentitiesbr($stringtotest);
@@ -1173,7 +1194,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals($stringfixed, $result, 'Error');    // Expected '' because should failed because login 'auto' does not exists
 
 
-		// For a string that is already HTML (contains HTML tags) with special tags but badly formated
+		// For a string that is already HTML (contains HTML tags) with special tags but badly formatted
 		$stringtotest = "testA\n<h1>hhhh</h1><z>ddd</z><header>aaa</header><footer>bbb</footer>";
 		if (getDolGlobalString("MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY")) {
 			$stringfixed = "testA\n<h1>hhhh</h1>\nddd\n<header>aaa</header>\n<footer>bbb</footer>\n";
@@ -1189,7 +1210,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals($stringfixed, $result, 'Error');
 
 
-		// For a string that is already HTML (contains HTML tags) but badly formated
+		// For a string that is already HTML (contains HTML tags) but badly formatted
 		$stringtotest = "testB\n<h1>hhh</h1>\n<td>td alone</td><h1>iii</h1>";
 		if (getDolGlobalString("MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY")) {
 			$stringfixed = "testB\n<h1>hhh</h1>\n<h1>iii</h1>\n<table>\n<tr>\n<td>td alone</td>\n</tr>\n</table>\n";

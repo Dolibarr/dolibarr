@@ -194,7 +194,7 @@ class ActionComm extends CommonObject
 	public $datep2;
 
 	/**
-	 * @var int -1=Unkown duration
+	 * @var int -1=Unknown duration
 	 * @deprecated
 	 */
 	public $durationp = -1;
@@ -382,7 +382,7 @@ class ActionComm extends CommonObject
 	/**
 	 * Properties to manage the recurring events
 	 */
-	public $recurid;		/* A string YYYYMMDDHHMMSS shared by allevent of same serie */
+	public $recurid;		/* A string YYYYMMDDHHMMSS shared by allevent of same series */
 	public $recurrule;		/* Rule of recurring */
 	public $recurdateend;	/* Repeat until this date */
 
@@ -442,7 +442,7 @@ class ActionComm extends CommonObject
 
 		// Clean parameters
 		$this->label = dol_trunc(trim($this->label), 128);
-		$this->location = dol_trunc(trim($this->location), 128);
+		$this->location = (!empty($this->location) ? dol_trunc(trim($this->location), 128) : "");
 		$this->note_private = dol_htmlcleanlastbr(trim(empty($this->note_private) ? $this->note : $this->note_private));
 		if (empty($this->percentage)) {
 			$this->percentage = 0;
@@ -784,7 +784,7 @@ class ActionComm extends CommonObject
 	 *  @param  string	$ref    			Ref of action to get
 	 *  @param  string	$ref_ext			Ref ext to get
 	 *  @param	string	$email_msgid		Email msgid
-	 *  @param	string	$loadresources		1=Load also resources
+	 *  @param	int		$loadresources		1=Load also resources
 	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '', $ref_ext = '', $email_msgid = '', $loadresources = 1)
@@ -1328,7 +1328,7 @@ class ActionComm extends CommonObject
 	 *  @param		string	$filter			Other filter
 	 *  @param		string	$sortfield		Sort on this field
 	 *  @param		string	$sortorder		ASC or DESC
-	 *  @param		string	$limit			Limit number of answers
+	 *  @param		int		$limit			Limit number of answers
 	 *  @return		ActionComm[]|string		Error string if KO, array with actions if OK
 	 */
 	public function getActions($socid = 0, $fk_element = 0, $elementtype = '', $filter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
@@ -1406,7 +1406,7 @@ class ActionComm extends CommonObject
 	/**
 	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 * @param	User	$user   			Objet user
+	 * @param	User	$user   			Object user
 	 * @param	int		$load_state_board	Load indicator array this->nb
 	 * @return WorkboardResponse|int 		Return integer <0 if KO, WorkboardResponse if OK
 	 */
@@ -1422,9 +1422,6 @@ class ActionComm extends CommonObject
 			$sql = "SELECT count(a.id) as nb";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
-		}
 		if (!$user->hasRight('agenda', 'allactions', 'read')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources AS ar ON a.id = ar.fk_actioncomm AND ar.element_type ='user' AND ar.fk_element = ".((int) $user->id);
 		}
@@ -1433,16 +1430,23 @@ class ActionComm extends CommonObject
 			$sql .= " AND a.percent >= 0 AND a.percent < 100";
 		}
 		$sql .= " AND a.entity IN (".getEntity('agenda').")";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
-			$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
-		}
-		if ($user->socid) {
-			$sql .= " AND a.fk_soc = ".((int) $user->socid);
-		}
 		if (!$user->hasRight('agenda', 'allactions', 'read')) {
 			$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id)." OR a.fk_user_done = ".((int) $user->id);
 			$sql .= " OR ar.fk_element = ".((int) $user->id);
 			$sql .= ")";
+		}
+		// If the internal user must only see his customers, force searching by him
+		$search_sale = 0;
+		if (!$user->hasRight('societe', 'client', 'voir')) {
+			$search_sale = $user->id;
+		}
+		// Search on sale representative
+		if ($search_sale && $search_sale != '-1') {
+			if ($search_sale == -2) {
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc)";
+			} elseif ($search_sale > 0) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			}
 		}
 
 		$resql = $this->db->query($sql);
@@ -1487,7 +1491,7 @@ class ActionComm extends CommonObject
 
 
 	/**
-	 *  Charge les informations d'ordre info dans l'objet facture
+	 *  Charge les information d'ordre info dans l'objet facture
 	 *
 	 *  @param	int		$id       	Id de la facture a charger
 	 *  @return	void
@@ -1542,7 +1546,7 @@ class ActionComm extends CommonObject
 	 *  @param  int     $percent        Percent
 	 *  @param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
 	 *  @param  int		$hidenastatus   1=Show nothing if status is "Not applicable"
-	 *  @param  int     $datestart      Date start of event
+	 *  @param  int|string     $datestart      Date start of event
 	 *  @return string		    		Label
 	 */
 	public function LibStatut($percent, $mode, $hidenastatus = 0, $datestart = '')
@@ -1641,7 +1645,7 @@ class ActionComm extends CommonObject
 			if (!empty($this->email_tocc)) {
 				$datas['mailcc'] = '<br><b>'.$langs->trans('MailCC').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_tocc);
 			}
-			/* Disabled because bcc must remain by defintion not visible
+			/* Disabled because bcc must remain by definition not visible
 			if (!empty($this->email_tobcc)) {
 				$datas['mailccc'] = '<br><b>'.$langs->trans('MailCCC').':</b> '.$this->email_tobcc;
 			} */
@@ -1670,7 +1674,7 @@ class ActionComm extends CommonObject
 	 *  Use $this->id, $this->type_code, $this->label and $this->type_label
 	 *
 	 *  @param	int		$withpicto				0 = No picto, 1 = Include picto into link, 2 = Only picto
-	 *  @param	int		$maxlength				Max number of charaters into label. If negative, use the ref as label.
+	 *  @param	int		$maxlength				Max number of characters into label. If negative, use the ref as label.
 	 *  @param	string	$classname				Force style class on a link
 	 *  @param	string	$option					'' = Link to action, 'birthday'= Link to contact, 'holiday' = Link to leave
 	 *  @param	int		$overwritepicto			1 = Overwrite picto with this one
@@ -1745,7 +1749,7 @@ class ActionComm extends CommonObject
 			if (!empty($this->email_tocc)) {
 				$tooltip .= '<br><b>'.$langs->trans('MailCC').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_tocc);
 			}
-			/* Disabled because bcc must remain by defintion not visible
+			/* Disabled because bcc must remain by definition not visible
 			if (!empty($this->email_tobcc)) {
 				$tooltip .= '<br><b>'.$langs->trans('MailCCC').':</b> '.$this->email_tobcc;
 			} */
@@ -1771,8 +1775,6 @@ class ActionComm extends CommonObject
 			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
 			$tooltip = '';
 		}
-		//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color)
-		//	$linkclose = ' style="background-color:#'.$this->type_color.'"';
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowAction");
@@ -2043,7 +2045,7 @@ class ActionComm extends CommonObject
 			$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
 			$sql .= $hookmanager->resPrint;
 
-			// We must filter on assignement table
+			// We must filter on assignment table
 			if ($filters['logint']) {
 				$sql .= ", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 			}
@@ -2074,7 +2076,7 @@ class ActionComm extends CommonObject
 				if ($key == 'notactiontype') {
 					$sql .= " AND c.type <> '".$this->db->escape($value)."'";
 				}
-				// We must filter on assignement table
+				// We must filter on assignment table
 				if ($key == 'logint') {
 					$sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
 				}
@@ -2349,7 +2351,7 @@ class ActionComm extends CommonObject
 
 		$now = dol_now();
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->specimen = 1;
 
@@ -2443,23 +2445,23 @@ class ActionComm extends CommonObject
 		$this->reminders = array();
 
 		//Select all action comm reminders for event
-		$sql = "SELECT rowid as id, typeremind, dateremind, status, offsetvalue, offsetunit, fk_user";
+		$sql = "SELECT rowid as id, typeremind, dateremind, status, offsetvalue, offsetunit, fk_user, fk_email_template, lasterror";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
 		$sql .= " WHERE fk_actioncomm = ".((int) $this->id);
 		if ($onlypast) {
 			$sql .= " AND dateremind <= '".$this->db->idate(dol_now())."'";
 		}
 		if ($type) {
-			$sql .= " AND typeremind ='".$this->db->escape($type)."'";
+			$sql .= " AND typeremind = '".$this->db->escape($type)."'";
 		}
 		if ($fk_user > 0) {
 			$sql .= " AND fk_user = ".((int) $fk_user);
 		}
 		if (!getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
-			$sql .= " AND typeremind != 'email'";
+			$sql .= " AND typeremind <> 'email'";
 		}
 		if (!getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
-			$sql .= " AND typeremind != 'browser'";
+			$sql .= " AND typeremind <> 'browser'";
 		}
 
 		$sql .= $this->db->order("dateremind", "ASC");
@@ -2475,6 +2477,8 @@ class ActionComm extends CommonObject
 				$tmpactioncommreminder->offsetunit = $obj->offsetunit;
 				$tmpactioncommreminder->status = $obj->status;
 				$tmpactioncommreminder->fk_user = $obj->fk_user;
+				$tmpactioncommreminder->fk_email_template = $obj->fk_email_template;
+				$tmpactioncommreminder->lasterror = $obj->lasterror;
 
 				$this->reminders[$obj->id] = $tmpactioncommreminder;
 			}
@@ -2523,7 +2527,8 @@ class ActionComm extends CommonObject
 
 		//Select all action comm reminders
 		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
-		$sql .= " WHERE typeremind = 'email' AND status = 0";
+		$sql .= " WHERE typeremind = 'email'";
+		$sql .= " AND status = 0";	// 0=No yet sent, -1=Error. TODO Include reminder in error once we can count number of error, so we can try 5 times and not more on errors.
 		$sql .= " AND dateremind <= '".$this->db->idate($now)."'";
 		$sql .= " AND entity IN (".getEntity('actioncomm').")";
 		$sql .= $this->db->order("dateremind", "ASC");
@@ -2594,7 +2599,7 @@ class ActionComm extends CommonObject
 							if ($cMailFile->sendfile()) {
 								$nbMailSend++;
 							} else {
-								$errormesg = $cMailFile->error.' : '.$to;
+								$errormesg = 'Failed to send email to: '.$to.' '.$cMailFile->error.join(',', $cMailFile->errors);
 								$error++;
 							}
 						}
@@ -2662,7 +2667,7 @@ class ActionComm extends CommonObject
 	}
 
 	/**
-	 * Udpate the percent value of a event with the given id
+	 * Update the percent value of a event with the given id
 	 *
 	 * @param int		$id			The id of the event
 	 * @param int		$percent	The new percent value for the event

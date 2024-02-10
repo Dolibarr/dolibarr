@@ -296,7 +296,7 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 						$contactobject = $object->contact;
 					} else {
 						$socobject = $object->thirdparty;
-						// if we have a CUSTOMER contact and we dont use it as thirdparty recipient we store the contact object for later use
+						// if we have a CUSTOMER contact and we don't use it as thirdparty recipient we store the contact object for later use
 						$contactobject = $object->contact;
 					}
 				} else {
@@ -322,7 +322,7 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 				}
 
 				// Make substitutions into odt
-				$array_user = $this->get_substitutionarray_user($object, $outputlangs);
+				$array_user = $this->get_substitutionarray_user($user, $outputlangs);
 				$array_soc = $this->get_substitutionarray_mysoc($mysoc, $outputlangs);
 				$array_thirdparty = $this->get_substitutionarray_thirdparty($socobject, $outputlangs);
 				$array_other = $this->get_substitutionarray_other($outputlangs);

@@ -122,13 +122,11 @@ class PaymentDonation extends CommonObject
 	 *  Use this->amounts to have list of lines for the payment
 	 *
 	 *  @param      User		$user			User making payment
-	 *  @param      bool 		$notrigger 		false=launch triggers after, true=disable triggers
+	 *  @param      int 		$notrigger 		0=launch triggers after, 1=disable triggers
 	 *  @return     int     					Return integer <0 if KO, id of payment if OK
 	 */
-	public function create($user, $notrigger = false)
+	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		$now = dol_now();
@@ -203,7 +201,7 @@ class PaymentDonation extends CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_donation");
-				$this->ref = $this->id;
+				$this->ref = (string) $this->id;
 			} else {
 				$error++;
 			}
@@ -546,7 +544,7 @@ class PaymentDonation extends CommonObject
 	{
 		$this->id = 0;
 
-		$this->fk_donation = '';
+		$this->fk_donation = 0;
 		$this->datec = '';
 		$this->tms = '';
 		$this->datep = '';
@@ -555,9 +553,9 @@ class PaymentDonation extends CommonObject
 		$this->paymenttype = '';
 		$this->num_payment = '';
 		$this->note_public = '';
-		$this->fk_bank = '';
-		$this->fk_user_creat = '';
-		$this->fk_user_modif = '';
+		$this->fk_bank = 0;
+		$this->fk_user_creat = dol_now();
+		$this->fk_user_modif = dol_now();
 	}
 
 

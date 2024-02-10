@@ -62,7 +62,6 @@ ChooseFileToImport=Upload file then click on the %s icon to select file as sourc
 SourceFileFormat=Source file format
 FieldsInSourceFile=Fields in source file
 FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
-Field=Field
 NoFields=No fields
 MoveField=Move field column number %s
 ExampleOfImportFile=Example_of_import_file
@@ -145,3 +144,4 @@ SelectImportFieldsSource = Choose the source file fields you want to import and 
 MandatoryTargetFieldsNotMapped=Some mandatory target fields are not mapped
 AllTargetMandatoryFieldsAreMapped=All target fields that need a mandatory value are mapped
 ResultOfSimulationNoError=Result of simulation: No error 
+NumberOfLinesLimited=Number of lines limited
