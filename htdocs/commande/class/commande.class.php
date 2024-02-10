@@ -145,7 +145,9 @@ class Commande extends CommonOrder
 	public $cond_reglement_doc;
 
 	/**
-	 * @var double Deposit % for payment terms
+	 * @var string 	Deposit percent for payment terms.
+	 *				Populated by setPaymentTerms().
+	 * @see setPaymentTerms()
 	 */
 	public $deposit_percent;
 
