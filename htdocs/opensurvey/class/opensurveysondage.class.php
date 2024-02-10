@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García	    <marcosgdf@gmail.com>
- * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024  Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -470,7 +470,16 @@ class Opensurveysondage extends CommonObject
 		$datas = [];
 		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("ShowSurvey").'</u>';
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (!empty($this->date_fin)) {
+			$datas['expire_date'] = '<br><b>'.$langs->trans('ExpireDate').':</b> '.dol_print_date($this->date_fin, 'day');
+			if ($this->date_fin && $this->date_fin < dol_now() && $this->status == Opensurveysondage::STATUS_VALIDATED) {
+				$datas['expire_date'] .= img_warning($langs->trans("Expired"));
+			}
+		}
 		$datas['title'] = '<br><b>'.$langs->trans('Title').':</b> '.$this->title;
+		if (!empty($this->description)) {
+			$datas['description'] = '<br><b>'.$langs->trans('Description').':</b> '.$this->description;
+		}
 
 		return $datas;
 	}
