@@ -104,8 +104,10 @@ if ($this->control->tpl['action_delete']) {
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans('Phone'); ?></td>
+<td><?php echo $langs->trans('Phone'); ?></td>
 	<td><?php echo $this->control->tpl['phone']; ?></td>
+	<td><?php echo $langs->trans('PhoneMobile'); ?></td>
+	<td><?php echo $this->control->tpl['phone_mobile']; ?></td>
 	<td><?php echo $langs->trans('Fax'); ?></td>
 	<td><?php echo $this->control->tpl['fax']; ?></td>
 </tr>

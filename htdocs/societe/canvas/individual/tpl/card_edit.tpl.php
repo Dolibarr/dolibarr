@@ -147,8 +147,10 @@ if ($this->control->tpl['fournisseur']) {
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans('Phone'); ?></td>
+<td><?php echo $langs->trans('Phone'); ?></td>
 	<td><input type="text" name="tel" value="<?php echo $this->control->tpl['tel']; ?>"></td>
+	<td><?php echo $langs->trans('PhoneMobile'); ?></td>
+	<td><input type="text" name="mob" value="<?php echo $this->control->tpl['mob']; ?>"></td>
 	<td><?php echo $langs->trans('Fax'); ?></td>
 	<td><input type="text" name="fax" value="<?php echo $this->control->tpl['fax']; ?>"></td>
 </tr>

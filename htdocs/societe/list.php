@@ -83,6 +83,7 @@ $search_state = trim(GETPOST("search_state", 'alpha'));
 $search_region = trim(GETPOST("search_region", 'alpha'));
 $search_email = trim(GETPOST('search_email', 'alpha'));
 $search_phone = trim(GETPOST('search_phone', 'alpha'));
+$search_phone_mobile = trim(GETPOST('search_phone_mobile', 'alpha'));
 $search_fax = trim(GETPOST('search_fax', 'alpha'));
 $search_url = trim(GETPOST('search_url', 'alpha'));
 $search_idprof1 = trim(GETPOST('search_idprof1', 'alpha'));
@@ -209,6 +210,7 @@ $fieldstosearchall = array(
 	's.siret'=>"ProfId2",
 	's.ape'=>"ProfId3",
 	's.phone'=>"Phone",
+	's.phone_mobile'=>"PhoneMobile",
 	's.fax'=>"Fax",
 );
 if (($tmp = $langs->transnoentities("ProfId4".$mysoc->country_code)) && $tmp != "ProfId4".$mysoc->country_code && $tmp != '-') {
@@ -267,6 +269,7 @@ $arrayfields = array(
 	's.fax'=>array('label'=>"Fax", 'position'=>28, 'checked'=>0),
 	'typent.code'=>array('label'=>"ThirdPartyType", 'position'=>29, 'checked'=>$checkedtypetiers),
 	'staff.code'=>array('label'=>"Workforce", 'position'=>31, 'checked'=>0),
+	's.phone_mobile'=>array('label'=>"PhoneMobile", 'position'=>32, 'checked'=>0),
 	's.siren'=>array('label'=>"ProfId1Short", 'position'=>40, 'checked'=>$checkedprofid1),
 	's.siret'=>array('label'=>"ProfId2Short", 'position'=>41, 'checked'=>$checkedprofid2),
 	's.ape'=>array('label'=>"ProfId3Short", 'position'=>42, 'checked'=>$checkedprofid3),
@@ -384,6 +387,7 @@ if (empty($reshook)) {
 		$search_country = '';
 		$search_email = '';
 		$search_phone = '';
+		$search_phone_mobile = '';
 		$search_fax = '';
 		$search_url = '';
 		$search_idprof1 = '';
@@ -512,7 +516,7 @@ if ($resql) {
 $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.address, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, s.logo,";
 $sql .= " s.entity,";
 $sql .= " st.libelle as stcomm, st.picto as stcomm_picto, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
-$sql .= " s.email, s.phone, s.fax, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
+$sql .= " s.email, s.phone, s.phone_mobile, s.fax, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
 $sql .= " s.tms as date_update, s.datec as date_creation, s.import_key,";
 $sql .= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent,s.price_level,";
 $sql .= " s2.nom as name2,";
@@ -683,6 +687,9 @@ if ($search_email) {
 }
 if (strlen($search_phone)) {
 	$sql .= natural_search("s.phone", $search_phone);
+}
+if (strlen($search_phone_mobile)) {
+	$sql .= natural_search("s.phone_mobile", $search_phone_mobile);
 }
 if (strlen($search_fax)) {
 	$sql .= natural_search("s.fax", $search_fax);
@@ -887,6 +894,9 @@ if ($search_town != '') {
 }
 if ($search_phone != '') {
 	$param .= "&search_phone=".urlencode($search_phone);
+}
+if ($search_phone_mobile != '') {
+	$param .= "&search_phone_mobile=".urlencode($search_phone_mobile);
 }
 if ($search_fax != '') {
 	$param .= "&search_fax=".urlencode($search_fax);
@@ -1330,6 +1340,12 @@ if (!empty($arrayfields['s.phone']['checked'])) {
 	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_phone" value="'.dol_escape_htmltag($search_phone).'">';
 	print '</td>';
 }
+if (!empty($arrayfields['s.phone_mobile']['checked'])) {
+	// PhoneMobile
+	print '<td class="liste_titre">';
+	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_phone_mobile" value="'.dol_escape_htmltag($search_phone_mobile).'">';
+	print '</td>';
+}
 if (!empty($arrayfields['s.fax']['checked'])) {
 	// Fax
 	print '<td class="liste_titre">';
@@ -1555,6 +1571,10 @@ if (!empty($arrayfields['s.email']['checked'])) {
 }
 if (!empty($arrayfields['s.phone']['checked'])) {
 	print_liste_field_titre($arrayfields['s.phone']['label'], $_SERVER["PHP_SELF"], "s.phone", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['s.phone_mobile']['checked'])) {
+	print_liste_field_titre($arrayfields['s.phone_mobile']['label'], $_SERVER["PHP_SELF"], "s.phone_mobile", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.fax']['checked'])) {
@@ -1909,6 +1929,12 @@ while ($i < $imaxinloop) {
 		}
 		if (!empty($arrayfields['s.phone']['checked'])) {
 			print '<td class="nowraponall">'.dol_print_phone($obj->phone, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		if (!empty($arrayfields['s.phone_mobile']['checked'])) {
+			print '<td class="nowraponall">'.dol_print_phone($obj->phone_mobile, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone_mobile')."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
