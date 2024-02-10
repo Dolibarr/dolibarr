@@ -150,7 +150,7 @@ if (isModEnabled('barcode')) { ?>
 </tr>
 
 <tr>
-<td><?php echo $langs->trans('Phone'); ?></td>
+	<td><?php echo $langs->trans('Phone'); ?></td>
 	<td><input type="text" name="phone" value="<?php echo $this->control->tpl['phone']; ?>"></td>
 	<td><?php echo $langs->trans('PhoneMobile'); ?></td>
 	<td><input type="text" name="phone_mobile" value="<?php echo $this->control->tpl['phone_mobile']; ?>"></td>
