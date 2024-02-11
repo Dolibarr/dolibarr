@@ -643,7 +643,9 @@ foreach ($arrayofalerts as $alert) {
 	$html .= '</td>';
 	$html .= '<td style="white-space: nowrap">';
 	if (!empty($alert['issueidyogosha'])) {
-		$html .= '<a target="_blank" href="https://yogosha.com?'.$alert['issueidyogosha'].'">#'.$alert['issueidyogosha'].'</a>';
+		//$html .= '<a target="_blank" href="https://yogosha.com?'.$alert['issueidyogosha'].'">';
+		$html .= $alert['issueidyogosha'];
+		//$html .= '</a>';
 	} else {
 		//$html .= '<span class="opacitymedium">public issue</span>';
 	}
