@@ -40,11 +40,15 @@ define('VERSION', "1.0");
 
 $phpstanlevel = 3;
 
+// Include Dolibarr environment
+require_once $path.'../../htdocs/master.inc.php';
+require_once $path.'../../htdocs/core/lib/files.lib.php';
+require_once $path.'../../htdocs/core/lib/geturl.lib.php';
 
 print '***** '.constant('PRODUCT').' - '.constant('VERSION').' *****'."\n";
 if (empty($argv[1])) {
 	print 'You must run this tool being into the root of the project.'."\n";
-	print 'Usage:   '.constant('PRODUCT').'.php  pathto/outputfile.html  [--dir-scc=pathtoscc] [--dir-phpstan=pathtophpstan]'."\n";
+	print 'Usage:   '.constant('PRODUCT').'.php  pathto/outputfile.html  [--dir-scc=pathtoscc|disabled] [--dir-phpstan=pathtophpstan|disabled]'."\n";
 	print 'Example: '.constant('PRODUCT').'.php  documents/apstats/index.html --dir-scc=/snap/bin --dir-phpstan=~/git/phpstan/htdocs/includes/bin';
 	exit(0);
 }
@@ -93,27 +97,30 @@ $urlgit = 'https://github.com/Dolibarr/dolibarr/blob/develop/';
 
 
 // Count lines of code of application
-$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc . --exclude-dir=htdocs/includes,htdocs/custom,htdocs/theme/common/fontawesome-5,htdocs/theme/common/octicons';
-print 'Execute SCC to count lines of code in project: '.$commandcheck."\n";
-$output_arrproj = array();
-$resexecproj = 0;
-exec($commandcheck, $output_arrproj, $resexecproj);
+if ($dirscc != 'disabled') {
+	$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc . --exclude-dir=htdocs/includes,htdocs/custom,htdocs/theme/common/fontawesome-5,htdocs/theme/common/octicons';
+	print 'Execute SCC to count lines of code in project: '.$commandcheck."\n";
+	$output_arrproj = array();
+	$resexecproj = 0;
+	exec($commandcheck, $output_arrproj, $resexecproj);
 
 
-// Count lines of code of dependencies
-$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc htdocs/includes htdocs/theme/common/fontawesome-5 htdocs/theme/common/octicons';
-print 'Execute SCC to count lines of code in dependencies: '.$commandcheck."\n";
-$output_arrdep = array();
-$resexecdep = 0;
-exec($commandcheck, $output_arrdep, $resexecdep);
-
+	// Count lines of code of dependencies
+	$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc htdocs/includes htdocs/theme/common/fontawesome-5 htdocs/theme/common/octicons';
+	print 'Execute SCC to count lines of code in dependencies: '.$commandcheck."\n";
+	$output_arrdep = array();
+	$resexecdep = 0;
+	exec($commandcheck, $output_arrdep, $resexecdep);
+}
 
 // Get technical debt
-$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$phpstanlevel.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 5G --error-format=github';
-print 'Execute PHPStan to get the technical debt: '.$commandcheck."\n";
-$output_arrtd = array();
-$resexectd = 0;
-exec($commandcheck, $output_arrtd, $resexectd);
+if ($dirphpstan != 'disabled') {
+	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$phpstanlevel.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 5G --error-format=github';
+	print 'Execute PHPStan to get the technical debt: '.$commandcheck."\n";
+	$output_arrtd = array();
+	$resexectd = 0;
+	exec($commandcheck, $output_arrtd, $resexectd);
+}
 
 
 // Count lines of code of dependencies
@@ -189,10 +196,76 @@ foreach (array('proj', 'dep') as $source) {
 // Search the max
 $arrayofmax = array('Lines'=>0);
 foreach (array('proj', 'dep') as $source) {
-	foreach ($arrayoflineofcode[$source] as $val) {
-		$arrayofmax['Lines'] = max($arrayofmax['Lines'], $val['Lines']);
+	if (!empty($arrayoflineofcode[$source])) {
+		foreach ($arrayoflineofcode[$source] as $val) {
+			$arrayofmax['Lines'] = max($arrayofmax['Lines'], $val['Lines']);
+		}
 	}
 }
+
+
+
+// Retrieve the .git information
+$nbofdays = 90;
+$delay = (3600 * 24 * $nbofdays);
+$urlgit = 'https://api.github.com/search/issues?q=is:pr+repo:Dolibarr/dolibarr+created:>'.dol_print_date(dol_now() - $delay, "%Y-%m");
+
+
+$arrayofalerts = array();
+$arrayofalerts1 = $arrayofalerts2 = $arrayofalerts3 = array();
+
+// Count lines of code of application
+$newurl = $urlgit.'+CVE';
+$result = getURLContent($newurl);
+print 'Execute GET on github for '.$newurl."\n";
+if ($result && $result['http_code'] == 200) {
+	$arrayofalerts1 = json_decode($result['content']);
+
+	foreach ($arrayofalerts1->items as $val) {
+		$tmpval = cleanVal($val);
+		if (preg_match('/CVE/i', $tmpval['title'])) {
+			$arrayofalerts[$tmpval['number']] = $tmpval;
+		}
+	}
+} else {
+	print 'Error: failed to get github response';
+	exit(-1);
+}
+
+$newurl = $urlgit.'+yogosha';
+$result = getURLContent($newurl);
+print 'Execute GET on github for '.$newurl."\n";
+if ($result && $result['http_code'] == 200) {
+	$arrayofalerts2 = json_decode($result['content']);
+
+	foreach ($arrayofalerts2->items as $val) {
+		$tmpval = cleanVal($val);
+		if (preg_match('/yogosha:/i', $tmpval['title'])) {
+			$arrayofalerts[$tmpval['number']] = $tmpval;
+		}
+	}
+} else {
+	print 'Error: failed to get github response';
+	exit(-1);
+}
+
+$newurl = $urlgit.'+Sec:';
+$result = getURLContent($newurl);
+print 'Execute GET on github for '.$newurl."\n";
+if ($result && $result['http_code'] == 200) {
+	$arrayofalerts3 = json_decode($result['content']);
+	foreach ($arrayofalerts3->items as $val) {
+		$tmpval = cleanVal($val);
+		if (preg_match('/Sec:/i', $tmpval['title'])) {
+			$arrayofalerts[$tmpval['number']] = $tmpval;
+		}
+	}
+} else {
+	print 'Error: failed to get github response';
+	exit(-1);
+}
+
+$timeend = time();
 
 
 $timeend = time();
@@ -487,25 +560,48 @@ $html .= '</section>'."\n";
 
 $tmp = '';
 $nblines = 0;
-foreach ($output_arrtd as $line) {
-	$reg = array();
-	//print $line."\n";
-	preg_match('/^::error file=(.*),line=(\d+),col=(\d+)::(.*)$/', $line, $reg);
-	if (!empty($reg[1])) {
-		if ($nblines < 20) {
-			$tmp .= '<tr class="nohidden">';
-		} else {
-			$tmp .= '<tr class="hidden sourcephpstan">';
+if (!empty($output_arrtd)) {
+	foreach ($output_arrtd as $line) {
+		$reg = array();
+		//print $line."\n";
+		preg_match('/^::error file=(.*),line=(\d+),col=(\d+)::(.*)$/', $line, $reg);
+		if (!empty($reg[1])) {
+			if ($nblines < 20) {
+				$tmp .= '<tr class="nohidden">';
+			} else {
+				$tmp .= '<tr class="hidden sourcephpstan">';
+			}
+			$tmp .= '<td>'.$reg[1].'</td>';
+			$tmp .= '<td class="">';
+			$tmp .= '<a href="'.$urlgit.$reg[1].'#L'.$reg[2].'" target="_blank">'.$reg[2].'</a>';
+			$tmp .= '</td>';
+			$tmp .= '<td>'.$reg[4].'</td>';
+			$tmp .= '</tr>'."\n";
+			$nblines++;
 		}
-		$tmp .= '<td>'.$reg[1].'</td>';
-		$tmp .= '<td class="">';
-		$tmp .= '<a href="'.$urlgit.$reg[1].'#L'.$reg[2].'" target="_blank">'.$reg[2].'</a>';
-		$tmp .= '</td>';
-		$tmp .= '<td>'.$reg[4].'</td>';
-		$tmp .= '</tr>'."\n";
-		$nblines++;
 	}
 }
+
+
+// Last security errors
+
+$html .= '<section class="chapter" id="linesofcode">'."\n";
+$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>Last security alerts <span class="opacitymedium">(last '.$nbofdays.' days)</span></h2>'."\n";
+
+$html .= '<div class="div-table-responsive">'."\n";
+$html .= '<div class="boxallwidth">'."\n";
+$html .= '<table class="list_technical_debt centpercent">'."\n";
+$html .= '<tr class="trgroup"><td>ID</td><td>Title</td><td>Date</td></tr>'."\n";
+foreach ($arrayofalerts as $alert) {
+	$html .= '<tr><td><a href="https://github.com/Dolibarr/dolibarr/issue/'.$alert['number'].'">#'.$alert['number'].'</a></td>';
+	$html .= '<td>'.$alert['title'].'</td><td>';
+	$html .= $alert['created_at'].'</td>';
+	$html .= '</tr>';
+}
+$html .= '</table>';
+$html .= '</div>';
+$html .= '</div>';
+$html .= '</section>';
 
 
 // Technical debt
@@ -526,7 +622,7 @@ $html .= '</div>';
 $html .= '</section>'."\n";
 
 
-// JS code
+// JS code to allow to expand/collapse
 
 $html .= '
 <script>
@@ -564,4 +660,23 @@ if ($fh) {
 function formatNumber($number, $nbdec = 0)
 {
 	return number_format($number, 0, '.', ' ');
+}
+
+/**
+ * cleanVal
+ *
+ * @param array 	$val		Array of a PR
+ * @return 						Array of a PR
+ */
+function cleanVal($val)
+{
+	$tmpval = array();
+
+	$tmpval['url'] = $val->url;
+	$tmpval['number'] = $val->number;
+	$tmpval['title'] = $val->title;
+	$tmpval['created_at'] = $val->created_at;
+	$tmpval['updated_at'] = $val->updated_at;
+
+	return $tmpval;
 }
