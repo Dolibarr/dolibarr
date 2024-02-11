@@ -488,7 +488,7 @@ class Cronjob extends CommonObject
 				$this->datenextrun = $this->db->jdate($obj->datenextrun);
 				$this->dateend = $this->db->jdate($obj->dateend);
 				$this->datestart = $this->db->jdate($obj->datestart);
-				$this->lastresult = $obj->lastresult;
+				$this->lastresult = (string) $obj->lastresult;
 				$this->lastoutput = $obj->lastoutput;
 				$this->datelastresult = $this->db->jdate($obj->datelastresult);
 				$this->unitfrequency = $obj->unitfrequency;
