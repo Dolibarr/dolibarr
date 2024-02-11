@@ -24,15 +24,9 @@ return [
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
-        'htdocs/adherents/type.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
         'htdocs/admin/receiptprinter.php' => ['PhanRedefineFunctionInternal'],
-        'htdocs/api/class/api_documents.class.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
-        'htdocs/barcode/printsheet.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
-        'htdocs/categories/class/api_categories.class.php' => ['PhanAccessMethodProtected'],
-        'htdocs/categories/viewcat.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
         'htdocs/collab/index.php' => ['PhanParamTooMany'],
         'htdocs/comm/mailing/card.php' => ['PhanPluginSuspiciousParamPosition'],
-        'htdocs/compta/cashcontrol/cashcontrol_card.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
         'htdocs/compta/prelevement/class/bonprelevement.class.php' => ['PhanParamTooMany'],
         'htdocs/compta/prelevement/create.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/core/class/commondocgenerator.class.php' => ['PhanTypeArraySuspiciousNull'],
@@ -43,10 +37,8 @@ return [
         'htdocs/core/db/pgsql.class.php' => ['PhanParamSignatureMismatch'],
         'htdocs/core/db/sqlite3.class.php' => ['PhanParamSignatureMismatch', 'PhanTypeMismatchReturnNullable'],
         'htdocs/core/get_info.php' => ['PhanPluginSuspiciousParamPosition'],
-        'htdocs/core/lib/files.lib.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
         'htdocs/core/lib/functions.lib.php' => ['PhanParamTooMany', 'PhanRedefineFunctionInternal'],
         'htdocs/core/lib/price.lib.php' => ['PhanPluginSuspiciousParamPosition'],
-        'htdocs/core/modules/movement/doc/pdf_standard.modules.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
         'htdocs/core/modules/mrp/doc/pdf_vinci.modules.php' => ['PhanTypeArraySuspiciousNull'],
         'htdocs/core/modules/syslog/mod_syslog_file.php' => ['PhanParamSignatureMismatch'],
         'htdocs/core/modules/syslog/mod_syslog_syslog.php' => ['PhanParamSignatureMismatch'],
