@@ -804,9 +804,9 @@ class Cronjob extends CommonObject
 		$sql .= " datelastresult=".(dol_strlen($this->datelastresult) != 0 ? "'".$this->db->idate($this->datelastresult)."'" : 'null').",";
 		$sql .= " lastresult=".(isset($this->lastresult) ? "'".$this->db->escape($this->lastresult)."'" : "null").",";
 		$sql .= " lastoutput=".(isset($this->lastoutput) ? "'".$this->db->escape($this->lastoutput)."'" : "null").",";
-		$sql .= " unitfrequency=".(isset($this->unitfrequency) ?: "null").",";
-		$sql .= " frequency=".(isset($this->frequency) ?: "null").",";
-		$sql .= " status=".(isset($this->status) ?: "null").",";
+		$sql .= " unitfrequency=".(isset($this->unitfrequency) ? "'".$this->db->escape($this->unitfrequency)."'" : "null").",";
+		$sql .= " frequency=".(isset($this->frequency) ? ((int) $this->frequency) : "null").",";
+		$sql .= " status=".(isset($this->status) ? ((int) $this->status) : "null").",";
 		$sql .= " processing=".((isset($this->processing) && $this->processing > 0) ? $this->processing : "0").",";
 		$sql .= " pid=".(isset($this->pid) ? ((int) $this->pid) : "null").",";
 		$sql .= " email_alert = ".(isset($this->email_alert) ? "'".$this->db->escape($this->email_alert)."'" : "null").",";
