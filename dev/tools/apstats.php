@@ -77,24 +77,13 @@ while ($i < $argc) {
 	$i++;
 }
 
+
+// Start getting data
+
 $timestart = time();
-
-// Count lines of code of Dolibarr itself
-/*
-$commandcheck = 'cloc . --exclude-dir=includes --exclude-dir=custom --ignore-whitespace --vcs=git';
-$resexec = shell_exec($commandcheck);
-$resexec = (int) (empty($resexec) ? 0 : trim($resexec));
-
-
-// Count lines of code of external dependencies
-$commandcheck = 'cloc htdocs/includes --ignore-whitespace --vcs=git';
-$resexec = shell_exec($commandcheck);
-$resexec = (int) (empty($resexec) ? 0 : trim($resexec));
-*/
 
 // Retrieve the .git information
 $urlgit = 'https://github.com/Dolibarr/dolibarr/blob/develop/';
-
 
 // Count lines of code of application
 if ($dirscc != 'disabled') {
@@ -121,16 +110,6 @@ if ($dirphpstan != 'disabled') {
 	$resexectd = 0;
 	exec($commandcheck, $output_arrtd, $resexectd);
 }
-
-
-// Count lines of code of dependencies
-$commandcheck = "git log --shortstat --no-renames --no-merges --use-mailmap --pretty='format:%cI;%H;%aN;%ae;%ce'";	// --since=  --until=...
-print 'Execute git log to count number of commits by day: '.$commandcheck."\n";
-$output_arrglpu = array();
-$resexecglpu = 0;
-//exec($commandcheck, $output_arrglpu, $resexecglpu);
-
-
 
 $arrayoflineofcode = array();
 $arraycocomo = array();
@@ -204,15 +183,35 @@ foreach (array('proj', 'dep') as $source) {
 }
 
 
+// Get stats on nb of commits
+$commandcheck = "git log --shortstat --no-renames --no-merges --use-mailmap --pretty='format:%cI;%H;%aN;%aE;%ce;%s' --since='".dol_print_date(dol_now() - $delay, '%Y-%m-%d');"'";	// --since=  --until=...
+print 'Execute git log to get list of commits: '.$commandcheck."\n";
+$output_arrglpu = array();
+$resexecglpu = 0;
+//exec($commandcheck, $output_arrglpu, $resexecglpu);
 
-// Retrieve the .git information
+
+// Retrieve the git information for security alerts
 $nbofmonth = 6;
 $delay = (3600 * 24 * 30 * $nbofmonth);
-$urlgit = 'https://api.github.com/search/issues?q=is:pr+repo:Dolibarr/dolibarr+created:>'.dol_print_date(dol_now() - $delay, "%Y-%m");
-
-
 $arrayofalerts = array();
-$arrayofalerts1 = $arrayofalerts2 = $arrayofalerts3 = array();
+
+$commandcheck = "git log --first-parent --shortstat --no-renames --no-merges --use-mailmap --pretty='format:%cI;%H;%aN;%aE;%ce;%s' --since='".dol_print_date(dol_now() - $delay, '%Y-%m-%d');"' | grep yogosha";
+print 'Execute git log to get commits of security: '.$commandcheck."\n";
+$output_arrglpu = array();
+$resexecglpu = 0;
+exec($commandcheck, $output_arrglpu, $resexecglpu);
+foreach ($output_arrglpu as $val) {
+	$tmpval = cleanVal2($val);
+	if (preg_match('/yogosha/i', $tmpval['title'])) {
+		$arrayofalerts[$tmpval['numbercommit']] = $tmpval;
+	}
+}
+
+
+/*
+//$urlgit = 'https://api.github.com/search/issues?q=is:pr+repo:Dolibarr/dolibarr+created:>'.dol_print_date(dol_now() - $delay, "%Y-%m");
+$urlgit = 'https://api.github.com/search/commits?q=repo:Dolibarr/dolibarr+yogosha+created:>'.dol_print_date(dol_now() - $delay, "%Y-%m");
 
 // Count lines of code of application
 $newurl = $urlgit.'+CVE';
@@ -264,7 +263,7 @@ if ($result && $result['http_code'] == 200) {
 	print 'Error: failed to get github response';
 	exit(-1);
 }
-
+*/
 
 $timeend = time();
 
@@ -678,6 +677,28 @@ function cleanVal($val)
 	$tmpval['title'] = $val->title;
 	$tmpval['created_at'] = $val->created_at;
 	$tmpval['updated_at'] = $val->updated_at;
+
+	return $tmpval;
+}
+
+/**
+ * cleanVal2
+ *
+ * @param array 	$val		Array of a PR
+ * @return 						Array of a PR
+ */
+function cleanVal2($val)
+{
+
+	$tmp = explode(';', $val);
+
+	$tmpval = array();
+	$tmpval['url'] = '';
+	$tmpval['number'] = '???';
+	$tmpval['numbercommit'] = $tmp[1];
+	$tmpval['title'] = $tmp[5];
+	$tmpval['created_at'] = $tmp[0];
+	$tmpval['updated_at'] = '';
 
 	return $tmpval;
 }
