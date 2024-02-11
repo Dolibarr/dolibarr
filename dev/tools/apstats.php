@@ -206,8 +206,8 @@ foreach (array('proj', 'dep') as $source) {
 
 
 // Retrieve the .git information
-$nbofdays = 90;
-$delay = (3600 * 24 * $nbofdays);
+$nbofmonth = 6;
+$delay = (3600 * 24 * 30 * $nbofmonth);
 $urlgit = 'https://api.github.com/search/issues?q=is:pr+repo:Dolibarr/dolibarr+created:>'.dol_print_date(dol_now() - $delay, "%Y-%m");
 
 
@@ -587,7 +587,7 @@ if (!empty($output_arrtd)) {
 // Last security errors
 
 $html .= '<section class="chapter" id="linesofcode">'."\n";
-$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>Last security alerts <span class="opacitymedium">(last '.$nbofdays.' days)</span></h2>'."\n";
+$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>Last security alerts <span class="opacitymedium">(last '.$nbofmonth.' month)</span></h2>'."\n";
 
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<div class="boxallwidth">'."\n";
