@@ -305,7 +305,7 @@ class LoanSchedule extends CommonObject
 			$this->amount_interest = trim($this->amount_interest);
 		}
 		if (isset($this->num_payment)) {
-			$this->num_payment = trim($this->num_payment);
+			$this->num_payment = (int) $this->num_payment;
 		}
 		if (isset($this->note_private)) {
 			$this->note_private = trim($this->note_private);
@@ -314,7 +314,7 @@ class LoanSchedule extends CommonObject
 			$this->note_public = trim($this->note_public);
 		}
 		if (isset($this->fk_bank)) {
-			$this->fk_bank = trim($this->fk_bank);
+			$this->fk_bank = (int) $this->fk_bank;
 		}
 		if (isset($this->fk_payment_loan)) {
 			$this->fk_payment_loan = (int) $this->fk_payment_loan;
