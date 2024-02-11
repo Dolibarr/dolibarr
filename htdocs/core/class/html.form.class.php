@@ -1477,19 +1477,19 @@ class Form
 			$sql .= " AND (";
 			$prefix = !getDolGlobalString('COMPANY_DONOTSEARCH_ANYWHERE') ? '%' : ''; // Can use index if COMPANY_DONOTSEARCH_ANYWHERE is on
 			// For natural search
-			$scrit = explode(' ', $filterkey);
+			$search_crit = explode(' ', $filterkey);
 			$i = 0;
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= "(";
 			}
-			foreach ($scrit as $crit) {
+			foreach ($search_crit as $crit) {
 				if ($i > 0) {
 					$sql .= " AND ";
 				}
 				$sql .= "(s.nom LIKE '" . $this->db->escape($prefix . $crit) . "%')";
 				$i++;
 			}
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= ")";
 			}
 			if (isModEnabled('barcode')) {
@@ -2889,12 +2889,12 @@ class Form
 			$sql .= ' AND (';
 			$prefix = !getDolGlobalString('PRODUCT_DONOTSEARCH_ANYWHERE') ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
 			// For natural search
-			$scrit = explode(' ', $filterkey);
+			$search_crit = explode(' ', $filterkey);
 			$i = 0;
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= "(";
 			}
-			foreach ($scrit as $crit) {
+			foreach ($search_crit as $crit) {
 				if ($i > 0) {
 					$sql .= " AND ";
 				}
@@ -2917,7 +2917,7 @@ class Form
 				$sql .= ")";
 				$i++;
 			}
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= ")";
 			}
 			if (isModEnabled('barcode')) {
@@ -3537,12 +3537,12 @@ class Form
 			$sql .= ' AND (';
 			$prefix = !getDolGlobalString('PRODUCT_DONOTSEARCH_ANYWHERE') ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
 			// For natural search
-			$scrit = explode(' ', $filterkey);
+			$search_crit = explode(' ', $filterkey);
 			$i = 0;
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= "(";
 			}
-			foreach ($scrit as $crit) {
+			foreach ($search_crit as $crit) {
 				if ($i > 0) {
 					$sql .= " AND ";
 				}
@@ -3553,7 +3553,7 @@ class Form
 				$sql .= ")";
 				$i++;
 			}
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= ")";
 			}
 			if (isModEnabled('barcode')) {
@@ -7469,12 +7469,12 @@ class Form
 			$sql .= ' AND (';
 			$prefix = !getDolGlobalString('TICKET_DONOTSEARCH_ANYWHERE') ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
 			// For natural search
-			$scrit = explode(' ', $filterkey);
+			$search_crit = explode(' ', $filterkey);
 			$i = 0;
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= "(";
 			}
-			foreach ($scrit as $crit) {
+			foreach ($search_crit as $crit) {
 				if ($i > 0) {
 					$sql .= " AND ";
 				}
@@ -7482,7 +7482,7 @@ class Form
 				$sql .= ")";
 				$i++;
 			}
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= ")";
 			}
 			$sql .= ')';
@@ -7694,12 +7694,12 @@ class Form
 			$sql .= ' AND (';
 			$prefix = !getDolGlobalString('TICKET_DONOTSEARCH_ANYWHERE') ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
 			// For natural search
-			$scrit = explode(' ', $filterkey);
+			$search_crit = explode(' ', $filterkey);
 			$i = 0;
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= "(";
 			}
-			foreach ($scrit as $crit) {
+			foreach ($search_crit as $crit) {
 				if ($i > 0) {
 					$sql .= " AND ";
 				}
@@ -7707,7 +7707,7 @@ class Form
 				$sql .= "";
 				$i++;
 			}
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= ")";
 			}
 			$sql .= ')';
@@ -7927,12 +7927,12 @@ class Form
 			$sql .= ' AND (';
 			$prefix = !getDolGlobalString('MEMBER_DONOTSEARCH_ANYWHERE') ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
 			// For natural search
-			$scrit = explode(' ', $filterkey);
+			$search_crit = explode(' ', $filterkey);
 			$i = 0;
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= "(";
 			}
-			foreach ($scrit as $crit) {
+			foreach ($search_crit as $crit) {
 				if ($i > 0) {
 					$sql .= " AND ";
 				}
@@ -7940,7 +7940,7 @@ class Form
 				$sql .= " OR p.lastname LIKE '" . $this->db->escape($prefix . $crit) . "%')";
 				$i++;
 			}
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= ")";
 			}
 			$sql .= ')';

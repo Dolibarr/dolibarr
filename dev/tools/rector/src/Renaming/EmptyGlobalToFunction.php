@@ -178,7 +178,7 @@ class EmptyGlobalToFunction extends AbstractRector
 	 * Check if node is a global access with format conf->global->XXX
 	 *
 	 * @param Node 	$node 	A node
-	 * @return bool			Return true if noe is conf->global->XXX
+	 * @return bool			Return true if node is conf->global->XXX
 	 */
 	private function isGlobalVar($node)
 	{

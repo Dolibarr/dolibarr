@@ -4594,14 +4594,15 @@ class Societe extends CommonObject
 	{
 		// phpcs:enable
 		global $langs;
+		$label = '';
 		if ($fk_prospectlevel != '') {
-			$lib = $langs->trans("ProspectLevel".$fk_prospectlevel);
-			// If lib not found in language file, we get label from cache/database
-			if ($lib == "ProspectLevel".$fk_prospectlevel) {
-				$lib = $langs->getLabelFromKey($this->db, $fk_prospectlevel, 'c_prospectlevel', 'code', 'label');
+			$label = $langs->trans("ProspectLevel".$fk_prospectlevel);
+			// If label is not found in language file, we get label from cache/database
+			if ($label == "ProspectLevel".$fk_prospectlevel) {
+				$label = $langs->getLabelFromKey($this->db, $fk_prospectlevel, 'c_prospectlevel', 'code', 'label');
 			}
 		}
-		return $lib;
+		return $label;
 	}
 
 	/**
@@ -5357,6 +5358,7 @@ class Societe extends CommonObject
 			}
 
 			// Merge categories
+			include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 			$static_cat = new Categorie($this->db);
 
 			$custcats_ori = $static_cat->containing($soc_origin->id, 'customer', 'id');
