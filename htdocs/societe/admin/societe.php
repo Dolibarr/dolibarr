@@ -391,7 +391,8 @@ foreach ($dirsociete as $dirroot) {
 					dol_syslog($e->getMessage(), LOG_ERR);
 				}
 
-				$modCodeTiers = new $file();
+				/** @var ModeleThirdPartyCode $modCodeTiers */
+				$modCodeTiers = new $file($db);
 
 				// Show modules according to features level
 				if ($modCodeTiers->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
