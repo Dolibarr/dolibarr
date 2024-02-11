@@ -238,7 +238,7 @@ class PaymentVarious extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->amount = trim($this->amount);
+		$this->amount = (float) price2num($this->amount);
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
 		$this->fk_bank = (int) $this->fk_bank;
@@ -456,7 +456,7 @@ class PaymentVarious extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->amount = price2num(trim($this->amount));
+		$this->amount = (float) price2num($this->amount);
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
 		$this->fk_bank = (int) $this->fk_bank;
