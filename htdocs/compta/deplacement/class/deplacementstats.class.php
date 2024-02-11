@@ -94,9 +94,9 @@ class DeplacementStats extends Stats
 	/**
 	 * 	Renvoie le nombre de facture par mois pour une annee donnee
 	 *
-	 *	@param	string	$year	Year to scan
+	 *	@param	int		$year		Year to scan
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *	@return	array			Array of values
+	 *	@return	array				Array of values
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
