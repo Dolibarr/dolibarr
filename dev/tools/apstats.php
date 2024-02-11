@@ -192,19 +192,46 @@ $resexecglpu = 0;
 
 
 // Retrieve the git information for security alerts
-$nbofmonth = 6;
+$nbofmonth = 2;
 $delay = (3600 * 24 * 30 * $nbofmonth);
 $arrayofalerts = array();
 
-$commandcheck = "git log --first-parent --shortstat --no-renames --no-merges --use-mailmap --pretty='format:%cI;%H;%aN;%aE;%ce;%s' --since='".dol_print_date(dol_now() - $delay, '%Y-%m-%d');"' | grep yogosha";
-print 'Execute git log to get commits of security: '.$commandcheck."\n";
+$commandcheck = "git log --shortstat --no-renames --no-merges --use-mailmap --pretty='format:%cI;%H;%aN;%aE;%ce;%s' --since='".dol_print_date(dol_now() - $delay, '%Y-%m-%d')."' | grep -E 'yogosha|CVE|Sec:'";
+print 'Execute git log to get commits related to security: '.$commandcheck."\n";
 $output_arrglpu = array();
 $resexecglpu = 0;
 exec($commandcheck, $output_arrglpu, $resexecglpu);
 foreach ($output_arrglpu as $val) {
 	$tmpval = cleanVal2($val);
-	if (preg_match('/yogosha/i', $tmpval['title'])) {
-		$arrayofalerts[$tmpval['numbercommit']] = $tmpval;
+	if (preg_match('/yogosha|CVE|Sec:/i', $tmpval['title'])) {
+		$alreadyfound = '';
+		$alreadyfoundcommitid = '';
+		foreach ($arrayofalerts as $val) {
+			if ($val['issueidyogosha'] && $val['issueidyogosha'] == $tmpval['issueidyogosha']) {	// Already in list
+				$alreadyfound = 'yogosha';
+				$alreadyfoundcommitid = $val['commitid'];
+				break;
+			}
+			if ($val['issueid'] && $val['issueid'] == $tmpval['issueid']) {	// Already in list
+				$alreadyfound = 'git';
+				$alreadyfoundcommitid = $val['commitid'];
+				break;
+			}
+			if ($val['issueidcve'] && $val['issueidcve'] == $tmpval['issueidcve']) {	// Already in list
+				$alreadyfound = 'cve';
+				$alreadyfoundcommitid = $val['commitid'];
+				break;
+			}
+		}
+		//$alreadyfound=0;
+		if (!$alreadyfound) {
+			$arrayofalerts[$tmpval['commitid']] = $tmpval;
+		} else {
+			if (empty($arrayofalerts[$alreadyfoundcommitid]['commitidbis'])) {
+				$arrayofalerts[$alreadyfoundcommitid]['commitidbis'] = array();
+			}
+			$arrayofalerts[$alreadyfoundcommitid]['commitidbis'][] = $tmpval['commitid'];
+		}
 	}
 }
 
@@ -336,6 +363,18 @@ th,td {
 }
 .trgroup {
 	border-bottom: 1px solid #aaa;
+}
+.tdoverflowmax100 {
+	max-width: 100px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax300 {
+	max-width: 300px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 .seedetail {
 	color: #000088;
@@ -586,16 +625,46 @@ if (!empty($output_arrtd)) {
 // Last security errors
 
 $html .= '<section class="chapter" id="linesofcode">'."\n";
-$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>Last security alerts <span class="opacitymedium">(last '.$nbofmonth.' month)</span></h2>'."\n";
+$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>Last security issues <span class="opacitymedium">(last '.$nbofmonth.' month)</span></h2>'."\n";
 
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<div class="boxallwidth">'."\n";
 $html .= '<table class="list_technical_debt centpercent">'."\n";
-$html .= '<tr class="trgroup"><td>ID</td><td>Title</td><td>Date</td></tr>'."\n";
+$html .= '<tr class="trgroup"><td>Commit ID</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap">Reported on<br>CVE</td><td>Title</td><td>Date</td></tr>'."\n";
 foreach ($arrayofalerts as $alert) {
-	$html .= '<tr><td><a href="https://github.com/Dolibarr/dolibarr/issues/'.$alert['number'].'">#'.$alert['number'].'</a></td>';
-	$html .= '<td>'.$alert['title'].'</td><td>';
-	$html .= $alert['created_at'].'</td>';
+	$html .= '<tr>';
+	$html .= '<td>';
+	$html .= '<a target="_blank" href="https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'].'">'.$alert['commitid'].'</a>';
+	if (!empty($alert['commitidbis'])) {
+		foreach ($alert['commitidbis'] as $tmpcommitidbis) {
+			$html .= '<br>+<a target="_blank" href="https://github.com/Dolibarr/dolibarr/commit/'.$tmpcommitidbis.'">'.$tmpcommitidbis.'</a>';
+		}
+	}
+	$html .= '</td>';
+	$html .= '<td style="white-space: nowrap">';
+	if (!empty($alert['issueidyogosha'])) {
+		$html .= '<a target="_blank" href="https://yogosha.com?'.$alert['issueidyogosha'].'">#'.$alert['issueidyogosha'].'</a>';
+	} else {
+		//$html .= '<span class="opacitymedium">public issue</span>';
+	}
+	$html .= '</td>';
+	$html .= '<td style="white-space: nowrap">';
+	if (!empty($alert['issueid'])) {
+		$html .= '<a target="_blank" href="https://github.com/Dolibarr/dolibarr/issues/'.$alert['issueid'].'">#'.$alert['issueid'].'</a>';
+	} else {
+		//$html .= '<span class="opacitymedium">private</span>';
+	}
+	$html .= '</td>';
+	$html .= '<td style="white-space: nowrap">';
+	if (!empty($alert['issueidcve'])) {
+		$cve = preg_replace('/\s+/', '-', trim($alert['issueidcve']));
+		$html .= '<a target="_blank" href="https://nvd.nist.gov/vuln/detail/CVE-'.$cve.'">CVE-'.$cve.'</a>';
+	}
+	$html .= '</td>';
+	$html .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($alert['title']).'">'.$alert['title'].'</td>';
+	$html .= '<td style="white-space: nowrap">';
+	$html .= preg_replace('/T.*$/', '', $alert['created_at']);
+	$html .= '</td>';
 	$html .= '</tr>';
 }
 $html .= '</table>';
@@ -689,16 +758,28 @@ function cleanVal($val)
  */
 function cleanVal2($val)
 {
-
 	$tmp = explode(';', $val);
 
 	$tmpval = array();
+	$tmpval['commitid'] = $tmp[1];
 	$tmpval['url'] = '';
-	$tmpval['number'] = '???';
-	$tmpval['numbercommit'] = $tmp[1];
+	$tmpval['issueid'] = '';
+	$tmpval['issueidyogosha'] = '';
+	$tmpval['issueidcve'] = '';
 	$tmpval['title'] = $tmp[5];
 	$tmpval['created_at'] = $tmp[0];
 	$tmpval['updated_at'] = '';
+
+	$reg = array();
+	if (preg_match('/#(\d+)/', $tmpval['title'], $reg)) {
+		$tmpval['issueid'] = $reg[1];
+	}
+	if (preg_match('/CVE([0-9\-\s]+)/', $tmpval['title'], $reg)) {
+		$tmpval['issueidcve'] = preg_replace('/^\-/', '', trim($reg[1]));
+	}
+	if (preg_match('/#yogosha(\d+)/i', $tmpval['title'], $reg)) {
+		$tmpval['issueidyogosha'] = $reg[1];
+	}
 
 	return $tmpval;
 }
