@@ -2360,8 +2360,8 @@ class Product extends CommonObject
 				}
 			} else {
 				$price = (float) price2num($newprice, 'MU');
-				$price_ttc = ($newnpr != 1) ? (float) price2num($newprice) * (1 + ($newvat / 100)) : $price;
-				$price_ttc = price2num($price_ttc, 'MU');
+				$price_ttc = ($newnpr != 1) ? price2num($newprice) * (1 + ($newvat / 100)) : $price;
+				$price_ttc = (float) price2num($price_ttc, 'MU');
 
 				if ($newminprice !== '' || $newminprice === 0) {
 					$price_min = price2num($newminprice, 'MU');
@@ -6600,8 +6600,9 @@ class Product extends CommonObject
 
 
 	/**
-	 * Return the duration in Hours of a service base on duration fields
-	 * @return int -1 KO, >= 0 is the duration in hours
+	 * Return the duration of a service in hours (for a service based on duration fields)
+  	 *
+	 * @return float|-1		Duration in hours if OK, -1 if KO
 	 */
 	public function getProductDurationHours()
 	{
