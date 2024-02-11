@@ -265,8 +265,6 @@ if ($result && $result['http_code'] == 200) {
 	exit(-1);
 }
 
-$timeend = time();
-
 
 $timeend = time();
 
@@ -596,7 +594,7 @@ $html .= '<div class="boxallwidth">'."\n";
 $html .= '<table class="list_technical_debt centpercent">'."\n";
 $html .= '<tr class="trgroup"><td>ID</td><td>Title</td><td>Date</td></tr>'."\n";
 foreach ($arrayofalerts as $alert) {
-	$html .= '<tr><td><a href="https://github.com/Dolibarr/dolibarr/issue/'.$alert['number'].'">#'.$alert['number'].'</a></td>';
+	$html .= '<tr><td><a href="https://github.com/Dolibarr/dolibarr/issues/'.$alert['number'].'">#'.$alert['number'].'</a></td>';
 	$html .= '<td>'.$alert['title'].'</td><td>';
 	$html .= $alert['created_at'].'</td>';
 	$html .= '</tr>';
