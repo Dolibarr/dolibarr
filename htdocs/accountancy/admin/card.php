@@ -257,9 +257,9 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Chart of accounts type
-	print '<tr><td><span class="fieldrequired">';
+	print '<tr><td>';
 	print $form->textwithpicto($langs->trans("Pcgtype"), $langs->transnoentitiesnoconv("PcgtypeDesc"));
-	print '</span></td>';
+	print '</td>';
 	print '<td>';
 	print '<input type="text" name="pcg_type" list="pcg_type_datalist" value="'.dol_escape_htmltag(GETPOSTISSET('pcg_type') ? GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
 	// autosuggest from existing account types if found
