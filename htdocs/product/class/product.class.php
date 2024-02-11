@@ -6601,7 +6601,7 @@ class Product extends CommonObject
 
 	/**
 	 * Return the duration of a service in hours (for a service based on duration fields)
-  	 *
+	 *
 	 * @return float|-1		Duration in hours if OK, -1 if KO
 	 */
 	public function getProductDurationHours()
