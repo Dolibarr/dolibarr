@@ -40,11 +40,15 @@ define('VERSION', "1.0");
 
 $phpstanlevel = 3;
 
+// Include Dolibarr environment
+require_once $path.'../../htdocs/master.inc.php';
+require_once $path.'../../htdocs/core/lib/files.lib.php';
+require_once $path.'../../htdocs/core/lib/geturl.lib.php';
 
 print '***** '.constant('PRODUCT').' - '.constant('VERSION').' *****'."\n";
 if (empty($argv[1])) {
 	print 'You must run this tool being into the root of the project.'."\n";
-	print 'Usage:   '.constant('PRODUCT').'.php  pathto/outputfile.html  [--dir-scc=pathtoscc] [--dir-phpstan=pathtophpstan]'."\n";
+	print 'Usage:   '.constant('PRODUCT').'.php  pathto/outputfile.html  [--dir-scc=pathtoscc|disabled] [--dir-phpstan=pathtophpstan|disabled]'."\n";
 	print 'Example: '.constant('PRODUCT').'.php  documents/apstats/index.html --dir-scc=/snap/bin --dir-phpstan=~/git/phpstan/htdocs/includes/bin';
 	exit(0);
 }
@@ -73,57 +77,39 @@ while ($i < $argc) {
 	$i++;
 }
 
+
+// Start getting data
+
 $timestart = time();
-
-// Count lines of code of Dolibarr itself
-/*
-$commandcheck = 'cloc . --exclude-dir=includes --exclude-dir=custom --ignore-whitespace --vcs=git';
-$resexec = shell_exec($commandcheck);
-$resexec = (int) (empty($resexec) ? 0 : trim($resexec));
-
-
-// Count lines of code of external dependencies
-$commandcheck = 'cloc htdocs/includes --ignore-whitespace --vcs=git';
-$resexec = shell_exec($commandcheck);
-$resexec = (int) (empty($resexec) ? 0 : trim($resexec));
-*/
 
 // Retrieve the .git information
 $urlgit = 'https://github.com/Dolibarr/dolibarr/blob/develop/';
 
-
 // Count lines of code of application
-$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc . --exclude-dir=htdocs/includes,htdocs/custom,htdocs/theme/common/fontawesome-5,htdocs/theme/common/octicons';
-print 'Execute SCC to count lines of code in project: '.$commandcheck."\n";
-$output_arrproj = array();
-$resexecproj = 0;
-exec($commandcheck, $output_arrproj, $resexecproj);
+if ($dirscc != 'disabled') {
+	$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc . --exclude-dir=htdocs/includes,htdocs/custom,htdocs/theme/common/fontawesome-5,htdocs/theme/common/octicons';
+	print 'Execute SCC to count lines of code in project: '.$commandcheck."\n";
+	$output_arrproj = array();
+	$resexecproj = 0;
+	exec($commandcheck, $output_arrproj, $resexecproj);
 
 
-// Count lines of code of dependencies
-$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc htdocs/includes htdocs/theme/common/fontawesome-5 htdocs/theme/common/octicons';
-print 'Execute SCC to count lines of code in dependencies: '.$commandcheck."\n";
-$output_arrdep = array();
-$resexecdep = 0;
-exec($commandcheck, $output_arrdep, $resexecdep);
-
+	// Count lines of code of dependencies
+	$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc htdocs/includes htdocs/theme/common/fontawesome-5 htdocs/theme/common/octicons';
+	print 'Execute SCC to count lines of code in dependencies: '.$commandcheck."\n";
+	$output_arrdep = array();
+	$resexecdep = 0;
+	exec($commandcheck, $output_arrdep, $resexecdep);
+}
 
 // Get technical debt
-$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$phpstanlevel.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 5G --error-format=github';
-print 'Execute PHPStan to get the technical debt: '.$commandcheck."\n";
-$output_arrtd = array();
-$resexectd = 0;
-exec($commandcheck, $output_arrtd, $resexectd);
-
-
-// Count lines of code of dependencies
-$commandcheck = "git log --shortstat --no-renames --no-merges --use-mailmap --pretty='format:%cI;%H;%aN;%ae;%ce'";	// --since=  --until=...
-print 'Execute git log to count number of commits by day: '.$commandcheck."\n";
-$output_arrglpu = array();
-$resexecglpu = 0;
-//exec($commandcheck, $output_arrglpu, $resexecglpu);
-
-
+if ($dirphpstan != 'disabled') {
+	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$phpstanlevel.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 5G --error-format=github';
+	print 'Execute PHPStan to get the technical debt: '.$commandcheck."\n";
+	$output_arrtd = array();
+	$resexectd = 0;
+	exec($commandcheck, $output_arrtd, $resexectd);
+}
 
 $arrayoflineofcode = array();
 $arraycocomo = array();
@@ -189,11 +175,122 @@ foreach (array('proj', 'dep') as $source) {
 // Search the max
 $arrayofmax = array('Lines'=>0);
 foreach (array('proj', 'dep') as $source) {
-	foreach ($arrayoflineofcode[$source] as $val) {
-		$arrayofmax['Lines'] = max($arrayofmax['Lines'], $val['Lines']);
+	if (!empty($arrayoflineofcode[$source])) {
+		foreach ($arrayoflineofcode[$source] as $val) {
+			$arrayofmax['Lines'] = max($arrayofmax['Lines'], $val['Lines']);
+		}
 	}
 }
 
+
+// Get stats on nb of commits
+$commandcheck = "git log --shortstat --no-renames --no-merges --use-mailmap --pretty='format:%cI;%H;%aN;%aE;%ce;%s' --since='".dol_print_date(dol_now() - $delay, '%Y-%m-%d');"'";	// --since=  --until=...
+print 'Execute git log to get list of commits: '.$commandcheck."\n";
+$output_arrglpu = array();
+$resexecglpu = 0;
+//exec($commandcheck, $output_arrglpu, $resexecglpu);
+
+
+// Retrieve the git information for security alerts
+$nbofmonth = 2;
+$delay = (3600 * 24 * 30 * $nbofmonth);
+$arrayofalerts = array();
+
+$commandcheck = "git log --shortstat --no-renames --no-merges --use-mailmap --pretty='format:%cI;%H;%aN;%aE;%ce;%s' --since='".dol_print_date(dol_now() - $delay, '%Y-%m-%d')."' | grep -E 'yogosha|CVE|Sec:'";
+print 'Execute git log to get commits related to security: '.$commandcheck."\n";
+$output_arrglpu = array();
+$resexecglpu = 0;
+exec($commandcheck, $output_arrglpu, $resexecglpu);
+foreach ($output_arrglpu as $val) {
+	$tmpval = cleanVal2($val);
+	if (preg_match('/yogosha|CVE|Sec:/i', $tmpval['title'])) {
+		$alreadyfound = '';
+		$alreadyfoundcommitid = '';
+		foreach ($arrayofalerts as $val) {
+			if ($val['issueidyogosha'] && $val['issueidyogosha'] == $tmpval['issueidyogosha']) {	// Already in list
+				$alreadyfound = 'yogosha';
+				$alreadyfoundcommitid = $val['commitid'];
+				break;
+			}
+			if ($val['issueid'] && $val['issueid'] == $tmpval['issueid']) {	// Already in list
+				$alreadyfound = 'git';
+				$alreadyfoundcommitid = $val['commitid'];
+				break;
+			}
+			if ($val['issueidcve'] && $val['issueidcve'] == $tmpval['issueidcve']) {	// Already in list
+				$alreadyfound = 'cve';
+				$alreadyfoundcommitid = $val['commitid'];
+				break;
+			}
+		}
+		//$alreadyfound=0;
+		if (!$alreadyfound) {
+			$arrayofalerts[$tmpval['commitid']] = $tmpval;
+		} else {
+			if (empty($arrayofalerts[$alreadyfoundcommitid]['commitidbis'])) {
+				$arrayofalerts[$alreadyfoundcommitid]['commitidbis'] = array();
+			}
+			$arrayofalerts[$alreadyfoundcommitid]['commitidbis'][] = $tmpval['commitid'];
+		}
+	}
+}
+
+
+/*
+//$urlgit = 'https://api.github.com/search/issues?q=is:pr+repo:Dolibarr/dolibarr+created:>'.dol_print_date(dol_now() - $delay, "%Y-%m");
+$urlgit = 'https://api.github.com/search/commits?q=repo:Dolibarr/dolibarr+yogosha+created:>'.dol_print_date(dol_now() - $delay, "%Y-%m");
+
+// Count lines of code of application
+$newurl = $urlgit.'+CVE';
+$result = getURLContent($newurl);
+print 'Execute GET on github for '.$newurl."\n";
+if ($result && $result['http_code'] == 200) {
+	$arrayofalerts1 = json_decode($result['content']);
+
+	foreach ($arrayofalerts1->items as $val) {
+		$tmpval = cleanVal($val);
+		if (preg_match('/CVE/i', $tmpval['title'])) {
+			$arrayofalerts[$tmpval['number']] = $tmpval;
+		}
+	}
+} else {
+	print 'Error: failed to get github response';
+	exit(-1);
+}
+
+$newurl = $urlgit.'+yogosha';
+$result = getURLContent($newurl);
+print 'Execute GET on github for '.$newurl."\n";
+if ($result && $result['http_code'] == 200) {
+	$arrayofalerts2 = json_decode($result['content']);
+
+	foreach ($arrayofalerts2->items as $val) {
+		$tmpval = cleanVal($val);
+		if (preg_match('/yogosha:/i', $tmpval['title'])) {
+			$arrayofalerts[$tmpval['number']] = $tmpval;
+		}
+	}
+} else {
+	print 'Error: failed to get github response';
+	exit(-1);
+}
+
+$newurl = $urlgit.'+Sec:';
+$result = getURLContent($newurl);
+print 'Execute GET on github for '.$newurl."\n";
+if ($result && $result['http_code'] == 200) {
+	$arrayofalerts3 = json_decode($result['content']);
+	foreach ($arrayofalerts3->items as $val) {
+		$tmpval = cleanVal($val);
+		if (preg_match('/Sec:/i', $tmpval['title'])) {
+			$arrayofalerts[$tmpval['number']] = $tmpval;
+		}
+	}
+} else {
+	print 'Error: failed to get github response';
+	exit(-1);
+}
+*/
 
 $timeend = time();
 
@@ -206,6 +303,9 @@ $html = '<html>'."\n";
 $html .= '<meta charset="utf-8">'."\n";
 $html .= '<meta http-equiv="refresh" content="300">'."\n";
 $html .= '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
+$html .= '<meta name="keywords" content="erp, crm, dolibarr, statistic, projet, security alerts" />'."\n";
+$html .= '<meta name="title" content="Dolibarr project statistics" />'."\n";
+$html .= '<meta name="description" content="Statistics about the Dolibarr ERP CRM Open Source project (lines of code, contributions, security alerts, technical debt..." />'."\n";
 $html .= '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==" crossorigin="anonymous" referrerpolicy="no-referrer" />'."\n";
 $html .= '<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>'."\n";
 $html .= '
@@ -263,6 +363,18 @@ th,td {
 }
 .trgroup {
 	border-bottom: 1px solid #aaa;
+}
+.tdoverflowmax100 {
+	max-width: 100px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax300 {
+	max-width: 300px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 .seedetail {
 	color: #000088;
@@ -487,25 +599,80 @@ $html .= '</section>'."\n";
 
 $tmp = '';
 $nblines = 0;
-foreach ($output_arrtd as $line) {
-	$reg = array();
-	//print $line."\n";
-	preg_match('/^::error file=(.*),line=(\d+),col=(\d+)::(.*)$/', $line, $reg);
-	if (!empty($reg[1])) {
-		if ($nblines < 20) {
-			$tmp .= '<tr class="nohidden">';
-		} else {
-			$tmp .= '<tr class="hidden sourcephpstan">';
+if (!empty($output_arrtd)) {
+	foreach ($output_arrtd as $line) {
+		$reg = array();
+		//print $line."\n";
+		preg_match('/^::error file=(.*),line=(\d+),col=(\d+)::(.*)$/', $line, $reg);
+		if (!empty($reg[1])) {
+			if ($nblines < 20) {
+				$tmp .= '<tr class="nohidden">';
+			} else {
+				$tmp .= '<tr class="hidden sourcephpstan">';
+			}
+			$tmp .= '<td>'.$reg[1].'</td>';
+			$tmp .= '<td class="">';
+			$tmp .= '<a href="'.$urlgit.$reg[1].'#L'.$reg[2].'" target="_blank">'.$reg[2].'</a>';
+			$tmp .= '</td>';
+			$tmp .= '<td>'.$reg[4].'</td>';
+			$tmp .= '</tr>'."\n";
+			$nblines++;
 		}
-		$tmp .= '<td>'.$reg[1].'</td>';
-		$tmp .= '<td class="">';
-		$tmp .= '<a href="'.$urlgit.$reg[1].'#L'.$reg[2].'" target="_blank">'.$reg[2].'</a>';
-		$tmp .= '</td>';
-		$tmp .= '<td>'.$reg[4].'</td>';
-		$tmp .= '</tr>'."\n";
-		$nblines++;
 	}
 }
+
+
+// Last security errors
+
+$html .= '<section class="chapter" id="linesofcode">'."\n";
+$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>Last security issues <span class="opacitymedium">(last '.$nbofmonth.' month)</span></h2>'."\n";
+
+$html .= '<div class="div-table-responsive">'."\n";
+$html .= '<div class="boxallwidth">'."\n";
+$html .= '<table class="list_technical_debt centpercent">'."\n";
+$html .= '<tr class="trgroup"><td>Commit ID</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap">Reported on<br>CVE</td><td>Title</td><td>Date</td></tr>'."\n";
+foreach ($arrayofalerts as $alert) {
+	$html .= '<tr>';
+	$html .= '<td>';
+	$html .= '<a target="_blank" href="https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'].'">'.$alert['commitid'].'</a>';
+	if (!empty($alert['commitidbis'])) {
+		foreach ($alert['commitidbis'] as $tmpcommitidbis) {
+			$html .= '<br>+<a target="_blank" href="https://github.com/Dolibarr/dolibarr/commit/'.$tmpcommitidbis.'">'.$tmpcommitidbis.'</a>';
+		}
+	}
+	$html .= '</td>';
+	$html .= '<td style="white-space: nowrap">';
+	if (!empty($alert['issueidyogosha'])) {
+		//$html .= '<a target="_blank" href="https://yogosha.com?'.$alert['issueidyogosha'].'">';
+		$html .= $alert['issueidyogosha'];
+		//$html .= '</a>';
+	} else {
+		//$html .= '<span class="opacitymedium">public issue</span>';
+	}
+	$html .= '</td>';
+	$html .= '<td style="white-space: nowrap">';
+	if (!empty($alert['issueid'])) {
+		$html .= '<a target="_blank" href="https://github.com/Dolibarr/dolibarr/issues/'.$alert['issueid'].'">#'.$alert['issueid'].'</a>';
+	} else {
+		//$html .= '<span class="opacitymedium">private</span>';
+	}
+	$html .= '</td>';
+	$html .= '<td style="white-space: nowrap">';
+	if (!empty($alert['issueidcve'])) {
+		$cve = preg_replace('/\s+/', '-', trim($alert['issueidcve']));
+		$html .= '<a target="_blank" href="https://nvd.nist.gov/vuln/detail/CVE-'.$cve.'">CVE-'.$cve.'</a>';
+	}
+	$html .= '</td>';
+	$html .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($alert['title']).'">'.$alert['title'].'</td>';
+	$html .= '<td style="white-space: nowrap">';
+	$html .= preg_replace('/T.*$/', '', $alert['created_at']);
+	$html .= '</td>';
+	$html .= '</tr>';
+}
+$html .= '</table>';
+$html .= '</div>';
+$html .= '</div>';
+$html .= '</section>';
 
 
 // Technical debt
@@ -526,7 +693,7 @@ $html .= '</div>';
 $html .= '</section>'."\n";
 
 
-// JS code
+// JS code to allow to expand/collapse
 
 $html .= '
 <script>
@@ -564,4 +731,57 @@ if ($fh) {
 function formatNumber($number, $nbdec = 0)
 {
 	return number_format($number, 0, '.', ' ');
+}
+
+/**
+ * cleanVal
+ *
+ * @param array 	$val		Array of a PR
+ * @return 						Array of a PR
+ */
+function cleanVal($val)
+{
+	$tmpval = array();
+
+	$tmpval['url'] = $val->url;
+	$tmpval['number'] = $val->number;
+	$tmpval['title'] = $val->title;
+	$tmpval['created_at'] = $val->created_at;
+	$tmpval['updated_at'] = $val->updated_at;
+
+	return $tmpval;
+}
+
+/**
+ * cleanVal2
+ *
+ * @param array 	$val		Array of a PR
+ * @return 						Array of a PR
+ */
+function cleanVal2($val)
+{
+	$tmp = explode(';', $val);
+
+	$tmpval = array();
+	$tmpval['commitid'] = $tmp[1];
+	$tmpval['url'] = '';
+	$tmpval['issueid'] = '';
+	$tmpval['issueidyogosha'] = '';
+	$tmpval['issueidcve'] = '';
+	$tmpval['title'] = $tmp[5];
+	$tmpval['created_at'] = $tmp[0];
+	$tmpval['updated_at'] = '';
+
+	$reg = array();
+	if (preg_match('/#(\d+)/', $tmpval['title'], $reg)) {
+		$tmpval['issueid'] = $reg[1];
+	}
+	if (preg_match('/CVE([0-9\-\s]+)/', $tmpval['title'], $reg)) {
+		$tmpval['issueidcve'] = preg_replace('/^\-/', '', trim($reg[1]));
+	}
+	if (preg_match('/#yogosha(\d+)/i', $tmpval['title'], $reg)) {
+		$tmpval['issueidyogosha'] = $reg[1];
+	}
+
+	return $tmpval;
 }
