@@ -206,7 +206,7 @@ class Website extends CommonObject
 				}
 				$tmparray[$key] = preg_replace('/[_-].*$/', '', trim($val)); // en_US or en-US -> en
 			}
-			$this->otherlang = join(',', $tmparray);
+			$this->otherlang = implode(',', $tmparray);
 		}
 
 		// Check parameters
@@ -253,7 +253,7 @@ class Website extends CommonObject
 		if (!$resql) {
 			$error++;
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error) {
@@ -382,7 +382,7 @@ class Website extends CommonObject
 			}
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -483,7 +483,7 @@ class Website extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -531,7 +531,7 @@ class Website extends CommonObject
 				}
 				$tmparray[$key] = preg_replace('/[_-].*$/', '', trim($val)); // en_US or en-US -> en
 			}
-			$this->otherlang = join(',', $tmparray);
+			$this->otherlang = implode(',', $tmparray);
 		}
 		if (empty($this->lang)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MainLanguage"));
@@ -563,7 +563,7 @@ class Website extends CommonObject
 		if (!$resql) {
 			$error++;
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error && !$notrigger) {
@@ -625,7 +625,7 @@ class Website extends CommonObject
 			if (!$resql) {
 				$error++;
 				$this->errors[] = 'Error '.$this->db->lasterror();
-				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+				dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 			}
 		}
 
@@ -726,7 +726,7 @@ class Website extends CommonObject
 			$error++;
 			$this->error = $object->error;
 			$this->errors = $object->errors;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error) {
@@ -1086,7 +1086,7 @@ class Website extends CommonObject
 			// This comment syntax is important, it is parsed by import to get information on page ID and all aliases to regenerate
 			$line .= '-- Page ID '.$oldpageid.' -> '.$objectpageold->newid.'__+MAX_llx_website_page__ - Aliases '.$allaliases.' --;'; // newid start at 1, 2...
 			$line .= "\n";
-			fputs($fp, $line);
+			fwrite($fp, $line);
 
 			// Warning: We must keep llx_ here. It is a generic SQL.
 			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, lang, image, keywords, status, date_creation, tms, import_key, grabbed_from, type_container, htmlheader, content, author_alias, allowed_in_frames)';
@@ -1145,7 +1145,7 @@ class Website extends CommonObject
 			$line .= ");";
 			$line .= "\n";
 
-			fputs($fp, $line);
+			fwrite($fp, $line);
 
 			// Add line to update home page id during import
 			//var_dump($this->fk_default_home.' - '.$objectpageold->id.' - '.$objectpageold->newid);exit;
@@ -1153,7 +1153,7 @@ class Website extends CommonObject
 				// Warning: We must keep llx_ here. It is a generic SQL.
 				$line = "UPDATE llx_website SET fk_default_home = ".($objectpageold->newid > 0 ? $this->db->escape($objectpageold->newid)."__+MAX_llx_website_page__" : "null")." WHERE rowid = __WEBSITE_ID__;";
 				$line .= "\n";
-				fputs($fp, $line);
+				fwrite($fp, $line);
 			}
 		}
 
@@ -1161,7 +1161,7 @@ class Website extends CommonObject
 		$line .= "UPDATE llx_website SET lang = '".$this->db->escape($this->lang)."' WHERE rowid = __WEBSITE_ID__;\n";
 		$line .= "UPDATE llx_website SET otherlang = '".$this->db->escape($this->otherlang)."' WHERE rowid = __WEBSITE_ID__;\n";
 		$line .= "\n";
-		fputs($fp, $line);
+		fwrite($fp, $line);
 
 		fclose($fp);
 		dolChmod($filesql);
