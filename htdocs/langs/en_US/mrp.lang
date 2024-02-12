@@ -86,6 +86,7 @@ BOMTotalCost=The cost to produce this BOM based on cost of each quantity and pro
 BOMTotalCostService=If the "Workstation" module is activated and a workstation is defined by default on the line, then the calculation is "quantity (converted into hours) x workstation ahr", otherwise "quantity x cost price of the service"
 GoOnTabProductionToProduceFirst=You must first have started the production to close a Manufacturing Order (See tab '%s'). But you can Cancel it.
 ErrorAVirtualProductCantBeUsedIntoABomOrMo=A kit can't be used into a BOM or a MO
+StockChangeDisable = Stock change has been disabled. You can change this value from the BOM card.
 Workstation=Workstation
 Workstations=Workstations
 WorkstationsDescription=Workstations management

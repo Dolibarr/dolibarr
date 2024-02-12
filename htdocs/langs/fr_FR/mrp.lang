@@ -50,6 +50,7 @@ QtyFrozen=Qté bloquée
 QuantityFrozen=Quantité bloquée
 QuantityConsumedInvariable=Lorsque cet indicateur est défini, la quantité consommée est toujours la valeur définie et n'est pas relative à la quantité produite.
 DisableStockChange=Modification de stock désactivé
+StockChangeDisable = La modification de stock a été désactivée. Vous pouvez changer cette valeur depuis la fiche de la BOM.
 DisableStockChangeHelp=Lorsque cette propriété est définie, il n'y a pas de modification de stock sur ce produit, quelle que soit la quantité consommée
 BomAndBomLines=Nomenclatures et lignes
 BOMLine=Ligne de Nomenclature (BOM)
