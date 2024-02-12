@@ -34,7 +34,6 @@ PaymentEvent=Betaling af arrangement
 NewRegistration=Registrering
 EventOrganizationSetup=Opsætning af begivenhedsorganisation
 EventOrganization=Arrangement organisering
-Settings=Indstillinger
 EventOrganizationSetupPage = Konfigurationsside for begivenhedsorganisation
 EVENTORGANIZATION_TASK_LABEL = Etiket over opgaver, der skal oprettes automatisk, når projektet valideres
 EVENTORGANIZATION_TASK_LABELTooltip = Når du validerer en begivenhed til at organisere, kan nogle opgaver automatisk oprettes i projektet <br> <br> For eksempel: <br> Send Ring for konferencer <br> Send Ring for boder <br> Valider forslag af konferencer <br> Valider ansøgning om Boder <br> Åbne abonnementer til begivenheden for deltagerne <br> Send en påmindelse om begivenheden til højttalere <br> Send en påmindelse om begivenheden til standværter <br> Send en påmindelse om begivenheden til deltagere
@@ -90,7 +89,7 @@ PriceOfRegistrationHelp=Pris at betale for at tilmelde sig eller deltage i arran
 PriceOfBooth=Abonnementspris for at stå en kabine
 PriceOfBoothHelp=Abonnementspris for at stå en kabine
 EventOrganizationICSLink=Link ICS til konferencer
-ConferenceOrBoothInformation=Oplysninger om konference eller stand
+ConferenceOrBoothInformation=Konference eller stand information
 Attendees=Deltagere
 ListOfAttendeesOfEvent=Liste over deltagere i arrangementsprojektet
 DownloadICSLink = Download ICS-link
@@ -98,6 +97,7 @@ EVENTORGANIZATION_SECUREKEY = Seed for at sikre nøglen til den offentlige regis
 SERVICE_BOOTH_LOCATION = Service, der bruges til fakturarække om en standplacering
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service brugt til fakturarækken om et deltagerabonnement på en begivenhed
 NbVotes=Antal stemmer
+
 #
 # Status
 #
@@ -107,8 +107,9 @@ EvntOrgConfirmed = Bekræftet
 EvntOrgNotQualified = Ikke kvalificeret
 EvntOrgDone = Gjort
 EvntOrgCancelled = Annulleret
+
 #
-# Public page
+# Other
 #
 SuggestForm = Forslagsside
 SuggestOrVoteForConfOrBooth = Side for forslag eller afstemning
@@ -144,13 +145,8 @@ OrganizationEventBulkMailToAttendees=Dette er en påmindelse om din deltagelse i
 OrganizationEventBulkMailToSpeakers=Dette er en påmindelse om din deltagelse i arrangementet som foredragsholder
 OrganizationEventLinkToThirdParty=Link til tredjepart (kunde, leverandør eller partner)
 OrganizationEvenLabelName=Offentligt navn på konferencen eller standen
-
 NewSuggestionOfBooth=Ansøgning om bod
 NewSuggestionOfConference=Ansøgning om at afholde en konference
-
-#
-# Vote page
-#
 EvntOrgRegistrationWelcomeMessage = Velkommen til konferencesiden eller messesiden.
 EvntOrgRegistrationConfWelcomeMessage = Velkommen til konferencesiden.
 EvntOrgRegistrationBoothWelcomeMessage = Velkommen til siden med forslag til stand.
@@ -158,8 +154,8 @@ EvntOrgVoteHelpMessage = Her kan du se og stemme på de foreslåede begivenheder
 VoteOk = Din stemme er blevet accepteret.
 AlreadyVoted = Du har allerede stemt på denne begivenhed.
 VoteError = Der opstod en fejl under afstemningen. Prøv igen.
-
 SubscriptionOk=Din registrering er blevet registreret
+AmountOfRegistrationPaid=Indbetalt tilmeldingsbeløb
 ConfAttendeeSubscriptionConfirmation = Bekræftelse af dit abonnement på en begivenhed
 Attendee = Deltager
 PaymentConferenceAttendee = Konference deltager betaling
@@ -169,8 +165,8 @@ RegistrationAndPaymentWereAlreadyRecorder=En registrering og en betaling blev al
 EmailAttendee=E -mail til deltager
 EmailCompany=Firma e-mail
 EmailCompanyForInvoice=Firmaets e -mail (for faktura, hvis den er forskellig fra deltagerens e -mail)
-ErrorSeveralCompaniesWithEmailContactUs=Flere virksomheder med denne e -mail er fundet, så vi kan ikke automatisk validere din registrering. Kontakt os venligst på %s for en manuel validering
-ErrorSeveralCompaniesWithNameContactUs=Flere virksomheder med dette navn er fundet, så vi kan ikke automatisk validere din registrering. Kontakt os venligst på %s for en manuel validering
+ErrorSeveralCompaniesWithEmailContactUs=Der er fundet flere virksomheder med denne e-mail, så vi kan ikke automatisk validere din registrering. Kontakt os venligst på %s for en manuel validering
+ErrorSeveralCompaniesWithNameContactUs=Der er fundet flere virksomheder med dette navn, så vi kan ikke automatisk validere din registrering. Kontakt os venligst på %s for en manuel validering
 NoPublicActionsAllowedForThisEvent=Ingen offentlige handlinger er åbne for offentligheden for denne begivenhed
 MaxNbOfAttendees=Max antal deltagere
 DateStartEvent=Begivenhedens startdato

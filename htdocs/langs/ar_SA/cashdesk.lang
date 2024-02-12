@@ -90,7 +90,6 @@ ColorTheme=موضوع اللون
 Colorful=زاهى الألوان
 HeadBar=رئيس بار
 SortProductField=مجال لفرز المنتجات
-Browser=المتصفح
 BrowserMethodDescription=طباعة إيصالات بسيطة وسهلة. فقط عدد قليل من المعلمات لتكوين الإيصال. اطبع عبر المتصفح.
 TakeposConnectorMethodDescription=نموذج خارجي مع ميزات إضافية. إمكانية الطباعة من السحابة.
 PrintMethod=طريقة الطباعة
@@ -106,8 +105,10 @@ ControlCashOpening=افتح النافذة المنبثقة "Control cash box" �
 CloseCashFence=إغلاق التحكم في صندوق النقد
 CashReport=تقرير النقدية
 MainPrinterToUse=الطابعة الرئيسية لاستخدامها
+MainPrinterToUseMore=empty means the browser printer system
 OrderPrinterToUse=طلب الطابعة لاستخدامها
 MainTemplateToUse=النموذج الرئيسي المراد استخدامه
+MainTemplateToUseMore=when not using browser printing system
 OrderTemplateToUse=طلب نموذج للاستخدام
 BarRestaurant=مطعم بار
 AutoOrder=طلب من قبل الزبون نفسه
@@ -153,3 +154,5 @@ LineDiscount=خصم الخط
 LineDiscountShort=قرص الخط.
 InvoiceDiscount=خصم فاتورة
 InvoiceDiscountShort=قرص فاتورة.
+TestPrinterDesc=The server will send a simple test page to a ESC/POS printer
+TestPrinterDesc2=The server will send an enhanced test page with image and barcode to a ESC/POS printer

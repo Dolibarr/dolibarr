@@ -16,7 +16,6 @@ CurrenciesUsed_help_to_add=Lisää eri valuuttojen ja kurssit, joita sinun tulee
 rate=korko
 MulticurrencyReceived=Vastaanotettu, alkuperäinen valuutta
 MulticurrencyRemainderToTake=Jäljellä oleva summa, alkuperäinen valuutta
-MulticurrencyPaymentAmount=Suorituksen summa, alkuperäinen valuutta
 AmountToOthercurrency=Summa (vastaanottavan tilin valuutassa)
 CurrencyRateSyncSucceed=Valuuttakurssin synkronointi onnistui
 MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Käytä verkkomaksuissa asiakirjan valuuttaa

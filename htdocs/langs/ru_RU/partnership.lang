@@ -20,6 +20,7 @@ ModulePartnershipName=Управление партнерством
 PartnershipDescription=Модуль Управление партнерством
 PartnershipDescriptionLong= Модуль Управление партнерством
 Partnership=Партнерство
+Partnerships=Партнерские отношения
 AddPartnership=Добавить партнерство
 CancelPartnershipForExpiredMembers=Партнерство: отмените партнерство участников с истекшими подписками
 PartnershipCheckBacklink=Партнерство: проверьте ссылающуюся обратную ссылку
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Партнерство: проверьте ссылаю
 # Menu
 #
 NewPartnership=Новое партнерство
+NewPartnershipbyWeb=Ваш запрос на партнерство добавлен успешно. Возможно, мы скоро свяжемся с вами...
 ListOfPartnerships=Список партнерских отношений
 
 #
@@ -36,10 +38,10 @@ ListOfPartnerships=Список партнерских отношений
 PartnershipSetup=Настройка партнерства
 PartnershipAbout=О партнерстве
 PartnershipAboutPage=Партнерство о странице
-partnershipforthirdpartyormember=Статус партнера должен быть установлен на "третье лицо" или "участник".
+partnershipforthirdpartyormember=Партнер статус должен быть установлен как «третья сторона» или «член».
 PARTNERSHIP_IS_MANAGED_FOR=Партнерство удалось
 PARTNERSHIP_BACKLINKS_TO_CHECK=Обратные ссылки для проверки
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Кол-во дней до отмены статуса партнерства по истечении срока подписки
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Количество дней до прекращения статус партнерства по истечении срока действия подписание
 ReferingWebsiteCheck=Проверка ссылки на сайт
 ReferingWebsiteCheckDesc=Вы можете включить функцию проверки того, что ваши партнеры добавили обратную ссылку на домены вашего веб-сайта на своем собственном веб-сайте.
 PublicFormRegistrationPartnerDesc=Dolibarr может предоставить вам общедоступный URL-адрес/веб-сайт, чтобы внешние посетители могли запросить участие в партнерской программе.
@@ -53,7 +55,7 @@ PartnershipDedicatedToThisMember=Партнерство, посвященное 
 DatePartnershipStart=Дата начала
 DatePartnershipEnd=Дата окончания
 ReasonDecline=Причина отклонения
-ReasonDeclineOrCancel=Причина отклонения
+ReasonDeclineOrCancel=Reason for refusal or cancellation
 PartnershipAlreadyExist=Партнерство уже существует
 ManagePartnership=Управление партнерством
 BacklinkNotFoundOnPartnerWebsite=Обратная ссылка не найдена на партнерском сайте
@@ -80,15 +82,17 @@ YourPartnershipRefusedTopic=От партнерства отказано
 YourPartnershipAcceptedTopic=Партнерство принято
 YourPartnershipCanceledTopic=Партнерство отменено
 
-YourPartnershipWillSoonBeCanceledContent=Сообщаем вам, что ваше партнерство скоро будет отменено (обратная ссылка не найдена)
-YourPartnershipRefusedContent=Сообщаем вам, что ваш запрос на партнерство был отклонен.
-YourPartnershipAcceptedContent=Сообщаем вам, что ваш запрос на партнерство принят.
-YourPartnershipCanceledContent=Сообщаем вам, что ваше партнерство было расторгнуто.
+YourPartnershipWillSoonBeCanceledContent=Мы хотели бы сообщить вам, что наше партнерство скоро будет прекращено (мы не получили продления или не были выполнены необходимые условия для нашего партнерства). Пожалуйста, свяжитесь с нами, если вы получили это сообщение по ошибке.
+YourPartnershipRefusedContent=Мы хотели бы сообщить вам, что ваш запрос на партнерство был отклонен. Предпосылки не выполнены. Пожалуйста, свяжитесь с нами, если вам нужна дополнительная информация.
+YourPartnershipAcceptedContent=Мы хотели бы сообщить вам, что ваш запрос на партнерство принят.
+YourPartnershipCanceledContent=Сообщаем Вам, что наше сотрудничество прекращено. Пожалуйста, свяжитесь с нами, если вам нужна дополнительная информация.
 
 CountLastUrlCheckError=Количество ошибок при последней проверке URL
 LastCheckBacklink=Дата последней проверки URL
-ReasonDeclineOrCancel=Причина отклонения
 
 NewPartnershipRequest=Новый запрос на партнерство
 NewPartnershipRequestDesc=Эта форма позволяет вам подать заявку на участие в одной из наших партнерских программ. Если вам нужна помощь в заполнении этой формы, свяжитесь с нами по электронной почте <b> %s </b> .
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Эта страница должна содержать хотя бы один ссылка в одном из доменов следующий: <span class='notranslate'>%s</ пролет>
+
+IPOfApplicant=ИП заявителя
 

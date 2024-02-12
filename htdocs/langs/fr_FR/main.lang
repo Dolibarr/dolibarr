@@ -9,7 +9,7 @@ DIRECTION=ltr
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil
+# freeserif is for Tamil or Ethiopian
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -920,7 +920,7 @@ BackOffice=Back office
 Submit=Soumettre
 View=Vue
 Export=Exporter
-Import=Espace d'import
+Import=Import
 Exports=Exports
 ExportFilteredList=Exporter liste filtrée
 ExportList=Exporter liste
@@ -963,6 +963,7 @@ AutomaticallyCalculated=Calculé automatiquement
 TitleSetToDraft=Retour à l'état de brouillon
 ConfirmSetToDraft=Etes vous sûr de vouloir revenir à l'état Brouillon ?
 ImportId=Id import
+Event=Evénement
 Events=Événements
 EMailTemplates=Modèles des courriels
 FileNotShared=Fichier non partagé avec un public externe
@@ -1180,7 +1181,6 @@ ConfirmAffectUserQuestion=Voulez-vous vraiment affecter des utilisateurs aux %s 
 ConfirmSetSupervisorQuestion=Êtes-vous sûr de vouloir définir le superviseur sur le ou les enregistrements sélectionnés %s ?
 ConfirmUpdatePriceQuestion=Voulez-vous vraiment mettre à jour le prix du ou des enregistrements %s sélectionnés ?
 CategTypeNotFound=Aucun type de tag trouvé pour ce type d'enregistrements
-Rate=Taux
 SupervisorNotFound=Superviseur introuvable
 CopiedToClipboard=Copié dans le presse-papier
 InformationOnLinkToContract=Ce montant n’est que le total de toutes les lignes du contrat. Aucune notion de temps n’est prise en considération.
@@ -1213,6 +1213,7 @@ CanceledHidden=Annulé masqué
 CanceledShown=Annulé affiché
 Terminate=Résilier
 Terminated=Résilié
+Position=Position
 AddLineOnPosition=Ajouter une ligne à la position (si vide: à la fin)
 ConfirmAllocateCommercial=Confirmation d'assignation d'un commercial
 ConfirmAllocateCommercialQuestion=Etes-vous sûr de vouloir assigner l'enregistrement %s sélectionné ?
@@ -1230,6 +1231,7 @@ ExternalUser=Utilisateur externe
 NoSpecificContactAddress=Pas de contact ou d'adresse spécifique
 NoSpecificContactAddressBis=Cet onglet est dédié à forcer des contacts ou des adresses spécifiques pour l'objet actuel. Utilisez-le uniquement si vous souhaitez définir un ou plusieurs contacts ou adresses spécifiques pour l'objet lorsque les informations sur le tiers ne sont pas suffisantes ou inexactes.
 HideOnVCard=Cacher %s
+ShowOnVCard=Show %s
 AddToContacts=Ajouter l'adresse à mes contacts
 LastAccess=Dernier accès
 UploadAnImageToSeeAPhotoHere=Téléverser une image depuis l'onglet %s pour afficher une image ici
@@ -1259,4 +1261,7 @@ AmountSalary=Montant du salaire
 InvoiceSubtype=Sous-type de facture
 ConfirmMassReverse=Confirmation d'annulation de masse
 ConfirmMassReverseQuestion=Êtes-vous sûr de vouloir annuler le(s) %s enregistrement(s) sélectionné(s) ?
-
+ElementType=Element type
+ElementId=Element Id
+Encrypted=Encrypted
+Settings=Paramètres

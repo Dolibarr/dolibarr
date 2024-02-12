@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = 管理和追蹤招募活動中的新職位
 # Admin page
 #
 RecruitmentSetup = 招募設定
-Settings = 設定
 RecruitmentSetupPage = 在此處輸入招募模組主要選項的設定
 RecruitmentArea=招募區域
 PublicInterfaceRecruitmentDesc=職缺的公共頁面是顯示和回答開放職缺的公開URL。每個職缺記錄上都有一個針對每個開放職缺的不同連結。
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=啟用開放工作的公共頁面
 #
 # About page
 #
-About = 關於
 RecruitmentAbout = 關於招募
 RecruitmentAboutPage = 關於頁面的招募
 NbOfEmployeesExpected=預期員工人數
@@ -77,3 +75,6 @@ ExtrafieldsApplication=補充屬性（工作申請）
 MakeOffer=同意要求的薪資
 WeAreRecruiting=我們正在招聘。這是一個待填補的空缺職位清單...
 NoPositionOpen=暫時沒有職位空缺
+ConfirmClose=Confirm cancellation
+ConfirmCloseAsk=Are you sure you want to cancel this recruitment candidature
+recruitment=招募

@@ -9,7 +9,7 @@ DIRECTION=ltr
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil
+# freeserif is for Tamil or Ethiopian
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -963,6 +963,7 @@ AutomaticallyCalculated=Automaattisesti laskettu
 TitleSetToDraft=Mene takaisin luonnokseen
 ConfirmSetToDraft=Haluatko varmasti palata Luonnos-tilaan?
 ImportId=Vie ID
+Event=Tapahtuma
 Events=Tapahtumat
 EMailTemplates=Sähköposti viestipohjat
 FileNotShared=tiedosto ei jaettu ulkoiselle yleisölle
@@ -1180,7 +1181,6 @@ ConfirmAffectUserQuestion=Haluatko varmasti määrittää käyttäjiä %s valitu
 ConfirmSetSupervisorQuestion=Haluatko varmasti asettaa valvojan %s valitulle tietueelle?
 ConfirmUpdatePriceQuestion=Haluatko varmasti päivittää %s valitun tietueen hinnan?
 CategTypeNotFound=Tietuetyypille ei löytynyt tunnistetyyppiä
-Rate=Kurssi
 SupervisorNotFound=Valvojaa ei löydy
 CopiedToClipboard=Kopioitu leikepöydälle
 InformationOnLinkToContract=Tämä summa on vain sopimuksen kaikkien rivien summa. Ajan käsitettä ei oteta huomioon.
@@ -1213,6 +1213,7 @@ CanceledHidden=Peruutettu piilotettu
 CanceledShown=Peruutettu näytetään
 Terminate=Lopeta
 Terminated=Lopetettu
+Position=Sijainti
 AddLineOnPosition=Lisää rivi kohtaan (jos tyhjä on lopussa)
 ConfirmAllocateCommercial=Anna myyntiedustajalle vahvistus
 ConfirmAllocateCommercialQuestion=Haluatko varmasti määrittää %s valitun tietueen?
@@ -1230,6 +1231,7 @@ ExternalUser=Ulkoinen käyttäjä
 NoSpecificContactAddress=Ei tarkennettua yhteystietoa tai osoitetta
 NoSpecificContactAddressBis=Tämä välilehti on omistettu pakottamaan tiettyjä yhteystietoja tai osoitteita nykyiselle objektille. Käytä sitä vain, jos haluat määrittää objektille yhden tai useamman nimenomaisen yhteystiedon tai osoitteen, kun kolmannen osapuolen tiedot eivät ole riittäviä tai epätarkkoja.
 HideOnVCard=Piilota %s
+ShowOnVCard=Show %s
 AddToContacts=Lisää osoite yhteystietoihini
 LastAccess=Viimeinen pääsy
 UploadAnImageToSeeAPhotoHere=Lataa kuva välilehdeltä %s, niin näet kuvan täällä
@@ -1259,4 +1261,7 @@ AmountSalary=Palkan määrä
 InvoiceSubtype=Laskun alatyyppi
 ConfirmMassReverse=Joukkokäänteinen vahvistus
 ConfirmMassReverseQuestion=Haluatko varmasti peruuttaa %s valitun tietueen?
-
+ElementType=Element type
+ElementId=Element Id
+Encrypted=Encrypted
+Settings=Asetukset

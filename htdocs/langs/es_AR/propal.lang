@@ -9,5 +9,4 @@ PropalsDraft=Borradores
 PropalsOpened=Abierto
 PropalStatusDraft=Borrador (necesita ser validado)
 PropalStatusCanceledShort=Cancelada
-PropalStatusValidatedShort=Validated (open)
 DefaultModelPropalCreate=Creación de modelo por defecto

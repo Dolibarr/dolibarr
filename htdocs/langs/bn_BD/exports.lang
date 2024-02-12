@@ -62,7 +62,6 @@ ChooseFileToImport=ফাইল আপলোড করুন তারপর স
 SourceFileFormat=Source file format
 FieldsInSourceFile=Fields in source file
 FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
-Field=Field
 NoFields=No fields
 MoveField=Move field column number %s
 ExampleOfImportFile=Example_of_import_file
