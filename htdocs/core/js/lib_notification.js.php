@@ -212,9 +212,9 @@ function check_events() {
 
 		result = 1;
 	} else {
-		console.log("Cancel check_events() with dolnotif_nb_test_for_page="+dolnotif_nb_test_for_page+". Check is useless because javascript Notification.permission is "+Notification.permission+" (blocked manualy or web site is not https or browser is in Private mode).");
+		console.log("Cancel check_events() with dolnotif_nb_test_for_page="+dolnotif_nb_test_for_page+". Check is useless because javascript Notification.permission is "+Notification.permission+" (blocked manually or web site is not https or browser is in Private mode).");
 
-		result = 2;	// We return a positive so the repeated check will done even if authroization is not yet allowed may be after this check)
+		result = 2;	// We return a positive so the repeated check will done even if authorization is not yet allowed may be after this check)
 	}
 
 	if (dolnotif_nb_test_for_page >= 5) {
