@@ -2270,7 +2270,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public function insert_module_parts()
 	{
 		// phpcs:enable
-		global $conf;
+		global $conf, $langs;
 
 		$error = 0;
 

@@ -147,14 +147,15 @@ class Paiement extends CommonObject
 	public $type_code;
 
 	/**
-	 * @var string							Numero du CHQ, VIR, etc...
+	 * @var string
 	 * @deprecated
 	 * @see $num_payment
 	 */
 	public $num_paiement;
 
 	/**
-	 * @var string Numero du CHQ, VIR, etc...
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 

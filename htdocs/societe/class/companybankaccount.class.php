@@ -615,7 +615,7 @@ class CompanyBankAccount extends Account
 		$this->code_banque     = '123';
 		$this->code_guichet    = '456';
 		$this->number          = 'CUST12345';
-		$this->cle_rib         = 50;
+		$this->cle_rib         = '50';
 		$this->bic             = 'CC12';
 		$this->iban            = 'FR999999999';
 		$this->domiciliation   = 'Bank address of customer corp';
