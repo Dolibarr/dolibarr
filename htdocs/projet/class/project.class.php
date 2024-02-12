@@ -1204,7 +1204,7 @@ class Project extends CommonObject
 				return 1;
 			} else {
 				$this->db->rollback();
-				$this->error = join(',', $this->errors);
+				$this->error = implode(',', $this->errors);
 				dol_syslog(get_class($this)."::setValid ".$this->error, LOG_ERR);
 				return -1;
 			}
@@ -1257,7 +1257,7 @@ class Project extends CommonObject
 					return 1;
 				} else {
 					$this->db->rollback();
-					$this->error = join(',', $this->errors);
+					$this->error = implode(',', $this->errors);
 					dol_syslog(get_class($this)."::setClose ".$this->error, LOG_ERR);
 					return -1;
 				}
@@ -1630,13 +1630,13 @@ class Project extends CommonObject
 
 		if ($mode == 0) {
 			$sql .= " AND ( p.public = 1";
-			$sql .= " OR ( ec.fk_c_type_contact IN (".$this->db->sanitize(join(',', array_keys($listofprojectcontacttype))).")";
+			$sql .= " OR ( ec.fk_c_type_contact IN (".$this->db->sanitize(implode(',', array_keys($listofprojectcontacttype))).")";
 			$sql .= " AND ec.fk_socpeople = ".((int) $user->id).")";
 			$sql .= " )";
 		} elseif ($mode == 1) {
 			$sql .= " AND ec.element_id = p.rowid";
 			$sql .= " AND (";
-			$sql .= "  ( ec.fk_c_type_contact IN (".$this->db->sanitize(join(',', array_keys($listofprojectcontacttype))).")";
+			$sql .= "  ( ec.fk_c_type_contact IN (".$this->db->sanitize(implode(',', array_keys($listofprojectcontacttype))).")";
 			$sql .= " AND ec.fk_socpeople = ".((int) $user->id).")";
 			$sql .= " )";
 		} elseif ($mode == 2) {
