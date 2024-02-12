@@ -5327,12 +5327,17 @@ class Societe extends CommonObject
 				'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
 				'stcomm_id', 'outstanding_limit', 'order_min_amount', 'supplier_order_min_amount', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
 				'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
-				'model_pdf', 'webservices_url', 'webservices_key', 'accountancy_code_sell', 'accountancy_code_buy'
+				'model_pdf', 'webservices_url', 'webservices_key', 'accountancy_code_sell', 'accountancy_code_buy', 'typent_id'
 			);
 			foreach ($listofproperties as $property) {
 				if (empty($this->$property)) {
 					$this->$property = $soc_origin->$property;
 				}
+			}
+
+			if ($this->typent_id == -1)
+			{
+				$this->typent_id = $soc_origin->typent_id;
 			}
 
 			// Concat some data
