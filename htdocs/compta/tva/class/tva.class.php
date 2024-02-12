@@ -60,6 +60,11 @@ class Tva extends CommonObject
 	public $datev;
 	public $amount;
 	public $type_payment;
+
+	/**
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
+	 */
 	public $num_payment;
 
 	/**
