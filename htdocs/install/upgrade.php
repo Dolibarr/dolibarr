@@ -200,8 +200,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		if (count($versionmindb) && count($versionarray)
 			&& versioncompare($versionarray, $versionmindb) < 0) {
 			// Warning: database version too low.
-			print "<tr><td>".$langs->trans("ErrorDatabaseVersionTooLow", join('.', $versionarray), join('.', $versionmindb)).'</td><td class="right"><span class="error">'.$langs->trans("Error")."</span></td></tr>\n";
-			dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorDatabaseVersionTooLow", join('.', $versionarray), join('.', $versionmindb)));
+			print "<tr><td>".$langs->trans("ErrorDatabaseVersionTooLow", implode('.', $versionarray), implode('.', $versionmindb)).'</td><td class="right"><span class="error">'.$langs->trans("Error")."</span></td></tr>\n";
+			dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorDatabaseVersionTooLow", implode('.', $versionarray), implode('.', $versionmindb)));
 			$ok = 0;
 		}
 
@@ -216,7 +216,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$listofforbiddenversion = '';
 			foreach ($dbversion_disallowed as $dbversion_totest) {
 				if ($dbversion_totest['type'] == $db->type) {
-					$listofforbiddenversion .= ($listofforbiddenversion ? ', ' : '').join('.', $dbversion_totest['version']);
+					$listofforbiddenversion .= ($listofforbiddenversion ? ', ' : '').implode('.', $dbversion_totest['version']);
 				}
 			}
 			foreach ($dbversion_disallowed as $dbversion_totest) {
@@ -225,8 +225,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 					&& (versioncompare($dbversion_totest['version'], $versionarray) == 0 || versioncompare($dbversion_totest['version'], $versionarray) <= -4 || versioncompare($dbversion_totest['version'], $versionarray) >= 4)
 				) {
 					// Warning: database version too low.
-					print '<tr><td><div class="warning">'.$langs->trans("ErrorDatabaseVersionForbiddenForMigration", join('.', $versionarray), $listofforbiddenversion)."</div></td><td class=\"right\">".$langs->trans("Error")."</td></tr>\n";
-					dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorDatabaseVersionForbiddenForMigration", join('.', $versionarray), $listofforbiddenversion));
+					print '<tr><td><div class="warning">'.$langs->trans("ErrorDatabaseVersionForbiddenForMigration", implode('.', $versionarray), $listofforbiddenversion)."</div></td><td class=\"right\">".$langs->trans("Error")."</td></tr>\n";
+					dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorDatabaseVersionForbiddenForMigration", implode('.', $versionarray), $listofforbiddenversion));
 					$ok = 0;
 					break;
 				}
