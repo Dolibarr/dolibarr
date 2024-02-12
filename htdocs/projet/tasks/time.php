@@ -561,7 +561,7 @@ if ($action == 'confirm_generateinvoice') {
 
 						// Update lineid into line of timespent
 						$sql = 'UPDATE '.MAIN_DB_PREFIX.'element_time SET invoice_line_id = '.((int) $lineid).', invoice_id = '.((int) $tmpinvoice->id);
-						$sql .= ' WHERE rowid IN ('.$db->sanitize(join(',', $toselect)).') AND fk_user = '.((int) $userid);
+						$sql .= ' WHERE rowid IN ('.$db->sanitize(implode(',', $toselect)).') AND fk_user = '.((int) $userid);
 						$result = $db->query($sql);
 						if (!$result) {
 							$error++;
@@ -661,7 +661,7 @@ if ($action == 'confirm_generateinvoice') {
 
 					// Update lineid into line of timespent
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'element_time SET invoice_line_id = '.((int) $lineid).', invoice_id = '.((int) $tmpinvoice->id);
-					$sql .= ' WHERE rowid IN ('.$db->sanitize(join(',', $toselect)).') AND fk_user = '.((int) $userid);
+					$sql .= ' WHERE rowid IN ('.$db->sanitize(implode(',', $toselect)).') AND fk_user = '.((int) $userid);
 					$result = $db->query($sql);
 					if (!$result) {
 						$error++;
@@ -760,7 +760,7 @@ if ($action == 'confirm_generateinvoice') {
 						if (!$error) {
 							// Update lineid into line of timespent
 							$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'element_time SET invoice_line_id = ' . ((int) $lineid) . ', invoice_id = ' . ((int) $tmpinvoice->id);
-							$sql .= ' WHERE rowid IN (' . $db->sanitize(join(',', $toselect)) . ')';
+							$sql .= ' WHERE rowid IN (' . $db->sanitize(implode(',', $toselect)) . ')';
 							$result = $db->query($sql);
 							if (!$result) {
 								$error++;
@@ -955,7 +955,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Define a complementary filter for search of next/prev ref.
 			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-				$projectstatic->next_prev_filter = "rowid IN (" . $db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0') . ")";
+				$projectstatic->next_prev_filter = "rowid IN (" . $db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0') . ")";
 			}
 
 			dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
