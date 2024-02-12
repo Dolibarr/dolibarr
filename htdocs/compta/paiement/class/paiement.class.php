@@ -368,8 +368,8 @@ class Paiement extends CommonObject
 		}
 
 
-		$totalamount = price2num($totalamount);
-		$totalamount_converted = price2num($totalamount_converted);
+		$totalamount = (float) price2num($totalamount);
+		$totalamount_converted = (float) price2num($totalamount_converted);
 
 		// Check parameters
 		if (empty($totalamount) && empty($atleastonepaymentnotnull)) {	 // We accept negative amounts for withdraw reject but not empty arrays
@@ -390,9 +390,9 @@ class Paiement extends CommonObject
 
 		if ($way == 'dolibarr') {
 			$total = $totalamount;
-			$mtotal = $totalamount_converted; // Maybe use price2num with MT for the converted value
+			$mtotal = $totalamount_converted;
 		} else {
-			$total = $totalamount_converted; // Maybe use price2num with MT for the converted value
+			$total = $totalamount_converted;
 			$mtotal = $totalamount;
 		}
 
@@ -1460,6 +1460,6 @@ class Paiement extends CommonObject
 	{
 		$accountline = new AccountLine($this->db);
 		$accountline->fetch($this->bank_line);
-		return $accountline->rappro;
+		return $accountline->rappro ? true : false;
 	}
 }
