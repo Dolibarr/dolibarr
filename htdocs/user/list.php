@@ -491,7 +491,7 @@ if ($search_warehouse > 0) {
 	$sql .= " AND u.fk_warehouse = ".((int) $search_warehouse);
 }
 if (isModEnabled('salaries') && $contextpage == 'employeelist' && !$user->hasRight("salaries", "readall")) {
-	$sql .= " AND u.rowid IN (".$db->sanitize(join(',', $childids)).")";
+	$sql .= " AND u.rowid IN (".$db->sanitize(implode(',', $childids)).")";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -692,7 +692,7 @@ if ($search_all) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
 	print '<!-- Search done like if USER_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
