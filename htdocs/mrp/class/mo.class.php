@@ -1861,7 +1861,7 @@ class MoLine extends CommonObjectLine
 			$this->error = 'BadValueForQty';
 			return -1;
 		}
-		if(empty($this->fk_stock_movement) && $this->fields['disable_stock_change']['enabled']) {
+		if (empty($this->fk_stock_movement) && $this->fields['disable_stock_change']['enabled']) {
 			$this->error = 'StockChangeDisable';
 			return -1;
 		}
