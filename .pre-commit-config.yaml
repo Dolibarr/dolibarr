@@ -18,7 +18,8 @@ repos:
       - id: check-merge-conflict
       - id: check-executables-have-shebangs
       - id: check-shebang-scripts-are-executable
-        exclude: (?x)^( dev/tools/dolibarr-postgres2mysql.php |test/other/test_serialize.php
+        exclude:
+          (?x)^( dev/tools/dolibarr-postgres2mysql.php |test/other/test_serialize.php
           |test/phpunit/textutf8.txt |test/phpunit/textiso.txt |htdocs/includes/.*
           |htdocs/modulebuilder/template/.* |build/debian/dolibarr.postrm |build/debian/dolibarr.postinst
           |build/debian/dolibarr.config )$
@@ -53,14 +54,32 @@ repos:
 
   # Check PHP syntax
   - repo: https://github.com/mdeweerd/pre-commit-php
-    rev: v1.6.3
+    rev: v1.6.5
     hooks:
       - id: php-cbf
         files: \.(php)$
         args: [--standard=dev/setup/codesniffer/ruleset.xml]
       - id: php-cs
         files: \.(php)$
-        args: [--standard=dev/setup/codesniffer/ruleset.xml, --report=emacs]
+        args:
+          [
+            --standard=dev/setup/codesniffer/ruleset.xml,
+            --report=emacs,
+            --severity=5,
+          ]
+      - alias: php-cs-with-cache
+        id: php-cs
+        # Configuration for ci - run on all files with cache
+        stages: [manual]
+        args:
+          [
+            --standard=dev/setup/codesniffer/ruleset.xml,
+            --report=emacs,
+            --severity=5,
+            --cache=.cache/pre-commit/dolibarr-php-cs.cache,
+            .,
+          ]
+        pass_filenames: false # Run on all files
       - id: php-lint
       - id: php-stan
         stages: [manual]
@@ -72,7 +91,8 @@ repos:
     hooks:
       - id: prettier
         stages: [manual]
-        exclude: (?x)^( .*\.(phar |min\.css |lock) |htdocs/(includes|theme/common)/.*
+        exclude:
+          (?x)^( .*\.(phar |min\.css |lock) |htdocs/(includes|theme/common)/.*
           )$
         exclude_types:
           - php
@@ -96,7 +116,7 @@ repos:
         args:
           - --no-warnings
           - -d
-          - '{extends: relaxed, rules: {line-length: {max: 120}}}'
+          - "{extends: relaxed, rules: {line-length: {max: 120}}}"
 
   # Execute codespell to fix typo errors (setup of codespell into dev/tools/codespell/)
   - repo: https://github.com/codespell-project/codespell
@@ -109,7 +129,7 @@ repos:
         # dev/tools/codespell/addCodespellIgnores.sh
         args:
           - -D
-          - '-'
+          - "-"
           - -D
           - dev/tools/codespell/codespell-dict.txt
           - -I
@@ -129,7 +149,7 @@ repos:
         files: ^htdocs/langs/en_US/.*$
         args:
           - -D
-          - '-'
+          - "-"
           - -D
           - dev/tools/codespell/codespell-dict.txt
           - -L
@@ -148,4 +168,4 @@ repos:
     rev: v0.9.0.6
     hooks:
       - id: shellcheck
-        args: [-W, '100']
+        args: [-W, "100"]
