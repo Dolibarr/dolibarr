@@ -7853,6 +7853,9 @@ table.jPicker {
 	div.login_block {
 		border-right: 1px solid rgba(0,0,0,0.3);
 	}
+	.loginbuttonexternal {
+		width: 260px;
+	}
 
 	div.tmenucenter {
 		  text-overflow: clip;
