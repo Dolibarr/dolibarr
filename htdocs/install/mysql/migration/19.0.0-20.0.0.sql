@@ -222,3 +222,15 @@ ALTER TABLE llx_ticket ADD COLUMN model_pdf varchar(255);
 ALTER TABLE llx_ticket ADD COLUMN last_main_doc varchar(255);
 ALTER TABLE llx_ticket ADD COLUMN extraparams varchar(255);
 ALTER TABLE llx_ticket ADD COLUMN origin_replyto varchar(128);
+
+
+ALTER TABLE llx_societe ADD COLUMN geolat double(24,8) DEFAULT NULL;
+ALTER TABLE llx_societe ADD COLUMN geolong double(24,8) DEFAULT NULL;
+ALTER TABLE llx_societe ADD COLUMN geopoint point DEFAULT NULL;
+ALTER TABLE llx_societe ADD COLUMN georesultcode varchar(16) NULL;
+
+ALTER TABLE llx_socpeople ADD COLUMN geolat double(24,8) DEFAULT NULL;
+ALTER TABLE llx_socpeople ADD COLUMN geolong double(24,8) DEFAULT NULL;
+ALTER TABLE llx_socpeople ADD COLUMN geopoint point DEFAULT NULL;
+ALTER TABLE llx_socpeople ADD COLUMN georesultcode varchar(16) NULL;
+

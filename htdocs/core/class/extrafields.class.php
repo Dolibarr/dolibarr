@@ -148,7 +148,8 @@ class ExtraFields
 
 		$result = 0;
 
-		if ($type == 'separate') {
+		if ($type == 'separator' || $type == 'separate') {
+			$type = 'separate';
 			$unique = 0;
 			$required = 0;
 		}	// Force unique and not required if this is a separator field to avoid troubles.
