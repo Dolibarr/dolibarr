@@ -2317,7 +2317,7 @@ class Setup extends DolibarrApi
 
 			// Scan scripts
 			asort($checksumconcat); // Sort list of checksum
-			$checksumget = md5(join(',', $checksumconcat));
+			$checksumget = md5(implode(',', $checksumconcat));
 			$checksumtoget = trim((string) $xml->dolibarr_htdocs_dir_checksum);
 
 			$outexpectedchecksum = ($checksumtoget ? $checksumtoget : $langs->trans("Unknown"));
