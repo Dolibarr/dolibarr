@@ -88,7 +88,7 @@ if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
 }
 print '<td class="right"><input size="3" type="text" class="flat" name="PRODUIT_ATTRIBUTES_SEPARATOR" value="'.$separator.'"></td></tr>';
 
-print '<tr class="oddeven"><td>'.$langs->trans('AllowStockMovementVariantParent').'</td><td>';
+print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans('AllowStockMovementVariantParent'), $langs->trans('AllowStockMovementVariantParentHelp')).'</td><td>';
 print $form->selectyesno("VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT", getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT'), 1).'</td></tr>';
 
 print '</table>';
