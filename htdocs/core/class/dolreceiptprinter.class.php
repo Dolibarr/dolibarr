@@ -110,7 +110,6 @@ use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\PrintConnectors\CupsPrintConnector;
 use Mike42\Escpos\PrintConnectors\DummyPrintConnector;
-use Mike42\Escpos\CapabilityProfile;
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\EscposImage;
 
