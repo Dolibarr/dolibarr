@@ -22,7 +22,6 @@
  */
 
 
-
 /**
  * Save content of a page on disk
  *
@@ -543,11 +542,13 @@ function showWebsiteTemplates(Website $website)
 	global $conf, $langs, $form, $user;
 
 	$dirthemes = array('/doctemplates/websites');
-	if (!empty($conf->modules_parts['websitetemplates'])) {		// Using this feature slow down application
+	/*
+	if (!empty($conf->modules_parts['websitetemplates'])) {
 		foreach ($conf->modules_parts['websitetemplates'] as $reldir) {
 			$dirthemes = array_merge($dirthemes, (array) ($reldir.'doctemplates/websites'));
 		}
 	}
+	*/
 	$dirthemes = array_unique($dirthemes);
 	// Now dir_themes=array('/themes') or dir_themes=array('/theme','/mymodule/theme')
 
