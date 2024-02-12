@@ -578,12 +578,16 @@ function showWebsiteTemplates(Website $website)
 	if (count($dirthemes)) {
 		$i = 0;
 		foreach ($dirthemes as $dir) {
-			//print $dirroot.$dir;exit;
-			$dirtheme = DOL_DATA_ROOT.$dir; // This include loop on $conf->file->dol_document_root
+			if (preg_match('/^\/doctemplates\//', $dir)) {
+				$dirtheme = DOL_DATA_ROOT.$dir; // This include loop on $conf->file->dol_document_root
+			} else {
+				$dirtheme = dol_buildpath($dir); // This include loop on $conf->file->dol_document_root
+			}
 			if (is_dir($dirtheme)) {
 				$handle = opendir($dirtheme);
 				if (is_resource($handle)) {
 					while (($subdir = readdir($handle)) !== false) {
+						//var_dump($dirtheme.'/'.$subdir);
 						if (is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) != '.' && substr($subdir, 0, 3) != 'CVS' && preg_match('/\.zip$/i', $subdir)) {
 							$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
 
