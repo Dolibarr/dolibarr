@@ -66,7 +66,8 @@ class LoanSchedule extends CommonObject
 	public $fk_typepayment;
 
 	/**
-	 * @var int Payment ID
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
@@ -305,7 +306,7 @@ class LoanSchedule extends CommonObject
 			$this->amount_interest = trim($this->amount_interest);
 		}
 		if (isset($this->num_payment)) {
-			$this->num_payment = (int) $this->num_payment;
+			$this->num_payment = trim($this->num_payment);
 		}
 		if (isset($this->note_private)) {
 			$this->note_private = trim($this->note_private);
