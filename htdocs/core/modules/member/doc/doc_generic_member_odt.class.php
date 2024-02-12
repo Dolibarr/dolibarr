@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -425,6 +426,11 @@ class doc_generic_member_odt extends ModelePDFMember
 	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{
 		// phpcs:enable
+		if (!$object instanceof Adherent) {
+			dol_print_error($this->db, printf("Expected Adherent object got %s.", gettype($object)));
+			return array();
+		}
+
 		$array_other = array();
 		foreach ($object as $key => $value) {
 			if (!is_array($value) && !is_object($value)) {
