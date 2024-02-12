@@ -35,6 +35,12 @@ create table llx_socpeople
   town				varchar(255),
   fk_departement	integer,
   fk_pays			integer        DEFAULT 0,
+
+  geolat                   double(24,8)   DEFAULT NULL,
+  geolong                  double(24,8)   DEFAULT NULL,
+  geopoint                 point DEFAULT NULL,
+  georesultcode            varchar(16),
+
   birthday			date,
   poste				varchar(255),
   phone				varchar(30),

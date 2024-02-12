@@ -91,7 +91,7 @@ class Holiday extends CommonObject
 	/**
 	 * @var int 	Date of validation or approval. TODO: Use date_valid instead for validation.
 	 */
-	public $date_valid = '';
+	public $date_valid = 0;
 
 	/**
 	 * @var int 	ID of user that has validated
@@ -111,7 +111,7 @@ class Holiday extends CommonObject
 	/**
 	 * @var int 	Date for refuse
 	 */
-	public $date_refuse = '';
+	public $date_refuse = 0;
 
 	/**
 	 * @var int 	ID for refuse
@@ -121,7 +121,7 @@ class Holiday extends CommonObject
 	/**
 	 * @var int 	Date for cancellation
 	 */
-	public $date_cancel = '';
+	public $date_cancel = 0;
 
 	/**
 	 * @var int 	ID for cancellation
@@ -1577,7 +1577,7 @@ class Holiday extends CommonObject
 	 *
 	 *  @param	string	$name                 Name of parameter
 	 *  @param  string  $createifnotfound     'stringvalue'=Create entry with string value if not found. For example 'YYYYMMDDHHMMSS'.
-	 *  @return string      		          Value of parameter. Example: 'YYYYMMDDHHMMSS' or < 0 if error
+	 *  @return string|int<min,0>             Value of parameter. Example: 'YYYYMMDDHHMMSS' or < 0 if error
 	 */
 	public function getConfCP($name, $createifnotfound = '')
 	{
@@ -1771,11 +1771,11 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *  Return balance of holiday for one user
+	 *  Return the balance of annual leave of a user
 	 *
-	 *  @param	int		$user_id    ID de l'utilisateur
+	 *  @param	int		$user_id    User ID
 	 *  @param	int		$fk_type	Filter on type
-	 *  @return float        		Retourne le solde de congés payés de l'utilisateur
+	 *  @return float|null     		Balance of annual leave if OK, null if KO.
 	 */
 	public function getCPforUser($user_id, $fk_type = 0)
 	{

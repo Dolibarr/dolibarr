@@ -14,6 +14,7 @@
  * Copyright (C) 2018-2020	Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2019-2023	Alexandre Spangaro		<aspangaro@easya.solutions>
  * Copyright (C) 2023		Nick Fragoulis
+ * Copyright (C) 2023		Joachim Kueter		    <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -331,6 +332,20 @@ if (empty($reshook)) {
 					$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
 					$totaldeposits = $objecttmp->getSumDepositsUsed();
 					$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
+
+					// hook to finalize the remaining amount, considering e.g. cash discount agreements
+					$parameters = array('remaintopay'=>$objecttmp->resteapayer);
+					$reshook = $hookmanager->executeHooks('finalizeAmountOfInvoice', $parameters, $objecttmp, $action); // Note that $action and $object may have been modified by some hooks
+					if ($reshook > 0) {
+						// print $hookmanager->resPrint;
+						if (!empty($remaintopay = $hookmanager->resArray['remaintopay'])) {
+							$objecttmp->resteapayer = $remaintopay;
+						}
+					} elseif ($reshook < 0) {
+						$error++;
+						setEventMessages($objecttmp->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
+					}
+
 					if ($objecttmp->statut == FactureFournisseur::STATUS_DRAFT) {
 						$error++;
 						setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
