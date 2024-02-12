@@ -714,7 +714,7 @@ if ($action == 'addsite' && $usercanedit) {
 		$tmpobject->ref = GETPOST('WEBSITE_REF', 'alpha');
 		$tmpobject->description = GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml');
 		$tmpobject->lang = GETPOST('WEBSITE_LANG', 'aZ09');
-		$tmpobject->otherlang = join(',', $arrayotherlang);
+		$tmpobject->otherlang = implode(',', $arrayotherlang);
 		$tmpobject->virtualhost = GETPOST('virtualhost', 'alpha');
 
 		$result = $tmpobject->create($user);
@@ -1503,7 +1503,7 @@ if ($action == 'updatecss' && $usercanedit) {
 
 				$object->virtualhost = $tmpvirtualhost;
 				$object->lang = GETPOST('WEBSITE_LANG', 'aZ09');
-				$object->otherlang = join(',', $arrayotherlang);
+				$object->otherlang = implode(',', $arrayotherlang);
 				$object->use_manifest = GETPOSTINT('use_manifest');
 
 				$result = $object->update($user);
