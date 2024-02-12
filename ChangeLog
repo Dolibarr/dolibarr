@@ -23,7 +23,7 @@ FIX: Accountancy - Update Quadra export format
 FIX: add action update_extras to don card
 FIX: add_customer_ref_on_linked_shipment (#26349)
 FIX: add display of an error when attempting to delete a committed transaction (#26573)
-FIX: Adding the $encode parrameter to recursive _replaceHtmlWithOdtTag() utilisation
+FIX: Adding the $encode parameter to recursive _replaceHtmlWithOdtTag() utilisation
 FIX: add warning in the changelog
 FIX: avoid php8 warnings (#25596)
 FIX: avoid warning : Cannot use a scalar value as an array (#26437)
@@ -103,7 +103,7 @@ FIX: template invoice list extrafield filters (backport v17) (#26227)
 FIX: thirdparty object in proposal card is not loaded
 FIX: too long output
 FIX: translation button
-FIX: use event.key instead event.wich to avoid keyboard difference
+FIX: use event.key instead event.which to avoid keyboard difference
 FIX: Use of line->insert instead of line->create
 FIX: user creation when LDAP is configured (#26332)
 FIX: Use the wrong logo size on PDF
