@@ -534,12 +534,14 @@ if (empty($reshook)) {
 		$localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);
 		$localtax2_tx = get_localtax($tva_tx, 2, $customer, $mysoc, $tva_npr);
 
+
 		if (isModEnabled('productbatch') && isModEnabled('stock')) {
 			$batch = GETPOST('batch', 'alpha');
 
 			if (!empty($batch)) {
 				$action="setbatch";
 			} else {
+				// Set nb of suggested with nb of batch into the warehouse of the terminal
 				$nbofsuggested = 0;
 				$prod->load_stock('warehouseopen');
 				$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
@@ -552,9 +554,8 @@ if (empty($reshook)) {
 				}
 
 				echo "<script>";
-				echo "function addbatch(batch, warehouseid){";
-				echo '$("#poslines").load("invoice.php?action=addline&batch="+batch+"&warehouseid="+warehouseid+"&place='.$place.'&idproduct='.$idproduct.'&token='.newToken().'", function() {
-			});';
+				echo "function addbatch(batch, warehouseid) {";
+				echo '$("#poslines").load("invoice.php?action=addline&batch="+batch+"&warehouseid="+warehouseid+"&place='.$place.'&idproduct='.$idproduct.'&token='.newToken().'", function() {});';
 				echo "}";
 				echo "</script>";
 
@@ -579,7 +580,7 @@ if (empty($reshook)) {
 							//$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
 						}
 						$detail .= ' - '.$langs->trans("Qty").': '.$dbatch->qty;
-						$detail .= " <button onclick='addbatch(".$dbatch->batch.", ".getDolGlobalInt($constantforkey).")'>".$langs->trans("Select")."</button>";
+						$detail .= ' <button onclick="addbatch(\''.$dbatch->batch.'\', '.getDolGlobalInt($constantforkey).')">'.$langs->trans("Select")."</button>";
 						$detail .= '<br>';
 						print $detail;
 
@@ -595,6 +596,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
+
 
 		if (getDolGlobalString('TAKEPOS_SUPPLEMENTS')) {
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';

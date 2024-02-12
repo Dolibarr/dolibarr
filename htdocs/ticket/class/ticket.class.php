@@ -5,6 +5,7 @@
  * Copyright (C) 2020      Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2023      Charlene Benke 	   <charlene@patas-monkey.com>
  * Copyright (C) 2023	   Benjamin Falière	   <benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1410,43 +1411,52 @@ class Ticket extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Return status label of object
+	 * Return status label of object
 	 *
-	 *    @param      string 	$status      Id status
-	 *    @param      int		$mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *    @param	  int		$notooltip	 1=No tooltip
-	 *    @param	  int		$progress	 Progression (0 to 100)
-	 *    @return     string     			 Label
+	 * @param	string		$status			Id status
+	 * @param	int			$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @param	int			$notooltip		1=No tooltip
+	 * @param	int			$progress		Progression (0 to 100)
+	 * @return	string						Label
 	 */
 	public function LibStatut($status, $mode = 0, $notooltip = 0, $progress = 0)
 	{
 		// phpcs:enable
 		global $langs, $hookmanager;
 
-		$labelStatus = $this->labelStatus[$status];
-		$labelStatusShort = $this->labelStatusShort[$status];
+		$labelStatus = !empty($status) ? $this->labelStatus[$status] : '';
+		$labelStatusShort = !empty($status) ? $this->labelStatusShort[$status] : '';
 
-		if ($status == self::STATUS_NOT_READ) {
-			$statusType = 'status0';
-		} elseif ($status == self::STATUS_READ) {
-			$statusType = 'status1';
-		} elseif ($status == self::STATUS_ASSIGNED) {
-			$statusType = 'status2';
-		} elseif ($status == self::STATUS_IN_PROGRESS) {
-			$statusType = 'status4';
-		} elseif ($status == self::STATUS_WAITING) {
-			$statusType = 'status7';
-		} elseif ($status == self::STATUS_NEED_MORE_INFO) {
-			$statusType = 'status3';
-		} elseif ($status == self::STATUS_CANCELED) {
-			$statusType = 'status9';
-		} elseif ($status == self::STATUS_CLOSED) {
-			$statusType = 'status6';
-		} else {
-			$labelStatus = 'Unknown';
-			$labelStatusShort = 'Unknown';
-			$statusType = 'status0';
-			$mode = 0;
+		switch ($status) {
+			case self::STATUS_NOT_READ:
+				$statusType = 'status0';
+				break;
+			case self::STATUS_READ:
+				$statusType = 'status1';
+				break;
+			case self::STATUS_ASSIGNED:
+				$statusType = 'status2';
+				break;
+			case self::STATUS_IN_PROGRESS:
+				$statusType = 'status4';
+				break;
+			case self::STATUS_WAITING:
+				$statusType = 'status7';
+				break;
+			case self::STATUS_NEED_MORE_INFO:
+				$statusType = 'status3';
+				break;
+			case self::STATUS_CANCELED:
+				$statusType = 'status9';
+				break;
+			case self::STATUS_CLOSED:
+				$statusType = 'status6';
+				break;
+			default:
+				$labelStatus = 'Unknown';
+				$labelStatusShort = 'Unknown';
+				$statusType = 'status0';
+				$mode = 0;
 		}
 
 		$parameters = array(
