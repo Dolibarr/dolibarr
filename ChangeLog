@@ -14,7 +14,7 @@ FIX: Accountancy - Level 3 of binding not working on supplier side (#27462)
 FIX: Accounting files export - Use th instead of td on all title columns (#28003)
 FIX: add action update_extras to don card
 FIX: Adding hooks init
-FIX: Adding the $encode parrameter to recursive _replaceHtmlWithOdtTag() utilisation
+FIX: Adding the $encode parameter to recursive _replaceHtmlWithOdtTag() utilisation
 FIX: add new hook context for mo production card (#28037)
 FIX: avoid from re-initializing result on nested hook getEntity (#27799)
 FIX: avoid sql error (issue #26342)
@@ -273,7 +273,7 @@ NEW: Accountancy - Manage intra-community VAT on supplier invoices - FPC22
 NEW: Accountancy - iSuiteExpert export model
 NEW: Accountancy - Quadratus export with attachments in accountancy export
 NEW: Accountancy - Can filter on a custom group of accounts. Perf or ledger list.
-NEW: Can upload a file with drag and drop on purchase invoice, vats, salaries and social contributions 
+NEW: Can upload a file with drag and drop on purchase invoice, vats, salaries and social contributions
 NEW: Authentication: #22740 add OpenID Connect impl
 NEW: Authentication: add experimental support for Google OAuth2 connexion
 NEW: Authentication: can now edit service name for OAuth token
@@ -462,13 +462,13 @@ WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * Minimal PHP version is now PHP 7.1 instead of PHP 7.0
-* Sensitive datas like keys in setup pages, that need encyption (for example the API keys of users, the CRON security key, the keys into the Stripe module, or 
+* Sensitive datas like keys in setup pages, that need encyption (for example the API keys of users, the CRON security key, the keys into the Stripe module, or
 external modules setup pages that store sensitive keys or password), are using the $dolibarr_main_instance_unique_id as part of the key for encryption. So,
-if you restore or duplicate the data from another instance dump, you must also update this parameter in ther conf.php file to allow decryption in the new instance, or 
+if you restore or duplicate the data from another instance dump, you must also update this parameter in ther conf.php file to allow decryption in the new instance, or
 better, you must reenter the sensitive data into the setup pages of the new instance to resave them correctly.
-Note that to find all the parameters that are encrypted into the setup database, you can do a "SELECT * FROM llx_const WHERE value LIKE '%dolcrypt%';"  
+Note that to find all the parameters that are encrypted into the setup database, you can do a "SELECT * FROM llx_const WHERE value LIKE '%dolcrypt%';"
 * The deprecated method "escapeunderscore()" of database handlers has been removed. You must use "escapeforlike()" instead.
-* The method "nb_expedition()" has been renamed into "countNbOfShipments()" 
+* The method "nb_expedition()" has been renamed into "countNbOfShipments()"
 * Revert default type of hooks. Default is now 'addreplace' hooks (and exception become 'output' hooks, that become deprecated).
 * Deprecated property libelle removed from entrepot class.
 * The type 'text' in ->fields property does not accept html content anymore. Use the type 'html' for that.
@@ -870,7 +870,7 @@ WARNING:
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * Minimal PHP version is now PHP 7.0 instead of PHP 5.6
 * Core has introduced a Universal Filter Syntax for seach criteria. Example: ((((field1:=:value1) OR (field2:in:1,2,3)) AND ...). In rare case, some filters
-  could be provided by URL parameters. For such cases (societe/ajax/company.php), use of Universal Filter Syntax become mandatory. 
+  could be provided by URL parameters. For such cases (societe/ajax/company.php), use of Universal Filter Syntax become mandatory.
 * The signature of method getNomUrl() of class ProductFournisseur has been modified to match the signature of method Product->getNomUrl()
 * Trigger ORDER_SUPPLIER_DISPATCH is removed, use ORDER_SUPPLIER_RECEIVE and/or LINEORDER_SUPPLIER_DISPATCH instead.
 * All functions fetch_all() have been set to deprecated for naming consitency, use fetchAll() instead.
@@ -948,7 +948,7 @@ FIX: #23019 Impossible to add task times to an existing draft invoice
 FIX: #23072
 FIX: #23075
 FIX: #23087
-FIX: #23115 
+FIX: #23115
 FIX: #23116
 FIX: #23117
 FIX: #23281
