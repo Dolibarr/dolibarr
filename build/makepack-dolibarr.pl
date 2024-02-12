@@ -583,6 +583,7 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/factory*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/forceproject*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/lead*`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/langs/*/README.md`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/management*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/multicompany*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/ndf*`;
