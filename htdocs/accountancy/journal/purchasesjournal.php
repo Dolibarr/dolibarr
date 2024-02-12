@@ -371,7 +371,7 @@ WHERE
     fd.product_type <= 2
     AND fd.fk_code_ventilation <= 0
     AND fd.total_ttc <> 0
-	AND fk_facture_fourn IN (".$db->sanitize(join(",", array_keys($tabfac))).")
+	AND fk_facture_fourn IN (".$db->sanitize(implode(",", array_keys($tabfac))).")
 GROUP BY fk_facture_fourn
 ";
 $resql = $db->query($sql);
@@ -624,7 +624,7 @@ if ($action == 'writebookkeeping' && !$error) {
 						$bookkeeping->numero_compte = $k;
 						$bookkeeping->label_compte = $label_account;
 
-						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16).' - '.$invoicestatic->ref_supplier.' - '.$langs->trans("VAT").' '.join(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '');
+						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16).' - '.$invoicestatic->ref_supplier.' - '.$langs->trans("VAT").' '.implode(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '');
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
 						$bookkeeping->debit = ($mt > 0) ? $mt : 0;
@@ -885,8 +885,8 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 					print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 					print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 					print '""'.$sep;
-					print '"'.$langs->trans("VAT").' - '.join(', ', $def_tva[$key][$k]).' %"'.$sep;
-					print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 16), 'ISO-8859-1').' - '.$val["refsuppliersologest"].' - '.$langs->trans("VAT").join(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '').'"'.$sep;
+					print '"'.$langs->trans("VAT").' - '.implode(', ', $def_tva[$key][$k]).' %"'.$sep;
+					print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 16), 'ISO-8859-1').' - '.$val["refsuppliersologest"].' - '.$langs->trans("VAT").implode(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '').'"'.$sep;
 					print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 					print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
 					print '"'.$journal.'"';
@@ -1216,7 +1216,7 @@ if (empty($action) || $action == 'view') {
 					print "<td>";
 					print '</td>';
 					print "<td>";
-					print $companystatic->getNomUrl(0, 'supplier', 16).' - '.$invoicestatic->ref_supplier.' - '.$langs->trans("VAT").' '.join(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '');
+					print $companystatic->getNomUrl(0, 'supplier', 16).' - '.$invoicestatic->ref_supplier.' - '.$langs->trans("VAT").' '.implode(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '');
 					print "</td>";
 					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
