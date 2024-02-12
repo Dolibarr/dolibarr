@@ -2184,7 +2184,7 @@ div.vmenu, td.vmenu {
 
 	.menuhider { display: block !important; }
 	.dropdown-user-image { display: none; }
-	.user-header { height: auto !important; color: var(--colorbackbody); }
+	.user-header { height: auto !important; color: var(--colortextbackhmenu); }
 
 	#id-container {
 		width: 100%;
