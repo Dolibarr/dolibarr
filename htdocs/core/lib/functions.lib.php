@@ -144,7 +144,7 @@ function getMultidirOutput($object, $module = '')
 /**
  * Return dolibarr global constant string value
  *
- * @param string $key 		key to return value, return '' if not set
+ * @param string $key 		key to return value, return $default if not set
  * @param string $default 	value to return
  * @return string
  */
@@ -1651,6 +1651,12 @@ function dol_escape_php($stringtoescape, $stringforquotes = 2)
 		return str_replace('"', "'", $stringtoescape);
 	}
 	if ($stringforquotes == 1) {
+		// We remove the \ char.
+		// If we allow the \ char, we can have $stringtoescape =
+		// abc\';phpcodedanger;  so the escapement will become
+		// abc\\';phpcodedanger;  and injecting this into
+		// $a='...' will give $ac='abc\\';phpcodedanger;
+		$stringtoescape = str_replace('\\', '', $stringtoescape);
 		return str_replace("'", "\'", str_replace('"', "'", $stringtoescape));
 	}
 
@@ -2373,9 +2379,9 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	if (class_exists("Imagick")) {
 		if ($object->element == 'expensereport' || $object->element == 'propal' || $object->element == 'commande' || $object->element == 'facture' || $object->element == 'supplier_proposal') {
 			$modulepart = $object->element;
-		} elseif ($object->element == 'fichinter') {
+		} elseif ($object->element == 'fichinter' || $object->element == 'intervention') {
 			$modulepart = 'ficheinter';
-		} elseif ($object->element == 'contrat') {
+		} elseif ($object->element == 'contrat' || $object->element == 'contract') {
 			$modulepart = 'contract';
 		} elseif ($object->element == 'order_supplier') {
 			$modulepart = 'supplier_order';
@@ -2455,7 +2461,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 	} else {
 		if ($showimage) {
-			if ($modulepart != 'unknown') {
+			if ($modulepart != 'unknown' || method_exists($object, 'getDataToShowPhoto')) {
 				$phototoshow = '';
 				// Check if a preview file is available
 				if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter', 'contract', 'supplier_order', 'supplier_proposal', 'supplier_invoice', 'expensereport')) && class_exists("Imagick")) {
@@ -2949,12 +2955,12 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 
 	// Clean format
 	if (preg_match('/%b/i', $format)) {		// There is some text to translate
-		// We inhibate translation to text made by strftime functions. We will use trans instead later.
+		// We inhibit translation to text made by strftime functions. We will use trans instead later.
 		$format = str_replace('%b', '__b__', $format);
 		$format = str_replace('%B', '__B__', $format);
 	}
 	if (preg_match('/%a/i', $format)) {		// There is some text to translate
-		// We inhibate translation to text made by strftime functions. We will use trans instead later.
+		// We inhibit translation to text made by strftime functions. We will use trans instead later.
 		$format = str_replace('%a', '__a__', $format);
 		$format = str_replace('%A', '__A__', $format);
 	}
@@ -8718,7 +8724,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$daytext = $outputlangs->trans('Day'.$tmp['wday']);
 
 		$substitutionarray = array_merge($substitutionarray, array(
-			'__NOW_TMS__' => (int) $now,
+			'__NOW_TMS__' => (string) $now,		// Must be the string that represent the int
 			'__NOW_TMS_YMD__' => dol_print_date($now, 'day', 'auto', $outputlangs),
 			'__DAY__' => (string) $tmp['mday'],
 			'__DAY_TEXT__' => $daytext, // Monday
@@ -9558,7 +9564,7 @@ function dol_osencode($str)
  * 		@param	string	$fieldid		Field to get
  *      @param  int		$entityfilter	Filter by entity
  *      @param	string	$filters		Filters to add. WARNING: string must be escaped for SQL and not coming from user input.
- *      @return int						Return integer <0 if KO, Id of code if OK
+ *      @return int<-1,max>				ID of code if OK, 0 if key empty, -1 if KO
  *      @see $langs->getLabelFromKey
  */
 function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid = 'id', $entityfilter = 0, $filters = '')
@@ -9567,7 +9573,7 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 
 	// If key empty
 	if ($key == '') {
-		return '';
+		return 0;
 	}
 
 	// Check in cache
@@ -12658,7 +12664,7 @@ function dolForgeCriteriaCallback($matches)
 		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
 			$tmpescaped = $regbis[1];
 		}
-		//$tmpescaped = "'".$db->escapeforlike($db->escape($regbis[1]))."'";
+		//$tmpescaped = "'".$db->escape($db->escapeforlike($regbis[1]))."'";
 		$tmpescaped = "'".$db->escape($tmpescaped)."'";	// We do not escape the _ and % so the like will works
 	} elseif (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
 		$tmpescaped = "'".$db->escape($regbis[1])."'";

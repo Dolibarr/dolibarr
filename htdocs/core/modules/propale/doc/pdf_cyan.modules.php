@@ -873,7 +873,7 @@ class pdf_cyan extends ModelePDFPropales
 					$already_merged = array();
 					foreach ($object->lines as $line) {
 						if (!empty($line->fk_product) && !(in_array($line->fk_product, $already_merged))) {
-							// Find the desire PDF
+							// Find the desired PDF
 							$filetomerge = new Propalmergepdfproduct($this->db);
 
 							if (getDolGlobalInt('MAIN_MULTILANGS')) {
@@ -1415,6 +1415,14 @@ class pdf_cyan extends ModelePDFPropales
 
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetTextColor(0, 0, 0);
+		}
+
+		$parameters = array('pdf' => &$pdf, 'object' => &$object, 'outputlangs' => $outputlangs, 'index' => &$index);
+
+		$reshook = $hookmanager->executeHooks('afterPDFTotalTable', $parameters, $this); // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0) {
+			$this->error = $hookmanager->error;
+			$this->errors = $hookmanager->errors;
 		}
 
 		$index++;

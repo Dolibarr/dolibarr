@@ -121,7 +121,9 @@ abstract class CommonObject
 	public $table_element_line = '';
 
 	/**
-	 * @var int 		0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 * Does this object supports the multicompany module ?
+	 *
+	 * @var int|string 		0 if no test on entity, 1 if test with field entity, 2 if test with link by fk_soc, 'field@table' if test with link by field@table
 	 */
 	public $ismultientitymanaged;
 
@@ -757,7 +759,9 @@ abstract class CommonObject
 	public $cond_reglement_supplier_id;
 
 	/**
-	 * @var string 		Populated by setPaymentTerms()
+	 * @var string      Deposit percent for payment terms.
+	 *                  Populated by setPaymentTerms().
+	 * @see setPaymentTerms()
 	 */
 	public $deposit_percent;
 
@@ -4519,7 +4523,7 @@ abstract class CommonObject
 	 */
 	public function setStatut($status, $elementId = null, $elementType = '', $trigkey = '', $fieldstatus = 'fk_statut')
 	{
-		global $user, $langs, $conf;
+		global $user;
 
 		$savElementId = $elementId; // To be used later to know if we were using the method using the id of this or not.
 
@@ -5573,7 +5577,7 @@ abstract class CommonObject
 	 * Common function for all objects extending CommonObject for generating documents
 	 *
 	 * @param 	string 		$modelspath 	Relative folder where generators are placed
-	 * @param 	string 		$modele 		Generator to use. Caller must set it to obj->model_pdf or GETPOST('model_pdf','alpha') for example.
+	 * @param 	string 		$modele 		Generator to use. Caller must set it to obj->model_pdf or $_POST for example.
 	 * @param 	Translate 	$outputlangs 	Output language to use
 	 * @param 	int 		$hidedetails 	1 to hide details. 0 by default
 	 * @param 	int 		$hidedesc 		1 to hide product description. 0 by default
@@ -5610,6 +5614,7 @@ abstract class CommonObject
 
 		// If selected model is a filename template (then $modele="modelname" or "modelname:filename")
 		$tmp = explode(':', $modele, 2);
+		$saved_model = $modele;
 		if (!empty($tmp[1])) {
 			$modele = $tmp[0];
 			$srctemplatepath = $tmp[1];
@@ -5717,7 +5722,7 @@ abstract class CommonObject
 		$sav_charset_output = empty($outputlangs->charset_output) ? '' : $outputlangs->charset_output;
 
 		// update model_pdf in object
-		$this->model_pdf = $modele;
+		$this->model_pdf = $saved_model;
 
 		if (in_array(get_class($this), array('Adherent'))) {
 			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
@@ -5952,7 +5957,7 @@ abstract class CommonObject
 	 **/
 	public function getDefaultCreateValueFor($fieldname, $alternatevalue = null, $type = 'alphanohtml')
 	{
-		global $conf, $_POST;
+		global $_POST;
 
 		// If param here has been posted, we use this value first.
 		if (GETPOSTISSET($fieldname)) {
@@ -9030,6 +9035,45 @@ abstract class CommonObject
 		return $buyPrice;
 	}
 
+	/**
+	 * getDataToShowPhoto
+	 *
+	 * @param 	string	$modulepart		Module part
+	 * @param 	string	$imagesize		Image size
+	 * @return 	array					Array of data to show photo
+	 */
+	public function getDataToShowPhoto($modulepart, $imagesize)
+	{
+		global $conf;
+
+		$newmodulepart = $modulepart;
+		if ($modulepart == 'unknown' && !empty($this->module)) {
+			$newmodulepart = $this->module;
+		}
+
+		$id = $this->id;
+
+		$dir = $conf->$newmodulepart->dir_output;
+		if (!empty($this->photo)) {
+			if (dolIsAllowedForPreview($this->photo)) {
+				if ((string) $imagesize == 'mini') {
+					$file = get_exdir(0, 0, 0, 0, $this, $newmodulepart) . 'photos/' . dol_sanitizeFileName(getImageFileNameForSize($this->photo, '_mini'));
+				} elseif ((string) $imagesize == 'small') {
+					$file = get_exdir(0, 0, 0, 0, $this, $newmodulepart) . 'photos/' . dol_sanitizeFileName(getImageFileNameForSize($this->photo, '_small'));
+				} else {
+					$file = get_exdir(0, 0, 0, 0, $this, $newmodulepart) . 'photos/' . dol_sanitizeFileName($this->photo);
+				}
+				$originalfile = get_exdir(0, 0, 0, 0, $this, $newmodulepart) . 'photos/' . dol_sanitizeFileName($this->photo);
+			}
+		}
+
+		$altfile = '';
+		$email = empty($this->email) ? '' : $this->email;
+		$capture = '';
+
+		return array('dir' => $dir, 'file' => $file, 'originalfile' => $originalfile, 'altfile' => $altfile, 'email' => $email, 'capture' => $capture);
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Show photos of an object (nbmax maximum), into several columns
@@ -9526,7 +9570,7 @@ abstract class CommonObject
 							$this->$field = (float) $obj->$field;
 						}
 					} else {
-						if (isset($obj->$field) && !is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+						if (isset($obj->$field) && (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1))) {
 							$this->$field = (int) $obj->$field;
 						} else {
 							$this->$field = null;
@@ -9541,7 +9585,7 @@ abstract class CommonObject
 						$this->$field = (float) $obj->$field;
 					}
 				} else {
-					if (isset($obj->$field) && !is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+					if (isset($obj->$field) && (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1))) {
 						$this->$field = (float) $obj->$field;
 					} else {
 						$this->$field = null;
@@ -9600,7 +9644,7 @@ abstract class CommonObject
 	 *
 	 * @param 	string|int	$value			Value to protect
 	 * @param	array		$fieldsentry	Properties of field
-	 * @return 	string
+	 * @return 	string|int
 	 */
 	protected function quote($value, $fieldsentry)
 	{

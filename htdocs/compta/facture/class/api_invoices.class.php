@@ -156,6 +156,10 @@ class Invoices extends DolibarrApi
 
 		$this->invoice->fetchObjectLinked();
 
+		// Add online_payment_url, copied from order
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+		$this->invoice->online_payment_url = getOnlinePaymentUrl(0, 'invoice', $this->invoice->ref);
+
 		return $this->_cleanObjectDatas($this->invoice);
 	}
 
@@ -192,7 +196,7 @@ class Invoices extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -263,6 +267,10 @@ class Invoices extends DolibarrApi
 					if (is_array($tmparray)) {
 						$invoice_static->contacts_ids = $tmparray;
 					}
+					// Add online_payment_url, copied from order
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+					$invoice_static->online_payment_url = getOnlinePaymentUrl(0, 'invoice', $invoice_static->ref);
+
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($invoice_static), $properties);
 				}
 				$i++;
@@ -282,7 +290,7 @@ class Invoices extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(401, "Insuffisant rights");
 		}
 		// Check mandatory fields
@@ -335,7 +343,7 @@ class Invoices extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 			throw new RestException(403);
 		}
-		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
 		}
 		if (empty($orderid)) {
@@ -376,7 +384,7 @@ class Invoices extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('contrat', 'lire')) {
 			throw new RestException(403);
 		}
-		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
 		}
 		if (empty($contractid)) {
@@ -443,7 +451,7 @@ class Invoices extends DolibarrApi
 	 */
 	public function putLine($id, $lineid, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -514,7 +522,7 @@ class Invoices extends DolibarrApi
 	 */
 	public function postContact($id, $contactid, $type)
 	{
-		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -562,7 +570,7 @@ class Invoices extends DolibarrApi
 	 */
 	public function deleteContact($id, $contactid, $type)
 	{
-		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -607,7 +615,7 @@ class Invoices extends DolibarrApi
 	 */
 	public function deleteLine($id, $lineid)
 	{
-		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
 		}
 		if (empty($lineid)) {
@@ -623,7 +631,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(404, 'Invoice not found');
 		}
 
-		$updateRes = $this->invoice->deleteline($lineid, $id);
+		$updateRes = $this->invoice->deleteLine($lineid, $id);
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {
@@ -640,7 +648,7 @@ class Invoices extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -745,7 +753,7 @@ class Invoices extends DolibarrApi
 	 */
 	public function postLine($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -833,7 +841,7 @@ class Invoices extends DolibarrApi
 	 */
 	public function addContact($id, $fk_socpeople, $type_contact, $source, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
 		}
 		$result = $this->invoice->fetch($id);
@@ -881,7 +889,7 @@ class Invoices extends DolibarrApi
 	 */
 	public function settodraft($id, $idwarehouse = -1)
 	{
-		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
 		}
 		$result = $this->invoice->fetch($id);
@@ -932,7 +940,7 @@ class Invoices extends DolibarrApi
 	 */
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
 		}
 		$result = $this->invoice->fetch($id);
@@ -961,6 +969,10 @@ class Invoices extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// copy from order
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+		$this->invoice->online_payment_url = getOnlinePaymentUrl(0, 'invoice', $this->invoice->ref);
+
 		return $this->_cleanObjectDatas($this->invoice);
 	}
 
@@ -981,7 +993,7 @@ class Invoices extends DolibarrApi
 	 */
 	public function settopaid($id, $close_code = '', $close_note = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
 		}
 		$result = $this->invoice->fetch($id);
@@ -1030,7 +1042,7 @@ class Invoices extends DolibarrApi
 	 */
 	public function settounpaid($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
 		}
 		$result = $this->invoice->fetch($id);
@@ -1118,7 +1130,7 @@ class Invoices extends DolibarrApi
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
-		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -1287,7 +1299,7 @@ class Invoices extends DolibarrApi
 	 */
 	public function useDiscount($id, $discountid)
 	{
-		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
 		}
 		if (empty($id)) {
@@ -1334,7 +1346,7 @@ class Invoices extends DolibarrApi
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
-		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
 		}
 		if (empty($id)) {
@@ -1426,7 +1438,7 @@ class Invoices extends DolibarrApi
 	{
 		require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
-		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
 		}
 		if (empty($id)) {
@@ -1546,7 +1558,7 @@ class Invoices extends DolibarrApi
 	{
 		require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
-		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
 		}
 		foreach ($arrayofamounts as $id => $amount) {
@@ -1680,7 +1692,7 @@ class Invoices extends DolibarrApi
 	{
 		require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
-		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
 		}
 		if (empty($id)) {

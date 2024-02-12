@@ -58,7 +58,7 @@ $chatGPT = new Ai($db);
 
 $instructions = dol_string_nohtmltag($jsonData['instructions'], 1, 'UTF-8');
 
-$generatedContent = $chatGPT->generateContent($instructions);
+$generatedContent = $chatGPT->generateContent($instructions, 'gpt-3.5-turbo', 'MAILING');
 
 if (is_array($generatedContent) && $generatedContent['error']) {
 	print "Error : " . $generatedContent['message'];

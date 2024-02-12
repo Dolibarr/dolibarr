@@ -473,7 +473,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					$height_note = 0;
 				}
 
-				// Use new auto collum system
+				// Use new auto column system
 				$this->prepareArrayColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
 				$nexY = $tab_top + $this->tabTitleHeight;
@@ -916,7 +916,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf, $mysoc;
+		global $conf, $mysoc, $hookmanager;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -1100,6 +1100,14 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetTextColor(0, 0, 0);
+		}
+
+		$parameters = array('pdf' => &$pdf, 'object' => &$object, 'outputlangs' => $outputlangs, 'index' => &$index);
+
+		$reshook = $hookmanager->executeHooks('afterPDFTotalTable', $parameters, $this); // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0) {
+			$this->error = $hookmanager->error;
+			$this->errors = $hookmanager->errors;
 		}
 
 		$index++;

@@ -65,9 +65,9 @@ $langs->loadLangs(array('bills', 'companies', 'products', 'categories'));
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
-$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id = (GETPOST('id', 'int') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
@@ -82,8 +82,8 @@ if ($contextpage == 'poslist') {
 	$optioncss = 'print';
 }
 
-$lineid = GETPOST('lineid', 'int');
-$userid = GETPOST('userid', 'int');
+$lineid = GETPOSTINT('lineid');
+$userid = GETPOSTINT('userid');
 $search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refcustomer = GETPOST('search_refcustomer', 'alpha');
 $search_type = GETPOST('search_type', 'int');
@@ -117,28 +117,28 @@ $search_customer_code = GETPOST("search_customer_code", 'alphanohtml');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
-$search_date_startday = GETPOST('search_date_startday', 'int');
-$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
-$search_date_startyear = GETPOST('search_date_startyear', 'int');
-$search_date_endday = GETPOST('search_date_endday', 'int');
-$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
-$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_startday = GETPOSTINT('search_date_startday');
+$search_date_startmonth = GETPOSTINT('search_date_startmonth');
+$search_date_startyear = GETPOSTINT('search_date_startyear');
+$search_date_endday = GETPOSTINT('search_date_endday');
+$search_date_endmonth = GETPOSTINT('search_date_endmonth');
+$search_date_endyear = GETPOSTINT('search_date_endyear');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear); // Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
-$search_date_valid_startday = GETPOST('search_date_valid_startday', 'int');
-$search_date_valid_startmonth = GETPOST('search_date_valid_startmonth', 'int');
-$search_date_valid_startyear = GETPOST('search_date_valid_startyear', 'int');
-$search_date_valid_endday = GETPOST('search_date_valid_endday', 'int');
-$search_date_valid_endmonth = GETPOST('search_date_valid_endmonth', 'int');
-$search_date_valid_endyear = GETPOST('search_date_valid_endyear', 'int');
+$search_date_valid_startday = GETPOSTINT('search_date_valid_startday');
+$search_date_valid_startmonth = GETPOSTINT('search_date_valid_startmonth');
+$search_date_valid_startyear = GETPOSTINT('search_date_valid_startyear');
+$search_date_valid_endday = GETPOSTINT('search_date_valid_endday');
+$search_date_valid_endmonth = GETPOSTINT('search_date_valid_endmonth');
+$search_date_valid_endyear = GETPOSTINT('search_date_valid_endyear');
 $search_date_valid_start = dol_mktime(0, 0, 0, $search_date_valid_startmonth, $search_date_valid_startday, $search_date_valid_startyear); // Use tzserver
 $search_date_valid_end = dol_mktime(23, 59, 59, $search_date_valid_endmonth, $search_date_valid_endday, $search_date_valid_endyear);
-$search_datelimit_startday = GETPOST('search_datelimit_startday', 'int');
-$search_datelimit_startmonth = GETPOST('search_datelimit_startmonth', 'int');
-$search_datelimit_startyear = GETPOST('search_datelimit_startyear', 'int');
-$search_datelimit_endday = GETPOST('search_datelimit_endday', 'int');
-$search_datelimit_endmonth = GETPOST('search_datelimit_endmonth', 'int');
-$search_datelimit_endyear = GETPOST('search_datelimit_endyear', 'int');
+$search_datelimit_startday = GETPOSTINT('search_datelimit_startday');
+$search_datelimit_startmonth = GETPOSTINT('search_datelimit_startmonth');
+$search_datelimit_startyear = GETPOSTINT('search_datelimit_startyear');
+$search_datelimit_endday = GETPOSTINT('search_datelimit_endday');
+$search_datelimit_endmonth = GETPOSTINT('search_datelimit_endmonth');
+$search_datelimit_endyear = GETPOSTINT('search_datelimit_endyear');
 $search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $search_datelimit_startday, $search_datelimit_startyear);
 $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
@@ -153,7 +153,7 @@ if ($search_late == 'late') {
 }
 $filtre = GETPOST('filtre', 'alpha');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -243,10 +243,10 @@ $arrayfields = array(
 	'f.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>292),
 	'multicurrency_dynamount_payed'=>array('label'=>'MulticurrencyAlreadyPaid', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>295),
 	'multicurrency_rtp'=>array('label'=>'MulticurrencyRemainderToPay', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>296), // Not enabled by default because slow
-	'total_pa' => array('label' => ((getDolGlobalString('MARGIN_TYPE') == '1') ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (!isModEnabled('margin') || empty($user->rights->margins->liretous) ? 0 : 1)),
-	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (!isModEnabled('margin') || empty($user->rights->margins->liretous) ? 0 : 1)),
-	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || empty($user->rights->margins->liretous) || !getDolGlobalString('DISPLAY_MARGIN_RATES') ? 0 : 1)),
-	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || empty($user->rights->margins->liretous) || !getDolGlobalString('DISPLAY_MARK_RATES') ? 0 : 1)),
+	'total_pa' => array('label' => ((getDolGlobalString('MARGIN_TYPE') == '1') ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? 0 : 1)),
+	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? 0 : 1)),
+	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARGIN_RATES') ? 0 : 1)),
+	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARK_RATES') ? 0 : 1)),
 	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	'f.tms' =>array('type'=>'timestamp', 'label'=>'DateModificationShort', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>502),
 	'u.login'=>array('label'=>"UserAuthor", 'checked'=>1, 'position'=>504),
@@ -411,9 +411,9 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 	require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 	if (!empty($arrayofselected)) {
-		$bankid = GETPOST('bankid', 'int');
-		$paiementid = GETPOST('paiementid', 'int');
-		$paiementdate = dol_mktime(12, 0, 0, GETPOST('datepaimentmonth', 'int'), GETPOST('datepaimentday', 'int'), GETPOST('datepaimentyear', 'year'));
+		$bankid = GETPOSTINT('bankid');
+		$paiementid = GETPOSTINT('paiementid');
+		$paiementdate = dol_mktime(12, 0, 0, GETPOSTINT('datepaimentmonth'), GETPOSTINT('datepaimentday'), GETPOSTINT('datepaimentyear'));
 		if (empty($paiementdate)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 			$error++;
@@ -580,9 +580,19 @@ $facturestatic = new Facture($db);
 $formcompany = new FormCompany($db);
 $companystatic = new Societe($db);
 $companyparent = new Societe($db);
+
 $company_url_list = array();
 $subtypearray = $object->getArrayOfInvoiceSubtypes(0);
-$title = $langs->trans('BillsCustomers').' '.($socid > 0 ? ' '.$soc->name : '');
+
+if ($socid > 0) {
+	$soc = new Societe($db);
+	$soc->fetch($socid);
+	if (empty($search_company)) {
+		$search_company = $soc->name;
+	}
+}
+
+$title = $langs->trans('BillsCustomers').' '.($socid > 0 ? ' - '.$soc->name : '');
 $help_url = 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
@@ -969,14 +979,6 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // --------------------------------------------------------------------
 
 llxHeader('', $title, $help_url);
-
-if ($socid > 0) {
-	$soc = new Societe($db);
-	$soc->fetch($socid);
-	if (empty($search_company)) {
-		$search_company = $soc->name;
-	}
-}
 
 $param = '&socid='.urlencode($socid);
 if (!empty($mode)) {

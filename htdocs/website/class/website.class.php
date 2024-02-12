@@ -730,7 +730,7 @@ class Website extends CommonObject
 		}
 
 		if (!$error) {
-			dolCopyDir($pathofwebsiteold, $pathofwebsitenew, $conf->global->MAIN_UMASK, 0, null, 2);
+			dolCopyDir($pathofwebsiteold, $pathofwebsitenew, getDolGlobalString('MAIN_UMASK'), 0, null, 2);
 
 			// Check symlink to medias and restore it if ko
 			$pathtomedias = DOL_DATA_ROOT.'/medias'; // Target
@@ -744,11 +744,11 @@ class Website extends CommonObject
 			// Copy images and js dir
 			$pathofmediasjsold = DOL_DATA_ROOT.'/medias/js/'.$oldref;
 			$pathofmediasjsnew = DOL_DATA_ROOT.'/medias/js/'.$newref;
-			dolCopyDir($pathofmediasjsold, $pathofmediasjsnew, $conf->global->MAIN_UMASK, 0);
+			dolCopyDir($pathofmediasjsold, $pathofmediasjsnew, getDolGlobalString('MAIN_UMASK'), 0);
 
 			$pathofmediasimageold = DOL_DATA_ROOT.'/medias/image/'.$oldref;
 			$pathofmediasimagenew = DOL_DATA_ROOT.'/medias/image/'.$newref;
-			dolCopyDir($pathofmediasimageold, $pathofmediasimagenew, $conf->global->MAIN_UMASK, 0);
+			dolCopyDir($pathofmediasimageold, $pathofmediasimagenew, getDolGlobalString('MAIN_UMASK'), 0);
 
 			$newidforhome = 0;
 

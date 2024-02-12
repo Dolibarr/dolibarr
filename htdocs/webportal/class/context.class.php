@@ -132,7 +132,7 @@ class Context
 			$this->controller = 'default';
 		}
 
-		$this->appliName = !empty($conf->global->WEBPORTAL_TITLE) ? $conf->global->WEBPORTAL_TITLE : $conf->global->MAIN_INFO_SOCIETE_NOM;
+		$this->appliName = getDolGlobalString('WEBPORTAL_TITLE', getDolGlobalString('MAIN_INFO_SOCIETE_NOM'));
 
 		//$this->generateNewToken();
 
@@ -243,8 +243,8 @@ class Context
 		global $conf;
 
 		// Init de l'url de base
-		if (!empty($conf->global->WEBPORTAL_ROOT_URL)) {
-			$rootUrl = $conf->global->WEBPORTAL_ROOT_URL;
+		if (getDolGlobalString('WEBPORTAL_ROOT_URL')) {
+			$rootUrl = getDolGlobalString('WEBPORTAL_ROOT_URL');
 			if (substr($rootUrl, -1) !== '/') {
 				$rootUrl .= '/';
 			}

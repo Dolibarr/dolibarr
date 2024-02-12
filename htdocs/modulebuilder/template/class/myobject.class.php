@@ -102,7 +102,7 @@ class MyObject extends CommonObject
 	 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
 	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
-	 *	'validate' is 1 if need to validate with $this->validateField()
+	 *	'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
 	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
@@ -247,7 +247,7 @@ class MyObject extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
@@ -502,7 +502,7 @@ class MyObject extends CommonObject
 					if (strpos($value, '%') === false) {
 						$sqlwhere[] = $key . " = '" . $this->db->sanitize($this->db->escape($value)) . "'";
 					} else {
-						$sqlwhere[] = $key . " LIKE '%" . $this->db->escapeforlike($this->db->escape($value)) . "%'";
+						$sqlwhere[] = $key . " LIKE '%" . $this->db->escape($this->db->escapeforlike($value)) . "%'";
 					}
 				}
 			}
@@ -617,8 +617,8 @@ class MyObject extends CommonObject
 			return 0;
 		}
 
-		/* if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule','write'))
-		 || (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->mymodule->myobject->myobject_advance->validate))))
+		/* if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule', 'myobject', 'write'))
+		 || (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule', 'myobject_advance', 'validate')))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -1211,7 +1211,7 @@ class MyObject extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$result = 0;
 		$includedocgeneration = 0;
@@ -1235,6 +1235,23 @@ class MyObject extends CommonObject
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Return validation test result for a field.
+	 * Need MAIN_ACTIVATE_VALIDATION_RESULT to be called.
+	 *
+	 * @param  array   $fields	       		Array of properties of field to show
+	 * @param  string  $fieldKey            Key of attribute
+	 * @param  string  $fieldValue          value of attribute
+	 * @return bool 						Return false if fail, true on success, set $this->error for error message
+	 */
+	public function validateField($fields, $fieldKey, $fieldValue)
+	{
+		// Add your own validation rules here.
+		// ...
+
+		return parent::validateField($fields, $fieldKey, $fieldValue);
 	}
 
 	/**

@@ -51,7 +51,7 @@ class PropalListController extends Controller
 	 * Action method is called before html output
 	 * can be used to manage security and change context
 	 *
-	 * @return  void
+	 * @return  int     Return integer < 0 on error, > 0 on success
 	 */
 	public function action()
 	{
@@ -59,7 +59,7 @@ class PropalListController extends Controller
 
 		$context = Context::getInstance();
 		if (!$context->controllerInstance->checkAccess()) {
-			return;
+			return -1;
 		}
 
 		// Load translation files required by the page
@@ -83,6 +83,8 @@ class PropalListController extends Controller
 		}
 
 		$this->formList = $formListWebPortal;
+
+		return 1;
 	}
 
 	/**

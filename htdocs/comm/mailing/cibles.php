@@ -129,6 +129,11 @@ if ($action == 'add' && $user->hasRight('mailing', 'creer')) {		// Add recipient
 		}
 	}
 	if ($result > 0) {
+		// If status of emailing is sent completely, change to to send partially
+		if ($object->status == $object::STATUS_SENTCOMPLETELY) {
+			$object->setStatut($object::STATUS_SENTPARTIALY);
+		}
+
 		setEventMessages($langs->trans("XTargetsAdded", $result), null, 'mesgs');
 		$action = '';
 	}
@@ -275,7 +280,7 @@ if ($object->fetch($id) >= 0) {
 
 	$morehtmlright = '';
 	$nbtry = $nbok = 0;
-	if ($object->statut == $object::STATUS_SENTPARTIALY || $object->statut == $object::STATUS_SENTCOMPLETELY) {
+	if ($object->status == $object::STATUS_SENTPARTIALY || $object->status == $object::STATUS_SENTCOMPLETELY) {
 		$nbtry = $object->countNbOfTargets('alreadysent');
 		$nbko  = $object->countNbOfTargets('alreadysentko');
 		$nbok = ($nbtry - $nbko);
@@ -314,21 +319,23 @@ if ($object->fetch($id) >= 0) {
 	print '</td></tr>';
 
 	// Errors to
-	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
-	$emailarray = CMailFile::getArrayAddress($object->email_errorsto);
-	foreach ($emailarray as $email => $name) {
-		if ($name != $email) {
-			print dol_escape_htmltag($name).' &lt;'.$email;
-			print '&gt;';
-			if (!isValidEmail($email)) {
-				$langs->load("errors");
-				print img_warning($langs->trans("ErrorBadEMail", $email));
+	if ($object->messtype != 'sms') {
+		print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
+		$emailarray = CMailFile::getArrayAddress($object->email_errorsto);
+		foreach ($emailarray as $email => $name) {
+			if ($name != $email) {
+				print dol_escape_htmltag($name).' &lt;'.$email;
+				print '&gt;';
+				if (!isValidEmail($email)) {
+					$langs->load("errors");
+					print img_warning($langs->trans("ErrorBadEMail", $email));
+				}
+			} else {
+				print dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1);
 			}
-		} else {
-			print dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1);
 		}
+		print '</td></tr>';
 	}
-	print '</td></tr>';
 
 	print '</table>';
 	print '</div>';
@@ -340,13 +347,13 @@ if ($object->fetch($id) >= 0) {
 	print '<table class="border centpercent tableforfield">';
 
 	// Number of distinct emails
-	print '<tr><td class="titlefield">';
+	print '<tr><td>';
 	print $langs->trans("TotalNbOfDistinctRecipients");
 	print '</td><td>';
 	$nbemail = ($object->nbemail ? $object->nbemail : 0);
 	if (is_numeric($nbemail)) {
 		$text = '';
-		if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || ($object->statut == 2 && $nbtry < $nbemail))) {
+		if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->status == 1 || ($object->status == 2 && $nbtry < $nbemail))) {
 			if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
 				$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 			} else {
@@ -398,7 +405,14 @@ if ($object->fetch($id) >= 0) {
 	print '<br>';
 
 
-	$allowaddtarget = ($object->statut == $object::STATUS_DRAFT);
+	$newcardbutton = '';
+	$allowaddtarget = ($object->status == $object::STATUS_DRAFT);
+	if (GETPOST('allowaddtarget')) {
+		$allowaddtarget = 1;
+	}
+	if (!$allowaddtarget) {
+		$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&allowaddtarget=1', '', $user->hasRight('mailing', 'creer'));
+	}
 
 	// Show email selectors
 	if ($allowaddtarget && $user->hasRight('mailing', 'creer')) {
@@ -410,11 +424,19 @@ if ($object->fetch($id) >= 0) {
 		print '<div class="tagtr liste_titre">';
 		print '<div class="tagtd"></div>';
 		print '<div class="tagtd">'.$langs->trans("RecipientSelectionModules").'</div>';
-		print '<div class="tagtd center maxwidth150">'.$langs->trans("NbOfUniqueEMails").'</div>';
-		print '<div class="tagtd left"><div class="inline-block">'.$langs->trans("Filters").'</div>';
-		print ' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <div class=" inline-block">'.$langs->trans("EvenUnsubscribe").' ';
-		print ajax_object_onoff($object, 'evenunsubscribe', 'evenunsubscribe', 'EvenUnsubscribe:switch_on:warning', 'EvenUnsubscribe', array(), 'small valignmiddle', '', 1);
+		print '<div class="tagtd center maxwidth150">';
+		if ($object->messtype != 'sms') {
+			print $langs->trans("NbOfUniqueEMails");
+		} else {
+			print $langs->trans("NbOfUniquePhones");
+		}
 		print '</div>';
+		print '<div class="tagtd left"><div class="inline-block">'.$langs->trans("Filters").'</div>';
+		if ($object->messtype != 'sms') {
+			print ' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <div class=" inline-block">'.$langs->trans("EvenUnsubscribe").' ';
+			print ajax_object_onoff($object, 'evenunsubscribe', 'evenunsubscribe', 'EvenUnsubscribe:switch_on:warning', 'EvenUnsubscribe', array(), 'small valignmiddle', '', 1);
+			print '</div>';
+		}
 		print '</div>';
 		print '<div class="tagtd">&nbsp;</div>';
 		print '</div>';	// End tr
@@ -648,14 +670,14 @@ if ($object->fetch($id) >= 0) {
 		print '<input type="hidden" name="page_y" value="">';
 
 		$morehtmlcenter = '';
-		if ($allowaddtarget) {
+		if ($object->status == $object::STATUS_DRAFT) {
 			$morehtmlcenter = '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ToClearAllRecipientsClickHere").'</span> <a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition smallpaddingimp">'.$langs->trans("TargetsReset").'</a>';
 		}
 		$morehtmlcenter .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=exportcsv&token='.newToken().'&exportcsv=1&id='.$object->id.'">'.img_picto('', 'download', 'class="pictofixedwidth"').$langs->trans("Download").'</a>';
 
 		$massactionbutton = '';
 
-		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit, 0, 0, 1);
+		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 		print '</form>';
 
@@ -776,12 +798,12 @@ if ($object->fetch($id) >= 0) {
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 					print '<td class="center">';
 					print '<!-- ID mailing_cibles = '.$obj->rowid.' -->';
-					if ($obj->statut == $object::STATUS_DRAFT) {	// Not sent yet
+					if ($obj->status == $object::STATUS_DRAFT) {	// Not sent yet
 						if ($user->hasRight('mailing', 'creer')) {
 							print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.((int) $obj->rowid).$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
 						}
 					}
-					/*if ($obj->statut == -1)	// Sent with error
+					/*if ($obj->status == -1)	// Sent with error
 					 {
 					 print '<a href="'.$_SERVER['PHP_SELF'].'?action=retry&rowid='.$obj->rowid.$param.'">'.$langs->trans("Retry").'</a>';
 					 }*/
@@ -834,7 +856,7 @@ if ($object->fetch($id) >= 0) {
 
 				// Date sent
 				print '<td class="center nowraponall">';
-				if ($obj->statut != $object::STATUS_DRAFT) {
+				if ($obj->status != $object::STATUS_DRAFT) {
 					// Date sent
 					print $obj->date_envoi;
 				}
@@ -842,10 +864,10 @@ if ($object->fetch($id) >= 0) {
 
 				// Status of recipient sending email (Warning != status of emailing)
 				print '<td class="nowrap center">';
-				if ($obj->statut == $object::STATUS_DRAFT) {
-					print $object::libStatutDest($obj->statut, 2, '');
+				if ($obj->status == $object::STATUS_DRAFT) {
+					print $object::libStatutDest($obj->status, 2, '');
 				} else {
-					print $object::libStatutDest($obj->statut, 2, $obj->error_text);
+					print $object::libStatutDest($obj->status, 2, $obj->error_text);
 				}
 				print '</td>';
 
@@ -853,12 +875,12 @@ if ($object->fetch($id) >= 0) {
 				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 					print '<td class="center">';
 					print '<!-- ID mailing_cibles = '.$obj->rowid.' -->';
-					if ($obj->statut == $object::STATUS_DRAFT) {	// Not sent yet
+					if ($obj->status == $object::STATUS_DRAFT) {	// Not sent yet
 						if ($user->hasRight('mailing', 'creer')) {
 							print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.((int) $obj->rowid).$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
 						}
 					}
-					/*if ($obj->statut == -1)	// Sent with error
+					/*if ($obj->status == -1)	// Sent with error
 					{
 						print '<a href="'.$_SERVER['PHP_SELF'].'?action=retry&rowid='.$obj->rowid.$param.'">'.$langs->trans("Retry").'</a>';
 					}*/
@@ -869,7 +891,7 @@ if ($object->fetch($id) >= 0) {
 				$i++;
 			}
 		} else {
-			if ($object->statut < $object::STATUS_SENTPARTIALY) {
+			if ($object->status < $object::STATUS_SENTPARTIALY) {
 				print '<tr><td colspan="9">';
 				print '<span class="opacitymedium">'.$langs->trans("NoTargetYet").'</span>';
 				print '</td></tr>';

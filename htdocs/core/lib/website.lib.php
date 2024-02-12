@@ -115,7 +115,7 @@ function dolKeepOnlyPhpCode($str)
  * @param	int			$removephppart		0=Replace PHP sections with a PHP badge. 1=Remove completely PHP sections.
  * @param	string		$contenttype		Content type
  * @param	int			$containerid 		Contenair id
- * @return	boolean							True if OK
+ * @return	string							html content
  * @see dolWebsiteOutput() for function used to replace content in a web server context
  */
 function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $contenttype = 'html', $containerid = 0)

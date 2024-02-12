@@ -238,8 +238,7 @@ class WebsitePage extends CommonObject
 	 * @param string    $website_id     Web site id (page name must also be filled if this parameter is used)
 	 * @param string    $page           Page name (website id must also be filled if this parameter is used). Example 'myaliaspage' or 'fr/myaliaspage'
 	 * @param string    $aliasalt       Alternative alias to search page (slow)
-	 *
-	 * @return int Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @return int 						Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $website_id = null, $page = null, $aliasalt = null)
 	{

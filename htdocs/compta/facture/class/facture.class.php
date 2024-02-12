@@ -266,6 +266,12 @@ class Facture extends CommonInvoice
 	 */
 	public $remise_percent;
 
+	/**
+	 * @var string payment url
+	 */
+	public $online_payment_url;
+
+
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -539,14 +545,16 @@ class Facture extends CommonInvoice
 			}
 			$this->entity            = $_facrec->entity; // Invoice created in same entity than template
 
-			// Fields coming from GUI (priority on template). TODO Value of template should be used as default value on GUI so we can use here always value from GUI
-			$this->fk_project        = GETPOST('projectid', 'int') > 0 ? ((int) GETPOST('projectid', 'int')) : $_facrec->fk_project;
+			// Fields coming from GUI.
+			// @TODO Value of template should be used as default value on the form on the GUI, and we should here always use the value from GUI
+			// set by posted page with $object->xxx = ... and this section should be removed.
+			$this->fk_project        = GETPOST('projectid', 'int') > 0 ? GETPOSTINT('projectid') : $_facrec->fk_project;
 			$this->note_public       = GETPOSTISSET('note_public') ? GETPOST('note_public', 'restricthtml') : $_facrec->note_public;
 			$this->note_private      = GETPOSTISSET('note_private') ? GETPOST('note_private', 'restricthtml') : $_facrec->note_private;
 			$this->model_pdf = GETPOSTISSET('model') ? GETPOST('model', 'alpha') : $_facrec->model_pdf;
-			$this->cond_reglement_id = GETPOST('cond_reglement_id', 'int') > 0 ? ((int) GETPOST('cond_reglement_id', 'int')) : $_facrec->cond_reglement_id;
-			$this->mode_reglement_id = GETPOST('mode_reglement_id', 'int') > 0 ? ((int) GETPOST('mode_reglement_id', 'int')) : $_facrec->mode_reglement_id;
-			$this->fk_account        = GETPOST('fk_account') > 0 ? ((int) GETPOST('fk_account')) : $_facrec->fk_account;
+			$this->cond_reglement_id = GETPOST('cond_reglement_id', 'int') > 0 ? GETPOSTINT('cond_reglement_id') : $_facrec->cond_reglement_id;
+			$this->mode_reglement_id = GETPOST('mode_reglement_id', 'int') > 0 ? GETPOSTINT('mode_reglement_id') : $_facrec->mode_reglement_id;
+			$this->fk_account        = GETPOST('fk_account') > 0 ? GETPOSTINT('fk_account') : $_facrec->fk_account;
 
 			// Set here to have this defined for substitution into notes, should be recalculated after adding lines to get same result
 			$this->total_ht          = $_facrec->total_ht;
@@ -2341,15 +2349,13 @@ class Facture extends CommonInvoice
 				$line->fk_product       = $objp->fk_product;
 				$line->date_start       = $this->db->jdate($objp->date_start);
 				$line->date_end         = $this->db->jdate($objp->date_end);
-				$line->date_start       = $this->db->jdate($objp->date_start);
-				$line->date_end         = $this->db->jdate($objp->date_end);
 				$line->info_bits        = $objp->info_bits;
 				$line->total_ht         = $objp->total_ht;
 				$line->total_tva        = $objp->total_tva;
 				$line->total_localtax1  = $objp->total_localtax1;
 				$line->total_localtax2  = $objp->total_localtax2;
 				$line->total_ttc        = $objp->total_ttc;
-				$line->code_ventilation = $objp->fk_code_ventilation;
+
 				$line->fk_fournprice = $objp->fk_fournprice;
 				$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
 				$line->pa_ht = $marginInfos[0];
@@ -4351,7 +4357,7 @@ class Facture extends CommonInvoice
 	 *  @param		int		$id			Id of object (for a check)
 	 *	@return		int					Return integer <0 if KO, >0 if OK
 	 */
-	public function deleteline($rowid, $id = 0)
+	public function deleteLine($rowid, $id = 0)
 	{
 		global $user;
 

@@ -1120,11 +1120,12 @@ class ExtraFields
 				} else {
 					$checked = ' value="1" ';
 				}
-				$out = '<input type="hidden" name="'.$keyprefix.$key.$keysuffix.'_boolean" value="1">';	// A hidden field ending with "_boolean" that is always set to 1.
-				$out .= '<input type="checkbox" class="flat valignmiddle'.($morecss ? ' '.$morecss : '').' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.$checked.' '.($moreparam ? $moreparam : '').'>';
+
+				$out = '<input type="checkbox" class="flat valignmiddle'.($morecss ? ' '.$morecss : '').' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.$checked.' '.($moreparam ? $moreparam : '').'>';
 			} else {
 				$out = $form->selectyesno($keyprefix.$key.$keysuffix, $value, 1, false, 1);
 			}
+			$out .= '<input type="hidden" name="'.$keyprefix.$key.$keysuffix.'_boolean" value="1">';	// A hidden field ending with "_boolean" that is always set to 1.
 		} elseif ($type == 'price') {
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value = price($value);

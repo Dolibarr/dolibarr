@@ -55,7 +55,7 @@ $webPortalTheme = new WebPortalTheme();
 	}
 
 	if (!empty($webPortalTheme->loginLogoUrl)) {
-		print '--login-logo: url("'.$webPortalTheme->loginLogoUrl.'"); /* for relative path, must be relative od the css file or use full url starting by http:// */'."\n";
+		print '--login-logo: url("'.$webPortalTheme->loginLogoUrl.'"); /* for relative path, must be relative to the css file or use full url starting by http:// */'."\n";
 	}
 	?>
 }

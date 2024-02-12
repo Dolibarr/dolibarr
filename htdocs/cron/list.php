@@ -90,10 +90,10 @@ if (!$user->hasRight('cron', 'read')) {
 	accessforbidden();
 }
 
-$permissiontoread = $user->rights->cron->read;
+$permissiontoread = $user->hasRight('cron', 'read');
 $permissiontoadd = $user->rights->cron->create ? $user->rights->cron->create : $user->rights->cron->write;
-$permissiontodelete = $user->rights->cron->delete;
-$permissiontoexecute = $user->rights->cron->execute;
+$permissiontodelete = $user->hasRight('cron', 'delete');
+$permissiontoexecute = $user->hasRight('cron', 'execute');
 
 
 /*
@@ -534,7 +534,7 @@ if ($num > 0) {
 		$object->status = $obj->status;
 		$object->priority = $obj->priority;
 		$object->processing = $obj->processing;
-		$object->lastresult = $obj->lastresult;
+		$object->lastresult = (string) $obj->lastresult;
 		$object->datestart = $db->jdate($obj->datestart);
 		$object->dateend = $db->jdate($obj->dateend);
 		$object->module_name = $obj->module_name;

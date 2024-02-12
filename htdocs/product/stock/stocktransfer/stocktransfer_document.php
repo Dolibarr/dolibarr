@@ -80,7 +80,7 @@ if ($id > 0 || !empty($ref)) {
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'stocktransfer', $object->id);
 
-$permissiontoadd = $user->rights->stocktransfer->stocktransfer->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd = $user->hasRight('stocktransfer', 'stocktransfer', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 
 
@@ -182,10 +182,6 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'stocktransfer';
-	//$permission = $user->rights->stocktransfer->stocktransfer->write;
-	$permission = 1;
-	//$permtoedit = $user->rights->stocktransfer->stocktransfer->write;
-	$permtoedit = 1;
 	$param = '&id='.$object->id;
 
 	//$relativepathwithnofile='stocktransfer/' . dol_sanitizeFileName($object->id).'/';

@@ -224,7 +224,7 @@ class WebPortalMember extends Adherent
 		$datas = [];
 
 		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-			return ['optimize' => $langs->trans("ShowWebPortalMember")];
+			return ['optimize' => $langs->trans("WebPortalMember")];
 		}
 		$datas['picto'] = img_picto('', $this->picto) . ' <u>' . $langs->trans("WebPortalMember") . '</u>';
 		if (isset($this->status)) {
@@ -252,7 +252,7 @@ class WebPortalMember extends Adherent
 	{
 		global $conf, $langs, $hookmanager;
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && $withpictoimg) {
 			$withpictoimg = 0;
 		}
 
@@ -297,7 +297,7 @@ class WebPortalMember extends Adherent
 		$linkstart .= '<a href="' . $url . '"';
 		$linkclose = "";
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$langs->load("users");
 				$label = $langs->trans("ShowUser");
 				$linkclose .= ' alt="' . dol_escape_htmltag($label, 1) . '"';
@@ -335,7 +335,7 @@ class WebPortalMember extends Adherent
 			$result .= $picto;
 		}
 		if (($withpictoimg > -2 && $withpictoimg != 2) || $withpictoimg == -4) {
-			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$result .= '<span class="nopadding valignmiddle' . ((!isset($this->statut) || $this->statut) ? '' : ' strikefordisabled') .
 					($morecss ? ' usertext' . $morecss : '') . '">';
 			}
@@ -346,7 +346,7 @@ class WebPortalMember extends Adherent
 			} else {
 				$result .= $this->getFullName($langs, '', ($mode == 'firstname' ? 2 : ($mode == 'lastname' ? 4 : -1)), $maxlen);
 			}
-			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$result .= '</span>';
 			}
 		}
@@ -435,8 +435,8 @@ class WebPortalMember extends Adherent
 
 			// List of extra languages
 			$arrayoflangcode = array();
-			if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) {
-				$arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+			if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
+				$arrayoflangcode[] = getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE');
 			}
 
 			if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
@@ -466,9 +466,9 @@ class WebPortalMember extends Adherent
 		}
 
 		// If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
-		if (!in_array($this->country_code, $countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)
-			&& empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state) {
-			if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 && $this->region) {
+		if (!in_array($this->country_code, $countriesusingstate) && !getDolGlobalString('MAIN_FORCE_STATE_INTO_ADDRESS')
+			&& !getDolGlobalString('SOCIETE_DISABLE_STATE') && $this->state) {
+			if (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 && $this->region) {
 				$out .= ($outdone ? ' - ' : '') . $this->region . ' - ' . $this->state;
 			} else {
 				$out .= ($outdone ? ' - ' : '') . $this->state;

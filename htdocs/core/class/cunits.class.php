@@ -85,7 +85,7 @@ class CUnits extends CommonDict
 			$this->libelle = trim($this->short_label);
 		}
 		if (isset($this->unit_type)) {
-			$this->active = trim($this->unit_type);
+			$this->unit_type = trim($this->unit_type);
 		}
 		if (isset($this->active)) {
 			$this->active = (int) $this->active;
@@ -103,14 +103,14 @@ class CUnits extends CommonDict
 		$sql .= "code,";
 		$sql .= "label,";
 		$sql .= "short_label,";
-		$sql .= "unit_type";
+		$sql .= "unit_type,";
 		$sql .= "scale";
 		$sql .= ") VALUES (";
 		$sql .= " ".(!isset($this->id) ? 'NULL' : "'".$this->db->escape($this->id)."'").",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
 		$sql .= " ".(!isset($this->short_label) ? 'NULL' : "'".$this->db->escape($this->short_label)."'").",";
-		$sql .= " ".(!isset($this->unit_type) ? 'NULL' : "'".$this->db->escape($this->unit_type)."'");
+		$sql .= " ".(!isset($this->unit_type) ? 'NULL' : "'".$this->db->escape($this->unit_type)."'").",";
 		$sql .= " ".(!isset($this->scale) ? 'NULL' : "'".$this->db->escape($this->scale)."'");
 		$sql .= ")";
 
@@ -402,16 +402,13 @@ class CUnits extends CommonDict
 	 * @param string $code code of unit
 	 * @param string $mode 0= id , short_label=Use short label as value, code=use code
 	 * @param string $unit_type weight,size,surface,volume,qty,time...
-	 * @return int            Return integer <0 if KO, Id of code if OK
+	 * @return int|string            Return integer <0 if KO, Id of code if OK (or $code if $mode is different from '', 'short_label' or 'code')
 	 */
 	public function getUnitFromCode($code, $mode = 'code', $unit_type = '')
 	{
-		if ($mode == 'short_label') {
-			return dol_getIdFromCode($this->db, $code, 'c_units', 'short_label', 'rowid', 0, " AND unit_type = '".$this->db->escape($unit_type)."'");
-		} elseif ($mode == 'code') {
-			return dol_getIdFromCode($this->db, $code, 'c_units', 'code', 'rowid', 0, " AND unit_type = '". $this->db->escape($unit_type) ."'");
+		if ($mode == 'short_label' || $mode == 'code') {
+			return dol_getIdFromCode($this->db, $code, 'c_units', $mode, 'rowid', 0, " AND unit_type = '".$this->db->escape($unit_type)."'");
 		}
-
 		return $code;
 	}
 

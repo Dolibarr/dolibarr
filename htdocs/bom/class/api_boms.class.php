@@ -471,7 +471,7 @@ class Boms extends DolibarrApi
 			throw new RestException(500, 'Line to delete (rowid: '.$lineid.') is not a line of BOM (id: '.$this->bom->id.')');
 		}
 
-		$updateRes = $this->bom->deleteline(DolibarrApiAccess::$user, $lineid);
+		$updateRes = $this->bom->deleteLine(DolibarrApiAccess::$user, $lineid);
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {

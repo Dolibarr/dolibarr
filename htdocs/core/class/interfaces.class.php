@@ -39,6 +39,11 @@ class Interfaces
 	public $dir; // Directory with all core and external triggers files
 
 	/**
+	 * @var string		Last module name in error
+	 */
+	public $lastmoduleerror;
+
+	/**
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
@@ -90,12 +95,12 @@ class Interfaces
 		}
 
 		$nbfile = $nbtotal = $nbok = $nbko = 0;
+		$this->lastmoduleerror = '';
 
 		$files = array();
 		$modules = array();
 		$orders = array();
 		$i = 0;
-
 
 		$dirtriggers = array_merge(array('/core/triggers'), $conf->modules_parts['triggers']);
 		foreach ($dirtriggers as $reldir) {
@@ -215,6 +220,7 @@ class Interfaces
 					//dol_syslog("Error in trigger ".$action." - result = ".$result." - Nb of error string returned = ".count($objMod->errors), LOG_ERR);
 					$nbtotal++;
 					$nbko++;
+					$this->lastmoduleerror = $modName;
 					if (!empty($objMod->errors)) {
 						$this->errors = array_merge($this->errors, $objMod->errors);
 					} elseif (!empty($objMod->error)) {
@@ -228,7 +234,7 @@ class Interfaces
 		}
 
 		if ($nbko) {
-			dol_syslog(get_class($this)."::run_triggers action=".$action." Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko." - Nb of error string returned in this->errors = ".count($this->errors), LOG_ERR);
+			dol_syslog(get_class($this)."::run_triggers action=".$action." Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko.($this->lastmoduleerror ? " - Last module in error: ".$this->lastmoduleerror : "")." - Nb of error string returned in this->errors = ".count($this->errors), LOG_ERR);
 			return -$nbko;
 		} else {
 			//dol_syslog(get_class($this)."::run_triggers Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko, LOG_DEBUG);

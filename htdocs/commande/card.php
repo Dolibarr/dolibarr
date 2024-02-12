@@ -129,7 +129,7 @@ $usercancancel      =  ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user
 $usercansend        =   (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight('commande', 'order_advance', 'send'));
 $usercangeneretedoc =   (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight('commande', 'order_advance', 'generetedoc'));
 
-$usermustrespectpricemin    = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && empty($user->rights->produit->ignore_price_min_advance)) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
+$usermustrespectpricemin    = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('produit', 'ignore_price_min_advance')) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
 $usercancreatepurchaseorder = ($user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer'));
 
 $permissionnote    = $usercancreate;     //  Used by the include of actions_setnotes.inc.php
@@ -233,7 +233,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate) {
 		// Remove a product line
-		$result = $object->deleteline($user, $lineid);
+		$result = $object->deleteLine($user, $lineid);
 		if ($result > 0) {
 			// reorder lines
 			$object->line_order(true);

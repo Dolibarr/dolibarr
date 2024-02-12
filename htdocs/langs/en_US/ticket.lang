@@ -69,7 +69,7 @@ Read=Read
 Assigned=Assigned
 NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
-Answered=Answered
+TicketAnswered=Answered
 Waiting=Waiting
 SolvedClosed=Solved
 Deleted=Deleted
@@ -88,7 +88,6 @@ MailToSendTicketMessage=To send email from ticket message
 #
 TicketSetup=Ticket module setup
 TicketSettings=Settings
-TicketSetupPage=
 TicketPublicAccess=A public interface requiring no identification is available at the following url
 TicketSetupDictionaries=The type of ticket, severity and analytic codes are configurable from dictionaries
 TicketParamModule=Module variable setup

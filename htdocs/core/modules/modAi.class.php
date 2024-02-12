@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ class modAi extends DolibarrModules
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		// To use a supported fa-xxx css style of font awesome, use this->picto='xxx'
-		$this->picto = 'fa-microchip"';
+		$this->picto = 'fa-microchip';
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
