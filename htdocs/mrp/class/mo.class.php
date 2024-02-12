@@ -373,6 +373,13 @@ class Mo extends CommonObject
 		unset($object->fk_user_creat);
 		unset($object->import_key);
 
+		// Remove produced and consumed lines
+		foreach ($object->lines as $key => $line) {
+			if (in_array($line->role, array('consumed', 'produced'))) {
+				unset($object->lines[$key]);
+			}
+		}
+
 		// Clear fields
 		$object->ref = empty($this->fields['ref']['default']) ? "copy_of_".$object->ref : $this->fields['ref']['default'];
 		$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
