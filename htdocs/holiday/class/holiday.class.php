@@ -1771,11 +1771,11 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *  Return balance of holiday for one user
+	 *  Return the balance of annual leave of a user
 	 *
-	 *  @param	int		$user_id    ID de l'utilisateur
+	 *  @param	int		$user_id    User ID
 	 *  @param	int		$fk_type	Filter on type
-	 *  @return float|null     		Retourne le solde de congés payés de l'utilisateur, null si KO
+	 *  @return float|null     		Balance of annual leave if OK, null if KO.
 	 */
 	public function getCPforUser($user_id, $fk_type = 0)
 	{

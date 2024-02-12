@@ -2284,6 +2284,28 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					continue; // Discard empty arrays
 				}
 
+				// If module brings website templates, we must generate the zip like we do whenenabling the website module
+				if ($key == 'websitetemplates' && $value == 1) {
+					$srcroot = dol_buildpath('/'.strtolower($this->name).'/doctemplates/websites');
+
+					// Copy templates in dir format (recommended) into zip file
+					$docs = dol_dir_list($srcroot, 'directories', 0, 'website_.*$');
+					foreach ($docs as $cursorfile) {
+						$src = $srcroot.'/'.$cursorfile['name'];
+						$dest = DOL_DATA_ROOT.'/doctemplates/websites/'.$cursorfile['name'];
+
+						// Compress it
+						global $errormsg;
+						$errormsg = '';
+						$result = dol_compress_dir($src, $dest.'.zip', 'zip');
+						if ($result < 0) {
+							$error++;
+							$this->error = ($errormsg ? $errormsg : $langs->trans('ErrorFailToCreateZip', $dest));
+							$this->errors[] = ($errormsg ? $errormsg : $langs->trans('ErrorFailToCreateZip', $dest));
+						}
+					}
+				}
+
 				$entity = $conf->entity; // Reset the current entity
 				$newvalue = $value;
 

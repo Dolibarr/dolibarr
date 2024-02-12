@@ -9765,7 +9765,7 @@ For developers:
 - New: Works with Mysql 5.5.
 - Qual: Menu system code is simpler.
 - Qual: Mutualize some duplicate code.
-- Qual: Renamed some fields into database to be more internationnal.
+- Qual: Renamed some fields into database to be more international.
 - Qual: Removed deprecated code.
 
 
@@ -10155,7 +10155,7 @@ For users:
 - Full support of Mysql option mode=strict.
 - Added a new event from member module to agenda tracked events.
 - Can attach a file to suppliers orders.
-- Change to make Bank Account Number form more "internationnal".
+- Change to make Bank Account Number form more "international".
 - Can clone an invoice.
 - Can clone an emailing.
 - Reduce memory usage (about 2%).
