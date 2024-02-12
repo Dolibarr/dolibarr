@@ -417,7 +417,7 @@ if (empty($error) && !empty($xml)) {
 
 	asort($checksumconcat); // Sort list of checksum
 	//var_dump($checksumconcat);
-	$checksumget = md5(join(',', $checksumconcat));
+	$checksumget = md5(implode(',', $checksumconcat));
 	$checksumtoget = trim((string) $xml->dolibarr_htdocs_dir_checksum);
 
 	//var_dump(count($file_list['added']));
