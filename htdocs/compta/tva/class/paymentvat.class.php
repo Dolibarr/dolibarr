@@ -73,7 +73,7 @@ class PaymentVAT extends CommonObject
 	/**
 	 * @var string
 	 * @deprecated
-  	 * @see $num_payment
+	 * @see $num_payment
 	 */
 	public $num_paiement;
 
