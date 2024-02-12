@@ -353,7 +353,7 @@ if (!empty($search_status) && $search_status != -1) {
 }
 
 if (!$user->hasRight('holiday', 'readall')) {
-	$sql .= ' AND cp.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
+	$sql .= ' AND cp.fk_user IN ('.$db->sanitize(implode(',', $childids)).')';
 }
 if ($id > 0) {
 	$sql .= " AND cp.fk_user IN (".$db->sanitize($id).")";
@@ -559,7 +559,7 @@ if ($sall) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if HOLIDAY_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
