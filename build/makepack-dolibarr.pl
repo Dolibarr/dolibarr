@@ -538,6 +538,8 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/security`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/spec`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/test`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/tools/php-cs-fixer/vendor`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/tools/rector/vendor`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/uml`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/vagrant`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/xdebug`;
