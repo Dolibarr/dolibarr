@@ -88,7 +88,7 @@ class InterfaceLogevents extends DolibarrTriggers
 	 * @return	int					if KO: <0, if no trigger ran: 0, if OK: >0
 	 * @throws	Exception			dol_syslog can throw Exceptions
 	 */
-	public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf): int
 	{
 		if (getDolGlobalString('MAIN_LOGEVENTS_DISABLE_ALL')) {
 			return 0; // Log events is disabled (hidden features)
