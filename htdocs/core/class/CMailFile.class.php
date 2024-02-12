@@ -351,7 +351,7 @@ class CMailFile
 				}
 			}
 			if (!empty($listofemailstoadd)) {
-				$addr_bcc .= ($addr_bcc ? ', ' : '').join(', ', $listofemailstoadd);
+				$addr_bcc .= ($addr_bcc ? ', ' : '').implode(', ', $listofemailstoadd);
 			}
 		}
 
@@ -1267,7 +1267,7 @@ class CMailFile
 				$res = true;
 				if (!empty($this->error) || !empty($this->errors) || !$result) {
 					if (!empty($failedRecipients)) {
-						$this->errors[] = 'Transport failed for the following addresses: "' . join('", "', $failedRecipients) . '".';
+						$this->errors[] = 'Transport failed for the following addresses: "' . implode('", "', $failedRecipients) . '".';
 					}
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res = false;
@@ -1359,19 +1359,19 @@ class CMailFile
 		// phpcs:enable
 		global $dolibarr_main_data_root;
 
-		if (@is_writeable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
+		if (@is_writable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
 			$outputfile = $dolibarr_main_data_root."/dolibarr_mail.log";
 			$fp = fopen($outputfile, "w");	// overwrite
 
 			if ($this->sendmode == 'mail') {
-				fputs($fp, $this->headers);
-				fputs($fp, $this->eol); // This eol is added by the mail function, so we add it in log
-				fputs($fp, $this->message);
+				fwrite($fp, $this->headers);
+				fwrite($fp, $this->eol); // This eol is added by the mail function, so we add it in log
+				fwrite($fp, $this->message);
 			} elseif ($this->sendmode == 'smtps') {
-				fputs($fp, $this->smtps->log); // this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on
+				fwrite($fp, $this->smtps->log); // this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on
 			} elseif ($this->sendmode == 'swiftmailer') {
-				fputs($fp, "smtpheader=\n".$this->message->getHeaders()->toString()."\n");
-				fputs($fp, $this->logger->dump()); // this->logger is filled only if MAIN_MAIL_DEBUG was set to on
+				fwrite($fp, "smtpheader=\n".$this->message->getHeaders()->toString()."\n");
+				fwrite($fp, $this->logger->dump()); // this->logger is filled only if MAIN_MAIL_DEBUG was set to on
 			}
 
 			fclose($fp);
@@ -1399,7 +1399,7 @@ class CMailFile
 	{
 		global $dolibarr_main_data_root;
 
-		if (@is_writeable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
+		if (@is_writable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
 			$srcfile = $dolibarr_main_data_root."/dolibarr_mail.log";
 
 			// Add message to dolibarr_mail.log. We do not use dol_syslog() on purpose,
