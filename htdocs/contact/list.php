@@ -511,7 +511,7 @@ if (!empty($userid)) {    // propre au commercial
 	$sql .= " AND p.fk_user_creat=".((int) $userid);
 }
 if ($search_level) {
-	$sql .= natural_search("p.fk_prospectlevel", join(',', $search_level), 3);
+	$sql .= natural_search("p.fk_prospectlevel", implode(',', $search_level), 3);
 }
 if ($search_stcomm != '' && $search_stcomm != -2) {
 	$sql .= natural_search("p.fk_stcommcontact", $search_stcomm, 2);
@@ -985,7 +985,7 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if CONTACT_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 if ($search_firstlast_only) {
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_firstlast_only).$langs->trans("Lastname").", ".$langs->trans("Firstname").'</div>';
