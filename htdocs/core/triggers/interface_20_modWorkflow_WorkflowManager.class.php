@@ -96,7 +96,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 
 				$object->clearObjectLinkedCache();
 
-				return $ret;
+				return (int) $ret;
 			}
 		}
 
@@ -202,7 +202,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						foreach ($object->linkedObjects['shipping'] as $element) {
 							$ret = $element->setClosed();
 							if ($ret < 0) {
-								return $ret;
+								return (int) $ret;
 							}
 						}
 					}
@@ -223,7 +223,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						foreach ($object->linkedObjects['shipping'] as $element) {
 							$ret = $element->setBilled();
 							if ($ret < 0) {
-								return $ret;
+								return (int) $ret;
 							}
 						}
 					}
