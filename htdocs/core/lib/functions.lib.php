@@ -1102,6 +1102,9 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 				/*if (empty($options)) {
 					return 'BadParameterForGETPOST - Param 4 of sanitizeVal()';
 				}*/
+				if (is_null($options)) {
+					$options = 0;
+				}
 				$out = filter_var($out, $filter, $options);
 			}
 			break;

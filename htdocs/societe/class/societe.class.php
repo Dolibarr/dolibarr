@@ -1362,7 +1362,7 @@ class Societe extends CommonObject
 		$this->name 		= $this->name ? trim($this->name) : trim($this->nom);
 		$this->nom 			= $this->name; // For backward compatibility
 		$this->name_alias 	= trim($this->name_alias);
-		$this->ref_ext		= trim($this->ref_ext);
+		$this->ref_ext		= (empty($this->ref_ext) ? '' : trim($this->ref_ext));
 		$this->address		= trim($this->address);
 		$this->zip 			= trim($this->zip);
 		$this->town 		= trim($this->town);
@@ -1376,8 +1376,8 @@ class Societe extends CommonObject
 		$this->fax			= preg_replace("/\./", "", $this->fax);
 		$this->email		= trim($this->email);
 		$this->url			= $this->url ? clean_url($this->url, 0) : '';
-		$this->note_private = trim($this->note_private);
-		$this->note_public  = trim($this->note_public);
+		$this->note_private = (empty($this->note_private) ? '' : trim($this->note_private));
+		$this->note_public  = (empty($this->note_public) ? '' : trim($this->note_public));
 		$this->idprof1		= trim($this->idprof1);
 		$this->idprof2		= trim($this->idprof2);
 		$this->idprof3		= trim($this->idprof3);
@@ -1429,7 +1429,7 @@ class Societe extends CommonObject
 
 		$this->code_compta_client = trim(empty($this->code_compta) ? $this->code_compta_client : $this->code_compta);
 		$this->code_compta = $this->code_compta_client; // for backward compatibility
-		$this->code_compta_fournisseur = trim($this->code_compta_fournisseur);
+		$this->code_compta_fournisseur = (empty($this->code_compta_fournisseur) ? '' : trim($this->code_compta_fournisseur));
 
 		// Check parameters. More tests are done later in the ->verify()
 		if (!is_numeric($this->client) && !is_numeric($this->fournisseur)) {
@@ -1468,8 +1468,8 @@ class Societe extends CommonObject
 		$this->webservices_url = $this->webservices_url ? clean_url($this->webservices_url, 0) : '';
 		$this->webservices_key = trim($this->webservices_key);
 
-		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
-		$this->accountancy_code_sell = trim($this->accountancy_code_sell);
+		$this->accountancy_code_buy = (empty($this->accountancy_code_buy) ? '' : trim($this->accountancy_code_buy));
+		$this->accountancy_code_sell = (empty($this->accountancy_code_sell) ? '' : trim($this->accountancy_code_sell));
 
 		//Incoterms
 		$this->fk_incoterms = (int) $this->fk_incoterms;
