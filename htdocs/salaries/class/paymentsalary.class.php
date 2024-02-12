@@ -110,7 +110,8 @@ class PaymentSalary extends CommonObject
 	public $num_paiement;
 
 	/**
-	 * @var string			Payment reference
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 

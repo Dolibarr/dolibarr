@@ -1107,7 +1107,7 @@ textarea.centpercent {
 	word-wrap: break-word;
 }
 .wordbreakimp {
-	word-break: break-word;
+	word-break: break-word !important;
 }
 .wordbreak {
 	word-break: break-word;	/* cut fist between word, inside word if not possible */
@@ -1115,7 +1115,7 @@ textarea.centpercent {
 .wordbreakall {
 	word-break: break-all;
 }
-td.wordbreak img {
+td.wordbreak img, td.wordbreakimp img {
 	max-width: 100%;
 }
 .bold {
