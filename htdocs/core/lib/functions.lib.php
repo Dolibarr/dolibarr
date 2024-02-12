@@ -2955,12 +2955,12 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 
 	// Clean format
 	if (preg_match('/%b/i', $format)) {		// There is some text to translate
-		// We inhibate translation to text made by strftime functions. We will use trans instead later.
+		// We inhibit translation to text made by strftime functions. We will use trans instead later.
 		$format = str_replace('%b', '__b__', $format);
 		$format = str_replace('%B', '__B__', $format);
 	}
 	if (preg_match('/%a/i', $format)) {		// There is some text to translate
-		// We inhibate translation to text made by strftime functions. We will use trans instead later.
+		// We inhibit translation to text made by strftime functions. We will use trans instead later.
 		$format = str_replace('%a', '__a__', $format);
 		$format = str_replace('%A', '__A__', $format);
 	}
