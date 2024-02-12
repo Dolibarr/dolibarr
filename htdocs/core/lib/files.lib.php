@@ -2560,7 +2560,7 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
  * Security check when accessing to a document (used by document.php, viewimage.php and webservices to get documents).
  * TODO Replace code that set $accessallowed by a call to restrictedArea()
  *
- * @param	string		$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Exemple: 'medias', 'invoice', 'logs', 'tax-vat', ...
+ * @param	string		$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Example: 'medias', 'invoice', 'logs', 'tax-vat', ...
  * @param	string		$original_file		Relative path with filename, relative to modulepart.
  * @param	string		$entity				Restrict onto entity (0=no restriction)
  * @param  	User|null	$fuser				User object (forced)
