@@ -118,7 +118,7 @@ if (empty($reshook)) {
 		$object->accountid = GETPOSTINT("accountid") > 0 ? GETPOSTINT("accountid") : 0;
 		$object->datev = $datev;
 		$object->datep = $datep;
-		$object->amount = price2num(GETPOST("amount", 'alpha'));
+		$object->amount = GETPOSTFLOAT("amount");
 		$object->label = GETPOST("label", 'restricthtml');
 		$object->note = GETPOST("note", 'restricthtml');
 		$object->type_payment = dol_getIdFromCode($db, GETPOST('paymenttype'), 'c_paiement', 'code', 'id', 1);
@@ -126,7 +126,7 @@ if (empty($reshook)) {
 		$object->chqemetteur = GETPOST("chqemetteur", 'alpha');
 		$object->chqbank = GETPOST("chqbank", 'alpha');
 		$object->fk_user_author = $user->id;
-		$object->category_transaction = GETPOST("category_transaction", 'alpha');
+		$object->category_transaction = GETPOSTINT("category_transaction");
 
 		$object->accountancy_code = GETPOST("accountancy_code") > 0 ? GETPOST("accountancy_code", "alpha") : "";
 		$object->subledger_account = $subledger_account;
@@ -289,10 +289,10 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 			$object->sens = $object->sens;
 		}
 
-		if (GETPOST("clone_amount", "alpha")) {
-			$object->amount = price2num(GETPOST("clone_amount", "alpha"));
+		if (GETPOSTISSET("clone_amount")) {
+			$object->amount = GETPOSTFLOAT("clone_amount");
 		} else {
-			$object->amount = price2num($object->amount);
+			$object->amount = (float) price2num($object->amount);
 		}
 
 		if ($object->check()) {
