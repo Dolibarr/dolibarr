@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018       Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
