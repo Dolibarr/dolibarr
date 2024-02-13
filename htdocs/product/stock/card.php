@@ -92,9 +92,9 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
-$usercanread = (($user->rights->stock->lire));
-$usercancreate = (($user->rights->stock->creer));
-$usercandelete = (($user->rights->stock->supprimer));
+$usercanread = (($user->hasRight('stock', 'lire')));
+$usercancreate = (($user->hasRight('stock', 'creer')));
+$usercandelete = (($user->hasRight('stock', 'supprimer')));
 
 
 /*
@@ -134,19 +134,19 @@ if (empty($reshook)) {
 
 	// Ajout entrepot
 	if ($action == 'add' && $user->hasRight('stock', 'creer')) {
-		$object->ref = (string) GETPOST("ref", "alpha");
-		$object->fk_parent = (int) GETPOST("fk_parent", "int");
-		$object->fk_project = GETPOST('projectid', 'int');
-		$object->label = (string) GETPOST("libelle", "alpha");
-		$object->description = (string) GETPOST("desc", "alpha");
-		$object->statut = GETPOST("statut", "int");
-		$object->lieu = (string) GETPOST("lieu", "alpha");
-		$object->address = (string) GETPOST("address", "alpha");
-		$object->zip = (string) GETPOST("zipcode", "alpha");
-		$object->town = (string) GETPOST("town", "alpha");
-		$object->country_id = GETPOST("country_id");
-		$object->phone = (string) GETPOST("phone", "alpha");
-		$object->fax = (string) GETPOST("fax", "alpha");
+		$object->ref          = (string) GETPOST("ref", "alpha");
+		$object->fk_parent    = GETPOSTINT("fk_parent");
+		$object->fk_project   = GETPOSTINT('projectid');
+		$object->label        = (string) GETPOST("libelle", "alpha");
+		$object->description  = (string) GETPOST("desc", "alpha");
+		$object->statut       = GETPOSTINT("statut");
+		$object->lieu         = (string) GETPOST("lieu", "alpha");
+		$object->address      = (string) GETPOST("address", "alpha");
+		$object->zip          = (string) GETPOST("zipcode", "alpha");
+		$object->town         = (string) GETPOST("town", "alpha");
+		$object->country_id   = GETPOSTINT("country_id");
+		$object->phone        = (string) GETPOST("phone", "alpha");
+		$object->fax          = (string) GETPOST("fax", "alpha");
 
 		if (!empty($object->label)) {
 			// Fill array 'array_options' with data from add form
@@ -267,7 +267,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->stock->dir_output;
-	$permissiontoadd = $user->rights->stock->creer;
+	$permissiontoadd = $user->hasRight('stock', 'creer');
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 

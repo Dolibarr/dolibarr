@@ -891,7 +891,7 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 *	Decrypt sensitive data in database
 	 *
-	 *	@param	int		$value			Value to decrypt
+	 *	@param	string	$value			Value to decrypt
 	 * 	@return	string					Decrypted value if used
 	 */
 	public function decrypt($value)

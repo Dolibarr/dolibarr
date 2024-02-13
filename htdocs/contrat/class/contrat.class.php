@@ -1886,10 +1886,8 @@ class Contrat extends CommonObject
 	 *	@param  User	$user       User that delete
 	 *  @return int         		>0 if OK, <0 if KO
 	 */
-	public function deleteline($idline, User $user)
+	public function deleteLine($idline, User $user)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		if ($this->statut >= 0) {

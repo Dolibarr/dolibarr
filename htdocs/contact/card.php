@@ -59,8 +59,8 @@ $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
-$id = GETPOST('id', 'int');
-$socid = GETPOST('socid', 'int');
+$id = GETPOSTINT('id');
+$socid = GETPOSTINT('socid');
 
 // Initialize technical object
 $object = new Contact($db);
@@ -102,7 +102,7 @@ $permissiontoadd = $user->hasRight('societe', 'contact', 'creer');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-if ($object->priv && $object->user_creation->id != $user->id) {
+if ($object->priv && $object->user_creation_id != $user->id) {
 	accessforbidden();
 }
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
@@ -206,7 +206,7 @@ if (empty($reshook)) {
 		}
 
 		$object->entity = (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : $conf->entity);
-		$object->socid = GETPOSTINT("socid");
+		$object->socid = $socid;
 		$object->lastname = (string) GETPOST("lastname", 'alpha');
 		$object->firstname = (string) GETPOST("firstname", 'alpha');
 		$object->civility_code = (string) GETPOST("civility_code", 'alpha');
@@ -404,7 +404,7 @@ if (empty($reshook)) {
 
 			$object->oldcopy = clone $object;
 
-			$object->socid = GETPOST("socid", 'int');
+			$object->socid = $socid;
 			$object->lastname = (string) GETPOST("lastname", 'alpha');
 			$object->firstname = (string) GETPOST("firstname", 'alpha');
 			$object->civility_code = (string) GETPOST("civility_code", 'alpha');
@@ -847,6 +847,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr>';
 				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
 				print '<td>';
+				// Default value is in MAILING_CONTACT_DEFAULT_BULK_STATUS that you can modify in setup of module emailing
 				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS')), 1, false, (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2));
 				print '</td>';
 				print '</tr>';

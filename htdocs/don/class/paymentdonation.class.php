@@ -67,6 +67,10 @@ class PaymentDonation extends CommonObject
 	public $fk_typepayment;	// Payment mode ID
 	public $paymenttype;	// Payment mode ID or Code. TODO Use only the code in this field.
 
+	/**
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
+	 */
 	public $num_payment;
 
 	/**
@@ -201,7 +205,7 @@ class PaymentDonation extends CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_donation");
-				$this->ref = $this->id;
+				$this->ref = (string) $this->id;
 			} else {
 				$error++;
 			}
@@ -544,7 +548,7 @@ class PaymentDonation extends CommonObject
 	{
 		$this->id = 0;
 
-		$this->fk_donation = '';
+		$this->fk_donation = 0;
 		$this->datec = '';
 		$this->tms = '';
 		$this->datep = '';
@@ -553,9 +557,9 @@ class PaymentDonation extends CommonObject
 		$this->paymenttype = '';
 		$this->num_payment = '';
 		$this->note_public = '';
-		$this->fk_bank = '';
-		$this->fk_user_creat = '';
-		$this->fk_user_modif = '';
+		$this->fk_bank = 0;
+		$this->fk_user_creat = dol_now();
+		$this->fk_user_modif = dol_now();
 	}
 
 

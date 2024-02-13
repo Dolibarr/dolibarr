@@ -290,8 +290,6 @@ class modWebhook extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $langs;
-
 		$result = $this->_load_tables('/install/mysql/tables/', 'webhook');
 		//$result = $this->_load_tables('/webhook/sql/');
 		if ($result < 0) {

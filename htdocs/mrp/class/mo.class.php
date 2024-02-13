@@ -18,7 +18,7 @@
  */
 
 /**
- * \file        class/mo.class.php
+ * \file        mrp/class/mo.class.php
  * \ingroup     mrp
  * \brief       This file is a CRUD class file for Mo (Create/Read/Update/Delete)
  */
@@ -26,6 +26,7 @@
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
+
 
 /**
  * Class for Mo
@@ -877,12 +878,13 @@ class Mo extends CommonObject
 	/**
 	 *  Delete a line of object in database
 	 *
-	 *	@param  User	$user       User that delete
-	 *  @param	int		$idline		Id of line to delete
-	 *  @param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
-	 *  @return int         		>0 if OK, <0 if KO
+	 *	@param  User	$user       	User that delete
+	 *  @param	int		$idline			Id of line to delete
+	 *  @param 	int 	$notrigger  	0=launch triggers after, 1=disable triggers
+	 *  @param	int		$fk_movement	Movement
+	 *  @return int         			Return >0 if OK, <0 if KO
 	 */
-	public function deleteLine(User $user, $idline, $notrigger = 0)
+	public function deleteLine(User $user, $idline, $notrigger = 0, $fk_movement = 0)
 	{
 		global $langs;
 		$langs->loadLangs(array('stocks', 'mrp'));
@@ -892,7 +894,6 @@ class Mo extends CommonObject
 			return -2;
 		}
 		$productstatic = new Product($this->db);
-		$fk_movement = GETPOST('fk_movement', 'int');
 		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);
 
 		if (!empty($arrayoflines)) {

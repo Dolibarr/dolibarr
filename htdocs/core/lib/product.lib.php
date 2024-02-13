@@ -799,7 +799,7 @@ function measuring_units_string($scale = '', $measuring_style = '', $unit = 0, $
  *  @param	string  	$scale				Scale of unit: '0', '-3', '6', ...
  *  @param	int			$use_short_label	1=Use short label ('g' instead of 'gram'). Short labels are not translated.
  *  @param	Translate	$outputlangs		Language object
- *	@return	string	   			         	Unit string
+ *	@return	string|-1	   			        Unit string if OK, -1 if KO
  * 	@see	formproduct->selectMeasuringUnits()
  */
 function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_short_label = 0, $outputlangs = null)

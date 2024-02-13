@@ -363,16 +363,6 @@ class Salary extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -5;
 		}
-		/* if (isModEnabled("banque") && (empty($this->accountid) || $this->accountid <= 0))
-		{
-			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
-			return -6;
-		}
-		if (isModEnabled("banque") && (empty($this->type_payment) || $this->type_payment <= 0))
-		{
-			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
-			return -7;
-		}*/
 
 		$this->db->begin();
 

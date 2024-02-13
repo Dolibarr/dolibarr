@@ -56,7 +56,7 @@ if ($action == 'dolibarr2ldap') {
 	$db->begin();
 
 	$ldap = new Ldap();
-	$result = $ldap->connect_bind();
+	$result = $ldap->connectBind();
 
 	$info = $object->_load_ldap_info();
 	$dn = $object->_load_ldap_dn($info);
@@ -161,7 +161,7 @@ print '</tr>';
 
 // Lecture LDAP
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result > 0) {
 	$info = $object->_load_ldap_info();
 	$dn = $object->_load_ldap_dn($info, 1);

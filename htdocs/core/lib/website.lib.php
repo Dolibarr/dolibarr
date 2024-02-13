@@ -115,7 +115,7 @@ function dolKeepOnlyPhpCode($str)
  * @param	int			$removephppart		0=Replace PHP sections with a PHP badge. 1=Remove completely PHP sections.
  * @param	string		$contenttype		Content type
  * @param	int			$containerid 		Contenair id
- * @return	boolean							True if OK
+ * @return	string							html content
  * @see dolWebsiteOutput() for function used to replace content in a web server context
  */
 function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $contenttype = 'html', $containerid = 0)
@@ -1044,7 +1044,11 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 				} else {
 					$found++;
 
-					$image_path = DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($obj->share);
+					if (defined('USEDOLIBARRSERVER') || defined('USEDOLIBARREDITOR')) {
+						$image_path = DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($obj->share);
+					} else {
+						$image_path = '/wrapper.php?hashp='.urlencode($obj->share);
+					}
 					if ($extName) {
 						//getImageFileNameForSize($dir.$file, '_small')
 						$image_path .= '&extname='.urlencode($extName);
@@ -1057,12 +1061,20 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 			$i++;
 		}
 		if (!$found && $foundnotshared) {
-			$image_path = DOL_URL_ROOT.'/viewimage.php?modulepart=common&file=nophotopublic.png';
+			if (defined('USEDOLIBARRSERVER') || defined('USEDOLIBARREDITOR')) {
+				$image_path = DOL_URL_ROOT.'/viewimage.php?modulepart=common&file=nophotopublic.png';
+			} else {
+				$image_path = '/wrapper.php?modulepart=common&file=nophotopublic.png';
+			}
 		}
 	}
 
 	if (empty($image_path)) {
-		$image_path = DOL_URL_ROOT.'/viewimage.php?modulepart=common&file=nophoto.png';
+		if (defined('USEDOLIBARRSERVER') || defined('USEDOLIBARREDITOR')) {
+			$image_path = DOL_URL_ROOT.'/viewimage.php?modulepart=common&file=nophoto.png';
+		} else {
+			$image_path = '/wrapper.php?modulepart=common&file=nophoto.png';
+		}
 	}
 
 	return $image_path;

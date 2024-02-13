@@ -384,16 +384,15 @@ class pdf_paiement extends CommonDocGenerator
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	TCPDF			$pdf     		Object PDF
+	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  int			$page	     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $page, $showaddress, $outputlangs)
 	{
 		// phpcs:enable
-		global $langs, $conf;
 
 		// Do not add the BACKGROUND as this is a report
 		//pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
@@ -437,7 +436,7 @@ class pdf_paiement extends CommonDocGenerator
 
 		$pdf->line($this->posxbankaccount - 1, $this->tab_top, $this->posxbankaccount - 1, $this->tab_top + $this->tab_height + 10);
 		$pdf->SetXY($this->posxbankaccount, $this->tab_top + 2);
-		$pdf->MultiCell($this->posxinvoiceamount - $this->posxbankaccount, 2, $outputlangs->transnoentities("Account"), 0, 'L');
+		$pdf->MultiCell($this->posxinvoiceamount - $this->posxbankaccount, 2, $outputlangs->transnoentities("BankAccount"), 0, 'L');
 
 
 		$pdf->line($this->posxinvoiceamount - 1, $this->tab_top, $this->posxinvoiceamount - 1, $this->tab_top + $this->tab_height + 10);
@@ -451,6 +450,8 @@ class pdf_paiement extends CommonDocGenerator
 		$pdf->line($this->marge_gauche, $this->tab_top + 10, $this->page_largeur - $this->marge_droite, $this->tab_top + 10);
 
 		$pdf->Rect($this->marge_gauche, $this->tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $this->tab_height + 10);
+
+		return 0;
 	}
 
 

@@ -207,8 +207,9 @@ class HookManager
 		}
 
 		// Init return properties
-		$this->resPrint = '';
-		$this->resArray = array();
+		$localResPrint = '';
+		$localResArray = array();
+
 		$this->resNbOfHooks = 0;
 
 		// Here, the value for $method and $hooktype are given.
@@ -263,16 +264,17 @@ class HookManager
 
 						if (isset($actionclassinstance->results) && is_array($actionclassinstance->results)) {
 							if ($resactiontmp > 0) {
-								$this->resArray = $actionclassinstance->results;
+								$localResArray = $actionclassinstance->results;
 							} else {
-								$this->resArray = array_merge($this->resArray, $actionclassinstance->results);
+								$localResArray = array_merge_recursive($localResArray, $actionclassinstance->results);
 							}
 						}
+
 						if (!empty($actionclassinstance->resprints)) {
 							if ($resactiontmp > 0) {
-								$this->resPrint = $actionclassinstance->resprints;
+								$localResPrint = $actionclassinstance->resprints;
 							} else {
-								$this->resPrint .= $actionclassinstance->resprints;
+								$localResPrint .= $actionclassinstance->resprints;
 							}
 						}
 					} else {
@@ -291,10 +293,10 @@ class HookManager
 						$resaction += $resactiontmp;
 
 						if (!empty($actionclassinstance->results) && is_array($actionclassinstance->results)) {
-							$this->resArray = array_merge($this->resArray, $actionclassinstance->results);
+							$localResArray = array_merge_recursive($localResArray, $actionclassinstance->results);
 						}
 						if (!empty($actionclassinstance->resprints)) {
-							$this->resPrint .= $actionclassinstance->resprints;
+							$localResPrint .= $actionclassinstance->resprints;
 						}
 						if (is_numeric($resactiontmp) && $resactiontmp < 0) {
 							$error++;
@@ -307,7 +309,7 @@ class HookManager
 						if (!is_array($resactiontmp) && !is_numeric($resactiontmp)) {
 							dol_syslog('Error: Bug into hook '.$method.' of module class '.get_class($actionclassinstance).'. Method must not return a string but an int (0=OK, 1=Replace, -1=KO) and set string into ->resprints', LOG_ERR);
 							if (empty($actionclassinstance->resprints)) {
-								$this->resPrint .= $resactiontmp;
+								$localResPrint .= $resactiontmp;
 							}
 						}
 					}
@@ -319,6 +321,9 @@ class HookManager
 				}
 			}
 		}
+
+		$this->resPrint = $localResPrint;
+		$this->resArray = $localResArray;
 
 		return ($error ? -1 : $resaction);
 	}

@@ -22,7 +22,6 @@
  */
 
 
-
 /**
  * Save content of a page on disk
  *
@@ -540,14 +539,16 @@ function dolSaveLicense($file, $content)
  */
 function showWebsiteTemplates(Website $website)
 {
-	global $conf, $langs, $db, $form, $user;
+	global $conf, $langs, $form, $user;
 
 	$dirthemes = array('/doctemplates/websites');
-	if (!empty($conf->modules_parts['websitetemplates'])) {		// Using this feature slow down application
+	/*
+	if (!empty($conf->modules_parts['websitetemplates'])) {
 		foreach ($conf->modules_parts['websitetemplates'] as $reldir) {
 			$dirthemes = array_merge($dirthemes, (array) ($reldir.'doctemplates/websites'));
 		}
 	}
+	*/
 	$dirthemes = array_unique($dirthemes);
 	// Now dir_themes=array('/themes') or dir_themes=array('/theme','/mymodule/theme')
 
@@ -578,12 +579,16 @@ function showWebsiteTemplates(Website $website)
 	if (count($dirthemes)) {
 		$i = 0;
 		foreach ($dirthemes as $dir) {
-			//print $dirroot.$dir;exit;
-			$dirtheme = DOL_DATA_ROOT.$dir; // This include loop on $conf->file->dol_document_root
+			if (preg_match('/^\/doctemplates\//', $dir)) {
+				$dirtheme = DOL_DATA_ROOT.$dir; // This include loop on $conf->file->dol_document_root
+			} else {
+				$dirtheme = dol_buildpath($dir); // This include loop on $conf->file->dol_document_root
+			}
 			if (is_dir($dirtheme)) {
 				$handle = opendir($dirtheme);
 				if (is_resource($handle)) {
 					while (($subdir = readdir($handle)) !== false) {
+						//var_dump($dirtheme.'/'.$subdir);
 						if (is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) != '.' && substr($subdir, 0, 3) != 'CVS' && preg_match('/\.zip$/i', $subdir)) {
 							$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
 

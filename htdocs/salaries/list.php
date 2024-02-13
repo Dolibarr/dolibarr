@@ -142,9 +142,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->salaries->read;
-$permissiontoadd = $user->rights->salaries->write;
-$permissiontodelete = $user->rights->salaries->delete;
+$permissiontoread = $user->hasRight('salaries', 'read');
+$permissiontoadd = $user->hasRight('salaries', 'write');
+$permissiontodelete = $user->hasRight('salaries', 'delete');
 
 // Security check
 $socid = GETPOST("socid", "int");
@@ -370,10 +370,10 @@ if ($search_type_id) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
-if ($search_ref) {
+if ($search_ref != '') {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
-if ($search_user > 0) {
+if ($search_user != '') {
 	$param .= '&search_user='.urlencode($search_user);
 }
 if ($search_label) {

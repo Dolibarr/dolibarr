@@ -127,7 +127,7 @@ function testSqlAndScriptInject($val, $type)
 		// If $val has changed after removing non valid UTF8 chars, it means we have an evil string.
 		$inj += 1;
 	}
-	//print 'type='.$type.'-val='.$val.'-newval='.$newval."-inj=".$inj."\n";
+	//print 'inj='.$inj.'-type='.$type.'-val='.$val.'-newval='.$newval."\n";
 
 	// For SQL Injection (only GET are used to scan for such injection strings)
 	if ($type == 1 || $type == 3) {
@@ -213,14 +213,20 @@ function testSqlAndScriptInject($val, $type)
  * Return true if security check on parameters are OK, false otherwise.
  *
  * @param		string|array	$var		Variable name
- * @param		string			$type		1=GET, 0=POST, 2=PHP_SELF
- * @return		boolean|null				true if there is no injection. Stop code if injection found.
+ * @param		int				$type		1=GET, 0=POST, 2=PHP_SELF
+ * @param		int				$stopcode	0=No stop code, 1=Stop code (default) if injection found
+ * @return		boolean|null				True if there is no injection.
  */
-function analyseVarsForSqlAndScriptsInjection(&$var, $type)
+function analyseVarsForSqlAndScriptsInjection(&$var, $type, $stopcode = 1)
 {
 	if (is_array($var)) {
 		foreach ($var as $key => $value) {	// Warning, $key may also be used for attacks
-			if (analyseVarsForSqlAndScriptsInjection($key, $type) && analyseVarsForSqlAndScriptsInjection($value, $type)) {
+			// Exclude check for some variable keys
+			if ($type === 0 && defined('NOSCANPOSTFORINJECTION') && is_array(constant('NOSCANPOSTFORINJECTION')) && in_array($key, constant('NOSCANPOSTFORINJECTION'))) {
+				continue;
+			}
+
+			if (analyseVarsForSqlAndScriptsInjection($key, $type, $stopcode) && analyseVarsForSqlAndScriptsInjection($value, $type, $stopcode)) {
 				//$var[$key] = $value;	// This is useless
 			} else {
 				http_response_code(403);
@@ -228,29 +234,33 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 				// Get remote IP: PS: We do not use getRemoteIP(), function is not yet loaded and we need a value that can't be spoofed
 				$ip = (empty($_SERVER['REMOTE_ADDR']) ? 'unknown' : $_SERVER['REMOTE_ADDR']);
 
-				$errormessage = 'Access refused to '.htmlentities($ip, ENT_COMPAT, 'UTF-8').' by SQL or Script injection protection in main.inc.php:analyseVarsForSqlAndScriptsInjection type='.htmlentities($type, ENT_COMPAT, 'UTF-8');
+				if ($stopcode) {
+					$errormessage = 'Access refused to '.htmlentities($ip, ENT_COMPAT, 'UTF-8').' by SQL or Script injection protection in main.inc.php:analyseVarsForSqlAndScriptsInjection type='.htmlentities($type, ENT_COMPAT, 'UTF-8');
 
-				$errormessage2 = 'paramkey='.htmlentities($key, ENT_COMPAT, 'UTF-8');
-				$errormessage2 .= ' paramvalue='.htmlentities($value, ENT_COMPAT, 'UTF-8');
-				$errormessage2 .= ' page='.htmlentities($_SERVER["REQUEST_URI"], ENT_COMPAT, 'UTF-8');
+					$errormessage2 = 'page='.htmlentities($_SERVER["REQUEST_URI"], ENT_COMPAT, 'UTF-8');
+					$errormessage2 .= ' paramkey='.htmlentities($key, ENT_COMPAT, 'UTF-8');
+					$errormessage2 .= ' paramvalue='.htmlentities($value, ENT_COMPAT, 'UTF-8');
 
-				print $errormessage;
-				print "<br>\n";
-				print 'Try to go back, fix data of your form and resubmit it. You can contact also your technical support.';
+					print $errormessage;
+					print "<br>\n";
+					print 'Try to go back, fix data of your form and resubmit it. You can contact also your technical support.';
 
-				print '<!--'."\n";
-				print $errormessage2;
-				print "\n".'-->';
+					print "\n".'<!--'."\n";
+					print $errormessage2;
+					print "\n".'-->';
 
-				// Add entry into error the PHP server error log
-				if (function_exists('error_log')) {
-					error_log($errormessage.' '.$errormessage2);
+					// Add entry into the PHP server error log
+					if (function_exists('error_log')) {
+						error_log($errormessage.' '.substr($errormessage2, 2000));
+					}
+
+					// Note: No addition into security audit table is done because we don't want to execute code in such a case.
+					// Detection of too many such requests can be done with a fail2ban rule on 403 error code or into the PHP server error log.
+
+					exit;
+				} else {
+					return false;
 				}
-
-				// Note: No addition into security audit table is done because we don't want to execute code in such a case.
-				// Detection of too many such requests can be done with a fail2ban rule on 403 error code or into the PHP server error log.
-
-				exit;
 			}
 		}
 		return true;
@@ -262,7 +272,7 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 // To disable the WAF for GET and POST and PHP_SELF, uncomment this
 //define('NOSCANPHPSELFFORINJECTION', 1);
 //define('NOSCANGETFORINJECTION', 1);
-//define('NOSCANPOSTFORINJECTION', 1);
+//define('NOSCANPOSTFORINJECTION', 1 or 2);
 
 // Check consistency of NOREQUIREXXX DEFINES
 if ((defined('NOREQUIREDB') || defined('NOREQUIRETRAN')) && !defined('NOREQUIREMENU')) {
@@ -288,7 +298,7 @@ if (!defined('NOSCANGETFORINJECTION') && !empty($_SERVER["QUERY_STRING"])) {
 	analyseVarsForSqlAndScriptsInjection($morevaltochecklikeget, 1);
 }
 // Sanity check on POST
-if (!defined('NOSCANPOSTFORINJECTION')) {
+if (!defined('NOSCANPOSTFORINJECTION') || is_array(constant('NOSCANPOSTFORINJECTION'))) {
 	analyseVarsForSqlAndScriptsInjection($_POST, 0);
 }
 
@@ -456,7 +466,7 @@ if (GETPOST('textbrowser', 'int') || (!empty($conf->browser->name) && $conf->bro
 
 // Force HTTPS if required ($conf->file->main_force_https is 0/1 or 'https dolibarr root url')
 // $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
-if (!empty($conf->file->main_force_https) && isHTTPS() && !defined('NOHTTPSREDIRECT')) {
+if (!empty($conf->file->main_force_https) && !isHTTPS() && !defined('NOHTTPSREDIRECT')) {
 	$newurl = '';
 	if (is_numeric($conf->file->main_force_https)) {
 		if ($conf->file->main_force_https == '1' && !empty($_SERVER["SCRIPT_URI"])) {	// If SCRIPT_URI supported by server
@@ -498,7 +508,7 @@ if (!defined('NOLOGIN') && !defined('NOIPCHECK') && !empty($dolibarr_main_restri
 	}
 }
 
-	// Loading of additional presentation includes
+// Loading of additional presentation includes
 if (!defined('NOREQUIREHTML')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php'; // Need 660ko memory (800ko in 2.2)
 }
@@ -506,16 +516,22 @@ if (!defined('NOREQUIREAJAX')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php'; // Need 22ko memory
 }
 
-	// If install or upgrade process not done or not completely finished, we call the install page.
+// If install or upgrade process not done or not completely finished, we call the install page.
 if (getDolGlobalString('MAIN_NOT_INSTALLED') || getDolGlobalString('MAIN_NOT_UPGRADED')) {
 	dol_syslog("main.inc: A previous install or upgrade was not complete. Redirect to install page.", LOG_WARNING);
 	header("Location: ".DOL_URL_ROOT."/install/index.php");
 	exit;
 }
-	// If an upgrade process is required, we call the install page.
-if ((getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') && ($conf->global->MAIN_VERSION_LAST_UPGRADE != DOL_VERSION))
-		|| (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') && getDolGlobalString('MAIN_VERSION_LAST_INSTALL') && ($conf->global->MAIN_VERSION_LAST_INSTALL != DOL_VERSION))) {
-	$versiontocompare = !getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') ? $conf->global->MAIN_VERSION_LAST_INSTALL : $conf->global->MAIN_VERSION_LAST_UPGRADE;
+// If an upgrade process is required, we call the install page.
+$checkifupgraderequired = false;
+if (getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') && getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') != DOL_VERSION) {
+	$checkifupgraderequired = true;
+}
+if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') && getDolGlobalString('MAIN_VERSION_LAST_INSTALL') && getDolGlobalString('MAIN_VERSION_LAST_INSTALL') != DOL_VERSION) {
+	$checkifupgraderequired = true;
+}
+if ($checkifupgraderequired) {
+	$versiontocompare = getDolGlobalString('MAIN_VERSION_LAST_UPGRADE', getDolGlobalString('MAIN_VERSION_LAST_INSTALL'));
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 	$dolibarrversionlastupgrade = preg_split('/[.-]/', $versiontocompare);
 	$dolibarrversionprogram = preg_split('/[.-]/', DOL_VERSION);
@@ -609,7 +625,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 					print " into setup).\n";
 				}
 			}
-				die;
+			die;
 		}
 	}
 
@@ -648,7 +664,7 @@ if (GETPOSTISSET('disablemodules')) {
 	$_SESSION["disablemodules"] = GETPOST('disablemodules', 'alpha');
 }
 if (!empty($_SESSION["disablemodules"])) {
-	$modulepartkeys = array('css', 'js', 'tabs', 'triggers', 'login', 'substitutions', 'menus', 'theme', 'sms', 'tpl', 'barcode', 'models', 'societe', 'hooks', 'dir', 'syslog', 'tpllinkable', 'contactelement', 'moduleforexternal');
+	$modulepartkeys = array('css', 'js', 'tabs', 'triggers', 'login', 'substitutions', 'menus', 'theme', 'sms', 'tpl', 'barcode', 'models', 'societe', 'hooks', 'dir', 'syslog', 'tpllinkable', 'contactelement', 'moduleforexternal', 'websitetemplates');
 
 	$disabled_modules = explode(',', $_SESSION["disablemodules"]);
 	foreach ($disabled_modules as $module) {
@@ -683,10 +699,11 @@ if (is_array($modulepart)) {
 }
 
 
-		/*
-		 * Phase authentication / login
-		 */
-		$login = '';
+/*
+ * Phase authentication / login
+ */
+
+$login = '';
 if (!defined('NOLOGIN')) {
 	// $authmode lists the different method of identification to be tested in order of preference.
 	// Example: 'http', 'dolibarr', 'ldap', 'http,forceuser', '...'
@@ -820,7 +837,7 @@ if (!defined('NOLOGIN')) {
 		if (GETPOST('openid_mode', 'alpha', 1)) {	// For openid_connect ?
 			$goontestloop = true;
 		}
-		if (GETPOST('beforeoauthloginredirect', 'int') || GETPOST('afteroauthloginreturn')) {	// For oauth login
+		if (GETPOST('beforeoauthloginredirect') || GETPOST('afteroauthloginreturn')) {	// For oauth login
 			$goontestloop = true;
 		}
 		if (!empty($_COOKIE['login_dolibarr'])) {	// TODO For ? Remove this ?
@@ -830,7 +847,7 @@ if (!defined('NOLOGIN')) {
 		if (!is_object($langs)) { // This can occurs when calling page with NOREQUIRETRAN defined, however we need langs for error messages.
 			include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 			$langs = new Translate("", $conf);
-			$langcode = (GETPOST('lang', 'aZ09', 1) ?GETPOST('lang', 'aZ09', 1) : (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
+			$langcode = (GETPOST('lang', 'aZ09', 1) ?GETPOST('lang', 'aZ09', 1) : getDolGlobalString('MAIN_LANG_DEFAULT', 'auto'));
 			if (defined('MAIN_LANG_DEFAULT')) {
 				$langcode = constant('MAIN_LANG_DEFAULT');
 			}
@@ -840,8 +857,23 @@ if (!defined('NOLOGIN')) {
 		// Validation of login/pass/entity
 		// If ok, the variable login will be returned
 		// If error, we will put error message in session under the name dol_loginmesg
-		// Note authmode is an array for example: array('0'=>'dolibarr', '1'=>'googleoauth');
 		if ($test && $goontestloop && (GETPOST('actionlogin', 'aZ09') == 'login' || $dolibarr_main_authentication != 'dolibarr')) {
+			// Loop on each test mode defined into $authmode
+			// $authmode is an array for example: array('0'=>'dolibarr', '1'=>'googleoauth');
+			$oauthmodetotestarray = array('google');
+			foreach ($oauthmodetotestarray as $oauthmodetotest) {
+				if (in_array($oauthmodetotest.'oauth', $authmode) && GETPOST('beforeoauthloginredirect') != $oauthmodetotest) {
+					// If we did not click on the link to use OAuth authentication, we do not try it.
+					dol_syslog("User did not click on link for OAuth so we disable check using googleoauth");
+					foreach ($authmode as $tmpkey => $tmpval) {
+						if ($tmpval == $oauthmodetotest.'oauth') {
+							unset($authmode[$tmpkey]);
+							break;
+						}
+					}
+				}
+			}
+
 			$login = checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode);
 			if ($login === '--bad-login-validity--') {
 				$login = '';
@@ -1764,7 +1796,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		// Displays title
 		$appli = constant('DOL_APPLICATION_TITLE');
 		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-			$appli = $conf->global->MAIN_APPLICATION_TITLE;
+			$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
 		}
 
 		print '<title>';
@@ -1832,7 +1864,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			print '<!-- Includes CSS for JQuery (Ajax library) -->'."\n";
 			$jquerytheme = 'base';
 			if (getDolGlobalString('MAIN_USE_JQUERY_THEME')) {
-				$jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
+				$jquerytheme = getDolGlobalString('MAIN_USE_JQUERY_THEME');
 			}
 			if (constant('JS_JQUERY_UI')) {
 				print '<link rel="stylesheet" type="text/css" href="'.JS_JQUERY_UI.'css/'.$jquerytheme.'/jquery-ui.min.css'.($ext ? '?'.$ext : '').'">'."\n"; // Forced JQuery
@@ -2142,7 +2174,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		// Define link to login card
 		$appli = constant('DOL_APPLICATION_TITLE');
 		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-			$appli = $conf->global->MAIN_APPLICATION_TITLE;
+			$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
 			if (preg_match('/\d\.\d/', $appli)) {
 				if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
 					$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
@@ -2499,7 +2531,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	// Define version to show
 	$appli = constant('DOL_APPLICATION_TITLE');
 	if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-		$appli = $conf->global->MAIN_APPLICATION_TITLE;
+		$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
 		if (preg_match('/\d\.\d/', $appli)) {
 			if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
 				$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
@@ -3144,7 +3176,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		}
 		$selected = -1;
 		if (!getDolGlobalString('MAIN_USE_TOP_MENU_SEARCH_DROPDOWN')) {
-			// Select into select2 is awfull on smartphone. TODO Is this still true with select2 v4 ?
+			// Select with select2 is awful on smartphone. TODO Is this still true with select2 v4 ?
 			if ($conf->browser->layout == 'phone') {
 				$conf->global->MAIN_USE_OLD_SEARCH_FORM = 1;
 			}
@@ -3255,7 +3287,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 
 			$appli = constant('DOL_APPLICATION_TITLE');
 			if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-				$appli = $conf->global->MAIN_APPLICATION_TITLE; $doliurl = '';
+				$appli = getDolGlobalString('MAIN_APPLICATION_TITLE'); $doliurl = '';
 				if (preg_match('/\d\.\d/', $appli)) {
 					if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
 						$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
@@ -3321,7 +3353,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 				$bugbaseurl .= urlencode("\n");
 				$bugbaseurl .= urlencode("## Report\n");
 			} elseif (getDolGlobalString('MAIN_BUGTRACK_ENABLELINK')) {
-				$bugbaseurl = $conf->global->MAIN_BUGTRACK_ENABLELINK;
+				$bugbaseurl = getDolGlobalString('MAIN_BUGTRACK_ENABLELINK');
 			} else {
 				$bugbaseurl = "";
 			}
@@ -3389,7 +3421,7 @@ function main_area($title = '')
 	print $hookmanager->resPrint;
 
 	if (getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')) {
-		print info_admin($langs->trans("WarningYouAreInMaintenanceMode", $conf->global->MAIN_ONLY_LOGIN_ALLOWED), 0, 0, 1, 'warning maintenancemode');
+		print info_admin($langs->trans("WarningYouAreInMaintenanceMode", getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')), 0, 0, 1, 'warning maintenancemode');
 	}
 
 	// Permit to add user company information on each printed document by setting SHOW_SOCINFO_ON_PRINT

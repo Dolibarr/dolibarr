@@ -6,6 +6,7 @@
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019-2024  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2023       Lenin Rivas         <lenin.rivas777@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,24 +41,24 @@ function dol_basename($pathfile)
 }
 
 /**
- *  Scan a directory and return a list of files/directories.
- *  Content for string is UTF8 and dir separator is "/".
+ * Scan a directory and return a list of files/directories.
+ * Content for string is UTF8 and dir separator is "/".
  *
- *  @param	string		$path        	Starting path from which to search. This is a full path.
- *  @param	string		$types        	Can be "directories", "files", or "all"
- *  @param	int			$recursive		Determines whether subdirectories are searched
- *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/' by doing preg_quote($var,'/'), since this char is used for preg_match function,
+ * @param	string		$path        	Starting path from which to search. This is a full path.
+ * @param	string		$types        	Can be "directories", "files", or "all"
+ * @param	int			$recursive		Determines whether subdirectories are searched
+ * @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/' by doing preg_quote($var,'/'), since this char is used for preg_match function,
  *                                      but must not contains the start and end '/'. Filter is checked into basename only.
- *  @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked both into fullpath and into basename (So '^xxx' may exclude 'xxx/dirscanned/...' and dirscanned/xxx').
- *  @param	string		$sortcriteria	Sort criteria ('','fullname','relativename','name','date','size')
- *  @param	int 		$sortorder		Sort order (SORT_ASC, SORT_DESC)
- *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only, 4=Force load of perm
- *  @param	int			$nohook			Disable all hooks
- *  @param	string		$relativename	For recursive purpose only. Must be "" at first call.
- *  @param	int 		$donotfollowsymlinks	Do not follow symbolic links
- *  @param	int 		$nbsecondsold	Only files older than $nbsecondsold
- *  @return	array						Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
- *  @see dol_dir_list_in_database()
+ * @param	string[]	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked both into fullpath and into basename (So '^xxx' may exclude 'xxx/dirscanned/...' and dirscanned/xxx').
+ * @param	string		$sortcriteria	Sort criteria ('','fullname','relativename','name','date','size')
+ * @param	int 		$sortorder		Sort order (SORT_ASC, SORT_DESC)
+ * @param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only, 4=Force load of perm
+ * @param	int			$nohook			Disable all hooks
+ * @param	string		$relativename	For recursive purpose only. Must be "" at first call.
+ * @param	int 		$donotfollowsymlinks	Do not follow symbolic links
+ * @param	int 		$nbsecondsold	Only files older than $nbsecondsold
+ * @return	array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
+ * @see dol_dir_list_in_database()
  */
 function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0, $nohook = 0, $relativename = "", $donotfollowsymlinks = 0, $nbsecondsold = 0)
 {
@@ -69,9 +70,9 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 		//print 'xxx'."files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter);
 	}
 
-	$loaddate = ($mode == 1 || $mode == 2 || $nbsecondsold) ? true : false;
-	$loadsize = ($mode == 1 || $mode == 3) ? true : false;
-	$loadperm = ($mode == 1 || $mode == 4) ? true : false;
+	$loaddate = ($mode == 1 || $mode == 2 || $nbsecondsold != 0);
+	$loadsize = ($mode == 1 || $mode == 3);
+	$loadperm = ($mode == 1 || $mode == 4);
 
 	// Clean parameters
 	$path = preg_replace('/([\\/]+)$/i', '', $path);
@@ -222,17 +223,17 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 
 
 /**
- *  Scan a directory and return a list of files/directories.
- *  Content for string is UTF8 and dir separator is "/".
+ * Scan a directory and return a list of files/directories.
+ * Content for string is UTF8 and dir separator is "/".
  *
- *  @param	string		$path        	Starting path from which to search. Example: 'produit/MYPROD'
- *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
- *  @param	array|null	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.'))
- *  @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")
- *  @param	string		$sortorder		Sort order (SORT_ASC, SORT_DESC)
- *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like description
- *  @return	array						Array of array('name'=>'xxx','fullname'=>'/abc/xxx','type'=>'dir|file',...)
- *  @see dol_dir_list()
+ * @param	string		$path        	Starting path from which to search. Example: 'produit/MYPROD'
+ * @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
+ * @param	string[]|null	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.'))
+ * @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")
+ * @param	int			$sortorder		Sort order (SORT_ASC, SORT_DESC)
+ * @param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like description
+ * @return	array<array{rowid:string,label:string,name:string,path:string,level1name:string,fullname:string,fullpath_orig:string,date_c:string,datem:string,type:string,keywords:string,cover:string,position:int,acl:string,share:string,description:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
+ * @see dol_dir_list()
  */
 function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0)
 {
@@ -308,7 +309,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
  * Complete $filearray with data from database.
  * This will call doldir_list_indatabase to complete filearray.
  *
- * @param	array	$filearray			Array of files obtained using dol_dir_list
+ * @param	array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}>	$filearray	Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...) Array of files obtained using dol_dir_list
  * @param	string	$relativedir		Relative dir from DOL_DATA_ROOT
  * @return	void
  */
@@ -528,6 +529,7 @@ function dol_dir_is_emtpy($folder)
 	if (is_dir($newfolder)) {
 		$handle = opendir($newfolder);
 		$folder_content = '';
+		$name_array = [];
 		while ((gettype($name = readdir($handle)) != "boolean")) {
 			$name_array[] = $name;
 		}
@@ -564,8 +566,10 @@ function dol_count_nb_of_line($file)
 	if ($fp) {
 		while (!feof($fp)) {
 			$line = fgets($fp);
-			// We increase count only if read was success. We need test because feof return true only after fgets so we do n+1 fgets for a file with n lines.
-			if (!$line === false) {
+			// Increase count only if read was success.
+			// Test needed  because feof returns true only after fgets
+			//   so we do n+1 fgets for a file with n lines.
+			if ($line !== false) {
 				$nb++;
 			}
 		}
@@ -619,15 +623,15 @@ function dol_fileperm($pathoffile)
  * Make replacement of strings into a file.
  *
  * @param	string	$srcfile			       Source file (can't be a directory)
- * @param	array	$arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
+ * @param	array<string,string>	$arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
  * @param	string	$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
- * @param	int		$newmask			       Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
+ * @param	string	$newmask			       Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param	int		$indexdatabase		       1=index new file into database.
  * @param   int     $arrayreplacementisregex   1=Array of replacement is already an array with key that is a regex. Warning: the key must be escaped with preg_quote for '/'
  * @return	int							       Return integer <0 if error, 0 if nothing done (dest file already exists), >0 if OK
  * @see		dol_copy()
  */
-function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask = 0, $indexdatabase = 0, $arrayreplacementisregex = 0)
+function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask = '0', $indexdatabase = 0, $arrayreplacementisregex = 0)
 {
 	global $conf;
 
@@ -670,7 +674,7 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
 	dol_delete_file($tmpdestfile);
 
 	// Create $newpathoftmpdestfile from $newpathofsrcfile
-	$content = file_get_contents($newpathofsrcfile, 'r');
+	$content = file_get_contents($newpathofsrcfile);
 
 	if (empty($arrayreplacementisregex)) {
 		$content = make_substitutions($content, $arrayreplacement, null);
@@ -708,14 +712,14 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
  *
  * @param	string	$srcfile			Source file (can't be a directory)
  * @param	string	$destfile			Destination file (can't be a directory)
- * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
+ * @param	string	$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
  * @param   int     $testvirus          Do an antivirus test. Move is canceled if a virus is found.
  * @param	int		$indexdatabase		Index new file into database.
  * @return	int							Return integer <0 if error, 0 if nothing done (dest file already exists and overwriteifexists=0), >0 if OK
  * @see		dol_delete_file() dolCopyDir()
  */
-function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 0)
+function dol_copy($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 0)
 {
 	global $db, $user;
 
@@ -827,7 +831,7 @@ function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
 		}
 	}
 
-	return $result;
+	return (int) $result;
 }
 
 /**
@@ -835,18 +839,16 @@ function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
  *
  * @param	string	$srcfile			Source file (a directory)
  * @param	string	$destfile			Destination file (a directory)
- * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
+ * @param	string	$newmask			Mask for new file ('0' by default means getDolGlobalString('MAIN_UMASK')). Example: '0666'
  * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
- * @param	array	$arrayreplacement	Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
+ * @param	array<string,string>	$arrayreplacement	Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
  * @param	int		$excludesubdir		0=Do not exclude subdirectories, 1=Exclude subdirectories, 2=Exclude subdirectories if name is not a 2 chars (used for country codes subdirectories).
- * @param	array	$excludefileext		Exclude some file extensions
+ * @param	string[]	$excludefileext		Exclude some file extensions
  * @return	int							Return integer <0 if error, 0 if nothing done (all files already exists and overwriteifexists=0), >0 if OK
  * @see		dol_copy()
  */
 function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement = null, $excludesubdir = 0, $excludefileext = null)
 {
-	global $conf;
-
 	$result = 0;
 
 	dol_syslog("files.lib.php::dolCopyDir srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwriteifexists=".$overwriteifexists);
@@ -863,7 +865,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 		umask(0);
 		$dirmaskdec = octdec($newmask);
 		if (empty($newmask) && getDolGlobalString('MAIN_UMASK')) {
-			$dirmaskdec = octdec($conf->global->MAIN_UMASK);
+			$dirmaskdec = octdec(getDolGlobalString('MAIN_UMASK'));
 		}
 		$dirmaskdec |= octdec('0200'); // Set w bit required to be able to create content for recursive subdirs files
 		dol_mkdir($destfile, '', decoct($dirmaskdec));
@@ -925,7 +927,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 		$result = -2;
 	}
 
-	return $result;
+	return (int) $result;
 }
 
 
@@ -938,15 +940,15 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
  *
  * @param	string  $srcfile            Source file (can't be a directory. use native php @rename() to move a directory)
  * @param   string	$destfile           Destination file (can't be a directory. use native php @rename() to move a directory)
- * @param   integer	$newmask            Mask in octal string for new file (0 by default means $conf->global->MAIN_UMASK)
+ * @param   string	$newmask            Mask in octal string for new file (0 by default means $conf->global->MAIN_UMASK)
  * @param   int		$overwriteifexists  Overwrite file if exists (1 by default)
  * @param   int     $testvirus          Do an antivirus test. Move is canceled if a virus is found.
  * @param	int		$indexdatabase		Index new file into database.
- * @param	int		$moreinfo			Array with more information
+ * @param	array	$moreinfo			Array with more information
  * @return  boolean 		            True if OK, false if KO
  * @see dol_move_uploaded_file()
  */
-function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 1, $moreinfo = array())
+function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 1, $moreinfo = array())
 {
 	global $user, $db, $conf;
 	$result = false;
@@ -1177,20 +1179,15 @@ function dol_unescapefile($filename)
  *
  * @param   string      $src_file       Source file to check
  * @param   string      $dest_file      Destination file name (to know the expected type)
- * @return  array                       Array of errors, or empty array if not virus found
+ * @return  string[]                    Array of errors, or empty array if not virus found
  */
 function dolCheckVirus($src_file, $dest_file = '')
 {
 	global $db;
 
-	if (preg_match('/\.pdf$/i', $dest_file)) {
-		dol_syslog("dolCheckVirus Check pdf does not contains js file");
-		if (!getDolGlobalString('MAIN_ANTIVIRUS_ALLOW_JS_IN_PDF')) {
-			$tmp = file_get_contents(trim($src_file));
-			if (preg_match('/[\n\s]+\/JavaScript[\n\s]+/m', $tmp)) {
-				return array('File is a PDF with javascript inside');
-			}
-		}
+	$reterrors = dolCheckOnFileName($src_file, $dest_file);
+	if (!empty($reterrors)) {
+		return $reterrors;
 	}
 
 	if (getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
@@ -1204,6 +1201,31 @@ function dolCheckVirus($src_file, $dest_file = '')
 			return $reterrors;
 		}
 	}
+	return array();
+}
+
+/**
+ * Check virus into a file
+ *
+ * @param   string      $src_file       Source file to check
+ * @param   string      $dest_file      Destination file name (to know the expected type)
+ * @return  string[]                    Array of errors, or empty array if not virus found
+ */
+function dolCheckOnFileName($src_file, $dest_file = '')
+{
+	if (preg_match('/\.pdf$/i', $dest_file)) {
+		if (!getDolGlobalString('MAIN_ANTIVIRUS_ALLOW_JS_IN_PDF')) {
+			dol_syslog("dolCheckOnFileName Check that pdf does not contains js code");
+
+			$tmp = file_get_contents(trim($src_file));
+			if (preg_match('/[\n\s]+\/JavaScript[\n\s]+/m', $tmp)) {
+				return array('File is a PDF with javascript inside');
+			}
+		} else {
+			dol_syslog("dolCheckOnFileName Check js into pdf disabled");
+		}
+	}
+
 	return array();
 }
 
@@ -1230,7 +1252,7 @@ function dolCheckVirus($src_file, $dest_file = '')
  */
 function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan = 0, $uploaderrorcode = 0, $nohook = 0, $varfiles = 'addedfile', $upload_dir = '')
 {
-	global $conf, $db, $user, $langs;
+	global $conf;
 	global $object, $hookmanager;
 
 	$reshook = 0;
@@ -1359,7 +1381,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  @param  int		$disableglob    Disable usage of glob like * so function is an exact delete function that will return error if no file found
  *  @param  int		$nophperrors    Disable all PHP output errors
  *  @param	int		$nohook			Disable all hooks
- *  @param	object	$object			Current object in use
+ *  @param	object|null	$object			Current object in use
  *  @param	boolean	$allowdotdot	Allow to delete file path with .. inside. Never use this, it is reserved for migration purpose.
  *  @param	int		$indexdatabase	Try to remove also index entries.
  *  @param	int		$nolog			Disable log file
@@ -2321,7 +2343,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
  */
 function dol_uncompress($inputfile, $outputdir)
 {
-	global $conf, $langs, $db;
+	global $langs, $db;
 
 	$fileinfo = pathinfo($inputfile);
 	$fileinfo["extension"] = strtolower($fileinfo["extension"]);
@@ -2349,6 +2371,12 @@ function dol_uncompress($inputfile, $outputdir)
 						$langs->load("errors");
 						$ok = 0;
 						$errmsg = $langs->trans("ErrorFailToCreateDir", $val['filename']);
+						break;
+					}
+					if ($val['status'] == 'write_protected') {
+						$langs->load("errors");
+						$ok = 0;
+						$errmsg = $langs->trans("ErrorFailToCreateFile", $val['filename']);
 						break;
 					}
 				}
@@ -2445,7 +2473,7 @@ function dol_uncompress($inputfile, $outputdir)
  * @return	int						Return integer <0 if KO, >0 if OK
  * @see dol_uncompress(), dol_compress_file()
  */
-function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles = '', $rootdirinzip = '', $newmask = 0)
+function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles = '', $rootdirinzip = '', $newmask = '0')
 {
 	$foundhandler = 0;
 
@@ -2573,16 +2601,16 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
  * Security check when accessing to a document (used by document.php, viewimage.php and webservices to get documents).
  * TODO Replace code that set $accessallowed by a call to restrictedArea()
  *
- * @param	string	$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Example: 'medias', 'invoice', 'logs', 'tax-vat', ...
- * @param	string	$original_file		Relative path with filename, relative to modulepart.
- * @param	string	$entity				Restrict onto entity (0=no restriction)
- * @param  	User	$fuser				User object (forced)
- * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided) or for hierarchy
- * @param   string  $mode               Check permission for 'read' or 'write'
- * @return	mixed						Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' & 'original_file' (as a full path name)
+ * @param	string		$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Example: 'medias', 'invoice', 'logs', 'tax-vat', ...
+ * @param	string		$original_file		Relative path with filename, relative to modulepart.
+ * @param	string		$entity				Restrict onto entity (0=no restriction)
+ * @param  	User|null	$fuser				User object (forced)
+ * @param	string		$refname			Ref of object to check permission for external users (autodetect if not provided) or for hierarchy
+ * @param   string  	$mode               Check permission for 'read' or 'write'
+ * @return	mixed							Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' & 'original_file' (as a full path name)
  * @see restrictedArea()
  */
-function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser = '', $refname = '', $mode = 'read')
+function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser = null, $refname = '', $mode = 'read')
 {
 	global $conf, $db, $user, $hookmanager;
 	global $dolibarr_main_data_root, $dolibarr_main_document_root_alt;
@@ -2662,7 +2690,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $dolibarr_main_data_root.'/doctemplates/'.$original_file;
 	} elseif ($modulepart == 'doctemplateswebsite' && !empty($dolibarr_main_data_root)) {
 		// Wrapping for doctemplates of websites
-		$accessallowed = ($fuser->rights->website->write && preg_match('/\.jpg$/i', basename($original_file)));
+		$accessallowed = ($fuser->hasRight('website', 'write') && preg_match('/\.jpg$/i', basename($original_file)));
 		$original_file = $dolibarr_main_data_root.'/doctemplates/websites/'.$original_file;
 	} elseif ($modulepart == 'packages' && !empty($dolibarr_main_data_root)) {	// To download zip of modules
 		// Wrapping for *.zip package files, like when used with url http://.../document.php?modulepart=packages&file=module_myfile.zip
@@ -3191,11 +3219,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif ($modulepart == 'export' && !empty($conf->export->dir_temp)) {
 		// Wrapping for export module
 		// Note that a test may not be required because we force the dir of download on the directory of the user that export
-		$accessallowed = $user->rights->export->lire;
+		$accessallowed = $user->hasRight('export', 'lire');
 		$original_file = $conf->export->dir_temp.'/'.$fuser->id.'/'.$original_file;
 	} elseif ($modulepart == 'import' && !empty($conf->import->dir_temp)) {
 		// Wrapping for import module
-		$accessallowed = $user->rights->import->run;
+		$accessallowed = $user->hasRight('import', 'run');
 		$original_file = $conf->import->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'recruitment' && !empty($conf->recruitment->dir_output)) {
 		// Wrapping for recruitment module

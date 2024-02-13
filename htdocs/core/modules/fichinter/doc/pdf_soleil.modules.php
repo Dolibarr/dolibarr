@@ -518,11 +518,12 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *  @param  Fichinter	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf, $langs;
+
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		// Load traductions files required by page
@@ -695,6 +696,8 @@ class pdf_soleil extends ModelePDFFicheinter
 			$pdf->SetXY($posx + 2, $posy);
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

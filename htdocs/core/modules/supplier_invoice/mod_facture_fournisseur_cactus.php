@@ -176,7 +176,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	 * @param	Societe		$objsoc     Object third party
 	 * @param  	Object		$object		Object invoice
 	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return 	string      			Value if OK, <=0 if KO
+	 * @return 	string|-1      			Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object, $mode = 'next')
 	{

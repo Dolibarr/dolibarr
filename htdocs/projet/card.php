@@ -207,23 +207,23 @@ if (empty($reshook)) {
 
 			$db->begin();
 
-			$object->ref             = GETPOST('ref', 'alphanohtml');
-			$object->fk_project      = GETPOST('fk_project', 'int');
-			$object->title           = GETPOST('title', 'alphanohtml');
-			$object->socid           = GETPOST('socid', 'int');
-			$object->description     = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
-			$object->public          = GETPOST('public', 'alphanohtml');
-			$object->opp_amount      = price2num(GETPOST('opp_amount', 'alphanohtml'));
-			$object->budget_amount   = price2num(GETPOST('budget_amount', 'alphanohtml'));
-			$object->date_c = dol_now();
-			$object->date_start      = $date_start;
-			$object->date_end        = $date_end;
-			$object->date_start_event = $date_start_event;
-			$object->date_end_event   = $date_end_event;
-			$object->location        = $location;
-			$object->statut          = $status;
-			$object->opp_status      = $opp_status;
-			$object->opp_percent     = $opp_percent;
+			$object->ref                  = GETPOST('ref', 'alphanohtml');
+			$object->fk_project           = GETPOSTINT('fk_project');
+			$object->title                = GETPOST('title', 'alphanohtml');
+			$object->socid                = GETPOST('socid', 'int');
+			$object->description          = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
+			$object->public               = GETPOST('public', 'alphanohtml');
+			$object->opp_amount           = GETPOSTFLOAT('opp_amount');
+			$object->budget_amount        = GETPOSTFLOAT('budget_amount');
+			$object->date_c               = dol_now();
+			$object->date_start           = $date_start;
+			$object->date_end             = $date_end;
+			$object->date_start_event     = $date_start_event;
+			$object->date_end_event       = $date_end_event;
+			$object->location             = $location;
+			$object->statut               = $status;
+			$object->opp_status           = $opp_status;
+			$object->opp_percent          = $opp_percent;
 			$object->usage_opportunity    = (GETPOST('usage_opportunity', 'alpha') == 'on' ? 1 : 0);
 			$object->usage_task           = (GETPOST('usage_task', 'alpha') == 'on' ? 1 : 0);
 			$object->usage_bill_time      = (GETPOST('usage_bill_time', 'alpha') == 'on' ? 1 : 0);
@@ -401,6 +401,42 @@ if (empty($reshook)) {
 			} else {
 				unset($object->thirdparty);
 			}
+		}
+	}
+
+	if ($action == 'set_opp_status' && $user->hasRight('projet', 'creer')) {
+		$error = 0;
+		if (GETPOSTISSET('opp_status')) {
+			$object->opp_status   = $opp_status;
+		}
+		if (GETPOSTISSET('opp_percent')) {
+			$object->opp_percent  = $opp_percent;
+		}
+
+		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
+			if ($object->opp_amount && ($object->opp_status <= 0)) {
+				$error++;
+				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+			}
+		}
+
+		if (!$error) {
+			$result = $object->update($user);
+			if ($result < 0) {
+				$error++;
+				if ($result == -4) {
+					setEventMessages($langs->trans("ErrorRefAlreadyExists"), null, 'errors');
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
+		}
+
+		if ($error) {
+			$db->rollback();
+			$action = 'edit';
+		} else {
+			$db->commit();
 		}
 	}
 
@@ -1347,18 +1383,16 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opportunity)) {
 			// Opportunity status
-			print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
-			$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
-			if ($code) {
-				print $langs->trans("OppStatus".$code);
+			print '<tr><td>'.$langs->trans("OpportunityStatus");
+			if ($action != 'edit_opp_status' && $user->hasRight('projet', 'creer')) {
+				print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_opp_status&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
 			}
-
-			// Opportunity percent
-			print ' <span title="'.$langs->trans("OpportunityProbability").'"> / ';
-			if (strcmp($object->opp_percent, '')) {
-				print price($object->opp_percent, 0, $langs, 1, 0).' %';
-			}
-			print '</span></td></tr>';
+			print '</td><td>';
+			$html_name_status 	= ($action == 'edit_opp_status') ? 'opp_status' : 'none';
+			$html_name_percent 	= ($action == 'edit_opp_status') ? 'opp_percent' : 'none';
+			$percent_value = (GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ? vatrate($object->opp_percent) : ''));
+			$formproject->formOpportunityStatus($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->opp_status, $percent_value, $html_name_status, $html_name_percent);
+			print '</td></tr>';
 
 			// Opportunity Amount
 			print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
