@@ -159,6 +159,10 @@ class CompanyBankAccount extends Account
 	 * @var integer
 	 */
 	public $datec;
+
+	/**
+	 * @var string label
+	 */
 	public $label;
 	public $bank;
 	public $code_banque;
@@ -183,7 +187,7 @@ class CompanyBankAccount extends Account
 	 * @var int $default_rib  1 = this object is the third party's default bank information, 0 if not
 	 */
 	public $default_rib;
-	
+
 	/**
 	 * @var int state id
 	 */
@@ -198,7 +202,15 @@ class CompanyBankAccount extends Account
 	 * @var string currency code
 	 */
 	public $currency_code;
+
+	/**
+	 * @var string rum
+	 */
 	public $rum;
+
+	/**
+	 * @var int date rum
+	 */
 	public $date_rum;
 
 	/**
