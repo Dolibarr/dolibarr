@@ -1919,20 +1919,18 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount, 0, $outputlangs), 0, 'R', 0);
 			}
 
-			/*
-			 if ($object->close_code == Facture::CLOSECODE_DISCOUNTVAT)
-			 {
-			 $index++;
-			 $pdf->SetFillColor(255, 255, 255);
+			if ($object->close_code == Facture::CLOSECODE_DISCOUNTVAT)
+			{
+				$index++;
+				$pdf->SetFillColor(255, 255, 255);
 
-			 $pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-			 $pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOfferedShort").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("EscompteOfferedShort") : ''), $useborder, 'L', 1);
-			 $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-			 $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 0, $outputlangs), $useborder, 'R', 1);
+				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOfferedShort").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("EscompteOfferedShort") : ''), $useborder, 'L', 1);
+				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+				$pdf->MultiCell($largcol2, $tab2_hl, price(price2num($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT'), 0, $outputlangs), $useborder, 'R', 1);
 
-			 $resteapayer = 0;
-			 }
-			 */
+				$resteapayer = 0;
+			}
 
 			$index++;
 			$pdf->SetTextColor(0, 0, 60);
