@@ -8075,7 +8075,7 @@ abstract class CommonObject
 				}
 			}
 		} elseif ($type == 'chkbxlst') {
-			$value_arr = (isset($value) ? explode(',', $value) : array(''));
+			$value_arr = (isset($value) ? explode(',', $value) : array());
 
 			$param_list = array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
