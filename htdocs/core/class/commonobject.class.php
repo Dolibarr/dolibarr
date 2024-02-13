@@ -99,7 +99,8 @@ abstract class CommonObject
 	public $element;
 
 	/**
-	 * @var string		Fieldname with the ID of the parent object, if this object has a parent
+	 * @var string|int	Field with ID of parent key if this field has a parent (a string). For example 'fk_product'.
+	 *					ID of parent key itself (an int). For example in few classes like 'Comment', 'ActionComm' or 'AdvanceTargetingMailing'.
 	 */
 	public $fk_element;
 
