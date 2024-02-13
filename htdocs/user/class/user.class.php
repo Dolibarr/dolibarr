@@ -589,7 +589,6 @@ class User extends CommonObject
 				$this->admin		= $obj->admin;
 				$this->note_public = $obj->note_public;
 				$this->note_private = $obj->note_private;
-				$this->note			= $obj->note_private;	// deprecated
 
 				$this->statut		= $obj->status;			// deprecated
 				$this->status		= $obj->status;
