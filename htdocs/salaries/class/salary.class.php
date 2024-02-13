@@ -120,6 +120,7 @@ class Salary extends CommonObject
 
 	/**
 	 * @var int 1 if salary paid COMPLETELY, 0 otherwise (do not use it anymore, use statut and close_code)
+ 	 * @deprecated
 	 */
 	public $paye;
 
