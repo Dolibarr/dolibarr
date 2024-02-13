@@ -1442,7 +1442,14 @@ class FormFile
 							} else {
 								print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
 							}
-							print '<img class="photo maxwidth200 shadow valignmiddle" height="'.(($useinecm == 4 || $useinecm == 5 || $useinecm == 6) ? '20' : $maxheightmini).'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($relativepath.$smallfile).'" title="">';
+							print '<img class="photo maxwidth200 shadow valignmiddle"';
+							if ($useinecm == 4 || $useinecm == 5 || $useinecm == 6) {
+								print ' height="20"';
+							} else {
+								//print ' style="max-height: '.$maxheightmini.'px"';
+								print ' style="max-height: 24px"';
+							}
+							print ' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($relativepath.$smallfile).'" title="">';
 							print '</a>';
 						} else {
 							print '&nbsp;';

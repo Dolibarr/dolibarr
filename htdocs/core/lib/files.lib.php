@@ -1185,14 +1185,9 @@ function dolCheckVirus($src_file, $dest_file = '')
 {
 	global $db;
 
-	if (preg_match('/\.pdf$/i', $dest_file)) {
-		dol_syslog("dolCheckVirus Check pdf does not contains js file");
-		if (!getDolGlobalString('MAIN_ANTIVIRUS_ALLOW_JS_IN_PDF')) {
-			$tmp = file_get_contents(trim($src_file));
-			if (preg_match('/[\n\s]+\/JavaScript[\n\s]+/m', $tmp)) {
-				return array('File is a PDF with javascript inside');
-			}
-		}
+	$reterrors = dolCheckOnFileName($src_file, $dest_file);
+	if (!empty($reterrors)) {
+		return $reterrors;
 	}
 
 	if (getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
@@ -1206,6 +1201,31 @@ function dolCheckVirus($src_file, $dest_file = '')
 			return $reterrors;
 		}
 	}
+	return array();
+}
+
+/**
+ * Check virus into a file
+ *
+ * @param   string      $src_file       Source file to check
+ * @param   string      $dest_file      Destination file name (to know the expected type)
+ * @return  string[]                    Array of errors, or empty array if not virus found
+ */
+function dolCheckOnFileName($src_file, $dest_file = '')
+{
+	if (preg_match('/\.pdf$/i', $dest_file)) {
+		if (!getDolGlobalString('MAIN_ANTIVIRUS_ALLOW_JS_IN_PDF')) {
+			dol_syslog("dolCheckOnFileName Check that pdf does not contains js code");
+
+			$tmp = file_get_contents(trim($src_file));
+			if (preg_match('/[\n\s]+\/JavaScript[\n\s]+/m', $tmp)) {
+				return array('File is a PDF with javascript inside');
+			}
+		} else {
+			dol_syslog("dolCheckOnFileName Check js into pdf disabled");
+		}
+	}
+
 	return array();
 }
 
@@ -1232,7 +1252,7 @@ function dolCheckVirus($src_file, $dest_file = '')
  */
 function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan = 0, $uploaderrorcode = 0, $nohook = 0, $varfiles = 'addedfile', $upload_dir = '')
 {
-	global $conf, $db, $user, $langs;
+	global $conf;
 	global $object, $hookmanager;
 
 	$reshook = 0;
