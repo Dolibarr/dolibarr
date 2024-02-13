@@ -95,9 +95,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_TIERS_PROSPECT' => array(
@@ -129,9 +129,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_TIERS_PROSPECT_CLIENT' => array(
@@ -163,9 +163,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_TIERS_NIPROSPECT_NICLIENT' => array(
@@ -197,9 +197,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_TIERS_FOURNISSEUR' => array(
@@ -230,9 +230,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_CONTACT_CLIENT' => array(
@@ -268,9 +268,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_CONTACT_PROSPECT' => array(
@@ -306,9 +306,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_CONTACT_PROSPECT_CLIENT' => array(
@@ -344,9 +344,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT' => array(
@@ -382,9 +382,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_CONTACT_FOURNISSEUR' => array(
@@ -419,9 +419,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_ADHERENT' => array(
@@ -451,9 +451,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 		);
@@ -483,11 +483,11 @@ class DataPolicyCron
 
 						if ($action == 'anonymize') {
 							if ($object->isObjectUsed($obj->rowid) == 0) {			// If object to clean is used
-								foreach ($params['fields_anonym'] as $fields => $val) {
+								foreach ($params['fields_anonym'] as $field => $val) {
 									if ($val == 'MAKEANONYMOUS') {
-										$object->$fields = $fields.'-anonymous-'.$obj->rowid;
+										$object->$field = $field.'-anonymous-'.$obj->rowid;
 									} else {
-										$object->$fields = $val;
+										$object->$field = $val;
 									}
 								}
 								$result = $object->update($obj->rowid, $user);
