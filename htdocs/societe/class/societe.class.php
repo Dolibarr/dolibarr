@@ -5335,8 +5335,7 @@ class Societe extends CommonObject
 				}
 			}
 
-			if ($this->typent_id == -1)
-			{
+			if ($this->typent_id == -1) {
 				$this->typent_id = $soc_origin->typent_id;
 			}
 
