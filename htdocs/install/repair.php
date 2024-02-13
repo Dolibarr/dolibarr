@@ -279,7 +279,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 			}
 			print ' - Found '.count($arrayoffieldsfound).' fields into table';
 			if (count($arrayoffieldsfound) > 0) {
-				print ' <span class="opacitymedium">('.join(', ', array_keys($arrayoffieldsfound)).')</span>';
+				print ' <span class="opacitymedium">('.implode(', ', array_keys($arrayoffieldsfound)).')</span>';
 			}
 			print '<br>'."\n";
 
@@ -1547,7 +1547,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 						$obj_dispatch->eatby ? "'".$db->escape($obj_dispatch->eatby)."'" : 'NULL',
 						$obj_dispatch->sellby ? "'".$db->escape($obj_dispatch->sellby)."'" : 'NULL'
 					);
-					$sql_attach_values = join(', ', $sql_attach_values);
+					$sql_attach_values = implode(', ', $sql_attach_values);
 
 					$sql_attach = 'INSERT INTO '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
 					$sql_attach .= ' (fk_commande, fk_product, fk_commandefourndet, qty, fk_entrepot, fk_user, datec, comment, status, tms, batch, eatby, sellby)';
@@ -1593,7 +1593,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 	$db->close();
 
 	echo '<tr><td><h3>SQL queries with errors:</h3></tr></td>';
-	echo '<tr><td>'.join('</td></tr><tr><td>', $errors).'</td></tr>';
+	echo '<tr><td>'.implode('</td></tr><tr><td>', $errors).'</td></tr>';
 }
 
 // Repair llx_commande_fournisseur to eliminate duplicate reference

@@ -1309,7 +1309,7 @@ class Cronjob extends CommonObject
 						$errmsg .= $object->error;
 					}
 					if (is_array($object->errors) && count($object->errors)) {
-						$errmsg .= (($errmsg ? ', ' : '').join(', ', $object->errors));
+						$errmsg .= (($errmsg ? ', ' : '').implode(', ', $object->errors));
 					}
 					if (empty($errmsg)) {
 						$errmsg = $langs->trans('ErrorUnknown');

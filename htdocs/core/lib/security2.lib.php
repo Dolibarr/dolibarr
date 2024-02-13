@@ -63,7 +63,7 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
 		$entitytotest = 1;
 	}
 
-	dol_syslog("checkLoginPassEntity usertotest=".$usertotest." entitytotest=".$entitytotest." authmode=".join(',', $authmode));
+	dol_syslog("checkLoginPassEntity usertotest=".$usertotest." entitytotest=".$entitytotest." authmode=".implode(',', $authmode));
 	$login = '';
 
 	// Validation of login/pass/entity with standard modules
@@ -455,7 +455,7 @@ function encodedecode_dbpassconf($level = 0)
 		// Write new conf file
 		$file = DOL_DOCUMENT_ROOT.'/conf/conf.php';
 		if ($fp = @fopen($file, 'w')) {
-			fputs($fp, $config);
+			fwrite($fp, $config);
 			fflush($fp);
 			fclose($fp);
 			clearstatcache();

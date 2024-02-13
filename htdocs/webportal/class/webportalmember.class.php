@@ -447,7 +447,7 @@ class WebPortalMember extends Adherent
 				$extralanguages->fetch_name_extralanguages($elementforaltlanguage);
 
 				if (!empty($extralanguages->attributes[$elementforaltlanguage]['address']) || !empty($extralanguages->attributes[$elementforaltlanguage]['town'])) {
-					$out .= "<!-- alternatelanguage for '" . $elementforaltlanguage . "' set to fields '" . join(',', $extralanguages->attributes[$elementforaltlanguage]) . "' -->\n";
+					$out .= "<!-- alternatelanguage for '" . $elementforaltlanguage . "' set to fields '" . implode(',', $extralanguages->attributes[$elementforaltlanguage]) . "' -->\n";
 					$this->fetchValuesForExtraLanguages();
 					if (!is_object($form)) {
 						$form = new Form($this->db);

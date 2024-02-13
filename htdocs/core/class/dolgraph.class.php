@@ -781,7 +781,7 @@ class DolGraph
 		// phpcs:enable
 		global $langs;
 
-		dol_syslog(get_class($this) . "::draw_jflot this->type=" . join(',', $this->type) . " this->MaxValue=" . $this->MaxValue);
+		dol_syslog(get_class($this) . "::draw_jflot this->type=" . implode(',', $this->type) . " this->MaxValue=" . $this->MaxValue);
 
 		if (empty($this->width) && empty($this->height)) {
 			print 'Error width or height not set';
@@ -1068,7 +1068,7 @@ class DolGraph
 		// phpcs:enable
 		global $langs;
 
-		dol_syslog(get_class($this) . "::draw_chart this->type=" . join(',', $this->type) . " this->MaxValue=" . $this->MaxValue);
+		dol_syslog(get_class($this) . "::draw_chart this->type=" . implode(',', $this->type) . " this->MaxValue=" . $this->MaxValue);
 
 		if (empty($this->width) && empty($this->height)) {
 			print 'Error width or height not set';

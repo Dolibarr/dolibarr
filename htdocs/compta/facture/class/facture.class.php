@@ -2812,7 +2812,7 @@ class Facture extends CommonInvoice
 			if (count($list_rowid_det)) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 				$sql .= ' SET fk_facture = NULL, fk_facture_line = NULL';
-				$sql .= ' WHERE fk_facture_line IN ('.$this->db->sanitize(join(',', $list_rowid_det)).')';
+				$sql .= ' WHERE fk_facture_line IN ('.$this->db->sanitize(implode(',', $list_rowid_det)).')';
 
 				if (!$this->db->query($sql)) {
 					$this->error = $this->db->error()." sql=".$sql;
@@ -5923,7 +5923,7 @@ class Facture extends CommonInvoice
 
 			return 0;
 		} else {
-			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
+			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? implode(', ', $errorsMsg) : $error;
 
 			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
 

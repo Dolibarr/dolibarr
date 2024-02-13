@@ -250,7 +250,7 @@ if (empty($reshook) && $action == 'add') {
 				}
 			} else {
 				$error++;
-				$errmsg .= join('<br>', $societe->errors);
+				$errmsg .= implode('<br>', $societe->errors);
 			}
 		}
 	}

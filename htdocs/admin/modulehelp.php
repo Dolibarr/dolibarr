@@ -375,7 +375,7 @@ if ($mode == 'feature') {
 		$i = 0;
 		foreach ($objMod->depends as $modulestringorarray) {
 			if (is_array($modulestringorarray)) {
-				$text .= ($i ? ', ' : '').join(', ', $modulestringorarray);
+				$text .= ($i ? ', ' : '').implode(', ', $modulestringorarray);
 			} else {
 				$text .= ($i ? ', ' : '').$modulestringorarray;
 			}
@@ -391,7 +391,7 @@ if ($mode == 'feature') {
 		$i = 0;
 		foreach ($objMod->requiredby as $modulestringorarray) {
 			if (is_array($modulestringorarray)) {
-				$text .= ($i ? ', ' : '').join(', ', $modulestringorarray);
+				$text .= ($i ? ', ' : '').implode(', ', $modulestringorarray);
 			} else {
 				$text .= ($i ? ', ' : '').$modulestringorarray;
 			}

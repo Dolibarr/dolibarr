@@ -247,7 +247,7 @@ $sql .= " ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = sal.fk_user";
 $sql .= " AND s.entity IN (".getEntity('payment_salaries').")";
 if (!$user->hasRight('salaries', 'readall')) {
-	$sql .= " AND sal.fk_user IN (".$db->sanitize(join(',', $childids)).")";
+	$sql .= " AND sal.fk_user IN (".$db->sanitize(implode(',', $childids)).")";
 }
 
 // Search criteria

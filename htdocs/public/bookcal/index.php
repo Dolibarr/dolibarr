@@ -221,7 +221,7 @@ if ($action == 'add') {
 				$result = $contact->create($user);
 				if ($result < 0) {
 					$error++;
-					$errmsg .= $contact->error." ".join(',', $contact->errors);
+					$errmsg .= $contact->error." ".implode(',', $contact->errors);
 				}
 			}
 		} else {
@@ -248,7 +248,7 @@ if ($action == 'add') {
 		$result = $actioncomm->create($user);
 		if ($result < 0) {
 			$error++;
-			$errmsg .= $actioncomm->error." ".join(',', $actioncomm->errors);
+			$errmsg .= $actioncomm->error." ".implode(',', $actioncomm->errors);
 		}
 
 		if (!$error) {

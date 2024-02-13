@@ -279,7 +279,7 @@ if (empty($reshook) && $action == 'add') {
 				$resultat=$company->create($user);
 				if ($resultat < 0) {
 					$error++;
-					$errmsg .= join('<br>', $company->errors);
+					$errmsg .= implode('<br>', $company->errors);
 				}
 
 				$partnership->fk_soc = $company->id;
@@ -502,7 +502,7 @@ if (empty($reshook) && $action == 'add') {
 				dol_syslog("partnership ".$partnership->ref." was created, we redirect to ".$urlback);
 			} else {
 				$error++;
-				$errmsg .= join('<br>', $partnership->errors);
+				$errmsg .= implode('<br>', $partnership->errors);
 			}
 		} else {
 			setEventMessage($errmsg, 'errors');

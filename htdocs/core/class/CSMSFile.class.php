@@ -232,18 +232,18 @@ class CSMSFile
 		// phpcs:enable
 		global $conf, $dolibarr_main_data_root;
 
-		if (@is_writeable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
+		if (@is_writable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
 			$outputfile = $dolibarr_main_data_root."/dolibarr_sms.log";
 			$fp = fopen($outputfile, "w");
 
-			fputs($fp, "From: ".$this->addr_from."\n");
-			fputs($fp, "To: ".$this->addr_to."\n");
-			fputs($fp, "Priority: ".$this->priority."\n");
-			fputs($fp, "Class: ".$this->class."\n");
-			fputs($fp, "Deferred: ".$this->deferred."\n");
-			fputs($fp, "DisableStop: ".$this->nostop."\n");
-			fputs($fp, "DeliveryReceipt: ".$this->deliveryreceipt."\n");
-			fputs($fp, "Message:\n".$this->message);
+			fwrite($fp, "From: ".$this->addr_from."\n");
+			fwrite($fp, "To: ".$this->addr_to."\n");
+			fwrite($fp, "Priority: ".$this->priority."\n");
+			fwrite($fp, "Class: ".$this->class."\n");
+			fwrite($fp, "Deferred: ".$this->deferred."\n");
+			fwrite($fp, "DisableStop: ".$this->nostop."\n");
+			fwrite($fp, "DeliveryReceipt: ".$this->deliveryreceipt."\n");
+			fwrite($fp, "Message:\n".$this->message);
 
 			fclose($fp);
 			dolChmod($outputfile);
@@ -263,11 +263,11 @@ class CSMSFile
 		// phpcs:enable
 		global $dolibarr_main_data_root;
 
-		if (@is_writeable($dolibarr_main_data_root)) {    // Avoid fatal error on fopen with open_basedir
+		if (@is_writable($dolibarr_main_data_root)) {    // Avoid fatal error on fopen with open_basedir
 			$outputfile = $dolibarr_main_data_root."/dolibarr_sms.log";
 			$fp = fopen($outputfile, "a+");
 
-			fputs($fp, "\nResult of SmsSend = ".$result);
+			fwrite($fp, "\nResult of SmsSend = ".$result);
 
 			fclose($fp);
 			dolChmod($outputfile);

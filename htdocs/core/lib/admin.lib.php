@@ -1194,7 +1194,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 								if (empty($resarray['errors'])) {
 									$activate = true;
 								} else {
-									$activateerr = join(', ', $resarray['errors']);
+									$activateerr = implode(', ', $resarray['errors']);
 									foreach ($resarray['errors'] as $errorMessage) {
 										dol_syslog($errorMessage, LOG_ERR);
 									}

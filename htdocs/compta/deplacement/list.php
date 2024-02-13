@@ -100,7 +100,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON d.fk_soc = s.rowid";
 $sql .= " WHERE d.fk_user = u.rowid";
 $sql .= " AND d.entity = ".$conf->entity;
 if (!$user->hasRight('deplacement', 'readall') && !$user->hasRight('deplacement', 'lire_tous')) {
-	$sql .= ' AND d.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
+	$sql .= ' AND d.fk_user IN ('.$db->sanitize(implode(',', $childids)).')';
 }
 // If the internal user must only see his customers, force searching by him
 $search_sale = 0;

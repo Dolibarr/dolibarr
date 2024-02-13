@@ -2499,8 +2499,8 @@ class ExpenseReport extends CommonObject
 		$sql .= " AND ex.entity IN (".getEntity('expensereport').")";
 		if (!$user->hasRight('expensereport', 'readall')) {
 			$userchildids = $user->getAllChildIds(1);
-			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(join(',', $userchildids)).")";
-			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
+			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(implode(',', $userchildids)).")";
+			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(implode(',', $userchildids))."))";
 		}
 
 		$resql = $this->db->query($sql);
@@ -2546,8 +2546,8 @@ class ExpenseReport extends CommonObject
 		$sql .= " AND ex.entity IN (".getEntity('expensereport').")";
 		if (!$user->hasRight('expensereport', 'readall')) {
 			$userchildids = $user->getAllChildIds(1);
-			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(join(',', $userchildids)).")";
-			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
+			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(implode(',', $userchildids)).")";
+			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(implode(',', $userchildids))."))";
 		}
 
 		$resql = $this->db->query($sql);

@@ -454,7 +454,7 @@ if ($event->type == 'payout.created') {
 				// This include closing invoices to 'paid' (and trigger including unsuspending) and regenerating document
 				$paiement_id = $paiement->create($user, 1);
 				if ($paiement_id < 0) {
-					$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->errors);
+					$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . implode("<br>\n", $paiement->errors);
 					$ispostactionok = -1;
 					$error++;
 
@@ -492,7 +492,7 @@ if ($event->type == 'payout.created') {
 						$label = '(CustomerInvoicePayment)';
 						$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, $customer_id, '');
 						if ($result < 0) {
-							$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->errors);
+							$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . implode("<br>\n", $paiement->errors);
 							$ispostactionok = -1;
 							$error++;
 						} else {

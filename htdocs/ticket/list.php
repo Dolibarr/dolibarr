@@ -401,7 +401,7 @@ foreach ($search as $key => $val) {
 			$newarrayofstatus[] = Ticket::STATUS_CANCELED;
 		}
 		if (count($newarrayofstatus)) {
-			$sql .= natural_search($key, join(',', $newarrayofstatus), 2);
+			$sql .= natural_search($key, implode(',', $newarrayofstatus), 2);
 		}
 		continue;
 	} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create' || $key == 'fk_project') {
@@ -412,7 +412,7 @@ foreach ($search as $key => $val) {
 	} elseif ($key == 'type_code') {
 		$newarrayoftypecodes = is_array($search[$key]) ? $search[$key] : (!empty($search[$key]) ? explode(',', $search[$key]) : array());
 		if (count($newarrayoftypecodes)) {
-			$sql .= natural_search($key, join(',', $newarrayoftypecodes), 3);
+			$sql .= natural_search($key, implode(',', $newarrayoftypecodes), 3);
 		}
 		continue;
 	}
@@ -606,7 +606,7 @@ if ($projectid > 0 || $project_ref) {
 		// Define a complementary filter for search of next/prev ref.
 		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-			$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
+			$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
 		}
 
 		dol_banner_tab($object, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -803,7 +803,7 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if TICKET_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>'."\n";
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>'."\n";
 }
 
 $moreforfilter = '';

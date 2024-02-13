@@ -815,7 +815,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	// for this given object (link to company, is contact for project, ...)
 	if (!empty($objectid) && $objectid > 0) {
 		$ok = checkUserAccessToObject($user, $featuresarray, $object, $tableandshare, $feature2, $dbt_keyfield, $dbt_select, $parentfortableentity);
-		$params = array('objectid' => $objectid, 'features' => join(',', $featuresarray), 'features2' => $feature2);
+		$params = array('objectid' => $objectid, 'features' => implode(',', $featuresarray), 'features2' => $feature2);
 		//print 'checkUserAccessToObject ok='.$ok;
 		if ($mode) {
 			return $ok ? 1 : 0;

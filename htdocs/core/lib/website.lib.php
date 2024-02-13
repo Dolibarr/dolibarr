@@ -869,7 +869,7 @@ function getSocialNetworkHeaderCards($params = null)
 
 		$fullurl = $website->virtualhost.'/'.$websitepage->pageurl.'.php';
 		$canonicalurl = $website->virtualhost.(($websitepage->id == $website->fk_default_home) ? '/' : (($shortlangcode != substr($website->lang, 0, 2) ? '/'.$shortlangcode : '').'/'.$websitepage->pageurl.'.php'));
-		$hashtags = trim(join(' #', array_map('trim', explode(',', $websitepage->keywords))));
+		$hashtags = trim(implode(' #', array_map('trim', explode(',', $websitepage->keywords))));
 
 		// Open Graph
 		$out .= '<meta name="og:type" content="website">'."\n";	// TODO If blogpost, use type article
@@ -922,7 +922,7 @@ function getSocialNetworkSharingLinks()
 
 	if ($website->virtualhost) {
 		$fullurl = $website->virtualhost.'/'.$websitepage->pageurl.'.php';
-		$hashtags = trim(join(' #', array_map('trim', explode(',', $websitepage->keywords))));
+		$hashtags = trim(implode(' #', array_map('trim', explode(',', $websitepage->keywords))));
 
 		$out .= '<div class="dol-social-share">'."\n";
 
@@ -1332,7 +1332,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					dol_mkdir(dirname($filetosave));
 
 					$fp = fopen($filetosave, "w");
-					fputs($fp, $tmpgeturl['content']);
+					fwrite($fp, $tmpgeturl['content']);
 					fclose($fp);
 					dolChmod($filetosave);
 				}
@@ -1401,7 +1401,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					dol_mkdir(dirname($filetosave));
 
 					$fp = fopen($filetosave, "w");
-					fputs($fp, $tmpgeturl['content']);
+					fwrite($fp, $tmpgeturl['content']);
 					fclose($fp);
 					dolChmod($filetosave);
 				}

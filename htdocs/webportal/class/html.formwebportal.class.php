@@ -399,8 +399,8 @@ class FormWebPortal extends Form
 			}
 		}
 		if (!is_object($objecttmp)) {
-			dol_syslog('Error bad setup of type for field ' . join(',', $InfoFieldList), LOG_WARNING);
-			return 'Error bad setup of type for field ' . join(',', $InfoFieldList);
+			dol_syslog('Error bad setup of type for field ' . implode(',', $InfoFieldList), LOG_WARNING);
+			return 'Error bad setup of type for field ' . implode(',', $InfoFieldList);
 		}
 
 		dol_syslog(__METHOD__ . ' filter=' . $filter, LOG_DEBUG);

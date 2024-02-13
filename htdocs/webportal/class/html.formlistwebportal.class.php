@@ -524,7 +524,7 @@ class FormListWebPortal
 			$tableKey = 't.' . $key;
 			if (!empty($arrayfields[$tableKey]['checked'])) {
 				$tableOrder = '';
-				if (key_exists($tableKey, $sortList)) {
+				if (array_key_exists($tableKey, $sortList)) {
 					$tableOrder = strtolower($sortList[$tableKey]);
 				}
 				$url_param = $url_file . '&sortfield=' . $tableKey . '&sortorder=' . ($tableOrder == 'desc' ? 'asc' : 'desc') . $param;
