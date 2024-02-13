@@ -123,7 +123,7 @@ abstract class DolibarrTriggers
 	 *
 	 * @return string
 	 */
-	public function getName(): string
+	public function getName()
 	{
 		return $this->name;
 	}
@@ -133,7 +133,7 @@ abstract class DolibarrTriggers
 	 *
 	 * @return string
 	 */
-	public function getDesc(): string
+	public function getDesc()
 	{
 		return $this->description;
 	}
@@ -143,7 +143,7 @@ abstract class DolibarrTriggers
 	 *
 	 * @return string Version of trigger file
 	 */
-	public function getVersion(): string
+	public function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");
@@ -186,5 +186,5 @@ abstract class DolibarrTriggers
 	 *  @param conf         $conf       Object conf
 	 *  @return int                     if KO: <0 || if no trigger ran: 0 || if OK: >0
 	 */
-	abstract public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf): int;
+	abstract public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf);
 }
