@@ -4,6 +4,7 @@
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2022      Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2023      Alexandre Janniaux  <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -371,7 +372,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				// The original sale order is id in $object->origin_id
 				// Find all shipments on sale order origin
 
-				if (($object->origin == 'order' || $object->origin = 'commande') && $object->origin_id > 0) {
+				if (in_array($object->origin, array('order', 'commande')) && $object->origin_id > 0) {
 					require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 					$order = new Commande($this->db);
 					$ret = $order->fetch($object->origin_id);
@@ -445,7 +446,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				// The original purchase order is id in $object->origin_id
 				// Find all reception on purchase order origin
 
-				if (($object->origin == 'order_supplier' || $object->origin == 'supplier_order' || $object->origin = 'commandeFournisseur') && $object->origin_id > 0) {
+				if (in_array($object->origin, array('order_supplier', 'supplier_order', 'commandeFournisseur')) && $object->origin_id > 0) {
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 					$order = new CommandeFournisseur($this->db);
 					$ret = $order->fetch($object->origin_id);

@@ -99,7 +99,8 @@ abstract class CommonObject
 	public $element;
 
 	/**
-	 * @var string		Fieldname with the ID of the parent object, if this object has a parent
+	 * @var string|int	Field with ID of parent key if this field has a parent (a string). For example 'fk_product'.
+	 *					ID of parent key itself (an int). For example in few classes like 'Comment', 'ActionComm' or 'AdvanceTargetingMailing'.
 	 */
 	public $fk_element;
 
@@ -8075,7 +8076,7 @@ abstract class CommonObject
 				}
 			}
 		} elseif ($type == 'chkbxlst') {
-			$value_arr = explode(',', $value);
+			$value_arr = (isset($value) ? explode(',', $value) : array());
 
 			$param_list = array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
@@ -9046,6 +9047,7 @@ abstract class CommonObject
 	{
 		global $conf;
 
+		$file = ''; $originalfile = '';
 		$newmodulepart = $modulepart;
 		if ($modulepart == 'unknown' && !empty($this->module)) {
 			$newmodulepart = $this->module;
