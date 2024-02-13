@@ -67,9 +67,15 @@ $formSetup = new FormSetup($db);
 $item = $formSetup->newItem('AI_CONFIGURATIONS_PROMPT');
 $item->defaultFieldValue = '';
 
-$setupnotempty =+ count($formSetup->items);
+$setupnotempty += count($formSetup->items);
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+// List of AI features
+$arrayofaifeatures = array(
+	'emailing' => 'Emailing',
+	'imagegeneration' => 'ImageGeneration'
+);
 
 
 /*
@@ -84,6 +90,9 @@ $post_prompt = GETPOST('postPrompt', 'alpha');
 $currentConfigurationsJson = dolibarr_get_const($db, 'AI_CONFIGURATIONS_PROMPT', $conf->entity);
 $currentConfigurations = json_decode($currentConfigurationsJson, true);
 
+if ($action == 'update' && GETPOST('cancel')) {
+	$action = 'edit';
+}
 if ($action == 'update' && !GETPOST('cancel')) {
 	$error = 0;
 	if (empty($modulename)) {
@@ -94,7 +103,7 @@ if ($action == 'update' && !GETPOST('cancel')) {
 		$currentConfigurations = [];
 	}
 
-	if (empty($pre_prompt) && empty($post_prompt)) {
+	if (empty($modulename) || (empty($pre_prompt) && empty($post_prompt))) {
 		if (isset($currentConfigurations[$modulename])) {
 			unset($currentConfigurations[$modulename]);
 		}
@@ -110,7 +119,7 @@ if ($action == 'update' && !GETPOST('cancel')) {
 	if (!$error) {
 		if ($result) {
 			header("Location: ".$_SERVER['PHP_SELF']);
-			setEventMessages($langs->trans("CongigurationUpdated"), null, 'mesgs');
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 			exit;
 		} else {
 			setEventMessages($langs->trans("ErrorUpdating"), null, 'errors');
@@ -141,15 +150,21 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 $head = aiAdminPrepareHead();
 print dol_get_fiche_head($head, 'custom', $langs->trans($title), -1, "fa-microchip");
 
+//$newbutton = '<a href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("New").'</a>';
+$newbutton = '';
+
+print load_fiche_titre($langs->trans("AIPromptForFeatures"), $newbutton, '');
+
 if ($action == 'edit') {
 	$out .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 	$out .= '<input type="hidden" name="action" value="update">';
+
 	$out .= '<table class="noborder centpercent">';
 	$out .= '<thead>';
 	$out .= '<tr class="liste_titre">';
-	$out .= '<td>'.$langs->trans('Settings').'</td>';
-	$out .= '<td>'.$langs->trans('Value').'</td>';
+	$out .= '<td>'.$langs->trans('Add').'</td>';
+	$out .= '<td></td>';
 	$out .= '</tr>';
 	$out .= '</thead>';
 	$out .= '<tbody>';
@@ -158,11 +173,12 @@ if ($action == 'edit') {
 	$out .= '<span id="module" class="spanforparamtooltip">'.$langs->trans("Feature").'</span>';
 	$out .= '</td>';
 	$out .= '<td>';
-
+	// Combo list of AI features
 	$out .= '<select name="module_name" id="module_select" class="flat minwidth500">';
-	$out .= '<option></option>';
-
-	$out .= '<option value="emailing">emailing</option>';
+	$out .= '<option>&nbsp;</option>';
+	foreach ($arrayofaifeatures as $key => $val) {
+		$out .= '<option value="'.$val.'">'.$langs->trans($arrayofaifeatures[$key]).'</option>';
+	}
 	/*
 	$sql = "SELECT name FROM llx_const WHERE name LIKE 'MAIN_MODULE_%' AND value = '1'";
 	$resql = $db->query($sql);
@@ -176,8 +192,9 @@ if ($action == 'edit') {
 		$out.= '<option disabled>Erreur :'. $db->lasterror().'</option>';
 	}
 	*/
-
 	$out .= '</select>';
+	$out .= ajax_combobox("module_select");
+
 	$out .= '</td>';
 	$out .= '</tr>';
 	$out .= '<tr class="oddeven">';
@@ -199,7 +216,46 @@ if ($action == 'edit') {
 	$out .= '</tbody>';
 	$out .= '</table>';
 
-	$out .= $form->buttonsSaveCancel("Save", 'Cancel');
+	$out .= $form->buttonsSaveCancel("Add", "");
+
+	$out .= '<br><br><br>';
+
+	print $out;
+}
+
+
+if ($action == 'edit' || $action == 'create') {
+	$out = '<table class="noborder centpercent">';
+	foreach ($currentConfigurations as $key => $config) {
+		if (!preg_match('/^[a-z]+$/i', $key)) {	// Ignore empty saved setup
+			continue;
+		}
+		$out .= '<thead>';
+		$out .= '<tr class="liste_titre">';
+		$out .= '<td>'.$langs->trans($arrayofaifeatures[$key]).'</td>';
+		$out .= '<td></td>';
+		$out .= '</tr>';
+		$out .= '</thead>';
+		$out .= '<tbody>';
+		$out .= '<tr class="oddeven">';
+		$out .= '<td class="col-setup-title">';
+		$out .= '<span id="prePrompt" class="spanforparamtooltip">pre-Prompt</span>';
+		$out .= '</td>';
+		$out .= '<td>';
+		$out .= '<input name="prePrompt" id="prePromptInput" class="flat minwidth500" value="'.$config['prePrompt'].'">';
+		$out .= '</td>';
+		$out .= '</tr>';
+		$out .= '<tr class="oddeven">';
+		$out .= '<td class="col-setup-title">';
+		$out .= '<span id="postPrompt" class="spanforparamtooltip">Post-prompt</span>';
+		$out .= '</td>';
+		$out .= '<td>';
+		$out .= '<input name="postPrompt" id="postPromptInput" class="flat minwidth500" value="'.$config['postPrompt'].'">';
+		$out .= '</td>';
+		$out .= '</tr>';
+	}
+	$out .= '</tbody>';
+	$out .= '</table>';
 
 	$out .= '</form>';
 
@@ -224,13 +280,6 @@ if ($action == 'edit') {
 	print $out;
 
 	print '<br>';
-} elseif (!empty($formSetup->items)) {
-	print $formSetup->generateOutput();
-	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
-	print '</div>';
-} else {
-	print '<br>'.$langs->trans("NothingToSetup");
 }
 
 if (empty($setupnotempty)) {

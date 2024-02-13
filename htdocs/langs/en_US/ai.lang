@@ -4,3 +4,5 @@ AI_KEY_API_CHATGPT= Key for ChatGPT IA api
 AiSetup=AI module setup
 AiCustomPrompt=AI customs prompt
 AI_CONFIGURATIONS_PROMPT=Custom prompt
+ImageGeneration=Image generation
+AIPromptForFeatures=AI custom prompts for features
