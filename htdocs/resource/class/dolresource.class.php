@@ -173,7 +173,7 @@ class Dolresource extends CommonObject
 	 * @param	int		$no_trigger	0=launch triggers after, 1=disable triggers
 	 * @return	int					if KO: <0 || if OK: Id of created object
 	 */
-	public function create(User $user, int $no_trigger = 0): int
+	public function create(User $user, int $no_trigger = 0)
 	{
 		$error = 0;
 
@@ -259,7 +259,7 @@ class Dolresource extends CommonObject
 	 * @param	string	$ref	Ref of object
 	 * @return	int				if KO: <0 || if OK: >0
 	 */
-	public function fetch(int $id, string $ref = ''): int
+	public function fetch(int $id, string $ref = '')
 	{
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -439,7 +439,7 @@ class Dolresource extends CommonObject
 	 * @param	int		$id		Id of link element_resources
 	 * @return	int				if KO: <0 || if OK: >0
 	 */
-	public function fetchElementResource(int $id): int
+	public function fetchElementResource(int $id)
 	{
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -492,7 +492,7 @@ class Dolresource extends CommonObject
 	 * @param	int		$notrigger		Disable all triggers
 	 * @return	int						if OK: >0 || if KO: <0
 	 */
-	public function delete(int $rowid, int $notrigger = 0): int
+	public function delete(int $rowid, int $notrigger = 0)
 	{
 		global $user, $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -571,7 +571,7 @@ class Dolresource extends CommonObject
 	 * @param	array		$filter			filter output
 	 * @return	int							if KO: <0 || if OK number of lines loaded
 	 */
-	public function fetchAll(string $sortorder, string $sortfield, int $limit, int $offset, array $filter = []): int
+	public function fetchAll(string $sortorder, string $sortfield, int $limit, int $offset, array $filter = [])
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
@@ -658,7 +658,7 @@ class Dolresource extends CommonObject
 	 * @param	int			$notrigger	0=launch triggers after, 1=disable triggers
 	 * @return	int						if KO: <0 || if OK: >0
 	 */
-	public function updateElementResource(User $user = null, int $notrigger = 0): int
+	public function updateElementResource(User $user = null, int $notrigger = 0)
 	{
 		$error = 0;
 
@@ -736,7 +736,7 @@ class Dolresource extends CommonObject
 	 * @param	string		$resource_type		Type
 	 * @return	array							Array of resources
 	 */
-	public function getElementResources(string $element, int $element_id, string $resource_type = ''): array
+	public function getElementResources(string $element, int $element_id, string $resource_type = '')
 	{
 		// Links between objects are stored in this table
 		$sql = 'SELECT rowid, resource_id, resource_type, busy, mandatory';
@@ -778,7 +778,7 @@ class Dolresource extends CommonObject
 	 * @param	int		$elementId			Element id
 	 * @return	int							Nb of resources loaded
 	 */
-	public function fetchElementResources(string $elementType, int $elementId): int
+	public function fetchElementResources(string $elementType, int $elementId)
 	{
 		$resources = $this->getElementResources($elementType, $elementId);
 		$i = 0;
@@ -794,7 +794,7 @@ class Dolresource extends CommonObject
 	 *
 	 * @return		int		if KO: <0 || if already loaded: 0 || Number of lines loaded
 	 */
-	public function loadCacheCodeTypeResource(): int
+	public function loadCacheCodeTypeResource()
 	{
 		global $langs;
 
@@ -864,7 +864,7 @@ class Dolresource extends CommonObject
 	 *  @param		int		$save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return		string								String with URL
 	 */
-	public function getNomUrl(int $withpicto = 0, string $option = '', string $get_params = '', int $notooltip = 0, string $morecss = '', int $save_lastsearch_value = -1): string
+	public function getNomUrl(int $withpicto = 0, string $option = '', string $get_params = '', int $notooltip = 0, string $morecss = '', int $save_lastsearch_value = -1)
 	{
 		global $langs, $hookmanager, $action;
 
@@ -941,7 +941,7 @@ class Dolresource extends CommonObject
 	 * @param		int		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 * @return		string				Label of status
 	 */
-	public function getLibStatut(int $mode = 0): string
+	public function getLibStatut(int $mode = 0)
 	{
 		return $this->getLibStatusLabel($this->status, $mode);
 	}
@@ -953,7 +953,7 @@ class Dolresource extends CommonObject
 	 * @param	int		$mode 		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto
 	 * @return	string				Label of status
 	 */
-	public static function getLibStatusLabel(int $status, int $mode = 0): string
+	public static function getLibStatusLabel(int $status, int $mode = 0)
 	{
 		return '';
 	}
@@ -963,7 +963,7 @@ class Dolresource extends CommonObject
 	 *
 	 * @return	int		if KO: <0 || if OK: >0
 	 */
-	public function loadStateBoard(): int
+	public function loadStateBoard()
 	{
 		$this->nb = array();
 
