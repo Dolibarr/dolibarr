@@ -354,12 +354,10 @@ class pdf_standard_actions
 	 *	@param	TCPDF		$pdf     		Object PDF
 	 *	@param  Translate	$outputlangs	Object lang for output
 	 *	@param	int			$pagenb			Page nb
-	 *  @return	integer
+	 *  @return	float|int                   Return topshift value
 	 */
 	private function _pagehead(&$pdf, $outputlangs, $pagenb)
 	{
-		global $conf, $langs;
-
 		// Do not add the BACKGROUND as this is a report
 		//pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
