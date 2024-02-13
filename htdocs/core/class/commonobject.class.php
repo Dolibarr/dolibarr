@@ -43,7 +43,7 @@
 /**
  *	Parent class of all other business classes (invoices, contracts, proposals, orders, ...)
  */
-abstract class CommonObject
+abstract class CommonObject implements ArrayAccess
 {
 	const TRIGGER_PREFIX = ''; // to be overridden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc.
 
@@ -10778,5 +10778,81 @@ abstract class CommonObject
 
 		$this->db->commit();
 		return true;
+	}
+
+
+	/* Implement ArrayAccess interface */
+	/* See: https://www.drupal.org/project/language_hierarchy/issues/3354024
+	 *      concerning 'ReturnTypeWillChange' annotation workaround.
+	 */
+
+	/**
+	 * Test if the property exists.
+	 *
+	 * @param mixed $offset property to test
+	 * @return bool
+	 */
+	#[\ReturnTypeWillChange]
+	public function offsetExists($offset)
+	{
+		return is_string($offset) && property_exists($this, $offset);
+	}
+
+	/**
+	 * Get the property value for the key
+	 *
+	 * @param mixed $offset property to get
+	 * @return mixed
+	 */
+	#[\ReturnTypeWillChange]
+	public function offsetGet($offset)
+	{
+		if ($this->offsetExists($offset)) {
+			return $this->{$offset};
+		} else {
+			throw new Exception("Property '{$offset}' does not exist.");
+		}
+	}
+
+	/**
+	 * Set the value of a property
+	 *
+	 * @param mixed $offset property to set
+	 * @param mixed $value value to set for property
+	 * @return void
+	 */
+	#[\ReturnTypeWillChange]
+	public function offsetSet($offset, $value)
+	{
+		if ($this->offsetExists($offset)) {
+			$this->{$offset} = $value;
+		} else {
+			throw new Exception("Property '{$offset}' does not exist.");
+		}
+	}
+
+	/**
+	 * @param string $offset property to unset
+	 * @return void
+	 */
+	#[\ReturnTypeWillChange]
+	public function offsetUnset($offset)
+	{
+		if ($this->offsetExists($offset)) {
+			unset($this->{$offset});
+		} else {
+			throw new Exception("Property '{$offset}' does not exist.");
+		}
+	}
+
+	/**
+	 * Provide list of available properties on this object
+	 *
+	 * (Not part of the ArrayAccess interface, provided for convenience.).
+	 * @return string[]
+	 */
+	public function getKeys()
+	{
+		return array_keys(get_object_vars($this));
 	}
 }
