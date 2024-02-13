@@ -41,9 +41,9 @@ class DataPolicyCron
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$db      Database handler
+	 *  @param		DoliDB		$db		Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 	}
@@ -53,7 +53,7 @@ class DataPolicyCron
 	 * Function exec
 	 * CAN BE A CRON TASK
 	 *
-	 * @return	int									0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 * @return		int					if OK: 0 (this function is used also by cron so only 0 is OK)
 	 */
 	public function cleanDataForDataPolicy()
 	{
