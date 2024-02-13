@@ -8076,7 +8076,7 @@ abstract class CommonObject
 				}
 			}
 		} elseif ($type == 'chkbxlst') {
-			$value_arr = explode(',', $value);
+			$value_arr = (isset($value) ? explode(',', $value) : array());
 
 			$param_list = array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
@@ -9047,6 +9047,7 @@ abstract class CommonObject
 	{
 		global $conf;
 
+		$file = ''; $originalfile = '';
 		$newmodulepart = $modulepart;
 		if ($modulepart == 'unknown' && !empty($this->module)) {
 			$newmodulepart = $this->module;

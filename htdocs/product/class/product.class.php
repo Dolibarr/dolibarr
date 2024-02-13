@@ -1076,19 +1076,19 @@ class Product extends CommonObject
 		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : null);
 		$this->note_public = (isset($this->note_public) ? trim($this->note_public) : null);
 		$this->net_measure = price2num($this->net_measure);
-		$this->net_measure_units = trim($this->net_measure_units);
+		$this->net_measure_units = (empty($this->net_measure_units) ? '' : trim($this->net_measure_units));
 		$this->weight = price2num($this->weight);
-		$this->weight_units = trim($this->weight_units);
+		$this->weight_units = (empty($this->weight_units) ? '' : trim($this->weight_units));
 		$this->length = price2num($this->length);
-		$this->length_units = trim($this->length_units);
+		$this->length_units = (empty($this->length_units) ? '' : trim($this->length_units));
 		$this->width = price2num($this->width);
-		$this->width_units = trim($this->width_units);
+		$this->width_units = (empty($this->width_units) ? '' : trim($this->width_units));
 		$this->height = price2num($this->height);
-		$this->height_units = trim($this->height_units);
+		$this->height_units = (empty($this->height_units) ? '' : trim($this->height_units));
 		$this->surface = price2num($this->surface);
-		$this->surface_units = trim($this->surface_units);
+		$this->surface_units = (empty($this->surface_units) ? '' : trim($this->surface_units));
 		$this->volume = price2num($this->volume);
-		$this->volume_units = trim($this->volume_units);
+		$this->volume_units = (empty($this->volume_units) ? '' : trim($this->volume_units));
 
 		// set unit not defined
 		if (is_numeric($this->length_units)) {
@@ -1142,7 +1142,7 @@ class Product extends CommonObject
 		}
 
 		// Barcode value
-		$this->barcode = trim($this->barcode);
+		$this->barcode = (empty($this->barcode) ? '' : trim($this->barcode));
 
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
 		$this->accountancy_code_buy_intra = trim($this->accountancy_code_buy_intra);
