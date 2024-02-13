@@ -1919,8 +1919,7 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount, 0, $outputlangs), 0, 'R', 0);
 			}
 
-			if ($object->close_code == Facture::CLOSECODE_DISCOUNTVAT)
-			{
+			if ($object->close_code == Facture::CLOSECODE_DISCOUNTVAT) {
 				$index++;
 				$pdf->SetFillColor(255, 255, 255);
 
