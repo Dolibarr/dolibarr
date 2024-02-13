@@ -66,6 +66,10 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public $fk_typepayment;
 
+	/**
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
+	 */
 	public $num_payment;
 
 	/**
