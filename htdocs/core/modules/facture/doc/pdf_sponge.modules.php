@@ -2424,6 +2424,7 @@ class pdf_sponge extends ModelePDFFactures
 		$pdf->SetTextColor(0, 0, 0);
 
 		$pagehead = array('top_shift' => $top_shift, 'shipp_shift' => $shipp_shift);
+
 		return $pagehead;
 	}
 

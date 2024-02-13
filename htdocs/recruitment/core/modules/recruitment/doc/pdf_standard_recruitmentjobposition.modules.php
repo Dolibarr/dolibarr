@@ -810,11 +810,11 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
-	 *  @return	float|int
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "propal", "companies"));
@@ -1043,6 +1043,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
 		return $top_shift;
 	}
 

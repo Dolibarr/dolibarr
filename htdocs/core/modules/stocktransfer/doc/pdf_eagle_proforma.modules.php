@@ -1159,12 +1159,12 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param	string		$titlekey		Translation key to show as title of document
-	 *  @return	int                         Return topshift value
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "StockTransferSheetProforma")
 	{
 		// phpcs:enable
-		global $conf, $langs, $hookmanager;
+		global $conf, $langs;
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "propal", "orders", "companies"));
@@ -1438,6 +1438,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
 		return $top_shift;
 	}
 

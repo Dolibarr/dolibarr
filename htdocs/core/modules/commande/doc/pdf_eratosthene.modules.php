@@ -1674,6 +1674,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
 		return $top_shift;
 	}
 

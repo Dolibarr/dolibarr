@@ -869,12 +869,12 @@ class pdf_standard_asset extends ModelePDFAsset
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	Tcpdf			$pdf     		Object PDF
+	 *  @param	Tcpdf		$pdf     		Object PDF
 	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
-	 *  @return	float
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
@@ -1113,6 +1113,7 @@ class pdf_standard_asset extends ModelePDFAsset
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
 		return $top_shift;
 	}
 
