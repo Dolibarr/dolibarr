@@ -866,7 +866,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * Gives the module position
 	 *
-	 * @return int  	Module position (an external module should never return a value lower than 100000. 1-100000 are reserved for core)
+	 * @return string	Module position (an external module should never return a value lower than 100000. 1-100000 are reserved for core)
 	 */
 	public function getModulePosition()
 	{
@@ -876,7 +876,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			if ($this->module_position >= 100000) {
 				return $this->module_position;
 			} else {
-				return $this->module_position + 100000;
+				$position = intval($this->module_position) + 100000;
+				return strval($position);
 			}
 		}
 	}
