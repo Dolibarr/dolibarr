@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2008 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016	   Francis Appels       <francis.appels@yahoo.com>
- * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,6 +117,12 @@ class Entrepot extends CommonObject
 	 * @var array List of short language codes for status
 	 */
 	public $labelStatus = array();
+
+	/**
+	 * Update timestamp record (tms)
+	 * @var integer
+	 */
+	public $tms;
 
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
