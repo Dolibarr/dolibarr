@@ -39,7 +39,7 @@ class mod_lot_free extends ModeleNumRefBatch
 	 */
 
 
-	// variables inherited from ModelProductCode class
+	// variables inherited from ModeleNumRefBatch class
 	public $name = 'lot_free';
 	public $version = 'dolibarr';
 	public $code_null;
