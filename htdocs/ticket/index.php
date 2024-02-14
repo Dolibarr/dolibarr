@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) - 2013-2016    Jean-François FERRY     <hello@librethic.io>
- * Copyright (C) - 2019         Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2021		Frédéric France				<frederic.france@netlogic.fr>
+/* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
+ * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2021-2024	Frédéric France				<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -376,7 +376,6 @@ if ($user->hasRight('ticket', 'read')) {
 				$object->id = $objp->rowid;
 				$object->ref = $objp->ref;
 				$object->track_id = $objp->track_id;
-				$object->fk_statut = $objp->status;
 				$object->status = $objp->status;
 				$object->progress = $objp->progress;
 				$object->subject = $objp->subject;
