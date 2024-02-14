@@ -363,7 +363,6 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  */
 function restrictedArea(User $user, $features, $object = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0, $mode = 0)
 {
-	global $conf;
 	global $hookmanager;
 
 	// Define $objectid
@@ -1199,7 +1198,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 
 	$langs->loadLangs(array("main", "errors"));
 
-	if ($printheader) {
+	if ($printheader && !defined('NOHEADERNOFOOTER')) {
 		if (function_exists("llxHeader")) {
 			llxHeader('');
 		} elseif (function_exists("llxHeaderVierge")) {
@@ -1237,7 +1236,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 			}
 		}
 	}
-	if ($printfooter && function_exists("llxFooter")) {
+	if ($printfooter && !defined('NOHEADERNOFOOTER') && function_exists("llxFooter")) {
 		print '</div>';
 		llxFooter();
 	}

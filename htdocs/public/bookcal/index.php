@@ -298,7 +298,7 @@ if ($action == 'create') {
 //print '<div class="">';
 
 print '<div class="bookcalpublicarea centpercent center" style="min-width:30%;width:fit-content;height:70%;top:60%;left: 50%;">';
-print '<div class="bookcalform boxtable" style="border:thin solid gray;padding:5px;min-height:50%">';
+print '<div class="bookcalform" style="min-height:50%">';
 if ($action == 'afteradd') {
 	print '<h2>';
 	print $langs->trans("BookingSuccessfullyBooked");
@@ -307,12 +307,10 @@ if ($action == 'afteradd') {
 } else {
 	$param = '';
 
-	print '<table>';
+	print '<table class="centpercent">';
 	print '<tr>';
 	print '<td>';
-	if ($action == 'create') {
-		print '<span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory", '*').'</span>';
-	} else {
+	if ($action != 'create') {
 		print '<form name="formsearch" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 
@@ -331,18 +329,15 @@ if ($action == 'afteradd') {
 	}
 	print '</td>';
 	print '<td>';
-	print '<div class="center hidden bookingtab" style="height:50%">';
-	print '<span id="bookingtabspandate"></span>';
+	print '<div class="bookingtab hidden" style="height:50%">';
+	print '<div id="bookingtabspandate"></div>';
 	print '</div>';
 	print '</td>';
 	print '</tr>';
 
 	print '<tr>';
-
-
-	if ($action == 'create') {
+	if ($action == "create") {
 		print '<td>';
-		print '<br>';
 		if (empty($datetimebooking)) {
 			$timebookingarray = explode(" - ", $timebooking);
 			$timestartarray = explode(":", $timebookingarray[0]);
@@ -350,12 +345,11 @@ if ($action == 'afteradd') {
 			$datetimebooking = dol_time_plus_duree($datetimechosen, intval($timestartarray[0]), "h");
 			$datetimebooking = dol_time_plus_duree($datetimebooking, intval($timestartarray[1]), "i");
 		}
-		print '<span>'.img_picto("", "calendar")."&nbsp;".dol_print_date($datetimebooking, 'dayhourtext').'</span>';
+		print '<span>'.img_picto("", "calendar")." ".dol_print_date($datetimebooking, 'dayhourtext').'</span>';
+		print '<div class="center"><a href="'.$_SERVER["PHP_SELF"].'?id=1&year=2024&month=2" class="small">('.$langs->trans("SelectANewDate").')</a></div>';
 		print '</td>';
-	}
 
-	print '<td>';
-	if ($action == "create") {
+		print '<td>';
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -366,27 +360,30 @@ if ($action == 'afteradd') {
 		print '<input type="hidden" name="durationbooking" value="'.$durationbooking.'">';
 
 		// Lastname
-		print '<tr><td>'.$langs->trans("Lastname").' <span class="star">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
+		print '<tr><td><input autofocus type="text" name="lastname" class="minwidth150" placeholder="'.dol_escape_htmltag($langs->trans("Lastname").'*').'" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
 		// Firstname
-		print '<tr><td>'.$langs->trans("Firstname").' <span class="star">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
+		print '<tr><td><input type="text" name="firstname" class="minwidth150" placeholder="'.dol_escape_htmltag($langs->trans("Firstname").'*').'" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
 		// EMail
-		print '<tr><td>'.$langs->trans("Email").' <span class="star">*</span></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+		print '<tr><td><input type="email" name="email" maxlength="255" class="minwidth150" placeholder="'.dol_escape_htmltag($langs->trans("Email").'*').'" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 
 		// Comments
 		print '<tr>';
-		print '<td class="tdtop">'.$langs->trans("Message").'</td>';
-		print '<td class="tdtop"><textarea name="description" id="description" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_2.'">'.dol_escape_htmltag(GETPOST('description', 'restricthtml'), 0, 1).'</textarea></td>';
+		print '<td class="tdtop">';
+		print $langs->trans("Message");
+		print '<textarea name="description" id="description" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_4.'">'.dol_escape_htmltag(GETPOST('description', 'restricthtml'), 0, 1).'</textarea></td>';
 		print '</tr>'."\n";
 		print '</table>'."\n";
 		print '<div class="center">';
 		print '<input type="submit" value="'.$langs->trans("Submit").'" id="submitsave" class="button">';
 		print '</div>';
 		print '</form>';
+		print '</td>';
 	} else {
+		print '<td>';
 		print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month">';
 		print ' <tr class="">';
 		// Column title of weeks numbers
-		echo '  <td class="center">#</td>';
+		print '  <td class="center hideonsmartphone">#</td>';
 		$i = 0;
 		while ($i < 7) {
 			$numdayinweek = (($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7);
@@ -396,13 +393,16 @@ if ($action == 'afteradd') {
 				print $langs->trans($labelshort[$numdayinweek]);
 				print '  </td>'."\n";
 			} else {
-				print '  <td class="center minwidth75 bold uppercase tdfordaytitle'.($i == 0 ? ' borderleft' : '').'">';
-				print $langs->trans("Day".$numdayinweek);
+				print '  <td class="center minwidth75 bold uppercase small tdoverflowmax50 tdfordaytitle'.($i == 0 ? ' borderleft' : '').'">';
+				//$labelshort = array(0=>'SundayMin', 1=>'MondayMin', 2=>'TuesdayMin', 3=>'WednesdayMin', 4=>'ThursdayMin', 5=>'FridayMin', 6=>'SaturdayMin');
+				$labelshort = array(0=>'Sunday', 1=>'Monday', 2=>'Tuesday', 3=>'Wednesday', 4=>'Thursday', 5=>'Friday', 6=>'Saturday');
+				print $langs->trans($labelshort[$numdayinweek]);
 				print '  </td>'."\n";
 			}
 			$i++;
 		}
-		echo ' </tr>'."\n";
+		print ' </tr>'."\n";
+
 		$todayarray = dol_getdate($now, 'fast');
 		$todaytms = dol_mktime(0, 0, 0, $todayarray['mon'], $todayarray['mday'], $todayarray['year']);
 
@@ -434,7 +434,7 @@ if ($action == 'afteradd') {
 			// Get week number for the targeted date '$currdate0'
 			$numweek0 = date("W", strtotime(date($currdate0)));
 			// Show the week number, and define column width
-			echo ' <td class="center weeknumber opacitymedium" style="min-width: 40px">'.$numweek0.'</td>';
+			echo ' <td class="center weeknumber opacitymedium hideonsmartphone" style="min-width: 40px">'.$numweek0.'</td>';
 
 			for ($iter_day = 0; $iter_day < 7; $iter_day++) {
 				if ($tmpday <= 0) {
@@ -490,8 +490,8 @@ if ($action == 'afteradd') {
 		print '</td>';
 
 		print '<td>'; // Column visible after selection of a day
-		print '<div class="center hidden bookingtab" style="height:50%">';
-		print '<div style="margin-top:8px;max-height:330px" class="div-table-responsive-no-min">';
+		print '<div class="center bookingtab" style="height:50%">';
+		print '<div style="height:100%">';
 		print '<form id="formbooking" name="formbooking" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -500,14 +500,15 @@ if ($action == 'afteradd') {
 		print '<input type="hidden" id="datetimechosen" name="datetimechosen" value="">';
 		print '<input type="hidden" id="durationbooking" name="durationbooking" value="">';
 
-		print '<div id="buttonlistbooking"></div>';
+		print '<div id="bookinghoursection">';
+		print '<br><br><br><br><br><br><div class="opacitymedium center">'.$langs->trans("SelectADay").'</div>';
+		print '</div>';
 		print '</form>';
 		print '</div>';
 		print '</div>';
 
 		print '</td>';
 	}
-	print '</td>';
 	print '</tr>';
 	print '</table>';
 	print '</div>';
@@ -518,7 +519,8 @@ if ($action == 'afteradd') {
 	function generateBookingButtons(timearray, datestring){
 		console.log("We generate all booking buttons of "+datestring);
 		str = "";
-		for(index in timearray){
+
+		for (index in timearray){
 			let hour = new Date("2000-01-01T" + index + ":00");
 			duration = timearray[index];
 			isalreadybooked = false;
@@ -532,9 +534,10 @@ if ($action == 'afteradd') {
 			let mins = hour.getMinutes().toString().padStart(2, "0"); // Formatter pour obtenir deux chiffres
 
 			timerange = index + " - " + `${hours}:${mins}`;
-			str += "<input class=\'button btnsubmitbooking "+(isalreadybooked == true ? "btnbookcalbooked" : "")+"\' type=\'submit\' name=\'timebooking\' value=\'"+timerange+"\' data-duration=\'"+duration+"\'><br>";
+			str += \'<input class="button btnsubmitbooking \'+(isalreadybooked == true ? "btnbookcalbooked" : "")+\'" type="submit" name="timebooking" value="\'+timerange+\'" data-duration="\'+duration+\'"><br>\';
 		}
-		$("#buttonlistbooking").html(str);
+
+		$("#bookinghoursection").html(str);
 		$(".btnsubmitbooking").on("click", function(){
 			duration = $(this).data("duration");
 			$("#durationbooking").val(duration);
