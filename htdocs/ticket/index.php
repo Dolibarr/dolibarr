@@ -220,8 +220,10 @@ if ($result) {
 	$colorseries[Ticket::STATUS_ASSIGNED] = $badgeStatus3;
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_IN_PROGRESS]), 'data' => round($tick['inprogress']));
 	$colorseries[Ticket::STATUS_IN_PROGRESS] = $badgeStatus4;
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_WAITING]), 'data' => round($tick['waiting']));
-	$colorseries[Ticket::STATUS_WAITING] = '-'.$badgeStatus4;
+	if (getDolGlobalString('TICKET_INCLUDE_SUSPENDED_STATUS')) {
+		$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_WAITING]), 'data' => round($tick['waiting']));
+		$colorseries[Ticket::STATUS_WAITING] = '-'.$badgeStatus4;
+	}
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_NEED_MORE_INFO]), 'data' => round($tick['needmoreinfo']));
 	$colorseries[Ticket::STATUS_NEED_MORE_INFO] = '-'.$badgeStatus3;
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_CANCELED]), 'data' => round($tick['canceled']));
