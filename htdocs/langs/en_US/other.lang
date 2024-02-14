@@ -336,3 +336,5 @@ FTPFailedToUploadFile=Failed to upload the file <b>%s</b>.
 AddFolder=Create folder
 FileWasCreateFolder=Folder <b>%s</b> has been created
 FTPFailedToCreateFolder=Failed to create folder <b>%s</b>.
+SelectADay=Select a day in calendar
+SelectANewDate=Select a new date
