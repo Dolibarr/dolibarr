@@ -12,12 +12,16 @@ define('PHAN_DIR', __DIR__);
 return [
 	//	'processes' => 6,
 	'backward_compatibility_checks' => false,
-	'simplify_ast'=>true,
+	'simplify_ast' => true,
 	'analyzed_file_extensions' => ['php','inc'],
 	'globals_type_map' => [
-		'db' => '\DoliDB',
 		'conf' => '\Conf',
+		'db' => '\DoliDB',
+		'extrafields' => '\ExtraFields',
+		'hookmanager' => '\HookManager',
 		'langs' => '\Translate',
+		'mysoc' => '\Societe',
+		'nblines' => '\int',
 		'user' => '\User',
 	],
 
