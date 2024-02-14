@@ -46,7 +46,6 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	// variables not inherited
 	public $prefixcustomer = 'CU';
 	public $prefixsupplier = 'SU';
-	
 
 
 	/**
