@@ -252,13 +252,11 @@ if (getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_COMPILED_PHYSICAL_STOCK')) 
 } else {
 	$sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";
 	$sql .= " p.fk_product_type, p.tms, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock";
-}
-// Add fields from hooks
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldSelect', $parameters); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
-$sql_having = '';
-if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_COMPILED_PHYSICAL_STOCK')) {
+	// Add fields from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldSelect', $parameters); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
+	$sql_having = '';
 	if ($toolowstock) {
 		$sql_having .= " HAVING SUM(" . $db->ifsql('s.reel IS NULL', '0', 's.reel') . ") < p.seuil_stock_alerte";
 	}
