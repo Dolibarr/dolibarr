@@ -56,7 +56,6 @@ class PaymentExpenseReport extends CommonObject
 	public $fk_expensereport;
 
 	public $datec = '';
-	public $tms = '';
 	public $datep = '';
 	public $amount; // Total amount of payment
 	public $amounts = array(); // Array of amounts

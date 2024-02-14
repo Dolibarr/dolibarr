@@ -103,8 +103,6 @@ class EmailCollectorFilter extends CommonObject
 	 */
 	public $date_creation;
 
-
-	public $tms;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
