@@ -60,29 +60,19 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
 abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 {
 
+	// variables inherited from CommonNumRefGenerator class
+	public $code_null;
+	public $code_modifiable;
+	public $code_modifiable_invalide;
+	public $code_auto;
+
+
 	/**
 	 * Constructor
 	 *
 	 *  @param DoliDB       $db     Database object
 	 */
 	abstract public function __construct($db);
-
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto;
-
-	/**
-	 * @var string Editable code
-	 */
-	public $code_modifiable;
-
-	public $code_modifiable_invalide; // Modified code if it is invalid
-
-	/**
-	 * @var int Code facultatif
-	 */
-	public $code_null;
 
 
 	/**
@@ -97,6 +87,7 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 		global $langs;
 		return $langs->trans("Function_getNextValue_InModuleNotWorking");
 	}
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -126,6 +117,7 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 		}
 		return $list;
 	}
+
 
 	/**
 	 *  Return description of module parameters
