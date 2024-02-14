@@ -44,7 +44,7 @@ class Localtax extends CommonObject
 	public $picto = 'payment';
 
 	public $ltt;
-	public $tms;
+
 	public $datep;
 	public $datev;
 	public $amount;

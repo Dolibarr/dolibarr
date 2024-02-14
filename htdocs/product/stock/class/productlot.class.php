@@ -145,7 +145,6 @@ class Productlot extends CommonObject
 	public $qc_frequency = '';
 	public $lifetime = '';
 	public $datec = '';
-	public $tms = '';
 
 	/**
 	 * @var int user ID

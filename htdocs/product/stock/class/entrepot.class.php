@@ -118,11 +118,6 @@ class Entrepot extends CommonObject
 	 */
 	public $labelStatus = array();
 
-	/**
-	 * Update timestamp record (tms)
-	 * @var integer
-	 */
-	public $tms;
 
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.

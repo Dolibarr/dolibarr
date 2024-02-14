@@ -142,11 +142,6 @@ class Workstation extends CommonObject
 	public $date_creation;
 
 	/**
-	 * @var int timestamp
-	 */
-	public $tms;
-
-	/**
 	 * @var int User ID
 	 */
 	public $fk_user_creat;

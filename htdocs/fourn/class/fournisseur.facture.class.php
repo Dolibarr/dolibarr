@@ -169,13 +169,6 @@ class FactureFournisseur extends CommonInvoice
 	public $datec;
 
 	/**
-	 * Date modification record (tms)
-	 *
-	 * @var integer
-	 */
-	public $tms;
-
-	/**
 	 * Max payment date (date_echeance)
 	 *
 	 * @var integer

@@ -128,11 +128,6 @@ class CashControl extends CommonObject
 	 * @var integer|string $date_modification
 	 */
 	public $date_modification;
-	/**
-	 * @var integer|string $date_modification
-	 * @deprecated
-	 */
-	public $tms;
 
 	/**
 	 * @var integer|string $date_valid
