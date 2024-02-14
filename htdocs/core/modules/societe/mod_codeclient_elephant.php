@@ -45,9 +45,9 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	public $code_modifiable_null;
 	public $code_auto;
 	public $prefixIsRequired;
-	
-	// variables not inherited 
-	
+
+	// variables not inherited
+
 	/**
 	 * @var string search string
 	 */
