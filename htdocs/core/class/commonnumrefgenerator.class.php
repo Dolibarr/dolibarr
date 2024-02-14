@@ -87,12 +87,12 @@ abstract class CommonNumRefGenerator
 	 *
 	 *  @param	Translate	$langs		Object langs
 	 *  @return string      			Model name
-  	 *  @deprecated
-  	 *  @see getName()
+	 *  @deprecated
+	 *  @see getName()
 	 */
 	public function getNom($langs)
 	{
-		return getName($langs);
+		return $this->getName($langs);
 	}
 
 	/** Return model name
