@@ -9515,7 +9515,7 @@ abstract class CommonObject
 					$queryarray[$field] = ((int) $conf->entity);
 				} else {
 					// $this->{$field} may be null, '', 0, '0', 123, '123'
-					if ((isset($this->{$field}) && $this->{$field} != '') || !empty($info['notnull'])) {
+					if ((isset($this->{$field}) && ((string) $this->{$field}) != '') || !empty($info['notnull'])) {
 						if (!isset($this->{$field})) {
 							$queryarray[$field] = 0;
 						} elseif ($this->isInt($info)) {

@@ -24,12 +24,10 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-
-global $langs, $user, $conf;
-
-// Libraries
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once '../lib/ai.lib.php';
+
+$langs->loadLangs(array("admin"));
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
