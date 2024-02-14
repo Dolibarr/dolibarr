@@ -8633,6 +8633,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				if (is_object($object) && $object->element == 'facture') {
 					$substitutionarray['__URL_INVOICE__'] = DOL_MAIN_URL_ROOT."/compta/facture/card.php?id=".$object->id;
+					$substitutionarray['__FACDATE__'] = isset($object->date) ? dol_print_date($object->date, 'daytext', 0, $outputlangs) : '';
+					$substitutionarray['__FACDATELIMREG__'] = isset($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'daytext', 0, $outputlangs) : '';
+					$substitutionarray['__SIT_NUM__'] = isset($object->situation_counter) ? $object->situation_counter : '';
 				}
 				if (is_object($object) && $object->element == 'contrat') {
 					$substitutionarray['__URL_CONTRACT__'] = DOL_MAIN_URL_ROOT."/contrat/card.php?id=".$object->id;
