@@ -555,7 +555,7 @@ if (!empty($arrayfields['wug.fk_usergroup']['checked'])) {
 // resources
 if (!empty($arrayfields['wr.fk_resource']['checked'])) {
 	print '<td class="liste_titre">';
-	print $formresource->select_resource_list($resources, 'resources', '', '', 0, '', '', $conf->entity, true, 0, '', true);
+	print $formresource->select_resource_list($resources, 'resources', [], '', 0, '', '', $conf->entity, true, 0, '', true);
 	print '</td>';
 }
 
