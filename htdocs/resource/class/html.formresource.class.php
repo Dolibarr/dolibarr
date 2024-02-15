@@ -75,7 +75,7 @@ class FormResource
 	 *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 *  @param	array	$filterkey		Filter on key value
 	 *  @param	int		$outputmode		0=HTML select string, 1=Array, 2=without form tag
-	 *  @param	int		$limit			Limit number of answers
+	 *  @param	int		$limit			Limit number of answers, 0 for no limit
 	 *  @param	string	$morecss		More css
 	 * 	@param	bool	$multiple		add [] in the name of element and add 'multiple' attribute
 	 * 	@return	string|array			HTML string with
