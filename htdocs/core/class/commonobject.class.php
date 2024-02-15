@@ -9207,7 +9207,11 @@ abstract class CommonObject
 								$alt = $overwritetitle;
 							}
 						}
-
+						if (empty($cache) && !empty($val['label'])) {
+							// label is md5 of file
+							// use it in url to say we want to cache this version of the file
+							$cache = $val['label'];
+						}
 						if ($usesharelink) {
 							if ($val['share']) {
 								if (empty($maxHeight) || ($photo_vignette && $imgarray['height'] > $maxHeight)) {
