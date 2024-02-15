@@ -33,7 +33,7 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 
 	$mode = GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'graph';
-	$objecttype = GETPOST('objecttype', 'aZ09');
+	$objecttype = GETPOST('objecttype', 'aZ09arobase');
 	$tabfamily  = GETPOST('tabfamily', 'aZ09');
 
 	if (empty($objecttype)) {
@@ -137,10 +137,15 @@ if ($objecttype) {
 		} else {
 			dol_include_once("/".$objecttype."/class/".$objecttype.".class.php");
 		}
+
 		$ObjectClassName = $arrayoftype[$objecttype]['ObjectClassName'];
-		$object = new $ObjectClassName($db);
+		if (class_exists($ObjectClassName)) {
+			$object = new $ObjectClassName($db);
+		} else {
+			print 'Failed to load class for type '.$objecttype.'. Class file found but class object '.$ObjectClassName.' not found.';
+		}
 	} catch (Exception $e) {
-		print 'Failed to load class for type '.$objecttype;
+		print 'Failed to load class for type '.$objecttype.'. Class path not found.';
 	}
 }
 
@@ -148,7 +153,7 @@ if ($objecttype) {
 $socid = 0;
 if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
-	accessforbidden();
+	accessforbidden('Access forbidden to external users');
 }
 
 // Fetch optionals attributes and labels
@@ -186,7 +191,7 @@ if (!empty($object->element_for_permission)) {
 	$features = $object->element_for_permission;
 }
 
-restrictedArea($user, $features, 0, '');
+restrictedArea($user, $features.(empty($object->module) ? '' : '@'.$object->module), 0, '');
 
 $error = 0;
 
