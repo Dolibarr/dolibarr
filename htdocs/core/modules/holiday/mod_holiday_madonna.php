@@ -19,45 +19,30 @@
 
 /**
  *  \file       htdocs/core/modules/holiday/mod_holiday_madonna.php
- *  \ingroup    contract
- *  \brief      File of class to manage contract numbering rules Serpis
+ *  \ingroup    holiday
+ *  \brief      File of class to manage holiday numbering rules Madonna
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/holiday/modules_holiday.php';
 
 /**
- * 	Class to manage contract numbering rules madonna
+ * 	Class to manage holiday numbering rules Madonna
  */
 class mod_holiday_madonna extends ModelNumRefHolidays
 {
+
+	// variables inherited from ModelNumRefHolidays class
+	public $name = 'Madonna';
+	public $version = 'dolibarr';
+	public $error = '';
+	public $code_auto = 1;
+
+
+	// variables not inherited
+	
 	/**
-	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
-	public $version = 'dolibarr';
-
 	public $prefix = 'HL';
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Madonna';
-
-	/**
-	 * @var string model name
-	 */
-	public $name = 'Madonna';
-
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto = 1;
 
 
 	/**
