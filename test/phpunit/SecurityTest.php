@@ -877,7 +877,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$url = 'ftp://mydomain.com';
 		$tmp = getURLContent($url);
 		print __METHOD__." url=".$url."\n";
-		$this->assertGreaterThan(0, strpos($tmp['curl_error_msg'], 'not supported'));	// Test error if return does not contains 'not supported'
+		$this->assertRegExp("/not supported/", $tmp['curl_error_msg'], "Should disable ftp connection");	// Test error if return does not contains 'not supported'
 
 		$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
 		$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow
