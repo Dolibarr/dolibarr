@@ -48,6 +48,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $numero;
 
 	/**
+	 * @var int id module on dolistore platform
+	 */
+	public $dolistore_id;
+	
+	/**
 	 * @var   string Publisher name
 	 * @since 4.0.0
 	 */
