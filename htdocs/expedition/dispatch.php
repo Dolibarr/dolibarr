@@ -911,7 +911,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 										print $langs->trans("ErrorNoWarehouseDefined");
 									}
 								} else {
-									print '<input id="entrepot'.$suffix.'" type="hidden" value="'.$objd->fk_entrepot.'">';
+									print '<input id="entrepot'.$suffix.'" name="entrepot'.$suffix.'" type="hidden" value="'.$objd->fk_entrepot.'">';
 									print img_warning().' '.$langs->trans('StockDisabled') ;
 								}
 								print "</td>\n";
