@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +49,23 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
  */
 class AdminLibTest extends CommonClassTest
 {
-	protected $backupGlobalsBlacklist = array('conf', 'user', 'langs', 'db');
+	/**
+	 * Constructor
+	 *
+	 * @param 	string			$name		Name
+	 * @return	AdminLibTest
+	 */
+	public function __construct($name = '')
+	{
+		$excludesList = array('conf', 'user', 'langs', 'db');
+		if (version_compare(\PHPUnit\Runner\Version::id(), '9.0.0', '>=')) {
+			$this->backupGlobalsExcludesList = $excludesList;
+		} else {
+			// Deprecated in PHPUNIT9, Removed in PHPUNIT10
+			$this->backupGlobalsBlacklist = $excludesList;
+		}
+		parent::__construct($name);
+	}
 
 
 	/**
