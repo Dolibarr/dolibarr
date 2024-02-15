@@ -299,7 +299,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('description', ($description ? $description : $object->description), '', '200', 'dolibarr_notes', false);
+		$doleditor = new DolEditor('description', ($description ?: $object->description), '', '200', 'dolibarr_notes', false);
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -307,14 +307,14 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
 		print '<td>';
 		print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
-		print '<input type="text" name="phone" id="phone" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone).'"></td>';
+		print '<input type="tel" name="phone" id="phone" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone).'"></td>';
 		print '</tr>';
 
 		// Email
 		print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '').'</td>';
 		print '<td>';
 		print img_picto('', 'object_email', 'class="pictofixedwidth"');
-		print '<input type="text" name="email" id="email" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email).'"></td>';
+		print '<input type="email" name="email" id="email" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email).'"></td>';
 		print '</tr>';
 
 		// Max users
@@ -383,22 +383,6 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '</td>';
 		print '</tr>';
 
-		// Phone
-		print '<tr>';
-		print '<td>'.$langs->trans("Phone").'</td>';
-		print '<td>';
-		print $object->phone;
-		print '</td>';
-		print '</tr>';
-
-		// Email
-		print '<tr>';
-		print '<td>'.$langs->trans("Email").'</td>';
-		print '<td>';
-		print $object->email;
-		print '</td>';
-		print '</tr>';
-
 		// Max users
 		print '<tr>';
 		print '<td>'.$langs->trans("MaxUsers").'</td>';
@@ -406,14 +390,6 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print $object->max_users;
 		print '</td>';
 		print '</tr>';
-
-		// Origin country code
-		print '<tr>';
-		print '<td>'.$langs->trans("CountryOrigin").'</td>';
-		print '<td>';
-		print getCountry($object->country_id, 0, $db);
-		print '</td>';
-
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
