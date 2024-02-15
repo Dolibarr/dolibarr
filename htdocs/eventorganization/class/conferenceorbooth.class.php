@@ -138,7 +138,7 @@ class ConferenceOrBooth extends ActionComm
 	public $note;
 	public $fk_action;
 	public $datec;
-	public $tms;
+
 	public $fk_user_author;
 	public $fk_user_mod;
 	public $import_key;

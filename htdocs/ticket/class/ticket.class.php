@@ -198,11 +198,6 @@ class Ticket extends CommonObject
 	public $datec;
 
 	/**
-	 * @var int Last modification date
-	 */
-	public $tms;
-
-	/**
 	 * @var int Read date
 	 */
 	public $date_read;

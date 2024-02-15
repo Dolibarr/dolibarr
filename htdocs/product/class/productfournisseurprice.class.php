@@ -132,7 +132,6 @@ class ProductFournisseurPrice extends CommonObject
 	public $rowid;
 	public $entity;
 	public $datec;
-	public $tms;
 	public $fk_product;
 	public $fk_soc;
 	public $ref_fourn;

@@ -116,7 +116,6 @@ class Dolresource extends CommonObject
 	 * @var int ID
 	 */
 	public $fk_user_create;
-	public $tms;
 
 	/**
 	 * Used by fetchElementResource() to return an object

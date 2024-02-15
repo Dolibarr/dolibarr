@@ -613,6 +613,12 @@ abstract class CommonObject
 	public $date_modification;
 
 	/**
+	 * Update timestamp record (tms)
+	 * @var integer
+	 */
+	public $tms;
+
+	/**
 	 * @var integer|string|null
 	 * @deprecated 					Use $date_modification
 	 */

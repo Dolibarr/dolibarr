@@ -161,7 +161,6 @@ class Inventory extends CommonObject
 	 * @var integer|string date_validation
 	 */
 	public $date_validation;
-	public $tms;
 
 	/**
 	 * @var int ID
@@ -849,7 +848,6 @@ class InventoryLine extends CommonObjectLine
 	public $fk_product;
 	public $batch;
 	public $datec;
-	public $tms;
 	public $qty_stock;
 	public $qty_view;
 	public $qty_regulated;
