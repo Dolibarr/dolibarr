@@ -572,7 +572,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 
 		//$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref AS sref, SUM(l.qty) as qty,";
 		$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, '' AS sref, l.qty as qty,";
-		$sql .= " p.ref, p.label, p.tobatch, p.fk_default_warehouse, p.barcode";
+		$sql .= " p.ref, p.label, p.tobatch, p.fk_default_warehouse, p.barcode, p.stockable_product";
 		// Enable hooks to alter the SQL query (SELECT)
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks(
