@@ -2442,3 +2442,4 @@ RecommendedForProduction=Recommended for Production
 RecommendedForDebug=Recommended for Debug
 ExportUseForce=Use the parameter -f
 ExportUseForceHelp=Force to continue the export even when an error is found (Backup may not be reliable)
+EnterAnIP=Enter an IP address
