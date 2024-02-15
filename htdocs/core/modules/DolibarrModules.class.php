@@ -48,9 +48,14 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $numero;
 
 	/**
-	 * @var int id module on dolistore platform
+	 * @var array to external platform
+  	 *     'dolistore' => array(
+	 *         'id' => '001',
+	 *         'logo' => 'dolistore.png'
+  	 *		   'url' => 'https://www.dolistore.com/'
+	 *     )
 	 */
-	public $dolistore_id;
+	public $external_link =array();
 	
 	/**
 	 * @var   string Publisher name
