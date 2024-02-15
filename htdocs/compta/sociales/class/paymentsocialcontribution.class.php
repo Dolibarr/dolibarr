@@ -58,7 +58,6 @@ class PaymentSocialContribution extends CommonObject
 	public $fk_charge;
 
 	public $datec = '';
-	public $tms = '';
 	public $datep = '';
 
 	/**

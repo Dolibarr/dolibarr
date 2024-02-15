@@ -70,7 +70,6 @@ class MouvementStock extends CommonObject
 	 */
 	public $type;
 
-	public $tms = '';
 	public $datem = '';
 	public $price;
 

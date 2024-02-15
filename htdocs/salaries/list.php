@@ -258,7 +258,7 @@ $sql .= " ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = s.fk_user";
 $sql .= " AND s.entity IN (".getEntity('salaries').")";
 if (!$user->hasRight('salaries', 'readall')) {
-	$sql .= " AND s.fk_user IN (".$db->sanitize(join(',', $childids)).")";
+	$sql .= " AND s.fk_user IN (".$db->sanitize(implode(',', $childids)).")";
 }
 //print $sql;
 

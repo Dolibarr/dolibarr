@@ -936,7 +936,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
  * Note:
  *  - This function differs from dol_move_uploaded_file, because it can be called in any context.
  *  - Database indexes for files are updated.
- *  - Test on antivirus is done only if param testvirus is provided and an antivirus was set.
+ *  - Test on virus is done only if param testvirus is provided and an antivirus was set.
  *
  * @param	string  $srcfile            Source file (can't be a directory. use native php @rename() to move a directory)
  * @param   string	$destfile           Destination file (can't be a directory. use native php @rename() to move a directory)
@@ -966,10 +966,18 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 		$newpathofsrcfile = dol_osencode($srcfile);
 		$newpathofdestfile = dol_osencode($destfile);
 
-		// Check virus
+		// Check on virus
 		$testvirusarray = array();
 		if ($testvirus) {
+			// Check using filename + antivirus
 			$testvirusarray = dolCheckVirus($newpathofsrcfile, $newpathofdestfile);
+			if (count($testvirusarray)) {
+				dol_syslog("files.lib.php::dol_move canceled because a virus was found into source file. we ignore the move request.", LOG_WARNING);
+				return false;
+			}
+		} else {
+			// Check using filename only
+			$testvirusarray = dolCheckOnFileName($newpathofsrcfile, $newpathofdestfile);
 			if (count($testvirusarray)) {
 				dol_syslog("files.lib.php::dol_move canceled because a virus was found into source file. we ignore the move request.", LOG_WARNING);
 				return false;
@@ -1231,7 +1239,7 @@ function dolCheckOnFileName($src_file, $dest_file = '')
 
 
 /**
- *	Make control on an uploaded file from an GUI page and move it to final destination.
+ *	Check validity of a file upload from an GUI page, and move it to its final destination.
  * 	If there is errors (virus found, antivir in error, bad filename), file is not moved.
  *  Note:
  *  - This function can be used only into a HTML page context. Use dol_move if you are outside.
@@ -1292,8 +1300,8 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		if (empty($disablevirusscan) && file_exists($src_file)) {
 			$checkvirusarray = dolCheckVirus($src_file, $dest_file);
 			if (count($checkvirusarray)) {
-				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.join(',', $checkvirusarray), LOG_WARNING);
-				return 'ErrorFileIsInfectedWithAVirus: '.join(',', $checkvirusarray);
+				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.implode(',', $checkvirusarray), LOG_WARNING);
+				return 'ErrorFileIsInfectedWithAVirus: '.implode(',', $checkvirusarray);
 			}
 		}
 
@@ -1329,7 +1337,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 	}
 
 	if ($reshook < 0) {	// At least one blocking error returned by one hook
-		$errmsg = join(',', $hookmanager->errors);
+		$errmsg = implode(',', $hookmanager->errors);
 		if (empty($errmsg)) {
 			$errmsg = 'ErrorReturnedBySomeHooks'; // Should not occurs. Added if hook is bugged and does not set ->errors when there is error.
 		}
@@ -1731,7 +1739,7 @@ function dol_meta_create($object)
 		}
 
 		$fp = fopen($file, "w");
-		fputs($fp, $meta);
+		fwrite($fp, $meta);
 		fclose($fp);
 
 		dolChmod($file);
@@ -1769,9 +1777,9 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
 		}
 	}
 	$keytoavoidconflict = empty($trackid) ? '' : '-'.$trackid;
-	$_SESSION["listofpaths".$keytoavoidconflict] = join(';', $listofpaths);
-	$_SESSION["listofnames".$keytoavoidconflict] = join(';', $listofnames);
-	$_SESSION["listofmimes".$keytoavoidconflict] = join(';', $listofmimes);
+	$_SESSION["listofpaths".$keytoavoidconflict] = implode(';', $listofpaths);
+	$_SESSION["listofnames".$keytoavoidconflict] = implode(';', $listofnames);
+	$_SESSION["listofmimes".$keytoavoidconflict] = implode(';', $listofmimes);
 }
 
 
@@ -2177,7 +2185,7 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
 
 				$count = $image->getNumberImages();
 
-				if (!dol_is_file($fileoutput) || is_writeable($fileoutput)) {
+				if (!dol_is_file($fileoutput) || is_writable($fileoutput)) {
 					try {
 						$ret = $image->writeImages($fileoutput, true);
 					} catch (Exception $e) {

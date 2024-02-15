@@ -244,7 +244,7 @@ $sql .= " cd.total_tva,";
 $sql .= " cd.tva_tx,";
 $sql .= " cd.subprice,";
 //$sql.= " cd.date_c as date_creation,";
-$sql .= " cd.tms as date_update";
+$sql .= " cd.tms as date_modification";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -521,7 +521,7 @@ if (!empty($sall)) {
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $morefilter = '';
@@ -976,7 +976,7 @@ while ($i < $imaxinloop) {
 	// Date modification
 	if (!empty($arrayfields['cd.tms']['checked'])) {
 		print '<td class="center nowraponall">';
-		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+		print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

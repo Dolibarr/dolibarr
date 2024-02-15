@@ -77,7 +77,7 @@ $sql = "SELECT count(d.rowid) as nb, sum(d.km) as km, d.type";
 $sql .= " FROM ".MAIN_DB_PREFIX."deplacement as d";
 $sql .= " WHERE d.entity = ".$conf->entity;
 if (!$user->hasRight('deplacement', 'readall') && !$user->hasRight('deplacement', 'lire_tous')) {
-	$sql .= ' AND d.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
+	$sql .= ' AND d.fk_user IN ('.$db->sanitize(implode(',', $childids)).')';
 }
 $sql .= " GROUP BY d.type";
 $sql .= " ORDER BY d.type";
@@ -154,7 +154,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = d.fk_user";
 $sql .= " AND d.entity = ".$conf->entity;
 if (!$user->hasRight('deplacement', 'readall') && !$user->hasRight('deplacement', 'lire_tous')) {
-	$sql .= ' AND d.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
+	$sql .= ' AND d.fk_user IN ('.$db->sanitize(implode(',', $childids)).')';
 }
 // If the internal user must only see his customers, force searching by him
 $search_sale = 0;

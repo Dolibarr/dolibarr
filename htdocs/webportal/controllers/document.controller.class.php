@@ -206,7 +206,7 @@ class DocumentController extends Controller
 		$object = new stdClass();
 		$reshook = $hookmanager->executeHooks('downloadDocument', $parameters, $object, $action); // Note that $action and $object may have been
 		if ($reshook < 0) {
-			$errors = $hookmanager->error . (is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '') . join(', ', $hookmanager->errors) : '');
+			$errors = $hookmanager->error . (is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '') . implode(', ', $hookmanager->errors) : '');
 			dol_syslog("document.php - Errors when executing the hook 'downloadDocument' : " . $errors);
 			print "ErrorDownloadDocumentHooks: " . $errors;
 			exit;

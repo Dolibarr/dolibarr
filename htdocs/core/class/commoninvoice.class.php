@@ -1518,7 +1518,7 @@ abstract class CommonInvoice extends CommonObject
 									$actioncomm->type_code = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 									$actioncomm->code = 'AC_' . $actioncode;
 									$actioncomm->label = $description;
-									$actioncomm->note_private = join(",\n", $postactionmessages);
+									$actioncomm->note_private = implode(",\n", $postactionmessages);
 									$actioncomm->fk_project = $this->fk_project;
 									$actioncomm->datep = $now;
 									$actioncomm->datef = $now;

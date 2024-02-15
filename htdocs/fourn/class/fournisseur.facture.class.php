@@ -169,13 +169,6 @@ class FactureFournisseur extends CommonInvoice
 	public $datec;
 
 	/**
-	 * Date modification record (tms)
-	 *
-	 * @var integer
-	 */
-	public $tms;
-
-	/**
 	 * Max payment date (date_echeance)
 	 *
 	 * @var integer
@@ -1459,7 +1452,7 @@ class FactureFournisseur extends CommonInvoice
 			if (count($list_rowid_det)) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 				$sql .= ' SET fk_invoice_supplier = NULL, fk_invoice_supplier_line = NULL';
-				$sql .= ' WHERE fk_invoice_supplier_line IN ('.$this->db->sanitize(join(',', $list_rowid_det)).')';
+				$sql .= ' WHERE fk_invoice_supplier_line IN ('.$this->db->sanitize(implode(',', $list_rowid_det)).')';
 
 				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 				if (!$this->db->query($sql)) {

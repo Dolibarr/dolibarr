@@ -1308,7 +1308,7 @@ class ActionComm extends CommonObject
 				return 1;
 			} else {
 				$this->db->rollback();
-				dol_syslog(get_class($this)."::update ".join(',', $this->errors), LOG_ERR);
+				dol_syslog(get_class($this)."::update ".implode(',', $this->errors), LOG_ERR);
 				return -2;
 			}
 		} else {
@@ -2599,7 +2599,7 @@ class ActionComm extends CommonObject
 							if ($cMailFile->sendfile()) {
 								$nbMailSend++;
 							} else {
-								$errormesg = 'Failed to send email to: '.$to.' '.$cMailFile->error.join(',', $cMailFile->errors);
+								$errormesg = 'Failed to send email to: '.$to.' '.$cMailFile->error.implode(',', $cMailFile->errors);
 								$error++;
 							}
 						}
@@ -2658,7 +2658,7 @@ class ActionComm extends CommonObject
 			return 0;
 		} else {
 			$this->db->commit(); // We commit also on error, to have the error message recorded.
-			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
+			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? implode(', ', $errorsMsg) : $error;
 
 			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
 

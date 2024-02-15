@@ -613,10 +613,11 @@ abstract class CommonObject
 	public $date_modification;
 
 	/**
-	 * @var integer|string|null
-	 * @deprecated 					Use $date_modification
+	 * Update timestamp record (tms)
+	 * @var integer
+	 * @deprecated					Use $date_modification
 	 */
-	public $date_update;
+	public $tms;
 
 	/**
 	 * @var integer|string|null		Object closing date
@@ -939,7 +940,7 @@ abstract class CommonObject
 	 */
 	public function errorsToString()
 	{
-		return $this->error.(is_array($this->errors) ? (($this->error != '' ? ', ' : '').join(', ', $this->errors)) : '');
+		return $this->error.(is_array($this->errors) ? (($this->error != '' ? ', ' : '').implode(', ', $this->errors)) : '');
 	}
 
 
@@ -8529,7 +8530,7 @@ abstract class CommonObject
 		$reshook = $hookmanager->executeHooks('showOptionals', $parameters, $this, $action); // Note that $action and $object may have been modified by hook
 
 		if (empty($reshook)) {
-			if (is_array($extrafields->attributes[$this->table_element]) && key_exists('label', $extrafields->attributes[$this->table_element]) && is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label']) > 0) {
+			if (is_array($extrafields->attributes[$this->table_element]) && array_key_exists('label', $extrafields->attributes[$this->table_element]) && is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label']) > 0) {
 				$out .= "\n";
 				$out .= '<!-- commonobject:showOptionals --> ';
 				$out .= "\n";
@@ -9207,7 +9208,11 @@ abstract class CommonObject
 								$alt = $overwritetitle;
 							}
 						}
-
+						if (empty($cache) && !empty($val['label'])) {
+							// label is md5 of file
+							// use it in url to say we want to cache this version of the file
+							$cache = $val['label'];
+						}
 						if ($usesharelink) {
 							if ($val['share']) {
 								if (empty($maxHeight) || ($photo_vignette && $imgarray['height'] > $maxHeight)) {
@@ -9515,7 +9520,7 @@ abstract class CommonObject
 					$queryarray[$field] = ((int) $conf->entity);
 				} else {
 					// $this->{$field} may be null, '', 0, '0', 123, '123'
-					if ((isset($this->{$field}) && $this->{$field} != '') || !empty($info['notnull'])) {
+					if ((isset($this->{$field}) && ((string) $this->{$field}) != '') || !empty($info['notnull'])) {
 						if (!isset($this->{$field})) {
 							$queryarray[$field] = 0;
 						} elseif ($this->isInt($info)) {
@@ -9772,7 +9777,7 @@ abstract class CommonObject
 
 		// If we have a field ref with a default value of (PROV)
 		if (!$error) {
-			if (key_exists('ref', $this->fields) && key_exists('notnull', $this->fields['ref']) && $this->fields['ref']['notnull'] > 0 && key_exists('default', $this->fields['ref']) && $this->fields['ref']['default'] == '(PROV)') {
+			if (array_key_exists('ref', $this->fields) && array_key_exists('notnull', $this->fields['ref']) && $this->fields['ref']['notnull'] > 0 && array_key_exists('default', $this->fields['ref']) && $this->fields['ref']['default'] == '(PROV)') {
 				$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET ref = '(PROV".((int) $this->id).")' WHERE (ref = '(PROV)' OR ref = '') AND rowid = ".((int) $this->id);
 				$resqlupdate = $this->db->query($sql);
 

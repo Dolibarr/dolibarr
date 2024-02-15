@@ -432,7 +432,7 @@ if (empty($reshook) && $action == 'add') {
 					$result = $company->create_from_member($adh);
 					if ($result < 0) {
 						$error++;
-						$errmsg .= join('<br>', $company->errors);
+						$errmsg .= implode('<br>', $company->errors);
 					}
 				}
 
@@ -466,7 +466,7 @@ if (empty($reshook) && $action == 'add') {
 				}
 			} else {
 				$error++;
-				$errmsg .= join('<br>', $adh->errors);
+				$errmsg .= implode('<br>', $adh->errors);
 			}
 		}
 	}

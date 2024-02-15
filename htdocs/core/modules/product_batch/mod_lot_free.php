@@ -39,31 +39,13 @@ class mod_lot_free extends ModeleNumRefBatch
 	 */
 
 
-	/**
-	 * @var string model name
-	 */
+	// variables inherited from ModeleNumRefBatch class
 	public $name = 'lot_free';
-
-	/**
-	 * @var string Code modifiable
-	 */
+	public $version = 'dolibarr';
+	public $code_null;
 	public $code_modifiable;
-
-	public $code_modifiable_invalide; // Code modifiable si il est invalid
-
-	public $code_modifiable_null; // Code modifiables si il est null
-
-	public $code_null; // Code facultatif
-
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
-
-	/**
-	 * @var int Automatic numbering
-	 */
+	public $code_modifiable_invalide;
+	public $code_modifiable_null;
 	public $code_auto;
 
 

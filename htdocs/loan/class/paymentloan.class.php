@@ -56,8 +56,6 @@ class PaymentLoan extends CommonObject
 	 */
 	public $datec = '';
 
-	public $tms = '';
-
 	/**
 	 * @var string Payment date
 	 */
