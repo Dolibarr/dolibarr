@@ -38,7 +38,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 
 
 	// variables not inherited
-	
+
 	/**
 	 * @var string
 	 */
