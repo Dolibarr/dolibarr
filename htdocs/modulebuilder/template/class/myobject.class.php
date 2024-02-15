@@ -600,7 +600,7 @@ class MyObject extends CommonObject
 	 */
 	public function validate($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -635,7 +635,10 @@ class MyObject extends CommonObject
 		if (!empty($num)) {
 			// Validate
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET ref = '".$this->db->escape($num)."',";
+			$sql .= " SET ";
+			if (!empty($this->fields['ref'])) {
+				$sql .= " ref = '".$this->db->escape($num)."',";
+			}
 			$sql .= " status = ".self::STATUS_VALIDATED;
 			if (!empty($this->fields['date_validation'])) {
 				$sql .= ", date_validation = '".$this->db->idate($now)."'";
