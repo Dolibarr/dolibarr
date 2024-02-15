@@ -63,7 +63,7 @@ class pdf_einstein extends ModelePDFCommandes
 	public $description;
 
 	/**
-	 * @var string 	Save the name of generated file as the main doc when generating a doc with this template
+	 * @var int 	Save the name of generated file as the main doc when generating a doc with this template, 1 for yes, 0 if not
 	 */
 	public $update_main_doc_field;
 

@@ -70,6 +70,7 @@ class Salary extends CommonObject
 
 	public $salary;
 	public $amount;
+
 	/**
 	 * @var int ID
 	 */
@@ -117,7 +118,8 @@ class Salary extends CommonObject
 	public $user;
 
 	/**
-	 * 1 if salary paid COMPLETELY, 0 otherwise (do not use it anymore, use statut and close_code)
+	 * @var int 1 if salary paid COMPLETELY, 0 otherwise (do not use it anymore, use statut and close_code)
+	 * @deprecated
 	 */
 	public $paye;
 
@@ -188,11 +190,9 @@ class Salary extends CommonObject
 
 		// Update extrafield
 		if (!$error) {
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 		}
 
@@ -342,11 +342,11 @@ class Salary extends CommonObject
 		$this->amount = price2num(trim($this->amount));
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
-		$this->fk_bank = trim($this->fk_bank);
-		$this->fk_user_author = trim($this->fk_user_author);
-		$this->fk_user_modif = trim($this->fk_user_modif);
-		$this->accountid = trim($this->accountid);
-		$this->paye = trim($this->paye);
+		$this->fk_bank = (int) $this->fk_bank;
+		$this->fk_user_author = (int) $this->fk_user_author;
+		$this->fk_user_modif = (int) $this->fk_user_modif;
+		$this->accountid = (int) $this->accountid;
+		$this->paye = (int) $this->paye;
 
 		// Check parameters
 		if (!$this->label) {
@@ -413,11 +413,9 @@ class Salary extends CommonObject
 			if ($this->id > 0) {
 				// Update extrafield
 				if (!$error) {
-					if (!$error) {
-						$result = $this->insertExtraFields();
-						if ($result < 0) {
-							$error++;
-						}
+					$result = $this->insertExtraFields();
+					if ($result < 0) {
+						$error++;
 					}
 				}
 
