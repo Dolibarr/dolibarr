@@ -263,6 +263,13 @@ class ExpeditionLigne extends CommonObjectLine
 	public $volume_units;
 
 	/**
+	 * 0=This service or product is not managed in stock, 1=This service or product is managed in stock
+	 *
+	 * @var boolean
+	 */
+	public $stockable_product = true;
+
+	/**
 	 * @var float|string
 	 */
 	public $remise_percent;

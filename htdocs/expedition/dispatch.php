@@ -901,13 +901,18 @@ if ($object->id > 0 || !empty($object->ref)) {
 
 								// Warehouse
 								print '<td class="right">';
-								if (count($listwarehouses) > 1) {
-									print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
-								} elseif (count($listwarehouses) == 1) {
-									print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
+								if ($objp->stockable_product == Product::ENABLED_STOCK){
+									if (count($listwarehouses) > 1) {
+										print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
+									} elseif (count($listwarehouses) == 1) {
+										print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
+									} else {
+										$langs->load("errors");
+										print $langs->trans("ErrorNoWarehouseDefined");
+									}
 								} else {
-									$langs->load("errors");
-									print $langs->trans("ErrorNoWarehouseDefined");
+									print '<input id="entrepot'.$suffix.'" type="hidden" value="'.$objd->fk_entrepot.'">';
+									print img_warning().' '.$langs->trans('StockDisabled') ;
 								}
 								print "</td>\n";
 
