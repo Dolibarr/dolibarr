@@ -251,10 +251,10 @@ if (empty($reshook)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-		$objecttmp = new $objectclass($db);
+		$objecttmp = new MouvementStock($db);
 		$listofobjectid = array();
 		foreach ($toselect as $toselectid) {
-			$objecttmp = new $objectclass($db); // must create new instance because instance is saved into $listofobjectref array for future use
+			$objecttmp = new MouvementStock($db); // must create new instance because instance is saved into $listofobjectref array for future use
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
 				$listofobjectid[$toselectid] = $toselectid;
@@ -311,7 +311,8 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			$langs->load("exports");
-			setEventMessages($langs->trans('FileSuccessfullyBuilt', $filename.'_'.dol_print_date($now, 'dayhourlog')), null, 'mesgs');
+			setEventMessage($langs->trans('FeatureNotYetAvailable'));
+			//setEventMessages($langs->trans('FileSuccessfullyBuilt', $filename.'_'.dol_print_date($now, 'dayhourlog')), null, 'mesgs');
 		}
 
 		$massaction = '';
