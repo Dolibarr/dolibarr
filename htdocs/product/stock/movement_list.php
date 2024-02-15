@@ -65,6 +65,7 @@ $ref = GETPOST('ref', 'alpha');
 $msid = GETPOST('msid', 'int');
 $idproduct = GETPOST('idproduct', 'int');
 $product_id = GETPOST("product_id", 'int');
+$show_files = GETPOST('show_files', 'int');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_date_startday = GETPOST('search_date_startday', 'int');
@@ -1002,6 +1003,9 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 if ($id > 0) {
 	$param .= '&id='.urlencode($id);
 }
+if ($show_files) {
+	$param .= '&show_files='.urlencode($show_files);
+}
 if ($search_date_startday) {
 	$param .= '&search_date_startday='.urlencode($search_date_startday);
 }
@@ -1683,7 +1687,7 @@ if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords 
 	$genallowed = $permissiontoread;
 	$delallowed = $permissiontoadd;
 
-	print $formfile->showdocuments('massfilesarea_'.$object->module, '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+	print $formfile->showdocuments('massfilesarea_stock', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 
 // End of page
