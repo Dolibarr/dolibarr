@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,13 +124,25 @@ class LangTest extends CommonClassTest
 			print __METHOD__." SeparatorThousand=".$result."\n";
 			$this->assertTrue(in_array($result, array('.',',','/',' ','','\'','None','Space')), 'Error on thousand separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
 
+			$useNewRegex = version_compare(\PHPUnit\Runner\Version::id(), '9.0.0', '>=');
+
 			// Test java string contains only d,M,y,/,-,. and not m,...
 			$result = $tmplangs->transnoentitiesnoconv("FormatDateShortJava");
 			print __METHOD__." FormatDateShortJava=".$result."\n";
-			$this->assertRegExp('/^[dMy\/\-\.]+$/', $result, 'FormatDateShortJava KO for lang code '.$code);
+			if ($useNewRegex) {
+				$this->assertMatchesRegularExpression('/^[dMy\/\-\.]+$/', $result, 'FormatDateShortJava KO for lang code '.$code);
+			} else {
+				// Deprecated in PHPUNIT9, Removed in PHPUNIT10
+				$this->assertRegExp('/^[dMy\/\-\.]+$/', $result, 'FormatDateShortJava KO for lang code '.$code);
+			}
+
 			$result = $tmplangs->trans("FormatDateShortJavaInput");
 			print __METHOD__." FormatDateShortJavaInput=".$result."\n";
-			$this->assertRegExp('/^[dMy\/\-\.]+$/', $result, 'FormatDateShortJavaInput KO for lang code '.$code);
+			if ($useNewRegex) {
+				$this->assertMatchesRegularExpression('/^[dMy\/\-\.]+$/', $result, 'FormatDateShortJavaInput KO for lang code '.$code);
+			} else {
+				$this->assertRegExp('/^[dMy\/\-\.]+$/', $result, 'FormatDateShortJavaInput KO for lang code '.$code);
+			}
 
 			unset($tmplangs);
 
