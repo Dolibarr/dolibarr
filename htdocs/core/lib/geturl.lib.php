@@ -230,9 +230,11 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		// on windows PHP 7.4.
 		curl_setopt($ch, CURLOPT_PROTOCOLS, $protocols);
 		curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, $protocols);
+		/* CURLOPT_REDIR_PROTOCOLS_STR available from PHP 7.85.0
 		if (version_compare(PHP_VERSION, '8.3.0', '>=') && version_compare(curl_version()['version'], '7.85.0', '>=')) {
 			curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS_STR, implode(",", array_keys($redir_list)));
 		}
+		*/
 
 		// Getting response from server
 		$response = curl_exec($ch);
