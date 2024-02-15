@@ -83,7 +83,6 @@ $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
 $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
-$search_status = GETPOST('search_status', 'int');
 $search_paymentmode = GETPOST('search_paymentmode', 'int');
 $search_paymentcond = GETPOST('search_paymentcond', 'int');
 $search_town = GETPOST('search_town', 'alpha');
@@ -107,6 +106,10 @@ $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $search_categ_sup = trim(GETPOST("search_categ_sup", 'int'));
 $search_product_category = GETPOST('search_product_category', 'int');
+
+$search_status = GETPOST('search_status', 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
+$object_statut = GETPOST('search_statut', 'alpha');
 
 $option = GETPOST('search_option');
 if ($option == 'late') {
@@ -281,6 +284,7 @@ if (empty($reshook)) {
 		$search_multicurrency_montant_vat = '';
 		$search_multicurrency_montant_ttc = '';
 		$search_status = '';
+		$object_statut = '';																																	
 		$search_paymentmode = '';
 		$search_paymentcond = '';
 		$search_town = '';
@@ -305,7 +309,11 @@ if (empty($reshook)) {
 		$option = '';
 		$socid = "";
 	}
-
+	
+	if ($object_statut != '') {
+		$search_status = $object_statut;
+	}
+	
 	// Mass actions
 	$objectclass = 'FactureFournisseur';
 	$objectlabel = 'SupplierInvoices';
