@@ -360,15 +360,15 @@ if (empty($reshook)) {
 			} else {
 				$p = new Product($db);
 				$res = $p->fetch($objectsrc->lines[$i]->fk_product);
-				if($res > 0) {
-					if(GETPOST('entrepot_id', 'int') == -1) {
+				if ($res > 0) {
+					if (GETPOST('entrepot_id', 'int') == -1) {
 						$qty .= '_'.$j;
 					}
 
-					if($p->stockable_product == Product::DISABLED_STOCK) {
+					if ($p->stockable_product == Product::DISABLED_STOCK) {
 						$w = new Entrepot($db);
 						$Tw = $w->list_array();
-						if(count($Tw) > 0) {
+						if (count($Tw) > 0) {
 							$w_Id = array_keys($Tw);
 							$stockLine[$i][$j]['qty'] = GETPOST($qty, 'int');
 
@@ -377,8 +377,7 @@ if (empty($reshook)) {
 							//
 							$stockLine[$i][$j]['warehouse_id'] = $w_Id[0];
 							$stockLine[$i][$j]['ix_l'] = GETPOST($idl, 'int');
-						}
-						else {
+						} else {
 							setEventMessage($langs->trans('NoWarehouseInBase'));
 						}
 					}
