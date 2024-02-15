@@ -346,7 +346,7 @@ class WebsitePage extends CommonObject
 			}
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -415,7 +415,7 @@ class WebsitePage extends CommonObject
 						}
 						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 					}
-					$stringtouse = $key." IN (".$this->db->sanitize(join(',', $listoflang), 1).")";
+					$stringtouse = $key." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
 					if ($foundnull) {
 						$stringtouse = "(".$stringtouse." OR ".$key." IS NULL)";
 					}
@@ -476,7 +476,7 @@ class WebsitePage extends CommonObject
 		} else {
 			$this->error = 'Error '.$this->db->lasterror();
 			$this->errors[] = $this->error;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -517,7 +517,7 @@ class WebsitePage extends CommonObject
 						}
 						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 					}
-					$stringtouse = $key." IN (".$this->db->sanitize(join(',', $listoflang), 1).")";
+					$stringtouse = $key." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
 					if ($foundnull) {
 						$stringtouse = "(".$stringtouse." OR ".$key." IS NULL)";
 					}
@@ -544,7 +544,7 @@ class WebsitePage extends CommonObject
 		} else {
 			$this->error = 'Error '.$this->db->lasterror();
 			$this->errors[] = $this->error;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -721,7 +721,7 @@ class WebsitePage extends CommonObject
 			$error++;
 			$this->error = $object->error;
 			$this->errors = $object->errors;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
 		unset($object->context['createfromclone']);

@@ -92,7 +92,7 @@ if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expenserep
 	&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('expensereport', 'writeall_advance'))) {
 	$childids = $user->getAllChildIds();
 	$childids[] = $user->id;
-	$sql .= " AND d.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";
+	$sql .= " AND d.fk_user_author IN (".$db->sanitize(implode(',', $childids)).")\n";
 }
 
 $sql .= " GROUP BY tf.code, tf.label";
@@ -202,7 +202,7 @@ if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expenserep
 	&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('expensereport', 'writeall_advance'))) {
 	$childids = $user->getAllChildIds();
 	$childids[] = $user->id;
-	$sql .= " AND d.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";
+	$sql .= " AND d.fk_user_author IN (".$db->sanitize(implode(',', $childids)).")\n";
 }
 $sql .= ' AND d.entity IN ('.getEntity('expensereport').')';
 $sql .= $db->order($sortfield, $sortorder);

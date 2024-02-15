@@ -20,7 +20,7 @@ The following changes may create regressions for some external modules, but were
 * Ldap class methods connect_bind() & dump_content() have been renamed
 * More class properties (with old name in french) are now deprecated in favor of the property name in english.
 * Some API HTTP return code were moved from 401 to 403 to better follow REST specification.
-
+* Properties ->date_update and ->date_modification were merged into date_modification.
 
 
 ***** ChangeLog for 19.0.0 compared to 18.0.0 *****

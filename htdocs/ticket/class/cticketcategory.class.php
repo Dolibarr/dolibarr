@@ -148,11 +148,6 @@ class CTicketCategory extends CommonObject
 	public $date_creation;
 
 	/**
-	 * @var integer tms
-	 */
-	public $tms;
-
-	/**
 	 * @var int ID
 	 */
 	public $fk_user_creat;
@@ -433,7 +428,7 @@ class CTicketCategory extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}

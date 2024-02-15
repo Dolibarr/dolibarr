@@ -47,7 +47,6 @@ require_once DOL_DOCUMENT_ROOT .'/ticket/class/ticket.class.php';               
 use Webklex\PHPIMAP\ClientManager;
 use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
 use Webklex\PHPIMAP\Exceptions\InvalidWhereQueryCriteriaException;
-use Webklex\PHPIMAP\Exceptions\GetMessagesFailedException;
 
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
@@ -186,11 +185,6 @@ class EmailCollector extends CommonObject
 	 * @var integer|string date_creation
 	 */
 	public $date_creation;
-
-	/**
-	 * @var int timestamp
-	 */
-	public $tms;
 
 	/**
 	 * @var int ID
@@ -869,7 +863,7 @@ class EmailCollector extends CommonObject
 
 			$this->error .= 'EmailCollector ID '.$emailcollector->id.':'.$emailcollector->error.'<br>';
 			if (!empty($emailcollector->errors)) {
-				$this->error .= join('<br>', $emailcollector->errors);
+				$this->error .= implode('<br>', $emailcollector->errors);
 			}
 			$this->output .= 'EmailCollector ID '.$emailcollector->id.': '.$emailcollector->lastresult.'<br>';
 		}
@@ -1602,7 +1596,7 @@ class EmailCollector extends CommonObject
 				$mapoferrrors = imap_errors();
 				if ($mapoferrrors !== false) {
 					$error++;
-					$this->error = "Search string not understood - ".join(',', $mapoferrrors);
+					$this->error = "Search string not understood - ".implode(',', $mapoferrrors);
 					$this->errors[] = $this->error;
 				}
 			}
@@ -3217,7 +3211,7 @@ class EmailCollector extends CommonObject
 									$result = $candidaturetocreate->create($user);
 									if ($result <= 0) {
 										$errorforactions++;
-										$this->error = 'Failed to create candidature: '.join(', ', $candidaturetocreate->errors);
+										$this->error = 'Failed to create candidature: '.implode(', ', $candidaturetocreate->errors);
 										$this->errors = $candidaturetocreate->errors;
 									}
 
@@ -3385,7 +3379,7 @@ class EmailCollector extends CommonObject
 		}
 
 		if (!empty($this->errors)) {
-			$this->lastresult .= "<br>".join("<br>", $this->errors);
+			$this->lastresult .= "<br>".implode("<br>", $this->errors);
 		}
 		$this->codelastresult = ($error ? 'KO' : 'OK');
 

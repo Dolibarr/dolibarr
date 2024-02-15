@@ -559,7 +559,7 @@ function showWebsiteTemplates(Website $website)
 
 	// Title
 	print '<tr class="liste_titre"><th class="titlefield">';
-	print $form->textwithpicto($langs->trans("Templates"), $langs->trans("ThemeDir").' : '.join(", ", $dirthemes));
+	print $form->textwithpicto($langs->trans("Templates"), $langs->trans("ThemeDir").' : '.implode(", ", $dirthemes));
 	print ' ';
 	print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($website->ref).'&importsite=1" rel="noopener noreferrer external">';
 	print img_picto('', 'refresh');

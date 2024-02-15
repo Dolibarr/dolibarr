@@ -138,9 +138,6 @@ class SocieteAccount extends CommonObject
 	 */
 	public $date_creation;
 
-
-	public $tms;
-
 	/**
 	 * @var int ID
 	 */

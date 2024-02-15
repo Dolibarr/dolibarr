@@ -295,7 +295,7 @@ $filters = '';
 $userchilds = array();
 if (!$user->hasRight('holiday', 'readall')) {
 	$userchilds = $user->getAllChildIds(1);
-	$filters .= ' AND u.rowid IN ('.$db->sanitize(join(', ', $userchilds)).')';
+	$filters .= ' AND u.rowid IN ('.$db->sanitize(implode(', ', $userchilds)).')';
 }
 if (!empty($search_name)) {
 	$filters .= natural_search(array('u.firstname', 'u.lastname'), $search_name);

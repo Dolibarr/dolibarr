@@ -58,11 +58,6 @@ class Cronjob extends CommonObject
 	public $jobtype;
 
 	/**
-	 * @var string|int     Date for last cron object update
-	 */
-	public $tms = '';
-
-	/**
 	 * @var string|int     Date for cron job create
 	 */
 	public $datec = '';
@@ -1309,7 +1304,7 @@ class Cronjob extends CommonObject
 						$errmsg .= $object->error;
 					}
 					if (is_array($object->errors) && count($object->errors)) {
-						$errmsg .= (($errmsg ? ', ' : '').join(', ', $object->errors));
+						$errmsg .= (($errmsg ? ', ' : '').implode(', ', $object->errors));
 					}
 					if (empty($errmsg)) {
 						$errmsg = $langs->trans('ErrorUnknown');

@@ -122,7 +122,7 @@ if (!empty($action) && $action != 'view') {
 
 	if ($object->id > 0) { // update or delete or other than create
 		// check user has the right to modify this type of website
-		if (!key_exists($object->site, $object->fields['site']['arrayofkeyval'])) {
+		if (!array_key_exists($object->site, $object->fields['site']['arrayofkeyval'])) {
 			accessforbidden('NotAllowed');
 		}
 	}
