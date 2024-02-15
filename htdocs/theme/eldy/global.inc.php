@@ -7762,6 +7762,27 @@ table.jPicker {
 	min-width: 100px;
 }
 
+/* ============================================================================== */
+/* CSS style used for BookCal                                                     */
+/* ============================================================================== */
+
+.center.bookingtab {
+	margin-left: 20px;
+}
+#bookinghoursection {
+	width: 145px;
+	height: 320px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	text-align: left;
+}
+.bookcalform {
+	border: 1px solid #000;
+	padding: 15px;
+	border-radius: 5px;
+	margin-bottom: 15px;
+}
+
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
@@ -7821,6 +7842,17 @@ table.jPicker {
 		margin-left: 10px;
 		margin-right: 10px;
 		text-align: start;
+	}
+
+	.bookcalform.boxtable .minwidth75 {
+		min-width: auto;
+	}
+	.center.bookingtab {
+		margin-left: 6px;
+	}
+	#bookinghoursection {
+		font-size: small;
+		width: 122px;
 	}
 }
 

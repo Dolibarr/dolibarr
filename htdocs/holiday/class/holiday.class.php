@@ -2383,8 +2383,8 @@ class Holiday extends CommonObject
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
 		if (!$user->hasRight('expensereport', 'readall')) {
 			$userchildids = $user->getAllChildIds(1);
-			$sql .= " AND (h.fk_user IN (".$this->db->sanitize(join(',', $userchildids)).")";
-			$sql .= " OR h.fk_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
+			$sql .= " AND (h.fk_user IN (".$this->db->sanitize(implode(',', $userchildids)).")";
+			$sql .= " OR h.fk_validator IN (".$this->db->sanitize(implode(',', $userchildids))."))";
 		}
 
 		$resql = $this->db->query($sql);
@@ -2425,8 +2425,8 @@ class Holiday extends CommonObject
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
 		if (!$user->hasRight('expensereport', 'read_all')) {
 			$userchildids = $user->getAllChildIds(1);
-			$sql .= " AND (h.fk_user IN (".$this->db->sanitize(join(',', $userchildids)).")";
-			$sql .= " OR h.fk_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
+			$sql .= " AND (h.fk_user IN (".$this->db->sanitize(implode(',', $userchildids)).")";
+			$sql .= " OR h.fk_validator IN (".$this->db->sanitize(implode(',', $userchildids))."))";
 		}
 
 		$resql = $this->db->query($sql);

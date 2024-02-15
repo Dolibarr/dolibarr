@@ -5444,7 +5444,7 @@ function dol_print_error($db = null, $error = '', $errors = null)
 	}
 
 	if (!empty($conf->modules)) {
-		$out .= "<b>".$langs->trans("Modules").":</b> ".join(', ', $conf->modules)."<br>\n";
+		$out .= "<b>".$langs->trans("Modules").":</b> ".implode(', ', $conf->modules)."<br>\n";
 	}
 
 	if (is_object($db)) {
@@ -7433,7 +7433,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 		}
 	}
 
-	$allowed_tags_string = join("><", $allowed_tags);
+	$allowed_tags_string = implode("><", $allowed_tags);
 	$allowed_tags_string = '<'.$allowed_tags_string.'>';
 
 	$stringtoclean = str_replace('<!DOCTYPE html>', '__!DOCTYPE_HTML__', $stringtoclean);	// Replace DOCTYPE to avoid to have it removed by the strip_tags
@@ -12662,7 +12662,7 @@ function dolForgeCriteriaCallback($matches)
 				$tmpelemarray[$tmpkey] = $db->escape($db->sanitize($tmpelem, 1, 1, 1));
 			}
 		}
-		$tmpescaped2 .= join(',', $tmpelemarray);
+		$tmpescaped2 .= implode(',', $tmpelemarray);
 		$tmpescaped2 .= ')';
 
 		$tmpescaped = $tmpescaped2;

@@ -599,7 +599,7 @@ class Products extends DolibarrApi
 		$result = $categories->getListForItem($id, 'product', $sortfield, $sortorder, $limit, $page);
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieve category list : '.join(',', array_merge(array($categories->error), $categories->errors)));
+			throw new RestException(503, 'Error when retrieve category list : '.implode(',', array_merge(array($categories->error), $categories->errors)));
 		}
 
 		return $result;
@@ -632,7 +632,7 @@ class Products extends DolibarrApi
 		}
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieve prices list : '.join(',', array_merge(array($this->product->error), $this->product->errors)));
+			throw new RestException(503, 'Error when retrieve prices list : '.implode(',', array_merge(array($this->product->error), $this->product->errors)));
 		}
 
 		return array(
@@ -723,7 +723,7 @@ class Products extends DolibarrApi
 		}
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieve prices list : '.join(',', array_merge(array($this->product->error), $this->product->errors)));
+			throw new RestException(503, 'Error when retrieve prices list : '.implode(',', array_merge(array($this->product->error), $this->product->errors)));
 		}
 
 		return array(

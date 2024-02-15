@@ -159,7 +159,7 @@ class FileUpload
 		// At this point we should have a valid upload_dir in options
 		//if ($pathname === null && $filename === null) { // OR or AND???
 		if ($pathname === null || $filename === null) {
-			if (!key_exists("upload_dir", $this->options)) {
+			if (!array_key_exists("upload_dir", $this->options)) {
 				setEventMessage('If $fk_element = null or $element = null you must specify upload_dir on $options', 'errors');
 				throw new Exception('If $fk_element = null or $element = null you must specify upload_dir on $options');
 			} elseif (!is_dir($this->options['upload_dir'])) {

@@ -740,10 +740,10 @@ if ($search_parent_name) {
 	$sql .= natural_search("s2.nom", $search_parent_name);
 }
 if ($search_level) {
-	$sql .= natural_search("s.fk_prospectlevel", join(',', $search_level), 3);
+	$sql .= natural_search("s.fk_prospectlevel", implode(',', $search_level), 3);
 }
 if ($search_stcomm) {
-	$sql .= natural_search("s.fk_stcomm", join(',', $search_stcomm), 2);
+	$sql .= natural_search("s.fk_stcomm", implode(',', $search_stcomm), 2);
 }
 if ($search_import_key) {
 	$sql .= natural_search("s.import_key", $search_import_key);
@@ -1149,7 +1149,7 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if SOCIETE_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';

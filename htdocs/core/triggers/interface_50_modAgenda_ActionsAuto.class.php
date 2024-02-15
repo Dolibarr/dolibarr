@@ -1574,7 +1574,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$_SESSION['LAST_ACTION_CREATED'] = $ret;
 			return 1;
 		} else {
-			$this->error = "Failed to insert event : ".$actioncomm->error." ".join(',', $actioncomm->errors);
+			$this->error = "Failed to insert event : ".$actioncomm->error." ".implode(',', $actioncomm->errors);
 			$this->errors = $actioncomm->errors;
 
 			dol_syslog("interface_modAgenda_ActionsAuto.class.php: ".$this->error, LOG_ERR);

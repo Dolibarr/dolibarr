@@ -629,7 +629,7 @@ if ($ispaymentok) {
 
 					$result = $object->subscriptionComplementaryActions($crowid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom, $emetteur_banque, $autocreatethirdparty, $TRANSACTIONID, $service);
 					if ($result < 0) {
-						dol_syslog("Error ".$object->error." ".join(',', $object->errors), LOG_DEBUG, 0, '_payment');
+						dol_syslog("Error ".$object->error." ".implode(',', $object->errors), LOG_DEBUG, 0, '_payment');
 
 						$error++;
 						$postactionmessages[] = $object->error;
@@ -896,7 +896,7 @@ if ($ispaymentok) {
 				if (!$error) {
 					$paiement_id = $paiement->create($user, 1); // This include closing invoices and regenerating documents
 					if ($paiement_id < 0) {
-						$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
+						$postactionmessages[] = $paiement->error.' '.implode("<br>\n", $paiement->errors);
 						$ispostactionok = -1;
 						$error++;
 					} else {
@@ -933,7 +933,7 @@ if ($ispaymentok) {
 						}
 						$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
 						if ($result < 0) {
-							$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
+							$postactionmessages[] = $paiement->error.' '.implode("<br>\n", $paiement->errors);
 							$ispostactionok = -1;
 							$error++;
 						} else {
@@ -1024,7 +1024,7 @@ if ($ispaymentok) {
 						if (!$error) {
 							$paiement_id = $paiement->create($user, 1); // This include closing invoices and regenerating documents
 							if ($paiement_id < 0) {
-								$postactionmessages[] = $paiement->error . ' ' . join("<br>\n", $paiement->errors);
+								$postactionmessages[] = $paiement->error . ' ' . implode("<br>\n", $paiement->errors);
 								$ispostactionok = -1;
 								$error++;
 							} else {
@@ -1061,7 +1061,7 @@ if ($ispaymentok) {
 								}
 								$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
 								if ($result < 0) {
-									$postactionmessages[] = $paiement->error . ' ' . join("<br>\n", $paiement->errors);
+									$postactionmessages[] = $paiement->error . ' ' . implode("<br>\n", $paiement->errors);
 									$ispostactionok = -1;
 									$error++;
 								} else {
@@ -1157,7 +1157,7 @@ if ($ispaymentok) {
 				if (!$error) {
 					$paiement_id = $paiement->create($user, 1);
 					if ($paiement_id < 0) {
-						$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
+						$postactionmessages[] = $paiement->error.' '.implode("<br>\n", $paiement->errors);
 						$ispostactionok = -1;
 						$error++;
 					} else {
@@ -1195,7 +1195,7 @@ if ($ispaymentok) {
 						$label = '(DonationPayment)';
 						$result = $paiement->addPaymentToBank($user, 'payment_donation', $label, $bankaccountid, '', '');
 						if ($result < 0) {
-							$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
+							$postactionmessages[] = $paiement->error.' '.implode("<br>\n", $paiement->errors);
 							$ispostactionok = -1;
 							$error++;
 						} else {
@@ -1291,7 +1291,7 @@ if ($ispaymentok) {
 					if (!$error) {
 						$paiement_id = $paiement->create($user, 1); // This include closing invoices and regenerating documents
 						if ($paiement_id < 0) {
-							$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
+							$postactionmessages[] = $paiement->error.' '.implode("<br>\n", $paiement->errors);
 							$ispostactionok = -1;
 							$error++;
 						} else {
@@ -1328,7 +1328,7 @@ if ($ispaymentok) {
 							}
 							$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
 							if ($result < 0) {
-								$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
+								$postactionmessages[] = $paiement->error.' '.implode("<br>\n", $paiement->errors);
 								$ispostactionok = -1;
 								$error++;
 							} else {
@@ -1521,7 +1521,7 @@ if ($ispaymentok) {
 					if (!$error) {
 						$paiement_id = $paiement->create($user, 1); // This include closing invoices and regenerating documents
 						if ($paiement_id < 0) {
-							$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
+							$postactionmessages[] = $paiement->error.' '.implode("<br>\n", $paiement->errors);
 							$ispostactionok = -1;
 							$error++;
 						} else {
@@ -1558,7 +1558,7 @@ if ($ispaymentok) {
 							}
 							$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
 							if ($result < 0) {
-								$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
+								$postactionmessages[] = $paiement->error.' '.implode("<br>\n", $paiement->errors);
 								$ispostactionok = -1;
 								$error++;
 							} else {
@@ -1732,7 +1732,7 @@ if ($ispaymentok) {
 						if (!$error) {
 							$paiement_id = $paiement->create($user, 1); // This include closing invoices and regenerating documents
 							if ($paiement_id < 0) {
-								$postactionmessages[] = $paiement->error . ' ' . join("<br>\n", $paiement->errors);
+								$postactionmessages[] = $paiement->error . ' ' . implode("<br>\n", $paiement->errors);
 								$ispostactionok = -1;
 								$error++;
 							} else {
@@ -1769,7 +1769,7 @@ if ($ispaymentok) {
 								}
 								$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
 								if ($result < 0) {
-									$postactionmessages[] = $paiement->error . ' ' . join("<br>\n", $paiement->errors);
+									$postactionmessages[] = $paiement->error . ' ' . implode("<br>\n", $paiement->errors);
 									$ispostactionok = -1;
 									$error++;
 								} else {

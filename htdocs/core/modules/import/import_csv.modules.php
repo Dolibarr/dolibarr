@@ -138,7 +138,7 @@ class ImportCsv extends ModeleImports
 	public function write_title_example($outputlangs, $headerlinefields)
 	{
 		// phpcs:enable
-		$s = join($this->separator, array_map('cleansep', $headerlinefields));
+		$s = implode($this->separator, array_map('cleansep', $headerlinefields));
 		return $s."\n";
 	}
 
@@ -153,7 +153,7 @@ class ImportCsv extends ModeleImports
 	public function write_record_example($outputlangs, $contentlinevalues)
 	{
 		// phpcs:enable
-		$s = join($this->separator, array_map('cleansep', $contentlinevalues));
+		$s = implode($this->separator, array_map('cleansep', $contentlinevalues));
 		return $s."\n";
 	}
 

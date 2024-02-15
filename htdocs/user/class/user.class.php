@@ -2916,7 +2916,7 @@ class User extends CommonObject
 				$data['phone'] = '<br><b>'.$langs->trans("Phone").':</b> '.$langs->trans("Yes");
 			}
 			if (!empty($_SESSION["disablemodules"])) {
-				$data['disabledmodules'] = '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.dol_string_nohtmltag(join(', ', explode(',', $_SESSION["disablemodules"])));
+				$data['disabledmodules'] = '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.dol_string_nohtmltag(implode(', ', explode(',', $_SESSION["disablemodules"])));
 			}
 		}
 

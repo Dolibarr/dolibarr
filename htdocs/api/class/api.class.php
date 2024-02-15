@@ -18,9 +18,7 @@
  */
 
 use Luracast\Restler\Restler;
-use Luracast\Restler\RestException;
 use Luracast\Restler\Defaults;
-use Luracast\Restler\Format\UploadFormat;
 
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 

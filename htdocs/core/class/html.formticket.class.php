@@ -1004,7 +1004,7 @@ class FormTicket
 				$sql .= " FROM ".$this->db->prefix()."c_ticket_category as ctc";
 				$sql .= " JOIN ".$this->db->prefix()."c_ticket_category as ctcjoin ON ctc.fk_parent = ctcjoin.rowid";
 				$sql .= " WHERE ctc.active > 0 AND ctc.entity = ".((int) $conf->entity);
-				$sql .= " AND ctc.rowid NOT IN (".$this->db->sanitize(join(',', $arrayidusedconcat)).")";
+				$sql .= " AND ctc.rowid NOT IN (".$this->db->sanitize(implode(',', $arrayidusedconcat)).")";
 
 				if ($filtertype == 'public=1') {
 					$sql .= " AND ctc.public = 1";
