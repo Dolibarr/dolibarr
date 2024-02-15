@@ -406,7 +406,7 @@ if ((!empty($search_categ) && $search_categ > 0) || !empty($catid)) {
 $sql .= " d.rowid, d.ref, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc,";
 $sql .= " d.civility, d.datefin, d.address, d.zip, d.town, d.state_id, d.country,";
 $sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.birth, d.public, d.photo,";
-$sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut as status, d.datec as date_creation, d.tms as date_update,";
+$sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut as status, d.datec as date_creation, d.tms as date_modification,";
 $sql .= " d.note_private, d.note_public, d.import_key,";
 $sql .= " s.nom,";
 $sql .= " ".$db->ifsql("d.societe IS NULL", "s.nom", "d.societe")." as companyname,";
@@ -1487,7 +1487,7 @@ while ($i < $imaxinloop) {
 		// Date modification
 		if (!empty($arrayfields['d.tms']['checked'])) {
 			print '<td class="nowrap center">';
-			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

@@ -842,7 +842,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 		print '<div class="div-table-responsive">'."\n";
 		print '<table class="noborder centpercent">';
 
-		$sql  = "SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount";
+		$sql  = "SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_modification, p.budget_amount";
 		$sql .= ", cls.code as opp_status_code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";

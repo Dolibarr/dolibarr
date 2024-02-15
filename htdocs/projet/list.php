@@ -473,7 +473,7 @@ $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfi
 
 $distinct = 'DISTINCT'; // We add distinct until filter on contact of project or task is implemented with AND EXISTS
 $sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat,";
-$sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_update, p.budget_amount,";
+$sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_modification, p.budget_amount,";
 $sql .= " p.usage_opportunity, p.usage_task, p.usage_bill_time, p.usage_organize_event,";
 $sql .= " p.email_msgid, p.import_key,";
 $sql .= " p.accept_conference_suggestions, p.accept_booth_suggestions, p.price_registration, p.price_booth,";
@@ -1994,7 +1994,7 @@ while ($i < $imaxinloop) {
 		// Date modification
 		if (!empty($arrayfields['p.tms']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

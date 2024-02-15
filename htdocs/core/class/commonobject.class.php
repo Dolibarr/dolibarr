@@ -615,14 +615,9 @@ abstract class CommonObject
 	/**
 	 * Update timestamp record (tms)
 	 * @var integer
+	 * @deprecated					Use $date_modification
 	 */
 	public $tms;
-
-	/**
-	 * @var integer|string|null
-	 * @deprecated 					Use $date_modification
-	 */
-	public $date_update;
 
 	/**
 	 * @var integer|string|null		Object closing date
