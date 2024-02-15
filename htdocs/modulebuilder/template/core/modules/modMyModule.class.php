@@ -368,9 +368,9 @@ class modMyModule extends DolibarrModules
 		/* BEGIN MODULEBUILDER EXPORT MYOBJECT */
 		/*
 		$langs->load("mymodule@mymodule");
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='myobject@mymodule';
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = 'MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_icon[$r] = $this->picto;
 		// Define $this->export_fields_array, $this->export_TypeFields_array and $this->export_entities_array
 		$keyforclass = 'MyObject'; $keyforclassfile='/mymodule/class/myobject.class.php'; $keyforelement='myobject@mymodule';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
@@ -399,9 +399,9 @@ class modMyModule extends DolibarrModules
 		/* BEGIN MODULEBUILDER IMPORT MYOBJECT */
 		/*
 		$langs->load("mymodule@mymodule");
-		$this->import_code[$r]=$this->rights_class.'_'.$r;
-		$this->import_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->import_icon[$r]='myobject@mymodule';
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = 'MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->import_icon[$r] = $this->picto;
 		$this->import_tables_array[$r] = array('t' => MAIN_DB_PREFIX.'mymodule_myobject', 'extra' => MAIN_DB_PREFIX.'mymodule_myobject_extrafields');
 		$this->import_tables_creator_array[$r] = array('t' => 'fk_user_author'); // Fields to store import user id
 		$import_sample = array();
