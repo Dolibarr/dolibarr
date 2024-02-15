@@ -116,7 +116,8 @@ jobs:
         shell: cmd
         run: |-
           php --ini
-          SET PHP_INI_SCAN_DIR=C:\myphpini
+          REM TODO Uncomment next line to restrict directory access
+          REM SET PHP_INI_SCAN_DIR=C:\myphpini
           SET INIFILE="C:\myphpini\dolibarr.ini"
           mkdir c:\myphpini
           echo [php] > %INIFILE%
