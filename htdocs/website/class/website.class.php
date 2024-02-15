@@ -100,10 +100,6 @@ class Website extends CommonObject
 	 * @var integer	date_modification
 	 */
 	public $date_modification;
-	/**
-	 * @var integer date_modification
-	 */
-	public $tms;
 
 	/**
 	 * @var integer Default home page

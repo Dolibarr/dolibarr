@@ -60,7 +60,7 @@ ONLY vulnerabilities discovered, when the following setup on test platform is us
   CSRF attacks and HTML injections are accepted but double check this setup that is experimental setup that already fix a lot of case and soon enabled by default.
 * ONLY security reports on modules provided by default and with the "stable" status are valid (troubles in "experimental", "development" or external modules are not valid vulnerabilities).
 * The root of web server must link to htdocs and the documents directory must be outside of the web server root (this is the default when using the default installer but may differs with external installer).
-* The web server setup must be done so that only the documents directory is in write mode. The root directory called htdocs must be read-only.
+* The web server setup must be done so that only the documents directory is in write mode and directory listing is not allowed. The directory path htdocs/ must be read-only.
 * The modules DebugBar and ModuleBuilder must NOT be enabled. (by default, these modules are not enabled. They are developer tools)
 * Ability for a high-level user to edit web site pages in the CMS by including HTML or JavaScript is an expected feature. Vulnerabilities in the website module are validated only if HTML or JavaScript injection can be done by a non-allowed user.
 * Fail2ban rules for rate limit on the login page, forgotten password page, API calls and all public pages (/public/*) must be installed as recommended in the section "About - Admin tools - Section Access limits and mitigation".
@@ -85,6 +85,7 @@ Scope is the web application (backoffice) and the APIs.
 
 ## Examples of vulnerabilities that are Non-qualified for reporting.
 
+* Directory Listing (this is a bad setup of the web server, not a problem into the application)
 * "Self" XSS
 * Clickjacking/UI redressing
 * Presence of autocomplete attribute on web forms

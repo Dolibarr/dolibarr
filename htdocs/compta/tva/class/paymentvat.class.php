@@ -53,7 +53,7 @@ class PaymentVAT extends CommonObject
 	public $fk_tva;
 
 	public $datec = '';
-	public $tms = '';
+
 	public $datep = '';
 
 	/**

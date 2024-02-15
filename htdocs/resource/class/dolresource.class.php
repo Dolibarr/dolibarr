@@ -58,21 +58,9 @@ class Dolresource extends CommonObject
 	public $zip;
 
 	/**
-	 * @var string yown
+	 * @var string town
 	 */
 	public $town;
-
-	/**
-	 * @var string ID
-	 */
-	public $fk_code_type_resource;
-
-	public $type_label;
-
-	/**
-	 * @var string description
-	 */
-	public $description;
 
 	/**
 	 * @var int ID country
@@ -84,24 +72,78 @@ class Dolresource extends CommonObject
 	 */
 	public $fk_state;
 
-	// Variable for a link of resource
+	/**
+	 * @var string description
+	 */
+	public $description;
 
 	/**
-	 * @var int ID
+	 * @var string telephone number
+	 */
+	public $phone;
+
+	/**
+	 * @var string email address
+	 */
+	public $email;
+
+	/**
+	 * @var int Maximum users
+	 */
+	public $max_users;
+
+	/**
+	 * @var string ID
+	 */
+	public $fk_code_type_resource;
+
+	public $type_label;
+
+	/**
+	 * @var int resource ID
+	 * For resource-element link
+	 * @see updateElementResource()
+	 * @see fetchElementResource()
 	 */
 	public $resource_id;
+
+	/**
+	 * @var string resource type
+	 */
 	public $resource_type;
+
+	/**
+	 * @var int element ID
+	 * For resource-element link
+	 * @see updateElementResource()
+	 * @see fetchElementResource()
+	 */
 	public $element_id;
+
+	/**
+	 * @var string element type
+	 */
 	public $element_type;
+
+	/**
+	 * @var int
+	 */
 	public $busy;
+
+	/**
+	 * @var int
+	 */
 	public $mandatory;
+
+	/**
+	 * @var int
+	 */
 	public $fulldayevent;
 
 	/**
 	 * @var int ID
 	 */
 	public $fk_user_create;
-	public $tms;
 
 	/**
 	 * Used by fetchElementResource() to return an object
@@ -136,14 +178,28 @@ class Dolresource extends CommonObject
 	 *
 	 * @param	User	$user		User that creates
 	 * @param	int		$no_trigger	0=launch triggers after, 1=disable triggers
-	 * @return	int					Return integer if KO: <0, if OK: Id of created object
+	 * @return	int					if KO: <0 || if OK: Id of created object
 	 */
 	public function create(User $user, int $no_trigger = 0)
 	{
 		$error = 0;
 
 		// Clean parameters
-		$new_resource_values = [$this->ref, $this->address, $this->zip, $this->town, $this->description, $this->country_id, $this->state_id, $this->fk_code_type_resource, $this->note_public, $this->note_private];
+		$new_resource_values = [
+			$this->ref,
+			$this->address,
+			$this->zip,
+			$this->town,
+			$this->country_id,
+			$this->state_id,
+			$this->description,
+			$this->phone,
+			$this->email,
+			$this->max_users,
+			$this->fk_code_type_resource,
+			$this->note_public,
+			$this->note_private
+		];
 		foreach ($new_resource_values as $key => $value) {
 			if (isset($value)) {
 				$new_resource_values[$key] = trim($value);
@@ -157,9 +213,12 @@ class Dolresource extends CommonObject
 		$sql .= "address,";
 		$sql .= "zip,";
 		$sql .= "town,";
-		$sql .= "description,";
 		$sql .= "fk_country,";
 		$sql .= "fk_state,";
+		$sql .= "description,";
+		$sql .= "phone,";
+		$sql .= "email,";
+		$sql .= "max_users,";
 		$sql .= "fk_code_type_resource,";
 		$sql .= "note_public,";
 		$sql .= "note_private";
@@ -222,11 +281,10 @@ class Dolresource extends CommonObject
 	 *
 	 * @param	int		$id		Id of object
 	 * @param	string	$ref	Ref of object
-	 * @return	int				Return integer if KO: <0 , if OK: >0
+	 * @return	int				if KO: <0 || if OK: >0
 	 */
-	public function fetch($id, $ref = '')
+	public function fetch(int $id, string $ref = '')
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.entity,";
@@ -234,9 +292,12 @@ class Dolresource extends CommonObject
 		$sql .= " t.address,";
 		$sql .= " t.zip,";
 		$sql .= " t.town,";
-		$sql .= " t.description,";
 		$sql .= " t.fk_country,";
 		$sql .= " t.fk_state,";
+		$sql .= " t.description,";
+		$sql .= " t.phone,";
+		$sql .= " t.email,";
+		$sql .= " t.max_users,";
 		$sql .= " t.fk_code_type_resource,";
 		$sql .= " t.note_public,";
 		$sql .= " t.note_private,";
@@ -245,7 +306,7 @@ class Dolresource extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
 		if ($id) {
-			$sql .= " WHERE t.rowid = ".((int) $id);
+			$sql .= " WHERE t.rowid = ".($id);
 		} else {
 			$sql .= " WHERE t.ref = '".$this->db->escape($ref)."'";
 		}
@@ -262,11 +323,14 @@ class Dolresource extends CommonObject
 				$this->address = $obj->address;
 				$this->zip = $obj->zip;
 				$this->town = $obj->town;
-				$this->description				= $obj->description;
 				$this->country_id = $obj->fk_country;
 				$this->state_id = $obj->fk_state;
+				$this->description = $obj->description;
+				$this->phone = $obj->phone;
+				$this->email = $obj->email;
+				$this->max_users = $obj->max_users;
 				$this->fk_code_type_resource = $obj->fk_code_type_resource;
-				$this->note_public				= $obj->note_public;
+				$this->note_public = $obj->note_public;
 				$this->note_private = $obj->note_private;
 				$this->type_label = $obj->type_label;
 
@@ -288,13 +352,13 @@ class Dolresource extends CommonObject
 	/**
 	 * Update object in database
 	 *
-	 * @param	User	$user		User that modifies
-	 * @param	int		$notrigger	0=launch triggers after, 1=disable triggers
-	 * @return	int					Return integer if KO: <0 , if OK: >0
+	 * @param	User|null	$user		User that modifies
+	 * @param	int			$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int						if KO: <0 || if OK: >0
 	 */
-	public function update($user = null, $notrigger = 0)
+	public function update(User $user = null, int $notrigger = 0)
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -310,17 +374,26 @@ class Dolresource extends CommonObject
 		if (isset($this->town)) {
 			$this->town = trim($this->town);
 		}
-		if (isset($this->fk_code_type_resource)) {
-			$this->fk_code_type_resource = trim($this->fk_code_type_resource);
-		}
-		if (isset($this->description)) {
-			$this->description = trim($this->description);
-		}
 		if (!is_numeric($this->country_id)) {
 			$this->country_id = 0;
 		}
 		if (!is_numeric($this->state_id)) {
 			$this->state_id = 0;
+		}
+		if (isset($this->description)) {
+			$this->description = trim($this->description);
+		}
+		if (isset($this->phone)) {
+			$this->phone = trim($this->phone);
+		}
+		if (isset($this->email)) {
+			$this->email = trim($this->email);
+		}
+		if (!is_numeric($this->max_users)) {
+			$this->max_users = 0;
+		}
+		if (isset($this->fk_code_type_resource)) {
+			$this->fk_code_type_resource = trim($this->fk_code_type_resource);
 		}
 
 		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
@@ -334,9 +407,12 @@ class Dolresource extends CommonObject
 		$sql .= " address=".(isset($this->address) ? "'".$this->db->escape($this->address)."'" : "null").",";
 		$sql .= " zip=".(isset($this->zip) ? "'".$this->db->escape($this->zip)."'" : "null").",";
 		$sql .= " town=".(isset($this->town) ? "'".$this->db->escape($this->town)."'" : "null").",";
+		$sql .= " fk_country=".($this->country_id > 0 ? (int) $this->country_id : "null").",";
+		$sql .= " fk_state=".($this->state_id > 0 ? (int) $this->state_id : "null").",";
 		$sql .= " description=".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").",";
-		$sql .= " fk_country=".($this->country_id > 0 ? $this->country_id : "null").",";
-		$sql .= " fk_state=".($this->state_id > 0 ? $this->state_id : "null").",";
+		$sql .= " phone=".(isset($this->phone) ? "'".$this->db->escape($this->phone)."'" : "null").",";
+		$sql .= " email=".(isset($this->email) ? "'".$this->db->escape($this->email)."'" : "null").",";
+		$sql .= " max_users=".(isset($this->max_users) ? (int) $this->max_users : "null").",";
 		$sql .= " fk_code_type_resource=".(isset($this->fk_code_type_resource) ? "'".$this->db->escape($this->fk_code_type_resource)."'" : "null").",";
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null');
 		$sql .= " WHERE rowid=".((int) $this->id);
@@ -378,14 +454,10 @@ class Dolresource extends CommonObject
 		}
 
 		if (!$error) {
-			$action = 'update';
-
 			// Actions on extra fields
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 		}
 
@@ -406,10 +478,10 @@ class Dolresource extends CommonObject
 	/**
 	 * Load data of resource links into memory from database
 	 *
-	 * @param	int	$id		Id of link element_resources
-	 * @return	int			Return integer if KO: <0, if OK: >0
+	 * @param	int		$id		Id of link element_resources
+	 * @return	int				if KO: <0 || if OK: >0
 	 */
-	public function fetchElementResource($id)
+	public function fetchElementResource(int $id)
 	{
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -422,7 +494,7 @@ class Dolresource extends CommonObject
 		$sql .= " t.fk_user_create,";
 		$sql .= " t.tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as t";
-		$sql .= " WHERE t.rowid = ".((int) $id);
+		$sql .= " WHERE t.rowid = ".($id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -460,11 +532,11 @@ class Dolresource extends CommonObject
 	 *
 	 * @param	int		$rowid			Id of resource line to delete
 	 * @param	int		$notrigger		Disable all triggers
-	 * @return	int						Return integer if OK: >0, if KO: <0
+	 * @return	int						if OK: >0 || if KO: <0
 	 */
-	public function delete($rowid, $notrigger = 0)
+	public function delete(int $rowid, int $notrigger = 0)
 	{
-		global $user, $langs, $conf;
+		global $user, $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error = 0;
@@ -472,7 +544,7 @@ class Dolresource extends CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " WHERE rowid = ".((int) $rowid);
+		$sql .= " WHERE rowid = ".($rowid);
 
 		dol_syslog(get_class($this), LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -509,7 +581,7 @@ class Dolresource extends CommonObject
 
 		if (!$error) {
 			// We remove directory
-			$ref = dol_sanitizeFileName($this->ref);
+			dol_sanitizeFileName($this->ref);
 			if (!empty($conf->resource->dir_output)) {
 				$dir = $conf->resource->dir_output."/".dol_sanitizeFileName($this->ref);
 				if (file_exists($dir)) {
@@ -539,9 +611,9 @@ class Dolresource extends CommonObject
 	 * @param	int			$limit			limit page
 	 * @param	int			$offset			page
 	 * @param	array		$filter			filter output
-	 * @return	int							Return integer if KO: <0, if OK number of lines loaded
+	 * @return	int							if KO: <0 || if OK number of lines loaded
 	 */
-	public function fetchAll($sortorder, $sortfield, $limit, $offset, $filter = [])
+	public function fetchAll(string $sortorder, string $sortfield, int $limit, int $offset, array $filter = [])
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
@@ -553,9 +625,12 @@ class Dolresource extends CommonObject
 		$sql .= " t.address,";
 		$sql .= " t.zip,";
 		$sql .= " t.town,";
-		$sql .= " t.description,";
 		$sql .= " t.fk_country,";
 		$sql .= " t.fk_state,";
+		$sql .= " t.description,";
+		$sql .= " t.phone,";
+		$sql .= " t.email,";
+		$sql .= " t.max_users,";
 		$sql .= " t.fk_code_type_resource,";
 		$sql .= " t.tms,";
 		// Add fields from extrafields
@@ -600,9 +675,12 @@ class Dolresource extends CommonObject
 					$line->address = $obj->address;
 					$line->zip = $obj->zip;
 					$line->town = $obj->town;
-					$line->description = $obj->description;
 					$line->country_id = $obj->fk_country;
 					$line->state_id = $obj->fk_state;
+					$line->description = $obj->description;
+					$this->phone = $obj->phone;
+					$this->email = $obj->email;
+					$this->max_users = $obj->max_users;
 					$line->fk_code_type_resource = $obj->fk_code_type_resource;
 					$line->type_label = $obj->type_label;
 
@@ -624,13 +702,12 @@ class Dolresource extends CommonObject
 	/**
 	 * Update element resource in database
 	 *
-	 * @param	User	$user		User that modifies
-	 * @param	int		$notrigger	0=launch triggers after, 1=disable triggers
-	 * @return	int					Return integer if KO: <0, if OK: >0
+	 * @param	User|null	$user		User that modifies
+	 * @param	int			$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int						if KO: <0 || if OK: >0
 	 */
-	public function updateElementResource($user = null, $notrigger = 0)
+	public function updateElementResource(User $user = null, int $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -702,15 +779,13 @@ class Dolresource extends CommonObject
 	/**
 	 * Return an array with resources linked to the element
 	 *
-	 * @param string    $element        Element
-	 * @param int       $element_id     Id
-	 * @param string    $resource_type  Type
-	 * @return array                    Array of resources
+	 * @param	string		$element			Element
+	 * @param	int			$element_id			Id
+	 * @param	string		$resource_type		Type
+	 * @return	array							Array of resources
 	 */
-	public function getElementResources($element, $element_id, $resource_type = '')
+	public function getElementResources(string $element, int $element_id, string $resource_type = '')
 	{
-		$resources = array();
-
 		// Links between objects are stored in this table
 		$sql = 'SELECT rowid, resource_id, resource_type, busy, mandatory';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'element_resources';
@@ -747,15 +822,15 @@ class Dolresource extends CommonObject
 	/**
 	 *  Return an int number of resources linked to the element
 	 *
-	 * @param		string	$element		Element type
-	 * @param		int		$element_id		Element id
-	 * @return		int						Nb of resources loaded
+	 * @param	string	$elementType		Element type
+	 * @param	int		$elementId			Element id
+	 * @return	int							Nb of resources loaded
 	 */
-	public function fetchElementResources($element, $element_id)
+	public function fetchElementResources(string $elementType, int $elementId)
 	{
-		$resources = $this->getElementResources($element, $element_id);
+		$resources = $this->getElementResources($elementType, $elementId);
 		$i = 0;
-		foreach ($resources as $nb => $resource) {
+		foreach ($resources as $resource) {
 			$this->lines[$i] = fetchObjectByElement($resource['resource_id'], $resource['resource_type']);
 			$i++;
 		}
@@ -765,7 +840,7 @@ class Dolresource extends CommonObject
 	/**
 	 * Load in cache resource type code (setup in dictionary)
 	 *
-	 * @return		int		Number of lines loaded, if already loaded: 0, if KO: <0
+	 * @return		int		if KO: <0 || if already loaded: 0 || Number of lines loaded
 	 */
 	public function loadCacheCodeTypeResource()
 	{
@@ -802,9 +877,8 @@ class Dolresource extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param	array	$params		ex option, infologin
 	 * @since	v18
+	 * @param	array	$params		ex option, infologin
 	 * @return	array
 	 */
 	public function getTooltipContentArray($params)
@@ -830,17 +904,17 @@ class Dolresource extends CommonObject
 	/**
 	 * Return clickable link of object (with optional picto)
 	 *
-	 *	@param      int		$withpicto					Add picto into link
-	 *	@param      string	$option						Where point the link ('compta', 'expedition', 'document', ...)
-	 *	@param      string	$get_params    				Parameters added to url
-	 *	@param		int  	$notooltip					1=Disable tooltip
-	 *  @param  	string  $morecss                    Add more css on link
-	 *  @param  	int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return     string          					String with URL
+	 *	@param		int		$withpicto					Add picto into link
+	 *	@param		string	$option						Where point the link ('compta', 'expedition', 'document', ...)
+	 *	@param		string	$get_params					Parameters added to url
+	 *	@param		int		$notooltip					1=Disable tooltip
+	 *  @param		string	$morecss                    Add more css on link
+	 *  @param		int		$save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return		string								String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl(int $withpicto = 0, string $option = '', string $get_params = '', int $notooltip = 0, string $morecss = '', int $save_lastsearch_value = -1)
 	{
-		global $conf, $langs, $hookmanager;
+		global $langs, $hookmanager, $action;
 
 		$result = '';
 		$params = [
@@ -890,14 +964,13 @@ class Dolresource extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ?: 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
 		}
 		$result .= $linkend;
 
-		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
 		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
@@ -913,10 +986,10 @@ class Dolresource extends CommonObject
 	/**
 	 * Get status label
 	 *
-	 * @param	int		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 * @return	string				Label of status
+	 * @param		int		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return		string				Label of status
 	 */
-	public function getLibStatut($mode = 0)
+	public function getLibStatut(int $mode = 0)
 	{
 		return $this->getLibStatusLabel($this->status, $mode);
 	}
@@ -926,17 +999,17 @@ class Dolresource extends CommonObject
 	 *
 	 * @param	int		$status		Id status
 	 * @param	int		$mode 		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto
-	 * @return	string 				Label of status
+	 * @return	string				Label of status
 	 */
-	public static function getLibStatusLabel($status, $mode = 0)
+	public static function getLibStatusLabel(int $status, int $mode = 0)
 	{
 		return '';
 	}
 
 	/**
-	 *      Load indicators this->nb for state board
+	 * Load indicators this->nb for state board
 	 *
-	 * @return	int		Return integer if KO: <0, if OK: >0
+	 * @return	int		if KO: <0 || if OK: >0
 	 */
 	public function loadStateBoard()
 	{

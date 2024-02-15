@@ -110,10 +110,6 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	 */
 	public $status;
 
-	/**
-	 * @var int timestamp
-	 */
-	public $tms = '';
 	public $batch;
 	public $eatby = '';
 	public $sellby = '';
