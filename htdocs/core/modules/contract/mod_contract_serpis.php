@@ -37,7 +37,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 
 
 	// variables not inherited
-	
+
 	/**
 	 * @var string
 	 */
