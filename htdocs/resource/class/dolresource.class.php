@@ -58,21 +58,9 @@ class Dolresource extends CommonObject
 	public $zip;
 
 	/**
-	 * @var string yown
+	 * @var string town
 	 */
 	public $town;
-
-	/**
-	 * @var string ID
-	 */
-	public $fk_code_type_resource;
-
-	public $type_label;
-
-	/**
-	 * @var string description
-	 */
-	public $description;
 
 	/**
 	 * @var int ID country
@@ -83,6 +71,33 @@ class Dolresource extends CommonObject
 	 * @var int ID state
 	 */
 	public $fk_state;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
+	/**
+	 * @var string telephone number
+	 */
+	public $phone;
+
+	/**
+	 * @var string email address
+	 */
+	public $email;
+
+	/**
+	 * @var int Maximum users
+	 */
+	public $max_users;
+
+	/**
+	 * @var string ID
+	 */
+	public $fk_code_type_resource;
+
+	public $type_label;
 
 	// Variable for a link of resource
 
@@ -101,7 +116,6 @@ class Dolresource extends CommonObject
 	 * @var int ID
 	 */
 	public $fk_user_create;
-	public $tms;
 
 	/**
 	 * Used by fetchElementResource() to return an object
@@ -143,7 +157,21 @@ class Dolresource extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$new_resource_values = [$this->ref, $this->address, $this->zip, $this->town, $this->description, $this->country_id, $this->state_id, $this->fk_code_type_resource, $this->note_public, $this->note_private];
+		$new_resource_values = [
+			$this->ref,
+			$this->address,
+			$this->zip,
+			$this->town,
+			$this->country_id,
+			$this->state_id,
+			$this->description,
+			$this->phone,
+			$this->email,
+			$this->max_users,
+			$this->fk_code_type_resource,
+			$this->note_public,
+			$this->note_private
+		];
 		foreach ($new_resource_values as $key => $value) {
 			if (isset($value)) {
 				$new_resource_values[$key] = trim($value);
@@ -157,9 +185,12 @@ class Dolresource extends CommonObject
 		$sql .= "address,";
 		$sql .= "zip,";
 		$sql .= "town,";
-		$sql .= "description,";
 		$sql .= "fk_country,";
 		$sql .= "fk_state,";
+		$sql .= "description,";
+		$sql .= "phone,";
+		$sql .= "email,";
+		$sql .= "max_users,";
 		$sql .= "fk_code_type_resource,";
 		$sql .= "note_public,";
 		$sql .= "note_private";
@@ -234,9 +265,12 @@ class Dolresource extends CommonObject
 		$sql .= " t.address,";
 		$sql .= " t.zip,";
 		$sql .= " t.town,";
-		$sql .= " t.description,";
 		$sql .= " t.fk_country,";
 		$sql .= " t.fk_state,";
+		$sql .= " t.description,";
+		$sql .= " t.phone,";
+		$sql .= " t.email,";
+		$sql .= " t.max_users,";
 		$sql .= " t.fk_code_type_resource,";
 		$sql .= " t.note_public,";
 		$sql .= " t.note_private,";
@@ -262,11 +296,14 @@ class Dolresource extends CommonObject
 				$this->address = $obj->address;
 				$this->zip = $obj->zip;
 				$this->town = $obj->town;
-				$this->description				= $obj->description;
 				$this->country_id = $obj->fk_country;
 				$this->state_id = $obj->fk_state;
+				$this->description = $obj->description;
+				$this->phone = $obj->phone;
+				$this->email = $obj->email;
+				$this->max_users = $obj->max_users;
 				$this->fk_code_type_resource = $obj->fk_code_type_resource;
-				$this->note_public				= $obj->note_public;
+				$this->note_public = $obj->note_public;
 				$this->note_private = $obj->note_private;
 				$this->type_label = $obj->type_label;
 
@@ -310,17 +347,26 @@ class Dolresource extends CommonObject
 		if (isset($this->town)) {
 			$this->town = trim($this->town);
 		}
-		if (isset($this->fk_code_type_resource)) {
-			$this->fk_code_type_resource = trim($this->fk_code_type_resource);
-		}
-		if (isset($this->description)) {
-			$this->description = trim($this->description);
-		}
 		if (!is_numeric($this->country_id)) {
 			$this->country_id = 0;
 		}
 		if (!is_numeric($this->state_id)) {
 			$this->state_id = 0;
+		}
+		if (isset($this->description)) {
+			$this->description = trim($this->description);
+		}
+		if (isset($this->phone)) {
+			$this->phone = trim($this->phone);
+		}
+		if (isset($this->email)) {
+			$this->email = trim($this->email);
+		}
+		if (!is_numeric($this->max_users)) {
+			$this->max_users = 0;
+		}
+		if (isset($this->fk_code_type_resource)) {
+			$this->fk_code_type_resource = trim($this->fk_code_type_resource);
 		}
 
 		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
@@ -334,9 +380,12 @@ class Dolresource extends CommonObject
 		$sql .= " address=".(isset($this->address) ? "'".$this->db->escape($this->address)."'" : "null").",";
 		$sql .= " zip=".(isset($this->zip) ? "'".$this->db->escape($this->zip)."'" : "null").",";
 		$sql .= " town=".(isset($this->town) ? "'".$this->db->escape($this->town)."'" : "null").",";
+		$sql .= " fk_country=".($this->country_id > 0 ? (int) $this->country_id : "null").",";
+		$sql .= " fk_state=".($this->state_id > 0 ? (int) $this->state_id : "null").",";
 		$sql .= " description=".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").",";
-		$sql .= " fk_country=".($this->country_id > 0 ? $this->country_id : "null").",";
-		$sql .= " fk_state=".($this->state_id > 0 ? $this->state_id : "null").",";
+		$sql .= " phone=".(isset($this->phone) ? "'".$this->db->escape($this->phone)."'" : "null").",";
+		$sql .= " email=".(isset($this->email) ? "'".$this->db->escape($this->email)."'" : "null").",";
+		$sql .= " max_users=".(isset($this->max_users) ? (int) $this->max_users : "null").",";
 		$sql .= " fk_code_type_resource=".(isset($this->fk_code_type_resource) ? "'".$this->db->escape($this->fk_code_type_resource)."'" : "null").",";
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null');
 		$sql .= " WHERE rowid=".((int) $this->id);
@@ -553,9 +602,12 @@ class Dolresource extends CommonObject
 		$sql .= " t.address,";
 		$sql .= " t.zip,";
 		$sql .= " t.town,";
-		$sql .= " t.description,";
 		$sql .= " t.fk_country,";
 		$sql .= " t.fk_state,";
+		$sql .= " t.description,";
+		$sql .= " t.phone,";
+		$sql .= " t.email,";
+		$sql .= " t.max_users,";
 		$sql .= " t.fk_code_type_resource,";
 		$sql .= " t.tms,";
 		// Add fields from extrafields
@@ -600,9 +652,12 @@ class Dolresource extends CommonObject
 					$line->address = $obj->address;
 					$line->zip = $obj->zip;
 					$line->town = $obj->town;
-					$line->description = $obj->description;
 					$line->country_id = $obj->fk_country;
 					$line->state_id = $obj->fk_state;
+					$line->description = $obj->description;
+					$this->phone = $obj->phone;
+					$this->email = $obj->email;
+					$this->max_users = $obj->max_users;
 					$line->fk_code_type_resource = $obj->fk_code_type_resource;
 					$line->type_label = $obj->type_label;
 

@@ -138,7 +138,6 @@ class Opensurveysondage extends CommonObject
 	public $status;
 	public $format;
 	public $mailsonde;
-	public $tms;
 	public $entity;
 	/**
 	 * @var int		Allow comments on this poll

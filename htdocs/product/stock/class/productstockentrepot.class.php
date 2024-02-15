@@ -50,8 +50,6 @@ class ProductStockEntrepot extends CommonObject
 	 */
 	public $table_element = 'product_warehouse_properties';
 
-	public $tms = '';
-
 	/**
 	 * @var int ID
 	 */

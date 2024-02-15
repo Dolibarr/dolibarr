@@ -173,11 +173,6 @@ class BOM extends CommonObject
 	public $date_valid;
 
 	/**
-	 * @var int timestamp
-	 */
-	public $tms;
-
-	/**
 	 * @var int Id User creator
 	 */
 	public $fk_user_creat;

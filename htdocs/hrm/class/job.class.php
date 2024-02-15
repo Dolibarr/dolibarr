@@ -119,7 +119,7 @@ class Job extends CommonObject
 	public $label;
 	public $description;
 	public $date_creation;
-	public $tms;
+
 	public $deplacement;
 	public $note_public;
 	public $note_private;

@@ -48,7 +48,6 @@ class LoanSchedule extends CommonObject
 	public $bank_account;
 	public $bank_line;
 	public $datec;
-	public $tms;
 
 	/**
 	 * @var string Payment date

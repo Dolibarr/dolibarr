@@ -47,11 +47,9 @@ class Salary extends CommonObject
 	 */
 	public $picto = 'salary';
 
-	public $tms;
-
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
+	/**
+	 * @var array	List of child tables. To test if we can delete object.
+	 */
 	protected $childtables = array('payment_salary' => array('name'=>'SalaryPayment', 'fk_element'=>'fk_salary'));
 
 	// /**

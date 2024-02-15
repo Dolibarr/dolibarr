@@ -268,7 +268,7 @@ $sql .= " cp.ref,";
 $sql .= " cp.fk_user,";
 $sql .= " cp.fk_type,";
 $sql .= " cp.date_create,";
-$sql .= " cp.tms as date_update,";
+$sql .= " cp.tms as date_modification,";
 $sql .= " cp.description,";
 $sql .= " cp.date_debut,";
 $sql .= " cp.date_fin,";
@@ -867,7 +867,7 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 		$approbatorstatic->photo = $obj->validator_photo;
 
 		$date = $obj->date_create;
-		$date_modif = $obj->date_update;
+		$date_modif = $obj->date_modification;
 
 		$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 		$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';

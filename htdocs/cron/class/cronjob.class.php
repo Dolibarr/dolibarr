@@ -58,11 +58,6 @@ class Cronjob extends CommonObject
 	public $jobtype;
 
 	/**
-	 * @var string|int     Date for last cron object update
-	 */
-	public $tms = '';
-
-	/**
 	 * @var string|int     Date for cron job create
 	 */
 	public $datec = '';

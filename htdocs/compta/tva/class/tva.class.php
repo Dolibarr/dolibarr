@@ -55,7 +55,6 @@ class Tva extends CommonObject
 	 */
 	public $total;
 
-	public $tms;
 	public $datep;
 	public $datev;
 	public $amount;

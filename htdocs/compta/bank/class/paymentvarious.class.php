@@ -59,11 +59,6 @@ class PaymentVarious extends CommonObject
 	/**
 	 * @var int timestamp
 	 */
-	public $tms;
-
-	/**
-	 * @var int timestamp
-	 */
 	public $datep;
 
 	/**
