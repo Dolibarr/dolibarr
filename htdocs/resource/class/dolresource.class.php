@@ -158,7 +158,21 @@ class Dolresource extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$new_resource_values = [$this->ref, $this->address, $this->zip, $this->town, $this->description, $this->country_id, $this->state_id, $this->fk_code_type_resource, $this->note_public, $this->note_private];
+		$new_resource_values = [
+			$this->ref,
+			$this->address,
+			$this->zip,
+			$this->town,
+			$this->country_id,
+			$this->state_id,
+			$this->description,
+			$this->phone,
+			$this->email,
+			$this->max_users,
+			$this->fk_code_type_resource,
+			$this->note_public,
+			$this->note_private
+		];
 		foreach ($new_resource_values as $key => $value) {
 			if (isset($value)) {
 				$new_resource_values[$key] = trim($value);
