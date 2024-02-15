@@ -126,7 +126,7 @@ if (empty($reshook)) {
 				$result = $object->create($user);
 				if ($result > 0) {
 					// Creation OK
-					setEventMessages($langs->trans('ResourceCreatedWithSuccess'), null, 'mesgs');
+					setEventMessages($langs->trans('ResourceCreatedWithSuccess'), null);
 					header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 					exit;
 				} else {
@@ -195,7 +195,7 @@ if (empty($reshook)) {
 			$result = $object->delete($id);
 
 			if ($result >= 0) {
-				setEventMessages($langs->trans('RessourceSuccessfullyDeleted'), null, 'mesgs');
+				setEventMessages($langs->trans('RessourceSuccessfullyDeleted'), null);
 				header('Location: '.DOL_URL_ROOT.'/resource/list.php');
 				exit;
 			} else {
@@ -229,7 +229,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 
 	if ($action == 'create' || $action == 'edit') {
 		if (!$user->hasRight('resource', 'write')) {
-			accessforbidden('', 0, 1);
+			accessforbidden('', 0);
 		}
 
 		// Create/Edit object
@@ -242,7 +242,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 
 		// Ref
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("ResourceFormLabel_ref").'</td>';
-		print '<td><input class="minwidth200" name="ref" value="'.($ref ? $ref : $object->ref).'" autofocus="autofocus"></td></tr>';
+		print '<td><input class="minwidth200" name="ref" value="'.($ref ?: $object->ref).'" autofocus="autofocus"></td></tr>';
 
 		// Address
 		print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
@@ -266,7 +266,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 
 		// Origin country
 		print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>';
-		print $form->select_country($object->country_id, 'country_id');
+		print $form->select_country($object->country_id);
 		if ($user->admin) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
@@ -311,14 +311,14 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '</tr>';
 
 		// Email
-		print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '').'</td>';
+		print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0).'</td>';
 		print '<td>';
 		print img_picto('', 'object_email', 'class="pictofixedwidth"');
 		print '<input type="email" name="email" id="email" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email).'"></td>';
 		print '</tr>';
 
 		// Max users
-		print '<tr><td>'.$form->editfieldkey('MaxUsers', 'max_users', '', $object, 0, 'string', '').'</td>';
+		print '<tr><td>'.$form->editfieldkey('MaxUsers', 'max_users', '', $object, 0).'</td>';
 		print '<td>';
 		print img_picto('', 'object_user', 'class="pictofixedwidth"');
 		print '<input type="number" name="max_users" id="max_users" value="'.(GETPOSTISSET('max_users') ? GETPOSTINT('max_users') : $object->max_users).'"></td>';
@@ -356,7 +356,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&id='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
+		dol_banner_tab($object, 'ref', $linkback, 1, 'ref');
 
 
 		print '<div class="fichecenter">';

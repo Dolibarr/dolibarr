@@ -83,7 +83,7 @@ class Dolresource extends CommonObject
 	public $phone;
 
 	/**
-	 * @var string emil address
+	 * @var string email address
 	 */
 	public $email;
 
