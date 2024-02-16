@@ -281,12 +281,12 @@ class Ticket extends CommonObject
 	/**
 	 * Status
 	 */
-	const STATUS_NOT_READ = 0;
-	const STATUS_READ = 1;
-	const STATUS_ASSIGNED = 2;
-	const STATUS_IN_PROGRESS = 3;
-	const STATUS_NEED_MORE_INFO = 5;	// waiting requester feedback
-	const STATUS_WAITING = 7;			// on hold
+	const STATUS_NOT_READ = 0;			// Draft. Not take into account yet.
+	const STATUS_READ = 1;				// Ticket was read.
+	const STATUS_ASSIGNED = 2;			// Ticket was just assigned to someone. Not in progress yet.
+	const STATUS_IN_PROGRESS = 3;		// In progress
+	const STATUS_NEED_MORE_INFO = 5;	// Waiting requester feedback
+	const STATUS_WAITING = 7;			// On hold
 	const STATUS_CLOSED = 8;			// Closed - Solved
 	const STATUS_CANCELED = 9;			// Closed - Not solved
 

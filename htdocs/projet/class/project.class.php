@@ -352,6 +352,7 @@ class Project extends CommonObject
 	 */
 	const STATUS_CLOSED = 2;
 
+
 	/**
 	 *  Constructor
 	 *
