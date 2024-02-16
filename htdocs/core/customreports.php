@@ -41,6 +41,9 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	}
 
 	$search_measures = GETPOST('search_measures', 'array');
+	if (empty($search_measures)) {
+		$search_measures = array(0 => 't.count');
+	}
 
 	//$search_xaxis = GETPOST('search_xaxis', 'array');
 	if (GETPOST('search_xaxis', 'alpha') && GETPOST('search_xaxis', 'alpha') != '-1') {
@@ -1043,8 +1046,8 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 	if ($level == 0) {
 		// Add the count of record only for the main/first level object. Parents are necessarily unique for each record.
 		$arrayofmesures[$tablealias.'.count'] = array(
-			'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': Count',
-			'labelnohtml' => $labelofobject.': Count',
+			'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans("Number"),
+			'labelnohtml' => $labelofobject.': '.$langs->trans("Number"),
 			'position' => 0,
 			'table' => $object->table_element,
 			'tablefromt' => $tablepath
@@ -1058,28 +1061,28 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 		if (!empty($val['isameasure']) && (!isset($val['enabled']) || dol_eval($val['enabled'], 1, 1, '1'))) {
 			$position = (empty($val['position']) ? 0 : intval($val['position']));
 			$arrayofmesures[$tablealias.'.'.$key.'-sum'] = array(
-				'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>',
+				'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>',
 				'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
 				'position' => ($position + ($count * 100000)).'.1',
 				'table' => $object->table_element,
 				'tablefromt' => $tablepath
 			);
 			$arrayofmesures[$tablealias.'.'.$key.'-average'] = array(
-				'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Average").')</span>',
+				'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Average").')</span>',
 				'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
 				'position' => ($position + ($count * 100000)).'.2',
 				'table' => $object->table_element,
 				'tablefromt' => $tablepath
 			);
 			$arrayofmesures[$tablealias.'.'.$key.'-min'] = array(
-				'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Minimum").')</span>',
+				'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Minimum").')</span>',
 				'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
 				'position' => ($position + ($count * 100000)).'.3',
 				'table' => $object->table_element,
 				'tablefromt' => $tablepath
 			);
 			$arrayofmesures[$tablealias.'.'.$key.'-max'] = array(
-				'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Maximum").')</span>',
+				'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Maximum").')</span>',
 				'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
 				'position' => ($position + ($count * 100000)).'.4',
 				'table' => $object->table_element,
@@ -1093,28 +1096,28 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 			if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
 				$position = (!empty($val['position']) ? $val['position'] : 0);
 				$arrayofmesures[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-sum'] = array(
-					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>',
+					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>',
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
 					'position' => ($position+($count * 100000)).'.1',
 					'table' => $object->table_element,
 					'tablefromt' => $tablepath
 				);
 				$arrayofmesures[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-average'] = array(
-					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Average").')</span>',
+					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Average").')</span>',
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
 					'position' => ($position+($count * 100000)).'.2',
 					'table' => $object->table_element,
 					'tablefromt' => $tablepath
 				);
 				$arrayofmesures[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-min'] = array(
-					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Minimum").')</span>',
+					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Minimum").')</span>',
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
 					'position' => ($position+($count * 100000)).'.3',
 					'table' => $object->table_element,
 					'tablefromt' => $tablepath
 				);
 				$arrayofmesures[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-max'] = array(
-					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Maximum").')</span>',
+					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Maximum").')</span>',
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
 					'position' => ($position+($count * 100000)).'.4',
 					'table' => $object->table_element,
