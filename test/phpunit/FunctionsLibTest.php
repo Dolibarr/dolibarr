@@ -177,6 +177,64 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
 
 	/**
+	 * testDolCheckFilters
+	 *
+	 * @return boolean
+	 */
+	public function testDolCheckFilters()
+	{
+		global $conf, $langs, $db;
+
+		// A sql with global parenthesis at level 2
+		$error = '';
+		$parenthesislevel = 0;
+		$sql = '(( ... (a:=:1) .éééé. (b:=:1) ... ))';
+		$result = dolCheckFilters($sql, $error, $parenthesislevel);
+		$this->assertEquals(2, $parenthesislevel);
+		$this->assertTrue($result);
+
+		// A sql with global parenthesis at level 2
+		$error = '';
+		$parenthesislevel = 0;
+		$sql = '(((((a:=:1) ... ) .éééé.. (b:=:1) ..) ... ))';
+		$result = dolCheckFilters($sql, $error, $parenthesislevel);
+		$this->assertEquals(2, $parenthesislevel);
+		$this->assertTrue($result);
+
+		// A sql with global parenthesis at level 2
+		$error = '';
+		$parenthesislevel = 0;
+		$sql = '((... (((a:=:1) ... ( .éééé.. (b:=:1) ..)))))';
+		$result = dolCheckFilters($sql, $error, $parenthesislevel);
+		$this->assertEquals(2, $parenthesislevel);
+		$this->assertTrue($result);
+
+		// A sql with global parenthesis at level 0
+		$error = '';
+		$parenthesislevel = 0;
+		$sql = '(a:=:1) ... (b:=:1) éééé ...';
+		$result = dolCheckFilters($sql, $error, $parenthesislevel);
+		$this->assertEquals(0, $parenthesislevel);
+		$this->assertTrue($result);
+
+		// A sql with bad balance
+		$error = '';
+		$parenthesislevel = 0;
+		$sql = '((((a:=:1) ... (b:=:1) éééé ..))';
+		$result = dolCheckFilters($sql, $error, $parenthesislevel);
+		$this->assertEquals(0, $parenthesislevel);
+		$this->assertFalse($result);
+
+		// A sql with bad balance
+		$error = '';
+		$parenthesislevel = 0;
+		$sql = '(((a:=:1) ... (b:=:1) éééé ..)))';
+		$result = dolCheckFilters($sql, $error, $parenthesislevel);
+		$this->assertEquals(0, $parenthesislevel);
+		$this->assertFalse($result);
+	}
+
+	/**
 	 * testDolForgeCriteriaCallback
 	 *
 	 * @return boolean

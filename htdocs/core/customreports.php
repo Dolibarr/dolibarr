@@ -163,12 +163,16 @@ $extrafields->fetch_name_optionals_label('all');	// We load all extrafields defi
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 $search_component_params = array('');
-$search_component_params_hidden = GETPOST('search_component_params_hidden', 'alphanohtml');
+$search_component_params_hidden = trim(GETPOST('search_component_params_hidden', 'alphanohtml'));
+$search_component_params_input = trim(GETPOST('search_component_params_input', 'alphanohtml'));
+//var_dump($search_component_params_hidden);
+//var_dump($search_component_params_input);
 
-// For the case we enter a criteria manually, the search_component_params_input will be defined and must be used in priority
-if (GETPOST('search_component_params_input', 'alphanohtml')) {
-	$search_component_params_hidden = GETPOST('search_component_params_input', 'alphanohtml');
-}
+$arrayofandtagshidden = dolForgeExplodeAnd($search_component_params_hidden);
+$arrayofandtagsinput = dolForgeExplodeAnd($search_component_params_input);
+
+$search_component_params_hidden = implode(' AND ', array_merge($arrayofandtagshidden, $arrayofandtagsinput));
+//var_dump($search_component_params_hidden);
 
 $MAXUNIQUEVALFORGROUP = 20;
 $MAXMEASURESINBARGRAPH = 20;
