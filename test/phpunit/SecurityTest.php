@@ -136,7 +136,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 	/**
 	 *	This method is called when a test fails
 	 *
-	 *  @param	Throwable	$i		Trhowable object
+	 *  @param	Throwable	$t		Throwable object
 	 *  @return void
 	 */
 	protected function onNotSuccessfulTest(Throwable $t): void
