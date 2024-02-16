@@ -152,7 +152,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 
 				// Check if file is qualified
 				foreach ($excludefilterarray as $filt) {
-					if (preg_match('/'.$filt.'/i', $utf8_file) || preg_match('/'.$filt.'/i', $utf8_fullpathfile)) {
+					if (preg_match('{'.$filt.'}i', $utf8_file) || preg_match('{'.$filt.'}i', $utf8_fullpathfile)) {
 						$qualified = 0;
 						break;
 					}
@@ -175,7 +175,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 								$fileperm = dol_fileperm($utf8_fullpathfile);
 							}
 
-							if (!$filter || preg_match('/'.$filter.'/i', $utf8_file)) {	// We do not search key $filter into all $path, only into $file part
+							if (!$filter || preg_match('{'.$filter.'}i', $utf8_file)) {	// We do not search key $filter in the full $path, only in the $utf8_file part
 								$reg = array();
 								preg_match('/([^\/]+)\/[^\/]+$/', $utf8_fullpathfile, $reg);
 								$level1name = (isset($reg[1]) ? $reg[1] : '');
@@ -209,7 +209,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 							$filesize = dol_filesize($utf8_fullpathfile);
 						}
 
-						if (!$filter || preg_match('/'.$filter.'/i', $utf8_file)) {	// We do not search key $filter into $utf8_path, only into $utf8_file
+						if (!$filter || preg_match('{'.$filter.'}i', $utf8_file)) {	// We do not search key $filter in the $path, only in the $utf8_file
 							if (empty($nbsecondsold) || $filedate <= ($now - $nbsecondsold)) {
 								preg_match('/([^\/]+)\/[^\/]+$/', $utf8_fullpathfile, $reg);
 								$level1name = (isset($reg[1]) ? $reg[1] : '');
