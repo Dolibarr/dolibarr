@@ -12631,7 +12631,7 @@ function dolForgeExplodeAnd($sqlfilters)
  *
  * @param	string  		$sqlfilters     	Universal SQL filter string. Must have been trimmed before.
  * @param	string			$error				Returned error message
- * @param	int				$parenthesislevel	Returned level of global parenthesis that we can remove/siplify, 0 if error or we cant simplify.
+ * @param	int				$parenthesislevel	Returned level of global parenthesis that we can remove/simplify, 0 if error or we can't simplify.
  * @return 	boolean			   					True if valid, False if not valid ($error returned parameter is filled with the reason in such a case)
  */
 function dolCheckFilters($sqlfilters, &$error = '', &$parenthesislevel = 0)
@@ -12772,8 +12772,8 @@ function dolForgeCriteriaCallback($matches)
 		//$tmpescaped = "'".$db->escape($db->escapeforlike($regbis[1]))."'";
 		$tmpescaped = "'".$db->escape($tmpescaped)."'";	// We do not escape the _ and % so the LIKE will work as expected
 	} elseif (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
-		// TODO Retreive type of field for $operand field name.
-		// So we can complete format. For exemple we could complete a year with month and day.
+		// TODO Retrieve type of field for $operand field name.
+		// So we can complete format. For example we could complete a year with month and day.
 		$tmpescaped = "'".$db->escape($regbis[1])."'";
 	} else {
 		if (strtoupper($tmpescaped) == 'NULL') {
