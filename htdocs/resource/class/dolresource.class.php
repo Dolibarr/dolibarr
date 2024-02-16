@@ -519,6 +519,7 @@ class Dolresource extends CommonObject
 				$this->busy = $obj->busy;
 				$this->mandatory = $obj->mandatory;
 				$this->fk_user_create = $obj->fk_user_create;
+				$this->date_modification = $obj->date_modification;
 
 				/*if ($obj->resource_id && $obj->resource_type) {
 					$this->objresource = fetchObjectByElement($obj->resource_id, $obj->resource_type);
@@ -692,6 +693,8 @@ class Dolresource extends CommonObject
 					$this->email = $obj->email;
 					$this->max_users = $obj->max_users;
 					$line->fk_code_type_resource = $obj->fk_code_type_resource;
+					$line->date_modification = $obj->date_modification;
+					$line->date_creation = $obj->date_creation;
 					$line->type_label = $obj->type_label;
 
 					// fetch optionals attributes and labels
@@ -719,6 +722,7 @@ class Dolresource extends CommonObject
 	public function updateElementResource(User $user = null, int $notrigger = 0)
 	{
 		$error = 0;
+		$this->date_modification = dol_now();
 
 		// Clean parameters
 		if (!is_numeric($this->resource_id)) {
