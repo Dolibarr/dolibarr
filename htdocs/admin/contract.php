@@ -376,6 +376,7 @@ foreach ($dirmodels as $reldir) {
 							$classname = substr($file, 0, dol_strlen($file) - 12);
 
 							require_once $dir.'/'.$file;
+							/** @var ModelePDFContract $module */
 							$module = new $classname($db);
 
 							$modulequalified = 1;
