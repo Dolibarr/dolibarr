@@ -309,15 +309,13 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		'currentobject' => $currentobject,
 		'out' => $out
 	);
-	// avoid from re-initializing results of previous hook (nested hooks)
-	$hookmanager2 = clone $hookmanager;
-	$reshook = $hookmanager2->executeHooks('hookGetEntity', $parameters, $currentobject, $action); // Note that $action and $object may have been modified by some hooks
+	$reshook = $hookmanager->executeHooks('hookGetEntity', $parameters, $currentobject, $action); // Note that $action and $object may have been modified by some hooks
 
 	if (is_numeric($reshook)) {
-		if ($reshook == 0 && !empty($hookmanager2->resPrint)) {
-			$out .= ','.$hookmanager2->resPrint; // add
+		if ($reshook == 0 && !empty($hookmanager->resPrint)) {
+			$out .= ','.$hookmanager->resPrint; // add
 		} elseif ($reshook == 1) {
-			$out = $hookmanager2->resPrint; // replace
+			$out = $hookmanager->resPrint; // replace
 		}
 	}
 
