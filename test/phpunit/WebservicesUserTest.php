@@ -30,7 +30,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
-
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -49,7 +49,7 @@ $conf->global->MAIN_UMASK='0666';
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class WebservicesUserTest extends PHPUnit\Framework\TestCase
+class WebservicesUserTest extends CommonClassTest
 {
 	protected $savconf;
 	protected $savuser;

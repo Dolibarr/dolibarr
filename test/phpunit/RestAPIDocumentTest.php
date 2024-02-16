@@ -30,6 +30,7 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	echo "Load permissions for admin user nb 1\n";
@@ -46,7 +47,7 @@ $conf->global->MAIN_UMASK = '0666';
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
+class RestAPIDocumentTest extends CommonClassTest
 {
 	protected $savconf;
 	protected $savuser;

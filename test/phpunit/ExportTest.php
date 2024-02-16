@@ -30,6 +30,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/exports/class/export.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
@@ -70,7 +71,7 @@ if (! defined("NOLOGIN")) {
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class ExportTest extends PHPUnit\Framework\TestCase
+class ExportTest extends CommonClassTest
 {
 	protected $savconf;
 	protected $savuser;

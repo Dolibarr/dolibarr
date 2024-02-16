@@ -57,8 +57,8 @@ require_once dirname(__FILE__).'/../../htdocs/core/modules/propale/modules_propa
 require_once dirname(__FILE__).'/../../htdocs/core/modules/project/modules_project.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/fichinter/modules_fichinter.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/modules_expedition.php';
-
 require_once dirname(__FILE__).'/../../htdocs/core/modules/modExpenseReport.class.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 
 if (empty($user->id)) {
@@ -76,7 +76,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class BuildDocTest extends PHPUnit\Framework\TestCase
+class BuildDocTest extends CommonClassTest
 {
 	protected $savconf;
 	protected $savuser;

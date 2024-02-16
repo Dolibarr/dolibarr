@@ -56,7 +56,7 @@ if (! defined("NOSESSION")) {
 require_once dirname(__FILE__).'/../../htdocs/main.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
-
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -73,7 +73,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class SecurityTest extends PHPUnit\Framework\TestCase
+class SecurityTest extends CommonClassTest
 {
 	protected $savconf;
 	protected $savuser;
@@ -131,6 +131,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		print __METHOD__."\n";
 	}
+
 
 	/**
 	 * Init phpunit tests

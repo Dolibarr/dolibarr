@@ -940,7 +940,7 @@ if ($sql) {
 }
 //var_dump($data);
 
-
+print '<!-- Section to show the result -->'."\n";
 print '<div class="customreportsoutput'.($totalnbofrecord ? '' : ' customreportsoutputnotdata').'">';
 
 

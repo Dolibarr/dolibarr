@@ -29,6 +29,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/functions2.lib.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
@@ -69,7 +70,7 @@ if (! defined("NOLOGIN")) {
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class Functions2LibTest extends PHPUnit\Framework\TestCase
+class Functions2LibTest extends CommonClassTest
 {
 	protected $savconf;
 	protected $savuser;

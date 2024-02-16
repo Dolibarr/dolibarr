@@ -27,6 +27,7 @@
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
@@ -78,7 +79,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class WebsiteTest extends PHPUnit\Framework\TestCase
+class WebsiteTest extends CommonClassTest
 {
 	protected $savconf;
 	protected $savuser;

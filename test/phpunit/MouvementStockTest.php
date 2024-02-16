@@ -31,6 +31,7 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/product/stock/class/mouvementstock.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/stock/class/entrepot.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -47,7 +48,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class MouvementStockTest extends PHPUnit\Framework\TestCase
+class MouvementStockTest extends CommonClassTest
 {
 	protected $savconf;
 	protected $savuser;
