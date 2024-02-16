@@ -47,6 +47,11 @@ require_once DOL_DOCUMENT_ROOT.'/bookcal/class/availabilities.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
+// Security check
+if (!isModEnabled('bookcal')) {
+	httponly_accessforbidden('Module Bookcal isn\'t enabled');
+}
+
 $langs->loadLangs(array("main", "other", "dict", "agenda", "errors", "companies"));
 
 $action = GETPOST('action', 'aZ09');
@@ -103,11 +108,13 @@ if ($next_day < 6) {
 $lastdaytoshow = dol_mktime(0, 0, 0, $next_month, $next_day, $next_year, 'tzuserrel');
 
 $datechosen = GETPOST('datechosen', 'alpha');
-$datetimechosen = GETPOST('datetimechosen', 'int');
+$datetimechosen = GETPOSTINT('datetimechosen');
 $isdatechosen = false;
 $timebooking = GETPOST("timebooking");
-$datetimebooking = GETPOST("datetimebooking", 'int');
-$durationbooking = GETPOST("durationbooking", 'int');
+$datetimebooking = GETPOSTINT("datetimebooking");
+$durationbooking = GETPOSTINT("durationbooking");
+$errmsg = '';
+
 /**
  * Show header for booking
  *
@@ -126,6 +133,8 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
 	print '<body id="mainbody" class="publicnewmemberform">';
+
+	$urllogo = '';
 
 	// Define urllogo
 	if (getDolGlobalInt('BOOKCAL_SHOW_COMPANY_LOGO') || getDolGlobalString('BOOPKCAL_PUBLIC_INTERFACE_TOPIC')) {
@@ -410,13 +419,16 @@ if ($action == 'afteradd') {
 		$arrayofavailabledays = array();
 
 		$arrayofavailabilities = $availability->fetchAll('', '', 0, 0, array('status' => '1', 'fk_bookcal_calendar' => $id));
-
-		foreach ($arrayofavailabilities as $key => $value) {
-			$startarray = dol_getdate($value->start);
-			$endarray = dol_getdate($value->end);
-			for ($i = $startarray['mday']; $i <= $endarray['mday']; $i++) {
-				if ($todayarray['mon'] >= $startarray['mon'] && $todayarray['mon'] <= $endarray['mon']) {
-					$arrayofavailabledays[dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year'])] = dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year']);
+		if ($arrayofavailabilities < 0) {
+			setEventMessages($availability->error, $availability->errors, 'errors');
+		} else {
+			foreach ($arrayofavailabilities as $key => $value) {
+				$startarray = dol_getdate($value->start);
+				$endarray = dol_getdate($value->end);
+				for ($i = $startarray['mday']; $i <= $endarray['mday']; $i++) {
+					if ($todayarray['mon'] >= $startarray['mon'] && $todayarray['mon'] <= $endarray['mon']) {
+						$arrayofavailabledays[dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year'])] = dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year']);
+					}
 				}
 			}
 		}
