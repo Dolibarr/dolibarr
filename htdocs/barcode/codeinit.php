@@ -400,6 +400,7 @@ if (isModEnabled('product') || isModEnabled('service')) {
 	}
 
 	$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."product";
+	$sql .= " WHERE entity IN (".getEntity('product').")";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
