@@ -232,6 +232,48 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$result = dolCheckFilters($sql, $error, $parenthesislevel);
 		$this->assertEquals(0, $parenthesislevel);
 		$this->assertFalse($result);
+
+		return true;
+	}
+
+
+	/**
+	 * testDolForgeExplodeAnd
+	 *
+	 * @return boolean
+	 */
+	public function testDolForgeExplodeAnd()
+	{
+		$tmp = dolForgeExplodeAnd('');
+		$this->assertEquals(0, count($tmp));
+
+		$tmp = dolForgeExplodeAnd('(a:=:1)');
+		$this->assertEquals('(a:=:1)', $tmp[0]);
+
+		$tmp = dolForgeExplodeAnd('(a:=:1) AND (b:=:2)');
+		$this->assertEquals('(a:=:1)', $tmp[0]);
+		$this->assertEquals('(b:=:2)', $tmp[1]);
+
+		$tmp = dolForgeExplodeAnd('(a:=:1) AND ((b:=:2) OR (c:=:3))');
+		$this->assertEquals('(a:=:1)', $tmp[0]);
+		$this->assertEquals('((b:=:2) OR (c:=:3))', $tmp[1]);
+
+		$tmp = dolForgeExplodeAnd('(a:=:1) AND (b:=:2) OR (c:=:3)');
+		$this->assertEquals('(a:=:1)', $tmp[0]);
+		$this->assertEquals('(b:=:2) OR (c:=:3)', $tmp[1]);
+
+		$tmp = dolForgeExplodeAnd('(a:=:1) OR (b:=:2) AND (c:=:3)');
+		$this->assertEquals('(a:=:1) OR (b:=:2)', $tmp[0]);
+		$this->assertEquals('(c:=:3)', $tmp[1]);
+
+		$tmp = dolForgeExplodeAnd('(a:=:1) OR ((b:=:2) AND (c:=:3))');
+		$this->assertEquals('(a:=:1) OR ((b:=:2) AND (c:=:3))', $tmp[0]);
+
+		$tmp = dolForgeExplodeAnd('((y:=:1) AND (p:=:8))');
+		$this->assertEquals('(y:=:1)', $tmp[0]);
+		$this->assertEquals('(p:=:8)', $tmp[1]);
+
+		return true;
 	}
 
 	/**

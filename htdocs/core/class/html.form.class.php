@@ -10731,7 +10731,7 @@ class Form
 			$ret .= '<input type="hidden" name="show_search_component_params_hidden" value="1">';
 		}
 		$ret .= "<!-- We store the full Universal Search String into this field. For example: (t.ref:like:'SO-%') AND ((t.ref:like:'CO-%') OR (t.ref:like:'AA%')) -->";
-		$ret .= '<input type="hidden" name="search_component_params_hidden" value="' . dol_escape_htmltag($search_component_params_hidden) . '">';
+		$ret .= '<input type="hidden" id="search_component_params_hidden" name="search_component_params_hidden" value="' . dol_escape_htmltag($search_component_params_hidden) . '">';
 		// $ret .= "<!-- sql= ".forgeSQLFromUniversalSearchCriteria($search_component_params_hidden, $errormessage)." -->";
 
 		// For compatibility with forms that show themself the search criteria in addition of this component, we output these fields
@@ -10761,7 +10761,7 @@ class Form
 		$ret .= '</div>';
 
 		$ret .= "<!-- Field to enter a generic filter string: t.ref:like:'SO-%', t.date_creation:<:'20160101', t.date_creation:<:'2016-01-01 12:30:00', t.nature:is:NULL, t.field2:isnot:NULL -->\n";
-		$ret .= '<input type="text" placeholder="' . $langs->trans("Filters") . '" name="search_component_params_input" class="noborderbottom search_component_input" value="">';
+		$ret .= '<input type="text" placeholder="' . $langs->trans("Filters") . '" id="search_component_params_input" name="search_component_params_input" class="noborderbottom search_component_input" value="">';
 
 		$ret .= '</div>';
 		$ret .= '</div>';
@@ -10774,7 +10774,6 @@ class Form
 			// Regenerate the search_component_params_hidden with all data-ufilter except the one to delete, and post the page
 			var newparamstring = \'\';
 			$(\'.tagsearch\').each(function(index, element) {
-				console.log(element);
 				tmpfilterid = $(this).attr("data-ufilterid");
 				if (tmpfilterid != filterid) {
 					// We keep this criteria
@@ -10785,7 +10784,9 @@ class Form
 					}
 				}
 			});
-			console.log(newparamstring);
+			console.log("newparamstring = "+newparamstring);
+
+			jQuery("#search_component_params_hidden").val(newparamstring);
 
 			// We repost the form
 			$(this).closest(\'form\').submit();

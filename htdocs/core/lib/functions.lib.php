@@ -12573,6 +12573,16 @@ function dolForgeExplodeAnd($sqlfilters)
 	$arrayofandtags = array();
 	$nbofchars = dol_strlen($sqlfilters);
 
+	$error = '';
+	$parenthesislevel = 0;
+	$result = dolCheckFilters($sqlfilters, $error, $parenthesislevel);
+	if (!$result) {
+		return array();
+	}
+	if ($parenthesislevel >= 1) {
+		$sqlfilters = preg_replace('/^\(/', '', preg_replace('/\)$/', '', $sqlfilters));
+	}
+
 	$i = 0;
 	$s = '';
 	$countparenthesis = 0;
