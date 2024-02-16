@@ -201,19 +201,14 @@ class Task extends CommonObjectLine
 	const STATUS_DRAFT = 0;
 
 	/**
-	 * To do status
+	 * Validated status (To do). Note: We also have the field progress to know the progression from 0 to 100%.
 	 */
-	const STATUS_TODO = 1;
-
-	/**
-	 * Running status
-	 */
-	const STATUS_RUNNING = 2;
+	const STATUS_VALIDATED = 1;
 
 	/**
 	 * Finished status
 	 */
-	const STATUS_FINISHED = 3;
+	const STATUS_CLOSED = 3;
 
 	/**
 	 * Transferred status
