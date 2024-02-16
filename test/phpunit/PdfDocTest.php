@@ -33,6 +33,7 @@ require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/pdf.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/doc.lib.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -49,7 +50,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class PdfDocTest extends PHPUnit\Framework\TestCase
+class PdfDocTest extends CommonClassTest
 {
 	protected $savconf;
 	protected $savuser;

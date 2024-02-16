@@ -30,6 +30,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.commande.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.product.class.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -47,7 +48,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CommandeFournisseurTest extends PHPUnit\Framework\TestCase
+class CommandeFournisseurTest extends CommonClassTest
 {
 	protected $savconf;
 	protected $savuser;

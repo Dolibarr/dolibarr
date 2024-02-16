@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       test/phpunit/CommonObjectTest.php
+ *      \file       test/phpunit/ActionCommTest.php
  *      \ingroup    test
  *      \brief      PHPUnit test
  *      \remarks    To run this script as CLI:  phpunit filename.php
@@ -28,9 +28,6 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
-require_once dirname(__FILE__).'/../../htdocs/projet/class/project.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -47,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CommonObjectTest extends CommonClassTest
+class CommonClassTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -59,7 +56,7 @@ class CommonObjectTest extends CommonClassTest
 	 * We save global variables into local variables
 	 *
 	 * @param 	string	$name		Name
-	 * @return CommonObjectTest
+	 * @return ActionCommTest
 	 */
 	public function __construct($name = '')
 	{
@@ -87,20 +84,40 @@ class CommonObjectTest extends CommonClassTest
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
+		if (!isModEnabled('agenda')) {
+			print __METHOD__." module agenda must be enabled.\n";
+			die(1);
+		}
+
 		print __METHOD__."\n";
 	}
 
 	/**
-	 * tearDownAfterClass
+	 *	This method is called when a test fails
 	 *
-	 * @return	void
+	 *  @param	Throwable	$t		Throwable object
+	 *  @return void
 	 */
-	public static function tearDownAfterClass(): void
+	protected function onNotSuccessfulTest(Throwable $t): void
 	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
+		$logfile = DOL_DATA_ROOT.'/dolibarr.log';
 
-		print __METHOD__."\n";
+		$lines = file($logfile);
+
+		$nbLinesToShow = 100;
+		$totalLines = count($lines);
+		$premiereLigne = max(0, $totalLines - $nbLinesToShow);
+
+		// Obtient les dernières lignes du tableau
+		$dernieresLignes = array_slice($lines, $premiereLigne, $nbLinesToShow);
+
+		// Show log file
+		print "\n----- Test fails. Show last ".$nbLinesToShow." lines of dolibarr.log file -----\n";
+		foreach ($dernieresLignes as $ligne) {
+			print $ligne . "<br>";
+		}
+
+		parent::onNotSuccessfulTest($t);
 	}
 
 	/**
@@ -111,89 +128,36 @@ class CommonObjectTest extends CommonClassTest
 	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
+
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		print __METHOD__."\n";
+		//print $db->getVersion()."\n";
 	}
+
 	/**
 	 * End phpunit tests
 	 *
 	 * @return  void
-	*/
+	 */
 	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
 
-
 	/**
-	 *  testFetchUser
+	 * tearDownAfterClass
 	 *
-	 *  @return void
+	 * @return	void
 	 */
-	public function testFetchUser()
+	public static function tearDownAfterClass(): void
 	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		global $db;
+		$db->rollback();
 
-		$localobject=new Commande($db);
-		$localobject->fetch(1);
-
-		$result=$localobject->fetch_user(1);
-
-		print __METHOD__." result=".$result."\n";
-		$this->assertLessThan($localobject->user->id, 0);
-		return $result;
-	}
-
-	/**
-	 *  testFetchProjet
-	 *
-	 *  @return void
-	 */
-	public function testFetchProjet()
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject=new Commande($db);
-		$localobject->fetch(1);
-		$result=$localobject->fetch_projet();
-
-		print __METHOD__." result=".$result."\n";
-		$this->assertLessThanOrEqual($result, 0);
-		return $result;
-	}
-
-	/**
-	 *  testFetchThirdParty
-	 *
-	 *  @return void
-	 */
-	public function testFetchThirdParty()
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject=new Commande($db);
-		$localobject->fetch(1);
-
-		$result=$localobject->fetch_thirdparty();
-
-		print __METHOD__." result=".$result."\n";
-		$this->assertLessThanOrEqual($result, 0);
-		return $result;
+		print __METHOD__."\n";
 	}
 }

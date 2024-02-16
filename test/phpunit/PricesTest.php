@@ -31,6 +31,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/price.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -51,7 +52,7 @@ if (getDolGlobalString('MAIN_ROUNDING_RULE_TOT')) {
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class PricesTest extends PHPUnit\Framework\TestCase
+class PricesTest extends CommonClassTest
 {
 	protected $savconf;
 	protected $savuser;
@@ -63,7 +64,6 @@ class PricesTest extends PHPUnit\Framework\TestCase
 	 * We save global variables into local variables
 	 *
 	 * @param 	string	$name		Name
-	 * @return PriceTest
 	 */
 	public function __construct($name = '')
 	{
