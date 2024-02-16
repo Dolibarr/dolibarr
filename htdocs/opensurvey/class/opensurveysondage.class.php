@@ -108,7 +108,7 @@ class Opensurveysondage extends CommonObject
 		'mail_admin' => array('type'=>'varchar(128)', 'label'=>'Mailadmin', 'enabled'=>'1', 'position'=>20, 'notnull'=>0, 'visible'=>-1,),
 		'nom_admin' => array('type'=>'varchar(64)', 'label'=>'Nomadmin', 'enabled'=>'1', 'position'=>25, 'notnull'=>0, 'visible'=>-1,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>-2, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150',),
-		'title' => array('type'=>'mediumtext', 'label'=>'Titre', 'enabled'=>'1', 'position'=>35, 'notnull'=>1, 'visible'=>-1,),
+		'titre' => array('type'=>'mediumtext', 'label'=>'Titre', 'enabled'=>'1', 'position'=>35, 'notnull'=>1, 'visible'=>-1,),
 		'date_fin' => array('type'=>'datetime', 'label'=>'Datefin', 'enabled'=>'1', 'position'=>40, 'notnull'=>1, 'visible'=>-1,),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>500, 'notnull'=>0, 'visible'=>-1,),
 		'format' => array('type'=>'varchar(2)', 'label'=>'Format', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>-1,),
