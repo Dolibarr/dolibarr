@@ -136,10 +136,11 @@ if ($reshook < 0) {
 if ($objecttype) {
 	try {
 		if (!empty($arrayoftype[$objecttype]['ClassPath'])) {
-			dol_include_once($arrayoftype[$objecttype]['ClassPath']);
+			$fileforclass = $arrayoftype[$objecttype]['ClassPath'];
 		} else {
-			dol_include_once("/".$objecttype."/class/".$objecttype.".class.php");
+			$fileforclass = "/".$objecttype."/class/".$objecttype.".class.php";
 		}
+		dol_include_once($fileforclass);
 
 		$ObjectClassName = $arrayoftype[$objecttype]['ObjectClassName'];
 		if (class_exists($ObjectClassName)) {
@@ -196,9 +197,11 @@ $arrayofvaluesforgroupby = array();
 $features = $object->element;
 if (!empty($object->element_for_permission)) {
 	$features = $object->element_for_permission;
+} else {
+	$features = $features.(empty($object->module) ? '' : '@'.$object->module);
 }
 
-restrictedArea($user, $features.(empty($object->module) ? '' : '@'.$object->module), 0, '');
+restrictedArea($user, $features, 0, '');
 
 $error = 0;
 
