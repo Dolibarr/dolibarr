@@ -148,7 +148,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 				}
 				// Check if file is qualified
 				foreach ($excludefilterarray as $filt) {
-					if (preg_match('/'.$filt.'/i', $file) || preg_match('/'.$filt.'/i', $fullpathfile)) {
+					if (preg_match('{'.$filt.'}i', $file) || preg_match('{'.$filt.'}i', $fullpathfile)) {
 						$qualified = 0;
 						break;
 					}
@@ -171,7 +171,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 								$fileperm = dol_fileperm($path."/".$file);
 							}
 
-							if (!$filter || preg_match('/'.$filter.'/i', $file)) {	// We do not search key $filter into all $path, only into $file part
+							if (!$filter || preg_match('{'.$filter.'}i', $file)) {	// We do not search key $filter into all $path, only into $file part
 								$reg = array();
 								preg_match('/([^\/]+)\/[^\/]+$/', $path.'/'.$file, $reg);
 								$level1name = (isset($reg[1]) ? $reg[1] : '');
@@ -205,7 +205,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 							$filesize = dol_filesize($path."/".$file);
 						}
 
-						if (!$filter || preg_match('/'.$filter.'/i', $file)) {	// We do not search key $filter into $path, only into $file
+						if (!$filter || preg_match('{'.$filter.'}i', $file)) {	// We do not search key $filter into $path, only into $file
 							if (empty($nbsecondsold) || $filedate <= ($now - $nbsecondsold)) {
 								preg_match('/([^\/]+)\/[^\/]+$/', $path.'/'.$file, $reg);
 								$level1name = (isset($reg[1]) ? $reg[1] : '');
@@ -3494,7 +3494,7 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathre
 		$expectedsize = (empty($file['size']) ? '' : $file['size']);
 		$expectedmd5 = (string) $file;
 
-		//if (preg_match('#'.$exclude.'#', $filename)) continue;
+		//if (preg_match('{'.$exclude.'}', $filename)) continue;
 
 		if (!file_exists($pathref.'/'.$filename)) {
 			$file_list['missing'][] = array('filename' => $filename, 'expectedmd5' => $expectedmd5, 'expectedsize' => $expectedsize);
