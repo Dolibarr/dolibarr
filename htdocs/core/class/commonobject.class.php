@@ -761,7 +761,7 @@ abstract class CommonObject
 	public $cond_reglement_supplier_id;
 
 	/**
-	 * @var string      Deposit percent for payment terms.
+	 * @var float       Deposit percent for payment terms.
 	 *                  Populated by setPaymentTerms().
 	 * @see setPaymentTerms()
 	 */
@@ -2784,7 +2784,7 @@ abstract class CommonObject
 	 *  Change the payments terms
 	 *
 	 *  @param		int		$id					Id of new payment terms
-	 *  @param		string	$deposit_percent	% of deposit if needed by payment terms
+	 *  @param		float	$deposit_percent	% of deposit if needed by payment terms
 	 *  @return		int							>0 if OK, <0 if KO
 	 */
 	public function setPaymentTerms($id, $deposit_percent = null)
@@ -2801,7 +2801,7 @@ abstract class CommonObject
 			}
 
 			if (empty($deposit_percent) || $deposit_percent < 0) {
-				$deposit_percent = getDictionaryValue('c_payment_term', 'deposit_percent', $id);
+				$deposit_percent = (float) getDictionaryValue('c_payment_term', 'deposit_percent', $id);
 			}
 
 			if ($deposit_percent > 100) {
