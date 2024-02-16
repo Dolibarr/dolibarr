@@ -243,7 +243,7 @@ foreach ($dirmodels as $reldir) {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.$file.'.php';
-
+					/** @var ModelNumRefContracts $module */
 					$module = new $file($db);
 
 					// Show modules according to features level
@@ -255,7 +255,7 @@ foreach ($dirmodels as $reldir) {
 					}
 
 					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
 						print $module->info($langs);
 						print '</td>';
 
