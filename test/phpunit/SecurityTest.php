@@ -132,6 +132,35 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__."\n";
 	}
 
+
+	/**
+	 *	This method is called when a test fails
+	 *
+	 *  @param	Throwable	$i		Trhowable object
+	 *  @return void
+	 */
+	protected function onNotSuccessfulTest(Throwable $t): void
+	{
+		$logfile = DOL_DATA_ROOT.'/dolibarr.log';
+
+		$lines = file($logfile);
+
+		$nbLinesToShow = 100;
+		$totalLines = count($lines);
+		$premiereLigne = max(0, $totalLines - $nbLinesToShow);
+
+		// Obtient les dernières lignes du tableau
+		$dernieresLignes = array_slice($lines, $premiereLigne, $nbLinesToShow);
+
+		// Show log file
+		print "\n----- Test fails. Show last ".$nbLinesToShow." lines of dolibarr.log file -----\n";
+		foreach ($dernieresLignes as $ligne) {
+			print $ligne . "<br>";
+		}
+
+		parent::onNotSuccessfulTest($t);
+	}
+
 	/**
 	 * Init phpunit tests
 	 *
