@@ -540,13 +540,13 @@ function dol_is_url($uri)
  * 	@param	string	$folder		Name of folder
  * 	@return boolean				True if dir is empty or non-existing, False if it contains files
  */
-function dol_dir_is_emtpy($folder)
+function dol_dir_is_empty($folder)
 {
 	$newfolder = dol_osencode($folder);
 	if (is_dir($newfolder)) {
 		$handle = opendir($newfolder);
 		$folder_content = '';
-		$name_array = [];
+		$name_array = array();
 		while ((gettype($name = readdir($handle)) != "boolean")) {
 			$name_array[] = $name;
 		}
