@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -280,6 +281,15 @@ class SecurityTest extends CommonClassTest
 		$result = testSqlAndScriptInject($test, 2);
 		//print "test=".$test." result=".$result."\n";
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject with a non valid UTF8 char');
+
+		$vars = array("PHP_SELF" => '/c/phptools/bin/phpunit');
+		$result = analyseVarsForSqlAndScriptsInjection($vars, 2);
+		$this->assertTrue($result, "Error on testSqlAndScriptInject for {$vars['PHP_SELF']} that should be accepted");
+
+		$vars = array("PHP_SELF" => 'c:\tools\bin\phpunit');
+		$result = analyseVarsForSqlAndScriptsInjection($vars, 2);
+		$expectedresult = "OKOK";
+		$this->assertTrue($result, "Error on testSqlAndScriptInject for {$vars['PHP_SELF']} that should be accepted");
 	}
 
 	/**
@@ -839,7 +849,15 @@ class SecurityTest extends CommonClassTest
 		$url = 'ftp://mydomain.com';
 		$tmp = getURLContent($url);
 		print __METHOD__." url=".$url."\n";
-		$this->assertRegExp("/not supported/", $tmp['curl_error_msg'], "Should disable ftp connection");	// Test error if return does not contains 'not supported'
+
+		// Error if return does not contain 'not supported'
+		// (indicates that the connection type is 'completely' disabled)
+		if (version_compare(\PHPUnit\Runner\Version::id(), '9.0.0', '>=')) {
+			$this->assertMatchesRegularExpression("/not supported/", $tmp['curl_error_msg'], "Should disable ftp connection");
+		} else {
+			// Deprecated in PHPUNIT9, Removed in PHPUNIT10
+			$this->assertRegExp("/not supported/", $tmp['curl_error_msg'], "Should disable ftp connection");
+		}
 
 		$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
 		$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow
