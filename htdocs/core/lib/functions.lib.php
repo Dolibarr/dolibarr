@@ -12770,8 +12770,10 @@ function dolForgeCriteriaCallback($matches)
 			$tmpescaped = $regbis[1];
 		}
 		//$tmpescaped = "'".$db->escape($db->escapeforlike($regbis[1]))."'";
-		$tmpescaped = "'".$db->escape($tmpescaped)."'";	// We do not escape the _ and % so the like will works
+		$tmpescaped = "'".$db->escape($tmpescaped)."'";	// We do not escape the _ and % so the LIKE will work as expected
 	} elseif (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
+		// TODO Retreive type of field for $operand field name.
+		// So we can complete format. For exemple we could complete a year with month and day.
 		$tmpescaped = "'".$db->escape($regbis[1])."'";
 	} else {
 		if (strtoupper($tmpescaped) == 'NULL') {

@@ -102,7 +102,7 @@ $arrayoftype = array(
 	'contract' => array('label' => 'Contracts', 'picto'=>'contract', 'ObjectClassName' => 'Contrat', 'enabled' => isModEnabled('contrat'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
 	'contractdet' => array('label' => 'ContractLines', 'picto'=>'contract', 'ObjectClassName' => 'ContratLigne', 'enabled' => isModEnabled('contrat'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
 	'bom' => array('label' => 'BOM', 'picto'=>'bom', 'ObjectClassName' => 'Bom', 'enabled' => isModEnabled('bom')),
-	'mo' => array('label' => 'MO', 'picto'=>'mrp', 'ObjectClassName' => 'Mo', 'enabled' => isModEnabled('mrp'), 'ClassPath' => "/mrp/class/mo.class.php"),
+	'mrp' => array('label' => 'MO', 'picto'=>'mrp', 'ObjectClassName' => 'Mo', 'enabled' => isModEnabled('mrp'), 'ClassPath' => "/mrp/class/mo.class.php"),
 	'ticket' => array('label' => 'Ticket', 'picto'=>'ticket', 'ObjectClassName' => 'Ticket', 'enabled' => isModEnabled('ticket')),
 	'member' => array('label' => 'Adherent', 'picto'=>'member', 'ObjectClassName' => 'Adherent', 'enabled' => isModEnabled('adherent'), 'ClassPath' => "/adherents/class/adherent.class.php", 'langs'=>'members'),
 	'cotisation' => array('label' => 'Subscriptions', 'picto'=>'member', 'ObjectClassName' => 'Subscription', 'enabled' => isModEnabled('adherent'), 'ClassPath' => "/adherents/class/subscription.class.php", 'langs'=>'members'),
@@ -310,12 +310,12 @@ if (is_array($search_groupby) && count($search_groupby)) {
 		}
 
 		// Add a where here keeping only the criteria on $tabletouse
-		// TODO
-		/*$sqlfilters = ... GETPOST('search_component_params_hidden', 'alphanohtml');
-		if ($sqlfilters) {
+		/* TODO
+		if ($search_component_params_hidden) {
 			$errormessage = '';
-			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
-		}*/
+			$sql .= forgeSQLFromUniversalSearchCriteria($search_component_params_hidden, $errormessage);
+		}
+		*/
 
 		$sql .= " LIMIT ".((int) ($MAXUNIQUEVALFORGROUP + 1));
 
