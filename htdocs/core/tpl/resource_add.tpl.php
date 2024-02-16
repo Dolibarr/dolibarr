@@ -17,7 +17,7 @@ $out = '';
 
 $out .= '<div class="centpercent allwidth nohover">';
 
-$out .= '<form class="nohover '.($var == true ? 'pair' : 'impair').'" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+$out .= '<form class="nohover '.(!empty($var) && $var == true ? 'pair' : 'impair').'" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 $out .= '<input type="hidden" name="token" value="'.newToken().'">';
 $out .= '<input type="hidden" name="action" value="add_element_resource">';
 $out .= '<input type="hidden" name="element" value="'.$element.'">';

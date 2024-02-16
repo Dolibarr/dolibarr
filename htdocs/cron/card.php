@@ -777,7 +777,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr><td>';
 	print $langs->trans('CronLastOutput')."</td><td>";
-	print '<span class="small">'.nl2br($object->lastoutput).'</span>';
+	print '<span class="small">'.(!empty($object->lastoutput) ? nl2br($object->lastoutput) : '').'</span>';
 	print "</td></tr>";
 
 	print '</table>';

@@ -201,10 +201,10 @@ class modGeneratePassPerso extends ModeleGenPassword
 
 		$this->initAll();	// For the case this method is called alone
 
-		$password_a = preg_split('//u', $password, null, PREG_SPLIT_NO_EMPTY);
-		$maj = preg_split('//u', $this->Maj, null, PREG_SPLIT_NO_EMPTY);
-		$num = preg_split('//u', $this->Nb, null, PREG_SPLIT_NO_EMPTY);
-		$spe = preg_split('//u', $this->Spe, null, PREG_SPLIT_NO_EMPTY);
+		$password_a = preg_split('//u', $password, 0, PREG_SPLIT_NO_EMPTY);
+		$maj = preg_split('//u', $this->Maj, 0, PREG_SPLIT_NO_EMPTY);
+		$num = preg_split('//u', $this->Nb, 0, PREG_SPLIT_NO_EMPTY);
+		$spe = preg_split('//u', $this->Spe, 0, PREG_SPLIT_NO_EMPTY);
 		/*
 		$password_a = str_split($password);
 		$maj = str_split($this->Maj);
@@ -259,7 +259,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 			return true;
 		}
 
-		$char = preg_split('//u', $password, null, PREG_SPLIT_NO_EMPTY);
+		$char = preg_split('//u', $password, 0, PREG_SPLIT_NO_EMPTY);
 
 		$last = "";
 		$count = 0;

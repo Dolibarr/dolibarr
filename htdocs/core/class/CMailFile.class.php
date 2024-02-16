@@ -2063,7 +2063,7 @@ class CMailFile
 
 		$ret = '';
 
-		$arrayaddress = explode(',', $address);
+		$arrayaddress = (!empty($address) ? explode(',', $address) : array());
 
 		// Boucle sur chaque composant de l'address
 		$i = 0;
