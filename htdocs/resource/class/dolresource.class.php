@@ -169,6 +169,7 @@ class Dolresource extends CommonObject
 	public function __construct(DoliDb $db)
 	{
 		$this->db = $db;
+		$this->status = 0;
 		$this->tms = '';
 		$this->cache_code_type_resource = array();
 	}
