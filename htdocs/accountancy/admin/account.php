@@ -260,7 +260,7 @@ if (strlen(trim($search_account))) {
 			$search_account_tmp_clean = $search_account_tmp;
 			$search_account_clean = $search_account;
 			$startchar = '%';
-			if (strpos($search_account_tmp, '^') === 0) {
+			if (substr($search_account_tmp, 0, 1) === '^') {
 				$startchar = '';
 				$search_account_tmp_clean = preg_replace('/^\^/', '', $search_account_tmp);
 				$search_account_clean = preg_replace('/^\^/', '', $search_account);
