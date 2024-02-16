@@ -2521,7 +2521,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if ($caneditfield) {
 				print '<textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 			}
-			print dol_escape_htmltag(GETPOSTISSET('address') ? GETPOST('address') : $object->address);
+			print dol_escape_htmltag(GETPOSTISSET('address') ? GETPOST('address') : $object->address, 0, 1);
 			if ($caneditfield) {
 				print '</textarea>';
 			}
