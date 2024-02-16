@@ -33,7 +33,7 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 
 	$mode = GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'graph';
-	$objecttype = GETPOST('objecttype', 'aZ09');
+	$objecttype = GETPOST('objecttype', 'aZ09arobase');
 	$tabfamily  = GETPOST('tabfamily', 'aZ09');
 
 	if (empty($objecttype)) {
@@ -102,7 +102,7 @@ $arrayoftype = array(
 	'contract' => array('label' => 'Contracts', 'picto'=>'contract', 'ObjectClassName' => 'Contrat', 'enabled' => isModEnabled('contrat'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
 	'contractdet' => array('label' => 'ContractLines', 'picto'=>'contract', 'ObjectClassName' => 'ContratLigne', 'enabled' => isModEnabled('contrat'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
 	'bom' => array('label' => 'BOM', 'picto'=>'bom', 'ObjectClassName' => 'Bom', 'enabled' => isModEnabled('bom')),
-	'mo' => array('label' => 'MO', 'picto'=>'mrp', 'ObjectClassName' => 'Mo', 'enabled' => isModEnabled('mrp'), 'ClassPath' => "/mrp/class/mo.class.php"),
+	'mrp' => array('label' => 'MO', 'picto'=>'mrp', 'ObjectClassName' => 'Mo', 'enabled' => isModEnabled('mrp'), 'ClassPath' => "/mrp/class/mo.class.php"),
 	'ticket' => array('label' => 'Ticket', 'picto'=>'ticket', 'ObjectClassName' => 'Ticket', 'enabled' => isModEnabled('ticket')),
 	'member' => array('label' => 'Adherent', 'picto'=>'member', 'ObjectClassName' => 'Adherent', 'enabled' => isModEnabled('adherent'), 'ClassPath' => "/adherents/class/adherent.class.php", 'langs'=>'members'),
 	'cotisation' => array('label' => 'Subscriptions', 'picto'=>'member', 'ObjectClassName' => 'Subscription', 'enabled' => isModEnabled('adherent'), 'ClassPath' => "/adherents/class/subscription.class.php", 'langs'=>'members'),
@@ -137,10 +137,15 @@ if ($objecttype) {
 		} else {
 			dol_include_once("/".$objecttype."/class/".$objecttype.".class.php");
 		}
+
 		$ObjectClassName = $arrayoftype[$objecttype]['ObjectClassName'];
-		$object = new $ObjectClassName($db);
+		if (class_exists($ObjectClassName)) {
+			$object = new $ObjectClassName($db);
+		} else {
+			print 'Failed to load class for type '.$objecttype.'. Class file found but class object '.$ObjectClassName.' not found.';
+		}
 	} catch (Exception $e) {
-		print 'Failed to load class for type '.$objecttype;
+		print 'Failed to load class for type '.$objecttype.'. Class path not found.';
 	}
 }
 
@@ -148,7 +153,7 @@ if ($objecttype) {
 $socid = 0;
 if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
-	accessforbidden();
+	accessforbidden('Access forbidden to external users');
 }
 
 // Fetch optionals attributes and labels
@@ -158,12 +163,16 @@ $extrafields->fetch_name_optionals_label('all');	// We load all extrafields defi
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 $search_component_params = array('');
-$search_component_params_hidden = GETPOST('search_component_params_hidden', 'alphanohtml');
+$search_component_params_hidden = trim(GETPOST('search_component_params_hidden', 'alphanohtml'));
+$search_component_params_input = trim(GETPOST('search_component_params_input', 'alphanohtml'));
+//var_dump($search_component_params_hidden);
+//var_dump($search_component_params_input);
 
-// For the case we enter a criteria manually, the search_component_params_input will be defined and must be used in priority
-if (GETPOST('search_component_params_input', 'alphanohtml')) {
-	$search_component_params_hidden = GETPOST('search_component_params_input', 'alphanohtml');
-}
+$arrayofandtagshidden = dolForgeExplodeAnd($search_component_params_hidden);
+$arrayofandtagsinput = dolForgeExplodeAnd($search_component_params_input);
+
+$search_component_params_hidden = implode(' AND ', array_merge($arrayofandtagshidden, $arrayofandtagsinput));
+//var_dump($search_component_params_hidden);
 
 $MAXUNIQUEVALFORGROUP = 20;
 $MAXMEASURESINBARGRAPH = 20;
@@ -186,7 +195,7 @@ if (!empty($object->element_for_permission)) {
 	$features = $object->element_for_permission;
 }
 
-restrictedArea($user, $features, 0, '');
+restrictedArea($user, $features.(empty($object->module) ? '' : '@'.$object->module), 0, '');
 
 $error = 0;
 
@@ -301,12 +310,12 @@ if (is_array($search_groupby) && count($search_groupby)) {
 		}
 
 		// Add a where here keeping only the criteria on $tabletouse
-		// TODO
-		/*$sqlfilters = ... GETPOST('search_component_params_hidden', 'alphanohtml');
-		if ($sqlfilters) {
+		/* TODO
+		if ($search_component_params_hidden) {
 			$errormessage = '';
-			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
-		}*/
+			$sql .= forgeSQLFromUniversalSearchCriteria($search_component_params_hidden, $errormessage);
+		}
+		*/
 
 		$sql .= " LIMIT ".((int) ($MAXUNIQUEVALFORGROUP + 1));
 

@@ -1236,7 +1236,7 @@ class Task extends CommonObjectLine
 		$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
 		$sql .= " WHERE pt.rowid = ec.element_id";
 		if ($userp && $filteronprojstatus > -1) {
-			$sql .= " AND pt.fk_status = ".((int) $filteronprojstatus);
+			$sql .= " AND p.fk_statut = ".((int) $filteronprojstatus);
 		}
 		if ($usert && $filteronprojstatus > -1) {
 			$sql .= " AND pt.fk_projet = p.rowid AND p.fk_statut = ".((int) $filteronprojstatus);

@@ -62,7 +62,7 @@ class DolibarrApiAccess implements iAuthenticate
 	/**
 	 * @var User		$user	Loggued user
 	 */
-	public static $user = '';
+	public static $user = null;
 
 
 	/**

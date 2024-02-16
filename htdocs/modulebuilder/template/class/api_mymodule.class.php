@@ -71,7 +71,7 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->read) {
+		if (!DolibarrApiAccess::$user->hasRight('mymodule', 'myobject', 'read')) {
 			throw new RestException(403);
 		}
 		if (!DolibarrApi::_checkAccessToResource('myobject', $id, 'mymodule_myobject')) {
@@ -110,7 +110,7 @@ class MyModuleApi extends DolibarrApi
 		$obj_ret = array();
 		$tmpobject = new MyObject($this->db);
 
-		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->read) {
+		if (!DolibarrApiAccess::$user->hasRight('mymodule', 'myobject', 'read')) {
 			throw new RestException(403);
 		}
 
@@ -195,7 +195,7 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->write) {
+		if (!DolibarrApiAccess::$user->hasRight('mymodule', 'myobject', 'write')) {
 			throw new RestException(403);
 		}
 
@@ -236,7 +236,7 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->write) {
+		if (!DolibarrApiAccess::$user->hasRight('mymodule', 'myobject', 'write')) {
 			throw new RestException(403);
 		}
 		if (!DolibarrApi::_checkAccessToResource('myobject', $id, 'mymodule_myobject')) {

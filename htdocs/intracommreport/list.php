@@ -153,8 +153,8 @@ if ($search_type == '0') {
 	$result = restrictedArea($user, 'produit|service', '', '', '', '', '', 0);
 }
 
-$permissiontoread = $user->rights->intracommreport->read;
-$permissiontodelete = $user->rights->intracommreport->delete;
+$permissiontoread = $user->hasRight('intracommreport', 'read');
+$permissiontodelete = $user->hasRight('intracommreport', 'delete');
 
 
 /*
@@ -410,7 +410,7 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if INTRACOMM_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $parameters = array();

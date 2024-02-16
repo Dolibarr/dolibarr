@@ -142,9 +142,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->salaries->read;
-$permissiontoadd = $user->rights->salaries->write;
-$permissiontodelete = $user->rights->salaries->delete;
+$permissiontoread = $user->hasRight('salaries', 'read');
+$permissiontoadd = $user->hasRight('salaries', 'write');
+$permissiontodelete = $user->hasRight('salaries', 'delete');
 
 // Security check
 $socid = GETPOST("socid", "int");
@@ -258,7 +258,7 @@ $sql .= " ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = s.fk_user";
 $sql .= " AND s.entity IN (".getEntity('salaries').")";
 if (!$user->hasRight('salaries', 'readall')) {
-	$sql .= " AND s.fk_user IN (".$db->sanitize(join(',', $childids)).")";
+	$sql .= " AND s.fk_user IN (".$db->sanitize(implode(',', $childids)).")";
 }
 //print $sql;
 

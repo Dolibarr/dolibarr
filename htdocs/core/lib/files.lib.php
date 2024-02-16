@@ -839,7 +839,7 @@ function dol_copy($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
  *
  * @param	string	$srcfile			Source file (a directory)
  * @param	string	$destfile			Destination file (a directory)
- * @param	string	$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
+ * @param	string	$newmask			Mask for new file ('0' by default means getDolGlobalString('MAIN_UMASK')). Example: '0666'
  * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
  * @param	array<string,string>	$arrayreplacement	Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
  * @param	int		$excludesubdir		0=Do not exclude subdirectories, 1=Exclude subdirectories, 2=Exclude subdirectories if name is not a 2 chars (used for country codes subdirectories).
@@ -849,8 +849,6 @@ function dol_copy($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
  */
 function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement = null, $excludesubdir = 0, $excludefileext = null)
 {
-	global $conf;
-
 	$result = 0;
 
 	dol_syslog("files.lib.php::dolCopyDir srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwriteifexists=".$overwriteifexists);
@@ -867,7 +865,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 		umask(0);
 		$dirmaskdec = octdec($newmask);
 		if (empty($newmask) && getDolGlobalString('MAIN_UMASK')) {
-			$dirmaskdec = octdec($conf->global->MAIN_UMASK);
+			$dirmaskdec = octdec(getDolGlobalString('MAIN_UMASK'));
 		}
 		$dirmaskdec |= octdec('0200'); // Set w bit required to be able to create content for recursive subdirs files
 		dol_mkdir($destfile, '', decoct($dirmaskdec));
@@ -938,7 +936,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
  * Note:
  *  - This function differs from dol_move_uploaded_file, because it can be called in any context.
  *  - Database indexes for files are updated.
- *  - Test on antivirus is done only if param testvirus is provided and an antivirus was set.
+ *  - Test on virus is done only if param testvirus is provided and an antivirus was set.
  *
  * @param	string  $srcfile            Source file (can't be a directory. use native php @rename() to move a directory)
  * @param   string	$destfile           Destination file (can't be a directory. use native php @rename() to move a directory)
@@ -968,10 +966,18 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 		$newpathofsrcfile = dol_osencode($srcfile);
 		$newpathofdestfile = dol_osencode($destfile);
 
-		// Check virus
+		// Check on virus
 		$testvirusarray = array();
 		if ($testvirus) {
+			// Check using filename + antivirus
 			$testvirusarray = dolCheckVirus($newpathofsrcfile, $newpathofdestfile);
+			if (count($testvirusarray)) {
+				dol_syslog("files.lib.php::dol_move canceled because a virus was found into source file. we ignore the move request.", LOG_WARNING);
+				return false;
+			}
+		} else {
+			// Check using filename only
+			$testvirusarray = dolCheckOnFileName($newpathofsrcfile, $newpathofdestfile);
 			if (count($testvirusarray)) {
 				dol_syslog("files.lib.php::dol_move canceled because a virus was found into source file. we ignore the move request.", LOG_WARNING);
 				return false;
@@ -1187,14 +1193,9 @@ function dolCheckVirus($src_file, $dest_file = '')
 {
 	global $db;
 
-	if (preg_match('/\.pdf$/i', $dest_file)) {
-		dol_syslog("dolCheckVirus Check pdf does not contains js file");
-		if (!getDolGlobalString('MAIN_ANTIVIRUS_ALLOW_JS_IN_PDF')) {
-			$tmp = file_get_contents(trim($src_file));
-			if (preg_match('/[\n\s]+\/JavaScript[\n\s]+/m', $tmp)) {
-				return array('File is a PDF with javascript inside');
-			}
-		}
+	$reterrors = dolCheckOnFileName($src_file, $dest_file);
+	if (!empty($reterrors)) {
+		return $reterrors;
 	}
 
 	if (getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
@@ -1211,9 +1212,34 @@ function dolCheckVirus($src_file, $dest_file = '')
 	return array();
 }
 
+/**
+ * Check virus into a file
+ *
+ * @param   string      $src_file       Source file to check
+ * @param   string      $dest_file      Destination file name (to know the expected type)
+ * @return  string[]                    Array of errors, or empty array if not virus found
+ */
+function dolCheckOnFileName($src_file, $dest_file = '')
+{
+	if (preg_match('/\.pdf$/i', $dest_file)) {
+		if (!getDolGlobalString('MAIN_ANTIVIRUS_ALLOW_JS_IN_PDF')) {
+			dol_syslog("dolCheckOnFileName Check that pdf does not contains js code");
+
+			$tmp = file_get_contents(trim($src_file));
+			if (preg_match('/[\n\s]+\/JavaScript[\n\s]+/m', $tmp)) {
+				return array('File is a PDF with javascript inside');
+			}
+		} else {
+			dol_syslog("dolCheckOnFileName Check js into pdf disabled");
+		}
+	}
+
+	return array();
+}
+
 
 /**
- *	Make control on an uploaded file from an GUI page and move it to final destination.
+ *	Check validity of a file upload from an GUI page, and move it to its final destination.
  * 	If there is errors (virus found, antivir in error, bad filename), file is not moved.
  *  Note:
  *  - This function can be used only into a HTML page context. Use dol_move if you are outside.
@@ -1234,7 +1260,7 @@ function dolCheckVirus($src_file, $dest_file = '')
  */
 function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan = 0, $uploaderrorcode = 0, $nohook = 0, $varfiles = 'addedfile', $upload_dir = '')
 {
-	global $conf, $db, $user, $langs;
+	global $conf;
 	global $object, $hookmanager;
 
 	$reshook = 0;
@@ -1274,8 +1300,8 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		if (empty($disablevirusscan) && file_exists($src_file)) {
 			$checkvirusarray = dolCheckVirus($src_file, $dest_file);
 			if (count($checkvirusarray)) {
-				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.join(',', $checkvirusarray), LOG_WARNING);
-				return 'ErrorFileIsInfectedWithAVirus: '.join(',', $checkvirusarray);
+				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.implode(',', $checkvirusarray), LOG_WARNING);
+				return 'ErrorFileIsInfectedWithAVirus: '.implode(',', $checkvirusarray);
 			}
 		}
 
@@ -1311,7 +1337,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 	}
 
 	if ($reshook < 0) {	// At least one blocking error returned by one hook
-		$errmsg = join(',', $hookmanager->errors);
+		$errmsg = implode(',', $hookmanager->errors);
 		if (empty($errmsg)) {
 			$errmsg = 'ErrorReturnedBySomeHooks'; // Should not occurs. Added if hook is bugged and does not set ->errors when there is error.
 		}
@@ -1713,7 +1739,7 @@ function dol_meta_create($object)
 		}
 
 		$fp = fopen($file, "w");
-		fputs($fp, $meta);
+		fwrite($fp, $meta);
 		fclose($fp);
 
 		dolChmod($file);
@@ -1751,9 +1777,9 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
 		}
 	}
 	$keytoavoidconflict = empty($trackid) ? '' : '-'.$trackid;
-	$_SESSION["listofpaths".$keytoavoidconflict] = join(';', $listofpaths);
-	$_SESSION["listofnames".$keytoavoidconflict] = join(';', $listofnames);
-	$_SESSION["listofmimes".$keytoavoidconflict] = join(';', $listofmimes);
+	$_SESSION["listofpaths".$keytoavoidconflict] = implode(';', $listofpaths);
+	$_SESSION["listofnames".$keytoavoidconflict] = implode(';', $listofnames);
+	$_SESSION["listofmimes".$keytoavoidconflict] = implode(';', $listofmimes);
 }
 
 
@@ -2159,7 +2185,7 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
 
 				$count = $image->getNumberImages();
 
-				if (!dol_is_file($fileoutput) || is_writeable($fileoutput)) {
+				if (!dol_is_file($fileoutput) || is_writable($fileoutput)) {
 					try {
 						$ret = $image->writeImages($fileoutput, true);
 					} catch (Exception $e) {
@@ -2583,16 +2609,16 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
  * Security check when accessing to a document (used by document.php, viewimage.php and webservices to get documents).
  * TODO Replace code that set $accessallowed by a call to restrictedArea()
  *
- * @param	string	$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Example: 'medias', 'invoice', 'logs', 'tax-vat', ...
- * @param	string	$original_file		Relative path with filename, relative to modulepart.
- * @param	string	$entity				Restrict onto entity (0=no restriction)
- * @param  	User	$fuser				User object (forced)
- * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided) or for hierarchy
- * @param   string  $mode               Check permission for 'read' or 'write'
- * @return	mixed						Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' & 'original_file' (as a full path name)
+ * @param	string		$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Example: 'medias', 'invoice', 'logs', 'tax-vat', ...
+ * @param	string		$original_file		Relative path with filename, relative to modulepart.
+ * @param	string		$entity				Restrict onto entity (0=no restriction)
+ * @param  	User|null	$fuser				User object (forced)
+ * @param	string		$refname			Ref of object to check permission for external users (autodetect if not provided) or for hierarchy
+ * @param   string  	$mode               Check permission for 'read' or 'write'
+ * @return	mixed							Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' & 'original_file' (as a full path name)
  * @see restrictedArea()
  */
-function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser = '', $refname = '', $mode = 'read')
+function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser = null, $refname = '', $mode = 'read')
 {
 	global $conf, $db, $user, $hookmanager;
 	global $dolibarr_main_data_root, $dolibarr_main_document_root_alt;
@@ -2672,7 +2698,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $dolibarr_main_data_root.'/doctemplates/'.$original_file;
 	} elseif ($modulepart == 'doctemplateswebsite' && !empty($dolibarr_main_data_root)) {
 		// Wrapping for doctemplates of websites
-		$accessallowed = ($fuser->rights->website->write && preg_match('/\.jpg$/i', basename($original_file)));
+		$accessallowed = ($fuser->hasRight('website', 'write') && preg_match('/\.jpg$/i', basename($original_file)));
 		$original_file = $dolibarr_main_data_root.'/doctemplates/websites/'.$original_file;
 	} elseif ($modulepart == 'packages' && !empty($dolibarr_main_data_root)) {	// To download zip of modules
 		// Wrapping for *.zip package files, like when used with url http://.../document.php?modulepart=packages&file=module_myfile.zip
@@ -3201,11 +3227,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif ($modulepart == 'export' && !empty($conf->export->dir_temp)) {
 		// Wrapping for export module
 		// Note that a test may not be required because we force the dir of download on the directory of the user that export
-		$accessallowed = $user->rights->export->lire;
+		$accessallowed = $user->hasRight('export', 'lire');
 		$original_file = $conf->export->dir_temp.'/'.$fuser->id.'/'.$original_file;
 	} elseif ($modulepart == 'import' && !empty($conf->import->dir_temp)) {
 		// Wrapping for import module
-		$accessallowed = $user->rights->import->run;
+		$accessallowed = $user->hasRight('import', 'run');
 		$original_file = $conf->import->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'recruitment' && !empty($conf->recruitment->dir_output)) {
 		// Wrapping for recruitment module

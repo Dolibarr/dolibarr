@@ -55,11 +55,15 @@ class Tva extends CommonObject
 	 */
 	public $total;
 
-	public $tms;
 	public $datep;
 	public $datev;
 	public $amount;
 	public $type_payment;
+
+	/**
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
+	 */
 	public $num_payment;
 
 	/**
@@ -584,7 +588,7 @@ class Tva extends CommonObject
 			return -4;
 		}
 		if (isModEnabled("banque") && (empty($this->accountid) || $this->accountid <= 0)) {
-			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("BankAccount"));
 			return -5;
 		}
 		if (isModEnabled("banque") && (empty($this->type_payment) || $this->type_payment <= 0)) {

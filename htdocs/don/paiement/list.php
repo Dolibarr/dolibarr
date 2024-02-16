@@ -94,7 +94,7 @@ $arrayfields = array(
 	'c.code'			=> array('label'=>"Type", 'checked'=>1, 'position'=>40),
 	'pd.num_paiement'	=> array('label'=>"Numero", 'checked'=>1, 'position'=>50, 'tooltip'=>"ChequeOrTransferNumber"),
 	'transaction'		=> array('label'=>"BankTransactionLine", 'checked'=>1, 'position'=>60, 'enabled'=>(isModEnabled("banque"))),
-	'ba.label'			=> array('label'=>"Account", 'checked'=>1, 'position'=>70, 'enabled'=>(isModEnabled("banque"))),
+	'ba.label'			=> array('label'=>"BankAccount", 'checked'=>1, 'position'=>70, 'enabled'=>(isModEnabled("banque"))),
 	'pd.amount'			=> array('label'=>"Amount", 'checked'=>1, 'position'=>80),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -316,13 +316,13 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($langs->trans("DonationsReglement"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bill', 0, '', '', $limit, 0, 0, 1);
+print_barre_liste($langs->trans("DonationPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bill', 0, '', '', $limit, 0, 0, 1);
 
 if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;

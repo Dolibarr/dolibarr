@@ -520,7 +520,7 @@ class pdf_standard extends ModelePDFEvaluation
 	 *  @param  Evaluation		$object     	Object to show
 	 *  @param  int	    		$showaddress    0=no, 1=yes
 	 *  @param  Translate		$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   	Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -624,6 +624,8 @@ class pdf_standard extends ModelePDFEvaluation
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->MultiCell(190, 4, $carac_emetteur, 0, 'L');
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

@@ -47,7 +47,6 @@ require_once DOL_DOCUMENT_ROOT .'/ticket/class/ticket.class.php';               
 use Webklex\PHPIMAP\ClientManager;
 use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
 use Webklex\PHPIMAP\Exceptions\InvalidWhereQueryCriteriaException;
-use Webklex\PHPIMAP\Exceptions\GetMessagesFailedException;
 
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
@@ -186,11 +185,6 @@ class EmailCollector extends CommonObject
 	 * @var integer|string date_creation
 	 */
 	public $date_creation;
-
-	/**
-	 * @var int timestamp
-	 */
-	public $tms;
 
 	/**
 	 * @var int ID
@@ -869,7 +863,7 @@ class EmailCollector extends CommonObject
 
 			$this->error .= 'EmailCollector ID '.$emailcollector->id.':'.$emailcollector->error.'<br>';
 			if (!empty($emailcollector->errors)) {
-				$this->error .= join('<br>', $emailcollector->errors);
+				$this->error .= implode('<br>', $emailcollector->errors);
 			}
 			$this->output .= 'EmailCollector ID '.$emailcollector->id.': '.$emailcollector->lastresult.'<br>';
 		}
@@ -1602,7 +1596,7 @@ class EmailCollector extends CommonObject
 				$mapoferrrors = imap_errors();
 				if ($mapoferrrors !== false) {
 					$error++;
-					$this->error = "Search string not understood - ".join(',', $mapoferrrors);
+					$this->error = "Search string not understood - ".implode(',', $mapoferrrors);
 					$this->errors[] = $this->error;
 				}
 			}
@@ -1894,7 +1888,7 @@ class EmailCollector extends CommonObject
 
 				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 					$fromstring = $overview['from'];
-					//$replytostring = empty($overview['reply-to']) ? '' : $overview['reply-to'];
+					$replytostring = empty($overview['in_reply-to']) ? $headers['Reply-To'] : $overview['in_reply-to'];
 
 					$sender = $overview['sender'];
 					$to = $overview['to'];
@@ -1905,7 +1899,7 @@ class EmailCollector extends CommonObject
 					$subject = $overview['subject'];
 				} else {
 					$fromstring = $overview[0]->from;
-					//$replytostring = empty($overview[0]->replyto) ? '' : $overview[0]->replyto;
+					$replytostring = empty($overview['in_reply-to']) ? $headers['Reply-To'] : $overview['in_reply-to'];
 
 					$sender = !empty($overview[0]->sender) ? $overview[0]->sender : '';
 					$to = $overview[0]->to;
@@ -2257,13 +2251,16 @@ class EmailCollector extends CommonObject
 						$description = $descriptiontitle = $descriptionmeta = $descriptionfull = '';
 
 						$descriptiontitle = $langs->trans("RecordCreatedByEmailCollector", $this->ref, $msgid);
-
+						//TODO: Reply-to
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTopic").' : '.dol_escape_htmltag($subject));
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailFrom").($langs->trans("MailFrom") != 'From' ? ' (From)' : '').' : '.dol_escape_htmltag($fromstring));
 						if ($sender) {
 							$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("Sender").($langs->trans("Sender") != 'Sender' ? ' (Sender)' : '').' : '.dol_escape_htmltag($sender));
 						}
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTo").($langs->trans("MailTo") != 'To' ? ' (To)' : '').' : '.dol_escape_htmltag($to));
+						if ($replyto) {
+							$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailReply").($langs->trans("MailReply") != 'Reply to' ? ' (Reply to)' : '').' : '.dol_escape_htmltag($replyto));
+						}
 						if ($sendtocc) {
 							$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailCC").($langs->trans("MailCC") != 'CC' ? ' (CC)' : '').' : '.dol_escape_htmltag($sendtocc));
 						}
@@ -2669,7 +2666,7 @@ class EmailCollector extends CommonObject
 											if (!dol_is_dir($destdir)) {
 												dol_mkdir($destdir);
 											}
-											if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+											if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 												foreach ($attachments as $attachment) {
 													$attachment->save($destdir.'/');
 												}
@@ -3033,6 +3030,7 @@ class EmailCollector extends CommonObject
 								$tickettocreate->category_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_CATEGORY_CODE') ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_CATEGORY_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_category', 'use_default', 'code', 1));
 								$tickettocreate->severity_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE') ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_severity', 'use_default', 'code', 1));
 								$tickettocreate->origin_email = $from;
+								$tickettocreate->origin_replyto = (!empty($replyto) ? $replyto : null);
 								$tickettocreate->fk_user_create = $user->id;
 								$tickettocreate->datec = dol_now();
 								$tickettocreate->fk_project = $projectstatic->id;
@@ -3213,7 +3211,7 @@ class EmailCollector extends CommonObject
 									$result = $candidaturetocreate->create($user);
 									if ($result <= 0) {
 										$errorforactions++;
-										$this->error = 'Failed to create candidature: '.join(', ', $candidaturetocreate->errors);
+										$this->error = 'Failed to create candidature: '.implode(', ', $candidaturetocreate->errors);
 										$this->errors = $candidaturetocreate->errors;
 									}
 
@@ -3381,7 +3379,7 @@ class EmailCollector extends CommonObject
 		}
 
 		if (!empty($this->errors)) {
-			$this->lastresult .= "<br>".join("<br>", $this->errors);
+			$this->lastresult .= "<br>".implode("<br>", $this->errors);
 		}
 		$this->codelastresult = ($error ? 'KO' : 'OK');
 

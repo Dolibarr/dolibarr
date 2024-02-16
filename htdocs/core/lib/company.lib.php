@@ -842,7 +842,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 		print '<div class="div-table-responsive">'."\n";
 		print '<table class="noborder centpercent">';
 
-		$sql  = "SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount";
+		$sql  = "SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_modification, p.budget_amount";
 		$sql .= ", cls.code as opp_status_code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
@@ -1692,7 +1692,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
 
-		$force_filter_contact = false;
+		if (get_class($filterobj) !== 'User') {
+			$force_filter_contact = false;
+		} else {
+			$force_filter_contact = true;
+		}
 		if (is_object($objcon) && $objcon->id > 0) {
 			$force_filter_contact = true;
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as r ON a.id = r.fk_actioncomm";
@@ -1705,7 +1709,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		if (!empty($hookmanager->resPrint)) {
 			$sql.= $hookmanager->resPrint;
 		}
-
 		if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur'))) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
@@ -1728,11 +1731,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", ".MAIN_DB_PREFIX."contrat as o";
 		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
-			&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))
-			&& $filterobj->table_element && $filterobj->element) {
+		&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))
+		&& $filterobj->table_element && $filterobj->element) {
 			$sql .= ", ".MAIN_DB_PREFIX.$filterobj->table_element." as o";
-		} elseif (is_object($filterobj)) {
-			return 'Bad value for $filterobj';
 		}
 
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
@@ -1794,6 +1795,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			} elseif (is_object($filterobj)) {
 				return 'Bad value for $filterobj';
 			}
+		} else {
+			$sql .= " AND u.rowid = ". ((int) $filterobj->id);
 		}
 
 		if (!empty($tms_start) && !empty($tms_end)) {
@@ -1968,6 +1971,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		}
 		if ($filterobj && get_class($filterobj) == 'Societe') {
 			$out .= '<input type="hidden" name="socid" value="'.$filterobj->id.'" />';
+		} else {
+			$out .= '<input type="hidden" name="userid" value="'.$filterobj->id.'" />';
 		}
 
 		$out .= "\n";
@@ -2020,11 +2025,17 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			if (get_class($filterobj) == 'Societe') {
 				$tmp .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&socid='.$filterobj->id.'&status=done">';
 			}
+			if (get_class($filterobj) == 'User') {
+				$tmp .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&userid='.$filterobj->id.'&status=done">';
+			}
 			$tmp .= ($donetodo != 'done' ? $langs->trans("ActionsToDoShort") : '');
 			$tmp .= ($donetodo != 'done' && $donetodo != 'todo' ? ' / ' : '');
 			$tmp .= ($donetodo != 'todo' ? $langs->trans("ActionsDoneShort") : '');
 			//$out.=$langs->trans("ActionsToDoShort").' / '.$langs->trans("ActionsDoneShort");
 			if (get_class($filterobj) == 'Societe') {
+				$tmp .= '</a>';
+			}
+			if (get_class($filterobj) == 'User') {
 				$tmp .= '</a>';
 			}
 			$out .= getTitleFieldOfList($tmp);

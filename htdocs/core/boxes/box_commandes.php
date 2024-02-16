@@ -49,7 +49,7 @@ class box_commandes extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->commande->lire);
+		$this->hidden = !$user->hasRight('commande', 'lire');
 	}
 
 	/**

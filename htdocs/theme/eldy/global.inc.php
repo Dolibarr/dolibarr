@@ -847,14 +847,14 @@ textarea.centpercent {
 	white-space: nowrap;
 	display: inline-block;
 }
-.wrapimp {
+.wrapimp, .wrapimp pre {
 	white-space: normal !important;
 }
 .wordwrap {
 	word-wrap: break-word;
 }
 .wordbreakimp {
-	word-break: break-word;
+	word-break: break-word !important;
 }
 .wordbreak {
 	word-break: break-word;	/* cut fist between word, inside word if not possible */
@@ -862,7 +862,7 @@ textarea.centpercent {
 .wordbreakall {
 	word-break: break-all;
 }
-td.wordbreak img {
+td.wordbreak img, td.wordbreakimp img {
 	max-width: 100%;
 }
 .bold {
@@ -1032,7 +1032,7 @@ body[class*="colorblind-"] .text-success{
 	color : <?php print $textDanger; ?>
 }
 
-.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfielda span.fa-crop,
+.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfielda span.fa-crop, .editfielda span.fa-eye,
 .editfieldlang {
 	color: #ccc !important;
 }
@@ -7762,6 +7762,27 @@ table.jPicker {
 	min-width: 100px;
 }
 
+/* ============================================================================== */
+/* CSS style used for BookCal                                                     */
+/* ============================================================================== */
+
+.center.bookingtab {
+	margin-left: 20px;
+}
+#bookinghoursection {
+	width: 145px;
+	height: 320px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	text-align: left;
+}
+.bookcalform {
+	border: 1px solid #000;
+	padding: 15px;
+	border-radius: 5px;
+	margin-bottom: 15px;
+}
+
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
@@ -7821,6 +7842,17 @@ table.jPicker {
 		margin-left: 10px;
 		margin-right: 10px;
 		text-align: start;
+	}
+
+	.bookcalform.boxtable .minwidth75 {
+		min-width: auto;
+	}
+	.center.bookingtab {
+		margin-left: 6px;
+	}
+	#bookinghoursection {
+		font-size: small;
+		width: 122px;
 	}
 }
 

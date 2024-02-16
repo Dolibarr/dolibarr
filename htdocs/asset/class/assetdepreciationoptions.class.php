@@ -106,7 +106,6 @@ class AssetDepreciationOptions extends CommonObject
 	);
 	public $fk_asset;
 	public $fk_asset_model;
-	public $tms;
 	public $fk_user_modif;
 
 	/**

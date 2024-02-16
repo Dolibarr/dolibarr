@@ -53,7 +53,7 @@ class PaymentVAT extends CommonObject
 	public $fk_tva;
 
 	public $datec = '';
-	public $tms = '';
+
 	public $datep = '';
 
 	/**
@@ -73,11 +73,13 @@ class PaymentVAT extends CommonObject
 	/**
 	 * @var string
 	 * @deprecated
+	 * @see $num_payment
 	 */
 	public $num_paiement;
 
 	/**
-	 * @var string
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 

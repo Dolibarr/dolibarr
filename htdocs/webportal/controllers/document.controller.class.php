@@ -111,7 +111,7 @@ class DocumentController extends Controller
 		if (isset($_GET["attachment"])) {
 			$attachment = GETPOST("attachment", 'alpha') ? true : false;
 		}
-		if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) {
+		if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 			$attachment = false;
 		}
 
@@ -206,7 +206,7 @@ class DocumentController extends Controller
 		$object = new stdClass();
 		$reshook = $hookmanager->executeHooks('downloadDocument', $parameters, $object, $action); // Note that $action and $object may have been
 		if ($reshook < 0) {
-			$errors = $hookmanager->error . (is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '') . join(', ', $hookmanager->errors) : '');
+			$errors = $hookmanager->error . (is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '') . implode(', ', $hookmanager->errors) : '');
 			dol_syslog("document.php - Errors when executing the hook 'downloadDocument' : " . $errors);
 			print "ErrorDownloadDocumentHooks: " . $errors;
 			exit;
@@ -240,13 +240,13 @@ class DocumentController extends Controller
 	 * Action method is called before html output
 	 * can be used to manage security and change context
 	 *
-	 * @return  void
+	 * @return  int     Return integer < 0 on error, > 0 on success
 	 */
 	public function action()
 	{
 		$context = Context::getInstance();
 		if (!$context->controllerInstance->checkAccess()) {
-			return;
+			return -1;
 		}
 
 		//$context = Context::getInstance();
@@ -255,6 +255,8 @@ class DocumentController extends Controller
 		//$context->doNotDisplayHeaderBar=1;// hide default header
 
 		$this->init();
+
+		return 1;
 	}
 
 	/**

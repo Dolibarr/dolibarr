@@ -351,45 +351,51 @@ class CMailFile
 				}
 			}
 			if (!empty($listofemailstoadd)) {
-				$addr_bcc .= ($addr_bcc ? ', ' : '').join(', ', $listofemailstoadd);
+				$addr_bcc .= ($addr_bcc ? ', ' : '').implode(', ', $listofemailstoadd);
 			}
 		}
 
 		// Verify if $to, $addr_cc and addr_bcc have unwanted addresses
 		if (getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO')) {
 			//Verify for $to
+			$replaceto = false;
 			$tabto = explode(",", $to);
 			$listofemailstonotsendto = explode(',', getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO'));
 			foreach ($tabto as $key => $addrto) {
 				if (in_array($addrto, $listofemailstonotsendto)) {
 					unset($tabto[$key]);
+					$replaceto = true;
 				}
 			}
-			if (empty($tabto) && !getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE')) {
+			if ($replaceto && getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE')) {
 				$tabto[] = getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE');
 			}
 			$to = implode(',', $tabto);
 
 			//Verify for $addr_cc
+			$replacecc = false;
 			$tabcc = explode(',', $addr_cc);
 			foreach ($tabcc as $key => $cc) {
 				if (in_array($cc, $tabcc)) {
 					unset($tabcc[$key]);
+					$replacecc = true;
 				}
 			}
-			if (empty($addr_cc) && !getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE')) {
-				$addr_cc[] = getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE');
+			if ($replacecc && getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE')) {
+				$tabcc[] = getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE');
 			}
 			$addr_cc = implode(',', $tabcc);
 
 			//Verify for $addr_bcc
+			$replacebcc= false;
 			$tabbcc = explode(',', $addr_bcc);
 			foreach ($tabbcc as $key => $bcc) {
 				if (in_array($bcc, $tabbcc)) {
 					unset($tabbcc[$key]);
+					$replacebcc = true;
 				}
 			}
-			if (empty($tabbcc) && !getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE')) {
+			if ($replacebcc && getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE')) {
 				$tabbcc[] = getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE');
 			}
 			$addr_bcc = implode(',', $tabbcc);
@@ -1261,7 +1267,7 @@ class CMailFile
 				$res = true;
 				if (!empty($this->error) || !empty($this->errors) || !$result) {
 					if (!empty($failedRecipients)) {
-						$this->errors[] = 'Transport failed for the following addresses: "' . join('", "', $failedRecipients) . '".';
+						$this->errors[] = 'Transport failed for the following addresses: "' . implode('", "', $failedRecipients) . '".';
 					}
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res = false;
@@ -1353,19 +1359,19 @@ class CMailFile
 		// phpcs:enable
 		global $dolibarr_main_data_root;
 
-		if (@is_writeable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
+		if (@is_writable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
 			$outputfile = $dolibarr_main_data_root."/dolibarr_mail.log";
 			$fp = fopen($outputfile, "w");	// overwrite
 
 			if ($this->sendmode == 'mail') {
-				fputs($fp, $this->headers);
-				fputs($fp, $this->eol); // This eol is added by the mail function, so we add it in log
-				fputs($fp, $this->message);
+				fwrite($fp, $this->headers);
+				fwrite($fp, $this->eol); // This eol is added by the mail function, so we add it in log
+				fwrite($fp, $this->message);
 			} elseif ($this->sendmode == 'smtps') {
-				fputs($fp, $this->smtps->log); // this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on
+				fwrite($fp, $this->smtps->log); // this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on
 			} elseif ($this->sendmode == 'swiftmailer') {
-				fputs($fp, "smtpheader=\n".$this->message->getHeaders()->toString()."\n");
-				fputs($fp, $this->logger->dump()); // this->logger is filled only if MAIN_MAIL_DEBUG was set to on
+				fwrite($fp, "smtpheader=\n".$this->message->getHeaders()->toString()."\n");
+				fwrite($fp, $this->logger->dump()); // this->logger is filled only if MAIN_MAIL_DEBUG was set to on
 			}
 
 			fclose($fp);
@@ -1393,7 +1399,7 @@ class CMailFile
 	{
 		global $dolibarr_main_data_root;
 
-		if (@is_writeable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
+		if (@is_writable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
 			$srcfile = $dolibarr_main_data_root."/dolibarr_mail.log";
 
 			// Add message to dolibarr_mail.log. We do not use dol_syslog() on purpose,

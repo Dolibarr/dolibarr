@@ -347,8 +347,8 @@ if ($action == 'replacesite' || $mode == 'replacesite') {
 	$listofpages = getPagesFromSearchCriterias($containertype, $algo, $searchkey, 1000, $sortfield, $sortorder, $langcode, $otherfilters, -1);
 }
 
-$usercanedit = $user->rights->website->write;
-$permissiontoadd = $user->rights->website->write;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+$usercanedit = $user->hasRight('website', 'write');
+$permissiontoadd = $user->hasRight('website', 'write');	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 $permissiontodelete = $user->hasRight('website', 'delete');
 
 
@@ -714,7 +714,7 @@ if ($action == 'addsite' && $usercanedit) {
 		$tmpobject->ref = GETPOST('WEBSITE_REF', 'alpha');
 		$tmpobject->description = GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml');
 		$tmpobject->lang = GETPOST('WEBSITE_LANG', 'aZ09');
-		$tmpobject->otherlang = join(',', $arrayotherlang);
+		$tmpobject->otherlang = implode(',', $arrayotherlang);
 		$tmpobject->virtualhost = GETPOST('virtualhost', 'alpha');
 
 		$result = $tmpobject->create($user);
@@ -1503,7 +1503,7 @@ if ($action == 'updatecss' && $usercanedit) {
 
 				$object->virtualhost = $tmpvirtualhost;
 				$object->lang = GETPOST('WEBSITE_LANG', 'aZ09');
-				$object->otherlang = join(',', $arrayotherlang);
+				$object->otherlang = implode(',', $arrayotherlang);
 				$object->use_manifest = GETPOSTINT('use_manifest');
 
 				$result = $object->update($user);
@@ -4036,6 +4036,7 @@ if ($action == 'createsite') {
 }
 
 if ($action == 'importsite') {
+	print '<!-- action=importsite -->';
 	print '<div class="fiche">';
 
 	print '<br>';

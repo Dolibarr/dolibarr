@@ -335,6 +335,38 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Create external user
+	if ($action == 'createsubscription_confirm' && $confirm == "yes" && $user->hasRight('adherent', 'creer')) {
+		$tmpmember = new Adherent($db);
+		$adht = new AdherentType($db);
+		$error = 0;
+		$nbcreated = 0;
+		$now = dol_now();
+		$amount = price2num(GETPOST('amount', 'alpha'));
+		$db->begin();
+		foreach ($toselect as $id) {
+			$res = $tmpmember->fetch($id);
+			if ($res > 0) {
+				$result = $tmpmember->subscription($now, $amount);
+				if ($result < 0) {
+					$error++;
+				} else {
+					$nbcreated++;
+				}
+			} else {
+				$error++;
+			}
+		}
+
+		if (!$error) {
+			setEventMessages($langs->trans("XSubsriptionCreated", $nbcreated), null, 'mesgs');
+			$db->commit();
+		} else {
+			setEventMessages($langs->trans("XSubsriptionError", $error), null, 'mesgs');
+			$db->rollback();
+		}
+	}
+
 	// Mass actions
 	$objectclass = 'Adherent';
 	$objectlabel = 'Members';
@@ -374,7 +406,7 @@ if ((!empty($search_categ) && $search_categ > 0) || !empty($catid)) {
 $sql .= " d.rowid, d.ref, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc,";
 $sql .= " d.civility, d.datefin, d.address, d.zip, d.town, d.state_id, d.country,";
 $sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.birth, d.public, d.photo,";
-$sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut as status, d.datec as date_creation, d.tms as date_update,";
+$sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut as status, d.datec as date_creation, d.tms as date_modification,";
 $sql .= " d.note_private, d.note_public, d.import_key,";
 $sql .= " s.nom,";
 $sql .= " ".$db->ifsql("d.societe IS NULL", "s.nom", "d.societe")." as companyname,";
@@ -706,6 +738,9 @@ if (isModEnabled('category') && $user->hasRight('adherent', 'creer')) {
 if ($user->hasRight('adherent', 'creer') && $user->hasRight('user', 'user', 'creer')) {
 	$arrayofmassactions['createexternaluser'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("CreateExternalUser");
 }
+if ($user->hasRight('adherent', 'creer')) {
+	$arrayofmassactions['createsubscription'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("CreateSubscription");
+}
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
 	$arrayofmassactions = array();
 }
@@ -740,6 +775,34 @@ $topicmail = "Information";
 $modelmail = "member";
 $objecttmp = new Adherent($db);
 $trackid = 'mem'.$object->id;
+if ($massaction == 'createsubscription') {
+	$tmpmember = new Adherent($db);
+	$adht = new AdherentType($db);
+	$amount = 0;
+	foreach ($toselect as $id) {
+		$now = dol_now();
+		$tmpmember->fetch($id);
+		$res = $adht->fetch($tmpmember->typeid);
+		if ($res > 0) {
+			$amounttmp = $adht->amount;
+			if (!empty($tmpmember->last_subscription_amount) && !GETPOSTISSET('newamount') && is_numeric($amounttmp)) {
+				$amounttmp = max($tmpmember->last_subscription_amount, $amount);
+			}
+			$amount = max(0, $amounttmp, $amount);
+		} else {
+			$error++;
+		}
+	}
+
+	$date = dol_print_date(dol_now(), "%d/%m/%Y");
+	$formquestion = array(
+		array('label' => $langs->trans("DateSubscription"), 'type' => 'other', 'value' => $date),
+		array('label' => $langs->trans("Amount"), 'type' => 'text', 'value' => price($amount, 0, '', 0), 'name' => 'amount'),
+		array('type' => 'separator'),
+		array('label' => $langs->trans("MoreActions"), 'type' => 'other', 'value' => $langs->trans("None").' '.img_warning($langs->trans("WarningNoComplementaryActionDone"))),
+	);
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassSubsriptionCreation"), $langs->trans("ConfirmMassSubsriptionCreationQuestion", count($toselect)), "createsubscription_confirm", $formquestion, '', 0, 200, 500, 1);
+}
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all) {
@@ -749,7 +812,7 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if MYOBJECT_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>'."\n";
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>'."\n";
 }
 
 $moreforfilter = '';
@@ -1424,7 +1487,7 @@ while ($i < $imaxinloop) {
 		// Date modification
 		if (!empty($arrayfields['d.tms']['checked'])) {
 			print '<td class="nowrap center">';
-			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

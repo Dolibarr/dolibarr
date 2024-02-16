@@ -238,8 +238,8 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'ExpenseReport';
 	$objectlabel = 'ExpenseReport';
-	$permissiontoread = $user->rights->expensereport->lire;
-	$permissiontodelete = $user->rights->expensereport->supprimer;
+	$permissiontoread = $user->hasRight('expensereport', 'lire');
+	$permissiontodelete = $user->hasRight('expensereport', 'supprimer');
 	$uploaddir = $conf->expensereport->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -336,7 +336,7 @@ if ($search_status != '' && $search_status >= 0) {
 // RESTRICT RIGHTS
 if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')
 	&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('expensereport', 'writeall_advance'))) {
-	$sql .= " AND d.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";
+	$sql .= " AND d.fk_user_author IN (".$db->sanitize(implode(',', $childids)).")\n";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -497,8 +497,8 @@ if ($resql) {
 
 			$childids = $user->getAllChildIds(1);
 
-			$canedit = ((in_array($user_id, $childids) && $user->rights->expensereport->creer)
-				|| ($conf->global->MAIN_USE_ADVANCED_PERMS && $user->rights->expensereport->writeall_advance));
+			$canedit = ((in_array($user_id, $childids) && $user->hasRight('expensereport', 'creer'))
+				|| ($conf->global->MAIN_USE_ADVANCED_PERMS && $user->hasRight('expensereport', 'writeall_advance')));
 
 			// Buttons for actions
 			if ($canedit) {
@@ -537,7 +537,7 @@ if ($resql) {
 		foreach ($fieldstosearchall as $key => $val) {
 			$fieldstosearchall[$key] = $langs->trans($val);
 		}
-		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).implode(', ', $fieldstosearchall).'</div>';
 	}
 
 	$moreforfilter = '';
@@ -1010,8 +1010,8 @@ if ($resql) {
 		$urlsource .= str_replace('&amp;', '&', $param);
 
 		$filedir = $diroutputmassaction;
-		$genallowed = $user->rights->expensereport->lire;
-		$delallowed = $user->rights->expensereport->creer;
+		$genallowed = $user->hasRight('expensereport', 'lire');
+		$delallowed = $user->hasRight('expensereport', 'creer');
 
 		print $formfile->showdocuments('massfilesarea_expensereport', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 	}

@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/import.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('exports', 'compta', 'errors'));
+$langs->loadLangs(array('exports', 'compta', 'errors', 'admin'));
 
 // Security check
 $result = restrictedArea($user, 'import');
@@ -1821,7 +1821,7 @@ if ($step == 5 && $datatoimport) {
 		$alias = preg_replace('/(\..*)$/i', '', $label);
 		$listfields[$i] = '<span class="nowrap">'.$langs->trans("Column").' '.num2Alpha($code - 1).' -> '.$label.'</span>';
 	}
-	print count($listfields) ? (join(', ', $listfields)) : $langs->trans("Error");
+	print count($listfields) ? (implode(', ', $listfields)) : $langs->trans("Error");
 	print '</td></tr>';
 
 	print '</table>';
@@ -2252,7 +2252,7 @@ if ($step == 6 && $datatoimport) {
 		$alias = preg_replace('/(\..*)$/i', '', $label);
 		$listfields[$i] = $langs->trans("Field").' '.$code.'->'.$label;
 	}
-	print count($listfields) ? (join(', ', $listfields)) : $langs->trans("Error");
+	print count($listfields) ? (implode(', ', $listfields)) : $langs->trans("Error");
 	print '</td></tr>';
 
 	print '</table>';

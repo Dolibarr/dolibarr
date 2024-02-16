@@ -113,7 +113,7 @@ if (empty($reshook)) {
 		$search_field1 = '';
 		$search_field2 = '';
 		$search_date_creation = '';
-		$search_date_update = '';
+		$search_date_modification = '';
 		$toselect = array();
 		$search_array_options = array();
 	}

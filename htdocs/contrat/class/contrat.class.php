@@ -2893,7 +2893,7 @@ class Contrat extends CommonObject
 			$this->error = $this->db->lasterror();
 		}
 
-		$this->output .= count($contractlineprocessed).' contract line(s) with end date before '.dol_print_date($enddatetoscan, 'day').' were renewed'.(count($contractlineprocessed)>0 ? ' : '.join(',', $contractlineprocessed) : '');
+		$this->output .= count($contractlineprocessed).' contract line(s) with end date before '.dol_print_date($enddatetoscan, 'day').' were renewed'.(count($contractlineprocessed)>0 ? ' : '.implode(',', $contractlineprocessed) : '');
 
 		return ($error ? 1 : 0);
 	}
@@ -2984,8 +2984,6 @@ class ContratLigne extends CommonObjectLine
 	 * @var string Ref
 	 */
 	public $ref;
-
-	public $tms;
 
 	/**
 	 * @var int ID

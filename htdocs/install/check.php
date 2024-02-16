@@ -275,7 +275,7 @@ if (is_readable($conffile) && filesize($conffile) > 8) {
 		$fp = @fopen($conffile, "w");
 		if ($fp) {
 			@fwrite($fp, '<?php');
-			@fputs($fp, "\n");
+			@fwrite($fp, "\n");
 			fclose($fp);
 		} else {
 			dolibarr_install_syslog("check: failed to create a new file ".$conffile." into current dir ".getcwd().". Please check permissions.", LOG_ERR);

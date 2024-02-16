@@ -155,11 +155,6 @@ class Mo extends CommonObject
 	 */
 	public $date_valid;
 
-	/**
-	 * @var integer|string date_validation
-	 */
-	public $tms;
-
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
@@ -541,7 +536,7 @@ class Mo extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -2038,7 +2033,6 @@ class MoLine extends CommonObjectLine
 	public $fk_mrp_production;
 	public $fk_stock_movement;
 	public $date_creation;
-	public $tms;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
@@ -2189,7 +2183,7 @@ class MoLine extends CommonObjectLine
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}

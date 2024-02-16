@@ -273,7 +273,7 @@ class FormWebPortal extends Form
 		}
 
 		// Get list of files starting with name of ref (Note: files with '^ref\.extension' are generated files, files with '^ref-...' are uploaded files)
-		if ($allfiles || !empty($conf->global->MAIN_SHOW_ALL_FILES_ON_DOCUMENT_TOOLTIP)) {
+		if ($allfiles || getDolGlobalString('MAIN_SHOW_ALL_FILES_ON_DOCUMENT_TOOLTIP')) {
 			$filterforfilesearch = '^' . preg_quote(basename($modulesubdir), '/');
 		} else {
 			$filterforfilesearch = '^' . preg_quote(basename($modulesubdir), '/') . '\.';
@@ -399,8 +399,8 @@ class FormWebPortal extends Form
 			}
 		}
 		if (!is_object($objecttmp)) {
-			dol_syslog('Error bad setup of type for field ' . join(',', $InfoFieldList), LOG_WARNING);
-			return 'Error bad setup of type for field ' . join(',', $InfoFieldList);
+			dol_syslog('Error bad setup of type for field ' . implode(',', $InfoFieldList), LOG_WARNING);
+			return 'Error bad setup of type for field ' . implode(',', $InfoFieldList);
 		}
 
 		dol_syslog(__METHOD__ . ' filter=' . $filter, LOG_DEBUG);
@@ -699,7 +699,7 @@ class FormWebPortal extends Form
 
 				if ($type == 'datetime') {
 					//$moreparam .= ' step="1"'; to show seconds
-					$out .= ' ' . $this->inputType('time', $htmlName . '_time', $valueTime, $htmlName . '_time', $morecss, $moreparam);
+					$out .= ' ' . $this->inputType('time', $htmlName.'_time', $valueTime, $htmlId, $morecss, $moreparam);
 				}
 				break;
 

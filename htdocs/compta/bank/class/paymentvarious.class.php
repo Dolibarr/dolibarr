@@ -59,19 +59,47 @@ class PaymentVarious extends CommonObject
 	/**
 	 * @var int timestamp
 	 */
-	public $tms;
 	public $datep;
+
+	/**
+	 * @var int timestamp
+	 */
 	public $datev;
 
 	/**
-	 * @var int sens of operation
+	 * @var int<0,1> Payment direction (debit or credit)
 	 */
 	public $sens;
+
+	/**
+	 * @var float
+	 */
 	public $amount;
+
+	/**
+	 * @var int Payment type (fk_typepayment)
+	 */
 	public $type_payment;
+
+	/**
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
+	 */
 	public $num_payment;
+
+	/**
+	 * @var string Name of cheque writer
+	 */
 	public $chqemetteur;
+
+	/**
+	 * @var string Bank of cheque writer
+	 */
 	public $chqbank;
+
+	/**
+	 * @var int Category id
+	 */
 	public $category_transaction;
 
 	/**
@@ -206,7 +234,7 @@ class PaymentVarious extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->amount = trim($this->amount);
+		$this->amount = (float) price2num($this->amount);
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
 		$this->fk_bank = (int) $this->fk_bank;
@@ -424,7 +452,7 @@ class PaymentVarious extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->amount = price2num(trim($this->amount));
+		$this->amount = (float) price2num($this->amount);
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
 		$this->fk_bank = (int) $this->fk_bank;
@@ -499,7 +527,7 @@ class PaymentVarious extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_various");
-			$this->ref = $this->id;
+			$this->ref = (string) $this->id;
 
 			if ($this->id > 0) {
 				if (isModEnabled("banque") && !empty($this->amount)) {

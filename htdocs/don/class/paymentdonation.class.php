@@ -56,8 +56,6 @@ class PaymentDonation extends CommonObject
 
 	public $datec = '';
 
-	public $tms = '';
-
 	public $datep = '';
 
 	public $amount; // Total amount of payment
@@ -67,6 +65,10 @@ class PaymentDonation extends CommonObject
 	public $fk_typepayment;	// Payment mode ID
 	public $paymenttype;	// Payment mode ID or Code. TODO Use only the code in this field.
 
+	/**
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
+	 */
 	public $num_payment;
 
 	/**

@@ -150,9 +150,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->partnership->read;
-$permissiontoadd = $user->rights->partnership->write;
-$permissiontodelete = $user->rights->partnership->delete;
+$permissiontoread = $user->hasRight('partnership', 'read');
+$permissiontoadd = $user->hasRight('partnership', 'write');
+$permissiontodelete = $user->hasRight('partnership', 'delete');
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
@@ -695,7 +695,7 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if PARTNERSHIP_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>'."\n";
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>'."\n";
 }
 
 $moreforfilter = '';

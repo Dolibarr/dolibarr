@@ -127,7 +127,6 @@ class EmailSenderProfile extends CommonObject
 	 */
 	public $date_creation;
 
-	public $tms;
 	public $private;
 	public $signature;
 	public $position;
