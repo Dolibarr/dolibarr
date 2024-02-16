@@ -31,33 +31,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/member/modules_member.class.php';
  */
 class mod_member_advanced extends ModeleNumRefMembers
 {
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
+
+	// variables inherited from ModeleNumRefMembers class
+	public $name = 'Advanced';
 	public $version = 'dolibarr';
+	public $error = '';
+	public $code_auto = 1;
+
+
+	// variables not inherited
 
 	/**
-	 * prefix
-	 *
-	 * @var string
+	 *  @var string
 	 */
 	public $prefix = 'MEM';
 
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string model name
-	 */
-	public $name = 'Advanced';
-
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto = 1;
 
 	/**
 	 *  Return description of numbering module

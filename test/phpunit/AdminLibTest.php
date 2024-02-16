@@ -174,7 +174,7 @@ class AdminLibTest extends PHPUnit\Framework\TestCase
 
 		$result = $moduledescriptor->init();
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals(1, $result);
+		$this->assertEquals(1, $result, "Enable module modExpenseReport");
 		$conf->setValues($db);
 
 		require_once dirname(__FILE__).'/../../htdocs/core/modules/modApi.class.php';
@@ -185,7 +185,7 @@ class AdminLibTest extends PHPUnit\Framework\TestCase
 
 		$result = $moduledescriptor->init();
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals(1, $result);
+		$this->assertEquals(1, $result, "Enable module modAPI");
 		$conf->setValues($db);
 	}
 }

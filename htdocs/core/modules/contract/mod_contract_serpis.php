@@ -28,35 +28,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
  */
 class mod_contract_serpis extends ModelNumRefContracts
 {
+
+	// variables inherited from ModelNumRefContracts class
+	public $name = 'Serpis';
+	public $version = 'dolibarr';
+	public $error = '';
+	public $code_auto = 1;
+
+
+	// variables not inherited
+
 	/**
-	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
-	public $version = 'dolibarr';
-
 	public $prefix = 'CT';
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Serpis';
-
-	/**
-	 * @var string model name
-	 */
-	public $name = 'Serpis';
-
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto = 1;
 
 
 	/**
