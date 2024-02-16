@@ -571,6 +571,7 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 UPDATE llx_menu SET url = '/fourn/paiement/list.php?mainmenu=billing&leftmenu=suppliers_bills_payment' WHERE leftmenu = 'suppliers_bills_payment';
 
 -- Easya 2024
+
 -- Backport VAT by entity #24965 - Also available on Easya 2022
 -- VMYSQL4.1 DROP INDEX uk_c_tva_id on llx_c_tva;
 -- VPGSQL8.2 DROP INDEX uk_c_tva_id;
@@ -586,3 +587,8 @@ UPDATE llx_product set stockable_product = 0 WHERE fk_product_type = 1;
 
 -- Rename const to add customer categories on not customer/prospect third-party if enabled
 UPDATE llx_const SET name = 'THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT' WHERE name = 'THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER';
+
+-- add triggers for COMPANY_RIB_XXX
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('COMPANY_RIB_CREATE','Third party payment information created','Executed when a third party payment information is created','societe',1);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('COMPANY_RIB_MODIFY','Third party payment information updated','Executed when a third party payment information is updated','societe',1);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('COMPANY_RIB_DELETE','Third party payment information deleted','Executed when a third party payment information is deleted','societe',1);
