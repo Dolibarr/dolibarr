@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +96,6 @@ class CodingPhpTest extends CommonClassTest
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname', SORT_ASC, 0, 1, '', 1);
-
 		foreach ($filesarray as $key => $file) {
 			if (preg_match('/\/(htdocs|html)\/includes\//', $file['fullname'])) {
 				continue;
@@ -116,7 +116,6 @@ class CodingPhpTest extends CommonClassTest
 				continue;
 			}
 
-			//print 'Check php file '.$file['relativename']."\n";
 			$filecontent = file_get_contents($file['fullname']);
 
 			if (preg_match('/\.class\.php/', $file['relativename'])
@@ -124,7 +123,7 @@ class CodingPhpTest extends CommonClassTest
 				|| preg_match('/modules\/.*\/doc\/(doc|pdf)_/', $file['relativename'])
 				|| preg_match('/modules\/(import|mailings|printing)\//', $file['relativename'])
 				|| in_array($file['name'], array('modules_boxes.php', 'TraceableDB.php'))) {
-				// Check into Class files
+				// Check Class files
 				if (! in_array($file['name'], array(
 					'api.class.php',
 					'commonobject.class.php',
@@ -138,18 +137,18 @@ class CodingPhpTest extends CommonClassTest
 					// Must not find $db->
 					$ok = true;
 					$matches = array();
-					// Check string $db-> inside a class.php file (it should be $this->db-> into such classes)
+					// Check string $db-> inside a class.php file (it should be $this->db-> in such classes)
 					preg_match_all('/'.preg_quote('$db->', '/').'/', $filecontent, $matches, PREG_SET_ORDER);
 					foreach ($matches as $key => $val) {
 						$ok = false;
 						break;
 					}
 					//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-					$this->assertTrue($ok, 'Found string $db-> into a .class.php file in '.$file['relativename'].'. Inside a .class file, you should use $this->db-> instead.');
+					$this->assertTrue($ok, 'Found string $db-> in a .class.php file in '.$file['relativename'].'. Inside a .class file, you should use $this->db-> instead.');
 					//exit;
 				}
 
-				if (preg_match('/\.class\.php/', $file['relativename']) && ! in_array($file['relativename'], array(
+				if (preg_match('/\.class\.php$/', $file['relativename']) && ! in_array($file['relativename'], array(
 					'adherents/canvas/actions_adherentcard_common.class.php',
 					'contact/canvas/actions_contactcard_common.class.php',
 					'compta/facture/class/facture.class.php',
@@ -177,7 +176,7 @@ class CodingPhpTest extends CommonClassTest
 					// Must not find GETPOST
 					$ok = true;
 					$matches = array();
-					// Check string GETPOSTFLOAT a class.php file (should not be found into classes)
+					// Check string GETPOSTFLOAT a class.php file (should not be found in classes)
 					preg_match_all('/GETPOST\(["\'](....)/', $filecontent, $matches, PREG_SET_ORDER);
 					foreach ($matches as $key => $val) {
 						if (in_array($val[1], array('lang', 'forc', 'mass', 'conf'))) {
@@ -187,11 +186,10 @@ class CodingPhpTest extends CommonClassTest
 						$ok = false;
 						break;
 					}
-					//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-					$this->assertTrue($ok, 'Found string GETPOST into a .class.php file in '.$file['relativename'].'.');
+					$this->assertTrue($ok, 'Found string GETPOST in a .class.php file in '.$file['relativename'].'.');
 				}
 			} else {
-				// Check into Include files
+				// Check Include files
 				if (! in_array($file['name'], array(
 					'objectline_view.tpl.php',
 					'extrafieldsinexport.inc.php',
@@ -202,7 +200,7 @@ class CodingPhpTest extends CommonClassTest
 					// Must not found $this->db->
 					$ok = true;
 					$matches = array();
-					// Check string $this->db-> into a non class.php file (it should be $db-> into such classes)
+					// Check string $this->db-> in a non class.php file (it should be $db-> in such classes)
 					preg_match_all('/'.preg_quote('$this->db->', '/').'/', $filecontent, $matches, PREG_SET_ORDER);
 					foreach ($matches as $key => $val) {
 						$ok = false;
@@ -214,9 +212,9 @@ class CodingPhpTest extends CommonClassTest
 				}
 			}
 
-			// Check we don't miss top_httphead() into any ajax pages
+			// Check we don't miss top_httphead() in any ajax pages
 			if (preg_match('/ajax\//', $file['relativename'])) {
-				print "Analyze ajax page ".$file['relativename']."\n";
+				//print "Analyze ajax page ".$file['relativename']."\n";
 				$ok = true;
 				$matches = array();
 				preg_match_all('/top_httphead/', $filecontent, $matches, PREG_SET_ORDER);
@@ -224,28 +222,25 @@ class CodingPhpTest extends CommonClassTest
 					$ok = false;
 				}
 				//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-				$this->assertTrue($ok, 'Did not find top_httphead into the ajax page '.$file['relativename']);
+				$this->assertTrue($ok, 'Did not find top_httphead in the ajax page '.$file['relativename']);
 				//exit;
 			}
 
 			// Check if a var_dump has been forgotten
 			if (!preg_match('/test\/phpunit/', $file['fullname'])) {
-				if (! in_array($file['name'], array('class.nusoap_base.php'))) {
-					$ok = true;
-					$matches = array();
-					preg_match_all('/(.)\s*var_dump\(/', $filecontent, $matches, PREG_SET_ORDER);
-					//var_dump($matches);
-					foreach ($matches as $key => $val) {
-						if ($val[1] != '/' && $val[1] != '*') {
-							$ok = false;
-							break;
-						}
+				$ok = true;
+				$matches = array();
+				preg_match_all('/(^|\S)[ \t]*?var_dump\(/m', $filecontent, $matches, PREG_SET_ORDER);
+				//var_dump($matches);
+				foreach ($matches as $key => $val) {
+					if ($val[1] != '/' && $val[1] != '*') {
+						$ok = false;
 						break;
 					}
-					//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-					$this->assertTrue($ok, 'Found string var_dump that is not just after /* or // in '.$file['relativename']);
-					//exit;
 				}
+				//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+				$this->assertTrue($ok, 'Found string var_dump that is not just after /* or // in '.$file['relativename']);
+				//exit;
 			}
 
 			// Check get_class followed by __METHOD__
@@ -296,7 +291,7 @@ class CodingPhpTest extends CommonClassTest
 				break;
 			}
 			//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-			$this->assertTrue($ok, 'Found non quoted or not casted var into sql request '.$file['relativename'].' - Bad.');
+			$this->assertTrue($ok, 'Found non quoted or not casted var in sql request '.$file['relativename'].' - Bad.');
 			//exit;
 
 			// Check that forged sql string is using ' instead of " as string PHP quotes
@@ -312,7 +307,7 @@ class CodingPhpTest extends CommonClassTest
 				//if ($reg[0] != 'db') $ok=false;
 			}
 			//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-			$this->assertTrue($ok, 'Found a forged SQL string that mix on same line the use of \' for PHP string and PHP variables into file '.$file['relativename'].' Use " to forge PHP string like this: $sql = "SELECT ".$myvar...');
+			$this->assertTrue($ok, 'Found a forged SQL string that mix on same line the use of \' for PHP string and PHP variables in file '.$file['relativename'].' Use " to forge PHP string like this: $sql = "SELECT ".$myvar...');
 			//exit;
 
 			// Check that forged sql string is using ' instead of " as string PHP quotes
@@ -324,7 +319,7 @@ class CodingPhpTest extends CommonClassTest
 				$ok = false;
 				break;
 			}
-			$this->assertTrue($ok, 'Found a forged SQL string that mix on same line the use of \' for PHP string and PHP variables into file '.$file['relativename'].' Use " to forge PHP string like this: $sql = "SELECT ".$myvar...');
+			$this->assertTrue($ok, 'Found a forged SQL string that mix on same line the use of \' for PHP string and PHP variables in file '.$file['relativename'].' Use " to forge PHP string like this: $sql = "SELECT ".$myvar...');
 
 			// Check sql string VALUES ... , ".$xxx
 			//  with xxx that is not 'db-' (for $db->escape). It means we forget a ' if string, or an (int) if int, when forging sql request.
@@ -343,7 +338,7 @@ class CodingPhpTest extends CommonClassTest
 				break;
 			}
 			//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-			$this->assertTrue($ok, 'Found non quoted or not casted var into sql request '.$file['relativename'].' - Bad.');
+			$this->assertTrue($ok, 'Found non quoted or not casted var in sql request '.$file['relativename'].' - Bad.');
 			//exit;
 
 			// Check '".$xxx non escaped
@@ -495,7 +490,7 @@ class CodingPhpTest extends CommonClassTest
 					break;
 				}
 			}
-			$this->assertTrue($ok, 'Found a forbidden string sequence into '.$file['relativename'].' : name="token" value="\'.$_SESSION[..., you must use a newToken() instead of $_SESSION[\'newtoken\'].');
+			$this->assertTrue($ok, 'Found a forbidden string sequence in '.$file['relativename'].' : name="token" value="\'.$_SESSION[..., you must use a newToken() instead of $_SESSION[\'newtoken\'].');
 
 
 			// Test we don't have preg_grep with a param without preg_quote
@@ -570,7 +565,7 @@ class CodingPhpTest extends CommonClassTest
 				$ok = false;
 				break;
 			}
-			$this->assertTrue($ok, 'Found a CURDATE\(\) into code. Do not use this SQL method in file '.$file['relativename'].'. You must use the PHP function dol_now() instead.');
+			$this->assertTrue($ok, 'Found a CURDATE\(\) in code. Do not use this SQL method in file '.$file['relativename'].'. You must use the PHP function dol_now() instead.');
 		}
 
 		return;
