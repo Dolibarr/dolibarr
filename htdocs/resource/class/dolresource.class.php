@@ -223,13 +223,15 @@ class Dolresource extends CommonObject
 		$sql .= "fk_code_type_resource,";
 		$sql .= "note_public,";
 		$sql .= "note_private, ";
-		$sql .= "datec";
+		$sql .= "datec, ";
+		$sql .= "fk_user_author ";
 		$sql .= ") VALUES (";
 		$sql .= getEntity('resource') . ", ";
 		foreach ($new_resource_values as $value) {
 			$sql .= " " . ((isset($value) && $value > 0) ? "'" . $this->db->escape($value) . "'" : 'NULL') . ",";
 		}
-		$sql .= " '" . $this->db->idate($this->date_creation) . "'";
+		$sql .= " '" . $this->db->idate($this->date_creation) . "',";
+		$sql .= " " . (!empty($user->id) ? ((int) $user->id) : "null");
 		$sql .= ")";
 
 		// Database session
@@ -420,7 +422,8 @@ class Dolresource extends CommonObject
 		$sql .= " email=".(isset($this->email) ? "'".$this->db->escape($this->email)."'" : "null").",";
 		$sql .= " max_users=".(isset($this->max_users) ? (int) $this->max_users : "null").",";
 		$sql .= " fk_code_type_resource=".(isset($this->fk_code_type_resource) ? "'".$this->db->escape($this->fk_code_type_resource)."'" : "null").",";
-		$sql .= " tms=".("'" . $this->db->idate($this->date_modification) . "'");
+		$sql .= " tms=" . ("'" . $this->db->idate($this->date_modification) . "',");
+		$sql .= " fk_user_modif=" . (!empty($user->id) ? ((int) $user->id) : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
