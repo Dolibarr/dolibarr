@@ -911,6 +911,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 										print $langs->trans("ErrorNoWarehouseDefined");
 									}
 								} else {
+									// on force l'entrepot pour passer le test d'ajout de ligne dans expedition.class.php
 									print '<input id="entrepot'.$suffix.'" name="entrepot'.$suffix.'" type="hidden" value="'.$objd->fk_entrepot.'">';
 									print img_warning().' '.$langs->trans('StockDisabled') ;
 								}
