@@ -12631,7 +12631,7 @@ function dolForgeExplodeAnd($sqlfilters)
  *
  * @param	string  		$sqlfilters     	Universal SQL filter string. Must have been trimmed before.
  * @param	string			$error				Returned error message
- * @param	int				$parenthesislevel	Returned level of global parenthesis that we can remove/siplify, 0 if error or we cant simplify.
+ * @param	int				$parenthesislevel	Returned level of global parenthesis that we can remove/simplify, 0 if error or we can't simplify.
  * @return 	boolean			   					True if valid, False if not valid ($error returned parameter is filled with the reason in such a case)
  */
 function dolCheckFilters($sqlfilters, &$error = '', &$parenthesislevel = 0)
