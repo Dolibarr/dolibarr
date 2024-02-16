@@ -30,33 +30,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
  */
 class mod_contract_magre extends ModelNumRefContracts
 {
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
-	public $version = 'dolibarr';
 
-	/**
-	 * @var string Error message
-	 */
-	public $error = '';
-
-	/**
-	 * @var string nom
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Magre';
-
-	/**
-	 * @var string name
-	 */
+	// variables inherited from ModelNumRefContracts class
 	public $name = 'Magre';
-
-	/**
-	 * @var int Automatic numbering
-	 */
+	public $version = 'dolibarr';
+	public $error = '';
 	public $code_auto = 1;
+
 
 	/**
 	 *	Return default description of numbering model
