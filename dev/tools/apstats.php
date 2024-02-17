@@ -663,11 +663,11 @@ if (!empty($output_arrtd)) {
 			} else {
 				$tmp .= '<tr class="hidden sourcephpstan">';
 			}
-			$tmp .= '<td>'.$reg[1].'</td>';
+			$tmp .= '<td>'.dolPrintLabel($reg[1]).'</td>';
 			$tmp .= '<td class="">';
-			$tmp .= '<a href="'.$urlgit.$reg[1].'#L'.$reg[2].'" target="_blank">'.$reg[2].'</a>';
+			$tmp .= '<a href="'.dol_escape_htmltag($urlgit.$reg[1].'#L'.$reg[2]).'" target="_blank">'.dolPrintLabel($reg[2]).'</a>';
 			$tmp .= '</td>';
-			$tmp .= '<td>'.$reg[4].'</td>';
+			$tmp .= '<td>'.dolPrintLabel($reg[4]).'</td>';
 			$tmp .= '</tr>'."\n";
 			$nblines++;
 		}
@@ -693,18 +693,18 @@ if (count($output_phan_json) != 0) {
 				$line_range = "#L{$line_start}-L{$line_end}";
 				$line_range_txt = "{$line_start}-{$line_end}";
 			}
-			$code_url = $urlgit.$path.$line_range;
-			$description = dolPrintLabel($notice['description']);
+			$code_url_attr = dol_escape_htmltag($urlgit.$path.$line_range);
+			$description_escaped = dolPrintLabel($notice['description']);
 			if ($phan_nblines < 20) {
 				$tmp = '<tr class="nohidden">';
 			} else {
 				$tmp = '<tr class="hidden sourcephan">';
 			}
-			$tmp .= '<td>'.$path.'</td>';
+			$tmp .= '<td>'.dolPrintLabel($path).'</td>';
 			$tmp .= '<td class="">';
-			$tmp .= '<a href="'.$code_url.'" target="_blank">'.$line_range_txt.'</a>';
+			$tmp .= '<a href="'.$code_url_attr.'" target="_blank">'.$line_range_txt.'</a>';
 			$tmp .= '</td>';
-			$tmp .= '<td class="tdoverflowmax300">'.$description.'</td>';
+			$tmp .= '<td class="tdoverflowmax300">'.$description_escaped.'</td>';
 			$tmp .= '</tr>';
 
 			$phan_items[] = $tmp;
