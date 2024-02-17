@@ -239,7 +239,7 @@ class CodingPhpTest extends CommonClassTest
 					}
 				}
 				//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-				$this->assertTrue($ok, 'Found string var_dump that is not just after /* or // in '.$file['relativename']);
+				$this->assertTrue($ok, 'Found string var_dump that is not just after /* or // in '.$file['relativename']."({$file['fullname']})");
 				//exit;
 			}
 
