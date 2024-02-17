@@ -717,7 +717,7 @@ if (count($output_phan_json) != 0) {
 // Last security errors
 
 $html .= '<section class="chapter" id="linesofcode">'."\n";
-$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>Last security issues <span class="opacitymedium">(last '.($nbofmonth > 1 ? $nbofmonth.' months':'month').')</span></h2>'."\n";
+$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>Last security issues <span class="opacitymedium">(last '.($nbofmonth != 1 ? $nbofmonth.' months' : 'month').')</span></h2>'."\n";
 
 $html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
@@ -771,18 +771,21 @@ $html .= '</section>';
 
 // Technical debt PHPstan
 if ($nblines != 0) {
+	$datatable_script .= '
+ if (typeof(DataTable)==="function") {jQuery(".sourcephpstan").toggle(true);}
+ let phpstantable = new DataTable("#technicaldebt table");
+';
 	$html .= '<section class="chapter" id="technicaldebt">'."\n";
 	$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">(PHPStan level '.$phpstanlevel.' -> '.$nblines.' warnings)</span></h2>'."\n";
 
 	$html .= '<div class="boxallwidth">'."\n";
 	$html .= '<div class="div-table-responsive">'."\n";
 	$html .= '<table class="list_technical_debt centpercent">'."\n";
-	$html .= '<tr class="trgroup"><td>File</td><td>Line</td><td>Type</td></tr>'."\n";
+	$html .= '<thead><tr class="trgroup"><td>File</td><td>Line</td><td>Type</td></tr></thead><tbody>'."\n";
 	$html .= $tmp;
-	$html .= '<tr class="sourcephpstan"><td colspan="3"><span class="seedetail" data-source="phpstan" id="sourcephpstan">Show all...</span></td></tr>';
-	$html .= '</table>';
-	$html .= '</div>';
-	$html .= '</div>';
+	$html .= '<tbody></table>';
+	$html .= '<div><span class="seedetail" data-source="phpstan" id="sourcephpstan">Show all...</span></div>';
+	$html .= '</div></div>';
 
 	$html .= '</section>'."\n";
 }
