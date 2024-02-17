@@ -175,7 +175,7 @@ $search_component_params_input = trim(GETPOST('search_component_params_input', '
 
 // If string is not an universal filter string, we try to convert it into universal filter syntax string
 $errorstr = '';
-forgeSQLFromUniversalSearchCriteria($search_component_params_input, $errorstr);	// Try converstion UFS->SQL
+forgeSQLFromUniversalSearchCriteria($search_component_params_input, $errorstr);	// Try conversion UFS->SQL
 //var_dump($errorstr);
 if ($errorstr) {
 	$value = $search_component_params_input;
