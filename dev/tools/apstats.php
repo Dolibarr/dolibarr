@@ -700,12 +700,13 @@ if (count($output_phan_json) != 0) {
 			} else {
 				$tmp = '<tr class="hidden sourcephan">';
 			}
-			$tmp .= "<td>$path</td>";
+			$tmp .= '<td>'.$path.'</td>';
 			$tmp .= '<td class="">';
-			$tmp .= "<a href=\"{$code_url}\" target=\"_blank\">{$line_range_txt}</a>";
+			$tmp .= '<a href="'.$code_url.'" target="_blank">'.$line_range_txt.'</a>';
 			$tmp .= '</td>';
-			$tmp .= "<td>$description</td>";
+			$tmp .= '<td class="tdoverflowmax300">'.$description.'</td>';
 			$tmp .= '</tr>';
+
 			$phan_items[] = $tmp;
 			$phan_nblines++;
 		}
@@ -721,7 +722,7 @@ $html .= '<h2><span class="fas fa-code pictofixedwidth"></span>Last security iss
 $html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="list_technical_debt centpercent">'."\n";
-$html .= '<tr class="trgroup"><td>Commit ID</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap">Reported on<br>CVE</td><td>Title</td><td>Date</td></tr>'."\n";
+$html .= '<tr class="trgroup"><td>Commit ID</td><td>Date</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap">Reported on<br>CVE</td><td>Title</td></tr>'."\n";
 foreach ($arrayofalerts as $alert) {
 	$html .= '<tr style="vertical-align: top;">';
 	$html .= '<td class="nowrap">';
@@ -733,6 +734,9 @@ foreach ($arrayofalerts as $alert) {
 		}
 		$html .= '</div></div>';
 	}
+	$html .= '</td>';
+	$html .= '<td style="white-space: nowrap">';
+	$html .= preg_replace('/T.*$/', '', $alert['created_at']);
 	$html .= '</td>';
 	$html .= '<td style="white-space: nowrap">';
 	if (!empty($alert['issueidyogosha'])) {
@@ -757,9 +761,6 @@ foreach ($arrayofalerts as $alert) {
 	}
 	$html .= '</td>';
 	$html .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($alert['title']).'">'.$alert['title'].'</td>';
-	$html .= '<td style="white-space: nowrap">';
-	$html .= preg_replace('/T.*$/', '', $alert['created_at']);
-	$html .= '</td>';
 	$html .= '</tr>';
 }
 $html .= '</table>';
