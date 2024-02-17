@@ -289,7 +289,7 @@ class FunctionsLibTest extends CommonClassTest
 		// An attempt for SQL injection
 		$filter='if(now()=sysdate()%2Csleep(6)%2C0)';
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals('Filter syntax error - Bad syntax of the search string', $sql);
+		$this->assertEquals('Filter error - Bad syntax of the search string', $sql);
 
 		// A real search string
 		$filter='(((statut:=:1) or (entity:in:__AAA__)) and (abc:<:2.0) and (abc:!=:1.23))';
@@ -310,7 +310,7 @@ class FunctionsLibTest extends CommonClassTest
 		// Check that parenthesis are NOT allowed inside the last operand. Very important.
 		$filter = "(t.fieldint:=:(1,2))";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals("Filter syntax error - Bad syntax of the search string", $sql);
+		$this->assertEquals("Filter error - Bad syntax of the search string", $sql);
 
 		// Check that ' is escaped into the last operand
 		$filter = "(t.fieldstring:=:'aaa'ttt')";
