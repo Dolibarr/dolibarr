@@ -18,10 +18,10 @@
  */
 
 /**
- *      \file       test/phpunit/ActionCommTest.php
+ *      \file       test/phpunit/CommonClassTest.php
  *      \ingroup    test
  *      \brief      PHPUnit test
- *      \remarks    To run this script as CLI:  phpunit filename.php
+ *      \remarks    Class that extends all PHPunit tests. To share similare code between each test.
  */
 
 global $conf,$user,$langs,$db;
