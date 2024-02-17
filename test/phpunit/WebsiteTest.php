@@ -88,7 +88,7 @@ class WebsiteTest extends CommonClassTest
 	 */
 	public function testGetPagesFromSearchCriterias()
 	{
-		global $db;
+		global $db, $website;	// We need the $website as global, it is used by the getPagesFromSearchCriterias()
 
 		$website = new Website($db);	// $website must be defined globally for getPagesFromSearchCriterias()
 
