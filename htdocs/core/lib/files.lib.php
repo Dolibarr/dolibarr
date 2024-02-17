@@ -972,14 +972,14 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 			// Check using filename + antivirus
 			$testvirusarray = dolCheckVirus($newpathofsrcfile, $newpathofdestfile);
 			if (count($testvirusarray)) {
-				dol_syslog("files.lib.php::dol_move canceled because a virus was found into source file. we ignore the move request.", LOG_WARNING);
+				dol_syslog("files.lib.php::dol_move canceled because a virus was found into source file. We ignore the move request.", LOG_WARNING);
 				return false;
 			}
 		} else {
 			// Check using filename only
 			$testvirusarray = dolCheckOnFileName($newpathofsrcfile, $newpathofdestfile);
 			if (count($testvirusarray)) {
-				dol_syslog("files.lib.php::dol_move canceled because a virus was found into source file. we ignore the move request.", LOG_WARNING);
+				dol_syslog("files.lib.php::dol_move canceled because a virus was found into source file. We ignore the move request.", LOG_WARNING);
 				return false;
 			}
 		}
