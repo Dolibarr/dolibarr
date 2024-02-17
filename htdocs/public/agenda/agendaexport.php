@@ -211,6 +211,7 @@ foreach ($filters as $key => $value) {
 	}
 	if ($key == 'project') {
 		$filename .= '-project'.$value;
+		$shortfilename .= '-project'.$value;
 	}
 	if ($key == 'logina') {
 		$filename .= '-logina'.$value; // Author
@@ -226,6 +227,11 @@ foreach ($filters as $key => $value) {
 	}
 	if ($key == 'module') {
 		$filename .= '-module'.$value;
+		if ($value == 'project@eventorganization') {
+			$shortfilename .= '-project';
+		} elseif ($value == 'conforbooth@eventorganization') {
+			$shortfilename .= '-conforbooth';
+		}
 	}
 	if ($key == 'status') {
 		$filename .= '-status'.$value;
@@ -266,16 +272,21 @@ $exportholidays = GETPOST('includeholidays', 'int');
 
 // Build file
 if ($format == 'ical' || $format == 'vcal') {
+	// For export of conforbooth, we disable the filter 'notolderthan'
+	if (!empty($filters['project']) && !empty($filters['module']) && ($filters['module'] == 'project@eventorganization' || $filters['module'] == 'conforbooth@eventorganization')) {
+		$filters['notolderthan'] = null;
+	}
+
 	$result = $agenda->build_exportfile($format, $type, $cachedelay, $filename, $filters, $exportholidays);
 	if ($result >= 0) {
 		$attachment = true;
-		if (isset($_GET["attachment"])) {
-			$attachment = $_GET["attachment"];
+		if (GETPOSTISSET("attachment")) {
+			$attachment = GETPOST("attachment");
 		}
 		//$attachment = false;
 		$contenttype = 'text/calendar';
-		if (isset($_GET["contenttype"])) {
-			$contenttype = $_GET["contenttype"];
+		if (GETPOSTISSET("contenttype")) {
+			$contenttype = GETPOST("contenttype");
 		}
 		//$contenttype='text/plain';
 		$outputencoding = 'UTF-8';

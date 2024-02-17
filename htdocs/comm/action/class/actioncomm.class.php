@@ -2051,6 +2051,7 @@ class ActionComm extends CommonObject
 			}
 			$sql .= " WHERE a.fk_action=c.id";
 			$sql .= " AND a.entity IN (".getEntity('agenda').")";
+
 			foreach ($filters as $key => $value) {
 				if ($key == 'notolderthan' && $value != '') {
 					$sql .= " AND a.datep >= '".$this->db->idate($now - ($value * 24 * 60 * 60))."'";
@@ -2111,6 +2112,9 @@ class ActionComm extends CommonObject
 					}
 				}
 				if ($key == 'module') {
+					if ($value == 'conforbooth@eventorganization') {
+						$value = '@eventorganization';
+					}
 					$sql .= " AND c.module LIKE '%".$this->db->escape($value)."'";
 				}
 				if ($key == 'status') {
