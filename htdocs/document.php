@@ -275,7 +275,7 @@ $fullpath_original_file_osencoded = dol_osencode($fullpath_original_file); // Ne
 // This test if file exists should be useless. We keep it to find bug more easily
 if (!file_exists($fullpath_original_file_osencoded)) {
 	dol_syslog("ErrorFileDoesNotExists: ".$fullpath_original_file);
-	print "ErrorFileDoesNotExists: ".$original_file;
+	print "ErrorFileDoesNotExists: ".dol_escape_htmltag($original_file);
 	exit;
 }
 
