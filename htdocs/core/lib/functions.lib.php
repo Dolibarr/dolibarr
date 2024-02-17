@@ -7356,6 +7356,7 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 	$temp = dol_html_entity_decode($temp, ENT_COMPAT | ENT_HTML5, $pagecodeto);
 
 	$temp = str_replace('< ', '__ltspace__', $temp);
+	$temp = str_replace('<:', '__lttwopoints__', $temp);
 
 	if ($strip_tags) {
 		$temp = strip_tags($temp);
@@ -7394,6 +7395,7 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 	}
 
 	$temp = str_replace('__ltspace__', '< ', $temp);
+	$temp = str_replace('__lttwopoints__', '<:', $temp);
 
 	return trim($temp);
 }
@@ -10605,11 +10607,15 @@ function dol_getmypid()
  *                             			If param $mode is 1, can contains an operator <, > or = like "<10" or ">=100.5 < -1000"
  *                             			If param $mode is 2 or -2, can contains a list of int id separated by comma like "1,3,4"
  *                             			If param $mode is 3 or -3, can contains a list of string separated by comma like "a,b,c".
- * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of ID separated with comma (Example '1,3,4'), -2 is for exclude list,
- * 										3=value is list of string separated with comma (Example 'text 1,text 2'), -3 if for exclude list, 4=value is a list of ID separated with comma (Example '2,7') to be used to search into a multiselect string '1,2,3,4'
+ * @param	integer			$mode		0=value is list of keyword strings,
+ * 										1=value is a numeric test (Example ">5.5 <10"),
+ * 										2=value is a list of ID separated with comma (Example '1,3,4'), -2 is for exclude list,
+ * 										3=value is list of string separated with comma (Example 'text 1,text 2'), -3 if for exclude list,
+ * 										4=value is a list of ID separated with comma (Example '2,7') to be used to search into a multiselect string '1,2,3,4'
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  * @see dolSqlDateFilter()
+ * @see forgeSQLFromUniversalSearchCriteria()
  */
 function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 {
@@ -12529,6 +12535,7 @@ function jsonOrUnserialize($stringtodecode)
  * @param	int			$noerror	1=If search criteria is not valid, does not return an error string but invalidate the SQL
  * @return	string					Return forged SQL string
  * @see dolSqlDateFilter()
+ * @see natural_search()
  */
 function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 0, $nopar = 0, $noerror = 0)
 {
@@ -12552,11 +12559,12 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 
 	$t = str_replace(array('and','or','AND','OR',' '), '', $t);		// Remove the only strings allowed between each () criteria
 	// If the string result contains something else than '()', the syntax was wrong
 	if (preg_match('/[^\(\)]/', $t)) {
-		$errorstr = 'Bad syntax of the search string';
+		$tmperrorstr = 'Bad syntax of the search string';
+		$errorstr = 'Bad syntax of the search string: '.$filter;
 		if ($noerror) {
 			return '1 = 2';
 		} else {
-			return 'Filter syntax error - '.$errorstr;		// Bad syntax of the search string, we return an error message or force a SQL not found
+			return 'Filter error - '.$tmperrorstr;		// Bad syntax of the search string, we return an error message or force a SQL not found
 		}
 	}
 
@@ -12564,7 +12572,8 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 
 }
 
 /**
- * Explode an universal search string with AND parts
+ * Explode an universal search string with AND parts.
+ * This is used to output the search criteria in an UFS (Universal Filter Syntax) input component.
  *
  * @param 	string			$sqlfilters			Universal SQL filter string. Must have been trimmed before.
  * @return 	array								Array of AND
@@ -12634,6 +12643,7 @@ function dolForgeExplodeAnd($sqlfilters)
  * @param	string			$error				Returned error message
  * @param	int				$parenthesislevel	Returned level of global parenthesis that we can remove/simplify, 0 if error or we can't simplify.
  * @return 	boolean			   					True if valid, False if not valid ($error returned parameter is filled with the reason in such a case)
+ * @see forgeSQLFromUniversalSearchCriteria()
  */
 function dolCheckFilters($sqlfilters, &$error = '', &$parenthesislevel = 0)
 {

@@ -409,6 +409,7 @@ class SecurityTest extends CommonClassTest
 		$_POST["param12"]='<!DOCTYPE html><html>aaa</html>';
 		$_POST["param13"]='&#110; &#x6E; &gt; &lt; &quot; <a href=\"j&#x61;vascript:alert(document.domain)\">XSS</a>';
 		$_POST["param13b"]='&#110; &#x6E; &gt; &lt; &quot; <a href=\"j&#x61vascript:alert(document.domain)\">XSS</a>';
+		$_POST["param13c"]='aaa:<:bbb';
 		$_POST["param14"]="Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submitted by CKEditor)";
 		$_POST["param15"]="<img onerror<=alert(document.domain)> src=>0xbeefed";
 		//$_POST["param15b"]="<html><head><title>Example HTML</title></head><body><div><p>This is a paragraph.</div><ul><li>Item 1</li><li>Item 2</li></ol></body><html>";
@@ -537,6 +538,10 @@ class SecurityTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('n n > <  XSS', $result, 'Test that html entities are decoded with alpha');
 
+		$result=GETPOST("param13c", 'alphanohtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('aaa:<:bbb', $result, 'Test 13c');
+
 
 		// Test with alphawithlgt
 
@@ -587,7 +592,6 @@ class SecurityTest extends CommonClassTest
 		$result=GETPOST("param19", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('<a href="&lpar;alert(document.cookie)&rpar;">XSS</a>', $result, 'Test 19');
-
 
 		// Test with restricthtml + MAIN_RESTRICTHTML_ONLY_VALID_HTML only to test disabling of bad attributes
 

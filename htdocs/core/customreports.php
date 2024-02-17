@@ -133,6 +133,7 @@ if ($reshook < 0) {
 	}
 }
 
+// Load the main $object for statistics
 if ($objecttype) {
 	try {
 		if (!empty($arrayoftype[$objecttype]['ClassPath'])) {
@@ -171,6 +172,83 @@ $search_component_params_hidden = trim(GETPOST('search_component_params_hidden',
 $search_component_params_input = trim(GETPOST('search_component_params_input', 'alphanohtml'));
 //var_dump($search_component_params_hidden);
 //var_dump($search_component_params_input);
+
+// If string is not an universal filter string, we try to convert it into universal filter syntax string
+$errorstr = '';
+forgeSQLFromUniversalSearchCriteria($search_component_params_input, $errorstr);	// Try converstion UFS->SQL
+//var_dump($errorstr);
+if ($errorstr) {
+	$value = $search_component_params_input;
+
+	$value = preg_replace('/([a-z\.]+)\s*([!<>=]+|in|notin|like|notlike)\s*/', '\1:\2:', $value); // Clean string 'x < 10' into 'x:<:10' so we can then explode on space to get all AND tests to do
+	$value = preg_replace('/\s*\|\s*/', '|', $value);
+	//var_dump($value);
+
+	$crits = explode(' ', trim($value)); // the string after the name of the field. Explode on each AND
+	$res = '';
+
+	$i1 = 0;	// count the nb of and criteria added (all fields / criteria)
+	foreach ($crits as $crit) {		// Loop on each AND criteria
+		$crit = trim($crit);
+
+		$i2 = 0;	// count the nb of valid criteria added for this first criteria
+		$newres = '';
+		$tmpcrits = explode('|', $crit);
+		$i3 = 0;	// count the nb of valid criteria added for this current field
+		foreach ($tmpcrits as $tmpcrit) {
+			if ($tmpcrit !== '0' && empty($tmpcrit)) {
+				continue;
+			}
+			$tmpcrit = trim($tmpcrit);
+			//var_dump($tmpcrit);
+
+			$errorstr = '';
+			$parenthesislevel = 0;
+			$rescheckfilter = dolCheckFilters($tmpcrit, $errorstr, $parenthesislevel);
+			if ($rescheckfilter) {
+				while ($parenthesislevel > 0) {
+					$tmpcrit = preg_replace('/^\(/', '', preg_replace('/\)$/', '', $tmpcrit));
+					$parenthesislevel--;
+				}
+			}
+
+			$field = preg_replace('/(:[!<>=\s]+:|:in:|:notin:|:like:|:notlike:).*$/', '', $tmpcrit);		// the name of the field
+			$tmpcrit = preg_replace('/^.*(:[!<>=\s]+:|:in:|:notin:|:like:|:notlike:)/', '\1', $tmpcrit);	// the condition after the name of the field
+			//var_dump($field); var_dump($tmpcrit); var_dump($i3);
+
+			$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
+
+			$operator = '=';
+			$newcrit = preg_replace('/(:[!<>=\s]+:|:in:|:notin:|:like:|:notlike:)/', '', $tmpcrit);
+			//var_dump($newcrit);
+
+			$reg = array();
+			preg_match('/:([!<>=\s]+|in|notin|like|notlike):/', $tmpcrit, $reg);
+			if (!empty($reg[1])) {
+				$operator = $reg[1];
+			}
+			if ($newcrit != '') {
+				if (!preg_match('/^\'[^\']*\'$/', $newcrit)) {
+					$numnewcrit = price2num($newcrit);
+					$newres .= '('.$field.':'.$operator.':'.((float) $numnewcrit).')';
+				} else {
+					$newres .= '('.$field.':'.$operator.":".((string) $newcrit).')';
+				}
+				$i3++; // a criteria was added to string
+			}
+		}
+		$i2++; // a criteria for 1 more field was added to string
+
+		if ($newres) {
+			$res = $res.($res ? ' AND ' : '').($i2 > 1 ? '(' : '').$newres.($i2 > 1 ? ')' : '');
+		}
+		$i1++;
+	}
+	$res = "(".$res.")";
+
+	//var_dump($res);exit;
+	$search_component_params_input = $res;
+}
 
 $arrayofandtagshidden = dolForgeExplodeAnd($search_component_params_hidden);
 $arrayofandtagsinput = dolForgeExplodeAnd($search_component_params_input);
@@ -811,7 +889,10 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 //print $sql;
 
 if ($errormessage) {
+	print '<div class="warning">';
 	print dol_escape_htmltag($errormessage);
+	//print '<br>'.dol_escape_htmltag('SQL is '.$sql);
+	print '</div>';
 	$sql = '';
 }
 
@@ -830,119 +911,122 @@ $data = array();
 if ($sql) {
 	$resql = $db->query($sql);
 	if (!$resql) {
-		dol_print_error($db);
-	}
+		print '<div class="warning">';
+		print dol_escape_htmltag($db->lasterror());
+		//print '<br>'.dol_escape_htmltag('SQL is '.$sql);
+		print '</div>';
+	} else {
+		$ifetch = 0;
+		$xi = 0;
+		$oldlabeltouse = '';
+		while ($obj = $db->fetch_object($resql)) {
+			$ifetch++;
+			if ($useagroupby) {
+				$xval = $search_xaxis[0];
+				$fieldforxkey = 'x_0';
+				$xlabel = $obj->$fieldforxkey;
+				$xvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $xval);
 
-	$ifetch = 0;
-	$xi = 0;
-	$oldlabeltouse = '';
-	while ($obj = $db->fetch_object($resql)) {
-		$ifetch++;
-		if ($useagroupby) {
-			$xval = $search_xaxis[0];
-			$fieldforxkey = 'x_0';
-			$xlabel = $obj->$fieldforxkey;
-			$xvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $xval);
-
-			// Define $xlabel
-			if (!empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
-				$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
-			}
-			$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->transnoentitiesnoconv("Empty") : $langs->transnoentitiesnoconv("NotDefined")));
-
-			if ($oldlabeltouse && ($labeltouse != $oldlabeltouse)) {
-				$xi++; // Increase $xi
-			}
-			//var_dump($labeltouse.' '.$oldlabeltouse.' '.$xi);
-			$oldlabeltouse = $labeltouse;
-
-			/* Example of value for $arrayofvaluesforgroupby
-			 * array (size=1)
-			 *	  'g_0' =>
-			 *	    array (size=6)
-			 *	      0 => string '0' (length=1)
-			 *	      '' => string 'Empty' (length=5)
-			 *	      '__NULL__' => string 'Not defined' (length=11)
-			 *	      'done' => string 'done' (length=4)
-			 *	      'processing' => string 'processing' (length=10)
-			 *	      'undeployed' => string 'undeployed' (length=10)
-			 */
-			foreach ($search_measures as $key => $val) {
-				$gi = 0;
-				foreach ($search_groupby as $gkey) {
-					//var_dump('*** Fetch #'.$ifetch.' for labeltouse='.$labeltouse.' measure number '.$key.' and group g_'.$gi);
-					//var_dump($arrayofvaluesforgroupby);
-					foreach ($arrayofvaluesforgroupby['g_'.$gi] as $gvaluepossiblekey => $gvaluepossiblelabel) {
-						$ykeysuffix = $gvaluepossiblelabel;
-						$gvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $gval);
-
-						$fieldfory = 'y_'.$key;
-						$fieldforg = 'g_'.$gi;
-						$fieldforybis = 'y_'.$key.'_'.$ykeysuffix;
-						//var_dump('gvaluepossiblekey='.$gvaluepossiblekey.' gvaluepossiblelabel='.$gvaluepossiblelabel.' ykeysuffix='.$ykeysuffix.' gval='.$gval.' gvalwithoutsuffix='.$gvalwithoutprefix);
-						//var_dump('fieldforg='.$fieldforg.' obj->$fieldforg='.$obj->$fieldforg.' fieldfory='.$fieldfory.' obj->$fieldfory='.$obj->$fieldfory.' fieldforybis='.$fieldforybis);
-
-						if (!is_array($data[$xi])) {
-							$data[$xi] = array();
-						}
-
-						if (!array_key_exists('label', $data[$xi])) {
-							$data[$xi] = array();
-							$data[$xi]['label'] = $labeltouse;
-						}
-
-						$objfieldforg = $obj->$fieldforg;
-						if (is_null($objfieldforg)) {
-							$objfieldforg = '__NULL__';
-						}
-
-						if ($gvaluepossiblekey == '0') {	// $gvaluepossiblekey can have type int or string. So we create a special if, used when value is '0'
-							//var_dump($objfieldforg.' == \'0\' -> '.($objfieldforg == '0'));
-							if ($objfieldforg == '0') {
-								// The record we fetch is for this group
-								$data[$xi][$fieldforybis] = $obj->$fieldfory;
-							} elseif (!isset($data[$xi][$fieldforybis])) {
-								// The record we fetch is not for this group
-								$data[$xi][$fieldforybis] = '0';
-							}
-						} else {
-							//var_dump((string) $objfieldforg.' === '.(string) $gvaluepossiblekey.' -> '.((string) $objfieldforg === (string) $gvaluepossiblekey));
-							if ((string) $objfieldforg === (string) $gvaluepossiblekey) {
-								// The record we fetch is for this group
-								$data[$xi][$fieldforybis] = $obj->$fieldfory;
-							} elseif (!isset($data[$xi][$fieldforybis])) {
-								// The record we fetch is not for this group
-								$data[$xi][$fieldforybis] = '0';
-							}
-						}
-					}
-					//var_dump($data[$xi]);
-					$gi++;
+				// Define $xlabel
+				if (!empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
+					$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
 				}
-			}
-		} else {	// No group by
-			$xval = $search_xaxis[0];
-			$fieldforxkey = 'x_0';
-			$xlabel = $obj->$fieldforxkey;
-			$xvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $xval);
+				$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->transnoentitiesnoconv("Empty") : $langs->transnoentitiesnoconv("NotDefined")));
 
-			// Define $xlabel
-			if (!empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
-				$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
-			}
+				if ($oldlabeltouse && ($labeltouse != $oldlabeltouse)) {
+					$xi++; // Increase $xi
+				}
+				//var_dump($labeltouse.' '.$oldlabeltouse.' '.$xi);
+				$oldlabeltouse = $labeltouse;
 
-			$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->transnoentitiesnoconv("Empty") : $langs->transnoentitiesnoconv("NotDefined")));
-			$xarrayforallseries = array('label' => $labeltouse);
-			foreach ($search_measures as $key => $val) {
-				$fieldfory = 'y_'.$key;
-				$xarrayforallseries[$fieldfory] = $obj->$fieldfory;
+				/* Example of value for $arrayofvaluesforgroupby
+				 * array (size=1)
+				 *	  'g_0' =>
+				 *	    array (size=6)
+				 *	      0 => string '0' (length=1)
+				 *	      '' => string 'Empty' (length=5)
+				 *	      '__NULL__' => string 'Not defined' (length=11)
+				 *	      'done' => string 'done' (length=4)
+				 *	      'processing' => string 'processing' (length=10)
+				 *	      'undeployed' => string 'undeployed' (length=10)
+				 */
+				foreach ($search_measures as $key => $val) {
+					$gi = 0;
+					foreach ($search_groupby as $gkey) {
+						//var_dump('*** Fetch #'.$ifetch.' for labeltouse='.$labeltouse.' measure number '.$key.' and group g_'.$gi);
+						//var_dump($arrayofvaluesforgroupby);
+						foreach ($arrayofvaluesforgroupby['g_'.$gi] as $gvaluepossiblekey => $gvaluepossiblelabel) {
+							$ykeysuffix = $gvaluepossiblelabel;
+							$gvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $gval);
+
+							$fieldfory = 'y_'.$key;
+							$fieldforg = 'g_'.$gi;
+							$fieldforybis = 'y_'.$key.'_'.$ykeysuffix;
+							//var_dump('gvaluepossiblekey='.$gvaluepossiblekey.' gvaluepossiblelabel='.$gvaluepossiblelabel.' ykeysuffix='.$ykeysuffix.' gval='.$gval.' gvalwithoutsuffix='.$gvalwithoutprefix);
+							//var_dump('fieldforg='.$fieldforg.' obj->$fieldforg='.$obj->$fieldforg.' fieldfory='.$fieldfory.' obj->$fieldfory='.$obj->$fieldfory.' fieldforybis='.$fieldforybis);
+
+							if (!is_array($data[$xi])) {
+								$data[$xi] = array();
+							}
+
+							if (!array_key_exists('label', $data[$xi])) {
+								$data[$xi] = array();
+								$data[$xi]['label'] = $labeltouse;
+							}
+
+							$objfieldforg = $obj->$fieldforg;
+							if (is_null($objfieldforg)) {
+								$objfieldforg = '__NULL__';
+							}
+
+							if ($gvaluepossiblekey == '0') {	// $gvaluepossiblekey can have type int or string. So we create a special if, used when value is '0'
+								//var_dump($objfieldforg.' == \'0\' -> '.($objfieldforg == '0'));
+								if ($objfieldforg == '0') {
+									// The record we fetch is for this group
+									$data[$xi][$fieldforybis] = $obj->$fieldfory;
+								} elseif (!isset($data[$xi][$fieldforybis])) {
+									// The record we fetch is not for this group
+									$data[$xi][$fieldforybis] = '0';
+								}
+							} else {
+								//var_dump((string) $objfieldforg.' === '.(string) $gvaluepossiblekey.' -> '.((string) $objfieldforg === (string) $gvaluepossiblekey));
+								if ((string) $objfieldforg === (string) $gvaluepossiblekey) {
+									// The record we fetch is for this group
+									$data[$xi][$fieldforybis] = $obj->$fieldfory;
+								} elseif (!isset($data[$xi][$fieldforybis])) {
+									// The record we fetch is not for this group
+									$data[$xi][$fieldforybis] = '0';
+								}
+							}
+						}
+						//var_dump($data[$xi]);
+						$gi++;
+					}
+				}
+			} else {	// No group by
+				$xval = $search_xaxis[0];
+				$fieldforxkey = 'x_0';
+				$xlabel = $obj->$fieldforxkey;
+				$xvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $xval);
+
+				// Define $xlabel
+				if (!empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
+					$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
+				}
+
+				$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->transnoentitiesnoconv("Empty") : $langs->transnoentitiesnoconv("NotDefined")));
+				$xarrayforallseries = array('label' => $labeltouse);
+				foreach ($search_measures as $key => $val) {
+					$fieldfory = 'y_'.$key;
+					$xarrayforallseries[$fieldfory] = $obj->$fieldfory;
+				}
+				$data[$xi] = $xarrayforallseries;
+				$xi++;
 			}
-			$data[$xi] = $xarrayforallseries;
-			$xi++;
 		}
-	}
 
-	$totalnbofrecord = count($data);
+		$totalnbofrecord = count($data);
+	}
 }
 //var_dump($data);
 

@@ -185,7 +185,7 @@ class ContratTest extends CommonClassTest
 	/**
 	 * testContratOther
 	 *
-	 * @param	Contract	$localobject	Object contract
+	 * @param	Contrat		$localobject	Object contract
 	 * @return	int
 	 *
 	 * @depends testContratFetch
