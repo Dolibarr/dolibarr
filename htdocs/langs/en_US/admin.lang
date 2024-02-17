@@ -2442,3 +2442,4 @@ AiCustomPrompt=AI customs prompt
 AI_CONFIGURATIONS_PROMPT=Custom prompt
 ImageGeneration=Image generation
 AIPromptForFeatures=AI custom prompts for features
+EnterAnIP=Enter an IP address

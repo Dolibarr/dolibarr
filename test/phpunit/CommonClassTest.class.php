@@ -56,7 +56,6 @@ class CommonClassTest extends PHPUnit\Framework\TestCase
 	 * We save global variables into local variables
 	 *
 	 * @param 	string	$name		Name
-	 * @return ActionCommTest
 	 */
 	public function __construct($name = '')
 	{

@@ -162,6 +162,7 @@ CalcModeVATDebt=মোড <b>%sকমিটমেন্ট অ্যাকাউ
 CalcModeVATEngagement=মোড <b>%sআয়-ব্যয়ের উপর ভ্যাট%s</b>.
 CalcModeDebt=পরিচিত নথিভুক্ত নথি বিশ্লেষণ
 CalcModeEngagement=পরিচিত নথিভুক্ত পেমেন্ট বিশ্লেষণ
+CalcModePayment=পরিচিত নথিভুক্ত পেমেন্ট বিশ্লেষণ
 CalcModeBookkeeping=বুককিপিং লেজার টেবিলে জার্নালাইজ করা ডেটা বিশ্লেষণ।
 CalcModeNoBookKeeping=এমনকি যদি তারা এখনও লেজারে হিসাব না করে থাকে
 CalcModeLT1= মোড <b>%sগ্রাহকের চালানের উপর RE - সরবরাহকারীদের চালানb0ecb2ec87f><span class0 ='notranslate'></b></span>

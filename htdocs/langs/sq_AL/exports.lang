@@ -62,7 +62,6 @@ ChooseFileToImport=Ngarkoni skedarin më pas klikoni në ikonën %s për të zgj
 SourceFileFormat=Formati i skedarit burim
 FieldsInSourceFile=Fushat në skedarin burimor
 FieldsInTargetDatabase=Fushat e synuara në bazën e të dhënave Dolibarr (e theksuar=e detyrueshme)
-Field=Fusha
 NoFields=Nuk ka fusha
 MoveField=Zhvendos numrin e kolonës së fushës %s
 ExampleOfImportFile=Shembull_i_import_file
@@ -145,3 +144,4 @@ SelectImportFieldsSource = Zgjidhni fushat e skedarit burim që dëshironi të i
 MandatoryTargetFieldsNotMapped=Disa fusha objektive të detyrueshme nuk janë të përcaktuara
 AllTargetMandatoryFieldsAreMapped=Të gjitha fushat e synuara që kanë nevojë për një vlerë të detyrueshme janë hartuar
 ResultOfSimulationNoError=Rezultati i simulimit: Nuk ka gabim
+NumberOfLinesLimited=Numri i linjave është i kufizuar

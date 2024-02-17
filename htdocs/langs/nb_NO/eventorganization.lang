@@ -34,7 +34,6 @@ PaymentEvent=Betaling av arrangement
 NewRegistration=Registrering
 EventOrganizationSetup=Oppsett av arrangementorganisasjon
 EventOrganization=Arrangementsorganisering
-Settings=Innstillinger
 EventOrganizationSetupPage = Konfigurasjonsside for arrangementsorganisasjon
 EVENTORGANIZATION_TASK_LABEL = Etikett over oppgaver som skal opprettes automatisk når prosjektet er validert
 EVENTORGANIZATION_TASK_LABELTooltip = Når du validerer et arrangement for å organisere, kan noen oppgaver automatisk opprettes i prosjektet. <br><br>For eksempel:<br> Send innkalling til konferanser <br>Send innkalling til stander <br>Valider forslag til konferanser <br>Valider søknad om stander<br> Åpne abonnementer på arrangementet for deltakere <br>Send en påminnelse om arrangementet til foredragsholdere <br>Send en påminnelse om arrangementet til Booth-verter<br> Send en påminnelse om arrangementet til deltakerne
@@ -98,6 +97,7 @@ EVENTORGANIZATION_SECUREKEY = Seed for å sikre nøkkelen til den offentlige reg
 SERVICE_BOOTH_LOCATION = Tjenesten brukt for fakturalinjen om en standplassering
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Tjenesten som brukes for fakturalinjen om et deltakerabonnement på et arrangement
 NbVotes=Antall stemmer
+
 #
 # Status
 #
@@ -107,8 +107,9 @@ EvntOrgConfirmed = Bekreftet
 EvntOrgNotQualified = Ikke kvalifisert
 EvntOrgDone = Utført
 EvntOrgCancelled = Kansellert
+
 #
-# Public page
+# Other
 #
 SuggestForm = Forslagsside
 SuggestOrVoteForConfOrBooth = Side for forslag eller stemme
@@ -144,13 +145,8 @@ OrganizationEventBulkMailToAttendees=Dette er en påminnelse om din deltakelse i
 OrganizationEventBulkMailToSpeakers=Dette er en påminnelse om din deltakelse i arrangementet som foredragsholder
 OrganizationEventLinkToThirdParty=Link til tredjepart (kunde, leverandør eller partner)
 OrganizationEvenLabelName=Offentlig navn på konferansen eller standen
-
 NewSuggestionOfBooth=Søknad om stand
 NewSuggestionOfConference=Søknad om å holde en konferanse
-
-#
-# Vote page
-#
 EvntOrgRegistrationWelcomeMessage = Velkommen til forslagssiden til konferanse eller stand.
 EvntOrgRegistrationConfWelcomeMessage = Velkommen til forslagssiden til konferanse.
 EvntOrgRegistrationBoothWelcomeMessage = Velkommen til forslagssiden til stand.
@@ -158,8 +154,8 @@ EvntOrgVoteHelpMessage = Her kan du se og stemme på de foreslåtte arrangemente
 VoteOk = Din stemme har blitt akseptert.
 AlreadyVoted = Du har allerede stemt på dette arrangementet.
 VoteError = Det har oppstått en feil under avstemningen, prøv igjen.
-
 SubscriptionOk=Registreringen din er registrert
+AmountOfRegistrationPaid=Innbetalt registreringsbeløp
 ConfAttendeeSubscriptionConfirmation = Bekreftelse på ditt abonnement på et arrangement
 Attendee = Deltaker
 PaymentConferenceAttendee = Betaling for konferansedeltakere
@@ -169,7 +165,7 @@ RegistrationAndPaymentWereAlreadyRecorder=En registrering og en betaling er alle
 EmailAttendee=Deltakerens epost
 EmailCompany=Firma epost
 EmailCompanyForInvoice=Firma-epost (for faktura, hvis forskjellig fra deltaker-epost)
-ErrorSeveralCompaniesWithEmailContactUs=Flere selskaper med denne epostadressen er funnet, så vi kan ikke automatisk validere registreringen din. Vennligst kontakt oss på %s for en manuell validering
+ErrorSeveralCompaniesWithEmailContactUs=Flere selskaper med denne eposten er funnet, så vi kan ikke automatisk validere registreringen din. Vennligst kontakt oss på %s for en manuell validering
 ErrorSeveralCompaniesWithNameContactUs=Flere selskaper med dette navnet er funnet, så vi kan ikke automatisk validere registreringen din. Vennligst kontakt oss på %s for en manuell validering
 NoPublicActionsAllowedForThisEvent=Ingen offentlige handlinger er åpne for offentligheten for dette arrangementet
 MaxNbOfAttendees=Maks antall deltakere

@@ -1,5 +1,4 @@
 BlockedLog=Unveränderbare Logs
-Field=Feld
 BlockedLogDesc=Dieses Modul trägt in Echtzeit einige Events in eine Log (block chain) ein, die nicht nicht verändert werden können. Dieses Modul ermöglicht so eine Kompatibilität mit den Finanzregeln, die in einigen Ländern gemacht wurden (z.B. in Frankreich Loi de Finance 2016 NF525)
 Fingerprints=Eingetragene Events und Fingerprints
 FingerprintsDesc=Dies ist das Tool zum Durchsuchen oder Extrahieren der unveränderlichen Protokolle. Unveränderliche Protokolle werden in Echtzeit erstellt und lokal in einer dedizierten Tabelle archiviert, wenn Sie ein Geschäftsereignis aufzeichnen. Sie können dieses Tool verwenden, um dieses Archiv zu exportieren und in einem externen Speicher zu speichern (einige Länder, wie Frankreich, verlangen, dass Sie dies jedes Jahr tun). Beachten Sie, dass es keine Funktion zum Löschen dieses Protokolls gibt und jede Änderung, die direkt in diesem Protokoll vorgenommen wird, z. B. von einem Hacker, mit einem ungültigen digitalen Fingerabdruck gemeldet wird. Wenn Sie diese Tabelle wirklich löschen müssen, weil Sie Ihre Anwendung zu Demo-/Testzwecken verwendet haben und Ihre Daten bereinigen möchten, um mit der Produktion zu beginnen, können Sie Ihren Reseller oder Integrator bitten, Ihre Datenbank zurückzusetzen (alle Ihre Daten werden entfernt).
@@ -13,15 +12,12 @@ OkCheckFingerprintValidity=Der archivierte Protokolleintrag ist gültig. Die Dat
 OkCheckFingerprintValidityButChainIsKo=Der archivierte Logeintrag scheint im Vergleich zum vorherigen gültig zu sein, aber die vorangehende Eintragskette wurde beschädigt.
 AddedByAuthority=In der Remote-Instanz gespeichert
 NotAddedByAuthorityYet=Noch nicht in der Remote-Instanz gespeichert
-ShowDetails=Gespeicherte Details zeigen
 BlockedLogBillDownload=Kundenrechnung herunterladen
 BlockedLogBillPreview=Kundenrechnung - Vorschau
 BlockedlogInfoDialog=Details zum Log
 ListOfTrackedEvents=Liste nachverfolgter Ereignisse
 Fingerprint=Fingerprint
 DownloadLogCSV=Eingetragene Logs exportieren (CSV)
-logDOC_PREVIEW=Vorschau eines validierten Dokuments zum Drucken oder Herunterladen
-logDOC_DOWNLOAD=Herunterladen eines validierten Dokuments zum Drucken oder Senden
 DataOfArchivedEvent=Vollständige Daten des archivierten Ereignisses
 ImpossibleToReloadObject=Ursprüngliches Objekt (Typ %s, ID %s) nicht verknüpft (siehe Spalte 'Vollständige Daten' für die revisionssicher gespeicherten Daten)
 BlockedLogAreRequiredByYourCountryLegislation=Das Modul "Revisionssicheres Protokoll" kann von der Gesetzgebung Ihres Landes verlangt werden. Durch Deaktivieren dieses Moduls können zukünftige Transaktionen mit Bezug auf Gesetze und rechtssichere Software ungültig werden, da sie nicht durch eine Steuerprüfung validiert werden können.
@@ -33,6 +29,7 @@ RestrictYearToExport=Beschränke Zeitraum (Monat/Jahr) für den Export
 BlockedLogEnabled=Das System zum Protokollieren von Ereignissen in unveränderbaren Logs wurde aktiviert
 BlockedLogDisabled=Das System zum Protokollieren von Ereignissen in unveränderbaren Logs wurde deaktiviert, nachdem schon einige Aufzeichnungen durchgeführt wurden. Es wurde ein spezieller Fingerabdruck gespeichert, um die Kette als gebrochen zu markieren
 BlockedLogDisabledBis=Das System zum Protokollieren von Ereignissen in unveränderbaren Logs wurde deaktiviert. Dies ist möglich, da noch keine Aufzeichnungen vorgenommen wurden.
+LinkHasBeenDisabledForPerformancePurpose=Aus Leistungsgründen wird der direkte Link zum Dokument nach der 100. Zele nicht angezeigt.<span class='notranslate'>
 
 ## logTypes
 logBILL_DELETE=Kundenrechnung automatisch gelöscht

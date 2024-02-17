@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Érvényesített
 StatusSendingProcessedShort=Feldolgozva
 SendingSheet=Szállítási lap
 ConfirmDeleteSending=Biztosan törölni szeretné ezt a szállítmányt?
-ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
+ConfirmValidateSending=Biztosan érvényesíteni kívánja ezt a szállítmányt a következő hivatkozással: <b>%s</b>?
 ConfirmCancelSending=Biztosan törölni szeretné ezt a szállítmányt?
 DocumentModelMerou=Merou A5 modell
 WarningNoQtyLeftToSend=Figyelem, nincsenek szállításra váró termékek.
@@ -48,7 +48,7 @@ DateDeliveryPlanned=A szállítás tervezett dátuma
 RefDeliveryReceipt=Szállítási visszaigazolás
 StatusReceipt=Kézbesítési nyugta állapota
 DateReceived=Kézbesítés beérkezésének dátuma
-ClassifyReception=Classify Received
+ClassifyReception=Besorolás beérkezett
 SendShippingByEMail=Szállítmány küldése e-mailben
 SendShippingRef=Szállítmány benyújtása %s
 ActionsOnShipping=Események a szállítás során
@@ -62,7 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Termékmennyiség a már beérkezet
 NoProductToShipFoundIntoStock=Nem található szállítandó termék a(z) <b>%s</b> raktárban. Javítsa ki a készletet, vagy menjen vissza egy másik raktár kiválasztásához.
 WeightVolShort=Súly/térfogat.
 ValidateOrderFirstBeforeShipment=Elõször érvényesítenie kell a rendelést, mielõtt kiszállítást végezhet.
-NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
+NoLineGoOnTabToAddSome=Nincs sor, lépjen a „%s” lapra a hozzáadáshoz
 
 # Sending methods
 # ModelDocument
@@ -75,12 +75,12 @@ SumOfProductWeights=Terméksúlyok összege
 # warehouse details
 DetailWarehouseNumber= Raktár adatai
 DetailWarehouseFormat= W:%s (Menny.: %d)
-SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
-CreationOptions=Available options during shipment creation
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Jelenítse meg a készletezés utolsó dátumát a szállítmány létrehozásakor a sorozatszám vagy a tétel esetében
+CreationOptions=Rendelkezésre álló lehetőségek a szállítmány létrehozása során
 
-ShipmentDistribution=Shipment distribution
+ShipmentDistribution=Szállítmány elosztása
 
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+ErrorTooManyCombinationBatchcode=Nem történt feladás a %s sorhoz, mivel túl sok raktár, termék és kötegkód kombináció található (%s).
+ErrorNoCombinationBatchcode=Nem sikerült elmenteni a %s sort a warehouse-product-lot/serial kombinációjaként (%s, %s, %s) nem található raktáron.
 
-ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s
+ErrorTooMuchShipped=A kiszállított mennyiség nem lehet nagyobb, mint a %s sorhoz rendelt mennyiség

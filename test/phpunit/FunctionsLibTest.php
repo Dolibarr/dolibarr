@@ -78,36 +78,6 @@ print "\n";
  */
 class FunctionsLibTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-	protected $savmysoc;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 * @return CoreTest
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db,$mysoc;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-		$this->savmysoc=$mysoc;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
 	/**
 	 * setUpBeforeClass
 	 *
@@ -133,46 +103,6 @@ class FunctionsLibTest extends CommonClassTest
 			die(1);
 		}
 
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		//$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests. Restore variables before each test.
-	 *
-	 * @return	void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db,$mysoc;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-		$mysoc=$this->savmysoc;
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function tearDown(): void
-	{
 		print __METHOD__."\n";
 	}
 
@@ -289,7 +219,7 @@ class FunctionsLibTest extends CommonClassTest
 		// An attempt for SQL injection
 		$filter='if(now()=sysdate()%2Csleep(6)%2C0)';
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals('Filter syntax error - Bad syntax of the search string', $sql);
+		$this->assertEquals('Filter error - Bad syntax of the search string', $sql);
 
 		// A real search string
 		$filter='(((statut:=:1) or (entity:in:__AAA__)) and (abc:<:2.0) and (abc:!=:1.23))';
@@ -310,7 +240,7 @@ class FunctionsLibTest extends CommonClassTest
 		// Check that parenthesis are NOT allowed inside the last operand. Very important.
 		$filter = "(t.fieldint:=:(1,2))";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals("Filter syntax error - Bad syntax of the search string", $sql);
+		$this->assertEquals("Filter error - Bad syntax of the search string", $sql);
 
 		// Check that ' is escaped into the last operand
 		$filter = "(t.fieldstring:=:'aaa'ttt')";

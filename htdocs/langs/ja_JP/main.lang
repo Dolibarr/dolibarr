@@ -9,7 +9,7 @@ DIRECTION=ltr
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil
+# freeserif is for Tamil or Ethiopian
 FONTFORPDF=cid0jp
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
@@ -963,6 +963,7 @@ AutomaticallyCalculated=自動計算
 TitleSetToDraft=下書きに戻る
 ConfirmSetToDraft=下書き状態にもどしたいのね、いいね？
 ImportId=インポートID
+Event=イベント
 Events=イベント
 EMailTemplates=メールテンプレート
 FileNotShared=ファイルは外部に共有されていない
@@ -1180,7 +1181,6 @@ ConfirmAffectUserQuestion=選択したレコード(s) %s にユーザを割り�
 ConfirmSetSupervisorQuestion=スーパーバイザを %s 選択したレコード(s)に設定するか?
 ConfirmUpdatePriceQuestion=%s 選択したレコード(s)の価格を更新してもよいか?
 CategTypeNotFound=レコードのタイプのタグタイプが見つからない
-Rate=率
 SupervisorNotFound=スーパーバイザーが見つからない
 CopiedToClipboard=クリップボードにコピー
 InformationOnLinkToContract=この金額は、契約の全行の合計にすぎない。時間の概念は考慮されていない。
@@ -1213,6 +1213,7 @@ CanceledHidden=非表示キャンセル済
 CanceledShown=表示済キャンセル済
 Terminate=終了する
 Terminated=解除された
+Position=位置
 AddLineOnPosition=位置に行を追加（空の場合は最後に）
 ConfirmAllocateCommercial=営業担当者割当確定
 ConfirmAllocateCommercialQuestion=選択した%sレコード(s)を割り当ててもよいか？
@@ -1230,6 +1231,7 @@ ExternalUser=外部ユーザ
 NoSpecificContactAddress=特定の連絡先や住所なし
 NoSpecificContactAddressBis=このタブは、現在のオブジェクトに特定の連絡先またはアドレスを強制する専用のタブ。 取引先 の情報が不十分または正確でない場合に、オブジェクトに対して 1 つまたは複数の特定の連絡先またはアドレスを定義する場合にのみ使用すること。
 HideOnVCard=%s を隠す
+ShowOnVCard=Show %s
 AddToContacts=連絡先にアドレスを追加
 LastAccess=最終アクセス
 UploadAnImageToSeeAPhotoHere=タブ %s から画像をアップロードし、ここに写真を表示する
@@ -1259,4 +1261,7 @@ AmountSalary=給与額
 InvoiceSubtype=請求書のサブタイプ
 ConfirmMassReverse=一括リバース確定
 ConfirmMassReverseQuestion=%s 選択したレコード(s)を元に戻してもよろしい か?
-
+ElementType=Element type
+ElementId=Element Id
+Encrypted=Encrypted
+Settings=Settings

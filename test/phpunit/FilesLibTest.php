@@ -50,86 +50,6 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
  */
 class FilesLibTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 * @return FilesLibTest
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf = $conf;
-		$this->savuser = $user;
-		$this->savlangs = $langs;
-		$this->savdb = $db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
-
-		print __METHOD__."\n";
-	}
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
-	}
-
-
 	/**
 	 * testDolBasename
 	 *
@@ -174,7 +94,7 @@ class FilesLibTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$file = dirname(__FILE__).'/Example_import_company_1.csv';
+		$file = dirname(__FILE__).'/file_import_company_1.csv';
 		$result = dol_count_nb_of_line($file);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(3, $result);
@@ -195,7 +115,7 @@ class FilesLibTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$file = dirname(__FILE__).'/Example_import_company_1.csv';
+		$file = dirname(__FILE__).'/file_import_company_1.csv';
 
 		$result = dol_is_file($file);
 		print __METHOD__." result=".$result."\n";
@@ -336,7 +256,11 @@ class FilesLibTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$file = dirname(__FILE__).'/Example_import_company_1.csv';
+		$file = dirname(__FILE__).'/file_import_company_1.csv';
+
+		$result = dol_copy($file, '/adir/that/does/not/exists/file.csv');
+		print __METHOD__." result=".$result."\n";
+		$this->assertLessThan(0, $result, "$result".'copy dir that does not exists');    // We should have error
 
 		$result = dol_copy($file, '/adir/that/does/not/exists/file.csv');
 		print __METHOD__." result=".$result."\n";
@@ -390,6 +314,18 @@ class FilesLibTest extends CommonClassTest
 		$result = dol_delete_file($conf->admin->dir_temp.'/file with [x]*é.csv');
 		print __METHOD__." result=".$result."\n";
 		$this->assertTrue($result, 'delete file using glob');
+
+
+
+		$file = dirname(__FILE__).'/file_pdf_with_js.pdf.jpg';
+
+		$result = dol_copy($file, $conf->admin->dir_temp.'/file_pdf_with_js.pdf.jpg');
+		print __METHOD__." result=".$result."\n";
+		$this->assertGreaterThan(0, $result, "$result".' failed to copy pdf file');
+
+		$result = dol_move($conf->admin->dir_temp.'/file_pdf_with_js.pdf.jpg', $conf->admin->dir_temp.'/file_pdf_with_js.pdf');
+		print __METHOD__." dol_move of corrupted file result=".$result."\n";
+		$this->assertFalse($result, "$result".' move of a jpg into a corrupted pdf should fails');
 	}
 
 	/**
@@ -410,7 +346,7 @@ class FilesLibTest extends CommonClassTest
 		print 'testDolCompressUnCompress zip'."\n";
 
 		$format = 'zip';
-		$filein = dirname(__FILE__).'/Example_import_company_1.csv';
+		$filein = dirname(__FILE__).'/file_import_company_1.csv';
 		$fileout = $conf->admin->dir_temp.'/test.'.$format;
 		$dirout = $conf->admin->dir_temp.'/testdir'.$format;
 
@@ -441,7 +377,7 @@ class FilesLibTest extends CommonClassTest
 		print 'testDolCompressUnCompress gz'."\n";
 
 		$format = 'gz';
-		$filein = dirname(__FILE__).'/Example_import_company_1.csv';
+		$filein = dirname(__FILE__).'/file_import_company_1.csv';
 		$fileout = $conf->admin->dir_temp.'/test.'.$format;
 		$dirout = $conf->admin->dir_temp.'/testdir'.$format;
 
@@ -566,7 +502,7 @@ class FilesLibTest extends CommonClassTest
 		// To test a move of empty directory that should work
 		$dirsrcpath = $conf->admin->dir_temp.'/directory';
 		$dirdestpath = $conf->admin->dir_temp.'/directory2';
-		$file = dirname(__FILE__).'/Example_import_company_1.csv';
+		$file = dirname(__FILE__).'/file_import_company_1.csv';
 		dol_mkdir($dirsrcpath);
 		dol_delete_dir_recursive($dirdestpath, 0, 1);
 		$result = dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);

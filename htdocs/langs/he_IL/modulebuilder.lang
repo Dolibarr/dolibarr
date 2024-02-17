@@ -27,8 +27,7 @@ ModuleBuilderDeschooks=כרטיסייה זו מוקדשת לווים.
 ModuleBuilderDescwidgets=כרטיסייה זו מוקדשת לניהול/בניית ווידג'טים.
 ModuleBuilderDescbuildpackage=אתה יכול ליצור כאן קובץ חבילה "מוכן להפצה" (קובץ .zip מנורמל) של המודול שלך וקובץ תיעוד "מוכן להפצה". פשוט לחץ על הכפתור כדי לבנות את החבילה או קובץ התיעוד.
 EnterNameOfModuleToDeleteDesc=אתה יכול למחוק את המודול שלך. אזהרה: כל קובצי הקידוד של המודול (נוצר או נוצר באופן ידני) והנתונים והתיעוד המובנים יימחקו!
-EnterNameOfObjectToDeleteDesc=אתה יכול למחוק אובייקט. אזהרה: כל קבצי הקידוד (שנוצרו או נוצרו באופן ידני) הקשורים לאובייקט יימחקו!
-EnterNameOfObjectToDeleteDesc=אתה יכול למחוק אובייקט. אזהרה: כל קבצי הקידוד (שנוצרו או נוצרו באופן ידני) הקשורים לאובייקט יימחקו!
+EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
 DangerZone=אזור סכנה
 BuildPackage=בניית חבילה
 BuildPackageDesc=אתה יכול ליצור חבילת zip של היישום שלך כך שאתה מוכן להפיץ אותו בכל Dolibarr. אתה יכול גם להפיץ אותו או למכור אותו בשוק כמו <a href="https://www.dolistore.com">DoliStore.com</a>.
@@ -183,7 +182,7 @@ DictionaryDeleted=מילון <b>%s</b> הוסר בהצלחה
 PropertyModuleUpdated=הנכס <b>%s</b> עודכן בהצלחה
 InfoForApiFile=* כאשר אתה יוצר קובץ בפעם הראשונה, כל השיטות ייווצרו <strong>עבור כל אובייקט.</strong><br>* כשאתה לוחץ ב-<strong>remove</strong> אתה פשוט מסיר את כל השיטות עבור ה-<span ='notranslate'><strong></span>האובייקט שנבחר</strong>.
 SetupFile=עמוד להגדרת מודול
-EmailingSelectors=בוררי אימייל
+EmailingSelectors=Emails selectors
 EmailingSelectorDesc=אתה יכול ליצור ולערוך כאן את קבצי הכיתה כדי לספק בוררי יעד חדשים לדוא"ל עבור מודול שליחת הדוא"ל ההמונית
 EmailingSelectorFile=קובץ בורר מיילים
 NoEmailingSelector=אין קובץ בורר אימיילים

@@ -49,35 +49,8 @@ $conf->global->MAIN_UMASK = '0666';
  */
 class RestAPIDocumentTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
 	protected $api_url;
 	protected $api_key;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables.
-	 *
-	 * @param 	string	$name		Name
-	 * @return RestAPIDocumentTest
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf = $conf;
-		$this->savuser = $user;
-		$this->savlangs = $langs;
-		$this->savdb = $db;
-
-		echo __METHOD__.' db->type='.$db->type.' user->id='.$user->id;
-		//print " - db ".$db->db;
-		echo "\n";
-	}
 
 	/**
 	 * setUpBeforeClass
@@ -89,18 +62,10 @@ class RestAPIDocumentTest extends CommonClassTest
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-		echo __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
+		if (!isModEnabled('api')) {
+			print __METHOD__." module api must be enabled.\n";
+			die(1);
+		}
 
 		echo __METHOD__."\n";
 	}
@@ -138,16 +103,6 @@ class RestAPIDocumentTest extends CommonClassTest
 		$this->api_key = $object['success']['token'];
 
 		echo __METHOD__." api_key: $this->api_key \n";
-	}
-
-	/**
-	 * End phpunit tests.
-	 *
-	 * @return void
-	 */
-	protected function tearDown(): void
-	{
-		echo __METHOD__."\n";
 	}
 
 	/**

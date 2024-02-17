@@ -51,34 +51,6 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  */
 class SupplierProposalTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 * @return SupplierProposalTest
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
 	/**
 	 * setUpBeforeClass
 	 *
@@ -93,19 +65,6 @@ class SupplierProposalTest extends CommonClassTest
 			print "\n".__METHOD__." module Supplier proposal must be enabled.\n";
 			die(1);
 		}
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
 
 		print __METHOD__."\n";
 	}
@@ -129,16 +88,6 @@ class SupplierProposalTest extends CommonClassTest
 		// Set permission not set by default sql sample
 		$user->addrights(0, 'supplier_proposal');
 		$user->getrights('supplier_proposal', 1);
-	}
-
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
 	}
 
 	/**

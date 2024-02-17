@@ -27,8 +27,7 @@ ModuleBuilderDeschooks=Tab này là dành riêng cho hooks.
 ModuleBuilderDescwidgets=Tab này được dành riêng để quản lý/xây dựng các widget.
 ModuleBuilderDescbuildpackage=Bạn có thể tạo ở đây một gói tệp "sẵn sàng để phân phối" (tệp .zip được chuẩn hóa) của mô-đun của bạn và tệp tài liệu "sẵn sàng phân phối". Chỉ cần nhấp vào nút để xây dựng gói hoặc tập tin tài liệu.
 EnterNameOfModuleToDeleteDesc=Bạn có thể xóa mô-đun của bạn. CẢNH BÁO: Tất cả các tệp mã hóa của mô-đun (được tạo hoặc tạo thủ công) VÀ cấu trúc dữ liệu và tài liệu có cấu trúc sẽ bị xóa!
-EnterNameOfObjectToDeleteDesc=Bạn có thể xóa một đối tượng. CẢNH BÁO: Tất cả các tệp mã hóa (được tạo hoặc tạo thủ công) liên quan đến đối tượng sẽ bị xóa!
-EnterNameOfObjectToDeleteDesc=Bạn có thể xóa một đối tượng. CẢNH BÁO: Tất cả các tệp mã hóa (được tạo hoặc tạo thủ công) liên quan đến đối tượng sẽ bị xóa!
+EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
 DangerZone=Khu vực nguy hiểm
 BuildPackage=Xây dựng gói
 BuildPackageDesc=Bạn có thể tạo gói zip của ứng dụng để bạn sẵn sàng phân phối nó trên bất kỳ Dolibarr nào. Bạn cũng có thể phân phối hoặc bán nó trên thị trường như <a href="https://www.dolistore.com">DoliStore.com</a> .
@@ -183,3 +182,7 @@ DictionaryDeleted=Đã xóa thành công từ điển <b>%s</b>
 PropertyModuleUpdated=Thuộc tính <b>%s</b> đã được cập nhật thành công
 InfoForApiFile=* Khi bạn tạo tệp lần đầu tiên thì tất cả các phương thức sẽ được tạo <strong>cho từng đối tượng.</strong><br>* Khi bạn nhấp vào <strong>remove</strong>, bạn chỉ cần xóa tất cả các phương thức cho lớp <span> ='notranslate'><strong></span>đối tượng được chọn</strong>.
 SetupFile=Trang để thiết lập mô-đun
+EmailingSelectors=Emails selectors
+EmailingSelectorDesc=Bạn có thể tạo và chỉnh sửa các tệp lớp tại đây để cung cấp bộ chọn mục tiêu email mới cho mô-đun gửi email hàng loạt
+EmailingSelectorFile=Tệp chọn email
+NoEmailingSelector=Không có tệp chọn email
