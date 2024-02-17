@@ -341,7 +341,7 @@ class Productbatch extends CommonObject
 	{
 		$this->id = 0;
 
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->fk_product_stock = '';
 		$this->sellby = '';
 		$this->eatby = '';
