@@ -8,7 +8,6 @@ NewSupplierInvoice = Faturë e re e shitësit
 History=Historia
 ListOfSuppliers=Lista e shitësve
 ShowSupplier=Trego shitësin
-OrderDate=Data e porosisë
 BuyingPriceMin=Çmimi më i mirë i blerjes
 BuyingPriceMinShort=Çmimi më i mirë i blerjes
 TotalBuyingPriceMinShort=Totali i çmimeve të blerjes së nënprodukteve

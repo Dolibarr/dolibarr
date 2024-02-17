@@ -27,8 +27,7 @@ ModuleBuilderDeschooks=Ushbu yorliq kancalarga bag'ishlangan.
 ModuleBuilderDescwidgets=Ushbu yorliq vidjetlarni boshqarish / qurishga bag'ishlangan.
 ModuleBuilderDescbuildpackage=Siz bu erda modulingizning "tarqatishga tayyor" paketli faylini (normalizatsiya qilingan .zip fayli) va "tarqatishga tayyor" hujjat faylini yaratishingiz mumkin. Paket yoki hujjatlar faylini yaratish uchun tugmani bosing.
 EnterNameOfModuleToDeleteDesc=Siz modulingizni o'chirib tashlashingiz mumkin. OGOHLANTIRISH: Modulning barcha kodlash fayllari (qo'lda yaratilgan yoki yaratilgan) VA tuzilgan ma'lumotlar va hujjatlar o'chiriladi!
-EnterNameOfObjectToDeleteDesc=Ob'ektni o'chirishingiz mumkin. OGOHLANTIRISH: Ob'ektga tegishli bo'lgan barcha kodlash fayllari (qo'lda yaratilgan yoki yaratilgan) o'chiriladi!
-EnterNameOfObjectToDeleteDesc=Ob'ektni o'chirishingiz mumkin. OGOHLANTIRISH: Ob'ektga tegishli bo'lgan barcha kodlash fayllari (qo'lda yaratilgan yoki yaratilgan) o'chiriladi!
+EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
 DangerZone=Xavfli hudud
 BuildPackage=Paket yaratish
 BuildPackageDesc=Siz o'zingizning arizangizning zip paketini yaratishingiz mumkin, shunda siz uni har qanday Dolibarr-da tarqatishga tayyor bo'lasiz. Siz uni tarqatishingiz yoki <a href="https://www.dolistore.com"> kabi bozorda sotishingiz mumkin DoliStore.com </a>.
@@ -183,3 +182,7 @@ DictionaryDeleted=<b>%s</b> lug'ati olib tashlandi.
 PropertyModuleUpdated=<b>%s</b> mulki muvaffaqiyatli yangilandi
 InfoForApiFile=* Faylni birinchi marta yaratganingizda, har bir obyekt uchun barcha usullar <strong> yaratiladi.</strong><br>* <strong>oʻchirishni bosganingizda</strong> ni bosganingizda, <span sinfi uchun barcha usullarni olib tashlaysiz. ='notranslate'><strong></span>tanlangan obyekt</strong>.
 SetupFile=Modulni sozlash sahifasi
+EmailingSelectors=Emails selectors
+EmailingSelectorDesc=Ommaviy elektron pochta moduli uchun yangi elektron maqsadli tanlovchilarni taqdim etish uchun sinf fayllarini bu yerda yaratishingiz va tahrirlashingiz mumkin
+EmailingSelectorFile=Elektron pochta selektor fayli
+NoEmailingSelector=Elektron pochtani tanlash fayli yo'q

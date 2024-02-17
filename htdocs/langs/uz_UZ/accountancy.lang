@@ -90,13 +90,13 @@ AccountancyAreaDescProd=QADAM %s: Mahsulotlar/xizmatlaringizda buxgalteriya hiso
 
 AccountancyAreaDescBind=QADAM %s: mavjud %s satrlari bilan buxgalteriya hisobi o'rtasidagi bog'lanishni tekshiring, shuning uchun dastur bir marta bosish bilan Ledger-dagi operatsiyalarni jurnalga yozib olish imkoniyatiga ega bo'ladi. To'liq etishmayotgan birikmalar. Buning uchun %s menyu yozuvidan foydalaning.
 AccountancyAreaDescWriteRecords=QADAM %s: operatsiyalarni kitobga yozing. Buning uchun <strong> %s </strong> menyusiga o'ting va <strong> %s </strong> tugmachasini bosing.
-AccountancyAreaDescAnalyze=STEP %s: Read reportings or generate export files for other bookkeepers.
-AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't transfer anymore data in the same period in a future.
+AccountancyAreaDescAnalyze=QADAM %s: Hisobotlarni oʻqing yoki boshqa buxgalterlar uchun eksport fayllarini yarating.
+AccountancyAreaDescClosePeriod=QADAM %s: Davrani yoping, shuning uchun kelajakda xuddi shu davrda boshqa ma’lumotlarni uzata olmaymiz.
 
 TheFiscalPeriodIsNotDefined=Sozlashning majburiy bosqichi tugallanmagan (moliyaviy davr aniqlanmagan)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=O'rnatishning majburiy bosqichi tugallanmagan (buxgalteriya kodlari jurnali barcha bank hisoblari uchun aniqlanmagan)
 Selectchartofaccounts=Faol hisobvaraqlar rejasini tanlang
-CurrentChartOfAccount=Current active chart of account
+CurrentChartOfAccount=Joriy faol hisoblar jadvali
 ChangeAndLoad=O'zgartirish va yuklash
 Addanaccount=Add an accounting account
 AccountAccounting=Accounting account
@@ -335,7 +335,6 @@ CategoryDeleted=Buxgalteriya hisobi toifasi olib tashlandi
 AccountingJournals=Buxgalteriya jurnallari
 AccountingJournal=Buxgalteriya jurnali
 NewAccountingJournal=Yangi buxgalteriya jurnali
-ShowAccountingJournal=Buxgalteriya jurnalini ko'rsatish
 NatureOfJournal=Jurnalning tabiati
 AccountingJournalType1=Turli xil operatsiyalar
 AccountingJournalType2=Sotish
@@ -446,8 +445,8 @@ AccountancyOneUnletteringModifiedSuccessfully=Bitta kelishuv muvaffaqiyatli oʻz
 AccountancyUnletteringModifiedSuccessfully=%s unreconcile muvaffaqiyatli oʻzgartirildi
 
 ## Closure
-AccountancyClosureStep1=Step 1 : Validate and lock the movements
-AccountancyClosureStep2=Step 2 : Close the fiscal period
+AccountancyClosureStep1=1-qadam: Harakatlarni tasdiqlang va qulflang
+AccountancyClosureStep2=2-qadam: moliyaviy davrni yoping
 AccountancyClosureStep3=3-qadam: Yozuvlarni chiqarib oling (ixtiyoriy)
 AccountancyClosureClose=Moliyaviy davrni yopish
 AccountancyClosureAccountingReversal="Taqsimlanmagan daromad" yozuvlarini chiqarib oling va yozib oling
