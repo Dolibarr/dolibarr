@@ -48,34 +48,6 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  */
 class CommandeTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 * @return CommandeTest
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
 	/**
 	 * setUpBeforeClass
 	 *
@@ -94,45 +66,6 @@ class CommandeTest extends CommonClassTest
 		print __METHOD__."\n";
 	}
 
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return  void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-		//print $db->getVersion()."\n";
-	}
-
-	/**
-	 * End phpunit tests
-	 *
-	 * @return  void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
-	}
 
 	/**
 	 * testCommandeCreate
