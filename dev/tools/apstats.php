@@ -700,12 +700,13 @@ if (count($output_phan_json) != 0) {
 			} else {
 				$tmp = '<tr class="hidden sourcephan">';
 			}
-			$tmp .= "<td>$path</td>";
+			$tmp .= '<td>'.$path.'</td>';
 			$tmp .= '<td class="">';
-			$tmp .= "<a href=\"{$code_url}\" target=\"_blank\">{$line_range_txt}</a>";
+			$tmp .= '<a href="'.$code_url.'" target="_blank">'.$line_range_txt.'</a>';
 			$tmp .= '</td>';
-			$tmp .= "<td>$description</td>";
+			$tmp .= '<td class="tdoverflowmax300">'.$description.'</td>';
 			$tmp .= '</tr>';
+
 			$phan_items[] = $tmp;
 			$phan_nblines++;
 		}
