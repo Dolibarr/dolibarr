@@ -667,7 +667,7 @@ if (!empty($output_arrtd)) {
 			$tmp .= '<td class="">';
 			$tmp .= '<a href="'.$urlgit.$reg[1].'#L'.$reg[2].'" target="_blank">'.$reg[2].'</a>';
 			$tmp .= '</td>';
-			$tmp .= '<td>'.$reg[4].'</td>';
+			$tmp .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($reg[4]).'">'.dol_escape_htmltag($reg[4]).'</td>';
 			$tmp .= '</tr>'."\n";
 			$nblines++;
 		}
@@ -704,7 +704,7 @@ if (count($output_phan_json) != 0) {
 			$tmp .= '<td class="">';
 			$tmp .= '<a href="'.$code_url.'" target="_blank">'.$line_range_txt.'</a>';
 			$tmp .= '</td>';
-			$tmp .= '<td class="tdoverflowmax300">'.$description.'</td>';
+			$tmp .= '<td class="tdoverflowmax300">'.dol_escape_htmltag($description).'</td>';
 			$tmp .= '</tr>';
 
 			$phan_items[] = $tmp;
@@ -760,7 +760,7 @@ foreach ($arrayofalerts as $alert) {
 		$html .= '<a target="_blank" href="https://nvd.nist.gov/vuln/detail/CVE-'.$cve.'">CVE-'.$cve.'</a>';
 	}
 	$html .= '</td>';
-	$html .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($alert['title']).'">'.$alert['title'].'</td>';
+	$html .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($alert['title']).'">'.dol_escape_htmltag($alert['title']).'</td>';
 	$html .= '</tr>';
 }
 $html .= '</table>';
