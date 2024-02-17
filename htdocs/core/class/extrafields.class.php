@@ -46,7 +46,7 @@ class ExtraFields
 	/**
 	 * @var array New array to store extrafields definition
 	 */
-	public $attributes;
+	public $attributes = array();
 
 	/**
 	 * @var array	Array with boolean of status of groups
@@ -95,6 +95,7 @@ class ExtraFields
 		'checkbox' => 'ExtrafieldCheckBox',
 		'chkbxlst' => 'ExtrafieldCheckBoxFromList',
 		'link' => 'ExtrafieldLink',
+		'point' => 'ExtrafieldPointGeo',
 		'separate' => 'ExtrafieldSeparator',
 	);
 
@@ -106,9 +107,6 @@ class ExtraFields
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->error = '';
-		$this->errors = array();
-		$this->attributes = array();
 	}
 
 	/**
@@ -239,6 +237,9 @@ class ExtraFields
 			} elseif ($type == 'link') {
 				$typedb = 'int';
 				$lengthdb = '11';
+			} elseif ($type == 'point') {
+				$typedb = 'point';
+				$lengthdb = '';
 			} elseif ($type == 'html') {
 				$typedb = 'text';
 				$lengthdb = $length;
@@ -595,6 +596,9 @@ class ExtraFields
 			} elseif ($type == 'link') {
 				$typedb = 'int';
 				$lengthdb = '11';
+			} elseif ($type == 'point') {
+				$typedb = 'point';
+				$lengthdb = '';
 			} elseif ($type == 'password') {
 				$typedb = 'varchar';
 				$lengthdb = '128';
