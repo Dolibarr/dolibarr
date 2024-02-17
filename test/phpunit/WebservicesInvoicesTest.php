@@ -51,10 +51,6 @@ $conf->global->MAIN_UMASK='0666';
  */
 class WebservicesInvoicesTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
 	protected $soapclient;
 
 	private static $socid;
@@ -145,45 +141,6 @@ class WebservicesInvoicesTest extends CommonClassTest
 
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function tearDown(): void
-	{
 		print __METHOD__."\n";
 	}
 
