@@ -20,25 +20,24 @@
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Sistema di gestione della conoscenza
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Gestire una base di Knowledge Management (KM) o Help-Desk
+ModuleKnowledgeManagementDesc=Gestire una base di conoscenza (KM) o Help-Desk
 
 #
 # Admin page
 #
 KnowledgeManagementSetup = Configurazione del sistema di gestione della conoscenza
-Settings = Impostazioni
 KnowledgeManagementSetupPage = Pagina di configurazione del sistema di gestione della conoscenza
 
 
 #
 # About page
 #
-About = Info
 KnowledgeManagementAbout = Informazioni sulla gestione della conoscenza
 KnowledgeManagementAboutPage = Gestione della conoscenza sulla pagina
 
 KnowledgeManagementArea = Gestione della conoscenza
 MenuKnowledgeRecord = Base di conoscenza
+MenuKnowledgeRecordShort = Base di conoscenza
 ListKnowledgeRecord = Elenco degli articoli
 NewKnowledgeRecord = Nuovo articolo
 ValidateReply = Convalida la soluzione

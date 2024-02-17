@@ -23,7 +23,7 @@ Module4100Desc = Datu konfidencialitātes pārvaldības modulis (atbilstība GDP
 #
 datapolicySetup = Moduļa datu konfidencialitātes politikas iestatīšana
 Deletion = Datu dzēšana
-datapolicySetupPage = Atkarībā no jūsu valsts tiesību aktiem (piemērs <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external"> VDAR 5. pants </a>), personas dati ir jāuzglabā ne ilgāk par laiku, kas nepieciešams nolūkiem, kādiem tie tika vākti, izņemot arhivēšanas nolūkos. <br> Dzēšana tiks veikta automātiski pēc noteikta laika bez notikuma (ilgums, kuru norādīsiet tālāk).
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
 NB_MONTHS = %s mēneši
 ONE_YEAR = 1 gads
 NB_YEARS = %s gadi
@@ -40,16 +40,16 @@ DATAPOLICY_CONTACT_FOURNISSEUR = Piegādātājs
 DATAPOLICY_ADHERENT = Dalībnieks
 DATAPOLICY_Tooltip_SETUP = Saziņas veids — norādiet savu izvēli katram veidam.
 DATAPOLICYMail = E-pasta iestatīšana
-DATAPOLICYSUBJECTMAIL = E-pasta tēma
+DATAPOLICYSUBJECTMAIL = Subject of the email
 DATAPOLICYCONTENTMAIL = E-pasta saturs
 DATAPOLICYSUBSITUTION = Savā e-pastā varat izmantot šādus mainīgos (LINKACCEPT ļauj izveidot saiti, kas ieraksta personas piekrišanu, LINKREFUSED ļauj ierakstīt personas atteikumu):
 DATAPOLICYACCEPT = Ziņa pēc vienošanās
-DATAPOLICYREFUSE = Ziņa pēc nesaskaņas
+DATAPOLICYREFUSE = Message after disagreement
 SendAgreementText = Jūs varat nosūtīt GDPR e-pastu uz visām jūsu attiecīgajām kontaktpersonām (kuras vēl nav saņēmušas e-pastu un kurām neesat reģistrējis neko par viņu GDPR līgumu). Lai to izdarītu, izmantojiet šo pogu.
 SendAgreement = Sūtīt ēpastus
 AllAgreementSend = Visi e-pasti ir nosūtīti
 TXTLINKDATAPOLICYACCEPT = Teksts saitei "vienošanās"
-TXTLINKDATAPOLICYREFUSE = Teksts saitei "nepiekrišana"
+TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
 
 
 #
@@ -57,8 +57,8 @@ TXTLINKDATAPOLICYREFUSE = Teksts saitei "nepiekrišana"
 #
 DATAPOLICY_BLOCKCHECKBOX = GDPR: personas datu apstrāde
 DATAPOLICY_consentement = Saņemta piekrišana personas datu apstrādei
-DATAPOLICY_opposition_traitement = Iebilst pret savu personas datu apstrādi
-DATAPOLICY_opposition_prospection = Iebilst pret savu personas datu apstrādi izpētes nolūkos
+DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
+DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
 
 #
 # Popup
@@ -78,15 +78,11 @@ DATAPOLICY_PORTABILITE_CONFIRMATION = Jūs vēlaties eksportēt šīs kontaktper
 #
 ANONYMISER_AT = Anonimizēts %s
 
-# V2
-DATAPOLICYReturn = GDPR validācija
-DATAPOLICY_date = Vienošanās/nepiekrišanas datums GDPR
-DATAPOLICY_send = Datums nosūtīšanas līguma e-pasts
-DATAPOLICYReturn = GDPR validācija
+DATAPOLICY_date = Date of agreement/disagreement GDPR
+DATAPOLICY_send = Date agreement email sent
 DATAPOLICY_SEND = Nosūtiet GDPR e-pastu
 MailSent = E-pasts ir nosūtīts
 
 # ERROR
-ErrorSubjectIsRequired = Kļūda: ir jānorāda e-pasta tēma. Norādiet to moduļa iestatījumos
-=Tehniskas problēmas dēļ nevarējām reģistrēt jūsu izvēli. Mēs par to atvainojamies. Sazinieties ar mums, lai nosūtītu mums savu izvēli.
-NUMBER_MONTH_BEFORE_DELETION = Mēneša skaits pirms dzēšanas
+=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
+NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

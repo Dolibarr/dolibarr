@@ -177,6 +177,7 @@ NEW: TakePOS: added option TAKEPOS_HIDE_PRODUCT_PRICES to hide prices in TakePOS
 NEW: Tickets: add and list external contributors on ticket public interface
 NEW: Third-Parties: add total line to third-parties list (#26148)
 NEW: Tooltips are using ajax by default
+NEW: Website: Support of js into the Dolibarr server preview
 NEW: Top menu support picto of modules that are font awesome picto.
 NEW: updating by adding massactions for delete projects in societe tab
 NEW: updating by adding tooltip for api section in Modulebuilder

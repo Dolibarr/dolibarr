@@ -34,7 +34,6 @@ PaymentEvent=תשלום אירוע
 NewRegistration=הַרשָׁמָה
 EventOrganizationSetup=הגדרת ארגון אירועים
 EventOrganization=ארגון אירועים
-Settings=הגדרות
 EventOrganizationSetupPage = דף הגדרות ארגון אירועים
 EVENTORGANIZATION_TASK_LABEL = תווית של משימות ליצירה אוטומטית כאשר הפרויקט מאומת
 EVENTORGANIZATION_TASK_LABELTooltip = כאשר אתה מאמת אירוע לארגון, ניתן ליצור כמה משימות באופן אוטומטי בפרויקט<br><br>לדוגמה: <br>שלח קול קורא לוועידות<br>שלח קול קורא לדוכנים<br>אמת הצעות של כנסים<span ='notranslate'><br></span>אמת את האפליקציה לדוכנים<br>פתוח מנויים לאירוע למשתתפים<br> של האירוע לרמקולים<span class='notranslate'><br>שלח תזכורת לאירוע למארחי ביתן<br>שלח תזכורת לאירוע למשתתפים

@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - languages
 Language_am_ET=إثيوبي
 Language_af_ZA=الأفريكانية (جنوب أفريقيا)
-Language_en_AE=العربية (الإمارات العربية المتحدة)
 Language_ar_AR=العربية
 Language_ar_DZ=العربية (الجزائر)
 Language_ar_EG=العربية (مصر)
@@ -28,7 +27,7 @@ Language_de_CH=الألمانية (سويسرا)
 Language_de_LU=الألمانية (لوكسمبورغ)
 Language_el_GR=يوناني
 Language_el_CY=اليونانية (قبرص)
-Language_en_AE=العربية (الإمارات العربية المتحدة)
+Language_en_AE=English (United Arab Emirates)
 Language_en_AU=الإنكليزية (أستراليا)
 Language_en_CA=الإنكليزية (كندا)
 Language_en_GB=الانجليزية (المملكة المتحدة)
@@ -57,7 +56,6 @@ Language_es_PE=الإسبانية (بيرو)
 Language_es_PR=الأسبانية (بورتو ريكو)
 Language_es_US=الإسبانية (الولايات المتحدة الأمريكية)
 Language_es_UY=الإسبانية (أوروغواي)
-Language_es_GT=الإسبانية (غواتيمالا)
 Language_es_VE=الإسبانية (فنزويلا)
 Language_et_EE=الإستونية
 Language_eu_ES=الباسكي

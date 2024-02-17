@@ -8,7 +8,6 @@ NewSupplierInvoice = Nieuwe leveranciersfactuur
 History=Geschiedenis
 ListOfSuppliers=Leveranciersoverzicht
 ShowSupplier=Toon leverancier
-OrderDate=Besteldatum
 BuyingPriceMin=Voorkeur inkoopprijs
 BuyingPriceMinShort=Voorkeur inkoopprijs
 TotalBuyingPriceMinShort=Totaal van aankoopprijzen subproducten

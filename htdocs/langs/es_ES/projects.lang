@@ -249,7 +249,7 @@ LatestProjects=Últimos %s presupuestos
 LatestModifiedProjects=Últimos %s proyectos modificados 
 OtherFilteredTasks=Otras tareas filtradas
 NoAssignedTasks=Sin tareas asignadas ( Asigne proyectos/tareas al usuario actual desde el selector superior  para indicar tiempos en ellas)
-ThirdPartyRequiredToGenerateInvoice=Se debe definir un tercero en el proyecto para poder facturarlo.
+ThirdPartyRequiredToGenerateIntervention=Se debe definir un tercero en el proyecto para poder crear una intervención.
 ThirdPartyRequiredToGenerateInvoice=Se debe definir un tercero en el proyecto para poder facturarlo.
 ChooseANotYetAssignedTask=Elige una tarea que aún no te haya sido asignada
 # Comments trans
