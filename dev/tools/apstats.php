@@ -524,7 +524,7 @@ $html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="centpercent">';
 $html .= '<tr class="loc">';
-$html .= '<th class="left">Language</th>';
+$html .= '<th class="left" style="min-width: 150px">Language</th>';
 $html .= '<th class="right">Bytes</th>';
 $html .= '<th class="right">Files</th>';
 $html .= '<th class="right">Lines</th>';
