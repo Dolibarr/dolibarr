@@ -457,7 +457,7 @@ function dolWebsiteIncrementCounter($websiteid, $websitepagetype, $websitepageid
 			$sql .= " pageviews_month = pageviews_month + 1,";
 			// if last access was done during previous month, we save pageview_month into pageviews_previous_month
 			$sql .= " pageviews_previous_month = ".$db->ifsql("lastaccess < '".$db->idate(dol_mktime(0, 0, 0, $tmpnow['mon'], 1, $tmpnow['year'], 'gmt', 0), 'gmt')."'", 'pageviews_month', 'pageviews_previous_month').",";
-			$sql .= " lastaccess = '".$db->idate(dol_now('gmt'), 'gmt')."'";
+			$sql .= " lastaccess = '".$db->idate(dol_now('gmt'), 'gmt')."',";
 			$sql .= " lastpageid = ".((int) $websitepageid);
 			$sql .= " WHERE rowid = ".((int) $websiteid);
 
