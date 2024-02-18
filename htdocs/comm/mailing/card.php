@@ -1185,7 +1185,7 @@ if ($action == 'create') {
 				$formmail = new FormMail($db);
 				$formmail->fromname = $object->email_from;
 				$formmail->frommail = $object->email_from;
-				$formmail->withsubstit = 1;
+				$formmail->withsubstit =0;
 				$formmail->withfrom = 0;
 				$formmail->withto = $user->email ? $user->email : 1;
 				$formmail->withtocc = 0;
@@ -1193,6 +1193,8 @@ if ($action == 'create') {
 				$formmail->withtopic = 0;
 				$formmail->withtopicreadonly = 1;
 				$formmail->withfile = 0;
+				$formmail->withlayout = 0;
+				$formmail->withaiprompt = 0;
 				$formmail->withbody = 0;
 				$formmail->withbodyreadonly = 1;
 				$formmail->withcancel = 1;
