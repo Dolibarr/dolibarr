@@ -9573,9 +9573,7 @@ function ascii_check($str)
  */
 function dol_osencode($str)
 {
-	global $conf;
-
-	$tmp = ini_get("unicode.filesystem_encoding"); // Disponible avec PHP 6.0
+	$tmp = ini_get("unicode.filesystem_encoding");
 	if (empty($tmp) && !empty($_SERVER["WINDIR"])) {
 		$tmp = 'iso-8859-1'; // By default for windows
 	}
