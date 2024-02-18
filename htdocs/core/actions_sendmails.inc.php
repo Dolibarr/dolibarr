@@ -309,6 +309,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			}
 
 			$replyto = dol_string_nospecial(GETPOST('replytoname'), ' ', array(",")).' <'.GETPOST('replytomail').'>';
+
 			$message = GETPOST('message', 'restricthtml');
 			$subject = GETPOST('subject', 'restricthtml');
 
