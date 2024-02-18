@@ -1091,11 +1091,11 @@ if ($action == 'edit') {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->trackid = (($action == 'testhtml') ? "testhtml" : "test");
-		$formmail->fromname = (GETPOSTISSET('fromname') ? GETPOST('fromname') : $conf->global->MAIN_MAIL_EMAIL_FROM);
-		$formmail->frommail = (GETPOSTISSET('frommail') ? GETPOST('frommail') : $conf->global->MAIN_MAIL_EMAIL_FROM);
+		$formmail->fromname = (GETPOSTISSET('fromname') ? GETPOST('fromname') : getDolGlobalString('MAIN_MAIL_EMAIL_FROM'));
+		$formmail->frommail = (GETPOSTISSET('frommail') ? GETPOST('frommail') : getDolGlobalString('MAIN_MAIL_EMAIL_FROM'));
 		$formmail->fromid = $user->id;
 		$formmail->fromalsorobot = 1;
-		$formmail->fromtype = (GETPOSTISSET('fromtype') ? GETPOST('fromtype', 'aZ09') : (getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE') ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
+		$formmail->fromtype = (GETPOSTISSET('fromtype') ? GETPOST('fromtype', 'aZ09') : getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE', 'user'));
 		$formmail->withfromreadonly = 1;
 		$formmail->withsubstit = 1;
 		$formmail->withfrom = 1;
@@ -1106,6 +1106,8 @@ if ($action == 'edit') {
 		$formmail->withtopic = (GETPOSTISSET('subject') ? GETPOST('subject') : $langs->trans("Test"));
 		$formmail->withtopicreadonly = 0;
 		$formmail->withfile = 2;
+		$formmail->withlayout = 1;
+		$formmail->withaiprompt = 1;
 		$formmail->withbody = (GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : ($action == 'testhtml' ? $langs->transnoentities("PredefinedMailTestHtml") : $langs->transnoentities("PredefinedMailTest")));
 		$formmail->withbodyreadonly = 0;
 		$formmail->withcancel = 1;
@@ -1130,10 +1132,12 @@ if ($action == 'edit') {
 		print dol_get_fiche_end();
 
 		// References
-		print '<br><br>';
-		print '<span class="opacitymedium">'.$langs->trans("EMailsWillHaveMessageID").': ';
-		print dol_escape_htmltag('<timestamp.*@'.dol_getprefix('email').'>');
-		print '</span>';
+		if (!empty($user->admin)) {
+			print '<br><br>';
+			print '<span class="opacitymedium">'.$langs->trans("EMailsWillHaveMessageID").': ';
+			print dol_escape_htmltag('<timestamp.*@'.dol_getprefix('email').'>');
+			print '</span>';
+		}
 	}
 }
 

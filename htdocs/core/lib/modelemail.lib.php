@@ -19,27 +19,19 @@
 
 /**
  *		\file       htdocs/core/lib/emailmodel.lib.php
- *
  *		\brief      File for getting email html models
  */
 
 /**
- * get empty html
- * @return string  $out  html content
+ * Get empty html
+ *
+ * @param	string	$name	Name of template
+ * @return 	string  $out  	Html content
  */
-function empty_template()
+function getHtmlOfLayout($name)
 {
-	$out = '';
-	return $out;
-}
-
-/**
- * get basic html
- * @return string  $out  html content
- */
-function basic_template()
-{
-	$out = '
+	if ($name == 'basic') {
+		$out = '
             <div >
             <div >
             <img alt="Gray rectangle" style="margin-left:150px;" width="800px" height="100px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
@@ -60,16 +52,8 @@ function basic_template()
             <img alt="Gray rectangle" style="margin-left:150px;" width="15%" height="50px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
 
         </div>';
-	return $out;
-}
-
-/**
- * get news html
- * @return string  $out  html content
- */
-function news_template()
-{
-	$out = '
+	} elseif ($name == 'news') {
+		$out = '
         <h1 style="margin-left:120px;">Lorem, ipsum dolor sit amet consectetur adipisicing elit sit amet consectetur</h1>
         <h2 style="margin-left:120px;">Lorem, ipsum dolor sit amet consectetur adipisicing elitsit amet consectetur adipisicing </h2>
 
@@ -102,73 +86,56 @@ function news_template()
                 <img alt="Gray rectangle" style="" width="130px" height="130px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
             </div>
         </div>';
-	return $out;
-}
+	} elseif ($name == 'commerce') {
+		$out = '
+		    <h1 style="margin-left:120px;">Lorem, ipsum dolor sit amet consectetur adipisicing elit sit amet consectetur</h1>
+		    <h2 style="margin-left:120px;">Lorem, ipsum dolor sit amet consectetur adipisicing elitsit amet consectetur adipisicing </h2>
 
-/**
- * get commerce html
- * @return string  $out  html content
- */
-function commerce_template()
-{
-	$out = '
-    <h1 style="margin-left:120px;">Lorem, ipsum dolor sit amet consectetur adipisicing elit sit amet consectetur</h1>
-    <h2 style="margin-left:120px;">Lorem, ipsum dolor sit amet consectetur adipisicing elitsit amet consectetur adipisicing </h2>
+		    <div style="font-family: Arial, sans-serif; background-color: #f7f7f7; padding: 16px; max-width: 600px; margin: 0 auto; box-sizing: border-box;">
+		    <div style="display: flex;">
+		        <div style="margin-bottom: 50px; flex: 1; padding-right: 8px;">
+		            <div>
+		                <img alt="Gray rectangle" style="margin-left:120px;margin-top:30px;" width="350px" height="100px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
+		            </div>
+		            <div style="margin-left:120px;background-color: #e0e0e0; padding: 8px; margin-bottom: 8px; text-indent: 50px;">
+		                Lorem ipsum dolor sit amet, consectetur adipiscing elit<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+		            </div>
+		        </div>
 
-    <div style="font-family: Arial, sans-serif; background-color: #f7f7f7; padding: 16px; max-width: 600px; margin: 0 auto; box-sizing: border-box;">
-    <div style="display: flex;">
-        <div style="margin-bottom: 50px; flex: 1; padding-right: 8px;">
-            <div>
-                <img alt="Gray rectangle" style="margin-left:120px;margin-top:30px;" width="350px" height="100px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
-            </div>
-            <div style="margin-left:120px;background-color: #e0e0e0; padding: 8px; margin-bottom: 8px; text-indent: 50px;">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit...
-            </div>
-        </div>
+		            <br><br>
+		        <div style="margin-bottom: 10px; flex: 1; padding-left: 8px;">
+		            <div>
+		                <img alt="Gray rectangle" style="margin-left:120px;margin-top:30px;" width="350px" height="100px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
+		            </div>
+		                <div style="margin-left:120px;background-color: #e0e0e0; padding: 8px; margin-bottom: 8px; text-indent: 50px;">
+		                Lorem ipsum dolor sit amet, consectetur adipiscing elit<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+		            </div>
+		        </div>
+		    </div>
+		    <div style="display: flex;">
+		        <div style="margin-bottom: 50px; flex: 1; padding-right: 8px;">
+		            <div>
+		                <img alt="Gray rectangle" style="margin-left:120px;margin-top:30px;" width="350px" height="100px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
+		            </div>
+		            <div style="margin-left:120px;background-color: #e0e0e0; padding: 8px; margin-bottom: 8px; text-indent: 50px;">
+		                Lorem ipsum dolor sit amet, consectetur adipiscing elit<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+		            </div>
+		        </div>
 
-            <br><br>
-        <div style="margin-bottom: 10px; flex: 1; padding-left: 8px;">
-            <div>
-                <img alt="Gray rectangle" style="margin-left:120px;margin-top:30px;" width="350px" height="100px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
-            </div>
-                <div style="margin-left:120px;background-color: #e0e0e0; padding: 8px; margin-bottom: 8px; text-indent: 50px;">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit...
-            </div>
-        </div>	  
-    </div>	 
-    <div style="display: flex;">
-        <div style="margin-bottom: 50px; flex: 1; padding-right: 8px;">
-            <div>
-                <img alt="Gray rectangle" style="margin-left:120px;margin-top:30px;" width="350px" height="100px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
-            </div>
-            <div style="margin-left:120px;background-color: #e0e0e0; padding: 8px; margin-bottom: 8px; text-indent: 50px;">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit...
-            </div>
-        </div>
-
-            <br><br>
-        <div style="margin-bottom: 10px; flex: 1; padding-left: 8px;">
-            <div>
-                <img alt="Gray rectangle" style="margin-left:120px;margin-top:30px;" width="350px" height="100px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
-            </div>
-                <div style="margin-left:120px;background-color: #e0e0e0; padding: 8px; margin-bottom: 8px; text-indent: 50px;">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit...
-            </div>
-        </div>	  
-    </div>	 
-  </div>
-      
-  ';
-	return $out;
-}
-
-/**
- * get basic html
- * @return string  $out  html content
- */
-function text_template()
-{
-	$out = '
+		            <br><br>
+		        <div style="margin-bottom: 10px; flex: 1; padding-left: 8px;">
+		            <div>
+		                <img alt="Gray rectangle" style="margin-left:120px;margin-top:30px;" width="350px" height="100px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
+		            </div>
+		                <div style="margin-left:120px;background-color: #e0e0e0; padding: 8px; margin-bottom: 8px; text-indent: 50px;">
+		                Lorem ipsum dolor sit amet, consectetur adipiscing elit<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+		            </div>
+		        </div>
+		    </div>
+		  </div>
+		  ';
+	} elseif ($name == 'text') {
+		$out = '
         <h1 style="margin-left:150px">Lorem ipsum dolor sit amet consectetur adipisicing elit sit amet consectetur adipisicing elit.</h1>
         <h3 style="margin-left:150px">Lorem ipsum dolor sit amet consectetur adipisicing elit sit amet consectetur adipisicing elit.</h3>
         <p style="margin-left:150px">
@@ -180,6 +147,9 @@ function text_template()
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi impedit molestias voluptatibus. Natus nulla sint totam illo? Hic name consequuntur id harum pariatur, quo illo quaerat minima tempore.
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi impedit molestias voluptatibus. Natus nulla sint totam illo? Hic name consequuntur id harum pariatur, quo illo quaerat minima tempore.
         </p>';
+	} else {
+		$out = '';
+	}
 
 	return $out;
 }

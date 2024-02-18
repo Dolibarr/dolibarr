@@ -1268,3 +1268,6 @@ ElementType=Element type
 ElementId=Element Id
 Encrypted=Encrypted
 Settings=Settings
+FillMessageWithALayout=Fill message with a layout
+FillMessageWithAIContent=Fill message with AI content
+EnterYourAIPromptHere=Enter your AI prompt here

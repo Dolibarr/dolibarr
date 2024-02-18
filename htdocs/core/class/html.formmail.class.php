@@ -144,6 +144,16 @@ class FormMail extends Form
 	public $withfile;
 
 	/**
+	 * @var int	1=Add a button "Fill with layout"
+	 */
+	public $withlayout;
+
+	/**
+	 * @var int	1=Add a button "Fill with AI generation"
+	 */
+	public $withaiprompt;
+
+	/**
 	 * @var int 1=Add a checkbox "Attach also main document" for mass actions (checked by default), -1=Add checkbox (not checked by default)
 	 */
 	public $withmaindocfile;
@@ -542,7 +552,7 @@ class FormMail extends Form
 					$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')), 1);
 				}
 				$out .= ' &nbsp; ';
-				$out .= '<input type="submit" class="button" value="'.$langs->trans('Apply').'" name="modelselected" disabled="disabled" id="modelselected">';
+				$out .= '<input type="submit" class="button reposition smallpaddingimp" value="'.$langs->trans('Apply').'" name="modelselected" disabled="disabled" id="modelselected">';
 				$out .= ' &nbsp; ';
 				$out .= '</div>';
 			} else {
@@ -889,12 +899,7 @@ class FormMail extends Form
 				$out .= "</td></tr>\n";
 			}
 
-			//input prompt AI
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-			if (isModEnabled('ai')) {
-				$out .= $this->getModelEmailTemplate();
-			}
-			// Message
+			// Message (+ Links to choose layout or ai prompt)
 			if (!empty($this->withbody)) {
 				$defaultmessage = GETPOST('message', 'restricthtml');
 				if (!GETPOST('modelselected', 'alpha') || GETPOST('modelmailselected') != '-1') {
@@ -995,8 +1000,56 @@ class FormMail extends Form
 				}
 
 				$out .= '<tr>';
-				$out .= '<td colspan="2">';
+				$out .= '<td class="tdtop">';
 				$out .= $form->textwithpicto($langs->trans('MailText'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltipfrombody');
+				$out .= '</td>';
+				$out .= '<td>';
+
+				// Add link to add layout
+				if ($this->withlayout && $this->withfckeditor) {
+					$out .= '<a href="#" id="linkforlayouttemplates" class="reposition notasortlink inline-block alink marginrightonly">';
+					$out .= img_picto($langs->trans("FillMessageWithALayout"), 'layout', 'class="paddingrightonly"');
+					$out .= $langs->trans("FillMessageWithALayout").'...';
+					$out .= '</a> &nbsp; &nbsp; ';
+
+					$out .= '<script>
+						$(document).ready(function() {
+  							$("#linkforlayouttemplates").click(function() {
+								console.log("We click on linkforlayouttemplates");
+								event.preventDefault();
+								jQuery("#template-selector").toggle();
+								//jQuery("#template-selector").attr("style", "aaa");
+								jQuery("#ai_input").hide();
+							});
+						});
+					</script>
+					';
+				}
+				// Add link to add AI content
+				if ($this->withaiprompt && isModEnabled('ai')) {
+					$out .= '<a href="#" id="linkforaiprompt" class="reposition notasortlink inline-block alink marginrightonly">';
+					$out .= img_picto($langs->trans("FillMessageWithAIContent"), 'ai', 'class="paddingrightonly"');
+					$out .= $langs->trans("FillMessageWithAIContent").'...';
+					$out .= '</a>';
+
+					$out .= '<script>
+						$(document).ready(function() {
+  							$("#linkforaiprompt").click(function() {
+								console.log("We click on linkforaiprompt");
+								event.preventDefault();
+								jQuery("#ai_input").toggle();
+								jQuery("#template-selector").hide();
+							});
+						});
+					</script>
+					';
+				}
+				if ($this->withfckeditor) {
+					$out .= $this->getModelEmailTemplate();
+				}
+				if (isModEnabled('ai')) {
+					$out .= $this->getSectionForAIPrompt();
+				}
 				$out .= '</td>';
 				$out .= '</tr>';
 
@@ -1381,38 +1434,38 @@ class FormMail extends Form
 	}
 
 	/**
-	 * get Html For instruction of message
+	 * Return Html code for AI instruction of message
+	 *
 	 * @return 	string      Text for instructions
 	 */
-	public function getHtmlForInstruction()
+	public function getSectionforAIPrompt()
 	{
-		global $langs, $form;
+		global $langs;
 
-		$out = '<tr id="ai_input">';
+		$out = '<tr id="ai_input" class="hidden">';
 		$out .= '<td>';
-		$out .= $form->textwithpicto($langs->trans('helpWithAi'), $langs->trans("YouCanMakeSomeInstructionForEmail"));
+		//$out .= $form->textwithpicto($langs->trans('helpWithAi'), $langs->trans("YouCanMakeSomeInstructionForEmail"));
 		$out .= '</td>';
 
 		$out .= '<td>';
-		$out .= '<input type="text" class="quatrevingtpercent" id="ai_instructions" name="instruction" placeholder="message with AI" />';
+		$out .= '<input type="text" class="quatrevingtpercent" id="ai_instructions" name="instruction" placeholder="'.$langs->trans("EnterYourAIPromptHere").'..." />';
 		$out .= '<input id="generate_button" type="button" class="button smallpaddingimp"  value="'.$langs->trans('Generate').'"/>';
 		$out .= "</td></tr>\n";
 
 
 		$out .= "<script type='text/javascript'>
 			$(document).ready(function() {
-
-				//for keydown
+				// for keydown
 				$('#ai_instructions').keydown(function(event) {
-					if (event.keyCode === 13) { 
-						event.preventDefault(); 
-						$('#generate_button').click(); 
+					if (event.keyCode === 13) {
+						event.preventDefault();
+						$('#generate_button').click();
 					}
 				});
 
 				$('#generate_button').click(function() {
 					var instructions = $('#ai_instructions').val();
-					//editor on readonly 
+					//editor on readonly
         			if (CKEDITOR.instances.message) {
 						CKEDITOR.instances.message.setReadOnly(1);
 					}
@@ -1425,20 +1478,23 @@ class FormMail extends Form
 							'instructions': instructions,
 						}),
 						success: function(response) {
-							if (".getDolGlobalString('FCKEDITOR_ENABLE_MAIL').") {
-								CKEDITOR.instances.message.setData(response);
-							} 
-							else {
-								tinymce.get('message').setContent(response);
+							console.log('Add response into field message: '+response);
+
+							if (CKEDITOR.instances && CKEDITOR.instances.message && ".getDolGlobalInt('FCKEDITOR_ENABLE_MAIL', 0).") {
+								CKEDITOR.instances.message.setReadOnly(0);
+								//CKEDITOR.instances.message.setData(response);
 							}
-							// remove readonly 
-							CKEDITOR.instances.message.setReadOnly(0);
+
+							jQuery('#message').val(response);
+
+							// remove readonly
 							$('#ai_instructions').val('');
 						},
 						error: function(xhr, status, error) {
+							alert(error);
 							console.error('error ajax', status, error);
 						}
-						
+
 					});
 				});
 			});
@@ -1448,46 +1504,31 @@ class FormMail extends Form
 	}
 
 	/**
-	 * get models template email in boxes
+	 * Return HTML code for selection of email layout
+	 *
 	 * @return 	string      HTML for model email boxes
-
 	 */
 	public function getModelEmailTemplate()
 	{
-
-		global $langs, $form;
-		$out = '<tr>';
-		$out .= '<td>';
-		$out .= $form->textwithpicto($langs->trans('ModelTemplate'), $langs->trans("YouCanChooseAModelForYouMailContent"));
-		$out .= '</td>';
-		$out .= '<td>';
-		$out .= '<div id="template-selector" class="template-container">';
+		$out .= '<div id="template-selector" class="template-container hidden">';
 		$templates = array(
-			'empty' => 'empty_template',
-			'basic' => 'basic_template',
-			'news'  => 'news_template',
-			'commerce' => 'commerce_template',
-			'text' => 'text_template'
+			'empty' => 'empty',
+			'basic' => 'basic',
+			'news'  => 'news',
+			'commerce' => 'commerce',
+			'text' => 'text'
 		);
 
 		foreach ($templates as $template => $templateFunction) {
-			if (function_exists($templateFunction)) {
-				$contentHtml = $templateFunction();
-			}
+			$contentHtml = getHtmlOfLayout($template);
+
 			$out .= '<div class="template-option" data-template="'.$template.'" data-content="'.htmlentities($contentHtml).'">';
-			$out .= '<img alt="'.$template.'" src="'.DOL_URL_ROOT.'/theme/common/mailtemplate/'.$template.'.png" />';
+			$out .= '<img class="maillayout" alt="'.$template.'" src="'.DOL_URL_ROOT.'/theme/common/maillayout/'.$template.'.png" />';
 			$out .= '<span class="template-option-text">'.ucfirst($template).'</span>';
 			$out .= '</div>';
 		}
-		$out .= '<div class="template-option" data-template="ai"><i class="fas fa-edit"></i><span >Generate with AI</span></div>';
 		$out .= '</div>';
-		$out .= '</td></tr>';
-		$out .= "<script type='text/javascript'>
-				var cssLink = document.createElement('link');
-				cssLink.href = '".DOL_URL_ROOT."/ai/css/style.css';
-				cssLink.rel = 'stylesheet';
-				cssLink.type = 'text/css';
-				document.head.appendChild(cssLink);</script>";
+
 		$out .= "<script type='text/javascript'>
 				$(document).ready(function() {
 					$('.template-option').click(function() {
@@ -1496,25 +1537,17 @@ class FormMail extends Form
 
 						var template = $(this).data('template');
 						var contentHtml = $(this).data('content');
-						
+
 						var editorInstance = CKEDITOR.instances.message;
 						if (editorInstance) {
 							editorInstance.setData(contentHtml);
 						}
-						// display input for generate with IA
-						if(template === 'ai') {
-							$('#ai_input').show();
-						} else {
-							$('#ai_input').hide();
-						}
 					});
 				});
 		</script>";
-		$out .= $this->getHtmlForInstruction();
+
 		return $out;
 	}
-
-
 
 	/**
 	 *  Return templates of email with type = $type_template or type = 'all'.
