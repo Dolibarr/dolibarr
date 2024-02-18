@@ -1977,7 +1977,7 @@ class ExtraFields
 		} elseif ($type == 'point') {
 			require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
 			$geom = geoPHP::load($value, 'wkb');
-			$value = $geom->out('json');
+			$value = $geom->x().' '.$geom->y();
 			// var_dump($geom, $value);
 		} elseif ($type == 'text') {
 			$value = dol_htmlentitiesbr($value);
