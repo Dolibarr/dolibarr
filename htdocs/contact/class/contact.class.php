@@ -104,6 +104,7 @@ class Contact extends CommonObject
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>3, 'position'=>35),
 		'civility' =>array('type'=>'varchar(6)', 'label'=>'Civility', 'enabled'=>1, 'visible'=>3, 'position'=>40),
 		'lastname' =>array('type'=>'varchar(50)', 'label'=>'Lastname', 'enabled'=>1, 'visible'=>1, 'position'=>45, 'showoncombobox'=>1, 'searchall'=>1),
+		'name_alias' =>array('type'=>'varchar(255)', 'label'=>'Name alias', 'enabled'=>1, 'visible'=>-1, 'position'=>46, 'searchall'=>1),
 		'firstname' =>array('type'=>'varchar(50)', 'label'=>'Firstname', 'enabled'=>1, 'visible'=>1, 'position'=>50, 'showoncombobox'=>1, 'searchall'=>1),
 		'poste' =>array('type'=>'varchar(80)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>-1, 'position'=>52),
 		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
@@ -166,6 +167,11 @@ class Contact extends CommonObject
 	 * @var string fullname
 	 */
 	public $fullname;
+
+	/**
+	 * @var string fullname
+	 */
+	public $name_alias;
 
 	/**
 	 * @var string Address
@@ -466,6 +472,7 @@ class Contact extends CommonObject
 		$this->db->begin();
 
 		// Clean parameters
+		$this->name_alias = trim($this->name_alias);
 		$this->lastname = $this->lastname ? trim($this->lastname) : trim($this->name);
 		$this->firstname = trim($this->firstname);
 		$this->setUpperOrLowerCase();
@@ -484,6 +491,7 @@ class Contact extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
 		$sql .= " datec";
 		$sql .= ", fk_soc";
+		$sql .= ", name_alias";
 		$sql .= ", lastname";
 		$sql .= ", firstname";
 		$sql .= ", fk_user_creat";
@@ -501,6 +509,7 @@ class Contact extends CommonObject
 		} else {
 			$sql .= "null,";
 		}
+		$sql .= "'".$this->db->escape($this->name_alias)."',";
 		$sql .= "'".$this->db->escape($this->lastname)."',";
 		$sql .= "'".$this->db->escape($this->firstname)."',";
 		$sql .= " ".($user->id > 0 ? ((int) $user->id) : "null").",";
@@ -582,6 +591,7 @@ class Contact extends CommonObject
 
 		// Clean parameters
 		$this->ref_ext = (empty($this->ref_ext) ? '' : trim($this->ref_ext));
+		$this->name_alias = trim($this->name_alias);
 		$this->lastname = trim($this->lastname) ? trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname);
 		$this->email = trim($this->email);
@@ -610,6 +620,7 @@ class Contact extends CommonObject
 			$sql .= " fk_soc = NULL,";
 		}
 		$sql .= " civility='".$this->db->escape($this->civility_code)."'";
+		$sql .= ", name_alias='".$this->db->escape($this->name_alias)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
 		$sql .= ", address='".$this->db->escape($this->address)."'";
@@ -981,7 +992,7 @@ class Contact extends CommonObject
 
 		$langs->loadLangs(array("dict", "companies"));
 
-		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_code, c.lastname, c.firstname,";
+		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_code, c.name_alias, c.lastname, c.firstname,";
 		$sql .= " c.address, c.statut, c.zip, c.town,";
 		$sql .= " c.fk_pays as country_id,";
 		$sql .= " c.fk_departement as state_id,";
@@ -1034,6 +1045,7 @@ class Contact extends CommonObject
 				$this->civility_code    = $obj->civility_code;
 				$this->civility	        = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != "Civility".$obj->civility_code ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
 
+				$this->name_alias	= $obj->name_alias;
 				$this->lastname		= $obj->lastname;
 				$this->firstname	= $obj->firstname;
 				$this->address		= $obj->address;
