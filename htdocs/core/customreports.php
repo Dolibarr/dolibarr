@@ -24,7 +24,7 @@
  *		\ingroup    core
  *		\brief      Page to make custom reports. Page can be used alone or as a tab among other tabs of an object
  */
-ffd df f
+ffd df f  gd dfgdf
 if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	require '../main.inc.php';
 
