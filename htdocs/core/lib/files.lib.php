@@ -131,14 +131,18 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 			$filedate = '';
 			$filesize = '';
 			$fileperm = '';
-			while (false !== ($utf8_file = readdir($dir))) {        // $utf8_file is always a basename (in directory $os_path)
-				if (!utf8_check($utf8_file)) {
-					$utf8_file = mb_convert_encoding($utf8_file, 'UTF-8', 'ISO-8859-1'); // Make sure data is stored in utf8 in memory
+			while (false !== ($os_file = readdir($dir))) {        // $utf8_file is always a basename (in directory $os_path)
+				$os_fullpathfile = ($os_path ? $os_path.'/' : '').$os_file;
+
+				if (!utf8_check($os_file)) {
+					$utf8_file = mb_convert_encoding($os_file, 'UTF-8', 'ISO-8859-1'); // Make sure data is stored in utf8 in memory
+				} else {
+					$utf8_file = $os_file;
 				}
-				$mixed_fullpathfile = ($os_path ? $os_path.'/' : '').$utf8_file;  // TODO: Suspicious! Combining system encoding with UTF-8 encoding ...
 
 				$qualified = 1;
 
+				$utf8_fullpathfile = "$utf8_path/$utf8_file";  // Temp variable for speed
 				// Define excludefilterarray
 				$excludefilterarray = array('^\.');
 				if (is_array($excludefilter)) {
@@ -148,40 +152,39 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 				}
 				// Check if file is qualified
 				foreach ($excludefilterarray as $filt) {
-					if (preg_match('/'.$filt.'/i', $utf8_file) || preg_match('/'.$filt.'/i', $mixed_fullpathfile)) {
+					if (preg_match('/'.$filt.'/i', $utf8_file) || preg_match('/'.$filt.'/i', $utf8_fullpathfile)) {
 						$qualified = 0;
 						break;
 					}
 				}
-				//print $mixed_fullpathfile.' '.$utf8_file.' '.$qualified.'<br>';
+				//print $utf8_fullpathfile.' '.$utf8_file.' '.$qualified.'<br>';
 
-				$utf8_fullpath = "$utf8_path/$utf8_file";  // Temp variable for speed
 				if ($qualified) {
-					$isdir = is_dir(dol_osencode($utf8_fullpath));
+					$isdir = is_dir($os_fullpathfile);
 					// Check whether this is a file or directory and whether we're interested in that type
 					if ($isdir && (($types == "directories") || ($types == "all") || $recursive > 0)) {
 						// Add entry into file_list array
 						if (($types == "directories") || ($types == "all")) {
 							if ($loaddate || $sortcriteria == 'date') {
-								$filedate = dol_filemtime($utf8_fullpath);
+								$filedate = dol_filemtime($utf8_fullpathfile);
 							}
 							if ($loadsize || $sortcriteria == 'size') {
-								$filesize = dol_filesize($utf8_fullpath);
+								$filesize = dol_filesize($utf8_fullpathfile);
 							}
 							if ($loadperm || $sortcriteria == 'perm') {
-								$fileperm = dol_fileperm($utf8_fullpath);
+								$fileperm = dol_fileperm($utf8_fullpathfile);
 							}
 
 							if (!$filter || preg_match('/'.$filter.'/i', $utf8_file)) {	// We do not search key $filter into all $path, only into $file part
 								$reg = array();
-								preg_match('/([^\/]+)\/[^\/]+$/', $utf8_fullpath, $reg);
+								preg_match('/([^\/]+)\/[^\/]+$/', $utf8_fullpathfile, $reg);
 								$level1name = (isset($reg[1]) ? $reg[1] : '');
 								$file_list[] = array(
 									"name" => $utf8_file,
 									"path" => $utf8_path,
 									"level1name" => $level1name,
 									"relativename" => ($relativename ? $relativename.'/' : '').$utf8_file,
-									"fullname" => $utf8_fullpath,
+									"fullname" => $utf8_fullpathfile,
 									"date" => $filedate,
 									"size" => $filesize,
 									"perm" => $fileperm,
@@ -192,30 +195,30 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 
 						// if we're in a directory and we want recursive behavior, call this function again
 						if ($recursive > 0) {
-							if (empty($donotfollowsymlinks) || !is_link($utf8_fullpath)) {
-								//var_dump('eee '. $utf8_fullpath. ' '.is_dir($utf8_fullpath).' '.is_link($utf8_fullpath));
-								$file_list = array_merge($file_list, dol_dir_list($utf8_fullpath, $types, $recursive + 1, $filter, $excludefilter, $sortcriteria, $sortorder, $mode, $nohook, ($relativename != '' ? $relativename.'/' : '').$utf8_file, $donotfollowsymlinks, $nbsecondsold));
+							if (empty($donotfollowsymlinks) || !is_link($utf8_fullpathfile)) {
+								//var_dump('eee '. $utf8_fullpathfile. ' '.is_dir($utf8_fullpathfile).' '.is_link($utf8_fullpathfile));
+								$file_list = array_merge($file_list, dol_dir_list($utf8_fullpathfile, $types, $recursive + 1, $filter, $excludefilter, $sortcriteria, $sortorder, $mode, $nohook, ($relativename != '' ? $relativename.'/' : '').$utf8_file, $donotfollowsymlinks, $nbsecondsold));
 							}
 						}
 					} elseif (!$isdir && (($types == "files") || ($types == "all"))) {
 						// Add file into file_list array
 						if ($loaddate || $sortcriteria == 'date') {
-							$filedate = dol_filemtime($utf8_fullpath);
+							$filedate = dol_filemtime($utf8_fullpathfile);
 						}
 						if ($loadsize || $sortcriteria == 'size') {
-							$filesize = dol_filesize($utf8_fullpath);
+							$filesize = dol_filesize($utf8_fullpathfile);
 						}
 
 						if (!$filter || preg_match('/'.$filter.'/i', $utf8_file)) {	// We do not search key $filter into $utf8_path, only into $utf8_file
 							if (empty($nbsecondsold) || $filedate <= ($now - $nbsecondsold)) {
-								preg_match('/([^\/]+)\/[^\/]+$/', $utf8_fullpath, $reg);
+								preg_match('/([^\/]+)\/[^\/]+$/', $utf8_fullpathfile, $reg);
 								$level1name = (isset($reg[1]) ? $reg[1] : '');
 								$file_list[] = array(
 									"name" => $utf8_file,
 									"path" => $utf8_path,
 									"level1name" => $level1name,
 									"relativename" => ($relativename ? $relativename.'/' : '').$utf8_file,
-									"fullname" => $utf8_fullpath,
+									"fullname" => $utf8_fullpathfile,
 									"date" => $filedate,
 									"size" => $filesize,
 									"type" => 'file'
