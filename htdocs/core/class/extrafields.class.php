@@ -1609,7 +1609,12 @@ class ExtraFields
 			//$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '');
 			$out = $form->selectForForms($tmparray[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '', $element.':options_'.$key);
 		} elseif ($type == 'point') {
-			$out = 'TODO';
+			$pointtypes = ['Point'];
+			require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
+			$geom = geoPHP::load($value, 'wkb');
+			$out = $form->selectarray($keyprefix.$key.$keysuffix.'_type', $pointtypes, 'Point', 0, 0, '', 0, '100%');
+			$out .= '<input type="number" step="0.0000001" name="'.$keyprefix.$key.$keysuffix.'_x'.'" id="'.$keyprefix.$key.$keysuffix.'_x'.'"  value="'.$geom->x().'"/>';
+			$out .= '<input type="number" step="0.0000001" name="'.$keyprefix.$key.$keysuffix.'_y'.'" id="'.$keyprefix.$key.$keysuffix.'_y'.'" value="'.$geom->y().'"/>';
 		} elseif ($type == 'password') {
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
 			$out = '<input style="display:none" type="text" name="fakeusernameremembered">'; // Hidden field to reduce impact of evil Google Chrome autopopulate bug.
