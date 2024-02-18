@@ -38,8 +38,8 @@ class GeoMapEditor
 	/**
 	 * getHtml
 	 *
-	 * @var string $htmlname htmlname
-	 * @var string $geojson  json of geometric objects
+	 * @param string $htmlname htmlname
+	 * @param string $geojson  json of geometric objects
 	 *
 	 * @return string
 	 */
@@ -70,14 +70,14 @@ class GeoMapEditor
 				console.log("pm:drawend");
 				console.log(e);
 			});
-			map.on("pm:update", (e) => {
+			map.on("pm:markerdragend", (e) => {
 				map.pm.addControls({
 					drawMarker: false,
 					drawPolyline: false,
 					drawRectangle: false,
 					drawPolygon: false,
 				});
-				console.log("pm:update");
+				console.log("pm:markerdragend");
 				console.log(e);
 			});
 			map.on("pm:remove", (e) => {
