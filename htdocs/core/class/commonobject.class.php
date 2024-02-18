@@ -320,7 +320,10 @@ abstract class CommonObject
 	public $statut;
 
 	/**
-	 * @var int 		The object's status
+	 * @var int|array<int, string>      The object's status (an int).
+	 *                                  Or an array listing all the potential status of the object:
+	 *                                    array: int of the status => translated label of the status
+	 *                                    See for example the Account class.
 	 * @see setStatut()
 	 */
 	public $status;
@@ -9058,7 +9061,8 @@ abstract class CommonObject
 	{
 		global $conf;
 
-		$file = ''; $originalfile = '';
+		$file = '';
+		$originalfile = '';
 		$newmodulepart = $modulepart;
 		if ($modulepart == 'unknown' && !empty($this->module)) {
 			$newmodulepart = $this->module;
@@ -9130,6 +9134,10 @@ abstract class CommonObject
 				$dir = $sdir.'/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
 				$pdir = '/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
 			}
+		}
+		if ($modulepart == 'category') {
+			$dir = $sdir.'/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
+			$pdir = '/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
 		}
 
 		// Defined relative dir to DOL_DATA_ROOT

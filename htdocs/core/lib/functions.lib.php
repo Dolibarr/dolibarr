@@ -1669,7 +1669,7 @@ function dol_escape_php($stringtoescape, $stringforquotes = 2)
 
 /**
  * Return a string label ready to be output on HTML content
- * To use text inside an attribute, use can simply only dol_escape_htmltag()
+ * To use the text inside a HTML tag attribute, use can use only dol_escape_htmltag()
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
@@ -2414,6 +2414,26 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" title="'.dol_escape_htmltag($langs->trans("UploadAnImageToSeeAPhotoHere", $langs->transnoentitiesnoconv("Documents"))).'" alt="No photo"'.($width ? ' style="width: '.$width.'px"' : '').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
 			}
 		}
+	} elseif ($object->element == 'category') {
+		/** @var Categorie $object */
+		$width = 80;
+		$cssclass = 'photowithmargin photoref';
+		$showimage = $object->isAnyPhotoAvailable($conf->categorie->multidir_output[$entity]);
+		$maxvisiblephotos = getDolGlobalInt('CATEGORY_MAX_VISIBLE_PHOTO', 5);
+		if ($conf->browser->layout == 'phone') {
+			$maxvisiblephotos = 1;
+		}
+		if ($showimage) {
+			$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('category', $conf->categorie->multidir_output[$entity], 'small', $maxvisiblephotos, 0, 0, 0, 0, $width, 0, '').'</div>';
+		} else {
+			if (getDolGlobalString('CATEGORY_NODISPLAYIFNOPHOTO')) {
+				$nophoto = '';
+				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"></div>';
+			} else {    // Show no photo link
+				$nophoto = '/public/theme/common/nophoto.png';
+				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" title="'.dol_escape_htmltag($langs->trans("UploadAnImageToSeeAPhotoHere", $langs->transnoentitiesnoconv("Documents"))).'" alt="No photo"'.($width ? ' style="width: '.$width.'px"' : '').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+			}
+		}
 	} elseif ($object->element == 'bom') {
 		/** @var Bom $object */
 		$width = 80;
@@ -2437,6 +2457,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	} elseif ($object->element == 'ticket') {
 		$width = 80;
 		$cssclass = 'photoref';
+		/** @var Ticket $object */
 		$showimage = $object->is_photo_available($conf->ticket->multidir_output[$entity].'/'.$object->ref);
 		$maxvisiblephotos = getDolGlobalInt('TICKET_MAX_VISIBLE_PHOTO', 2);
 		if ($conf->browser->layout == 'phone') {
