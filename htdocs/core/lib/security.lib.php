@@ -465,7 +465,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		}
 	}
 
-	// Features/modules to check
+	// Features/modules to check (to support the & and | operator)
 	$featuresarray = array($features);
 	if (preg_match('/&/', $features)) {
 		$featuresarray = explode("&", $features);

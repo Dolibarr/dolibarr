@@ -49,8 +49,13 @@ class MyObject extends CommonObject
 	public $table_element = 'mymodule_myobject';
 
 	/**
+	 * @var string 	If permission must be checkec with hasRight('mymodule', 'read') and not hasright('mymodyle', 'myobject', 'read'), you can uncomment this line
+	 */
+	//public $element_for_permission = 'mymodule';
+
+	/**
 	 * @var int  	Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 * 				0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 0;
 

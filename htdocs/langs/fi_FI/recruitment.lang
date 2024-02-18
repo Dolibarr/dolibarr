@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Hallinnoi ja ja seuraa uusien työpaikkojen rekrytointik
 # Admin page
 #
 RecruitmentSetup = Rekrytointiasetukset
-Settings = Asetukset
 RecruitmentSetupPage = Kirjoita tähän rekrytointimoduulin päävaihtoehtojen asetukset
 RecruitmentArea=Rekrytointialue
 PublicInterfaceRecruitmentDesc=Työpaikkojen julkiset sivut ovat julkisia URL-osoitteita, joissa näkyy ja vastaus avoimiin työpaikkoihin. Jokaiselle avoimelle työlle on yksi erilainen linkki, joka löytyy jokaisesta työtietueesta.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Ota käyttöön avoimien töiden julkiset sivut
 #
 # About page
 #
-About = Yleisesti
 RecruitmentAbout = Tietoja rekrytoinnista
 RecruitmentAboutPage = Rekrytointi sivusta
 NbOfEmployeesExpected=Odotettu työntekijöiden määrä

@@ -67,7 +67,6 @@ AccountsArea=Tilialue
 AccountCard=Tii-kortti
 DeleteAccount=Poista tili
 ConfirmDeleteAccount=Haluatko varmasti poistaa tämän tilin?
-Account=Tili
 BankTransactionByCategories=Pankkitapahtumat luokittain
 BankTransactionForCategory=Pankkitapahtumat luokassa <b>%s</b>
 RemoveFromRubrique=Poista linkki kategoriaan

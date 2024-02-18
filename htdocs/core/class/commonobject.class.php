@@ -320,7 +320,10 @@ abstract class CommonObject
 	public $statut;
 
 	/**
-	 * @var int 		The object's status
+	 * @var int|array<int, string>      The object's status (an int).
+	 *                                  Or an array listing all the potential status of the object:
+	 *                                    array: int of the status => translated label of the status
+	 *                                    See for example the Account class.
 	 * @see setStatut()
 	 */
 	public $status;
@@ -761,7 +764,7 @@ abstract class CommonObject
 	public $cond_reglement_supplier_id;
 
 	/**
-	 * @var string      Deposit percent for payment terms.
+	 * @var float       Deposit percent for payment terms.
 	 *                  Populated by setPaymentTerms().
 	 * @see setPaymentTerms()
 	 */
@@ -2784,7 +2787,7 @@ abstract class CommonObject
 	 *  Change the payments terms
 	 *
 	 *  @param		int		$id					Id of new payment terms
-	 *  @param		string	$deposit_percent	% of deposit if needed by payment terms
+	 *  @param		float	$deposit_percent	% of deposit if needed by payment terms
 	 *  @return		int							>0 if OK, <0 if KO
 	 */
 	public function setPaymentTerms($id, $deposit_percent = null)
@@ -2801,7 +2804,7 @@ abstract class CommonObject
 			}
 
 			if (empty($deposit_percent) || $deposit_percent < 0) {
-				$deposit_percent = getDictionaryValue('c_payment_term', 'deposit_percent', $id);
+				$deposit_percent = (float) getDictionaryValue('c_payment_term', 'deposit_percent', $id);
 			}
 
 			if ($deposit_percent > 100) {
@@ -9048,15 +9051,15 @@ abstract class CommonObject
 	{
 		global $conf;
 
-		$file = ''; $originalfile = '';
+		$file = '';
+		$originalfile = '';
 		$newmodulepart = $modulepart;
 		if ($modulepart == 'unknown' && !empty($this->module)) {
 			$newmodulepart = $this->module;
 		}
 
 		$id = $this->id;
-
-		$dir = $conf->$newmodulepart->dir_output;
+		$dir = $conf->$newmodulepart->dir_output ?? '';
 		if (!empty($this->photo)) {
 			if (dolIsAllowedForPreview($this->photo)) {
 				if ((string) $imagesize == 'mini') {
@@ -9120,6 +9123,10 @@ abstract class CommonObject
 				$dir = $sdir.'/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
 				$pdir = '/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
 			}
+		}
+		if ($modulepart == 'category') {
+			$dir = $sdir.'/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
+			$pdir = '/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
 		}
 
 		// Defined relative dir to DOL_DATA_ROOT

@@ -491,7 +491,7 @@ class StockTransfer extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		$this->tms = ''; // Will be done automatically because tms field is on update cascade
+		$this->tms = 0; // Will be done automatically because tms field is on update cascade
 		$res = $this->updateCommon($user, $notrigger);
 		if (($this->socid > 0 || $this->fk_soc > 0) && empty($this->thirdparty)) {
 			$this->fetch_thirdparty();

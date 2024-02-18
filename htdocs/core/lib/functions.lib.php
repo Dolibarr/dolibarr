@@ -1669,7 +1669,7 @@ function dol_escape_php($stringtoescape, $stringforquotes = 2)
 
 /**
  * Return a string label ready to be output on HTML content
- * To use text inside an attribute, use can simply only dol_escape_htmltag()
+ * To use the text inside a HTML tag attribute, use can use only dol_escape_htmltag()
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
@@ -1738,7 +1738,7 @@ function dolPrintPassword($s)
  *        - dolPrintPassword that is abelhtmlspecialchars( , ENT_COMPAT, 'UTF-8') for passwords.
  *
  *  @param      string		$stringtoescape			String to escape
- *  @param		int			$keepb					1=Keep b tags, 0=remove them completely
+ *  @param		int			$keepb					1=Replace b tags with escaped value (except if in $noescapetags), 0=Remove them completely
  *  @param      int         $keepn              	1=Preserve \r\n strings, 0=Replace them with escaped value, -1=Remove them. Set to 1 when escaping for a <textarea>.
  *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape. TODO Does not works yet when there is attributes into tag.
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
@@ -2414,6 +2414,26 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" title="'.dol_escape_htmltag($langs->trans("UploadAnImageToSeeAPhotoHere", $langs->transnoentitiesnoconv("Documents"))).'" alt="No photo"'.($width ? ' style="width: '.$width.'px"' : '').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
 			}
 		}
+	} elseif ($object->element == 'category') {
+		/** @var Categorie $object */
+		$width = 80;
+		$cssclass = 'photowithmargin photoref';
+		$showimage = $object->isAnyPhotoAvailable($conf->categorie->multidir_output[$entity]);
+		$maxvisiblephotos = getDolGlobalInt('CATEGORY_MAX_VISIBLE_PHOTO', 5);
+		if ($conf->browser->layout == 'phone') {
+			$maxvisiblephotos = 1;
+		}
+		if ($showimage) {
+			$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('category', $conf->categorie->multidir_output[$entity], 'small', $maxvisiblephotos, 0, 0, 0, 0, $width, 0, '').'</div>';
+		} else {
+			if (getDolGlobalString('CATEGORY_NODISPLAYIFNOPHOTO')) {
+				$nophoto = '';
+				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"></div>';
+			} else {    // Show no photo link
+				$nophoto = '/public/theme/common/nophoto.png';
+				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" title="'.dol_escape_htmltag($langs->trans("UploadAnImageToSeeAPhotoHere", $langs->transnoentitiesnoconv("Documents"))).'" alt="No photo"'.($width ? ' style="width: '.$width.'px"' : '').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+			}
+		}
 	} elseif ($object->element == 'bom') {
 		/** @var Bom $object */
 		$width = 80;
@@ -2437,6 +2457,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	} elseif ($object->element == 'ticket') {
 		$width = 80;
 		$cssclass = 'photoref';
+		/** @var Ticket $object */
 		$showimage = $object->is_photo_available($conf->ticket->multidir_output[$entity].'/'.$object->ref);
 		$maxvisiblephotos = getDolGlobalInt('TICKET_MAX_VISIBLE_PHOTO', 2);
 		if ($conf->browser->layout == 'phone') {
@@ -4298,7 +4319,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 		$stringencoding = 'UTF-8';
 	}
 	// reduce for small screen
-	if ($conf->dol_optimize_smallscreen == 1 && $display == 1) {
+	if (!empty($conf->dol_optimize_smallscreen) && $conf->dol_optimize_smallscreen == 1 && $display == 1) {
 		$size = round($size / 3);
 	}
 
@@ -5340,7 +5361,7 @@ function img_searchclear($titlealt = 'default', $other = '')
 }
 
 /**
- *	Show information for admin users or standard users
+ *	Show information in HTML for admin users or standard users
  *
  *	@param	string	$text				Text info
  *	@param  integer	$infoonimgalt		Info is shown only on alt of star picto, otherwise it is show on output after the star picto
@@ -5362,7 +5383,9 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
 		}
 
 		$class = (empty($admin) ? 'undefined' : ($admin == '1' ? 'info' : $admin));
-		$result = ($nodiv ? '' : '<div class="'.$class.($morecss ? ' '.$morecss : '').($textfordropdown ? ' hidden' : '').'">').'<span class="fa fa-info-circle" title="'.dol_escape_htmltag($admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).'"></span> '.$text.($nodiv ? '' : '</div>');
+		$result = ($nodiv ? '' : '<div class="'.$class.($morecss ? ' '.$morecss : '').($textfordropdown ? ' hidden' : '').'">').'<span class="fa fa-info-circle" title="'.dol_escape_htmltag($admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).'"></span> ';
+		$result .= dol_escape_htmltag($text, 1, 0, 'div,span,b');
+		$result .= ($nodiv ? '' : '</div>');
 
 		if ($textfordropdown) {
 			$tmpresult = '<span class="'.$class.'text opacitymedium cursorpointer">'.$langs->trans($textfordropdown).' '.img_picto($langs->trans($textfordropdown), '1downarrow').'</span>';
@@ -7356,6 +7379,7 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 	$temp = dol_html_entity_decode($temp, ENT_COMPAT | ENT_HTML5, $pagecodeto);
 
 	$temp = str_replace('< ', '__ltspace__', $temp);
+	$temp = str_replace('<:', '__lttwopoints__', $temp);
 
 	if ($strip_tags) {
 		$temp = strip_tags($temp);
@@ -7394,6 +7418,7 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 	}
 
 	$temp = str_replace('__ltspace__', '< ', $temp);
+	$temp = str_replace('__lttwopoints__', '<:', $temp);
 
 	return trim($temp);
 }
@@ -7709,7 +7734,11 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up, without the trick, with '<h1>Foo<p>bar</p></h1>'
 					// like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
 
-					$out = '<?xml encoding="UTF-8"><div class="tricktoremove">'.$out.'</div>';
+					if (dol_textishtml($out)) {
+						$out = '<?xml encoding="UTF-8"><div class="tricktoremove">'.$out.'</div>';
+					} else {
+						$out = '<?xml encoding="UTF-8"><div class="tricktoremove">'.dol_nl2br($out).'</div>';
+					}
 					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD | LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOXMLDECL);
 					$out = trim($dom->saveHTML());
 
@@ -10605,11 +10634,15 @@ function dol_getmypid()
  *                             			If param $mode is 1, can contains an operator <, > or = like "<10" or ">=100.5 < -1000"
  *                             			If param $mode is 2 or -2, can contains a list of int id separated by comma like "1,3,4"
  *                             			If param $mode is 3 or -3, can contains a list of string separated by comma like "a,b,c".
- * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of ID separated with comma (Example '1,3,4'), -2 is for exclude list,
- * 										3=value is list of string separated with comma (Example 'text 1,text 2'), -3 if for exclude list, 4=value is a list of ID separated with comma (Example '2,7') to be used to search into a multiselect string '1,2,3,4'
+ * @param	integer			$mode		0=value is list of keyword strings,
+ * 										1=value is a numeric test (Example ">5.5 <10"),
+ * 										2=value is a list of ID separated with comma (Example '1,3,4'), -2 is for exclude list,
+ * 										3=value is list of string separated with comma (Example 'text 1,text 2'), -3 if for exclude list,
+ * 										4=value is a list of ID separated with comma (Example '2,7') to be used to search into a multiselect string '1,2,3,4'
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  * @see dolSqlDateFilter()
+ * @see forgeSQLFromUniversalSearchCriteria()
  */
 function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 {
@@ -12529,6 +12562,7 @@ function jsonOrUnserialize($stringtodecode)
  * @param	int			$noerror	1=If search criteria is not valid, does not return an error string but invalidate the SQL
  * @return	string					Return forged SQL string
  * @see dolSqlDateFilter()
+ * @see natural_search()
  */
 function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 0, $nopar = 0, $noerror = 0)
 {
@@ -12552,11 +12586,12 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 
 	$t = str_replace(array('and','or','AND','OR',' '), '', $t);		// Remove the only strings allowed between each () criteria
 	// If the string result contains something else than '()', the syntax was wrong
 	if (preg_match('/[^\(\)]/', $t)) {
-		$errorstr = 'Bad syntax of the search string';
+		$tmperrorstr = 'Bad syntax of the search string';
+		$errorstr = 'Bad syntax of the search string: '.$filter;
 		if ($noerror) {
 			return '1 = 2';
 		} else {
-			return 'Filter syntax error - '.$errorstr;		// Bad syntax of the search string, we return an error message or force a SQL not found
+			return 'Filter error - '.$tmperrorstr;		// Bad syntax of the search string, we return an error message or force a SQL not found
 		}
 	}
 
@@ -12564,7 +12599,8 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 
 }
 
 /**
- * Explode an universal search string with AND parts
+ * Explode an universal search string with AND parts.
+ * This is used to output the search criteria in an UFS (Universal Filter Syntax) input component.
  *
  * @param 	string			$sqlfilters			Universal SQL filter string. Must have been trimmed before.
  * @return 	array								Array of AND
@@ -12634,6 +12670,7 @@ function dolForgeExplodeAnd($sqlfilters)
  * @param	string			$error				Returned error message
  * @param	int				$parenthesislevel	Returned level of global parenthesis that we can remove/simplify, 0 if error or we can't simplify.
  * @return 	boolean			   					True if valid, False if not valid ($error returned parameter is filled with the reason in such a case)
+ * @see forgeSQLFromUniversalSearchCriteria()
  */
 function dolCheckFilters($sqlfilters, &$error = '', &$parenthesislevel = 0)
 {

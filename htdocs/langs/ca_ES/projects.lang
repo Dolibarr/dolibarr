@@ -249,7 +249,7 @@ LatestProjects=Últims %s projectes
 LatestModifiedProjects=Últims %s projectes modificats
 OtherFilteredTasks=Altres tasques filtrades
 NoAssignedTasks=No s'ha trobat cap tasca assignada (assigneu el projecte/tasques a l'usuari actual des del quadre de selecció superior per a introduir-hi l'hora)
-ThirdPartyRequiredToGenerateInvoice=Cal definir un tercer en el projecte per a poder facturar-lo.
+ThirdPartyRequiredToGenerateIntervention=S'ha de definir un tercer al projecte per poder crear intervenció.
 ThirdPartyRequiredToGenerateInvoice=Cal definir un tercer en el projecte per a poder facturar-lo.
 ChooseANotYetAssignedTask=Trieu una tasca que encara no us ha estat assignada
 # Comments trans

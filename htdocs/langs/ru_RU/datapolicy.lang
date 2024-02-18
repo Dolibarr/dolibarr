@@ -14,79 +14,75 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Module label 'ModuledatapolicyName'
-Module4100Name = Data Privacy Policy
+Module4100Name = Политика конфиденциальности данных
 # Module description 'ModuledatapolicyDesc'
-Module4100Desc = Module to manage Data Privacy (Conformity with the GDPR)
+Module4100Desc = модуль для управления конфиденциальностью данных (соответствие GDPR)
 
 #
 # Administration page
 #
-datapolicySetup = Module Data Privacy Policy Setup
-Deletion = Deletion of data
-datapolicySetupPage = Depending of laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding that necessary for the purposes for which they were collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without event (the duration which you will have indicated below).
-NB_MONTHS = %s months
-ONE_YEAR = 1 year
-NB_YEARS = %s years
+datapolicySetup = модуль Политика конфиденциальности данных настройка
+Deletion = Удаление данных
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+NB_MONTHS = %s месяцев
+ONE_YEAR = 1 год
+NB_YEARS = %s лет
 DATAPOLICY_TIERS_CLIENT = Клиент
 DATAPOLICY_TIERS_PROSPECT = Лид
-DATAPOLICY_TIERS_PROSPECT_CLIENT = Prospect/Customer
-DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Nor prospect/Nor customer
+DATAPOLICY_TIERS_PROSPECT_CLIENT = перспектива/клиент
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Ни перспектива/Нор клиент
 DATAPOLICY_TIERS_FOURNISSEUR = Поставщик
 DATAPOLICY_CONTACT_CLIENT = Клиент
 DATAPOLICY_CONTACT_PROSPECT = Лид
-DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospect/Customer
-DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Nor prospect/Nor customer
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = перспектива/клиент
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ни перспектива/Нор клиент
 DATAPOLICY_CONTACT_FOURNISSEUR = Поставщик
 DATAPOLICY_ADHERENT = Участник
-DATAPOLICY_Tooltip_SETUP = Type of contact - Indicate your choices for each type.
-DATAPOLICYMail = Emails Setup
-DATAPOLICYSUBJECTMAIL = Subject of email
-DATAPOLICYCONTENTMAIL = Content of the email
-DATAPOLICYSUBSITUTION = You can use the following variables in your email (LINKACCEPT allows to create a link recording the agreement of the person, LINKREFUSED makes it possible to record the refusal of the person):
-DATAPOLICYACCEPT = Message after agreement
-DATAPOLICYREFUSE = Message after desagreement
-SendAgreementText = You can send a GDPR email to all your relevant contacts (who have not yet received an email and for which you have not registered anything about their GDPR agreement). To do this, use the following button.
-SendAgreement = Send emails
-AllAgreementSend = All emails have been sent
-TXTLINKDATAPOLICYACCEPT = Text for the link "agreement"
-TXTLINKDATAPOLICYREFUSE = Text for the link "desagreement"
+DATAPOLICY_Tooltip_SETUP = Тип контакта. Укажите варианты для каждого типа.
+DATAPOLICYMail = Электронная почта настройка
+DATAPOLICYSUBJECTMAIL = Subject of the email
+DATAPOLICYCONTENTMAIL = Содержание электронного письма
+DATAPOLICYSUBSITUTION = Вы можете использовать переменные следующий в своей электронной почте (LINKACCEPT позволяет создать a ссылкафиксируя согласие человека, LINKREFUSED дает возможность зафиксировать отказ человека):
+DATAPOLICYACCEPT = Сообщение после соглашения
+DATAPOLICYREFUSE = Message after disagreement
+SendAgreementText = Вы можете отправить электронное письмо о GDPR всем своим контактам (которые еще не получили электронное письмо и, для которого вы не зарегистрировали ничего об их соглашении GDPR). Для этого используйте кнопку следующий.
+SendAgreement = Отправить письма
+AllAgreementSend = Все письма отправлены
+TXTLINKDATAPOLICYACCEPT = Текст ссылка «соглашения»
+TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
 
 
 #
 # Extrafields
 #
-DATAPOLICY_BLOCKCHECKBOX = GDPR : Processing of personal data
-DATAPOLICY_consentement = Consent obtained for the processing of personal data
-DATAPOLICY_opposition_traitement = Opposes the processing of his personal data
-DATAPOLICY_opposition_prospection = Opposes the processing of his personal data for the purposes of prospecting
+DATAPOLICY_BLOCKCHECKBOX = GDPR: обработка Личныйданных
+DATAPOLICY_consentement = Получено согласие на обработку Личныйданных.
+DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
+DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
 
 #
 # Popup
 #
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonymize a thirdparty
-DATAPOLICY_POPUP_ANONYME_TEXTE = You can not delete this contact from Dolibarr because there are related items. In accordance with the GDPR, you will make all this data anonymous to respect your obligations. Would you like to continue ?
+DATAPOLICY_POPUP_ANONYME_TITLE = Анонимизировать третье лицо
+DATAPOLICY_POPUP_ANONYME_TEXTE = Вы не можете удалить этот контакт из Dolibarr, поскольку там есть элементы Связанный. В соответствии с GDPR вы сделаете все эти данные анонимными для соблюдения своих обязательств. Желаете ли вы продолжить ?
 
 #
 # Button for portability
 #
-DATAPOLICY_PORTABILITE = Portability GDPR
-DATAPOLICY_PORTABILITE_TITLE = Export of personal data
-DATAPOLICY_PORTABILITE_CONFIRMATION = You want to export the personal data of this contact. Are you sure ?
+DATAPOLICY_PORTABILITE = Портативность GDPR
+DATAPOLICY_PORTABILITE_TITLE = Экспорт данных Личный
+DATAPOLICY_PORTABILITE_CONFIRMATION = Вы хотите экспортировать Личныйданные этого контакта. Вы уверены ?
 
 #
 # Notes added during an anonymization
 #
-ANONYMISER_AT = Anonymised the %s
+ANONYMISER_AT = Анонимизирован %s
 
-# V2
-DATAPOLICYReturn = GDPR Validation
-DATAPOLICY_date = Date of agreement/desagreement GDPR
-DATAPOLICY_send = Date sending agreement email
-DATAPOLICYReturn = GDPR Validation
-DATAPOLICY_SEND = Send GDPR email
-MailSent = Email has been sent
+DATAPOLICY_date = Date of agreement/disagreement GDPR
+DATAPOLICY_send = Date agreement email sent
+DATAPOLICY_SEND = Отправить письмо по GDPR
+MailSent = Письмо было отправлено
 
 # ERROR
-ErrorSubjectIsRequired = Error : The subject of email is required. Indicate it in the module setup
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to send us your choice.
-NUMBER_MONTH_BEFORE_DELETION = Number of month before deletion
+=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
+NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

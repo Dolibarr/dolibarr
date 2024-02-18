@@ -6,6 +6,7 @@ TotalMargin=Жалпы маржа
 MarginOnProducts=Маржа / өнімдер
 MarginOnServices=Маржа / қызметтер
 MarginRate=Маржа мөлшерлемесі
+ModifyMarginRates=Маржа мөлшерлемелерін өзгерту
 MarkRate=Белгілеу жылдамдығы
 DisplayMarginRates=Маржа мөлшерлемелерін көрсету
 DisplayMarkRates=Белгілеу жылдамдығын көрсету
@@ -22,7 +23,7 @@ ProductService=Өнім немесе қызмет
 AllProducts=Барлық өнімдер мен қызметтер
 ChooseProduct/Service=Өнімді немесе қызметті таңдаңыз
 ForceBuyingPriceIfNull=Анықталмаған жағдайда сатып алу/өзіндік құн сату бағасына мәжбүрлейді
-ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
+ForceBuyingPriceIfNullDetails=Жаңа жолды қосқанда сатып алу/құн бағасы көрсетілмесе және бұл опция "ҚОСУЛЫ" болса, маржа жаңа жолда 0%% болады (сатып алу/құны бағасы = сату бағасы). Бұл опция «ӨШІРУЛІ» болса (ұсынылады), маржа әдепкі бойынша ұсынылған мәнге тең болады (және әдепкі мән табылмаса, 100%% болуы мүмкін).
 MARGIN_METHODE_FOR_DISCOUNT=Жаһандық жеңілдіктер үшін маржа әдісі
 UseDiscountAsProduct=Өнім ретінде
 UseDiscountAsService=Қызмет ретінде
@@ -37,7 +38,7 @@ CostPrice=Шығын бағасы
 UnitCharges=Бірлік төлемдері
 Charges=Төлемдер
 AgentContactType=Коммерциялық агентпен байланыс түрі
-AgentContactTypeDetails=Байланыс/мекенжай бойынша маржа есебі үшін қандай байланыс түрі (шот -фактураларда көрсетілген) қолданылатынын анықтаңыз. Контакт бойынша статистиканы оқу сенімді емес екенін ескеріңіз, себебі көп жағдайда байланыс шот -фактураларда анықталмауы мүмкін.
+AgentContactTypeDetails=Әрбір контакт/мекенжай бойынша маржа есебі үшін қандай контакт түрін (шот-фактураларда байланыстырылған) қолданылатынын анықтаңыз. Контакт бойынша статистиканы оқу сенімді емес екенін ескеріңіз, өйткені көп жағдайда контакт шот-фактураларда анық көрсетілмеуі мүмкін.
 rateMustBeNumeric=Бағасы сандық мән болуы керек
 markRateShouldBeLesserThan100=Бағалау коэффициенті 100 -ден төмен болуы керек
 ShowMarginInfos=Маржа ақпаратын көрсету

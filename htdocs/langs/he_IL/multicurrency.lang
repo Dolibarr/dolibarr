@@ -16,7 +16,6 @@ CurrenciesUsed_help_to_add=הוסף את המטבעות והשערים השונ�
 rate=ציון
 MulticurrencyReceived=התקבל, מטבע מקורי
 MulticurrencyRemainderToTake=הסכום הנותר, המטבע המקורי
-MulticurrencyPaymentAmount=סכום תשלום, מטבע מקורי
 AmountToOthercurrency=סכום ל (במטבע של החשבון המקבל)
 CurrencyRateSyncSucceed=סנכרון שער מטבע נעשה בהצלחה
 MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=השתמש במטבע של המסמך לתשלומים מקוונים

@@ -62,7 +62,6 @@ ChooseFileToImport=Tải lên tệp sau đó nhấp vào biểu tượng %s đ�
 SourceFileFormat=Định dạng tệp nguồn
 FieldsInSourceFile=Các trường trong tệp nguồn
 FieldsInTargetDatabase=Các trường mục tiêu trong cơ sở dữ liệu Dolibarr (bold = bắt buộc)
-Field=Trường
 NoFields=Không có trường
 MoveField=Di chuyển số cột trường %s
 ExampleOfImportFile=Example_of_import_file
@@ -145,3 +144,4 @@ SelectImportFieldsSource = Chọn các trường tệp nguồn bạn muốn nh�
 MandatoryTargetFieldsNotMapped=Một số trường mục tiêu bắt buộc không được ánh xạ
 AllTargetMandatoryFieldsAreMapped=Tất cả các trường mục tiêu cần giá trị bắt buộc đều được ánh xạ
 ResultOfSimulationNoError=Kết quả mô phỏng: Không có lỗi
+NumberOfLinesLimited=Số lượng dòng giới hạn

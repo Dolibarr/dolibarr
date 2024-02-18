@@ -457,8 +457,10 @@ function dolWebsiteIncrementCounter($websiteid, $websitepagetype, $websitepageid
 			$sql .= " pageviews_month = pageviews_month + 1,";
 			// if last access was done during previous month, we save pageview_month into pageviews_previous_month
 			$sql .= " pageviews_previous_month = ".$db->ifsql("lastaccess < '".$db->idate(dol_mktime(0, 0, 0, $tmpnow['mon'], 1, $tmpnow['year'], 'gmt', 0), 'gmt')."'", 'pageviews_month', 'pageviews_previous_month').",";
-			$sql .= " lastaccess = '".$db->idate(dol_now('gmt'), 'gmt')."'";
+			$sql .= " lastaccess = '".$db->idate(dol_now('gmt'), 'gmt')."',";
+			$sql .= " lastpageid = ".((int) $websitepageid);
 			$sql .= " WHERE rowid = ".((int) $websiteid);
+
 			$resql = $db->query($sql);
 			if (! $resql) {
 				return -1;
@@ -544,7 +546,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 			unset($tmpwebsitepage);
 		}
 		if ($result > 0) {
-			$currenturi = $_SERVER["REQUEST_URI"];
+			$currenturi = $_SERVER["REQUEST_URI"];	// Example: /public/website/index.php?website=mywebsite.com&pageref=mywebsite-home&nocache=1708177483
 			$regtmp = array();
 			if (preg_match('/&pageref=([^&]+)/', $currenturi, $regtmp)) {
 				if ($regtmp[0] == $containerref) {
@@ -559,13 +561,14 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		}
 	} else { // When page called from virtual host server
 		$newurl = '/'.$containerref.'.php';
+		$newurl = $newurl.(empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]);
 	}
 
 	if ($newurl) {
 		if ($permanent) {
 			header("Status: 301 Moved Permanently", false, 301);
 		}
-		header("Location: ".$newurl.(empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]));
+		header("Location: ".$newurl);
 		exit;
 	} else {
 		print "Error, page contains a redirect to the alias page '".$containerref."' that does not exists in web site (".$website->id." / ".$website->ref.")";

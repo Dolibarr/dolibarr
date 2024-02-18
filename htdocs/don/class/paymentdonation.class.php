@@ -548,7 +548,7 @@ class PaymentDonation extends CommonObject
 
 		$this->fk_donation = 0;
 		$this->datec = '';
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->datep = '';
 		$this->amount = '';
 		$this->fk_typepayment = '';

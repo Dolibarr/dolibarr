@@ -9,7 +9,7 @@ DIRECTION=ltr
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil
+# freeserif is for Tamil or Ethiopian
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -963,6 +963,7 @@ AutomaticallyCalculated=Automatski izračunato
 TitleSetToDraft=Pretvori u skicu
 ConfirmSetToDraft=Jeste li sigurni da želiti pretvoriti u skicu?
 ImportId=Oznaka uvoza
+Event=Događaj
 Events=Događaj
 EMailTemplates=Predlošci e-pošte
 FileNotShared=Datoteka se ne može dijeliti
@@ -1180,7 +1181,6 @@ ConfirmAffectUserQuestion=Jeste li sigurni da želite dodijeliti korisnike %s od
 ConfirmSetSupervisorQuestion=Jeste li sigurni da želite postaviti nadzornika na %s odabrani zapis(e)?
 ConfirmUpdatePriceQuestion=Jeste li sigurni da želite ažurirati cijenu %s odabranih zapisa?
 CategTypeNotFound=Nije pronađena vrsta oznake za vrstu zapisa
-Rate=Stopa
 SupervisorNotFound=Nadzornik nije pronađen
 CopiedToClipboard=Kopirano u međuspremnik
 InformationOnLinkToContract=Ovaj iznos je samo zbroj svih stavki ugovora. Ne uzima se u obzir pojam vremena.
@@ -1213,6 +1213,7 @@ CanceledHidden=Otkazano skriveno
 CanceledShown=Otkazano prikazano
 Terminate=Prekini
 Terminated=Prekinuto
+Position=Pozicija
 AddLineOnPosition=Dodajte redak na poziciju (na kraju ako je prazan)
 ConfirmAllocateCommercial=Dodijelite potvrdu prodajnog predstavnika
 ConfirmAllocateCommercialQuestion=Jeste li sigurni da želite dodijeliti %s odabrane zapise?
@@ -1230,6 +1231,7 @@ ExternalUser=Vanjski korisnik
 NoSpecificContactAddress=Nema konkretnog kontakta ili adrese
 NoSpecificContactAddressBis=Ova je kartica namijenjena forsiranju određenih kontakata ili adresa za trenutni objekt. Koristite ga samo ako želite definirati jedan ili više specifičnih kontakata ili adresa za objekt kada podaci o trećoj strani nisu dovoljni ili nisu točni.
 HideOnVCard=Sakrij %s
+ShowOnVCard=Show %s
 AddToContacts=Dodaj adresu mojim kontaktima
 LastAccess=Zadnji pristup
 UploadAnImageToSeeAPhotoHere=Učitajte sliku s kartice %s da vidite fotografiju ovdje
@@ -1259,4 +1261,7 @@ AmountSalary=Iznos plaće
 InvoiceSubtype=Podvrsta računa
 ConfirmMassReverse=Skupna potvrda storniranja
 ConfirmMassReverseQuestion=Jeste li sigurni da želite za poništavanje %s odabranih zapisa?
-
+ElementType=Element type
+ElementId=Element Id
+Encrypted=Encrypted
+Settings=Postavke

@@ -1861,7 +1861,7 @@ class Adherent extends CommonObject
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 				$amounts = array();
-				$amounts[$invoice->id] = price2num($amount);
+				$amounts[$invoice->id] = (float) price2num($amount);
 
 				$paiement = new Paiement($this->db);
 				$paiement->datepaye = $paymentdate;

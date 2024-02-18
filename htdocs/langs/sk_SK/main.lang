@@ -9,7 +9,7 @@ DIRECTION=ltr
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil
+# freeserif is for Tamil or Ethiopian
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=8
 SeparatorDecimal=,
@@ -963,6 +963,7 @@ AutomaticallyCalculated=Automaticky vypočítané
 TitleSetToDraft=Vráťte sa do konceptu
 ConfirmSetToDraft=Naozaj sa chcete vrátiť do stavu Koncept?
 ImportId=ID importu
+Event=Udalosť
 Events=Udalosti
 EMailTemplates=E-mailové šablóny
 FileNotShared=Súbor nie je zdieľaný s externou verejnosťou
@@ -1180,7 +1181,6 @@ ConfirmAffectUserQuestion=Naozaj chcete používateľov priradiť k %s vybratým
 ConfirmSetSupervisorQuestion=Naozaj chcete nastaviť supervízora na vybraté záznamy %s?
 ConfirmUpdatePriceQuestion=Naozaj chcete aktualizovať cenu vybratých záznamov %s?
 CategTypeNotFound=Pre typ záznamov sa nenašiel žiadny typ značky
-Rate=Sadzba
 SupervisorNotFound=Dozorca sa nenašiel
 CopiedToClipboard=Skopírované do schránky
 InformationOnLinkToContract=Táto suma je len súčtom všetkých riadkov zmluvy. Neberie sa do úvahy pojem času.
@@ -1213,6 +1213,7 @@ CanceledHidden=Zrušené skryté
 CanceledShown=Zrušené zobrazené
 Terminate=Ukončiť
 Terminated=Ukončené
+Position=Pozícia
 AddLineOnPosition=Pridať riadok na pozíciu (na koniec, ak je prázdny)
 ConfirmAllocateCommercial=Priradiť potvrdenie obchodného zástupcu
 ConfirmAllocateCommercialQuestion=Naozaj chcete priradiť %s vybraté záznamy?
@@ -1230,6 +1231,7 @@ ExternalUser=Externý užívateľ
 NoSpecificContactAddress=Žiadny konkrétny kontakt ani adresa
 NoSpecificContactAddressBis=Táto karta je určená na vynútenie konkrétnych kontaktov alebo adries pre aktuálny objekt. Použite ho iba vtedy, ak chcete pre objekt definovať jeden alebo niekoľko konkrétnych kontaktov alebo adries, keď informácie o tretej strane nie sú dostatočné alebo presné.
 HideOnVCard=Skryť %s
+ShowOnVCard=Show %s
 AddToContacts=Pridať adresu do mojich kontaktov
 LastAccess=Posledný prístup
 UploadAnImageToSeeAPhotoHere=Nahrajte obrázok z karty %s, aby ste tu mohli vidieť fotografiu
@@ -1259,4 +1261,7 @@ AmountSalary=Výška platu
 InvoiceSubtype=Podtyp faktúry
 ConfirmMassReverse=Hromadné spätné potvrdenie
 ConfirmMassReverseQuestion=Naozaj chcete zvrátiť vybraté záznamy %s?
-
+ElementType=Element type
+ElementId=Element Id
+Encrypted=Encrypted
+Settings=Settings
