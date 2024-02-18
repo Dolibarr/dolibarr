@@ -1047,7 +1047,7 @@ class FormMail extends Form
 				if ($this->withfckeditor) {
 					$out .= $this->getModelEmailTemplate();
 				}
-				if (isModEnabled('ai')) {
+				if ($this->withaiprompt && isModEnabled('ai')) {
 					$out .= $this->getSectionForAIPrompt();
 				}
 				$out .= '</td>';
@@ -1438,7 +1438,7 @@ class FormMail extends Form
 	 *
 	 * @return 	string      Text for instructions
 	 */
-	public function getSectionforAIPrompt()
+	public function getSectionForAIPrompt()
 	{
 		global $langs;
 
