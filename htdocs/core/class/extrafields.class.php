@@ -1619,8 +1619,8 @@ class ExtraFields
 				$geoy = $geom->y();
 			}
 			$out = $form->selectarray($keyprefix.$key.$keysuffix.'_type', $pointtypes, 'point', 0, 0, '', 0, '100%');
-			$out .= '<input type="number" step="0.0000001" name="'.$keyprefix.$key.$keysuffix.'_x'.'" id="'.$keyprefix.$key.$keysuffix.'_x'.'"  value="'.$geox.'"/>';
-			$out .= '<input type="number" step="0.0000001" name="'.$keyprefix.$key.$keysuffix.'_y'.'" id="'.$keyprefix.$key.$keysuffix.'_y'.'" value="'.$geoy.'"/>';
+			$out .= '<input type="number" step="0.0000001" name="'.$keyprefix.$key.$keysuffix.'_x'.'" id="'.$keyprefix.$key.$keysuffix.'_x"  value="'.$geox.'"/>';
+			$out .= '<input type="number" step="0.0000001" name="'.$keyprefix.$key.$keysuffix.'_y'.'" id="'.$keyprefix.$key.$keysuffix.'_y" value="'.$geoy.'"/>';
 		} elseif ($type == 'password') {
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
 			$out = '<input style="display:none" type="text" name="fakeusernameremembered">'; // Hidden field to reduce impact of evil Google Chrome autopopulate bug.
