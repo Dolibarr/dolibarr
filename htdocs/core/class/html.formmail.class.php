@@ -1510,7 +1510,7 @@ class FormMail extends Form
 	 */
 	public function getModelEmailTemplate()
 	{
-		$out .= '<div id="template-selector" class="template-container hidden">';
+		$out = '<div id="template-selector" class="template-container hidden">';
 		$templates = array(
 			'empty' => 'empty',
 			'basic' => 'basic',
