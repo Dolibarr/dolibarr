@@ -9059,8 +9059,7 @@ abstract class CommonObject
 		}
 
 		$id = $this->id;
-
-		$dir = $conf->$newmodulepart->dir_output;
+		$dir = $conf->$newmodulepart->dir_output ?? '';
 		if (!empty($this->photo)) {
 			if (dolIsAllowedForPreview($this->photo)) {
 				if ((string) $imagesize == 'mini') {
