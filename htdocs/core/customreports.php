@@ -24,7 +24,7 @@
  *		\ingroup    core
  *		\brief      Page to make custom reports. Page can be used alone or as a tab among other tabs of an object
  */
-ffd df f  gd dfgdf
+
 if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	require '../main.inc.php';
 
@@ -40,7 +40,7 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 		$objecttype = 'thirdparty';
 	}
 
-	$search_me   asures = GETPOST('search_measures', 'array');
+	$search_measures = GETPOST('search_measures', 'array');
 	if (empty($search_measures)) {
 		$search_measures = array(0 => 't.count');
 	}

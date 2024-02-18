@@ -5,11 +5,11 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
-      # This hook test the name of the branch and return error if the name is develop or a version
+      # This hook test the name of the branch and return error if the name is 'develop' or an official version 'x.y'
       # so you can't commit if your branch name is not a custom branch name. Using a custom branch name is good
       # practice that make easier to manage PR. You can disable this if you still want to commit on branch with common names.
-      - id: no-commit-to-branch
-        args: [--branch, develop, --pattern, \d+.0]
+      #- id: no-commit-to-branch
+      #  args: [--branch, develop, --pattern, \d+.0]
       # This check format of xml files
       - id: check-xml
         exclude: |
