@@ -372,6 +372,7 @@ function convertDurationtoHour($duration_value, $duration_unit)
  * 												Note: In database, dates are always for the server TZ.
  * @return     string		$sqldate			String with SQL filter
  * @see forgeSQLFromUniversalSearchCriteria()
+ * @see natural_search()
  */
 function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $excludefirstand = 0, $gm = false)
 {

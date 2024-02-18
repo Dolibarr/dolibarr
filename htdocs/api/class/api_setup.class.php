@@ -2149,9 +2149,9 @@ class Setup extends DolibarrApi
 					$i++;
 					$out .= '<tr class="oddeven">';
 					$out .= '<td>'.$i.'</td>'."\n";
-					$out .= '<td>'.$constname.'</td>'."\n";
-					$out .= '<td class="center">'.$constvalue.'</td>'."\n";
-					$out .= '<td class="center">'.$valueforchecksum.'</td>'."\n";
+					$out .= '<td>'.dol_escape_htmltag($constname).'</td>'."\n";
+					$out .= '<td class="center">'.dol_escape_htmltag($constvalue).'</td>'."\n";
+					$out .= '<td class="center">'.dol_escape_htmltag($valueforchecksum).'</td>'."\n";
 					$out .= "</tr>\n";
 				}
 
@@ -2201,7 +2201,7 @@ class Setup extends DolibarrApi
 						$i++;
 						$out .= '<tr class="oddeven">';
 						$out .= '<td>'.$i.'</td>'."\n";
-						$out .= '<td>'.$file['filename'].'</td>'."\n";
+						$out .= '<td>'.dol_escape_htmltag($file['filename']).'</td>'."\n";
 						$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
 						$out .= "</tr>\n";
 					}
@@ -2234,7 +2234,7 @@ class Setup extends DolibarrApi
 						$i++;
 						$out .= '<tr class="oddeven">';
 						$out .= '<td>'.$i.'</td>'."\n";
-						$out .= '<td>'.$file['filename'].'</td>'."\n";
+						$out .= '<td>'.dol_escape_htmltag($file['filename']).'</td>'."\n";
 						$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
 						$out .= '<td class="center">'.$file['md5'].'</td>'."\n";
 						$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
@@ -2280,7 +2280,7 @@ class Setup extends DolibarrApi
 						$i++;
 						$out .= '<tr class="oddeven">';
 						$out .= '<td>'.$i.'</td>'."\n";
-						$out .= '<td>'.$file['filename'].'</td>'."\n";
+						$out .= '<td>'.dol_escape_htmltag($file['filename']).'</td>'."\n";
 						$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
 						$out .= '<td class="center">'.$file['md5'].'</td>'."\n";
 						$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);

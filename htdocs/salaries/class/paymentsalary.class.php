@@ -66,11 +66,6 @@ class PaymentSalary extends CommonObject
 	public $datec = '';
 
 	/**
-	 * @var int				Timestamp
-	 */
-	public $tms = '';
-
-	/**
 	 * @var int|string		Date of payment
 	 * @deprecated
 	 * @see $datep

@@ -104,12 +104,12 @@ class Opensurveysondage extends CommonObject
 	 */
 	public $fields=array(
 		'id_sondage' => array('type'=>'varchar(16)', 'label'=>'Idsondage', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>-1,),
-		'commentaires' => array('type'=>'mediumtext', 'label'=>'Commentaires', 'enabled'=>'1', 'position'=>15, 'notnull'=>0, 'visible'=>-1,),
+		'commentaires' => array('type'=>'mediumtext', 'label'=>'Comments', 'enabled'=>'1', 'position'=>15, 'notnull'=>0, 'visible'=>-1,),
 		'mail_admin' => array('type'=>'varchar(128)', 'label'=>'Mailadmin', 'enabled'=>'1', 'position'=>20, 'notnull'=>0, 'visible'=>-1,),
 		'nom_admin' => array('type'=>'varchar(64)', 'label'=>'Nomadmin', 'enabled'=>'1', 'position'=>25, 'notnull'=>0, 'visible'=>-1,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>-2, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150',),
-		'title' => array('type'=>'mediumtext', 'label'=>'Titre', 'enabled'=>'1', 'position'=>35, 'notnull'=>1, 'visible'=>-1,),
-		'date_fin' => array('type'=>'datetime', 'label'=>'Datefin', 'enabled'=>'1', 'position'=>40, 'notnull'=>1, 'visible'=>-1,),
+		'titre' => array('type'=>'mediumtext', 'label'=>'Title', 'enabled'=>'1', 'position'=>35, 'notnull'=>1, 'visible'=>-1,),
+		'date_fin' => array('type'=>'datetime', 'label'=>'DateEnd', 'enabled'=>'1', 'position'=>40, 'notnull'=>1, 'visible'=>-1,),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>500, 'notnull'=>0, 'visible'=>-1,),
 		'format' => array('type'=>'varchar(2)', 'label'=>'Format', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>-1,),
 		'mailsonde' => array('type'=>'integer', 'label'=>'Mailsonde', 'enabled'=>'1', 'position'=>55, 'notnull'=>1, 'visible'=>-1,),
@@ -138,7 +138,6 @@ class Opensurveysondage extends CommonObject
 	public $status;
 	public $format;
 	public $mailsonde;
-	public $tms;
 	public $entity;
 	/**
 	 * @var int		Allow comments on this poll

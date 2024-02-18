@@ -149,7 +149,6 @@ MaxNbOfLinesForBoxes=الحد الأعلى لعدد أسطر البريمجات
 AllWidgetsWereEnabled=جميع البريمجات المتاحة ممكنة
 WidgetAvailable=القطعة المتاحة
 PositionByDefault=الطلبية الإفتراضية
-Position=الوضع
 MenusDesc=يقوم مديرو القائمة بتعيين محتوى شريطي القائمة (الأفقي والعمودي).
 MenusEditorDesc=The menu editor allows you to define custom menu entries. Use it carefully to avoid instability and permanently unreachable menu entries.<br>Some modules add menu entries (in menu <b>All</b> mostly). If you remove some of these entries by mistake, you can restore them disabling and reenabling the module.
 MenuForUsers=قائمة للمستخدمين
@@ -220,7 +219,6 @@ ModulesMarketPlaces=ابحث عن تطبيقات / وحدات خارجية
 ModulesDevelopYourModule=تطوير التطبيق / الوحدات الخاصة بك
 ModulesDevelopDesc=يمكنك أيضًا تطوير الوحدة النمطية الخاصة بك أو العثور على شريك لتطوير وحدة من أجلك.
 DOLISTOREdescriptionLong=بدلاً من التبديل إلى موقع ويب <a href="https://www.dolistore.com"> www.dolistore.com </a> للعثور على وحدة خارجية ، يمكنك استخدام هذه الأداة المضمنة التي ستقوم بإجراء البحث في السوق الخارجية نيابةً عنك (قد يكون بطيئًا ، وتحتاج إلى الوصول إلى الإنترنت) ...
-NewModule=وحدة جديدة
 FreeModule=حر
 CompatibleUpTo=متوافق مع الإصدار %s
 NotCompatible=لا تبدو هذه الوحدة متوافقة مع Dolibarr %s (Min %s - Max %s).
@@ -304,7 +302,7 @@ MAIN_DISABLE_ALL_MAILS=تعطيل جميع عمليات إرسال البريد 
 MAIN_MAIL_FORCE_SENDTO=إرسال جميع رسائل البريد الإلكترونية الى (بدلا عن المستلم الحقيقي لاغراض التطوير والتجربة)
 MAIN_MAIL_ENABLED_USER_DEST_SELECT=اقتراح عناوين بريد الموظفين الإلكتروني (إذا كان موجودا) في حقل المستلمين عند ارنشاء رسالة بريد جديدة
 MAIN_MAIL_NO_WITH_TO_SELECTED=لا تحدد مستلمًا افتراضيًا حتى لو كان هناك خيار واحد فقط ممكن
-MAIN_MAIL_SENDMODE=طريقة إرسال البريد الإلكتروني
+MAIN_MAIL_SENDMODE=Sending method
 MAIN_MAIL_SMTPS_ID=معرف SMTP (إذا كان خادم الإرسال يتطلب مصادقة)
 MAIN_MAIL_SMTPS_PW=كلمة مرور SMTP (إذا كان خادم الإرسال يتطلب مصادقة)
 MAIN_MAIL_EMAIL_TLS=استخدم تشفير TLS (SSL)
@@ -435,6 +433,7 @@ MassConvert=إطلاق التحويل بالجملة
 PriceFormatInCurrentLanguage=تنسيق السعر في اللغة الحالية
 String=سلسلة
 String1Line=سلسلة (سطر واحد)
+Text=النص
 TextLong=نص طويل
 TextLongNLines=نص طويل (سطور)
 HtmlText=نص Html
@@ -685,7 +684,7 @@ Module5000Desc=يسمح لك لإدارة الشركات المتعددة
 Module6000Name=سير العمل بين الوحدات
 Module6000Desc=إدارة سير العمل بين الوحدات النمطية المختلفة (الإنشاء التلقائي للكائن و / أو تغيير الحالة تلقائيًا)
 Module10000Name=مواقع الويب
-Module10000Desc=أنشئ مواقع ويب (عامة) باستخدام محرر WYSIWYG. هذا هو مدير موقع أو CMS موجه للمطورين (من الأفضل معرفة لغة HTML و CSS). ما عليك سوى إعداد خادم الويب (Apache ، Nginx ، ...) للإشارة إلى دليل Dolibarr المخصص لجعله متصلًا بالإنترنت باستخدام اسم المجال الخاص بك.
+Module10000Desc=CMS to create websites with a WYSIWYG editor. This is a webmaster or developer oriented Content Management System (it is better to know HTML and CSS language). Just setup your web server (Apache, Nginx, ...) to point to the dedicated Dolibarr directory to have it online on the internet with your own domain name.
 Module20000Name=إدارة طلب الإجازة
 Module20000Desc=تحديد وتتبع طلبات إجازة الموظفين
 Module39000Name=الكثير من المنتجات
@@ -1131,14 +1130,10 @@ LocalTax1IsNotUsed=لا تستخدم الضريبة الثانية
 LocalTax1IsUsedDesc=استخدم نوعًا ثانيًا من الضرائب (بخلاف النوع الأول)
 LocalTax1IsNotUsedDesc=لا تستخدم نوعًا آخر من الضرائب (بخلاف الضريبة الأولى)
 LocalTax1Management=النوع الثاني من الضرائب
-LocalTax1IsUsedExample=
-LocalTax1IsNotUsedExample=
 LocalTax2IsNotUsed=لا تستخدم الضرائب الثالثة
 LocalTax2IsUsedDesc=استخدم نوعًا ثالثًا من الضرائب (بخلاف النوع الأول)
 LocalTax2IsNotUsedDesc=لا تستخدم نوعًا آخر من الضرائب (بخلاف الضريبة الأولى)
 LocalTax2Management=النوع الثالث من الضريبة
-LocalTax2IsUsedExample=
-LocalTax2IsNotUsedExample=
 LocalTax1ManagementES=إدارة الطاقة المتجددة
 LocalTax1IsUsedDescES=معدل RE افتراضيًا عند إنشاء التوقعات والفواتير والأوامر وما إلى ذلك ، يتبع القاعدة القياسية النشطة: <br> إذا لم يكن المشتري خاضعًا لـ RE ، RE افتراضيًا = 0. نهاية الحكم. <br> إذا تعرض المشتري لـ RE ، فإن RE بشكل افتراضي. نهاية الحكم. <br>
 LocalTax1IsNotUsedDescES=افتراضيا الطاقة المتجددة المقترحة هي 0. نهاية الحكم.
@@ -1213,7 +1208,6 @@ EnableMultilangInterface=قم بتمكين دعم متعدد اللغات للع
 EnableShowLogo=إظهار شعار الشركة في القائمة
 CompanyInfo=الشركة | المؤسسة
 CompanyIds=هويات الشركة / المنظمة
-CompanyName=اسم
 CompanyAddress=عنوان
 CompanyZip=الرمز البريدي
 CompanyTown=مدينة
@@ -1752,8 +1746,6 @@ BarcodeDescQRCODE=الباركود من نوع رمز الاستجابة الس�
 GenbarcodeLocation=شريط أدوات سطر الأوامر رمز جيل (التي يستخدمها محرك داخلي لبعض أنواع الرمز الشريطي). يجب أن تكون متوافقة مع "genbarcode". <br> على سبيل المثال: / البيرة / المحلية / بن / genbarcode
 BarcodeInternalEngine=Internal engine
 BarCodeNumberManager=مدير لصناعة السيارات تحديد أرقام الباركود
-##### Prelevements #####
-WithdrawalsSetup=إعداد مدفوعات الخصم المباشر للوحدة
 ##### ExternalRSS #####
 ExternalRSSSetup=RSS الواردات الخارجية الإعداد <textarea></textarea>
 NewRSS=الجديد تغذية RSS
@@ -2320,8 +2312,6 @@ IfYouUseASecondTaxYouMustSetYouUseTheMainTax=إذا كنت تريد استخدا
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=إذا كنت تريد استخدام ضريبة ثالثة ، فيجب عليك أيضًا تمكين ضريبة المبيعات الأولى
 LanguageAndPresentation=اللغة والعرض
 SkinAndColors=الجلد والألوان
-IfYouUseASecondTaxYouMustSetYouUseTheMainTax=إذا كنت تريد استخدام ضريبة ثانية ، فيجب عليك أيضًا تمكين ضريبة المبيعات الأولى
-IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=إذا كنت تريد استخدام ضريبة ثالثة ، فيجب عليك أيضًا تمكين ضريبة المبيعات الأولى
 PDF_USE_1A=قم بإنشاء ملف PDF بتنسيق PDF / A-1b
 MissingTranslationForConfKey = ترجمة مفقودة لـ %s
 NativeModules=الوحدات الأصلية
@@ -2339,7 +2329,6 @@ ExportUseLowMemoryModeHelp=استخدم وضع الذاكرة المنخفضة �
 ModuleWebhookName = الويب هوك
 ModuleWebhookDesc = واجهة لالتقاط مشغلات dolibarr و لإرسال بيانات الحدث إلى عنوان URL
 WebhookSetup = إعداد Webhook
-Settings = الإعدادات
 WebhookSetupPage = صفحة إعداد Webhook
 ShowQuickAddLink=أظهر زرًا لإضافة عنصر بسرعة في القائمة العلوية اليمنى
 ShowSearchAreaInTopMenu=إظهار البحث منطقة في القائمة العلوية
@@ -2371,7 +2360,6 @@ DoesNotWorkWithAllThemes=لن تعمل مع جميع المواضيع
 NoName=بدون اسم
 ShowAdvancedOptions= عرض الخيارات المتقدمة
 HideAdvancedoptions= إخفاء الخيارات المتقدمة
-CIDLookupURL=يقدم نموذج عنوان URL يمكن استخدامه بواسطة أداة خارجية للحصول على اسم جهة خارجية أو جهة اتصال من رقم هاتفها. عنوان URL المراد استخدامه هو:
 OauthNotAvailableForAllAndHadToBeCreatedBefore=مصادقة OAUTH2 غير متاحة لجميع المضيفين ، ويجب أن يكون قد تم إنشاء رمز مميز بالأذونات الصحيحة في المنبع باستخدام الوحدة النمطية OAUTH
 MAIN_MAIL_SMTPS_OAUTH_SERVICE=خدمة مصادقة OAUTH2
 DontForgetCreateTokenOauthMod=يجب إنشاء رمز مميز بالأذونات الصحيحة مع وحدة OAUTH النمطية
@@ -2440,3 +2428,8 @@ ParametersForTestEnvironment=معلمات بيئة الاختبار
 TryToKeepOnly=حاول الاحتفاظ بـ %s فقط.
 RecommendedForProduction=الموصى بها للإنتاج
 RecommendedForDebug=موصى به لتصحيح الأخطاء
+UrlPublicInterfaceLabelAdmin=رابط بديل للواجهة العامة
+UrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface with another URL (the virtual host server must act as a proxy on the standard URL)
+ExportUseForce=Use the parameter -f
+ExportUseForceHelp=Force to continue the export even when an error is found (Backup may not be reliable)
+CustomPrompt=Custom prompts

@@ -34,7 +34,6 @@ PaymentEvent=Pagesa e ngjarjes
 NewRegistration=Regjistrimi
 EventOrganizationSetup=Konfigurimi i organizimit të ngjarjeve
 EventOrganization=Organizimi i eventit
-Settings=Cilësimet
 EventOrganizationSetupPage = Faqja e konfigurimit të organizimit të ngjarjeve
 EVENTORGANIZATION_TASK_LABEL = Etiketa e detyrave për t'u krijuar automatikisht kur projekti të vërtetohet
 EVENTORGANIZATION_TASK_LABELTooltip = Kur vërtetoni një ngjarje për të organizuar, disa detyra mund të krijohen automatikisht në projekt<br><br>Për shembull: <br>Dërgo thirrje për konferenca<br>Dërgo thirrje për kabinatb0342fccfda19bzit sugjerime të klasave të konferencave</span ='notranslate'><br>Vërteto aplikacionin për Booths<br>Hap abonimet në ngjarje për të pranishmitb0342fccfda19>b0342fccfda1 i ngjarjes folësve<span class='notranslate'><br>Dërgo një kujtim të ngjarjes te mbajtësit e Booth<br>Dërgo një kujtim të ngjarjes për të pranishmit

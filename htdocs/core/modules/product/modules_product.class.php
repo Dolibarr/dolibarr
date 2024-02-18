@@ -60,22 +60,12 @@ abstract class ModelePDFProduct extends CommonDocGenerator
  */
 abstract class ModeleProductCode extends CommonNumRefGenerator
 {
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto;
 
-	/**
-	 * @var string Editable code
-	 */
-	public $code_modifiable;
-
-	public $code_modifiable_invalide; // Modified code if it is invalid
-
-	/**
-	 * @var int Code facultatif
-	 */
+	// variables inherited from CommonNumRefGenerator class
 	public $code_null;
+	public $code_modifiable;
+	public $code_modifiable_invalide;
+	public $code_auto;
 
 
 	/**

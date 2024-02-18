@@ -331,8 +331,8 @@ class DolibarrApi
 	protected function _checkFilters($sqlfilters, &$error = '')
 	{
 		// phpcs:enable
-
-		return dolCheckFilters($sqlfilters, $error);
+		$firstandlastparenthesis = 0;
+		return dolCheckFilters($sqlfilters, $error, $firstandlastparenthesis);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

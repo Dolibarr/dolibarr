@@ -16,7 +16,6 @@ CurrenciesUsed_help_to_add=আপনার <b>প্রস্তাব</b>, b0ae
 rate=হার
 MulticurrencyReceived=প্রাপ্ত, আসল মুদ্রা
 MulticurrencyRemainderToTake=অবশিষ্ট পরিমাণ, আসল মুদ্রা
-MulticurrencyPaymentAmount=অর্থপ্রদানের পরিমাণ, আসল মুদ্রা
 AmountToOthercurrency=পরিমাণ (প্রাপ্তি অ্যাকাউন্টের মুদ্রায়)
 CurrencyRateSyncSucceed=কারেন্সি রেট সিঙ্ক্রোনাইজেশন সফলভাবে সম্পন্ন হয়েছে
 MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=অনলাইন পেমেন্টের জন্য নথির মুদ্রা ব্যবহার করুন

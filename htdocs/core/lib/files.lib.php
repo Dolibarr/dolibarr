@@ -936,7 +936,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
  * Note:
  *  - This function differs from dol_move_uploaded_file, because it can be called in any context.
  *  - Database indexes for files are updated.
- *  - Test on antivirus is done only if param testvirus is provided and an antivirus was set.
+ *  - Test on virus is done only if param testvirus is provided and an antivirus was set.
  *
  * @param	string  $srcfile            Source file (can't be a directory. use native php @rename() to move a directory)
  * @param   string	$destfile           Destination file (can't be a directory. use native php @rename() to move a directory)
@@ -966,12 +966,20 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 		$newpathofsrcfile = dol_osencode($srcfile);
 		$newpathofdestfile = dol_osencode($destfile);
 
-		// Check virus
+		// Check on virus
 		$testvirusarray = array();
 		if ($testvirus) {
+			// Check using filename + antivirus
 			$testvirusarray = dolCheckVirus($newpathofsrcfile, $newpathofdestfile);
 			if (count($testvirusarray)) {
-				dol_syslog("files.lib.php::dol_move canceled because a virus was found into source file. we ignore the move request.", LOG_WARNING);
+				dol_syslog("files.lib.php::dol_move canceled because a virus was found into source file. We ignore the move request.", LOG_WARNING);
+				return false;
+			}
+		} else {
+			// Check using filename only
+			$testvirusarray = dolCheckOnFileName($newpathofsrcfile, $newpathofdestfile);
+			if (count($testvirusarray)) {
+				dol_syslog("files.lib.php::dol_move canceled because a virus was found into source file. We ignore the move request.", LOG_WARNING);
 				return false;
 			}
 		}
@@ -1231,7 +1239,7 @@ function dolCheckOnFileName($src_file, $dest_file = '')
 
 
 /**
- *	Make control on an uploaded file from an GUI page and move it to final destination.
+ *	Check validity of a file upload from an GUI page, and move it to its final destination.
  * 	If there is errors (virus found, antivir in error, bad filename), file is not moved.
  *  Note:
  *  - This function can be used only into a HTML page context. Use dol_move if you are outside.

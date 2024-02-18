@@ -31,6 +31,7 @@ global $conf,$user,$langs,$db,$mysoc;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
@@ -75,38 +76,8 @@ print "\n";
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class FunctionsLibTest extends PHPUnit\Framework\TestCase
+class FunctionsLibTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-	protected $savmysoc;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 * @return CoreTest
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db,$mysoc;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-		$this->savmysoc=$mysoc;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
 	/**
 	 * setUpBeforeClass
 	 *
@@ -135,46 +106,106 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		print __METHOD__."\n";
 	}
 
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		//$db->rollback();
-
-		print __METHOD__."\n";
-	}
 
 	/**
-	 * Init phpunit tests. Restore variables before each test.
+	 * testDolCheckFilters
 	 *
-	 * @return	void
+	 * @return boolean
 	 */
-	protected function setUp(): void
+	public function testDolCheckFilters()
 	{
-		global $conf,$user,$langs,$db,$mysoc;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-		$mysoc=$this->savmysoc;
+		global $conf, $langs, $db;
 
-		print __METHOD__."\n";
+		// A sql with global parenthesis at level 2
+		$error = '';
+		$parenthesislevel = 0;
+		$sql = '(( ... (a:=:1) .éééé. (b:=:1) ... ))';
+		$result = dolCheckFilters($sql, $error, $parenthesislevel);
+		$this->assertEquals(2, $parenthesislevel);
+		$this->assertTrue($result);
+
+		// A sql with global parenthesis at level 2
+		$error = '';
+		$parenthesislevel = 0;
+		$sql = '(((((a:=:1) ... ) .éééé.. (b:=:1) ..) ... ))';
+		$result = dolCheckFilters($sql, $error, $parenthesislevel);
+		$this->assertEquals(2, $parenthesislevel);
+		$this->assertTrue($result);
+
+		// A sql with global parenthesis at level 2
+		$error = '';
+		$parenthesislevel = 0;
+		$sql = '((... (((a:=:1) ... ( .éééé.. (b:=:1) ..)))))';
+		$result = dolCheckFilters($sql, $error, $parenthesislevel);
+		$this->assertEquals(2, $parenthesislevel);
+		$this->assertTrue($result);
+
+		// A sql with global parenthesis at level 0
+		$error = '';
+		$parenthesislevel = 0;
+		$sql = '(a:=:1) ... (b:=:1) éééé ...';
+		$result = dolCheckFilters($sql, $error, $parenthesislevel);
+		$this->assertEquals(0, $parenthesislevel);
+		$this->assertTrue($result);
+
+		// A sql with bad balance
+		$error = '';
+		$parenthesislevel = 0;
+		$sql = '((((a:=:1) ... (b:=:1) éééé ..))';
+		$result = dolCheckFilters($sql, $error, $parenthesislevel);
+		$this->assertEquals(0, $parenthesislevel);
+		$this->assertFalse($result);
+
+		// A sql with bad balance
+		$error = '';
+		$parenthesislevel = 0;
+		$sql = '(((a:=:1) ... (b:=:1) éééé ..)))';
+		$result = dolCheckFilters($sql, $error, $parenthesislevel);
+		$this->assertEquals(0, $parenthesislevel);
+		$this->assertFalse($result);
+
+		return true;
 	}
+
 
 	/**
-	 * End phpunit tests
+	 * testDolForgeExplodeAnd
 	 *
-	 * @return	void
+	 * @return boolean
 	 */
-	protected function tearDown(): void
+	public function testDolForgeExplodeAnd()
 	{
-		print __METHOD__."\n";
-	}
+		$tmp = dolForgeExplodeAnd('');
+		$this->assertEquals(0, count($tmp));
 
+		$tmp = dolForgeExplodeAnd('(a:=:1)');
+		$this->assertEquals('(a:=:1)', $tmp[0]);
+
+		$tmp = dolForgeExplodeAnd('(a:=:1) AND (b:=:2)');
+		$this->assertEquals('(a:=:1)', $tmp[0]);
+		$this->assertEquals('(b:=:2)', $tmp[1]);
+
+		$tmp = dolForgeExplodeAnd('(a:=:1) AND ((b:=:2) OR (c:=:3))');
+		$this->assertEquals('(a:=:1)', $tmp[0]);
+		$this->assertEquals('((b:=:2) OR (c:=:3))', $tmp[1]);
+
+		$tmp = dolForgeExplodeAnd('(a:=:1) AND (b:=:2) OR (c:=:3)');
+		$this->assertEquals('(a:=:1)', $tmp[0]);
+		$this->assertEquals('(b:=:2) OR (c:=:3)', $tmp[1]);
+
+		$tmp = dolForgeExplodeAnd('(a:=:1) OR (b:=:2) AND (c:=:3)');
+		$this->assertEquals('(a:=:1) OR (b:=:2)', $tmp[0]);
+		$this->assertEquals('(c:=:3)', $tmp[1]);
+
+		$tmp = dolForgeExplodeAnd('(a:=:1) OR ((b:=:2) AND (c:=:3))');
+		$this->assertEquals('(a:=:1) OR ((b:=:2) AND (c:=:3))', $tmp[0]);
+
+		$tmp = dolForgeExplodeAnd('((y:=:1) AND (p:=:8))');
+		$this->assertEquals('(y:=:1)', $tmp[0]);
+		$this->assertEquals('(p:=:8)', $tmp[1]);
+
+		return true;
+	}
 
 	/**
 	 * testDolForgeCriteriaCallback
@@ -188,7 +219,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		// An attempt for SQL injection
 		$filter='if(now()=sysdate()%2Csleep(6)%2C0)';
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals('Filter syntax error - Bad syntax of the search string', $sql);
+		$this->assertEquals('Filter error - Bad syntax of the search string', $sql);
 
 		// A real search string
 		$filter='(((statut:=:1) or (entity:in:__AAA__)) and (abc:<:2.0) and (abc:!=:1.23))';
@@ -209,7 +240,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		// Check that parenthesis are NOT allowed inside the last operand. Very important.
 		$filter = "(t.fieldint:=:(1,2))";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals("Filter syntax error - Bad syntax of the search string", $sql);
+		$this->assertEquals("Filter error - Bad syntax of the search string", $sql);
 
 		// Check that ' is escaped into the last operand
 		$filter = "(t.fieldstring:=:'aaa'ttt')";

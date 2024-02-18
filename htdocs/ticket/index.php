@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) - 2013-2016    Jean-François FERRY     <hello@librethic.io>
- * Copyright (C) - 2019         Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2021		Frédéric France				<frederic.france@netlogic.fr>
+/* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
+ * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2021-2024	Frédéric France				<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -220,8 +220,10 @@ if ($result) {
 	$colorseries[Ticket::STATUS_ASSIGNED] = $badgeStatus3;
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_IN_PROGRESS]), 'data' => round($tick['inprogress']));
 	$colorseries[Ticket::STATUS_IN_PROGRESS] = $badgeStatus4;
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_WAITING]), 'data' => round($tick['waiting']));
-	$colorseries[Ticket::STATUS_WAITING] = '-'.$badgeStatus4;
+	if (getDolGlobalString('TICKET_INCLUDE_SUSPENDED_STATUS')) {
+		$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_WAITING]), 'data' => round($tick['waiting']));
+		$colorseries[Ticket::STATUS_WAITING] = '-'.$badgeStatus4;
+	}
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_NEED_MORE_INFO]), 'data' => round($tick['needmoreinfo']));
 	$colorseries[Ticket::STATUS_NEED_MORE_INFO] = '-'.$badgeStatus3;
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_CANCELED]), 'data' => round($tick['canceled']));
@@ -374,7 +376,6 @@ if ($user->hasRight('ticket', 'read')) {
 				$object->id = $objp->rowid;
 				$object->ref = $objp->ref;
 				$object->track_id = $objp->track_id;
-				$object->fk_statut = $objp->status;
 				$object->status = $objp->status;
 				$object->progress = $objp->progress;
 				$object->subject = $objp->subject;

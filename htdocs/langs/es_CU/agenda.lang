@@ -2,7 +2,6 @@
 IdAgenda=evento de identificación
 ActionsOwnedBy=Evento propiedad de
 ActionsOwnedByShort=Dueño
-Event=Evento
 ListOfActions=Lista de eventos
 EventOnFullDay=Evento en todos los días
 MenuToDoActions=Todos los eventos incompletos

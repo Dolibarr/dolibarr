@@ -2985,8 +2985,6 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $ref;
 
-	public $tms;
-
 	/**
 	 * @var int ID
 	 */

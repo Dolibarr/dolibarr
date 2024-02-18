@@ -9,7 +9,7 @@ DIRECTION=ltr
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil
+# freeserif is for Tamil or Ethiopian
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -963,6 +963,7 @@ AutomaticallyCalculated=Automatisch berechnet
 TitleSetToDraft=Zurück zu Entwurf gehen
 ConfirmSetToDraft=Wollen Sie wirklich zum Entwurfsstatus zurück gehen?
 ImportId=Import ID
+Event=Ereignis
 Events=Ereignisse
 EMailTemplates=E-Mail-Vorlagen
 FileNotShared=Datei nicht für die Öffentlichkeit freigegeben
@@ -1180,7 +1181,6 @@ ConfirmAffectUserQuestion=Möchten Sie die Benutzer wirklich den ausgewählten %
 ConfirmSetSupervisorQuestion=Möchten Sie den Verantwortlichen wirklich für die ausgewählten %s-Datensätze festlegen?
 ConfirmUpdatePriceQuestion=Möchten Sie den Preis der %s ausgewählten Datensätze wirklich aktualisieren?
 CategTypeNotFound=Für den Datensatztyp wurde kein Tag-Typ gefunden
-Rate=Rate
 SupervisorNotFound=Vorgesetzten nicht gefunden
 CopiedToClipboard=In die Zwischenablage kopiert
 InformationOnLinkToContract=Dieser Betrag ist nur die Summe aller Vertragszeilen. Zeitbegriff wird nicht berücksichtigt.
@@ -1213,6 +1213,7 @@ CanceledHidden=Stornierte ausgeblendet
 CanceledShown=Stornierte angezeigt
 Terminate=Beenden
 Terminated=Deaktiviert
+Position=Position
 AddLineOnPosition=Zeile an folgender Position hinzufügen (am Ende, falls leer)
 ConfirmAllocateCommercial=Bestätigung der Zuordnung eines Vertriebsmitarbeiters
 ConfirmAllocateCommercialQuestion=Möchten Sie die ausgewählten %s-Datensätze wirklich zuweisen?
@@ -1230,6 +1231,7 @@ ExternalUser=Externer Benutzer
 NoSpecificContactAddress=Kein Kontakt oder Adresse
 NoSpecificContactAddressBis=Diese Registerkarte dient dazu, bestimmte Kontakte oder Adressen für das aktuelle Objekt zu erzwingen. Verwenden Sie diese Funktion nur, wenn Sie einen oder mehrere spezifische Kontakte oder Adressen für das Objekt definieren möchten für den Fall, dass die Informationen über den Geschäftspartner nicht ausreichen oder nicht spezifisch genug sind.
 HideOnVCard=%s ausblenden
+ShowOnVCard=%s anzeigen
 AddToContacts=Adresse zu meinen Kontakten hinzufügen
 LastAccess=Letzter Zugriff
 UploadAnImageToSeeAPhotoHere=Laden Sie ein Bild auf der Registerkarte %s hoch, um hier ein Foto zu sehen
@@ -1259,4 +1261,7 @@ AmountSalary=Gehalt Betrag
 InvoiceSubtype=Rechnung Untertyp
 ConfirmMassReverse=Massenaktion Umkehr der Bestätigung 
 ConfirmMassReverseQuestion=Sind Sie sicher, dass Sie die ausgewählten %s Datensätze umkehren wollen?
-
+ElementType=Elementtyp
+ElementId=Element ID
+Encrypted=Verschlüsselt
+Settings=Einstellungen

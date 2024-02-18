@@ -335,7 +335,6 @@ CategoryDeleted=Mühasibat hesabı üçün kateqoriya silindi
 AccountingJournals=Mühasibat jurnalları
 AccountingJournal=Mühasibat jurnalı
 NewAccountingJournal=Yeni mühasibat jurnalı
-ShowAccountingJournal=Mühasibat jurnalını göstərin
 NatureOfJournal=Jurnalın təbiəti
 AccountingJournalType1=Müxtəlif əməliyyatlar
 AccountingJournalType2=Satış
@@ -446,8 +445,8 @@ AccountancyOneUnletteringModifiedSuccessfully=Bir barışdırılma uğurla dəyi
 AccountancyUnletteringModifiedSuccessfully=%s barışdırmaq uğurla dəyişdirildi
 
 ## Closure
-AccountancyClosureStep1=Step 1 : Validate and lock the movements
-AccountancyClosureStep2=Step 2 : Close the fiscal period
+AccountancyClosureStep1=Addım 1: Hərəkətləri təsdiqləyin və kilidləyin
+AccountancyClosureStep2=Addım 2: Maliyyə dövrünü bağlayın
 AccountancyClosureStep3=Addım 3: Girişləri çıxarın (İstəyə görə)
 AccountancyClosureClose=Maliyyə dövrünü bağlayın
 AccountancyClosureAccountingReversal="Bölüşdürülməmiş mənfəət" qeydlərini çıxarın və qeyd edin
