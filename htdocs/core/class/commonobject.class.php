@@ -9051,7 +9051,8 @@ abstract class CommonObject
 	{
 		global $conf;
 
-		$file = ''; $originalfile = '';
+		$file = '';
+		$originalfile = '';
 		$newmodulepart = $modulepart;
 		if ($modulepart == 'unknown' && !empty($this->module)) {
 			$newmodulepart = $this->module;
@@ -9123,6 +9124,10 @@ abstract class CommonObject
 				$dir = $sdir.'/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
 				$pdir = '/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
 			}
+		}
+		if ($modulepart == 'category') {
+			$dir = $sdir.'/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
+			$pdir = '/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
 		}
 
 		// Defined relative dir to DOL_DATA_ROOT
