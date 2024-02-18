@@ -234,3 +234,4 @@ ALTER TABLE llx_socpeople ADD COLUMN geolong double(24,8) DEFAULT NULL;
 ALTER TABLE llx_socpeople ADD COLUMN geopoint point DEFAULT NULL;
 ALTER TABLE llx_socpeople ADD COLUMN georesultcode varchar(16) NULL;
 
+ALTER TABLE llx_socpeople ADD COLUMN alias varchar(255) NULL;
