@@ -427,7 +427,7 @@ class doc_generic_member_odt extends ModelePDFMember
 	{
 		// phpcs:enable
 		if (!$object instanceof Adherent) {
-			dol_print_error($this->db, printf("Expected Adherent object got %s.", gettype($object)));
+			dol_syslog("Expected Adherent object, got ".gettype($object), LOG_ERR);
 			return array();
 		}
 

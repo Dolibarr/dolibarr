@@ -144,7 +144,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		global $conf, $extrafields;
 
 		if (!$object instanceof Project) {
-			dol_print_error($this->db, printf("Expected Project object got %s.", gettype($object)));
+			dol_syslog("Expected Project object, got ".gettype($object), LOG_ERR);
 			return array();
 		}
 

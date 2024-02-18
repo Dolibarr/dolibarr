@@ -141,10 +141,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{
 		// phpcs:enable
-		global $conf;
-
 		if (!$object instanceof Project) {
-			dol_print_error($this->db, printf("Expected Project object got %s.", gettype($object)));
+			dol_syslog("Expected Project object, got ".gettype($object), LOG_ERR);
 			return array();
 		}
 

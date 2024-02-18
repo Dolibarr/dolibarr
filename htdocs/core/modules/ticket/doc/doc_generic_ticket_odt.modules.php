@@ -419,15 +419,17 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 	{
 		// phpcs:enable
 		if (!$object instanceof User) {
-			dol_print_error($this->db, printf("Expected User object got %s.", gettype($object)));
+			dol_syslog("Expected Ticket object, got ".gettype($object), LOG_ERR);
 			return array();
 		}
+
 		$array_other = array();
 		foreach ($object as $key => $value) {
 			if (!is_array($value) && !is_object($value)) {
 				$array_other[$array_key.'_'.$key] = $value;
 			}
 		}
+
 		return $array_other;
 	}
 }
