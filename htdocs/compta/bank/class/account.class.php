@@ -199,9 +199,9 @@ class Account extends CommonObject
 	public $type_lib = array();
 
 	/**
-	 * Variable containing all account statuses with their respective translated label.
+	 * Array listing all the potential status of an account.
 	 * Defined in __construct
-	 * @var array
+	 * @var array<int, string>		array: int of the status => translated label of the status
 	 */
 	public $status = array();
 
@@ -796,7 +796,7 @@ class Account extends CommonObject
 				$accline = new AccountLine($this->db);
 				$accline->datec = $now;
 				$accline->label = '('.$langs->trans("InitialBankBalance").')';
-				$accline->amount = price2num($balance);
+				$accline->amount = (float) price2num($balance);
 				$accline->fk_user_author = $user->id;
 				$accline->fk_account = $this->id;
 				$accline->datev = $this->date_solde;
