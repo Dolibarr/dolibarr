@@ -62,7 +62,6 @@ ChooseFileToImport=Faylni yuklang, so'ngra faylni manba import fayli sifatida ta
 SourceFileFormat=Manba fayl formati
 FieldsInSourceFile=Manba faylidagi maydonlar
 FieldsInTargetDatabase=Dolibarr ma'lumotlar bazasidagi maqsad maydonlari (qalin = majburiy)
-Field=Maydon
 NoFields=Maydonlar yo‘q
 MoveField=%s maydon ustun satrini siljiting
 ExampleOfImportFile=Import_file-ning namunasi
@@ -145,3 +144,4 @@ SelectImportFieldsSource = Import qilmoqchi bo'lgan manba fayl maydonlarini va u
 MandatoryTargetFieldsNotMapped=Ba'zi majburiy maqsadli maydonlar xaritaga kiritilmagan
 AllTargetMandatoryFieldsAreMapped=Majburiy qiymatga muhtoj bo'lgan barcha maqsadli maydonlar xaritada ko'rsatilgan
 ResultOfSimulationNoError=Simulyatsiya natijasi: xatolik yo'q
+NumberOfLinesLimited=Chiziqlar soni cheklangan

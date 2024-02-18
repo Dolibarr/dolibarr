@@ -1646,6 +1646,36 @@ class Categorie extends CommonObject
 	}
 
 	/**
+	 *  Return if at least one photo is available
+	 *
+	 * @param  string $sdir Directory to scan
+	 * @return boolean                 True if at least one photo is available, False if not
+	 */
+	public function isAnyPhotoAvailable($sdir)
+	{
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
+
+		$sdir .= '/' . get_exdir($this->id, 2, 0, 0, $this, 'category') . $this->id . "/photos/";
+
+		$dir_osencoded = dol_osencode($sdir);
+		if (file_exists($dir_osencoded)) {
+			$handle = opendir($dir_osencoded);
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					if (!utf8_check($file)) {
+						$file = mb_convert_encoding($file, 'UTF-8', 'ISO-8859-1'); // To be sure data is stored in UTF8 in memory
+					}
+					if (dol_is_file($sdir . $file) && image_format_supported($file) >= 0) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * getTooltipContentArray
 	 * @param array $params params to construct tooltip data
 	 * @since v18
@@ -1755,7 +1785,7 @@ class Categorie extends CommonObject
 		if (file_exists($dir)) {
 			if (is_array($file['name']) && count($file['name']) > 0) {
 				$nbfile = count($file['name']);
-				for ($i = 0; $i <= $nbfile; $i++) {
+				for ($i = 0; $i < $nbfile; $i++) {
 					$originImage = $dir.$file['name'][$i];
 
 					// Cree fichier en taille origine

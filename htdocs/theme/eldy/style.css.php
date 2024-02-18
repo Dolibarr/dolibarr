@@ -331,7 +331,6 @@ print '*/'."\n";
 // Include the global.inc.php that include the badges, btn, info-box, dropdown, progress...
 require __DIR__.'/global.inc.php';
 
-
 if (is_object($db)) {
 	$db->close();
 }

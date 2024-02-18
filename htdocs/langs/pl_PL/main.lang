@@ -9,7 +9,7 @@ DIRECTION=ltr
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil
+# freeserif is for Tamil or Ethiopian
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -963,6 +963,7 @@ AutomaticallyCalculated=Automatycznie przeliczone
 TitleSetToDraft=Powróć do wersji roboczej
 ConfirmSetToDraft=Czy na pewno chcesz wrócić do stanu wersji roboczej?
 ImportId=ID importu
+Event=Wydarzenie
 Events=Wydarzenia
 EMailTemplates=Szablony wiadomości
 FileNotShared=Plik nie jest udostępniony publicznie poza domenę
@@ -1180,7 +1181,6 @@ ConfirmAffectUserQuestion=Czy na pewno chcesz przypisać użytkowników do %s wy
 ConfirmSetSupervisorQuestion=Czy na pewno chcesz ustawić nadzorcę dla wybranych rekordów %s?
 ConfirmUpdatePriceQuestion=Czy na pewno chcesz zaktualizować cenę wybranych rekordów %s?
 CategTypeNotFound=Nie znaleziono typu tagu dla typu rekordów
-Rate=Stawka
 SupervisorNotFound=Nie znaleziono nadzorcy
 CopiedToClipboard=Skopiowane do schowka
 InformationOnLinkToContract=Kwota ta to tylko suma wszystkich pozycji zamówienia. Nie bierze się pod uwagę żadnego pojęcia czasu.
@@ -1213,6 +1213,7 @@ CanceledHidden=Anulowano, ukryto
 CanceledShown=Pokazano anulowanie
 Terminate=Zakończ
 Terminated=Zakończony
+Position=Pozycja
 AddLineOnPosition=Dodaj linię na pozycji (na końcu, jeśli jest pusta)
 ConfirmAllocateCommercial=Przypisz potwierdzenie przedstawiciela handlowego
 ConfirmAllocateCommercialQuestion=Czy na pewno chcesz przypisać %s wybrane rekordy?
@@ -1230,6 +1231,7 @@ ExternalUser=Zewnętrzny użytkownik
 NoSpecificContactAddress=Nie ustawiono szczególnych kontaktów i adresów
 NoSpecificContactAddressBis=Zakładka ta służy do wymuszenia szczególnych kontaktów lub adresów dla bieżącego obiektu. Używaj jej tylko wtedy, gdy chcesz zdefiniować jeden lub kilka kontaktów lub adresów do odpowiednich zastosowań, gdy informacje o kontrahencie są niewystarczające lub niewłaściwe.
 HideOnVCard=Ukryj %s
+ShowOnVCard=Wyświetl %s
 AddToContacts=Dodaj adres do swoich kontaktów
 LastAccess=Ostatni dostęp
 UploadAnImageToSeeAPhotoHere=Prześlij obraz z zakładki %s, aby zobaczyć zdjęcie tutaj
@@ -1259,4 +1261,7 @@ AmountSalary=Wysokość wynagrodzenia
 InvoiceSubtype=Podtyp faktury
 ConfirmMassReverse=Masowe potwierdzenie zwrotu
 ConfirmMassReverseQuestion=Czy na pewno chcesz cofnąć wybrane rekordy %s?
-
+ElementType=Element type
+ElementId=Element Id
+Encrypted=Encrypted
+Settings=Ustawienia

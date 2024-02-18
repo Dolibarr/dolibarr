@@ -365,7 +365,7 @@ class Task extends CommonObjectLine
 		$sql .= " t.datee as date_end,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_valid,";
-		$sql .= " t.fk_status as status,";
+		$sql .= " t.fk_statut as status,";
 		$sql .= " t.progress,";
 		$sql .= " t.budget_amount,";
 		$sql .= " t.priority,";
@@ -1069,7 +1069,7 @@ class Task extends CommonObjectLine
 		if ($includebilltime) {
 			$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public, p.fk_statut, p.usage_bill_time,";
 			$sql .= " t.datec, t.dateo, t.datee, t.tms,";
-			$sql .= " t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_status,";
+			$sql .= " t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut,";
 			$sql .= " t.dateo, t.datee, t.planned_workload, t.rang,";
 			$sql .= " t.description, ";
 			$sql .= " t.budget_amount, ";

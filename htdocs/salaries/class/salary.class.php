@@ -311,7 +311,7 @@ class Salary extends CommonObject
 	{
 		$this->id = 0;
 
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->fk_user = 0;
 		$this->datep = '';
 		$this->datev = '';

@@ -563,7 +563,7 @@ class PaymentSalary extends CommonObject
 		$this->id = 0;
 		$this->fk_salary = 0;
 		$this->datec = '';
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->datepaye = '';
 		$this->amount = 0.0;
 		$this->fk_typepayment = 0;

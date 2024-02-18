@@ -51,7 +51,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $cancel  = GETPOST('cancel', 'alpha');
 
 $sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortorder = GETPOST('sortorder', 'aZ09');
 
 $module = GETPOST('module', 'alpha');
 $tab = GETPOST('tab', 'aZ09');

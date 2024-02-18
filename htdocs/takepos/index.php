@@ -352,9 +352,11 @@ function LoadProducts(position, issubcat) {
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&thirdpartyid=' + jQuery('#thirdpartyid').val() + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset=0', function(data) {
 		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat+" then loop on result to fill image thumbs");
 		console.log(data);
+
 		while (ishow < maxproduct) {
-			//console.log("ishow"+ishow+" idata="+idata);
-			console.log(data[idata]);
+			console.log("ishow"+ishow+" idata="+idata);
+			//console.log(data[idata]);
+
 			if (typeof (data[idata]) == "undefined") {
 				<?php if (!getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) {
 					echo '$("#prodivdesc"+ishow).hide();';
@@ -367,8 +369,10 @@ function LoadProducts(position, issubcat) {
 				}?>
 				$("#proprice"+ishow).attr("class", "hidden");
 				$("#proprice"+ishow).html("");
+
 				$("#prodiv"+ishow).data("rowid","");
 				$("#prodiv"+ishow).attr("data-rowid","");
+
 				$("#prodiv"+ishow).attr("class","wrapper2 divempty");
 			} else  {
 				<?php
@@ -407,13 +411,14 @@ function LoadProducts(position, issubcat) {
 					?>
 				}
 				console.log("#prodiv"+ishow+".data(rowid)="+data[idata]['id']);
-				console.log($("#prodiv"+ishow));
 
 				$("#prodiv"+ishow).data("rowid", data[idata]['id']);
 				$("#prodiv"+ishow).attr("data-rowid", data[idata]['id']);
 				console.log($('#prodiv4').data('rowid'));
+
 				$("#prodiv"+ishow).data("iscat", 0);
 				$("#prodiv"+ishow).attr("data-iscat", 0);
+
 				$("#prodiv"+ishow).attr("class","wrapper2");
 
 				<?php

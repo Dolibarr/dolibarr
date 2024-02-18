@@ -160,6 +160,7 @@ ALTER TABLE llx_usergroup_extrafields DROP INDEX idx_usergroup_extrafields;
 ALTER TABLE llx_usergroup_extrafields ADD UNIQUE INDEX uk_usergroup_extrafields (fk_object);
 
 ALTER TABLE llx_website ADD COLUMN name_template varchar(255) NULL;
+ALTER TABLE llx_website ADD COLUMN lastpageid integer DEFAULT 0;
 
 UPDATE llx_categorie SET date_creation = tms, tms = tms WHERE date_creation IS NULL AND tms IS NOT NULL;
 
@@ -224,7 +225,8 @@ ALTER TABLE llx_ticket ADD COLUMN last_main_doc varchar(255);
 ALTER TABLE llx_ticket ADD COLUMN extraparams varchar(255);
 ALTER TABLE llx_ticket ADD COLUMN origin_replyto varchar(128);
 
-
+ALTER TABLE llx_expensereport MODIFY COLUMN model_pdf varchar(255) DEFAULT NULL;
+ALTER TABLE llx_fichinter_rec MODIFY COLUMN modelpdf varchar(255) DEFAULT NULL;
 ALTER TABLE llx_societe ADD COLUMN geolat double(24,8) DEFAULT NULL;
 ALTER TABLE llx_societe ADD COLUMN geolong double(24,8) DEFAULT NULL;
 ALTER TABLE llx_societe ADD COLUMN geopoint point DEFAULT NULL;
@@ -234,3 +236,5 @@ ALTER TABLE llx_socpeople ADD COLUMN geolat double(24,8) DEFAULT NULL;
 ALTER TABLE llx_socpeople ADD COLUMN geolong double(24,8) DEFAULT NULL;
 ALTER TABLE llx_socpeople ADD COLUMN geopoint point DEFAULT NULL;
 ALTER TABLE llx_socpeople ADD COLUMN georesultcode varchar(16) NULL;
+
+ALTER TABLE llx_socpeople ADD COLUMN name_alias varchar(255) NULL;

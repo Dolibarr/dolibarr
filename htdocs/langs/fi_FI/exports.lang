@@ -62,7 +62,6 @@ ChooseFileToImport=Lataa tiedosto ja napsauta sitten %s-kuvaketta valitaksesi ti
 SourceFileFormat=Lähde tiedostomuoto
 FieldsInSourceFile=Toimialoja lähdetiedostoa
 FieldsInTargetDatabase=Kohdekentät Dolibarrissa tietokanta (bold=pakollinen)
-Field=Kenttä
 NoFields=Ei kentät
 MoveField=Siirrä kenttä sarakkeeseen numero %s
 ExampleOfImportFile=Example_of_import_file

@@ -1948,7 +1948,7 @@ class FormFile
 				}
 				print '&file='.urlencode($relativefile).'">';
 				print img_mime($file['name'], $file['name'].' ('.dol_print_size($file['size'], 0, 0).')');
-				print dol_trunc($file['name'], $maxlength, 'middle');
+				print dol_escape_htmltag(dol_trunc($file['name'], $maxlength, 'middle'));
 				print '</a>';
 
 				//print $this->getDocumentsLink($modulepart, $modulesubdir, $filedir, '^'.preg_quote($file['name'],'/').'$');

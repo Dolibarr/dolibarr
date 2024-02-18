@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=شراكة مكرسة لهذا العضو
 DatePartnershipStart=تاريخ البدء
 DatePartnershipEnd=تاريخ الانتهاء
 ReasonDecline=سبب الرفض
-ReasonDeclineOrCancel=سبب الرفض
+ReasonDeclineOrCancel=Reason for refusal or cancellation
 PartnershipAlreadyExist=الشراكة موجودة بالفعل
 ManagePartnership=إدارة الشراكة
 BacklinkNotFoundOnPartnerWebsite=الرابط الخلفي غير موجود على موقع الشريك
@@ -89,7 +89,6 @@ YourPartnershipCanceledContent=نود أن نعلمك أنه تم إلغاء ش�
 
 CountLastUrlCheckError=عدد الأخطاء الخاصة بآخر فحص لعنوان URL
 LastCheckBacklink=تاريخ آخر فحص لعنوان URL
-ReasonDeclineOrCancel=سبب الرفض
 
 NewPartnershipRequest=طلب شراكة جديد
 NewPartnershipRequestDesc=يسمح لك هذا النموذج بطلب أن تكون جزءًا من أحد برامج الشراكة الخاصة بنا. إذا كنت بحاجة إلى مساعدة لملء هذا النموذج ، فيرجى الاتصال عبر البريد الإلكتروني <b> %s </b>.

@@ -2193,7 +2193,7 @@ div.vmenu, td.vmenu {
 
 	.menuhider { display: block !important; }
 	.dropdown-user-image { display: none; }
-	.user-header { height: auto !important; color: var(--colorbackbody); }
+	.user-header { height: auto !important; color: var(--colortextbackhmenu); }
 
 	#id-container {
 		width: 100%;
@@ -8009,6 +8009,9 @@ table.jPicker {
 		max-width: 200px;      /* must be width of menu + padding + padding of sidenav */
 		width: 200px;          /* must be width of menu + padding + padding of sidenav */
 	}
+	.loginbuttonexternal {
+		width: 260px;
+	}
 	.side-nav-vert .user-menu .dropdown-menu {
 		width: 234px !important;
 	}
@@ -8149,20 +8152,20 @@ table.jPicker {
 
 <?php
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
+include dol_buildpath($path.'/theme/'.$theme.'/emaillayout.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/timeline.inc.php', 0);
 
-if (getDolGlobalString('THEME_CUSTOM_CSS')) {
-	print $conf->global->THEME_CUSTOM_CSS;
-}
+
+// Add custom CSS if defined
+print getDolGlobalString('THEME_CUSTOM_CSS');
 
 ?>
 
-	div.extra_inline_chkbxlst,
-	div.extra_inline_checkbox {
-		min-width:150px;
-	}
+div.extra_inline_chkbxlst, div.extra_inline_checkbox {
+	min-width:150px;
+}
 
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {

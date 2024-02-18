@@ -34,7 +34,6 @@ PaymentEvent=Pagamento do evento
 NewRegistration=Rexistro
 EventOrganizationSetup=Configuración da Organización de Eventos
 EventOrganization=Organización de eventos
-Settings=Configuracións
 EventOrganizationSetupPage = Páxina de configuración da Organización de Eventos
 EVENTORGANIZATION_TASK_LABEL = Etiqueta de tarefas para crear automaticamente cando o proxecto é validado 
 EVENTORGANIZATION_TASK_LABELTooltip = Cando valida un evento organizado, pódense crear automaticamente algunhas tarefas no proxecto<br><br>Por exemplo<br>Enviar Chamada para Conferencias<br>Enviar Chamada para Stand<br>validar suxerencias para Conferencias<br>Validar aplicacións para Stand<br>Abrir subscricións a eventos para os participantes<br>Enviar lembranza do evento aos ponentes<br>Enviar lembranza do evento aos anfitrións do Stand<br>Enviar lembranza do evento aos asistentes

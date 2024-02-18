@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - languages
 Language_am_ET=אתיופי
 Language_af_ZA=אפריקנס (דרום אפריקה)
-Language_en_AE=ערבית (איחוד האמירויות הערביות)
 Language_ar_AR=ערבית
 Language_ar_DZ=ערבית (אלג'יריה)
 Language_ar_EG=ערבית (מצרים)
@@ -28,7 +27,7 @@ Language_de_CH=גרמנית (שוויץ)
 Language_de_LU=גרמנית (לוקסמבורג)
 Language_el_GR=יווני
 Language_el_CY=יוונית (קפריסין)
-Language_en_AE=ערבית (איחוד האמירויות הערביות)
+Language_en_AE=English (United Arab Emirates)
 Language_en_AU=אנגלית (אוסטרליה)
 Language_en_CA=אנגלית (קנדה)
 Language_en_GB=אנגלית (בריטניה)
@@ -57,7 +56,6 @@ Language_es_PE=ספרדית (פרו)
 Language_es_PR=ספרדית (פורטו ריקו)
 Language_es_US=ספרדית (ארה"ב)
 Language_es_UY=ספרדית (אורוגוואי)
-Language_es_GT=ספרדית (גואטמלה)
 Language_es_VE=ספרדית (ונצואלה)
 Language_et_EE=אסטונית
 Language_eu_ES=הבסקים

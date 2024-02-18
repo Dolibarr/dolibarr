@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Kelola dan ikuti kampanye perekrutan untuk posisi pekerj
 # Admin page
 #
 RecruitmentSetup = Pengaturan perekrutan
-Settings = Pengaturan
 RecruitmentSetupPage = Masuk di sini pengaturan opsi utama untuk modul rekrutmen
 RecruitmentArea=Area perekrutan
 PublicInterfaceRecruitmentDesc=Halaman pekerjaan publik adalah URL publik untuk menunjukkan dan menjawab pekerjaan terbuka. Ada satu tautan berbeda untuk setiap pekerjaan terbuka, ditemukan di setiap catatan pekerjaan.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Aktifkan halaman publik dari pekerjaan terbuka
 #
 # About page
 #
-About = Tentang
 RecruitmentAbout = Tentang Rekrutmen
 RecruitmentAboutPage = Rekrutmen tentang halaman
 NbOfEmployeesExpected=Nb karyawan yang diharapkan
@@ -77,3 +75,6 @@ ExtrafieldsApplication=Atribut pelengkap (lamaran kerja)
 MakeOffer=Buat sebuah penawaran
 WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
 NoPositionOpen=No positions open at the moment
+ConfirmClose=Confirm cancellation
+ConfirmCloseAsk=Are you sure you want to cancel this recruitment candidature
+recruitment=Perekrutan

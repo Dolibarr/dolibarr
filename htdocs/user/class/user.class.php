@@ -12,7 +12,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       charlene Benke          <charlie@patas-monkey.com>
  * Copyright (C) 2018-2021       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -805,15 +805,19 @@ class User extends CommonObject
 			if (strpos($module, '@') !== false) {
 				$module = $tmp[1];
 			}
-			$rightsPath = $tmp[1];
-			$permlevel2 = $permlevel1;
-			$permlevel1 = $tmp[0];
+			if ($tmp[0] != $tmp[1]) {
+				// If $module = 'myobject@mymodule'
+				$rightsPath = $tmp[1];
+				$permlevel2 = $permlevel1;
+				$permlevel1 = $tmp[0];
+			} else {
+				// If $module = 'abc@abc'
+				$rightsPath = $tmp[1];
+			}
 		}
 
 		// In $conf->modules, we have 'accounting', 'product', 'facture', ...
 		// In $user->rights, we have 'accounting', 'produit', 'facture', ...
-		//var_dump($module);
-		//var_dump($rightsPath);
 		//var_dump($this->rights->$rightsPath);
 		//var_dump($conf->modules);
 		//var_dump($module.' '.isModEnabled($module).' '.$rightsPath.' '.$permlevel1.' '.$permlevel2);
@@ -2957,6 +2961,7 @@ class User extends CommonObject
 			'objecttype' => $this->element,
 			'infologin' => $infologin,
 			'option' => $option,
+			'hidethirdpartylogo' => $hidethirdpartylogo,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
