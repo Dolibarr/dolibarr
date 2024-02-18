@@ -2261,9 +2261,7 @@ class ExtraFields
 					$geox = GETPOST("options_".$key."_x", 'alpha');
 					$geoy = GETPOST("options_".$key."_y", 'alpha');
 					$geostring = strtoupper($pointtypes[$geotype]).'('.price2num($geox).' '.price2num($geoy).')';
-					var_dump($geostring);
 					$geom = geoPHP::load($geostring);
-					var_dump($geom, $geom->out('wkb'));
 					$value_key = $geom->out('wkb');
 				} elseif (in_array($key_type, array('text'))) {
 					$label_security_check = 'alphanohtml';
