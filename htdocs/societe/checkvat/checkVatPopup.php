@@ -63,8 +63,10 @@ if (!$vatNumber) {
 	print '<br>';
 
 	// Set the parameters to send to the WebService
-	$parameters = array("countryCode" => $countryCode,
-						"vatNumber" => $vatNumber);
+	$parameters = array(
+		"countryCode" => $countryCode,
+		"vatNumber" => $vatNumber,
+	);
 
 	// Set the WebService URL
 	dol_syslog("Create nusoap_client for URL=".$WS_DOL_URL." WSDL=".$WS_DOL_URL_WSDL);
@@ -87,30 +89,23 @@ if (!$vatNumber) {
 	dol_syslog("Call method ".$WS_METHOD);
 	$result = $soapclient->call($WS_METHOD, $parameters);
 
-	//var_dump($parameters);
-	//var_dump($soapclient);
-	//print "x".is_array($result)."i";
-	//var_dump($result);
-	//print $soapclient->request.'<br>';
-	//print $soapclient->response.'<br>';
-
 	$messagetoshow = '';
 	print '<b>'.$langs->trans("Response").'</b>:<br>';
-
+	$faultstring = $result['faultstring'] ?? '';
 	// Service indisponible
-	if (!is_array($result) || preg_match('/SERVICE_UNAVAILABLE/i', $result['faultstring'])) {
+	if (!is_array($result) || preg_match('/SERVICE_UNAVAILABLE/i', $faultstring)) {
 		print '<span class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</span><br>';
 		$messagetoshow = $soapclient->response;
-	} elseif (preg_match('/TIMEOUT/i', $result['faultstring'])) {
+	} elseif (preg_match('/TIMEOUT/i', $faultstring)) {
 		print '<span class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</span><br>';
 		$messagetoshow = $soapclient->response;
-	} elseif (preg_match('/SERVER_BUSY/i', $result['faultstring'])) {
+	} elseif (preg_match('/SERVER_BUSY/i', $faultstring)) {
 		print '<span class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</span><br>';
 		$messagetoshow = $soapclient->response;
-	} elseif ($result['faultstring']) {
+	} elseif ($faultstring) {
 		print '<span class="error">'.$langs->trans("Error").'</span><br>';
-		$messagetoshow = $result['faultstring'];
-	} elseif (preg_match('/INVALID_INPUT/i', $result['faultstring'])
+		$messagetoshow = $faultstring;
+	} elseif (preg_match('/INVALID_INPUT/i', $faultstring)
 	|| ($result['requestDate'] && !$result['valid'])) {
 		// Syntax ko
 		if ($result['requestDate']) {
@@ -126,7 +121,7 @@ if (!$vatNumber) {
 		}
 		print $langs->trans("VATIntraSyntaxIsValid").': <span class="ok">'.$langs->trans("Yes").'</span><br>';
 		print $langs->trans("ValueIsValid").': ';
-		if (preg_match('/MS_UNAVAILABLE/i', $result['faultstring'])) {
+		if (preg_match('/MS_UNAVAILABLE/i', $faultstring)) {
 			print '<span class="error">'.$langs->trans("ErrorVATCheckMS_UNAVAILABLE", $countryCode).'</span><br>';
 		} else {
 			if (!empty($result['valid']) && ($result['valid'] == 1 || $result['valid'] == 'true')) {
