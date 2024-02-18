@@ -7638,8 +7638,12 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up, without the trick, with '<h1>Foo<p>bar</p></h1>'
 					// like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
 
-					$out = '<?xml encoding="UTF-8"><div class="tricktoremove">'.$out.'</div>';
-					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD|LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
+					if (dol_textishtml($out)) {
+						$out = '<?xml encoding="UTF-8"><div class="tricktoremove">'.$out.'</div>';
+					} else {
+						$out = '<?xml encoding="UTF-8"><div class="tricktoremove">'.dol_nl2br($out).'</div>';
+					}
+					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD | LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOXMLDECL);
 					$out = trim($dom->saveHTML());
 
 					// Remove the trick added to solve pb with text without parent tag
