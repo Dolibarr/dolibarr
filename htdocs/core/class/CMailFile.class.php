@@ -261,6 +261,7 @@ class CMailFile
 		if (getDolGlobalString('MAIN_MAIL_FORCE_CONTENT_TYPE_TO_HTML')) {
 			$this->msgishtml = 1; // To force to send everything with content type html.
 		}
+		dol_syslog("CMailFile::CMailfile: msgishtml=".$this->msgishtml);
 
 		// Detect images
 		if ($this->msgishtml) {
