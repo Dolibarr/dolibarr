@@ -1669,7 +1669,7 @@ function dol_escape_php($stringtoescape, $stringforquotes = 2)
 
 /**
  * Return a string label ready to be output on HTML content
- * To use text inside an attribute, use can simply only dol_escape_htmltag()
+ * To use the text inside a HTML tag attribute, use can use only dol_escape_htmltag()
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
