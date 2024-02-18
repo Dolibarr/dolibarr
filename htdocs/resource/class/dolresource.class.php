@@ -171,7 +171,7 @@ class Dolresource extends CommonObject
 		$this->db = $db;
 		$this->status = 0;
 
-    $this->cache_code_type_resource = array();
+		$this->cache_code_type_resource = array();
 	}
 
 	/**
