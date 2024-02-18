@@ -30,7 +30,7 @@ the project: `pre-commit-config.yaml`.
    Then you can install pre-commit tool: `python -m pip install pre-commit`.
 
 2. In your local git clone of the project, run `pre-commit install` to add the hooks.\
-   or copy the file git/hooks/pre-commit manually. (recommanded because this file differs
+   or copy the file git/hooks/pre-commit manually. (recommended because this file differs
    from the file installed with pre-commit install as it redirects output to the error
    channel so your IDE will be able to catch the error.
 
@@ -38,8 +38,8 @@ the project: `pre-commit-config.yaml`.
 ### Tips
 
 After installing `pre-commit` onto your local git clone, pre-commit will run
-on every commit. The first time, all tools required by pre-commit will be installed 
-into ~/.cache/pre-commit 
+on every commit. The first time, all tools required by pre-commit will be installed
+into ~/.cache/pre-commit
 
 When it finds some issue, the git commit will be aborted, so you can fix it,
 or verify it.
