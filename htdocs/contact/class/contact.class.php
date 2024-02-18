@@ -169,7 +169,7 @@ class Contact extends CommonObject
 	public $fullname;
 
 	/**
-	 * @var string fullname
+	 * @var string Name alias
 	 */
 	public $name_alias;
 
