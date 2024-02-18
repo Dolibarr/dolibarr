@@ -31,7 +31,7 @@ class GeoMapEditor
 	 *
 	 * @return void
 	 */
-	public function __contruct()
+	public function __construct()
 	{
 	}
 
@@ -68,6 +68,16 @@ class GeoMapEditor
 					drawPolygon: false,
 				});
 				console.log("pm:drawend");
+				console.log(e);
+			});
+			map.on("pm:update", (e) => {
+				map.pm.addControls({
+					drawMarker: false,
+					drawPolyline: false,
+					drawRectangle: false,
+					drawPolygon: false,
+				});
+				console.log("pm:update");
 				console.log(e);
 			});
 			map.on("pm:remove", (e) => {
