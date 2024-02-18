@@ -517,7 +517,7 @@ class Products extends DolibarrApi
 	 *
 	 * @param  int $id            Id of parent product/service
 	 * @param  int $subproduct_id Id of child product/service
-	 * @param  int $qty           Quantity
+	 * @param  float $qty         Quantity
 	 * @param  int $incdec        1=Increase/decrease stock of child when parent stock increase/decrease
 	 * @return int
 	 *
