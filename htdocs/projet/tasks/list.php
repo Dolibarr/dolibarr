@@ -345,10 +345,9 @@ if (count($listoftaskcontacttype) == 0) {
 $distinct = 'DISTINCT'; // We add distinct until we are added a protection to be sure a contact of a project and task is assigned only once.
 $sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.datee as projectdatee, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate, p.usage_bill_time,";
 $sql .= " s.nom as name, s.name_alias as alias, s.rowid as socid,";
-$sql .= " t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_update,";
-$sql .= " t.rowid as id, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut,";
-$sql .= " t.description, t.fk_task_parent";
-$sql .= " ,t.budget_amount";
+$sql .= " t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_modification,";
+$sql .= " t.rowid as id, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut as status,";
+$sql .= " t.description, t.fk_task_parent, t.budget_amount";
 // Add sum fields
 if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed']['checked'])) {
 	$sql .= " , SUM(tt.element_duration * ".$db->ifsql("invoice_id IS NULL", "1", "0").") as tobill, SUM(tt.element_duration * ".$db->ifsql("invoice_id IS NULL", "0", "1").") as billed";
@@ -1137,6 +1136,7 @@ while ($i < $imaxinloop) {
 	$object->label = $obj->label;
 	$object->description = $obj->description;
 	$object->fk_statut = $obj->fk_statut;
+	$object->status = $obj->status;
 	$object->progress = $obj->progress;
 	$object->budget_amount = $obj->budget_amount;
 	$object->date_start = $db->jdate($obj->date_start);
@@ -1532,7 +1532,7 @@ while ($i < $imaxinloop) {
 			// Date modification
 			if (!empty($arrayfields['t.tms']['checked'])) {
 				print '<td class="center">';
-				print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+				print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

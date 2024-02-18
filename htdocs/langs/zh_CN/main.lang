@@ -9,7 +9,7 @@ DIRECTION=ltr
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil
+# freeserif is for Tamil or Ethiopian
 FONTFORPDF=stsongstdlight
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
@@ -963,6 +963,7 @@ AutomaticallyCalculated=自动计算
 TitleSetToDraft=恢复到草稿
 ConfirmSetToDraft=您确定要恢复到草稿状态吗？
 ImportId=导入ID
+Event=Event
 Events=事件
 EMailTemplates=电子邮件模板
 FileNotShared=未向外部公众分享的文件
@@ -1180,7 +1181,6 @@ ConfirmAffectUserQuestion=您确定要将用户分配给 %s 选定的记录？
 ConfirmSetSupervisorQuestion=您确定要将主管设置为 %s 选定的记录？
 ConfirmUpdatePriceQuestion=您确定要更新 <span class='notranslate'>%s</span> 的价格吗\n 选定的记录？
 CategTypeNotFound=未找到记录类型的标签类型
-Rate=税率
 SupervisorNotFound=未找到主管
 CopiedToClipboard=已复制到剪贴板
 InformationOnLinkToContract=该金额只是合同所有行的总和。不考虑时间概念。
@@ -1213,6 +1213,7 @@ CanceledHidden=取消隐藏
 CanceledShown=显示已取消
 Terminate=终止
 Terminated=终止
+Position=位置
 AddLineOnPosition=在位置上添加行（如果为空则在末尾）
 ConfirmAllocateCommercial=指定销售代表确认
 ConfirmAllocateCommercialQuestion=您确定要分配 %s 选定的记录？
@@ -1230,6 +1231,7 @@ ExternalUser=外部用户
 NoSpecificContactAddress=无具体联系人或地址
 NoSpecificContactAddressBis=This tab is dedicated to force specific contacts or addresses for the current object. Use it only if you want to define one or several specific contacts or addresses for the object when the information on the third party is not enough or not accurate.
 HideOnVCard=隐藏%s
+ShowOnVCard=Show %s
 AddToContacts=将地址添加到我的联系人
 LastAccess=上次访问时间
 UploadAnImageToSeeAPhotoHere=从标签 <span class='notranslate'>%s</span> 上传图像\n 在这里查看照片
@@ -1259,4 +1261,7 @@ AmountSalary=Salary amount
 InvoiceSubtype=Invoice subtype
 ConfirmMassReverse=Bulk Reverse confirmation
 ConfirmMassReverseQuestion=Are you sure you want to reverse the %s selected record(s)?
-
+ElementType=Element type
+ElementId=Element Id
+Encrypted=Encrypted
+Settings=设置

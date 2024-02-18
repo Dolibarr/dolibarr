@@ -67,7 +67,6 @@ AccountsArea=אזור חשבונות
 AccountCard=כרטיס חשבון
 DeleteAccount=מחק חשבון
 ConfirmDeleteAccount=האם אתה בטוח שברצונך למחוק חשבון זה?
-Account=Account
 BankTransactionByCategories=כניסות בנק לפי קטגוריות
 BankTransactionForCategory=כניסות בנק לקטגוריה <b>%s</b>
 RemoveFromRubrique=הסר קישור עם קטגוריה

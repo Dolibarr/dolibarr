@@ -117,7 +117,6 @@ class EvaluationLine extends CommonObjectLine
 	);
 	public $rowid;
 	public $date_creation;
-	public $tms;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $fk_skill;

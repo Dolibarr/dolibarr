@@ -190,7 +190,7 @@ $accounts = array();
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = "SELECT b.rowid, b.label, b.courant, b.rappro, b.account_number, b.fk_accountancy_journal, b.currency_code, b.datec as date_creation, b.tms as date_update";
+$sql = "SELECT b.rowid, b.label, b.courant, b.rappro, b.account_number, b.fk_accountancy_journal, b.currency_code, b.datec as date_creation, b.tms as date_modification";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -814,7 +814,7 @@ foreach ($accounts as $key => $type) {
 		// Date modification
 		if (!empty($arrayfields['b.tms']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($objecttmp->date_update, 'dayhour');
+			print dol_print_date($objecttmp->date_modification, 'dayhour');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

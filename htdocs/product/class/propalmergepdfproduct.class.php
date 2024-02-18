@@ -61,7 +61,6 @@ class Propalmergepdfproduct extends CommonObject
 	 */
 	public $fk_user_mod;
 	public $datec = '';
-	public $tms = '';
 
 	/**
 	 * @var string lang code

@@ -198,13 +198,6 @@ class CompanyPaymentMode extends CommonObject
 	 */
 	public $datec;
 
-	/**
-	 * Date modification record (tms)
-	 *
-	 * @var integer
-	 */
-	public $tms;
-
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 

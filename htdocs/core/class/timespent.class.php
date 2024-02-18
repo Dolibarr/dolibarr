@@ -134,7 +134,6 @@ class TimeSpent extends CommonObject
 		'note' => array('type'=>'text', 'label'=>'note', 'enabled'=>'1', 'position'=>18, 'notnull'=>0, 'visible'=>-1,),
 	);
 	public $rowid;
-	public $tms;
 	public $import_key;
 	public $fk_element;
 	public $elementtype;

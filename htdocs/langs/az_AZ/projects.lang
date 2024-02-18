@@ -47,7 +47,7 @@ NbOfProjects=Layihələrin sayı
 NbOfTasks=Tapşırıqların sayı
 TimeEntry=Vaxt izləmə
 TimeSpent=Vaxt sərf
-TimeSpentSmall=Time spent
+TimeSpentSmall=Keçirilmiş vaxt
 TimeSpentByYou=Sizin sərf etdiyiniz vaxt
 TimeSpentByUser=İstifadəçinin sərf etdiyi vaxt
 TaskId=Tapşırıq ID
@@ -249,7 +249,7 @@ LatestProjects=Ən son %s layihələr
 LatestModifiedProjects=Ən son %s dəyişdirilmiş layihələr
 OtherFilteredTasks=Digər filtrlənmiş tapşırıqlar
 NoAssignedTasks=Heç bir təyin edilmiş tapşırıq tapılmadı (vaxt daxil etmək üçün yuxarıdakı seçim qutusundan cari istifadəçiyə layihə/tapşırıqlar təyin edin)
-ThirdPartyRequiredToGenerateInvoice=Layihənin hesab-fakturasını təqdim etmək üçün layihədə üçüncü tərəf müəyyən edilməlidir.
+ThirdPartyRequiredToGenerateIntervention=A third party must be defined on project to be able to create intervention.
 ThirdPartyRequiredToGenerateInvoice=Layihənin hesab-fakturasını təqdim etmək üçün layihədə üçüncü tərəf müəyyən edilməlidir.
 ChooseANotYetAssignedTask=Hələ sizə təyin edilməmiş bir tapşırıq seçin
 # Comments trans

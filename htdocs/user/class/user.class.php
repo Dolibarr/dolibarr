@@ -383,8 +383,8 @@ class User extends CommonObject
 
 	public $fields = array(
 		'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
-		'lastname'=>array('type'=>'varchar(50)', 'label'=>'LastName', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1),
-		'firstname'=>array('type'=>'varchar(50)', 'label'=>'FirstName', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
+		'lastname'=>array('type'=>'varchar(50)', 'label'=>'Lastname', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1),
+		'firstname'=>array('type'=>'varchar(50)', 'label'=>'Firstname', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
 		'ref_employee'=>array('type'=>'varchar(50)', 'label'=>'RefEmployee', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>30, 'searchall'=>1),
 		'national_registration_number'=>array('type'=>'varchar(50)', 'label'=>'NationalRegistrationNumber', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>40, 'searchall'=>1)
 	);
@@ -805,15 +805,19 @@ class User extends CommonObject
 			if (strpos($module, '@') !== false) {
 				$module = $tmp[1];
 			}
-			$rightsPath = $tmp[1];
-			$permlevel2 = $permlevel1;
-			$permlevel1 = $tmp[0];
+			if ($tmp[0] != $tmp[1]) {
+				// If $module = 'myobject@mymodule'
+				$rightsPath = $tmp[1];
+				$permlevel2 = $permlevel1;
+				$permlevel1 = $tmp[0];
+			} else {
+				// If $module = 'abc@abc'
+				$rightsPath = $tmp[1];
+			}
 		}
 
 		// In $conf->modules, we have 'accounting', 'product', 'facture', ...
 		// In $user->rights, we have 'accounting', 'produit', 'facture', ...
-		//var_dump($module);
-		//var_dump($rightsPath);
 		//var_dump($this->rights->$rightsPath);
 		//var_dump($conf->modules);
 		//var_dump($module.' '.isModEnabled($module).' '.$rightsPath.' '.$permlevel1.' '.$permlevel2);
@@ -4132,12 +4136,10 @@ class User extends CommonObject
 
 		$this->findUserIdByEmailCache[$email] = -1;
 
-		global $conf;
-
 		$sql = 'SELECT rowid';
 		$sql .= ' FROM '.$this->db->prefix().'user';
 		if (getDolGlobalString('AGENDA_DISABLE_EXACT_USER_EMAIL_COMPARE_FOR_EXTERNAL_CALENDAR')) {
-			$sql .= " WHERE email LIKE '%".$this->db->escape($email)."%'";
+			$sql .= " WHERE email LIKE '%".$this->db->escape($this->db->escapeforlike($email))."%'";
 		} else {
 			$sql .= " WHERE email = '".$this->db->escape($email)."'";
 		}

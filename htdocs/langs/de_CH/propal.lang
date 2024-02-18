@@ -8,7 +8,6 @@ PropalStatusSigned=Unterzeichnet (ist zu verrechnen)
 PropalStatusNotSigned=Nicht unterzeichnet (geschlossen)
 PropalStatusBilled=Verrechnet
 PropalStatusCanceledShort=widerrufen
-PropalStatusValidatedShort=Validated (open)
 PropalStatusClosedShort=Geschlossen
 PropalStatusSignedShort=Unterzeichnet
 PropalStatusNotSignedShort=Nicht unterzeichnet

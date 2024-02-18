@@ -101,8 +101,14 @@ class Task extends CommonObjectLine
 
 	/**
 	 * @var int ID
+	 * @deprecated use status instead
 	 */
 	public $fk_statut;
+
+	/**
+	 * @var int ID
+	 */
+	public $status;
 
 	public $priority;
 
@@ -189,6 +195,30 @@ class Task extends CommonObjectLine
 	 */
 	public $project_budget_amount;
 
+	/**
+	 * Draft status
+	 */
+	const STATUS_DRAFT = 0;
+
+	/**
+	 * Validated status (To do). Note: We also have the field progress to know the progression from 0 to 100%.
+	 */
+	const STATUS_VALIDATED = 1;
+
+	/**
+	 * Finished status
+	 */
+	const STATUS_CLOSED = 3;
+
+	/**
+	 * Transferred status
+	 */
+	const STATUS_TRANSFERRED = 4;
+
+	/**
+	 * status canceled
+	 */
+	const STATUS_CANCELED = 9;
 
 
 	/**
@@ -335,7 +365,7 @@ class Task extends CommonObjectLine
 		$sql .= " t.datee as date_end,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_valid,";
-		$sql .= " t.fk_statut,";
+		$sql .= " t.fk_statut as status,";
 		$sql .= " t.progress,";
 		$sql .= " t.budget_amount,";
 		$sql .= " t.priority,";
@@ -380,7 +410,8 @@ class Task extends CommonObjectLine
 				$this->date_end				= $this->db->jdate($obj->date_end);
 				$this->fk_user_creat		= $obj->fk_user_creat;
 				$this->fk_user_valid		= $obj->fk_user_valid;
-				$this->fk_statut			= $obj->fk_statut;
+				$this->fk_statut		    = $obj->status;
+				$this->status			    = $obj->status;
 				$this->progress				= $obj->progress;
 				$this->budget_amount		= $obj->budget_amount;
 				$this->priority				= $obj->priority;
@@ -884,7 +915,7 @@ class Task extends CommonObjectLine
 		$this->duration_effective = '';
 		$this->fk_user_creat = null;
 		$this->progress = '25';
-		$this->fk_statut = null;
+		$this->status = null;
 		$this->note = 'This is a specimen task not';
 	}
 
@@ -1119,7 +1150,8 @@ class Task extends CommonObjectLine
 					}
 
 					$tasks[$i]->progress		= $obj->progress;
-					$tasks[$i]->fk_statut = $obj->status;
+					$tasks[$i]->fk_statut		= $obj->status;
+					$tasks[$i]->status 		    = $obj->status;
 					$tasks[$i]->public = $obj->public;
 					$tasks[$i]->date_start = $this->db->jdate($obj->date_start);
 					$tasks[$i]->date_end		= $this->db->jdate($obj->date_end);
@@ -2130,7 +2162,7 @@ class Task extends CommonObjectLine
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->fk_statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2321,6 +2353,7 @@ class Task extends CommonObjectLine
 				$task_static->projectstatus = $obj->projectstatus;
 				$task_static->progress = $obj->progress;
 				$task_static->fk_statut = $obj->status;
+				$task_static->status = $obj->status;
 				$task_static->date_start = $this->db->jdate($obj->date_start);
 				$task_static->date_end = $this->db->jdate($obj->date_end);
 

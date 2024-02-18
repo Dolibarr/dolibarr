@@ -187,11 +187,6 @@ class EmailCollector extends CommonObject
 	public $date_creation;
 
 	/**
-	 * @var int timestamp
-	 */
-	public $tms;
-
-	/**
 	 * @var int ID
 	 */
 	public $fk_user_creat;

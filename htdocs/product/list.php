@@ -447,7 +447,7 @@ if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 } else {
 	$sql .= " ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export, ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export,";
 }
-$sql .= ' p.datec as date_creation, p.tms as date_update, p.pmp, p.stock, p.cost_price,';
+$sql .= ' p.datec as date_creation, p.tms as date_modification, p.pmp, p.stock, p.cost_price,';
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units,';
 $sql .= ' p.fk_country, p.fk_state,';
 $sql .= ' p.import_key,';
@@ -2188,7 +2188,7 @@ while ($i < $imaxinloop) {
 		// Date modification
 		if (!empty($arrayfields['p.tms']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

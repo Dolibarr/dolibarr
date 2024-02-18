@@ -368,9 +368,9 @@ class modMyModule extends DolibarrModules
 		/* BEGIN MODULEBUILDER EXPORT MYOBJECT */
 		/*
 		$langs->load("mymodule@mymodule");
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='myobject@mymodule';
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = 'MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_icon[$r] = $this->picto;
 		// Define $this->export_fields_array, $this->export_TypeFields_array and $this->export_entities_array
 		$keyforclass = 'MyObject'; $keyforclassfile='/mymodule/class/myobject.class.php'; $keyforelement='myobject@mymodule';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
@@ -387,8 +387,8 @@ class modMyModule extends DolibarrModules
 		//$this->export_examplevalues_array[$r] = array('t.field'=>'Example');
 		//$this->export_help_array[$r] = array('t.field'=>'FieldDescHelp');
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'myobject as t';
-		//$this->export_sql_end[$r]  =' LEFT JOIN '.MAIN_DB_PREFIX.'myobject_line as tl ON tl.fk_myobject = t.rowid';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'mymodule_myobject as t';
+		//$this->export_sql_end[$r]  =' LEFT JOIN '.MAIN_DB_PREFIX.'mymodule_myobject_line as tl ON tl.fk_myobject = t.rowid';
 		$this->export_sql_end[$r] .=' WHERE 1 = 1';
 		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('myobject').')';
 		$r++; */
@@ -399,9 +399,9 @@ class modMyModule extends DolibarrModules
 		/* BEGIN MODULEBUILDER IMPORT MYOBJECT */
 		/*
 		$langs->load("mymodule@mymodule");
-		$this->import_code[$r]=$this->rights_class.'_'.$r;
-		$this->import_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->import_icon[$r]='myobject@mymodule';
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = 'MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->import_icon[$r] = $this->picto;
 		$this->import_tables_array[$r] = array('t' => MAIN_DB_PREFIX.'mymodule_myobject', 'extra' => MAIN_DB_PREFIX.'mymodule_myobject_extrafields');
 		$this->import_tables_creator_array[$r] = array('t' => 'fk_user_author'); // Fields to store import user id
 		$import_sample = array();

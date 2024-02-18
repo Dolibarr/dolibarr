@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Quan hệ đối tác dành riêng cho thành v
 DatePartnershipStart=Ngày bắt đầu
 DatePartnershipEnd=Ngày kết thúc
 ReasonDecline=Lý do từ chối
-ReasonDeclineOrCancel=Lý do từ chối
+ReasonDeclineOrCancel=Reason for refusal or cancellation
 PartnershipAlreadyExist=Quan hệ đối tác đã tồn tại
 ManagePartnership=Quản lý quan hệ đối tác
 BacklinkNotFoundOnPartnerWebsite=Không tìm thấy backlink trên trang web đối tác
@@ -89,7 +89,6 @@ YourPartnershipCanceledContent=Chúng tôi muốn thông báo cho bạn rằng q
 
 CountLastUrlCheckError=Số lỗi trong lần kiểm tra URL cuối cùng
 LastCheckBacklink=Ngày kiểm tra URL lần cuối
-ReasonDeclineOrCancel=Lý do từ chối
 
 NewPartnershipRequest=Yêu cầu hợp tác mới
 NewPartnershipRequestDesc=Biểu mẫu này cho phép bạn yêu cầu tham gia một trong các chương trình hợp tác của chúng tôi. Nếu bạn cần trợ giúp để điền vào biểu mẫu này, vui lòng liên hệ qua email <b>%s<span class='notranslate'></b></ khoảng>.
