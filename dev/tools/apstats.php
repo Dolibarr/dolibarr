@@ -338,9 +338,9 @@ $html = '<html>'."\n";
 $html .= '<meta charset="utf-8">'."\n";
 $html .= '<meta http-equiv="refresh" content="300">'."\n";
 $html .= '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
-$html .= '<meta name="keywords" content="erp, crm, dolibarr, statistics, project, security alerts" />'."\n";
-$html .= '<meta name="title" content="Dolibarr project statistics" />'."\n";
-$html .= '<meta name="description" content="Statistics about the Dolibarr ERP CRM Open Source project (lines of code, contributions, security alerts, technical debt..." />'."\n";
+$html .= '<meta name="keywords" content="erp, crm, dolibarr, statistics, project, security alerts">'."\n";
+$html .= '<meta name="title" content="Dolibarr project statistics">'."\n";
+$html .= '<meta name="description" content="Statistics about the Dolibarr ERP CRM Open Source project (lines of code, contributions, security alerts, technical debt...">'."\n";
 $html .= '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==" crossorigin="anonymous" referrerpolicy="no-referrer" />'."\n";
 $html .= '<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>'."\n";
 $html .= '<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">';
@@ -663,11 +663,11 @@ if (!empty($output_arrtd)) {
 			} else {
 				$tmp .= '<tr class="hidden sourcephpstan">';
 			}
-			$tmp .= '<td>'.$reg[1].'</td>';
+			$tmp .= '<td>'.dolPrintLabel($reg[1]).'</td>';
 			$tmp .= '<td class="">';
-			$tmp .= '<a href="'.$urlgit.$reg[1].'#L'.$reg[2].'" target="_blank">'.$reg[2].'</a>';
+			$tmp .= '<a href="'.dol_escape_htmltag($urlgit.$reg[1].'#L'.$reg[2]).'" target="_blank">'.dolPrintLabel($reg[2]).'</a>';
 			$tmp .= '</td>';
-			$tmp .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($reg[4]).'">'.dol_escape_htmltag($reg[4]).'</td>';
+			$tmp .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($reg[4]).'">'.dolPrintLabel($reg[4]).'</td>';
 			$tmp .= '</tr>'."\n";
 			$nblines++;
 		}
@@ -693,18 +693,17 @@ if (count($output_phan_json) != 0) {
 				$line_range = "#L{$line_start}-L{$line_end}";
 				$line_range_txt = "{$line_start}-{$line_end}";
 			}
-			$code_url = $urlgit.$path.$line_range;
-			$description = dolPrintLabel($notice['description']);
+			$code_url_attr = dol_escape_htmltag($urlgit.$path.$line_range);
 			if ($phan_nblines < 20) {
 				$tmp = '<tr class="nohidden">';
 			} else {
 				$tmp = '<tr class="hidden sourcephan">';
 			}
-			$tmp .= '<td>'.$path.'</td>';
+			$tmp .= '<td>'.dolPrintLabel($path).'</td>';
 			$tmp .= '<td class="">';
-			$tmp .= '<a href="'.$code_url.'" target="_blank">'.$line_range_txt.'</a>';
+			$tmp .= '<a href="'.$code_url_attr.'" target="_blank">'.$line_range_txt.'</a>';
 			$tmp .= '</td>';
-			$tmp .= '<td class="tdoverflowmax300">'.dol_escape_htmltag($description).'</td>';
+			$tmp .= '<td class="tdoverflowmax300">'.dolPrintLabel($notice['description']).'</td>';
 			$tmp .= '</tr>';
 
 			$phan_items[] = $tmp;
@@ -717,7 +716,7 @@ if (count($output_phan_json) != 0) {
 // Last security errors
 
 $html .= '<section class="chapter" id="linesofcode">'."\n";
-$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>Last security issues <span class="opacitymedium">(last '.($nbofmonth > 1 ? $nbofmonth.' months':'month').')</span></h2>'."\n";
+$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>Last security issues <span class="opacitymedium">(last '.($nbofmonth != 1 ? $nbofmonth.' months' : 'month').')</span></h2>'."\n";
 
 $html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
@@ -771,18 +770,21 @@ $html .= '</section>';
 
 // Technical debt PHPstan
 if ($nblines != 0) {
+	$datatable_script .= '
+ if (typeof(DataTable)==="function") {jQuery(".sourcephpstan").toggle(true);}
+ let phpstantable = new DataTable("#technicaldebt table");
+';
 	$html .= '<section class="chapter" id="technicaldebt">'."\n";
 	$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">(PHPStan level '.$phpstanlevel.' -> '.$nblines.' warnings)</span></h2>'."\n";
 
 	$html .= '<div class="boxallwidth">'."\n";
 	$html .= '<div class="div-table-responsive">'."\n";
 	$html .= '<table class="list_technical_debt centpercent">'."\n";
-	$html .= '<tr class="trgroup"><td>File</td><td>Line</td><td>Type</td></tr>'."\n";
+	$html .= '<thead><tr class="trgroup"><td>File</td><td>Line</td><td>Type</td></tr></thead><tbody>'."\n";
 	$html .= $tmp;
-	$html .= '<tr class="sourcephpstan"><td colspan="3"><span class="seedetail" data-source="phpstan" id="sourcephpstan">Show all...</span></td></tr>';
-	$html .= '</table>';
-	$html .= '</div>';
-	$html .= '</div>';
+	$html .= '<tbody></table>';
+	$html .= '<div><span class="seedetail" data-source="phpstan" id="sourcephpstan">Show all...</span></div>';
+	$html .= '</div></div>';
 
 	$html .= '</section>'."\n";
 }

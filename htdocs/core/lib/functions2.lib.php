@@ -6,6 +6,7 @@
  * Copyright (C) 2015       Ferran Marcet               <fmarcet@2byte.es>
  * Copyright (C) 2015-2016  Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,11 +72,13 @@ function jsUnEscape($source)
 
 
 /**
- * Return list of modules directories. We detect directories that contains a subdirectory /core/modules
- * We discard directory modules that contains 'disabled' into their name.
+ * Return list of directories that contain modules.
  *
- * @param	string	$subdir		Sub directory (Example: '/mailings')
- * @return	array				Array of directories that can contains module descriptors
+ * Detects directories that contain a subdirectory /core/modules.
+ * Modules that contains 'disabled' in their name are excluded.
+ *
+ * @param	string					$subdir	Sub directory (Example: '/mailings' will look for /core/modules/mailings/)
+ * @return	array<string,string>			Array of directories that can contain module descriptors ($key==value)
  */
 function dolGetModulesDirs($subdir = '')
 {
@@ -97,7 +100,7 @@ function dolGetModulesDirs($subdir = '')
 					continue; // We discard module if it contains disabled into name.
 				}
 
-				if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS' && $file != 'includes') {
+				if (substr($file, 0, 1) != '.' && is_dir($dirroot.'/'.$file) && strtoupper(substr($file, 0, 3)) != 'CVS' && $file != 'includes') {
 					if (is_dir($dirroot.'/'.$file.'/core/modules'.$subdir.'/')) {
 						$modulesdir[$dirroot.'/'.$file.'/core/modules'.$subdir.'/'] = $dirroot.'/'.$file.'/core/modules'.$subdir.'/';
 					}
@@ -1653,10 +1656,10 @@ function numero_semaine($time)
 	// Definition du numero de semaine: nb de jours entre "premier Jeudi de l'annee" et "Jeudi de la semaine";
 	$numeroSemaine = (
 		(
-		date("z", mktime(12, 0, 0, date("m", $jeudiSemaine), date("d", $jeudiSemaine), date("Y", $jeudiSemaine)))
+			date("z", mktime(12, 0, 0, date("m", $jeudiSemaine), date("d", $jeudiSemaine), date("Y", $jeudiSemaine)))
 	-
 	date("z", mktime(12, 0, 0, date("m", $premierJeudiAnnee), date("d", $premierJeudiAnnee), date("Y", $premierJeudiAnnee)))
-	) / 7
+		) / 7
 	) + 1;
 
 	// Cas particulier de la semaine 53
@@ -2027,8 +2030,8 @@ function getSoapParams()
 	$response_timeout = (!getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT') ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT); // Response timeout
 	//print extension_loaded('soap');
 	if ($proxyuse) {
-		$params = array('connection_timeout'=>$timeout,
-					  'response_timeout'=>$response_timeout,
+		$params = array('connection_timeout' => $timeout,
+					  'response_timeout' => $response_timeout,
 					  'proxy_use'      => 1,
 					  'proxy_host'     => $proxyhost,
 					  'proxy_port'     => $proxyport,
@@ -2037,8 +2040,8 @@ function getSoapParams()
 					  'trace'		   => 1
 		);
 	} else {
-		$params = array('connection_timeout'=>$timeout,
-					  'response_timeout'=>$response_timeout,
+		$params = array('connection_timeout' => $timeout,
+					  'response_timeout' => $response_timeout,
 					  'proxy_use'      => 0,
 					  'proxy_host'     => false,
 					  'proxy_port'     => false,
@@ -2569,8 +2572,8 @@ function colorHexToHsl($hex, $alpha = false, $returnArray = false)
 		$saturation += 1;
 	}
 
-	$lightness = round($lightness*100);
-	$saturation = round($saturation*100);
+	$lightness = round($lightness * 100);
+	$saturation = round($saturation * 100);
 
 	if ($returnArray) {
 		return array(
@@ -2711,7 +2714,7 @@ if (!function_exists('dolEscapeXML')) {
 	 */
 	function dolEscapeXML($string)
 	{
-		return strtr($string, array('\''=>'&apos;', '"'=>'&quot;', '&'=>'&amp;', '<'=>'&lt;', '>'=>'&gt;'));
+		return strtr($string, array('\'' => '&apos;', '"' => '&quot;', '&' => '&amp;', '<' => '&lt;', '>' => '&gt;'));
 	}
 }
 
