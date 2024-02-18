@@ -164,6 +164,7 @@ $usercancreate = $user->hasRight('agenda', 'allactions', 'create') || (($object-
 
 $listUserAssignedUpdated = false;
 $listResourceAssignedUpdated = false;
+$assignedtouser = array();
 
 // Remove user to assigned list
 if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned') == '0')) {

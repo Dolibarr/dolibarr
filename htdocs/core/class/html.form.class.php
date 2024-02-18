@@ -9938,7 +9938,7 @@ class Form
 		} else {
 			// Generic case to show photos
 			// TODO Implement this method in previous objects so we can always use this generic method.
-			if (method_exists($object, 'getDataToShowPhoto')) {
+			if ($modulepart != "unknown" && method_exists($object, 'getDataToShowPhoto')) {
 				$tmpdata = $object->getDataToShowPhoto($modulepart, $imagesize);
 
 				$dir = $tmpdata['dir'];
