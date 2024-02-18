@@ -170,6 +170,7 @@ function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoreset
 				print $tab[$x]['buttons'];
 				print '</td></tr></table>';
 			} else {
+				// Show the badge with color for the category
 				print $tab[$x]['entry'];
 			}
 			//print ' -> A '.$tab[$x]['rowid'].' mainmenu='.$tab[$x]['mainmenu'].' leftmenu='.$tab[$x]['leftmenu'].' fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].'<br>'."\n";
@@ -193,9 +194,11 @@ function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoreset
 			if ($showfk) {
 				print '<table class="nobordernopadding centpercent"><tr>';
 				print '<td class="tdoverflowmax200">';
-				print '<strong class="paddingleft paddingright"><a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&token='.newToken().'&menuId='.$tab[$x]['rowid'].$moreparam.'">';
+				print '<strong class="paddingleft paddingright">';
+				print '<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&token='.newToken().'&menuId='.$tab[$x]['rowid'].$moreparam.'">';
 				print $tab[$x]['title'];
-				print '</a></strong>';
+				print '</a>';
+				print '</strong>';
 				print '<span class="small opacitymedium">(mainmenu='.$tab[$x]['mainmenu'].' - leftmenu='.$tab[$x]['leftmenu'].', fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].')</small>';
 				print '</td>';
 				print '<td class="right nowraponall">';
