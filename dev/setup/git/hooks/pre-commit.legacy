@@ -17,8 +17,7 @@ echo "Running precommit hook in .git/hooks/pre-commit" 1>&2
 if [ "$#" -eq 1 ]
 then
     oIFS=$IFS
-    IFS='
-    '
+    IFS=$'\n'
     SFILES="$1"
     IFS=$oIFS
 fi
