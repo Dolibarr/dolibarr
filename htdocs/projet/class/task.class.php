@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022       Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
@@ -1069,7 +1069,7 @@ class Task extends CommonObjectLine
 		if ($includebilltime) {
 			$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public, p.fk_statut, p.usage_bill_time,";
 			$sql .= " t.datec, t.dateo, t.datee, t.tms,";
-			$sql .= " t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut,";
+			$sql .= " t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
 			$sql .= " t.dateo, t.datee, t.planned_workload, t.rang,";
 			$sql .= " t.description, ";
 			$sql .= " t.budget_amount, ";
