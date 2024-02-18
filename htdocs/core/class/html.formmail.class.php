@@ -1480,12 +1480,12 @@ class FormMail extends Form
 						success: function(response) {
 							console.log('Add response into field message: '+response);
 
+							jQuery('#message').val(response);
+
 							if (CKEDITOR.instances && CKEDITOR.instances.message && ".getDolGlobalInt('FCKEDITOR_ENABLE_MAIL', 0).") {
 								CKEDITOR.instances.message.setReadOnly(0);
-								//CKEDITOR.instances.message.setData(response);
+								CKEDITOR.instances.message.setData(response);
 							}
-
-							jQuery('#message').val(response);
 
 							// remove readonly
 							$('#ai_instructions').val('');

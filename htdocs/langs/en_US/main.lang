@@ -841,6 +841,7 @@ ClickToEdit=Click to edit
 ClickToRefresh=Click to refresh
 EditWithEditor=Edit with CKEditor
 EditWithTextEditor=Edit with Text editor
+EditHTML=Edit HTML
 EditHTMLSource=Edit HTML Source
 ObjectDeleted=Object %s deleted
 ByCountry=By country
