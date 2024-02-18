@@ -170,8 +170,8 @@ class Dolresource extends CommonObject
 	{
 		$this->db = $db;
 		$this->status = 0;
-		$this->tms = dol_now();
-		$this->cache_code_type_resource = array();
+
+    $this->cache_code_type_resource = array();
 	}
 
 	/**
@@ -184,6 +184,7 @@ class Dolresource extends CommonObject
 	public function create(User $user, int $no_trigger = 0)
 	{
 		$error = 0;
+		$this->date_creation = dol_now();
 
 		// Clean parameters
 		$new_resource_values = [
@@ -199,7 +200,7 @@ class Dolresource extends CommonObject
 			$this->max_users,
 			$this->fk_code_type_resource,
 			$this->note_public,
-			$this->note_private
+			$this->note_private,
 		];
 		foreach ($new_resource_values as $key => $value) {
 			if (isset($value)) {
@@ -222,13 +223,16 @@ class Dolresource extends CommonObject
 		$sql .= "max_users,";
 		$sql .= "fk_code_type_resource,";
 		$sql .= "note_public,";
-		$sql .= "note_private";
+		$sql .= "note_private, ";
+		$sql .= "datec, ";
+		$sql .= "fk_user_author ";
 		$sql .= ") VALUES (";
 		$sql .= getEntity('resource') . ", ";
 		foreach ($new_resource_values as $value) {
 			$sql .= " " . ((isset($value) && $value > 0) ? "'" . $this->db->escape($value) . "'" : 'NULL') . ",";
 		}
-		$sql = rtrim($sql, ",");
+		$sql .= " '" . $this->db->idate($this->date_creation) . "',";
+		$sql .= " " . (!empty($user->id) ? ((int) $user->id) : "null");
 		$sql .= ")";
 
 		// Database session
@@ -302,7 +306,8 @@ class Dolresource extends CommonObject
 		$sql .= " t.fk_code_type_resource,";
 		$sql .= " t.note_public,";
 		$sql .= " t.note_private,";
-		$sql .= " t.tms,";
+		$sql .= " t.tms as date_modification,";
+		$sql .= " t.datec as date_creation,";
 		$sql .= " ty.label as type_label";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
@@ -333,6 +338,8 @@ class Dolresource extends CommonObject
 				$this->fk_code_type_resource = $obj->fk_code_type_resource;
 				$this->note_public = $obj->note_public;
 				$this->note_private = $obj->note_private;
+				$this->date_creation     = $this->db->jdate($obj->date_creation);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
 				$this->type_label = $obj->type_label;
 
 				// Retrieve all extrafield
@@ -361,6 +368,7 @@ class Dolresource extends CommonObject
 	{
 		global $conf, $langs;
 		$error = 0;
+		$this->date_modification = dol_now();
 
 		// Clean parameters
 		if (isset($this->ref)) {
@@ -415,7 +423,8 @@ class Dolresource extends CommonObject
 		$sql .= " email=".(isset($this->email) ? "'".$this->db->escape($this->email)."'" : "null").",";
 		$sql .= " max_users=".(isset($this->max_users) ? (int) $this->max_users : "null").",";
 		$sql .= " fk_code_type_resource=".(isset($this->fk_code_type_resource) ? "'".$this->db->escape($this->fk_code_type_resource)."'" : "null").",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null');
+		$sql .= " tms=" . ("'" . $this->db->idate($this->date_modification) . "',");
+		$sql .= " fk_user_modif=" . (!empty($user->id) ? ((int) $user->id) : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -493,7 +502,7 @@ class Dolresource extends CommonObject
 		$sql .= " t.busy,";
 		$sql .= " t.mandatory,";
 		$sql .= " t.fk_user_create,";
-		$sql .= " t.tms";
+		$sql .= " t.tms as date_modification";
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as t";
 		$sql .= " WHERE t.rowid = ".($id);
 
@@ -511,6 +520,7 @@ class Dolresource extends CommonObject
 				$this->busy = $obj->busy;
 				$this->mandatory = $obj->mandatory;
 				$this->fk_user_create = $obj->fk_user_create;
+				$this->date_modification = $obj->date_modification;
 
 				/*if ($obj->resource_id && $obj->resource_type) {
 					$this->objresource = fetchObjectByElement($obj->resource_id, $obj->resource_type);
@@ -633,7 +643,8 @@ class Dolresource extends CommonObject
 		$sql .= " t.email,";
 		$sql .= " t.max_users,";
 		$sql .= " t.fk_code_type_resource,";
-		$sql .= " t.tms,";
+		$sql .= " t.tms as date_modification,";
+		$sql .= " t.datec as date_creation,";
 		// Add fields from extrafields
 		if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['label'])) {
 			foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
@@ -683,6 +694,8 @@ class Dolresource extends CommonObject
 					$this->email = $obj->email;
 					$this->max_users = $obj->max_users;
 					$line->fk_code_type_resource = $obj->fk_code_type_resource;
+					$line->date_modification = $obj->date_modification;
+					$line->date_creation = $obj->date_creation;
 					$line->type_label = $obj->type_label;
 
 					// fetch optionals attributes and labels
@@ -710,6 +723,7 @@ class Dolresource extends CommonObject
 	public function updateElementResource(User $user = null, int $notrigger = 0)
 	{
 		$error = 0;
+		$this->date_modification = dol_now();
 
 		// Clean parameters
 		if (!is_numeric($this->resource_id)) {
@@ -739,7 +753,7 @@ class Dolresource extends CommonObject
 		$sql .= " element_type = ".(isset($this->element_type) ? "'".$this->db->escape($this->element_type)."'" : "null").",";
 		$sql .= " busy = ".(isset($this->busy) ? (int) $this->busy : "null").",";
 		$sql .= " mandatory = ".(isset($this->mandatory) ? (int) $this->mandatory : "null").",";
-		$sql .= " tms = ".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null');
+		$sql .= " tms = ".(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : 'null');
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
