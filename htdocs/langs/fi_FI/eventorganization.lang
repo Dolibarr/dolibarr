@@ -34,7 +34,6 @@ PaymentEvent=maksu tapahtumasta
 NewRegistration=Rekisteröinti
 EventOrganizationSetup=Tapahtuman järjestämisen asetukset
 EventOrganization=Tapahtuman järjestäminen
-Settings=Asetukset
 EventOrganizationSetupPage = Tapahtumaorganisaation asetussivu
 EVENTORGANIZATION_TASK_LABEL = Tehtävien tunniste luo automaattisesti, kun projekti vahvistetaan
 EVENTORGANIZATION_TASK_LABELTooltip = Kun vahvistat tapahtuman järjestämisen, projektissa voidaan luoda automaattisesti joitakin tehtäviä<br><br>Esimerkki: <br>Lähetä konferenssikutsu<br>Lähetä osastokutsu<br>Konferenssiehdotukset<span>Vahvista ='notranslate'><br></span>Vahvista Booths-hakemus<br>Avaa tapahtuman tilaukset osallistujille<br> tapahtuman puhujille<span class='notranslate'><br>Lähetä muistutus tapahtumasta Boothin isännöijille<br>Lähetä muistutus tapahtumasta osallistujille

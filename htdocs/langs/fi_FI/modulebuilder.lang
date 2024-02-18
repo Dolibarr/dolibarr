@@ -27,8 +27,7 @@ ModuleBuilderDeschooks=Tämä välilehti on omistettu koukkuille.
 ModuleBuilderDescwidgets=Tämä välilehti on omistettu widgetien hallintaan/rakentamiseen.
 ModuleBuilderDescbuildpackage=Voit luoda täällä jaettavaksi valmiin paketin tiedosto (normalisoitu .zip tiedosto) moduulistasi ja "jakeluvalmis" -dokumentaatio tiedosto. Luo paketti tai dokumentaatio napsauttamalla painiketta tiedosto.
 EnterNameOfModuleToDeleteDesc=Voit poistaa moduulisi. VAROITUS: Kaikki moduulin koodaustiedostot (luodut tai luodut manuaalisesti) ja strukturoidun datan ja dokumentaatio poistetaan!
-EnterNameOfObjectToDeleteDesc=Voit poistaa kohteen. VAROITUS: Kaikki objektiin liittyvät koodaustiedostot (luodut tai luodut manuaalisesti) poistetaan!
-EnterNameOfObjectToDeleteDesc=Voit poistaa kohteen. VAROITUS: Kaikki objektiin liittyvät koodaustiedostot (luodut tai luodut manuaalisesti) poistetaan!
+EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
 DangerZone=Vaaravyöhyke
 BuildPackage=Rakenna paketti
 BuildPackageDesc=Voit luoda zip-paketin sovelluksestasi, jotta olet valmis jakamaan sen missä tahansa Dolibarrissa. Voit myös jakaa sitä tai myydä sitä markkinoilla, kuten <a href="https://www.dolistore.com">DoliStore.com</a>.
@@ -183,7 +182,7 @@ DictionaryDeleted=Sanakirja <b>%s</b> poistettu onnistuneesti
 PropertyModuleUpdated=Omaisuus <b>%s</b> on päivitetty onnistuneesti
 InfoForApiFile=* Kun luot tiedosto ensimmäistä kertaa, kaikki menetelmät luodaan <strong> jokaiselle objektille.</strong><br>* Kun napsautat <strong>poista<span class='notranslate'0f6f6f6f79 span> poistat vain kaikki menetelmät <strong>valitusta objektista</strong>.
 SetupFile=Sivu moduulien asennukseen
-EmailingSelectors=Sähköpostien valitsijat
+EmailingSelectors=Emails selectors
 EmailingSelectorDesc=Voit luoda ja muokata tässä luokkatiedostoja tarjotaksesi uusia sähköpostikohteen valitsimia joukkosähköpostimoduulille
 EmailingSelectorFile=Sähköpostien valitsin tiedosto
 NoEmailingSelector=Ei sähköpostin valitsin tiedosto

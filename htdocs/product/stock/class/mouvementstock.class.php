@@ -1135,10 +1135,12 @@ class MouvementStock extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', 'stock', 'class="pictofixedwidth"').'<u>'.$langs->trans("Movement").' '.$this->id.'</u>';
+		$label = img_picto('', 'stock', 'class="pictofixedwidth"').'<u>'.$langs->trans("StockMovement").'</u>';
 		$label .= '<div width="100%">';
-		$label .= '<b>'.$langs->trans('Label').':</b> '.$this->label;
-		$label .= '<br><b>'.$langs->trans('Qty').':</b> '.($this->qty > 0 ? '+' : '').$this->qty;
+		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->id;
+		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
+		$qtylabel = (($this->qty > 0) ? '<span class="stockmovemententry">+' :  '<span class="stockmovementexit">') . $this->qty . '</span>';
+		$label .= '<br><b>'.$langs->trans('Qty').':</b> ' . $qtylabel;
 		if ($this->batch) {
 			$label .= '<br><b>'.$langs->trans('Batch').':</b> '.$this->batch;
 		}

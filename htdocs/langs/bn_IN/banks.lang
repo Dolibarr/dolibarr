@@ -67,7 +67,6 @@ AccountsArea=অ্যাকাউন্ট এলাকা
 AccountCard=অ্যাকাউন্ট কার্ড
 DeleteAccount=হিসাব মুছে ফেলা
 ConfirmDeleteAccount=আপনি কি এই অ্যাকাউন্টটি মুছে ফেলার বিষয়ে নিশ্চিত?
-Account=হিসাব
 BankTransactionByCategories=বিভাগ দ্বারা ব্যাঙ্ক এন্ট্রি
 BankTransactionForCategory=<b>%s</b> বিভাগের জন্য ব্যাঙ্ক এন্ট্রি
 RemoveFromRubrique=বিভাগ সহ লিঙ্ক সরান

@@ -47,7 +47,7 @@ NbOfProjects=Loyihalar soni
 NbOfTasks=Vazifalar soni
 TimeEntry=Vaqtni kuzatish
 TimeSpent=O'tkazilgan vaqt
-TimeSpentSmall=Time spent
+TimeSpentSmall=O'tkazilgan vaqt
 TimeSpentByYou=Siz sarflagan vaqt
 TimeSpentByUser=Foydalanuvchi sarflagan vaqt
 TaskId=Vazifa identifikatori
@@ -249,7 +249,7 @@ LatestProjects=Oxirgi %s loyihalari
 LatestModifiedProjects=Oxirgi %s o'zgartirilgan loyihalar
 OtherFilteredTasks=Boshqa filtrlangan vazifalar
 NoAssignedTasks=Belgilangan vazifalar topilmadi (loyihani / vazifalarni joriy foydalanuvchiga vaqtni belgilash uchun yuqori tanlangan maydonchadan belgilang)
-ThirdPartyRequiredToGenerateInvoice=Hisob-kitob qilish imkoniyatiga ega bo'lish uchun loyihada uchinchi shaxs aniqlanishi kerak.
+ThirdPartyRequiredToGenerateIntervention=A third party must be defined on project to be able to create intervention.
 ThirdPartyRequiredToGenerateInvoice=Hisob-kitob qilish imkoniyatiga ega bo'lish uchun loyihada uchinchi shaxs aniqlanishi kerak.
 ChooseANotYetAssignedTask=Sizga hali tayinlanmagan vazifani tanlang
 # Comments trans

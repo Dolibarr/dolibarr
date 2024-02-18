@@ -34,7 +34,6 @@ PaymentEvent=Malipo ya tukio
 NewRegistration=Usajili
 EventOrganizationSetup=Mpangilio wa Shirika la Tukio
 EventOrganization=Shirika la tukio
-Settings=Mipangilio
 EventOrganizationSetupPage = Ukurasa wa kuanzisha Shirika la Tukio
 EVENTORGANIZATION_TASK_LABEL = Lebo ya kazi za kuunda kiotomatiki mradi utakapothibitishwa
 EVENTORGANIZATION_TASK_LABELTooltip = Unapoidhinisha tukio ili kupanga, baadhi ya kazi zinaweza kuundwa kiotomatiki katika mradi <br>  <br> Kwa mfano: <br> Tuma Wito kwa Mikutano <br> Tuma Simu kwa Booths <br> Thibitisha mapendekezo ya Mikutano <br> Thibitisha ombi la Booths <br> Fungua usajili wa tukio kwa waliohudhuria <br> Tuma ukumbusho wa tukio kwa wazungumzaji <br> Tuma ukumbusho wa tukio kwa wapangishaji wa Booth <br> Tuma ukumbusho wa tukio kwa waliohudhuria
@@ -90,7 +89,7 @@ PriceOfRegistrationHelp=Bei ya kulipa ili kujiandikisha au kushiriki katika tuki
 PriceOfBooth=Bei ya usajili ili kusimama kibanda
 PriceOfBoothHelp=Bei ya usajili ili kusimama kibanda
 EventOrganizationICSLink=Unganisha ICS kwa mikutano
-ConferenceOrBoothInformation=Taarifa za Mkutano au Kibanda
+ConferenceOrBoothInformation=Conference Or Booth information
 Attendees=Waliohudhuria
 ListOfAttendeesOfEvent=Orodha ya waliohudhuria mradi wa tukio
 DownloadICSLink = Pakua kiungo cha ICS
@@ -98,6 +97,7 @@ EVENTORGANIZATION_SECUREKEY = Mbegu ili kupata ufunguo wa ukurasa wa usajili wa 
 SERVICE_BOOTH_LOCATION = Huduma inayotumika kwa safu mlalo ya ankara kuhusu eneo la kibanda
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Huduma inayotumika kwa safu mlalo ya ankara kuhusu usajili wa mhudhuriaji kwa tukio
 NbVotes=Idadi ya kura
+
 #
 # Status
 #
@@ -106,9 +106,10 @@ EvntOrgSuggested = Imependekezwa
 EvntOrgConfirmed = Imethibitishwa
 EvntOrgNotQualified = Hajahitimu
 EvntOrgDone = Imekamilika
-EvntOrgCancelled = Imeghairiwa
+EvntOrgCancelled = Canceled
+
 #
-# Public page
+# Other
 #
 SuggestForm = Ukurasa wa pendekezo
 SuggestOrVoteForConfOrBooth = Ukurasa wa pendekezo au kura
@@ -144,13 +145,8 @@ OrganizationEventBulkMailToAttendees=Huu ni ukumbusho kuhusu ushiriki wako katik
 OrganizationEventBulkMailToSpeakers=Hiki ni kikumbusho cha ushiriki wako katika tukio kama mzungumzaji
 OrganizationEventLinkToThirdParty=Unganisha kwa wahusika wengine (mteja, mtoa huduma au mshirika)
 OrganizationEvenLabelName=Jina la umma la mkutano au kibanda
-
 NewSuggestionOfBooth=Maombi ya kibanda
 NewSuggestionOfConference=Ombi la kufanya mkutano
-
-#
-# Vote page
-#
 EvntOrgRegistrationWelcomeMessage = Karibu kwenye ukurasa wa mapendekezo ya mkutano au kibanda.
 EvntOrgRegistrationConfWelcomeMessage = Karibu kwenye ukurasa wa mapendekezo ya mkutano.
 EvntOrgRegistrationBoothWelcomeMessage = Karibu kwenye ukurasa wa mapendekezo ya kibanda.
@@ -158,8 +154,8 @@ EvntOrgVoteHelpMessage = Hapa, unaweza kutazama na kupiga kura kwa ajili ya matu
 VoteOk = Kura yako imekubaliwa.
 AlreadyVoted = Tayari umepigia kura tukio hili.
 VoteError = Hitilafu imetokea wakati wa kupiga kura, tafadhali jaribu tena.
-
 SubscriptionOk=Usajili wako umerekodiwa
+AmountOfRegistrationPaid=Amount of registration paid
 ConfAttendeeSubscriptionConfirmation = Uthibitishaji wa usajili wako kwa tukio
 Attendee = Mhudhuriaji
 PaymentConferenceAttendee = Malipo ya waliohudhuria mkutano
@@ -169,8 +165,8 @@ RegistrationAndPaymentWereAlreadyRecorder=Usajili na malipo tayari yamerekodiwa 
 EmailAttendee=Barua pepe ya mshiriki
 EmailCompany=Barua pepe ya kampuni
 EmailCompanyForInvoice=Barua pepe ya kampuni (kwa ankara, ikiwa tofauti na barua pepe ya mhudhuriaji)
-ErrorSeveralCompaniesWithEmailContactUs=Kampuni kadhaa zilizo na barua pepe hii zimepatikana kwa hivyo hatuwezi kuthibitisha usajili wako kiotomatiki. Tafadhali wasiliana nasi kwa %s kwa uthibitisho wa mwongozo
-ErrorSeveralCompaniesWithNameContactUs=Kampuni kadhaa zilizo na jina hili zimepatikana kwa hivyo hatuwezi kuthibitisha usajili wako kiotomatiki. Tafadhali wasiliana nasi kwa %s kwa uthibitisho wa mwongozo
+ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
 NoPublicActionsAllowedForThisEvent=Hakuna vitendo vya umma vilivyo wazi kwa tukio hili
 MaxNbOfAttendees=Idadi ya juu zaidi ya waliohudhuria
 DateStartEvent=Tarehe ya kuanza kwa tukio

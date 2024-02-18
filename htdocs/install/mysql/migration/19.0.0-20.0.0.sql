@@ -160,6 +160,7 @@ ALTER TABLE llx_usergroup_extrafields DROP INDEX idx_usergroup_extrafields;
 ALTER TABLE llx_usergroup_extrafields ADD UNIQUE INDEX uk_usergroup_extrafields (fk_object);
 
 ALTER TABLE llx_website ADD COLUMN name_template varchar(255) NULL;
+ALTER TABLE llx_website ADD COLUMN lastpageid integer DEFAULT 0;
 
 UPDATE llx_categorie SET date_creation = tms, tms = tms WHERE date_creation IS NULL AND tms IS NOT NULL;
 
@@ -214,7 +215,8 @@ ALTER TABLE llx_knowledgemanagement_knowledgerecord MODIFY COLUMN answer longtex
 -- Rename const to add customer categories on not customer/prospect third-party if enabled
 UPDATE llx_const SET name = 'THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT' WHERE name = 'THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER';
 
-ALTER TABLE llx_fichinter ADD COLUMN signed integer DEFAULT NULL AFTER duree;
+ALTER TABLE llx_fichinter ADD COLUMN signed_status integer DEFAULT NULL AFTER duree;
+ALTER TABLE llx_contrat ADD COLUMN signed_status integer DEFAULT NULL AFTER date_contrat;
 
 ALTER TABLE llx_mailing ADD COLUMN messtype	varchar(16) DEFAULT 'email' after rowid;
 
@@ -233,4 +235,3 @@ ALTER TABLE llx_socpeople ADD COLUMN geolat double(24,8) DEFAULT NULL;
 ALTER TABLE llx_socpeople ADD COLUMN geolong double(24,8) DEFAULT NULL;
 ALTER TABLE llx_socpeople ADD COLUMN geopoint point DEFAULT NULL;
 ALTER TABLE llx_socpeople ADD COLUMN georesultcode varchar(16) NULL;
-

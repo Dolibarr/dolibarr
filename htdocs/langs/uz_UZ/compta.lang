@@ -162,6 +162,7 @@ CalcModeVATDebt=Modda <b> %s majburiyatlarni hisobga olish bo'yicha QQS %s </b>.
 CalcModeVATEngagement=<b> %s daromad-xarajatlar bo'yicha QQS %s </b>.
 CalcModeDebt=Ma'lum qayd etilgan hujjatlarni tahlil qilish
 CalcModeEngagement=Ma'lum qayd etilgan to'lovlarni tahlil qilish
+CalcModePayment=Ma'lum qayd etilgan to'lovlarni tahlil qilish
 CalcModeBookkeeping=Buxgalteriya hisobi jadvalida qayd etilgan ma'lumotlarni tahlil qilish.
 CalcModeNoBookKeeping=Agar ular hali Ledgerda hisobga olinmagan bo'lsa ham
 CalcModeLT1= Xaridorlarning hisob-fakturalarida <b> %sRE rejimi - etkazib beruvchilar invoices%s </b>

@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=Идоракунии донишҳо (KM) ё пой
 # Admin page
 #
 KnowledgeManagementSetup = Танзими системаи идоракунии дониш
-Settings = Танзимот
 KnowledgeManagementSetupPage = Саҳифаи танзими системаи идоракунии дониш
 
 
 #
 # About page
 #
-About = Дар бораи
 KnowledgeManagementAbout = Дар бораи идоракунии дониш
 KnowledgeManagementAboutPage = Идоракунии дониш дар бораи саҳифа
 
 KnowledgeManagementArea = Идоракунии дониш
 MenuKnowledgeRecord = Пойгоҳи дониш
+MenuKnowledgeRecordShort = Knowledge base
 ListKnowledgeRecord = Рӯйхати мақолаҳо
 NewKnowledgeRecord = Мақолаи нав
 ValidateReply = Ҳалли худро тасдиқ кунед
@@ -47,8 +46,14 @@ KnowledgeRecord = Мақола
 KnowledgeRecordExtraFields = Майдони экзотикӣ барои мақола
 GroupOfTicket=Гурӯҳи чиптаҳо
 YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
+SuggestedForTicketsInGroup=Suggested on ticket creation
 
 SetObsolete=Set as obsolete
 ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
 ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+BoxLastKnowledgerecordDescription=Last %s articles
+BoxLastKnowledgerecord=Last articles
+BoxLastKnowledgerecordContent=Last articles
+BoxLastKnowledgerecordModifiedContent=Last modified articles
+BoxLastModifiedKnowledgerecordDescription=Last %s modified articles
+BoxLastModifiedKnowledgerecord=Last modified articles
