@@ -607,6 +607,12 @@ class ExtraFields
 			} elseif ($type == 'point') {
 				$typedb = 'point';
 				$lengthdb = '';
+			} elseif ($type == 'linestring') {
+				$typedb = 'linestring';
+				$lengthdb = '';
+			} elseif ($type == 'polygon') {
+				$typedb = 'polygon';
+				$lengthdb = '';
 			} elseif ($type == 'password') {
 				$typedb = 'varchar';
 				$lengthdb = '128';
