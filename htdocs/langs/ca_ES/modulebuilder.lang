@@ -27,8 +27,7 @@ ModuleBuilderDeschooks=Aquesta pestanya està dedicada als ganxos (hooks)
 ModuleBuilderDescwidgets=Aquesta pestanya està dedicada a gestionar/crear ginys.
 ModuleBuilderDescbuildpackage=Aquí podeu generar un fitxer de paquet "a punt per a distribuir" (un fitxer .zip normalitzat) del vostre mòdul i un fitxer de documentació "a punt per a distribuir". Simplement feu clic al botó per a crear el paquet o el fitxer de documentació.
 EnterNameOfModuleToDeleteDesc=Podeu suprimir el vostre mòdul. AVÍS: se suprimiran tots els fitxers de codificació del mòdul (generats o creats manualment) I la documentació estructurada i la documentació.
-EnterNameOfObjectToDeleteDesc=Podeu suprimir un objecte. AVÍS: Tots els fitxers de codificació (generats o creats manualment) relacionats amb l'objecte s'eliminaran.
-EnterNameOfObjectToDeleteDesc=Podeu suprimir un objecte. AVÍS: Tots els fitxers de codificació (generats o creats manualment) relacionats amb l'objecte s'eliminaran.
+EnterNameOfObjectToDeleteDesc=Podeu esborrar un objecte. ADVERTÈNCIA: S'eliminaran tots els fitxers de codificació (generats o creats manualment) relacionats amb l'objecte!
 DangerZone=Zona perillosa
 BuildPackage=Construeix el paquet
 BuildPackageDesc=Pots generar un paquet zip de la teva aplicació perquè puguis distribuir-lo a qualsevol Dolibarr. També podeu distribuir-lo o vendre'l a <a href="https://www.dolistore.com">DoliStore.com</a>.
@@ -183,3 +182,7 @@ DictionaryDeleted=El diccionari <b>%s</b> s'ha eliminat correctament
 PropertyModuleUpdated=La propietat <b>%s</b> s'ha actualitzat correctament
 InfoForApiFile=* Quan genereu un fitxer per primera vegada, es crearan tots els mètodes <strong>per a cada objecte.</strong><br>* Quan feu clic a <strong>remove</strong> només elimineu tots els mètodes de la classe <span ='notranslate'><strong></span>objecte seleccionat</strong>.
 SetupFile=Pàgina per a la configuració del mòdul
+EmailingSelectors=Selectors de correus electrònics
+EmailingSelectorDesc=Podeu generar i editar aquí els fitxers de classe per proporcionar nous selectors de destinació de correu electrònic per al mòdul d'enviament massiu de correu electrònic
+EmailingSelectorFile=Fitxer selector de correus electrònics
+NoEmailingSelector=No hi ha cap fitxer de selecció de correus electrònics

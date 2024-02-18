@@ -120,7 +120,7 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 	if (!empty($lockfile) && !file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install")) {
 		$langs->load("errors");
 		//if (!empty($message)) $message.='<br>';
-		$message .= info_admin($langs->trans("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+		$message .= info_admin($langs->transnoentities("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
 	}
 
 	// Conf files must be in read only mode
@@ -128,7 +128,7 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 		$langs->load("errors");
 		//$langs->load("other");
 		//if (!empty($message)) $message.='<br>';
-		$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+		$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
 	}
 
 	$object = new stdClass();
@@ -137,9 +137,9 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 	if ($reshook == 0) {
 		$message .= $hookmanager->resPrint;
 	}
-	if ($message) {
-		print $message.'<br>';
-		//$message.='<br>';
+	if ($message) {	// $message is an HTML string.
+		print dol_string_onlythesehtmltags($message, 1, 0, 0, 0, array('div', 'span', 'b'));
+		print '<br>';
 		//print info_admin($langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
 	}
 }

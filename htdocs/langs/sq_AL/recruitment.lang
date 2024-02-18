@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Menaxhoni dhe ndiqni fushatat e rekrutimit për pozicion
 # Admin page
 #
 RecruitmentSetup = Konfigurimi i rekrutimit
-Settings = Cilësimet
 RecruitmentSetupPage = Vendosni këtu konfigurimin e opsioneve kryesore për modulin e rekrutimit
 RecruitmentArea=Zona e rekrutimit
 PublicInterfaceRecruitmentDesc=Faqet publike të punëve janë URL publike për t'u shfaqur dhe për t'iu përgjigjur punëve të hapura. Ekziston një lidhje e ndryshme për çdo punë të hapur, që gjendet në çdo regjistrim pune.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Aktivizo faqet publike të punëve të hapura
 #
 # About page
 #
-About = Rreth
 RecruitmentAbout = Rreth Rekrutimit
 RecruitmentAboutPage = Rekrutimi rreth faqes
 NbOfEmployeesExpected=Nb e pritur e punonjësve
@@ -79,3 +77,4 @@ WeAreRecruiting=Ne jemi duke rekrutuar. Kjo është lista e pozicioneve të hapu
 NoPositionOpen=Asnjë pozicion i hapur për momentin
 ConfirmClose=Konfirmo anulimin
 ConfirmCloseAsk=Jeni i sigurt që dëshironi ta anuloni këtë kandidaturë rekrutimi
+recruitment=Rekrutimi

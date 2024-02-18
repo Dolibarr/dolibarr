@@ -23,7 +23,7 @@ Module4100Desc = Moduli për menaxhimin e privatësisë së të dhënave (përpu
 #
 datapolicySetup = Konfigurimi i politikës së privatësisë së të dhënave të modulit
 Deletion = Fshirja e të dhënave
-datapolicySetupPage = Në varësi të ligjeve të vendeve tuaja (Shembull <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Neni 5</a> i GDPR), të dhënat personale duhet të mbahen për një periudhë jo duke e tejkaluar atë të nevojshme për qëllimet për të cilat janë mbledhur, përveç për qëllime arkivore.<br>Fshirja do të bëhet automatikisht pas një kohe të caktuar pa ngjarje (kohëzgjatja që do të keni treguar më poshtë).
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
 NB_MONTHS = %s muaj
 ONE_YEAR = 1 vit
 NB_YEARS = %s vjet
@@ -40,16 +40,16 @@ DATAPOLICY_CONTACT_FOURNISSEUR = Furnizuesi
 DATAPOLICY_ADHERENT = Anëtar
 DATAPOLICY_Tooltip_SETUP = Lloji i kontaktit - Tregoni zgjedhjet tuaja për secilin lloj.
 DATAPOLICYMail = Konfigurimi i emaileve
-DATAPOLICYSUBJECTMAIL = Subjekti i emailit
+DATAPOLICYSUBJECTMAIL = Subject of the email
 DATAPOLICYCONTENTMAIL = Përmbajtja e emailit
 DATAPOLICYSUBSITUTION = Ju mund të përdorni variablat e mëposhtëm në emailin tuaj (LINKACCEPT lejon krijimin e një lidhjeje që regjistron marrëveshjen e personit, LINKREFUSED bën të mundur regjistrimin e refuzimit të personit):
 DATAPOLICYACCEPT = Mesazh pas marrëveshjeje
-DATAPOLICYREFUSE = Mesazh pas mosmarrëveshjes
+DATAPOLICYREFUSE = Message after disagreement
 SendAgreementText = Ju mund t'u dërgoni një email GDPR të gjithë kontakteve tuaja përkatëse (të cilët nuk kanë marrë ende një email dhe për të cilët nuk keni regjistruar asgjë në lidhje me marrëveshjen e tyre GDPR). Për ta bërë këtë, përdorni butonin e mëposhtëm.
 SendAgreement = Dërgo email
 AllAgreementSend = Të gjitha emailet janë dërguar
 TXTLINKDATAPOLICYACCEPT = Teksti për lidhjen "marrëveshje"
-TXTLINKDATAPOLICYREFUSE = Teksti për lidhjen "marrëveshje"
+TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
 
 
 #
@@ -57,8 +57,8 @@ TXTLINKDATAPOLICYREFUSE = Teksti për lidhjen "marrëveshje"
 #
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Përpunimi i të dhënave personale
 DATAPOLICY_consentement = Pëlqimi i marrë për përpunimin e të dhënave personale
-DATAPOLICY_opposition_traitement = Kundërshton përpunimin e të dhënave të tij personale
-DATAPOLICY_opposition_prospection = Kundërshton përpunimin e të dhënave të tij personale për qëllime kërkimi
+DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
+DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
 
 #
 # Popup
@@ -78,15 +78,11 @@ DATAPOLICY_PORTABILITE_CONFIRMATION = Ju dëshironi të eksportoni të dhënat p
 #
 ANONYMISER_AT = Anonimoi %s
 
-# V2
-DATAPOLICYReturn = Vleresimi i GDPR
-DATAPOLICY_date = Data e marrëveshjes/marrëveshjes GDPR
-DATAPOLICY_send = Data e dërgimit të emailit të marrëveshjes
-DATAPOLICYReturn = Vleresimi i GDPR
+DATAPOLICY_date = Date of agreement/disagreement GDPR
+DATAPOLICY_send = Date agreement email sent
 DATAPOLICY_SEND = Dërgo email GDPR
 MailSent = Email është dërguar
 
 # ERROR
-ErrorSubjectIsRequired = Gabim: Subjekti i emailit kërkohet. Tregojeni atë në konfigurimin e modulit
-=Për shkak të një problemi teknik, ne nuk mundëm të regjistronim zgjedhjen tuaj. Kërkojmë falje për këtë. Na kontaktoni për të na dërguar zgjedhjen tuaj.
-NUMBER_MONTH_BEFORE_DELETION = Numri i muajit para fshirjes
+=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
+NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

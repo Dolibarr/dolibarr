@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Жаңа жұмыс орындарына жалдау н
 # Admin page
 #
 RecruitmentSetup = Жұмысқа қабылдауды реттеу
-Settings = Параметрлер
 RecruitmentSetupPage = Мұнда жалдау модулінің негізгі параметрлерін орнатуды енгізіңіз
 RecruitmentArea=Жұмысқа қабылдау аймағы
 PublicInterfaceRecruitmentDesc=Бос жұмыс орындарының ашық беттері - бұл ашық жұмыс орындарын көрсетуге және жауап беруге арналған жалпыға ортақ URL мекенжайлары. Әр бос жұмыс орны үшін әр жұмыс жазбасында бір сілтеме бар.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Ашық жұмыс орындарының жалп
 #
 # About page
 #
-About = Туралы
 RecruitmentAbout = Жұмысқа қабылдау туралы
 RecruitmentAboutPage = Бет туралы жалдау
 NbOfEmployeesExpected=Қызметкерлердің күтілетін саны
@@ -57,16 +55,16 @@ EmailRecruiter=Электрондық пошта жалдаушы
 ToUseAGenericEmail=Жалпы электрондық поштаны пайдалану үшін. Егер анықталмаса, жұмысқа қабылдауға жауапты адамның электрондық поштасы қолданылады
 NewCandidature=Жаңа қосымша
 ListOfCandidatures=Өтінімдер тізімі
-Remuneration=Salary
-RequestedRemuneration=Requested salary
-ProposedRemuneration=Proposed salary
+Remuneration=Жалақы
+RequestedRemuneration=Сұраныс жалақы
+ProposedRemuneration=Ұсынылған жалақы
 ContractProposed=Ұсынылған келісім
 ContractSigned=Шартқа қол қойылды
 ContractRefused=Келісімшарт бас тартты
 RecruitmentCandidature=Қолдану
 JobPositions=Жұмыс орындары
 RecruitmentCandidatures=Қолданбалар
-InterviewToDo=Contacts to follow
+InterviewToDo=Бақыланатын контактілер
 AnswerCandidature=Қолданбалы жауап
 YourCandidature=Сіздің өтініміңіз
 YourCandidatureAnswerMessage=Өтінішіңізге рахмет. <br> ...
@@ -75,5 +73,8 @@ JobClosedTextCanceled=Жұмыс орны жабық.
 ExtrafieldsJobPosition=Қосымша атрибуттар (лауазымдар)
 ExtrafieldsApplication=Қосымша атрибуттар (жұмысқа өтініш)
 MakeOffer=Ұсыныс жасаңыз
-WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
-NoPositionOpen=No positions open at the moment
+WeAreRecruiting=Біз жұмысқа қабылдап жатырмыз. Бұл толтырылатын бос орындардың тізімі...
+NoPositionOpen=Қазіргі уақытта позициялар ашылған
+ConfirmClose=Бас тартуды растаңыз
+ConfirmCloseAsk=Осы жалдау кандидатурасынан бас тартқыңыз келетініне сенімдісіз бе
+recruitment=Жұмысқа қабылдау

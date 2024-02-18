@@ -28,7 +28,6 @@ ModuleBuilderDescwidgets=Diese Registerkarte dient zum Verwalten / Erstellen von
 ModuleBuilderDescbuildpackage=Sie können hier eine "ready to distribute" Paketdatei (eine normalisierte.zip-Datei) Ihres Moduls und eine "ready to distribute" Dokumentationsdatei erzeugen. Klicken Sie einfach auf die Schaltfläche, um das Paket oder die Dokumentationsdatei zu erstellen.
 EnterNameOfModuleToDeleteDesc=Sie können Ihr Modul löschen. WARNUNG: Alle Codedateien des Moduls (generiert oder manuell erstellt) UND strukturierte Daten und Dokumentationen werden gelöscht!
 EnterNameOfObjectToDeleteDesc=Sie können ein Objekt löschen. WARNUNG: Alle Codedateien (generiert oder manuell erstellt), die sich auf das Objekt beziehen, werden gelöscht!
-EnterNameOfObjectToDeleteDesc=Sie können ein Objekt löschen. WARNUNG: Alle Codedateien (generiert oder manuell erstellt), die sich auf das Objekt beziehen, werden gelöscht!
 DangerZone=Gefahrenzone
 BuildPackage=Paket erstellen
 BuildPackageDesc=Sie können ein Zip-Paket Ihrer Anwendung erstellen, um es auf jede Dolibarr-Installation verteilen zu können. Sie können es auch über einem Marktplatz wie <a href="https://www.dolistore.com">DoliStore.com</a> kostenlos verbreiten oder verkaufen.
@@ -183,7 +182,7 @@ DictionaryDeleted=Wörterbuch <b>%s</b> erfolgreich entfernt
 PropertyModuleUpdated=Die Eigenschaft <b>%s</b> wurde erfolgreich aktualisiert
 InfoForApiFile=* Wenn Sie die Datei zum ersten mal generieren, werden <strong>für jedes Objekt</strong> alle Methoden erstellt.<br>* Wenn Sie auf <strong>remove</strong> klicken, entfernen Sie alle Methoden für das <strong>ausgewählte Objekt</strong>.
 SetupFile=Seite für die Modulkonfiguration
-EmailingSelectors=Sektoren für E-Mail-Kampagnen
+EmailingSelectors=E-Mail-Selektoren
 EmailingSelectorDesc=Sie können hier die Klassendateien generieren und bearbeiten, um neue E-Mail-Ziel-Selektoren für das Modul 'E-Mail-Kampagnen' bereitzustellen.
 EmailingSelectorFile=E-Mails Selector-Datei
 NoEmailingSelector=Keine E-Mails-Selektor-Datei

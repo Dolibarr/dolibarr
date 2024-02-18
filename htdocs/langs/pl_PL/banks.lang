@@ -67,7 +67,6 @@ AccountsArea=Obszar kont
 AccountCard=Karta konta
 DeleteAccount=Usuń konto
 ConfirmDeleteAccount=Jesteś pewien, że chcesz usunąć to konto?
-Account=Konto
 BankTransactionByCategories=Wpisy bankowe według kategorii
 BankTransactionForCategory=Wpisy bankowe dla kategorii <b>%s</b>
 RemoveFromRubrique=Usuń powiązanie z kategorią

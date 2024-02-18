@@ -27,8 +27,7 @@ ModuleBuilderDeschooks=Táto karta je venovaná háčikom.
 ModuleBuilderDescwidgets=Táto karta je určená na správu/vytváranie miniaplikácií.
 ModuleBuilderDescbuildpackage=Tu môžete vygenerovať súbor balíka „pripravený na distribúciu“ (normalizovaný súbor .zip) vášho modulu a dokumentačný súbor „pripravený na distribúciu“. Kliknutím na tlačidlo vytvoríte balík alebo dokumentačný súbor.
 EnterNameOfModuleToDeleteDesc=Modul môžete vymazať. UPOZORNENIE: Všetky kódovacie súbory modulu (vygenerované alebo vytvorené ručne) A štruktúrované dáta a dokumentácia budú vymazané!
-EnterNameOfObjectToDeleteDesc=Môžete odstrániť objekt. UPOZORNENIE: Všetky kódovacie súbory (vygenerované alebo vytvorené ručne) súvisiace s objektom budú vymazané!
-EnterNameOfObjectToDeleteDesc=Môžete odstrániť objekt. UPOZORNENIE: Všetky kódovacie súbory (vygenerované alebo vytvorené ručne) súvisiace s objektom budú vymazané!
+EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
 DangerZone=Nebezpečná zóna
 BuildPackage=Zostavte balík
 BuildPackageDesc=Môžete si vygenerovať zip balík vašej aplikácie, takže ste pripravení ju distribuovať na ľubovoľnom serveri Dolibarr. Môžete ho tiež distribuovať alebo predávať na trhu ako <a href="https://www.dolistore.com">DoliStore.com</a>.
@@ -183,7 +182,7 @@ DictionaryDeleted=Slovník <b>%s</b> bol úspešne odstránený
 PropertyModuleUpdated=Vlastníctvo <b>%s</b> bolo úspešne aktualizované
 InfoForApiFile=* Keď vygenerujete súbor prvýkrát, všetky metódy sa vytvoria <strong>pre každý objekt.</strong><br>* Keď kliknete na <strong>remove</strong>, odstránite iba všetky metódy pre túto triedu ='notranslate'><strong></span>vybratý objekt</strong>.
 SetupFile=Stránka pre nastavenie modulu
-EmailingSelectors=Selektory e-mailov
+EmailingSelectors=Emails selectors
 EmailingSelectorDesc=Tu môžete generovať a upravovať súbory triedy, aby ste poskytli nové selektory cieľov e-mailu pre modul hromadného odosielania e-mailov
 EmailingSelectorFile=Súbor na výber e-mailov
 NoEmailingSelector=Žiadny súbor na výber e-mailov

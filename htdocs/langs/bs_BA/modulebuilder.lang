@@ -27,8 +27,7 @@ ModuleBuilderDeschooks=Ova kartica je posvećena kukicama.
 ModuleBuilderDescwidgets=Ova kartica je posvećena upravljanju/izgradnji widgeta.
 ModuleBuilderDescbuildpackage=Ovdje možete generirati datoteku paketa "spremna za distribuciju" (normaliziranu .zip datoteku) vašeg modula i datoteku dokumentacije "spremna za distribuciju". Samo kliknite na dugme da biste napravili paket ili dokumentaciju.
 EnterNameOfModuleToDeleteDesc=Možete izbrisati svoj modul. UPOZORENJE: Sve datoteke kodiranja modula (generirane ili kreirane ručno) i strukturirani podaci i dokumentacija će biti izbrisana!
-EnterNameOfObjectToDeleteDesc=Možete izbrisati objekat. UPOZORENJE: Sve datoteke kodiranja (generirane ili kreirane ručno) koje se odnose na objekt bit će izbrisane!
-EnterNameOfObjectToDeleteDesc=Možete izbrisati objekat. UPOZORENJE: Sve datoteke kodiranja (generirane ili kreirane ručno) koje se odnose na objekt bit će izbrisane!
+EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
 DangerZone=Opasna zona
 BuildPackage=Build package
 BuildPackageDesc=Možete generirati zip paket svoje aplikacije tako da ste spremni da ga distribuirate na bilo kojem Dolibarru. Također ga možete distribuirati ili prodavati na tržištu kao što je <a href="https://www.dolistore.com">DoliStore.com</a>.
@@ -183,7 +182,7 @@ DictionaryDeleted=Rječnik <b>%s</b> je uspješno uklonjen
 PropertyModuleUpdated=Svojstvo <b>%s</b> je uspješno ažurirano
 InfoForApiFile=* Kada generirate datoteku po prvi put, sve metode će biti kreirane <strong>za svaki objekt.</strong><br>* Kada kliknete na <strong>ukloni</strong> samo uklanjate sve metode za klasu <span ='notranslate'><strong></span>odabrani objekat</strong>.
 SetupFile=Stranica za podešavanje modula
-EmailingSelectors=Selektori e-pošte
+EmailingSelectors=Emails selectors
 EmailingSelectorDesc=Možete generirati i ovdje urediti datoteke klasa kako biste pružili nove birače cilja e-pošte za modul masovnog slanja e-pošte
 EmailingSelectorFile=Fajl selektora e-pošte
 NoEmailingSelector=Nema datoteke za odabir e-pošte

@@ -9,7 +9,7 @@ DIRECTION=ltr
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil
+# freeserif is for Tamil or Ethiopian
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
@@ -963,6 +963,7 @@ AutomaticallyCalculated=Automatisk beregnet
 TitleSetToDraft=Gå tilbake til utkast
 ConfirmSetToDraft=Er du sikker på at du vil gå tilbake til utkaststatus?
 ImportId=Import ID
+Event=Hendelse
 Events=Hendelser
 EMailTemplates=E-postmaler
 FileNotShared=Filen er ikke delt eksternt
@@ -1180,7 +1181,6 @@ ConfirmAffectUserQuestion=Er du sikker på at du vil tilordne brukere til %s val
 ConfirmSetSupervisorQuestion=Er du sikker på at du vil sette supervisor til %s valgte post(er)?
 ConfirmUpdatePriceQuestion=Er du sikker på at du vil oppdatere prisen på %s valgte post(er)?
 CategTypeNotFound=Ingen merketype funnet for denne post-typen
-Rate=Sats
 SupervisorNotFound=Supervisor ikke funnet
 CopiedToClipboard=Kopiert til utklippstavlen
 InformationOnLinkToContract=Dette beløpet er bare summen av alle linjene i kontrakten. Ingen tidsbruk tas i betraktning.
@@ -1213,6 +1213,7 @@ CanceledHidden=Kansellert skjult
 CanceledShown=Kansellert vist
 Terminate=Terminer
 Terminated=Terminert
+Position=Posisjon
 AddLineOnPosition=Legg til linje på posisjon (på slutten hvis tom)
 ConfirmAllocateCommercial=Tildel salgsrepresentant bekreftelse
 ConfirmAllocateCommercialQuestion=Er du sikker på at du vil tilordne %s valgte post(er)?
@@ -1230,6 +1231,7 @@ ExternalUser=Ekstern bruker
 NoSpecificContactAddress=Ingen spesifikk kontakt eller adresse
 NoSpecificContactAddressBis=Denne fanen er dedikert til å tvinge spesifikke kontakter eller adresser for gjeldende objekt. Bruk den bare hvis du ønsker å definere en eller flere spesifikke kontakter eller adresser for objektet når informasjonen om tredjeparten ikke er tilstrekkelig eller nøyaktig.
 HideOnVCard=Skjul %s
+ShowOnVCard=Show %s
 AddToContacts=Legg til adresse i kontaktene mine
 LastAccess=Siste tilgang
 UploadAnImageToSeeAPhotoHere=Last opp et bilde fra fanen %s for å se et bilde her
@@ -1259,4 +1261,7 @@ AmountSalary=Lønnsbeløp
 InvoiceSubtype=Faktura undertype
 ConfirmMassReverse=Bulk reversert bekreftelse
 ConfirmMassReverseQuestion=Er du sikker på at du vil reversere %s valgte post(er)?
-
+ElementType=Element type
+ElementId=Element Id
+Encrypted=Encrypted
+Settings=Innstillinger

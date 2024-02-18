@@ -941,7 +941,7 @@ class Cronjob extends CommonObject
 		$this->id = 0;
 		$this->ref = '';
 		$this->entity = 0;
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->datec = '';
 		$this->label = '';
 		$this->jobtype = '';

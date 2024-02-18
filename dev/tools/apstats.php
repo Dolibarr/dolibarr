@@ -667,7 +667,7 @@ if (!empty($output_arrtd)) {
 			$tmp .= '<td class="">';
 			$tmp .= '<a href="'.dol_escape_htmltag($urlgit.$reg[1].'#L'.$reg[2]).'" target="_blank">'.dolPrintLabel($reg[2]).'</a>';
 			$tmp .= '</td>';
-			$tmp .= '<td>'.dolPrintLabel($reg[4]).'</td>';
+			$tmp .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($reg[4]).'">'.dolPrintLabel($reg[4]).'</td>';
 			$tmp .= '</tr>'."\n";
 			$nblines++;
 		}
@@ -694,7 +694,6 @@ if (count($output_phan_json) != 0) {
 				$line_range_txt = "{$line_start}-{$line_end}";
 			}
 			$code_url_attr = dol_escape_htmltag($urlgit.$path.$line_range);
-			$description_escaped = dolPrintLabel($notice['description']);
 			if ($phan_nblines < 20) {
 				$tmp = '<tr class="nohidden">';
 			} else {
@@ -704,7 +703,7 @@ if (count($output_phan_json) != 0) {
 			$tmp .= '<td class="">';
 			$tmp .= '<a href="'.$code_url_attr.'" target="_blank">'.$line_range_txt.'</a>';
 			$tmp .= '</td>';
-			$tmp .= '<td class="tdoverflowmax300">'.$description_escaped.'</td>';
+			$tmp .= '<td class="tdoverflowmax300">'.dolPrintLabel($notice['description']).'</td>';
 			$tmp .= '</tr>';
 
 			$phan_items[] = $tmp;
@@ -760,7 +759,7 @@ foreach ($arrayofalerts as $alert) {
 		$html .= '<a target="_blank" href="https://nvd.nist.gov/vuln/detail/CVE-'.$cve.'">CVE-'.$cve.'</a>';
 	}
 	$html .= '</td>';
-	$html .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($alert['title']).'">'.$alert['title'].'</td>';
+	$html .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($alert['title']).'">'.dol_escape_htmltag($alert['title']).'</td>';
 	$html .= '</tr>';
 }
 $html .= '</table>';

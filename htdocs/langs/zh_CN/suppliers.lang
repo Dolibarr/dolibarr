@@ -8,7 +8,6 @@ NewSupplierInvoice = 新供应商发票
 History=历史
 ListOfSuppliers=供应商清单
 ShowSupplier=显示供应商
-OrderDate=订购日期
 BuyingPriceMin=最优采购价格
 BuyingPriceMinShort=最优采购价格
 TotalBuyingPriceMinShort=子产品采购价格总计

@@ -62,7 +62,6 @@ ChooseFileToImport=העלה קובץ ולאחר מכן לחץ על הסמל %s �
 SourceFileFormat=פורמט קובץ המקור
 FieldsInSourceFile=שדות בקובץ המקור
 FieldsInTargetDatabase=שדות יעד במסד הנתונים של Dolibarr (מודגש=חובה)
-Field=שדה
 NoFields=אין שדות
 MoveField=העבר את מספר עמודת השדה %s
 ExampleOfImportFile=דוגמה_ל_ייבוא_קובץ

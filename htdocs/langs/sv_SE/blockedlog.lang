@@ -1,5 +1,4 @@
 BlockedLog=Oföränderliga loggar
-Field=Fält
 BlockedLogDesc=Den här modulen spårar några händelser i en oförändrad logg (som du inte kan modifiera efter att ha sparad) i en blockkedja, i realtid. Denna modul ger kompatibilitet med kraven i vissa lands lagar (som Frankrike med lagen Finance 2016 - Norme NF525).
 Fingerprints=Arkiverade händelser och fingeravtryck
 FingerprintsDesc=Det här är verktyget för att bläddra eller extrahera de oföränderliga loggarna. Oförändliga loggar genereras och arkiveras lokalt i ett dedikerat bord, i realtid när du spelar in en affärshändelse. Du kan använda det här verktyget för att exportera det här arkivet och spara det till ett externt stöd (vissa länder, som Frankrike, ber att du gör det varje år). Observera att det inte finns någon funktion att rensa den här loggen och varje förändring som försökt göras direkt i den här loggen (t.ex. av en hacker) kommer att rapporteras med ett icke-giltigt fingeravtryck. Om du verkligen behöver rensa den här tabellen eftersom du använde din ansökan för ett demo / test syfte och vill rengöra dina data för att starta din produktion, kan du fråga din återförsäljare eller integratör om att återställa databasen (alla dina data kommer att tas bort).
@@ -13,16 +12,13 @@ OkCheckFingerprintValidity=Arkiverad loggpost är giltig. Uppgifterna på den h�
 OkCheckFingerprintValidityButChainIsKo=Arkiverad logg verkar giltig jämfört med tidigare men kedjan förstördes tidigare.
 AddedByAuthority=Lagras i fjärrmyndighet
 NotAddedByAuthorityYet=Ännu inte lagrad i fjärrmyndighet
-ShowDetails=Visa sparade detaljer
 BlockedLogBillDownload=Ladda ner faktura
 BlockedLogBillPreview=Förhandsgranska faktura
 BlockedlogInfoDialog=Logguppgifter
 ListOfTrackedEvents=Lista över spårade händelser
 Fingerprint=Fingeravtryck
 DownloadLogCSV=Exportera arkiverade loggar (CSV)
-logDOC_PREVIEW=Förhandsgranskning av ett bekräftat dokument för att kunna skriva ut eller hämta
-logDOC_DOWNLOAD=Nedladdning av ett bekräftat dokument för att skriva ut eller skicka
-DataOfArchivedEvent=Hela datan i arkiverad händelse
+DataOfArchivedEvent=Fullständig information om arkiverad händelse
 ImpossibleToReloadObject=Originalobjekt (typ %s, id %s) inte länkat (se kolumnen Fullständig datasökning för att få oförändrad sparade data)
 BlockedLogAreRequiredByYourCountryLegislation=Modifierad loggmodul kan krävas enligt ditt lands lagstiftning. Inaktivera den här modulen kan göra eventuella framtida transaktioner ogiltiga med avseende på lagen och användningen av laglig programvara eftersom de inte kan bekräftas av en skatterevision.
 BlockedLogActivatedBecauseRequiredByYourCountryLegislation=Modifierad loggmodul aktiverades på grund av lagstiftningen i ditt land. Inaktivera den här modulen kan göra eventuella framtida transaktioner ogiltiga med avseende på lagen och användningen av laglig programvara eftersom de inte kan bekräftas av en skatterevision.
@@ -33,6 +29,7 @@ RestrictYearToExport=Begränsa månad/år att exportera
 BlockedLogEnabled=System för att spåra händelser i oföränderliga loggar har aktiverats
 BlockedLogDisabled=Systemet för att spåra händelser i oföränderliga loggar har inaktiverats efter att vissa kontroller gjorts. Vi sparade ett speciellt fingeravtryck för att spåra kedjan som trasig
 BlockedLogDisabledBis=Systemet för att spåra händelser i oföränderliga loggar har inaktiverats. Detta är möjligt eftersom ingen registrering har gjorts ännu.
+LinkHasBeenDisabledForPerformancePurpose=För prestationsändamål visas inte direktlänk till dokumentet efter den 100:e raden.
 
 ## logTypes
 logBILL_DELETE=Faltira raderas logiskt
