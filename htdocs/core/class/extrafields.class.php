@@ -1609,16 +1609,18 @@ class ExtraFields
 			//$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '');
 			$out = $form->selectForForms($tmparray[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '', $element.':options_'.$key);
 		} elseif ($type == 'point') {
-			$pointtypes = [
-				'Point',
-				'Multipoint',
-				'Linestring',
-			];
 			require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
-			$geom = geoPHP::load($value, 'wkb');
-			$out = $form->selectarray($keyprefix.$key.$keysuffix.'_type', $pointtypes, 'Point', 0, 0, '', 0, '100%');
-			$out .= '<input type="number" step="0.0000001" name="'.$keyprefix.$key.$keysuffix.'_x'.'" id="'.$keyprefix.$key.$keysuffix.'_x'.'"  value="'.$geom->x().'"/>';
-			$out .= '<input type="number" step="0.0000001" name="'.$keyprefix.$key.$keysuffix.'_y'.'" id="'.$keyprefix.$key.$keysuffix.'_y'.'" value="'.$geom->y().'"/>';
+			$pointtypes = geoPHP::geometryList();
+			$geox = '';
+			$geoy = '';
+			if (!empty($value)) {
+				$geom = geoPHP::load($value, 'wkb');
+				$geox = $geom->x();
+				$geoy = $geom->y();
+			}
+			$out = $form->selectarray($keyprefix.$key.$keysuffix.'_type', $pointtypes, 'point', 0, 0, '', 0, '100%');
+			$out .= '<input type="number" step="0.0000001" name="'.$keyprefix.$key.$keysuffix.'_x'.'" id="'.$keyprefix.$key.$keysuffix.'_x'.'"  value="'.$geox.'"/>';
+			$out .= '<input type="number" step="0.0000001" name="'.$keyprefix.$key.$keysuffix.'_y'.'" id="'.$keyprefix.$key.$keysuffix.'_y'.'" value="'.$geoy.'"/>';
 		} elseif ($type == 'password') {
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
 			$out = '<input style="display:none" type="text" name="fakeusernameremembered">'; // Hidden field to reduce impact of evil Google Chrome autopopulate bug.
@@ -1976,9 +1978,12 @@ class ExtraFields
 			}
 		} elseif ($type == 'point') {
 			require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
-			$geom = geoPHP::load($value, 'wkb');
-			$value = $geom->x().' '.$geom->y();
-			// var_dump($geom, $value);
+			if (!empty($value)) {
+				$geom = geoPHP::load($value, 'wkb');
+				$value = $geom->x().' '.$geom->y();
+			} else {
+				$value = '';
+			}
 		} elseif ($type == 'text') {
 			$value = dol_htmlentitiesbr($value);
 		} elseif ($type == 'html') {
@@ -2247,6 +2252,9 @@ class ExtraFields
 				} elseif (in_array($key_type, array('pricecy', 'double'))) {
 					$value_key = price2num(GETPOST("options_".$key, 'alpha')).':'.GETPOST("options_".$key."currency_id", 'alpha');
 				} elseif (in_array($key_type, array('html'))) {
+					$value_key = GETPOST("options_".$key, 'restricthtml');
+				} elseif (in_array($key_type, array('point'))) {
+					// construct point
 					$value_key = GETPOST("options_".$key, 'restricthtml');
 				} elseif (in_array($key_type, array('text'))) {
 					$label_security_check = 'alphanohtml';

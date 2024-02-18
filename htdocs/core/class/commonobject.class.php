@@ -6622,9 +6622,16 @@ abstract class CommonObject
 			foreach ($new_array_options as $key => $value) {
 				$attributeKey = substr($key, 8); // Remove 'options_' prefix
 				// Add field of attribute
-				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] != 'separate') { // Only for other type than separator)
+				if (!in_array($extrafields->attributes[$this->table_element]['type'][$attributeKey], ['separate', 'point'])) { // Only for other type than separator)
 					if ($new_array_options[$key] != '' || $new_array_options[$key] == '0') {
 						$sql .= ",'".$this->db->escape($new_array_options[$key])."'";
+					} else {
+						$sql .= ",null";
+					}
+				}
+				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'point') { // for point type
+					if (!empty($new_array_options[$key])) {
+						$sql .= ",ST_PointFromWKB(".$new_array_options[$key].")";
 					} else {
 						$sql .= ",null";
 					}
