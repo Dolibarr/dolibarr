@@ -96,6 +96,8 @@ class ExtraFields
 		'chkbxlst' => 'ExtrafieldCheckBoxFromList',
 		'link' => 'ExtrafieldLink',
 		'point' => 'ExtrafieldPointGeo',
+		'linestring' => 'ExtrafieldLineStringGeo',
+		'polygon' => 'ExtrafieldPolygonGeo',
 		'separate' => 'ExtrafieldSeparator',
 	);
 
@@ -239,6 +241,12 @@ class ExtraFields
 				$lengthdb = '11';
 			} elseif ($type == 'point') {
 				$typedb = 'point';
+				$lengthdb = '';
+			} elseif ($type == 'linestring') {
+				$typedb = 'linestring';
+				$lengthdb = '';
+			} elseif ($type == 'polygon') {
+				$typedb = 'polygon';
 				$lengthdb = '';
 			} elseif ($type == 'html') {
 				$typedb = 'text';
@@ -1623,10 +1631,6 @@ class ExtraFields
 			if (!preg_match('/search_/', $keyprefix)) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/geomapeditor.class.php';
 				$geomapeditor = new GeoMapEditor();
-				// $out = $form->selectarray($keyprefix.$key.$keysuffix.'_type', $pointtypes, 'point', 0, 0, '', 0, '100%');
-				// $out .= '<input type="text" name="'.$keyprefix.$key.$keysuffix.'_x'.'" id="'.$keyprefix.$key.$keysuffix.'_x"  value="'.$geox.'"/>';
-				// $out .= '<input type="text" name="'.$keyprefix.$key.$keysuffix.'_y'.'" id="'.$keyprefix.$key.$keysuffix.'_y" value="'.$geoy.'"/><br>';
-
 				$out .= $geomapeditor->getHtml($keyprefix.$key.$keysuffix, $geojson);
 			} else {
 				// If keyprefix is search_ or search_options_, we must just use a simple text field
@@ -2267,13 +2271,13 @@ class ExtraFields
 				} elseif ($key_type == 'point') {
 					// construct point
 					require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
-					$pointtypes = geoPHP::geometryList();
-					$geotype = GETPOST("options_".$key."_type", 'alpha');
-					$geox = GETPOST("options_".$key."_x", 'alpha');
-					$geoy = GETPOST("options_".$key."_y", 'alpha');
-					$geostring = strtoupper($pointtypes[$geotype]).'('.price2num($geox).' '.price2num($geoy).')';
-					$geom = geoPHP::load($geostring);
-					$value_key = $geom->out('wkb');
+					$geojson = (string) GETPOST("options_".$key, 'none');
+					if ($geojson != '{}') {
+						$geom = geoPHP::load($geojson, 'json');
+						$value_key = $geom->out('wkb');
+					} else {
+						$value_key = '';
+					}
 				} elseif (in_array($key_type, array('text'))) {
 					$label_security_check = 'alphanohtml';
 					// by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html

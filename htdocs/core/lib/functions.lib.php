@@ -4395,6 +4395,8 @@ function getPictoForType($key)
 		'link' => 'link',
 		'icon' => "question",
 		'point' => "country",
+		'linestring' => "country",
+		'polygon' => "country",
 		'separate' => 'minus'
 	);
 

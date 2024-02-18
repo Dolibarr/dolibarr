@@ -45,13 +45,17 @@ class GeoMapEditor
 	 */
 	public function getHtml($htmlname, $geojson)
 	{
-		$out = '<textarea id="' . $htmlname . '" rows="2" cols="90">'.$geojson.'</textarea>';
+		global $langs;
+
+		$out = '<input id="' . $htmlname . '" name="' . $htmlname . '" size="100" value="' . htmlentities($geojson) . '">';
 		$out .= '<div id="map_' . $htmlname . '" style="width: 600px; height: 350px;"></div>';
 		$out .= '
 		<script>
-			var geoms = JSON.parse(\''.$geojson.'\');
+			var geoms = JSON.parse(\'' . $geojson . '\');
+			console.log(geoms);
+			//var map = L.map("map_' . $htmlname . '").setView([51.505, -0.09], 13);
 			var map = L.map("map_' . $htmlname . '").setView(geoms.coordinates, 14);
-			if (geoms.type == "Point") {
+			if (geoms && geoms.type == "Point") {
 				L.marker(geoms.coordinates).addTo(map);
 				map.pm.addControls({
 					drawMarker: false,
@@ -67,6 +71,7 @@ class GeoMapEditor
 					drawRectangle: false,
 					drawPolygon: false,
 				});
+				generateGeoJson();
 				console.log("pm:drawend");
 				console.log(e);
 			});
@@ -90,18 +95,10 @@ class GeoMapEditor
 				console.log(e);
 				$("#' . $htmlname . '").val ("{}");
 			});
+
 			map.on("pm:create", (e) => {
 				console.log("pm:create");
-				console.log(e);
-				var type = "Point";
-				if (e.shape == "Line") {
-					type = "PolyLine";
-				}
-				var marker = {
-					type: type,
-					coordinates: e.marker._latlng,
-				}
-				$("#' . $htmlname . '").val (JSON.stringify(marker));
+				generateGeoJson();
 			});
 			map.on("pm:globaleditmodetoggled", (e) => {
 				console.log(e);
@@ -110,7 +107,8 @@ class GeoMapEditor
 				maxZoom: 19,
 				attribution: \'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>\'
 			}).addTo(map);
-			map.pm.setLang("fr");
+			map.pm.setLang("'.($langs->shortlang ?? 'en').'");
+			// remove controls not needed
 			map.pm.addControls({
 				position: \'topleft\',
 				dragMode: false,
@@ -119,9 +117,38 @@ class GeoMapEditor
 				drawText: false,
 				editMode: true,
 				removalMode: true,
-				rotateMode: false,
+				rotateMode: true,
 				customControls: false,
 			});
+
+			function generateGeoJson(){
+				var fg = L.featureGroup();
+				var layers = findLayers(map);
+				layers.forEach(function(layer){
+					fg.addLayer(layer);
+				});
+				console.log(fg.toGeoJSON());
+				$("#' . $htmlname . '").val (JSON.stringify(fg.toGeoJSON().features[0].geometry));
+			}
+			function findLayers(map) {
+				// https://stackoverflow.com/questions/62887120/leafletjs-geoman-into-json-data
+				var layers = [];
+				map.eachLayer(layer => {
+					if (
+						layer instanceof L.Polyline || // Don"t worry about Polygon and Rectangle they are included in Polyline
+						layer instanceof L.Marker ||
+						layer instanceof L.Circle ||
+						layer instanceof L.CircleMarker
+					) {
+						layers.push(layer);
+					}
+				});
+				// filter out layers that don"t have the leaflet-geoman instance
+				layers = layers.filter(layer => !!layer.pm);
+				// filter out everything that"s leaflet-geoman specific temporary stuff
+				layers = layers.filter(layer => !layer._pmTempLayer);
+				return layers;
+			}
 		</script>';
 
 		return $out;
