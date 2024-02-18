@@ -1622,7 +1622,7 @@ class ExtraFields
 
 			//$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '');
 			$out = $form->selectForForms($tmparray[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '', $element.':options_'.$key);
-		} elseif ($type == 'point') {
+		} elseif (in_array($type, ['point', 'linestring', 'polygon'])) {
 			require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
 			$pointtypes = geoPHP::geometryList();
 			$geojson = '{}';
@@ -1637,7 +1637,7 @@ class ExtraFields
 			if (!preg_match('/search_/', $keyprefix)) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/geomapeditor.class.php';
 				$geomapeditor = new GeoMapEditor();
-				$out .= $geomapeditor->getHtml($keyprefix.$key.$keysuffix, $geojson);
+				$out .= $geomapeditor->getHtml($keyprefix.$key.$keysuffix, $geojson, $type);
 			} else {
 				// If keyprefix is search_ or search_options_, we must just use a simple text field
 				$out = '';
