@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2020-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2020-2024 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Note: This tool can be included into a list page with :
+ * Note: This tool can be included into a list page with:
  * define('USE_CUSTOM_REPORT_AS_INCLUDE', 1);
  * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
@@ -22,7 +22,7 @@
 /**
  *   	\file       htdocs/core/customreports.php
  *		\ingroup    core
- *		\brief      Page to make custom reports
+ *		\brief      Page to make custom reports. Page can be used alone or as a tab among other tabs of an object
  */
 
 if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
