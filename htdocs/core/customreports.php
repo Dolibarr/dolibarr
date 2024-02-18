@@ -40,7 +40,7 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 		$objecttype = 'thirdparty';
 	}
 
-	$search_measures = GETPOST('search_measures', 'array');
+	$search_me   asures = GETPOST('search_measures', 'array');
 	if (empty($search_measures)) {
 		$search_measures = array(0 => 't.count');
 	}
