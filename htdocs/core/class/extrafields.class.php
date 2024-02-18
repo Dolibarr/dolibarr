@@ -1609,7 +1609,11 @@ class ExtraFields
 			//$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '');
 			$out = $form->selectForForms($tmparray[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '', $element.':options_'.$key);
 		} elseif ($type == 'point') {
-			$pointtypes = ['Point'];
+			$pointtypes = [
+				'Point',
+				'Multipoint',
+				'Linestring',
+			];
 			require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
 			$geom = geoPHP::load($value, 'wkb');
 			$out = $form->selectarray($keyprefix.$key.$keysuffix.'_type', $pointtypes, 'Point', 0, 0, '', 0, '100%');
