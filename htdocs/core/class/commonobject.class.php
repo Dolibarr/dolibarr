@@ -6275,7 +6275,7 @@ abstract class CommonObject
 					$sql .= ", ".$name;
 				}
 				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'point') {
-					$sql .= ", ST_AsText(".$name.") as ".$name;
+					$sql .= ", ST_AsWKB(".$name.") as ".$name;
 				}
 			}
 			$sql .= " FROM ".$this->db->prefix().$table_element."_extrafields";

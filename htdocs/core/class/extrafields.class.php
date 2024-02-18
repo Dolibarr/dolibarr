@@ -1966,12 +1966,10 @@ class ExtraFields
 				}
 			}
 		} elseif ($type == 'point') {
-			//require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
-			//$geom = geoPHP::load("POINT(74.224074 96.428248)",'wkt');
-			//$geom = geoPHP::load($value, 'ewkt');
-			//$value = $geom->out('json');
-			//var_dump($value);
-			$value = $value;
+			require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
+			$geom = geoPHP::load($value, 'wkb');
+			$value = $geom->out('json');
+			// var_dump($geom, $value);
 		} elseif ($type == 'text') {
 			$value = dol_htmlentitiesbr($value);
 		} elseif ($type == 'html') {
