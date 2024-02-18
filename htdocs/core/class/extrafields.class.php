@@ -1611,16 +1611,27 @@ class ExtraFields
 		} elseif ($type == 'point') {
 			require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
 			$pointtypes = geoPHP::geometryList();
+			$geojson = '{}';
 			$geox = '';
 			$geoy = '';
 			if (!empty($value)) {
 				$geom = geoPHP::load($value, 'wkb');
 				$geox = $geom->x();
 				$geoy = $geom->y();
+				$geojson = $geom->out('json');
 			}
-			$out = $form->selectarray($keyprefix.$key.$keysuffix.'_type', $pointtypes, 'point', 0, 0, '', 0, '100%');
-			$out .= '<input type="text" name="'.$keyprefix.$key.$keysuffix.'_x'.'" id="'.$keyprefix.$key.$keysuffix.'_x"  value="'.$geox.'"/>';
-			$out .= '<input type="text" name="'.$keyprefix.$key.$keysuffix.'_y'.'" id="'.$keyprefix.$key.$keysuffix.'_y" value="'.$geoy.'"/>';
+			if (!preg_match('/search_/', $keyprefix)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/geomapeditor.class.php';
+				$geomapeditor = new GeoMapEditor();
+				// $out = $form->selectarray($keyprefix.$key.$keysuffix.'_type', $pointtypes, 'point', 0, 0, '', 0, '100%');
+				// $out .= '<input type="text" name="'.$keyprefix.$key.$keysuffix.'_x'.'" id="'.$keyprefix.$key.$keysuffix.'_x"  value="'.$geox.'"/>';
+				// $out .= '<input type="text" name="'.$keyprefix.$key.$keysuffix.'_y'.'" id="'.$keyprefix.$key.$keysuffix.'_y" value="'.$geoy.'"/><br>';
+
+				$out .= $geomapeditor->getHtml($keyprefix.$key.$keysuffix, $geojson);
+			} else {
+				// If keyprefix is search_ or search_options_, we must just use a simple text field
+				$out = '';
+			}
 		} elseif ($type == 'password') {
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
 			$out = '<input style="display:none" type="text" name="fakeusernameremembered">'; // Hidden field to reduce impact of evil Google Chrome autopopulate bug.
