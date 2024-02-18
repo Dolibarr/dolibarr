@@ -6631,7 +6631,7 @@ abstract class CommonObject
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'point') { // for point type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_PointFromWKB(".$new_array_options[$key].")";
+						$sql .= ",ST_PointFromWKB('".$new_array_options[$key]."')";
 					} else {
 						$sql .= ",null";
 					}

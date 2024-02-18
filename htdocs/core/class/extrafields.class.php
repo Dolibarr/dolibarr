@@ -1619,8 +1619,8 @@ class ExtraFields
 				$geoy = $geom->y();
 			}
 			$out = $form->selectarray($keyprefix.$key.$keysuffix.'_type', $pointtypes, 'point', 0, 0, '', 0, '100%');
-			$out .= '<input type="number" step="0.0000001" name="'.$keyprefix.$key.$keysuffix.'_x'.'" id="'.$keyprefix.$key.$keysuffix.'_x"  value="'.$geox.'"/>';
-			$out .= '<input type="number" step="0.0000001" name="'.$keyprefix.$key.$keysuffix.'_y'.'" id="'.$keyprefix.$key.$keysuffix.'_y" value="'.$geoy.'"/>';
+			$out .= '<input type="text" name="'.$keyprefix.$key.$keysuffix.'_x'.'" id="'.$keyprefix.$key.$keysuffix.'_x"  value="'.$geox.'"/>';
+			$out .= '<input type="text" name="'.$keyprefix.$key.$keysuffix.'_y'.'" id="'.$keyprefix.$key.$keysuffix.'_y" value="'.$geoy.'"/>';
 		} elseif ($type == 'password') {
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
 			$out = '<input style="display:none" type="text" name="fakeusernameremembered">'; // Hidden field to reduce impact of evil Google Chrome autopopulate bug.
@@ -2167,7 +2167,7 @@ class ExtraFields
 					continue;
 				}
 
-				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'checkbox', 'chkbxlst')))) {
+				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'checkbox', 'chkbxlst', 'point')))) {
 					//when unticking boolean field, it's not set in POST
 					continue;
 				}
@@ -2253,9 +2253,18 @@ class ExtraFields
 					$value_key = price2num(GETPOST("options_".$key, 'alpha')).':'.GETPOST("options_".$key."currency_id", 'alpha');
 				} elseif (in_array($key_type, array('html'))) {
 					$value_key = GETPOST("options_".$key, 'restricthtml');
-				} elseif (in_array($key_type, array('point'))) {
+				} elseif ($key_type == 'point') {
 					// construct point
-					$value_key = GETPOST("options_".$key, 'restricthtml');
+					require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
+					$pointtypes = geoPHP::geometryList();
+					$geotype = GETPOST("options_".$key."_type", 'alpha');
+					$geox = GETPOST("options_".$key."_x", 'alpha');
+					$geoy = GETPOST("options_".$key."_y", 'alpha');
+					$geostring = strtoupper($pointtypes[$geotype]).'('.price2num($geox).' '.price2num($geoy).')';
+					var_dump($geostring);
+					$geom = geoPHP::load($geostring);
+					var_dump($geom, $geom->out('wkb'));
+					$value_key = $geom->out('wkb');
 				} elseif (in_array($key_type, array('text'))) {
 					$label_security_check = 'alphanohtml';
 					// by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html
