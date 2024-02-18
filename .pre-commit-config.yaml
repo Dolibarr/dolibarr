@@ -5,14 +5,21 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
+      # This hook test the name of the branch and return error if the name is develop or a version
+      # so you can't commit if your branch name is not a custom branch name. Using a custom branch name is good
+      # practice that make easier to manage PR. You can disable this if you still want to commit on branch with common names.
       - id: no-commit-to-branch
         args: [--branch, develop, --pattern, \d+.0]
+      # This check format of xml files
       - id: check-xml
         exclude: |
           (?x)^(htdocs/includes/.*)$
+      # This check format of yaml files
       - id: check-yaml
         args: [--unsafe]
+      # This checl format of json files
       - id: check-json
+      # Fix DOS end of files to get Unix end of files
       - id: mixed-line-ending
         # alternative for dev/tools/fixdosfiles.sh
         exclude: |
@@ -20,18 +27,25 @@ repos:
                |.*/CRLF.*.php  # Files in swiftmailer
                )$
         args: [--fix=lf]
+      # Remove trailing whitespace.
       - id: trailing-whitespace
         exclude_types: [markdown]
+      # Fix the end of file
       - id: end-of-file-fixer
+      # Check if there is not completly merged conflict
       - id: check-merge-conflict
+      # Chech the shebangs of shell files
       - id: check-executables-have-shebangs
+      # Check that shell files are executables
       - id: check-shebang-scripts-are-executable
         exclude:
           (?x)^( dev/tools/dolibarr-postgres2mysql.php |test/other/test_serialize.php
           |test/phpunit/textutf8.txt |test/phpunit/textiso.txt |htdocs/includes/.*
           |htdocs/modulebuilder/template/.* |build/debian/dolibarr.postrm |build/debian/dolibarr.postinst
           |build/debian/dolibarr.config )$
+      # Fix the first UTF8 byte
       - id: fix-byte-order-marker
+      # ???
       - id: check-case-conflict
 
   # Beautify shell scripts
