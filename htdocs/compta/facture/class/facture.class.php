@@ -263,7 +263,7 @@ class Facture extends CommonInvoice
 
 	/**
 	 * @var float	Percent of discount ("remise" in French)
-     * @deprecated The discount percent is on line level now
+	 * @deprecated The discount percent is on line level now
 	 */
 	public $remise_percent;
 
