@@ -889,6 +889,7 @@ class FormFile
 					} else {
 						$out .= '<span class="spanoverflow">';
 					}
+					$out .= $imgpreview;
 					$out .= '<a class="documentdownload paddingright" href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
 
 					$mime = dol_mimetype($relativepath, '', 0);
@@ -901,7 +902,6 @@ class FormFile
 					$out .= dol_trunc($file["name"], 150);
 					$out .= '</a>';
 					$out .= '</span>'."\n";
-					$out .= $imgpreview;
 					$out .= '</td>';
 
 					// Show file size
