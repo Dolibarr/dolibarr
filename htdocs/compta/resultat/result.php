@@ -256,7 +256,7 @@ print '<th class="liste_titre"></th>';
 print '<th class="liste_titre right">'.$langs->trans("PreviousPeriod").'</th>';
 print '<th class="liste_titre right">'.$langs->trans("SelectedPeriod").'</th>';
 foreach ($months as $k => $v) {
-	if (($k + 1) >= $date_startmonth) {
+	if (($k + 1) >= $date_startmonth && $k < $date_endmonth) {
 		print '<th class="liste_titre right width50">'.$langs->trans('MonthShort'.sprintf("%02s", ($k + 1))).'</th>';
 	}
 }
@@ -389,7 +389,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 				// Detail by month
 				foreach ($months as $k => $v) {
-					if (($k + 1) >= $date_startmonth) {
+					if (($k + 1) >= $date_startmonth && $k < $date_endmonth) {
 						foreach ($sommes as $code => $det) {
 							$vars[$code] = empty($det['M'][$k]) ? 0 : $det['M'][$k];
 						}
@@ -588,7 +588,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 				// Each month
 				foreach ($totCat['M'] as $k => $v) {
-					if (($k + 1) >= $date_startmonth) {
+					if (($k + 1) >= $date_startmonth && $k < $date_endmonth) {
 						print '<td class="right nowraponall"><span class="amount">'.price($v).'</span></td>';
 					}
 				}
@@ -629,7 +629,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 							// Make one call for each month
 							foreach ($months as $k => $v) {
-								if (($k + 1) >= $date_startmonth) {
+								if (($k + 1) >= $date_startmonth && $k < $date_endmonth) {
 									if (isset($cpt['account_number'])) {
 										$resultM = $totPerAccount[$cpt['account_number']]['M'][$k];
 									} else {
