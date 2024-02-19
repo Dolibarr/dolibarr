@@ -1241,7 +1241,7 @@ class Task extends CommonObjectLine
 			$sql .= " WHERE pt.rowid = ec.element_id";
 		}
 		if ($userp && $filteronprojstatus > -1) {
-			$sql .= " AND p.fk_statut = ".((int) $filteronprojstatus);
+			$sql .= " AND pt.fk_statut = ".((int) $filteronprojstatus);
 		}
 		if ($usert && $filteronprojstatus > -1) {
 			$sql .= " AND pt.fk_projet = p.rowid AND p.fk_statut = ".((int) $filteronprojstatus);
