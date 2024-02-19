@@ -1145,7 +1145,7 @@ class Product extends CommonObject
 		$this->barcode = (empty($this->barcode) ? '' : trim($this->barcode));
 
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
-		$this->accountancy_code_buy_intra = trim($this->accountancy_code_buy_intra);
+		$this->accountancy_code_buy_intra = (!empty($this->accountancy_code_buy_intra) ? trim($this->accountancy_code_buy_intra) : '');
 		$this->accountancy_code_buy_export = trim($this->accountancy_code_buy_export);
 		$this->accountancy_code_sell = trim($this->accountancy_code_sell);
 		$this->accountancy_code_sell_intra = trim($this->accountancy_code_sell_intra);

@@ -18,7 +18,9 @@
 
 use Luracast\Restler\RestException;
 
-require_once DOL_DOCUMENT_ROOT . '/salaries/class/salary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
+
 
 /**
  * API class for salaries
@@ -37,6 +39,17 @@ class Salaries extends DolibarrApi
 		'label',
 		'amount',
 	);
+
+	/**
+	 * array $FIELDS Mandatory fields, checked when creating an object
+	 */
+	static $FIELDSPAYMENT = array(
+		"paiementtype",
+		'datepaye',
+		'chid',
+		'amounts',
+	);
+
 
 	/**
 	 * Constructor
@@ -62,8 +75,8 @@ class Salaries extends DolibarrApi
 	{
 		$list = array();
 
-		if (!DolibarrApiAccess::$user->rights->banque->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'read')) {
+			throw new RestException(403);
 		}
 
 		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "salary as t";
@@ -109,8 +122,8 @@ class Salaries extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'read')) {
+			throw new RestException(403);
 		}
 
 		$salary = new Salary($this->db);
@@ -130,8 +143,8 @@ class Salaries extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->configurer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'write')) {
+			throw new RestException(403);
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -156,9 +169,8 @@ class Salaries extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		/** @todo ->rights->salaries ? */
-		if (!DolibarrApiAccess::$user->rights->banque->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'write')) {
+			throw new RestException(403);
 		}
 
 		$salary = new Salary($this->db);
@@ -189,8 +201,8 @@ class Salaries extends DolibarrApi
 	 */
 	/*public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->configurer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'delete')) {
+			throw new RestException(403);
 		}
 		$salary = new Salary($this->db);
 		$result = $salary->fetch($id);
@@ -210,6 +222,197 @@ class Salaries extends DolibarrApi
 		);
 	}*/
 
+
+	/**
+	 * Get the list of payment of salaries.
+	 *
+	 * @param string    $sortfield  Sort field
+	 * @param string    $sortorder  Sort order
+	 * @param int       $limit      Limit for list
+	 * @param int       $page       Page number
+	 * @return array                List of paymentsalary objects
+	 *
+	 * @url     GET /payments
+	 *
+	 * @throws RestException
+	 */
+	public function getAllPayments($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0)
+	{
+		$list = array();
+
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'read')) {
+			throw new RestException(403);
+		}
+
+		$sql = "SELECT t.rowid FROM " . MAIN_DB_PREFIX . "payment_salary as t, ".MAIN_DB_PREFIX."salary as s";
+		$sql .= ' WHERE s.rowid = t.fk_salary AND t.entity IN ('.getEntity('salary').')';
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
+
+		dol_syslog("API Rest request");
+
+		$result = $this->db->query($sql);
+
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			for ($i = 0; $i < $min; $i++) {
+				$obj = $this->db->fetch_object($result);
+				$paymentsalary = new PaymentSalary($this->db);
+				if ($paymentsalary->fetch($obj->rowid) > 0) {
+					$list[] = $this->_cleanObjectDatas($paymentsalary);
+				}
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieving list of paymentsalaries: ' . $this->db->lasterror());
+		}
+
+		return $list;
+	}
+
+	/**
+	 * Get a given payment.
+	 *
+	 * @param 	int    $pid    	ID of payment salary
+	 * @return 	array 			PaymentSalary object
+	 *
+	 * @url     GET /payments/{pid}
+	 *
+	 * @throws RestException
+	 */
+	public function getPayments($pid)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'read')) {
+			throw new RestException(403);
+		}
+
+		$paymentsalary = new PaymentSalary($this->db);
+		$result = $paymentsalary->fetch($pid);
+		if (!$result) {
+			throw new RestException(404, 'paymentsalary not found');
+		}
+
+		return $this->_cleanObjectDatas($paymentsalary);
+	}
+
+	/**
+	 * Create payment salary on a salary
+	 *
+	 * @param 	int		$id					Id of salary
+	 * @param 	array 	$request_data    	Request data
+	 * @return 	int 						ID of paymentsalary
+	 *
+	 * @url     POST {id}/payments
+	 *
+	 * @throws RestException
+	 */
+	public function addPayment($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'write')) {
+			throw new RestException(403);
+		}
+		// Check mandatory fields
+		$result = $this->_validatepayments($request_data);
+
+		$paymentsalary = new PaymentSalary($this->db);
+		$paymentsalary->fk_salary = $id;
+		foreach ($request_data as $field => $value) {
+			$paymentsalary->$field = $this->_checkValForAPI($field, $value, $paymentsalary);
+		}
+
+		if ($paymentsalary->create(DolibarrApiAccess::$user, 1) < 0) {
+			throw new RestException(500, 'Error creating paymentsalary', array_merge(array($paymentsalary->error), $paymentsalary->errors));
+		}
+		if (isModEnabled("banque")) {
+			$paymentsalary->addPaymentToBank(
+				DolibarrApiAccess::$user,
+				'payment_salary',
+				'(SalaryPayment)',
+				(int) $request_data['accountid'],
+				'',
+				''
+			);
+		}
+		return $paymentsalary->id;
+	}
+
+	/**
+	 * Update paymentsalary
+	 *
+	 * @param int    $id              ID of paymentsalary
+	 * @param array  $request_data    data
+	 * @return int
+	 *
+	 * @url     POST {id}/payments
+	 *
+	 * @throws RestException
+	 */
+	public function updatePayment($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'write')) {
+			throw new RestException(403);
+		}
+
+		$paymentsalary = new PaymentSalary($this->db);
+		$result = $paymentsalary->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Payment salary not found');
+		}
+
+		foreach ($request_data as $field => $value) {
+			if ($field == 'id') {
+				continue;
+			}
+			$paymentsalary->$field = $this->_checkValForAPI($field, $value, $paymentsalary);
+		}
+
+		if ($paymentsalary->update(DolibarrApiAccess::$user) > 0) {
+			return $this->get($id);
+		} else {
+			throw new RestException(500, $paymentsalary->error);
+		}
+	}
+
+	/**
+	 * Delete a payment salary
+	 *
+	 * @param int    $id    ID of payment salary
+	 * @return array
+	 *
+	 * @url     DELETE {id}/payments
+	 */
+	/*public function delete($id)
+	 {
+	 if (!DolibarrApiAccess::$user->hasRight('salaries', 'delete')) {
+	 throw new RestException(401);
+	 }
+	 $paymentsalary = new PaymentSalary($this->db);
+	 $result = $paymentsalary->fetch($id);
+	 if (!$result) {
+	 throw new RestException(404, 'paymentsalary not found');
+	 }
+
+	 if ($paymentsalary->delete(DolibarrApiAccess::$user) < 0) {
+	 throw new RestException(401, 'error when deleting paymentsalary');
+	 }
+
+	 return array(
+	 'success' => array(
+	 'code' => 200,
+	 'message' => 'paymentsalary deleted'
+	 )
+	 );
+	 }*/
+
+
 	/**
 	 * Validate fields before creating an object
 	 *
@@ -228,6 +431,28 @@ class Salaries extends DolibarrApi
 			$salary[$field] = $data[$field];
 		}
 		return $salary;
+	}
+
+	/**
+	 * Validate fields before creating an object
+	 *
+	 * @param array|null    $data    Data to validate
+	 * @return array
+	 *
+	 * @throws RestException
+	 */
+	private function _validatepayments($data)
+	{
+		$paymentsalary = array();
+		$fields = Salaries::$FIELDSPAYMENT;
+		if (isModEnabled("banque")) array_push($fields, "accountid");
+		foreach ($fields as $field) {
+			if (!isset($data[$field])) {
+				throw new RestException(400, "$field field missing");
+			}
+			$paymentsalary[$field] = $data[$field];
+		}
+		return $paymentsalary;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
