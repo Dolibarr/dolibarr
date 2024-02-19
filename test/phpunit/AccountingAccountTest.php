@@ -36,7 +36,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -75,12 +75,12 @@ class AccountingAccountTest extends CommonClassTest
 	public function testAccountingAccountCreate()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new AccountingAccount($db);
+		$localobject = new AccountingAccount($db);
 		$localobject->fk_pcg_version = 'PCG99-ABREGE';
 		$localobject->account_category = 0;
 		$localobject->pcg_type = 'XXXXX';
@@ -89,7 +89,7 @@ class AccountingAccountTest extends CommonClassTest
 		$localobject->account_parent = 0;
 		$localobject->label = 'Account specimen';
 		$localobject->active = 0;
-		$result=$localobject->create($user);
+		$result = $localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -109,13 +109,13 @@ class AccountingAccountTest extends CommonClassTest
 	public function testAccountingAccountFetch($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new AccountingAccount($db);
-		$result=$localobject->fetch($id);
+		$localobject = new AccountingAccount($db);
+		$result = $localobject->fetch($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -135,13 +135,13 @@ class AccountingAccountTest extends CommonClassTest
 	public function testAccountingAccountUpdate($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject->label='New label';
-		$result=$localobject->update($user);
+		$localobject->label = 'New label';
+		$result = $localobject->update($user);
 
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -161,14 +161,14 @@ class AccountingAccountTest extends CommonClassTest
 	public function testAccountingAccountDelete($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new AccountingAccount($db);
-		$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+		$localobject = new AccountingAccount($db);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
