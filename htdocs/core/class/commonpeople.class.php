@@ -23,7 +23,7 @@
 
 
 /**
- *      Superclass for thirdparties, contacts, members or users
+ *      Support class for thirdparties, contacts, members, users or resources
  */
 trait CommonPeople
 {
