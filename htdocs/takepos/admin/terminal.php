@@ -164,6 +164,11 @@ $filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';
 print $form->select_company(getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$terminaltouse), 'socid', $filter, 1, 0, 0, array(), 0, 'maxwidth500 widthcentpercentminusx');
 print '</td></tr>';
 
+print '<tr class="oddeven"><td>'.$langs->trans("ForbidSalesToTheDefaultCustomer").'</td>';
+print '<td>';
+print ajax_constantonoff("TAKEPOS_FORBID_SALES_TO_DEFAULT_CUSTOMER", array(), $conf->entity, 0, 0, 1, 0);
+print '</td></tr>';
+
 $atleastonefound = 0;
 if (isModEnabled("banque")) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
