@@ -444,7 +444,7 @@ if (empty($reshook)) {
 					$object->warehouse_id = GETPOSTINT('warehouse_id');
 					$object->duree_validite = $duration;
 					$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
-					$object->deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
+					$object->deposit_percent = GETPOSTFLOAT('cond_reglement_id_deposit_percent');
 					$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
 					$object->fk_account = GETPOSTINT('fk_account');
 					$object->socid = GETPOSTINT('socid');
@@ -475,7 +475,7 @@ if (empty($reshook)) {
 				$object->warehouse_id = GETPOSTINT('warehouse_id');
 				$object->duree_validite = price2num(GETPOST('duree_validite', 'alpha'));
 				$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
-				$object->deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
+				$object->deposit_percent = GETPOSTFLOAT('cond_reglement_id_deposit_percent');
 				$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
 				$object->fk_account = GETPOSTINT('fk_account');
 				$object->contact_id = GETPOSTINT('contactid');
