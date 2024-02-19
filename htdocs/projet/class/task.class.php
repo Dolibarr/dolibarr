@@ -1217,9 +1217,15 @@ class Task extends CommonObjectLine
 		}
 
 		/* Liste des taches et role sur les projects ou taches */
-		$sql = "SELECT pt.rowid as pid, ec.element_id, ctc.code, ctc.source";
+		$sql = "SELECT ";
 		if ($userp) {
-			$sql .= " FROM ".MAIN_DB_PREFIX."projet as pt";
+			$sql .= " p.rowid as pid,";
+		} else {
+			$sql .= " pt.rowid as pid,";
+		}
+		$sql .= " ec.element_id, ctc.code, ctc.source";
+		if ($userp) {
+			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		}
 		if ($usert && $filteronprojstatus > -1) {
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p, ".MAIN_DB_PREFIX."projet_task as pt";
@@ -1229,7 +1235,11 @@ class Task extends CommonObjectLine
 		}
 		$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 		$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
-		$sql .= " WHERE pt.rowid = ec.element_id";
+		if ($userp) {
+			$sql .= " WHERE p.rowid = ec.element_id";
+		} else {
+			$sql .= " WHERE pt.rowid = ec.element_id";
+		}
 		if ($userp && $filteronprojstatus > -1) {
 			$sql .= " AND p.fk_statut = ".((int) $filteronprojstatus);
 		}
@@ -1253,7 +1263,7 @@ class Task extends CommonObjectLine
 		$sql .= " AND ctc.source = 'internal'";
 		if ($projectid) {
 			if ($userp) {
-				$sql .= " AND pt.rowid IN (".$this->db->sanitize($projectid).")";
+				$sql .= " AND p.rowid IN (".$this->db->sanitize($projectid).")";
 			}
 			if ($usert) {
 				$sql .= " AND pt.fk_projet IN (".$this->db->sanitize($projectid).")";
