@@ -31,6 +31,16 @@
 -- To rebuild sequence for postgresql after insert, by forcing id autoincrement fields:
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
+
+-- V19 forgotten
+
+ALTER TABLE llx_resource ADD COLUMN phone varchar(255) DEFAULT NULL AFTER max_users;
+ALTER TABLE llx_resource ADD COLUMN email varchar(255) DEFAULT NULL AFTER phone;
+ALTER TABLE llx_resource ADD COLUMN url varchar(255) DEFAULT NULL AFTER email;
+ALTER TABLE llx_resource ADD COLUMN fk_state integer DEFAULT NULL AFTER fk_country;
+ALTER TABLE llx_resource ADD INDEX idx_resource_fk_state (fk_state);
+
+
 -- Use unique keys for extrafields
 ALTER TABLE llx_actioncomm_extrafields DROP INDEX idx_actioncomm_extrafields;
 ALTER TABLE llx_actioncomm_extrafields ADD UNIQUE INDEX uk_actioncomm_extrafields (fk_object);

@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 class Dolresource extends CommonObject
 {
 	use CommonPeople;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
