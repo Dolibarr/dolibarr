@@ -73,7 +73,7 @@ class FormOrder extends Form
 	}
 
 	/**
-	 *  Return combo list of differents status of a orders
+	 *  Return combo list of different status of orders
 	 *
 	 *  @param	string	$selected   Preselected value
 	 *  @param	int		$short		Use short labels
@@ -91,7 +91,6 @@ class FormOrder extends Form
 			Commande::STATUS_CLOSED,
 			Commande::STATUS_CANCELED
 		);
-
 
 		$tmpsupplierorder = new Commande($this->db);
 
