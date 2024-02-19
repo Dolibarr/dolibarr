@@ -205,7 +205,7 @@ if (GETPOST('reset')) {
  */
 
 if (!isset($_SESSION['description']) && !isset($_SESSION['mail'])) {
-	dol_print_error('', $langs->trans('ErrorOpenSurveyFillFirstSection'));
+	dol_print_error(null, $langs->trans('ErrorOpenSurveyFillFirstSection'));
 	exit;
 }
 
@@ -338,7 +338,7 @@ $nbrejourmois = date("t", mktime(0, 0, 0, $_SESSION["mois"], 1, $_SESSION["annee
 $premierjourmois = date("N", mktime(0, 0, 0, $_SESSION["mois"], 1, $_SESSION["annee"])) - 1;
 
 //traduction de la valeur du mois
-if (is_integer($_SESSION["mois"]) && $_SESSION["mois"] > 0 && $_SESSION["mois"] < 13) {
+if (is_int($_SESSION["mois"]) && $_SESSION["mois"] > 0 && $_SESSION["mois"] < 13) {
 	$motmois = dol_print_date(mktime(0, 0, 0, $_SESSION["mois"], 10), '%B');
 } else {
 	$motmois = dol_print_date(dol_now(), '%B');

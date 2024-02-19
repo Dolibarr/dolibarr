@@ -79,8 +79,8 @@ $object = new Opensurveysondage($db);
 $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
 
 // Security check
-if (empty($conf->recruitment->enabled)) {
-	httponly_accessforbidden('Module Recruitment not enabled');
+if (!isModEnabled('opensurvey')) {
+	httponly_accessforbidden('Module Opensurvey not enabled');
 }
 
 

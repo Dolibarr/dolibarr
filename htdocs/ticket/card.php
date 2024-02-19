@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2016 Jean-François FERRY  <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel  <christophe@altairis.fr>
  * Copyright (C) 2018      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021      Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024 Frédéric France		<frederic.france@netlogic.fr>
  * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2022-2023 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Benjamin Falière		<benjamin.faliere@altairis.fr>
@@ -31,6 +31,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -254,6 +255,7 @@ if (empty($reshook)) {
 			$object->fk_project 				= $projectid;
 			$object->fk_contract 				= GETPOST('fk_contract', 'int');
 
+			$object->context['contact_id'] = GETPOSTINT('contact_id');
 
 			$id = $object->create($user);
 			if ($id <= 0) {
@@ -494,6 +496,7 @@ if (empty($reshook)) {
 
 			$url = 'card.php?track_id='.GETPOST('track_id', 'alpha');
 			header("Location: ".$url);
+			exit;
 		} else {
 			$action = '';
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -503,12 +506,15 @@ if (empty($reshook)) {
 	if ($action == "confirm_public_close" && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoadd) {
 		$object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
 		if ($_SESSION['email_customer'] == $object->origin_email || $_SESSION['email_customer'] == $object->thirdparty->email) {
+			$object->context['contact_id'] = GETPOSTINT('contact_id');
+
 			$object->close($user);
 
 			setEventMessages('<div class="confirm">'.$langs->trans('TicketMarkedAsClosed').'</div>', null, 'mesgs');
 
 			$url = 'card.php?track_id='.GETPOST('track_id', 'alpha');
 			header("Location: ".$url);
+			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
@@ -702,7 +708,6 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-	//var_dump($action);exit;
 
 	// Actions to send emails
 	$triggersendname = 'TICKET_SENTBYMAIL';
@@ -724,6 +729,7 @@ if (empty($reshook)) {
 
 $userstat = new User($db);
 $form = new Form($db);
+$formfile = new FormFile($db);
 $formticket = new FormTicket($db);
 if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
@@ -755,7 +761,7 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->withcancel = 1;
 
 	$formticket->showForm(1, 'create', 0, null, $action);
-	/*} elseif ($action == 'edit' && $user->rights->ticket->write && $object->status < Ticket::STATUS_CLOSED) {
+	/*} elseif ($action == 'edit' && $user->hasRight('ticket', 'write') && $object->status < Ticket::STATUS_CLOSED) {
 	$formticket = new FormTicket($db);
 
 	$head = ticket_prepare_head($object);
@@ -806,8 +812,7 @@ if ($action == 'create' || $action == 'presend') {
 	print $form->buttonsSaveCancel();
 
 	print '</form>'; */
-} elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'presend' || $action == 'presend_addmessage' || $action == 'close' || $action == 'abandon' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'categories' || $action == 'reopen'
-	|| $action== 'edit_contrat' || $action == 'editsubject' || $action == 'edit_extras' || $action == 'update_extras' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink') {
+} elseif (empty($action) || in_array($action, ['builddoc', 'view', 'addlink', 'dellink', 'presend', 'presend_addmessage', 'close', 'abandon', 'delete', 'editcustomer', 'progression', 'categories', 'reopen', 'edit_contrat', 'editsubject', 'edit_extras', 'update_extras', 'edit_extrafields', 'set_extrafields', 'classify', 'sel_contract', 'edit_message_init', 'set_status', 'dellink'])) {
 	if ($res > 0) {
 		// or for unauthorized internals users
 		if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $object->fk_user_assign != $user->id) && !$user->hasRight('ticket', 'manage')) {
@@ -883,7 +888,7 @@ if ($action == 'create' || $action == 'presend') {
 				// Define a complementary filter for search of next/prev ref.
 				if (!$user->hasRight('projet', 'all', 'lire')) {
 					$objectsListId = $projectstat->getProjectsAuthorizedForUser($user, $mine, 0);
-					$projectstat->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
+					$projectstat->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
 				}
 				print $form->showrefnav($projectstat, 'ref', $linkback, 1, 'ref', 'ref', '');
 				print '</td></tr>';
@@ -964,7 +969,7 @@ if ($action == 'create' || $action == 'presend') {
 			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByPublicPortal"), $htmltooptip, 1, 'help', '', 0, 3, 'tooltip').'</small>';
 		}
 
-		$permissiontoedit = $object->status < 8 && !$user->socid && $user->rights->ticket->write;
+		$permissiontoedit = $object->status < 8 && !$user->socid && $user->hasRight('ticket', 'write');
 		//$permissiontoedit = 0;
 
 		// Thirdparty
@@ -1608,6 +1613,21 @@ if ($action == 'create' || $action == 'presend') {
 		if ($action != 'presend' && $action != 'presend_addmessage' && $action != 'add_message') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
+			/*
+			 * Generated documents
+			 */
+			$filename = dol_sanitizeFileName($object->ref);
+			$filedir = $upload_dir."/".dol_sanitizeFileName($object->ref);
+			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+			$genallowed = $permissiontoadd;
+			$delallowed = $permissiontodelete;
+			$codelang = '';
+			if ($object->fk_soc > 0) {
+				$object->fetch_thirdparty();
+				$codelang = $object->thirdparty->default_lang;
+			}
+
+			print $formfile->showdocuments('ticket', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $codelang);
 
 			// Show links to link elements
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('ticket'));

@@ -97,7 +97,7 @@ class CGenericDic extends CommonDict
 			$this->label = trim($this->label);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
 		// Insert request
@@ -321,7 +321,7 @@ class CGenericDic extends CommonDict
 			$this->label = trim($this->label);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
 		// Check parameters

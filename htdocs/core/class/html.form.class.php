@@ -1341,7 +1341,7 @@ class Form
 			}
 
 			// mode 1
-			$urloption = 'htmlname=' . urlencode(str_replace('.', '_', $htmlname)) . '&outjson=1&filter=' . urlencode($filter) . (empty($excludeids) ? '' : '&excludeids=' . join(',', $excludeids)) . ($showtype ? '&showtype=' . urlencode($showtype) : '') . ($showcode ? '&showcode=' . urlencode($showcode) : '');
+			$urloption = 'htmlname=' . urlencode(str_replace('.', '_', $htmlname)) . '&outjson=1&filter=' . urlencode($filter) . (empty($excludeids) ? '' : '&excludeids=' . implode(',', $excludeids)) . ($showtype ? '&showtype=' . urlencode($showtype) : '') . ($showcode ? '&showcode=' . urlencode($showcode) : '');
 
 			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
 			if (empty($hidelabel)) {
@@ -1466,7 +1466,7 @@ class Form
 			$sql .= " AND s.status <> 0";
 		}
 		if (!empty($excludeids)) {
-			$sql .= " AND s.rowid NOT IN (" . $this->db->sanitize(join(',', $excludeids)) . ")";
+			$sql .= " AND s.rowid NOT IN (" . $this->db->sanitize(implode(',', $excludeids)) . ")";
 		}
 		// Add where from hooks
 		$parameters = array();
@@ -1477,19 +1477,19 @@ class Form
 			$sql .= " AND (";
 			$prefix = !getDolGlobalString('COMPANY_DONOTSEARCH_ANYWHERE') ? '%' : ''; // Can use index if COMPANY_DONOTSEARCH_ANYWHERE is on
 			// For natural search
-			$scrit = explode(' ', $filterkey);
+			$search_crit = explode(' ', $filterkey);
 			$i = 0;
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= "(";
 			}
-			foreach ($scrit as $crit) {
+			foreach ($search_crit as $crit) {
 				if ($i > 0) {
 					$sql .= " AND ";
 				}
 				$sql .= "(s.nom LIKE '" . $this->db->escape($prefix . $crit) . "%')";
 				$i++;
 			}
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= ")";
 			}
 			if (isModEnabled('barcode')) {
@@ -2081,10 +2081,10 @@ class Form
 		if (getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX') || $notdisabled) {
 			$sql .= " AND u.statut <> 0";
 		}
-		if (!empty($conf->global->USER_HIDE_NONEMPLOYEE_IN_COMBOBOX) || $notdisabled) {
+		if (getDolGlobalString('USER_HIDE_NONEMPLOYEE_IN_COMBOBOX') || $notdisabled) {
 			$sql .= " AND u.employee <> 0";
 		}
-		if (!empty($conf->global->USER_HIDE_EXTERNAL_IN_COMBOBOX) || $notdisabled) {
+		if (getDolGlobalString('USER_HIDE_EXTERNAL_IN_COMBOBOX') || $notdisabled) {
 			$sql .= " AND u.fk_soc IS NULL";
 		}
 		if (!empty($morefilter)) {
@@ -2431,7 +2431,7 @@ class Form
 
 			$events = array();
 			$out .= img_picto('', 'resource', 'class="pictofixedwidth"');
-			$out .= $formresources->select_resource_list(0, $htmlname, '', 1, 1, 0, $events, '', 2, null);
+			$out .= $formresources->select_resource_list(0, $htmlname, [], 1, 1, 0, $events, '', 2, 0);
 			//$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
 			$out .= ' <input type="submit" disabled class="button valignmiddle smallpaddingimp reposition" id="' . $action . 'assignedtoresource" name="' . $action . 'assignedtoresource" value="' . dol_escape_htmltag($langs->trans("Add")) . '">';
 			$out .= '<br>';
@@ -2889,12 +2889,12 @@ class Form
 			$sql .= ' AND (';
 			$prefix = !getDolGlobalString('PRODUCT_DONOTSEARCH_ANYWHERE') ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
 			// For natural search
-			$scrit = explode(' ', $filterkey);
+			$search_crit = explode(' ', $filterkey);
 			$i = 0;
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= "(";
 			}
-			foreach ($scrit as $crit) {
+			foreach ($search_crit as $crit) {
 				if ($i > 0) {
 					$sql .= " AND ";
 				}
@@ -2917,7 +2917,7 @@ class Form
 				$sql .= ")";
 				$i++;
 			}
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= ")";
 			}
 			if (isModEnabled('barcode')) {
@@ -3489,9 +3489,12 @@ class Form
 		}
 
 		$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.duration, p.fk_product_type, p.stock, p.tva_tx as tva_tx_sale, p.default_vat_code as default_vat_code_sale,";
-		$sql .= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice,";
-		$sql .= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.default_vat_code, pfp.fk_soc, s.nom as name,";
-		$sql .= " pfp.supplier_reputation";
+		$sql .= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice";
+		if (isModEnabled('multicurrency')) {
+			$sql .= ", pfp.multicurrency_code, pfp.multicurrency_unitprice";
+		}
+		$sql .= ", pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.default_vat_code, pfp.fk_soc, s.nom as name";
+		$sql .= ", pfp.supplier_reputation";
 		// if we use supplier description of the products
 		if (getDolGlobalString('PRODUIT_FOURN_TEXTS')) {
 			$sql .= ", pfp.desc_fourn as description";
@@ -3534,12 +3537,12 @@ class Form
 			$sql .= ' AND (';
 			$prefix = !getDolGlobalString('PRODUCT_DONOTSEARCH_ANYWHERE') ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
 			// For natural search
-			$scrit = explode(' ', $filterkey);
+			$search_crit = explode(' ', $filterkey);
 			$i = 0;
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= "(";
 			}
-			foreach ($scrit as $crit) {
+			foreach ($search_crit as $crit) {
 				if ($i > 0) {
 					$sql .= " AND ";
 				}
@@ -3550,7 +3553,7 @@ class Form
 				$sql .= ")";
 				$i++;
 			}
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= ")";
 			}
 			if (isModEnabled('barcode')) {
@@ -3814,6 +3817,10 @@ class Form
 					$optstart .= ' data-tvatx-formated="' . dol_escape_htmltag(price($objp->tva_tx, 0, $langs, 1, -1, 2)) . '"';
 					$optstart .= ' data-default-vat-code="' . dol_escape_htmltag($objp->default_vat_code) . '"';
 					$optstart .= ' data-supplier-ref="' . dol_escape_htmltag($objp->ref_fourn) . '"';
+					if (isModEnabled('multicurrency')) {
+						$optstart .= ' data-multicurrency-code="' . dol_escape_htmltag($objp->multicurrency_code) . '"';
+						$optstart .= ' data-multicurrency-up="' . dol_escape_htmltag($objp->multicurrency_unitprice) . '"';
+					}
 				}
 				$optstart .= ' data-description="' . dol_escape_htmltag($objp->description, 0, 1) . '"';
 
@@ -3835,6 +3842,10 @@ class Form
 					'disabled' => (empty($objp->idprodfournprice) ? true : false),
 					'description' => $objp->description
 				);
+				if (isModEnabled('multicurrency')) {
+					$outarrayentry['multicurrency_code'] = $objp->multicurrency_code;
+					$outarrayentry['multicurrency_unitprice'] = price2num($objp->multicurrency_unitprice, 'MU');
+				}
 
 				$parameters = array(
 					'objp' => &$objp,
@@ -3850,28 +3861,32 @@ class Form
 				// "key" value of json key array is used by jQuery automatically as selected value. Example: 'type' = product or service, 'price_ht' = unit price without tax
 				// "label" value of json key array is used by jQuery automatically as text for combo box
 				$out .= $optstart . ' data-html="' . dol_escape_htmltag($optlabel) . '">' . $optlabel . "</option>\n";
-				array_push(
-					$outarray,
-					array('key' => $outkey,
-						'value' => $outref,
-						'label' => $outvallabel,
-						'qty' => $outqty,
-						'price_qty_ht' => price2num($objp->fprice, 'MU'),        // Keep higher resolution for price for the min qty
-						'price_qty_ht_locale' => price($objp->fprice),
-						'price_unit_ht' => price2num($objp->unitprice, 'MU'),    // This is used to fill the Unit Price
-						'price_unit_ht_locale' => price($objp->unitprice),
-						'price_ht' => price2num($objp->unitprice, 'MU'),        // This is used to fill the Unit Price (for compatibility)
-						'tva_tx_formated' => price($objp->tva_tx),
-						'tva_tx' => price2num($objp->tva_tx),
-						'default_vat_code' => $objp->default_vat_code,
-						'discount' => $outdiscount,
-						'type' => $outtype,
-						'duration_value' => $outdurationvalue,
-						'duration_unit' => $outdurationunit,
-						'disabled' => (empty($objp->idprodfournprice) ? true : false),
-						'description' => $objp->description
-					)
+				$outarraypush = array(
+					'key' => $outkey,
+					'value' => $outref,
+					'label' => $outvallabel,
+					'qty' => $outqty,
+					'price_qty_ht' => price2num($objp->fprice, 'MU'),        // Keep higher resolution for price for the min qty
+					'price_qty_ht_locale' => price($objp->fprice),
+					'price_unit_ht' => price2num($objp->unitprice, 'MU'),    // This is used to fill the Unit Price
+					'price_unit_ht_locale' => price($objp->unitprice),
+					'price_ht' => price2num($objp->unitprice, 'MU'),        // This is used to fill the Unit Price (for compatibility)
+					'tva_tx_formated' => price($objp->tva_tx),
+					'tva_tx' => price2num($objp->tva_tx),
+					'default_vat_code' => $objp->default_vat_code,
+					'discount' => $outdiscount,
+					'type' => $outtype,
+					'duration_value' => $outdurationvalue,
+					'duration_unit' => $outdurationunit,
+					'disabled' => (empty($objp->idprodfournprice) ? true : false),
+					'description' => $objp->description
 				);
+				if (isModEnabled('multicurrency')) {
+					$outarraypush['multicurrency_code'] = $objp->multicurrency_code;
+					$outarraypush['multicurrency_unitprice'] = price2num($objp->multicurrency_unitprice, 'MU');
+				}
+				array_push($outarray, $outarraypush);
+
 				// Example of var_dump $outarray
 				// array(1) {[0]=>array(6) {[key"]=>string(1) "2" ["value"]=>string(3) "ppp"
 				//           ["label"]=>string(76) "ppp (<strong>f</strong>ff2) - ppp - 20,00 Euros/1unité (20,00 Euros/unité)"
@@ -7454,12 +7469,12 @@ class Form
 			$sql .= ' AND (';
 			$prefix = !getDolGlobalString('TICKET_DONOTSEARCH_ANYWHERE') ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
 			// For natural search
-			$scrit = explode(' ', $filterkey);
+			$search_crit = explode(' ', $filterkey);
 			$i = 0;
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= "(";
 			}
-			foreach ($scrit as $crit) {
+			foreach ($search_crit as $crit) {
 				if ($i > 0) {
 					$sql .= " AND ";
 				}
@@ -7467,7 +7482,7 @@ class Form
 				$sql .= ")";
 				$i++;
 			}
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= ")";
 			}
 			$sql .= ')';
@@ -7679,12 +7694,12 @@ class Form
 			$sql .= ' AND (';
 			$prefix = !getDolGlobalString('TICKET_DONOTSEARCH_ANYWHERE') ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
 			// For natural search
-			$scrit = explode(' ', $filterkey);
+			$search_crit = explode(' ', $filterkey);
 			$i = 0;
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= "(";
 			}
-			foreach ($scrit as $crit) {
+			foreach ($search_crit as $crit) {
 				if ($i > 0) {
 					$sql .= " AND ";
 				}
@@ -7692,7 +7707,7 @@ class Form
 				$sql .= "";
 				$i++;
 			}
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= ")";
 			}
 			$sql .= ')';
@@ -7912,12 +7927,12 @@ class Form
 			$sql .= ' AND (';
 			$prefix = !getDolGlobalString('MEMBER_DONOTSEARCH_ANYWHERE') ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
 			// For natural search
-			$scrit = explode(' ', $filterkey);
+			$search_crit = explode(' ', $filterkey);
 			$i = 0;
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= "(";
 			}
-			foreach ($scrit as $crit) {
+			foreach ($search_crit as $crit) {
 				if ($i > 0) {
 					$sql .= " AND ";
 				}
@@ -7925,7 +7940,7 @@ class Form
 				$sql .= " OR p.lastname LIKE '" . $this->db->escape($prefix . $crit) . "%')";
 				$i++;
 			}
-			if (count($scrit) > 1) {
+			if (count($search_crit) > 1) {
 				$sql .= ")";
 			}
 			$sql .= ')';
@@ -9200,6 +9215,7 @@ class Form
 				// Output template part (modules that overwrite templates must declare this into descriptor)
 				$dirtpls = array_merge($conf->modules_parts['tpl'], array('/' . $tplpath . '/tpl'));
 				foreach ($dirtpls as $reldir) {
+					$reldir = rtrim($reldir, '/');
 					if ($nboftypesoutput == ($nbofdifferenttypes - 1)) {    // No more type to show after
 						global $noMoreLinkedObjectBlockAfter;
 						$noMoreLinkedObjectBlockAfter = 1;
@@ -9489,16 +9505,16 @@ class Form
 	/**
 	 *    Return an html string with a select combo box to choose yes or no
 	 *
-	 * @param string $htmlname Name of html select field
-	 * @param string $value Pre-selected value
-	 * @param int $option 0 return yes/no, 1 return 1/0
-	 * @param bool $disabled true or false
-	 * @param int $useempty 1=Add empty line
-	 * @param int $addjscombo 1=Add js beautifier on combo box
-	 * @param string $morecss More CSS
-	 * @param string $labelyes Label for Yes
-	 * @param string $labelno Label for No
-	 * @return    string                        See option
+	 * @param string 	$htmlname 		Name of html select field
+	 * @param string 	$value 			Pre-selected value
+	 * @param int 		$option 		0 return yes/no, 1 return 1/0
+	 * @param bool 		$disabled 		true or false
+	 * @param int 		$useempty 		1=Add empty line
+	 * @param int 		$addjscombo 	1=Add js beautifier on combo box
+	 * @param string 	$morecss 		More CSS
+	 * @param string 	$labelyes 		Label for Yes
+	 * @param string 	$labelno 		Label for No
+	 * @return    string                See option
 	 */
 	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0, $morecss = '', $labelyes = 'Yes', $labelno = 'No')
 	{
@@ -9821,20 +9837,21 @@ class Form
 	}
 
 	/**
-	 *        Return HTML code to output a photo
+	 * Return HTML code to output a photo
 	 *
-	 * @param string $modulepart Key to define module concerned ('societe', 'userphoto', 'memberphoto')
-	 * @param object $object Object containing data to retrieve file name
-	 * @param int $width Width of photo
-	 * @param int $height Height of photo (auto if 0)
-	 * @param int $caneditfield Add edit fields
-	 * @param string $cssclass CSS name to use on img for photo
-	 * @param string $imagesize 'mini', 'small' or '' (original)
-	 * @param int $addlinktofullsize Add link to fullsize image
-	 * @param int $cache 1=Accept to use image in cache
-	 * @param string $forcecapture '', 'user' or 'environment'. Force parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
-	 * @param int $noexternsourceoverwrite No overwrite image with extern source (like 'gravatar' or other module)
-	 * @return string                            HTML code to output photo
+	 * @param string 	$modulepart 				Key to define module concerned ('societe', 'userphoto', 'memberphoto')
+	 * @param object 	$object 					Object containing data to retrieve file name
+	 * @param int 		$width 						Width of photo
+	 * @param int 		$height 					Height of photo (auto if 0)
+	 * @param int 		$caneditfield 				Add edit fields
+	 * @param string 	$cssclass 					CSS name to use on img for photo
+	 * @param string 	$imagesize 					'mini', 'small' or '' (original)
+	 * @param int 		$addlinktofullsize 			Add link to fullsize image
+	 * @param int 		$cache 						1=Accept to use image in cache
+	 * @param string 	$forcecapture 				'', 'user' or 'environment'. Force parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
+	 * @param int		$noexternsourceoverwrite 	No overwrite image with extern source (like 'gravatar' or other module)
+	 * @return string                            	HTML code to output photo
+	 * @see getImagePublicURLOfObject()
 	 */
 	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0)
 	{
@@ -9843,7 +9860,6 @@ class Form
 		$entity = (empty($object->entity) ? $conf->entity : $object->entity);
 		$id = (empty($object->id) ? $object->rowid : $object->id);
 
-		$ret = '';
 		$dir = '';
 		$file = '';
 		$originalfile = '';
@@ -9921,28 +9937,24 @@ class Form
 			$capture = 'user';
 		} else {
 			// Generic case to show photos
-			$dir = $conf->$modulepart->dir_output;
-			if (!empty($object->photo)) {
-				if (dolIsAllowedForPreview($object->photo)) {
-					if ((string) $imagesize == 'mini') {
-						$file = get_exdir($id, 2, 0, 0, $object, $modulepart) . 'photos/' . getImageFileNameForSize($object->photo, '_mini');
-					} elseif ((string) $imagesize == 'small') {
-						$file = get_exdir($id, 2, 0, 0, $object, $modulepart) . 'photos/' . getImageFileNameForSize($object->photo, '_small');
-					} else {
-						$file = get_exdir($id, 2, 0, 0, $object, $modulepart) . 'photos/' . $object->photo;
-					}
-					$originalfile = get_exdir($id, 2, 0, 0, $object, $modulepart) . 'photos/' . $object->photo;
-				}
+			// TODO Implement this method in previous objects so we can always use this generic method.
+			if ($modulepart != "unknown" && method_exists($object, 'getDataToShowPhoto')) {
+				$tmpdata = $object->getDataToShowPhoto($modulepart, $imagesize);
+
+				$dir = $tmpdata['dir'];
+				$file = $tmpdata['file'];
+				$originalfile = $tmpdata['originalfile'];
+				$altfile = $tmpdata['altfile'];
+				$email = $tmpdata['email'];
+				$capture = $tmpdata['capture'];
 			}
-			if (getDolGlobalString('MAIN_OLD_IMAGE_LINKS')) {
-				$altfile = $object->id . ".jpg"; // For backward compatibility
-			}
-			$email = $object->email;
 		}
 
 		if ($forcecapture) {
 			$capture = $forcecapture;
 		}
+
+		$ret = '';
 
 		if ($dir) {
 			if ($file && file_exists($dir . "/" . $file)) {
@@ -10300,7 +10312,7 @@ class Form
 											method: "POST",
 											dataType: "json",
 											data: { fk_c_exp_tax_cat: $(this).val(), token: \'' . currentToken() . '\' },
-											url: "' . (DOL_URL_ROOT . '/expensereport/ajax/ajaxik.php?' . join('&', $params)) . '",
+											url: "' . (DOL_URL_ROOT . '/expensereport/ajax/ajaxik.php?' . implode('&', $params)) . '",
 										}).done(function( data, textStatus, jqXHR ) {
 											console.log(data);
 											if (typeof data.up != "undefined") {
@@ -10374,7 +10386,8 @@ class Form
 		global $langs;
 
 		$out = '';
-		$sql = "SELECT id, code, label FROM " . $this->db->prefix() . "c_type_fees";
+		$sql = "SELECT id, code, label";
+		$sql .= " FROM ".$this->db->prefix()."c_type_fees";
 		$sql .= " WHERE active = 1";
 
 		$resql = $this->db->query($sql);
@@ -10397,6 +10410,8 @@ class Form
 				$out .= '<option ' . ($selected == $obj->{$field} ? 'selected="selected"' : '') . ' value="' . $obj->{$field} . '">' . ($key != $obj->code ? $key : $obj->label) . '</option>';
 			}
 			$out .= '</select>';
+
+			$out .= ajax_combobox('select_'.$htmlname);
 		} else {
 			dol_print_error($this->db);
 		}
@@ -10684,40 +10699,9 @@ class Form
 			// Split the criteria on each AND
 			//var_dump($search_component_params_hidden);
 
-			$nbofchars = dol_strlen($search_component_params_hidden);
-			$arrayofandtags = array();
-			$i = 0;
-			$s = '';
-			$countparenthesis = 0;
-			while ($i < $nbofchars) {
-				$char = dol_substr($search_component_params_hidden, $i, 1);
+			$arrayofandtags = dolForgeExplodeAnd($search_component_params_hidden);
 
-				if ($char == '(') {
-					$countparenthesis++;
-				} elseif ($char == ')') {
-					$countparenthesis--;
-				}
-
-				if ($countparenthesis == 0) {
-					$char2 = dol_substr($search_component_params_hidden, $i+1, 1);
-					$char3 = dol_substr($search_component_params_hidden, $i+2, 1);
-					if ($char == 'A' && $char2 == 'N' && $char3 == 'D') {
-						// We found a AND
-						$arrayofandtags[] = trim($s);
-						$s = '';
-						$i+=2;
-					} else {
-						$s .= $char;
-					}
-				} else {
-					$s .= $char;
-				}
-				$i++;
-			}
-			if ($s) {
-				$arrayofandtags[] = trim($s);
-			}
-
+			// $arrayofandtags is now array( '...' , '...', ...)
 			// Show each AND part
 			foreach ($arrayofandtags as $tmpkey => $tmpval) {
 				$errormessage = '';
@@ -10747,7 +10731,7 @@ class Form
 			$ret .= '<input type="hidden" name="show_search_component_params_hidden" value="1">';
 		}
 		$ret .= "<!-- We store the full Universal Search String into this field. For example: (t.ref:like:'SO-%') AND ((t.ref:like:'CO-%') OR (t.ref:like:'AA%')) -->";
-		$ret .= '<input type="hidden" name="search_component_params_hidden" value="' . dol_escape_htmltag($search_component_params_hidden) . '">';
+		$ret .= '<input type="hidden" id="search_component_params_hidden" name="search_component_params_hidden" value="' . dol_escape_htmltag($search_component_params_hidden) . '">';
 		// $ret .= "<!-- sql= ".forgeSQLFromUniversalSearchCriteria($search_component_params_hidden, $errormessage)." -->";
 
 		// For compatibility with forms that show themself the search criteria in addition of this component, we output these fields
@@ -10777,21 +10761,38 @@ class Form
 		$ret .= '</div>';
 
 		$ret .= "<!-- Field to enter a generic filter string: t.ref:like:'SO-%', t.date_creation:<:'20160101', t.date_creation:<:'2016-01-01 12:30:00', t.nature:is:NULL, t.field2:isnot:NULL -->\n";
-		$ret .= '<input type="text" placeholder="' . $langs->trans("Search") . '" name="search_component_params_input" class="noborderbottom search_component_input" value="">';
+		$ret .= '<input type="text" placeholder="' . $langs->trans("Filters") . '" id="search_component_params_input" name="search_component_params_input" class="noborderbottom search_component_input" value="">';
 
 		$ret .= '</div>';
 		$ret .= '</div>';
 
 		$ret .= '<script>
-		jQuery(".tagsearchdelete").click(function() {
-			var filterid = $(this).parents().data("ufilterid");
-			console.log("We click to delete a criteria nb "+filterid);
-			// TODO Update the search_component_params_hidden with all data-ufilter except the one delete and post page
+		jQuery(".tagsearchdelete").click(function(e) {
+			var filterid = $(this).parents().attr("data-ufilterid");
+			console.log("We click to delete the criteria nb "+filterid);
 
+			// Regenerate the search_component_params_hidden with all data-ufilter except the one to delete, and post the page
+			var newparamstring = \'\';
+			$(\'.tagsearch\').each(function(index, element) {
+				tmpfilterid = $(this).attr("data-ufilterid");
+				if (tmpfilterid != filterid) {
+					// We keep this criteria
+					if (newparamstring == \'\') {
+						newparamstring = $(this).attr("data-ufilter");
+					} else {
+						newparamstring = newparamstring + \' AND \' + $(this).attr("data-ufilter");
+					}
+				}
+			});
+			console.log("newparamstring = "+newparamstring);
+
+			jQuery("#search_component_params_hidden").val(newparamstring);
+
+			// We repost the form
+			$(this).closest(\'form\').submit();
 		});
 		</script>
 		';
-
 
 		return $ret;
 	}

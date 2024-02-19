@@ -56,7 +56,7 @@ if (! defined("NOSESSION")) {
 require_once dirname(__FILE__).'/../../htdocs/main.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
-
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -73,91 +73,8 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class SecurityTest extends PHPUnit\Framework\TestCase
+class SecurityTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 * @return SecurityTest
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		// Restore value to a neutral value (it was set to a test value by some tests)
-		unset($_SERVER["PHP_SELF"]);
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
-	}
-
 	/**
 	 * testSetLang
 	 *
@@ -408,6 +325,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_POST["param12"]='<!DOCTYPE html><html>aaa</html>';
 		$_POST["param13"]='&#110; &#x6E; &gt; &lt; &quot; <a href=\"j&#x61;vascript:alert(document.domain)\">XSS</a>';
 		$_POST["param13b"]='&#110; &#x6E; &gt; &lt; &quot; <a href=\"j&#x61vascript:alert(document.domain)\">XSS</a>';
+		$_POST["param13c"]='aaa:<:bbb';
 		$_POST["param14"]="Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submitted by CKEditor)";
 		$_POST["param15"]="<img onerror<=alert(document.domain)> src=>0xbeefed";
 		//$_POST["param15b"]="<html><head><title>Example HTML</title></head><body><div><p>This is a paragraph.</div><ul><li>Item 1</li><li>Item 2</li></ol></body><html>";
@@ -536,6 +454,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('n n > <  XSS', $result, 'Test that html entities are decoded with alpha');
 
+		$result=GETPOST("param13c", 'alphanohtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('aaa:<:bbb', $result, 'Test 13c');
+
 
 		// Test with alphawithlgt
 
@@ -586,7 +508,6 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=GETPOST("param19", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('<a href="&lpar;alert(document.cookie)&rpar;">XSS</a>', $result, 'Test 19');
-
 
 		// Test with restricthtml + MAIN_RESTRICTHTML_ONLY_VALID_HTML only to test disabling of bad attributes
 
@@ -918,53 +839,53 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$url = 'ftp://mydomain.com';
 		$tmp = getURLContent($url);
 		print __METHOD__." url=".$url."\n";
-		$this->assertGreaterThan(0, strpos($tmp['curl_error_msg'], 'not supported'));	// Test error if return does not contains 'not supported'
+		$this->assertRegExp("/not supported/", $tmp['curl_error_msg'], "Should disable ftp connection");	// Test error if return does not contains 'not supported'
 
 		$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
 		$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(301, $tmp['http_code'], 'Should GET url 301 response and stop here');
+		$this->assertEquals(301, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url 301 response');
 
 		$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
 		$tmp = getURLContent($url);		// We DO follow a page with return 300 so result should be 200
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(200, $tmp['http_code'], 'Should GET url 301 with a follow -> 200 but we get '.$tmp['http_code']);
+		$this->assertEquals(200, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url 301 with a follow -> 200 but we get '.(empty($tmp['http_code']) ? 0 : $tmp['http_code']));
 
 		$url = 'http://localhost';
 		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, $tmp['http_code'], 'Should GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
+		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
 
 		$url = 'http://127.0.0.1';
 		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, $tmp['http_code'], 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.0.1 is not an external URL
+		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.0.1 is not an external URL
 
 		$url = 'http://127.0.2.1';
 		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, $tmp['http_code'], 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.2.1 is not an external URL
+		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.2.1 is not an external URL
 
 		$url = 'https://169.254.0.1';
 		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, $tmp['http_code'], 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 169.254.0.1 is not an external URL
+		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 169.254.0.1 is not an external URL
 
 		$url = 'http://[::1]';
 		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, $tmp['http_code'], 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because [::1] is not an external URL
+		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because [::1] is not an external URL
 
 		/*$url = 'localtest.me';
 		 $tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
 		 print __METHOD__." url=".$url."\n";
-		 $this->assertEquals(400, $tmp['http_code'], 'Should GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
+		 $this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
 		 */
 
 		$url = 'http://192.0.0.192';
 		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL but on an IP in blacklist
-		print __METHOD__." url=".$url." tmp['http_code'] = ".$tmp['http_code']."\n";
-		$this->assertEquals(400, $tmp['http_code'], 'Access should be refused and was not');	// Test we receive an error because ip is in blacklist
+		print __METHOD__." url=".$url." tmp['http_code'] = ".(empty($tmp['http_code']) ? 0 : $tmp['http_code'])."\n";
+		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Access should be refused and was not');	// Test we receive an error because ip is in blacklist
 
 		return 0;
 	}

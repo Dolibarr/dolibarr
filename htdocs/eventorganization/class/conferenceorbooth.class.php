@@ -138,7 +138,7 @@ class ConferenceOrBooth extends ActionComm
 	public $note;
 	public $fk_action;
 	public $datec;
-	public $tms;
+
 	public $fk_user_author;
 	public $fk_user_mod;
 	public $import_key;
@@ -345,7 +345,7 @@ class ConferenceOrBooth extends ActionComm
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}

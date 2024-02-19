@@ -135,7 +135,6 @@ class Partnership extends CommonObject
 	public $note_public;
 	public $note_private;
 	public $date_creation;
-	public $tms;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $last_main_doc;
@@ -493,7 +492,7 @@ class Partnership extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -1062,6 +1061,21 @@ class Partnership extends CommonObject
 	}
 
 	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB 	$db 			Database handler
+	 * @param int 		$origin_id 		Old thirdparty id
+	 * @param int 		$dest_id 		New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty($db, $origin_id, $dest_id)
+	{
+		$tables = array('partnership');
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
 	 *  Return the label of the status
 	 *
 	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
@@ -1206,7 +1220,7 @@ class Partnership extends CommonObject
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 

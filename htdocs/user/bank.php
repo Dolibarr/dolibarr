@@ -85,11 +85,11 @@ if (empty($account->userid)) {
 // Define value to know what current user can do on users
 $canadduser = (!empty($user->admin) || $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write);
 $canreaduser = (!empty($user->admin) || $user->rights->user->user->lire || $user->rights->hrm->read_personal_information->read);
-$permissiontoaddbankaccount = (!empty($user->rights->salaries->write) || !empty($user->rights->hrm->employee->write) || $user->hasRight('user', 'creer'));
+$permissiontoaddbankaccount = ($user->hasRight('salaries', 'write') || $user->hasRight('hrm', 'employee', 'write') || $user->hasRight('user', 'creer'));
 $permissiontoreadhr = $user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write');
 $permissiontowritehr = $user->hasRight('hrm', 'write_personal_information', 'write');
 
-// Ok if user->rights->salaries->read or user->rights->hrm->read
+// Ok if user->hasRight('salaries', 'read') or user->hasRight('hrm', 'read')
 //$result = restrictedArea($user, 'salaries|hrm', $object->id, 'user&user', $feature2);
 $ok = false;
 if ($user->id == $id) {
@@ -118,7 +118,7 @@ if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 
 	$account->bank            = GETPOST('bank', 'alpha');
 	$account->label           = GETPOST('label', 'alpha');
-	$account->courant         = GETPOST('courant', 'alpha');
+	$account->courant         = GETPOSTINT('courant');
 	$account->code_banque     = GETPOST('code_banque', 'alpha');
 	$account->code_guichet    = GETPOST('code_guichet', 'alpha');
 	$account->number          = GETPOST('number', 'alpha');
@@ -149,7 +149,7 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 
 	$account->bank            = GETPOST('bank', 'alpha');
 	$account->label           = GETPOST('label', 'alpha');
-	$account->courant         = GETPOST('courant', 'alpha');
+	$account->courant         = GETPOSTINT('courant');
 	$account->code_banque     = GETPOST('code_banque', 'alpha');
 	$account->code_guichet    = GETPOST('code_guichet', 'alpha');
 	$account->number          = GETPOST('number', 'alpha');

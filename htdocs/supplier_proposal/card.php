@@ -104,16 +104,16 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Common permissions
-$usercanread = $user->rights->supplier_proposal->lire;
-$usercancreate		= $user->rights->supplier_proposal->creer;
-$usercandelete		= $user->rights->supplier_proposal->supprimer;
+$usercanread = $user->hasRight('supplier_proposal', 'lire');
+$usercancreate		= $user->hasRight('supplier_proposal', 'creer');
+$usercandelete		= $user->hasRight('supplier_proposal', 'supprimer');
 
 // Advanced permissions
-$usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($usercancreate)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->supplier_proposal->validate_advance)));
+$usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($usercancreate)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('supplier_proposal', 'validate_advance')));
 $usercansend = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->rights->supplier_proposal->send_advance);
 
 // Additional area permissions
-$usercanclose = $user->rights->supplier_proposal->cloturer;
+$usercanclose = $user->hasRight('supplier_proposal', 'cloturer');
 $usercancreateorder = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
 
 // Permissions for includes
@@ -197,7 +197,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate) {
 		// Remove line
-		$result = $object->deleteline($lineid);
+		$result = $object->deleteLine($lineid);
 		// reorder lines
 		if ($result > 0) {
 			$object->line_order(true);
@@ -574,7 +574,7 @@ if (empty($reshook)) {
 		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
 		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
 		foreach ($object->lines as $line) {
-			$result = $object->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
+			$result = $object->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->array_options, $line->ref_fourn, $line->fk_unit, $line->multicurrency_subprice);
 		}
 	} elseif ($action == 'addline' && $usercancreate) {
 		$langs->load('errors');
@@ -1106,7 +1106,7 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'updateline' && $usercancreate && GETPOST('cancel', 'alpha') == $langs->trans("Cancel")) {
-		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // Pour reaffichage de la fiche en cours d'edition
+		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); //  To re-display card in edit mode
 		exit();
 	} elseif ($action == 'classin' && $usercancreate) {
 		// Set project

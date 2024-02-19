@@ -721,7 +721,7 @@ if (empty($reshook)) {
 		}
 
 		$ldap = new Ldap();
-		$result = $ldap->connect_bind();
+		$result = $ldap->connectBind();
 		if ($result >= 0) {
 			// Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 			$required_fields = array_unique(array_values(array_filter($required_fields, "dol_validElement")));
@@ -808,7 +808,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if (isModEnabled('ldap') && (isset($conf->global->LDAP_SYNCHRO_ACTIVE) && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_LDAP_TO_DOLIBARR)) {
 		// Show form to add an account from LDAP if sync LDAP -> Dolibarr is set
 		$ldap = new Ldap();
-		$result = $ldap->connect_bind();
+		$result = $ldap->connectBind();
 		if ($result >= 0) {
 			$required_fields = array(
 				$conf->global->LDAP_KEY_USERS,
@@ -938,18 +938,34 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '</td></tr>';
 
 	if (!empty($conf->use_javascript_ajax)) {
+		// Add code to generate the login when creating a new user.
+		// Best rule to generate would be to use the same rule than dol_buildlogin() but currently it is a PHP function not available in js.
+		// TODO Implement a dol_buildlogin in javascript.
+		$charforseparator = getDolGlobalString("MAIN_USER_SEPARATOR_CHAR_FOR_GENERATED_LOGIN", '.');
+		if ($charforseparator == 'none') {
+			$charforseparator = '';
+		}
 		print '<script>
 			jQuery(document).ready(function() {
-				$(".createloginauto").on("change", function(){
-					lastname = $("#lastname").val();
-					firstname = $("#firstname").val();
-					if($(this).attr("id") == "firstname"){
-						firstname = firstname.toLowerCase();
-						firstname = firstname[0];
+				$(".createloginauto").on("keyup", function() {
+					console.log(".createloginauto change: We generate login when we have a lastname");
+
+					lastname = $("#lastname").val().toLowerCase();
+			';
+		if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {
+			print '			firstname = $("#firstname").val().toLowerCase()[0];';
+		} else {
+			print '			firstname = $("#firstname").val().toLowerCase();';
+		}
+		print '
+					login = "";
+					if (lastname) {
+						if (firstname) {
+							login = firstname + \''. dol_escape_js($charforseparator).'\';
+						}
+						login += lastname;
 					}
-					lastname = lastname.toLowerCase();
-					console.log("We create a login from firstname and lastname");
-					$("#login").val(firstname+lastname);
+					$("#login").val(login);
 				})
 			});
 		</script>';
@@ -1212,7 +1228,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<tr><td>'.$langs->trans($value['label']).'</td>';
 				print '<td>';
 				if (!empty($value['icon'])) {
-					print '<span class="fa '.$value['icon'].' pictofixedwidth"></span>';
+					print '<span class="fab '.$value['icon'].' pictofixedwidth"></span>';
 				}
 				if (!empty($ldap_social[$key])) {
 					print '<input type="hidden" name="'.$key.'" value="'.$ldap_social[$key].'">';
@@ -1415,7 +1431,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		// pour recuperer passDoNotExpire et userChangePassNextLogon
 		if (isModEnabled('ldap') && !empty($object->ldap_sid)) {
 			$ldap = new Ldap();
-			$result = $ldap->connect_bind();
+			$result = $ldap->connectBind();
 			if ($result > 0) {
 				$userSearchFilter = '(' . getDolGlobalString('LDAP_FILTER_CONNECTION').'('.$ldap->getUserIdentifier().'='.$object->login.'))';
 				$entries = $ldap->fetch($object->login, $userSearchFilter);
@@ -2521,7 +2537,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if ($caneditfield) {
 				print '<textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 			}
-			print $object->address;
+			print dol_escape_htmltag(GETPOSTISSET('address') ? GETPOST('address') : $object->address, 0, 1);
 			if ($caneditfield) {
 				print '</textarea>';
 			}
@@ -2530,7 +2546,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Zip
 			print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
 			if ($caneditfield) {
-				print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
+				print $formcompany->select_ziptown((GETPOSTISSET('zipcode') ? GETPOST('zipcode') : $object->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
 			} else {
 				print $object->zip;
 			}
@@ -2539,7 +2555,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Town
 			print '<tr><td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
 			if ($caneditfield) {
-				print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+				print $formcompany->select_ziptown((GETPOSTISSET('town') ? GETPOST('town') : $object->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 			} else {
 				print $object->town;
 			}
@@ -2625,7 +2641,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						print '<tr><td>'.$langs->trans($value['label']).'</td>';
 						print '<td>';
 						if (!empty($value['icon'])) {
-							print '<span class="fa '.$value['icon'].' pictofixedwidth"></span>';
+							print '<span class="fab '.$value['icon'].' pictofixedwidth"></span>';
 						}
 						if ($caneditfield && empty($object->ldap_sid)) {
 							print '<input type="text" name="'.$key.'" class="flat maxwidth200" value="'.(isset($object->socialnetworks[$key]) ? $object->socialnetworks[$key] : '').'">';

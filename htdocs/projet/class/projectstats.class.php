@@ -57,7 +57,7 @@ class ProjectStats extends Stats
 			$this->where .= " AND fk_soc = ".((int) $this->socid);
 		}
 		if (is_array($this->userid) && count($this->userid) > 0) {
-			$this->where .= ' AND fk_user IN ('.$this->db->sanitize(join(',', $this->userid)).')';
+			$this->where .= ' AND fk_user IN ('.$this->db->sanitize(implode(',', $this->userid)).')';
 		} elseif ($this->userid > 0) {
 			$this->where .= " AND fk_user = ".((int) $this->userid);
 		}

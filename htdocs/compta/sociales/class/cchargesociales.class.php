@@ -143,7 +143,7 @@ class Cchargesociales
 		if (!$resql) {
 			$error++;
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error) {
@@ -226,7 +226,7 @@ class Cchargesociales
 			}
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -280,7 +280,7 @@ class Cchargesociales
 		if (!$resql) {
 			$error++;
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
 		//if (!$error && !$notrigger) {
@@ -340,7 +340,7 @@ class Cchargesociales
 			if (!$resql) {
 				$error++;
 				$this->errors[] = 'Error '.$this->db->lasterror();
-				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+				dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 			}
 		}
 
@@ -519,13 +519,12 @@ class Cchargesociales
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-
 		$this->libelle = '';
 		$this->label = '';
 		$this->deductible = '';
 		$this->active = '';
 		$this->code = '';
-		$this->fk_pays = '';
+		$this->fk_pays = 0;
 		$this->module = '';
 		$this->accountancy_code = '';
 	}

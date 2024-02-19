@@ -53,6 +53,9 @@ $error = 0;
 $forcecommit = 0;
 $confirmed = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */
@@ -125,7 +128,7 @@ if (!getDolGlobalString('LDAP_MEMBER_TYPE_DN')) {
 }
 
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result >= 0) {
 	$justthese = array();
 
@@ -186,11 +189,11 @@ if ($result >= 0) {
 		}
 		print "\n";
 	} else {
-		dol_print_error('', $ldap->error);
+		dol_print_error(null, $ldap->error);
 		$error++;
 	}
 } else {
-	dol_print_error('', $ldap->error);
+	dol_print_error(null, $ldap->error);
 	$error++;
 }
 

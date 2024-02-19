@@ -40,7 +40,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'cronjoblist'; // To manage different context of search
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -90,10 +90,10 @@ if (!$user->hasRight('cron', 'read')) {
 	accessforbidden();
 }
 
-$permissiontoread = $user->rights->cron->read;
+$permissiontoread = $user->hasRight('cron', 'read');
 $permissiontoadd = $user->rights->cron->create ? $user->rights->cron->create : $user->rights->cron->write;
-$permissiontodelete = $user->rights->cron->delete;
-$permissiontoexecute = $user->rights->cron->execute;
+$permissiontodelete = $user->hasRight('cron', 'delete');
+$permissiontoexecute = $user->hasRight('cron', 'execute');
 
 
 /*
@@ -534,7 +534,7 @@ if ($num > 0) {
 		$object->status = $obj->status;
 		$object->priority = $obj->priority;
 		$object->processing = $obj->processing;
-		$object->lastresult = $obj->lastresult;
+		$object->lastresult = (string) $obj->lastresult;
 		$object->datestart = $db->jdate($obj->datestart);
 		$object->dateend = $db->jdate($obj->dateend);
 		$object->module_name = $obj->module_name;

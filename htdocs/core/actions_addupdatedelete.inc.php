@@ -56,6 +56,7 @@ if ($cancel) {
 // Action to add record
 if ($action == 'add' && !empty($permissiontoadd)) {
 	foreach ($object->fields as $key => $val) {
+		// Ignore special cases
 		if ($object->fields[$key]['type'] == 'duration') {
 			if (GETPOST($key.'hour') == '' && GETPOST($key.'min') == '') {
 				continue; // The field was not submitted to be saved
@@ -65,6 +66,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 				continue; // The field was not submitted to be saved
 			}
 		}
+
 		// Ignore special fields
 		if (in_array($key, array('rowid', 'entity', 'import_key'))) {
 			continue;
@@ -144,9 +146,16 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			if (!$error && !empty($val['validate']) && is_callable(array($object, 'validateField'))) {
 				if (!$object->validateField($object->fields, $key, $value)) {
 					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 		}
+	}
+
+	// Special field
+	$model_pdf = GETPOST('model');
+	if (!empty($model_pdf) && property_exists($this, 'model_pdf')) {
+		$object->model_pdf = $model_pdf;
 	}
 
 	// Fill array 'array_options' with data from add form
@@ -179,7 +188,6 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			}
 		} else {
 			$db->rollback();
-
 			$error++;
 			// Creation KO
 			if (!empty($object->errors)) {
@@ -384,7 +392,7 @@ if ($action == "update_extras" && GETPOST('id', 'int') > 0 && !empty($permission
 // Action to delete
 if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 	if (!($object->id > 0)) {
-		dol_print_error('', 'Error, object must be fetched before being deleted');
+		dol_print_error(null, 'Error, object must be fetched before being deleted');
 		exit;
 	}
 
@@ -422,11 +430,13 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 
 // Remove a line
 if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissiontoadd)) {
-	if (method_exists($object, 'deleteline')) {
-		$result = $object->deleteline($user, $lineid); // For backward compatibility
+	if (!empty($object->element) && $object->element == 'mo') {
+		$fk_movement = GETPOSTINT('fk_movement');
+		$result = $object->deleteLine($user, $lineid, 0, $fk_movement);
 	} else {
 		$result = $object->deleteLine($user, $lineid);
 	}
+
 	if ($result > 0) {
 		// Define output language
 		$outputlangs = $langs;

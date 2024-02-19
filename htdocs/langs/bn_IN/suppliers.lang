@@ -8,7 +8,6 @@ NewSupplierInvoice = নতুন বিক্রেতা চালান
 History=ইতিহাস
 ListOfSuppliers=বিক্রেতাদের তালিকা
 ShowSupplier=বিক্রেতা দেখান
-OrderDate=অর্ডারের তারিখ
 BuyingPriceMin=সেরা ক্রয় মূল্য
 BuyingPriceMinShort=সেরা ক্রয় মূল্য
 TotalBuyingPriceMinShort=মোট উপ-পণ্য ক্রয় মূল্য

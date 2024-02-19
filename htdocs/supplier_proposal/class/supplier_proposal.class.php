@@ -843,7 +843,7 @@ class SupplierProposal extends CommonObject
 	 *  @param		int		$lineid			Id of line to delete
 	 *  @return     int         			>0 if OK, <0 if KO
 	 */
-	public function deleteline($lineid)
+	public function deleteLine($lineid)
 	{
 		global $user;
 
@@ -2429,7 +2429,7 @@ class SupplierProposal extends CommonObject
 			}
 
 			if (!$mybool) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 

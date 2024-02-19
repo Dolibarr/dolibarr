@@ -829,7 +829,7 @@ $sql .= " country.code as country_code,";
 $sql .= ' c.rowid, c.ref, c.total_ht, c.total_tva, c.total_ttc, c.ref_client, c.fk_user_author,';
 $sql .= ' c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva as multicurrency_total_vat, c.multicurrency_total_ttc,';
 $sql .= ' c.date_valid, c.date_commande, c.note_public, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as billed,';
-$sql .= ' c.date_creation as date_creation, c.tms as date_update, c.date_cloture as date_cloture,';
+$sql .= ' c.date_creation as date_creation, c.tms as date_modification, c.date_cloture as date_cloture,';
 $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender,';
 $sql .= ' c.fk_cond_reglement,c.deposit_percent,c.fk_mode_reglement,c.fk_shipping_method,';
@@ -1444,7 +1444,7 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if MYOBJECT_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
@@ -2446,7 +2446,7 @@ while ($i < $imaxinloop) {
 		$userstatic->lastname = $obj->lastname;
 		$userstatic->firstname = $obj->firstname;
 		$userstatic->email = $obj->user_email;
-		$userstatic->statut = $obj->user_statut;
+		$userstatic->status = $obj->user_statut;
 		$userstatic->entity = $obj->entity;
 		$userstatic->photo = $obj->photo;
 		$userstatic->office_phone = $obj->office_phone;
@@ -2582,7 +2582,7 @@ while ($i < $imaxinloop) {
 		// Date modification
 		if (!empty($arrayfields['c.tms']['checked'])) {
 			print '<td align="center" class="nowrap">';
-			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2773,10 +2773,10 @@ while ($i < $imaxinloop) {
 	$i++;
 }
 
-	// Show total line
-	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+// Show total line
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
-	// If no record found
+// If no record found
 if ($num == 0) {
 	$colspan = 1;
 	foreach ($arrayfields as $key => $val) {
@@ -2787,16 +2787,16 @@ if ($num == 0) {
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
-	$db->free($resql);
+$db->free($resql);
 
-	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
-	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
+$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
 
-	print '</table>'."\n";
-	print '</div>'."\n";
+print '</table>'."\n";
+print '</div>'."\n";
 
-	print '</form>'."\n";
+print '</form>'."\n";
 
 if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
 	$hidegeneratedfilelistifempty = 1;
@@ -2815,6 +2815,6 @@ if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords 
 	print $formfile->showdocuments('massfilesarea_orders', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 
-	// End of page
-	llxFooter();
-	$db->close();
+// End of page
+llxFooter();
+$db->close();

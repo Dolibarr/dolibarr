@@ -207,9 +207,9 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Reception';
 	$objectlabel = 'Receptions';
-	$permissiontoread = $user->rights->reception->lire;
-	$permissiontoadd = $user->rights->reception->creer;
-	$permissiontodelete = $user->rights->reception->supprimer;
+	$permissiontoread = $user->hasRight('reception', 'lire');
+	$permissiontoadd = $user->hasRight('reception', 'creer');
+	$permissiontodelete = $user->hasRight('reception', 'supprimer');
 	$uploaddir = $conf->reception->multidir_output[$conf->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -597,7 +597,7 @@ $sql = "SELECT e.rowid, e.ref, e.ref_supplier, e.date_reception as date_receptio
 $sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,";
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= " e.date_creation as date_creation, e.tms as date_update";
+$sql .= " e.date_creation as date_creation, e.tms as date_modification";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -935,7 +935,7 @@ if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
@@ -1366,7 +1366,7 @@ while ($i < $imaxinloop) {
 		// Date modification
 		if (!empty($arrayfields['e.tms']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuserrel');
+			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuserrel');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

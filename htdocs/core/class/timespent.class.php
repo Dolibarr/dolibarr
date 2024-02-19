@@ -134,7 +134,6 @@ class TimeSpent extends CommonObject
 		'note' => array('type'=>'text', 'label'=>'note', 'enabled'=>'1', 'position'=>18, 'notnull'=>0, 'visible'=>-1,),
 	);
 	public $rowid;
-	public $tms;
 	public $import_key;
 	public $fk_element;
 	public $elementtype;
@@ -393,7 +392,7 @@ class TimeSpent extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -965,7 +964,7 @@ class TimeSpent extends CommonObject
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 

@@ -60,7 +60,7 @@ print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionProgram").'</
 // If current version differs from last upgrade
 if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
 	// Compare version with last install database version (upgrades never occurred)
-	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_INSTALL) {
+	if (DOL_VERSION != getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) {
 		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, getDolGlobalString('MAIN_VERSION_LAST_INSTALL')));
 	}
 } else {
@@ -79,7 +79,7 @@ print '<br>';
 $file_list = array('missing' => array(), 'updated' => array());
 
 // Local file to compare to
-$xmlshortfile = dol_sanitizeFileName(GETPOST('xmlshortfile', 'alpha') ? GETPOST('xmlshortfile', 'alpha') : 'filelist-'.DOL_VERSION.(!getDolGlobalString('MAIN_FILECHECK_LOCAL_SUFFIX') ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml'.(!getDolGlobalString('MAIN_FILECHECK_LOCAL_EXT') ? '' : $conf->global->MAIN_FILECHECK_LOCAL_EXT));
+$xmlshortfile = dol_sanitizeFileName(GETPOST('xmlshortfile', 'alpha') ? GETPOST('xmlshortfile', 'alpha') : 'filelist-'.DOL_VERSION.getDolGlobalString('MAIN_FILECHECK_LOCAL_SUFFIX').'.xml'.getDolGlobalString('MAIN_FILECHECK_LOCAL_EXT'));
 
 $xmlfile = DOL_DOCUMENT_ROOT.'/install/'.$xmlshortfile;
 if (!preg_match('/\.zip$/i', $xmlfile) && dol_is_file($xmlfile.'.zip')) {
@@ -417,7 +417,7 @@ if (empty($error) && !empty($xml)) {
 
 	asort($checksumconcat); // Sort list of checksum
 	//var_dump($checksumconcat);
-	$checksumget = md5(join(',', $checksumconcat));
+	$checksumget = md5(implode(',', $checksumconcat));
 	$checksumtoget = trim((string) $xml->dolibarr_htdocs_dir_checksum);
 
 	//var_dump(count($file_list['added']));

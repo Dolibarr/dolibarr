@@ -34,17 +34,17 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 class PaymentSalary extends CommonObject
 {
 	/**
-	 * @var string ID to identify managed object
+	 * @var string 			ID to identify managed object
 	 */
 	public $element = 'payment_salary';
 
 	/**
-	 * @var string Name of table without prefix where object is stored
+	 * @var string 			Name of table without prefix where object is stored
 	 */
 	public $table_element = 'payment_salary';
 
 	/**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 * @var string 			String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'payment';
 
@@ -56,22 +56,24 @@ class PaymentSalary extends CommonObject
 	public $chid;
 
 	/**
-	 * @var int ID
+	 * @var int 			ID of the salary linked to the payment
 	 */
 	public $fk_salary;
 
+	/**
+	 * @var int				Payment creation date
+	 */
 	public $datec = '';
-	public $tms = '';
 
 	/**
-	 * @var int|string date of payment
+	 * @var int|string		Date of payment
 	 * @deprecated
 	 * @see $datep
 	 */
 	public $datepaye = '';
 
 	/**
-	 * @var int|string date of payment
+	 * @var int|string		Date of payment
 	 */
 	public $datep = '';
 
@@ -81,11 +83,18 @@ class PaymentSalary extends CommonObject
 	 */
 	public $total;
 
-	public $amount; // Total amount of payment
-	public $amounts = array(); // Array of amounts
+	/**
+	 * @var float			Total amount of payment
+	 */
+	public $amount;
 
 	/**
-	 * @var int ID
+	 * @var array			Array of amounts
+	 */
+	public $amounts = array();
+
+	/**
+	 * @var int 			Payment type ID
 	 */
 	public $fk_typepayment;
 
@@ -96,47 +105,48 @@ class PaymentSalary extends CommonObject
 	public $num_paiement;
 
 	/**
-	 * @var string
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
 	/**
-	 * @var int ID
+	 * @inheritdoc
 	 */
 	public $fk_bank;
 
 	/**
-	 * @var int ID of bank_line
+	 * @var int				ID of bank_line
 	 */
 	public $bank_line;
 
 	/**
-	 * @var int ID
+	 * @var int				ID of the user who created the payment
 	 */
 	public $fk_user_author;
 
 	/**
-	 * @var int ID
+	 * @var int				ID of the user who modified the payment
 	 */
 	public $fk_user_modif;
 
 	/**
-	 * @var int Types paiement
+	 * @var int				Payment type
 	 */
 	public $type_code;
 
 	/**
-	 * @var int Paiement label
+	 * @var int				Payment label
 	 */
 	public $type_label;
 
 	/**
-	 * @var int			bank account description
+	 * @var int				Bank account description
 	 */
 	public $bank_account;
 
 	/**
-	 * @var int|string	validation date
+	 * @var int|string		Payment validation date
 	 */
 	public $datev = '';
 
@@ -551,19 +561,18 @@ class PaymentSalary extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-
-		$this->fk_salary = '';
+		$this->fk_salary = 0;
 		$this->datec = '';
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->datepaye = '';
-		$this->amount = '';
-		$this->fk_typepayment = '';
+		$this->amount = 0.0;
+		$this->fk_typepayment = 0;
 		$this->num_payment = '';
 		$this->note_private = '';
 		$this->note_public = '';
-		$this->fk_bank = '';
-		$this->fk_user_author = '';
-		$this->fk_user_modif = '';
+		$this->fk_bank = 0;
+		$this->fk_user_author = 0;
+		$this->fk_user_modif = 0;
 	}
 
 

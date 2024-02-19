@@ -133,9 +133,9 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Permissions
-$permissiontoread = $user->rights->hrm->all->read;
-$permissiontoadd  = $user->rights->hrm->all->write;
-$permissiontodelete = $user->rights->hrm->all->delete;
+$permissiontoread = $user->hasRight('hrm', 'all', 'read');
+$permissiontoadd  = $user->hasRight('hrm', 'all', 'write');
+$permissiontodelete = $user->hasRight('hrm', 'all', 'delete');
 
 // Security check (enable the most restrictive one)
 if ($user->socid > 0) {
@@ -447,7 +447,7 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if JOBPOSITION_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';

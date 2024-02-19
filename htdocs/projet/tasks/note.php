@@ -150,7 +150,7 @@ if ($object->id > 0) {
 		// Define a complementary filter for search of next/prev ref.
 		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-			$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
+			$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
 		}
 
 		dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -206,7 +206,7 @@ if ($object->id > 0) {
 
 		// Budget
 		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-		if (strcmp($projectstatic->budget_amount, '')) {
+		if (isset($projectstatic->budget_amount) && strcmp($projectstatic->budget_amount, '')) {
 			print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
 		}
 		print '</td></tr>';

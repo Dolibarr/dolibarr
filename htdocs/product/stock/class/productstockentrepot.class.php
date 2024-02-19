@@ -50,8 +50,6 @@ class ProductStockEntrepot extends CommonObject
 	 */
 	public $table_element = 'product_warehouse_properties';
 
-	public $tms = '';
-
 	/**
 	 * @var int ID
 	 */
@@ -604,9 +602,9 @@ class ProductStockEntrepot extends CommonObject
 	{
 		$this->id = 0;
 
-		$this->tms = '';
-		$this->fk_product = null;
-		$this->fk_entrepot = null;
+		$this->tms = dol_now();
+		$this->fk_product = 0;
+		$this->fk_entrepot = 0;
 		$this->seuil_stock_alerte = '';
 		$this->desiredstock = '';
 		$this->import_key = '';

@@ -26,14 +26,12 @@ ModuleKnowledgeManagementDesc=Bilimlarni boshqarish (KM) yoki Help-Desk bazasini
 # Admin page
 #
 KnowledgeManagementSetup = Bilimlarni boshqarish tizimini sozlash
-Settings = Sozlamalar
 KnowledgeManagementSetupPage = Bilimlarni boshqarish tizimini sozlash sahifasi
 
 
 #
 # About page
 #
-About = Haqida
 KnowledgeManagementAbout = Bilimlarni boshqarish to'g'risida
 KnowledgeManagementAboutPage = Sahifadagi bilimlarni boshqarish
 

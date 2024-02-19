@@ -12,8 +12,9 @@
  * Copyright (C) 2017		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2018-2022	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2018-2020	Frédéric France			<frederic.france@netlogic.fr>
- * Copyright (C) 2019-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2019-2023	Alexandre Spangaro		<aspangaro@easya.solutions>
  * Copyright (C) 2023		Nick Fragoulis
+ * Copyright (C) 2023		Joachim Kueter		    <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,7 +89,7 @@ $search_paymentcond = GETPOST('search_paymentcond', 'int');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
-$search_country = GETPOST("search_country", 'int');
+$search_country = GETPOST("search_country", 'alpha');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
@@ -331,6 +332,20 @@ if (empty($reshook)) {
 					$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
 					$totaldeposits = $objecttmp->getSumDepositsUsed();
 					$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
+
+					// hook to finalize the remaining amount, considering e.g. cash discount agreements
+					$parameters = array('remaintopay'=>$objecttmp->resteapayer);
+					$reshook = $hookmanager->executeHooks('finalizeAmountOfInvoice', $parameters, $objecttmp, $action); // Note that $action and $object may have been modified by some hooks
+					if ($reshook > 0) {
+						// print $hookmanager->resPrint;
+						if (!empty($remaintopay = $hookmanager->resArray['remaintopay'])) {
+							$objecttmp->resteapayer = $remaintopay;
+						}
+					} elseif ($reshook < 0) {
+						$error++;
+						setEventMessages($objecttmp->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
+					}
+
 					if ($objecttmp->statut == FactureFournisseur::STATUS_DRAFT) {
 						$error++;
 						setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
@@ -407,7 +422,15 @@ $thirdparty = new Societe($db);
 $subtypearray = $object->getArrayOfInvoiceSubtypes(0);
 $now = dol_now();
 
-$title = $langs->trans("BillsSuppliers").($socid ? ' '.$soc->name : '');
+if ($socid > 0) {
+	$soc = new Societe($db);
+	$soc->fetch($socid);
+	if (empty($search_company)) {
+		$search_company = $soc->name;
+	}
+}
+
+$title = $langs->trans("BillsSuppliers").($socid ? ' - '.$soc->name : '');
 $help_url = 'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores';
 
 // Build and execute select
@@ -417,7 +440,7 @@ if ($search_all) {
 	$sql = 'SELECT DISTINCT';
 }
 $sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.type, f.subtype, f.datef, f.date_lim_reglement as datelimite, f.fk_mode_reglement, f.fk_cond_reglement,";
-$sql .= " f.total_ht, f.total_ttc, f.total_tva as total_vat, f.paye as paye, f.close_code, f.fk_statut as fk_statut, f.libelle as label, f.datec as date_creation, f.tms as date_update,";
+$sql .= " f.total_ht, f.total_ttc, f.total_tva as total_vat, f.paye as paye, f.close_code, f.fk_statut as fk_statut, f.libelle as label, f.datec as date_creation, f.tms as date_modification,";
 $sql .= " f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,";
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
 $sql .= " f.note_public, f.note_private,";
@@ -530,8 +553,26 @@ if ($search_zip) {
 if ($search_state) {
 	$sql .= natural_search("state.nom", $search_state);
 }
-if ($search_country) {
-	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
+if (strlen(trim($search_country))) {
+	$arrayofcode = getCountriesInEEC();
+	$country_code_in_EEC = $country_code_in_EEC_without_me = '';
+	foreach ($arrayofcode as $key => $value) {
+		$country_code_in_EEC .= ($country_code_in_EEC ? "," : "")."'".$value."'";
+		if ($value != $mysoc->country_code) {
+			$country_code_in_EEC_without_me .= ($country_code_in_EEC_without_me ? "," : "")."'".$value."'";
+		}
+	}
+	if ($search_country == 'special_allnotme') {
+		$sql .= " AND country.code <> '".$db->escape($mysoc->country_code)."'";
+	} elseif ($search_country == 'special_eec') {
+		$sql .= " AND country.code IN (".$db->sanitize($country_code_in_EEC, 1).")";
+	} elseif ($search_country == 'special_eecnotme') {
+		$sql .= " AND country.code IN (".$db->sanitize($country_code_in_EEC_without_me, 1).")";
+	} elseif ($search_country == 'special_noteec') {
+		$sql .= " AND country.code NOT IN (".$db->sanitize($country_code_in_EEC, 1).")";
+	} else {
+		$sql .= natural_search("country.code", $search_country);
+	}
 }
 if ($search_type_thirdparty != '' && $search_type_thirdparty >= 0) {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
@@ -969,7 +1010,7 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if SUPPLIER_INVOICE_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>'."\n";
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>'."\n";
 }
 
 // If the user can view prospects other than his'
@@ -1138,7 +1179,7 @@ if (!empty($arrayfields['state.nom']['checked'])) {
 // Country
 if (!empty($arrayfields['country.code_iso']['checked'])) {
 	print '<td class="liste_titre center">';
-	print $form->select_country($search_country, 'search_country', '', 0, 'minwidth100imp maxwidth100');
+	print $form->select_country($search_country, 'search_country', '', 0, 'minwidth150imp maxwidth150', 'code2', 1, 0, 1, null, 1);
 	print '</td>';
 }
 // Company type
@@ -1963,7 +2004,7 @@ while ($i < $imaxinloop) {
 		// Date modification
 		if (!empty($arrayfields['f.tms']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

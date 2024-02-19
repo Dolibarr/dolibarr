@@ -142,7 +142,6 @@ class RecruitmentCandidature extends CommonObject
 	public $note_public;
 	public $note_private;
 	public $date_creation;
-	public $tms;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $fk_user;
@@ -425,7 +424,7 @@ class RecruitmentCandidature extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -966,7 +965,7 @@ class RecruitmentCandidature extends CommonObject
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 

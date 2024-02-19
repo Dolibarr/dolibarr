@@ -61,7 +61,7 @@ if (!$sortfield) {
 	$sortfield = "email";
 }
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $rowid = GETPOST('rowid', 'int');
 $action = GETPOST('action', 'aZ09');
 $search_nom = GETPOST("search_nom");
@@ -459,7 +459,7 @@ if ($object->fetch($id) >= 0) {
 	print "</div>";
 
 	// Show email selectors
-	if ($object->statut == 0 && $user->hasRight('mailing', 'creer')) {
+	if ($object->status == 0 && $user->hasRight('mailing', 'creer')) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/advtarget.tpl.php';
 	}
 }

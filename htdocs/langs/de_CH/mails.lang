@@ -1,7 +1,8 @@
 # Dolibarr language file - Source file is en_US - mails
 Mailing=Mailversand
+EMailings=E-Mail-Kampagne
+MailCard=E-Mail-Kampagnenkarte
 MailTitle=Titel
-MailFrom=Absender
 MailErrorsTo=Fehler an
 MailText=E-Mail-Text
 MailMessage=E-Mail Text

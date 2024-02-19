@@ -131,7 +131,7 @@ class Commande extends CommonOrder
 	public $billed;
 
 	/**
-	 * @var string Limit date payment
+	 * @var int Deadline for payment
 	 */
 	public $date_lim_reglement;
 	/**
@@ -145,7 +145,9 @@ class Commande extends CommonOrder
 	public $cond_reglement_doc;
 
 	/**
-	 * @var double Deposit % for payment terms
+	 * @var string 	Deposit percent for payment terms.
+	 *				Populated by setPaymentTerms().
+	 * @see setPaymentTerms()
 	 */
 	public $deposit_percent;
 
@@ -436,7 +438,7 @@ class Commande extends CommonOrder
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -776,8 +778,8 @@ class Commande extends CommonOrder
 
 		$error = 0;
 
-		$usercanclose = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->commande->creer))
-			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->commande->order_advance->close)));
+		$usercanclose = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'creer'))
+			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'order_advance', 'close')));
 
 		if ($usercanclose) {
 			if ($this->statut == self::STATUS_CLOSED) {
@@ -1553,12 +1555,12 @@ class Commande extends CommonOrder
 				$ref_ext = '';
 			}
 
-			$remise_percent = price2num($remise_percent);
-			$qty = price2num($qty);
+			$remise_percent = (float) price2num($remise_percent);
+			$qty = (float) price2num($qty);
 			$pu_ht = price2num($pu_ht);
 			$pu_ht_devise = price2num($pu_ht_devise);
 			$pu_ttc = price2num($pu_ttc);
-			$pa_ht = price2num($pa_ht);
+			$pa_ht = (float) price2num($pa_ht);
 			if (!preg_match('/\((.*)\)/', $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5,1' or '5.1' or '5.1(XXX)', we must clean only if '5,1'
 			}
@@ -2392,7 +2394,7 @@ class Commande extends CommonOrder
 	 *  @param		int		$id			Id of object (for a check)
 	 *  @return     int        		 	>0 if OK, 0 if nothing to do, <0 if KO
 	 */
-	public function deleteline($user = null, $lineid = 0, $id = 0)
+	public function deleteLine($user = null, $lineid = 0, $id = 0)
 	{
 		if ($this->statut == self::STATUS_DRAFT) {
 			$this->db->begin();
@@ -3149,16 +3151,16 @@ class Commande extends CommonOrder
 				return -1;
 			}
 
-			$remise_percent = price2num($remise_percent);
-			$qty = price2num($qty);
+			$remise_percent = (float) price2num($remise_percent);
+			$qty = (float) price2num($qty);
 			$pu = price2num($pu);
-			$pa_ht = price2num($pa_ht);
+			$pa_ht = (float) price2num($pa_ht);
 			$pu_ht_devise = price2num($pu_ht_devise);
 			if (!preg_match('/\((.*)\)/', $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
-			$txlocaltax1 = price2num($txlocaltax1);
-			$txlocaltax2 = price2num($txlocaltax2);
+			$txlocaltax1 = (float) price2num($txlocaltax1);
+			$txlocaltax2 = (float) price2num($txlocaltax2);
 
 			$this->db->begin();
 

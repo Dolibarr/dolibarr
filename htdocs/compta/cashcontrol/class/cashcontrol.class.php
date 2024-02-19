@@ -128,11 +128,6 @@ class CashControl extends CommonObject
 	 * @var integer|string $date_modification
 	 */
 	public $date_modification;
-	/**
-	 * @var integer|string $date_modification
-	 * @deprecated
-	 */
-	public $tms;
 
 	/**
 	 * @var integer|string $date_valid
@@ -261,16 +256,6 @@ class CashControl extends CommonObject
 			dol_syslog(get_class($this)."::valid action abandoned: already validated", LOG_WARNING);
 			return 0;
 		}
-
-		/*
-		 $posmodule = $this->posmodule;
-		 if (!empty($user->rights->$posmodule->use))
-		 {
-		 $this->error='NotEnoughPermissions';
-		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
-		 return -1;
-		 }
-		 */
 
 		$now = dol_now();
 

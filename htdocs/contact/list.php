@@ -97,6 +97,7 @@ if (isModEnabled('socialnetworks')) {
 	}
 }
 $search_priv = GETPOST("search_priv", 'alpha');
+$search_sale = GETPOSTINT('search_sale');
 $search_categ = GETPOST("search_categ", 'int');
 $search_categ_thirdparty = GETPOST("search_categ_thirdparty", 'int');
 $search_categ_supplier = GETPOST("search_categ_supplier", 'int');
@@ -383,6 +384,7 @@ if (empty($reshook)) {
 		$search_stcomm = '';
 		$search_level = '';
 		$search_status = -1;
+		$search_sale = '';
 		$search_categ = '';
 		$search_categ_thirdparty = '';
 		$search_categ_supplier = '';
@@ -415,6 +417,10 @@ if (empty($reshook)) {
 
 if ($search_priv < 0) {
 	$search_priv = '';
+}
+// the user has not right to see other third-party than their own
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
 }
 
 
@@ -466,7 +472,7 @@ if ($resql) {
 $sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias as alias,";
 $sql .= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.address, p.zip, p.town, p.poste, p.email, p.birthday,";
 $sql .= " p.socialnetworks, p.photo,";
-$sql .= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
+$sql .= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_modification,";
 $sql .= " p.import_key, p.fk_stcommcontact as stcomm_id, p.fk_prospectlevel,";
 $sql .= " st.libelle as stcomm, st.picto as stcomm_picto,";
 $sql .= " co.label as country, co.code as country_code";
@@ -495,23 +501,17 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = p.fk_pays";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_stcommcontact as st ON st.id = p.fk_stcommcontact";
-if (!$user->hasRight('societe', 'client', 'voir')) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-}
 
 // Add fields from hooks - ListFrom
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= ' WHERE p.entity IN ('.getEntity('contact').')';
-if (!$user->hasRight('societe', 'client', 'voir')) {
-	$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR p.fk_soc IS NULL)";
-}
 if (!empty($userid)) {    // propre au commercial
 	$sql .= " AND p.fk_user_creat=".((int) $userid);
 }
 if ($search_level) {
-	$sql .= natural_search("p.fk_prospectlevel", join(',', $search_level), 3);
+	$sql .= natural_search("p.fk_prospectlevel", implode(',', $search_level), 3);
 }
 if ($search_stcomm != '' && $search_stcomm != -2) {
 	$sql .= natural_search("p.fk_stcommcontact", $search_stcomm, 2);
@@ -529,6 +529,14 @@ if ($search_priv != '0' && $search_priv != '1') {
 	}
 }
 
+// Search on sale representative
+if (!empty($search_sale) && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".$db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".$db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
 
 // Search Contact Categories
 $searchCategoryContactList = $search_categ ? array($search_categ) : array();
@@ -823,6 +831,9 @@ if ($optioncss != '') {
 }
 $param .= '&begin='.urlencode($begin).'&userid='.urlencode($userid).'&contactname='.urlencode($search_all);
 $param .= '&type='.urlencode($type).'&view='.urlencode($view);
+if (!empty($search_sale) && $search_sale != '-1') {
+	$param .= '&search_sale='.urlencode($search_sale);
+}
 if (!empty($search_categ) && $search_categ != '-1') {
 	$param .= '&search_categ='.urlencode($search_categ);
 }
@@ -974,13 +985,23 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if CONTACT_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 if ($search_firstlast_only) {
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_firstlast_only).$langs->trans("Lastname").", ".$langs->trans("Firstname").'</div>';
 }
 
 $moreforfilter = '';
+
+// If the user can view third-party other than their own
+if ($user->hasRight('societe', 'client', 'voir')) {
+	$langs->load('commercial');
+	$moreforfilter .= '<div class="divsearchfield">';
+	$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
+	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth250 widthcentpercentminusx', 1);
+	$moreforfilter .= '</div>';
+}
+
 if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
@@ -1701,7 +1722,7 @@ while ($i < $imaxinloop) {
 		// Date modification
 		if (!empty($arrayfields['p.tms']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

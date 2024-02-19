@@ -119,7 +119,7 @@ class Job extends CommonObject
 	public $label;
 	public $description;
 	public $date_creation;
-	public $tms;
+
 	public $deplacement;
 	public $note_public;
 	public $note_private;
@@ -426,7 +426,7 @@ class Job extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -977,7 +977,7 @@ class Job extends CommonObject
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 

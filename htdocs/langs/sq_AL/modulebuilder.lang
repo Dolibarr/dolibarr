@@ -27,8 +27,7 @@ ModuleBuilderDeschooks=Kjo skedë është e dedikuar për grepa.
 ModuleBuilderDescwidgets=Kjo skedë është e dedikuar për të menaxhuar/ndërtuar miniaplikacione.
 ModuleBuilderDescbuildpackage=Këtu mund të gjeneroni një skedar paketë "gati për t'u shpërndarë" (një skedar .zip i normalizuar) të modulit tuaj dhe një skedar dokumentacioni "gati për t'u shpërndarë". Thjesht klikoni në butonin për të ndërtuar skedarin e paketës ose dokumentacionit.
 EnterNameOfModuleToDeleteDesc=Ju mund të fshini modulin tuaj. PARALAJMËRIM: Të gjithë skedarët e kodimit të modulit (të krijuara ose të krijuara me dorë) DHE të dhënat dhe dokumentacioni i strukturuar do të fshihen!
-EnterNameOfObjectToDeleteDesc=Ju mund të fshini një objekt. PARALAJMËRIM: Të gjithë skedarët e kodimit (të krijuara ose të krijuara manualisht) që lidhen me objektin do të fshihen!
-EnterNameOfObjectToDeleteDesc=Ju mund të fshini një objekt. PARALAJMËRIM: Të gjithë skedarët e kodimit (të krijuara ose të krijuara manualisht) që lidhen me objektin do të fshihen!
+EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
 DangerZone=Zone e rrezikshme
 BuildPackage=Ndërtoni paketën
 BuildPackageDesc=Ju mund të gjeneroni një paketë zip të aplikacionit tuaj në mënyrë që të jeni gati ta shpërndani atë në çdo Dolibarr. Mund ta shpërndani ose ta shisni gjithashtu në treg si <a href="https://www.dolistore.com">DoliStore.com</a>.
@@ -183,3 +182,7 @@ DictionaryDeleted=Fjalori <b>%s</b> u hoq me sukses
 PropertyModuleUpdated=Vetia <b>%s</b> është përditësuar me sukses
 InfoForApiFile=* Kur gjeneroni skedar për herë të parë, atëherë të gjitha metodat do të krijohen <strong>për çdo objekt.</strong><br>* Kur klikoni në <strong>hiq</strong> ju thjesht hiqni të gjitha metodat e klasës ='notranslate'><strong></span>objekt i zgjedhur</strong>.
 SetupFile=Faqe për konfigurimin e modulit
+EmailingSelectors=Emails selectors
+EmailingSelectorDesc=Ju mund të gjeneroni dhe modifikoni këtu skedarët e klasës për të siguruar përzgjedhës të rinj të synimeve të postës elektronike për modulin e dërgimit masiv të postës elektronike
+EmailingSelectorFile=Skedari i përzgjedhësit të emaileve
+NoEmailingSelector=Nuk ka skedar përzgjedhës të postës elektronike

@@ -131,13 +131,23 @@ class CompanyBankAccount extends Account
 		'stripe_account' => array('type'=>'varchar(128)', 'label'=>'Stripeaccount', 'enabled'=>'1', 'position'=>215, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
 		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>0, 'position'=>230),
 	);
+
+	/**
+	 * @var int ID
+	 */
 	public $id;
+
+	/**
+	 * @var string type
+	 */
 	public $type;
+
 	/**
 	 * @var int		Thirdparty ID
 	 * @deprecated	Use socid
 	 */
 	public $fk_soc;
+
 	/**
 	 * @var int		Thirdparty ID
 	 */
@@ -149,6 +159,10 @@ class CompanyBankAccount extends Account
 	 * @var integer
 	 */
 	public $datec;
+
+	/**
+	 * @var string label
+	 */
 	public $label;
 	public $bank;
 	public $code_banque;
@@ -158,17 +172,45 @@ class CompanyBankAccount extends Account
 	public $bic;
 	public $iban_prefix;
 	public $domiciliation;
+
+	/**
+	 * @var string owner
+	 */
 	public $proprio;
+
+	/**
+	 * @var string owner address
+	 */
 	public $owner_address;
 
 	/**
-	 * @var bool $default_rib  1 = this object is the third party's default bank information
+	 * @var int $default_rib  1 = this object is the third party's default bank information, 0 if not
 	 */
 	public $default_rib;
+
+	/**
+	 * @var int state id
+	 */
 	public $state_id;
+
+	/**
+	 * @var id country id
+	 */
 	public $fk_country;
+
+	/**
+	 * @var string currency code
+	 */
 	public $currency_code;
+
+	/**
+	 * @var string rum
+	 */
 	public $rum;
+
+	/**
+	 * @var int date rum
+	 */
 	public $date_rum;
 
 	/**
@@ -185,6 +227,10 @@ class CompanyBankAccount extends Account
 	public $exp_date_year;
 	public $country_code;
 	public $approved;
+
+	/**
+	 * @var string email
+	 */
 	public $email;
 	public $ending_date;
 	public $max_total_amount_of_all_payments;
@@ -193,8 +239,19 @@ class CompanyBankAccount extends Account
 	public $total_amount_of_all_payments;
 
 
+	/**
+	 * @var string external payment site
+	 */
 	public $ext_payment_site;	// Name of the external payment system ('StripeLive', 'StripeTest', 'StancerLive', 'StancerTest', ...)
+
+	/**
+	 * @var string comment
+	 */
 	public $comment;
+
+	/**
+	 * @var string ip address
+	 */
 	public $ipaddress;
 
 
@@ -615,7 +672,7 @@ class CompanyBankAccount extends Account
 		$this->code_banque     = '123';
 		$this->code_guichet    = '456';
 		$this->number          = 'CUST12345';
-		$this->cle_rib         = 50;
+		$this->cle_rib         = '50';
 		$this->bic             = 'CC12';
 		$this->iban            = 'FR999999999';
 		$this->domiciliation   = 'Bank address of customer corp';

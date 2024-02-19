@@ -28,7 +28,6 @@ ModuleBuilderDescwidgets=Esta guía está adicada a xestionar/construír widgets
 ModuleBuilderDescbuildpackage=Pode xerar aquí un ficheiro de paquete "listo para distribuír" (un ficheiro .zip normalizado) do seu módulo e un ficheiro de documentación "listo para distribuír". Só ten que facer clic no botón para crear o paquete ou o ficheiro de documentación.
 EnterNameOfModuleToDeleteDesc=Pode eliminar o seu módulo. AVISO: Eliminaranse todos os ficheiros de codificación do módulo (xerados ou creados manualmente) E os datos estruturados e a documentación.
 EnterNameOfObjectToDeleteDesc=Pode eliminar un obxecto. AVISO: Eliminaranse todos os ficheiros de codificación (xerados ou creados manualmente) relacionados co obxecto.
-EnterNameOfObjectToDeleteDesc=Pode eliminar un obxecto. AVISO: Eliminaranse todos os ficheiros de codificación (xerados ou creados manualmente) relacionados co obxecto.
 DangerZone=Zona de perigo
 BuildPackage=Construír o paquete
 BuildPackageDesc=Pode xerar un paquete zip da súa aplicación para que estea listo para distribuílo en calquera Dolibarr. Tamén podes distribuílo ou vendelo no mercado como <a href="https://www.dolistore.com"> DoliStore.com </a>.
@@ -183,3 +182,7 @@ DictionaryDeleted=Dicionario <b> %s </b> eliminado correctamente
 PropertyModuleUpdated=A propiedade <b> %s </b> actualizouse correctamente
 InfoForApiFile=* Cando xera o ficheiro por primeira vez, crearanse todos os métodos <strong>para cada obxecto.</strong><br>* Cando prema en <strong>eliminar</strong> só elimina todos os métodos para a clase<strong>obxecto seleccionado</strong>.
 SetupFile=Páxina para a configuración do módulo
+EmailingSelectors=Selectores de correos electrónicos
+EmailingSelectorDesc=Pode xerar e editar aquí os ficheiros de clase para proporcionar novos selectores de destino de correo electrónico para o módulo de correo electrónico masivo
+EmailingSelectorFile=Ficheiro de selección de correos electrónicos
+NoEmailingSelector=Non hai ficheiros de selección de correos electrónicos

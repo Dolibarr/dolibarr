@@ -44,7 +44,7 @@ class Localtax extends CommonObject
 	public $picto = 'payment';
 
 	public $ltt;
-	public $tms;
+
 	public $datep;
 	public $datev;
 	public $amount;
@@ -486,7 +486,7 @@ class Localtax extends CommonObject
 			return -4;
 		}
 		if (isModEnabled("banque") && (empty($this->accountid) || $this->accountid <= 0)) {
-			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("BankAccount"));
 			return -5;
 		}
 		if (isModEnabled("banque") && (empty($this->paymenttype) || $this->paymenttype <= 0)) {

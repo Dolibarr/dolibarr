@@ -794,7 +794,7 @@ class FormTicket
 	}
 
 	/**
-	 *      Return html list of ticket anaytic codes
+	 *      Return html list of ticket analytic codes
 	 *
 	 *      @param  string 		$selected   		Id pre-selected category
 	 *      @param  string 		$htmlname   		Name of select component
@@ -941,7 +941,7 @@ class FormTicket
 			$stringtoprint .= '<option value="">&nbsp;</option>';
 
 			$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ctc.public, ";
-			$sql .= $this->db->ifsql("ctc.rowid NOT IN (SELECT ctcfather.rowid FROM llx_c_ticket_category as ctcfather JOIN llx_c_ticket_category as ctcjoin ON ctcfather.rowid = ctcjoin.fk_parent)", "'NOTPARENT'", "'PARENT'")." as isparent";
+			$sql .= $this->db->ifsql("ctc.rowid NOT IN (SELECT ctcfather.rowid FROM llx_c_ticket_category as ctcfather JOIN llx_c_ticket_category as ctcjoin ON ctcfather.rowid = ctcjoin.fk_parent WHERE ctcjoin.active > 0)", "'NOTPARENT'", "'PARENT'")." as isparent";
 			$sql .= " FROM ".$this->db->prefix()."c_ticket_category as ctc";
 			$sql .= " WHERE ctc.active > 0 AND ctc.entity = ".((int) $conf->entity);
 			if ($filtertype == 'public=1') {
@@ -989,8 +989,8 @@ class FormTicket
 			if (count($arrayidused) == 1) {
 				return '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.dol_escape_htmltag($groupvalue).'">';
 			} else {
-				$stringtoprint .= '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'_select" class="maxwidth500 minwidth400">';
-				$stringtoprint .= '<input type="hidden" name="'.$htmlname.'_child_id" id="'.$htmlname.'_select_child_id" class="maxwidth500 minwidth400">';
+				$stringtoprint .= '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'_select" class="maxwidth500 minwidth400" value="'.GETPOST($htmlname).'">';
+				$stringtoprint .= '<input type="hidden" name="'.$htmlname.'_child_id" id="'.$htmlname.'_select_child_id" class="maxwidth500 minwidth400" '.GETPOST($htmlname).' value="'.GETPOST($htmlname."_child_id").'">';
 			}
 			$stringtoprint .= '</select>&nbsp;';
 
@@ -1004,7 +1004,7 @@ class FormTicket
 				$sql .= " FROM ".$this->db->prefix()."c_ticket_category as ctc";
 				$sql .= " JOIN ".$this->db->prefix()."c_ticket_category as ctcjoin ON ctc.fk_parent = ctcjoin.rowid";
 				$sql .= " WHERE ctc.active > 0 AND ctc.entity = ".((int) $conf->entity);
-				$sql .= " AND ctc.rowid NOT IN (".$this->db->sanitize(join(',', $arrayidusedconcat)).")";
+				$sql .= " AND ctc.rowid NOT IN (".$this->db->sanitize(implode(',', $arrayidusedconcat)).")";
 
 				if ($filtertype == 'public=1') {
 					$sql .= " AND ctc.public = 1";
@@ -1134,6 +1134,10 @@ class FormTicket
 			$stringtoprint .='$("#'.$htmlname.'_child_'.$use_multilevel.'").change(function() {
 				$("#ticketcategory_select").val($(this).val());
 				$("#ticketcategory_select_child_id").val($(this).attr("child_id"));
+				tmpvalselect = $("#ticketcategory_select").val();
+				if(tmpvalselect == "" && $("#ticketcategory_select_child_id").val() >= 1){
+					$("#ticketcategory_select_child_id").val($(this).attr("child_id")-1);
+				}
 				console.log($("#ticketcategory_select").val());
 			})';
 			$stringtoprint .='</script>';
@@ -1488,6 +1492,12 @@ class FormTicket
 				print '<input type="submit" class="button" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				print '</div></td>';
 			}
+
+			// From
+			$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
+			print '<tr class="email_line"><td><span class="">'.$langs->trans("MailFrom").'</span></td>';
+			print '<td><span class="">'.img_picto('', 'email', 'class="pictofixedwidth"').$from.'</span></td></tr>';
+
 			// Subject/topic
 			$topic = "";
 			foreach ($formmail->lines_model as $line) {
@@ -1498,7 +1508,7 @@ class FormTicket
 			}
 			print '<tr class="email_line"><td>'.$langs->trans('Subject').'</td>';
 			if (empty($topic)) {
-				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$langs->trans('TicketNewMessage').'" />';
+				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '. $ticketstat->subject .'" />';
 			} else {
 				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$topic.'" />';
 			}
@@ -1524,7 +1534,9 @@ class FormTicket
 					}
 				}
 
-				if ($ticketstat->origin_email && !in_array($ticketstat->origin_email, $sendto)) {
+				if (!empty($ticketstat->origin_replyto) && !in_array($ticketstat->origin_replyto, $sendto)) {
+					$sendto[] = dol_escape_htmltag($ticketstat->origin_replyto).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
+				} elseif ($ticketstat->origin_email && !in_array($ticketstat->origin_email, $sendto)) {
 					$sendto[] = dol_escape_htmltag($ticketstat->origin_email).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
 				}
 

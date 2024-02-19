@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=ナレッジマネジメント（KM）またはヘ
 # Admin page
 #
 KnowledgeManagementSetup = ナレッジマネジメントシステムの設定
-Settings = 設定
 KnowledgeManagementSetupPage = ナレッジマネジメントシステムの設定ページ
 
 
 #
 # About page
 #
-About = 約
 KnowledgeManagementAbout = 知識管理について
 KnowledgeManagementAboutPage = 知識管理に関するページ
 
 KnowledgeManagementArea = 知識管理
 MenuKnowledgeRecord = 知識ベース
+MenuKnowledgeRecordShort = 知識ベース
 ListKnowledgeRecord = 項目一覧
 NewKnowledgeRecord = 新しい項目
 ValidateReply = ソリューションを検証
@@ -47,8 +46,14 @@ KnowledgeRecord = 項目
 KnowledgeRecordExtraFields = 項目のエクストラフィールド
 GroupOfTicket=チケットのグループ
 YouCanLinkArticleToATicketCategory=記事をチケット グループにリンクできる（すると、記事はこのグループのすべてのチケットで強調表示される）。
-SuggestedForTicketsInGroup=チケットに対して提案されるのは、グループが
+SuggestedForTicketsInGroup=チケット作成時に提案
 
 SetObsolete=廃止として設定
 ConfirmCloseKM=この項目の締めくくりが廃止されたことを確定するか？
 ConfirmReopenKM=この項目を状態「検証済」に復元するか？
+BoxLastKnowledgerecordDescription=最後の %s 記事
+BoxLastKnowledgerecord=最後の記事
+BoxLastKnowledgerecordContent=最後の記事
+BoxLastKnowledgerecordModifiedContent=最終更新記事
+BoxLastModifiedKnowledgerecordDescription=最後に %s 変更された記事
+BoxLastModifiedKnowledgerecord=最終更新記事

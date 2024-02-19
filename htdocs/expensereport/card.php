@@ -113,9 +113,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('expensereportcard', 'globalcard'));
 
-$permissionnote = $user->rights->expensereport->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->expensereport->creer; // Used by the include of actions_dellink.inc.php
-$permissiontoadd = $user->rights->expensereport->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissionnote = $user->hasRight('expensereport', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('expensereport', 'creer'); // Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->hasRight('expensereport', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
@@ -150,7 +150,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'expensereport', $object->id, 'expensereport');
 
-$permissiontoadd = $user->rights->expensereport->creer;	// Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->hasRight('expensereport', 'creer');	// Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -1247,7 +1247,7 @@ if (empty($reshook)) {
 		$total_ht = $object_ligne->total_ht;
 		$total_tva = $object_ligne->total_tva;
 
-		$result = $object->deleteline(GETPOST("rowid", 'int'), $user);
+		$result = $object->deleteLine(GETPOST("rowid", 'int'), $user);
 		if ($result >= 0) {
 			if ($result > 0) {
 				// Define output language
@@ -1735,7 +1735,7 @@ if ($action == 'create') {
 				$userauthor = new User($db);
 				$result = $userauthor->fetch($object->fk_user_author);
 				if ($result < 0) {
-					dol_print_error('', $userauthor->error);
+					dol_print_error(null, $userauthor->error);
 				} elseif ($result > 0) {
 					print $userauthor->getNomUrl(-1);
 				}
@@ -2853,8 +2853,8 @@ if ($action != 'presend') {
 		$filename = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-		$genallowed	= $user->rights->expensereport->creer;
-		$delallowed	= $user->rights->expensereport->creer;
+		$genallowed	= $user->hasRight('expensereport', 'creer');
+		$delallowed	= $user->hasRight('expensereport', 'creer');
 		$var = true;
 		print $formfile->showdocuments('expensereport', $filename, $filedir, $urlsource, $genallowed, $delallowed);
 		$somethingshown = $formfile->numoffiles;

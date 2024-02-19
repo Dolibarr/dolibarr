@@ -47,11 +47,7 @@ class LoanSchedule extends CommonObject
 
 	public $bank_account;
 	public $bank_line;
-	/**
-	 * @var string Create date
-	 */
 	public $datec;
-	public $tms;
 
 	/**
 	 * @var string Payment date
@@ -69,7 +65,8 @@ class LoanSchedule extends CommonObject
 	public $fk_typepayment;
 
 	/**
-	 * @var int Payment ID
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
@@ -317,7 +314,7 @@ class LoanSchedule extends CommonObject
 			$this->note_public = trim($this->note_public);
 		}
 		if (isset($this->fk_bank)) {
-			$this->fk_bank = trim($this->fk_bank);
+			$this->fk_bank = (int) $this->fk_bank;
 		}
 		if (isset($this->fk_payment_loan)) {
 			$this->fk_payment_loan = (int) $this->fk_payment_loan;

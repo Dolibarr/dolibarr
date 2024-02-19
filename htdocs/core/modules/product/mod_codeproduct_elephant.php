@@ -33,42 +33,29 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
  */
 class mod_codeproduct_elephant extends ModeleProductCode
 {
-	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Elephant';
 
-	/**
-	 * @var string model name
-	 */
+	// variables inherited from ModelProductCode class
 	public $name = 'Elephant';
-
-	public $code_modifiable; // Code modifiable
-
-	public $code_modifiable_invalide; // Code modifiable si il est invalid
-
-	public $code_modifiable_null; // Code modifiables si il est null
-
-	public $code_null; // Code facultatif
-
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
-
-	/**
-	 * @var int Automatic numbering
-	 */
+	public $version = 'dolibarr';
+	public $code_null;
+	public $code_modifiable;
+	public $code_modifiable_invalide;
+	public $code_modifiable_null;
 	public $code_auto;
+	public $prefixIsRequired;
 
-	public $searchcode; // String de recherche
 
-	public $numbitcounter; // Nombre de chiffres du compteur
+	// variables not inherited
 
-	public $prefixIsRequired; // Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
+	/**
+	 *  @var string			String de recherche
+	 */
+	public $searchcode;
+
+	/**
+	 *  @var int			Nombre de chiffres du compteur
+	 */
+	public $numbitcounter;
 
 
 	/**
@@ -181,7 +168,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 *
 	 * @param	Product		$objproduct     Object product
 	 * @param  	int		    $type       Produit ou service (0:product, 1:service)
-	 * @return 	string      			Value if OK, '' if module not configured, <0 if KO
+	 * @return 	string|-1      			Value if OK, '' if module not configured, -1 if KO
 	 */
 	public function getNextValue($objproduct = null, $type = -1)
 	{

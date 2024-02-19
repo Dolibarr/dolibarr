@@ -72,7 +72,7 @@ $addreminder = GETPOST('addreminder', 'alpha');
 $offsetvalue = GETPOSTINT('offsetvalue');
 $offsetunit = GETPOST('offsetunittype_duration', 'aZ09');
 $remindertype = GETPOST('selectremindertype', 'aZ09');
-$modelmail = GETPOST('actioncommsendmodel_mail', 'int');
+$modelmail = GETPOSTINT('actioncommsendmodel_mail');
 $complete = GETPOST('complete', 'alpha');	// 'na' must be allowed
 $private = GETPOST('private', 'alphanohtml');
 if ($complete == 'na' || $complete == -2) {
@@ -127,7 +127,7 @@ if ($id > 0 && $action != 'add') {
 		$ret1 = $object->fetch_userassigned();
 	}
 	if ($ret < 0 || $ret1 < 0) {
-		dol_print_error('', $object->error);
+		dol_print_error(null, $object->error);
 	}
 }
 
@@ -164,6 +164,7 @@ $usercancreate = $user->hasRight('agenda', 'allactions', 'create') || (($object-
 
 $listUserAssignedUpdated = false;
 $listResourceAssignedUpdated = false;
+$assignedtouser = array();
 
 // Remove user to assigned list
 if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned') == '0')) {
@@ -368,7 +369,7 @@ if (empty($reshook) && $action == 'add') {
 				$hasPermissionOnLinkedObject = 1;
 			}
 			if ($hasPermissionOnLinkedObject) {
-				$object->fk_element = GETPOST("fk_element", 'int');
+				$object->fk_element = GETPOSTINT("fk_element");
 				$object->elementtype = GETPOST("elementtype", 'alpha');
 			}
 		}
@@ -387,7 +388,7 @@ if (empty($reshook) && $action == 'add') {
 		}
 		$object->fk_project = GETPOSTISSET("projectid") ? GETPOST("projectid", 'int') : 0;
 
-		$taskid = GETPOST('taskid', 'int');
+		$taskid = GETPOSTINT('taskid');
 		if (!empty($taskid)) {
 			$taskProject = new Task($db);
 			if ($taskProject->fetch($taskid) > 0) {
@@ -426,7 +427,7 @@ if (empty($reshook) && $action == 'add') {
 
 	if (!$error && getDolGlobalString('AGENDA_ENABLE_DONEBY')) {
 		if (GETPOST("doneby") > 0) {
-			$object->userdoneid = GETPOST("doneby", "int");
+			$object->userdoneid = GETPOSTINT("doneby");
 		}
 	}
 
@@ -437,7 +438,7 @@ if (empty($reshook) && $action == 'add') {
 	}
 
 	if (GETPOST('socid', 'int') > 0) {
-		$object->socid = GETPOST('socid', 'int');
+		$object->socid = GETPOSTINT('socid');
 		$object->fetch_thirdparty();
 
 		$object->societe = $object->thirdparty; // For backward compatibility
@@ -1071,7 +1072,7 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate') {
 
 	$newdate = GETPOST('newdate', 'alpha');
 	if (empty($newdate) || strpos($newdate, 'dayevent_') != 0) {
-		header("Location: ".$backtopage);
+		header("Location: ".$backtopage, true, 307);
 		exit;
 	}
 
@@ -1156,7 +1157,7 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate') {
 		}
 	}
 	if (!empty($backtopage)) {
-		header("Location: ".$backtopage);
+		header("Location: ".$backtopage, true, 307);
 		exit;
 	} else {
 		$action = '';
@@ -1545,8 +1546,14 @@ if ($action == 'create') {
 		if ($origin=='contact') {
 			$preselectedids[GETPOST('originid', 'int')] = GETPOST('originid', 'int');
 		}
+		// select "all" or "none" contact by default
+		if (getDolGlobalInt('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT')) {
+			$select_contact_default = 0; // select "all" contacts by default : avoid to use it if there is a lot of contacts
+		} else {
+			$select_contact_default = -1; // select "none" by default
+		}
 		print img_picto('', 'contact', 'class="paddingrightonly"');
-		print $form->selectcontacts(!getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? GETPOST('socid', 'int') : 0, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', false, 0, array(), false, 'multiple', 'contactid');
+		print $form->selectcontacts(GETPOSTISSET('socid') ? GETPOSTINT('socid') : $select_contact_default, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', false, 0, array(), false, 'multiple', 'contactid');
 		print '</td></tr>';
 	}
 

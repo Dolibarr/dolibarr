@@ -291,9 +291,9 @@ if (empty($reshook) && $action == 'add') {
 			$adh->pass        = GETPOST('pass1');
 		}
 		$adh->photo       = GETPOST('photo');
-		$adh->country_id  = getDolGlobalString("MEMBER_NEWFORM_FORCECOUNTRYCODE", GETPOST('country_id', 'int'));
-		$adh->state_id    = GETPOST('state_id', 'int');
-		$adh->typeid      = getDolGlobalString("MEMBER_NEWFORM_FORCETYPE", GETPOST('typeid', 'int'));
+		$adh->country_id  = getDolGlobalInt("MEMBER_NEWFORM_FORCECOUNTRYCODE", GETPOSTINT('country_id'));
+		$adh->state_id    = GETPOSTINT('state_id');
+		$adh->typeid      = getDolGlobalInt("MEMBER_NEWFORM_FORCETYPE", GETPOSTINT('typeid'));
 		$adh->note_private = GETPOST('note_private');
 		$adh->morphy      = getDolGlobalString("MEMBER_NEWFORM_FORCEMORPHY", GETPOST('morphy'));
 		$adh->birth       = $birthday;
@@ -432,7 +432,7 @@ if (empty($reshook) && $action == 'add') {
 					$result = $company->create_from_member($adh);
 					if ($result < 0) {
 						$error++;
-						$errmsg .= join('<br>', $company->errors);
+						$errmsg .= implode('<br>', $company->errors);
 					}
 				}
 
@@ -466,7 +466,7 @@ if (empty($reshook) && $action == 'add') {
 				}
 			} else {
 				$error++;
-				$errmsg .= join('<br>', $adh->errors);
+				$errmsg .= implode('<br>', $adh->errors);
 			}
 		}
 	}

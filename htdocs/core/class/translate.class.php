@@ -2,6 +2,7 @@
 /* Copyright (C) 2001      Eric Seigne         <erics@rycks.com>
  * Copyright (C) 2004-2015 Destailleur Laurent <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,20 +30,67 @@
  */
 class Translate
 {
-	public $dir; // Directories that contains /langs subdirectory
+	/**
+	 * @var string      Directory containing the /langs subdirectory
+	 */
+	public $dir;
 
-	public $defaultlang; // Current language for current user
-	public $shortlang; // Short language for current user
-	public $charset_output = 'UTF-8'; // Codage used by "trans" method outputs
+	/**
+	 * @var string      Current language for current user
+	 */
+	public $defaultlang;
 
-	public $tab_translate = array(); // Array of all translations key=>value
-	private $_tab_loaded = array(); // Array to store result after loading each language file
+	/**
+	 * @var string      Short language code for current user
+	 */
+	public $shortlang;
 
-	public $cache_labels = array(); // Cache for labels return by getLabelFromKey method
-	public $cache_currencies = array(); // Cache to store currency symbols
+	/**
+	 * @var string      Codage used by "trans" method outputs
+	 */
+	public $charset_output = 'UTF-8';
+
+
+	/**
+	 * @var array       Array of all translations key=>value
+	 */
+	public $tab_translate = array();
+
+	/**
+	 * @var array       Array to store result after loading each language file
+	 */
+	private $_tab_loaded = array();
+
+	/**
+	 * @var array       Cache for labels returned by getLabelFromKey method
+	 */
+	public $cache_labels = array();
+
+	/**
+	 * @var array       Cache to store currency symbols
+	 */
+	public $cache_currencies = array();
+
+	/**
+	 * @var bool        True if all currencies have been loaded in this->cache_currencies
+	 * @see $cache_currencies
+	 */
 	private $cache_currencies_all_loaded = false;
+
+	/**
+	 * @var string      Language to use
+	 */
 	public $origlang;
+
+	/**
+	 * @var string      Error message
+	 * @see $errors
+	 */
 	public $error;
+
+	/**
+	 * @var string[]    Array of error messages
+	 */
 	public $errors = array();
 
 
@@ -211,7 +259,7 @@ class Translate
 
 		// Check parameters
 		if (empty($domain)) {
-			dol_print_error('', get_class($this) . "::Load ErrorWrongParameters");
+			dol_print_error(null, get_class($this) . "::Load ErrorWrongParameters");
 			return -1;
 		}
 		if ($this->defaultlang === 'none_NONE') {
@@ -767,8 +815,9 @@ class Translate
 	 */
 	public function transcountry($str, $countrycode)
 	{
-		if (!empty($this->tab_translate["$str$countrycode"])) {
-			return $this->trans("$str$countrycode");
+		$strLocaleKey=$str.$countrycode;
+		if (!empty($this->tab_translate[$strLocaleKey])) {
+			return $this->trans($strLocaleKey);
 		} else {
 			return $this->trans($str);
 		}
@@ -785,8 +834,9 @@ class Translate
 	 */
 	public function transcountrynoentities($str, $countrycode)
 	{
-		if (!empty($this->tab_translate["$str$countrycode"])) {
-			return $this->transnoentities("$str$countrycode");
+		$strLocaleKey=$str.$countrycode;
+		if (!empty($this->tab_translate[$strLocaleKey])) {
+			return $this->transnoentities($strLocaleKey);
 		} else {
 			return $this->transnoentities($str);
 		}
@@ -980,7 +1030,7 @@ class Translate
 	 * 		@param	string	$fieldlabel		Field for label. This value must always be a hardcoded string and not a value coming from user input.
 	 *      @param	string	$keyforselect	Use another value than the translation key for the where into select
 	 *      @param  int		$filteronentity	Use a filter on entity
-	 *      @return string					Label in UTF8 (but without entities)
+	 *      @return string|int				Label in UTF8 (but without entities) or -1 if error
 	 *      @see dol_getIdFromCode()
 	 */
 	public function getLabelFromKey($db, $key, $tablename, $fieldkey, $fieldlabel, $keyforselect = '', $filteronentity = 0)

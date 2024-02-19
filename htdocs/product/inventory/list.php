@@ -129,9 +129,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->stock->lire;
-$permissiontoadd = $user->rights->stock->creer;
-$permissiontodelete = $user->rights->stock->supprimer;
+$permissiontoread = $user->hasRight('stock', 'lire');
+$permissiontoadd = $user->hasRight('stock', 'creer');
+$permissiontodelete = $user->hasRight('stock', 'supprimer');
 
 // Security check
 $socid = 0;
@@ -467,7 +467,7 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if MYOBJECT_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>'."\n";
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>'."\n";
 }
 
 $moreforfilter = '';

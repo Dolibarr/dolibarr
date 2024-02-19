@@ -83,7 +83,7 @@ if (empty($origin_id)) {
 	$origin_id  = GETPOST('originid', 'int'); // Id of order or propal
 }
 $ref = GETPOST('ref', 'alpha');
-$line_id = GETPOST('lineid', 'int') ? GETPOST('lineid', 'int') : '';
+$line_id = GETPOSTINT('lineid') ? GETPOSTINT('lineid') : 0;
 $facid = GETPOST('facid', 'int');
 
 $action	= GETPOST('action', 'alpha');
@@ -156,17 +156,17 @@ if (isModEnabled("reception") || $origin == 'reception' || empty($origin)) {
 }
 
 if (isModEnabled("reception")) {
-	$permissiontoread = $user->rights->reception->lire;
-	$permissiontoadd = $user->rights->reception->creer;
-	$permissiondellink = $user->rights->reception->creer; // Used by the include of actions_dellink.inc.php
-	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->creer)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->reception_advance->validate)));
-	$permissiontodelete = $user->rights->reception->supprimer;
+	$permissiontoread = $user->hasRight('reception', 'lire');
+	$permissiontoadd = $user->hasRight('reception', 'creer');
+	$permissiondellink = $user->hasRight('reception', 'creer'); // Used by the include of actions_dellink.inc.php
+	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'reception_advance', 'validate')));
+	$permissiontodelete = $user->hasRight('reception', 'supprimer');
 } else {
-	$permissiontoread = $user->rights->fournisseur->commande->receptionner;
-	$permissiontoadd = $user->rights->fournisseur->commande->receptionner;
-	$permissiondellink = $user->rights->fournisseur->commande->receptionner; // Used by the include of actions_dellink.inc.php
-	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->fournisseur->commande->receptionner)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->fournisseur->commande_advance->check)));
-	$permissiontodelete = $user->rights->fournisseur->commande->receptionner;
+	$permissiontoread = $user->hasRight('fournisseur', 'commande', 'receptionner');
+	$permissiontoadd = $user->hasRight('fournisseur', 'commande', 'receptionner');
+	$permissiondellink = $user->hasRight('fournisseur', 'commande', 'receptionner'); // Used by the include of actions_dellink.inc.php
+	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('fournisseur', 'commande', 'receptionner')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('fournisseur', 'commande_advance', 'check')));
+	$permissiontodelete = $user->hasRight('fournisseur', 'commande', 'receptionner');
 }
 
 
@@ -657,7 +657,7 @@ if (empty($reshook)) {
 
 
 					$line->id = $line_id;
-					$line->fk_entrepot = GETPOST($stockLocation, 'int');
+					$line->fk_entrepot = GETPOSTINT($stockLocation);
 					$line->qty = GETPOST($qty, 'int');
 					$line->comment = GETPOST($comment, 'alpha');
 
@@ -2208,8 +2208,8 @@ if ($action == 'create') {
 
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
-		$genallowed = $user->rights->reception->lire;
-		$delallowed = $user->rights->reception->creer;
+		$genallowed = $user->hasRight('reception', 'lire');
+		$delallowed = $user->hasRight('reception', 'creer');
 
 		print $formfile->showdocuments('reception', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 

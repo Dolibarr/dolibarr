@@ -18,9 +18,7 @@
  */
 
 use Luracast\Restler\Restler;
-use Luracast\Restler\RestException;
 use Luracast\Restler\Defaults;
-use Luracast\Restler\Format\UploadFormat;
 
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
@@ -333,8 +331,8 @@ class DolibarrApi
 	protected function _checkFilters($sqlfilters, &$error = '')
 	{
 		// phpcs:enable
-
-		return dolCheckFilters($sqlfilters, $error);
+		$firstandlastparenthesis = 0;
+		return dolCheckFilters($sqlfilters, $error, $firstandlastparenthesis);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

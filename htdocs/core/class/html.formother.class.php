@@ -522,13 +522,13 @@ class FormOther
 		if (!empty($user->socid)) {
 			$sql_usr .= " AND u.fk_soc = ".((int) $user->socid);
 		}
-		if (!empty($conf->global->USER_HIDE_NONEMPLOYEE_IN_COMBOBOX)) {
+		if (getDolGlobalString('USER_HIDE_NONEMPLOYEE_IN_COMBOBOX')) {
 			$sql_usr .= " AND u.employee <> 0";
 		}
-		if (!empty($conf->global->USER_HIDE_EXTERNAL_IN_COMBOBOX)) {
+		if (getDolGlobalString('USER_HIDE_EXTERNAL_IN_COMBOBOX')) {
 			$sql_usr .= " AND u.fk_soc IS NULL";
 		}
-		if (!empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) {
+		if (getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX')) {
 			$sql_usr .= " AND u.statut <> 0";
 		}
 
@@ -849,12 +849,12 @@ class FormOther
 	 *  @param	int			$showcolorbox			1=Show color code and color box, 0=Show only color code
 	 *  @param 	array		$arrayofcolors			Array of possible colors to choose in the selector. All colors are possible if empty. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
 	 *  @param	string		$morecss				Add css style into input field
-	 *  @param	string		$setpropertyonselect	Set this property after selecting a color
+	 *  @param	string		$setpropertyonselect	Set this CSS property after selecting a color
 	 *  @param	string		$default				Default color
 	 *  @return	string
 	 *  @see showColor()
 	 */
-	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '', $morecss = '', $setpropertyonselect = '', $default = '')
+	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = array(), $morecss = '', $setpropertyonselect = '', $default = '')
 	{
 		// Deprecation warning
 		if ($form_name) {
@@ -989,7 +989,7 @@ class FormOther
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Creae an image for color
+	 *	Create an image for color
 	 *
 	 *	@param	string	$color		Color of image
 	 *	@param	string	$module 	Name of module
@@ -1213,7 +1213,7 @@ class FormOther
 	 *  Class 'Form' must be known.
 	 *
 	 * 	@param	   User         $user		 Object User
-	 * 	@param	   String       $areacode    Code of area for pages - 0 = Home page ... See getListOfPagesForBoxes()
+	 * 	@param	   string       $areacode    Code of area for pages - 0 = Home page ... See getListOfPagesForBoxes()
 	 *	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlista'=>, 'boxlistb'=>)
 	 */
 	public static function getBoxesArea($user, $areacode)

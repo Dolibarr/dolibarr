@@ -24,7 +24,6 @@
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\Renderable;
-use DebugBar\DebugBarException;
 
 dol_include_once('/debugbar/class/TraceableDB.php');
 

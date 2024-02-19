@@ -906,11 +906,11 @@ class pdf_standard extends ModelePDFMovement
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param	string		$titlekey		Translation key to show as title of document
-	 *  @return	int                         Return topshift value
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "")
 	{
-		global $conf, $langs, $db, $hookmanager;
+		global $conf, $langs;
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "propal", "companies", "bills", "orders", "stocks"));
@@ -1116,6 +1116,7 @@ class pdf_standard extends ModelePDFMovement
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
 		return $top_shift;
 	}
 

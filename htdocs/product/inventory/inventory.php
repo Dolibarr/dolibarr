@@ -104,11 +104,11 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 
 
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$permissiontoadd = $user->rights->stock->creer;
-	$permissiontodelete = $user->rights->stock->supprimer;
+	$permissiontoadd = $user->hasRight('stock', 'creer');
+	$permissiontodelete = $user->hasRight('stock', 'supprimer');
 } else {
-	$permissiontoadd = $user->rights->stock->inventory_advance->write;
-	$permissiontodelete = $user->rights->stock->inventory_advance->write;
+	$permissiontoadd = $user->hasRight('stock', 'inventory_advance', 'write');
+	$permissiontodelete = $user->hasRight('stock', 'inventory_advance', 'write');
 }
 
 $now = dol_now();
@@ -430,7 +430,7 @@ llxHeader('', $langs->trans('Inventory'), $help_url);
 
 // Part to show record
 if ($object->id <= 0) {
-	dol_print_error('', 'Bad value for object id');
+	dol_print_error(null, 'Bad value for object id');
 	exit;
 }
 

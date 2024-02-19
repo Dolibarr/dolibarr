@@ -60,10 +60,11 @@ NoPageYet=Ende nuk ka faqe
 YouCanCreatePageOrImportTemplate=Mund të krijoni një faqe të re ose të importoni një shabllon të plotë të faqes në internet
 SyntaxHelp=Ndihmë për këshilla specifike sintaksore
 YouCanEditHtmlSourceckeditor=Ju mund të modifikoni kodin burimor HTML duke përdorur butonin "Burimi" në redaktues.
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> Mund të përfshini kodin PHP < në këtë burim span class='notranslate'><strong></span>&lt;?php ?&gt;</strong> . Variablat e mëposhtëm global janë të disponueshëm: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> Mund të përfshini gjithashtu përmbajtje të një Faqe/Konteineri tjetër me sintaksën e mëposhtme: class='notranslate'><br></span><strong>&lt;?php includeContainer_concluder('ali_toincludeContainer('ali_toinclude) ?&gt;</strong><br></strong><br><span2fcc='039 /span><span class="fa fa-bug"></span> Mund të bëni një ridrejtim në një faqe/enë tjetër me sintaksën e mëposhtme (Shënim: mos nxirr asnjë përmbajtja përpara një ridrejtimi):<br><strong>&lt;</span'>Container(redirect'>ph) alias_of_container_to_redirect_to'); ?<span class='notranslate'>&gt;</strong><br></strong><br><span2fcc='039 /span><span class="fa fa-link"></span> Për të shtuar një lidhje në një faqe tjetër, përdorni sintaksën:b03192fccf <strong>&lt;a href="alias_of_page_to_link_to.php"<span class='notranslate'877z0b0 >mylink&lt;a&gt;</strong></spannotranslate'> <br><br><span class="fa fa-download">b014f1b5z topan a</spansc ='notranslate'><strong>lidhja për të shkarkuar</strong> një skedar të ruajtur në b0e7843947c06bzdo'0 notranslate'></strong></span>, përdor direktorinë <strong>document.phpb0a65d071f6fc9zra'notranslate'> ><br>Për shembull, për një skedar në dokumente/ecm (duhet të regjistrohet), sintaksa është:<br>b0e7843947c06 ><span class='notranslate'>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</span class='notranslate'></strong><br>Për një skedar në dokumente/media (hapur direktorium për akses publik), sintaksa është: <br><strong>&lt;a href="/document.php?modulepart=medias.filepart=relative.filepart=relative.file_dir. ext"&gt;</strong><br>Për një lidhje të ndarë me një hapni aksesin duke përdorur çelësin e ndarjes hash të skedarit), sintaksa është:<br><strong>b03900eczf07d<3 /span>a href="/document.php?hashp=publicsharekeyoffile"<span class='notranslate'>&gt;</strong> <br><br><span class="fa fa-picture-o">b014f1b5z të përfshijë klasën</spans</spans> ='notranslate'><strong>imazhi</strong> ruhet në <strong><nospand6700'06bz0</spanf60>do 9z0 , përdorni mbështjellësin <strong>viewimage.php</strong> mbështjellësin:b0192f span>Për shembull, për një imazh në dokumente/media (direktoria e hapur për akses publik), sintaksa është:<span class='notranslate'><br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename class=ext"<s 'notranslate'>&gt;</span></strong><br>
-#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper.<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=Për një imazh të ndarë me një lidhje të përbashkët (hapja e qasjes duke përdorur çelësin hash të ndarjes së skedarit), sintaksa është:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;<span class='70f600000665 class='0012c7dcbe087z0 </span><br>
-YouCanEditHtmlSourceMore=<br>Më shumë shembuj të kodit HTML ose dinamik të disponueshëm në <a href="%s" target="_blank" rel="noopener noreferrer external">dokumentacioni wikib0e47span80cz5 ><span class='notranslate'><br>.
+YouCanEditHtmlSource3=Për të marrë URL-në e imazhit të një objekti PHP, përdorni<br><strong>b03900df7d31ec span>img src="<span class='notranslate'>&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?b0012c7dcbe08"z<0spanspan7> class='notranslate'>&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br>Më shumë shembuj të kodit HTML ose dinamik të disponueshëm në <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">dokumentacioni wikib0e47sd80cz5 >.<span class='notranslate'><br>
 ClonePage=Klonimi i faqes/kontejnerit
 CloneSite=Faqja e klonimit
 SiteAdded=Faqja e internetit u shtua
@@ -120,7 +121,6 @@ ReplaceString=Varg i ri
 CSSContentTooltipHelp=Fut këtu përmbajtjen e CSS. Për të shmangur ndonjë konflikt me CSS të aplikacionit, sigurohuni që të paraprini të gjitha deklaratat me klasën .bodywebsite. Për shembull:<br><br>#mycssselector, input.myclass:hover { ...  <br>duhet të jetë<br>.bodywebsite #mycssselector, .bodywebsite input.myclass:hover { ... <span class='notranslate'2ccdaf3><br></span> <br>Shënim: Nëse keni një skedar të madh pa këtë parashtesë, mund të përdorni 'lessc' për ta kthyer atë për të shtuar prefiksin .bodywebsite kudo.
 LinkAndScriptsHereAreNotLoadedInEditor=Paralajmërim: Kjo përmbajtje del vetëm kur aksesohet në sajt nga një server. Nuk përdoret në modalitetin e modifikimit, kështu që nëse keni nevojë të ngarkoni skedarë JavaScript edhe në modalitetin e redaktimit, thjesht shtoni etiketën tuaj 'script src=...' në faqe.
 Dynamiccontent=Shembull i një faqeje me përmbajtje dinamike
-ImportSite=Importoni shabllonin e faqes në internet
 EditInLineOnOff=Modaliteti 'Redakto në linjë' është %s
 ShowSubContainersOnOff=Mënyra për të ekzekutuar 'përmbajtje dinamike' është %s
 GlobalCSSorJS=Skedari global CSS/JS/Header i faqes në internet
@@ -157,9 +157,81 @@ Booking=Rezervimi
 Reservation=Rezervimi
 PagesViewedPreviousMonth=Faqet e shikuara (muajin e kaluar)
 PagesViewedTotal=Faqet e shikuara (gjithsej)
-Visibility=Dukshmëria
 Everyone=Të gjithë
 AssignedContacts=Kontaktet e caktuara
 WebsiteTypeLabel=Lloji i faqes në internet
-WebsiteTypeDolibarrWebsite=Uebfaqja (CMS Dolibarr)
-WebsiteTypeDolibarrPortal=Portali vendas Dolibarr
+WebsiteTypeDolibarrWebsite=Web site (Module WebSites CMS)
+WebsiteTypeDolibarrPortal=Native and ready to use web portal (Module Web Portal)
+WebPortalURL=Web portal URL
+NewWebsiteAccount=New accounts for websites
+ModuleWebPortalName=Web portal
+ModuleWebPortalDesc=A ready to use native web portal for customers, suppliers, partners or members
+WebPortalDescription=Public web portal module for membership and partnership
+WebPortalSetup=WebPortal setup
+WebPortalCSS=Web portal CSS
+WebPortalSetupPage=WebPortal setup page
+WEBPORTAL_TITLE=Brand name on header of public page
+UserAccountForWebPortalAreInThirdPartyTabHelp=Users accounts for WebPortal can be set on each third party card in Website accounts tab
+WebPortalAccessHidden=Hidden
+WebPortalAccessVisible=Visible
+WebPortalAccessEdit=Editable
+WEBPORTAL_MEMBER_CARD_ACCESS=Enable access to the membership record
+WebPortalMemberCardAccessHelp=Enable access to the membership record (Hidden / Visible or Editable)
+WEBPORTAL_PARTNERSHIP_CARD_ACCESS=Enable access to the partnership record
+WebPortalPartnerShipCardAccessHelp=Enable access to the partnership record (Hidden / Visible or Editable)
+WEBPORTAL_PROPAL_LIST_ACCESS=Enable access to the proposals
+WEBPORTAL_ORDER_LIST_ACCESS=Enable access to the orders
+WEBPORTAL_INVOICE_LIST_ACCESS=Enable access to the invoices
+WEBPORTAL_USER_LOGGED=Select an anonymous user
+WebPortalUserLoggedHelp=This user is used to update cards
+WebPortalHomeTitle=Welcome
+WebPortalHomeDesc=Welcome to the public interface
+WebPortalPropalListMenu=Proposals
+WebPortalPropalListTitle=List of proposals
+WebPortalPropalListDesc=List of proposals
+WebPortalPropalListNothing=Proposals not found
+WebPortalOrderListMenu=Orders
+WebPortalOrderListTitle=List of orders
+WebPortalOrderListDesc=List of orders
+WebPortalOrderListNothing=Orders not found
+WebPortalInvoiceListMenu=Faturat
+WebPortalInvoiceListTitle=List of invoices
+WebPortalInvoiceListDesc=List of invoices
+WebPortalInvoiceListNothing=Invoices not found
+WebPortalMemberCardMenu=Member
+WebPortalMemberCardTitle=Member card
+WebPortalMemberCardDesc=Member card
+WebPortalPartnershipCardMenu=Partnership
+WebPortalPartnershipCardTitle=Partnership card
+WebPortalPartnershipCardDesc=Partnership card
+loginWebportalUserName=User name / email
+loginWebportalPassword=Fjalëkalimi
+LoginNow=Login now
+RemoveSearchFilters=Remove search filters
+WEBPORTAL_PRIMARY_COLOR=Primary color
+WEBPORTAL_SECONDARY_COLOR=Secondary color
+WEBPORTAL_LOGIN_LOGO_URL=Login logo image URL
+WEBPORTAL_MENU_LOGO_URL=Menu logo image URL
+WEBPORTAL_MENU_LOGO_URLTooltip=Leave empty to use login logo
+WEBPORTAL_LOGIN_BACKGROUND=Background login image URL
+WEBPORTAL_BANNER_BACKGROUND=Background for banner
+WEBPORTAL_BANNER_BACKGROUND_IS_DARK=Use dark theme for banner
+AriaPrevPage=Previous page
+AriaNextPage=Next page
+AriaPageX=Page %s
+WebPortalError404=Page not found
+WebPortalErrorPageNotExist=Page not exist
+WebPortalErrorFetchThirdPartyAccountFromLogin=Error when loading third-party account (login : %s)
+WebPortalErrorAuthentication=Authentication error
+WebPortalErrorFetchLoggedThirdPartyAccount=Error when loading third-party account (login : %s)
+WebPortalErrorFetchLoggedUser=Error when loading user (Id : %s)
+WebPortalErrorFetchLoggedThirdParty=Error when loading third-party (Id : %s)
+WebPortalErrorFetchLoggedMember=Error when loading member (Id : %s)
+WebPortalErrorFetchLoggedPartnership=Error when loading partnership (Third-party Id : %s, Member Id : %s)
+ExportIntoGIT=Export into sources
+WebPortalMember=Membership
+WebPortalOrder=Sale Order
+WebPortalPartnership=Partnership
+WebPortalPropal=Proposal
+WebPortalGroupMenuAdmin=Administration
+WebPortalGroupMenuTechnical=Sistemi

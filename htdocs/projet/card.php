@@ -67,10 +67,10 @@ $objcanvas = GETPOST("objcanvas", "alphanohtml");
 $comefromclone = GETPOST("comefromclone", "alphanohtml");
 $date_start = dol_mktime(0, 0, 0, GETPOST('projectstartmonth', 'int'), GETPOST('projectstartday', 'int'), GETPOST('projectstartyear', 'int'));
 $date_end = dol_mktime(0, 0, 0, GETPOST('projectendmonth', 'int'), GETPOST('projectendday', 'int'), GETPOST('projectendyear', 'int'));
-$date_start_event = dol_mktime(GETPOST('date_start_eventhour', 'int'), GETPOST('date_start_eventmin', 'int'), GETPOST('date_start_eventsec', 'int'), GETPOST('date_start_eventmonth', 'int'), GETPOST('date_start_eventday', 'int'), GETPOST('date_start_eventyear', 'int'));
-$date_end_event = dol_mktime(GETPOST('date_end_eventhour', 'int'), GETPOST('date_end_eventmin', 'int'), GETPOST('date_end_eventsec', 'int'), GETPOST('date_end_eventmonth', 'int'), GETPOST('date_end_eventday', 'int'), GETPOST('date_end_eventyear', 'int'));
+$date_start_event = dol_mktime(GETPOSTINT('date_start_eventhour'), GETPOSTINT('date_start_eventmin'), GETPOSTINT('date_start_eventsec'), GETPOSTINT('date_start_eventmonth'), GETPOSTINT('date_start_eventday'), GETPOSTINT('date_start_eventyear'), 'tzuserrel');
+$date_end_event = dol_mktime(GETPOSTINT('date_end_eventhour'), GETPOSTINT('date_end_eventmin'), GETPOSTINT('date_end_eventsec'), GETPOSTINT('date_end_eventmonth'), GETPOSTINT('date_end_eventday'), GETPOSTINT('date_end_eventyear'), 'tzuserrel');
 $location = GETPOST('location', 'alphanohtml');
-$fk_project = GETPOST('fk_project', 'int');
+$fk_project = GETPOSTINT('fk_project');
 
 
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
@@ -207,23 +207,23 @@ if (empty($reshook)) {
 
 			$db->begin();
 
-			$object->ref             = GETPOST('ref', 'alphanohtml');
-			$object->fk_project      = GETPOST('fk_project', 'int');
-			$object->title           = GETPOST('title', 'alphanohtml');
-			$object->socid           = GETPOST('socid', 'int');
-			$object->description     = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
-			$object->public          = GETPOST('public', 'alphanohtml');
-			$object->opp_amount      = price2num(GETPOST('opp_amount', 'alphanohtml'));
-			$object->budget_amount   = price2num(GETPOST('budget_amount', 'alphanohtml'));
-			$object->date_c = dol_now();
-			$object->date_start      = $date_start;
-			$object->date_end        = $date_end;
-			$object->date_start_event = $date_start_event;
-			$object->date_end_event   = $date_end_event;
-			$object->location        = $location;
-			$object->statut          = $status;
-			$object->opp_status      = $opp_status;
-			$object->opp_percent     = $opp_percent;
+			$object->ref                  = GETPOST('ref', 'alphanohtml');
+			$object->fk_project           = GETPOSTINT('fk_project');
+			$object->title                = GETPOST('title', 'alphanohtml');
+			$object->socid                = GETPOST('socid', 'int');
+			$object->description          = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
+			$object->public               = GETPOST('public', 'alphanohtml');
+			$object->opp_amount           = GETPOSTFLOAT('opp_amount');
+			$object->budget_amount        = GETPOSTFLOAT('budget_amount');
+			$object->date_c               = dol_now();
+			$object->date_start           = $date_start;
+			$object->date_end             = $date_end;
+			$object->date_start_event     = $date_start_event;
+			$object->date_end_event       = $date_end_event;
+			$object->location             = $location;
+			$object->statut               = $status;
+			$object->opp_status           = $opp_status;
+			$object->opp_percent          = $opp_percent;
 			$object->usage_opportunity    = (GETPOST('usage_opportunity', 'alpha') == 'on' ? 1 : 0);
 			$object->usage_task           = (GETPOST('usage_task', 'alpha') == 'on' ? 1 : 0);
 			$object->usage_bill_time      = (GETPOST('usage_bill_time', 'alpha') == 'on' ? 1 : 0);
@@ -404,6 +404,42 @@ if (empty($reshook)) {
 		}
 	}
 
+	if ($action == 'set_opp_status' && $user->hasRight('projet', 'creer')) {
+		$error = 0;
+		if (GETPOSTISSET('opp_status')) {
+			$object->opp_status   = $opp_status;
+		}
+		if (GETPOSTISSET('opp_percent')) {
+			$object->opp_percent  = $opp_percent;
+		}
+
+		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
+			if ($object->opp_amount && ($object->opp_status <= 0)) {
+				$error++;
+				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+			}
+		}
+
+		if (!$error) {
+			$result = $object->update($user);
+			if ($result < 0) {
+				$error++;
+				if ($result == -4) {
+					setEventMessages($langs->trans("ErrorRefAlreadyExists"), null, 'errors');
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
+		}
+
+		if ($error) {
+			$db->rollback();
+			$action = 'edit';
+		} else {
+			$db->commit();
+		}
+	}
+
 	// Build doc
 	if ($action == 'builddoc' && $permissiontoadd) {
 		// Save last template used to generate document
@@ -504,8 +540,11 @@ if (empty($reshook)) {
 			$newobject->fetch_optionals();
 			$newobject->fetch_thirdparty(); // Load new object
 			$object = $newobject;
-			$action = 'edit';
+			$action = 'view';
 			$comefromclone = true;
+
+			setEventMessages($langs->trans("ProjectCreatedInDolibarr", $newobject->ref), "", 'mesgs');
+			//var_dump($newobject); exit;
 		}
 	}
 
@@ -1287,7 +1326,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		// Define a complementary filter for search of next/prev ref.
 		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-			$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
+			$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
 		}
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -1344,18 +1383,16 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opportunity)) {
 			// Opportunity status
-			print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
-			$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
-			if ($code) {
-				print $langs->trans("OppStatus".$code);
+			print '<tr><td>'.$langs->trans("OpportunityStatus");
+			if ($action != 'edit_opp_status' && $user->hasRight('projet', 'creer')) {
+				print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_opp_status&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
 			}
-
-			// Opportunity percent
-			print ' <span title="'.$langs->trans("OpportunityProbability").'"> / ';
-			if (strcmp($object->opp_percent, '')) {
-				print price($object->opp_percent, 0, $langs, 1, 0).' %';
-			}
-			print '</span></td></tr>';
+			print '</td><td>';
+			$html_name_status 	= ($action == 'edit_opp_status') ? 'opp_status' : 'none';
+			$html_name_percent 	= ($action == 'edit_opp_status') ? 'opp_percent' : 'none';
+			$percent_value = (GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ? vatrate($object->opp_percent) : ''));
+			$formproject->formOpportunityStatus($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->opp_status, $percent_value, $html_name_status, $html_name_percent);
+			print '</td></tr>';
 
 			// Opportunity Amount
 			print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';

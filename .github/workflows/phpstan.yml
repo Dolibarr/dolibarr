@@ -8,6 +8,11 @@ concurrency:
     group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
     cancel-in-progress: true
 
+env:
+  CACHE_KEY_PART: >
+    ${{ ( github.event_name == 'pull_request' ) && github.base_ref
+     }}${{ ( github.event_name == 'pull_request' ) && '-' }}${{ github.head_ref }}
+  GITHUB_JSON: ${{ toJSON(github) }} # Helps in debugging Github Action
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job
@@ -25,8 +30,6 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
-        with:
-         fetch-depth: 0
 
       # Get PHP and addons
       - name: Setup PHP
@@ -36,32 +39,32 @@ jobs:
           php-version: "${{ matrix.php-version }}"
           tools: phpstan, cs2pr
           extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap, mysql, pgsql, sqlite3, ldap, xml, mcrypt
-      # ???
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 14.x
-          registry-url: 'https://registry.npmjs.org'
 
       # Restore old cache
       - name: Restore phpstan cache
-        uses: actions/cache/restore@v3
+        id: cache
+        uses: actions/cache/restore@v4
         with:
           path: ./.github/tmp
-          key: "phpstan-cache-${{ matrix.php-version }}-${{ github.run_id }}"
+          key: phpstan-cache-${{ matrix.php-version }}-${{ env.CACHE_KEY_PART }}-${{ github.run_id }}
           restore-keys: |
+            phpstan-cache-${{ matrix.php-version }}-${{ env.CACHE_KEY_PART }}-
+            phpstan-cache-${{ matrix.php-version }}-${{ github.head_ref }}-
+            phpstan-cache-${{ matrix.php-version }}-${{ github.base_ref }}-
             phpstan-cache-${{ matrix.php-version }}-
       - name: Show debug into
         run: cd ./.github/tmp && ls -al
 
       # Run PHPStan
       - name: Run PHPStan
+        id: phpstan
         run: phpstan -vvv analyse --error-format=checkstyle --memory-limit 4G -a build/phpstan/bootstrap_action.php -c phpstan.neon | cs2pr --graceful-warnings
         # continue-on-error: true
 
       # Save cache
       - name: "Save phpstan cache"
-        uses: actions/cache/save@v3
-        if: always()
+        uses: actions/cache/save@v4
+        if: ${{ success() || ( ! cancelled() && steps.cache.outputs.cache-hit != 'true' ) }}
         with:
           path: ./.github/tmp
-          key: "phpstan-cache-${{ matrix.php-version }}-${{ github.run_id }}"
+          key: phpstan-cache-${{ matrix.php-version }}-${{ env.CACHE_KEY_PART }}-${{ github.run_id }}

@@ -228,8 +228,8 @@ if (empty($reshook) && $action == 'add') {
 			$thirdparty->address = GETPOST('address');
 			$thirdparty->zip = GETPOST('zip');
 			$thirdparty->town = GETPOST('town');
-			$thirdparty->country_id = GETPOST('country_id', 'int');
-			$thirdparty->state_id = GETPOST('state_id');
+			$thirdparty->country_id = GETPOSTINT('country_id');
+			$thirdparty->state_id = GETPOSTINT('state_id');
 			$thirdparty->client = $thirdparty::PROSPECT;
 			$thirdparty->code_client = 'auto';
 			$thirdparty->code_fournisseur = 'auto';
@@ -240,14 +240,14 @@ if (empty($reshook) && $action == 'add') {
 			//var_dump($thirdparty->array_options);exit;
 			if ($ret < 0) {
 				$error++;
-				$errmsg = ($extrafields->error ? $extrafields->error.'<br>' : '').join('<br>', $extrafields->errors);
+				$errmsg = ($extrafields->error ? $extrafields->error.'<br>' : '').implode('<br>', $extrafields->errors);
 			}
 
 			if (!$error) {
 				$result = $thirdparty->create($user);
 				if ($result <= 0) {
 					$error++;
-					$errmsg = ($thirdparty->error ? $thirdparty->error.'<br>' : '').join('<br>', $thirdparty->errors);
+					$errmsg = ($thirdparty->error ? $thirdparty->error.'<br>' : '').implode('<br>', $thirdparty->errors);
 				} else {
 					$proj->socid = $thirdparty->id;
 				}
@@ -409,7 +409,7 @@ if (empty($reshook) && $action == 'add') {
 				dol_syslog("project lead ".$proj->ref." has been created, we redirect to ".$urlback);
 			} else {
 				$error++;
-				$errmsg .= $proj->error.'<br>'.join('<br>', $proj->errors);
+				$errmsg .= $proj->error.'<br>'.implode('<br>', $proj->errors);
 			}
 		} else {
 			setEventMessage($errmsg, 'errors');

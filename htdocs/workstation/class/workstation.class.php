@@ -142,11 +142,6 @@ class Workstation extends CommonObject
 	public $date_creation;
 
 	/**
-	 * @var int timestamp
-	 */
-	public $tms;
-
-	/**
 	 * @var int User ID
 	 */
 	public $fk_user_creat;
@@ -482,7 +477,7 @@ class Workstation extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -899,7 +894,7 @@ class Workstation extends CommonObject
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 

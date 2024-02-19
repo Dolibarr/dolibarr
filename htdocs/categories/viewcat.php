@@ -66,7 +66,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 if ($id == "" && $label == "") {
-	dol_print_error('', 'Missing parameter id');
+	dol_print_error(null, 'Missing parameter id');
 	exit();
 }
 
@@ -153,7 +153,7 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {
 
 	$result = $object->del_type($tmpobject, $elementtype);
 	if ($result < 0) {
-		dol_print_error('', $object->error);
+		dol_print_error(null, $object->error);
 	}
 }
 
@@ -1025,7 +1025,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 	if ($user->hasRight("project", "read")) {
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-		$permission = $user->rights->projet->creer;
+		$permission = $user->hasRight('projet', 'creer');
 
 		$objects = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($objects < 0) {

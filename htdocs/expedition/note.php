@@ -64,7 +64,7 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->expedition->dir_output."/sending/".dol_sanitizeFileName($object->ref);
 }
 
-$permissionnote = $user->rights->expedition->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('expedition', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 // Security check
 if ($user->socid) {

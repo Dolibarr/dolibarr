@@ -90,13 +90,13 @@ AccountancyAreaDescProd=STAP %s: Definieer boekhoudaccounts op uw Producten/Dien
 
 AccountancyAreaDescBind=STAP %s: Als de koppeling tussen bestaande %s  boekingsregels en grootboekrekening is gecontroleerd, kunnen deze in de boekhouding worden weggeschreven met één muis-klik. Vul de eventuele ontbrekende koppelingen aan. Gebruik hiervoor menukeuze %s.
 AccountancyAreaDescWriteRecords=STAP %s: Wegschrijven transacties in boekhouding. Gebruik hiervoor menukeuze <strong>%s</strong> en klik op <strong>%s</strong>.
-AccountancyAreaDescAnalyze=STAP %s: Maak boekingen aan of wijzigingen toe en maak rapporten of exportbestanden aan.
-
-AccountancyAreaDescClosePeriod=STAP %s: Sluit periode af zodat er geen wijzigingen meer kunnen worden aangebracht.
+AccountancyAreaDescAnalyze=STAP %s: Lees rapportages of genereer exportbestanden voor andere boekhouders.
+AccountancyAreaDescClosePeriod=STAP %s: Sluit de periode zodat we in de toekomst in dezelfde periode geen gegevens meer kunnen overdragen.
 
 TheFiscalPeriodIsNotDefined=Een verplichte stap in het instellen is niet voltooid (boekperiode is niet gedefinieerd)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Een verplichte stap in de installatie is niet voltooid (journaal met boekhoudcode niet gedefinieerd voor alle bankrekeningen)
 Selectchartofaccounts=Selecteer actief rekeningschema
+CurrentChartOfAccount=Huidig actief rekeningschema
 ChangeAndLoad=Wijzigen en inlezen
 Addanaccount=Nieuwe grootboekrekening
 AccountAccounting=Grootboekrekening
@@ -335,7 +335,6 @@ CategoryDeleted=Categorie van deze grootboekrekening is verwijderd
 AccountingJournals=Dagboeken
 AccountingJournal=Dagboek
 NewAccountingJournal=Nieuw dagboek
-ShowAccountingJournal=Toon dagboek
 NatureOfJournal=Journaaltype
 AccountingJournalType1=Overige bewerkingen
 AccountingJournalType2=Verkopen
@@ -343,7 +342,7 @@ AccountingJournalType3=Aankopen
 AccountingJournalType4=Bank
 AccountingJournalType5=Declaraties
 AccountingJournalType8=Voorraad
-AccountingJournalType9=Retained earnings
+AccountingJournalType9=Ingehouden inkomsten
 GenerationOfAccountingEntries=Genereren van boekhoudkundige boekingen
 ErrorAccountingJournalIsAlreadyUse=Dit dagboek is al in gebruik
 AccountingAccountForSalesTaxAreDefinedInto=Opmerking: Grootboekrekeningen voor BTW worden vastgelegd in menukeuze <b>%s</b>-<b>%s</b>
@@ -434,10 +433,10 @@ Formula=Formule
 
 ## Reconcile
 LetteringAuto=Automatisch afstemmen
-LetteringManual=Handboek afstemmen
+LetteringManual=Handmatig afletteren
 Unlettering=niet afstemmen
 UnletteringAuto=Auto niet afstemmen
-UnletteringManual=niet-afstemmen handleiding
+UnletteringManual=handmatig afletteren verwijderen
 AccountancyNoLetteringModified=Geen afstemming gewijzigd
 AccountancyOneLetteringModifiedSuccessfully=Eén afstemming succesvol gewijzigd
 AccountancyLetteringModifiedSuccessfully=%s afstemming succesvol gewijzigd
@@ -446,16 +445,16 @@ AccountancyOneUnletteringModifiedSuccessfully=Eén onafstemming succesvol gewijz
 AccountancyUnletteringModifiedSuccessfully=%s afstemmen succesvol gewijzigd
 
 ## Closure
-AccountancyClosureStep1=Stap 1: Valideer en vergrendel bewegingen
+AccountancyClosureStep1=Stap 1: Valideer en vergrendel de bewegingen
 AccountancyClosureStep2=Stap 2: Sluit de fiscale periode af
 AccountancyClosureStep3=Stap 3: Gegevens extraheren (optioneel)
 AccountancyClosureClose=Sluit de fiscale periode af
-AccountancyClosureAccountingReversal=Extract and record "Retained earnings" entries
+AccountancyClosureAccountingReversal=Extraheer de vermeldingen 'Ingehouden winsten' en registreer deze
 AccountancyClosureStep3NewFiscalPeriod=Volgende fiscale periode
-AccountancyClosureGenerateClosureBookkeepingRecords=Generate "Retained earnings" entries on the next fiscal period
-AccountancyClosureSeparateAuxiliaryAccounts=When generating the "Retained earnings" entries, detail the sub-ledger accounts
+AccountancyClosureGenerateClosureBookkeepingRecords=Genereer posten voor "Ingehouden winsten" voor de volgende boekperiode
+AccountancyClosureSeparateAuxiliaryAccounts=Geef bij het genereren van de posten 'Ingehouden winsten' een gedetailleerd overzicht van de subgrootboekrekeningen
 AccountancyClosureCloseSuccessfully=De begrotingsperiode is met succes afgesloten
-AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping entries for "Retained earnings" has been inserted successfully
+AccountancyClosureInsertAccountingReversalSuccessfully=Boekhoudgegevens voor 'Ingehouden winsten' zijn met succes ingevoegd
 
 ## Confirm box
 ConfirmMassUnletteringAuto=Bulk automatische afstemming ongedaan maken bevestiging
@@ -464,7 +463,7 @@ ConfirmMassUnletteringQuestion=Weet u zeker dat u de %s geselecteerde record(s) 
 ConfirmMassDeleteBookkeepingWriting=Bevestiging bulk verwijdering
 ConfirmMassDeleteBookkeepingWritingQuestion=Hiermee wordt de transactie uit de boekhouding verwijderd (alle regelitems die betrekking hebben op dezelfde transactie worden verwijderd). Weet u zeker dat u de %s geselecteerde vermeldingen wilt verwijderen?
 AccountancyClosureConfirmClose=Weet u zeker dat u de huidige fiscale periode wilt afsluiten? <span class="warning">U begrijpt dat het sluiten van de fiscale periode een onomkeerbare actie is en dat u elke wijziging of verwijdering van invoer gedurende deze periode permanent zult blokkeren</span> .
-AccountancyClosureConfirmAccountingReversal=Are you sure you want to record entries for the "Retained earnings" ?
+AccountancyClosureConfirmAccountingReversal=Weet u zeker dat u boekingen voor de "Ingehouden winsten" wilt vastleggen?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Sommige verplichte stappen zijn nog niet volledig uitgevoerd. Maak deze alsnog.

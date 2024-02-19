@@ -57,8 +57,8 @@ require_once dirname(__FILE__).'/../../htdocs/core/modules/propale/modules_propa
 require_once dirname(__FILE__).'/../../htdocs/core/modules/project/modules_project.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/fichinter/modules_fichinter.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/modules_expedition.php';
-
 require_once dirname(__FILE__).'/../../htdocs/core/modules/modExpenseReport.class.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 
 if (empty($user->id)) {
@@ -76,36 +76,8 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class BuildDocTest extends PHPUnit\Framework\TestCase
+class BuildDocTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 * @return BuildDocTest
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
 	/**
 	 * setUpBeforeClass
 	 *
@@ -151,43 +123,6 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 		print __METHOD__."\n";
 	}
 
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-	}
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
-	}
 
 	/**
 	 * testFactureBuild

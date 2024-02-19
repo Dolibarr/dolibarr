@@ -14,6 +14,7 @@
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2022       Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +83,7 @@ if (empty($origin_id)) {
 	$origin_id  = GETPOST('object_id', 'int'); // Id of order or propal
 }
 $ref = GETPOST('ref', 'alpha');
-$line_id = GETPOST('lineid', 'int') ? GETPOST('lineid', 'int') : '';
+$line_id = GETPOSTINT('lineid');
 $facid = GETPOST('facid', 'int');
 
 $action		= GETPOST('action', 'alpha');
@@ -124,8 +125,8 @@ if ($user->socid) {
 
 $result = restrictedArea($user, 'expedition', $object->id, '');
 
-$permissiondellink = $user->rights->expedition->delivery->creer; // Used by the include of actions_dellink.inc.php
-$permissiontoadd = $user->rights->expedition->creer;
+$permissiondellink = $user->hasRight('expedition', 'delivery', 'creer'); // Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->hasRight('expedition', 'creer');
 
 
 /*
@@ -537,7 +538,7 @@ if (empty($reshook)) {
 		|| $action == 'settrueDepth'
 		|| $action == 'setshipping_method_id')
 		&& $user->hasRight('expedition', 'creer')
-		) {
+	) {
 		// Action update
 		$error = 0;
 
@@ -757,8 +758,8 @@ if (empty($reshook)) {
 							$stockLocation = 0;
 							$qty = "qtyl".$line_id;
 							$line->id = $line_id;
-							$line->entrepot_id = GETPOST($stockLocation, 'int');
-							$line->qty = GETPOST($qty, 'int');
+							$line->entrepot_id = GETPOSTINT($stockLocation);
+							$line->qty = GETPOSTFLOAT($qty);
 							if ($line->update($user) < 0) {
 								setEventMessages($line->error, $line->errors, 'errors');
 								$error++;
@@ -770,8 +771,8 @@ if (empty($reshook)) {
 							$stockLocation = "entl".$line_id;
 							$qty = "qtyl".$line_id;
 							$line->id = $line_id;
-							$line->entrepot_id = GETPOST($stockLocation, 'int');
-							$line->qty = GETPOST($qty, 'int');
+							$line->entrepot_id = GETPOSTINT($stockLocation);
+							$line->qty = GETPOSTFLOAT($qty);
 							if ($line->update($user) < 0) {
 								setEventMessages($line->error, $line->errors, 'errors');
 								$error++;
@@ -784,11 +785,11 @@ if (empty($reshook)) {
 								if (!$error) {
 									$stockLocation = "entl".$detail_entrepot->line_id;
 									$qty = "qtyl".$detail_entrepot->line_id;
-									$warehouse = GETPOST($stockLocation, 'int');
+									$warehouse = GETPOSTINT($stockLocation);
 									if (!empty($warehouse)) {
 										$line->id = $detail_entrepot->line_id;
 										$line->entrepot_id = $warehouse;
-										$line->qty = GETPOST($qty, 'int');
+										$line->qty = GETPOSTFLOAT($qty);
 										if ($line->update($user) < 0) {
 											setEventMessages($line->error, $line->errors, 'errors');
 											$error++;
@@ -803,7 +804,7 @@ if (empty($reshook)) {
 						} elseif (!isModEnabled('stock') && empty($conf->productbatch->enabled)) { // both product batch and stock are not activated.
 							$qty = "qtyl".$line_id;
 							$line->id = $line_id;
-							$line->qty = GETPOST($qty, 'int');
+							$line->qty = GETPOSTFLOAT($qty);
 							$line->entrepot_id = 0;
 							if ($line->update($user) < 0) {
 								setEventMessages($line->error, $line->errors, 'errors');
@@ -817,7 +818,7 @@ if (empty($reshook)) {
 						// Product no predefined
 						$qty = "qtyl".$line_id;
 						$line->id = $line_id;
-						$line->qty = GETPOST($qty, 'int');
+						$line->qty = GETPOSTFLOAT($qty);
 						$line->entrepot_id = 0;
 						if ($line->update($user) < 0) {
 							setEventMessages($line->error, $line->errors, 'errors');
@@ -2462,7 +2463,7 @@ if ($action == 'create') {
 							print '</tr>';
 						} else {
 							print '<!-- case edit 5 -->';
-							print '<tr><td colspan="3">'.$langs->trans("NotEnoughStock").'</td></tr>';
+							print '<tr><td colspan="3">'.$langs->trans("ErrorStockIsNotEnough").'</td></tr>';
 						}
 					} else {
 						print '<!-- case edit 6 -->';
@@ -2696,7 +2697,7 @@ if ($action == 'create') {
 					if (!$object->billed && getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT') !== '0') {
 						print dolGetButtonAction('', $langs->trans('ClassifyBilled'), 'default', $_SERVER["PHP_SELF"].'?action=classifybilled&token='.newToken().'&id='.$object->id, '');
 					}
-					print dolGetButtonAction('', $langs->trans("Close"), 'default', $_SERVER["PHP_SELF"].'?action=close&token='.newToken().'&id='.$object->id, '');
+					print dolGetButtonAction('', $langs->trans("Close"), 'default', $_SERVER["PHP_SELF"].'?action=classifyclosed&token='.newToken().'&id='.$object->id, '');
 				}
 			}
 
@@ -2729,8 +2730,8 @@ if ($action == 'create') {
 
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
-		$genallowed = $user->rights->expedition->lire;
-		$delallowed = $user->rights->expedition->creer;
+		$genallowed = $user->hasRight('expedition', 'lire');
+		$delallowed = $user->hasRight('expedition', 'creer');
 
 		print $formfile->showdocuments('expedition', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 

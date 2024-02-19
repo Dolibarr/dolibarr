@@ -59,8 +59,8 @@ $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
-$id = GETPOST('id', 'int');
-$socid = GETPOST('socid', 'int');
+$id = GETPOSTINT('id');
+$socid = GETPOSTINT('socid');
 
 // Initialize technical object
 $object = new Contact($db);
@@ -102,7 +102,7 @@ $permissiontoadd = $user->hasRight('societe', 'contact', 'creer');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-if ($object->priv && $object->user_creation->id != $user->id) {
+if ($object->priv && $object->user_creation_id != $user->id) {
 	accessforbidden();
 }
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
@@ -206,7 +206,7 @@ if (empty($reshook)) {
 		}
 
 		$object->entity = (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : $conf->entity);
-		$object->socid = GETPOST("socid", 'int');
+		$object->socid = $socid;
 		$object->lastname = (string) GETPOST("lastname", 'alpha');
 		$object->firstname = (string) GETPOST("firstname", 'alpha');
 		$object->civility_code = (string) GETPOST("civility_code", 'alpha');
@@ -225,12 +225,12 @@ if (empty($reshook)) {
 			}
 		}
 		$object->email = (string) GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
-		$object->no_email = GETPOST("no_email", "int");
+		$object->no_email = GETPOSTINT("no_email");
 		$object->phone_pro = (string) GETPOST("phone_pro", 'alpha');
 		$object->phone_perso = (string) GETPOST("phone_perso", 'alpha');
 		$object->phone_mobile = (string) GETPOST("phone_mobile", 'alpha');
 		$object->fax = (string) GETPOST("fax", 'alpha');
-		$object->priv = GETPOST("priv", 'int');
+		$object->priv = GETPOSTINT("priv");
 		$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 		$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 		$object->roles = GETPOST("roles", 'array');
@@ -239,7 +239,7 @@ if (empty($reshook)) {
 
 		// Note: Correct date should be completed with location to have exact GM time of birth.
 		$object->birthday = dol_mktime(0, 0, 0, GETPOST("birthdaymonth", 'int'), GETPOST("birthdayday", 'int'), GETPOST("birthdayyear", 'int'));
-		$object->birthday_alert = GETPOST("birthday_alert", 'alpha');
+		$object->birthday_alert = GETPOSTINT("birthday_alert");
 
 		//Default language
 		$object->default_lang = GETPOST('default_lang');
@@ -404,7 +404,7 @@ if (empty($reshook)) {
 
 			$object->oldcopy = clone $object;
 
-			$object->socid = GETPOST("socid", 'int');
+			$object->socid = $socid;
 			$object->lastname = (string) GETPOST("lastname", 'alpha');
 			$object->firstname = (string) GETPOST("firstname", 'alpha');
 			$object->civility_code = (string) GETPOST("civility_code", 'alpha');
@@ -586,7 +586,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$object = new Contact($db);
 		$result = $object->fetch($id);
 		if ($result <= 0) {
-			dol_print_error('', $object->error);
+			dol_print_error(null, $object->error);
 		}
 	}
 	$objcanvas->assign_values($action, $object->id, $object->ref); // Set value for templates
@@ -624,7 +624,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	if ($user->hasRight('societe', 'contact', 'creer')) {
 		if ($action == 'create') {
 			/*
-			 * Fiche en mode creation
+			 * Card in create mode
 			 */
 			$object->canvas = $canvas;
 
@@ -847,6 +847,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr>';
 				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
 				print '<td>';
+				// Default value is in MAILING_CONTACT_DEFAULT_BULK_STATUS that you can modify in setup of module emailing
 				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS')), 1, false, (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2));
 				print '</td>';
 				print '</tr>';
@@ -929,7 +930,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print "</form>";
 		} elseif ($action == 'edit' && !empty($id)) {
 			/*
-			 * Fiche en mode edition
+			 * Card in edit mode
 			 */
 
 			// We set country_id, and country_code label of the chosen country

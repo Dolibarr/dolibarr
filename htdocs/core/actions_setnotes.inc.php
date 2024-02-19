@@ -30,7 +30,7 @@
 // Set public note
 if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel', 'alpha')) {
 	if (empty($action) || !is_object($object) || empty($id)) {
-		dol_print_error('', 'Include of actions_setnotes.inc.php was done but required variable was not set before');
+		dol_print_error(null, 'Include of actions_setnotes.inc.php was done but required variable was not set before');
 	}
 	if (empty($object->id)) {
 		$object->fetch($id); // Fetch may not be already done
@@ -49,6 +49,9 @@ if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel',
 				$newlang = GETPOST('lang_id', 'aZ09');
 			}
 			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+				if (!is_object($object->thirdparty)) {
+					$object->fetch_thirdparty();
+				}
 				$newlang = $object->thirdparty->default_lang;
 			}
 			if (!empty($newlang)) {
@@ -76,7 +79,7 @@ if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel',
 	if (empty($user->socid)) {
 		// Private notes (always hidden to external users)
 		if (empty($action) || !is_object($object) || empty($id)) {
-			dol_print_error('', 'Include of actions_setnotes.inc.php was done but required variable was not set before');
+			dol_print_error(null, 'Include of actions_setnotes.inc.php was done but required variable was not set before');
 		}
 		if (empty($object->id)) {
 			$object->fetch($id); // Fetch may not be already done

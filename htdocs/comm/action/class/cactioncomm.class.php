@@ -346,7 +346,7 @@ class CActionComm
 	 *  Return name of action type as a label translated
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Picto only
-	 *  @return string			      	Label of action type
+	 *  @return string|-1		      	Label of action type, or -1 if error
 	 */
 	public function getNomUrl($withpicto = 0)
 	{

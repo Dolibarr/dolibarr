@@ -934,7 +934,7 @@ class pdf_espadon extends ModelePdfExpedition
 	 *  @param  Expedition	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	int							Return integer <0 if KO, > if OK
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -1187,6 +1187,7 @@ class pdf_espadon extends ModelePdfExpedition
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
 		return $top_shift;
 	}
 

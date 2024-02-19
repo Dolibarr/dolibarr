@@ -166,7 +166,7 @@ class ModeleImports
 	/**
 	 * getDriverId
 	 *
-	 * @return int		Id
+	 * @return string		Code of driver
 	 */
 	public function getDriverId()
 	{

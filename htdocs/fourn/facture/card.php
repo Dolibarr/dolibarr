@@ -309,7 +309,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate) {
 		// Remove a product line
-		$result = $object->deleteline($lineid);
+		$result = $object->deleteLine($lineid);
 		if ($result > 0) {
 			// reorder lines
 			$object->line_order(true);
@@ -760,7 +760,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'add' && $usercancreate) {
 		// Insert new invoice in database
 		if ($socid > 0) {
-			$object->socid = GETPOST('socid', 'int');
+			$object->socid = GETPOSTINT('socid');
 		}
 		$selectedLines = GETPOST('toselect', 'array');
 
@@ -1791,7 +1791,7 @@ if (empty($reshook)) {
 				$pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU'); // $pu_ht must be rounded according to settings
 			}
 			$price_base_type = 'HT';
-			$pu_devise = price2num($price_devise, 'CU');
+			$pu_devise = price2num($price_ht_devise, 'CU');
 
 			$result = $object->addline($product_desc, $pu_ht, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit, 0, $pu_devise, $ref_supplier);
 		}

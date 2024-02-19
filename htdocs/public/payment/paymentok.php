@@ -317,7 +317,7 @@ if (isModEnabled('paypal')) {
 				$ErrorShortMsg = "Session expired";
 
 				dol_syslog($ErrorLongMsg, LOG_WARNING, 0, '_payment');
-				dol_print_error('', 'Session expired');
+				dol_print_error(null, 'Session expired');
 			}
 		} else {
 			$ErrorCode = "PAYPALTOKENNOTDEFINED";
@@ -325,7 +325,7 @@ if (isModEnabled('paypal')) {
 			$ErrorShortMsg = "Parameter PAYPALTOKEN not defined";
 
 			dol_syslog($ErrorLongMsg, LOG_WARNING, 0, '_payment');
-			dol_print_error('', 'PAYPALTOKEN not defined');
+			dol_print_error(null, 'PAYPALTOKEN not defined');
 		}
 	}
 }
@@ -436,13 +436,13 @@ if ($ispaymentok) {
 		if ($result1 > 0 && $result2 > 0) {
 			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
-				$paymentTypeId = getDolGlobalString('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'paypal') {
-				$paymentTypeId = getDolGlobalString('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'stripe') {
-				$paymentTypeId = getDolGlobalString('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if (empty($paymentTypeId)) {
 				dol_syslog("paymentType = ".$paymentType, LOG_DEBUG, 0, '_payment');
@@ -629,7 +629,7 @@ if ($ispaymentok) {
 
 					$result = $object->subscriptionComplementaryActions($crowid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom, $emetteur_banque, $autocreatethirdparty, $TRANSACTIONID, $service);
 					if ($result < 0) {
-						dol_syslog("Error ".$object->error." ".join(',', $object->errors), LOG_DEBUG, 0, '_payment');
+						dol_syslog("Error ".$object->error." ".implode(',', $object->errors), LOG_DEBUG, 0, '_payment');
 
 						$error++;
 						$postactionmessages[] = $object->error;
@@ -843,13 +843,13 @@ if ($ispaymentok) {
 
 			$paymentTypeId = 0;
 			if ($paymentmethod === 'paybox') {
-				$paymentTypeId = getDolGlobalString('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod === 'paypal') {
-				$paymentTypeId = getDolGlobalString('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod === 'stripe') {
-				$paymentTypeId = getDolGlobalString('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if (empty($paymentTypeId)) {
 				dol_syslog("paymentType = ".$paymentType, LOG_DEBUG, 0, '_payment');
@@ -896,7 +896,7 @@ if ($ispaymentok) {
 				if (!$error) {
 					$paiement_id = $paiement->create($user, 1); // This include closing invoices and regenerating documents
 					if ($paiement_id < 0) {
-						$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
+						$postactionmessages[] = $paiement->error.' '.implode("<br>\n", $paiement->errors);
 						$ispostactionok = -1;
 						$error++;
 					} else {
@@ -933,7 +933,7 @@ if ($ispaymentok) {
 						}
 						$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
 						if ($result < 0) {
-							$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
+							$postactionmessages[] = $paiement->error.' '.implode("<br>\n", $paiement->errors);
 							$ispostactionok = -1;
 							$error++;
 						} else {
@@ -969,13 +969,13 @@ if ($ispaymentok) {
 
 			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
-				$paymentTypeId = getDolGlobalString('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'paypal') {
-				$paymentTypeId = getDolGlobalString('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'stripe') {
-				$paymentTypeId = getDolGlobalString('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if (empty($paymentTypeId)) {
 				dol_syslog("paymentType = ".$paymentType, LOG_DEBUG, 0, '_payment');
@@ -1024,7 +1024,7 @@ if ($ispaymentok) {
 						if (!$error) {
 							$paiement_id = $paiement->create($user, 1); // This include closing invoices and regenerating documents
 							if ($paiement_id < 0) {
-								$postactionmessages[] = $paiement->error . ' ' . join("<br>\n", $paiement->errors);
+								$postactionmessages[] = $paiement->error . ' ' . implode("<br>\n", $paiement->errors);
 								$ispostactionok = -1;
 								$error++;
 							} else {
@@ -1061,7 +1061,7 @@ if ($ispaymentok) {
 								}
 								$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
 								if ($result < 0) {
-									$postactionmessages[] = $paiement->error . ' ' . join("<br>\n", $paiement->errors);
+									$postactionmessages[] = $paiement->error . ' ' . implode("<br>\n", $paiement->errors);
 									$ispostactionok = -1;
 									$error++;
 								} else {
@@ -1103,13 +1103,13 @@ if ($ispaymentok) {
 		if ($result) {
 			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
-				$paymentTypeId = getDolGlobalString('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'paypal') {
-				$paymentTypeId = getDolGlobalString('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('global->PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'stripe') {
-				$paymentTypeId = getDolGlobalString('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if (empty($paymentTypeId)) {
 				dol_syslog("paymentType = ".$paymentType, LOG_DEBUG, 0, '_payment');
@@ -1157,7 +1157,7 @@ if ($ispaymentok) {
 				if (!$error) {
 					$paiement_id = $paiement->create($user, 1);
 					if ($paiement_id < 0) {
-						$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
+						$postactionmessages[] = $paiement->error.' '.implode("<br>\n", $paiement->errors);
 						$ispostactionok = -1;
 						$error++;
 					} else {
@@ -1195,7 +1195,7 @@ if ($ispaymentok) {
 						$label = '(DonationPayment)';
 						$result = $paiement->addPaymentToBank($user, 'payment_donation', $label, $bankaccountid, '', '');
 						if ($result < 0) {
-							$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
+							$postactionmessages[] = $paiement->error.' '.implode("<br>\n", $paiement->errors);
 							$ispostactionok = -1;
 							$error++;
 						} else {
@@ -1235,13 +1235,13 @@ if ($ispaymentok) {
 		if ($result) {
 			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
-				$paymentTypeId = getDolGlobalString('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'paypal') {
-				$paymentTypeId = getDolGlobalString('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'stripe') {
-				$paymentTypeId = getDolGlobalString('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if (empty($paymentTypeId)) {
 				dol_syslog("paymentType = ".$paymentType, LOG_DEBUG, 0, '_payment');
@@ -1291,7 +1291,7 @@ if ($ispaymentok) {
 					if (!$error) {
 						$paiement_id = $paiement->create($user, 1); // This include closing invoices and regenerating documents
 						if ($paiement_id < 0) {
-							$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
+							$postactionmessages[] = $paiement->error.' '.implode("<br>\n", $paiement->errors);
 							$ispostactionok = -1;
 							$error++;
 						} else {
@@ -1328,7 +1328,7 @@ if ($ispaymentok) {
 							}
 							$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
 							if ($result < 0) {
-								$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
+								$postactionmessages[] = $paiement->error.' '.implode("<br>\n", $paiement->errors);
 								$ispostactionok = -1;
 								$error++;
 							} else {
@@ -1465,13 +1465,13 @@ if ($ispaymentok) {
 
 			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
-				$paymentTypeId = getDolGlobalString('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'paypal') {
-				$paymentTypeId = getDolGlobalString('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'stripe') {
-				$paymentTypeId = getDolGlobalString('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if (empty($paymentTypeId)) {
 				dol_syslog("paymentType = ".$paymentType, LOG_DEBUG, 0, '_payment');
@@ -1521,7 +1521,7 @@ if ($ispaymentok) {
 					if (!$error) {
 						$paiement_id = $paiement->create($user, 1); // This include closing invoices and regenerating documents
 						if ($paiement_id < 0) {
-							$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
+							$postactionmessages[] = $paiement->error.' '.implode("<br>\n", $paiement->errors);
 							$ispostactionok = -1;
 							$error++;
 						} else {
@@ -1558,7 +1558,7 @@ if ($ispaymentok) {
 							}
 							$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
 							if ($result < 0) {
-								$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
+								$postactionmessages[] = $paiement->error.' '.implode("<br>\n", $paiement->errors);
 								$ispostactionok = -1;
 								$error++;
 							} else {
@@ -1674,13 +1674,13 @@ if ($ispaymentok) {
 
 			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
-				$paymentTypeId = getDolGlobalString('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'paypal') {
-				$paymentTypeId = getDolGlobalString('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'stripe') {
-				$paymentTypeId = getDolGlobalString('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if (empty($paymentTypeId)) {
 				dol_syslog("paymentType = ".$paymentType, LOG_DEBUG, 0, '_payment');
@@ -1732,7 +1732,7 @@ if ($ispaymentok) {
 						if (!$error) {
 							$paiement_id = $paiement->create($user, 1); // This include closing invoices and regenerating documents
 							if ($paiement_id < 0) {
-								$postactionmessages[] = $paiement->error . ' ' . join("<br>\n", $paiement->errors);
+								$postactionmessages[] = $paiement->error . ' ' . implode("<br>\n", $paiement->errors);
 								$ispostactionok = -1;
 								$error++;
 							} else {
@@ -1769,7 +1769,7 @@ if ($ispaymentok) {
 								}
 								$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
 								if ($result < 0) {
-									$postactionmessages[] = $paiement->error . ' ' . join("<br>\n", $paiement->errors);
+									$postactionmessages[] = $paiement->error . ' ' . implode("<br>\n", $paiement->errors);
 									$ispostactionok = -1;
 									$error++;
 								} else {

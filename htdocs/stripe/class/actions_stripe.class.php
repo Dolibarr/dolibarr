@@ -57,10 +57,10 @@ class ActionsStripeconnect extends CommonHookActions
 	/**
 	 * formObjectOptions
 	 *
-	 * @param	array	$parameters		Parameters
-	 * @param	Object	$object			Object
-	 * @param	string	$action			Action
-	 * @return bool
+	 * @param	array			$parameters		Parameters
+	 * @param	CommonObject	$object			Object
+	 * @param	string			$action			Action
+	 * @return int
 	 */
 	public function formObjectOptions($parameters, &$object, &$action)
 	{

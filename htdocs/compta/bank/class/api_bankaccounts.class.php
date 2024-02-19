@@ -67,8 +67,8 @@ class BankAccounts extends DolibarrApi
 	{
 		$list = array();
 
-		if (!DolibarrApiAccess::$user->rights->banque->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$sql = "SELECT t.rowid FROM ".MAIN_DB_PREFIX."bank_account AS t LEFT JOIN ".MAIN_DB_PREFIX."bank_account_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
@@ -129,8 +129,8 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$account = new Account($this->db);
@@ -150,8 +150,8 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->configurer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'configurer')) {
+			throw new RestException(403);
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -201,8 +201,8 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function transfer($bankaccount_from_id = 0, $bankaccount_to_id = 0, $date = null, $description = "", $amount = 0.0, $amount_to = 0.0)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->configurer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'configurer')) {
+			throw new RestException(403);
 		}
 
 		require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
@@ -325,8 +325,8 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->configurer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'configurer')) {
+			throw new RestException(403);
 		}
 
 		$account = new Account($this->db);
@@ -363,8 +363,8 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->configurer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'configurer')) {
+			throw new RestException(403);
 		}
 		$account = new Account($this->db);
 		$result = $account->fetch($id);
@@ -436,8 +436,8 @@ class BankAccounts extends DolibarrApi
 	{
 		$list = array();
 
-		if (!DolibarrApiAccess::$user->rights->banque->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$account = new Account($this->db);
@@ -499,8 +499,8 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function addLine($id, $date, $type, $label, $amount, $category = 0, $cheque_number = '', $cheque_writer = '', $cheque_bank = '', $accountancycode = '', $datev = null, $num_releve = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->modifier) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'modifier')) {
+			throw new RestException(403);
 		}
 
 		$account = new Account($this->db);
@@ -552,8 +552,8 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function addLink($id, $line_id, $url_id, $url, $label, $type)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->modifier) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'modifier')) {
+			throw new RestException(403);
 		}
 
 		$account = new Account($this->db);
@@ -595,8 +595,8 @@ class BankAccounts extends DolibarrApi
 	{
 		$list = array();
 
-		if (!DolibarrApiAccess::$user->rights->banque->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$account = new Account($this->db);

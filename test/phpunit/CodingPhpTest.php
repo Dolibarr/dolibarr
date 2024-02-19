@@ -30,6 +30,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
@@ -77,88 +78,8 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CodingPhpTest extends PHPUnit\Framework\TestCase
+class CodingPhpTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 * @return SecurityTest
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return  void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * End phpunit tests
-	 *
-	 * @return  void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
-	}
-
 	/**
 	 * testPHP
 	 *
@@ -212,8 +133,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					'translate.class.php',
 					'utils.class.php',
 					'TraceableDB.php',
-					'multicurrency.class.php',
-					'infobox.class.php'
+					'multicurrency.class.php'
 				))) {
 					// Must not find $db->
 					$ok=true;
@@ -227,6 +147,48 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
 					$this->assertTrue($ok, 'Found string $db-> into a .class.php file in '.$file['relativename'].'. Inside a .class file, you should use $this->db-> instead.');
 					//exit;
+				}
+
+				if (preg_match('/\.class\.php/', $file['relativename']) && ! in_array($file['relativename'], array(
+					'adherents/canvas/actions_adherentcard_common.class.php',
+					'contact/canvas/actions_contactcard_common.class.php',
+					'compta/facture/class/facture.class.php',
+					'core/class/commonobject.class.php',
+					'core/class/extrafields.class.php',
+					'core/class/html.form.class.php',
+					'core/class/html.formfile.class.php',
+					'core/class/html.formcategory.class.php',
+					'core/class/html.formmail.class.php',
+					'core/class/html.formother.class.php',
+					'core/class/html.formsms.class.php',
+					'core/class/html.formticket.class.php',
+					'core/class/utils.class.php',
+					'fourn/class/fournisseur.facture.class.php',
+					'societe/canvas/actions_card_common.class.php',
+					'societe/canvas/individual/actions_card_individual.class.php',
+					'ticket/class/actions_ticket.class.php',
+					'ticket/class/ticket.class.php',
+					'webportal/class/context.class.php',
+					'webportal/class/html.formcardwebportal.class.php',
+					'webportal/class/html.formlistwebportal.class.php',
+					'webportal/controllers/document.controller.class.php',
+					'workstation/class/workstation.class.php',
+				))) {
+					// Must not find GETPOST
+					$ok = true;
+					$matches = array();
+					// Check string GETPOSTFLOAT a class.php file (should not be found into classes)
+					preg_match_all('/GETPOST\(["\'](....)/', $filecontent, $matches, PREG_SET_ORDER);
+					foreach ($matches as $key => $val) {
+						if (in_array($val[1], array('lang', 'forc', 'mass', 'conf'))) {
+							continue;
+						}
+						//var_dump($val);
+						$ok = false;
+						break;
+					}
+					//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+					$this->assertTrue($ok, 'Found string GETPOST into a .class.php file in '.$file['relativename'].'.');
 				}
 			} else {
 				// Check into Include files

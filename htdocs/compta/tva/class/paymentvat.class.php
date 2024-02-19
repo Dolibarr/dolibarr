@@ -53,7 +53,7 @@ class PaymentVAT extends CommonObject
 	public $fk_tva;
 
 	public $datec = '';
-	public $tms = '';
+
 	public $datep = '';
 
 	/**
@@ -73,11 +73,13 @@ class PaymentVAT extends CommonObject
 	/**
 	 * @var string
 	 * @deprecated
+	 * @see $num_payment
 	 */
 	public $num_paiement;
 
 	/**
-	 * @var string
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
@@ -533,13 +535,12 @@ class PaymentVAT extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-
 		$this->fk_tva = 0;
 		$this->datec = '';
 		$this->tms = '';
 		$this->datep = '';
 		$this->amount = '';
-		$this->fk_typepaiement = '';
+		$this->fk_typepaiement = 0;
 		$this->num_payment = '';
 		$this->note_private = '';
 		$this->note_public = '';

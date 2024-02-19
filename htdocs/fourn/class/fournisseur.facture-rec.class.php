@@ -125,6 +125,9 @@ class FactureFournisseurRec extends CommonInvoice
 	public $cond_reglement_doc;
 	public $cond_reglement_id;
 
+	/**
+	 * @var int Deadline for payment
+	 */
 	public $date_lim_reglement;
 
 	public $usenewprice = 0;
@@ -533,6 +536,8 @@ class FactureFournisseurRec extends CommonInvoice
 		$sql .= " nb_gen_max = ". (!empty($this->nb_gen_max) ? ((int) $this->nb_gen_max) : 0) . ',';
 		$sql .= " auto_validate = ". (!empty($this->auto_validate) ? ((int) $this->auto_validate) : 0);
 		$sql .= " WHERE rowid = ". (int) $this->id;
+
+		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -991,7 +996,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ', fk_user_author';
 			$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 			$sql .= ') VALUES (';
-			$sql .= ' ' . (int) $facid;   // source supplier invoie id
+			$sql .= ' ' . (int) $facid;   // source supplier invoice id
 			$sql .= ', ' . (!empty($fk_product) ? "'" . $this->db->escape($fk_product) . "'" : 'null');
 			$sql .= ', ' . (!empty($ref) ? "'" . $this->db->escape($ref) . "'" : 'null');
 			$sql .= ', ' . (!empty($label) ? "'" . $this->db->escape($label) . "'" : 'null');
@@ -2197,7 +2202,7 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 		$sql .= ', special_code =' . (int) $this->special_code;
 		$sql .= ', rang = ' . (int) $this->rang;
 		$sql .= ', fk_unit = ' .($this->fk_unit ? "'".$this->db->escape($this->fk_unit)."'" : 'null');
-		$sql .= ', fk_user_modif = ' . (int) $user;
+		$sql .= ', fk_user_modif = ' . (int) $user->id;
 		$sql .= ' WHERE rowid = ' . (int) $this->id;
 
 		$this->db->begin();

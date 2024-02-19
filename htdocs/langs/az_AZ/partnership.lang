@@ -16,77 +16,83 @@
 #
 # Generic
 #
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+ModulePartnershipName=Tərəfdaşlığın idarə edilməsi
+PartnershipDescription=Modul Tərəfdaşlığın idarə edilməsi
+PartnershipDescriptionLong= Modul Tərəfdaşlığın idarə edilməsi
+Partnership=Tərəfdaşlıq
+Partnerships=Tərəfdaşlıqlar
+AddPartnership=Tərəfdaşlıq əlavə edin
+CancelPartnershipForExpiredMembers=Tərəfdaşlıq: Abunəlik müddəti bitmiş üzvlərin ortaqlığını ləğv edin
+PartnershipCheckBacklink=Tərəfdaşlıq: İstinad geri bağlantısını yoxlayın
 
 #
 # Menu
 #
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
+NewPartnership=Yeni Tərəfdaşlıq
+NewPartnershipbyWeb=Tərəfdaşlıq sorğunuz uğurla əlavə edildi. Tezliklə sizinlə əlaqə saxlaya bilərik...
+ListOfPartnerships=Tərəfdaşlığın siyahısı
 
 #
 # Admin page
 #
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+PartnershipSetup=Tərəfdaşlığın qurulması
+PartnershipAbout=Tərəfdaşlıq haqqında
+PartnershipAboutPage=Səhifə haqqında tərəfdaşlıq
+partnershipforthirdpartyormember=Tərəfdaş statusu "üçüncü tərəf" və ya "üzv" üçün təyin edilməlidir
+PARTNERSHIP_IS_MANAGED_FOR=Tərəfdaşlıq üçün idarə olunur
+PARTNERSHIP_BACKLINKS_TO_CHECK=Yoxlamaq üçün geri bağlantılar
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Abunəlik müddəti bitdikdə ortaqlıq statusunun ləğv edilməsinə qədərki günlər
+ReferingWebsiteCheck=Saytın istinadını yoxlayın
+ReferingWebsiteCheckDesc=Partnyorlarınızın öz vebsaytlarında vebsayt domenlərinizə geri keçid əlavə etdiyini yoxlamaq üçün funksiyanı aktivləşdirə bilərsiniz.
+PublicFormRegistrationPartnerDesc=Dolibarr xarici ziyarətçilərin tərəfdaşlıq proqramının bir hissəsi olmaq üçün müraciət etməsinə icazə vermək üçün sizə ictimai URL/veb-sayt təqdim edə bilər.
 
 #
 # Object
 #
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
-DatePartnershipStart=Start date
-DatePartnershipEnd=End date
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
+DeletePartnership=Tərəfdaşlığı silin
+PartnershipDedicatedToThisThirdParty=Bu üçüncü tərəfə həsr olunmuş tərəfdaşlıq
+PartnershipDedicatedToThisMember=Bu üzvə həsr olunmuş tərəfdaşlıq
+DatePartnershipStart=Başlama tarixi
+DatePartnershipEnd=Bitmə vaxtı
+ReasonDecline=Səbəbdən imtina
+ReasonDeclineOrCancel=Reason for refusal or cancellation
+PartnershipAlreadyExist=Tərəfdaşlıq artıq mövcuddur
+ManagePartnership=Tərəfdaşlığı idarə edin
+BacklinkNotFoundOnPartnerWebsite=Backlink partnyor saytında tapılmadı
+ConfirmClosePartnershipAsk=Bu tərəfdaşlığı ləğv etmək istədiyinizə əminsiniz?
+PartnershipType=Tərəfdaşlıq növü
+PartnershipRefApproved=%s tərəfdaşlığı təsdiq edildi
+KeywordToCheckInWebsite=Verilmiş açar sözün hər bir tərəfdaşın veb-saytında olmasını yoxlamaq istəyirsinizsə, bu açar sözü burada müəyyən edin
+PartnershipDraft=Qaralama
+PartnershipAccepted=Qəbul edildi
+PartnershipRefused=İmtina etdi
+PartnershipCanceled=Ləğv edildi
+PartnershipManagedFor=Tərəfdaşlar
 
 #
 # Template Mail
 #
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
+SendingEmailOnPartnershipWillSoonBeCanceled=Tərəfdaşlıq tezliklə ləğv ediləcək
+SendingEmailOnPartnershipRefused=Tərəfdaşlıqdan imtina etdi
+SendingEmailOnPartnershipAccepted=Tərəfdaşlıq qəbul edildi
+SendingEmailOnPartnershipCanceled=Tərəfdaşlıq ləğv edildi
 
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
+YourPartnershipWillSoonBeCanceledTopic=Tərəfdaşlıq tezliklə ləğv ediləcək
+YourPartnershipRefusedTopic=Tərəfdaşlıqdan imtina etdi
+YourPartnershipAcceptedTopic=Tərəfdaşlıq qəbul edildi
+YourPartnershipCanceledTopic=Tərəfdaşlıq ləğv edildi
 
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
+YourPartnershipWillSoonBeCanceledContent=Sizə bildirmək istərdik ki, tərəfdaşlığımız tezliklə ləğv ediləcək (yenilənməmişik və ya tərəfdaşlığımız üçün ilkin şərt yerinə yetirilməmişdir). Əgər bunu xəta səbəbindən almısınızsa, bizimlə əlaqə saxlayın.
+YourPartnershipRefusedContent=Sizə bildirmək istərdik ki, tərəfdaşlıq sorğunuz rədd edilib. İlkin şərtlər yerinə yetirilməyib. Əlavə məlumat lazımdırsa, zəhmət olmasa bizimlə əlaqə saxlayın.
+YourPartnershipAcceptedContent=Sizə bildirmək istərdik ki, tərəfdaşlıq sorğunuz qəbul edilib.
+YourPartnershipCanceledContent=Sizə bildirmək istərdik ki, tərəfdaşlığımız ləğv edilib. Əlavə məlumat lazımdırsa, zəhmət olmasa bizimlə əlaqə saxlayın.
 
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
+CountLastUrlCheckError=Son URL yoxlaması üçün xətaların sayı
+LastCheckBacklink=Son URL yoxlamasının tarixi
 
-#
-# Status
-#
-PartnershipDraft=Draft
-PartnershipAccepted=Accepted
-PartnershipRefused=Refused
-PartnershipCanceled=Canceled
-PartnershipManagedFor=Partners are
+NewPartnershipRequest=Yeni tərəfdaşlıq tələbi
+NewPartnershipRequestDesc=Bu forma sizə tərəfdaşlıq proqramımızın bir hissəsi olmaq üçün müraciət etməyə imkan verir. Bu formanı doldurmaq üçün köməyə ehtiyacınız varsa, lütfən, e-poçt vasitəsilə əlaqə saxlayın <b>%s<span class='notranslate'></b> span>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Bu səhifədə aşağıdakı domenlərdən birinə ən azı bir keçid olmalıdır: %s
+
+IPOfApplicant=Ərizəçinin IP
+

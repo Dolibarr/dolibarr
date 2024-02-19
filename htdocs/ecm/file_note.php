@@ -69,12 +69,12 @@ if (!$sortfield) {
 
 $section = GETPOST("section", 'alpha');
 if (!$section) {
-	dol_print_error('', 'Error, section parameter missing');
+	dol_print_error(null, 'Error, section parameter missing');
 	exit;
 }
 $urlfile = (string) dol_sanitizePathName(GETPOST("urlfile"));
 if (!$urlfile) {
-	dol_print_error('', "ErrorParamNotDefined");
+	dol_print_error(null, "ErrorParamNotDefined");
 	exit;
 }
 
@@ -106,9 +106,9 @@ if ($result < 0) {
 	exit;
 }
 
-$permissionnote = $user->rights->ecm->setup; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('ecm', 'setup'); // Used by the include of actions_setnotes.inc.php
 
-$permissiontoread = $user->rights->ecm->read;
+$permissiontoread = $user->hasRight('ecm', 'read');
 
 if (!$permissiontoread) {
 	accessforbidden();

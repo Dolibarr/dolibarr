@@ -6,6 +6,7 @@
  * Copyright (C) 2015       Ferran Marcet               <fmarcet@2byte.es>
  * Copyright (C) 2015-2016  Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,11 +72,13 @@ function jsUnEscape($source)
 
 
 /**
- * Return list of modules directories. We detect directories that contains a subdirectory /core/modules
- * We discard directory modules that contains 'disabled' into their name.
+ * Return list of directories that contain modules.
  *
- * @param	string	$subdir		Sub directory (Example: '/mailings')
- * @return	array				Array of directories that can contains module descriptors
+ * Detects directories that contain a subdirectory /core/modules.
+ * Modules that contains 'disabled' in their name are excluded.
+ *
+ * @param	string					$subdir	Sub directory (Example: '/mailings' will look for /core/modules/mailings/)
+ * @return	array<string,string>			Array of directories that can contain module descriptors ($key==value)
  */
 function dolGetModulesDirs($subdir = '')
 {
@@ -97,7 +100,7 @@ function dolGetModulesDirs($subdir = '')
 					continue; // We discard module if it contains disabled into name.
 				}
 
-				if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS' && $file != 'includes') {
+				if (substr($file, 0, 1) != '.' && is_dir($dirroot.'/'.$file) && strtoupper(substr($file, 0, 3)) != 'CVS' && $file != 'includes') {
 					if (is_dir($dirroot.'/'.$file.'/core/modules'.$subdir.'/')) {
 						$modulesdir[$dirroot.'/'.$file.'/core/modules'.$subdir.'/'] = $dirroot.'/'.$file.'/core/modules'.$subdir.'/';
 					}
@@ -192,7 +195,7 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		if (is_object($object->user_creation)) {
+		if (! empty($object->user_creation) && is_object($object->user_creation)) {	// deprecated mode
 			if ($object->user_creation->id) {
 				print $object->user_creation->getNomUrl(-1, '', 0, 0, 0);
 			} else {
@@ -1985,17 +1988,20 @@ function is_ip($ip)
  */
 function dol_buildlogin($lastname, $firstname)
 {
-	global $conf;
-
 	//$conf->global->MAIN_BUILD_LOGIN_RULE = 'f.lastname';
+	$charforseparator = getDolGlobalString("MAIN_USER_SEPARATOR_CHAR_FOR_GENERATED_LOGIN", '.');
+	if ($charforseparator == 'none') {
+		$charforseparator = '';
+	}
+
 	if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {	// f.lastname
 		$login = strtolower(dol_string_unaccent(dol_trunc($firstname, 1, 'right', 'UTF-8', 1)));
-		$login .= ($login ? '.' : '');
+		$login .= ($login ? $charforseparator : '');
 		$login .= strtolower(dol_string_unaccent($lastname));
 		$login = dol_string_nospecial($login, ''); // For special names
 	} else {	// firstname.lastname
 		$login = strtolower(dol_string_unaccent($firstname));
-		$login .= ($login ? '.' : '');
+		$login .= ($login ? $charforseparator : '');
 		$login .= strtolower(dol_string_unaccent($lastname));
 		$login = dol_string_nospecial($login, ''); // For special names
 	}
@@ -2024,24 +2030,24 @@ function getSoapParams()
 	$response_timeout = (!getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT') ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT); // Response timeout
 	//print extension_loaded('soap');
 	if ($proxyuse) {
-		$params = array('connection_timeout'=>$timeout,
-			'response_timeout'=>$response_timeout,
-			'proxy_use'      => 1,
-			'proxy_host'     => $proxyhost,
-			'proxy_port'     => $proxyport,
-			'proxy_login'    => $proxyuser,
-			'proxy_password' => $proxypass,
-			'trace'		   => 1
+		$params = array('connection_timeout' => $timeout,
+					  'response_timeout' => $response_timeout,
+					  'proxy_use'      => 1,
+					  'proxy_host'     => $proxyhost,
+					  'proxy_port'     => $proxyport,
+					  'proxy_login'    => $proxyuser,
+					  'proxy_password' => $proxypass,
+					  'trace'		   => 1
 		);
 	} else {
-		$params = array('connection_timeout'=>$timeout,
-			'response_timeout'=>$response_timeout,
-			'proxy_use'      => 0,
-			'proxy_host'     => false,
-			'proxy_port'     => false,
-			'proxy_login'    => false,
-			'proxy_password' => false,
-			'trace'		   => 1
+		$params = array('connection_timeout' => $timeout,
+					  'response_timeout' => $response_timeout,
+					  'proxy_use'      => 0,
+					  'proxy_host'     => false,
+					  'proxy_port'     => false,
+					  'proxy_login'    => false,
+					  'proxy_password' => false,
+					  'trace'		   => 1
 		);
 	}
 	return $params;
@@ -2283,14 +2289,14 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
 		$sql .= " SET ".$fieldfkparent." = 0";
-		$sql .= " WHERE rowid IN (".$db->sanitize(join(',', $listofidtoclean)).")"; // So we update only records detected wrong
+		$sql .= " WHERE rowid IN (".$db->sanitize(implode(',', $listofidtoclean)).")"; // So we update only records detected wrong
 		$resql = $db->query($sql);
 		if ($resql) {
 			$nb = $db->affected_rows($sql);
 			if ($nb > 0) {
 				// Removed orphelins records
 				print '<br>Some records were detected to have parent that is a child, we set them as root record for id: ';
-				print join(',', $listofidtoclean);
+				print implode(',', $listofidtoclean);
 			}
 
 			$totalnb += $nb;
@@ -2300,14 +2306,14 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		// Check and clean orphelins
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
 		$sql .= " SET ".$fieldfkparent." = 0";
-		$sql .= " WHERE ".$fieldfkparent." NOT IN (".$db->sanitize(join(',', $listofid), 1).")"; // So we update only records linked to a non existing parent
+		$sql .= " WHERE ".$fieldfkparent." NOT IN (".$db->sanitize(implode(',', $listofid), 1).")"; // So we update only records linked to a non existing parent
 		$resql = $db->query($sql);
 		if ($resql) {
 			$nb = $db->affected_rows($sql);
 			if ($nb > 0) {
 				// Removed orphelins records
 				print '<br>Some orphelins were found and modified to be parent so records are visible again for id: ';
-				print join(',', $listofid);
+				print implode(',', $listofid);
 			}
 
 			$totalnb += $nb;
@@ -2526,6 +2532,62 @@ function colorHexToRgb($hex, $alpha = false, $returnArray = false)
 	}
 }
 
+/**
+ * Color Hex to Hsl (used for style)
+ *
+ * @param	string 			$hex 			Color in hex
+ * @param	float|false 	$alpha 			0 to 1 to add alpha channel
+ * @param	bool 			$returnArray	true=return an array instead, false=return string
+ * @return	string|array					String or array
+ */
+function colorHexToHsl($hex, $alpha = false, $returnArray = false)
+{
+	$hex = str_replace('#', '', $hex);
+	$red = hexdec(substr($hex, 0, 2)) / 255;
+	$green = hexdec(substr($hex, 2, 2)) / 255;
+	$blue = hexdec(substr($hex, 4, 2)) / 255;
+
+	$cmin = min($red, $green, $blue);
+	$cmax = max($red, $green, $blue);
+	$delta = $cmax - $cmin;
+
+	if ($delta == 0) {
+		$hue = 0;
+	} elseif ($cmax === $red) {
+		$hue = (($green - $blue) / $delta);
+	} elseif ($cmax === $green) {
+		$hue = ($blue - $red) / $delta + 2;
+	} else {
+		$hue = ($red - $green) / $delta + 4;
+	}
+
+	$hue = round($hue * 60);
+	if ($hue < 0) {
+		$hue += 360;
+	}
+
+	$lightness = (($cmax + $cmin) / 2);
+	$saturation = $delta === 0 ? 0 : ($delta / (1 - abs(2 * $lightness - 1)));
+	if ($saturation < 0) {
+		$saturation += 1;
+	}
+
+	$lightness = round($lightness * 100);
+	$saturation = round($saturation * 100);
+
+	if ($returnArray) {
+		return array(
+			'h' => $hue,
+			'l' => $lightness,
+			's' => $saturation,
+			'a' => $alpha === false ? 1 : $alpha
+		);
+	} elseif ($alpha) {
+		return 'hsla('.$hue.', '.$saturation.', '.$lightness.' / '.$alpha.')';
+	} else {
+		return 'hsl('.$hue.', '.$saturation.', '.$lightness.')';
+	}
+}
 
 /**
  * Applies the Cartesian product algorithm to an array
@@ -2656,7 +2718,7 @@ if (!function_exists('dolEscapeXML')) {
 	 */
 	function dolEscapeXML($string)
 	{
-		return strtr($string, array('\''=>'&apos;', '"'=>'&quot;', '&'=>'&amp;', '<'=>'&lt;', '>'=>'&gt;'));
+		return strtr($string, array('\'' => '&apos;', '"' => '&quot;', '&' => '&amp;', '<' => '&lt;', '>' => '&gt;'));
 	}
 }
 

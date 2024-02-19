@@ -132,7 +132,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				$object->label = GETPOST('label');
-				$object->fk_bank = GETPOST('accountid');
+				$object->fk_bank = GETPOSTINT('accountid');
 				$object->capital = $capital;
 				$object->datestart = $datestart;
 				$object->dateend = $dateend;
@@ -140,7 +140,7 @@ if (empty($reshook)) {
 				$object->rate = $rate;
 				$object->note_private = GETPOST('note_private', 'restricthtml');
 				$object->note_public = GETPOST('note_public', 'restricthtml');
-				$object->fk_project = GETPOST('projectid', 'int');
+				$object->fk_project = GETPOSTINT('projectid');
 				$object->insurance_amount = GETPOST('insurance_amount', 'int');
 
 				$accountancy_account_capital = GETPOST('accountancy_account_capital');
@@ -291,11 +291,11 @@ if ($action == 'create') {
 
 	// Bank account
 	if (isModEnabled("banque")) {
-		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("BankAccount").'</td><td>';
 		$form->select_comptes(GETPOST("accountid"), "accountid", 0, "courant=1", 1); // Show list of bank account with courant
 		print '</td></tr>';
 	} else {
-		print '<tr><td>'.$langs->trans("Account").'</td><td>';
+		print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
 		print $langs->trans("NoBankAccountDefined");
 		print '</td></tr>';
 	}
@@ -774,7 +774,7 @@ if ($id > 0) {
 		}
 	} else {
 		// Loan not found
-		dol_print_error('', $object->error);
+		dol_print_error(null, $object->error);
 	}
 }
 

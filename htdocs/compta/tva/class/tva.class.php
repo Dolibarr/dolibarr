@@ -55,15 +55,19 @@ class Tva extends CommonObject
 	 */
 	public $total;
 
-	public $tms;
 	public $datep;
 	public $datev;
 	public $amount;
 	public $type_payment;
+
+	/**
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
+	 */
 	public $num_payment;
 
 	/**
-	 * @var DateTime
+	 * @var int     Creation date
 	 */
 	public $datec;
 
@@ -81,11 +85,6 @@ class Tva extends CommonObject
 	 * @var int
 	 */
 	public $rappro;
-
-	/**
-	 * @var integer|string totalpaid
-	 */
-	public $totalpaid;
 
 	/**
 	 * @var string label
@@ -426,9 +425,9 @@ class Tva extends CommonObject
 		$this->amount = '';
 		$this->label = '';
 		$this->note = '';
-		$this->fk_bank = '';
-		$this->fk_user_creat = '';
-		$this->fk_user_modif = '';
+		$this->fk_bank = 0;
+		$this->fk_user_creat = 0;
+		$this->fk_user_modif = 0;
 	}
 
 
@@ -589,7 +588,7 @@ class Tva extends CommonObject
 			return -4;
 		}
 		if (isModEnabled("banque") && (empty($this->accountid) || $this->accountid <= 0)) {
-			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("BankAccount"));
 			return -5;
 		}
 		if (isModEnabled("banque") && (empty($this->type_payment) || $this->type_payment <= 0)) {

@@ -235,7 +235,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 if (empty($reshook)) {
 	$objectclass = 'Account';
 	$objectlabel = 'BankTransaction';
-	$permissiontoread = !empty($user->rights->banque->lire);
+	$permissiontoread = $user->hasRight('banque', 'lire');
 	$permissiontodelete = $user->hasRight('banque', 'modifier');
 	$uploaddir = $conf->bank->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
@@ -787,7 +787,6 @@ if ($resql) {
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
-	//if ($user->rights->bank->supprimer) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	if (in_array($massaction, array('presend', 'predelete'))) {
 		$arrayofmassactions = array();
 	}
@@ -1301,7 +1300,7 @@ if ($resql) {
 		// If we are in a situation where we need/can show balance, we calculate the start of balance
 		if (!$balancecalculated && (!empty($arrayfields['balancebefore']['checked']) || !empty($arrayfields['balance']['checked'])) && ($mode_balance_ok || $search_conciliated === '0')) {
 			if (!$search_account) {
-				dol_print_error('', 'account is not defined but $mode_balance_ok is true');
+				dol_print_error(null, 'account is not defined but $mode_balance_ok is true');
 				exit;
 			}
 

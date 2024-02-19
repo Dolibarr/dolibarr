@@ -126,23 +126,22 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 	print '<td>'.$langs->trans("Parameters").'</td><td class="">'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
 
-	if (getDolGlobalString('TAKEPOS_PRINT_METHOD') != "browser") {		// Why this ?
-		print '<tr class="oddeven value"><td>';
-		print $langs->trans("OrderPrinters").' (<a href="'.DOL_URL_ROOT.'/takepos/admin/orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>)';
-		print '</td>';
-		print '<td class="">';
-		print ajax_constantonoff("TAKEPOS_ORDER_PRINTERS", array(), $conf->entity, 0, 0, 1, 0);
-		//print $form->selectyesno("TAKEPOS_ORDER_PRINTERS", $conf->global->TAKEPOS_ORDER_PRINTERS, 1);
-		print '</td></tr>';
+	print '<tr class="oddeven value"><td>';
+	print $langs->trans("OrderPrinters").' (<a href="'.DOL_URL_ROOT.'/takepos/admin/orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>)';
+	print '</td>';
+	print '<td class="">';
+	print ajax_constantonoff("TAKEPOS_ORDER_PRINTERS", array(), $conf->entity, 0, 0, 1, 0);
+	print '</td></tr>';
 
+	if (getDolGlobalString('TAKEPOS_ORDER_PRINTERS')) {
 		print '<tr class="oddeven value"><td>';
 		print $langs->trans("OrderNotes");
 		print '</td>';
 		print '<td class="">';
 		print ajax_constantonoff("TAKEPOS_ORDER_NOTES", array(), $conf->entity, 0, 0, 1, 0);
-		//print $form->selectyesno("TAKEPOS_ORDER_NOTES", $conf->global->TAKEPOS_ORDER_NOTES, 1);
 		print '</td></tr>';
-	} else {
+	}
+	/*else {
 		print '<tr class="oddeven value"><td>';
 		print $langs->trans("OrderPrinters");
 		print '</td>';
@@ -156,7 +155,7 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 		print '<td class="">';
 		print '<span class="opacitymedium">'.$langs->trans("NotAvailableWithBrowserPrinter").'</span>';
 		print '</td></tr>';
-	}
+	}*/
 
 	print '<tr class="oddeven value"><td>';
 	print $langs->trans("BasicPhoneLayout");

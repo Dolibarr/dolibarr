@@ -10,7 +10,7 @@
  * Copyright (C) 2018-2022 	Philippe Grand       	<philippe.grand@atoo-net.com>
  * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2023       Benjamin Grembi         <benjamin@oarces.fr>
- * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 $mesg = GETPOST('msg', 'alpha');
 $origin = GETPOST('origin', 'alpha');
-$originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
+$originid = (GETPOSTINT('originid') ? GETPOSTINT('originid') : GETPOSTINT('origin_id')); // For backward compatibility
 $note_public = GETPOST('note_public', 'restricthtml');
 $note_private = GETPOST('note_private', 'restricthtml');
 $lineid = GETPOST('line_id', 'int');
@@ -96,7 +96,7 @@ if ($id > 0 || !empty($ref)) {
 		$ret = $object->fetch_thirdparty();
 	}
 	if ($ret < 0) {
-		dol_print_error('', $object->error);
+		dol_print_error(null, $object->error);
 	}
 }
 
@@ -663,7 +663,7 @@ if (empty($reshook)) {
 			dol_print_error($db);
 			exit;
 		}
-		$result = $objectline->deleteline($user);
+		$result = $objectline->deleteLine($user);
 
 		if ($object->fetch($objectline->fk_fichinter) <= 0) {
 			dol_print_error($db);
@@ -744,7 +744,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->ficheinter->dir_output;
-	$permissiontoadd = $user->rights->ficheinter->creer;
+	$permissiontoadd = $user->hasRight('ficheinter', 'creer');
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'update_extras') {
@@ -1747,8 +1747,8 @@ if ($action == 'create') {
 		$filename = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->ficheinter->dir_output."/".$filename;
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-		$genallowed = $user->rights->ficheinter->lire;
-		$delallowed = $user->rights->ficheinter->creer;
+		$genallowed = $user->hasRight('ficheinter', 'lire');
+		$delallowed = $user->hasRight('ficheinter', 'creer');
 		print $formfile->showdocuments('ficheinter', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 		// Show links to link elements

@@ -148,7 +148,6 @@ class Asset extends CommonObject
 	public $note_public;
 	public $note_private;
 	public $date_creation;
-	public $tms;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $last_main_doc;
@@ -166,6 +165,7 @@ class Asset extends CommonObject
 	 * @var AssetDepreciationOptions	Used for computed fields of depreciation options class.
 	 */
 	public $asset_depreciation_options;
+	public $asset_accountancy_codes;
 	/**
 	 * @var array	List of depreciation lines for each mode (sort by depreciation date).
 	 */
@@ -459,7 +459,7 @@ class Asset extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -1561,7 +1561,7 @@ class Asset extends CommonObject
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 

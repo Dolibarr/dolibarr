@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modules_genpassw
 class modGeneratePassPerso extends ModeleGenPassword
 {
 	/**
-	 * @var int ID
+	 * @var string ID
 	 */
 	public $id;
 
@@ -42,7 +42,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 	/**
 	 * Minimum length (text visible by end user)
 	 *
-	 * @var string
+	 * @var int
 	 */
 	public $length;
 
@@ -102,12 +102,12 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$this->Ambi = array("1", "I", "l", "|", "O", "0");
 
 		$tabConf = explode(";", getDolGlobalString('USER_PASSWORD_PATTERN'));
-		$this->length2 = $tabConf[0];
+		$this->length2 = (int) $tabConf[0];
 		$this->NbMaj = $tabConf[1];
 		$this->NbNum = $tabConf[2];
 		$this->NbSpe = $tabConf[3];
 		$this->NbRepeat = $tabConf[4];
-		$this->WithoutAmbi = $tabConf[5];
+		$this->WithoutAmbi = (int) $tabConf[5];
 	}
 
 	/**
@@ -201,10 +201,10 @@ class modGeneratePassPerso extends ModeleGenPassword
 
 		$this->initAll();	// For the case this method is called alone
 
-		$password_a = preg_split('//u', $password, null, PREG_SPLIT_NO_EMPTY);
-		$maj = preg_split('//u', $this->Maj, null, PREG_SPLIT_NO_EMPTY);
-		$num = preg_split('//u', $this->Nb, null, PREG_SPLIT_NO_EMPTY);
-		$spe = preg_split('//u', $this->Spe, null, PREG_SPLIT_NO_EMPTY);
+		$password_a = preg_split('//u', $password, 0, PREG_SPLIT_NO_EMPTY);
+		$maj = preg_split('//u', $this->Maj, 0, PREG_SPLIT_NO_EMPTY);
+		$num = preg_split('//u', $this->Nb, 0, PREG_SPLIT_NO_EMPTY);
+		$spe = preg_split('//u', $this->Spe, 0, PREG_SPLIT_NO_EMPTY);
 		/*
 		$password_a = str_split($password);
 		$maj = str_split($this->Maj);
@@ -259,7 +259,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 			return true;
 		}
 
-		$char = preg_split('//u', $password, null, PREG_SPLIT_NO_EMPTY);
+		$char = preg_split('//u', $password, 0, PREG_SPLIT_NO_EMPTY);
 
 		$last = "";
 		$count = 0;

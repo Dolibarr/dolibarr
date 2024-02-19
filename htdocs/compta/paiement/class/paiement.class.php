@@ -57,11 +57,25 @@ class Paiement extends CommonObject
 	 */
 	public $picto = 'payment';
 
+	/**
+	 * @var int							Invoice ID
+	 */
 	public $facid;
+
+	/**
+	 * @var int							Company ID
+	 */
 	public $socid;
 
+	/**
+	 * @var int
+	 */
 	public $datepaye;
-	public $date;		// same than $datepaye
+
+	/**
+	 * @var int							same than $datepaye
+	 */
+	public $date;
 
 	/**
 	 * @deprecated
@@ -75,38 +89,73 @@ class Paiement extends CommonObject
 	 */
 	public $montant;
 
-	public $amount; // Total amount of payment (in the main currency)
-	public $multicurrency_amount; // Total amount of payment (in the currency of the bank account)
-	public $amounts = array(); // array: invoice ID => amount for that invoice (in the main currency)
-	public $multicurrency_amounts = array(); // array: invoice ID => amount for that invoice (in the invoice's currency)
-	public $multicurrency_tx = array(); // array: invoice ID => currency tx for that invoice
-	public $multicurrency_code = array(); // array: invoice ID => currency code for that invoice
-
-	public $pos_change = 0; // Excess received in TakePOS cash payment
-
-	public $author;
-	public $paiementid; 	// ID of mode of payment. Is saved into fields fk_paiement on llx_paiement = id of llx_c_paiement
-	public $paiementcode; 	// Code of mode of payment.
+	/**
+	 * @var float							Total amount of payment (in the main currency)
+	 */
+	public $amount;
 
 	/**
-	 * @var string Type of payment label
+	 * @var float							Total amount of payment (in the currency of the bank account)
+	 */
+	public $multicurrency_amount;
+
+	/**
+	 * @var array<int,float>				array: invoice ID => amount for that invoice (in the main currency)
+	 */
+	public $amounts = array();
+
+	/**
+	 * @var array<int,float>				array: invoice ID => amount for that invoice (in the invoice's currency)
+	 */
+	public $multicurrency_amounts = array();
+
+	/**
+	 * @var array<int,float>				Multicurrency rate (array: invoice ID => currency rate ("taux" in French) for that invoice)
+	 */
+	public $multicurrency_tx = array();
+
+	/**
+	 * @var array<int,string>				Multicurrency code (array: invoice ID => currency code for that invoice)
+	 */
+	public $multicurrency_code = array();
+
+	/**
+	 * @var float							Excess received in TakePOS cash payment
+	 */
+	public $pos_change = 0.0;
+
+	public $author;
+
+	/**
+	 * @var int								ID of mode of payment. Is saved into fields fk_paiement on llx_paiement = id of llx_c_paiement
+	 */
+	public $paiementid;
+
+	/**
+	 * @var string							Code of mode of payment.
+	 */
+	public $paiementcode;
+
+	/**
+	 * @var string							Type of payment label
 	 */
 	public $type_label;
 
 	/**
-	 * @var string Type of payment code (seems duplicate with $paiementcode);
+	 * @var string							Type of payment code (seems duplicate with $paiementcode);
 	 */
 	public $type_code;
 
 	/**
-	 * @var string Numero du CHQ, VIR, etc...
+	 * @var string
 	 * @deprecated
 	 * @see $num_payment
 	 */
 	public $num_paiement;
 
 	/**
-	 * @var string Numero du CHQ, VIR, etc...
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
@@ -277,7 +326,7 @@ class Paiement extends CommonObject
 			// Add controls of input validity
 			if ($value_converted === false) {
 				// We failed to find the conversion for one invoice
-				$this->error = 'FailedToFoundTheConversionRateForInvoice';
+				$this->error = $langs->trans('FailedToFoundTheConversionRateForInvoice');
 				return -1;
 			}
 			if (empty($currencyofpayment)) {
@@ -320,13 +369,13 @@ class Paiement extends CommonObject
 		}
 
 
-		$totalamount = price2num($totalamount);
-		$totalamount_converted = price2num($totalamount_converted);
+		$totalamount = (float) price2num($totalamount);
+		$totalamount_converted = (float) price2num($totalamount_converted);
 
 		// Check parameters
 		if (empty($totalamount) && empty($atleastonepaymentnotnull)) {	 // We accept negative amounts for withdraw reject but not empty arrays
 			$this->errors[] = 'TotalAmountEmpty';
-			$this->error = 'TotalAmountEmpty';
+			$this->error = $langs->trans('TotalAmountEmpty');
 			return -1;
 		}
 
@@ -342,9 +391,9 @@ class Paiement extends CommonObject
 
 		if ($way == 'dolibarr') {
 			$total = $totalamount;
-			$mtotal = $totalamount_converted; // Maybe use price2num with MT for the converted value
+			$mtotal = $totalamount_converted;
 		} else {
-			$total = $totalamount_converted; // Maybe use price2num with MT for the converted value
+			$total = $totalamount_converted;
 			$mtotal = $totalamount;
 		}
 
@@ -1156,7 +1205,7 @@ class Paiement extends CommonObject
 			}
 
 			if (!$mybool) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -1412,6 +1461,6 @@ class Paiement extends CommonObject
 	{
 		$accountline = new AccountLine($this->db);
 		$accountline->fetch($this->bank_line);
-		return $accountline->rappro;
+		return $accountline->rappro ? true : false;
 	}
 }

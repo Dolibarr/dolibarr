@@ -64,11 +64,6 @@ $langs->loadLangs(array("admin", "mymodule@mymodule"));
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('mymodulesetup', 'globalsetup'));
 
-// Access control
-if (!$user->admin) {
-	accessforbidden();
-}
-
 // Parameters
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -79,9 +74,14 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'myobject';
 
-
 $error = 0;
 $setupnotempty = 0;
+
+// Access control
+if (!$user->admin) {
+	accessforbidden();
+}
+
 
 // Set this to 1 to use the factory to manage constants. Warning, the generated module will be compatible with version v15+ only
 $useFormSetup = 1;
@@ -90,6 +90,11 @@ if (!class_exists('FormSetup')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 }
 $formSetup = new FormSetup($db);
+
+// Access control
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 // Enter here all parameters in your setup page
@@ -102,6 +107,7 @@ $item->cssClass = 'minwidth500';
 // Setup conf for selection of a simple string input
 $item = $formSetup->newItem('MYMODULE_MYPARAM2');
 $item->defaultFieldValue = 'default value';
+$item->fieldAttr['placeholder'] = 'A placeholder here';
 
 // Setup conf for selection of a simple textarea input but we replace the text of field title
 $item = $formSetup->newItem('MYMODULE_MYPARAM3');
@@ -276,6 +282,7 @@ if ($action == 'updateMask') {
 	}
 }
 
+$action = 'edit';
 
 
 /*
@@ -285,31 +292,36 @@ if ($action == 'updateMask') {
 $form = new Form($db);
 
 $help_url = '';
-$page_name = "MyModuleSetup";
+$title = "MyModuleSetup";
 
-llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-mymodule page-admin');
+llxHeader('', $langs->trans($title), $help_url, '', 0, 0, '', '', '', 'mod-mymodule page-admin');
 
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
-print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 
 // Configuration header
 $head = mymoduleAdminPrepareHead();
-print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "mymodule@mymodule");
+print dol_get_fiche_head($head, 'settings', $langs->trans($title), -1, "mymodule@mymodule");
 
 // Setup page goes here
 echo '<span class="opacitymedium">'.$langs->trans("MyModuleSetupPage").'</span><br><br>';
 
 
-if ($action == 'edit') {
+/*if ($action == 'edit') {
+ print $formSetup->generateOutput(true);
+ print '<br>';
+ } elseif (!empty($formSetup->items)) {
+ print $formSetup->generateOutput();
+ print '<div class="tabsAction">';
+ print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+ print '</div>';
+ }
+ */
+if (!empty($formSetup->items)) {
 	print $formSetup->generateOutput(true);
 	print '<br>';
-} elseif (!empty($formSetup->items)) {
-	print $formSetup->generateOutput();
-	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
-	print '</div>';
 } else {
 	print '<br>'.$langs->trans("NothingToSetup");
 }

@@ -82,11 +82,11 @@ if (empty($action) && empty($id) && empty($ref)) {
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-$permissiontoread = $user->rights->tax->charges->lire;
-$permissiontoadd = $user->rights->tax->charges->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontoread = $user->hasRight('tax', 'charges', 'lire');
+$permissiontoadd = $user->hasRight('tax', 'charges', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->tax->charges->supprimer || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_UNPAID);
-$permissionnote = $user->rights->tax->charges->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->tax->charges->creer; // Used by the include of actions_dellink.inc.php
+$permissionnote = $user->hasRight('tax', 'charges', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('tax', 'charges', 'creer'); // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->tax->multidir_output[isset($object->entity) ? $object->entity : 1].'/vat';
 
 // Security check
@@ -172,7 +172,7 @@ if (empty($reshook)) {
 	if ($action == 'add' && !$cancel) {
 		$error = 0;
 
-		$object->fk_account = GETPOST("accountid", 'int');
+		$object->fk_account = GETPOSTINT("accountid");
 		$object->type_payment = GETPOST("type_payment", 'alphanohtml');
 		$object->num_payment = GETPOST("num_payment", 'alphanohtml');
 
@@ -329,7 +329,8 @@ if (empty($reshook)) {
 		$object->fetch($id);
 
 		if ($object->id > 0) {
-			$object->id = $object->ref = null;
+			$object->id = 0;
+			$object->ref = null;
 			$object->paye = 0;
 
 			if (GETPOST('amount', 'alphanohtml')) {
@@ -840,9 +841,8 @@ if ($id > 0) {
 			$relativepath = $objref.'/'.$objref.'.pdf';
 			$filedir = $conf->tax->dir_output.'/vat/'.$objref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			//$genallowed = $user->rights->tax->charges->lire; // If you can read, you can build the PDF to read content
 			$genallowed = 0;
-			$delallowed = $user->rights->tax->charges->creer; // If you can create/edit, you can remove a file on card
+			$delallowed = $user->hasRight('tax', 'charges', 'creer'); // If you can create/edit, you can remove a file on card
 			print $formfile->showdocuments('tax-vat', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 		}
 

@@ -567,7 +567,7 @@ $sql .= " country.code as country_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= ' p.rowid, p.entity as propal_entity, p.note_private, p.total_ht, p.total_tva, p.total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut as status, p.fk_user_author, p.datep as dp, p.fin_validite as dfv, p.date_livraison as ddelivery,';
 $sql .= ' p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc,';
-$sql .= ' p.datec as date_creation, p.tms as date_update, p.date_cloture as date_cloture,';
+$sql .= ' p.datec as date_creation, p.tms as date_modification, p.date_cloture as date_cloture,';
 $sql .= ' p.date_signature as dsignature,';
 $sql .= ' p.note_public, p.note_private,';
 $sql .= ' p.fk_cond_reglement,p.deposit_percent,p.fk_mode_reglement,p.fk_shipping_method,p.fk_input_reason,';
@@ -1133,7 +1133,7 @@ if ($search_date_signature_endyear) {
 		foreach ($fieldstosearchall as $key => $val) {
 			$fieldstosearchall[$key] = $langs->trans($val);
 		}
-		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 	}
 
 	$i = 0;
@@ -2298,7 +2298,7 @@ if ($search_date_signature_endyear) {
 			// Date modification
 			if (!empty($arrayfields['p.tms']['checked'])) {
 				print '<td align="center" class="nowrap">';
-				print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+				print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
