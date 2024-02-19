@@ -85,13 +85,13 @@ class TargetTest extends CommonClassTest
 	public function testTargetFetch($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new Target($db);
-		$result=$localobject->fetch($id);
+		$localobject = new Target($db);
+		$result = $localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
 		print __METHOD__." id=".$id." result=".$result."\n";
@@ -114,7 +114,7 @@ class TargetTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$localobject->note_private='New note private after update';
+		$localobject->note_private = 'New note private after update';
 		$result = $localobject->update($user);
 
 		$this->assertLessThan($result, 0);
