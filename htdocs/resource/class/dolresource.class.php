@@ -34,16 +34,6 @@ class Dolresource extends CommonObject
 	use CommonPeople;
 
 	/**
-	 * @var string ID to identify managed object
-	 */
-	public $element = 'dolresource';
-
-	/**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element = 'resource';
-
-	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'resource';
@@ -151,7 +141,8 @@ class Dolresource extends CommonObject
 	{
 		$this->db = $db;
 		$this->status = 0;
-
+		$this->element = 'dolresource';
+		$this->table_element = 'resource';
 		$this->cache_code_type_resource = array();
 	}
 
