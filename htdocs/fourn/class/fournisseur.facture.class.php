@@ -2524,7 +2524,7 @@ class FactureFournisseur extends CommonInvoice
 		} elseif ($this->type == self::TYPE_DEPOSIT) {
 			$label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("Deposit").'</u>';
 		}
-		if (isset($this->status)) {
+		if (isset($this->statut)) {
 			$alreadypaid = -1;
 			if (isset($this->alreadypaid)) {
 				$alreadypaid = $this->alreadypaid;

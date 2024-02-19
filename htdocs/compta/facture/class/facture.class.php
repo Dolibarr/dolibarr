@@ -1766,6 +1766,9 @@ class Facture extends CommonInvoice
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
+				// Needed to display LibStatut
+				$this->alreadypaid = $this->getSommePaiement(empty($this->fk_multicurrency) ? 0 : 1);
+
 				// Lines
 				$this->lines = array();
 

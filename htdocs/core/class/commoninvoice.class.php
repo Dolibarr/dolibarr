@@ -140,9 +140,9 @@ abstract class CommonInvoice extends CommonObject
 			$obj = $this->db->fetch_object($resql);
 			$this->db->free($resql);
 			if ($multicurrency) {
-				return $obj->multicurrency_amount;
+				return $obj->multicurrency_amount ? : 0;
 			} else {
-				return $obj->amount;
+				return $obj->amount ? : 0;
 			}
 		} else {
 			$this->error = $this->db->lasterror();
