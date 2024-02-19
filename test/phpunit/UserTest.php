@@ -36,7 +36,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -75,16 +75,16 @@ class UserTest extends CommonClassTest
 	public function testUserCreate()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		print __METHOD__." USER_PASSWORD_GENERATED=".getDolGlobalString('USER_PASSWORD_GENERATED')."\n";
 
-		$localobject=new User($db);
+		$localobject = new User($db);
 		$localobject->initAsSpecimen();
-		$result=$localobject->create($user);
+		$result = $localobject->create($user);
 
 		$this->assertLessThan($result, 0, 'Creation of user has failed: '.$localobject->error);
 		print __METHOD__." result=".$result."\n";
@@ -102,13 +102,13 @@ class UserTest extends CommonClassTest
 	public function testUserFetch($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new User($db);
-		$result=$localobject->fetch($id);
+		$localobject = new User($db);
+		$result = $localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
 		print __METHOD__." id=".$id." result=".$result."\n";
@@ -126,19 +126,19 @@ class UserTest extends CommonClassTest
 	public function testUserUpdate($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$this->changeProperties($localobject);
-		$result=$localobject->update($user);
+		$result = $localobject->update($user);
 
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
 		// Test everything are still same than specimen
-		$newlocalobject=new User($db);
+		$newlocalobject = new User($db);
 		$newlocalobject->initAsSpecimen();
 		$this->changeProperties($newlocalobject);
 		$this->assertEquals($this->objCompare($localobject, $newlocalobject, true, array('id','socid','societe_id','specimen','note','ref','pass','pass_indatabase','pass_indatabase_crypted','pass_temp','datec','datem','datelastlogin','datepreviouslogin','flagdelsessionsbefore','iplastlogin','ippreviouslogin','trackid')), array());    // Actual, Expected
@@ -157,12 +157,12 @@ class UserTest extends CommonClassTest
 	public function testUserDisable($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$result=$localobject->setstatus(0);
+		$result = $localobject->setstatus(0);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
 		$this->assertLessThan($result, 0);
@@ -181,10 +181,10 @@ class UserTest extends CommonClassTest
 	public function testUserOther($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		/*$result=$localobject->setstatus(0);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
@@ -207,10 +207,10 @@ class UserTest extends CommonClassTest
 	public function testUserHasRight($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 		/*$result=$localobject->setstatus(0);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -239,10 +239,10 @@ class UserTest extends CommonClassTest
 	public function testUserSetPassword($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		// Test the 'none' password generator
 
@@ -352,14 +352,14 @@ class UserTest extends CommonClassTest
 	public function testUserDelete($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new User($db);
-		$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+		$localobject = new User($db);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -377,14 +377,14 @@ class UserTest extends CommonClassTest
 	public function testUserAddPermission($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new User($db);
-		$result=$localobject->fetch(1);			// Other tests use the user id 1
-		$result=$localobject->addrights(0, 'supplier_proposal');
+		$localobject = new User($db);
+		$result = $localobject->fetch(1);			// Other tests use the user id 1
+		$result = $localobject->addrights(0, 'supplier_proposal');
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -401,7 +401,7 @@ class UserTest extends CommonClassTest
 	 */
 	public function changeProperties(&$localobject)
 	{
-		$localobject->note_private='New note after update';
+		$localobject->note_private = 'New note after update';
 	}
 
 	/**
@@ -415,23 +415,23 @@ class UserTest extends CommonClassTest
 	 */
 	public function objCompare($oA, $oB, $ignoretype = true, $fieldstoignorearray = array('id'))
 	{
-		$retAr=array();
+		$retAr = array();
 
 		if (get_class($oA) !== get_class($oB)) {
-			$retAr[]="Supplied objects are not of same class.";
+			$retAr[] = "Supplied objects are not of same class.";
 		} else {
-			$oVarsA=get_object_vars($oA);
-			$oVarsB=get_object_vars($oB);
-			$aKeys=array_keys($oVarsA);
+			$oVarsA = get_object_vars($oA);
+			$oVarsB = get_object_vars($oB);
+			$aKeys = array_keys($oVarsA);
 			foreach ($aKeys as $sKey) {
 				if (in_array($sKey, $fieldstoignorearray)) {
 					continue;
 				}
 				if (! $ignoretype && ($oVarsA[$sKey] !== $oVarsB[$sKey])) {
-					$retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
+					$retAr[] = $sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
 				}
 				if ($ignoretype && ($oVarsA[$sKey] != $oVarsB[$sKey])) {
-					$retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
+					$retAr[] = $sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
 				}
 			}
 		}
