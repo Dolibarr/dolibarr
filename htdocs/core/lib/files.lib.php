@@ -521,20 +521,17 @@ function dol_is_link($pathoffile)
 }
 
 /**
- * Return if path is an URL
+ * Return if path is an URI (the name of the method is misleading).
  *
- * @param   string		$url	Url
- * @return  boolean      	   	True or false
+ * URLs are addresses for websites, URI refer to online resources.
+ *
+ * @param   string		$uri	URI to test
+ * @return  boolean      	   	True if the path looks like a URI, else false.
  */
-function dol_is_url($url)
+function dol_is_url($uri)
 {
-	$tmpprot = array('file', 'http', 'https', 'ftp', 'zlib', 'data', 'ssh', 'ssh2', 'ogg', 'expect');
-	foreach ($tmpprot as $prot) {
-		if (preg_match('/^'.$prot.':/i', $url)) {
-			return true;
-		}
-	}
-	return false;
+	$prots = array('file', 'http', 'https', 'ftp', 'zlib', 'data', 'ssh', 'ssh2', 'ogg', 'expect');
+	return false !== preg_match('/^('.implode('|', $prots).'):/i', $uri);
 }
 
 /**
