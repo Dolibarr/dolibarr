@@ -5643,7 +5643,8 @@ if ($action == 'create') {
 		if (empty($reshook)) {
 			$params = array(
 				'attr' => array(
-					'class' => 'classfortooltip'
+					'class' => 'classfortooltip',
+					'title' => ''
 				)
 			);
 			// Edit a validated invoice without any payment and not transferred to accounting

@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 class Dolresource extends CommonObject
 {
 	use CommonPeople;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -198,6 +199,7 @@ class Dolresource extends CommonObject
 			$this->phone,
 			$this->email,
 			$this->max_users,
+			$this->url,
 			$this->fk_code_type_resource,
 			$this->note_public,
 			$this->note_private,
@@ -221,6 +223,7 @@ class Dolresource extends CommonObject
 		$sql .= "phone,";
 		$sql .= "email,";
 		$sql .= "max_users,";
+		$sql .= "url,";
 		$sql .= "fk_code_type_resource,";
 		$sql .= "note_public,";
 		$sql .= "note_private, ";
@@ -303,6 +306,7 @@ class Dolresource extends CommonObject
 		$sql .= " t.phone,";
 		$sql .= " t.email,";
 		$sql .= " t.max_users,";
+		$sql .= " t.url,";
 		$sql .= " t.fk_code_type_resource,";
 		$sql .= " t.note_public,";
 		$sql .= " t.note_private,";
@@ -335,6 +339,7 @@ class Dolresource extends CommonObject
 				$this->phone = $obj->phone;
 				$this->email = $obj->email;
 				$this->max_users = $obj->max_users;
+				$this->url = $obj->url;
 				$this->fk_code_type_resource = $obj->fk_code_type_resource;
 				$this->note_public = $obj->note_public;
 				$this->note_private = $obj->note_private;
@@ -401,6 +406,9 @@ class Dolresource extends CommonObject
 		if (!is_numeric($this->max_users)) {
 			$this->max_users = 0;
 		}
+		if (isset($this->url)) {
+			$this->url = trim($this->url);
+		}
 		if (isset($this->fk_code_type_resource)) {
 			$this->fk_code_type_resource = trim($this->fk_code_type_resource);
 		}
@@ -422,6 +430,7 @@ class Dolresource extends CommonObject
 		$sql .= " phone=".(isset($this->phone) ? "'".$this->db->escape($this->phone)."'" : "null").",";
 		$sql .= " email=".(isset($this->email) ? "'".$this->db->escape($this->email)."'" : "null").",";
 		$sql .= " max_users=".(isset($this->max_users) ? (int) $this->max_users : "null").",";
+		$sql .= " url=".(isset($this->url) ? "'".$this->db->escape($this->url)."'" : "null").",";
 		$sql .= " fk_code_type_resource=".(isset($this->fk_code_type_resource) ? "'".$this->db->escape($this->fk_code_type_resource)."'" : "null").",";
 		$sql .= " tms=" . ("'" . $this->db->idate($this->date_modification) . "',");
 		$sql .= " fk_user_modif=" . (!empty($user->id) ? ((int) $user->id) : "null");
@@ -642,6 +651,7 @@ class Dolresource extends CommonObject
 		$sql .= " t.phone,";
 		$sql .= " t.email,";
 		$sql .= " t.max_users,";
+		$sql .= " t.url,";
 		$sql .= " t.fk_code_type_resource,";
 		$sql .= " t.tms as date_modification,";
 		$sql .= " t.datec as date_creation,";
@@ -693,6 +703,7 @@ class Dolresource extends CommonObject
 					$this->phone = $obj->phone;
 					$this->email = $obj->email;
 					$this->max_users = $obj->max_users;
+					$this->url = $obj->url;
 					$line->fk_code_type_resource = $obj->fk_code_type_resource;
 					$line->date_modification = $obj->date_modification;
 					$line->date_creation = $obj->date_creation;

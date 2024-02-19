@@ -2366,6 +2366,32 @@ class AccountLine extends CommonObjectLine
 	}
 
 
+	/**
+	 *		Update bank account record label in database
+	 *
+	 *		@return	int						Return integer <0 if KO, >0 if OK
+	 */
+	public function updateLabel()
+	{
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
+		$sql .= " label = '".$this->db->escape($this->label)."'";
+		$sql .= " WHERE rowid = ".((int) $this->rowid);
+
+		dol_syslog(get_class($this)."::update_label", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
+			$this->error = $this->db->error();
+			return -1;
+		}
+	}
+
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Update conciliation field

@@ -18,7 +18,7 @@
 
 use Luracast\Restler\RestException;
 
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 
 /**
  * API class for accounts
@@ -73,12 +73,12 @@ class BankAccounts extends DolibarrApi
 
 		$sql = "SELECT t.rowid FROM ".MAIN_DB_PREFIX."bank_account AS t LEFT JOIN ".MAIN_DB_PREFIX."bank_account_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		if ($category > 0) {
-			$sql .= ", ".MAIN_DB_PREFIX."categorie_account as c";
+			$sql .= ", " . MAIN_DB_PREFIX . "categorie_account as c";
 		}
-		$sql .= ' WHERE t.entity IN ('.getEntity('bank_account').')';
+		$sql .= ' WHERE t.entity IN (' . getEntity('bank_account') . ')';
 		// Select accounts of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".((int) $category)." AND c.fk_account = t.rowid";
+			$sql .= " AND c.fk_categorie = " . ((int) $category) . " AND c.fk_account = t.rowid";
 		}
 		// Add sql filters
 		if ($sqlfilters) {
@@ -113,7 +113,7 @@ class BankAccounts extends DolibarrApi
 				}
 			}
 		} else {
-			throw new RestException(503, 'Error when retrieving list of accounts: '.$this->db->lasterror());
+			throw new RestException(503, 'Error when retrieving list of accounts: ' . $this->db->lasterror());
 		}
 
 		return $list;
@@ -205,7 +205,7 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 
 		$accountfrom = new Account($this->db);
 		$resultAccountFrom = $accountfrom->fetch($bankaccount_from_id);
@@ -281,7 +281,7 @@ class BankAccounts extends DolibarrApi
 		 * Creating links between bank line record and its source
 		 */
 
-		$url = DOL_URL_ROOT.'/compta/bank/line.php?rowid=';
+		$url = DOL_URL_ROOT . '/compta/bank/line.php?rowid=';
 		$label = '(banktransfert)';
 		$type = 'banktransfert';
 
@@ -312,7 +312,7 @@ class BankAccounts extends DolibarrApi
 			);
 		} else {
 			$this->db->rollback();
-			throw new RestException(500, $accountfrom->error.' '.$accountto->error);
+			throw new RestException(500, $accountfrom->error . ' ' . $accountto->error);
 		}
 	}
 
@@ -446,8 +446,8 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(404, 'account not found');
 		}
 
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."bank ";
-		$sql .= " WHERE fk_account = ".((int) $id);
+		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "bank ";
+		$sql .= " WHERE fk_account = " . ((int) $id);
 
 		// Add sql filters
 		if ($sqlfilters) {
@@ -472,7 +472,7 @@ class BankAccounts extends DolibarrApi
 				}
 			}
 		} else {
-			throw new RestException(503, 'Error when retrieving list of account lines: '.$this->db->lasterror());
+			throw new RestException(503, 'Error when retrieving list of account lines: ' . $this->db->lasterror());
 		}
 
 		return $list;
@@ -532,7 +532,7 @@ class BankAccounts extends DolibarrApi
 			$num_releve
 		);
 		if ($result < 0) {
-			throw new RestException(503, 'Error when adding line to account: '.$account->error);
+			throw new RestException(503, 'Error when adding line to account: ' . $account->error);
 		}
 		return $result;
 	}
@@ -574,7 +574,7 @@ class BankAccounts extends DolibarrApi
 
 		$result = $account->add_url_line($line_id, $url_id, $url, $label, $type);
 		if ($result < 0) {
-			throw new RestException(503, 'Error when adding link to account line: '.$account->error);
+			throw new RestException(503, 'Error when adding link to account line: ' . $account->error);
 		}
 		return $result;
 	}
@@ -604,11 +604,88 @@ class BankAccounts extends DolibarrApi
 		if (!$result) {
 			throw new RestException(404, 'account not found');
 		}
+
 		$links = $account->get_url($line_id); // Get an array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> )
 		foreach ($links as &$link) {
 			unset($link[0], $link[1], $link[2], $link[3]); // Remove the numeric keys
 		}
 
 		return $links;
+	}
+
+	/**
+	 * Update an account line
+	 *
+	 * @param int    $id    		ID of account
+	 * @param int    $line_id       ID of account line
+	 * @param string $label         Label {@from body}
+	 * @return int  ID of link
+	 *
+	 * @url PUT {id}/lines/{line_id}
+	 */
+	public function updateLine($id, $line_id, $label)
+	{
+		if (!DolibarrApiAccess::$user->rights->banque->modifier) {
+			throw new RestException(401);
+		}
+
+		$account = new Account($this->db);
+		$result = $account->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'account not found');
+		}
+
+		$accountLine = new AccountLine($this->db);
+		$result = $accountLine->fetch($line_id);
+		if (!$result) {
+			throw new RestException(404, 'account line not found');
+		}
+
+		$accountLine->label = sanitizeVal($label);
+
+		$result = $accountLine->updateLabel();
+		if ($result < 0) {
+			throw new RestException(503, 'Error when updating link to account line: ' . $accountLine->error);
+		}
+		return $accountLine->id;
+	}
+
+	/**
+	 * Delete an account line
+	 *
+	 * @param int    $id    		ID of account
+	 * @param int    $line_id       ID of account line
+	 * @return array
+	 *
+	 * @url DELETE {id}/lines/{line_id}
+	 */
+	public function deleteLine($id, $line_id)
+	{
+		if (!DolibarrApiAccess::$user->rights->banque->modifier) {
+			throw new RestException(401);
+		}
+
+		$account = new Account($this->db);
+		$result = $account->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'account not found');
+		}
+
+		$accountLine = new AccountLine($this->db);
+		$result = $accountLine->fetch($line_id);
+		if (!$result) {
+			throw new RestException(404, 'account line not found');
+		}
+
+		if ($accountLine->delete(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(401, 'error when deleting account line');
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => "account line $line_id deleted"
+			)
+		);
 	}
 }
