@@ -37,7 +37,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -81,14 +81,14 @@ class FactureTest extends CommonClassTest
 	public function testFactureCreate()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new Facture($db);
+		$localobject = new Facture($db);
 		$localobject->initAsSpecimen();
-		$result=$localobject->create($user);
+		$result = $localobject->create($user);
 		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";
 		return $result;
@@ -106,13 +106,13 @@ class FactureTest extends CommonClassTest
 	public function testFactureFetch($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new Facture($db);
-		$result=$localobject->fetch($id);
+		$localobject = new Facture($db);
+		$result = $localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
 		print __METHOD__." id=".$id." result=".$result."\n";
@@ -131,13 +131,13 @@ class FactureTest extends CommonClassTest
 	public function testFactureUpdate($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$this->changeProperties($localobject);
-		$result=$localobject->update($user);
+		$result = $localobject->update($user);
 
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -156,18 +156,18 @@ class FactureTest extends CommonClassTest
 	public function testFactureValid($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$result=$localobject->validate($user);
+		$result = $localobject->validate($user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
 		$this->assertLessThan($result, 0);
 
 		// Test everything are still same than specimen
-		$newlocalobject=new Facture($db);
+		$newlocalobject = new Facture($db);
 		$newlocalobject->initAsSpecimen();
 		$this->changeProperties($newlocalobject);
 
@@ -205,10 +205,10 @@ class FactureTest extends CommonClassTest
 	public function testFactureOther($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		/*$result=$localobject->setstatus(0);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
@@ -219,7 +219,7 @@ class FactureTest extends CommonClassTest
 		print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
 		$this->assertNotEquals($localobject->date_creation, '');
 
-		$result=$localobject->demande_prelevement($user);
+		$result = $localobject->demande_prelevement($user);
 		print __METHOD__." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
@@ -238,43 +238,43 @@ class FactureTest extends CommonClassTest
 	public function testFactureDelete($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		// Force default setup
 		unset($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED);
 		unset($conf->global->INVOICE_CAN_NEVER_BE_REMOVED);
 
-		$localobject=new Facture($db);
-		$result=$localobject->fetch($id);
+		$localobject = new Facture($db);
+		$result = $localobject->fetch($id);
 
 		// Create another invoice and validate it after $localobject
-		$localobject2=new Facture($db);
-		$result=$localobject2->initAsSpecimen();
-		$result=$localobject2->create($user);
-		$result=$localobject2->validate($user);
+		$localobject2 = new Facture($db);
+		$result = $localobject2->initAsSpecimen();
+		$result = $localobject2->create($user);
+		$result = $localobject2->validate($user);
 		print 'Invoice $localobject ref = '.$localobject->ref."\n";
 		print 'Invoice $localobject2 created with ref = '.$localobject2->ref."\n";
 
 		$conf->global->INVOICE_CAN_NEVER_BE_REMOVED = 1;
 
-		$result=$localobject2->delete($user);					// Deletion is KO, option INVOICE_CAN_NEVER_BE_REMOVED is on
+		$result = $localobject2->delete($user);					// Deletion is KO, option INVOICE_CAN_NEVER_BE_REMOVED is on
 		print __METHOD__." id=".$localobject2->id." ref=".$localobject2->ref." result=".$result."\n";
 		$this->assertEquals(0, $result, 'Deletion should fail, option INVOICE_CAN_NEVER_BE_REMOVED is on');
 
 		unset($conf->global->INVOICE_CAN_NEVER_BE_REMOVED);
 
-		$result=$localobject->delete($user);					// Deletion is KO, it is not last invoice
+		$result = $localobject->delete($user);					// Deletion is KO, it is not last invoice
 		print __METHOD__." id=".$localobject->id." ref=".$localobject->ref." result=".$result."\n";
 		$this->assertEquals(0, $result, 'Deletion should fail, it is not last invoice');
 
-		$result=$localobject2->delete($user);					// Deletion is OK, it is last invoice
+		$result = $localobject2->delete($user);					// Deletion is OK, it is last invoice
 		print __METHOD__." id=".$localobject2->id." ref=".$localobject2->ref." result=".$result."\n";
 		$this->assertGreaterThan(0, $result, 'Deletion should work, it is last invoice');
 
-		$result=$localobject->delete($user);					// Deletion is KO, it is not last invoice
+		$result = $localobject->delete($user);					// Deletion is KO, it is not last invoice
 		print __METHOD__." id=".$localobject->id." ref=".$localobject->ref." result=".$result."\n";
 		$this->assertGreaterThan(0, $result, 'Deletion should work, it is again last invoice');
 
@@ -289,7 +289,7 @@ class FactureTest extends CommonClassTest
 	 */
 	public function changeProperties(&$localobject)
 	{
-		$localobject->note_private='New note';
+		$localobject->note_private = 'New note';
 		//$localobject->note='New note after update';
 	}
 
@@ -304,23 +304,23 @@ class FactureTest extends CommonClassTest
 	 */
 	public function objCompare($oA, $oB, $ignoretype = true, $fieldstoignorearray = array('id'))
 	{
-		$retAr=array();
+		$retAr = array();
 
 		if (get_class($oA) !== get_class($oB)) {
-			$retAr[]="Supplied objects are not of same class.";
+			$retAr[] = "Supplied objects are not of same class.";
 		} else {
-			$oVarsA=get_object_vars($oA);
-			$oVarsB=get_object_vars($oB);
-			$aKeys=array_keys($oVarsA);
+			$oVarsA = get_object_vars($oA);
+			$oVarsB = get_object_vars($oB);
+			$aKeys = array_keys($oVarsA);
 			foreach ($aKeys as $sKey) {
 				if (in_array($sKey, $fieldstoignorearray)) {
 					continue;
 				}
 				if (! $ignoretype && ($oVarsA[$sKey] !== $oVarsB[$sKey])) {
-					$retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
+					$retAr[] = $sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
 				}
 				if ($ignoretype && ($oVarsA[$sKey] != $oVarsB[$sKey])) {
-					$retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
+					$retAr[] = $sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
 				}
 			}
 		}

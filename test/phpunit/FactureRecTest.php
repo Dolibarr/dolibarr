@@ -37,7 +37,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -58,18 +58,18 @@ class FactureRecTest extends CommonClassTest
 	{
 		global $conf,$user,$langs,$db;
 
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobjectinv=new Facture($db);
+		$localobjectinv = new Facture($db);
 		$localobjectinv->initAsSpecimen();
 		$result = $localobjectinv->create($user);
 
 		print __METHOD__." result=".$result."\n";
 
-		$localobject=new FactureRec($db);
+		$localobject = new FactureRec($db);
 		$localobject->initAsSpecimen();
 		$result = $localobject->create($user, $localobjectinv->id);
 
@@ -91,12 +91,12 @@ class FactureRecTest extends CommonClassTest
 	public function testFactureRecFetch($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new FactureRec($db);
+		$localobject = new FactureRec($db);
 		$result = $localobject->fetch($id);
 
 		print __METHOD__." result=".$result."\n";
@@ -114,7 +114,7 @@ class FactureRecTest extends CommonClassTest
 	 */
 	public function changeProperties(&$localobject)
 	{
-		$localobject->note_private='New note';
+		$localobject->note_private = 'New note';
 		//$localobject->note='New note after update';
 	}
 
@@ -129,23 +129,23 @@ class FactureRecTest extends CommonClassTest
 	 */
 	public function objCompare($oA, $oB, $ignoretype = true, $fieldstoignorearray = array('id'))
 	{
-		$retAr=array();
+		$retAr = array();
 
 		if (get_class($oA) !== get_class($oB)) {
-			$retAr[]="Supplied objects are not of same class.";
+			$retAr[] = "Supplied objects are not of same class.";
 		} else {
-			$oVarsA=get_object_vars($oA);
-			$oVarsB=get_object_vars($oB);
-			$aKeys=array_keys($oVarsA);
+			$oVarsA = get_object_vars($oA);
+			$oVarsB = get_object_vars($oB);
+			$aKeys = array_keys($oVarsA);
 			foreach ($aKeys as $sKey) {
 				if (in_array($sKey, $fieldstoignorearray)) {
 					continue;
 				}
 				if (! $ignoretype && ($oVarsA[$sKey] !== $oVarsB[$sKey])) {
-					$retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
+					$retAr[] = $sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
 				}
 				if ($ignoretype && ($oVarsA[$sKey] != $oVarsB[$sKey])) {
-					$retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
+					$retAr[] = $sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
 				}
 			}
 		}

@@ -589,6 +589,14 @@ function Reduction() {
 }
 
 function CloseBill() {
+	<?php
+	if (!empty($conf->global->TAKEPOS_FORBID_SALES_TO_DEFAULT_CUSTOMER)) {
+		echo "customerAnchorTag = document.querySelector('a[id=\"customer\"]'); ";
+		echo "if (customerAnchorTag && customerAnchorTag.innerText.trim() === '".$langs->trans("Customer")."') { ";
+		echo "alert('".$langs->trans("NoClientErrorMessage")."'); ";
+		echo "return; } \n";
+	}
+	?>
 	invoiceid = $("#invoiceid").val();
 	console.log("Open popup to enter payment on invoiceid="+invoiceid);
 	<?php

@@ -37,7 +37,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 $langs->load("main");
 
@@ -59,15 +59,15 @@ class BankAccountTest extends CommonClassTest
 	public function testBankAccountCreate()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$localobject = new Account($db);
 		$localobject->initAsSpecimen();
 		$localobject->date_solde = dol_now();
-		$result=$localobject->create($user);
+		$result = $localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -87,13 +87,13 @@ class BankAccountTest extends CommonClassTest
 	public function testBankAccountFetch($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new Account($db);
-		$result=$localobject->fetch($id);
+		$localobject = new Account($db);
+		$result = $localobject->fetch($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -113,10 +113,10 @@ class BankAccountTest extends CommonClassTest
 	public function testBankAccountOther($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		/*$result=$localobject->setstatus(0);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
@@ -135,7 +135,7 @@ class BankAccountTest extends CommonClassTest
 		$this->assertTrue($result);
 
 		// Test checkIbanForAccount for CI account
-		$localobject2=new Account($db);
+		$localobject2 = new Account($db);
 		$localobject2->country = 'CI';
 		$localobject2->iban = 'CI77A12312341234123412341234';
 		$result = checkIbanForAccount($localobject2);
@@ -157,14 +157,14 @@ class BankAccountTest extends CommonClassTest
 	public function testBankAccountDelete($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new Account($db);
-		$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+		$localobject = new Account($db);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);

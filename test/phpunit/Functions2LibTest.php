@@ -79,7 +79,7 @@ class Functions2LibTest extends CommonClassTest
 	 */
 	public function testJsUnEscape()
 	{
-		$result=jsUnEscape('%u03BD%u03B5%u03BF');
+		$result = jsUnEscape('%u03BD%u03B5%u03BF');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('νεο', $result);
 	}
@@ -173,35 +173,35 @@ class Functions2LibTest extends CommonClassTest
 	public function testIsIP()
 	{
 		// Not valid
-		$ip='a299.299.299.299';
-		$result=is_ip($ip);
+		$ip = 'a299.299.299.299';
+		$result = is_ip($ip);
 		print __METHOD__." for ".$ip." result=".$result."\n";
 		$this->assertEquals(0, $result, $ip);
 
 		// Reserved IP range (not checked by is_ip function)
-		$ip='169.254.0.0';
-		$result=is_ip($ip);
+		$ip = '169.254.0.0';
+		$result = is_ip($ip);
 		print __METHOD__." for ".$ip." result=".$result."\n";
 		//$this->assertEquals(2,$result,$ip);      // Assertion disabled because returned value differs between PHP patch version
 
-		$ip='1.2.3.4';
-		$result=is_ip($ip);
+		$ip = '1.2.3.4';
+		$result = is_ip($ip);
 		print __METHOD__." for ".$ip." result=".$result."\n";
 		$this->assertEquals(1, $result, $ip);
 
 		// Private IP ranges
-		$ip='10.0.0.0';
-		$result=is_ip($ip);
+		$ip = '10.0.0.0';
+		$result = is_ip($ip);
 		print __METHOD__." for ".$ip." result=".$result."\n";
 		$this->assertEquals(2, $result, $ip);
 
-		$ip='172.16.0.0';
-		$result=is_ip($ip);
+		$ip = '172.16.0.0';
+		$result = is_ip($ip);
 		print __METHOD__." for ".$ip." result=".$result."\n";
 		$this->assertEquals(2, $result, $ip);
 
-		$ip='192.168.0.0';
-		$result=is_ip($ip);
+		$ip = '192.168.0.0';
+		$result = is_ip($ip);
 		print __METHOD__." for ".$ip." result=".$result."\n";
 		$this->assertEquals(2, $result, $ip);
 	}

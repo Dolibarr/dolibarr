@@ -39,7 +39,7 @@ if (empty($user->id)) {
 
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -77,10 +77,10 @@ class SupplierProposalTest extends CommonClassTest
 	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		print __METHOD__."\n";
 		//print $db->getVersion()."\n";
@@ -98,14 +98,14 @@ class SupplierProposalTest extends CommonClassTest
 	public function testSupplierProposalCreate()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new SupplierProposal($db);
+		$localobject = new SupplierProposal($db);
 		$localobject->initAsSpecimen();
-		$result=$localobject->create($user);
+		$result = $localobject->create($user);
 
 		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";
@@ -124,13 +124,13 @@ class SupplierProposalTest extends CommonClassTest
 	public function testSupplierProposalFetch($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new SupplierProposal($db);
-		$result=$localobject->fetch($id);
+		$localobject = new SupplierProposal($db);
+		$result = $localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
 		print __METHOD__." id=".$id." result=".$result."\n";
@@ -149,13 +149,13 @@ class SupplierProposalTest extends CommonClassTest
 	public function testSupplierProposalAddLine($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$localobject->fetch_thirdparty();
-		$result=$localobject->addline('Added line', 10, 2, 19.6);
+		$result = $localobject->addline('Added line', 10, 2, 19.6);
 
 		$this->assertLessThan($result, 0);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
@@ -174,10 +174,10 @@ class SupplierProposalTest extends CommonClassTest
 	public function testSupplierProposalValid($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$result = $user->addrights(0, 'supplier_proposal');
 		$this->assertLessThan($result, 0);
@@ -185,7 +185,7 @@ class SupplierProposalTest extends CommonClassTest
 		$result = $user->getrights('supplier_proposal', 1);
 		//$this->assertLessThan($result, 0);
 
-		$result=$localobject->valid($user);
+		$result = $localobject->valid($user);
 		$this->assertLessThan($result, 0);
 
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
@@ -205,10 +205,10 @@ class SupplierProposalTest extends CommonClassTest
 	public function testSupplierProposalOther($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		/*$result=$localobject->setstatus(0);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
@@ -234,14 +234,14 @@ class SupplierProposalTest extends CommonClassTest
 	public function testSupplierProposalDelete($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new SupplierProposal($db);
-		$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+		$localobject = new SupplierProposal($db);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);

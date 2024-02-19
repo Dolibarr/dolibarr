@@ -69,7 +69,7 @@ if (empty($user->id)) {
 		$user->rights->website = new stdClass();
 	}
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**

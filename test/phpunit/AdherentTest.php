@@ -38,7 +38,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -85,19 +85,19 @@ class AdherentTest extends CommonClassTest
 	public function testAdherentTypeCreate()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new AdherentType($db);
-		$localobject->statut=1;
-		$localobject->label='Adherent type test';
-		$localobject->subscription=1;
-		$localobject->amount=0;
-		$localobject->vote=1;
-		$localobject->company='Old company label';
-		$result=$localobject->create($user);
+		$localobject = new AdherentType($db);
+		$localobject->statut = 1;
+		$localobject->label = 'Adherent type test';
+		$localobject->subscription = 1;
+		$localobject->amount = 0;
+		$localobject->vote = 1;
+		$localobject->company = 'Old company label';
+		$result = $localobject->create($user);
 		print __METHOD__." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
@@ -116,15 +116,15 @@ class AdherentTest extends CommonClassTest
 	public function testAdherentCreate($fk_adherent_type)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new Adherent($db);
+		$localobject = new Adherent($db);
 		$localobject->initAsSpecimen();
-		$localobject->typeid=$fk_adherent_type;
-		$result=$localobject->create($user);
+		$localobject->typeid = $fk_adherent_type;
+		$result = $localobject->create($user);
 		print __METHOD__." result=".$result."\n";
 		if ($result < 0) {
 			print $localobject->error;
@@ -146,13 +146,13 @@ class AdherentTest extends CommonClassTest
 	public function testAdherentFetch($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new Adherent($db);
-		$result=$localobject->fetch($id);
+		$localobject = new Adherent($db);
+		$result = $localobject->fetch($id);
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 		return $localobject;
@@ -170,10 +170,10 @@ class AdherentTest extends CommonClassTest
 	public function testAdherentFetchLogin(Adherent $localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$newobject = new Adherent($db);
 		$result = $newobject->fetch_login($localobject->login);
@@ -195,44 +195,44 @@ class AdherentTest extends CommonClassTest
 	public function testAdherentUpdate(Adherent $localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$timestamp = dol_now();
 
 		$localobject->civility_id = 0;
-		$localobject->login='newlogin';
-		$localobject->company='New company label';
-		$localobject->note_public='New note public after update';
-		$localobject->note_private='New note private after update';
-		$localobject->lastname='New name';
-		$localobject->firstname='New firstname';
-		$localobject->gender='man';
-		$localobject->address='New address';
-		$localobject->zip='New zip';
-		$localobject->town='New town';
-		$localobject->country_id=2;
-		$localobject->statut=0;
-		$localobject->morphy=0;
-		$localobject->phone='New tel pro';
-		$localobject->phone_perso='New tel perso';
-		$localobject->phone_mobile='New tel mobile';
-		$localobject->email='newemail@newemail.com';
-		$localobject->birth=$timestamp;
-		$result=$localobject->update($user);
+		$localobject->login = 'newlogin';
+		$localobject->company = 'New company label';
+		$localobject->note_public = 'New note public after update';
+		$localobject->note_private = 'New note private after update';
+		$localobject->lastname = 'New name';
+		$localobject->firstname = 'New firstname';
+		$localobject->gender = 'man';
+		$localobject->address = 'New address';
+		$localobject->zip = 'New zip';
+		$localobject->town = 'New town';
+		$localobject->country_id = 2;
+		$localobject->statut = 0;
+		$localobject->morphy = 0;
+		$localobject->phone = 'New tel pro';
+		$localobject->phone_perso = 'New tel perso';
+		$localobject->phone_mobile = 'New tel mobile';
+		$localobject->email = 'newemail@newemail.com';
+		$localobject->birth = $timestamp;
+		$result = $localobject->update($user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
-		$result=$localobject->update_note($localobject->note_private, '_private');
+		$result = $localobject->update_note($localobject->note_private, '_private');
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
-		$result=$localobject->update_note($localobject->note_public, '_public');
+		$result = $localobject->update_note($localobject->note_public, '_public');
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
-		$newobject=new Adherent($db);
-		$result=$newobject->fetch($localobject->id);
+		$newobject = new Adherent($db);
+		$result = $newobject->fetch($localobject->id);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
@@ -274,10 +274,10 @@ class AdherentTest extends CommonClassTest
 	public function testAdherentMakeSubstitution(Adherent $localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$conf->global->MAIN_FIRSTNAME_NAME_POSITION = 0;	// Force setup for firstname+lastname
 
@@ -308,10 +308,10 @@ class AdherentTest extends CommonClassTest
 	public function testAdherentSetUserId(Adherent $localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		//We associate member with user
 		$result = $localobject->setUserId($user->id);
@@ -350,10 +350,10 @@ class AdherentTest extends CommonClassTest
 	public function testAdherentSetThirdPartyId(Adherent $localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		//Create a Third Party
 		$thirdparty = new Societe($db);
@@ -399,12 +399,12 @@ class AdherentTest extends CommonClassTest
 	public function testAdherentValidate(Adherent $localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$result=$localobject->validate($user);
+		$result = $localobject->validate($user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
@@ -423,10 +423,10 @@ class AdherentTest extends CommonClassTest
 	public function testAdherentOther(Adherent $localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		/*$result=$localobject->setstatus(0);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
@@ -452,10 +452,10 @@ class AdherentTest extends CommonClassTest
 	public function testAdherentResiliate(Adherent $localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		//Let's resilie un adherent
 		$result = $localobject->resiliate($user);
@@ -489,12 +489,12 @@ class AdherentTest extends CommonClassTest
 	public function testAdherentDelete($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$result=$localobject->delete($localobject->id, $user);
+		$result = $localobject->delete($localobject->id, $user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
@@ -514,14 +514,14 @@ class AdherentTest extends CommonClassTest
 	public function testAdherentTypeDelete($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobjectat=new AdherentType($db);
-		$result=$localobjectat->fetch($localobject->typeid);
-		$result=$localobjectat->delete($user);
+		$localobjectat = new AdherentType($db);
+		$result = $localobjectat->fetch($localobject->typeid);
+		$result = $localobjectat->delete($user);
 		print __METHOD__." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 

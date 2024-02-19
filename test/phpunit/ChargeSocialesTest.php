@@ -36,7 +36,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -56,14 +56,14 @@ class ChargeSocialesTest extends CommonClassTest
 	public function testChargeSocialesCreate()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new ChargeSociales($db);
+		$localobject = new ChargeSociales($db);
 		$localobject->initAsSpecimen();
-		$result=$localobject->create($user, $langs, $conf);
+		$result = $localobject->create($user, $langs, $conf);
 		print __METHOD__." result=".$result."\n";
 
 		$this->assertLessThan($result, 0);
@@ -82,13 +82,13 @@ class ChargeSocialesTest extends CommonClassTest
 	public function testChargeSocialesFetch($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new ChargeSociales($db);
-		$result=$localobject->fetch($id);
+		$localobject = new ChargeSociales($db);
+		$result = $localobject->fetch($id);
 		print __METHOD__." id=".$id." result=".$result."\n";
 
 		$this->assertLessThan($result, 0);
@@ -107,12 +107,12 @@ class ChargeSocialesTest extends CommonClassTest
 	public function testChargeSocialesValid($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$result=$localobject->setPaid($user);
+		$result = $localobject->setPaid($user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
 		$this->assertLessThan($result, 0);
@@ -131,16 +131,16 @@ class ChargeSocialesTest extends CommonClassTest
 	public function testChargeSocialesOther($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$result=$localobject->getNomUrl(1);
+		$result = $localobject->getNomUrl(1);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertNotEquals($result, '');
 
-		$result=$localobject->getSommePaiement();
+		$result = $localobject->getSommePaiement();
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThanOrEqual($result, 0);
 
@@ -160,14 +160,14 @@ class ChargeSocialesTest extends CommonClassTest
 	{
 		global $conf,$user,$langs,$db;
 
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new ChargeSociales($db);
-		$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+		$localobject = new ChargeSociales($db);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
