@@ -96,7 +96,7 @@ class ExtraFields
 		'chkbxlst' => 'ExtrafieldCheckBoxFromList',
 		'link' => 'ExtrafieldLink',
 		'point' => 'ExtrafieldPointGeo',
-		'linestring' => 'ExtrafieldLineStringGeo',
+		'linestring' => 'ExtrafieldLinestringGeo',
 		'polygon' => 'ExtrafieldPolygonGeo',
 		'separate' => 'ExtrafieldSeparator',
 	);
@@ -1624,14 +1624,9 @@ class ExtraFields
 			$out = $form->selectForForms($tmparray[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '', $element.':options_'.$key);
 		} elseif (in_array($type, ['point', 'linestring', 'polygon'])) {
 			require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
-			$pointtypes = geoPHP::geometryList();
 			$geojson = '{}';
-			$geox = '';
-			$geoy = '';
 			if (!empty($value)) {
 				$geom = geoPHP::load($value, 'wkb');
-				$geox = $geom->x();
-				$geoy = $geom->y();
 				$geojson = $geom->out('json');
 			}
 			if (!preg_match('/search_/', $keyprefix)) {
@@ -2274,10 +2269,10 @@ class ExtraFields
 					$value_key = price2num(GETPOST("options_".$key, 'alpha')).':'.GETPOST("options_".$key."currency_id", 'alpha');
 				} elseif (in_array($key_type, array('html'))) {
 					$value_key = GETPOST("options_".$key, 'restricthtml');
-				} elseif (in_array($type, ['point', 'linestring', 'polygon'])) {
+				} elseif (in_array($key_type, ['point', 'linestring', 'polygon'])) {
 					// construct point
 					require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
-					$geojson = (string) GETPOST("options_".$key, 'none');
+					$geojson = GETPOST("options_".$key, 'restricthtml');
 					if ($geojson != '{}') {
 						$geom = geoPHP::load($geojson, 'json');
 						$value_key = $geom->out('wkb');

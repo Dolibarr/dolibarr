@@ -47,16 +47,19 @@ class GeoMapEditor
 	{
 		global $langs;
 
-		$out = '<input id="' . $htmlname . '" name="' . $htmlname . '" size="100" value="' . htmlentities($geojson) . '">';
+		$out = '<input id="' . $htmlname . '" name="' . $htmlname . '" size="100" value="' . htmlentities($geojson, ENT_QUOTES) . '"/>';
 		$out .= '<div id="map_' . $htmlname . '" style="width: 600px; height: 350px;"></div>';
 		$out .= '
 		<script>
 			var geoms = JSON.parse(\'' . $geojson . '\');
 			console.log(geoms);
-			//var map = L.map("map_' . $htmlname . '").setView([51.505, -0.09], 13);
-			var map = L.map("map_' . $htmlname . '").setView(geoms.coordinates, 14);
+			if (Object.keys(geoms).length === 0) {
+				var map = L.map("map_' . $htmlname . '").setView([49.505, -0.09], 13);
+			} else {
+				var map = L.map("map_' . $htmlname . '").setView([geoms.coordinates[1], geoms.coordinates[0]], 14);
+			}
 			if (geoms && geoms.type == "Point") {
-				L.marker(geoms.coordinates).addTo(map);
+				L.marker([geoms.coordinates[1], geoms.coordinates[0]]).addTo(map);
 				map.pm.addControls({
 					drawMarker: false,
 					drawPolyline: false,
