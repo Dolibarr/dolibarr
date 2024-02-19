@@ -812,7 +812,7 @@ if ($action == 'edit') {
 			$linktosetvar2 = '</a>';
 			$messagetoshow = str_replace('{s1}', $linktosetvar1, $messagetoshow);
 			$messagetoshow = str_replace('{s2}', $linktosetvar2, $messagetoshow);
-
+			//print $messagetoshow;
 			print info_admin($messagetoshow, 0, 0, 'warning nomargintop');
 		}
 

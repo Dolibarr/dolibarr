@@ -34,22 +34,22 @@ function getHtmlOfLayout($name)
 		$out = '
             <div >
             <div >
-            <img alt="Gray rectangle" style="margin-left:150px;" width="800px" height="100px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
+            <img alt="Gray rectangle" width="800px" height="100px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
             </div>
-            <h3 style="margin-left:150px;">Lorem, ipsum dolor sit amet consectetur adipisicing elit.</h3>
-            <h3 style="margin-left:150px;">Lorem, ipsum dolor sit amet consectetur</h3>
+            <h3>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</h3>
+            <h3>Lorem, ipsum dolor sit amet consectetur</h3>
             <!-- Les paragraphes de texte -->
             <div class="email-template-text">
-            <p style="margin-left:150px;">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aperiam non blanditiis delectus accusamus reprehenderit voluptates repellat.<br> Excepturi illo delectus nisi labore, iste voluptatibus dignissimos explicabo, corrupti voluptatum et facere cum?</p>
+            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aperiam non blanditiis delectus accusamus reprehenderit voluptates repellat.<br> Excepturi illo delectus nisi labore, iste voluptatibus dignissimos explicabo, corrupti voluptatum et facere cum?</p>
             </div>
             <div class="email-template-text">
-            <p style="margin-left:150px;">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
             </div>
             <div class="email-template-text">
-            <p style="margin-left:150px;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
             </div>
 
-            <img alt="Gray rectangle" style="margin-left:150px;" width="15%" height="50px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
+            <img alt="Gray rectangle" width="15%" height="50px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
 
         </div>';
 	} elseif ($name == 'news') {
@@ -136,9 +136,9 @@ function getHtmlOfLayout($name)
 		  ';
 	} elseif ($name == 'text') {
 		$out = '
-        <h1 style="margin-left:150px">Lorem ipsum dolor sit amet consectetur adipisicing elit sit amet consectetur adipisicing elit.</h1>
-        <h3 style="margin-left:150px">Lorem ipsum dolor sit amet consectetur adipisicing elit sit amet consectetur adipisicing elit.</h3>
-        <p style="margin-left:150px">
+        <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit sit amet consectetur adipisicing elit.</h1>
+        <h2>Lorem ipsum dolor sit amet consectetur adipisicing elit sit amet consectetur adipisicing elit.</h2>
+        <p style="text-align: justify">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi impedit molestias voluptatibus. Natus nulla sint totam illo? Hic name consequuntur id harum pariatur, quo illo quaerat minima tempore.
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi impedit molestias voluptatibus. Natus nulla sint totam illo? Hic name consequuntur id harum pariatur, quo illo quaerat minima tempore.
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi impedit molestias voluptatibus. Natus nulla sint totam illo? Hic name consequuntur id harum pariatur, quo illo quaerat minima tempore.
