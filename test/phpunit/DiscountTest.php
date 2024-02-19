@@ -36,7 +36,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -56,20 +56,20 @@ class DiscountTest extends CommonClassTest
 	public function testDiscountCreate()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$soc = new Societe($db);
 		$soc->name = "CommandeTest Unittest";
 		$socid = $soc->create($user);
 		$this->assertLessThan($socid, 0, $soc->errorsToString());
 
-		$localobject=new DiscountAbsolute($db);
+		$localobject = new DiscountAbsolute($db);
 		$localobject->initAsSpecimen();
 		$localobject->fk_soc = $socid;
-		$result=$localobject->create($user);
+		$result = $localobject->create($user);
 
 		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";
@@ -88,13 +88,13 @@ class DiscountTest extends CommonClassTest
 	public function testDiscountFetch($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new DiscountAbsolute($db);
-		$result=$localobject->fetch($id);
+		$localobject = new DiscountAbsolute($db);
+		$result = $localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
 		print __METHOD__." id=".$id." result=".$result."\n";
@@ -113,14 +113,14 @@ class DiscountTest extends CommonClassTest
 	public function testDiscountDelete($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new DiscountAbsolute($db);
-		$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+		$localobject = new DiscountAbsolute($db);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
