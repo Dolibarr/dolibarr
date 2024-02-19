@@ -202,7 +202,7 @@ class PaymentSalary extends CommonObject
 			$this->fk_salary = (int) $this->fk_salary;
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) $this->amount;
 		}
 		if (isset($this->fk_typepayment)) {
 			$this->fk_typepayment = (int) $this->fk_typepayment;
@@ -228,11 +228,10 @@ class PaymentSalary extends CommonObject
 
 		$totalamount = 0;
 		foreach ($this->amounts as $key => $value) {  // How payment is dispatch
-			$newvalue = price2num($value, 'MT');
+			$newvalue = (float) price2num($value, 'MT');
 			$this->amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
 		}
-		$totalamount = price2num($totalamount);
 
 		// Check parameters
 		if ($totalamount == 0) {
@@ -246,14 +245,13 @@ class PaymentSalary extends CommonObject
 			// Insert array of amounts
 			foreach ($this->amounts as $key => $amount) {
 				$salary_id = $key;
-				$amount = price2num($amount);
 				if (is_numeric($amount) && !empty($amount)) {
 					// We can have n payments for 1 salary but we can't have 1 payments for n salaries (for invoices link is n-n, not for salaries).
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_salary (entity, fk_salary, datec, datep, amount,";
 					$sql .= " fk_typepayment, num_payment, note, fk_user_author, fk_bank)";
 					$sql .= " VALUES (".((int) $conf->entity).", ".((int) $salary_id).", '".$this->db->idate($now)."',";
 					$sql .= " '".$this->db->idate($this->datep)."',";
-					$sql .= " ".price2num($amount).",";
+					$sql .= " ".((float) $amount).",";
 					$sql .= " ".((int) $this->fk_typepayment).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".((int) $user->id).",";
 					$sql .= " 0)";
 
@@ -386,7 +384,7 @@ class PaymentSalary extends CommonObject
 			$this->fk_salary = (int) $this->fk_salary;
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) $this->amount;
 		}
 		if (isset($this->fk_typepayment)) {
 			$this->fk_typepayment = (int) $this->fk_typepayment;
@@ -564,7 +562,7 @@ class PaymentSalary extends CommonObject
 		$this->fk_salary = 0;
 		$this->datec = '';
 		$this->tms = dol_now();
-		$this->datepaye = '';
+		$this->datepaye = dol_now();
 		$this->amount = 0.0;
 		$this->fk_typepayment = 0;
 		$this->num_payment = '';
