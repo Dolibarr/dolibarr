@@ -80,55 +80,55 @@ class JsonLibTest extends CommonClassTest
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+		$this->savconf = $conf;
+		$this->savuser = $user;
+		$this->savlangs = $langs;
+		$this->savdb = $db;
 
 		// Try to decode a string encoded with serialize
 		$encoded = 'a:1:{s:7:"options";a:3:{s:3:"app";s:11:"Application";s:6:"system";s:6:"System";s:6:"option";s:6:"Option";}}';
-		$decoded=json_decode($encoded, true);
+		$decoded = json_decode($encoded, true);
 		$this->assertEquals(null, $decoded, 'test to json_decode() a string that was encoded with serialize()');
 
 		$encoded = 'rubishstring!aa{bcd';
-		$decoded=json_decode($encoded, true);
+		$decoded = json_decode($encoded, true);
 		$this->assertEquals(null, $decoded, 'test to json_decode() a string that was encoded with serialize()');
 
 		// Do a test with an array starting with 0
-		$arraytotest=array(0=>array('key'=>1,'value'=>'PRODREF','label'=>'Product ref with é and special chars \\ \' "'));
-		$arrayencodedexpected='[{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}]';
+		$arraytotest = array(0 => array('key' => 1,'value' => 'PRODREF','label' => 'Product ref with é and special chars \\ \' "'));
+		$arrayencodedexpected = '[{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}]';
 
-		$encoded=json_encode($arraytotest);
+		$encoded = json_encode($arraytotest);
 		$this->assertEquals($arrayencodedexpected, $encoded);
-		$decoded=json_decode($encoded, true);
+		$decoded = json_decode($encoded, true);
 		$this->assertEquals($arraytotest, $decoded, 'test for json_xxx');
 
-		$encoded=dol_json_encode($arraytotest);
+		$encoded = dol_json_encode($arraytotest);
 		$this->assertEquals($arrayencodedexpected, $encoded);
-		$decoded=dol_json_decode($encoded, true);
+		$decoded = dol_json_decode($encoded, true);
 		$this->assertEquals($arraytotest, $decoded, 'test for dol_json_xxx');
 
 		// Same test but array start with 2 instead of 0
-		$arraytotest=array(2=>array('key'=>1,'value'=>'PRODREF','label'=>'Product ref with é and special chars \\ \' "'));
-		$arrayencodedexpected='{"2":{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}}';
+		$arraytotest = array(2 => array('key' => 1,'value' => 'PRODREF','label' => 'Product ref with é and special chars \\ \' "'));
+		$arrayencodedexpected = '{"2":{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}}';
 
-		$encoded=json_encode($arraytotest);
+		$encoded = json_encode($arraytotest);
 		$this->assertEquals($arrayencodedexpected, $encoded);
-		$decoded=json_decode($encoded, true);
+		$decoded = json_decode($encoded, true);
 		$this->assertEquals($arraytotest, $decoded, 'test for json_xxx');
 
-		$encoded=dol_json_encode($arraytotest);
+		$encoded = dol_json_encode($arraytotest);
 		$this->assertEquals($arrayencodedexpected, $encoded);
-		$decoded=dol_json_decode($encoded, true);
+		$decoded = dol_json_decode($encoded, true);
 		$this->assertEquals($arraytotest, $decoded, 'test for dol_json_xxx');
 
 		// Test with object
-		$now=gmmktime(12, 0, 0, 1, 1, 1970);
-		$objecttotest=new stdClass();
-		$objecttotest->property1='abc';
-		$objecttotest->property2=1234;
-		$objecttotest->property3=$now;
-		$encoded=dol_json_encode($objecttotest);
+		$now = gmmktime(12, 0, 0, 1, 1, 1970);
+		$objecttotest = new stdClass();
+		$objecttotest->property1 = 'abc';
+		$objecttotest->property2 = 1234;
+		$objecttotest->property3 = $now;
+		$encoded = dol_json_encode($objecttotest);
 		$this->assertEquals('{"property1":"abc","property2":1234,"property3":43200}', $encoded);
 	}
 }

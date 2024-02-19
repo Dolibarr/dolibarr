@@ -37,9 +37,9 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
-$conf->global->MAIN_UMASK='0666';
+$conf->global->MAIN_UMASK = '0666';
 
 
 /**
@@ -53,7 +53,7 @@ class WebservicesThirdpartyTest extends CommonClassTest
 {
 	protected $soapclient;
 
-	private $ns='http://www.dolibarr.org/ns/';
+	private $ns = 'http://www.dolibarr.org/ns/';
 
 
 	/**
@@ -69,10 +69,10 @@ class WebservicesThirdpartyTest extends CommonClassTest
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+		$this->savconf = $conf;
+		$this->savuser = $user;
+		$this->savlangs = $langs;
+		$this->savdb = $db;
 
 		$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php';
 
@@ -80,7 +80,7 @@ class WebservicesThirdpartyTest extends CommonClassTest
 		print __METHOD__." create nusoap_client for URL=".$WS_DOL_URL."\n";
 		$this->soapclient = new nusoap_client($WS_DOL_URL);
 		if ($this->soapclient) {
-			$this->soapclient->soap_defencoding='UTF-8';
+			$this->soapclient->soap_defencoding = 'UTF-8';
 			$this->soapclient->decodeUTF8(false);
 		}
 
@@ -98,21 +98,21 @@ class WebservicesThirdpartyTest extends CommonClassTest
 	public function testWSThirdpartycreateThirdParty()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$WS_METHOD  = 'createThirdParty';
 
 
 		// Call the WebService method and store its result in $result.
-		$authentication=array(
-				'dolibarrkey'=>getDolGlobalString('WEBSERVICES_KEY'),
-				'sourceapplication'=>'DEMO',
-				'login'=>'admin',
-				'password'=>'admin',
-				'entity'=>'');
+		$authentication = array(
+				'dolibarrkey' => getDolGlobalString('WEBSERVICES_KEY'),
+				'sourceapplication' => 'DEMO',
+				'login' => 'admin',
+				'password' => 'admin',
+				'entity' => '');
 
 		$body = array(
 				"id" => null,
@@ -153,14 +153,14 @@ class WebservicesThirdpartyTest extends CommonClassTest
 		);
 
 		// Test URL
-		$result='';
-		$parameters = array('authentication'=>$authentication, 'thirdparty'=>$body);
+		$result = '';
+		$parameters = array('authentication' => $authentication, 'thirdparty' => $body);
 		print __METHOD__." call method ".$WS_METHOD."\n";
 		try {
 			$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
 		} catch (SoapFault $exception) {
 			echo $exception;
-			$result=0;
+			$result = 0;
 		}
 		if (! $result || !empty($result['faultstring'])) {
 			//var_dump($soapclient);
@@ -191,30 +191,30 @@ class WebservicesThirdpartyTest extends CommonClassTest
 	public function testWSThirdpartygetThirdPartyById($result)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 		$id = $result['id'];
 
 		$WS_METHOD  = 'getThirdParty';
 
 		// Call the WebService method and store its result in $result.
-		$authentication=array(
-		'dolibarrkey'=>getDolGlobalString('WEBSERVICES_KEY'),
-		'sourceapplication'=>'DEMO',
-		'login'=>'admin',
-		'password'=>'admin',
-		'entity'=>'');
+		$authentication = array(
+		'dolibarrkey' => getDolGlobalString('WEBSERVICES_KEY'),
+		'sourceapplication' => 'DEMO',
+		'login' => 'admin',
+		'password' => 'admin',
+		'entity' => '');
 
-		$result='';
-		$parameters = array('authentication'=>$authentication, 'id'=>$id);
+		$result = '';
+		$parameters = array('authentication' => $authentication, 'id' => $id);
 		print __METHOD__." call method ".$WS_METHOD."\n";
 		try {
 			$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
 		} catch (SoapFault $exception) {
 			echo $exception;
-			$result=0;
+			$result = 0;
 		}
 		if (! $result || !empty($result['faultstring'])) {
 			//var_dump($soapclient);
@@ -252,31 +252,31 @@ class WebservicesThirdpartyTest extends CommonClassTest
 	public function testWSThirdpartygetThirdPartyByRefExt($result)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 		$id = $result['id'];
 
 		$WS_METHOD  = 'getThirdParty';
 
 		// Call the WebService method and store its result in $result.
-		$authentication=array(
-				'dolibarrkey'=>getDolGlobalString('WEBSERVICES_KEY'),
-				'sourceapplication'=>'DEMO',
-				'login'=>'admin',
-				'password'=>'admin',
-				'entity'=>'');
+		$authentication = array(
+				'dolibarrkey' => getDolGlobalString('WEBSERVICES_KEY'),
+				'sourceapplication' => 'DEMO',
+				'login' => 'admin',
+				'password' => 'admin',
+				'entity' => '');
 
 		// Test URL
-		$result='';
-		$parameters = array('authentication'=>$authentication, 'id'=>'', 'ref'=>'', 'ref_ext'=>'12');
+		$result = '';
+		$parameters = array('authentication' => $authentication, 'id' => '', 'ref' => '', 'ref_ext' => '12');
 		print __METHOD__." call method ".$WS_METHOD."\n";
 		try {
 			$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
 		} catch (SoapFault $exception) {
 			echo $exception;
-			$result=0;
+			$result = 0;
 		}
 		print $this->soapclient->response;
 		if (! $result || !empty($result['faultstring'])) {
@@ -313,30 +313,30 @@ class WebservicesThirdpartyTest extends CommonClassTest
 	public function testWSThirdpartydeleteThirdPartyById($result)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 		$id = $result['id'];
 
 		$WS_METHOD  = 'deleteThirdParty';
 
 		// Call the WebService method and store its result in $result.
-		$authentication=array(
-				'dolibarrkey'=>getDolGlobalString('WEBSERVICES_KEY'),
-				'sourceapplication'=>'DEMO',
-				'login'=>'admin',
-				'password'=>'admin',
-				'entity'=>'');
+		$authentication = array(
+				'dolibarrkey' => getDolGlobalString('WEBSERVICES_KEY'),
+				'sourceapplication' => 'DEMO',
+				'login' => 'admin',
+				'password' => 'admin',
+				'entity' => '');
 
-		$result='';
-		$parameters = array('authentication'=>$authentication, 'id'=>$id, 'ref'=>'', 'ref_ext'=>'');
+		$result = '';
+		$parameters = array('authentication' => $authentication, 'id' => $id, 'ref' => '', 'ref_ext' => '');
 		print __METHOD__." call method ".$WS_METHOD."\n";
 		try {
 			$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
 		} catch (SoapFault $exception) {
 			echo $exception;
-			$result=0;
+			$result = 0;
 		}
 		if (! $result || !empty($result['faultstring'])) {
 			print 'Error: '.$this->soapclient->error_str;

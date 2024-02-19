@@ -92,14 +92,14 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 	$loadperm = ($mode == 1 || $mode == 4);
 
 	// Clean parameters
-	$path = preg_replace('/([\\/]+)$/i', '', $path);
+	$path = preg_replace('/([\\/]+)$/', '', $path);
 	$newpath = dol_osencode($path);
 	$now = dol_now();
 
 	$reshook = 0;
 	$file_list = array();
 
-	if (is_object($hookmanager) && !$nohook) {
+	if (!$nohook && $hookmanager instanceof HookManager) {
 		$hookmanager->resArray = array();
 
 		$hookmanager->initHooks(array('fileslib'));

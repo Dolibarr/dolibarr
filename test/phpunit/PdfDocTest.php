@@ -40,7 +40,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -60,12 +60,12 @@ class PdfDocTest extends CommonClassTest
 	public function testPdfDocGetLineDesc()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localproduct=new Product($db);
+		$localproduct = new Product($db);
 		$result = $localproduct->fetch(0, 'PINKDRESS');
 		if ($result < 0) {
 			print "\n".__METHOD__." Failed to make the fetch of product PINKDRESS. ".$localproduct->error;
@@ -77,19 +77,19 @@ class PdfDocTest extends CommonClassTest
 			die(1);
 		}
 
-		$localobject=new Facture($db);
+		$localobject = new Facture($db);
 		$localobject->initAsSpecimen();
-		$localobject->lines=array();
-		$localobject->lines[0]=new FactureLigne($db);
-		$localobject->lines[0]->fk_product=$product_id;
-		$localobject->lines[0]->label='Label 1';
-		$localobject->lines[0]->desc="This is a description with a é accent\n(Country of origin: France)";
+		$localobject->lines = array();
+		$localobject->lines[0] = new FactureLigne($db);
+		$localobject->lines[0]->fk_product = $product_id;
+		$localobject->lines[0]->label = 'Label 1';
+		$localobject->lines[0]->desc = "This is a description with a é accent\n(Country of origin: France)";
 
-		$result=pdf_getlinedesc($localobject, 0, $langs);
+		$result = pdf_getlinedesc($localobject, 0, $langs);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("PINKDRESS - Label 1<br>This is a description with a &eacute; accent<br>(Country of origin: France)", $result);
 
-		$result=doc_getlinedesc($localobject->lines[0], $langs);
+		$result = doc_getlinedesc($localobject->lines[0], $langs);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("PINKDRESS - Label 1\nThis is a description with a é accent\n(Country of origin: France)", $result);
 	}
@@ -101,12 +101,12 @@ class PdfDocTest extends CommonClassTest
 	*/
 	public function testPdfGetHeightForLogo()
 	{
-		$file=dirname(__FILE__).'/img250x50.jpg';
-		$result=pdf_getHeightForLogo($file);
+		$file = dirname(__FILE__).'/img250x50.jpg';
+		$result = pdf_getHeightForLogo($file);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, 20);
-		$file=dirname(__FILE__).'/img250x20.png';
-		$result=pdf_getHeightForLogo($file);
+		$file = dirname(__FILE__).'/img250x20.png';
+		$result = pdf_getHeightForLogo($file);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, 10.4);
 	}

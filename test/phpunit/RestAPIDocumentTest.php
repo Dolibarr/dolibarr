@@ -85,12 +85,12 @@ class RestAPIDocumentTest extends CommonClassTest
 
 		$this->api_url = DOL_MAIN_URL_ROOT.'/api/index.php';
 
-		$login='admin';
-		$password='admin';
-		$url=$this->api_url.'/login?login='.$login.'&password='.$password;
+		$login = 'admin';
+		$password = 'admin';
+		$url = $this->api_url.'/login?login='.$login.'&password='.$password;
 		// Call the API login method to save api_key for this test class.
 		// At first call, if token is not defined a random value is generated and returned.
-		$result=getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
+		$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
 		print __METHOD__." result = ".var_export($result, true)."\n";
 		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
 		$this->assertEquals($result['curl_error_no'], '');
@@ -125,13 +125,13 @@ class RestAPIDocumentTest extends CommonClassTest
 
 		//$data = '{ "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "mysubdir1/mysubdir2", "filecontent": "content text", "fileencoding": "" }';
 		$data = array(
-			'filename'=>"mynewfile.txt",
-			'modulepart'=>"medias",
-			'subdir'=>"tmpphpunit/tmpphpunit1",
-			'filecontent'=>"content text",
-			'fileencoding'=>"",
-			'overwriteifexists'=>0,
-			'createdirifnotexists'=>0
+			'filename' => "mynewfile.txt",
+			'modulepart' => "medias",
+			'subdir' => "tmpphpunit/tmpphpunit1",
+			'filecontent' => "content text",
+			'fileencoding' => "",
+			'overwriteifexists' => 0,
+			'createdirifnotexists' => 0
 		);
 
 		$param = '';
@@ -154,14 +154,14 @@ class RestAPIDocumentTest extends CommonClassTest
 		dol_mkdir(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit2');
 
 		$data = array(
-			'filename'=>"mynewfile.txt",
-			'modulepart'=>"medias",
-			'ref'=>"",
-			'subdir'=>"tmpphpunit/tmpphpunit2",
-			'filecontent'=>"content text",
-			'fileencoding'=>"",
-			'overwriteifexists'=>0,
-			'createdirifnotexists'=>0
+			'filename' => "mynewfile.txt",
+			'modulepart' => "medias",
+			'ref' => "",
+			'subdir' => "tmpphpunit/tmpphpunit2",
+			'filecontent' => "content text",
+			'fileencoding' => "",
+			'overwriteifexists' => 0,
+			'createdirifnotexists' => 0
 		);
 
 		$param = '';
@@ -182,14 +182,14 @@ class RestAPIDocumentTest extends CommonClassTest
 		dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit3');
 
 		$data = array(
-			'filename'=>"mynewfile.txt",
-			'modulepart'=>"medias",
-			'ref'=>"",
-			'subdir'=>"tmpphpunit/tmpphpunit3",
-			'filecontent'=>"content text",
-			'fileencoding'=>"",
-			'overwriteifexists'=>0,
-			'createdirifnotexists'=>1
+			'filename' => "mynewfile.txt",
+			'modulepart' => "medias",
+			'ref' => "",
+			'subdir' => "tmpphpunit/tmpphpunit3",
+			'filecontent' => "content text",
+			'fileencoding' => "",
+			'overwriteifexists' => 0,
+			'createdirifnotexists' => 1
 		);
 
 		$param = '';

@@ -36,7 +36,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -56,10 +56,10 @@ class DoliDBTest extends CommonClassTest
 	public function testDDLUpdateField()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		print __METHOD__.' db->type = '.$db->type."\n";
 
@@ -74,14 +74,14 @@ class DoliDBTest extends CommonClassTest
 		}
 
 		// Set new field
-		$field_desc = array('type'=>'varchar', 'value'=>'17', 'null'=>'NOT NULL');
+		$field_desc = array('type' => 'varchar', 'value' => '17', 'null' => 'NOT NULL');
 
 		$result = $db->DDLUpdateField($db->prefix().'c_paper_format', 'code', $field_desc);
 		$this->assertEquals(1, $result);
 		print __METHOD__." result=".$result."\n";
 
 		// TODO Use $savtype and $savnull instead of hard coded
-		$field_desc = array('type'=>'varchar', 'value'=>'16', 'null'=>'NOT NULL');
+		$field_desc = array('type' => 'varchar', 'value' => '16', 'null' => 'NOT NULL');
 
 		$result = $db->DDLUpdateField($db->prefix().'c_paper_format', 'code', $field_desc);
 		$this->assertEquals(1, $result);

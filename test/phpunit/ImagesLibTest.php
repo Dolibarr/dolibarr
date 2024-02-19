@@ -38,7 +38,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -57,14 +57,14 @@ class ImagesLibTest extends CommonClassTest
 	 */
 	public function testgetImageSize()
 	{
-		$file=dirname(__FILE__).'/img250x50.jpg';
-		$tmp=dol_getImageSize($file);
+		$file = dirname(__FILE__).'/img250x50.jpg';
+		$tmp = dol_getImageSize($file);
 		print __METHOD__." result=".$tmp['width'].'/'.$tmp['height']."\n";
 		$this->assertEquals($tmp['width'], 250);
 		$this->assertEquals($tmp['height'], 50);
 
-		$file=dirname(__FILE__).'/img250x20.png';
-		$tmp=dol_getImageSize($file);
+		$file = dirname(__FILE__).'/img250x20.png';
+		$tmp = dol_getImageSize($file);
 		print __METHOD__." result=".$tmp['width'].'/'.$tmp['height']."\n";
 		$this->assertEquals($tmp['width'], 250);
 		$this->assertEquals($tmp['height'], 20);
@@ -87,8 +87,8 @@ class ImagesLibTest extends CommonClassTest
 	{
 		global $conf;
 
-		$file=dirname(__FILE__).'/img250x20.png';
-		$filetarget=$conf->admin->dir_temp.'/img250x20.jpg';
+		$file = dirname(__FILE__).'/img250x20.png';
+		$filetarget = $conf->admin->dir_temp.'/img250x20.jpg';
 		dol_delete_file($filetarget);
 		$result = dol_imageResizeOrCrop($file, 0, 0, 0, 0, 0, $filetarget);
 		print __METHOD__." result=".$result."\n";

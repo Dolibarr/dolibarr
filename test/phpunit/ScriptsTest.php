@@ -68,7 +68,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -88,17 +88,17 @@ class ScriptsTest extends CommonClassTest
 	public function testBank()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$script=dirname(__FILE__).'/../../scripts/bank/export-bank-receipts.php BANKDUMMY RECEIPTDUMMY excel2007 lang=fr_FR';
+		$script = dirname(__FILE__).'/../../scripts/bank/export-bank-receipts.php BANKDUMMY RECEIPTDUMMY excel2007 lang=fr_FR';
 
 		$returnvar = 0;
 		$output = array();
 
-		$result=exec($script, $output, $returnvar);
+		$result = exec($script, $output, $returnvar);
 
 		print __METHOD__." result=".$result."\n";
 		print __METHOD__." output=".join("\n", $output)."\n";
@@ -118,10 +118,10 @@ class ScriptsTest extends CommonClassTest
 	public function testCompany()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		/*
 		$script=dirname(__FILE__).'/../../scripts/company/sync_contacts_dolibarr_2ldap now';
@@ -147,30 +147,30 @@ class ScriptsTest extends CommonClassTest
 	public function testContracts()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$returnvar = 0;
 		$output = array();
 
-		$script=dirname(__FILE__).'/../../scripts/contracts/email_expire_services_to_customers.php test thirdparties';
-		$result=exec($script, $output, $returnvar);
+		$script = dirname(__FILE__).'/../../scripts/contracts/email_expire_services_to_customers.php test thirdparties';
+		$result = exec($script, $output, $returnvar);
 		print __METHOD__." result=".$result."\n";
 		print __METHOD__." output=".join("\n", $output)."\n";
 		print __METHOD__." returnvar=".$returnvar."\n";
 		$this->assertEquals($returnvar, 0, 'email_expire_services_to_customers.php thirdparties');
 
-		$script=dirname(__FILE__).'/../../scripts/contracts/email_expire_services_to_customers.php test contacts -30';
-		$result=exec($script, $output, $returnvar);
+		$script = dirname(__FILE__).'/../../scripts/contracts/email_expire_services_to_customers.php test contacts -30';
+		$result = exec($script, $output, $returnvar);
 		print __METHOD__." result=".$result."\n";
 		print __METHOD__." output=".join("\n", $output)."\n";
 		print __METHOD__." returnvar=".$returnvar."\n";
 		$this->assertEquals($returnvar, 0, 'email_expire_services_to_customers.php contacts');
 
-		$script=dirname(__FILE__).'/../../scripts/contracts/email_expire_services_to_representatives.php test -30';
-		$result=exec($script, $output, $returnvar);
+		$script = dirname(__FILE__).'/../../scripts/contracts/email_expire_services_to_representatives.php test -30';
+		$result = exec($script, $output, $returnvar);
 		print __METHOD__." result=".$result."\n";
 		print __METHOD__." output=".join("\n", $output)."\n";
 		print __METHOD__." returnvar=".$returnvar."\n";
@@ -188,30 +188,30 @@ class ScriptsTest extends CommonClassTest
 	public function testInvoices()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$returnvar = 0;
 		$output = array();
 
-		$script=dirname(__FILE__).'/../../scripts/invoices/email_unpaid_invoices_to_customers.php test thirdparties';
-		$result=exec($script, $output, $returnvar);
+		$script = dirname(__FILE__).'/../../scripts/invoices/email_unpaid_invoices_to_customers.php test thirdparties';
+		$result = exec($script, $output, $returnvar);
 		print __METHOD__." result=".$result."\n";
 		print __METHOD__." output=".join("\n", $output)."\n";
 		print __METHOD__." returnvar=".$returnvar."\n";
 		$this->assertEquals($returnvar, 0, 'email_unpaid_invoices_to_customers.php thirdparties');
 
-		$script=dirname(__FILE__).'/../../scripts/invoices/email_unpaid_invoices_to_customers.php test contacts -30';
-		$result=exec($script, $output, $returnvar);
+		$script = dirname(__FILE__).'/../../scripts/invoices/email_unpaid_invoices_to_customers.php test contacts -30';
+		$result = exec($script, $output, $returnvar);
 		print __METHOD__." result=".$result."\n";
 		print __METHOD__." output=".join("\n", $output)."\n";
 		print __METHOD__." returnvar=".$returnvar."\n";
 		$this->assertEquals($returnvar, 0, 'email_unpaid_invoices_to_customers.php contacts');
 
-		$script=dirname(__FILE__).'/../../scripts/invoices/email_unpaid_invoices_to_representatives.php test thirdparties';
-		$result=exec($script, $output, $returnvar);
+		$script = dirname(__FILE__).'/../../scripts/invoices/email_unpaid_invoices_to_representatives.php test thirdparties';
+		$result = exec($script, $output, $returnvar);
 		print __METHOD__." result=".$result."\n";
 		print __METHOD__." output=".join("\n", $output)."\n";
 		print __METHOD__." returnvar=".$returnvar."\n";

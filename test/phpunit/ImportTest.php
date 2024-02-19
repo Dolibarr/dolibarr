@@ -78,7 +78,7 @@ class ImportTest extends CommonClassTest
 	 */
 	public function testImportSample1()
 	{
-		$file=dirname(__FILE__).'/Example_import_company_1.csv';
+		$file = dirname(__FILE__).'/Example_import_company_1.csv';
 
 		// TODO
 		// Run import on file and check the record with field "auto" are filled
