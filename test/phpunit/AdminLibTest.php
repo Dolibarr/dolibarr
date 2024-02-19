@@ -36,7 +36,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -59,21 +59,21 @@ class AdminLibTest extends CommonClassTest
 	public function testVersionCompare()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$result=versioncompare(array(3,1,-4), array(3,1,1));
+		$result = versioncompare(array(3,1,-4), array(3,1,1));
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(-3, $result);
-		$result=versioncompare(array(3,1,0), array(3,1,1));
+		$result = versioncompare(array(3,1,0), array(3,1,1));
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(-3, $result);
-		$result=versioncompare(array(3,1,0), array(3,2,0));
+		$result = versioncompare(array(3,1,0), array(3,2,0));
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(-2, $result);
-		$result=versioncompare(array(3,1,0), array(3,1,0));
+		$result = versioncompare(array(3,1,0), array(3,1,0));
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(0, $result);
 
@@ -91,7 +91,7 @@ class AdminLibTest extends CommonClassTest
 
 		require_once dirname(__FILE__).'/../../htdocs/core/modules/modExpenseReport.class.php';
 		print "Enable module modExpenseReport";
-		$moduledescriptor=new modExpenseReport($db);
+		$moduledescriptor = new modExpenseReport($db);
 
 		$result = $moduledescriptor->remove();
 
@@ -102,7 +102,7 @@ class AdminLibTest extends CommonClassTest
 
 		require_once dirname(__FILE__).'/../../htdocs/core/modules/modApi.class.php';
 		print "Enable module modAPI";
-		$moduledescriptor=new modApi($db);
+		$moduledescriptor = new modApi($db);
 
 		$result = $moduledescriptor->remove();
 

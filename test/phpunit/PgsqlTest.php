@@ -39,7 +39,7 @@ if (empty($user->id)) {
 	$user->getrights();
 }
 
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -59,10 +59,10 @@ class PgsqlTest extends CommonClassTest
 	public function testConvertSQLFromMysql()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		// Create a dummy db handler for pgsql
 		$tmpdb = new DoliDBPgsql('pqsql', 'host', 'user', 'pass');
@@ -75,50 +75,50 @@ class PgsqlTest extends CommonClassTest
 		*/
 
 		$sql = "ALTER TABLE llx_bank_account MODIFY COLUMN state_id integer USING state_id::integer;";
-		$result=$tmpdb->convertSQLFromMysql($sql);
+		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, "-- ALTER TABLE llx_bank_account MODIFY COLUMN state_id integer USING state_id::integer; replaced by --\nALTER TABLE llx_bank_account ALTER COLUMN state_id TYPE integer USING state_id::integer;");
 
-		$sql="ALTER TABLE llx_table RENAME TO llx_table_new;";
-		$result=$tmpdb->convertSQLFromMysql($sql);
+		$sql = "ALTER TABLE llx_table RENAME TO llx_table_new;";
+		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, "ALTER TABLE llx_table RENAME TO llx_table_new;");
 
-		$sql="ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;";
-		$result=$tmpdb->convertSQLFromMysql($sql);
+		$sql = "ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;";
+		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, "ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0';");
 
-		$sql="ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);";
-		$result=$tmpdb->convertSQLFromMysql($sql);
+		$sql = "ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);";
+		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, "-- ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60); replaced by --\nALTER TABLE llx_table RENAME COLUMN oldname TO newname");
 
-		$sql="ALTER TABLE llx_table DROP COLUMN oldname;";
-		$result=$tmpdb->convertSQLFromMysql($sql);
+		$sql = "ALTER TABLE llx_table DROP COLUMN oldname;";
+		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, $sql);
 
-		$sql="ALTER TABLE llx_table MODIFY name varchar(60);";
-		$result=$tmpdb->convertSQLFromMysql($sql);
+		$sql = "ALTER TABLE llx_table MODIFY name varchar(60);";
+		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, "-- ALTER TABLE llx_table MODIFY name varchar(60); replaced by --\nALTER TABLE llx_table ALTER COLUMN name TYPE varchar(60);");
 
 		// Create a constraint
-		$sql='ALTER TABLE llx_tablechild ADD CONSTRAINT fk_tablechild_fk_fieldparent FOREIGN KEY (fk_fieldparent) REFERENCES llx_tableparent (rowid)';
-		$result=$tmpdb->convertSQLFromMysql($sql);
+		$sql = 'ALTER TABLE llx_tablechild ADD CONSTRAINT fk_tablechild_fk_fieldparent FOREIGN KEY (fk_fieldparent) REFERENCES llx_tableparent (rowid)';
+		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, $sql.' DEFERRABLE INITIALLY IMMEDIATE;');
 
 		// Test GROUP_CONCAT (without SEPARATOR)
-		$sql="SELECT a.b, GROUP_CONCAT(a.c) FROM table GROUP BY a.b";
-		$result=$tmpdb->convertSQLFromMysql($sql);
+		$sql = "SELECT a.b, GROUP_CONCAT(a.c) FROM table GROUP BY a.b";
+		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, "SELECT a.b, STRING_AGG(a.c, ',') FROM table GROUP BY a.b", 'Test GROUP_CONCAT (without SEPARATOR)');
 
 		// Test GROUP_CONCAT (with SEPARATOR)
-		$sql="SELECT a.b, GROUP_CONCAT(a.c SEPARATOR ',') FROM table GROUP BY a.b";
-		$result=$tmpdb->convertSQLFromMysql($sql);
+		$sql = "SELECT a.b, GROUP_CONCAT(a.c SEPARATOR ',') FROM table GROUP BY a.b";
+		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, "SELECT a.b, STRING_AGG(a.c, ',') FROM table GROUP BY a.b", 'Test GROUP_CONCAT (with SEPARATOR)');
 

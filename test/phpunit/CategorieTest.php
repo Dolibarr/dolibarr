@@ -37,7 +37,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -57,36 +57,36 @@ class CategorieTest extends CommonClassTest
 	public function testCategorieCreate()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 
 		// We create a category
-		$localobject=new Categorie($db);
+		$localobject = new Categorie($db);
 		$localobject->initAsSpecimen();
 
 		// Check it does not exist (return 0)
-		$resultCheck=$localobject->already_exists();
+		$resultCheck = $localobject->already_exists();
 		print __METHOD__." resultCheck=".$resultCheck."\n";
 		$this->assertEquals(0, $resultCheck);
 
 		// Create
-		$resultFirstCreate=$localobject->create($user);
+		$resultFirstCreate = $localobject->create($user);
 		print __METHOD__." resultFirstCreate=".$resultFirstCreate."\n";
 		$this->assertGreaterThan(0, $resultFirstCreate);
 
 		// We try to create another one with same ref
-		$localobject2=new Categorie($db);
+		$localobject2 = new Categorie($db);
 		$localobject2->initAsSpecimen();
 
 		// Check it does exist (return 1)
-		$resultCheck=$localobject2->already_exists();
+		$resultCheck = $localobject2->already_exists();
 		print __METHOD__." resultCheck=".$resultCheck."\n";
 		$this->assertGreaterThan(0, $resultCheck);
 
-		$resultSecondCreate=$localobject2->create($user);
+		$resultSecondCreate = $localobject2->create($user);
 		print __METHOD__." result=".$resultSecondCreate."\n";
 		$this->assertEquals(-4, $resultSecondCreate);
 
@@ -105,37 +105,37 @@ class CategorieTest extends CommonClassTest
 	public function testCategorieProduct($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobjecttmp=new Categorie($db);
+		$localobjecttmp = new Categorie($db);
 		$localobjecttmp->initAsSpecimen();
-		$localobjecttmp->label='Specimen Category for product';
-		$localobjecttmp->type=0;    // product category
-		$catid=$localobjecttmp->create($user);
+		$localobjecttmp->label = 'Specimen Category for product';
+		$localobjecttmp->type = 0;    // product category
+		$catid = $localobjecttmp->create($user);
 
 		print __METHOD__." catid=".$catid."\n";
 		$this->assertGreaterThan(0, $catid);
 
 		// Try to create product linked to category
-		$localobject2=new Product($db);
+		$localobject2 = new Product($db);
 		$localobject2->initAsSpecimen();
-		$localobject2->ref.='-CATEG';
-		$localobject2->tva_npr=1;
-		$result=$localobject2->create($user);
+		$localobject2->ref .= '-CATEG';
+		$localobject2->tva_npr = 1;
+		$result = $localobject2->create($user);
 		$cat = new Categorie($db);
 		$cat->id = $catid;
 		$cat->type = 0;
-		$result=$cat->add_type($localobject2, "product");
+		$result = $cat->add_type($localobject2, "product");
 
 		print __METHOD__." result=".$result."\n";
 		$this->assertGreaterThan(0, $result);
 
 		// Get list of categories for product
-		$localcateg=new Categorie($db);
-		$listofcateg=$localcateg->containing($localobject2->id, Categorie::TYPE_PRODUCT, 'label');
+		$localcateg = new Categorie($db);
+		$listofcateg = $localcateg->containing($localobject2->id, Categorie::TYPE_PRODUCT, 'label');
 		$this->assertTrue(in_array('Specimen Category for product', $listofcateg), 'Categ not found linked to product when it should');
 
 		return $id;
@@ -153,13 +153,13 @@ class CategorieTest extends CommonClassTest
 	public function testCategorieFetch($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new Categorie($db);
-		$result=$localobject->fetch($id);
+		$localobject = new Categorie($db);
+		$result = $localobject->fetch($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertGreaterThan(0, $result);
@@ -178,13 +178,13 @@ class CategorieTest extends CommonClassTest
 	public function testCategorieUpdate($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject->note_private ='New note after update';
-		$result=$localobject->update($user);
+		$localobject->note_private = 'New note after update';
+		$result = $localobject->update($user);
 
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertGreaterThan(0, $result);
@@ -204,17 +204,17 @@ class CategorieTest extends CommonClassTest
 	public function testCategorieOther($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		/*$result=$localobject->setstatus(0);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 		*/
 
-		$retarray=$localobject->liste_photos('/');
+		$retarray = $localobject->liste_photos('/');
 		print __METHOD__." retarray size=".count($retarray)."\n";
 		$this->assertTrue(is_array($retarray));
 
@@ -233,14 +233,14 @@ class CategorieTest extends CommonClassTest
 	public function testCategorieDelete($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new Categorie($db);
-		$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+		$localobject = new Categorie($db);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertGreaterThan(0, $result);
@@ -257,13 +257,13 @@ class CategorieTest extends CommonClassTest
 	public function testCategorieStatic()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new Categorie($db);
-		$retarray=$localobject->get_full_arbo(3);
+		$localobject = new Categorie($db);
+		$retarray = $localobject->get_full_arbo(3);
 
 		print __METHOD__." retarray size=".count($retarray)."\n";
 		$this->assertTrue(is_array($retarray));

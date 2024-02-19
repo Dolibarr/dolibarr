@@ -37,7 +37,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -57,14 +57,14 @@ class FactureFournisseurTest extends CommonClassTest
 	public function testFactureFournisseurCreate()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new FactureFournisseur($db);
+		$localobject = new FactureFournisseur($db);
 		$localobject->initAsSpecimen();
-		$result=$localobject->create($user);
+		$result = $localobject->create($user);
 
 		$this->assertLessThan($result, 0, $localobject->errorsToString());
 		print __METHOD__." result=".$result."\n";
@@ -83,13 +83,13 @@ class FactureFournisseurTest extends CommonClassTest
 	public function testFactureFournisseurFetch($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new FactureFournisseur($db);
-		$result=$localobject->fetch($id);
+		$localobject = new FactureFournisseur($db);
+		$result = $localobject->fetch($id);
 
 		$this->assertLessThan($result, 0, $localobject->errorsToString());
 		print __METHOD__." id=".$id." result=".$result."\n";
@@ -108,13 +108,13 @@ class FactureFournisseurTest extends CommonClassTest
 	public function testFactureFournisseurUpdate($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject->note='New note after update';
-		$result=$localobject->update($user);
+		$localobject->note = 'New note after update';
+		$result = $localobject->update($user);
 
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0, $localobject->errorsToString());
@@ -133,12 +133,12 @@ class FactureFournisseurTest extends CommonClassTest
 	public function testFactureFournisseurValid($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$result=$localobject->validate($user);
+		$result = $localobject->validate($user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
 		$this->assertLessThan($result, 0, $localobject->errorsToString());
@@ -157,10 +157,10 @@ class FactureFournisseurTest extends CommonClassTest
 	public function testFactureFournisseurOther($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		/*$result=$localobject->setstatus(0);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
@@ -186,14 +186,14 @@ class FactureFournisseurTest extends CommonClassTest
 	public function testFactureFournisseurDelete($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new FactureFournisseur($db);
-		$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+		$localobject = new FactureFournisseur($db);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0, $localobject->errorsToString());

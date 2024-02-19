@@ -36,7 +36,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -56,12 +56,12 @@ class CommonInvoiceTest extends CommonClassTest
 	public function testCalculateDateLimReglement()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new Facture($db);
+		$localobject = new Facture($db);
 		$localobject->fetch(1);
 		$localobject->date = dol_mktime(12, 0, 0, 1, 1, 2010);
 

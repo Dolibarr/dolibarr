@@ -36,7 +36,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -56,14 +56,14 @@ class EntrepotTest extends CommonClassTest
 	public function testEntrepotCreate()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new Entrepot($db);
+		$localobject = new Entrepot($db);
 		$localobject->initAsSpecimen();
-		$result=$localobject->create($user);
+		$result = $localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
 		$this->assertGreaterThan(0, $result);
@@ -83,13 +83,13 @@ class EntrepotTest extends CommonClassTest
 	public function testEntrepotFetch($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new Entrepot($db);
-		$result=$localobject->fetch($id);
+		$localobject = new Entrepot($db);
+		$result = $localobject->fetch($id);
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
@@ -108,13 +108,13 @@ class EntrepotTest extends CommonClassTest
 	public function testEntrepotUpdate($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject->note='New note after update';
-		$result=$localobject->update($localobject->id, $user);
+		$localobject->note = 'New note after update';
+		$result = $localobject->update($localobject->id, $user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
@@ -133,10 +133,10 @@ class EntrepotTest extends CommonClassTest
 	public function testEntrepotOther($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$result = $localobject->get_full_arbo();
 		$this->assertEquals('WAREHOUSE SPECIMEN', $result);
@@ -156,15 +156,15 @@ class EntrepotTest extends CommonClassTest
 	public function testEntrepotDelete($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new Entrepot($db);
-		$result=$localobject->fetch($id);
+		$localobject = new Entrepot($db);
+		$result = $localobject->fetch($id);
 
-		$result=$localobject->delete($user);
+		$result = $localobject->delete($user);
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0, $localobject->errorsToString());
 

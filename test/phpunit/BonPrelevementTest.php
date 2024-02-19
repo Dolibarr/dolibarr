@@ -36,7 +36,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 $langs->load("main");
 
@@ -58,10 +58,10 @@ class BonPrelevementTest extends CommonClassTest
 	public function testBonPrelevementCreate()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		// TODO
 		// Create invoice
@@ -74,9 +74,9 @@ class BonPrelevementTest extends CommonClassTest
 
 
 		// Create withdraw record and generate SEPA file
-		$localobject=new BonPrelevement($db);
+		$localobject = new BonPrelevement($db);
 		//$localobject->date_solde=dol_now();
-		$result=$localobject->Create(0, 0, 'simu');
+		$result = $localobject->Create(0, 0, 'simu');
 
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, 0);

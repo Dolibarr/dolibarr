@@ -37,9 +37,9 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
-$conf->global->MAIN_UMASK='0666';
+$conf->global->MAIN_UMASK = '0666';
 
 
 /**
@@ -59,47 +59,47 @@ class WebservicesUserTest extends CommonClassTest
 	public function testWSUserGetUser()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_user.php';
 		$WS_METHOD  = 'getUser';
-		$ns='http://www.dolibarr.org/ns/';
+		$ns = 'http://www.dolibarr.org/ns/';
 
 		// Set the WebService URL
 		print __METHOD__." Create nusoap_client for URL=".$WS_DOL_URL."\n";
 		$soapclient = new nusoap_client($WS_DOL_URL);
 		if ($soapclient) {
-			$soapclient->soap_defencoding='UTF-8';
+			$soapclient->soap_defencoding = 'UTF-8';
 			$soapclient->decodeUTF8(false);
 		}
 
 		//$soapclient->setDebugLevel(5);
 
 		// Call the WebService method and store its result in $result.
-		$authentication=array(
-			'dolibarrkey'=>getDolGlobalString('WEBSERVICES_KEY'),
-			'sourceapplication'=>'DEMO',
-			'login'=>'admin',
-			'password'=>'admin',
-			'entity'=>''
+		$authentication = array(
+			'dolibarrkey' => getDolGlobalString('WEBSERVICES_KEY'),
+			'sourceapplication' => 'DEMO',
+			'login' => 'admin',
+			'password' => 'admin',
+			'entity' => ''
 		);
 
 		// Test URL
-		$result='';
-		$parameters = array('authentication'=>$authentication,'id'=>0,'ref'=>'admin');
+		$result = '';
+		$parameters = array('authentication' => $authentication,'id' => 0,'ref' => 'admin');
 		print __METHOD__." Call method ".$WS_METHOD."\n";
 		try {
 			$result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
 		} catch (SoapFault $exception) {
 			echo $exception;
-			$result=0;
+			$result = 0;
 		}
 		if (!empty($result['faultstring'])) {
 			print $result['faultstring']."\n";
-			$result=0;
+			$result = 0;
 		}
 		if (! $result) {
 			//var_dump($soapclient);
@@ -115,14 +115,14 @@ class WebservicesUserTest extends CommonClassTest
 		$this->assertEquals('OK', empty($result['result']['result_code']) ? '' : $result['result']['result_code'], 'Test on ref admin');
 
 		// Test URL
-		$result='';
-		$parameters = array('authentication'=>$authentication,'id'=>0,'ref'=>'refthatdoesnotexists');
+		$result = '';
+		$parameters = array('authentication' => $authentication,'id' => 0,'ref' => 'refthatdoesnotexists');
 		print __METHOD__."Call method ".$WS_METHOD."\n";
 		try {
 			$result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
 		} catch (SoapFault $exception) {
 			echo $exception;
-			$result=0;
+			$result = 0;
 		}
 		if (! $result || !empty($result['faultstring'])) {
 			//var_dump($soapclient);
