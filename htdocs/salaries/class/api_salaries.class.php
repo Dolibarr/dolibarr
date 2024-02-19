@@ -25,7 +25,6 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 /**
  * API class for salaries
  *
- * @property DoliDB db
  * @access protected
  * @class DolibarrApiAccess {@requires user,external}
  */
