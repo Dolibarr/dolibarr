@@ -163,10 +163,10 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " AND d.fk_commande = c.rowid";
 			$sql .= " AND d.fk_product = ".((int) $product->id);
 			if (!empty($search_month)) {
-				$sql .= ' AND MONTH(c.date_commande) IN ('.$db->sanitize($search_month).')';
+				$sql .= " AND MONTH(c.date_commande) IN (".$db->sanitize($search_month).")";
 			}
 			if (!empty($search_year)) {
-				$sql .= ' AND YEAR(c.date_commande) IN ('.$db->sanitize($search_year).')';
+				$sql .= " AND YEAR(c.date_commande) IN (".$db->sanitize($search_year).")";
 			}
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -176,7 +176,7 @@ if ($id > 0 || !empty($ref)) {
 			}
 
 			if ($search_status != '') {
-				$sql .= " AND c.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
+				$sql .= " AND c.fk_statut IN (".$db->sanitize($search_status).")";
 			}
 
 			$sql .= $db->order($sortfield, $sortorder);
