@@ -3494,8 +3494,6 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathre
 		$expectedsize = (empty($file['size']) ? '' : $file['size']);
 		$expectedmd5 = (string) $file;
 
-		//if (preg_match('#'.$exclude.'#', $filename)) continue;
-
 		if (!file_exists($pathref.'/'.$filename)) {
 			$file_list['missing'][] = array('filename' => $filename, 'expectedmd5' => $expectedmd5, 'expectedsize' => $expectedsize);
 		} else {
