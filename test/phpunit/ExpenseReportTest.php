@@ -36,7 +36,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 
@@ -57,32 +57,32 @@ class ExpenseReportTest extends CommonClassTest
 	public function testExpenseReportCreate()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		// Create supplier order with a too low quantity
-		$localobject=new ExpenseReport($db);
+		$localobject = new ExpenseReport($db);
 		$localobject->initAsSpecimen();         // Init a specimen with lines
 		$localobject->status = 0;
 		$localobject->fk_statut = 0;
 		$localobject->date_fin = null;  // Force bad value
 
-		$result=$localobject->create($user);
+		$result = $localobject->create($user);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(-1, $result, "Error on test ExpenseReport create 1 : ".$localobject->error);       // must be -1 because of missing mandatory fields
 
-		$sql="DELETE FROM ".MAIN_DB_PREFIX."expensereport where ref=''";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."expensereport where ref=''";
 		$db->query($sql);
 
 		// Create supplier order
-		$localobject2=new ExpenseReport($db);
+		$localobject2 = new ExpenseReport($db);
 		$localobject2->initAsSpecimen();        // Init a specimen with lines
 		$localobject2->status = 0;
 		$localobject2->fk_statut = 0;
 
-		$result=$localobject2->create($user);
+		$result = $localobject2->create($user);
 		print __METHOD__." result=".$result."\n";
 		$this->assertGreaterThanOrEqual(0, $result, "Error on test ExpenseReport create 2 : ".$localobject2->error);
 
@@ -102,13 +102,13 @@ class ExpenseReportTest extends CommonClassTest
 	public function testExpenseReportFetch($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new ExpenseReport($db);
-		$result=$localobject->fetch($id);
+		$localobject = new ExpenseReport($db);
+		$result = $localobject->fetch($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -127,12 +127,12 @@ class ExpenseReportTest extends CommonClassTest
 	public function testExpenseReportValid($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$result=$localobject->setValidate($user);
+		$result = $localobject->setValidate($user);
 
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -151,12 +151,12 @@ class ExpenseReportTest extends CommonClassTest
 	public function testExpenseReportApprove($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$result=$localobject->setApproved($user);
+		$result = $localobject->setApproved($user);
 
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -175,12 +175,12 @@ class ExpenseReportTest extends CommonClassTest
 	public function testExpenseReportCancel($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$result=$localobject->set_cancel($user, 'Because...');
+		$result = $localobject->set_cancel($user, 'Because...');
 
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -199,12 +199,12 @@ class ExpenseReportTest extends CommonClassTest
 	public function testExpenseReportOther($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$result=$localobject->getSumPayments();
+		$result = $localobject->getSumPayments();
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertGreaterThanOrEqual(0, $result);
 
@@ -223,14 +223,14 @@ class ExpenseReportTest extends CommonClassTest
 	public function testExpenseReportDelete($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new ExpenseReport($db);
-		$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+		$localobject = new ExpenseReport($db);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertGreaterThan(0, $result);
