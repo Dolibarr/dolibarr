@@ -35,7 +35,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 $langs->load("main");
 
@@ -57,10 +57,10 @@ class ODFTest extends CommonClassTest
 	public function testODFconvertVarToOdf()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		// we test using template_invoice, it does not matter, we just need a valid odt.
 		$filename = '../../htdocs/install/doctemplates/invoices/template_invoice.odt';
@@ -283,7 +283,7 @@ class ODFTest extends CommonClassTest
 			],
 		];
 
-		$odf=new Odf($filename, array());
+		$odf = new Odf($filename, array());
 		if (is_object($odf)) {
 			$result = 1;
 		} // Just to test
