@@ -36,7 +36,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 
@@ -58,22 +58,22 @@ class EmailCollectorTest extends CommonClassTest
 	public function testEmailCollectorCreate()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$langs->load("main");
 
 		// Create supplier order with a too low quantity
-		$localobject=new EmailCollector($db);
+		$localobject = new EmailCollector($db);
 		$localobject->initAsSpecimen();         // Init a specimen with lines
 
 		$this->filters = array();
 
 		$this->actions = array();
 
-		$result=$localobject->create($user);
+		$result = $localobject->create($user);
 		print __METHOD__." result=".$result."\n";
 		$this->assertGreaterThan(0, $result, "Error on test EmailCollector create: ".$localobject->error.' '.join(',', $localobject->errors));
 
@@ -93,13 +93,13 @@ class EmailCollectorTest extends CommonClassTest
 	public function testEmailCollectorFetch($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new EmailCollector($db);
-		$result=$localobject->fetch($id);
+		$localobject = new EmailCollector($db);
+		$result = $localobject->fetch($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -118,12 +118,12 @@ class EmailCollectorTest extends CommonClassTest
 	public function testEmailCollectorCollect($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$result=$localobject->getConnectStringIMAP();
+		$result = $localobject->getConnectStringIMAP();
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertEquals('{localhost:993/service=imap/ssl/novalidate-cert}', $result, 'Error in getConnectStringIMAP '.$localobject->error);
 
@@ -142,14 +142,14 @@ class EmailCollectorTest extends CommonClassTest
 	public function testEmailCollectorDelete($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new EmailCollector($db);
-		$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+		$localobject = new EmailCollector($db);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertGreaterThan(0, $result);
