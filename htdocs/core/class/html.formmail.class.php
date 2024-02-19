@@ -29,8 +29,6 @@
  *       \brief      Fichier de la class permettant la generation du formulaire html d'envoi de mail unitaire
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/modelemail.lib.php';
-
 
 
 /**
@@ -1039,6 +1037,10 @@ class FormMail extends Form
 								event.preventDefault();
 								jQuery("#ai_input").toggle();
 								jQuery("#template-selector").hide();
+								if (!jQuery("ai_input").is(":hidden")) {
+									console.log("Set focus on input field");
+									jQuery("#ai_instructions").focus();
+								}
 							});
 						});
 					</script>
@@ -1510,6 +1512,8 @@ class FormMail extends Form
 	 */
 	public function getModelEmailTemplate()
 	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/emaillayout.lib.php';
+
 		$out = '<div id="template-selector" class="template-container hidden">';
 		$templates = array(
 			'empty' => 'empty',

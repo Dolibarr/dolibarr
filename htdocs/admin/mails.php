@@ -50,16 +50,18 @@ if ($action == 'test' || ($action == 'send' && $trackid = 'test')) {
 $substitutionarrayfortest = array(
 	'__USER_LOGIN__' => $user->login,
 	'__USER_EMAIL__' => $user->email,
+	'__USER_FIRSTNAME__' => $user->firstname,
+	'__USER_LASTNAME__' => $user->lastname,
 	'__USER_SIGNATURE__' => (($user->signature && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $usersignature : ''), // Done into actions_sendmails
 	'__SENDEREMAIL_SIGNATURE__' => (($user->signature && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $usersignature : ''), // Done into actions_sendmails
-	'__ID__' => 'RecipientID',
+	//'__ID__' => 'RecipientID',
 	//'__EMAIL__' => 'RecipientEMail',				// Done into actions_sendmails
-	'__LASTNAME__' => 'RecipientLastname',
-	'__FIRSTNAME__' => 'RecipientFirstname',
-	'__ADDRESS__'=> 'RecipientAddress',
-	'__ZIP__'=> 'RecipientZip',
-	'__TOWN_'=> 'RecipientTown',
-	'__COUNTRY__'=> 'RecipientCountry',
+	'__LASTNAME__' => $langs->trans("Lastname").' ('.$langs->trans("Recipient").')',
+	'__FIRSTNAME__' => $langs->trans("Firstname").' ('.$langs->trans("Recipient").')',
+	//'__ADDRESS__'=> $langs->trans("Address").' ('.$langs->trans("Recipient").')',
+	//'__ZIP__'=> $langs->trans("Zip").' ('.$langs->trans("Recipient").')',
+	//'__TOWN_'=> $langs->trans("Town").' ('.$langs->trans("Recipient").')',
+	//'__COUNTRY__'=> $langs->trans("Country").' ('.$langs->trans("Recipient").')',
 	'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
 	'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefinedtag&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefinedtag", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0" />',
 );

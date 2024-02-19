@@ -18,7 +18,7 @@
  */
 
 /**
- *		\file       htdocs/core/lib/emailmodel.lib.php
+ *		\file       htdocs/core/lib/emaillayout.lib.php
  *		\brief      File for getting email html models
  */
 
