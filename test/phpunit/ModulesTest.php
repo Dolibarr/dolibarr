@@ -35,7 +35,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -55,12 +55,12 @@ class ModulesTest extends CommonClassTest
 	public function testModulesInit()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$modulelist=array('Accounting','Adherent','Agenda','Api','Asset','Banque','Barcode','BlockedLog','Bom','Bookmark',
+		$modulelist = array('Accounting','Adherent','Agenda','Api','Asset','Banque','Barcode','BlockedLog','Bom','Bookmark',
 		'Categorie','ClickToDial','Collab','Commande','Comptabilite','Contrat','Cron','DataPolicy','Dav','DebugBar','Deplacement','DocumentGeneration','Don','DynamicPrices',
 		'ECM','EmailCollector','EventOrganization','Expedition','ExpenseReport','Export','ExternalRss','ExternalSite',
 		'Facture','Fckeditor','Ficheinter','Fournisseur','FTP','GeoIPMaxmind','Gravatar','Holiday','HRM','Import','Incoterm','Intracommreport',
@@ -72,17 +72,17 @@ class ModulesTest extends CommonClassTest
 		'TakePos','Tax','Ticket','User','Variants','WebServices','WebServicesClient','Website','Workflow','Workstation','Zapier');
 		foreach ($modulelist as $modlabel) {
 			require_once DOL_DOCUMENT_ROOT.'/core/modules/mod'.$modlabel.'.class.php';
-			$class='mod'.$modlabel;
-			$mod=new $class($db);
+			$class = 'mod'.$modlabel;
+			$mod = new $class($db);
 
-			$result=$mod->remove();
-			$result=$mod->init();
+			$result = $mod->remove();
+			$result = $mod->init();
 
 			$this->assertLessThan($result, 0, $modlabel." ".$mod->error);
 			print __METHOD__." test remove/init for module ".$modlabel.", result=".$result."\n";
 
 			if (in_array($modlabel, array('Ldap', 'MailmanSpip'))) {
-				$result=$mod->remove();
+				$result = $mod->remove();
 			}
 		}
 
