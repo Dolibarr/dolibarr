@@ -700,7 +700,7 @@ class DolGraph
 		}
 
 		//print "max=".$max." res=".$res;
-		return $res;
+		return (int) $res;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1540,7 +1540,7 @@ class DolGraph
 	/**
 	 * Output HTML string to total value
 	 *
-	 * @return	string							HTML string to total value
+	 * @return	float|int							HTML string to total value
 	 */
 	public function total()
 	{
@@ -1587,16 +1587,17 @@ class DolGraph
 	public static function getDefaultGraphSizeForStats($direction, $defaultsize = '')
 	{
 		global $conf;
-
+		$defaultsize = (int) $defaultsize;
+		
 		if ($direction == 'width') {
 			if (empty($conf->dol_optimize_smallscreen)) {
-				return ($defaultsize ? $defaultsize : '500');
+				return ($defaultsize ? $defaultsize : 500);
 			} else {
-				return (empty($_SESSION['dol_screenwidth']) ? '280' : ($_SESSION['dol_screenwidth'] - 40));
+				return (empty($_SESSION['dol_screenwidth']) ? 280 : ($_SESSION['dol_screenwidth'] - 40));
 			}
 		}
-		if ($direction == 'height') {
-			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : '220') : '200');
+		elseif ($direction == 'height') {
+			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : 220) : 200);
 		}
 		return 0;
 	}
