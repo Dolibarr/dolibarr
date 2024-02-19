@@ -40,10 +40,11 @@ class GeoMapEditor
 	 *
 	 * @param string $htmlname htmlname
 	 * @param string $geojson  json of geometric objects
+	 * @param string $markertype type of marker
 	 *
 	 * @return string
 	 */
-	public function getHtml($htmlname, $geojson)
+	public function getHtml($htmlname, $geojson, $markertype)
 	{
 		global $langs;
 
@@ -52,77 +53,82 @@ class GeoMapEditor
 		$out .= '
 		<script>
 			var geoms = JSON.parse(\'' . $geojson . '\');
+			var markerType = "' . $markertype . '";
+			console.log(markerType);
 			console.log(geoms);
 			if (Object.keys(geoms).length === 0) {
-				var map = L.map("map_' . $htmlname . '").setView([49.505, -0.09], 13);
+				var map = L.map("map_' . $htmlname . '").setView([48.852, 2.351], 12);
 			} else {
 				var map = L.map("map_' . $htmlname . '").setView([geoms.coordinates[1], geoms.coordinates[0]], 14);
 			}
-			if (geoms && geoms.type == "Point") {
-				L.marker([geoms.coordinates[1], geoms.coordinates[0]]).addTo(map);
-				map.pm.addControls({
-					drawMarker: false,
-					drawPolyline: false,
-					drawRectangle: false,
-					drawPolygon: false,
-				});
-			}
-			map.on("pm:drawend", (e) => {
-				map.pm.addControls({
-					drawMarker: false,
-					drawPolyline: false,
-					drawRectangle: false,
-					drawPolygon: false,
-				});
-				generateGeoJson();
-				console.log("pm:drawend");
-				console.log(e);
-			});
-			map.on("pm:markerdragend", (e) => {
-				map.pm.addControls({
-					drawMarker: false,
-					drawPolyline: false,
-					drawRectangle: false,
-					drawPolygon: false,
-				});
-				console.log("pm:markerdragend");
-				console.log(e);
-			});
-			map.on("pm:remove", (e) => {
-				map.pm.addControls({
-					drawMarker: true,
-					drawPolyline: true,
-					drawRectangle: true,
-					drawPolygon: true,
-				});
-				console.log(e);
-				$("#' . $htmlname . '").val ("{}");
-			});
-
-			map.on("pm:create", (e) => {
-				console.log("pm:create");
-				generateGeoJson();
-			});
-			map.on("pm:globaleditmodetoggled", (e) => {
-				console.log(e);
-			});
 			var tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 				maxZoom: 19,
 				attribution: \'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>\'
 			}).addTo(map);
-			map.pm.setLang("'.($langs->shortlang ?? 'en').'");
+			map.pm.setLang("' . ($langs->shortlang ?? 'en') . '");
 			// remove controls not needed
 			map.pm.addControls({
 				position: \'topleft\',
 				dragMode: false,
+				drawMarker: false,
 				drawCircle:false,
 				drawCircleMarker: false,
 				drawText: false,
 				editMode: true,
 				removalMode: true,
-				rotateMode: true,
+				rotateMode: false,
 				customControls: false,
 			});
+			enableMarker(markerType);
+			if (geoms && geoms.type == "Point") {
+				L.marker([geoms.coordinates[1], geoms.coordinates[0]]).addTo(map);
+				disableMarkers();
+			}
+			map.on("pm:drawend", (e) => {
+				disableMarkers();
+				generateGeoJson();
+				console.log("pm:drawend");
+				console.log(e);
+			});
+			map.on("pm:markerdragend", (e) => {
+				disableMarkers();
+				generateGeoJson();
+				console.log("pm:markerdragend");
+				console.log(e);
+			});
+			map.on("pm:remove", (e) => {
+				enableMarker();
+				console.log(e);
+				$("#' . $htmlname . '").val ("{}");
+			});
+			map.on("pm:edit", (e) => {
+				console.log("pm:edit");
+				generateGeoJson();
+			});
+			map.on("pm:create", (e) => {
+				console.log("pm:create");
+				generateGeoJson();
+			});
+			map.on("pm:globaleditmodetoggled", (e) => {
+				generateGeoJson();
+				console.log(e);
+			});
+			function enableMarker(type) {
+				if (type == "point") {
+					console.log("enable : " + type);
+					map.pm.addControls({
+						drawMarker: true
+					});
+				};
+			}
+			function disableMarkers(){
+				map.pm.addControls({
+					drawMarker: false,
+					drawPolyline: false,
+					drawRectangle: false,
+					drawPolygon: false,
+				});
+			}
 
 			function generateGeoJson(){
 				var fg = L.featureGroup();
