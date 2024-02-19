@@ -22,6 +22,7 @@
  * Copyright (C) 2022       Charlene Benke           	<charlene@patas-monkey.com>
  * Copyright (C) 2023       Joachim Kueter              <git-jk@bloxera.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Lenin Rivas					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3660,6 +3661,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	}
 
 	$newphone = $phone;
+	$newphonewa = $phone;
 	if (strtoupper($countrycode) == "FR") {
 		// France
 		if (dol_strlen($phone) == 10) {
@@ -3837,6 +3839,19 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		} elseif (dol_strlen($phone) == 13) {// mobile +352_AAA_BB_CC_DD
 			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2).$separ.substr($newphone, 11, 2);
 		}
+	} elseif (strtoupper($countrycode) == "PE") {
+		// Peru
+		if (dol_strlen($phone) == 7) {// fixe 7 chiffres without code AAA_BBBB
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 4);
+		} elseif (dol_strlen($phone) == 9) {// mobile add code and fixe 9 chiffres +51_AAA_BBB_CCC
+			$newphonewa = '+51'.$newphone;
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 3).$separ.substr($newphone, 6, 3).$separ.substr($newphone, 10, 3);
+		} elseif (dol_strlen($phone) == 11) {// fixe 11 chiffres +511_AAA_BBBB
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 8, 4);
+		} elseif (dol_strlen($phone) == 12) {// mobile +51_AAA_BBB_CCC
+			$newphonewa = $newphone;
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 3).$separ.substr($newphone, 6, 3).$separ.substr($newphone, 10, 3).$separ.substr($newphone, 14, 3);
+		}
 	}
 
 	$newphoneastart = $newphoneaend = '';
@@ -3896,6 +3911,12 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			}
 		}
 	}
+
+	if (!empty($conf->global->CONTACT_PHONEMOBILE_SHOW_LINK_TO_WHATSAPP) && $withpicto == 'mobile') {
+		// Link to Whatsapp
+		$newphone .= ' <a href="https://wa.me/'.$newphonewa.'" target="_blank"';// Use api to whatasapp contacts
+		$newphone .= '><span class="fa pictofixedwidth fa-whatsapp" style="color:#25D366;" title="WhatsApp"></span></a>';
+	} 
 
 	if (empty($titlealt)) {
 		$titlealt = ($withpicto == 'fax' ? $langs->trans("Fax") : $langs->trans("Phone"));
