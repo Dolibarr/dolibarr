@@ -1588,15 +1588,14 @@ class DolGraph
 	{
 		global $conf;
 		$defaultsize = (int) $defaultsize;
-		
+
 		if ($direction == 'width') {
 			if (empty($conf->dol_optimize_smallscreen)) {
 				return ($defaultsize ? $defaultsize : 500);
 			} else {
 				return (empty($_SESSION['dol_screenwidth']) ? 280 : ($_SESSION['dol_screenwidth'] - 40));
 			}
-		}
-		elseif ($direction == 'height') {
+		} elseif ($direction == 'height') {
 			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : 220) : 200);
 		}
 		return 0;
