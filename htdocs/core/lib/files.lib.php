@@ -99,7 +99,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 	$reshook = 0;
 	$file_list = array();
 
-	if (is_object($hookmanager) && !$nohook) {
+	if (!$nohook && $hookmanager instanceof HookManager) {
 		$hookmanager->resArray = array();
 
 		$hookmanager->initHooks(array('fileslib'));
