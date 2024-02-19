@@ -36,7 +36,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -56,17 +56,17 @@ class XCalLibTest extends CommonClassTest
 	public function testQuotedPrintEncodeDecode()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$stringtoencode='ABCD=1234;';
-		$result=quotedPrintEncode($stringtoencode);
+		$stringtoencode = 'ABCD=1234;';
+		$result = quotedPrintEncode($stringtoencode);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('ABCD=3D1234;', $result);
 
-		$resultback=quotedPrintDecode($result);
+		$resultback = quotedPrintDecode($result);
 		print __METHOD__." result=".$resultback."\n";
 		$this->assertEquals($stringtoencode, $resultback);
 	}
