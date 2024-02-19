@@ -3841,12 +3841,12 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		}
 	} elseif (strtoupper($countrycode) == "PE") {
 		// Peru
-		if (dol_strlen($phone) == 7) {// fixe 7 chiffres without code AAA_BBBB
+		if (dol_strlen($phone) == 7) {// fix 7 chiffres without code AAA_BBBB
 			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 4);
-		} elseif (dol_strlen($phone) == 9) {// mobile add code and fixe 9 chiffres +51_AAA_BBB_CCC
+		} elseif (dol_strlen($phone) == 9) {// mobile add code and fix 9 chiffres +51_AAA_BBB_CCC
 			$newphonewa = '+51'.$newphone;
 			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 3).$separ.substr($newphone, 6, 3).$separ.substr($newphone, 10, 3);
-		} elseif (dol_strlen($phone) == 11) {// fixe 11 chiffres +511_AAA_BBBB
+		} elseif (dol_strlen($phone) == 11) {// fix 11 chiffres +511_AAA_BBBB
 			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 8, 4);
 		} elseif (dol_strlen($phone) == 12) {// mobile +51_AAA_BBB_CCC
 			$newphonewa = $newphone;
@@ -3915,7 +3915,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	if (!empty($conf->global->CONTACT_PHONEMOBILE_SHOW_LINK_TO_WHATSAPP) && $withpicto == 'mobile') {
 		// Link to Whatsapp
 		$newphone .= ' <a href="https://wa.me/'.$newphonewa.'" target="_blank"';// Use api to whatasapp contacts
-		$newphone .= '><span class="fa pictofixedwidth fa-whatsapp" style="color:#25D366;" title="WhatsApp"></span></a>';
+		$newphone .= '><span class="paddingright fab fa-whatsapp" style="color:#25D366;" title="WhatsApp"></span></a>';
 	} 
 
 	if (empty($titlealt)) {
