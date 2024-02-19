@@ -37,7 +37,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -77,15 +77,15 @@ class StripeTest extends CommonClassTest
 	public function testStripeOk()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$urltotest=getOnlinePaymentUrl(0, 'free');
+		$urltotest = getOnlinePaymentUrl(0, 'free');
 		print "urltotest=".$urltotest."\n";
 
-		$result=getURLContent($urltotest, 'GET', '', 1, array(), array('http', 'https'), 2);
+		$result = getURLContent($urltotest, 'GET', '', 1, array(), array('http', 'https'), 2);
 
 		print __METHOD__." result=".$result['http_code']."\n";
 		$this->assertEquals(200, $result['http_code']);
