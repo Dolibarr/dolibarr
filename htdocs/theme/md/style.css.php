@@ -8000,6 +8000,7 @@ table.jPicker {
 
 <?php
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
+include dol_buildpath($path.'/theme/eldy/emaillayout.inc.php', 0); // actually md use same style as eldy theme
 include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/eldy/timeline.inc.php', 0); // actually md use same style as eldy theme

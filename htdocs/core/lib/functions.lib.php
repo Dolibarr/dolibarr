@@ -22,6 +22,7 @@
  * Copyright (C) 2022       Charlene Benke           	<charlene@patas-monkey.com>
  * Copyright (C) 2023       Joachim Kueter              <git-jk@bloxera.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Lenin Rivas					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1668,24 +1669,13 @@ function dol_escape_php($stringtoescape, $stringforquotes = 2)
 }
 
 /**
- * Return a string label ready to be output on HTML content
- * To use the text inside a HTML tag attribute, use can use only dol_escape_htmltag()
- *
- * @param	string	$s		String to print
- * @return	string			String ready for HTML output
- */
-function dolPrintLabel($s)
-{
-	return dol_escape_htmltag(dol_htmlentitiesbr($s));
-}
-
-/**
- * Return a string ready to be output on HTML page
- * To use text inside an attribute, you can simply use dol_escape_htmltag()
+ * Return a string ready to be output on a HTML page.
+ * To output a text inside an attribute, you can use dolPrintHTMLForAttribute() or dolPrintHTMLForTextArea() inside a textarea
  *
  * @param	string	$s				String to print
  * @param	int		$allowiframe	Allow iframe tags
- * @return	string					String ready for HTML output
+ * @return	string					String ready for HTML output (sanitized and escape)
+ * @see dolPrintHTMLForAttribute(), dolPrintHTMLFortextArea()
  */
 function dolPrintHTML($s, $allowiframe = 0)
 {
@@ -1697,6 +1687,7 @@ function dolPrintHTML($s, $allowiframe = 0)
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
+ * @see dolPrintHTML(), dolPrintHTMLFortextArea()
  */
 function dolPrintHTMLForAttribute($s)
 {
@@ -1707,11 +1698,11 @@ function dolPrintHTMLForAttribute($s)
 
 /**
  * Return a string ready to be output on input textarea
- * To use text inside an attribute, use can use only dol_escape_htmltag()
  *
  * @param	string	$s				String to print
  * @param	int		$allowiframe	Allow iframe tags
  * @return	string					String ready for HTML output into a textarea
+ * @see dolPrintHTML(), dolPrintHTMLForAttribute()
  */
 function dolPrintHTMLForTextArea($s, $allowiframe = 0)
 {
@@ -1734,13 +1725,12 @@ function dolPrintPassword($s)
  *  Returns text escaped for inclusion in HTML alt or title or value tags, or into values of HTML input fields.
  *  When we need to output strings on pages, we should use:
  *        - dolPrintHTML... that is dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(), 1, 1, 1)), 1, 1) for notes or descriptions into textarea, add 'common' if into a html content
- *        - dolPrintLabel... that is dol_escape_htmltag(dol_htmlentitiesbr()) for simple labels.
  *        - dolPrintPassword that is abelhtmlspecialchars( , ENT_COMPAT, 'UTF-8') for passwords.
  *
  *  @param      string		$stringtoescape			String to escape
  *  @param		int			$keepb					1=Replace b tags with escaped value (except if in $noescapetags), 0=Remove them completely
  *  @param      int         $keepn              	1=Preserve \r\n strings, 0=Replace them with escaped value, -1=Remove them. Set to 1 when escaping for a <textarea>.
- *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape. TODO Does not works yet when there is attributes into tag.
+ *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape.
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
  *  @param		int			$cleanalsojavascript	Clean also javascript. @TODO switch this option to 1 by default.
  *  @return     string     				 			Escaped string
@@ -1781,11 +1771,27 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 			$tmparrayoftags = explode(',', $noescapetags);
 		}
 		if (count($tmparrayoftags)) {
-			// TODO Does not works yet when there is attributes into tag
+			$tmp = str_ireplace('DOUBLEQUOTE', '', $tmp);	// The keyword DOUBLEQUOTE is forbidden. Reserved, so we removed it if we find it.
+
 			foreach ($tmparrayoftags as $tagtoreplace) {
-				$tmp = str_ireplace('<'.$tagtoreplace.'>', '__BEGINTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
+				$tmp = preg_replace('/<'.preg_quote($tagtoreplace, '/').'>/', '__BEGINTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
 				$tmp = str_ireplace('</'.$tagtoreplace.'>', '__ENDTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
-				$tmp = str_ireplace('<'.$tagtoreplace.' />', '__BEGINENDTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
+				$tmp = preg_replace('/<'.preg_quote($tagtoreplace, '/').' \/>/', '__BEGINENDTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
+
+				// For case of tag with attribute
+				$reg = array();
+				if (preg_match('/<'.preg_quote($tagtoreplace, '/').'\s+([^>]+)>/', $tmp, $reg)) {
+					$tmpattributes = str_ireplace(array('[', ']'), '_', $reg[1]);	// We must not have [ ] inside the attribute string
+					$tmpattributes = str_ireplace('"', 'DOUBLEQUOTE', $tmpattributes);
+					$tmpattributes = preg_replace('/[^a-z0-9_\/\?\;\s=&\.]/i', '', $tmpattributes);
+					$tmp = preg_replace('/<'.preg_quote($tagtoreplace, '/').'\s+([^>]+)>/', '__BEGINTAGTOREPLACE'.$tagtoreplace.'['.$tmpattributes.']__', $tmp);
+				}
+				if (preg_match('/<'.preg_quote($tagtoreplace, '/').'\s+([^>]+)> \/>/', $tmp, $reg)) {
+					$tmpattributes = str_ireplace(array('[', ']'), '_', $reg[1]);	// We must not have [ ] inside the attribute string
+					$tmpattributes = str_ireplace('"', 'DOUBLEQUOTE', $tmpattributes);
+					$tmpattributes = preg_replace('/[^a-z0-9_\/\?\;\s=&]/i', '', $tmpattributes);
+					$tmp = preg_replace('/<'.preg_quote($tagtoreplace, '/').'\s+([^>]+) \/>/', '__BEGINENDTAGTOREPLACE'.$tagtoreplace.'['.$tmpattributes.']__', $tmp);
+				}
 			}
 		}
 
@@ -1794,9 +1800,13 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 		if (count($tmparrayoftags)) {
 			foreach ($tmparrayoftags as $tagtoreplace) {
 				$result = str_ireplace('__BEGINTAGTOREPLACE'.$tagtoreplace.'__', '<'.$tagtoreplace.'>', $result);
+				$result = preg_replace('/__BEGINTAGTOREPLACE'.$tagtoreplace.'\[(.*)\]__/', '<'.$tagtoreplace.' \1>', $result);
 				$result = str_ireplace('__ENDTAGTOREPLACE'.$tagtoreplace.'__', '</'.$tagtoreplace.'>', $result);
 				$result = str_ireplace('__BEGINENDTAGTOREPLACE'.$tagtoreplace.'__', '<'.$tagtoreplace.' />', $result);
+				$result = preg_replace('/__BEGINENDTAGTOREPLACE'.$tagtoreplace.'\[(.*)\]__/', '<'.$tagtoreplace.' \1 />', $result);
 			}
+
+			$result = str_ireplace('DOUBLEQUOTE', '"', $result);
 		}
 
 		return $result;
@@ -3660,6 +3670,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	}
 
 	$newphone = $phone;
+	$newphonewa = $phone;
 	if (strtoupper($countrycode) == "FR") {
 		// France
 		if (dol_strlen($phone) == 10) {
@@ -3837,6 +3848,19 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		} elseif (dol_strlen($phone) == 13) {// mobile +352_AAA_BB_CC_DD
 			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2).$separ.substr($newphone, 11, 2);
 		}
+	} elseif (strtoupper($countrycode) == "PE") {
+		// Peru
+		if (dol_strlen($phone) == 7) {// fix 7 chiffres without code AAA_BBBB
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 4);
+		} elseif (dol_strlen($phone) == 9) {// mobile add code and fix 9 chiffres +51_AAA_BBB_CCC
+			$newphonewa = '+51'.$newphone;
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 3).$separ.substr($newphone, 6, 3).$separ.substr($newphone, 10, 3);
+		} elseif (dol_strlen($phone) == 11) {// fix 11 chiffres +511_AAA_BBBB
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 8, 4);
+		} elseif (dol_strlen($phone) == 12) {// mobile +51_AAA_BBB_CCC
+			$newphonewa = $newphone;
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 3).$separ.substr($newphone, 6, 3).$separ.substr($newphone, 10, 3).$separ.substr($newphone, 14, 3);
+		}
 	}
 
 	$newphoneastart = $newphoneaend = '';
@@ -3895,6 +3919,12 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 				$newphone = '<span>'.$newphone.' '.$addlinktoagenda.'</span>';
 			}
 		}
+	}
+
+	if (!empty($conf->global->CONTACT_PHONEMOBILE_SHOW_LINK_TO_WHATSAPP) && $withpicto == 'mobile') {
+		// Link to Whatsapp
+		$newphone .= ' <a href="https://wa.me/'.$newphonewa.'" target="_blank"';// Use api to whatasapp contacts
+		$newphone .= '><span class="paddingright fab fa-whatsapp" style="color:#25D366;" title="WhatsApp"></span></a>';
 	}
 
 	if (empty($titlealt)) {
@@ -4510,7 +4540,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-				'accountancy', 'accounting_account', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
+				'accountancy', 'accounting_account', 'account', 'accountline', 'action', 'add', 'address', 'ai', 'angle-double-down', 'angle-double-up', 'asset',
 				'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'birthday-cake', 'bookmark', 'bom', 'briefcase-medical', 'bug', 'building',
 				'card', 'calendarlist', 'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype',
 				'cash-register', 'category', 'chart', 'check', 'clock', 'clone', 'close_title', 'code', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cross', 'cubes',
@@ -4523,7 +4553,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'hands-helping', 'help', 'holiday',
 				'id-card', 'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'jobprofile',
 				'key', 'knowledgemanagement',
-				'label', 'language', 'line', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lock', 'lot', 'long-arrow-alt-right',
+				'label', 'language', 'layout', 'line', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lock', 'lot', 'long-arrow-alt-right',
 				'margin', 'map-marker-alt', 'member', 'meeting', 'minus', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'off', 'on', 'order',
 				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'proposal', 'puce',
@@ -4555,7 +4585,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			}
 
 			$arrayconvpictotofa = array(
-				'account' => 'university', 'accounting_account' => 'clipboard-list', 'accountline' => 'receipt', 'accountancy' => 'search-dollar', 'action' => 'calendar-alt', 'add' => 'plus-circle', 'address' => 'address-book', 'asset' => 'money-check-alt', 'autofill' => 'fill',
+				'account' => 'university', 'accounting_account' => 'clipboard-list', 'accountline' => 'receipt', 'accountancy' => 'search-dollar', 'action' => 'calendar-alt', 'add' => 'plus-circle', 'address' => 'address-book', 'ai' => 'magic',
+				'asset' => 'money-check-alt', 'autofill' => 'fill',
 				'bank_account' => 'university',
 				'bill' => 'file-invoice-dollar', 'billa' => 'file-excel', 'billr' => 'file-invoice-dollar', 'billd' => 'file-medical',
 				'supplier_invoice' => 'file-invoice-dollar', 'supplier_invoicea' => 'file-excel', 'supplier_invoicer' => 'file-invoice-dollar', 'supplier_invoiced' => 'file-medical',
@@ -4570,7 +4601,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'graph' => 'chart-line', 'grip_title' => 'arrows-alt', 'grip' => 'arrows-alt', 'help' => 'question-circle',
 				'generic' => 'file', 'holiday' => 'umbrella-beach',
 				'info' => 'info-circle', 'inventory' => 'boxes', 'intracommreport' => 'globe-europe', 'jobprofile' => 'cogs',
-				'knowledgemanagement' => 'ticket-alt', 'label' => 'layer-group', 'line' => 'bars', 'loan' => 'money-bill-alt',
+				'knowledgemanagement' => 'ticket-alt', 'label' => 'layer-group', 'layout'=>'columns', 'line' => 'bars', 'loan' => 'money-bill-alt',
 				'member' => 'user-alt', 'meeting' => 'chalkboard-teacher', 'mrp' => 'cubes', 'next' => 'arrow-alt-circle-right',
 				'trip' => 'wallet', 'expensereport' => 'wallet', 'group' => 'users', 'movement' => 'people-carry',
 				'sign-out' => 'sign-out-alt',
@@ -5388,7 +5419,7 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
 
 		$class = (empty($admin) ? 'undefined' : ($admin == '1' ? 'info' : $admin));
 		$result = ($nodiv ? '' : '<div class="'.$class.($morecss ? ' '.$morecss : '').($textfordropdown ? ' hidden' : '').'">').'<span class="fa fa-info-circle" title="'.dol_escape_htmltag($admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).'"></span> ';
-		$result .= dol_escape_htmltag($text, 1, 0, 'div,span,b');
+		$result .= dol_escape_htmltag($text, 1, 0, 'div,span,b,br,a');
 		$result .= ($nodiv ? '' : '</div>');
 
 		if ($textfordropdown) {
@@ -7874,7 +7905,6 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
  *        Because writeHTMLCell convert also \n into <br>, if function is used to build PDF, nl2brmode must be 1.
  *  Note: When we output string on pages, we should use
  *        - dolPrintHTML... that is dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(), 1, 1, 1), 1, 1) for notes or descriptions,
- *        - dolPrintLabel... that is dol_escape_htmltag(dol_htmlentitiesbr()) for simple labels.
  *        - dolPrintPassword that is abelhtmlspecialchars( , ENT_COMPAT, 'UTF-8') for passwords.
  *
  *	@param	string	$stringtoencode		String to encode
@@ -9577,9 +9607,7 @@ function ascii_check($str)
  */
 function dol_osencode($str)
 {
-	global $conf;
-
-	$tmp = ini_get("unicode.filesystem_encoding"); // Disponible avec PHP 6.0
+	$tmp = ini_get("unicode.filesystem_encoding");
 	if (empty($tmp) && !empty($_SERVER["WINDIR"])) {
 		$tmp = 'iso-8859-1'; // By default for windows
 	}
@@ -11012,229 +11040,229 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 	if (preg_match('/\.txt$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.rtx$/i', $tmpfile)) {
 		$mime = 'text/richtext';
 		$imgmime = 'text.png';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.csv$/i', $tmpfile)) {
 		$mime = 'text/csv';
 		$imgmime = 'text.png';
-		$famime = 'file-text-o';
+		$famime = 'file-csv';
 	} elseif (preg_match('/\.tsv$/i', $tmpfile)) {
 		$mime = 'text/tab-separated-values';
 		$imgmime = 'text.png';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.(cf|conf|log)$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.ini$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$srclang = 'ini';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.md$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$srclang = 'md';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.css$/i', $tmpfile)) {
 		$mime = 'text/css';
 		$imgmime = 'css.png';
 		$srclang = 'css';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.lang$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$srclang = 'lang';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.(crt|cer|key|pub)$/i', $tmpfile)) {	// Certificate files
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.(html|htm|shtml)$/i', $tmpfile)) {		// XML based (HTML/XML/XAML)
 		$mime = 'text/html';
 		$imgmime = 'html.png';
 		$srclang = 'html';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.(xml|xhtml)$/i', $tmpfile)) {
 		$mime = 'text/xml';
 		$imgmime = 'other.png';
 		$srclang = 'xml';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.xaml$/i', $tmpfile)) {
 		$mime = 'text/xml';
 		$imgmime = 'other.png';
 		$srclang = 'xaml';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.bas$/i', $tmpfile)) {					// Languages
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$srclang = 'bas';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.(c)$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$srclang = 'c';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.(cpp)$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$srclang = 'cpp';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.cs$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$srclang = 'cs';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.(h)$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$srclang = 'h';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.(java|jsp)$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$srclang = 'java';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.php([0-9]{1})?$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'php.png';
 		$srclang = 'php';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.phtml$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'php.png';
 		$srclang = 'php';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.(pl|pm)$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'pl.png';
 		$srclang = 'perl';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.sql$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$srclang = 'sql';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.js$/i', $tmpfile)) {
 		$mime = 'text/x-javascript';
 		$imgmime = 'jscript.png';
 		$srclang = 'js';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.odp$/i', $tmpfile)) {					// Open office
 		$mime = 'application/vnd.oasis.opendocument.presentation';
 		$imgmime = 'ooffice.png';
-		$famime = 'file-powerpoint-o';
+		$famime = 'file-powerpoint';
 	} elseif (preg_match('/\.ods$/i', $tmpfile)) {
 		$mime = 'application/vnd.oasis.opendocument.spreadsheet';
 		$imgmime = 'ooffice.png';
-		$famime = 'file-excel-o';
+		$famime = 'file-excel';
 	} elseif (preg_match('/\.odt$/i', $tmpfile)) {
 		$mime = 'application/vnd.oasis.opendocument.text';
 		$imgmime = 'ooffice.png';
-		$famime = 'file-word-o';
+		$famime = 'file-word';
 	} elseif (preg_match('/\.mdb$/i', $tmpfile)) {					// MS Office
 		$mime = 'application/msaccess';
 		$imgmime = 'mdb.png';
-		$famime = 'file-o';
+		$famime = 'file';
 	} elseif (preg_match('/\.doc[xm]?$/i', $tmpfile)) {
 		$mime = 'application/msword';
 		$imgmime = 'doc.png';
-		$famime = 'file-word-o';
+		$famime = 'file-word';
 	} elseif (preg_match('/\.dot[xm]?$/i', $tmpfile)) {
 		$mime = 'application/msword';
 		$imgmime = 'doc.png';
-		$famime = 'file-word-o';
+		$famime = 'file-word';
 	} elseif (preg_match('/\.xlt(x)?$/i', $tmpfile)) {
 		$mime = 'application/vnd.ms-excel';
 		$imgmime = 'xls.png';
-		$famime = 'file-excel-o';
+		$famime = 'file-excel';
 	} elseif (preg_match('/\.xla(m)?$/i', $tmpfile)) {
 		$mime = 'application/vnd.ms-excel';
 		$imgmime = 'xls.png';
-		$famime = 'file-excel-o';
+		$famime = 'file-excel';
 	} elseif (preg_match('/\.xls$/i', $tmpfile)) {
 		$mime = 'application/vnd.ms-excel';
 		$imgmime = 'xls.png';
-		$famime = 'file-excel-o';
+		$famime = 'file-excel';
 	} elseif (preg_match('/\.xls[bmx]$/i', $tmpfile)) {
 		$mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 		$imgmime = 'xls.png';
-		$famime = 'file-excel-o';
+		$famime = 'file-excel';
 	} elseif (preg_match('/\.pps[mx]?$/i', $tmpfile)) {
 		$mime = 'application/vnd.ms-powerpoint';
 		$imgmime = 'ppt.png';
-		$famime = 'file-powerpoint-o';
+		$famime = 'file-powerpoint';
 	} elseif (preg_match('/\.ppt[mx]?$/i', $tmpfile)) {
 		$mime = 'application/x-mspowerpoint';
 		$imgmime = 'ppt.png';
-		$famime = 'file-powerpoint-o';
+		$famime = 'file-powerpoint';
 	} elseif (preg_match('/\.pdf$/i', $tmpfile)) {					// Other
 		$mime = 'application/pdf';
 		$imgmime = 'pdf.png';
-		$famime = 'file-pdf-o';
+		$famime = 'file-pdf';
 	} elseif (preg_match('/\.bat$/i', $tmpfile)) {					// Scripts
 		$mime = 'text/x-bat';
 		$imgmime = 'script.png';
 		$srclang = 'dos';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.sh$/i', $tmpfile)) {
 		$mime = 'text/x-sh';
 		$imgmime = 'script.png';
 		$srclang = 'bash';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.ksh$/i', $tmpfile)) {
 		$mime = 'text/x-ksh';
 		$imgmime = 'script.png';
 		$srclang = 'bash';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.bash$/i', $tmpfile)) {
 		$mime = 'text/x-bash';
 		$imgmime = 'script.png';
 		$srclang = 'bash';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.ico$/i', $tmpfile)) {					// Images
 		$mime = 'image/x-icon';
 		$imgmime = 'image.png';
-		$famime = 'file-image-o';
+		$famime = 'file-image';
 	} elseif (preg_match('/\.(jpg|jpeg)$/i', $tmpfile)) {
 		$mime = 'image/jpeg';
 		$imgmime = 'image.png';
-		$famime = 'file-image-o';
+		$famime = 'file-image';
 	} elseif (preg_match('/\.png$/i', $tmpfile)) {
 		$mime = 'image/png';
 		$imgmime = 'image.png';
-		$famime = 'file-image-o';
+		$famime = 'file-image';
 	} elseif (preg_match('/\.gif$/i', $tmpfile)) {
 		$mime = 'image/gif';
 		$imgmime = 'image.png';
-		$famime = 'file-image-o';
+		$famime = 'file-image';
 	} elseif (preg_match('/\.bmp$/i', $tmpfile)) {
 		$mime = 'image/bmp';
 		$imgmime = 'image.png';
-		$famime = 'file-image-o';
+		$famime = 'file-image';
 	} elseif (preg_match('/\.(tif|tiff)$/i', $tmpfile)) {
 		$mime = 'image/tiff';
 		$imgmime = 'image.png';
-		$famime = 'file-image-o';
+		$famime = 'file-image';
 	} elseif (preg_match('/\.svg$/i', $tmpfile)) {
 		$mime = 'image/svg+xml';
 		$imgmime = 'image.png';
-		$famime = 'file-image-o';
+		$famime = 'file-image';
 	} elseif (preg_match('/\.webp$/i', $tmpfile)) {
 		$mime = 'image/webp';
 		$imgmime = 'image.png';
-		$famime = 'file-image-o';
+		$famime = 'file-image';
 	} elseif (preg_match('/\.vcs$/i', $tmpfile)) {					// Calendar
 		$mime = 'text/calendar';
 		$imgmime = 'other.png';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.ics$/i', $tmpfile)) {
 		$mime = 'text/calendar';
 		$imgmime = 'other.png';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.torrent$/i', $tmpfile)) {				// Other
 		$mime = 'application/x-bittorrent';
 		$imgmime = 'other.png';
@@ -11242,40 +11270,40 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 	} elseif (preg_match('/\.(mp3|ogg|au|wav|wma|mid)$/i', $tmpfile)) {	// Audio
 		$mime = 'audio';
 		$imgmime = 'audio.png';
-		$famime = 'file-audio-o';
+		$famime = 'file-audio';
 	} elseif (preg_match('/\.mp4$/i', $tmpfile)) {					// Video
 		$mime = 'video/mp4';
 		$imgmime = 'video.png';
-		$famime = 'file-video-o';
+		$famime = 'file-video';
 	} elseif (preg_match('/\.ogv$/i', $tmpfile)) {
 		$mime = 'video/ogg';
 		$imgmime = 'video.png';
-		$famime = 'file-video-o';
+		$famime = 'file-video';
 	} elseif (preg_match('/\.webm$/i', $tmpfile)) {
 		$mime = 'video/webm';
 		$imgmime = 'video.png';
-		$famime = 'file-video-o';
+		$famime = 'file-video';
 	} elseif (preg_match('/\.avi$/i', $tmpfile)) {
 		$mime = 'video/x-msvideo';
 		$imgmime = 'video.png';
-		$famime = 'file-video-o';
+		$famime = 'file-video';
 	} elseif (preg_match('/\.divx$/i', $tmpfile)) {
 		$mime = 'video/divx';
 		$imgmime = 'video.png';
-		$famime = 'file-video-o';
+		$famime = 'file-video';
 	} elseif (preg_match('/\.xvid$/i', $tmpfile)) {
 		$mime = 'video/xvid';
 		$imgmime = 'video.png';
-		$famime = 'file-video-o';
+		$famime = 'file-video';
 	} elseif (preg_match('/\.(wmv|mpg|mpeg)$/i', $tmpfile)) {
 		$mime = 'video';
 		$imgmime = 'video.png';
-		$famime = 'file-video-o';
+		$famime = 'file-video';
 	} elseif (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z|tar|lzh|zst)$/i', $tmpfile)) {	// Archive
 		// application/xxx where zzz is zip, ...
 		$mime = 'archive';
 		$imgmime = 'archive.png';
-		$famime = 'file-archive-o';
+		$famime = 'file-archive';
 	} elseif (preg_match('/\.(exe|com)$/i', $tmpfile)) {					// Exe
 		$mime = 'application/octet-stream';
 		$imgmime = 'other.png';
@@ -11287,7 +11315,7 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 	} elseif (preg_match('/\.err$/i', $tmpfile)) {							 // phpcs:ignore
 		$mime = 'error';
 		$imgmime = 'error.png';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	}
 
 	// Return mimetype string

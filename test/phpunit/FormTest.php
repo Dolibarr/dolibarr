@@ -36,7 +36,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -56,13 +56,13 @@ class FormTest extends CommonClassTest
 	public function testSelectProduitsList()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new Form($db);
-		$result=$localobject->select_produits_list('', 'productid', '', 5, 0, '', 1, 2, 1);
+		$localobject = new Form($db);
+		$result = $localobject->select_produits_list('', 'productid', '', 5, 0, '', 1, 2, 1);
 
 		$this->assertEquals(count($result), 5);
 		print __METHOD__." count result=".count($result)."\n";
@@ -70,7 +70,7 @@ class FormTest extends CommonClassTest
 		$conf->global->ENTREPOT_EXTRA_STATUS = 1;
 
 		// Exclude stock in warehouseinternal
-		$result=$localobject->select_produits_list('', 'productid', '', 5, 0, '', 1, 2, 1, 0, '1', 0, '', 0, 'warehouseclosed,warehouseopen');
+		$result = $localobject->select_produits_list('', 'productid', '', 5, 0, '', 1, 2, 1, 0, '1', 0, '', 0, 'warehouseclosed,warehouseopen');
 		$this->assertEquals(count($result), 5);
 		print __METHOD__." count result=".count($result)."\n";
 

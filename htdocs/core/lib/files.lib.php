@@ -66,8 +66,25 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 	global $object;
 
 	if ($recursive <= 1) {	// Avoid too verbose log
-		dol_syslog("files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter));
+		// Verify filters (only on first call to function)
+		$filters_ok = true;
+		$error_info = "";
+		// Ensure we have an array for the exclusions
+		$exclude_array = $excludefilter === null ? array() : (is_array($excludefilter) ? $excludefilter : array($excludefilter));
+		foreach ((array($filter) + $exclude_array) as $f) {
+			// Check that all '/' are escaped.
+			if ((int) preg_match('/(?:^|[^\\\\])\//', $f) > 0) {
+				$filters_ok = false;
+				$error_info .= " error='$f unescaped_slash'";
+				dol_syslog("'$f' has unescaped '/'", LOG_ERR);
+			}
+		}
+		dol_syslog("files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter).$error_info);
 		//print 'xxx'."files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter);
+		if (!$filters_ok) {
+			// Return empty array when filters are invalid
+			return array();
+		}
 	}
 
 	$loaddate = ($mode == 1 || $mode == 2 || $nbsecondsold != 0);
@@ -75,21 +92,21 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 	$loadperm = ($mode == 1 || $mode == 4);
 
 	// Clean parameters
-	$path = preg_replace('/([\\/]+)$/i', '', $path);
+	$path = preg_replace('/([\\/]+)$/', '', $path);
 	$newpath = dol_osencode($path);
 	$now = dol_now();
 
 	$reshook = 0;
 	$file_list = array();
 
-	if (is_object($hookmanager) && !$nohook) {
+	if (!$nohook && $hookmanager instanceof HookManager) {
 		$hookmanager->resArray = array();
 
 		$hookmanager->initHooks(array('fileslib'));
 
 		$parameters = array(
 			'path' => $newpath,
-			'types'=> $types,
+			'types' => $types,
 			'recursive' => $recursive,
 			'filter' => $filter,
 			'excludefilter' => $excludefilter,
@@ -108,7 +125,9 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 			return array();
 		}
 
-		if ($dir = opendir($newpath)) {
+		if (($dir = opendir($newpath)) === false) {
+			return array();
+		} else {
 			$filedate = '';
 			$filesize = '';
 			$fileperm = '';
@@ -238,6 +257,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0)
 {
 	global $conf, $db;
+
 
 	$sql = " SELECT rowid, label, entity, filename, filepath, fullpath_orig, keywords, cover, gen_or_uploaded, extraparams,";
 	$sql .= " date_c, tms as date_m, fk_user_c, fk_user_m, acl, position, share";
@@ -1421,7 +1441,7 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 
 		$parameters = array(
 			'file' => $file,
-			'disableglob'=> $disableglob,
+			'disableglob' => $disableglob,
 			'nophperrors' => $nophperrors
 		);
 		$reshook = $hookmanager->executeHooks('deleteFile', $parameters, $object);
@@ -2369,7 +2389,7 @@ function dol_uncompress($inputfile, $outputdir)
 			$result = $archive->extract(PCLZIP_OPT_PATH, $outputdir, PCLZIP_OPT_BY_PREG, '/^((?!\.\.).)*$/');
 
 			if (!is_array($result) && $result <= 0) {
-				return array('error'=>$archive->errorInfo(true));
+				return array('error' => $archive->errorInfo(true));
 			} else {
 				$ok = 1;
 				$errmsg = '';
@@ -2392,7 +2412,7 @@ function dol_uncompress($inputfile, $outputdir)
 				if ($ok) {
 					return array();
 				} else {
-					return array('error'=>$errmsg);
+					return array('error' => $errmsg);
 				}
 			}
 		}
@@ -2418,11 +2438,11 @@ function dol_uncompress($inputfile, $outputdir)
 				$zip->close();
 				return array();
 			} else {
-				return array('error'=>'ErrUnzipFails');
+				return array('error' => 'ErrUnzipFails');
 			}
 		}
 
-		return array('error'=>'ErrNoZipEngine');
+		return array('error' => 'ErrNoZipEngine');
 	} elseif (in_array($fileinfo["extension"], array('gz', 'bz2', 'zst'))) {
 		include_once DOL_DOCUMENT_ROOT."/core/class/utils.class.php";
 		$utils = new Utils($db);
@@ -2449,7 +2469,7 @@ function dol_uncompress($inputfile, $outputdir)
 			} elseif ($fileinfo["extension"] == "zst") {
 				$program = 'zstd';
 			} else {
-				return array('error'=>'ErrorBadFileExtension');
+				return array('error' => 'ErrorBadFileExtension');
 			}
 			$cmd = $program.' -dc '.escapeshellcmd(dol_sanitizePathName($fileinfo["dirname"]).'/'.dol_sanitizeFileName($fileinfo["basename"]));
 			$cmd .= ' > '.$outputfilename;
@@ -2465,7 +2485,7 @@ function dol_uncompress($inputfile, $outputdir)
 		return $resarray["result"] != 0 ? array('error' => $resarray["error"]) : array();
 	}
 
-	return array('error'=>'ErrorBadFileExtension');
+	return array('error' => 'ErrorBadFileExtension');
 }
 
 
@@ -2684,7 +2704,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = DOL_DOCUMENT_ROOT.'/public/theme/common/'.$original_file;
 	} elseif ($modulepart == 'medias' && !empty($dolibarr_main_data_root)) {
 		if (empty($entity) || empty($conf->medias->multidir_output[$entity])) {
-			return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
+			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
 		}
 		$accessallowed = 1;
 		$original_file = $conf->medias->multidir_output[$entity].'/'.$original_file;
@@ -2911,7 +2931,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif ($modulepart == 'category' && !empty($conf->categorie->multidir_output[$entity])) {
 		// Wrapping for categories (categories are allowed if user has permission to read categories or to work on TakePos)
 		if (empty($entity) || empty($conf->categorie->multidir_output[$entity])) {
-			return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
+			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
 		}
 		if ($fuser->hasRight("categorie", $lire) || $fuser->hasRight("takepos", "run")) {
 			$accessallowed = 1;
@@ -2966,7 +2986,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif (($modulepart == 'company' || $modulepart == 'societe' || $modulepart == 'thirdparty') && !empty($conf->societe->multidir_output[$entity])) {
 		// Wrapping for third parties
 		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) {
-			return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
+			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
 		}
 		if ($fuser->hasRight('societe', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
@@ -2976,7 +2996,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif ($modulepart == 'contact' && !empty($conf->societe->multidir_output[$entity])) {
 		// Wrapping for contact
 		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) {
-			return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
+			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
 		}
 		if ($fuser->hasRight('societe', $lire)) {
 			$accessallowed = 1;
@@ -3160,7 +3180,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif ($modulepart == 'product' || $modulepart == 'produit' || $modulepart == 'service' || $modulepart == 'produit|service') {
 		// Wrapping pour les produits et services
 		if (empty($entity) || (empty($conf->product->multidir_output[$entity]) && empty($conf->service->multidir_output[$entity]))) {
-			return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
+			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
 		}
 		if (($fuser->hasRight('produit', $lire) || $fuser->hasRight('service', $lire)) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
@@ -3173,7 +3193,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif ($modulepart == 'product_batch' || $modulepart == 'produitlot') {
 		// Wrapping pour les lots produits
 		if (empty($entity) || (empty($conf->productbatch->multidir_output[$entity]))) {
-			return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
+			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
 		}
 		if (($fuser->hasRight('produit', $lire)) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
@@ -3184,7 +3204,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif ($modulepart == 'movement' || $modulepart == 'mouvement') {
 		// Wrapping for stock movements
 		if (empty($entity) || empty($conf->stock->multidir_output[$entity])) {
-			return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
+			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
 		}
 		if (($fuser->hasRight('stock', $lire) || $fuser->hasRight('stock', 'movement', $lire) || $fuser->hasRight('stock', 'mouvement', $lire)) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
@@ -3477,7 +3497,7 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathre
 		//if (preg_match('#'.$exclude.'#', $filename)) continue;
 
 		if (!file_exists($pathref.'/'.$filename)) {
-			$file_list['missing'][] = array('filename'=>$filename, 'expectedmd5'=>$expectedmd5, 'expectedsize'=>$expectedsize);
+			$file_list['missing'][] = array('filename' => $filename, 'expectedmd5' => $expectedmd5, 'expectedsize' => $expectedsize);
 		} else {
 			$md5_local = md5_file($pathref.'/'.$filename);
 
@@ -3485,7 +3505,7 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathre
 				$checksumconcat[] = $expectedmd5;
 			} else {
 				if ($md5_local != $expectedmd5) {
-					$file_list['updated'][] = array('filename'=>$filename, 'expectedmd5'=>$expectedmd5, 'expectedsize'=>$expectedsize, 'md5'=>(string) $md5_local);
+					$file_list['updated'][] = array('filename' => $filename, 'expectedmd5' => $expectedmd5, 'expectedsize' => $expectedsize, 'md5' => (string) $md5_local);
 				}
 				$checksumconcat[] = $md5_local;
 			}

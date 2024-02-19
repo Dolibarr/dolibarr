@@ -37,9 +37,9 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
-$conf->global->MAIN_UMASK='0666';
+$conf->global->MAIN_UMASK = '0666';
 
 
 /**
@@ -73,17 +73,17 @@ class WebservicesInvoicesTest extends CommonClassTest
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+		$this->savconf = $conf;
+		$this->savuser = $user;
+		$this->savlangs = $langs;
+		$this->savdb = $db;
 
 		// Set the WebService URL
 		$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php';
 		print __METHOD__." create nusoap_client for URL=".$WS_DOL_URL."\n";
 		$this->soapclient = new nusoap_client($WS_DOL_URL);
 		if ($this->soapclient) {
-			$this->soapclient->soap_defencoding='UTF-8';
+			$this->soapclient->soap_defencoding = 'UTF-8';
 			$this->soapclient->decodeUTF8(false);
 		}
 
@@ -116,18 +116,18 @@ class WebservicesInvoicesTest extends CommonClassTest
 		// transaction commit. So if the invoice is created in the same
 		// transaction than the third party, the FK constraint fails.
 		// See this post for more detail: http://stackoverflow.com/a/5014744/5187108
-		$societe=new Societe($db);
-		$societe->ref='';
-		$societe->name='name';
-		$societe->ref_ext='ref-phpunit';
-		$societe->status=1;
-		$societe->client=1;
-		$societe->code_client='CU0901-1234';
-		$societe->code_fournisseur='SU0901-1234';
-		$societe->fournisseur=0;
-		$societe->date_creation=$now;
-		$societe->tva_assuj=0;
-		$societe->particulier=0;
+		$societe = new Societe($db);
+		$societe->ref = '';
+		$societe->name = 'name';
+		$societe->ref_ext = 'ref-phpunit';
+		$societe->status = 1;
+		$societe->client = 1;
+		$societe->code_client = 'CU0901-1234';
+		$societe->code_fournisseur = 'SU0901-1234';
+		$societe->fournisseur = 0;
+		$societe->date_creation = $now;
+		$societe->tva_assuj = 0;
+		$societe->particulier = 0;
 
 		$societe->create($user);
 		if (empty($societe->id)) {
@@ -153,10 +153,10 @@ class WebservicesInvoicesTest extends CommonClassTest
 	public function testWSInvoicesCreateInvoice()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$WS_METHOD  = 'createInvoice';
 
@@ -203,22 +203,22 @@ class WebservicesInvoicesTest extends CommonClassTest
 					);
 
 		// Call the WebService method and store its result in $result.
-		$authentication=array(
-		'dolibarrkey'=>getDolGlobalString('WEBSERVICES_KEY'),
-		'sourceapplication'=>'DEMO',
-		'login'=>'admin',
-		'password'=>$this->pass,
-		'entity'=>'');
+		$authentication = array(
+		'dolibarrkey' => getDolGlobalString('WEBSERVICES_KEY'),
+		'sourceapplication' => 'DEMO',
+		'login' => 'admin',
+		'password' => $this->pass,
+		'entity' => '');
 
 		// Test URL
-		$result='';
-		$parameters = array('authentication'=>$authentication,'invoice'=>$body);
+		$result = '';
+		$parameters = array('authentication' => $authentication,'invoice' => $body);
 		print __METHOD__." call method ".$WS_METHOD."\n";
 		try {
 			$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
 		} catch (SoapFault $exception) {
 			echo $exception;
-			$result=0;
+			$result = 0;
 		}
 		if (! $result || !empty($result['faultstring'])) {
 			//var_dump($soapclient);
@@ -250,30 +250,30 @@ class WebservicesInvoicesTest extends CommonClassTest
 	public function testWSInvoicesGetInvoiceByRefExt($result)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$WS_METHOD  = 'getInvoice';
 
 		// Call the WebService method and store its result in $result.
-		$authentication=array(
-		'dolibarrkey'=>getDolGlobalString('WEBSERVICES_KEY'),
-		'sourceapplication'=>'DEMO',
-		'login'=>'admin',
-		'password'=>$this->pass,
-		'entity'=>'');
+		$authentication = array(
+		'dolibarrkey' => getDolGlobalString('WEBSERVICES_KEY'),
+		'sourceapplication' => 'DEMO',
+		'login' => 'admin',
+		'password' => $this->pass,
+		'entity' => '');
 
 		// Test URL
-		$result='';
-		$parameters = array('authentication'=>$authentication, 'id'=>null, 'ref'=>null, 'ref_ext'=>'ref-phpunit-2');
+		$result = '';
+		$parameters = array('authentication' => $authentication, 'id' => null, 'ref' => null, 'ref_ext' => 'ref-phpunit-2');
 		print __METHOD__." call method ".$WS_METHOD."\n";
 		try {
 			$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
 		} catch (SoapFault $exception) {
 			echo $exception;
-			$result=0;
+			$result = 0;
 		}
 		if (! $result || !empty($result['faultstring'])) {
 			print $this->soapclient->error_str;
@@ -303,10 +303,10 @@ class WebservicesInvoicesTest extends CommonClassTest
 	public function testWSInvoicesUpdateInvoiceByRefExt($result)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$WS_METHOD  = 'updateInvoice';
 
@@ -355,22 +355,22 @@ class WebservicesInvoicesTest extends CommonClassTest
 			);
 
 		// Call the WebService method and store its result in $result.
-		$authentication=array(
-		'dolibarrkey'=>getDolGlobalString('WEBSERVICES_KEY'),
-		'sourceapplication'=>'DEMO',
-		'login'=>'admin',
-		'password'=>$this->pass,
-		'entity'=>'');
+		$authentication = array(
+		'dolibarrkey' => getDolGlobalString('WEBSERVICES_KEY'),
+		'sourceapplication' => 'DEMO',
+		'login' => 'admin',
+		'password' => $this->pass,
+		'entity' => '');
 
 		// Test URL
-		$result='';
-		$parameters = array('authentication'=>$authentication,'invoice'=>$body);
+		$result = '';
+		$parameters = array('authentication' => $authentication,'invoice' => $body);
 		print __METHOD__." call method ".$WS_METHOD."\n";
 		try {
 			$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
 		} catch (SoapFault $exception) {
 			echo $exception;
-			$result=0;
+			$result = 0;
 		}
 		if (! $result || !empty($result['faultstring'])) {
 			print 'Error: '.$this->soapclient->error_str;

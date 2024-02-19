@@ -92,7 +92,7 @@ class CoreTest extends CommonClassTest
 		global $dolibarr_main_db_type;
 		global $dolibarr_main_db_prefix;
 
-		$testtodo=0;
+		$testtodo = 0;
 
 		// Case 1:
 		// Test for subdir dolibarrnew (that point to htdocs) in root directory /var/www
@@ -101,12 +101,12 @@ class CoreTest extends CommonClassTest
 		// - Create link from htdocs to /var/www/dolibarrnew
 		// - Put into conf.php $dolibarr_main_document_root='/var/www/dolibarrnew';
 		if ($testtodo == 1) {
-			$_SERVER["HTTPS"]='';
-			$_SERVER["SERVER_NAME"]='localhost';
-			$_SERVER["SERVER_PORT"]='80';
-			$_SERVER["DOCUMENT_ROOT"]='/var/www';
-			$_SERVER["SCRIPT_NAME"]='/dolibarrnew/admin/system/phpinfo.php';
-			$expectedresult='/dolibarrnew';
+			$_SERVER["HTTPS"] = '';
+			$_SERVER["SERVER_NAME"] = 'localhost';
+			$_SERVER["SERVER_PORT"] = '80';
+			$_SERVER["DOCUMENT_ROOT"] = '/var/www';
+			$_SERVER["SCRIPT_NAME"] = '/dolibarrnew/admin/system/phpinfo.php';
+			$expectedresult = '/dolibarrnew';
 		}
 
 		// Case 2:
@@ -116,12 +116,12 @@ class CoreTest extends CommonClassTest
 		// - Create link from dolibarr to /var/www/aaa
 		// - Put into conf.php $dolibarr_main_document_root='/var/www/aaa/htdocs';
 		if ($testtodo == 2) {
-			$_SERVER["HTTPS"]='';
-			$_SERVER["SERVER_NAME"]='localhost';
-			$_SERVER["SERVER_PORT"]='80';
-			$_SERVER["DOCUMENT_ROOT"]='/var/www';
-			$_SERVER["SCRIPT_NAME"]='/aaa/htdocs/admin/system/phpinfo.php';
-			$expectedresult='/aaa/htdocs';
+			$_SERVER["HTTPS"] = '';
+			$_SERVER["SERVER_NAME"] = 'localhost';
+			$_SERVER["SERVER_PORT"] = '80';
+			$_SERVER["DOCUMENT_ROOT"] = '/var/www';
+			$_SERVER["SCRIPT_NAME"] = '/aaa/htdocs/admin/system/phpinfo.php';
+			$expectedresult = '/aaa/htdocs';
 		}
 
 		// Case 3:
@@ -132,12 +132,12 @@ class CoreTest extends CommonClassTest
 		// - Create virtual host localhostdolibarrnew that point to /home/ldestailleur/git/dolibarr/htdocs
 		// - Put into conf.php $dolibarr_main_document_root='/home/ldestailleur/git/dolibarr/htdocs';
 		if ($testtodo == 3) {
-			$_SERVER["HTTPS"]='';
-			$_SERVER["SERVER_NAME"]='localhostdolibarrnew';
-			$_SERVER["SERVER_PORT"]='80';
-			$_SERVER["DOCUMENT_ROOT"]='/home/ldestailleur/git/dolibarr/htdocs';
-			$_SERVER["SCRIPT_NAME"]='/admin/system/phpinfo.php';
-			$expectedresult='';
+			$_SERVER["HTTPS"] = '';
+			$_SERVER["SERVER_NAME"] = 'localhostdolibarrnew';
+			$_SERVER["SERVER_PORT"] = '80';
+			$_SERVER["DOCUMENT_ROOT"] = '/home/ldestailleur/git/dolibarr/htdocs';
+			$_SERVER["SCRIPT_NAME"] = '/admin/system/phpinfo.php';
+			$expectedresult = '';
 		}
 
 		// Case 4:
@@ -145,12 +145,12 @@ class CoreTest extends CommonClassTest
 		// a symbolic link
 		// URL: http://localhostdolibarrnew/admin/system/phpinfo.php
 		if ($testtodo == 4) {
-			$_SERVER["HTTPS"]='';
-			$_SERVER["SERVER_NAME"]='localhostdolibarrnew';
-			$_SERVER["SERVER_PORT"]='80';
-			$_SERVER["DOCUMENT_ROOT"]='/var/www/dolibarr';	// This is a link that point to /home/ldestail/workspace/dolibarr/htdocs
-			$_SERVER["SCRIPT_NAME"]='/admin/system/phpinfo.php';
-			$expectedresult='';
+			$_SERVER["HTTPS"] = '';
+			$_SERVER["SERVER_NAME"] = 'localhostdolibarrnew';
+			$_SERVER["SERVER_PORT"] = '80';
+			$_SERVER["DOCUMENT_ROOT"] = '/var/www/dolibarr';	// This is a link that point to /home/ldestail/workspace/dolibarr/htdocs
+			$_SERVER["SCRIPT_NAME"] = '/admin/system/phpinfo.php';
+			$expectedresult = '';
 		}
 
 		// Case 5:
@@ -161,12 +161,12 @@ class CoreTest extends CommonClassTest
 		// - Put into conf.php $dolibarr_main_document_root='/var/www/dolibarr/htdocs';
 		// - Put into conf.php $dolibarr_main_url_root='http://localhost/dolibarralias';  (because autodetect will fails in this case)
 		if ($testtodo == 5) {
-			$_SERVER["HTTPS"]='';
-			$_SERVER["SERVER_NAME"]='localhost';
-			$_SERVER["SERVER_PORT"]='80';
-			$_SERVER["DOCUMENT_ROOT"]='/var/www';
-			$_SERVER["SCRIPT_NAME"]='/dolibarralias/admin/system/phpinfo.php';
-			$expectedresult='/dolibarralias';
+			$_SERVER["HTTPS"] = '';
+			$_SERVER["SERVER_NAME"] = 'localhost';
+			$_SERVER["SERVER_PORT"] = '80';
+			$_SERVER["DOCUMENT_ROOT"] = '/var/www';
+			$_SERVER["SCRIPT_NAME"] = '/dolibarralias/admin/system/phpinfo.php';
+			$expectedresult = '/dolibarralias';
 		}
 
 		// Force to rerun filefunc.inc.php

@@ -68,7 +68,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -88,10 +88,10 @@ class LangTest extends CommonClassTest
 	public function testLang()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 
@@ -102,32 +102,32 @@ class LangTest extends CommonClassTest
 			}
 
 			print 'Check language file for lang code='.$code."\n";
-			$tmplangs=new Translate('', $conf);
-			$langcode=$code;
+			$tmplangs = new Translate('', $conf);
+			$langcode = $code;
 			$tmplangs->setDefaultLang($langcode);
 			$tmplangs->load("main");
 
-			$result=$tmplangs->transnoentitiesnoconv("FONTFORPDF");
+			$result = $tmplangs->transnoentitiesnoconv("FONTFORPDF");
 			print __METHOD__." FONTFORPDF=".$result."\n";
 			$this->assertTrue(in_array($result, array('msungstdlight', 'stsongstdlight', 'helvetica', 'DejaVuSans', 'cid0jp', 'cid0kr', 'freemono', 'freeserif')), 'Error bad value '.$result.' for FONTFORPDF in main.lang file '.$code);
 
-			$result=$tmplangs->transnoentitiesnoconv("DIRECTION");
+			$result = $tmplangs->transnoentitiesnoconv("DIRECTION");
 			print __METHOD__." DIRECTION=".$result."\n";
 			$this->assertTrue(in_array($result, array('rtl', 'ltr')), 'Error bad value for DIRECTION in main.lang file '.$code);
 
-			$result=$tmplangs->transnoentitiesnoconv("SeparatorDecimal");
+			$result = $tmplangs->transnoentitiesnoconv("SeparatorDecimal");
 			print __METHOD__." SeparatorDecimal=".$result."\n";
 			$this->assertTrue(in_array($result, array('.',',','/',' ','','None')), 'Error on decimal separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
 
-			$result=$tmplangs->transnoentitiesnoconv("SeparatorThousand");
+			$result = $tmplangs->transnoentitiesnoconv("SeparatorThousand");
 			print __METHOD__." SeparatorThousand=".$result."\n";
 			$this->assertTrue(in_array($result, array('.',',','/',' ','','\'','None','Space')), 'Error on thousand separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
 
 			// Test java string contains only d,M,y,/,-,. and not m,...
-			$result=$tmplangs->transnoentitiesnoconv("FormatDateShortJava");
+			$result = $tmplangs->transnoentitiesnoconv("FormatDateShortJava");
 			print __METHOD__." FormatDateShortJava=".$result."\n";
 			$this->assertRegExp('/^[dMy\/\-\.]+$/', $result, 'FormatDateShortJava KO for lang code '.$code);
-			$result=$tmplangs->trans("FormatDateShortJavaInput");
+			$result = $tmplangs->trans("FormatDateShortJavaInput");
 			print __METHOD__." FormatDateShortJavaInput=".$result."\n";
 			$this->assertRegExp('/^[dMy\/\-\.]+$/', $result, 'FormatDateShortJavaInput KO for lang code '.$code);
 
@@ -141,21 +141,21 @@ class LangTest extends CommonClassTest
 				}
 
 				//print 'Check lang file '.$file."\n";
-				$filecontent=file_get_contents(DOL_DOCUMENT_ROOT.'/langs/'.$code.'/'.$file);
+				$filecontent = file_get_contents(DOL_DOCUMENT_ROOT.'/langs/'.$code.'/'.$file);
 
-				$result=preg_match('/=--$/m', $filecontent);	// A special % char we don't want. We want the common one.
+				$result = preg_match('/=--$/m', $filecontent);	// A special % char we don't want. We want the common one.
 				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
 				$this->assertTrue($result == 0, 'Found a translation KEY=-- into file '.$code.'/'.$file.'. We probably want Key=- instead.');
 
-				$result=strpos($filecontent, '％');	// A special % char we don't want. We want the common one.
+				$result = strpos($filecontent, '％');	// A special % char we don't want. We want the common one.
 				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
 				$this->assertTrue($result === false, 'Found a bad percent char ％ instead of % into file '.$code.'/'.$file);
 
-				$result=preg_match('/%n/m', $filecontent);	// A sequence of char we don't want
+				$result = preg_match('/%n/m', $filecontent);	// A sequence of char we don't want
 				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
 				$this->assertTrue($result == 0, 'Found a sequence %n into the translation file '.$code.'/'.$file.'. We probably want %s');
 
-				$result=preg_match('/<<<<</m', $filecontent);	// A sequence of char we don't want
+				$result = preg_match('/<<<<</m', $filecontent);	// A sequence of char we don't want
 				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
 				$this->assertTrue($result == 0, 'Found a sequence <<<<< into the translation file '.$code.'/'.$file.'. Probably a bad merge of code were done.');
 			}
@@ -172,13 +172,13 @@ class LangTest extends CommonClassTest
 	public function testTrans()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$tmplangs=new Translate('', $conf);
-		$langcode='en_US';
+		$tmplangs = new Translate('', $conf);
+		$langcode = 'en_US';
 		$tmplangs->setDefaultLang($langcode);
 		$tmplangs->load("main");
 

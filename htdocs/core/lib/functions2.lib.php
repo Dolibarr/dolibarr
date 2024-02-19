@@ -1656,9 +1656,9 @@ function numero_semaine($time)
 	// Definition du numero de semaine: nb de jours entre "premier Jeudi de l'annee" et "Jeudi de la semaine";
 	$numeroSemaine = (
 		(
-			date("z", mktime(12, 0, 0, date("m", $jeudiSemaine), date("d", $jeudiSemaine), date("Y", $jeudiSemaine)))
-	-
-	date("z", mktime(12, 0, 0, date("m", $premierJeudiAnnee), date("d", $premierJeudiAnnee), date("Y", $premierJeudiAnnee)))
+		date("z", mktime(12, 0, 0, date("m", $jeudiSemaine), date("d", $jeudiSemaine), date("Y", $jeudiSemaine)))
+		-
+		date("z", mktime(12, 0, 0, date("m", $premierJeudiAnnee), date("d", $premierJeudiAnnee), date("Y", $premierJeudiAnnee)))
 		) / 7
 	) + 1;
 
@@ -2675,6 +2675,10 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'accountancy';
 	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions', 'partnerships', 'recruitments'))) {
 		$moduledirforclass = preg_replace('/s$/', '', $moduleobject);
+	} elseif ($moduleobject == 'paymentsalaries') {
+		$moduledirforclass = 'salaries';
+	} elseif ($moduleobject == 'paymentexpensereports') {
+		$moduledirforclass = 'expensereport';
 	}
 
 	return $moduledirforclass;
@@ -2847,8 +2851,8 @@ function phpSyntaxError($code)
 		if (preg_match("'syntax error, (.+) in .+ on line (\d+)$'s", $code, $code)) {
 			$code[2] = (int) $code[2];
 			$code = $code[2] <= $braces
-			? array($code[1], $code[2])
-			: array('unexpected $end'.substr($code[1], 14), $braces);
+				? array($code[1], $code[2])
+				: array('unexpected $end'.substr($code[1], 14), $braces);
 		} else {
 			$code = array('syntax error', 0);
 		}

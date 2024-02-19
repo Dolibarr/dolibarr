@@ -36,7 +36,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -56,19 +56,19 @@ class CompanyLibTest extends CommonClassTest
 	public function testNameCurrency()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$result=currency_name('USD');
+		$result = currency_name('USD');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('US Dollars', $result, 'Test to get currency name USD in default language '.$langs->defaultlang);
 
-		$outputlangs=new Translate('', $conf);
+		$outputlangs = new Translate('', $conf);
 		$outputlangs->setDefaultLang('fr_FR');
 
-		$result=currency_name('USD', 1, $outputlangs);
+		$result = currency_name('USD', 1, $outputlangs);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('USD - Dollars US', $result, 'Test to get currency name USD in default language '.$outputlangs->getDefaultLang());
 

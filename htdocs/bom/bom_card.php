@@ -731,7 +731,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=validate&amp;token='.newToken().'">'.$langs->trans("Validate").'</a>'."\n";
 					} else {
 						$langs->load("errors");
-						print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>'."\n";
+						print '<a class="butActionRefused classfortooltip" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>'."\n";
 					}
 				}
 			}

@@ -5,6 +5,7 @@
  * Copyright (C) 2016-2023	Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,12 +129,11 @@ class doc_generic_project_odt extends ModelePDFProjects
 		}
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Define array with couple substitution key => substitution value
 	 *
-	 * @param   Project			$object             Main object to use as data source
+	 * @param   CommonObject	$object             Main object to use as data source
 	 * @param   Translate		$outputlangs        Lang object to use for output
 	 * @param   string		    $array_key	        Name of the key for return array
 	 * @return	array								Array of substitution
@@ -141,7 +141,10 @@ class doc_generic_project_odt extends ModelePDFProjects
 	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{
 		// phpcs:enable
-		global $conf;
+		if (!$object instanceof Project) {
+			dol_syslog("Expected Project object, got ".gettype($object), LOG_ERR);
+			return array();
+		}
 
 		$resarray = array(
 			$array_key.'_id'=>$object->id,

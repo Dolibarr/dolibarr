@@ -68,7 +68,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -88,10 +88,10 @@ class CodingSqlTest extends CommonClassTest
 	public function testEscape()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		if ($db->type == 'mysqli') {
 			$a = 'abc"\'def';	// string is abc"'def
@@ -115,10 +115,10 @@ class CodingSqlTest extends CommonClassTest
 	public function testEscapeForLike()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$a = 'abc"\'def_ghi%klm\\nop';
 		//print $a;
@@ -134,10 +134,10 @@ class CodingSqlTest extends CommonClassTest
 	public function testSql()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$listofsqldir = array(DOL_DOCUMENT_ROOT.'/install/mysql/data', DOL_DOCUMENT_ROOT.'/install/mysql/tables', DOL_DOCUMENT_ROOT.'/install/mysql/migration');
 
@@ -161,37 +161,37 @@ class CodingSqlTest extends CommonClassTest
 				//$filecontent = preg_replace('/^--.*$/', '', $filecontent);
 				$filecontent = preg_replace('/--.*?\n/', '', $filecontent);
 
-				$result=strpos($filecontent, '`');
+				$result = strpos($filecontent, '`');
 				//print __METHOD__." Result for checking we don't have back quote = ".$result."\n";
-				$this->assertTrue($result===false, 'Found back quote into '.$file.'. Bad.');
+				$this->assertTrue($result === false, 'Found back quote into '.$file.'. Bad.');
 
-				$result=strpos($filecontent, '"');
+				$result = strpos($filecontent, '"');
 				//print __METHOD__." Result for checking we don't have double quote = ".$result."\n";
-				$this->assertTrue($result===false, 'Found double quote that is not [" neither {" (used for json content) neither (" (used for content with string like isModEnabled("")) into '.$file.'. Bad.');
+				$this->assertTrue($result === false, 'Found double quote that is not [" neither {" (used for json content) neither (" (used for content with string like isModEnabled("")) into '.$file.'. Bad.');
 
-				$result=strpos($filecontent, 'int(');
+				$result = strpos($filecontent, 'int(');
 				//print __METHOD__." Result for checking we don't have 'int(' instead of 'integer' = ".$result."\n";
-				$this->assertTrue($result===false, 'Found int(x) or tinyint(x) instead of integer or tinyint into '.$file.'. Bad.');
+				$this->assertTrue($result === false, 'Found int(x) or tinyint(x) instead of integer or tinyint into '.$file.'. Bad.');
 
-				$result=strpos($filecontent, 'ON DELETE CASCADE');
+				$result = strpos($filecontent, 'ON DELETE CASCADE');
 				//print __METHOD__." Result for checking we don't have 'ON DELETE CASCADE' = ".$result."\n";
-				$this->assertTrue($result===false, 'Found ON DELETE CASCADE into '.$file.'. Bad.');
+				$this->assertTrue($result === false, 'Found ON DELETE CASCADE into '.$file.'. Bad.');
 
-				$result=strpos($filecontent, 'NUMERIC(');
+				$result = strpos($filecontent, 'NUMERIC(');
 				//print __METHOD__." Result for checking we don't have 'NUMERIC(' = ".$result."\n";
-				$this->assertTrue($result===false, 'Found NUMERIC( into '.$file.'. Bad.');
+				$this->assertTrue($result === false, 'Found NUMERIC( into '.$file.'. Bad.');
 
-				$result=strpos($filecontent, 'NUMERIC(');
+				$result = strpos($filecontent, 'NUMERIC(');
 				//print __METHOD__." Result for checking we don't have 'curdate(' = ".$result."\n";
-				$this->assertTrue($result===false, 'Found curdate( into '.$file.'. Bad. Current date must be generated with PHP.');
+				$this->assertTrue($result === false, 'Found curdate( into '.$file.'. Bad. Current date must be generated with PHP.');
 
-				$result=strpos($filecontent, 'integer(');
+				$result = strpos($filecontent, 'integer(');
 				//print __METHOD__." Result for checking we don't have 'integer(' = ".$result."\n";
-				$this->assertTrue($result===false, 'Found value in parenthesis after the integer. It must be integer not integer(x) into '.$file.'. Bad.');
+				$this->assertTrue($result === false, 'Found value in parenthesis after the integer. It must be integer not integer(x) into '.$file.'. Bad.');
 
-				$result=strpos($filecontent, 'timestamp,');
+				$result = strpos($filecontent, 'timestamp,');
 				//print __METHOD__." Result for checking we don't have 'NUMERIC(' = ".$result."\n";
-				$this->assertTrue($result===false, 'Found type timestamp with option DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP after into '.$file.'. Bad.');
+				$this->assertTrue($result === false, 'Found type timestamp with option DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP after into '.$file.'. Bad.');
 
 				if ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/migration') {
 					// Test for migration files only
@@ -202,11 +202,11 @@ class CodingSqlTest extends CommonClassTest
 						// Test for key files only
 					} else {
 						// Test for non key files only
-						$result=(strpos($filecontent, 'KEY ') && strpos($filecontent, 'PRIMARY KEY') == 0);
+						$result = (strpos($filecontent, 'KEY ') && strpos($filecontent, 'PRIMARY KEY') == 0);
 						//print __METHOD__." Result for checking we don't have ' KEY ' instead of a sql file to create index = ".$result."\n";
-						$this->assertTrue($result===false, 'Found KEY into '.$file.'. Bad.');
+						$this->assertTrue($result === false, 'Found KEY into '.$file.'. Bad.');
 
-						$result=stripos($filecontent, 'ENGINE=innodb');
+						$result = stripos($filecontent, 'ENGINE=innodb');
 						//print __METHOD__." Result for checking we have the ENGINE=innodb string = ".$result."\n";
 						$this->assertGreaterThan(0, $result, 'The ENGINE=innodb was not found into '.$file.'. Add it or just fix syntax to match case.');
 					}
@@ -225,10 +225,10 @@ class CodingSqlTest extends CommonClassTest
 	public function testInitData()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$filesarray = scandir(DOL_DOCUMENT_ROOT.'/../dev/initdemo');
 		foreach ($filesarray as $key => $file) {
@@ -237,19 +237,19 @@ class CodingSqlTest extends CommonClassTest
 			}
 
 			print 'Check sql file '.$file."\n";
-			$filecontent=file_get_contents(DOL_DOCUMENT_ROOT.'/../dev/initdemo/'.$file);
+			$filecontent = file_get_contents(DOL_DOCUMENT_ROOT.'/../dev/initdemo/'.$file);
 
-			$result=strpos($filecontent, '@gmail.com');
+			$result = strpos($filecontent, '@gmail.com');
 			print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
-			$this->assertTrue($result===false, 'Found a bad key @gmail into file '.$file);
+			$this->assertTrue($result === false, 'Found a bad key @gmail into file '.$file);
 
-			$result=strpos($filecontent, 'eldy@');
+			$result = strpos($filecontent, 'eldy@');
 			print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
-			$this->assertTrue($result===false, 'Found a bad key eldy@ into file '.$file);
+			$this->assertTrue($result === false, 'Found a bad key eldy@ into file '.$file);
 
-			$result=strpos($filecontent, 'INSERT INTO `llx_oauth_token`');
+			$result = strpos($filecontent, 'INSERT INTO `llx_oauth_token`');
 			print __METHOD__." Result for checking we don't have data into llx_oauth_token = ".$result."\n";
-			$this->assertTrue($result===false, 'Found a non expected insert into file '.$file);
+			$this->assertTrue($result === false, 'Found a non expected insert into file '.$file);
 		}
 
 		return;

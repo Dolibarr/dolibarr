@@ -36,7 +36,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -56,13 +56,13 @@ class FormAdminTest extends CommonClassTest
 	public function testSelectPaperFormat()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new FormAdmin($db);
-		$result=$localobject->select_paper_format('', 'paperformat_id', 'A4', 0, 1);
+		$localobject = new FormAdmin($db);
+		$result = $localobject->select_paper_format('', 'paperformat_id', 'A4', 0, 1);
 
 		$this->assertEquals($result, '<select class="flat" id="paperformat_id" name="paperformat_id"><option value="EUA4">Format A4 - 210x297 mm</option></select>');
 		print __METHOD__." result=".$result."\n";

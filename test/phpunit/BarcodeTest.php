@@ -36,7 +36,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 $langs->load("main");
 
@@ -58,10 +58,10 @@ class BarcodeTest extends CommonClassTest
 	public function testBarcodeZATCAEncode()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$company = new Societe($db);
 		$company->name = 'Specimen company';
@@ -92,10 +92,10 @@ class BarcodeTest extends CommonClassTest
 	public function testBarcodeZATCADecode()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		//$string_zatca_base64 = "AQZSYWZlZXECDTEyMzQ1Njc4OVQxMjUDFDIwMjEtMDctMTJUMTQ6MjU6MDlaBAM3ODYFAjI1";
 		$string_zatca_base64 = "ARBTcGVjaW1lbiBjb21wYW55AgkxMjM0NTY3ODkDFDIwMjAtMDEtMDFUMDk6MzQ6NTZaBAMxMjAFAjIw";

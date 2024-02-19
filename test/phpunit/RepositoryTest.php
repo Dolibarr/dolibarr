@@ -67,7 +67,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -91,12 +91,12 @@ class RepositoryTest extends CommonClassTest
 		global $conf,$user,$langs,$db;
 
 		// Scan dir to guarantee we don't have library jquery twice
-		$foundfiles=dol_dir_list(DOL_DOCUMENT_ROOT.'/includes/', 'files', 1, '^jquery\.js', array('ckeditor'));
+		$foundfiles = dol_dir_list(DOL_DOCUMENT_ROOT.'/includes/', 'files', 1, '^jquery\.js', array('ckeditor'));
 		print __METHOD__." count(founddirs)=".count($foundfiles)."\n";
 		$this->assertEquals(1, count($foundfiles), 'We found jquery lib (jquery.js) twice');
 
 		// Scan dir to guarantee we don't have library jquery twice
-		$foundfiles=dol_dir_list(DOL_DOCUMENT_ROOT.'/includes/', 'files', 1, '^jquery\.min\.js', array('ckeditor'));
+		$foundfiles = dol_dir_list(DOL_DOCUMENT_ROOT.'/includes/', 'files', 1, '^jquery\.min\.js', array('ckeditor'));
 		print __METHOD__." count(founddirs)=".count($foundfiles)."\n";
 		$this->assertEquals(1, count($foundfiles), 'We found jquery lib (jquery.min.js) twice '.(empty($foundfiles[0]) ? '' : $foundfiles[0]['fullname']).' '.(empty($foundfiles[1]) ? '' : $foundfiles[1]['fullname']));
 	}
@@ -110,10 +110,10 @@ class RepositoryTest extends CommonClassTest
 	public function testRepository()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'directories', 1, '', array('\/custom\/'), 'fullname', SORT_ASC, 0, 1, '', 1);

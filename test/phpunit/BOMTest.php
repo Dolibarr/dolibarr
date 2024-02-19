@@ -35,7 +35,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 $langs->load("main");
 
@@ -57,14 +57,14 @@ class BOMTest extends CommonClassTest
 	public function testBOMCreate()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new BOM($db);
+		$localobject = new BOM($db);
 		$localobject->initAsSpecimen();
-		$result=$localobject->create($user);
+		$result = $localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -84,14 +84,14 @@ class BOMTest extends CommonClassTest
 	public function testBOMDelete($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new BOM($db);
-		$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+		$localobject = new BOM($db);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);

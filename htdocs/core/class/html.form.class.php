@@ -6046,9 +6046,9 @@ class Form
 			print '</form>';
 		} else {
 			if (!empty($rate)) {
-				print price($rate, 1, $langs, 1, 0);
+				print price($rate, 1, $langs, 0, 0);
 				if ($currency && $rate != 1) {
-					print ' &nbsp; (' . price($rate, 1, $langs, 1, 0) . ' ' . $currency . ' = 1 ' . $conf->currency . ')';
+					print ' &nbsp; (' . price($rate, 1, $langs, 0, 0) . ' ' . $currency . ' = 1 ' . $conf->currency . ')';
 				}
 			} else {
 				print 1;
@@ -9938,7 +9938,7 @@ class Form
 		} else {
 			// Generic case to show photos
 			// TODO Implement this method in previous objects so we can always use this generic method.
-			if (method_exists($object, 'getDataToShowPhoto')) {
+			if ($modulepart != "unknown" && method_exists($object, 'getDataToShowPhoto')) {
 				$tmpdata = $object->getDataToShowPhoto($modulepart, $imagesize);
 
 				$dir = $tmpdata['dir'];

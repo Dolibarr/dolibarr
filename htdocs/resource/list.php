@@ -280,6 +280,8 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print "</tr>\n";
 
 
+$totalarray = array();
+
 if ($ret) {
 	foreach ($object->lines as $resource) {
 		print '<tr class="oddeven">';
