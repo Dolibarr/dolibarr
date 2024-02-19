@@ -36,7 +36,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -56,12 +56,12 @@ class MarginsLibTest extends CommonClassTest
 	public function testGetMarginInfos()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$result=getMarginInfos(10, 0, 19.6, 0, 0, 0, 8);
+		$result = getMarginInfos(10, 0, 19.6, 0, 0, 0, 8);
 		//var_dump($result);
 		print __METHOD__." result[0]=".$result[0]."\n";
 		$this->assertEquals(8, $result[0]);
@@ -70,13 +70,13 @@ class MarginsLibTest extends CommonClassTest
 		print __METHOD__." result[2]=".$result[2]."\n";
 		$this->assertEquals(20, $result[2]);
 
-		$result=getMarginInfos(10, 10, 19.6, 0, 0, 0, 8);
+		$result = getMarginInfos(10, 10, 19.6, 0, 0, 0, 8);
 		print __METHOD__." result[0]=".$result[0]."\n";
 		$this->assertEquals(8, $result[0]);
 		print __METHOD__." result[1]=".$result[1]."\n";
 		$this->assertEquals(12.5, $result[1]);
 		print __METHOD__." result[2]=".$result[2]."\n";
-		$this->assertEquals(1/9*100, $result[2]);
+		$this->assertEquals(1 / 9 * 100, $result[2]);
 
 		return 0;
 	}
