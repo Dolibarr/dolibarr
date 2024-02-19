@@ -47,8 +47,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "core";
 		$this->description = "Triggers of this module allows to manage workflows";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = self::VERSION_DOLIBARR;
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'technic';
 	}
 
@@ -63,7 +62,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 	 * @param conf		    $conf       Object conf
 	 * @return int         				Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		if (empty($conf->workflow) || empty($conf->workflow->enabled)) {
 			return 0; // Module not active, we do nothing
@@ -98,7 +97,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 
 				$object->clearObjectLinkedCache();
 
-				return $ret;
+				return (int) $ret;
 			}
 		}
 
@@ -204,7 +203,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						foreach ($object->linkedObjects['shipping'] as $element) {
 							$ret = $element->setClosed();
 							if ($ret < 0) {
-								return $ret;
+								return (int) $ret;
 							}
 						}
 					}
@@ -225,7 +224,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						foreach ($object->linkedObjects['shipping'] as $element) {
 							$ret = $element->setBilled();
 							if ($ret < 0) {
-								return $ret;
+								return (int) $ret;
 							}
 						}
 					}
