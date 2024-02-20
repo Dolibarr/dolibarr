@@ -795,7 +795,11 @@ if ($nblines != 0) {
 if ($phan_nblines != 0) {
 	$datatable_script .= '
  if (typeof(DataTable)==="function") {jQuery(".sourcephan").toggle(true);}
- let phantable = new DataTable("#technicaldebtphan table");
+ let phantable = new DataTable("#technicaldebtphan table", {
+    lengthMenu: [
+        [10, 25, 50, 100, -1],
+        [10, 25, 50, 100, \'All\']
+    ]});
 ';
 	$html .= '<section class="chapter" id="technicaldebtphan">'."\n";
 	$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">(PHAN '.$phan_nblines.' warnings)</span></h2>'."\n";
@@ -806,7 +810,8 @@ if ($phan_nblines != 0) {
 	$html .= '<thead><tr class="trgroup"><td>File</td><td>Line</td><td>Detail</td></tr></thead><tbody>'."\n";
 	$html .= implode("\n", $phan_items);
 	$html .= '</tbody></table>';
-	$html .= '<div><span class="seedetail" data-source="phan" id="sourcephan">Show all...</span></div>';
+	// Disabled, no more required as list is managed with datatable
+	//$html .= '<div><span class="seedetail" data-source="phan" id="sourcephan">Show all...</span></div>';
 	$html .= '</div></div>';
 
 	$html .= '</section>'."\n";

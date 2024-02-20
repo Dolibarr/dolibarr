@@ -48,16 +48,16 @@ if (isModEnabled('barcode')) {
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'suppliers', 'bills', 'margins', 'stocks'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$rowid = GETPOST('rowid', 'int');
+$rowid = GETPOSTINT('rowid');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'pricesuppliercard';
 
-$socid = GETPOST('socid', 'int');
-$cost_price = price2num(GETPOST('cost_price', 'alpha'), '', 2);
-$pmp = price2num(GETPOST('pmp', 'alpha'), '', 2);
+$socid = GETPOSTINT('socid');
+$cost_price = GETPOSTFLOAT('cost_price');
+$pmp = GETPOSTFLOAT('pmp');
 
 $backtopage = GETPOST('backtopage', 'alpha');
 $error = 0;
@@ -65,9 +65,9 @@ $error = 0;
 $extrafields = new ExtraFields($db);
 
 // If socid provided by ajax company selector
-if (GETPOST('search_fourn_id', 'int')) {
-	$_GET['id_fourn'] = GETPOST('search_fourn_id', 'int');
-	$_POST['id_fourn'] = GETPOST('search_fourn_id', 'int');
+if (GETPOSTINT('search_fourn_id')) {
+	$_GET['id_fourn'] = GETPOSTINT('search_fourn_id');
+	$_POST['id_fourn'] = GETPOSTINT('search_fourn_id');
 }
 
 // Security check
@@ -81,10 +81,10 @@ if (!$user->hasRight('fournisseur', 'lire') && (!isModEnabled('margin') && !$use
 	accessforbidden();
 }
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = (GETPOST("page", 'int') ? GETPOST("page", 'int') : 0);
+$page = GETPOSTINT("page") ? GETPOSTINT("page") : 0;
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -143,7 +143,7 @@ if (empty($reshook)) {
 			$result = $object->fetch($id);
 			//Need dol_clone methode 1 (same object class) because update product use hasbatch method on oldcopy
 			$object->oldcopy = dol_clone($object, 1);
-			$object->cost_price = price2num($cost_price);
+			$object->cost_price = $cost_price;
 			$result = $object->update($object->id, $user);
 			if ($result > 0) {
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
@@ -157,7 +157,7 @@ if (empty($reshook)) {
 	if ($action == 'setpmp') {
 		if ($id) {
 			$result = $object->fetch($id);
-			$object->pmp = price2num($pmp);
+			$object->pmp = $pmp;
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".((float) $object->pmp)." WHERE rowid = ".((int) $id);
 			$resql = $db->query($sql);
 			//$result = $object->update($object->id, $user);
@@ -297,7 +297,7 @@ if (empty($reshook)) {
 				$extralabels = $extrafields->fetch_name_optionals_label("product_fournisseur_price");
 				$extrafield_values = $extrafields->getOptionalsFromPost("product_fournisseur_price");
 
-				$newprice = price2num(GETPOST("price", "alpha"));
+				$newprice = GETPOSTFLOAT("price");
 
 				if (empty($packaging)) {
 					$packaging = 1;
@@ -309,8 +309,8 @@ if (empty($reshook)) {
 				$object->packaging = $packaging;
 
 				if (isModEnabled("multicurrency")) {
-					$multicurrency_tx = price2num(GETPOST("multicurrency_tx", 'alpha'));
-					$multicurrency_price = price2num(GETPOST("multicurrency_price", 'alpha'));
+					$multicurrency_tx = GETPOSTFLOAT("multicurrency_tx");
+					$multicurrency_price = GETPOSTFLOAT("multicurrency_price");
 					$multicurrency_code = GETPOST("multicurrency_code", 'alpha');
 
 					$ret = $object->update_buyprice($quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOST("oselDispo"), $ref_fourn, $tva_tx, GETPOST("charges"), $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, GETPOST("multicurrency_price_base_type"), $multicurrency_tx, $multicurrency_code, $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);

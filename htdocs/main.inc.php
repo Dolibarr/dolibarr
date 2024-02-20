@@ -257,6 +257,11 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type, $stopcode = 1)
 					// Note: No addition into security audit table is done because we don't want to execute code in such a case.
 					// Detection of too many such requests can be done with a fail2ban rule on 403 error code or into the PHP server error log.
 
+
+					if (class_exists('PHPUnit\Framework\TestSuite')) {
+						$message = $errormessage.' '.substr($errormessage2, 2000);
+						throw new Exception("Security injection exception: $message");
+					}
 					exit;
 				} else {
 					return false;
@@ -574,7 +579,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	$sensitiveget = false;
 	if ((GETPOSTISSET('massaction') || GETPOST('action', 'aZ09')) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 3) {
 		// All GET actions (except the listed exception that are post actions) and mass actions are processed as sensitive.
-		if (GETPOSTISSET('massaction') || !in_array(GETPOST('action', 'aZ09'), array('create', 'createsite', 'createcard', 'edit', 'editvalidator', 'file_manager', 'presend', 'presend_addmessage', 'preview', 'specimen'))) {	// We exclude some action that are legitimate
+		if (GETPOSTISSET('massaction') || !in_array(GETPOST('action', 'aZ09'), array('create', 'createsite', 'createcard', 'edit', 'editvalidator', 'file_manager', 'presend', 'presend_addmessage', 'preview', 'specimen'))) {	// We exclude some action that are not sensitive so legitimate
 			$sensitiveget = true;
 		}
 	} elseif (getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 2) {

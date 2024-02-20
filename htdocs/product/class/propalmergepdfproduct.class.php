@@ -310,13 +310,13 @@ class Propalmergepdfproduct extends CommonObject
 		// Clean parameters
 
 		if (isset($this->fk_product)) {
-			$this->fk_product = trim($this->fk_product);
+			$this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->file_name)) {
 			$this->file_name = trim($this->file_name);
 		}
 		if (isset($this->fk_user_mod)) {
-			$this->fk_user_mod = trim($this->fk_user_mod);
+			$this->fk_user_mod = (int) $this->fk_user_mod;
 		}
 		if (isset($this->lang)) {
 			$this->lang = trim($this->lang);
