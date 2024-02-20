@@ -400,7 +400,7 @@ class SupplierInvoices extends DolibarrApi
 	 * Add payment line to a specific supplier invoice with the remain to pay as amount.
 	 *
 	 * @param int     $id                               Id of invoice
-	 * @param string  $datepaye           {@from body}  Payment date        {@type timestamp}
+	 * @param int     $datepaye           {@from body}  Payment date        {@type timestamp}
 	 * @param int     $payment_mode_id    {@from body}  Payment mode ID (look it up via REST GET to /setup/dictionary/payment_types) {@min 1}
 	 * @param string  $closepaidinvoices  {@from body}  Close paid invoices {@choice yes,no}
 	 * @param int     $accountid          {@from body}  Bank account ID (look it up via REST GET to /bankaccounts) {@min 1}
@@ -461,12 +461,12 @@ class SupplierInvoices extends DolibarrApi
 		$amounts = array();
 		$multicurrency_amounts = array();
 
-		$paymentamount = price2num($paymentamount, 'MT');
+		$paymentamount = (float) price2num($paymentamount, 'MT');
 
 		$amounts[$id] = $paymentamount;
 
 		// Multicurrency
-		$newvalue = price2num($this->invoice->multicurrency_total_ttc, 'MT');
+		$newvalue = (float) price2num($this->invoice->multicurrency_total_ttc, 'MT');
 		$multicurrency_amounts[$id] = $newvalue;
 
 		// Creation of payment line

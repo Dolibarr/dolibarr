@@ -419,7 +419,7 @@ class Tva extends CommonObject
 	{
 		$this->id = 0;
 
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->datep = '';
 		$this->datev = '';
 		$this->amount = '';

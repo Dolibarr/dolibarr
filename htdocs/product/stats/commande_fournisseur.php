@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'products', 'companies'));
@@ -67,10 +68,16 @@ if (!$sortfield) {
 }
 $search_month = GETPOST('search_month', 'int');
 $search_year = GETPOST('search_year', 'int');
+if (GETPOSTISARRAY('search_status')) {
+	$search_status = join(',', GETPOST('search_status', 'array:intcomma'));
+} else {
+	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
+}
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$search_month = '';
 	$search_year = '';
+	$search_status = '';
 }
 
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
@@ -85,6 +92,7 @@ $societestatic = new Societe($db);
 
 $form = new Form($db);
 $formother = new FormOther($db);
+$formorder = new FormOrder($db);
 
 if ($id > 0 || !empty($ref)) {
 	$product = new Product($db);
@@ -155,10 +163,10 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " AND d.fk_commande = c.rowid";
 			$sql .= " AND d.fk_product = ".((int) $product->id);
 			if (!empty($search_month)) {
-				$sql .= ' AND MONTH(c.date_commande) IN ('.$db->sanitize($search_month).')';
+				$sql .= " AND MONTH(c.date_commande) IN (".$db->sanitize($search_month).")";
 			}
 			if (!empty($search_year)) {
-				$sql .= ' AND YEAR(c.date_commande) IN ('.$db->sanitize($search_year).')';
+				$sql .= " AND YEAR(c.date_commande) IN (".$db->sanitize($search_year).")";
 			}
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -166,6 +174,11 @@ if ($id > 0 || !empty($ref)) {
 			if ($socid) {
 				$sql .= " AND c.fk_soc = ".((int) $socid);
 			}
+
+			if ($search_status != '') {
+				$sql .= " AND c.fk_statut IN (".$db->sanitize($search_status).")";
+			}
+
 			$sql .= $db->order($sortfield, $sortorder);
 
 			// Calcul total qty and amount for global if full scan list
@@ -197,6 +210,10 @@ if ($id > 0 || !empty($ref)) {
 					$option .= '&search_year='.urlencode($search_year);
 				}
 
+				if ($search_status != '') {
+					$param .= '&search_status='.urlencode($search_status);
+				}
+
 				print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				if (!empty($sortfield)) {
@@ -217,6 +234,8 @@ if ($id > 0 || !empty($ref)) {
 				print $langs->trans('Period').' ('.$langs->trans("OrderDate").') - ';
 				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.$search_month.'"> ';
 				print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
+				print $langs->trans('Status');
+				$formorder->selectSupplierOrderStatus($search_status, 1, 'search_status');
 				print '<div style="vertical-align: middle; display: inline-block">';
 				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
