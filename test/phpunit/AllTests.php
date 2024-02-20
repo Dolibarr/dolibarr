@@ -26,9 +26,11 @@
  */
 print "PHP Version: ".phpversion()."\n";
 print "Memory limit: ". ini_get('memory_limit')."\n";
-
-// Workaround for false security issue with main.inc.php in tests:
-$_SERVER['PHP_SELF'] = "phpunit";
+$isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+print "Is Windows: ". ($isWindows ? 1 : 0)."\n";
+if ($isWindows) {
+	$_SERVER['PHP_SELF'] = "phpunit";
+}
 
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql'); // This is to force using mysql driver
