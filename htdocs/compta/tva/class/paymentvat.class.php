@@ -536,7 +536,7 @@ class PaymentVAT extends CommonObject
 	{
 		$this->id = 0;
 		$this->fk_tva = 0;
-		$this->datec = '';
+		$this->datec = dol_now();
 		$this->tms = '';
 		$this->datep = '';
 		$this->amount = '';

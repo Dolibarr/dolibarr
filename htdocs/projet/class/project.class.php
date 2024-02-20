@@ -1224,8 +1224,6 @@ class Project extends CommonObject
 	 */
 	public function setClose($user)
 	{
-		global $langs, $conf;
-
 		$now = dol_now();
 
 		$error = 0;

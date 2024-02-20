@@ -144,13 +144,100 @@ class ProjectTest extends CommonClassTest
 		return $localobject->id;
 	}
 
+
+	/**
+	 * testTaskCreate
+	 *
+	 * @param	int		$idproject		ID project
+	 * @return	void
+	 *
+	 * @depends testProjectOther
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testTaskCreate($idproject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Task($db);
+		$localobject->initAsSpecimen();
+		$localobject->fk_project = $idproject;
+		$result = $localobject->create($user);
+
+		$this->assertLessThan($result, 0);
+		print __METHOD__." result=".$result."\n";
+		return $result;
+	}
+
+	/**
+	 * testTaskFetch
+	 *
+	 * @param	int		$id		Id of object
+	 * @return	void
+	 *
+	 * @depends	testTaskCreate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testTaskFetch($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Task($db);
+		$result = $localobject->fetch($id);
+
+		$this->assertLessThan($result, 0);
+		print __METHOD__." id=".$id." result=".$result."\n";
+
+		return $localobject;
+	}
+
+	/**
+	 * testTaskOther
+	 *
+	 * @param	Task	$localobject	Task
+	 * @return	int
+	 *
+	 * @depends testTaskFetch
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testTaskOther($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$usertoprocess = $user;
+		$onlyopenedproject = 0;
+
+		$taskstatic = new Task($db);
+		//$result = $localobject->setClose($user);
+		$projectsrole = $taskstatic->getUserRolesForProjectsOrTasks($usertoprocess, null, $localobject->fk_project, 0, $onlyopenedproject);
+		$tasksrole = $taskstatic->getUserRolesForProjectsOrTasks(null, $usertoprocess, $localobject->fk_project, 0, $onlyopenedproject);
+
+		print __METHOD__." id=".$localobject->id."\n";
+		$this->assertEquals(count($projectsrole), 0);
+		$this->assertEquals(count($tasksrole), 0);
+
+		return $localobject->fk_project;
+	}
+
+
 	/**
 	 * testProjectDelete
 	 *
 	 * @param	int		$id		Id of project
 	 * @return	void
 	 *
-	 * @depends	testProjectOther
+	 * @depends	testTaskOther
 	 * The depends says test is run only if previous is ok
 	 */
 	public function testProjectDelete($id)
