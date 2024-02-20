@@ -839,7 +839,9 @@ class SecurityTest extends CommonClassTest
 		$url = 'ftp://mydomain.com';
 		$tmp = getURLContent($url);
 		print __METHOD__." url=".$url."\n";
-		$this->assertRegExp("/not supported/", $tmp['curl_error_msg'], "Should disable ftp connection");	// Test error if return does not contains 'not supported'
+
+		$tmpvar = preg_match('/not supported/', $tmp['curl_error_msg']);
+		$this->assertEquals(1, $tmpvar, "Did not find the /not supported/ in getURLContent error message. We should.");
 
 		$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
 		$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow

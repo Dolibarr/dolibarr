@@ -126,10 +126,13 @@ class LangTest extends CommonClassTest
 			// Test java string contains only d,M,y,/,-,. and not m,...
 			$result = $tmplangs->transnoentitiesnoconv("FormatDateShortJava");
 			print __METHOD__." FormatDateShortJava=".$result."\n";
-			$this->assertRegExp('/^[dMy\/\-\.]+$/', $result, 'FormatDateShortJava KO for lang code '.$code);
+			$tmpvar = preg_match('/^[dMy\/\-\.]+$/', $result);
+			$this->assertEquals(1, $tmpvar, 'FormatDateShortJava KO for lang code '.$code.'. Does not match /[dMy\/\-\.]+/');
+
 			$result = $tmplangs->trans("FormatDateShortJavaInput");
 			print __METHOD__." FormatDateShortJavaInput=".$result."\n";
-			$this->assertRegExp('/^[dMy\/\-\.]+$/', $result, 'FormatDateShortJavaInput KO for lang code '.$code);
+			$tmpvar = preg_match('/^[dMy\/\-\.]+$/', $result);
+			$this->assertEquals(1, $tmpvar, 'FormatDateShortJavaInput KO for lang code '.$code.'. Does not match /^[dMy\/\-\.]+$/');
 
 			unset($tmplangs);
 
