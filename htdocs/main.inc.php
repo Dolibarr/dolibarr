@@ -257,6 +257,11 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type, $stopcode = 1)
 					// Note: No addition into security audit table is done because we don't want to execute code in such a case.
 					// Detection of too many such requests can be done with a fail2ban rule on 403 error code or into the PHP server error log.
 
+
+					if (class_exists('PHPUnit\Framework\TestSuite')) {
+						$message = $errormessage.' '.substr($errormessage2, 2000);
+						throw new Exception("Security injection exception: $message");
+					}
 					exit;
 				} else {
 					return false;
