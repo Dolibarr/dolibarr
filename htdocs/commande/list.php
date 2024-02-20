@@ -223,10 +223,6 @@ $object->fields = dol_sort_array($object->fields, 'position');
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-if (!$user->hasRight('societe', 'client', 'voir')) {
-	$search_sale = $user->id;
-}
-
 // Security check
 $id = (GETPOST('orderid') ? GETPOST('orderid', 'int') : GETPOST('id', 'int'));
 if ($user->socid) {
@@ -879,6 +875,21 @@ $sql .= ' AND c.entity IN ('.getEntity('commande').')';
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
+
+// Restriction on sale representative
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
+	if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+		$userschilds = $user->getAllChildIds();
+		if ($userschilds) {
+			foreach ($userschilds as $key => $value) {
+				$sql .= " OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $value).")";
+			}
+		}
+	}
+	$sql .= ")";
+}
+
 if ($search_ref) {
 	$sql .= natural_search('c.ref', $search_ref);
 }

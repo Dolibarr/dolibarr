@@ -2313,7 +2313,14 @@ abstract class CommonObject
 			$sql .= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		}
 		if ($restrictiononfksoc == 1 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
-			$sql .= " AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND (sc.fk_user = ".((int) $user->id);
+			if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+				$userschilds = $user->getAllChildIds();
+				foreach ($userschilds as $key => $value) {
+					$sql .= ' OR sc.fk_user = '.((int) $value);
+				}
+			}
+			$sql .= ')';
 		}
 		if ($restrictiononfksoc == 2 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND (sc.fk_user = ".((int) $user->id).' OR te.fk_soc IS NULL)';
