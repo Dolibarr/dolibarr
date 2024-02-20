@@ -40,7 +40,7 @@ class GeoMapEditor
 	 *
 	 * @param string $htmlname htmlname
 	 * @param string $geojson  json of geometric objects
-	 * @param string $markertype type of marker
+	 * @param string $markertype type of marker, point, linestrg, polygon
 	 *
 	 * @return string
 	 */
@@ -50,16 +50,47 @@ class GeoMapEditor
 
 		$out = '<input id="' . $htmlname . '" name="' . $htmlname . '" size="100" value="' . htmlentities($geojson, ENT_QUOTES) . '"/>';
 		$out .= '<div id="map_' . $htmlname . '" style="width: 600px; height: 350px;"></div>';
+		if ($geojson != '{}') {
+			// OpenLayers it's "longitude, latitude".
+			// inverting coordinates
+			$tmp = json_decode($geojson);
+			$tmp2 = new stdClass();
+			$tmp2->type = $tmp->type;
+			$tmp2->coordinates = [];
+			if ($tmp->type == 'Point') {
+				$tmp2->coordinates = [$tmp->coordinates[1], $tmp->coordinates[0]];
+			} else {
+				foreach ($tmp->coordinates as $key => $value) {
+					$tmp2->coordinates[] = [$value[1], $value[0]];
+				}
+			}
+			$geojson = json_encode($tmp2);
+		}
+
 		$out .= '
 		<script>
 			var geoms = JSON.parse(\'' . $geojson . '\');
 			var markerType = "' . $markertype . '";
+			var map = L.map("map_' . $htmlname . '");
 			console.log(markerType);
 			console.log(geoms);
-			if (Object.keys(geoms).length === 0) {
-				var map = L.map("map_' . $htmlname . '").setView([48.852, 2.351], 12);
-			} else {
-				var map = L.map("map_' . $htmlname . '").setView([geoms.coordinates[1], geoms.coordinates[0]], 14);
+			if (markerType == "point" && Object.keys(geoms).length != 0) {
+				map.setView(geoms.coordinates, 17);
+				L.marker(geoms.coordinates).addTo(map);
+				// disableMarkers();
+				map.pm.addControls({
+					drawMarker: false,
+					drawPolyline: false,
+					drawPolygon: false,
+				});
+			} else if (markerType == "linestrg" && Object.keys(geoms).length != 0) {
+				map.setView([48.852, 2.351], 12);
+				L.polyline(geoms.coordinates).addTo(map);
+			} else if (markerType == "polygon" && Object.keys(geoms).length != 0) {
+				map.setView([48.852, 2.351], 12);
+				// map.setView(geoms.coordinates, 14);
+			} else if (Object.keys(geoms).length === 0) {
+				map.setView([48.852, 2.351], 12);
 			}
 			var tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 				maxZoom: 19,
@@ -74,16 +105,17 @@ class GeoMapEditor
 				drawCircle:false,
 				drawCircleMarker: false,
 				drawText: false,
+				drawRectangle: false,
 				editMode: true,
 				removalMode: true,
 				rotateMode: false,
 				customControls: false,
 			});
 			enableMarker(markerType);
-			if (geoms && geoms.type == "Point") {
-				L.marker([geoms.coordinates[1], geoms.coordinates[0]]).addTo(map);
-				disableMarkers();
-			}
+			// if (geoms && geoms.type == "Point") {
+			// 	L.marker([geoms.coordinates[1], geoms.coordinates[0]]).addTo(map);
+			// 	disableMarkers();
+			// }
 			map.on("pm:drawend", (e) => {
 				disableMarkers();
 				generateGeoJson();
@@ -114,8 +146,8 @@ class GeoMapEditor
 				console.log(e);
 			});
 			function enableMarker(type) {
+				console.log("enable : " + type);
 				if (type == "point") {
-					console.log("enable : " + type);
 					map.pm.addControls({
 						drawMarker: true
 					});
@@ -125,7 +157,6 @@ class GeoMapEditor
 				map.pm.addControls({
 					drawMarker: false,
 					drawPolyline: false,
-					drawRectangle: false,
 					drawPolygon: false,
 				});
 			}
