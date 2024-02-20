@@ -257,9 +257,6 @@ class Task extends CommonObjectLine
 			return -1;
 		}
 
-		// Check parameters
-		// Put here code to add control on parameters values
-
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task (";
 		$sql .= "entity";
@@ -348,8 +345,6 @@ class Task extends CommonObjectLine
 	 */
 	public function fetch($id, $ref = '', $loadparentdata = 0)
 	{
-		global $langs, $conf;
-
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.ref,";
@@ -603,7 +598,7 @@ class Task extends CommonObjectLine
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error = 0;
@@ -1217,9 +1212,15 @@ class Task extends CommonObjectLine
 		}
 
 		/* Liste des taches et role sur les projects ou taches */
-		$sql = "SELECT pt.rowid as pid, ec.element_id, ctc.code, ctc.source";
+		$sql = "SELECT ";
 		if ($userp) {
-			$sql .= " FROM ".MAIN_DB_PREFIX."projet as pt";
+			$sql .= " p.rowid as pid,";
+		} else {
+			$sql .= " pt.rowid as pid,";
+		}
+		$sql .= " ec.element_id, ctc.code, ctc.source";
+		if ($userp) {
+			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		}
 		if ($usert && $filteronprojstatus > -1) {
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p, ".MAIN_DB_PREFIX."projet_task as pt";
@@ -1229,7 +1230,11 @@ class Task extends CommonObjectLine
 		}
 		$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 		$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
-		$sql .= " WHERE pt.rowid = ec.element_id";
+		if ($userp) {
+			$sql .= " WHERE p.rowid = ec.element_id";
+		} else {
+			$sql .= " WHERE pt.rowid = ec.element_id";
+		}
 		if ($userp && $filteronprojstatus > -1) {
 			$sql .= " AND p.fk_statut = ".((int) $filteronprojstatus);
 		}
@@ -1253,7 +1258,7 @@ class Task extends CommonObjectLine
 		$sql .= " AND ctc.source = 'internal'";
 		if ($projectid) {
 			if ($userp) {
-				$sql .= " AND pt.rowid IN (".$this->db->sanitize($projectid).")";
+				$sql .= " AND p.rowid IN (".$this->db->sanitize($projectid).")";
 			}
 			if ($usert) {
 				$sql .= " AND pt.fk_projet IN (".$this->db->sanitize($projectid).")";
@@ -1438,8 +1443,6 @@ class Task extends CommonObjectLine
 	 */
 	public function fetchTimeSpentOnTask($morewherefilter = '')
 	{
-		global $langs;
-
 		$arrayres = array();
 
 		$sql = "SELECT";
@@ -1646,8 +1649,6 @@ class Task extends CommonObjectLine
 	 */
 	public function fetchTimeSpent($id)
 	{
-		global $langs;
-
 		$timespent = new TimeSpent($this->db);
 		$timespent->fetch($id);
 

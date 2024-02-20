@@ -86,7 +86,9 @@ class pdf_eagle extends ModelePDFStockTransfer
 	public $posxwarehousedestination;
 
 	/**
-	 * @var int at Least One Batch
+	 * @var bool        True if at least one line of the StockTransfer object has a batch set.
+	 *                  Populated by $pdf_eagle->atLeastOneBatch()
+	 * @see atLeastOneBatch()
 	 */
 	public $atLeastOneBatch;
 
@@ -916,7 +918,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 	 *
 	 * @param	StockTransfer	$object	Stock Transfer object
 	 * @return	boolean			true if at least one line has batch set, false if not
-￼	 */
+	 */
 	public function atLeastOneBatch($object)
 	{
 		global $conf;

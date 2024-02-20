@@ -25,14 +25,13 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 /**
  * API class for salaries
  *
- * @property DoliDB db
  * @access protected
  * @class DolibarrApiAccess {@requires user,external}
  */
 class Salaries extends DolibarrApi
 {
 	/**
-	 * array $FIELDS Mandatory fields, checked when creating an object
+	 * @var array $FIELDS Mandatory fields, checked when creating an object
 	 */
 	static $FIELDS = array(
 		'fk_user',
