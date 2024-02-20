@@ -39,16 +39,6 @@ class Dolresource extends CommonObject
 	public $picto = 'resource';
 
 	/**
-	 * @var int ID country
-	 */
-	public $fk_country;
-
-	/**
-	 * @var int ID state
-	 */
-	public $fk_state;
-
-	/**
 	 * @var string description
 	 */
 	public $description;
