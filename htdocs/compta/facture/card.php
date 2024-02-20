@@ -1287,7 +1287,15 @@ if (empty($reshook)) {
 						$totaldeposits = $facture_source->getSumDepositsUsed();
 						$remain_to_pay = abs($facture_source->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits);
 
-						$object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'), $remain_to_pay, 1, 0, 0, 0, 0, 0, '', '', 'TTC');
+						if ((empty($soc) || !is_object($soc) || get_class($soc) != 'Societe') && $socid >0) {
+							$soc = new Societe($db);
+							$soc->fetch($socid);
+						}
+						if (!empty($soc) && is_object($soc) && get_class($soc) == 'Societe') {
+							$tva_tx = get_default_tva($mysoc,$soc);
+						} else $tva_tx = 0;
+
+						$object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'), $remain_to_pay, 1, $tva_tx, 0, 0, 0, 0, '', '', 'TTC');
 					}
 				}
 
