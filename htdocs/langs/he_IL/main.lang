@@ -1048,7 +1048,7 @@ Select2NotFound=לא נמצאו תוצאות
 Select2Enter=להיכנס
 Select2MoreCharacter=או יותר אופי
 Select2MoreCharacters=או יותר דמויות
-Select2MoreCharactersMore=<strong>תחביר חיפוש:</strong><br><span'> class='notranslate <kbd></span><strong> |</strong>b0860de534da6f class='</spanda6f class notranslate'><kbd> או</kbd> (a|b)<br><span class='notranslate20'>b0601eczd>7a<b03aecd /span><strong>*</strong></kbd><kbd> כל תו</kbd> (a*b)<br>b03aecd27a span><span class='notranslate'><strong>^</strong></kbd> <kbd> התחל עם</kbd> (^ab)<br>b03aec07a60 <span class='notranslate'><strong>$</strong></kbd>203d<01ec0d>b03 /span> סיים ב<span class='notranslate'></kbd> (ab$)<br>
+Select2MoreCharactersMore=<strong>Search syntax:</strong><br><kbd><strong> |</strong></kbd><kbd> OR</kbd> (a|b)<br><kbd><strong>*</strong></kbd><kbd> Any character</kbd> (a*b)<br><kbd><strong>^</strong></kbd><kbd> Start with</kbd> (^ab)<br><kbd><strong>$</strong></kbd><kbd> End with</kbd> (ab$)<br>
 Select2LoadingMoreResults=טוען תוצאות נוספות...
 Select2SearchInProgress=חיפוש מתבצע...
 SearchIntoThirdparties=צדדים שלישיים
@@ -1259,4 +1259,3 @@ AmountSalary=סכום שכר
 InvoiceSubtype=תת סוג חשבונית
 ConfirmMassReverse=אישור הפוך בכמות גדולה
 ConfirmMassReverseQuestion=האם אתה בטוח שברצונך להפוך את %s הרשומות שנבחרו?
-

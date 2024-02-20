@@ -360,7 +360,7 @@ ACCOUNTING_LETTERING_NBLETTERS=Hərf kodu yaradan zaman hərflərin sayı (stand
 ACCOUNTING_LETTERING_NBLETTERS_DESC=Bəzi mühasibat proqramları yalnız iki hərfli kodu qəbul edir. Bu parametr bu aspekti təyin etməyə imkan verir. Hərflərin standart sayı üçdür.
 OptionsAdvanced=Təkmilləşmiş Seçimlər
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Təchizatçı alışlarında ƏDV-nin əks ödənişinin idarə edilməsini aktivləşdirin
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Bu seçim aktiv olduqda, tədarükçünün və ya verilmiş satıcı hesab-fakturasının fərqli şəkildə mühasibat uçotuna köçürülməli olduğunu müəyyən edə bilərsiniz: "<"-də müəyyən edilmiş hesab planından 2 verilmiş hesab üzrə mühasibat uçotuna əlavə debet və kredit xətti yaradılacaq. span class='notranslate'>%s</span>" quraşdırma səhifəsi.
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "" setup page.
 
 ## Export
 NotExportLettering=Fayl yaradarkən hərfləri ixrac etməyin
