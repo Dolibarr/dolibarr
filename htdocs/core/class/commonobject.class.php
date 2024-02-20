@@ -9324,7 +9324,6 @@ abstract class CommonObject
 			$sql .= " VALUES (".implode(", ", $values).")";		// $values can contains 'abc' or 123
 
 			$res = $this->db->query($sql);
-			print_r($sql);
 			if (!$res) {
 				$error++;
 				if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
