@@ -250,8 +250,8 @@ Security=Siguria
 Passwords=Fjalëkalimet
 DoNotStoreClearPassword=Enkriptoni fjalëkalimet e ruajtura në bazën e të dhënave (JO si tekst i thjeshtë). Rekomandohet fuqimisht të aktivizoni këtë opsion.
 MainDbPasswordFileConfEncrypted=Enkriptoni fjalëkalimin e bazës së të dhënave të ruajtur në conf.php. Rekomandohet fuqimisht të aktivizoni këtë opsion.
-InstrucToEncodePass=Për të pasur fjalëkalim të koduar në skedarin <b>conf.php</b>, zëvendëso rreshtin cc<0192fz /span><span class='notranslate'><b>$dolibarr_main_db_pass="...";</b>b014 >nga<span class='notranslate'><br><b>$dolibarr_main_db_pass="crypted:b0ecb9f2ec span class='notranslate'></b>
-InstrucToClearPass=Për të deshifruar (pastruar) fjalëkalimin në skedarin <b>conf.php</b>, zëvendësoni rreshtin <br><b>$dolibarr_main_db_pass="crypted:...";b09a4b739f17f8f8s0 ><br>nga<br><b>$dolibarr_main_db_pass'8fda19bz0<span> > ";</b>
+InstrucToEncodePass=To have password encoded into the 1conf.php1 file, replace the line 23$dolibarr_main_db_pass="...";34by56$dolibarr_main_db_pass="crypted:%s";6
+InstrucToClearPass=To have password decoded (clear) into the conf.php file, replace the line $dolibarr_main_db_pass="crypted:...";by$dolibarr_main_db_pass="";
 ProtectAndEncryptPdfFiles=Mbroni skedarët PDF të krijuar. Kjo NUK rekomandohet pasi prish gjenerimin e PDF-ve në masë.
 ProtectAndEncryptPdfFilesDesc=Mbrojtja e një dokumenti PDF e mban atë të disponueshëm për t'u lexuar dhe printuar me çdo shfletues PDF. Megjithatë, redaktimi dhe kopjimi nuk është më i mundur. Vini re se përdorimi i kësaj veçorie bën që ndërtimi i PDF-ve të bashkuara globale të mos funksionojë.
 Feature=Veçori

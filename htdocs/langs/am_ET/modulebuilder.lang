@@ -111,7 +111,7 @@ TriggerDefDesc=ከሞጁልዎ ውጪ የሆነ የንግድ ክስተት ሲፈ
 SeeIDsInUse=በእርስዎ ጭነት ላይ ጥቅም ላይ የዋሉ መታወቂያዎችን ይመልከቱ
 SeeReservedIDsRangeHere=የተያዙ መታወቂያዎችን ክልል ይመልከቱ
 ToolkitForDevelopers=ለ Dolibarr ገንቢዎች መሣሪያ ስብስብ
-TryToUseTheModuleBuilder=የSQL እና ፒኤችፒ እውቀት ካሎት ቤተኛ ሞጁል ገንቢ ዊዛርድን መጠቀም ይችላሉ።<br>ሞጁሉን <strong><span class ያንቁ ='notranslate'>%s</span></strong>እና <span class="fa fa-bug">='span><translate' class' የሚለውን በመጫን ጠንቋዩን ይጠቀሙ። ></span> በላይኛው ቀኝ ምናሌ ላይ።<br>ማስጠንቀቂያ፡ ይህ የላቀ የገንቢ ባህሪ ነው፣ b0aee83365837fz<0አይደረግም span class='notranslate'></b></span>በምርት ቦታህ ላይ ሙከራ አድርግ!
+TryToUseTheModuleBuilder=If you have knowledge of SQL and PHP, you may use the native module builder wizard.1Enable the module 2%s2 and use the wizard by clicking the 33 on the top right menu.4Warning: This is an advanced developer feature, do 5not5 experiment on your production site!
 SeeTopRightMenu=ከላይ በቀኝ ሜኑ ላይ <span class="fa fa-bug"></span>ን ይመልከቱ
 AddLanguageFile=የቋንቋ ፋይል ያክሉ
 YouCanUseTranslationKey=በቋንቋ ፋይል ውስጥ የሚገኘውን የትርጉም ቁልፍ የሆነውን ቁልፍ እዚህ መጠቀም ትችላለህ ("ቋንቋዎች" የሚለውን ትር ተመልከት)
