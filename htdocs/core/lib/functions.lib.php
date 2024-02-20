@@ -3391,9 +3391,9 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $mor
  */
 function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, $showinvalid = 1, $withpicto = 0)
 {
-	global $conf, $user, $langs, $hookmanager;
+	global $user, $langs, $hookmanager;
 
-	$newemail = dol_escape_htmltag($email);
+	$emailLink = '';
 
 	if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && $withpicto) {
 		$withpicto = 0;
@@ -3404,17 +3404,17 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 	}
 
 	if (!empty($addlink)) {
-		$newemail = '<a style="text-overflow: ellipsis;" href="';
+		$emailLink = '<a style="text-overflow: ellipsis;" href="';
 		if (!preg_match('/^mailto:/i', $email)) {
-			$newemail .= 'mailto:';
+			$emailLink .= 'mailto:';
 		}
-		$newemail .= $email;
-		$newemail .= '">';
-		$newemail .= dol_trunc($email, $max);
-		$newemail .= '</a>';
+		$emailLink .= $email;
+		$emailLink .= '"><span class="nospan" style="margin-right: 10px">';
+		$emailLink .= ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto)).' ' : '') . dol_trunc($email, $max);
+		$emailLink .= '</span></a>';
 		if ($showinvalid && !isValidEmail($email)) {
 			$langs->load("errors");
-			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email));
+			$emailLink .= img_warning($langs->trans("ErrorBadEMail", $email));
 		}
 
 		if (($cid || $socid) && isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
@@ -3424,30 +3424,30 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 				$link = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$type.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
 			}
 			if ($link) {
-				$newemail = '<div>'.$newemail.' '.$link.'</div>';
+				$emailLink = '<div>'.$emailLink.' '.$link.'</div>';
 			}
 		}
 	} else {
 		if ($showinvalid && !isValidEmail($email)) {
 			$langs->load("errors");
-			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email));
+			$emailLink .= img_warning($langs->trans("ErrorBadEMail", $email));
 		}
+		$emailLink .= '<span class="nospan" style="margin-right: 10px">';
+		$emailLink .= ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto)).' ' : '') . dol_trunc($email, $max);
+		$emailLink .= '</span>';
 	}
 
-	$rep = '<span class="nospan" style="margin-right: 10px">';
-	$rep .= ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto)).' ' : '').$newemail;
-	$rep .= '</span>';
 	if ($hookmanager) {
 		$parameters = array('cid' => $cid, 'socid' => $socid, 'addlink' => $addlink, 'picto' => $withpicto);
 
 		$reshook = $hookmanager->executeHooks('printEmail', $parameters, $email);
 		if ($reshook > 0) {
-			$rep = '';
+			$emailLink = '';
 		}
-		$rep .= $hookmanager->resPrint;
+		$emailLink .= $hookmanager->resPrint;
 	}
 
-	return $rep;
+	return $emailLink;
 }
 
 /**
