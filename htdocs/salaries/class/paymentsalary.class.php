@@ -287,7 +287,7 @@ class PaymentSalary extends CommonObject
 			$error++;
 		}
 
-		if ( != 0 && !$error) {
+		if ($totalamount != 0 && !$error) {
 			$this->amount = $totalamount;
 			$this->total = $totalamount; // deprecated
 			$this->db->commit();
