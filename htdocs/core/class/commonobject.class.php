@@ -6274,10 +6274,16 @@ abstract class CommonObject
 		if (is_array($optionsArray) && count($optionsArray) > 0) {
 			$sql = "SELECT rowid";
 			foreach ($optionsArray as $name => $label) {
-				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || (!in_array($extrafields->attributes[$this->table_element]['type'][$name], ['separate', 'point']))) {
+				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || (!in_array($extrafields->attributes[$this->table_element]['type'][$name], ['separate', 'point', 'linestrg','polygon']))) {
 					$sql .= ", ".$name;
 				}
 				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'point') {
+					$sql .= ", ST_AsWKB(".$name.") as ".$name;
+				}
+				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'linestrg') {
+					$sql .= ", ST_AsWKB(".$name.") as ".$name;
+				}
+				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'polygon') {
 					$sql .= ", ST_AsWKB(".$name.") as ".$name;
 				}
 			}
@@ -6625,7 +6631,7 @@ abstract class CommonObject
 			foreach ($new_array_options as $key => $value) {
 				$attributeKey = substr($key, 8); // Remove 'options_' prefix
 				// Add field of attribute
-				if (!in_array($extrafields->attributes[$this->table_element]['type'][$attributeKey], ['separate', 'point'])) { // Only for other type than separator)
+				if (!in_array($extrafields->attributes[$this->table_element]['type'][$attributeKey], ['separate', 'point', 'linestrg', 'polygon'])) { // Only for other type than separator)
 					if ($new_array_options[$key] != '' || $new_array_options[$key] == '0') {
 						$sql .= ",'".$this->db->escape($new_array_options[$key])."'";
 					} else {
@@ -6635,6 +6641,20 @@ abstract class CommonObject
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'point') { // for point type
 					if (!empty($new_array_options[$key])) {
 						$sql .= ",ST_PointFromWKB('".$new_array_options[$key]."')";
+					} else {
+						$sql .= ",null";
+					}
+				}
+				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'linestrg') { // for linestring type
+					if (!empty($new_array_options[$key])) {
+						$sql .= ",ST_LineFromWKB('".$new_array_options[$key]."')";
+					} else {
+						$sql .= ",null";
+					}
+				}
+				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'polygon') { // for polygon type
+					if (!empty($new_array_options[$key])) {
+						$sql .= ",ST_PolyFromWKB('".$new_array_options[$key]."')";
 					} else {
 						$sql .= ",null";
 					}

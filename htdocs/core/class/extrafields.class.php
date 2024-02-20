@@ -96,7 +96,7 @@ class ExtraFields
 		'chkbxlst' => 'ExtrafieldCheckBoxFromList',
 		'link' => 'ExtrafieldLink',
 		'point' => 'ExtrafieldPointGeo',
-		'linestring' => 'ExtrafieldLinestringGeo',
+		'linestrg' => 'ExtrafieldLinestringGeo',
 		'polygon' => 'ExtrafieldPolygonGeo',
 		'separate' => 'ExtrafieldSeparator',
 	);
@@ -242,7 +242,7 @@ class ExtraFields
 			} elseif ($type == 'point') {
 				$typedb = 'point';
 				$lengthdb = '';
-			} elseif ($type == 'linestring') {
+			} elseif ($type == 'linestrg') {
 				$typedb = 'linestring';
 				$lengthdb = '';
 			} elseif ($type == 'polygon') {
@@ -607,7 +607,7 @@ class ExtraFields
 			} elseif ($type == 'point') {
 				$typedb = 'point';
 				$lengthdb = '';
-			} elseif ($type == 'linestring') {
+			} elseif ($type == 'linestrg') {
 				$typedb = 'linestring';
 				$lengthdb = '';
 			} elseif ($type == 'polygon') {
@@ -1622,7 +1622,7 @@ class ExtraFields
 
 			//$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '');
 			$out = $form->selectForForms($tmparray[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '', $element.':options_'.$key);
-		} elseif (in_array($type, ['point', 'linestring', 'polygon'])) {
+		} elseif (in_array($type, ['point', 'linestrg', 'polygon'])) {
 			require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
 			$geojson = '{}';
 			if (!empty($value)) {
@@ -1992,11 +1992,19 @@ class ExtraFields
 					return 'Error bad setup of extrafield';
 				}
 			}
-		} elseif (in_array($type, ['point', 'linestring', 'polygon'])) {
+		} elseif ($type == 'point') {
 			require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
 			if (!empty($value)) {
 				$geom = geoPHP::load($value, 'wkb');
 				$value = $geom->x().' '.$geom->y();
+			} else {
+				$value = '';
+			}
+		} elseif (in_array($type, ['linestrg', 'polygon'])) {
+			require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
+			if (!empty($value)) {
+				$geom = geoPHP::load($value, 'wkb');
+				$value = get_class($geom) . ' : '. $geom->numPoints() . ' Points';
 			} else {
 				$value = '';
 			}
@@ -2183,7 +2191,7 @@ class ExtraFields
 					continue;
 				}
 
-				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'checkbox', 'chkbxlst', 'point', 'linestring', 'polygon')))) {
+				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'checkbox', 'chkbxlst', 'point', 'linestrg', 'polygon')))) {
 					//when unticking boolean field, it's not set in POST
 					continue;
 				}
@@ -2269,7 +2277,7 @@ class ExtraFields
 					$value_key = price2num(GETPOST("options_".$key, 'alpha')).':'.GETPOST("options_".$key."currency_id", 'alpha');
 				} elseif (in_array($key_type, array('html'))) {
 					$value_key = GETPOST("options_".$key, 'restricthtml');
-				} elseif (in_array($key_type, ['point', 'linestring', 'polygon'])) {
+				} elseif (in_array($key_type, ['point', 'linestrg', 'polygon'])) {
 					// construct point
 					require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
 					$geojson = GETPOST("options_".$key, 'restricthtml');
