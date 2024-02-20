@@ -50,25 +50,6 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 class AdminLibTest extends CommonClassTest
 {
 	/**
-	 * Constructor
-	 *
-	 * @param 	string			$name		Name
-	 * @return	AdminLibTest
-	 */
-	public function __construct($name = '')
-	{
-		$excludesList = array('conf', 'user', 'langs', 'db');
-		if (version_compare(\PHPUnit\Runner\Version::id(), '9.0.0', '>=')) {
-			$this->backupGlobalsExcludesList = $excludesList;
-		} else {
-			// Deprecated in PHPUNIT9, Removed in PHPUNIT10
-			$this->backupGlobalsBlacklist = $excludesList;
-		}
-		parent::__construct($name);
-	}
-
-
-	/**
 	 * testVersionCompare
 	 *
 	 * @return	void
