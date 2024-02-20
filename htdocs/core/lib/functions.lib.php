@@ -226,7 +226,7 @@ function isModEnabled($module)
 		'expedition' => 'delivery_note',
 		'facture' => 'invoice',
 		'projet' => 'project',
-		'propal' => 'propale',
+		'propale' => 'propal',
 	);
 
 	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
