@@ -29,6 +29,7 @@ print "Memory limit: ". ini_get('memory_limit')."\n";
 $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
 print "Is Windows: ". ($isWindows ? 1 : 0)."\n";
 if ($isWindows) {
+	// Workaround to avoid to have PHP_SELF = "c:\path\dir" that is not allowed as a valid PHP_SELF value in some tests
 	$_SERVER['PHP_SELF'] = "phpunit";
 }
 
