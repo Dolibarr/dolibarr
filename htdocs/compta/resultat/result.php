@@ -353,7 +353,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 						$r = 0;
 					}
 
-					print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
+					print '<td class="liste_total right"><span class="amount">'.price($r, 0, '', 1, 0, 0).'</span></td>';
 				}
 
 				// Year N
@@ -380,7 +380,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 					$r = 0;
 				}
 
-				print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
+				print '<td class="liste_total right"><span class="amount">'.price($r, 0, '', 1, 0).'</span></td>';
 				if (empty($sommes[$code]['N'])) {
 					$sommes[$code]['N'] = $r;
 				} else {
@@ -402,7 +402,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 							$r = 0;
 						}
 
-						print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
+						print '<td class="liste_total right"><span class="amount">'.price($r, 0, '', 1, 0).'</span></td>';
 						if (empty($sommes[$code]['M'][$k])) {
 							$sommes[$code]['M'][$k] = $r;
 						} else {
@@ -425,7 +425,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 							$r = 0;
 						}
 
-						print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
+						print '<td class="liste_total right"><span class="amount">'.price($r, 0, '', 1, 0).'</span></td>';
 						if (empty($sommes[$code]['M'][$k])) {
 							$sommes[$code]['M'][$k] = $r;
 						} else {
@@ -583,18 +583,18 @@ if ($modecompta == 'CREANCES-DETTES') {
 				print $labeltoshow;
 				print '</td>';
 
-				print '<td class="right"><span class="amount">'.price($totCat['NP']).'</span></td>';
-				print '<td class="right"><span class="amount">'.price($totCat['N']).'</span></td>';
+				print '<td class="right"><span class="amount">'.price($totCat['NP'], 0, '', 1, 0, 0).'</span></td>';
+				print '<td class="right"><span class="amount">'.price($totCat['N'], 0, '', 1, 0, 0).'</span></td>';
 
 				// Each month
 				foreach ($totCat['M'] as $k => $v) {
 					if (($k + 1) >= $date_startmonth) {
-						print '<td class="right nowraponall"><span class="amount">'.price($v).'</span></td>';
+						print '<td class="right nowraponall"><span class="amount">'.price($v, 0, '', 1, 0).'</span></td>';
 					}
 				}
 				foreach ($totCat['M'] as $k => $v) {
 					if (($k + 1) < $date_startmonth) {
-						print '<td class="right nowraponall"><span class="amount">'.price($v).'</span></td>';
+						print '<td class="right nowraponall"><span class="amount">'.price($v, 0, '', 1, 0).'</span></td>';
 					}
 				}
 
@@ -624,8 +624,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 							print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($labeldetail).'">';
 							print dol_escape_htmltag($labeldetail);
 							print '</td>';
-							print '<td class="right"><span class="amount">'.price($resultNP).'</span></td>';
-							print '<td class="right"><span class="amount">'.price($resultN).'</span></td>';
+							print '<td class="right"><span class="amount">'.price($resultNP, 0, '', 1, 0).'</span></td>';
+							print '<td class="right"><span class="amount">'.price($resultN, 0, '', 1, 0).'</span></td>';
 
 							// Make one call for each month
 							foreach ($months as $k => $v) {
@@ -635,7 +635,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 									} else {
 										$resultM = 0;
 									}
-									print '<td class="right"><span class="amount">'.price($resultM).'</span></td>';
+									print '<td class="right"><span class="amount">'.price($resultM, 0, '', 1, 0).'</span></td>';
 								}
 							}
 							foreach ($months as $k => $v) {
@@ -645,7 +645,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 									} else {
 										$resultM = 0;
 									}
-									print '<td class="right"><span class="amount">'.price($resultM).'</span></td>';
+									print '<td class="right"><span class="amount">'.price($resultM, 0, '', 1, 0).'</span></td>';
 								}
 							}
 							print "</tr>\n";
