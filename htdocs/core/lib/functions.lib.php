@@ -7239,11 +7239,10 @@ function yn($yesno, $case = 1, $color = 0)
  *  @param	Object		$object			Object to use to get ref to forge the path.
  *  @param	string		$modulepart		Type of object ('invoice_supplier, 'donation', 'invoice', ...'). Use '' for autodetect from $object.
  *  @return	string						Dir to use ending. Example '' or '1/' or '1/2/'
+ *  @see getMultiDirOuput()
  */
 function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '')
 {
-	global $conf;
-
 	if (empty($modulepart) && !empty($object->module)) {
 		$modulepart = $object->module;
 	}
@@ -11970,7 +11969,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
  * 									'myobject@mymodule' or
  * 									'myobject_mysubobject' (where mymodule = myobject, like 'project_task')
  * @return  array					array('module'=>, 'classpath'=>, 'element'=>, 'subelement'=>, 'classfile'=>, 'classname'=>, 'dir_output'=>)
- * @see fetchObjectByElement()
+ * @see fetchObjectByElement(), getMultiDirOutput()
  */
 function getElementProperties($element_type)
 {
