@@ -234,6 +234,7 @@ class PaymentSalary extends CommonObject
 		}
 
 		// Check parameters
+		$totalamount = (float) price2num($totalamount, 'MT'); // this is to ensure the following test is no biaised by a potential float equal to 0.0000000000001
 		if ($totalamount == 0) {
 			return -1;
 		} // On accepte les montants negatifs pour les rejets de prelevement mais pas null
@@ -286,7 +287,7 @@ class PaymentSalary extends CommonObject
 			$error++;
 		}
 
-		if ($totalamount != 0 && !$error) {
+		if ( != 0 && !$error) {
 			$this->amount = $totalamount;
 			$this->total = $totalamount; // deprecated
 			$this->db->commit();
