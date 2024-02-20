@@ -87,9 +87,9 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 		}
 	}
 
-	$loaddate = ($mode == 1 || $mode == 2 || $nbsecondsold != 0);
-	$loadsize = ($mode == 1 || $mode == 3);
-	$loadperm = ($mode == 1 || $mode == 4);
+	$loaddate = ($mode == 1 || $mode == 2 || $nbsecondsold != 0 || $sortcriteria == 'date');
+	$loadsize = ($mode == 1 || $mode == 3 || $sortcriteria == 'size');
+	$loadperm = ($mode == 1 || $mode == 4 || $sortcriteria == 'perm');
 
 	// Clean parameters
 	$utf8_path = preg_replace('/([\\/]+)$/', '', $utf8_path);
