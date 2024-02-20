@@ -154,7 +154,7 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 				$bank_line_id_to = 0;
 				$result = 0;
 
-				// By default, electronic transfert from bank to bank
+				// By default, electronic transfer from bank to bank
 				$typefrom = $type[$n];
 				$typeto = $type[$n];
 				if ($tmpaccountto->courant == Account::TYPE_CASH || $tmpaccountfrom->courant == Account::TYPE_CASH) {
@@ -189,10 +189,10 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 					$error++;
 				}
 				if (!$error) {
-					$mesgs = $langs->trans("TransferFromToDone", '{s1}', '{s2}', $amount[$n], $langs->transnoentitiesnoconv("Currency".$conf->currency));
-					$mesgs = str_replace('{s1}', '<a href="bankentries_list.php?id='.$tmpaccountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$tmpaccountfrom->label.'</a>', $mesgs);
-					$mesgs = str_replace('{s2}', '<a href="bankentries_list.php?id='.$tmpaccountto->id.'">'.$tmpaccountto->label.'</a>', $mesgs);
-					setEventMessages($mesgs, null, 'mesgs');
+					$mesg = $langs->trans("TransferFromToDone", '{s1}', '{s2}', $amount[$n], $langs->transnoentitiesnoconv("Currency".$conf->currency));
+					$mesg = str_replace('{s1}', '<a href="bankentries_list.php?id='.$tmpaccountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$tmpaccountfrom->label.'</a>', $mesgs);
+					$mesg = str_replace('{s2}', '<a href="bankentries_list.php?id='.$tmpaccountto->id.'">'.$tmpaccountto->label.'</a>', $mesgs);
+					setEventMessages($mesg, null, 'mesgs');
 				} else {
 					$error++;
 					setEventMessages($tmpaccountfrom->error.' '.$tmpaccountto->error, null, 'errors');

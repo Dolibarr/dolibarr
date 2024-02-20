@@ -59,8 +59,8 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Permissions
-$permissiontoread = $user->rights->hrm->all->read;
-$permissionnote = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoread = $user->hasRight('hrm', 'all', 'read');
+$permissionnote = $user->hasRight('hrm', 'all', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();

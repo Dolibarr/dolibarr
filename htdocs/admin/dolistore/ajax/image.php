@@ -25,7 +25,7 @@ if (!defined('NOTOKENRENEWAL')) {
 /**
  *      \file       htdocs/admin/dolistore/ajax/image.php
  *      \ingroup    admin
- *      \brief      Page des informations dolistore
+ *      \brief      Page des information dolistore
  */
 
 require "../../../main.inc.php";
@@ -48,8 +48,8 @@ $quality    = GETPOST('quality', 'alpha');
 try {
 	$url = getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV') . '/api/images/products/'.$id_product.'/'.$id_image.'/'.$quality;
 	$api = new PrestaShopWebservice(
-		$conf->global->MAIN_MODULE_DOLISTORE_API_SRV,
-		$conf->global->MAIN_MODULE_DOLISTORE_API_KEY,
+		getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV'),
+		getDolGlobalString('MAIN_MODULE_DOLISTORE_API_KEY'),
 		$dolistore->debug_api
 	);
 	//echo $url;

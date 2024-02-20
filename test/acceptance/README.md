@@ -57,7 +57,7 @@ Now we can run selenium by two ways:
    npm update
    ```
 
-* In *nightwatch.conf.js* file inside the root directory of the project and inside the configuration file following environment variable has been specified. We can change the default values according to our local configuration.
+* Copy the file *nightwatch.conf.js* inside the root directory of the project and inside this configuration file set the following environment variable. We can change the default values according to our local configuration.
 
    ```
     const admin_username = process.env.ADMIN_USERNAME || 'admin';

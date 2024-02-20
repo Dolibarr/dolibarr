@@ -255,7 +255,7 @@ class ActionsMyModule extends CommonHookActions
 	 */
 	public function loadDataForCustomReports($parameters, &$action, $hookmanager)
 	{
-		global $conf, $user, $langs;
+		global $langs;
 
 		$langs->load("mymodule@mymodule");
 
@@ -280,7 +280,12 @@ class ActionsMyModule extends CommonHookActions
 
 		$this->results['head'] = $head;
 
-		return 1;
+		$arrayoftypes = array();
+		//$arrayoftypes['mymodule_myobject'] = array('label' => 'MyObject', 'picto'=>'myobject@mymodule', 'ObjectClassName' => 'MyObject', 'enabled' => isModEnabled('mymodule'), 'ClassPath' => "/mymodule/class/myobject.class.php", 'langs'=>'mymodule@mymodule')
+
+		$this->results['arrayoftype'] = $arrayoftypes;
+
+		return 0;
 	}
 
 

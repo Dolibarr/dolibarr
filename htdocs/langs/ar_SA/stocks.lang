@@ -24,7 +24,7 @@ StockAtDateInFuture=التاريخ في المستقبل
 StocksByLotSerial=الأسهم عن طريق القرعة / المسلسل
 LotSerial=الكثير / المسلسلات
 LotSerialList=قائمة الدفعة / المسلسلات
-SubjectToLotSerialOnly=Products subject to lot/serial only
+SubjectToLotSerialOnly=المنتجات الخاضعة للدفعة/المسلسل فقط
 Movements=حركات
 ErrorWarehouseRefRequired=مستودع الاشارة اسم مطلوب
 ListOfWarehouses=لائحة المخازن
@@ -49,7 +49,7 @@ StockCorrection=تصحيح المخزون
 CorrectStock=تصحيح الأوراق المالية
 StockTransfer=تحويل المخزن
 TransferStock=نقل المخزون
-MassStockTransferShort=Bulk stock change
+MassStockTransferShort=تغيير المخزون بالجملة
 StockMovement=حركة الأسهم
 StockMovements=تحركات الأسهم
 NumberOfUnit=عدد الوحدات
@@ -99,7 +99,7 @@ RealStockWillAutomaticallyWhen=سيتم تعديل المخزون الحقيقي
 VirtualStock=الأسهم الافتراضية
 VirtualStockAtDate=مخزون افتراضي في تاريخ مستقبلي
 VirtualStockAtDateDesc=المخزون الظاهري بمجرد الانتهاء من جميع الطلبات المعلقة التي تم التخطيط لمعالجتها قبل التاريخ المختار
-VirtualStockDesc=Virtual stock is the stock that will remain after all open/pending actions (that affect stocks) have been performed (purchase orders received, sales orders shipped, manufacturing orders produced, etc)
+VirtualStockDesc=المخزون الافتراضي هو المخزون الذي سيبقى بعد تنفيذ جميع الإجراءات المفتوحة/المعلقة (التي تؤثر على المخزونات) (استلام أوامر الشراء، وشحن أوامر البيع، وإنتاج أوامر التصنيع، وما إلى ذلك)
 AtDate=في التاريخ
 IdWarehouse=معرف مخزن
 DescWareHouse=وصف المخزن
@@ -119,6 +119,7 @@ PersonalStock=%s طبيعة الشخصية
 ThisWarehouseIsPersonalStock=هذا يمثل مستودع للطبيعة الشخصية لل%s %s
 SelectWarehouseForStockDecrease=اختيار مستودع لاستخدامها لانخفاض الأسهم
 SelectWarehouseForStockIncrease=اختيار مستودع لاستخدامها لزيادة المخزون
+RevertProductsToStock=إعادة المنتجات إلى المخزون؟
 NoStockAction=أي إجراء الأسهم
 DesiredStock=المخزون المطلوب
 DesiredStockDesc=سيكون مبلغ المخزون هذا هو القيمة المستخدمة لتعبئة المخزون عن طريق ميزة التزويد.
@@ -147,9 +148,9 @@ Replenishments=التجديد
 NbOfProductBeforePeriod=كمية من الناتج٪ الصورة في الأوراق المالية قبل الفترة المختارة (<٪ ق)
 NbOfProductAfterPeriod=كمية من الناتج٪ الصورة في الأوراق المالية بعد الفترة المختارة (>٪ ق)
 MassMovement=حركة جماهيرية
-SelectProductInAndOutWareHouse=Select a source warehouse (optional), a target warehouse, a product and a quantity then click "%s". Once this is done for all required movements, click on "%s".
+SelectProductInAndOutWareHouse=حدد مستودعًا مصدرًا (اختياري)، ومستودعًا مستهدفًا، ومنتجًا و وكمية ثم انقر على "%s". بمجرد الانتهاء من ذلك لجميع الحركات المطلوبة، انقر فوق "%s".
 RecordMovement=نقل السجل
-RecordMovements=Record stock movements
+RecordMovements=تسجيل تحركات الأسهم
 ReceivingForSameOrder=إيصالات لهذا النظام
 StockMovementRecorded=تحركات الأسهم سجلت
 RuleForStockAvailability=القواعد المتعلقة بمتطلبات الأسهم
@@ -167,6 +168,7 @@ qtyToTranferLotIsNotEnough=ليس لديك مخزون كافٍ ، لرقم ال�
 ShowWarehouse=مشاهدة مستودع
 MovementCorrectStock=تصحيح الأسهم للمنتج٪ الصورة
 MovementTransferStock=نقل الأسهم من الناتج٪ الصورة إلى مستودع آخر
+BatchStockMouvementAddInGlobal=انتقال مخزون الدُفعات إلى المخزون العالمي (لم يعد المنتج يستخدم الدُفعات)
 InventoryCodeShort=الجرد. / وسائل التحقق. رمز
 NoPendingReceptionOnSupplierOrder=لا يوجد استقبال معلق بسبب فتح أمر الشراء
 ThisSerialAlreadyExistWithDifferentDate=هذا الكثير / الرقم التسلسلي <strong>(٪ ق)</strong> موجودة بالفعل ولكن مع eatby مختلفة أو تاريخ sellby <strong>(وجدت٪ الصورة</strong> ولكن قمت <strong>بإدخال%s).</strong>
@@ -177,7 +179,7 @@ OptionMULTIPRICESIsOn=خيار "عدة أسعار لكل شريحة" قيد ال
 ProductStockWarehouseCreated=إنشاء حد المخزون للتنبيه والمخزون الأمثل المطلوب بشكل صحيح
 ProductStockWarehouseUpdated=حد المخزون للتنبيه والمخزون الأمثل المطلوب محدث بشكل صحيح
 ProductStockWarehouseDeleted=تم حذف حد المخزون للتنبيه والمخزون الأمثل المطلوب بشكل صحيح
-ProductStockWarehouse=Stock limit for alert and desired optimal stock by product and warehouse
+ProductStockWarehouse=حد المخزون للتنبيه و المخزون الأمثل المطلوب حسب المنتج و
 AddNewProductStockWarehouse=تعيين حد جديد للتنبيه والمخزون الأمثل المطلوب
 AddStockLocationLine=قم بتقليل الكمية ثم انقر لتقسيم السطر
 InventoryDate=تاريخ الجرد
@@ -213,7 +215,7 @@ OnlyProdsInStock=لا تضيف المنتج بدون مخزون
 TheoricalQty=الكمية النظرية
 TheoricalValue=الكمية النظرية
 LastPA=آخر BP
-CurrentPA=تيار BP
+CurrentPA=شركة بريتيش بتروليوم الحالية
 RecordedQty=الكمية المسجلة
 RealQty=الكمية الحقيقية
 RealValue=القيمة الحقيقية
@@ -237,9 +239,9 @@ StockIncrease=زيادة المخزون
 StockDecrease=انخفاض المخزون
 InventoryForASpecificWarehouse=جرد لمستودع معين
 InventoryForASpecificProduct=جرد لمنتج معين
-StockIsRequiredToChooseWhichLotToUse=An existing stock is required to be able to choose which lot to use
+StockIsRequiredToChooseWhichLotToUse=مطلوب مخزون موجود حتى تتمكن من اختيار الكمية التي تريد استخدامها
 ForceTo=يجبر على
-AlwaysShowFullArbo=Display the full path of a warehouse (parent warehouses) on the popup of warehouse links (Warning: This may decrease dramatically performances)
+AlwaysShowFullArbo=عرض المسار الكامل للمستودع (المستودعات الرئيسية) في النافذة المنبثقة لروابط المستودع (تحذير: قد يؤدي هذا إلى انخفاض الأداء بشكل كبير)
 StockAtDatePastDesc=يمكنك هنا عرض الأسهم (الأسهم الحقيقية) في تاريخ معين في الماضي
 StockAtDateFutureDesc=يمكنك عرض الأسهم (الأسهم الافتراضية) هنا في تاريخ معين في المستقبل
 CurrentStock=المخزون الحالي
@@ -273,14 +275,14 @@ InventoryStartedShort=بدأ
 ErrorOnElementsInventory=تم إلغاء العملية للسبب التالي:
 ErrorCantFindCodeInInventory=لا يمكن العثور على الكود التالي في المخزون
 QtyWasAddedToTheScannedBarcode=النجاح !! تمت إضافة الكمية إلى كل الباركود المطلوب. يمكنك إغلاق أداة الماسح الضوئي.
-StockChangeDisabled=Stock change disabled
+StockChangeDisabled=تم تعطيل تغيير المخزون
 NoWarehouseDefinedForTerminal=لا يوجد مستودع محدد للمحطة
 ClearQtys=امسح كل الكميات
 ModuleStockTransferName=تحويل المخزون المتقدم
 ModuleStockTransferDesc=إدارة متقدمة لتحويل المخزون مع إنشاء صحيفة التحويل
 StockTransferNew=نقل مخزون جديد
 StockTransferList=قائمة تحويلات المخزون
-ConfirmValidateStockTransfer=هل أنت متأكد من أنك تريد التحقق من صحة تحويل الأسهم هذا بالمرجع <STRONG> %s </STRONG>؟
+ConfirmValidateStockTransfer=هل أنت متأكد أنك تريد التحقق من صحة نقل الأسهم هذا باستخدام المرجع <b>%s<span class='notranslate'></b></ فترة>؟
 ConfirmDestock=انخفاض المخزون مع التحويل %s
 ConfirmDestockCancel=إلغاء تخفيض الأسهم بالتحويل %s
 DestockAllProduct=انخفاض المخزونات
@@ -307,19 +309,26 @@ StockTransferDecrementationCancel=إلغاء تخفيض المخازن المص�
 StockTransferIncrementationCancel=إلغاء زيادة مستودعات الوجهة
 StockStransferDecremented=انخفضت مستودعات المصدر
 StockStransferDecrementedCancel=إلغاء النقص في مستودعات المصدر
-StockStransferIncremented=مغلق - الأسهم المنقولة
-StockStransferIncrementedShort=الأسهم المنقولة
-StockStransferIncrementedShortCancel=إلغاء زيادة مستودعات الوجهة
+StockStransferIncremented=مغلق - تم نقل الأسهم
+StockStransferIncrementedShort=تم نقل الاسهم
+StockStransferIncrementedShortCancel=تم إلغاء زيادة مستودعات الوجهة
 StockTransferNoBatchForProduct=لا يستخدم المنتج %s الدُفعة ، امسح الدُفعة على الإنترنت وأعد المحاولة
 StockTransferSetup = تكوين وحدة نقل المخزون
-Settings=الإعدادات
 StockTransferSetupPage = صفحة التكوين لوحدة تحويل الأسهم
 StockTransferRightRead=اقرأ تحويلات الأسهم
 StockTransferRightCreateUpdate=إنشاء / تحديث تحويلات الأسهم
 StockTransferRightDelete=حذف تحويلات المخزونات
 BatchNotFound=الكمية / المسلسل غير موجود لهذا المنتج
-StockMovementWillBeRecorded=Stock movement will be recorded
-StockMovementNotYetRecorded=Stock movement will not be affected by this step
-WarningThisWIllAlsoDeleteStock=Warning, this will also destroy all quantities in stock in the warehouse
-DeleteBatch=Delete lot/serial
-ConfirmDeleteBatch=Are you sure you want to delete lot/serial ?
+StockEntryDate=تاريخ <br>الدخول في المخزون
+StockMovementWillBeRecorded=سيتم تسجيل حركة المخزون
+StockMovementNotYetRecorded=لن تتأثر حركة المخزون بهذه الخطوة
+ReverseConfirmed=تم عكس حركة المخزون بنجاح
+WarningThisWIllAlsoDeleteStock=تحذير، سيؤدي هذا أيضًا إلى تدمير جميع الكميات الموجودة في المخزون في المستودع
+ValidateInventory=التحقق من صحة المخزون
+IncludeSubWarehouse=تشمل المستودع الفرعي؟
+IncludeSubWarehouseExplanation=حدد هذا المربع إذا كنت تريد تضمين جميع المستودعات الفرعية للمستودع المرتبط في المخزون
+DeleteBatch=حذف المجموعة/المسلسل
+ConfirmDeleteBatch=هل أنت متأكد أنك تريد حذف المجموعة/المسلسل؟
+WarehouseUsage=استخدام المستودع
+InternalWarehouse=مستودع داخلي
+ExternalWarehouse=مستودع خارجي

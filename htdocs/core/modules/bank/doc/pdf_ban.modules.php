@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
- *	Classe permettant de generer les projets au modele Ban
+ *	Class permettant de generer les projects au modele Ban
  */
 
 class pdf_ban extends ModeleBankAccountDoc
@@ -300,7 +300,7 @@ class pdf_ban extends ModeleBankAccountDoc
 	 *  @param  Account		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -375,6 +375,8 @@ class pdf_ban extends ModeleBankAccountDoc
 			}
 		}
 		*/
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

@@ -46,7 +46,7 @@ $confirm = GETPOST('confirm');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-// TODO ajouter regle pour restreindre acces paiement
+// TODO ajouter regle pour restreindre access paiement
 //$result = restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentVAT($db);
@@ -210,7 +210,7 @@ print dol_get_fiche_end();
 
 
 /*
- * List of social contributions payed
+ * List of social contributions paid
  */
 
 $disable_delete = 0;
@@ -257,7 +257,7 @@ if ($resql) {
 			print '<td class="right"><span class="amount">'.price($objp->tva_amount).'</span></td>';
 			// Status
 			print '<td class="center">'.$tva->getLibStatut(4, $objp->amount).'</td>';
-			// Amount payed
+			// Amount paid
 			print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
 			print "</tr>\n";
 			if ($objp->paye == 1) {	// If at least one invoice is paid, disable delete

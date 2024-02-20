@@ -155,7 +155,7 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 		$sql .= " AND ps.fk_product = ".((int) $productid);
 	}
 	if (! empty($search_fk_warehouse)) {
-		$sql .= " AND ps.fk_entrepot IN (".$db->sanitize(join(",", $search_fk_warehouse)).")";
+		$sql .= " AND ps.fk_entrepot IN (".$db->sanitize(implode(",", $search_fk_warehouse)).")";
 	}
 	if ($search_ref) {
 		$sql .= natural_search("p.ref", $search_ref);
@@ -217,7 +217,7 @@ if ($date && $dateIsValid) {
 		$sql .= " AND sm.fk_product = ".((int) $productid);
 	}
 	if (!empty($search_fk_warehouse)) {
-		$sql .= " AND sm.fk_entrepot IN (".$db->sanitize(join(",", $search_fk_warehouse)).")";
+		$sql .= " AND sm.fk_entrepot IN (".$db->sanitize(implode(",", $search_fk_warehouse)).")";
 	}
 	if ($search_ref) {
 		$sql .= " AND p.ref LIKE '%".$db->escape($search_ref)."%' ";
@@ -288,7 +288,7 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 if (!empty($search_fk_warehouse)) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot IN ('.$db->sanitize(join(",", $search_fk_warehouse)).")";
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot IN ('.$db->sanitize(implode(",", $search_fk_warehouse)).")";
 }
 // Add fields from hooks
 $parameters = array();
@@ -427,7 +427,7 @@ if (!empty($search_fk_warehouse)) {
 	}
 }
 if ($productid > 0) {
-	$param .= '&productid='.$productid;
+	$param .= '&productid='.(int) $productid;
 }
 if (GETPOST('dateday', 'int') > 0) {
 	$param .= '&dateday='.GETPOST('dateday', 'int');
@@ -442,7 +442,7 @@ if (GETPOST('dateyear', 'int') > 0) {
 // TODO Move this into the title line ?
 print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'stock', 0, '', '', $limit, 0, 0, 1);
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="liste centpercent">';
 
 $stocklabel = $langs->trans('StockAtDate');

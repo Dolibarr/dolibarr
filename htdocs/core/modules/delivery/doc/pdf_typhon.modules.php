@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
  *	\ingroup    livraison
- *	\brief      File of class to manage receving receipts with template Typhon
+ *	\brief      File of class to manage receiving receipts with template Typhon
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 class pdf_typhon extends ModelePDFDeliveryOrder
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -382,7 +382,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 						$curY = $tab_top_newpage;
 					}
 
-					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
 					/*
 					 // TVA
@@ -688,11 +688,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 *  @param  Delivery	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf, $langs;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -854,6 +854,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		}
 
 		$pdf->SetTextColor(0, 0, 60);
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

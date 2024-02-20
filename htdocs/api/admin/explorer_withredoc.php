@@ -47,7 +47,7 @@ if (getDolGlobalString('API_EXPLORER_DISABLED')) {
 
 // Restrict API to some IPs
 if (getDolGlobalString('API_RESTRICT_ON_IP')) {
-	$allowedip = explode(' ', $conf->global->API_RESTRICT_ON_IP);
+	$allowedip = explode(' ', getDolGlobalString('API_RESTRICT_ON_IP'));
 	$ipremote = getUserRemoteIP();
 	if (!in_array($ipremote, $allowedip)) {
 		dol_syslog('Remote ip is '.$ipremote.', not into list ' . getDolGlobalString('API_RESTRICT_ON_IP'));

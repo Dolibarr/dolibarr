@@ -47,7 +47,7 @@ function DoResponse()
 		return;
 	}
 
-	// Get the main request informaiton.
+	// Get the main request information.
 	$sCommand = $_GET['Command'];
 	$sResourceType = $_GET['Type'];
 	$sCurrentFolder = GetCurrentFolder();

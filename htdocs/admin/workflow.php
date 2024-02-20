@@ -216,6 +216,8 @@ $workflowcodes = array_filter($workflowcodes, function ($var) {
 	return $var['enabled'];
 });
 
+
+
 /*
  * View
  */
@@ -315,7 +317,7 @@ foreach ($workflowcodes as $key => $params) {
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff($key);
 	} else {
-		if (!empty($conf->global->$key)) {
+		if (getDolGlobalString($key)) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del'.$key.'&token='.newToken().'">';
 			print img_picto($langs->trans("Activated"), 'switch_on');
 			print '</a>';

@@ -214,7 +214,7 @@ $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.t
 $tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays = c.rowid and c.active = 1";
 $tabsql[8] = "SELECT t.id	 as rowid, t.code as code, t.libelle, t.fk_country as country_id, c.code as country_code, c.label as country, t.position, t.active FROM ".MAIN_DB_PREFIX."c_typent as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON t.fk_country=c.rowid";
 $tabsql[9] = "SELECT c.code_iso as code, c.label, c.unicode, c.active FROM ".MAIN_DB_PREFIX."c_currencies AS c";
-$tabsql[10] = "SELECT t.rowid, t.entity, t.code, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays = c.rowid AND t.entity = ".getEntity($tabname[10]);
+$tabsql[10] = "SELECT t.rowid, t.entity, t.type_vat, t.code, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays = c.rowid AND t.entity IN (".getEntity($tabname[10]).")";
 $tabsql[11] = "SELECT t.rowid as rowid, t.element, t.source, t.code, t.libelle, t.position, t.active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[12] = "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.deposit_percent, c.nbjour, c.type_cdr, c.decalage, c.active, c.sortorder, c.entity FROM ".MAIN_DB_PREFIX."c_payment_term AS c WHERE c.entity IN (".getEntity($tabname[12]).")";
 $tabsql[13] = "SELECT c.id    as rowid, c.code, c.libelle, c.type, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_paiement AS c WHERE c.entity IN (".getEntity($tabname[13]).")";
@@ -308,7 +308,7 @@ $tabfield[6] = "code,libelle,type,color,position";
 $tabfield[7] = "code,libelle,country,accountancy_code";
 $tabfield[8] = "code,libelle,country_id,country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfield[9] = "code,label,unicode";
-$tabfield[10] = "country_id,country,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
+$tabfield[10] = "country_id,country,type_vat,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[11] = "element,source,code,libelle,position";
 $tabfield[12] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder";
 $tabfield[13] = "code,libelle,type";
@@ -355,7 +355,7 @@ $tabfieldvalue[6] = "code,libelle,type,color,position";
 $tabfieldvalue[7] = "code,libelle,country,accountancy_code";
 $tabfieldvalue[8] = "code,libelle,country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfieldvalue[9] = "code,label,unicode";
-$tabfieldvalue[10] = "country,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldvalue[10] = "country,type_vat,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldvalue[11] = "element,source,code,libelle,position";
 $tabfieldvalue[12] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder";
 $tabfieldvalue[13] = "code,libelle,type";
@@ -402,7 +402,7 @@ $tabfieldinsert[6] = "code,libelle,type,color,position";
 $tabfieldinsert[7] = "code,libelle,fk_pays,accountancy_code";
 $tabfieldinsert[8] = "code,libelle,fk_country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfieldinsert[9] = "code_iso,label,unicode";
-$tabfieldinsert[10] = "fk_pays,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note,entity";
+$tabfieldinsert[10] = "fk_pays,type_vat,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note,entity";
 $tabfieldinsert[11] = "element,source,code,libelle,position";
 $tabfieldinsert[12] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder,entity";
 $tabfieldinsert[13] = "code,libelle,type,entity";
@@ -537,7 +537,7 @@ $tabcond[44] = isModEnabled('asset');
 // List of help for fields (no more used, help is defined into tabcomplete)
 $tabhelp = array();
 
-// Table to store complete informations (will replace all other table). Key is table name.
+// Table to store complete information (will replace all other table). Key is table name.
 $tabcomplete = array(
 	'c_forme_juridique'=>array(
 		'picto'=>'company',
@@ -601,7 +601,7 @@ complete_dictionary_with_modules($taborder, $tabname, $tablib, $tabsql, $tabsqls
 $i = 0;
 foreach ($tabcomplete as $key => $value) {
 	$i++;
-	// When a dictionnary is commented
+	// When a dictionary is commented
 	if (!isset($tabcond[$i])) {
 		continue;
 	}
@@ -627,7 +627,7 @@ if ($id > 0) {
 	}
 }
 
-// Defaut sortorder
+// Default sortorder
 if (empty($sortfield)) {
 	$tmp1 = explode(',', empty($tabcomplete[$keytable]['sqlsort']) ? '' : $tabcomplete[$keytable]['sqlsort']);
 	$tmp2 = explode(' ', $tmp1[0]);
@@ -674,6 +674,13 @@ if ($id == 11) {
 		'external' => $langs->trans('External')
 	);
 }
+
+// Define type_vatList (used for dictionary "llx_c_tva")
+$type_vatList = array(
+	"0" => $langs->trans("All"),
+	"1" => $langs->trans("Sell"),
+	"2" => $langs->trans("Buy")
+);
 
 // Define localtax_typeList (used for dictionary "llx_c_tva")
 $localtax_typeList = array(
@@ -741,7 +748,7 @@ if (empty($reshook)) {
 			if ($value == 'country' && in_array($tablib[$id], array('DictionaryPublicHolidays', 'DictionaryCanton', 'DictionaryCompanyType', 'DictionaryHolidayTypes', 'DictionaryRevenueStamp'))) {
 				continue; // For some pages, country is not mandatory
 			}
-			// Discard check of mandatory fiedls for other fields
+			// Discard check of mandatory fields for other fields
 			if ($value == 'localtax1' && !GETPOST('localtax1_type')) {
 				continue;
 			}
@@ -761,14 +768,14 @@ if (empty($reshook)) {
 				continue; // For a column name 'sortorder', we use the field name 'position'
 			}
 			if ((!GETPOSTISSET($value) || GETPOST($value) == '')
-					&& (
-						!in_array($value, array('decalage', 'module', 'accountancy_code', 'accountancy_code_sell', 'accountancy_code_buy', 'tracking', 'picto', 'deposit_percent'))  // Fields that are not mandatory
+				&& (
+					!in_array($value, array('decalage', 'module', 'accountancy_code', 'accountancy_code_sell', 'accountancy_code_buy', 'tracking', 'picto', 'deposit_percent'))  // Fields that are not mandatory
 					&& ($id != 10 || ($value != 'code' && $value != 'note')) // Field code and note is not mandatory for dictionary table 10
 					)
 				) {
-				$ok = 0;
-				$fieldnamekey = $value;
-				// We take translate key of field
+					$ok = 0;
+					$fieldnamekey = $value;
+					// We take translate key of field
 				if ($fieldnamekey == 'libelle' || ($fieldnamekey == 'label')) {
 					$fieldnamekey = 'Label';
 				}
@@ -821,7 +828,7 @@ if (empty($reshook)) {
 					$fieldnamekey = 'UseByDefault';
 				}
 
-				setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
+					setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
 			}
 		}
 		// Other special checks
@@ -1358,9 +1365,9 @@ if ($id > 0) {
 
 		$newcardbutton = '';
 		/*$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
-		$newcardbutton .= dolGetButtonTitleSeparator();
-		*/
+		 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+		 $newcardbutton .= dolGetButtonTitleSeparator();
+		 */
 		$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/admin/dict.php?action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
 		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'tools', 0, $newcardbutton, '', $listlimit, 1, 0, 1);
@@ -1386,7 +1393,7 @@ if ($id > 0) {
 					}
 
 					// Define field friendly name from its technical name
-					$valuetoshow = ucfirst($value); // Par defaut
+					$valuetoshow = ucfirst($value); // Par default
 					$valuetoshow = $langs->trans($valuetoshow); // try to translate
 					$class = '';
 
@@ -1425,6 +1432,9 @@ if ($id > 0) {
 					if ($value == 'localtax2') {
 						$valuetoshow = $langs->trans("RateOfTaxN", '3');
 						$class = "center";
+					}
+					if ($value == 'type_vat') {
+						$valuetoshow = $langs->trans("VATType");
 					}
 					if ($value == 'organization') {
 						$valuetoshow = $langs->trans("Organization");
@@ -1837,6 +1847,11 @@ if ($id > 0) {
 				$cssprefix = 'center ';
 			}
 
+			if ($value == 'type_vat') {
+				$valuetoshow = $langs->trans("VATType");
+				$cssprefix = "center ";
+				$sortable = 0;
+			}
 			if ($value == 'localtax1_type') {
 				$valuetoshow = $langs->trans("UseLocalTax")." 2";
 				$cssprefix = "center ";
@@ -2301,6 +2316,13 @@ if ($id > 0) {
 								$valuetoshow = ($obj->code && $key != 'SizeUnit'.strtolower($obj->unit) ? $key : $obj->$value);
 							} elseif ($value == 'localtax1' || $value == 'localtax2') {
 								$class = "center";
+							} elseif ($value == 'type_vat') {
+								if ($obj->type_vat != 0) {
+									$valuetoshow = $type_vatList[$valuetoshow];
+								} else {
+									$valuetoshow = $langs->transnoentitiesnoconv("All");
+								}
+								$class = "center";
 							} elseif ($value == 'localtax1_type') {
 								if ($obj->localtax1 != 0) {
 									$valuetoshow = $localtax_typeList[$valuetoshow];
@@ -2371,7 +2393,7 @@ if ($id > 0) {
 							if (in_array($value, array('nbjour', 'decalage', 'pos', 'position', 'deposit_percent'))) {
 								$class .= ' right';
 							}
-							if (in_array($value, array('localtax1_type', 'localtax2_type'))) {
+							if (in_array($value, array('type_vat', 'localtax1_type', 'localtax2_type'))) {
 								$class .= ' nowraponall';
 							}
 							if (in_array($value, array('use_default', 'fk_parent', 'sortorder'))) {
@@ -2537,15 +2559,15 @@ $db->close();
  * 	@param		array		$fieldlist		Array of fields
  * 	@param		Object		$obj			If we show a particular record, obj is filled with record fields
  *  @param		string		$tabname		Name of SQL table
- *  @param		string		$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
+ *  @param		string		$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		string						'' or value of entity into table
  */
-function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
+function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 {
 	global $conf, $langs, $db, $mysoc;
 	global $form;
 	global $region_id;
-	global $elementList, $sourceList, $localtax_typeList;
+	global $elementList, $sourceList, $localtax_typeList, $type_vatList;
 
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
@@ -2597,7 +2619,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '</td>';
 		} elseif ($value == 'lang') {
 			print '<td>';
-			print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'lang');
+			print $formadmin->select_language(getDolGlobalString('MAIN_LANG_DEFAULT'), 'lang');
 			print '</td>';
 		} elseif (in_array($value, array('element', 'source'))) {	// Example: the type and source of the element (for contact types)
 			$tmparray = array();
@@ -2683,6 +2705,11 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 				'inch' => $langs->trans('SizeUnitinch')
 			);
 			print $form->selectarray('unit', $units, (!empty($obj->{$value}) ? $obj->{$value} : ''), 0, 0, 0);
+			print '</td>';
+		} elseif ($value == 'type_vat') {
+			// VAT type 0: all, 1: sell, 2: purchase
+			print '<td class="center">';
+			print $form->selectarray($value, $type_vatList, (!empty($obj->{$value}) ? $obj->{$value}:''));
 			print '</td>';
 		} elseif ($value == 'localtax1_type' || $value == 'localtax2_type') {
 			// Le type de taxe locale

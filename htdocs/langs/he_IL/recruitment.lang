@@ -18,59 +18,63 @@
 #
 
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = גיוס
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
+ModuleRecruitmentDesc = ניהול ומעקב אחר קמפיינים לגיוס למשרות חדשות
 
 #
 # Admin page
 #
-RecruitmentSetup = Recruitment setup
-Settings = Settings
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetup = הגדרת גיוס
+RecruitmentSetupPage = היכנס כאן להגדרת האפשרויות העיקריות למודול הגיוס
+RecruitmentArea=תחום הגיוס
+PublicInterfaceRecruitmentDesc=דפים ציבוריים של משרות הם כתובות URL ציבוריות להצגה ותשובות למשרות פתוחות. יש קישור אחד אחר לכל משרה פתוחה, שנמצא בכל רשומת משרה.
+EnablePublicRecruitmentPages=אפשר דפים ציבוריים של משרות פתוחות
 
 #
 # About page
 #
-About = About
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
-PositionToBeFilled=Job position
-PositionsToBeFilled=Job positions
-ListOfPositionsToBeFilled=List of job positions
-NewPositionToBeFilled=New job positions
+RecruitmentAbout = לגבי גיוס עובדים
+RecruitmentAboutPage = גיוס אודות עמוד
+NbOfEmployeesExpected=מספר עובדים צפוי
+JobLabel=תווית משרת העבודה
+WorkPlace=מקום עבודה
+DateExpected=תאריך צפוי
+FutureManager=מנהל עתידי
+ResponsibleOfRecruitement=אחראי על גיוס עובדים
+IfJobIsLocatedAtAPartner=אם העבודה ממוקמת במקום שותף
+PositionToBeFilled=עמדת עבודה
+PositionsToBeFilled=תפקידי עבודה
+ListOfPositionsToBeFilled=רשימת משרות עבודה
+NewPositionToBeFilled=משרות חדשות
 
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New application
-ListOfCandidatures=List of applications
-RequestedRemuneration=Requested remuneration
-ProposedRemuneration=Proposed remuneration
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-ContractRefused=Contract refused
-RecruitmentCandidature=Application
-JobPositions=Job positions
-RecruitmentCandidatures=Applications
-InterviewToDo=Interview to do
-AnswerCandidature=Application answer
-YourCandidature=Your application
-YourCandidatureAnswerMessage=Thanks you for your application.<br>...
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
-JobClosedTextCanceled=The job position is closed.
-ExtrafieldsJobPosition=Complementary attributes (job positions)
-ExtrafieldsApplication=Complementary attributes (job applications)
-MakeOffer=Make an offer
+JobOfferToBeFilled=משרה למילוי
+ThisIsInformationOnJobPosition=מידע על תפקיד המשרה למילוי
+ContactForRecruitment=צרו קשר לגיוס
+EmailRecruiter=מגייס אימייל
+ToUseAGenericEmail=כדי להשתמש באימייל גנרי. אם לא הוגדר, ייעשה שימוש באימייל של אחראי הגיוס
+NewCandidature=אפליקציה חדשה
+ListOfCandidatures=רשימת יישומים
+Remuneration=שכר
+RequestedRemuneration=שכר מבוקש
+ProposedRemuneration=שכר מוצע
+ContractProposed=חוזה מוצע
+ContractSigned=חוזה חתום
+ContractRefused=חוזה סירב
+RecruitmentCandidature=יישום
+JobPositions=תפקידי עבודה
+RecruitmentCandidatures=יישומים
+InterviewToDo=אנשי קשר לעקוב
+AnswerCandidature=תשובה לבקשה
+YourCandidature=האפליקציה שלך
+YourCandidatureAnswerMessage=תודה על פנייתך.<br>...
+JobClosedTextCandidateFound=המשרה סגורה. התפקיד אויש.
+JobClosedTextCanceled=המשרה סגורה.
+ExtrafieldsJobPosition=תכונות משלימות (משרות)
+ExtrafieldsApplication=תכונות משלימות (בקשות לעבודה)
+MakeOffer=תציע הצעה
+WeAreRecruiting=אנחנו מגייסים. זוהי רשימה של משרות פתוחות למילוי...
+NoPositionOpen=אין משרות פתוחות כרגע
+ConfirmClose=אשר את הביטול
+ConfirmCloseAsk=האם אתה בטוח שברצונך לבטל את מועמדות הגיוס הזו
+recruitment=גיוס

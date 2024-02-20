@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=அறிவு மேலாண்மை (KM) அ�
 # Admin page
 #
 KnowledgeManagementSetup = அறிவு மேலாண்மை அமைப்பு அமைப்பு
-Settings = அமைப்புகள்
 KnowledgeManagementSetupPage = அறிவு மேலாண்மை அமைப்பு அமைப்பு பக்கம்
 
 
 #
 # About page
 #
-About = பற்றி
 KnowledgeManagementAbout = அறிவு மேலாண்மை பற்றி
 KnowledgeManagementAboutPage = பக்கத்தைப் பற்றிய அறிவு மேலாண்மை
 
 KnowledgeManagementArea = அறிவு மேலாண்மை
 MenuKnowledgeRecord = அறிவு சார்ந்த
+MenuKnowledgeRecordShort = Knowledge base
 ListKnowledgeRecord = கட்டுரைகளின் பட்டியல்
 NewKnowledgeRecord = புதிய கட்டுரை
 ValidateReply = தீர்வு சரிபார்க்கவும்
@@ -47,8 +46,14 @@ KnowledgeRecord = கட்டுரை
 KnowledgeRecordExtraFields = கட்டுரைக்கான கூடுதல் புலங்கள்
 GroupOfTicket=டிக்கெட்டுகளின் குழு
 YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=குழுவாக இருக்கும்போது டிக்கெட்டுகளுக்கு பரிந்துரைக்கப்படுகிறது
+SuggestedForTicketsInGroup=Suggested on ticket creation
 
 SetObsolete=Set as obsolete
 ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
 ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+BoxLastKnowledgerecordDescription=Last %s articles
+BoxLastKnowledgerecord=Last articles
+BoxLastKnowledgerecordContent=Last articles
+BoxLastKnowledgerecordModifiedContent=Last modified articles
+BoxLastModifiedKnowledgerecordDescription=Last %s modified articles
+BoxLastModifiedKnowledgerecord=Last modified articles

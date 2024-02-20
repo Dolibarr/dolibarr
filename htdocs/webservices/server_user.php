@@ -653,7 +653,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 						}
 					} else {
 						$error++;
-						$errorcode = join(', ', ($thirdparty->error ? array($thirdparty->error) : $thirdparty->errors));
+						$errorcode = implode(', ', ($thirdparty->error ? array($thirdparty->error) : $thirdparty->errors));
 					}
 				}
 			} else {

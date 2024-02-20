@@ -47,9 +47,9 @@ class DoliDBMysqli extends DoliDB
 
 	/**
 	 *	Constructor.
-	 *	This create an opened connexion to a database server and eventually to a database
+	 *	This create an opened connection to a database server and eventually to a database
 	 *
-	 *	@param      string	$type		Type of database (mysql, pgsql...)
+	 *	@param      string	$type		Type of database (mysql, pgsql...). Not used.
 	 *	@param	    string	$host		Address of database server
 	 *	@param	    string	$user		Name of database user
 	 *	@param	    string	$pass		Password of database user
@@ -91,7 +91,7 @@ class DoliDBMysqli extends DoliDB
 		}
 
 		// Try server connection
-		// We do not try to connect to database, only to server. Connect to database is done later in constrcutor
+		// We do not try to connect to database, only to server. Connect to database is done later in constructor
 		$this->db = $this->connect($host, $user, $pass, '', $port);
 
 		if ($this->db && empty($this->db->connect_errno)) {
@@ -249,7 +249,7 @@ class DoliDBMysqli extends DoliDB
 		$tmp = false;
 		try {
 			if (!class_exists('mysqli')) {
-				dol_print_error('', 'Driver mysqli for PHP not available');
+				dol_print_error(null, 'Driver mysqli for PHP not available');
 			}
 			if (strpos($host, 'ssl://') === 0) {
 				$tmp = new mysqliDoli($host, $login, $passwd, $name, $port);
@@ -284,9 +284,9 @@ class DoliDBMysqli extends DoliDB
 
 
 	/**
-	 *  Close database connexion
+	 *  Close database connection
 	 *
-	 *  @return     bool     True if disconnect successfull, false otherwise
+	 *  @return     bool     True if disconnect successful, false otherwise
 	 *  @see        connect()
 	 */
 	public function close()
@@ -338,7 +338,7 @@ class DoliDBMysqli extends DoliDB
 
 		try {
 			if (!$this->database_name) {
-				// Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
+				// SQL query not needing a database connection (example: CREATE DATABASE)
 				$ret = $this->db->query($query, $result_mode);
 			} else {
 				$ret = $this->db->query($query, $result_mode);
@@ -378,7 +378,7 @@ class DoliDBMysqli extends DoliDB
 	public function fetch_object($resultset)
 	{
 		// phpcs:enable
-		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
+		// If the resultset was not provided, we get the last one for this connection
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -396,7 +396,7 @@ class DoliDBMysqli extends DoliDB
 	public function fetch_array($resultset)
 	{
 		// phpcs:enable
-		// If resultset not provided, we take the last used by connexion
+		// If resultset not provided, we take the last used by connection
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -413,14 +413,14 @@ class DoliDBMysqli extends DoliDB
 	public function fetch_row($resultset)
 	{
 		// phpcs:enable
-		// If resultset not provided, we take the last used by connexion
+		// If resultset not provided, we take the last used by connection
 		if (!is_bool($resultset)) {
 			if (!is_object($resultset)) {
 				$resultset = $this->_results;
 			}
 			return $resultset->fetch_row();
 		} else {
-			// si le curseur est un booleen on retourne la valeur 0
+			// si le curseur est un boolean on retourne la valeur 0
 			return 0;
 		}
 	}
@@ -436,7 +436,7 @@ class DoliDBMysqli extends DoliDB
 	public function num_rows($resultset)
 	{
 		// phpcs:enable
-		// If resultset not provided, we take the last used by connexion
+		// If resultset not provided, we take the last used by connection
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -454,7 +454,7 @@ class DoliDBMysqli extends DoliDB
 	public function affected_rows($resultset)
 	{
 		// phpcs:enable
-		// If resultset not provided, we take the last used by connexion
+		// If resultset not provided, we take the last used by connection
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -465,14 +465,14 @@ class DoliDBMysqli extends DoliDB
 
 
 	/**
-	 *	Libere le dernier resultset utilise sur cette connexion
+	 *	Libere le dernier resultset utilise sur cette connection
 	 *
 	 *	@param  mysqli_result	$resultset	Curseur de la requete voulue
 	 *	@return	void
 	 */
 	public function free($resultset = null)
 	{
-		// If resultset not provided, we take the last used by connexion
+		// If resultset not provided, we take the last used by connection
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -507,12 +507,12 @@ class DoliDBMysqli extends DoliDB
 	/**
 	 *	Return generic error code of last operation.
 	 *
-	 *	@return	string		Error code (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
+	 *	@return	string		Error code (Examples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
 	 */
 	public function errno()
 	{
 		if (!$this->connected) {
-			// Si il y a eu echec de connexion, $this->db n'est pas valide.
+			// Si il y a eu echec de connection, $this->db n'est pas valide.
 			return 'DB_ERROR_FAILED_TO_CONNECT';
 		} else {
 			// Constants to convert a MySql error code to a generic Dolibarr error code
@@ -564,7 +564,7 @@ class DoliDBMysqli extends DoliDB
 	public function error()
 	{
 		if (!$this->connected) {
-			// Si il y a eu echec de connexion, $this->db n'est pas valide pour mysqli_error.
+			// Si il y a eu echec de connection, $this->db n'est pas valide pour mysqli_error.
 			return 'Not connected. Check setup parameters in conf/conf.php file and your mysql client and server versions';
 		} else {
 			return $this->db->error;
@@ -648,9 +648,9 @@ class DoliDBMysqli extends DoliDB
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return connexion ID
+	 * Return connection ID
 	 *
-	 * @return	        string      Id connexion
+	 * @return	        string      Id connection
 	 */
 	public function DDLGetConnectId()
 	{
@@ -706,7 +706,7 @@ class DoliDBMysqli extends DoliDB
 	 *  List tables into a database
 	 *
 	 *  @param	string		$database	Name of database
-	 *  @param	string		$table		Nmae of table filter ('xxx%')
+	 *  @param	string		$table		Name of table filter ('xxx%')
 	 *  @return	array					List of tables in an array
 	 */
 	public function DDLListTables($database, $table = '')
@@ -738,7 +738,7 @@ class DoliDBMysqli extends DoliDB
 	 *  List tables into a database
 	 *
 	 *  @param	string		$database	Name of database
-	 *  @param	string		$table		Nmae of table filter ('xxx%')
+	 *  @param	string		$table		Name of table filter ('xxx%')
 	 *  @return	array					List of tables in an array
 	 */
 	public function DDLListTablesFull($database, $table = '')
@@ -770,7 +770,7 @@ class DoliDBMysqli extends DoliDB
 	 *	List information of columns into a table.
 	 *
 	 *	@param	string	$table		Name of table
-	 *	@return	array				Tableau des informations des champs de la table
+	 *	@return	array				Tableau des information des champs de la table
 	 */
 	public function DDLInfoTable($table)
 	{
@@ -923,8 +923,8 @@ class DoliDBMysqli extends DoliDB
 	 *
 	 *	@param	string	$table 				Name of table
 	 *	@param	string	$field_name 		Name of field to add
-	 *	@param	string	$field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
-	 *	@param	string	$field_position 	Optionnel ex.: "after champtruc"
+	 *	@param	string	$field_desc 		Associative table with description of field to insert [parameter name][parameter value]
+	 *	@param	string	$field_position 	Optional e.g.: "after some_field"
 	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLAddField($table, $field_name, $field_desc, $field_position = "")
@@ -1037,8 +1037,8 @@ class DoliDBMysqli extends DoliDB
 	 * 	Create a user and privileges to connect to database (even if database does not exists yet)
 	 *
 	 *	@param	string	$dolibarr_main_db_host 		Ip server or '%'
-	 *	@param	string	$dolibarr_main_db_user 		Nom user a creer
-	 *	@param	string	$dolibarr_main_db_pass 		Mot de passe user a creer
+	 *	@param	string	$dolibarr_main_db_user 		Nom new user
+	 *	@param	string	$dolibarr_main_db_pass 		Password for the new user
 	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
 	 *	@return	int									Return integer <0 if KO, >=0 if OK
 	 */
@@ -1258,7 +1258,7 @@ class mysqliDoli extends mysqli
 {
 	/**
 	 *	Constructor.
-	 *	This create an opened connexion to a database server and eventually to a database
+	 *	This create an opened connection to a database server and eventually to a database
 	 *
 	 *	@param	    string	$host		Address of database server
 	 *	@param	    string	$user		Name of database user
@@ -1270,7 +1270,11 @@ class mysqliDoli extends mysqli
 	public function __construct($host, $user, $pass, $name, $port = 0, $socket = "")
 	{
 		$flags = 0;
-		parent::init();
+		if (PHP_VERSION_ID >= 80100) {
+			parent::__construct();
+		} else {
+			parent::init();
+		}
 		if (strpos($host, 'ssl://') === 0) {
 			$host = substr($host, 6);
 			parent::options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);

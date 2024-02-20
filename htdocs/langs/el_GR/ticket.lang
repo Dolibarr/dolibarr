@@ -69,7 +69,7 @@ Read=Έχει αναγνωστεί
 Assigned=Έχει ανατεθεί
 NeedMoreInformation=Σε αναμονή περισσότερων πληροφοριών από τον χρήστη που άνοιξε το ticket
 NeedMoreInformationShort=Σε αναμονή περισσότερων πληροφοριών
-Answered=Απαντήθηκε
+TicketAnswered=Απαντήθηκε
 Waiting=Σε αναμονή
 SolvedClosed=Επιλύθηκε 
 Deleted=Διαγράφηκε
@@ -88,7 +88,6 @@ MailToSendTicketMessage=Για να στείλετε email από το μήνυ�
 #
 TicketSetup=Ρύθμιση ενότητας ticket
 TicketSettings=Ρυθμίσεις
-TicketSetupPage=
 TicketPublicAccess=Μια δημόσια διεπαφή χωρίς υποχρέωση σύνδεσης είναι διαθέσιμη στην παρακάτω διεύθυνση URL
 TicketSetupDictionaries=Ο τύπος του ticket, ο βαθμός σοβαρότητας και οι αναλυτικοί κωδικοί ρυθμίζονται από λεξικά
 TicketParamModule=Ρύθμιση μεταβλητών ενότητας
@@ -105,10 +104,8 @@ TicketsEmailMustExistHelp=Στη δημόσια διεπαφή, η διεύθυ�
 TicketsShowProgression=Εμφάνιση της προόδου του ticket στη δημόσια διεπαφή
 TicketsShowProgressionHelp=Ενεργοποιήστε αυτήν την επιλογή για να αποκρύψετε την πρόοδο του ticket στις σελίδες δημόσιας διεπαφής
 TicketCreateThirdPartyWithContactIfNotExist=Ζητήστε όνομα και όνομα εταιρείας για άγνωστα email.
-TicketCreateThirdPartyWithContactIfNotExistHelp=Ελέγξτε εάν υπάρχει τρίτο μέρος ή επαφή για το email που καταχωρίσατε. Εάν όχι, ζητήστε ένα όνομα και ένα όνομα εταιρείας για να δημιουργήσετε ένα τρίτο μέρος με επαφή.
+TicketCreateThirdPartyWithContactIfNotExistHelp=Ελέγξτε εάν υπάρχει τρίτο μέρος ή επαφή για το email που καταχωρίσατε. Εάν όχι, ζητήστε ένα όνομα και το όνομα της εταιρείας για να δημιουργήσετε ένα τρίτο μέρος με επαφή.
 PublicInterface=Δημόσια διεπαφή
-TicketUrlPublicInterfaceLabelAdmin=Εναλλακτική διεύθυνση URL για δημόσια διεπαφή
-TicketUrlPublicInterfaceHelpAdmin=Είναι δυνατόν να ορίσετε ένα ψευδώνυμο(alias) στον διακομιστή ιστού και έτσι να διαθέσετε τη δημόσια διεπαφή με μια άλλη διεύθυνση URL (ο διακομιστής πρέπει να ενεργεί ως διακομιστής μεσολάβησης(proxy) σε αυτήν τη νέα διεύθυνση URL)
 TicketPublicInterfaceTextHomeLabelAdmin=Κείμενο καλωσορίσματος της δημόσιας διεπαφής
 TicketPublicInterfaceTextHome=Μπορείτε να δημιουργήσετε ένα ticket υποστήριξης ή να προβάλετε ένα υπάρχον από το αναγνωριστικό παρακολούθησης ticket.
 TicketPublicInterfaceTextHomeHelpAdmin=Το κείμενο που ορίζεται εδώ θα εμφανιστεί στην αρχική σελίδα της δημόσιας διεπαφής.
@@ -158,6 +155,8 @@ TicketChooseProductCategory=Κατηγορία προϊόντος για υπο�
 TicketChooseProductCategoryHelp=Επιλέξτε την κατηγορία προϊόντων υποστήριξης ticket Αυτό θα χρησιμοποιηθεί για την αυτόματη σύνδεση μιας σύμβασης με ένα ticket
 TicketUseCaptchaCode=Χρησιμοποιήστε γραφικό κώδικα (CAPTCHA) όταν δημιουργείτε ένα ticket
 TicketUseCaptchaCodeHelp=Προσθέτει επαλήθευση CAPTCHA κατά τη δημιουργία νέου ticket.
+TicketsAllowClassificationModificationIfClosed=Να επιτρέπεται η τροποποίηση της ταξινόμησης των κλειστών ticket
+TicketsAllowClassificationModificationIfClosedHelp=Επιτρέψτε την τροποποίηση της ταξινόμησης (τύπος, ομάδα ticket, σημαντικότητα) ακόμη και αν τα εισιτήρια είναι κλειστά.
 
 #
 # Index & list page
@@ -249,7 +248,7 @@ TicketMessageMailIntroAutoNewPublicMessage=Ένα νέο μήνυμα αναρτ
 TicketAssignedToYou=Το ticket σας έχει ανατεθεί
 TicketAssignedEmailBody=Σας έχει ανατεθεί το ticket #%s από τον %s
 TicketAssignedCustomerEmail=Το ticket σας είναι σε κατάσταση επεξεργασίας.
-TicketAssignedCustomerBody=This is an automatic email to confirm your ticket has been assigned for processing.
+TicketAssignedCustomerBody=Αυτό είναι ένα αυτοματοποιημένο email προς επιβεβαίωση της επεξεργασίας του ticket σας.
 MarkMessageAsPrivate=Επισήμανση μηνύματος ως απόρρητου
 TicketMessageSendEmailHelp=Θα σταλεί ένα email σε όλες τις αντιστοιχισμένες επαφές
 TicketMessageSendEmailHelp2a=(εσωτερικές επαφές, αλλά και εξωτερικές επαφές εκτός εάν η επιλογή "%s" έχει επιλεγεί)
@@ -329,8 +328,8 @@ OldUser=Παλιός χρήστης
 NewUser=Νέος χρήστης
 NumberOfTicketsByMonth=Αριθμός tickets ανά μήνα
 NbOfTickets=Αριθμός tickets
-ExternalContributors=External contributors
-AddContributor=Add external contributor
+ExternalContributors=Εξωτερικοί συνεργάτες
+AddContributor=Προσθήκη εξωτερικού συνεργάτη
 
 # notifications
 TicketCloseEmailSubjectCustomer=Το Παρακαλώ εισαγάγετε το αναγνωριστικό παρακολούθησης ticket έκλεισε

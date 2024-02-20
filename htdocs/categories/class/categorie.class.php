@@ -221,6 +221,11 @@ class Categorie extends CommonObject
 	public $color;
 
 	/**
+	 * @var int Position
+	 */
+	public $position;
+
+	/**
 	 * @var int Visible
 	 */
 	public $visible;
@@ -260,7 +265,7 @@ class Categorie extends CommonObject
 	public $motherof = array();
 
 	/**
-	 * @var array Childs
+	 * @var array children
 	 */
 	public $childs = array();
 
@@ -352,7 +357,7 @@ class Categorie extends CommonObject
 			$type = $this->MAP_ID[$type];
 		}
 
-		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type, ref_ext";
+		$sql = "SELECT rowid, fk_parent, entity, label, description, color, position, fk_soc, visible, type, ref_ext";
 		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
 		if ($id) {
@@ -378,9 +383,10 @@ class Categorie extends CommonObject
 				$this->label		= $res['label'];
 				$this->description = $res['description'];
 				$this->color    	= $res['color'];
+				$this->position    	= $res['position'];
 				$this->socid		= (int) $res['fk_soc'];
 				$this->visible = (int) $res['visible'];
-				$this->type = (int) $res['type'];
+				$this->type = $res['type'];
 				$this->ref_ext = $res['ref_ext'];
 				$this->entity = (int) $res['entity'];
 				$this->date_creation = $this->db->jdate($res['date_creation']);
@@ -440,6 +446,7 @@ class Categorie extends CommonObject
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
 		$this->color = trim($this->color);
+		$this->position = (int) $this->position;
 		$this->import_key = trim($this->import_key);
 		$this->ref_ext = trim($this->ref_ext);
 		if (empty($this->visible)) {
@@ -461,6 +468,7 @@ class Categorie extends CommonObject
 		$sql .= " label,";
 		$sql .= " description,";
 		$sql .= " color,";
+		$sql .= " position,";
 		if (getDolGlobalString('CATEGORY_ASSIGNED_TO_A_CUSTOMER')) {
 			$sql .= "fk_soc,";
 		}
@@ -476,6 +484,7 @@ class Categorie extends CommonObject
 		$sql .= "'".$this->db->escape($this->label)."', ";
 		$sql .= "'".$this->db->escape($this->description)."', ";
 		$sql .= "'".$this->db->escape($this->color)."', ";
+		$sql .= (int) $this->position.",";
 		if (getDolGlobalString('CATEGORY_ASSIGNED_TO_A_CUSTOMER')) {
 			$sql .= ($this->socid > 0 ? $this->socid : 'null').", ";
 		}
@@ -566,6 +575,7 @@ class Categorie extends CommonObject
 		$sql .= " description = '".$this->db->escape($this->description)."',";
 		$sql .= " ref_ext = '".$this->db->escape($this->ref_ext)."',";
 		$sql .= " color = '".$this->db->escape($this->color)."'";
+		$sql .= ", position = ".(int) $this->position;
 		if (getDolGlobalString('CATEGORY_ASSIGNED_TO_A_CUSTOMER')) {
 			$sql .= ", fk_soc = ".($this->socid > 0 ? $this->socid : 'null');
 		}
@@ -859,7 +869,7 @@ class Categorie extends CommonObject
 	 * @param	string		$sortorder	Sort order ('ASC' or 'DESC');
 	 * @param   array       $filter     Filter array. Example array('field'=>'valueforlike', 'customsql'=>...)
 	 * @param   string      $filtermode Filter mode (AND or OR)
-	 * @return  array|int              	-1 if KO, array of instance of object if OK
+	 * @return  CommonObject[]|int[]|int              	Return -1 if KO, array of instance of object if OK
 	 * @see containsObject()
 	 */
 	public function getObjectsInCateg($type, $onlyids = 0, $limit = 0, $offset = 0, $sortfield = '', $sortorder = 'ASC', $filter = array(), $filtermode = 'AND')
@@ -1028,6 +1038,7 @@ class Categorie extends CommonObject
 					$categories[$i]['label']			= $category_static->label;
 					$categories[$i]['description'] = $category_static->description;
 					$categories[$i]['color']    		= $category_static->color;
+					$categories[$i]['position']    		= $category_static->position;
 					$categories[$i]['socid']			= $category_static->socid;
 					$categories[$i]['ref_ext'] = $category_static->ref_ext;
 					$categories[$i]['visible'] = $category_static->visible;
@@ -1055,7 +1066,7 @@ class Categorie extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return direct childs id of a category into an array
+	 * Return direct children ids of a category into an array
 	 *
 	 * @return	array|int   Return integer <0 KO, array ok
 	 */
@@ -1119,8 +1130,8 @@ class Categorie extends CommonObject
 	 *                id_mere = id de la categorie mere
 	 *                id_children = tableau des id enfant
 	 *                label = nom de la categorie
-	 *                fulllabel = nom avec chemin complet de la categorie
-	 *                fullpath = chemin complet compose des id
+	 *                fulllabel = Name with full path for the category
+	 *                fullpath = Full path built with the id's
 	 *
 	 * @param   string              $type               Type of categories ('customer', 'supplier', 'contact', 'product', 'member', ...)
 	 * @param   int|string|array	$markafterid        Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
@@ -1163,7 +1174,7 @@ class Categorie extends CommonObject
 		$current_lang = $langs->getDefaultLang();
 
 		// Init $this->cats array
-		$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.fk_parent, c.visible"; // Distinct reduce pb with old tables with duplicates
+		$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.position, c.fk_parent, c.visible"; // Distinct reduce pb with old tables with duplicates
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$sql .= ", t.label as label_trans, t.description as description_trans";
 		}
@@ -1185,6 +1196,7 @@ class Categorie extends CommonObject
 				$this->cats[$obj->rowid]['label'] = !empty($obj->label_trans) ? $obj->label_trans : $obj->label;
 				$this->cats[$obj->rowid]['description'] = !empty($obj->description_trans) ? $obj->description_trans : $obj->description;
 				$this->cats[$obj->rowid]['color'] = $obj->color;
+				$this->cats[$obj->rowid]['position'] = $obj->position;
 				$this->cats[$obj->rowid]['visible'] = $obj->visible;
 				$this->cats[$obj->rowid]['ref_ext'] = $obj->ref_ext;
 				$this->cats[$obj->rowid]['picto'] = 'category';
@@ -1228,7 +1240,7 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 *	For category id_categ and its childs available in this->cats, define property fullpath and fulllabel.
+	 *	For category id_categ and its children available in this->cats, define property fullpath and fulllabel.
 	 *  It is called by get_full_arbo()
 	 *  This function is a memory scan only from $this->cats and $this->motherof, no database access must be done here.
 	 *
@@ -1385,7 +1397,7 @@ class Categorie extends CommonObject
 	 * @param	string	$sep	     Separator
 	 * @param	string	$url	     Url ('', 'none' or 'urltouse')
 	 * @param   int     $nocolor     0
-	 * @param	string	$addpicto	 Add picto into link
+	 * @param	int		$addpicto	 Add picto into link
 	 * @return	array
 	 */
 	public function print_all_ways($sep = '&gt;&gt;', $url = '', $nocolor = 0, $addpicto = 0)
@@ -1393,8 +1405,8 @@ class Categorie extends CommonObject
 		// phpcs:enable
 		$ways = array();
 
-		$allways = $this->get_all_ways(); // Load array of categories
-		foreach ($allways as $way) {
+		$all_ways = $this->get_all_ways(); // Load array of categories
+		foreach ($all_ways as $way) {
 			$w = array();
 			$i = 0;
 			$forced_color = '';
@@ -1481,8 +1493,8 @@ class Categorie extends CommonObject
 		$parents = $this->get_meres();
 		if (is_array($parents)) {
 			foreach ($parents as $parent) {
-				$allways = $parent->get_all_ways();
-				foreach ($allways as $way) {
+				$all_ways = $parent->get_all_ways();
+				foreach ($all_ways as $way) {
 					$w = $way;
 					$w[] = $this;
 					$ways[] = $w;
@@ -1634,6 +1646,36 @@ class Categorie extends CommonObject
 	}
 
 	/**
+	 *  Return if at least one photo is available
+	 *
+	 * @param  string $sdir Directory to scan
+	 * @return boolean                 True if at least one photo is available, False if not
+	 */
+	public function isAnyPhotoAvailable($sdir)
+	{
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
+
+		$sdir .= '/' . get_exdir($this->id, 2, 0, 0, $this, 'category') . $this->id . "/photos/";
+
+		$dir_osencoded = dol_osencode($sdir);
+		if (file_exists($dir_osencoded)) {
+			$handle = opendir($dir_osencoded);
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					if (!utf8_check($file)) {
+						$file = mb_convert_encoding($file, 'UTF-8', 'ISO-8859-1'); // To be sure data is stored in UTF8 in memory
+					}
+					if (dol_is_file($sdir . $file) && image_format_supported($file) >= 0) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * getTooltipContentArray
 	 * @param array $params params to construct tooltip data
 	 * @since v18
@@ -1656,15 +1698,22 @@ class Categorie extends CommonObject
 	 *	Return name and link of category (with picto)
 	 *  Use ->id, ->ref, ->label, ->color
 	 *
-	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@param		string	$option			Sur quoi pointe le lien ('', 'xyz')
-	 * 	@param		int		$maxlength		Max length of text
-	 *  @param		string	$moreparam		More param on URL link
+	 *	@param		int		$withpicto				0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@param		string	$option					On what the link point to ('nolink', ...)
+	 * 	@param		int		$maxlength				Max length of text
+	 *  @param		string	$moreparam				More param on URL link
+	 *  @param  	int     $notooltip      		1=Disable tooltip
+	 *  @param  	string  $morecss                Add more css on link
+	 *  @param  	int     $save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return		string					Chaine avec URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $moreparam = '')
+	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $moreparam = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = '')
 	{
-		global $hookmanager;
+		global $conf, $langs, $hookmanager;
+
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 		$params = [
@@ -1682,6 +1731,19 @@ class Categorie extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
+		$url = DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.$moreparam.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($moreparam ? '?'.$moreparam : ''));
+
+		if ($option !== 'nolink') {
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($url && $add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
+		}
+
 		// Check contrast with background and correct text color
 		$forced_color = 'categtextwhite';
 		if ($this->color) {
@@ -1689,24 +1751,43 @@ class Categorie extends CommonObject
 				$forced_color = 'categtextblack';
 			}
 		}
-		$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.$moreparam.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($moreparam ? '?'.$moreparam : ''));
-		$link .= '"'.$dataparams;
-		$link .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
-		$link .= ' class="'.$classfortooltip.' '.$forced_color.'">';
-		$linkend = '</a>';
 
-		$picto = 'category';
+		$linkclose = '';
+		if (empty($notooltip)) {
+			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+				$label = $langs->trans("ShowMyObject");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.' '.$forced_color.($morecss ? ' '.$morecss : '').'"';
+		} else {
+			$linkclose = ($morecss ? ' class="'.$forced_color.($morecss ? ' '.$morecss : '').'"' : '');
+		}
 
+		if ($option == 'nolink' || empty($url)) {
+			$linkstart = '<span';
+		} else {
+			$linkstart = '<a href="'.$url.'"';
+		}
+		$linkstart .= $linkclose.'>';
+		if ($option == 'nolink' || empty($url)) {
+			$linkend = '</span>';
+		} else {
+			$linkend = '</a>';
+		}
+
+		$result .= $linkstart;
 
 		if ($withpicto) {
-			$result .= ($link.img_object($label, $picto, $dataparams.' class="'.$classfortooltip.'"').$linkend);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
-		if ($withpicto && $withpicto != 2) {
-			$result .= ' ';
-		}
+
 		if ($withpicto != 2) {
-			$result .= $link.dol_trunc(($this->ref ? $this->ref : $this->label), $maxlength).$linkend;
+			$result .= dol_trunc(($this->ref ? $this->ref : $this->label), $maxlength);
 		}
+
+		$result .= $linkend;
+
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
 		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
@@ -1722,9 +1803,9 @@ class Categorie extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Deplace fichier uploade sous le nom $file dans le repertoire sdir
+	 *  Add the image uploaded as $file to the directory $sdir/<category>-<id>/photos/
 	 *
-	 *  @param      string	$sdir       Final destination directory
+	 *  @param      string	$sdir       Root destination directory
 	 *  @param      array	$file		Uploaded file name
 	 *	@return		void
 	 */
@@ -1743,7 +1824,7 @@ class Categorie extends CommonObject
 		if (file_exists($dir)) {
 			if (is_array($file['name']) && count($file['name']) > 0) {
 				$nbfile = count($file['name']);
-				for ($i = 0; $i <= $nbfile; $i++) {
+				for ($i = 0; $i < $nbfile; $i++) {
 					$originImage = $dir.$file['name'][$i];
 
 					// Cree fichier en taille origine
@@ -1801,7 +1882,7 @@ class Categorie extends CommonObject
 							$photo_vignette = preg_replace('/'.$regs[0].'/i', '', $photo).'_small'.$regs[0];
 						}
 
-						// Objet
+						// Object
 						$obj = array();
 						$obj['photo'] = $photo;
 						if ($photo_vignette && is_file($dirthumb.$photo_vignette)) {
@@ -1998,7 +2079,7 @@ class Categorie extends CommonObject
 	{
 		dol_syslog(get_class($this)."::initAsSpecimen");
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->fk_parent = 0;
 		$this->label = 'SPECIMEN';
@@ -2026,7 +2107,7 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * Return the addtional SQL JOIN query for filtering a list by a category
+	 * Return the additional SQL JOIN query for filtering a list by a category
 	 *
 	 * @param string	$type			The category type (e.g Categorie::TYPE_WAREHOUSE)
 	 * @param string	$rowIdName		The name of the row id inside the whole sql query (e.g. "e.rowid")
@@ -2043,7 +2124,7 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * Return the addtional SQL SELECT query for filtering a list by a category
+	 * Return the additional SQL SELECT query for filtering a list by a category
 	 *
 	 * @param string	$type			The category type (e.g Categorie::TYPE_WAREHOUSE)
 	 * @param string	$rowIdName		The name of the row id inside the whole sql query (e.g. "e.rowid")

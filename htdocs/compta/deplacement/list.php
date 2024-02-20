@@ -97,19 +97,27 @@ $sql .= " u.lastname, u.firstname"; // Qui
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql .= ", ".MAIN_DB_PREFIX."deplacement as d";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON d.fk_soc = s.rowid";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-}
 $sql .= " WHERE d.fk_user = u.rowid";
 $sql .= " AND d.entity = ".$conf->entity;
 if (!$user->hasRight('deplacement', 'readall') && !$user->hasRight('deplacement', 'lire_tous')) {
-	$sql .= ' AND d.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
+	$sql .= ' AND d.fk_user IN ('.$db->sanitize(implode(',', $childids)).')';
 }
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR d.fk_soc IS NULL) ";
+// If the internal user must only see his customers, force searching by him
+$search_sale = 0;
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
 }
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = d.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = d.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
+// Search on socid
 if ($socid) {
-	$sql .= " AND s.rowid = ".((int) $socid);
+	$sql .= " AND d.fk_soc = ".((int) $socid);
 }
 
 if ($search_ref) {

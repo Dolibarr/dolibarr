@@ -71,7 +71,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
 
 $type = $object->type;
-// chek if salary pl
+// check if salary pl
 $salaryBonPl = $object->checkIfSalaryBonPrelevement();
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
@@ -136,7 +136,7 @@ if (empty($reshook)) {
 		}
 		else
 		{
-			dol_syslog("Fichier invalide",LOG_WARNING);
+			dol_syslog("File invalid",LOG_WARNING);
 			$mesg='BadFile';
 		}*/
 
@@ -149,17 +149,25 @@ if (empty($reshook)) {
 	}
 
 	// Set direct debit order to credited, create payment and close invoices
-	if ($action == 'infocredit' && $permissiontocreditdebit) {
+	if ($action == 'setinfocredit' && $permissiontocreditdebit) {
 		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
 		if (($object->type != 'bank-transfer' && $object->statut == BonPrelevement::STATUS_CREDITED) || ($object->type == 'bank-transfer' && $object->statut == BonPrelevement::STATUS_DEBITED)) {
 			$error = 1;
 			setEventMessages('WithdrawalCantBeCreditedTwice', array(), 'errors');
 		} else {
-			$error = $object->set_infocredit($user, $dt);
+			$error = $object->set_infocredit($user, $dt, ($salaryBonPl ? 'salary' : ''));
 		}
 
 		if ($error) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	if ($action == 'reopen' && $permissiontocreditdebit) {
+		$savtype = $object->type;
+		$res = $object->setStatut(BonPrelevement::STATUS_TRANSFERED);
+		if ($res <= 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -304,7 +312,7 @@ if ($id > 0 || $ref) {
 	print "</td>";
 	print '</tr>';
 
-	// Donwload file
+	// Download file
 	print '<tr><td class="titlefieldcreate">';
 	$labelfororderfield = 'WithdrawalFile';
 	if ($object->type == 'bank-transfer') {
@@ -386,11 +394,11 @@ if ($id > 0 || $ref) {
 		print '<br>';
 	}
 
-	if (!empty($object->date_trans) && empty($object->date_credit) && (($user->hasRight('prelevement', 'bons', 'credit') && $object->type != 'bank-transfer') || ($user->hasRight('paymentbybanktransfer', 'debit') && $object->type == 'bank-transfer')) && $action == 'setcredited') {
+	if ($object->status == BonPrelevement::STATUS_TRANSFERED && (($user->hasRight('prelevement', 'bons', 'credit') && $object->type != 'bank-transfer') || ($user->hasRight('paymentbybanktransfer', 'debit') && $object->type == 'bank-transfer')) && $action == 'setcredited') {
 		$btnLabel = ($object->type == 'bank-transfer') ? $langs->trans("ClassDebited") : $langs->trans("ClassCredited");
 		print '<form name="infocredit" method="post" action="card.php?id='.$object->id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="action" value="infocredit">';
+		print '<input type="hidden" name="action" value="setinfocredit">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyCredit").'</td></tr>';
@@ -417,11 +425,22 @@ if ($id > 0 || $ref) {
 					print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'send'));
 				}
 			}
-			if (!empty($object->date_trans) && empty($object->date_credit)) {
+
+			if ($object->status == BonPrelevement::STATUS_TRANSFERED) {
 				if ($object->type == 'bank-transfer') {
 					print dolGetButtonAction($langs->trans("ClassDebited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'debit'));
 				} else {
 					print dolGetButtonAction($langs->trans("ClassCredited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'credit'));
+				}
+			}
+
+			if (getDolGlobalString('BANK_CAN_REOPEN_DIRECT_DEBIT_OR_CREDIT_TRANSFER')) {
+				if ($object->status == BonPrelevement::STATUS_DEBITED || $object->status == BonPrelevement::STATUS_CREDITED) {
+					if ($object->type == 'bank-transfer') {
+						print dolGetButtonAction($langs->trans("ReOpen"), '', 'default', 'card.php?action=reopen&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'debit'));
+					} else {
+						print dolGetButtonAction($langs->trans("ReOpen"), '', 'default', 'card.php?action=reopen&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'credit'));
+					}
 				}
 			}
 
@@ -437,15 +456,21 @@ if ($id > 0 || $ref) {
 
 	$ligne = new LignePrelevement($db);
 
-	/*
-	 * Lines into withdraw request
-	 */
+	// Lines into withdraw request
 	if ($salaryBonPl) {
-		$sql = "SELECT pl.rowid, pl.statut, pl.amount,pl.fk_user";
-		$sql .=" FROM llx_prelevement as p, llx_prelevement_lignes as pl, llx_salary as s";
-		$sql .= " WHERE pl.rowid = p.fk_prelevement_lignes";
-		$sql .= " AND p.fk_salary = s.rowid";
-		$sql .= " AND pl.fk_prelevement_bons = ".((int) $id);
+		$sql = "SELECT pl.rowid, pl.statut, pl.amount, pl.fk_user,";
+		$sql .= " u.rowid as socid, u.login as name";
+		$sql .=" FROM llx_prelevement_lignes as pl";
+		$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
+		$sql .= ", ".MAIN_DB_PREFIX."user as u";
+		$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $id);
+		$sql .= " AND pl.fk_prelevement_bons = pb.rowid";
+		$sql .= " AND pb.entity = ".((int) $conf->entity);	// No sharing of entity here
+		$sql .= " AND pl.fk_user = u.rowid";
+		if ($socid) {
+			$sql .= " AND u.rowid = ".((int) $socid);
+		}
+		$sql .= $db->order($sortfield, $sortorder);
 	} else {
 		$sql = "SELECT pl.rowid, pl.statut, pl.amount,";
 		$sql .= " s.rowid as socid, s.nom as name";
@@ -504,7 +529,7 @@ if ($id > 0 || $ref) {
 		}
 		print_barre_liste($langs->trans("Lines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder liste centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Lines", $_SERVER["PHP_SELF"], "pl.rowid", '', $urladd, '', $sortfield, $sortorder);

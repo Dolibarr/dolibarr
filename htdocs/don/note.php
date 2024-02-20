@@ -57,7 +57,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'don', $object->id, '');
 
-$permissionnote = $user->rights->don->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('don', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -86,7 +86,7 @@ $title = $langs->trans('Donation')." - ".$langs->trans('Notes');
 
 $help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-donation page-card_notes');
 
 $form = new Form($db);
 if (isModEnabled('project')) {

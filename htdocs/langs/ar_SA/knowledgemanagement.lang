@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=إدارة إدارة المعرفة (KM) أو ق�
 # Admin page
 #
 KnowledgeManagementSetup = إعداد نظام إدارة المعرفة
-Settings = إعدادات
 KnowledgeManagementSetupPage = صفحة إعداد نظام إدارة المعرفة
 
 
 #
 # About page
 #
-About = حول
 KnowledgeManagementAbout = حول إدارة المعرفة
 KnowledgeManagementAboutPage = إدارة المعرفة حول الصفحة
 
 KnowledgeManagementArea = إدارة المعرفة
 MenuKnowledgeRecord = قاعدة المعرفة
+MenuKnowledgeRecordShort = قاعدة المعرفة
 ListKnowledgeRecord = قائمة المقالات
 NewKnowledgeRecord = مقال جديد
 ValidateReply = تحقق من صحة الحل
@@ -46,9 +45,15 @@ KnowledgeRecords = مقالات
 KnowledgeRecord = عنصر
 KnowledgeRecordExtraFields = Extrafields للمادة
 GroupOfTicket=مجموعة التذاكر
-YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=اقترح للتذاكر عندما تكون المجموعة
+YouCanLinkArticleToATicketCategory=يمكنك ربط المقالة بمجموعة تذاكر (لذلك سيتم تمييز المقالة على أي تذاكر في هذه المجموعة)
+SuggestedForTicketsInGroup=مقترح عند إنشاء التذاكر
 
 SetObsolete=تعيين كما عفا عليها الزمن
 ConfirmCloseKM=هل تؤكد أن إغلاق هذا المقال قد عفا عليه الزمن؟
 ConfirmReopenKM=هل تريد استعادة هذه المقالة إلى الحالة "تم التحقق منها"؟
+BoxLastKnowledgerecordDescription=آخر مقالات %s
+BoxLastKnowledgerecord=المقالات الأخيرة
+BoxLastKnowledgerecordContent=المقالات الأخيرة
+BoxLastKnowledgerecordModifiedContent=آخر المقالات المعدلة
+BoxLastModifiedKnowledgerecordDescription=آخر %s المقالات المعدلة
+BoxLastModifiedKnowledgerecord=آخر المقالات المعدلة

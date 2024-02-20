@@ -33,16 +33,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 	public $boxlabel = "BoxCustomersOrdersPerMonth";
 	public $depends  = array("commande");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 	public $widgettype = 'graph';
-
 
 	/**
 	 *  Constructor
@@ -56,7 +47,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->commande->lire);
+		$this->hidden = !$user->hasRight('commande', 'lire');
 	}
 
 	/**
@@ -99,7 +90,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 		if ($user->socid) {
 			$socid = $user->socid;
 		}
-		if (!$user->hasRight('societe', 'client', 'voir') || $socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 		}
 

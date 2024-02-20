@@ -165,7 +165,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$object = new Contact($db);
 		$result = $object->fetch($id);
 		if ($result <= 0) {
-			dol_print_error('', $object->error);
+			dol_print_error(null, $object->error);
 		}
 	}
 	$objcanvas->assign_values($action, $object->id, $object->ref); // Set value for templates
@@ -187,7 +187,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	 */
 	$head = array();
 	if ($id > 0) {
-		// Si edition contact deja existant
+		// Si edition contact deja existent
 		$object = new Contact($db);
 		$res = $object->fetch($id, $user);
 		if ($res < 0) {
@@ -210,7 +210,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$objsoc = new Societe($db);
 
 		/*
-		 * Fiche en mode visualisation
+		 * Card in view mode
 		 */
 
 		dol_htmloutput_errors($error, $errors);

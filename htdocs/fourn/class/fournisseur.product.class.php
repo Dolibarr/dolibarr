@@ -6,7 +6,7 @@
  * Copyright (C) 2012		Christophe Battarel	  <christophe.battarel@altairis.fr>
  * Copyright (C) 2015		Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2016-2023	Charlene Benke         <charlene@patas-monkey.com>
- * Copyright (C) 2019-2021  Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France       <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Pierre Ardoin         <mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,19 +40,22 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/productfournisseurprice.class.php
 class ProductFournisseur extends Product
 {
 	/**
-	 * @var DoliDB Database handler.
+	 * @var DoliDB		Database handler.
 	 */
 	public $db;
 
 	/**
-	 * @var string Error code (or message)
+	 * @var string		Error code (or message)
 	 */
 	public $error = '';
 
-	public $product_fourn_price_id; // id of ligne product-supplier
+	/**
+	 * @var int			ID of ligne product-supplier
+	 */
+	public $product_fourn_price_id;
 
 	/**
-	 * @var int ID
+	 * @var int			ID
 	 */
 	public $id;
 
@@ -62,31 +65,84 @@ class ProductFournisseur extends Product
 	 */
 	public $fourn_ref;
 
+	/**
+	 * @var int			The product lead time in days.
+	 */
 	public $delivery_time_days;
-	public $ref_supplier; // ref supplier (can be set by get_buyprice)
+
+	/**
+	 * @var string		The product reference of the supplier. Can be set by get_buyprice().
+	 */
+	public $ref_supplier;
+
+	/**
+	 * @var string		The product description of the supplier.
+	 */
 	public $desc_supplier;
-	public $vatrate_supplier; // default vat rate for this supplier/qty/product (can be set by get_buyprice)
+
+	/**
+	 * @var float		The VAT rate by default for this {supplier, qty, product}. Can be set by get_buyprice().
+	 */
+	public $vatrate_supplier;
 
 	/**
 	 * @deprecated
 	 * @see $product_id
 	 */
 	public $fk_product;
+
+	/**
+	 * @var int			The product ID.
+	 */
 	public $product_id;
+
+	/**
+	 * @var string		The product reference.
+	 */
 	public $product_ref;
 
-	public $fourn_id; //supplier id
-	public $fourn_name;	// supplier name
-	public $fourn_qty; // quantity for price (can be set by get_buyprice)
-	public $fourn_pu; // unit price for quantity (can be set by get_buyprice)
+	/**
+	 * @var int			The supplier ID.
+	 */
+	public $fourn_id;
 
-	public $fourn_price; // price for quantity
-	public $fourn_remise_percent; // discount for quantity (percent)
-	public $fourn_remise; // discount for quantity (amount)
+	/**
+	 * @var string		The supplier name.
+	 */
+	public $fourn_name;
+
+	/**
+	 * @var float		The Minimum Order Quantity (MOQ) for a given unit price. Can be set by get_buyprice().
+	 */
+	public $fourn_qty;
+
+	/**
+	 * @var float		The unit price for a given Minimum Order Quantity (MOQ). Can be set by get_buyprice().
+	 */
+	public $fourn_pu;
+
+	/**
+	 * @var float		The total price for a given Minimum Order Quantity (MOQ).
+	 */
+	public $fourn_price;
+
+	/**
+	 * @var float		The discount in percentage for a given Minimum Order Quantity (MOQ).
+	 */
+	public $fourn_remise_percent;
+
+	/**
+	 * @var float		The discount in value for a given Minimum Order Quantity (MOQ).
+	 */
+	public $fourn_remise;
 
 	public $fourn_charges;	// when getDolGlobalString('PRODUCT_CHARGES') is set
 
-	public $product_fourn_id; // product-supplier id
+	/**
+	 * @var int		product-supplier id
+	 */
+	public $product_fourn_id;
+
 	public $product_fourn_entity;
 
 	/**
@@ -255,7 +311,7 @@ class ProductFournisseur extends Product
 	 *    @param  	int			$availability		            Product availability
 	 *    @param	string		$ref_fourn			            Supplier ref
 	 *    @param	float		$tva_tx				            New VAT Rate (For example 8.5. Should not be a string)
-	 *    @param  	string		$charges			            costs affering to product
+	 *    @param  	string|float $charges			            costs affering to product
 	 *    @param  	float		$remise_percent		            Discount  regarding qty (percent)
 	 *    @param  	float		$remise				            Discount  regarding qty (amount)
 	 *    @param  	int			$newnpr				            Set NPR or not
@@ -273,8 +329,32 @@ class ProductFournisseur extends Product
 	 *    @param  	array		$options		     	       	Extrafields of product fourn price
 	 *    @return	int											Return integer <0 if KO, >=0 if OK
 	 */
-	public function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges = 0, $remise_percent = 0, $remise = 0, $newnpr = 0, $delivery_time_days = 0, $supplier_reputation = '', $localtaxes_array = array(), $newdefaultvatcode = '', $multicurrency_buyprice = 0, $multicurrency_price_base_type = 'HT', $multicurrency_tx = 1, $multicurrency_code = '', $desc_fourn = '', $barcode = '', $fk_barcode_type = '', $options = array())
-	{
+	public function update_buyprice(
+		$qty,
+		$buyprice,
+		$user,
+		$price_base_type,
+		$fourn,
+		$availability,
+		$ref_fourn,
+		$tva_tx,
+		$charges = 0,
+		$remise_percent = 0,
+		$remise = 0,
+		$newnpr = 0,
+		$delivery_time_days = 0,
+		$supplier_reputation = '',
+		$localtaxes_array = array(),
+		$newdefaultvatcode = '',
+		$multicurrency_buyprice = 0,
+		$multicurrency_price_base_type = 'HT',
+		$multicurrency_tx = 1,
+		$multicurrency_code = '',
+		$desc_fourn = '',
+		$barcode = '',
+		$fk_barcode_type = 0,
+		$options = array()
+	) {
 		// phpcs:enable
 		global $conf, $langs;
 		//global $mysoc;
@@ -299,7 +379,7 @@ class ProductFournisseur extends Product
 			$supplier_reputation = '';
 		}
 		if ($delivery_time_days != '' && !is_numeric($delivery_time_days)) {
-			$delivery_time_days = '';
+			$delivery_time_days = 0;
 		}
 		if ($price_base_type == 'TTC') {
 			$ttx = $tva_tx;
@@ -332,7 +412,7 @@ class ProductFournisseur extends Product
 		$qty = price2num($qty, 'MS');
 		$unitBuyPrice = price2num($buyprice / $qty, 'MU');
 
-		// We can have a puchase ref that need to buy 100 min for a given price and with a packaging of 50.
+		// We can have a purchase ref that need to buy 100 min for a given price and with a packaging of 50.
 		//$packaging = price2num(((empty($this->packaging) || $this->packaging < $qty) ? $qty : $this->packaging), 'MS');
 		$packaging = price2num((empty($this->packaging) ? $qty : $this->packaging), 'MS');
 
@@ -346,7 +426,7 @@ class ProductFournisseur extends Product
 			$localtax1 = $localtaxes_array['1'];
 			$localtaxtype2 = $localtaxes_array['2'];
 			$localtax2 = $localtaxes_array['3'];
-		} else { // old method. deprecated because ot can't retrieve type
+		} else { // old method. deprecated because it can't retrieve type
 			$localtaxtype1 = '0';
 			$localtax1 = get_localtax($newvat, 1);
 			$localtaxtype2 = '0';
@@ -812,22 +892,22 @@ class ProductFournisseur extends Product
 			return 0;
 		}
 
-		$this->product_fourn_price_id = '';
-		$this->product_fourn_id       = '';
+		$this->product_fourn_price_id = 0;
+		$this->product_fourn_id       = 0;
 		$this->fourn_ref              = '';
-		$this->fourn_price            = '';
-		$this->fourn_qty              = '';
-		$this->fourn_remise_percent   = '';
-		$this->fourn_remise           = '';
-		$this->fourn_unitprice        = '';
-		$this->fourn_id               = '';
+		$this->fourn_price            = 0;
+		$this->fourn_qty              = 0;
+		$this->fourn_remise_percent   = 0;
+		$this->fourn_remise           = 0;
+		$this->fourn_unitprice        = 0;
+		$this->fourn_id               = 0;
 		$this->fourn_name             = '';
-		$this->delivery_time_days = '';
-		$this->id                     = '';
+		$this->delivery_time_days     = 0;
+		$this->id                     = 0;
 
-		$this->fourn_multicurrency_price       = '';
-		$this->fourn_multicurrency_unitprice   = '';
-		$this->fourn_multicurrency_tx          = '';
+		$this->fourn_multicurrency_price       = 0;
+		$this->fourn_multicurrency_unitprice   = 0;
+		$this->fourn_multicurrency_tx          = 0;
 		$this->fourn_multicurrency_id          = '';
 		$this->fourn_multicurrency_code        = '';
 
@@ -1148,7 +1228,7 @@ class ProductFournisseur extends Product
 
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto).
+	 *  Return a link to the object card (with optionally the picto).
 	 *  Used getNomUrl of ProductFournisseur if a specific supplier ref is loaded. Otherwise use Product->getNomUrl().
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)

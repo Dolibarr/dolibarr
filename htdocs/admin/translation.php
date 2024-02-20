@@ -40,12 +40,16 @@ $action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optionscss', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ09');
 
+$mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'searchkey';
+
 $langcode = GETPOST('langcode', 'alphanohtml');
 $transkey = GETPOST('transkey', 'alphanohtml');
-$transvalue = GETPOST('transvalue', 'restricthtml');
+if ($mode == 'searchkey') {
+	$transvalue = GETPOST('transvalue', 'alphanohtml');
+} else {
+	$transvalue = GETPOST('transvalue', 'restricthtml');
+}
 
-
-$mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'searchkey';
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');

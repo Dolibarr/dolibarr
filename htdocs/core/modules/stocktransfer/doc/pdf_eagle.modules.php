@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2021 		Gauthier VERDOL 	<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 class pdf_eagle extends ModelePDFStockTransfer
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -74,8 +74,22 @@ class pdf_eagle extends ModelePDFStockTransfer
 	 * @var int posx weightvol
 	 */
 	public $posxweightvol;
+
+	/**
+	 * @var int posx warehousesource
+	 */
 	public $posxwarehousesource;
+
+	/**
+	 * @var int posx warehousedestination
+	 */
 	public $posxwarehousedestination;
+
+	/**
+	 * @var bool        True if at least one line of the StockTransfer object has a batch set.
+	 *                  Populated by $pdf_eagle->atLeastOneBatch()
+	 * @see atLeastOneBatch()
+	 */
 	public $atLeastOneBatch;
 
 	/**
@@ -83,7 +97,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 	 *
 	 *	@param	DoliDB	$db		Database handler
 	 */
-	public function __construct($db = 0)
+	public function __construct($db)
 	{
 		global $conf, $langs, $mysoc;
 
@@ -534,7 +548,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 						$curY = $tab_top_newpage;
 					}
 
-					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
 					// Lot / série
 					if (isModEnabled('productbatch')) {
@@ -699,7 +713,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 	 *	@param  StockTransfer	$object         Object invoice
 	 *	@param  int				$deja_regle     Montant deja regle
 	 *	@param	int				$posy			Position depart
-	 *	@param	Translate		$outputlangs	Objet langs
+	 *	@param	Translate		$outputlangs	Object langs
 	 *	@return int								Position pour suite
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
@@ -904,7 +918,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 	 *
 	 * @param	StockTransfer	$object	Stock Transfer object
 	 * @return	boolean			true if at least one line has batch set, false if not
-￼	 */
+	 */
 	public function atLeastOneBatch($object)
 	{
 		global $conf;
@@ -932,12 +946,12 @@ class pdf_eagle extends ModelePDFStockTransfer
 	 *  @param  StockTransfer	$object     	Object to show
 	 *  @param  int	    		$showaddress    0=no, 1=yes
 	 *  @param  Translate		$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   	Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf, $langs, $mysoc;
+		global $conf, $langs;
 
 		$langs->load("orders");
 
@@ -1199,6 +1213,8 @@ class pdf_eagle extends ModelePDFStockTransfer
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

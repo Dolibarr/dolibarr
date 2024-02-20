@@ -56,6 +56,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution
 $version = DOL_VERSION;
 $error = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */
@@ -117,7 +120,7 @@ if ($result <= 0) {
 	print "Export for bank account ".$acct->ref." (".$acct->label.").\n";
 }
 
-// Creation de la classe d'export du model ExportXXX
+// Create the export class for the model ExportXXX
 $dir = DOL_DOCUMENT_ROOT."/core/modules/export/";
 $file = "export_".$model.".modules.php";
 $classname = "Export".$model;
@@ -249,7 +252,7 @@ if ($resql) {
 
 		// Libelle
 		$reg = array();
-		preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parenthese on tente recherche de traduction
+		preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parentheses on tente recherche de traduction
 		if ($reg[1] && $langs->transnoentitiesnoconv($reg[1]) != $reg[1]) {
 			$description = $langs->transnoentitiesnoconv($reg[1]);
 		} else {

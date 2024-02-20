@@ -58,7 +58,6 @@ class PaymentSocialContribution extends CommonObject
 	public $fk_charge;
 
 	public $datec = '';
-	public $tms = '';
 	public $datep = '';
 
 	/**
@@ -98,11 +97,13 @@ class PaymentSocialContribution extends CommonObject
 	/**
 	 * @var string
 	 * @deprecated
+	 * @see $num_payment
 	 */
 	public $num_paiement;
 
 	/**
-	 * @var string
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
@@ -165,7 +166,7 @@ class PaymentSocialContribution extends CommonObject
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
-		// Validate parametres
+		// Validate parameters
 		if (!$this->datepaye) {
 			$this->error = 'ErrorBadValueForParameterCreatePaymentSocialContrib';
 			return -1;
@@ -229,7 +230,7 @@ class PaymentSocialContribution extends CommonObject
 				// Insere tableau des montants / factures
 				foreach ($this->amounts as $key => $amount) {
 					$contribid = $key;
-					if (is_numeric($amount) && $amount <> 0) {
+					if (is_numeric($amount) && $amount != 0) {
 						$amount = price2num($amount);
 
 						// If we want to closed paid invoices
@@ -531,19 +532,18 @@ class PaymentSocialContribution extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-
-		$this->fk_charge = '';
-		$this->datec = '';
-		$this->tms = '';
-		$this->datep = '';
-		$this->amount = '';
-		$this->fk_typepaiement = '';
-		$this->num_payment = '';
+		$this->fk_charge = 0;
+		$this->datec = dol_now();
+		$this->tms = dol_now();
+		$this->datep = dol_now();
+		$this->amount = 100;
+		$this->fk_typepaiement = 0;
+		$this->num_payment = 'ABC123';
 		$this->note_private = '';
 		$this->note_public = '';
-		$this->fk_bank = '';
-		$this->fk_user_creat = '';
-		$this->fk_user_modif = '';
+		$this->fk_bank = 0;
+		$this->fk_user_creat = 0;
+		$this->fk_user_modif = 0;
 	}
 
 

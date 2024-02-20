@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 class pdf_soleil extends ModelePDFFicheinter
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -144,7 +144,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 		// Show Draft Watermark
 		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('FICHINTER_DRAFT_WATERMARK'))) {
-			$this->watermark = $conf->global->FICHINTER_DRAFT_WATERMARK;
+			$this->watermark = getDolGlobalString('FICHINTER_DRAFT_WATERMARK');
 		}
 
 		if ($conf->ficheinter->dir_output) {
@@ -518,11 +518,12 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *  @param  Fichinter	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf, $langs;
+
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		// Load traductions files required by page
@@ -695,6 +696,8 @@ class pdf_soleil extends ModelePDFFicheinter
 			$pdf->SetXY($posx + 2, $posy);
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

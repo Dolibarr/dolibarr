@@ -497,8 +497,8 @@ class Menubase
 		$this->module = 'specimen';
 		$this->type = 'top';
 		$this->mainmenu = '';
-		$this->fk_menu = '0';
-		$this->position = '';
+		$this->fk_menu = 0;
+		$this->position = 0;
 		$this->url = 'http://dummy';
 		$this->target = '';
 		$this->title = 'Specimen menu';
@@ -506,8 +506,8 @@ class Menubase
 		$this->leftmenu = '';
 		$this->perms = '';
 		$this->enabled = '';
-		$this->user = '';
-		$this->tms = '';
+		$this->user = 0;
+		$this->tms = dol_now();
 	}
 
 
@@ -572,7 +572,7 @@ class Menubase
 		// We initialize newmenu with first already found menu entries
 		$this->newmenu = $newmenu;
 
-		// Now complete $this->newmenu->list to add entries found into $tabMenu that are childs of mainmenu=$menutopid, using the fk_menu link that is int (old method)
+		// Now complete $this->newmenu->list to add entries found into $tabMenu that are children of mainmenu=$menutopid, using the fk_menu link that is int (old method)
 		$this->recur($tabMenu, $menutopid, 1);
 
 		// Now complete $this->newmenu->list when fk_menu value is -1 (left menu added by modules with no top menu)
@@ -631,7 +631,7 @@ class Menubase
 	 *  @param	string	$myleftmenu     Value for left that defined leftmenu
 	 *  @param  int		$type_user      Looks for menu entry for 0=Internal users, 1=External users
 	 *  @param  string	$menu_handler   Name of menu_handler used ('auguria', 'eldy'...)
-	 *  @param  array	$tabMenu        Array to store new entries found (in most cases, it's empty, but may be alreay filled)
+	 *  @param  array	$tabMenu        Array to store new entries found (in most cases, it's empty, but may be already filled)
 	 *  @return int     		        >0 if OK, <0 if KO
 	 */
 	public function menuLoad($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)

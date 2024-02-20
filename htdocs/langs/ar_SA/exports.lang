@@ -27,8 +27,8 @@ FieldTitle=حقل العنوان
 NowClickToGenerateToBuildExportFile=الآن ، حدد تنسيق الملف في مربع التحرير والسرد وانقر فوق "إنشاء" لإنشاء ملف التصدير ...
 AvailableFormats=التنسيقات المتوفرة
 LibraryShort=المكتبة
-ExportCsvSeparator=فاصل ناقل الحركة Csv
-ImportCsvSeparator=فاصل ناقل الحركة Csv
+ExportCsvSeparator=فاصل أحرف CSV
+ImportCsvSeparator=فاصل أحرف CSV
 Step=خطوة
 FormatedImport=مساعد استيراد
 FormatedImportDesc1=تسمح لك هذه الوحدة بتحديث البيانات الموجودة أو إضافة كائنات جديدة إلى قاعدة البيانات من ملف بدون معرفة فنية ، باستخدام مساعد.
@@ -62,7 +62,6 @@ ChooseFileToImport=قم بتحميل الملف ثم انقر فوق أيقون�
 SourceFileFormat=مصدر تنسيق ملف
 FieldsInSourceFile=الحقول في ملف المصدر
 FieldsInTargetDatabase=الحقول المستهدفة في قاعدة بيانات Dolibarr (جريئة = إلزامي)
-Field=حقل
 NoFields=لا الحقول
 MoveField=تحرك %s حقل رقم العمود
 ExampleOfImportFile=Example_of_import_file
@@ -95,8 +94,8 @@ NbOfLinesOK=عدد الأسطر مع عدم وجود أخطاء وتحذيرات
 NbOfLinesImported=عدد خطوط المستوردة بنجاح : <b>%s.</b>
 DataComeFromNoWhere=قيمة لادخال تأتي من أي مكان في الملف المصدر.
 DataComeFromFileFieldNb=تأتي القيمة المراد إدراجها من العمود <b> %s </b> في الملف المصدر.
-DataComeFromIdFoundFromRef=The value that comes from the source file will be used to find the id of the parent object to use (so the object <b>%s</b> that has the ref. from source file must exist in the database).
-DataComeFromIdFoundFromCodeId=The value of code that comes from source file will be used to find the id of the parent object to use (so the code from source file must exist in the dictionary <b>%s</b>). Note that if you know the id, you can also use it in the source file instead of the code. Import should work in both cases.
+DataComeFromIdFoundFromRef=سيتم استخدام القيمة التي تأتي من الملف المصدر للعثور على معرف الكائن الأصلي المراد استخدامه (وبالتالي فإن الكائن <b>%s</span <span class='notranslate'></b> الذي يحتوي على المرجع من الملف المصدر يجب أن يكون موجودًا في قاعدة البيانات).
+DataComeFromIdFoundFromCodeId=سيتم استخدام قيمة الكود الذي يأتي من الملف المصدر للعثور على معرف الكائن الأصلي المراد استخدامه (لذا يجب أن يكون الكود من الملف المصدر موجودًا في القاموس <b>%s</b>). لاحظ أنه إذا كنت تعرف المعرف، فيمكنك أيضًا استخدامه في الملف المصدر بدلاً من الكود. يجب أن يعمل الاستيراد في كلتا الحالتين.
 DataIsInsertedInto=البيانات سوف تأتي من الملف المصدر يتم إدراجها في الحقل التالي :
 DataIDSourceIsInsertedInto=سيتم إدخال معرف الكائن الأصل ، الذي تم العثور عليه باستخدام البيانات الموجودة في الملف المصدر ، في الحقل التالي:
 DataCodeIDSourceIsInsertedInto=سيتم إدخال معرف السطر الأصل ، الذي تم العثور عليه من التعليمات البرمجية ، في الحقل التالي:
@@ -134,9 +133,9 @@ FormatControlRule=حكم عنصر تنسيق
 ## imports updates
 KeysToUseForUpdates=مفتاح (عمود) لاستخدامه مع <b> لتحديث البيانات الموجودة </b>
 NbInsert=Number of inserted lines: %s
-NbInsertSim=Number of lines that will be inserted: %s
+NbInsertSim=عدد الأسطر التي سيتم إدراجها: %s
 NbUpdate=Number of updated lines: %s
-NbUpdateSim=Number of lines that will be updated : %s
+NbUpdateSim=عدد الأسطر التي سيتم تحديثها : %s
 MultipleRecordFoundWithTheseFilters=Multiple records have been found with these filters: %s
 StocksWithBatch=مخزون وموقع (مستودع) المنتجات مع رقم الدُفعة / التسلسل
 WarningFirstImportedLine=لن يتم استيراد السطر (الأسطر) الأول مع التحديد الحالي
@@ -145,3 +144,4 @@ SelectImportFieldsSource = اختر حقول الملف المصدر التي ت
 MandatoryTargetFieldsNotMapped=لم يتم تعيين بعض الحقول الهدف الإلزامية
 AllTargetMandatoryFieldsAreMapped=يتم تعيين كافة الحقول المستهدفة التي تحتاج إلى قيمة إلزامية
 ResultOfSimulationNoError=نتيجة المحاكاة: لا خطأ
+NumberOfLinesLimited=عدد الخطوط محدود

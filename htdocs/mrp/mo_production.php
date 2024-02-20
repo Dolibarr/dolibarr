@@ -25,20 +25,20 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
+require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp_mo.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
-dol_include_once('/bom/class/bom.class.php');
-dol_include_once('/mrp/class/mo.class.php');
-dol_include_once('/mrp/lib/mrp_mo.lib.php');
 
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "stocks", "other", "product", "productbatch"));
@@ -63,14 +63,14 @@ $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mrp->dir_output.'/temp/massgeneration/'.$user->id;
 $objectline = new MoLine($db);
 
-$hookmanager->initHooks(array('mocard', 'globalcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('moproduction', 'globalcard')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -93,9 +93,9 @@ $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'mrp', $object->id, 'mrp_mo', '', 'fk_soc', 'rowid', $isdraft);
 
 // Permissions
-$permissionnote = $user->rights->mrp->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->mrp->write; // Used by the include of actions_dellink.inc.php
-$permissiontoadd = $user->rights->mrp->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissionnote = $user->hasRight('mrp', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('mrp', 'write'); // Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->hasRight('mrp', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 
 $permissiontoproduce = $permissiontoadd;
@@ -117,7 +117,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dol_buildpath('/mrp/mo_list.php', 1);
+	$backurlforlist = DOL_URL_ROOT.'/mrp/mo_list.php';
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		//var_dump($backurlforlist);exit;
@@ -133,7 +133,7 @@ if (empty($reshook)) {
 		$also_cancel_consumed_and_produced_lines = (GETPOST('alsoCancelConsumedAndProducedLines', 'alpha') ? 1 : 0);
 		$result = $object->cancel($user, 0, $also_cancel_consumed_and_produced_lines);
 		if ($result > 0) {
-			header("Location: " . dol_buildpath('/mrp/mo_card.php?id=' . $object->id, 1));
+			header("Location: " . DOL_URL_ROOT.'/mrp/mo_card.php?id=' . $object->id);
 			exit;
 		} else {
 			$action = '';
@@ -204,7 +204,7 @@ if (empty($reshook)) {
 				$moline->fk_default_workstation = $tmpproduct->fk_default_workstation;
 			}
 			$moline->disable_stock_change = ($tmpproduct->type == Product::TYPE_SERVICE ? 1 : 0);
-			if ($conf->global->PRODUCT_USE_UNITS) {
+			if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 				$moline->fk_unit = $tmpproduct->fk_unit;
 			}
 		}
@@ -840,7 +840,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Qty
 		print '<td class="right">'.$langs->trans("Qty").'</td>';
 		// Unit
-		if ($conf->global->PRODUCT_USE_UNITS) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			print '<td class="right">' . $langs->trans("Unit") . '</td>';
 		}
 		// Cost price
@@ -848,12 +848,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<td class="right">'.$langs->trans("UnitCost").'</td>';
 		}
 		// Qty already consumed
-		print '<td class="right">'.$langs->trans("QtyAlreadyConsumed").'</td>';
+		print '<td class="right">'.$form->textwithpicto($langs->trans("QtyAlreadyConsumedShort"), $langs->trans("QtyAlreadyConsumed")).'</td>';
 		// Warehouse
 		print '<td>';
 		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 			print $langs->trans("Warehouse");
-
+			if (isModEnabled('workstation')) {
+				print ' '.$langs->trans("or").' '.$langs->trans("Workstation");
+			}
 			// Select warehouse to force it everywhere
 			if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 				$listwarehouses = $tmpwarehouse->list_array(1);
@@ -909,7 +911,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '</td>';
 			// Qty
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
-			if ($conf->global->PRODUCT_USE_UNITS) {
+			if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 				print '<td></td>';
 			}
 			// Cost price
@@ -1024,10 +1026,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 						// Qty
 						print '<td class="right nowraponall">';
-						print '<input name="qty_lineProduce" type="number" value="'. $line->qty.'" width="25px">';
+						print '<input class="width40" name="qty_lineProduce" value="'. $line->qty.'">';
 						print '</td>';
 						// Unit
-						if ($conf->global->PRODUCT_USE_UNITS) {
+						if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 							print '<td class="right nowraponall">';
 							print measuringUnitString($line->fk_unit, '', '', 1);
 							print '</td>';
@@ -1041,24 +1043,29 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '</td>';
 						// Stock
 						print '<td class="nowraponall right">';
-						if ($tmpproduct->stock_reel < ($line->qty - $alreadyconsumed)) {
-							print img_warning($langs->trans('StockTooLow')).' ';
+						if ($tmpproduct->isStockManaged()) {
+							if ($tmpproduct->stock_reel < ($line->qty - $alreadyconsumed)) {
+								print img_warning($langs->trans('StockTooLow')).' ';
+							}
+							print '<span class="left">'. $tmpproduct->stock_reel  .' </span>';
 						}
-						print '<span class="left">'. $tmpproduct->stock_reel  .' </span>';
-						print '</td>';
-						// Batch
-						print '<td class="right">';
 						print '</td>';
 
+						// Batch
+						/*
+						print '<td class="right">';
+						print '</td>';
+						*/
+
 						// Action delete line
-						print '<td>';
-						print '<input type="submit" class="button buttongen button-add" name="save" value="' . $langs->trans("Edit") . '">';
-						print '<input type="submit" class="button buttongen button-cancel" name="cancel" value="' . $langs->trans("Cancel") . '">';
+						print '<td colspan="2">';
+						print '<input type="submit" class="button buttongen button-add small nominwidth" name="save" value="' . $langs->trans("Save") . '">';
+						print '<input type="submit" class="button buttongen button-cancel small nominwidth" name="cancel" value="' . $langs->trans("Cancel") . '">';
 						print '</td>';
 
 						// Action delete line
 						if ($permissiontodelete) {
-							print '<td class="center"></td>';
+							print '<td></td>';
 						}
 						print '<td></td>';
 						print '</tr>';
@@ -1100,7 +1107,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print price2num($line->qty, 'MS');
 						print '</td>';
 						// Unit
-						if ($conf->global->PRODUCT_USE_UNITS) {
+						if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 							print '<td class="right nowraponall">';
 							print measuringUnitString($line->fk_unit, '', '', 1);
 							print '</td>';
@@ -1140,10 +1147,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 						print ' ' . price2num($alreadyconsumed, 'MS');
 						print '</td>';
-						// Warehouse
+						// Warehouse and/or workstation
 						print '<td>';
 						if (getDolGlobalString('STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE') && $tmpwarehouse->id > 0) {
 							print img_picto('', $tmpwarehouse->picto) . " " . $tmpwarehouse->label;
+						}
+						if (isModEnabled('workstation') && $line->fk_default_workstation > 0) {
+							$tmpworkstation = new Workstation($db);
+							$tmpworkstation->fetch($line->fk_default_workstation);
+							print $tmpworkstation->getNomUrl(1);
 						}
 						print '</td>';
 						// Stock
@@ -1311,7 +1323,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<td class="right"><input type="text" class="width50 right" id="qtytoconsume-' . $line->id . '-' . $i . '" name="qty-' . $line->id . '-' . $i . '" value="' . $preselected . '" ' . $disable . '></td>';
 
 						// Unit
-						if ($conf->global->PRODUCT_USE_UNITS) {
+						if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 							print '<td></td>';
 						}
 
@@ -1402,6 +1414,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			});</script>';
 		}
 
+
 		// Lines to produce
 
 		print '</div>';
@@ -1436,7 +1449,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Qty
 		print '<td class="right">'.$langs->trans("Qty").'</td>';
 		/// Unit
-		if ($conf->global->PRODUCT_USE_UNITS) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			print '<td class="right">'.$langs->trans("Unit").'</td>';
 		}
 		// Cost price
@@ -1448,7 +1461,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 		}
 		// Already produced
-		print '<td class="right">'.$langs->trans("QtyAlreadyProduced").'</td>';
+		print '<td class="right">'.$form->textwithpicto($langs->trans("QtyAlreadyProducedShort"), $langs->trans("QtyAlreadyProduced")).'</td>';
 		// Warehouse
 		print '<td>';
 		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
@@ -1489,7 +1502,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Qty
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
 			//Unit
-			if ($conf->global->PRODUCT_USE_UNITS) {
+			if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 				print '<td></td>';
 			}
 			// Cost price
@@ -1556,7 +1569,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					// Qty
 					print '<td class="right">'.$line->qty.'</td>';
 					// Unit
-					if ($conf->global->PRODUCT_USE_UNITS) {
+					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 						print '<td class="right">'.measuringUnitString($line->fk_unit, '', '', 1).'</td>';
 					}
 					// Cost price
@@ -1655,7 +1668,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						// Qty
 						print '<td></td>';
 						// Unit
-						if ($conf->global->PRODUCT_USE_UNITS) {
+						if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 							print '<td></td>';
 						}
 						// Cost price
@@ -1708,7 +1721,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						// Qty
 						print '<td class="right"><input type="text" class="width50 right" id="qtytoproduce-'.$line->id.'-'.$i.'" name="qtytoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
 						//Unit
-						if ($conf->global->PRODUCT_USE_UNITS) {
+						if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 							print '<td class="right"></td>';
 						}
 						// Cost

@@ -1225,7 +1225,7 @@ class Lessc
 		}
 		list($color, $delta) = $args[2];
 		$color = $this->assertColor($color);
-		$delta = floatval($delta[1]);
+		$delta = (float) $delta[1];
 
 		return array($color, $delta);
 	}
@@ -1654,7 +1654,7 @@ class Lessc
 			$i = 0;
 			foreach ($rawComponents as $c) {
 				$val = $this->reduce($c);
-				$val = isset($val[1]) ? floatval($val[1]) : 0;
+				$val = isset($val[1]) ? (float) $val[1] : 0;
 
 				if ($i == 0) {
 					$clamp = 360;
@@ -1682,13 +1682,13 @@ class Lessc
 					if ($c[0] == "number" && $c[2] == "%") {
 						$components[] = 255 * ($c[1] / 100);
 					} else {
-						$components[] = floatval($c[1]);
+						$components[] = (float) $c[1];
 					}
 				} elseif ($i == 4) {
 					if ($c[0] == "number" && $c[2] == "%") {
 						$components[] = 1.0 * ($c[1] / 100);
 					} else {
-						$components[] = floatval($c[1]);
+						$components[] = (float) $c[1];
 					}
 				} else {
 					break;

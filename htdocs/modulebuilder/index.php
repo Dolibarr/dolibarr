@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019 Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $cancel  = GETPOST('cancel', 'alpha');
 
 $sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortorder = GETPOST('sortorder', 'aZ09');
 
 $module = GETPOST('module', 'alpha');
 $tab = GETPOST('tab', 'aZ09');
@@ -111,7 +112,7 @@ $FILEFLAG = 'modulebuilder.txt';
 $now = dol_now();
 $newmask = 0;
 if (empty($newmask) && getDolGlobalString('MAIN_UMASK')) {
-	$newmask = $conf->global->MAIN_UMASK;
+	$newmask = getDolGlobalString('MAIN_UMASK');
 }
 if (empty($newmask)) {	// This should no happen
 	$newmask = '0664';
@@ -280,6 +281,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 		}
 
 		// Delete dir and files that can be generated in sub tabs later if we need them (we want a minimal module first)
+		dol_delete_dir_recursive($destdir.'/ajax');
 		dol_delete_dir_recursive($destdir.'/build/doxygen');
 		dol_delete_dir_recursive($destdir.'/core/modules/mailings');
 		dol_delete_dir_recursive($destdir.'/core/modules/'.strtolower($modulename));
@@ -311,7 +313,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 		dol_delete_file($destdir.'/myobject_agenda.php');
 		dol_delete_file($destdir.'/myobject_list.php');
 		dol_delete_file($destdir.'/lib/'.strtolower($modulename).'_myobject.lib.php');
-		dol_delete_file($destdir.'/test/phpunit/functionnal/'.$modulename.'FunctionnalTest.php');
+		dol_delete_file($destdir.'/test/phpunit/functional/'.$modulename.'FunctionalTest.php');
 		dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
 		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject.sql');
 		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject_extrafields.sql');
@@ -474,7 +476,7 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 		if ($varnametoupdate) {
 			// Now we update the object file to set $$varnametoupdate to 1
 			$srcfile = $dirins.'/'.strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php';
-			$arrayreplacement = array('/\$'.$varnametoupdate.' = 0;/' => '$'.$varnametoupdate.' = 1;');
+			$arrayreplacement = array('/\$'.preg_quote($varnametoupdate, '/').' = 0;/' => '$'.$varnametoupdate.' = 1;');
 			dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
 		}
 	} else {
@@ -615,6 +617,40 @@ if ($dirins && $action == 'initwidget' && !empty($module)) {
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$srcfile = $srcdir.'/core/boxes/mymodulewidget1.php';
 	$destfile = $dirins.'/'.strtolower($module).'/core/boxes/'.strtolower($module).'widget1.php';
+	//var_dump($srcfile);
+	//var_dump($destfile);
+	$result = dol_copy($srcfile, $destfile, 0, 0);
+
+	if ($result > 0) {
+		$modulename = ucfirst($module); // Force first letter in uppercase
+
+		//var_dump($phpfileval['fullname']);
+		$arrayreplacement = array(
+			'mymodule'=>strtolower($modulename),
+			'MyModule'=>$modulename,
+			'MYMODULE'=>strtoupper($modulename),
+			'My module'=>$modulename,
+			'my module'=>$modulename,
+			'Mon module'=>$modulename,
+			'mon module'=>$modulename,
+			'htdocs/modulebuilder/template'=>strtolower($modulename),
+			'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
+		);
+
+		dolReplaceInFile($destfile, $arrayreplacement);
+	} else {
+		$langs->load("errors");
+		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
+	}
+}
+
+
+// init EmailSelector
+if ($dirins && $action == 'initemailing' && !empty($module)) {
+	dol_mkdir($dirins.'/'.strtolower($module).'/core/modules/mailings');
+	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
+	$srcfile = $srcdir.'/core/modules/mailings/mailing_mymodule_selector1.modules.php';
+	$destfile = $dirins.'/'.strtolower($module).'/core/modules/mailings/mailing_'.strtolower($module).'_selector1.modules.php';
 	//var_dump($srcfile);
 	//var_dump($destfile);
 	$result = dol_copy($srcfile, $destfile, 0, 0);
@@ -959,7 +995,7 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 			}
 			if ($varnametoupdate) {
 				$srcfile = $dirins.'/'.strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php';
-				$arrayreplacement = array('/\$'.$varnametoupdate.' = 1;/' => '$'.$varnametoupdate.' = 0;');
+				$arrayreplacement = array('/\$'.preg_quote($varnametoupdate, '/').' = 1;/' => '$'.preg_quote($varnametoupdate, '/').' = 0;');
 				dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
 			}
 		}
@@ -1033,7 +1069,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
 			 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 			 *  'index' if we want an index in database.
-			 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+			 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 			 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 			 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
 			 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
@@ -1483,7 +1519,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				$error++;
 				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
 			} else {
-				dolReplaceInFile($moduledescriptorfile, array('/* END MODULEBUILDER LEFTMENU MYOBJECT */' => '/*LEFTMENU '.strtoupper($objectname).'*/'.$stringtoadd."\n\t\t".'/*END LEFTMENU '.strtoupper($objectname).'*/'."\n\t\t".'/* END MODULEBUILDER LEFTMENU MYOBJECT */'));
+				$arrayofreplacement = array('/* END MODULEBUILDER LEFTMENU MYOBJECT */' => '/*LEFTMENU '.strtoupper($objectname).'*/'.$stringtoadd."\n\t\t".'/*END LEFTMENU '.strtoupper($objectname).'*/'."\n\t\t".'/* END MODULEBUILDER LEFTMENU MYOBJECT */');
+				dolReplaceInFile($moduledescriptorfile, $arrayofreplacement);
 			}
 		}
 		// Add module descriptor to list of files to replace "MyObject' string with real name of object.
@@ -1582,7 +1619,7 @@ if ($dirins && $action == 'initdic' && $module && empty($cancel)) {
 	}
 	if (!GETPOST('label')) {
 		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Lable")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	}
 	if (!$error) {
 		$newdicname = $dicname;
@@ -2222,7 +2259,7 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
 		}
 	}
 
-	// verify informations entred
+	// verify information entered
 	if (!GETPOST('label', 'alpha')) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
@@ -2317,7 +2354,7 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright')&& e
 			dol_print_error($db, $e->getMessage());
 		}
 	}
-	// verify informations entred
+	// verify information entered
 	if (!GETPOST('label', 'alpha')) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
@@ -3298,6 +3335,7 @@ if ($module == 'initmodule') {
 		$countMenus = count($moduleobj->menu);
 		$countTriggers = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/core/triggers");
 		$countWidgets = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/core/boxes");
+		$countEmailingSelectors = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/core/modules/mailings");
 		$countCss = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/css");
 		$countJs = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/js");
 		$countCLI = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/scripts");
@@ -3354,6 +3392,11 @@ if ($module == 'initmodule') {
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=widgets&module='.$module.($forceddirread ? '@'.$dirread : '');
 		$head2[$h][1] = ($countWidgets <= 0 ? $langs->trans("Widgets") : $langs->trans("Widgets").'<span class="marginleftonlyshort badge">'.$countWidgets."</span>");
 		$head2[$h][2] = 'widgets';
+		$h++;
+
+		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=emailings&module='.$module.($forceddirread ? '@'.$dirread : '');
+		$head2[$h][1] = ($countEmailingSelectors <= 0 ? $langs->trans("EmailingSelectors") : $langs->trans("EmailingSelectors").'<span class="marginleftonlyshort badge">'.$countEmailingSelectors."</span>");
+		$head2[$h][2] = 'emailings';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=exportimport&module='.$module.($forceddirread ? '@'.$dirread : '');
@@ -3428,7 +3471,8 @@ if ($module == 'initmodule') {
 				foreach ($listofsetuppages as $setuppage) {
 					//var_dump($setuppage);
 					print '<tr><td>';
-					print '<span class="fa fa-file-o"></span> '.$langs->trans("SetupFile").' : <strong class="wordbreak">'.$modulelowercase.'/admin/'.$setuppage['relativename'].'</strong>';
+					print '<span class="fa fa-file-o"></span> '.$langs->trans("SetupFile").' : ';
+					print '<strong class="wordbreak bold"><a href="'.dol_buildpath($modulelowercase.'/admin/'.$setuppage['relativename'], 1).'" target="_test">'.$modulelowercase.'/admin/'.$setuppage['relativename'].'</a></strong>';
 					print '</td><td><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($modulelowercase.'/admin/'.$setuppage['relativename']).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 					print '</td></tr>';
 				}
@@ -3662,7 +3706,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
-				print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'newlangcode', 0, 0, 1, 0, 0, 'minwidth300', 1);
+				print $formadmin->select_language(getDolGlobalString('MAIN_LANG_DEFAULT'), 'newlangcode', 0, 0, 1, 0, 0, 'minwidth300', 1);
 				print '<input type="submit" name="addlanguage" class="button smallpaddingimp" value="'.dol_escape_htmltag($langs->trans("AddLanguageFile")).'"><br>';
 				print '</form>';
 
@@ -4591,14 +4635,14 @@ if ($module == 'initmodule') {
 										print '</form>';
 									}
 								}
-								print '<tr><td><span class="warning">'.$langs->trans('Property $field not found into the class. The class was probably not generated by modulebuilder.').'</warning></td></tr>';
+								print '<tr><td><span class="warning">'.$langs->trans('Property %s not found in the class. The class was probably not generated by modulebuilder.', $field).'</warning></td></tr>';
 							}
 							print '</table>';
 							print '</div>';
 
 							print '</form>';
 						} else {
-							print '<span class="warning">'.$langs->trans('Failed to init the object with the new '.$tabobj.'($db)').'</warning>';
+							print '<span class="warning">'.$langs->trans('Failed to init the object with the new %s (%s)', $tabobj, (string) $db).'</warning>';
 						}
 					} catch (Exception $e) {
 						print $e->getMessage();
@@ -4673,7 +4717,6 @@ if ($module == 'initmodule') {
 					print '<br>';
 				}
 
-				print '<!-- tab=objects -->'."\n";
 				$head3 = array();
 				$h = 0;
 
@@ -4749,7 +4792,6 @@ if ($module == 'initmodule') {
 					print_liste_field_titre("Rowid", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 					print_liste_field_titre("Condition", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 					print_liste_field_titre("", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-
 					print "</tr>\n";
 
 					if (!empty($dicts) && is_array($dicts) && !empty($dicts['tabname']) && is_array($dicts['tabname'])) {
@@ -4868,7 +4910,7 @@ if ($module == 'initmodule') {
 							$i++;
 						}
 					} else {
-						print '<tr><td colspan="10"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+						print '<tr><td colspan="11"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 					}
 
 					print '</table>';
@@ -4993,7 +5035,7 @@ if ($module == 'initmodule') {
 			$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
 			$destdir = $dirins.'/'.strtolower($module);
 			$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
-			$objects = dolGetListOfObjectclasses($destdir);
+			$objects = dolGetListOfObjectClasses($destdir);
 
 			$leftmenus = array();
 
@@ -5339,7 +5381,7 @@ if ($module == 'initmodule') {
 						print '</tr>';
 					}
 				} else {
-					print '<tr><td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+					print '<tr><td colspan="14"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 				}
 
 				print '</table>';
@@ -5907,6 +5949,58 @@ if ($module == 'initmodule') {
 				} else {
 					print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("WidgetFile").' : <span class="opacitymedium">'.$langs->trans("NoWidget").'</span>';
 					print '</td><td><a href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initwidget&token='.newToken().'&format=php">'.img_picto('Generate', 'generate', 'class="paddingleft"').'</a>';
+					print '</td></tr>';
+				}
+				print '</table>';
+			} else {
+				$fullpathoffile = dol_buildpath($file, 0);
+
+				$content = file_get_contents($fullpathoffile);
+
+				// New module
+				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="action" value="savefile">';
+				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
+				print '<input type="hidden" name="tab" value="'.$tab.'">';
+				print '<input type="hidden" name="module" value="'.$module.'">';
+
+				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
+				print '<br>';
+				print '<center>';
+				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print ' &nbsp; ';
+				print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+				print '</center>';
+
+				print '</form>';
+			}
+		}
+
+		if ($tab == 'emailings') {
+			print '<!-- tab=emailings -->'."\n";
+			require_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
+
+			$emailingselectors = MailingTargets::getEmailingSelectorsList(array('/'.strtolower($module).'/core/modules/mailings'));
+
+			if ($action != 'editfile' || empty($file)) {
+				print '<span class="opacitymedium">'.$langs->trans("EmailingSelectorDesc").'</span><br>';
+				print '<br>';
+
+				print '<table>';
+				if (!empty($emailingselectors)) {
+					foreach ($emailingselectors as $emailingselector) {
+						$pathtofile = $emailingselector['relpath'];
+
+						print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("EmailingSelectorFile").' : <strong class="wordbreak">'.$pathtofile.'</strong>';
+						print '</td><td><a class="editfielda paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+						print '</td><td><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&token='.newToken().'&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Delete"), 'delete').'</a></td>';
+						print '</tr>';
+					}
+				} else {
+					print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("EmailingSelectorFile").' : <span class="opacitymedium">'.$langs->trans("NoEmailingSelector").'</span>';
+					print '</td><td><a href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initemailing&token='.newToken().'&format=php">'.img_picto('Generate', 'generate', 'class="paddingleft"').'</a>';
 					print '</td></tr>';
 				}
 				print '</table>';

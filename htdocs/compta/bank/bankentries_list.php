@@ -235,7 +235,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 if (empty($reshook)) {
 	$objectclass = 'Account';
 	$objectlabel = 'BankTransaction';
-	$permissiontoread = !empty($user->rights->banque->lire);
+	$permissiontoread = $user->hasRight('banque', 'lire');
 	$permissiontodelete = $user->hasRight('banque', 'modifier');
 	$uploaddir = $conf->bank->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
@@ -250,7 +250,7 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 	&& (!GETPOSTISSET('pageplusone') || (GETPOST('pageplusone') == GETPOST('pageplusoneold')))) {
 	$error = 0;
 
-	// Definition, nettoyage parametres
+	// Definition, nettoyage parameters
 	$num_releve = GETPOST("num_releve", "alpha");
 
 	if ($num_releve) {
@@ -342,7 +342,7 @@ if (GETPOST('save') && !$cancel && $user->hasRight('banque', 'modifier')) {
 	if (price2num(GETPOST("addcredit")) > 0) {
 		$amount = price2num(GETPOST("addcredit"));
 	} else {
-		$amount = - price2num(GETPOST("adddebit"));
+		$amount = price2num(-1 * (float) price2num(GETPOST("adddebit")));
 	}
 
 	$operation = GETPOST("operation", 'alpha');
@@ -722,7 +722,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 }
 
 if (($id > 0 || !empty($ref)) && ((string) $page == '')) {
-	// We open a list of transaction of a dedicated account and no page was set by defaut
+	// We open a list of transaction of a dedicated account and no page was set by default
 	// We force on last page.
 	$page = ($nbtotalofpages - 1);
 	$offset = $limit * $page;
@@ -787,7 +787,6 @@ if ($resql) {
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
-	//if ($user->rights->bank->supprimer) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	if (in_array($massaction, array('presend', 'predelete'))) {
 		$arrayofmassactions = array();
 	}
@@ -1290,6 +1289,9 @@ if ($resql) {
 	$savnbfield = $totalarray['nbfield'];
 	$totalarray = array();
 	$totalarray['nbfield'] = 0;
+	$totalarray['totaldeb'] = 0;
+	$totalarray['totalcred'] = 0;
+
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
 	while ($i < $imaxinloop) {
 		$objp = $db->fetch_object($resql);
@@ -1298,7 +1300,7 @@ if ($resql) {
 		// If we are in a situation where we need/can show balance, we calculate the start of balance
 		if (!$balancecalculated && (!empty($arrayfields['balancebefore']['checked']) || !empty($arrayfields['balance']['checked'])) && ($mode_balance_ok || $search_conciliated === '0')) {
 			if (!$search_account) {
-				dol_print_error('', 'account is not defined but $mode_balance_ok is true');
+				dol_print_error(null, 'account is not defined but $mode_balance_ok is true');
 				exit;
 			}
 

@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 class pdf_strato extends ModelePDFContract
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -155,7 +155,7 @@ class pdf_strato extends ModelePDFContract
 
 		// Show Draft Watermark
 		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('CONTRACT_DRAFT_WATERMARK'))) {
-			$this->watermark = $conf->global->CONTRACT_DRAFT_WATERMARK;
+			$this->watermark = getDolGlobalString('CONTRACT_DRAFT_WATERMARK');
 		}
 
 		global $outputlangsbis;
@@ -581,7 +581,7 @@ class pdf_strato extends ModelePDFContract
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
 	 *  @param	string		$titlekey		Translation key to show as title of document
-	 *  @return	int                         Return topshift value
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null, $titlekey = "Contract")
 	{
@@ -784,6 +784,7 @@ class pdf_strato extends ModelePDFContract
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
 		return $top_shift;
 	}
 

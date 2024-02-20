@@ -82,7 +82,7 @@ function dol_setcache($memoryid, $data, $expire = 0)
 		global $dolmemcache;
 		if (empty($dolmemcache) || !is_object($dolmemcache)) {
 			$dolmemcache = new Memcached();
-			$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
+			$tmparray = explode(':', getDolGlobalString('MEMCACHED_SERVER'));
 			$result = $dolmemcache->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
 			if (!$result) {
 				return -1;
@@ -103,7 +103,7 @@ function dol_setcache($memoryid, $data, $expire = 0)
 		global $dolmemcache;
 		if (empty($dolmemcache) || !is_object($dolmemcache)) {
 			$dolmemcache = new Memcache();
-			$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
+			$tmparray = explode(':', getDolGlobalString('MEMCACHED_SERVER'));
 			$result = $dolmemcache->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
 			if (!$result) {
 				return -1;
@@ -118,7 +118,7 @@ function dol_setcache($memoryid, $data, $expire = 0)
 		} else {
 			return -1;
 		}
-	} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {	// This is a really not reliable cache ! Use Memcached instead.
+	} elseif (getDolGlobalInt('MAIN_OPTIMIZE_SPEED') & 0x02) {	// This is a really not reliable cache ! Use Memcached instead.
 		// Using shmop
 		$result = dol_setshmop($memoryid, $data, $expire);
 	} else {
@@ -152,7 +152,7 @@ function dol_getcache($memoryid)
 		global $m;
 		if (empty($m) || !is_object($m)) {
 			$m = new Memcached();
-			$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
+			$tmparray = explode(':', getDolGlobalString('MEMCACHED_SERVER'));
 			$result = $m->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
 			if (!$result) {
 				return -1;
@@ -177,7 +177,7 @@ function dol_getcache($memoryid)
 		global $m;
 		if (empty($m) || !is_object($m)) {
 			$m = new Memcache();
-			$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
+			$tmparray = explode(':', getDolGlobalString('MEMCACHED_SERVER'));
 			$result = $m->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
 			if (!$result) {
 				return -1;
@@ -194,7 +194,7 @@ function dol_getcache($memoryid)
 		} else {
 			return null; // There is no way to make a difference between NOTFOUND and error when using Memcache. So do not use it, use Memcached instead.
 		}
-	} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {	// This is a really not reliable cache ! Use Memcached instead.
+	} elseif (getDolGlobalInt('MAIN_OPTIMIZE_SPEED') & 0x02) {	// This is a really not reliable cache ! Use Memcached instead.
 		// Using shmop
 		$data = dol_getshmop($memoryid);
 		return $data;
@@ -219,7 +219,7 @@ function dol_getcache($memoryid)
 function dol_getshmopaddress($memoryid)
 {
 	global $shmkeys, $shmoffset;
-	if (empty($shmkeys[$memoryid])) {	// No room reserved for thid memoryid, no way to use cache
+	if (empty($shmkeys[$memoryid])) {	// No room reserved for this memoryid, no way to use cache
 		return 0;
 	}
 	return $shmkeys[$memoryid] + $shmoffset;
@@ -272,7 +272,7 @@ function dol_setshmop($memoryid, $data, $expire)
 	if ($handle) {
 		$shm_bytes_written1 = shmop_write($handle, str_pad($size, 6), 0);
 		$shm_bytes_written2 = shmop_write($handle, $newdata, 6);
-		if (($shm_bytes_written1 + $shm_bytes_written2) != (6 + dol_strlen($newdata))) {
+		if ($shm_bytes_written1 + $shm_bytes_written2 != 6 + dol_strlen($newdata)) {
 			print "Couldn't write the entire length of data\n";
 		}
 		shmop_close($handle);
@@ -287,7 +287,7 @@ function dol_setshmop($memoryid, $data, $expire)
  * 	Read a memory area shared by all users, all sessions on server
  *
  *  @param	string	$memoryid		Memory id of shared area ('main', 'agenda', ...)
- * 	@return	int						Return integer <0 if KO, data if OK, Null if no cache enabled or not found
+ * 	@return	int|null				Return integer <0 if KO, data if OK, null if no cache enabled or not found
  */
 function dol_getshmop($memoryid)
 {

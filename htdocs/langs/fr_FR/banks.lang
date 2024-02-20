@@ -67,7 +67,6 @@ AccountsArea=Espace comptes
 AccountCard=Fiche compte
 DeleteAccount=Suppression de compte
 ConfirmDeleteAccount=Êtes-vous sûr de vouloir effacer ce compte bancaire ?
-Account=Compte
 BankTransactionByCategories=Écritures bancaires par tags/catégories
 BankTransactionForCategory=Écritures bancaires pour le tag/catégorie <b>%s</b>
 RemoveFromRubrique=Supprimer lien avec rubrique
@@ -190,7 +189,7 @@ IfYouDontReconcileDisableProperty=Si vous ne réalisez pas le rapprochement banc
 NoBankAccountDefined=Aucun compte bancaire défini
 NoRecordFoundIBankcAccount=Aucun enregistrement trouvé dans le compte bancaire. Généralement, cela se produit lorsqu'un enregistrement a été supprimé manuellement de la liste des transactions dans le compte bancaire (par exemple lors d'un rapprochement du compte bancaire). Une autre raison est que le paiement a été enregistré lorsque le module "%s" était désactivé.
 AlreadyOneBankAccount=un compte bancaire est déjà défini
-SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation=Variante SEPA fichier
+SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation=Variante du fichier SEPA 
 SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp=Oui = Stocker le « Type de paiement » dans la section « Virement de crédit » du fichier SEPA<br><br>Lors de la génération d'un fichier XML SEPA pour les virements, la section "PaymentTypeInformation" peut désormais être placée dans la section "CreditTransferTransactionInformation" (au lieu de la section "Payment"). Nous vous recommandons fortement de laisser cette case décochée pour placer PaymentTypeInformation au niveau Payment, car toutes les banques ne l'accepteront pas nécessairement au niveau CreditTransferTransactionInformation. Contactez votre banque avant de placer PaymentTypeInformation au niveau CreditTransferTransactionInformation.
 ToCreateRelatedRecordIntoBank=Pour créer un enregistrement bancaire associé manquant
 XNewLinesConciliated=%s nouvelle(s) ligne(s) rapprochée(s)

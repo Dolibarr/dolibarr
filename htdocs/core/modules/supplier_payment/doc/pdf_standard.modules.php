@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
 class pdf_standard extends ModelePDFSuppliersPayments
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -155,7 +155,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 *  @param		int					$hideref			Do not show ref
 	 *  @return		int										1=OK, 0=KO
 	 */
-	public function write_file($object, $outputlangs = '', $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs = null, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
@@ -353,7 +353,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 						$curY = $tab_top_newpage;
 					}
 
-					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
 					// ref fourn
 					$pdf->SetXY($this->posxreffacturefourn, $curY);
@@ -487,7 +487,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 *	@param	TCPDF			$pdf			Object PDF
 	 *	@param  PaiementFourn	$object         Object PaiementFourn
 	 *	@param	int				$posy			Position depart
-	 *	@param	Translate		$outputlangs	Objet langs
+	 *	@param	Translate		$outputlangs	Object langs
 	 *	@return int								Position pour suite
 	 */
 	protected function _tableau_cheque(&$pdf, $object, $posy, $outputlangs)
@@ -597,7 +597,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 *  @param  PaiementFourn	$object     	Object to show
 	 *  @param  int	    		$showaddress    0=no, 1=yes
 	 *  @param  Translate		$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   	Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -801,6 +801,8 @@ class pdf_standard extends ModelePDFSuppliersPayments
 				$pdf->MultiCell($widthrecbox, 4, $langs->trans("IBAN").': '.$iban, 0, 'L');
 			}
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

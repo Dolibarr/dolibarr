@@ -47,13 +47,6 @@ class Comment extends CommonObject
 	public $description;
 
 	/**
-	 * Date modification record (tms)
-	 *
-	 * @var integer
-	 */
-	public $tms;
-
-	/**
 	 * Date creation record (datec)
 	 *
 	 * @var integer
@@ -177,7 +170,7 @@ class Comment extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id			Id object
-	 *  @param	int		$ref		ref object
+	 *  @param	string	$ref		ref object
 	 *  @return int 		        Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = '')
