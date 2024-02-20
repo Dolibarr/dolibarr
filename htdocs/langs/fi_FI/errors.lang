@@ -308,7 +308,7 @@ ErrorTableNotFound=Taulukkoa <b>%s</b> ei löydy
 ErrorRefNotFound=Viite <b>%s</b> ei löydy
 ErrorValueForTooLow=Arvo <b>%s</b> on liian pieni
 ErrorValueCantBeNull=Arvo <b>%s</b> ei voi olla tyhjä
-ErrorDateOfMovementLowerThanDateOfFileTransmission=Pankkitapahtuman päiväys ei voi olla pienempi kuin päiväys <span class='notranslate'>tiedosto<. /span> lähetys
+ErrorDateOfMovementLowerThanDateOfFileTransmission=Pankkitapahtuman päiväys ei voi olla pienempi kuin päiväys <span class='notranslate'>tiedosto</span> lähetys
 ErrorTooMuchFileInForm=Liikaa tiedostoja muodossa, enimmäismäärä on %s tiedosto(s)
 ErrorSessionInvalidatedAfterPasswordChange=Istunto mitätöitiin salasanan, sähköpostiosoitteen, tilan tai päivämäärät voimassaolon muutoksen vuoksi. Ole hyvä ja kirjaudu uudelleen.
 ErrorExistingPermission = Lupa <b>%s</b> objektille  <b>%s</b> on jo olemassa

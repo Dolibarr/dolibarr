@@ -1586,7 +1586,7 @@ while ($i < $imaxinloop) {
 			if ($contextpage == 'poslist') {
 				print $obj->email;
 			} else {
-				print dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 18, 0, 1);
+				print dol_print_email($obj->email, $obj->rowid, $obj->socid, 1, 18, 0, 1);
 			}
 			print '</td>';
 			if (!$i) {
