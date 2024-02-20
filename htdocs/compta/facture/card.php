@@ -1292,7 +1292,7 @@ if (empty($reshook)) {
 							$soc->fetch($socid);
 						}
 						if (!empty($soc) && is_object($soc) && get_class($soc) == 'Societe') {
-							$tva_tx = get_default_tva($mysoc,$soc);
+							$tva_tx = get_default_tva($mysoc, $soc);
 						} else $tva_tx = 0;
 
 						$object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'), $remain_to_pay, 1, $tva_tx, 0, 0, 0, 0, '', '', 'TTC');
