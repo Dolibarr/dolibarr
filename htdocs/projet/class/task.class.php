@@ -257,9 +257,6 @@ class Task extends CommonObjectLine
 			return -1;
 		}
 
-		// Check parameters
-		// Put here code to add control on parameters values
-
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task (";
 		$sql .= "entity";
@@ -348,8 +345,6 @@ class Task extends CommonObjectLine
 	 */
 	public function fetch($id, $ref = '', $loadparentdata = 0)
 	{
-		global $langs, $conf;
-
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.ref,";
@@ -603,7 +598,7 @@ class Task extends CommonObjectLine
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error = 0;
@@ -1241,7 +1236,7 @@ class Task extends CommonObjectLine
 			$sql .= " WHERE pt.rowid = ec.element_id";
 		}
 		if ($userp && $filteronprojstatus > -1) {
-			$sql .= " AND pt.fk_statut = ".((int) $filteronprojstatus);
+			$sql .= " AND p.fk_statut = ".((int) $filteronprojstatus);
 		}
 		if ($usert && $filteronprojstatus > -1) {
 			$sql .= " AND pt.fk_projet = p.rowid AND p.fk_statut = ".((int) $filteronprojstatus);
@@ -1448,8 +1443,6 @@ class Task extends CommonObjectLine
 	 */
 	public function fetchTimeSpentOnTask($morewherefilter = '')
 	{
-		global $langs;
-
 		$arrayres = array();
 
 		$sql = "SELECT";
@@ -1656,8 +1649,6 @@ class Task extends CommonObjectLine
 	 */
 	public function fetchTimeSpent($id)
 	{
-		global $langs;
-
 		$timespent = new TimeSpent($this->db);
 		$timespent->fetch($id);
 
