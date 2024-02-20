@@ -161,6 +161,13 @@ class LangTest extends CommonClassTest
 				$result = preg_match('/<<<<</m', $filecontent);	// A sequence of char we don't want
 				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
 				$this->assertTrue($result == 0, 'Found a sequence <<<<< into the translation file '.$code.'/'.$file.'. Probably a bad merge of code were done.');
+
+				if (!in_array($code, array('ar_SA'))) {
+					$reg = array();
+					$result = preg_match('/(.*)<([^a-z\/\s,=\(]1)/im', $filecontent, $reg);	// A sequence of char we don't want
+					//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
+					$this->assertTrue($result == 0, 'Found a sequence tag '.$reg[1].'<'.$reg[2].' into the translation file '.$code.'/'.$file.'.');
+				}
 			}
 		}
 

@@ -1239,7 +1239,7 @@ PublicVirtualCard=ምናባዊ የንግድ ካርድ
 TreeView=የዛፍ እይታ
 DropFileToAddItToObject=ወደዚህ ነገር ለማከል ፋይል ጣል ያድርጉ
 UploadFileDragDropSuccess=ፋይሉ በተሳካ ሁኔታ ተሰቅሏል።
-SearchSyntaxTooltipForStringOrNum=በጽሑፍ መስክ ውስጥ ለመፈለግ፣ 'በመጀመር ወይም በመጨረስ' ለመፈለግ ወይም ለመጠቀም ^ ወይም $ ቁምፊዎችን መጠቀም ትችላለህ። 'አልያዘም' ሙከራ ለማድረግ። መጠቀም ይችላሉ | ከ'AND' ይልቅ ለ'OR' ሁኔታ ከጠፈር ይልቅ በሁለት ሕብረቁምፊዎች መካከል። ለቁጥር እሴቶች፣ ከዋጋው በፊት የሂሳብ ንፅፅርን ተጠቅመው ለማጣራት ኦፕሬተሩን <, >፣ <=, >= ወይም != መጠቀም ትችላለህ።
+SearchSyntaxTooltipForStringOrNum=For searching inside text fields, you can use the characters ^ or $ to make a 'start or end with' search or use the ! to make a 'does not contain' test. You can use the | between two strings instead of a space for a 'OR' condition instead of 'AND'. For numeric values, you can use the operator <, >, <=, >= or != before the value, to filter using a mathematical comparison
 InProgress=በሂደት ላይ
 DateOfPrinting=የታተመበት ቀን
 ClickFullScreenEscapeToLeave=ወደ ሙሉ ስክሪን ሁነታ ለመቀየር እዚህ ጠቅ ያድርጉ። ከሙሉ ማያ ገጽ ሁነታ ለመውጣት ESCAPE ን ይጫኑ።
@@ -1259,4 +1259,3 @@ AmountSalary=የደመወዝ መጠን
 InvoiceSubtype=የክፍያ መጠየቂያ ንዑስ ዓይነት
 ConfirmMassReverse=የጅምላ ተገላቢጦሽ ማረጋገጫ
 ConfirmMassReverseQuestion=እርግጠኛ ነዎት %s የተመረጠውን መዝገብ(ዎች) መቀልበስ ይፈልጋሉ?
-

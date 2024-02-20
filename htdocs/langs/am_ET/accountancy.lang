@@ -327,41 +327,6 @@ NotReconciled=አልታረቅም።
 WarningRecordWithoutSubledgerAreExcluded=ማስጠንቀቂያ፣ ንዑስ መለያ የሌላቸው ሁሉም መስመሮች ተጣርተው ከዚህ እይታ የተገለሉ ናቸው።
 AccountRemovedFromCurrentChartOfAccount=አሁን ባለው የመለያዎች ገበታ ውስጥ የማይገኝ የሂሳብ አያያዝ
 
-## Admin
-BindingOptions=የማስያዣ አማራጮች
-ApplyMassCategories=የጅምላ ምድቦችን ተግብር
-AddAccountFromBookKeepingWithNoCategories=የሚገኝ መለያ ገና በግላዊ ቡድን ውስጥ የለም።
-CategoryDeleted=የሒሳብ መለያው ምድብ ተወግዷል
-AccountingJournals=የሂሳብ መጽሔቶች
-AccountingJournal=የሂሳብ መጽሔት
-NewAccountingJournal=አዲስ የሂሳብ ጆርናል
-ShowAccountingJournal=የሂሳብ መጽሔት አሳይ
-NatureOfJournal=የጆርናል ተፈጥሮ
-AccountingJournalType1=የተለያዩ ስራዎች
-AccountingJournalType2=ሽያጭ
-AccountingJournalType3=ግዢዎች
-AccountingJournalType4=ባንክ
-AccountingJournalType5=የወጪ ሪፖርቶች
-AccountingJournalType8=ቆጠራ
-AccountingJournalType9=የተያዙ ገቢዎች
-GenerationOfAccountingEntries=የሂሳብ ግቤቶች ማመንጨት
-ErrorAccountingJournalIsAlreadyUse=ይህ መጽሔት አስቀድሞ ጥቅም ላይ ውሏል
-AccountingAccountForSalesTaxAreDefinedInto=ማስታወሻ፡ ለሽያጭ ታክስ የሂሳብ አያያዝ መለያ በምናሌ ውስጥ ይገለጻል <b>%s</b>9a4b739f17f8z0 - <span class='notranslate'><b>%s</b>
-NumberOfAccountancyEntries=የመግቢያ ብዛት
-NumberOfAccountancyMovements=የእንቅስቃሴዎች ብዛት
-ACCOUNTING_DISABLE_BINDING_ON_SALES=በሽያጭ ላይ የሂሳብ አያያዝ እና ማስተላለፍን ያሰናክሉ (የደንበኛ ደረሰኞች በሂሳብ አያያዝ ውስጥ አይገቡም)
-ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=በግዢዎች ላይ በሂሳብ አያያዝ ውስጥ ማሰር እና ማስተላለፍን ያሰናክሉ (የሻጭ ደረሰኞች በሂሳብ አያያዝ ውስጥ አይወሰዱም)
-ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=በወጪ ሪፖርቶች ላይ የሂሳብ አያያዝ እና ማስተላለፍን ያሰናክሉ (የወጪ ሪፖርቶች በሂሳብ አያያዙም)
-ACCOUNTING_ENABLE_LETTERING=በሂሳብ አያያዝ ውስጥ የፊደል አጻጻፍ ተግባርን ያንቁ
-ACCOUNTING_ENABLE_LETTERING_DESC=እነዚህ አማራጮች ሲነቁ በእያንዳንዱ የሂሳብ መዝገብ ላይ የተለያዩ የሂሳብ እንቅስቃሴዎችን በአንድ ላይ ማቧደን እንዲችሉ ኮድ መግለፅ ይችላሉ። ቀደም ባሉት ጊዜያት, የተለያዩ መጽሔቶች በተናጥል ሲተዳደሩ, ይህ ባህሪ የተለያዩ መጽሔቶችን የመንቀሳቀስ መስመሮችን በአንድ ላይ ማቧደን አስፈላጊ ነበር. ነገር ግን፣ በዶሊባርር አካውንቲንግ፣ እንደዚህ ያለ የመከታተያ ኮድ፣ "<b>%s<span class='notranslate'>b09a4b78z09f17 span>" አስቀድሞ በራስ ሰር ተቀምጧል፣ ስለዚህ አውቶማቲክ ፊደላት አስቀድሞ ተከናውኗል፣ የስህተት ስጋት የለውም፣ ስለዚህ ይህ ባህሪ ለጋራ አጠቃቀም የማይጠቅም ሆኗል። በእጅ የፊደል አጻጻፍ ባህሪ በሂሳብ መዝገብ ውስጥ መረጃን ለማስተላለፍ የሚያደርገውን የኮምፒተር ሞተር ለማያምኑ ለዋና ተጠቃሚዎች ይሰጣል።
-EnablingThisFeatureIsNotNecessary=ይህንን ባህሪ ማንቃት ለጠንካራ የሂሳብ አያያዝ አስተዳደር አስፈላጊ አይሆንም።
-ACCOUNTING_ENABLE_AUTOLETTERING=ወደ አካውንቲንግ ሲተላለፉ አውቶማቲክ ፊደላትን አንቃ
-ACCOUNTING_ENABLE_AUTOLETTERING_DESC=የደብዳቤው ኮድ በራስ-ሰር ይፈልቃል እና ይጨምራል እናም በዋና ተጠቃሚ አልተመረጠም።
-ACCOUNTING_LETTERING_NBLETTERS=የፊደል አጻጻፍ ኮድ በሚፈጥሩበት ጊዜ የፊደሎች ብዛት (ነባሪ 3)
-ACCOUNTING_LETTERING_NBLETTERS_DESC=አንዳንድ የሂሳብ ሶፍትዌሮች ባለ ሁለት ፊደል ኮድ ብቻ ነው የሚቀበሉት። ይህ ግቤት ይህንን ገጽታ እንዲያዘጋጁ ያስችልዎታል. የነባሪ ፊደሎች ቁጥር ሦስት ነው።
-OptionsAdvanced=የላቁ አማራጮች
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=በአቅራቢዎች ግዢ ላይ የተጨማሪ እሴት ታክስ አስተዳደርን ያግብሩ
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=ይህ አማራጭ ሲነቃ፣ አቅራቢው ወይም የተሰጠው የአቅራቢ ደረሰኝ ወደ ሂሳብ ሒሳብ በተለየ መንገድ መተላለፍ እንዳለበት መግለፅ ይችላሉ፡ ተጨማሪ ዴቢት እና ክሬዲት መስመር በሂሳብ መዝገብ ውስጥ በ2 የተሰጡ ሂሳቦች በ‹‹< ውስጥ ከተገለፀው የመለያ ገበታው ላይ ይወጣሉ። span class='notranslate'>%s</span>" ማዋቀር ገጽ።
 
 ## Export
 NotExportLettering=ፋይሉን በሚፈጥሩበት ጊዜ ፊደሉን ወደ ውጭ አይላኩ
