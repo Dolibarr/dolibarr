@@ -6640,21 +6640,21 @@ abstract class CommonObject
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'point') { // for point type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_PointFromWKB('".$new_array_options[$key]."')";
+						$sql .= ",ST_PointFromWKB('".$this->db->escape($new_array_options[$key])."')";
 					} else {
 						$sql .= ",null";
 					}
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'linestrg') { // for linestring type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_LineFromWKB('".$new_array_options[$key]."')";
+						$sql .= ",ST_LineFromWKB('".$this->db->escape($new_array_options[$key])."')";
 					} else {
 						$sql .= ",null";
 					}
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'polygon') { // for polygon type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_PolyFromWKB('".$new_array_options[$key]."')";
+						$sql .= ",ST_PolyFromWKB('".$this->db->escape($new_array_options[$key])."')";
 					} else {
 						$sql .= ",null";
 					}
