@@ -108,6 +108,7 @@ if ($action == 'initbarcodethirdparties') {
 		$nbok = 0;
 		if (!empty($eraseallthirdpartybarcode)) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
+			$sql .= " AND entity IN (".getEntity('societe').")";
 			$sql .= " SET barcode = NULL";
 			$resql = $db->query($sql);
 			if ($resql) {
@@ -120,6 +121,7 @@ if ($action == 'initbarcodethirdparties') {
 			$sql = "SELECT rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe";
 			$sql .= " WHERE barcode IS NULL or barcode = ''";
+			$sql .= " AND entity IN (".getEntity('societe').")";
 			$sql .= $db->order("datec", "ASC");
 			$sql .= $db->plimit($maxperinit);
 
@@ -211,6 +213,7 @@ if ($action == 'initbarcodeproducts') {
 		if (!empty($eraseallproductbarcode)) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product";
 			$sql .= " SET barcode = NULL";
+			$sql .= " WHERE entity IN (".getEntity('product').")";
 			$resql = $db->query($sql);
 			if ($resql) {
 				setEventMessages($langs->trans("AllBarcodeReset"), null, 'mesgs');
@@ -222,6 +225,7 @@ if ($action == 'initbarcodeproducts') {
 			$sql = "SELECT rowid, ref, fk_product_type";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product";
 			$sql .= " WHERE barcode IS NULL or barcode = ''";
+			$sql .= " AND entity IN (".getEntity('product').")";
 			$sql .= $db->order("datec", "ASC");
 			$sql .= $db->plimit($maxperinit);
 
@@ -322,6 +326,7 @@ if (isModEnabled('societe')) {
 	}
 
 	$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."societe";
+	$sql .= " WHERE entity IN (".getEntity('societe').")";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
@@ -376,6 +381,7 @@ if (isModEnabled('product') || isModEnabled('service')) {
 	$sql = "SELECT count(rowid) as nb, fk_product_type, datec";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product";
 	$sql .= " WHERE barcode IS NULL OR barcode = ''";
+	$sql .= " AND entity IN (".getEntity('product').")";
 	$sql .= " GROUP BY fk_product_type, datec";
 	$sql .= " ORDER BY datec";
 	$resql = $db->query($sql);
@@ -394,6 +400,7 @@ if (isModEnabled('product') || isModEnabled('service')) {
 	}
 
 	$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."product";
+	$sql .= " WHERE entity IN (".getEntity('product').")";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
