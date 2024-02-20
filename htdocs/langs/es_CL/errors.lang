@@ -72,7 +72,6 @@ ErrorFileIsInfectedWithAVirus=El programa antivirus no pudo validar el archivo (
 ErrorNumRefModel=Existe una referencia en la base de datos (%s) y no es compatible con esta regla de numeración. Elimine la referencia de registro o renombrada para activar este módulo.
 ErrorQtyTooLowForThisSupplier=Cantidad demasiado baja para este proveedor o ningún precio definido en este producto para este proveedor
 ErrorOrdersNotCreatedQtyTooLow=Algunos pedidos no se han creado debido a cantidades demasiado bajas
-ErrorModuleSetupNotComplete=La configuración del módulo %s parece estar incompleta. Vaya a Inicio - Configuración - Módulos para completar.
 ErrorBadMaskFailedToLocatePosOfSequence=Error, máscara sin número de secuencia
 ErrorBadMaskBadRazMonth=Error, mal valor de reinicio
 ErrorCounterMustHaveMoreThan3Digits=El contador debe tener más de 3 dígitos

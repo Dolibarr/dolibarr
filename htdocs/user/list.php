@@ -83,7 +83,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -175,7 +175,7 @@ $searchCategoryUserOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryUserOperator = GETPOSTINT('search_category_user_operator');
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
-	$searchCategoryUserOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
+	$searchCategoryUserOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
 $searchCategoryUserList = GETPOST('search_category_user_list', 'array');
 $catid = GETPOST('catid', 'int');
@@ -267,7 +267,7 @@ if (empty($reshook)) {
 		$search_datelastlogin = "";
 		$search_datepreviouslogin = "";
 		$search_date_creation = "";
-		$search_date_update = "";
+		$search_date_modification = "";
 		$search_categ = 0;
 		$toselect = array();
 		$search_array_options = array();
@@ -372,7 +372,7 @@ $sql .= " u.fk_user,";
 $sql .= " u.ref_employee, u.national_registration_number, u.job, u.salary, u.datelastlogin, u.datepreviouslogin,";
 $sql .= " u.datestartvalidity, u.dateendvalidity,";
 $sql .= " u.ldap_sid, u.statut as status, u.entity,";
-$sql .= " u.tms as date_update, u.datec as date_creation,";
+$sql .= " u.tms as date_modification, u.datec as date_creation,";
 $sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.office_phone as ofice_phone2, u2.user_mobile as user_mobile2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2, u2.statut as status2,";
 $sql .= " s.nom as name, s.canvas";
 // Add fields from extrafields
@@ -491,7 +491,7 @@ if ($search_warehouse > 0) {
 	$sql .= " AND u.fk_warehouse = ".((int) $search_warehouse);
 }
 if (isModEnabled('salaries') && $contextpage == 'employeelist' && !$user->hasRight("salaries", "readall")) {
-	$sql .= " AND u.rowid IN (".$db->sanitize(join(',', $childids)).")";
+	$sql .= " AND u.rowid IN (".$db->sanitize(implode(',', $childids)).")";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -692,7 +692,7 @@ if ($search_all) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
 	print '<!-- Search done like if USER_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
@@ -735,7 +735,7 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
@@ -1324,7 +1324,7 @@ while ($i < $imaxinloop) {
 		// Date modification
 		if (!empty($arrayfields['u.tms']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

@@ -493,7 +493,7 @@ if ($action == 'edit') {
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
 	print "<br><br>\n";
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td></td></tr>';
 
@@ -510,7 +510,7 @@ if ($action == 'edit') {
 	}
 	print '</td></tr>';
 
-	if (getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') && $conf->global->MAIN_MAIL_SENDMODE_TICKET != 'default') {
+	if (getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') && getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') != 'default') {
 		// Host server
 		if ($linuxlike && (getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') == 'mail')) {
 			//print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
@@ -558,7 +558,7 @@ if ($action == 'edit') {
 			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
 			if (isset($conf->global->MAIN_MAIL_SENDMODE_TICKET) && in_array($conf->global->MAIN_MAIL_SENDMODE_TICKET, array('smtps', 'swiftmailer'))) {
 				if (function_exists('openssl_open')) {
-					print yn($conf->global->MAIN_MAIL_EMAIL_TLS_TICKET);
+					print yn(getDolGlobalString('MAIN_MAIL_EMAIL_TLS_TICKET'));
 				} else {
 					print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 				}
@@ -575,7 +575,7 @@ if ($action == 'edit') {
 			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
 			if (isset($conf->global->MAIN_MAIL_SENDMODE_TICKET) && in_array($conf->global->MAIN_MAIL_SENDMODE_TICKET, array('smtps', 'swiftmailer'))) {
 				if (function_exists('openssl_open')) {
-					print yn($conf->global->MAIN_MAIL_EMAIL_STARTTLS_TICKET);
+					print yn(getDolGlobalString('MAIN_MAIL_EMAIL_STARTTLS_TICKET'));
 				} else {
 					print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 				}
@@ -615,8 +615,8 @@ if ($action == 'edit') {
 
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 
-	if (getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') && $conf->global->MAIN_MAIL_SENDMODE_TICKET != 'default') {
-		if ($conf->global->MAIN_MAIL_SENDMODE_TICKET != 'mail' || !$linuxlike) {
+	if (getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') && getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') != 'default') {
+		if (getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') != 'mail' || !$linuxlike) {
 			if (function_exists('fsockopen') && $port && $server) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
 			}
@@ -695,7 +695,7 @@ if ($action == 'edit') {
 		$formmail->ckeditortoolbar = 'dolibarr_mailings';
 		// Tableau des substitutions
 		$formmail->substit = $substitutionarrayfortest;
-		// Tableau des parametres complementaires du post
+		// Tableau des parameters complementaires du post
 		$formmail->param["action"] = "send";
 		$formmail->param["models"] = "body";
 		$formmail->param["mailid"] = 0;

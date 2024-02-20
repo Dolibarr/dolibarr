@@ -29,6 +29,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/functions2.lib.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
@@ -69,88 +70,8 @@ if (! defined("NOLOGIN")) {
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class Functions2LibTest extends PHPUnit\Framework\TestCase
+class Functions2LibTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 * @return CoreTest
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		//$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		//$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-	}
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
-	}
-
-
 	/**
 	 * testJsUnEscape
 	 *
@@ -158,7 +79,7 @@ class Functions2LibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testJsUnEscape()
 	{
-		$result=jsUnEscape('%u03BD%u03B5%u03BF');
+		$result = jsUnEscape('%u03BD%u03B5%u03BF');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('νεο', $result);
 	}
@@ -170,7 +91,7 @@ class Functions2LibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testIsValidMailDomain()
 	{
-		$mail = 'bidon@unvalid.unvalid';
+		$mail = 'bidon@invalid.invalid';
 		$result = isValidMailDomain($mail);
 		$this->assertEquals(0, $result, 'Email isValidMailDomain('.$mail.') should return 0 (not valid) but returned '.$result);
 
@@ -252,35 +173,35 @@ class Functions2LibTest extends PHPUnit\Framework\TestCase
 	public function testIsIP()
 	{
 		// Not valid
-		$ip='a299.299.299.299';
-		$result=is_ip($ip);
+		$ip = 'a299.299.299.299';
+		$result = is_ip($ip);
 		print __METHOD__." for ".$ip." result=".$result."\n";
 		$this->assertEquals(0, $result, $ip);
 
 		// Reserved IP range (not checked by is_ip function)
-		$ip='169.254.0.0';
-		$result=is_ip($ip);
+		$ip = '169.254.0.0';
+		$result = is_ip($ip);
 		print __METHOD__." for ".$ip." result=".$result."\n";
 		//$this->assertEquals(2,$result,$ip);      // Assertion disabled because returned value differs between PHP patch version
 
-		$ip='1.2.3.4';
-		$result=is_ip($ip);
+		$ip = '1.2.3.4';
+		$result = is_ip($ip);
 		print __METHOD__." for ".$ip." result=".$result."\n";
 		$this->assertEquals(1, $result, $ip);
 
 		// Private IP ranges
-		$ip='10.0.0.0';
-		$result=is_ip($ip);
+		$ip = '10.0.0.0';
+		$result = is_ip($ip);
 		print __METHOD__." for ".$ip." result=".$result."\n";
 		$this->assertEquals(2, $result, $ip);
 
-		$ip='172.16.0.0';
-		$result=is_ip($ip);
+		$ip = '172.16.0.0';
+		$result = is_ip($ip);
 		print __METHOD__." for ".$ip." result=".$result."\n";
 		$this->assertEquals(2, $result, $ip);
 
-		$ip='192.168.0.0';
-		$result=is_ip($ip);
+		$ip = '192.168.0.0';
+		$result = is_ip($ip);
 		print __METHOD__." for ".$ip." result=".$result."\n";
 		$this->assertEquals(2, $result, $ip);
 	}

@@ -85,8 +85,8 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->partnership->multidir_output[$object->entity]."/".$object->id;
 }
 
-$permissiontoread = $user->rights->partnership->read;
-$permissiontoadd = $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoread = $user->hasRight('partnership', 'read');
+$permissiontoadd = $user->hasRight('partnership', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 $managedfor = getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 
 // Security check - Protection if external user
@@ -142,7 +142,7 @@ $form = new Form($db);
 
 if ($object->id > 0) {
 	$title = $langs->trans("Agenda");
-	//if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
+	//if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
 	$help_url = '';
 	llxHeader('', $title, $help_url);
 

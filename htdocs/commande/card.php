@@ -129,7 +129,7 @@ $usercancancel      =  ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user
 $usercansend        =   (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight('commande', 'order_advance', 'send'));
 $usercangeneretedoc =   (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight('commande', 'order_advance', 'generetedoc'));
 
-$usermustrespectpricemin    = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && empty($user->rights->produit->ignore_price_min_advance)) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
+$usermustrespectpricemin    = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('produit', 'ignore_price_min_advance')) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
 $usercancreatepurchaseorder = ($user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer'));
 
 $permissionnote    = $usercancreate;     //  Used by the include of actions_setnotes.inc.php
@@ -165,6 +165,8 @@ if (empty($reshook)) {
 			}
 		}
 	}
+
+	$selectedLines = GETPOST('toselect', 'array');
 
 	if ($cancel) {
 		if (!empty($backtopageforcancel)) {
@@ -206,11 +208,18 @@ if (empty($reshook)) {
 	} elseif ($action == 'reopen' && $usercancreate) {
 		// Reopen a closed order
 		if ($object->statut == Commande::STATUS_CANCELED || $object->statut == Commande::STATUS_CLOSED) {
-			$result = $object->set_reopen($user);
-			if ($result > 0) {
-				setEventMessages($langs->trans('OrderReopened', $object->ref), null);
+			if (getDolGlobalInt('ORDER_REOPEN_TO_DRAFT')) {
+				$result = $object->setDraft($user, $idwarehouse);
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 			} else {
-				setEventMessages($object->error, $object->errors, 'errors');
+				$result = $object->set_reopen($user);
+				if ($result > 0) {
+					setEventMessages($langs->trans('OrderReopened', $object->ref), null);
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 			}
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
@@ -224,7 +233,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate) {
 		// Remove a product line
-		$result = $object->deleteline($user, $lineid);
+		$result = $object->deleteLine($user, $lineid);
 		if ($result > 0) {
 			// reorder lines
 			$object->line_order(true);
@@ -258,7 +267,6 @@ if (empty($reshook)) {
 		// Add order
 		$datecommande = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 		$date_delivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
-		$selectedLines = GETPOST('toselect', 'array');
 
 		if ($datecommande == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Date')), null, 'errors');
@@ -282,24 +290,24 @@ if (empty($reshook)) {
 			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->note_public = GETPOST('note_public', 'restricthtml');
 			$object->source = GETPOST('source_id', 'int');
-			$object->fk_project = GETPOST('projectid', 'int');
+			$object->fk_project = GETPOSTINT('projectid');
 			$object->ref_client = GETPOST('ref_client', 'alpha');
 			$object->model_pdf = GETPOST('model');
-			$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
-			$object->deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
-			$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
-			$object->fk_account = GETPOST('fk_account', 'int');
-			$object->availability_id = GETPOST('availability_id');
-			$object->demand_reason_id = GETPOST('demand_reason_id', 'int');
+			$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
+			$object->deposit_percent = GETPOSTFLOAT('cond_reglement_id_deposit_percent');
+			$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
+			$object->fk_account = GETPOSTINT('fk_account');
+			$object->availability_id = GETPOSTINT('availability_id');
+			$object->demand_reason_id = GETPOSTINT('demand_reason_id');
 			$object->delivery_date = $date_delivery;
-			$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
-			$object->warehouse_id = GETPOST('warehouse_id', 'int');
-			$object->fk_delivery_address = GETPOST('fk_address', 'int');
-			$object->contact_id = GETPOST('contactid', 'int');
-			$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
+			$object->warehouse_id = GETPOSTINT('warehouse_id');
+			$object->fk_delivery_address = GETPOSTINT('fk_address');
+			$object->contact_id = GETPOSTINT('contactid');
+			$object->fk_incoterms = GETPOSTINT('incoterm_id');
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-			$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
+			$object->multicurrency_tx = (float) price2num(GETPOST('originmulticurrency_tx'));
 			// Fill array 'array_options' with data from add form
 			if (!$error) {
 				$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -586,7 +594,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setconditions' && $usercancreate) {
-		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'), GETPOST('cond_reglement_id_deposit_percent', 'alpha'));
+		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'), GETPOSTFLOAT('cond_reglement_id_deposit_percent'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		} else {
@@ -608,7 +616,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
 		// Set incoterm
-		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTFLOAT('location_incoterms'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -908,7 +916,7 @@ if (empty($reshook)) {
 					$desc = $prod->description;
 				}
 
-				//If text set in desc is the same as product descpription (as now it's preloaded) whe add it only one time
+				//If text set in desc is the same as product descpription (as now it's preloaded) we add it only one time
 				if ($product_desc==$desc && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
 					$product_desc='';
 				}
@@ -994,7 +1002,7 @@ if (empty($reshook)) {
 
 			// Margin
 			$fournprice = price2num(GETPOST('fournprice'.$predef) ? GETPOST('fournprice'.$predef) : '');
-			$buyingprice = price2num(GETPOST('buying_price'.$predef) != '' ? GETPOST('buying_price'.$predef) : ''); // If buying_price is '0', we muste keep this value
+			$buyingprice = price2num(GETPOST('buying_price'.$predef) != '' ? GETPOST('buying_price'.$predef) : ''); // If buying_price is '0', we must keep this value
 
 			// Prepare a price equivalent for minimum price check
 			$pu_equivalent = $pu_ht;
@@ -1154,7 +1162,7 @@ if (empty($reshook)) {
 
 		// Add buying price
 		$fournprice = price2num(GETPOST('fournprice') ? GETPOST('fournprice') : '');
-		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : ''); // If buying_price is '0', we muste keep this value
+		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : ''); // If buying_price is '0', we must keep this value
 
 		// Extrafields Lines
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -1296,7 +1304,7 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'updateline' && $usercancreate && GETPOST('cancel', 'alpha')) {
-		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // Pour reaffichage de la fiche en cours d'edition
+		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); //  To re-display card in edit mode
 		exit();
 	} elseif ($action == 'confirm_validate' && $confirm == 'yes' && $usercanvalidate) {
 		$idwarehouse = GETPOST('idwarehouse', 'int');
@@ -1327,7 +1335,7 @@ if (empty($reshook)) {
 				$error = 0;
 				$deposit = null;
 
-				$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
+				$deposit_percent_from_payment_terms = (float) getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
 				if (
 					GETPOST('generate_deposit', 'alpha') == 'on' && !empty($deposit_percent_from_payment_terms)
@@ -1638,7 +1646,7 @@ if ($action == 'create') {
 }
 $help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-order page-card');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -1661,10 +1669,10 @@ if ($action == 'create' && $usercancreate) {
 
 	$currency_code = $conf->currency;
 
-	$cond_reglement_id = GETPOST('cond_reglement_id', 'int');
-	$deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
-	$mode_reglement_id = GETPOST('mode_reglement_id', 'int');
-	$fk_account = GETPOST('fk_account', 'int');
+	$cond_reglement_id = GETPOSTINT('cond_reglement_id');
+	$deposit_percent = GETPOSTFLOAT('cond_reglement_id_deposit_percent');
+	$mode_reglement_id = GETPOSTINT('mode_reglement_id');
+	$fk_account = GETPOSTINT('fk_account');
 
 	if (!empty($origin) && !empty($originid)) {
 		// Parse element/subelement (ex: project_task)
@@ -1776,16 +1784,16 @@ if ($action == 'create' && $usercancreate) {
 	// If form was posted (but error returned), we must reuse the value posted in priority (standard Dolibarr behaviour)
 	if (!GETPOST('changecompany')) {
 		if (GETPOSTISSET('cond_reglement_id')) {
-			$cond_reglement_id = GETPOST('cond_reglement_id', 'int');
+			$cond_reglement_id = GETPOSTINT('cond_reglement_id');
 		}
 		if (GETPOSTISSET('deposit_percent')) {
-			$deposit_percent = price2num(GETPOST('deposit_percent', 'alpha'));
+			$deposit_percent = GETPOSTFLOAT('deposit_percent');
 		}
 		if (GETPOSTISSET('mode_reglement_id')) {
-			$mode_reglement_id = GETPOST('mode_reglement_id', 'int');
+			$mode_reglement_id = GETPOSTINT('mode_reglement_id');
 		}
 		if (GETPOSTISSET('cond_reglement_id')) {
-			$fk_account = GETPOST('fk_account', 'int');
+			$fk_account = GETPOSTINT('fk_account');
 		}
 	}
 
@@ -1795,7 +1803,7 @@ if ($action == 'create' && $usercancreate) {
 	}
 	if (isModEnabled('stock') && empty($warehouse_id) && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')) {
 		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
-			$warehouse_id = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+			$warehouse_id = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 		}
 		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
 			$warehouse_id = $user->fk_warehouse;
@@ -1847,7 +1855,7 @@ if ($action == 'create' && $usercancreate) {
 			print '<td class="valuefieldcreate">';
 			$filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';
 			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
-			// reload page to retrieve customer informations
+			// reload page to retrieve customer information
 			if (!getDolGlobalString('RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED')) {
 				print '<script>
 				$(document).ready(function() {
@@ -1970,13 +1978,13 @@ if ($action == 'create' && $usercancreate) {
 			print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), !empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : $soc->fk_incoterms, 1).'</label></td>';
 			print '<td class="maxwidthonsmartphone">';
 			$incoterm_id = GETPOST('incoterm_id');
-			$incoterm_location = GETPOST('location_incoterms');
+			$location_incoterms = GETPOST('location_incoterms');
 			if (empty($incoterm_id)) {
 				$incoterm_id = (!empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : $soc->fk_incoterms);
-				$incoterm_location = (!empty($objectsrc->location_incoterms) ? $objectsrc->location_incoterms : $soc->location_incoterms);
+				$location_incoterms = (!empty($objectsrc->location_incoterms) ? $objectsrc->location_incoterms : $soc->location_incoterms);
 			}
 			print img_picto('', 'incoterm', 'class="pictofixedwidth"');
-			print $form->select_incoterms($incoterm_id, $incoterm_location);
+			print $form->select_incoterms($incoterm_id, $location_incoterms);
 			print '</td></tr>';
 		}
 
@@ -2008,7 +2016,7 @@ if ($action == 'create' && $usercancreate) {
 		print '<td>';
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 		$liste = ModelePDFCommandes::liste_modeles($db);
-		$preselected = $conf->global->COMMANDE_ADDON_PDF;
+		$preselected = getDolGlobalString('COMMANDE_ADDON_PDF');
 		print img_picto('', 'pdf', 'class="pictofixedwidth"');
 		print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
 		print "</td></tr>";
@@ -2216,7 +2224,7 @@ if ($action == 'create' && $usercancreate) {
 				// Suggestion to create invoice during order validation is not enabled by default.
 				// Such choice should be managed by the workflow module and trigger. This option generates conflicts with some setup.
 				// It may also break step of creating an order when invoicing must be done from proposals and not from orders
-				$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
+				$deposit_percent_from_payment_terms = (float) getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
 				if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && $user->hasRight('facture', 'creer')) {
 					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
@@ -2487,8 +2495,8 @@ if ($action == 'create' && $usercancreate) {
 
 			// Relative and absolute discounts
 			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
-				$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
-				$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+				$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
+				$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
 			} else {
 				$filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
 				$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
@@ -2534,7 +2542,7 @@ if ($action == 'create' && $usercancreate) {
 			print '</td>';
 			print '</tr>';
 
-			// Delivery date planed
+			// Delivery date planned
 			print '<tr><td>';
 			$editenable = $usercancreate;
 			print $form->editfieldkey("DateDeliveryPlanned", 'date_livraison', '', $object, $editenable);
@@ -2908,7 +2916,7 @@ if ($action == 'create' && $usercancreate) {
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
 			if (empty($reshook)) {
 				// Reopen a closed order
-				if (($object->statut == Commande::STATUS_CLOSED || $object->statut == Commande::STATUS_CANCELED) && $usercancreate) {
+				if (($object->statut == Commande::STATUS_CLOSED || $object->statut == Commande::STATUS_CANCELED) && $usercancreate && (!$object->billed || !getDolGlobalInt('ORDER_DONT_REOPEN_BILLED'))) {
 					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&amp;token='.newToken().'&amp;id='.$object->id, '');
 				}
 
@@ -3037,7 +3045,7 @@ if ($action == 'create' && $usercancreate) {
 
 				// Cancel order
 				if ($object->statut == Commande::STATUS_VALIDATED && !empty($usercancancel)) {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'">'.$langs->trans("Cancel").'</a>';
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'">'.$langs->trans("CancelOrder").'</a>';
 				}
 
 				// Delete order
@@ -3082,6 +3090,15 @@ if ($action == 'create' && $usercancreate) {
 
 			// Show online payment link
 			$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
+
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('doShowOnlinePaymentUrl', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook > 0) {
+				if (isset($hookmanager->resArray['showonlinepaymenturl'])) {
+					$useonlinepayment = $hookmanager->resArray['showonlinepaymenturl'];
+				}
+			}
+
 			if (getDolGlobalString('ORDER_HIDE_ONLINE_PAYMENT_ON_ORDER')) {
 				$useonlinepayment = 0;
 			}

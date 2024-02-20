@@ -107,7 +107,7 @@ $arrayfields = array(
 	'u.login'				=>array('label'=>"User", 'checked'=>1, 'position'=>30),
 	'c.libelle'			=>array('label'=>"Type", 'checked'=>1, 'position'=>40),
 	'pndf.num_payment'	=>array('label'=>"Numero", 'checked'=>1, 'position'=>50, 'tooltip'=>"ChequeOrTransferNumber"),
-	'ba.label'			=>array('label'=>"Account", 'checked'=>1, 'position'=>60, 'enable'=>(isModEnabled("banque"))),
+	'ba.label'			=>array('label'=>"BankAccount", 'checked'=>1, 'position'=>60, 'enable'=>(isModEnabled("banque"))),
 	'pndf.amount'			=>array('label'=>"Amount", 'checked'=>1, 'position'=>70),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -193,7 +193,7 @@ $sql .= ' WHERE ndf.entity IN ('.getEntity("expensereport").')';
 // RESTRICT RIGHTS
 if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')
 	&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('expensereport', 'writeall_advance'))) {
-	$sql .= " AND ndf.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";
+	$sql .= " AND ndf.fk_user_author IN (".$db->sanitize(implode(',', $childids)).")\n";
 }
 
 if ($search_ref) {
@@ -333,7 +333,7 @@ if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
@@ -586,7 +586,7 @@ while ($i < $imaxinloop) {
 
 		// Pyament type
 		if (!empty($arrayfields['c.libelle']['checked'])) {
-			$payment_type = $langs->trans("PaymentType".$objp->paiement_type) != ("PaymentType".$objp->paiement_type) ? $langs->trans("PaymentType".$objp->paiement_type) : $objp->paiement_libelle;
+			$payment_type = $langs->trans("PaymentType".$objp->paiement_type) != "PaymentType".$objp->paiement_type ? $langs->trans("PaymentType".$objp->paiement_type) : $objp->paiement_libelle;
 			print '<td>'.$payment_type.' '.dol_trunc($objp->num_payment, 32).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

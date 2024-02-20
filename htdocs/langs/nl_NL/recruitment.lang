@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Beheer en volg wervingscampagnes voor nieuwe vacatures
 # Admin page
 #
 RecruitmentSetup = Werving instellingen
-Settings = Instellingen
 RecruitmentSetupPage = Stel hier de hoofdopties voor de recruitment module in
 RecruitmentArea=Werving gebied
 PublicInterfaceRecruitmentDesc=Openbare pagina's met vacatures zijn openbare URL's om openstaande vacatures weer te geven en te beantwoorden. Er is een verschillende link voor elke openstaande vacature, te vinden op elk vacatureblad.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Schakel openbare pagina's van open vacatures in
 #
 # About page
 #
-About = Over
 RecruitmentAbout = Over werving
 RecruitmentAboutPage = Over Werving pagina
 NbOfEmployeesExpected=Verwacht aantal werknemers
@@ -77,3 +75,6 @@ ExtrafieldsApplication=Aanvullende attributen (sollicitaties)
 MakeOffer=Doe een aanbod
 WeAreRecruiting=We zijn aan het rekruteren. Dit is een lijst met openstaande vacatures die ingevuld moeten worden...
 NoPositionOpen=Op dit moment geen vacatures
+ConfirmClose=Bevestig de annulering
+ConfirmCloseAsk=Weet u zeker dat u deze sollicitatiekandidatuur wilt annuleren?
+recruitment=Werving

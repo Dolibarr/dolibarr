@@ -66,7 +66,7 @@ class CompanyBankAccount extends Account
 	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
 	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
@@ -131,13 +131,23 @@ class CompanyBankAccount extends Account
 		'stripe_account' => array('type'=>'varchar(128)', 'label'=>'Stripeaccount', 'enabled'=>'1', 'position'=>215, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
 		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>0, 'position'=>230),
 	);
+
+	/**
+	 * @var int ID
+	 */
 	public $id;
+
+	/**
+	 * @var string type
+	 */
 	public $type;
+
 	/**
 	 * @var int		Thirdparty ID
 	 * @deprecated	Use socid
 	 */
 	public $fk_soc;
+
 	/**
 	 * @var int		Thirdparty ID
 	 */
@@ -149,6 +159,10 @@ class CompanyBankAccount extends Account
 	 * @var integer
 	 */
 	public $datec;
+
+	/**
+	 * @var string label
+	 */
 	public $label;
 	public $bank;
 	public $code_banque;
@@ -158,17 +172,45 @@ class CompanyBankAccount extends Account
 	public $bic;
 	public $iban_prefix;
 	public $domiciliation;
+
+	/**
+	 * @var string owner
+	 */
 	public $proprio;
+
+	/**
+	 * @var string owner address
+	 */
 	public $owner_address;
 
 	/**
-	 * @var bool $default_rib  1 = this object is the third party's default bank information
+	 * @var int $default_rib  1 = this object is the third party's default bank information, 0 if not
 	 */
 	public $default_rib;
+
+	/**
+	 * @var int state id
+	 */
 	public $state_id;
+
+	/**
+	 * @var id country id
+	 */
 	public $fk_country;
+
+	/**
+	 * @var string currency code
+	 */
 	public $currency_code;
+
+	/**
+	 * @var string rum
+	 */
 	public $rum;
+
+	/**
+	 * @var int date rum
+	 */
 	public $date_rum;
 
 	/**
@@ -185,6 +227,10 @@ class CompanyBankAccount extends Account
 	public $exp_date_year;
 	public $country_code;
 	public $approved;
+
+	/**
+	 * @var string email
+	 */
 	public $email;
 	public $ending_date;
 	public $max_total_amount_of_all_payments;
@@ -193,8 +239,19 @@ class CompanyBankAccount extends Account
 	public $total_amount_of_all_payments;
 
 
+	/**
+	 * @var string external payment site
+	 */
 	public $ext_payment_site;	// Name of the external payment system ('StripeLive', 'StripeTest', 'StancerLive', 'StancerTest', ...)
+
+	/**
+	 * @var string comment
+	 */
 	public $comment;
+
+	/**
+	 * @var string ip address
+	 */
 	public $ipaddress;
 
 
@@ -262,7 +319,7 @@ class CompanyBankAccount extends Account
 
 		$error = 0;
 
-		// Check paramaters
+		// Check parameters
 		if (empty($this->socid)) {
 			$this->error = 'BadValueForParameter';
 			$this->errors[] = $this->error;
@@ -415,7 +472,7 @@ class CompanyBankAccount extends Account
 	 *	@param	int		$id			Id of record
 	 * 	@param	int		$socid		Id of company. If this is filled, function will return the first entry found (matching $default and $type)
 	 *  @param	int		$default	If id of company filled, we say if we want first record among all (-1), default record (1) or non default record (0)
-	 *  @param	int		$type		If id of company filled, we say if we want record of this type only
+	 *  @param	string	$type		If id of company filled, we say if we want record of this type only
 	 * 	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $socid = 0, $default = 1, $type = 'ban')
@@ -615,7 +672,7 @@ class CompanyBankAccount extends Account
 		$this->code_banque     = '123';
 		$this->code_guichet    = '456';
 		$this->number          = 'CUST12345';
-		$this->cle_rib         = 50;
+		$this->cle_rib         = '50';
 		$this->bic             = 'CC12';
 		$this->iban            = 'FR999999999';
 		$this->domiciliation   = 'Bank address of customer corp';

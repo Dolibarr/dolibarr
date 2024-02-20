@@ -136,8 +136,8 @@ if ($id > 0 || !empty($ref)) {
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = 0;
 if ($enablepermissioncheck) {
-	$permissiontoread = $user->rights->mymodule->myobject->read;
-	$permissiontoadd = $user->rights->mymodule->myobject->write;
+	$permissiontoread = $user->hasRight('mymodule', 'myobject', 'read');
+	$permissiontoadd = $user->hasRight('mymodule', 'myobject', 'write');
 } else {
 	$permissiontoread = 1;
 	$permissiontoadd = 1;
@@ -193,7 +193,7 @@ if ($object->id > 0) {
 	//$title = $object->ref." - ".$langs->trans("Agenda");
 	$help_url = 'EN:Module_Agenda_En|DE:Modul_Terminplanung';
 
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-mymodule page-card_agenda');
 
 	if (isModEnabled('notification')) {
 		$langs->load("mails");

@@ -61,11 +61,11 @@ if (php_sapi_name() == "cli") {
 	exit(-1);
 }
 
-// librarie core
+// core library
 // Dolibarr environment
 require '../../main.inc.php';
 
-// librarie jobs
+// cron jobs library
 dol_include_once("/cron/class/cronjob.class.php");
 
 global $langs, $conf;

@@ -71,7 +71,7 @@ if ($id > 0 || !empty($ref)) {
 	$object->getrights();
 }
 
-$permissiontoadd = (($object->id == $user->id) || (!empty($user->rights->user->user->lire)));
+$permissiontoadd = (($object->id == $user->id) || ($user->hasRight('user', 'user', 'lire')));
 
 // Security check
 if ($user->socid) {
@@ -539,7 +539,7 @@ if ($result > 0) {
 
 	print '</form>';
 } else {
-	dol_print_error('', 'RecordNotFound');
+	dol_print_error(null, 'RecordNotFound');
 }
 
 // End of page

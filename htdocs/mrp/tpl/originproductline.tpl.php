@@ -22,9 +22,9 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
-global $db;
+global $db, $langs;
 
-if (!empty($form) && !is_object($form)) {
+if (empty($form) || !is_object($form)) {
 	$form = new Form($db);
 }
 
@@ -35,9 +35,13 @@ $qtytoconsumeforline = $this->tpl['qty'] / (!empty($this->tpl['efficiency']) ? $
 $qtytoconsumeforline = price2num($qtytoconsumeforline, 'MS');
 
 $tmpproduct = new Product($db);
-$tmpproduct->fetch($line->fk_product);
+if ($line->fk_product > 0) {
+	$tmpproduct->fetch($line->fk_product);
+}
 $tmpbom = new BOM($db);
-$res = $tmpbom->fetch($line->fk_bom_child);
+if ($line->fk_bom_child > 0) {
+	$res = $tmpbom->fetch($line->fk_bom_child);
+}
 
 ?>
 
@@ -63,14 +67,20 @@ print '</td>';
 print '<td class="right">'.$this->tpl['qty'].(($this->tpl['efficiency'] > 0 && $this->tpl['efficiency'] < 1) ? ' / '.$form->textwithpicto($this->tpl['efficiency'], $langs->trans("ValueOfMeansLoss")).' = '.$qtytoconsumeforline : '').'</td>';
 // Unit
 print '<td class="right">'.measuringUnitString($this->tpl['fk_unit'], '', '', 1).'</td>';
-print '<td class="center">'.(empty($this->tpl['stock']) ? 0 : price2num($this->tpl['stock'], 'MS'));
-if ($this->tpl['seuil_stock_alerte'] != '' && ($this->tpl['stock'] < $this->tpl['seuil_stock_alerte'])) {
-	print ' '.img_warning($langs->trans("StockLowerThanLimit", $this->tpl['seuil_stock_alerte']));
+print '<td class="center">';
+if ($tmpproduct->isStockManaged()) {
+	print (empty($this->tpl['stock']) ? 0 : price2num($this->tpl['stock'], 'MS'));
+	if ($this->tpl['seuil_stock_alerte'] != '' && ($this->tpl['stock'] < $this->tpl['seuil_stock_alerte'])) {
+		print ' '.img_warning($langs->trans("StockLowerThanLimit", $this->tpl['seuil_stock_alerte']));
+	}
 }
 print '</td>';
-print '<td class="center">'.((empty($this->tpl['virtual_stock']) ? 0 : price2num($this->tpl['virtual_stock'], 'MS')));
-if ($this->tpl['seuil_stock_alerte'] != '' && ($this->tpl['virtual_stock'] < $this->tpl['seuil_stock_alerte'])) {
-	print ' '.img_warning($langs->trans("StockLowerThanLimit", $this->tpl['seuil_stock_alerte']));
+print '<td class="center">';
+if ($tmpproduct->isStockManaged()) {
+	print ((empty($this->tpl['virtual_stock']) ? 0 : price2num($this->tpl['virtual_stock'], 'MS')));
+	if ($this->tpl['seuil_stock_alerte'] != '' && ($this->tpl['virtual_stock'] < $this->tpl['seuil_stock_alerte'])) {
+		print ' '.img_warning($langs->trans("StockLowerThanLimit", $this->tpl['seuil_stock_alerte']));
+	}
 }
 print '</td>';
 print '<td class="center">'.($this->tpl['qty_frozen'] ? yn($this->tpl['qty_frozen']) : '').'</td>';

@@ -56,7 +56,7 @@ $donstatic = new Don($db);
 
 $help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';
 
-llxHeader('', $langs->trans("Donations"), $help_url);
+llxHeader('', $langs->trans("Donations"), $help_url, '', 0, 0, '', '', '', 'mod-donation page-index');
 
 $nb = array();
 $somme = array();
@@ -230,8 +230,8 @@ if ($resql) {
 
 			print '<td class="nobordernopadding">';
 			print $obj->societe;
-			print($obj->societe && ($obj->lastname || $obj->firstname) ? ' / ' : '');
-			print dolGetFirstLastname($obj->lastname, $obj->firstname);
+			print ($obj->societe && ($obj->lastname || $obj->firstname) ? ' / ' : '');
+			print dolGetFirstLastname($obj->firstname, $obj->lastname);
 			print '</td>';
 
 			print '<td class="right nobordernopadding nowraponall amount">';

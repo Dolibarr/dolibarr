@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->loadLangs(array("members", "companies"));
+$langs->loadLangs(array("members", "companies", "banks"));
 
 $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'create'/'add', 'edit'/'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -172,10 +172,10 @@ $accountstatic = new Account($db);
 $now = dol_now();
 
 // List of subscriptions
-$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, d.photo, d.statut,";
+$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, d.photo, d.statut as status,";
 $sql .= " d.gender, d.email, d.morphy,";
 $sql .= " c.rowid as crowid, c.fk_type, c.subscription,";
-$sql .= " c.dateadh, c.datef, c.datec as date_creation, c.tms as date_update,";
+$sql .= " c.dateadh, c.datef, c.datec as date_creation, c.tms as date_modification,";
 $sql .= " c.fk_bank as bank, c.note as note_private,";
 $sql .= " b.fk_account";
 // Add fields from extrafields
@@ -388,7 +388,7 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if MYOBJECT_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>'."\n";
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>'."\n";
 }
 
 $moreforfilter = '';
@@ -417,7 +417,7 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
@@ -611,7 +611,8 @@ while ($i < $imaxinloop) {
 	$adherent->firstname = $obj->firstname;
 	$adherent->ref = $obj->rowid;
 	$adherent->id = $obj->rowid;
-	$adherent->statut = $obj->statut;
+	$adherent->statut = $obj->status;
+	$adherent->status = $obj->status;
 	$adherent->login = $obj->login;
 	$adherent->photo = $obj->photo;
 	$adherent->gender = $obj->gender;
@@ -639,7 +640,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 
-		//fetch informations needs on this mode
+		//fetch information needs on this mode
 
 		if ($obj->fk_account > 0) {
 			$accountstatic->id = $obj->fk_account;
@@ -672,14 +673,14 @@ while ($i < $imaxinloop) {
 		}
 		// Ref
 		if (!empty($arrayfields['d.ref']['checked'])) {
-			print '<td>'.$subscription->getNomUrl(1).'</td>';
+			print '<td class="nowraponall">'.$subscription->getNomUrl(1).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Type
 		if (!empty($arrayfields['d.fk_type']['checked'])) {
-			print '<td class="nowraponall">';
+			print '<td class="tdoverflowmax100">';
 			if ($typeid > 0) {
 				print $adht->getNomUrl(1);
 			}
@@ -739,14 +740,14 @@ while ($i < $imaxinloop) {
 
 		// Date start
 		if (!empty($arrayfields['c.dateadh']['checked'])) {
-			print '<td class="center">'.dol_print_date($db->jdate($obj->dateadh), 'day')."</td>\n";
+			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->dateadh), 'day')."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Date end
 		if (!empty($arrayfields['c.datef']['checked'])) {
-			print '<td class="center">'.dol_print_date($db->jdate($obj->datef), 'day')."</td>\n";
+			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->datef), 'day')."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -784,7 +785,7 @@ while ($i < $imaxinloop) {
 		// Date modification
 		if (!empty($arrayfields['c.tms']['checked'])) {
 			print '<td class="nowrap center">';
-			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

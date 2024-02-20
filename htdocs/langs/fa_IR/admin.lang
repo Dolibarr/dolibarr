@@ -149,7 +149,6 @@ MaxNbOfLinesForBoxes=حداکثر سطور وسایل
 AllWidgetsWereEnabled=همۀ وسیله‌های موجود فعال هستند
 WidgetAvailable=Widget available
 PositionByDefault=ترتیب پیش‌فرض
-Position=مکان
 MenusDesc=اداره‌کننده‌های فهرست‌ها محتوای دو نوار فهرست را تعیین می‌کنند (افقی و عمودی).
 MenusEditorDesc=ویرایش‌گر فهرست به شما امکان تعریف واحد‌های اختیاری فهرستی را می‌دهید. در استفاده آن سعی کنید از گزینه‌ها و فهرست‌های نامطمئن و غیرقابل‌دسترس استفاده ننمائید. <br> برخی واحد‌ها گزینه‌های فهرست خود را اضافه می‌کنند (معمولا در فهرست <b>همه</b>). در صورتی‌که به اشتباه این گزینه‌ها را حذف کنید، می‌توانید با استفاده از غیرفعال‌کردن و دوباره فعال‌کردن واحد مورد نظر، آن گزینه را بازگردانید.
 MenuForUsers=فهرست برای کاربران
@@ -220,13 +219,14 @@ ModulesMarketPlaces=پیدا کردن واحد‌ها/برنامه‌های بی
 ModulesDevelopYourModule=ساختن برنامه/واحد دل‌خواه
 ModulesDevelopDesc=همچنین می‌توانید واحد‌های کاربردی دل‌خواه خودتان را ایجاد کنید یا شخصی برای توسعۀ نیازمندی‌های خود پیدا کنید تا این کار را انجام دهد.
 DOLISTOREdescriptionLong=به جای مراجعه به وبگاه <a href="https://www.dolistore.com">www.dolistore.com</a> برای پید کردن یک واحد مورد نیاز از بیرون، می‌توانید این ابزار داخلی را که بر روی بازارچۀ بیرونی جستجو می‌کند استفاده نمائید (ممکن است کند باشد، نیاز به دسترسی اینترنت دارد)...
-NewModule=New module
 FreeModule=رایگان
 CompatibleUpTo=سازگار با نسخۀ %s
 NotCompatible=به نظر نمی‌رسد این واحد با نسخۀ %s Dolibarr  نصب شده سازگار باشد (سازگاری حداقل با %s و حداکثر با %s ).
 CompatibleAfterUpdate=این واحد نیازمند روزآمدسازی Dolibarr نسخۀ %s است (حداقل %s - حداکثر %s)
 SeeInMarkerPlace=نمایش در بازارچه
 SeeSetupOfModule=See setup of module %s
+SeeSetupPage=See setup page at %s
+SeeReportPage=See report page at %s
 SetOptionTo=Set option <b>%s</b> to %s
 Updated=روزآمد شده
 AchatTelechargement=خرید / بارگیری
@@ -292,22 +292,22 @@ EmailSenderProfiles=نمایه‌های ارسال‌کنندۀ رایانامه
 EMailsSenderProfileDesc=You can keep this section empty. If you enter some emails here, they will be added to the list of possible senders into the combobox when your write a new email.
 MAIN_MAIL_SMTP_PORT=درگاه SMTP/SMTPS (مقدار پیش‌فرض در php.ini : <b>%s</b>)
 MAIN_MAIL_SMTP_SERVER=میزبان SMTP/SMTPS (مقدار پیش‌فرض در php.ini : <b>%s</b> )
-MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike=درگاه SMTP/SMTPS (در سامانه‌های ردۀ یونیکس تعریف نشده )
-MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike=میزبان SMTP/SMTPS (در سامانه‌های ردۀ یونیکس تعریف نشده )
-MAIN_MAIL_EMAIL_FROM=رایانامۀ ارسال کننده برای ارسال‌های خودکار (مقدار پیش‌فرض در php.ini : <b>%s</b> )
-EMailHelpMsgSPFDKIM=To prevent Dolibarr emails to be classified as spam, make sure that the server is authorized to send e-mails from this address by SPF and DKIM configuration
+MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike=SMTP/SMTPS Port
+MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike=SMTP/SMTPS Host
+MAIN_MAIL_EMAIL_FROM=Sender email for automatic emails
+EMailHelpMsgSPFDKIM=To prevent Dolibarr emails to be classified as spam, make sure that the server is authorized to send e-mails under this identity (by checking the SPF and DKIM configuration of the domain name)
 MAIN_MAIL_ERRORS_TO=رایانامه‌ای که برای ارسال پاسخ در نظر گرفت می‌شود ( بخش‌های "Errors-To" در پیام فرستاده شده)
 MAIN_MAIL_AUTOCOPY_TO= ارسال یک نسخه (Bcc) از همۀ پیام‌های ارسال شده به
 MAIN_DISABLE_ALL_MAILS=توقف ارسال همۀ رایانامه‌ها (برای اهداف آزمایشی یا نمایشی)
 MAIN_MAIL_FORCE_SENDTO=ارسال همۀ رایانامه‌ها به ( به جای دریافت‌کننده‌های واقعی، برای اهداف آزمایشی)
 MAIN_MAIL_ENABLED_USER_DEST_SELECT=Suggest emails of employees (if defined) into the list of predefined recipient when writing a new email
-MAIN_MAIL_NO_WITH_TO_SELECTED=Do not select a default recipient even if single choice
-MAIN_MAIL_SENDMODE=روش ارسال رایانامه
+MAIN_MAIL_NO_WITH_TO_SELECTED=Do not select a default recipient even if there is only 1 possible choice
+MAIN_MAIL_SENDMODE=Sending method
 MAIN_MAIL_SMTPS_ID=شناسۀ SMTP (شناسه‌ای که سرویس دهنده برای اعتبار ورود نیازمند است)
 MAIN_MAIL_SMTPS_PW=گذرواژۀ SMTP ( در صورتی که سرویس‌دهندۀ ارسال کننده نیازمند اعتبار ورود باشد)
 MAIN_MAIL_EMAIL_TLS=استفاده از رمزبندی TLS از (SSL)
 MAIN_MAIL_EMAIL_STARTTLS=استفاده از رمزبندی TLS از (STARTTLS)
-MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED=Authorise les certificats auto-signés
+MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED=Authorize self-signed certificates
 MAIN_MAIL_EMAIL_DKIM_ENABLED=استفاده از DKIM برای تولید امضای رایانامه
 MAIN_MAIL_EMAIL_DKIM_DOMAIN=دامنۀ رایانامه برای استفاده به همراه DKIM
 MAIN_MAIL_EMAIL_DKIM_SELECTOR=نام انتخاب کنندۀ DKIM
@@ -315,7 +315,7 @@ MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY=کلید خصوصی برای امضای DKIM
 MAIN_DISABLE_ALL_SMS=توقف ارسال پیامک ( برای حالت آزمایشی یا نمایشی)
 MAIN_SMS_SENDMODE=روش ارسال پیامک
 MAIN_MAIL_SMS_FROM=شمارۀ پیش‌فرض خط تلفن فرستندۀ پیامک
-MAIN_MAIL_DEFAULT_FROMTYPE=نشانی پیش‌فرض برای فرستندۀ رایانامه‌های دل‌خواه و دستی ( رایانامۀ کاربر یا شرکت)
+MAIN_MAIL_DEFAULT_FROMTYPE=Default sender email preselected on forms to send emails
 UserEmail=رایانامۀ کاربر
 CompanyEmail=رایانامۀ شرکت
 FeatureNotAvailableOnLinux=این قابلیت در سامانه‌های ردۀ یونیکس وجود ندارد. برنامۀ ارسال رایانامۀ محلی خود را آزمایش کنید.
@@ -417,6 +417,7 @@ PDFLocaltax=قواعد %s
 HideLocalTaxOnPDF=Hide %s rate in column Sale Tax / VAT
 HideDescOnPDF=پنهان کردن توضیح محصولات
 HideRefOnPDF=پنهان کردن شمارۀ مرجع
+ShowProductBarcodeOnPDF=Display the barcode number of the products
 HideDetailsOnPDF=پنهان کردن جزئیات سطور محصولات
 PlaceCustomerAddressToIsoLocation=استفاده از مکان استاندارد فرانسوی (La Poste) برای مکان درج نشانی مشتری
 Library=کتابخانه
@@ -424,7 +425,7 @@ UrlGenerationParameters=مقادیر امن‌سازی نشانی‌های ای�
 SecurityTokenIsUnique=استفاده از یک مقدار securekey منحصربه‌فرد برای هر نشانی اینترنتی
 EnterRefToBuildUrl=مرجع را برای شیء %s وارد کنید
 GetSecuredUrl=نشانی اینترنتی محاسبه شده را دریافت کنید
-ButtonHideUnauthorized=Hide unauthorized action buttons also for internal users (just greyed otherwise)
+ButtonHideUnauthorized=Hide unauthorized action buttons also for internal users (just grayed otherwise)
 OldVATRates=نرخ قدیمی مالیات‌بر‌ارزش‌افزوده
 NewVATRates=نرخ جدید قدیمی مالیات‌بر‌ارزش‌افزوده
 PriceBaseTypeToChange=تغییر قیمت‌ها بر پایۀ مقدار مرجع تعریف شده در
@@ -432,6 +433,7 @@ MassConvert=اجرای تبدیل دسته‌ای
 PriceFormatInCurrentLanguage=Price Format In Current Language
 String=رشته
 String1Line=String (1 line)
+Text=متن
 TextLong=متن طولانی
 TextLongNLines=Long text (n lines)
 HtmlText=نوشتۀ HTML
@@ -458,11 +460,11 @@ ComputedFormula=بخش محاسبه شده
 ComputedFormulaDesc=You can enter here a formula using other properties of object or any PHP coding to get a dynamic computed value. You can use any PHP compatible formulas including the "?" condition operator, and following global object: <strong>$db, $conf, $langs, $mysoc, $user, $objectoffield</strong>.<br><strong>WARNING</strong>: If you need properties of an object not loaded, just fetch yourself the object into your formula like in the second example.<br>Using a computed field means you can't enter yourself any value from interface. Also, if there is a syntax error, the formula may return nothing.<br><br>Example of formula:<br>$objectoffield->id < 10 ? round($objectoffield->id / 2, 2): ($objectoffield->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Example to reload object<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0 ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1')<br><br>Other example of formula to force load of object and its parent object:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
 Computedpersistent=بخش محاسبه‌شدۀ فروشگاه
 ComputedpersistentDesc=بخش‌های محاسبه‌شدۀ اضافی در پایگاه داده ذخیره خواهند شد، به‌هرحال مقدار تنها در زمانی دوباره محاسبه خواهد شد که شیء این بخش تغییر کند. در صورتی که بخش محاسبه‌شده به سایر اشیاء یا داده‌های سراسری وابسته باشد، این مقدار ممکن است خطا باشد!!
-ExtrafieldParamHelpPassword=خالی رها کردن این بخش به معنای این است که مقدار بدون حفاظت ذخیره خواهد شد (بخش مربوطه باید با یک ستاره روی صفحه پنهان باشد).<br> 'auto' را برای استفاده از قواعد حفاظت برای ذخیرۀ گذرواژه در بانک‌داده ذخیره کنید (مقدار خوانده شده کدبندی شده است و امکان خواندن مقدار اصلی دیگر وجود نخواهد داشت)
+ExtrafieldParamHelpPassword=Leaving this field blank means this value will be stored WITHOUT encryption (field is just hidden with stars on screen).<br><br>Enter value 'dolcrypt' to encode value with a reversible encryption algorithm. Clear data can still be known and edited but is encrypted into database.<br><br>Enter 'auto' (or 'md5', 'sha256', 'password_hash', ...) to use the default password encryption algorithm (or md5, sha256, password_hash...) to save the non reversible hashed password into database (no way to retrieve original value)
 ExtrafieldParamHelpselect=فهرست مقادیر باید به صورت سطور به شکل  key,value باشد (که key نمی‌تواند برابر با 0 باشد.)<br><br> برای مثال: <br>1,value1<br>2,value2<br>code3,value3<br>...<br><br>برای برخورداری از فهرستی وابسته به فهرست دیگری از مشخصات تکمیلی:<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>برای برخورداری از یک فهرست وابسته به یک فهرست دیگر:<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
 ExtrafieldParamHelpcheckbox=فهرست مقادیر باید سطوری به شکل key,value باشد که (که key نمی‌تواند برابر با 0 باشد) <br><br> برای مثال: <br>1,value1<br>2,value2 <br>3,value3<br>...
 ExtrafieldParamHelpradio=فهرست مقادیر باید سطوری به شکل key,value باشد که (که key نمی‌تواند برابر با 0 باشد) <br><br> برای مثال: <br>1,value1<br>2,value2 <br>3,value3<br>...
-ExtrafieldParamHelpsellist=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>- id_field is necessarly a primary int key<br>- filtersql is a SQL condition. It can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter which is the current id of current object<br>To use a SELECT into the filter use the keyword $SEL$ to bypass anti-injection protection.<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelpsellist=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>- id_field is necessarily a primary int key<br>- filtersql is a SQL condition. It can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter which is the current id of current object<br>To use a SELECT into the filter use the keyword $SEL$ to bypass anti-injection protection.<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelpchkbxlst=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=Parameters must be ObjectName:Classpath<br>Syntax: ObjectName:Classpath
 ExtrafieldParamHelpSeparator=Keep empty for a simple separator<br>Set this to 1 for a collapsing separator (open by default for new session, then status is kept for each user session)<br>Set this to 2 for a collapsing separator (collapsed by default for new session, then status is kept fore each user session)
@@ -473,7 +475,7 @@ LinkToTestClickToDial=برای آزمایش نشانی ClickToDial برای کا
 RefreshPhoneLink=بازسازی پیوند
 LinkToTest=پیوند قابل کلیک تولید شده برای کاربر <strong>%s</strong> (شمارۀ تلفن را برای آزمایش وارد نمائید)
 KeepEmptyToUseDefault=برای استفاده از مقدار پیش‌فرض چیزی درج نکنید
-KeepThisEmptyInMostCases=In most cases, you can keep this field empy.
+KeepThisEmptyInMostCases=In most cases, you can keep this field empty.
 DefaultLink=پیوند پیش‌فرض
 SetAsDefault=ثبت پیش‌فرض
 ValueOverwrittenByUserSetup=هشدار! این مقدار ممکناست با تغییر تنظیمات برپاسازی کاربر بازنویسی شود (هر کاربر می‌تواند نشانی مخصوص به خود را برای clicktodial تولید کند)
@@ -518,7 +520,7 @@ TheKeyIsTheNameOfHtmlField=این نام بخش مربوط به HTML است. ب�
 PageUrlForDefaultValues=You must enter the relative path of the page URL. If you include parameters in URL, it will be effective if all parameters in browsed URL have the value defined here.
 PageUrlForDefaultValuesCreate=<br>مثال:<br>برای برگۀ ساخت یک شخص سوم، <strong>%s</strong> هست. <br> برای نشانی اینترنتی قسمت‌های خارجی که در پوشۀ دلخواه نصب کرده‌اید، پوشۀ "custom/" را شامل نکنید و مسیری همانند <strong>mymodule/mypage.php</strong> استفاده کنید، حتما مطمئن شوید این‌گونه نباشد  custom/mymodule/mypage.php. <br>‌ در صورتی که مقدار پیش‌فرض را نیاز دارید، در صورتی که نشانی اینترنتی در بردارندۀ مقادیر باشد، شما می‌توانید از <strong>%s</strong> استفاده نمائید.
 PageUrlForDefaultValuesList=<br>مثال:<br> برای صفحۀ فهرست اشخاص سوم، به شکل <strong>%s</strong> می‌باشد. <br> برای نشانی مربوط به قسمت‌های خارجی که در یک پوشۀ دلخواه نصب‌شده، از "custom/" استفاده ننمائید، بلکه از مسیری مثل <strong>mymodule/mypagelist.php</strong> و به شکل custom/mymodule/mypagelist.php نباشد. <br> در صورتی که مقدار پیش فرض را در صورت وجود مقادیر در نشانی اینترنتی مورد نظر دارید از <strong>%s</strong> استفاده کنید
-AlsoDefaultValuesAreEffectiveForActionCreate=به‌یاد داشته باشید که بازنویسی مقادیر پیش‌فرض برای ساخت برگۀ دریافت اطلاعات تنها برای صفحاتی کار می‌کند که درست طراحی شده باشند ( یعنی با مقدار action=create یا presend...)
+AlsoDefaultValuesAreEffectiveForActionCreate=Also note that overwriting default values for form creation works only for pages that were correctly designed (so with parameter action=create or presend...)
 EnableDefaultValues=فعال‌کردن اختصاصی‌سازی مقادیر پیش‌فرض
 EnableOverwriteTranslation=Allow customization of translations
 GoIntoTranslationMenuToChangeThis=برای این کلید با این کد یک ترجمه پیدا شده است. برای تغییر این مقدار، شما باید از گزینۀ خانه-برپاسازی-ترجمه استفاده نمائید.
@@ -541,7 +543,7 @@ DAV_ALLOW_PRIVATE_DIRTooltip=پوشۀ اختصاصی عام، یک پوشۀ WebD
 DAV_ALLOW_PUBLIC_DIR=فعال کردن پوشۀ عام همگانی (پوشۀ اختصاصی WebDAV با نام "public" - اعتبارسنجی ورود لازم نیست)
 DAV_ALLOW_PUBLIC_DIRTooltip=پوشۀ عام همگانی یک پوشۀ WebDAV است که همگان می‌توانند (در حالت نوشتاری و خواندنی) به آن دسترسی داشته باشند، که اعتبارسنجی ورود (حساب نام‌کاربری/گذرواژه) هم لازم نیست.
 DAV_ALLOW_ECM_DIR=فعال کردن پوشۀ خصوصی DMS/ECM (پوشۀ ریشۀ واحد DMS/ECM- اعتبارسنجی ورود مورد نیاز است)
-DAV_ALLOW_ECM_DIRTooltip=فهرست ریشۀ پوشه‌ای که همۀ فایلها در حالت استفاده از واحد DMS/ECM به آن ارسال می‌شوند. همانند رابط دسترسی از طریق وب، در این واحد نیز شما برای تامین دسترسی به این واحد باید از یک برگۀ ورود نام‌کاربری/گذرواژه استفاده نمائید.
+DAV_ALLOW_ECM_DIRTooltip=The root directory where all files are manually uploaded when using the DMS/ECM module. Similarly as access from the web interface, you will need a valid login/password with adequate permissions to access it.
 ##### Modules #####
 Module0Name=کاربران و گروه‌ها
 Module0Desc=مدیریت کاربران/کارمندان و گروه‌ها
@@ -566,7 +568,7 @@ Module40Desc=Vendors and purchase management (purchase orders and billing of sup
 Module42Name=گزارش‌کار اشکال‌یابی
 Module42Desc=امکانات گزارش‌برداری (فایل، گزارش‌کار سامانه، ...). این گزارش کارها مربوط به مقاصد فنی/اشکال‌یابی هستند.
 Module43Name=نوار اشکال‌یابی
-Module43Desc=A tool for developper adding a debug bar in your browser.
+Module43Desc=A tool for developers, adding a debug bar in your browser.
 Module49Name=ویراستاران
 Module49Desc=مدیریت ویراستارها
 Module50Name=محصولات
@@ -582,7 +584,7 @@ Module54Desc=مدیریت قراردادها (خدمات یا اشتراک‌ه�
 Module55Name=بارکدها
 Module55Desc=Barcode or QR code management
 Module56Name=Payment by credit transfer
-Module56Desc=Management of payment of suppliers by Credit Transfer orders. It includes generation of SEPA file for European countries.
+Module56Desc=Management of payment of suppliers or salaries by Credit Transfer orders. It includes generation of SEPA file for European countries.
 Module57Name=Payments by Direct Debit
 Module57Desc=Management of Direct Debit orders. It includes generation of SEPA file for European countries.
 Module58Name=کلیک برای تماس
@@ -630,6 +632,10 @@ Module600Desc=ارسال رایانامه‌های اطلاعیه مبتنی ب�
 Module600Long=به خاطر داشته باشید این واحد رایانامه‌را به صورت بلادرنگ در هنگام یک رخداد معین ارسال می‌نماید. در صورتی که به دنبال یک قابلیت برای ارسال یادآورنده‌های رخدادهائی مثل جلسات باشید، به واحد تنظیمات جلسات مراجعه کنید.
 Module610Name=انواع محصولات
 Module610Desc=ساخت انواع مختلف کالاها (رنگ، اندازه و غیره)
+Module650Name=Bills Of Material (BOM)
+Module650Desc=Module to define your Bills Of Materials (BOM). Can be used for Manufacturing Resource Planning by the module Manufacturing Orders (MO)
+Module660Name=Manufacturing Resource Planning (MRP)
+Module660Desc=Module to Manage Manufacturing Orders (MO)
 Module700Name=کمک‌های مالی
 Module700Desc=مدیریت کمک‌های مالی
 Module770Name=گزارش هزینه‌ها
@@ -650,8 +656,8 @@ Module2300Name=وظایف برنامه‌ریزی‌شده
 Module2300Desc=مدیریت وظایف برنامه‌ریزی‌شده (alias cron یا chrono table)
 Module2400Name=رخدادها/جلسات
 Module2400Desc=رهگیری رخدادها. گزارش‌گیری خودکار رخدادها برای اهداف رهگیری یا ثبت دستی رخدادها یا ملاقات‌ها. این واحد مفهومی برای مشتری خوب یا مدیریت ارتباط با تامین کننده است.
-Module2430Name=Online Booking Calendar
-Module2430Desc=Provide an online calendar to allow anyone to book rendez-vous, according to predefined ranges or availabilities.
+Module2430Name=Online appointment scheduling
+Module2430Desc=Provides an online appointment booking system. This allow anyone to book rendez-vous, according to predefined ranges or availabilities.
 Module2500Name=DMS / ECM
 Module2500Desc=سامانۀ مدیریت مستندات / مدیریت محتوای الکترونیکی. سازماندهی خودکار مستندات ذخیره شده یا تولید شدۀ شما. اشتراک‌گذاری در صورت نیاز.
 Module2600Name=API / Web services (SOAP server)
@@ -672,13 +678,13 @@ Module3300Desc=A RAD (Rapid Application Development - low-code and no-code) tool
 Module3400Name=شبکه‌های اجتماعی
 Module3400Desc=Enable Social Networks fields into third parties and addresses (skype, twitter, facebook, ...).
 Module4000Name=مدیریت منابع انسانی
-Module4000Desc=مدیریت منابع انسانی (مدیریت شعبه، قراردادهای کارمندان و حس‌ها)
+Module4000Desc=Human resources management (management of department, employee contracts, skill management and interview)
 Module5000Name=چند-شرکتی
 Module5000Desc=به شما امکان مدیریت شرکت‌های متعدد را می‌دهد
 Module6000Name=Inter-modules Workflow
 Module6000Desc=Workflow management between different modules (automatic creation of object and/or automatic status change)
 Module10000Name=وبگاه‌ها
-Module10000Desc=Create websites (public) with a WYSIWYG editor. This is a webmaster or developer oriented CMS (it is better to know HTML and CSS language). Just setup your web server (Apache, Nginx, ...) to point to the dedicated Dolibarr directory to have it online on the internet with your own domain name.
+Module10000Desc=CMS to create websites with a WYSIWYG editor. This is a webmaster or developer oriented Content Management System (it is better to know HTML and CSS language). Just setup your web server (Apache, Nginx, ...) to point to the dedicated Dolibarr directory to have it online on the internet with your own domain name.
 Module20000Name=مدیریت درخواست مرخصی
 Module20000Desc=تعریف و رهگیری درخواست‌های مرخصی کارمندان
 Module39000Name=سری ساخت محصولات
@@ -712,6 +718,8 @@ Module63000Desc=مدیریت منابع (چاپ‌گرها، خودروها، ا
 Module66000Name=OAuth2 token management
 Module66000Desc=Provide a tool to generate and manage OAuth2 tokens. The token can then be used by some other modules.
 Module94160Name=دریافت‌های کالا
+ModuleBookCalName=Booking Calendar System
+ModuleBookCalDesc=Manage a Calendar to book appointments
 ##### Permissions #####
 Permission11=Read customer invoices (and payments)
 Permission12=ایجاد/ویرایش صورت‌حساب مشتریان
@@ -996,7 +1004,7 @@ Permission4031=Read personal information
 Permission4032=Write personal information
 Permission4033=Read all evaluations (even those of user not subordinates)
 Permission10001=خواندن محتوای وبگاه
-Permission10002=ساخت/ویرایش محتوای وبگاه (محتوای html و javascript ) 
+Permission10002=Create/modify website content (html and JavaScript content)
 Permission10003=ساخت/ویرایش محتوای وبگاه (کد پویای PHP). خطرناک، تنها باید تحت نظر توسعه‌دهندگان مشخص و محدود باشد.
 Permission10005=حذف محتوای وبگاه
 Permission20001=ملاحظۀ درخواست‌های مرخصی (درخواست‌های مرخصی افراد تحت مدیریت شما)
@@ -1098,6 +1106,7 @@ DictionaryExpenseTaxRange=گزارش هزینه - محدودۀ دسته‌بند
 DictionaryTransportMode=Intracomm report - Transport mode
 DictionaryBatchStatus=Product lot/serial Quality Control status
 DictionaryAssetDisposalType=Type of disposal of assets
+DictionaryInvoiceSubtype=Invoice subtypes
 TypeOfUnit=Type of unit
 SetupSaved=تنظیمات برپاسازی ذخیره شد
 SetupNotSaved=تنظیمات برپاسازی ذخیره نشد
@@ -1109,10 +1118,11 @@ BackToModuleList=بازگشت به فهرست واحد‌ها
 BackToDictionaryList=بازگشت به فهرست واژه‌نامه‌ها
 TypeOfRevenueStamp=انواع تمبر مالیاتی
 VATManagement=مدیریت مالیات بر فروش
-VATIsUsedDesc=به طور پیش‌فرض در هنگام ساخت مشتریان‌احتمالی، صورت‌حساب، سفارشات و غیره نرخ مالیات بر فروش از قاعدۀ استاندارد فعال استفاده می‌نماید: <br> در صورتی‌که مالیات برای فروشنده موضوعیت نداشته باشد، پیش‌فرض مالیات بر فروشبه 0 تغییر خواهد کرد. پایان قاعده. <br> در صورتی که (کشور فروشنده=کشور خریدار) باشد، مالیات بر فروش به طور پیش‌فرض برابر با مالیات برفروش محصول در کشور فروشنده خواهد شد. پایان قاعده. <br> در صورتی که فروشنده و خریدار هر دو در جامعۀ اروپائی باشند و کالاها، کالاهای مرتبط با حمل‌ونقل باشند (زمینی، دریائی، هوائی)، مالیات بر ارزش افزودۀ پیش‌فرض برابر با 0 خواهد بود. این قاعده مربوط به کشور فروشنده است، لطفا با حساب‌دار خود مشورت کنید. مالیات بر ارزش افزوده باید توسط خریاد به دفتر گمرک در کشورش پرداخت شود، نه به فروشنده. پایان قاعده. <br> در صورتی که فروشنده و خریدار هر دو در جامعۀ اروپائی باشند و خریدار یک شرکت نیست (و شمارۀ ثبت شدۀ مالیات بر افزودۀ داخل جامعه‌ای ندارد) در این موقعیت مالیات بر ارزش افزوده به شکل پیش‌فرض نرخ مربوطه در کشور فروشنده در خواهد آمد. پایان قاعده. <br> در صورتی که فروشنده و خریدار هر دو در جامعۀ اروپائی باشند و فروشنده یک شرکت باشد (با شمارۀ ثبت شدۀ مالیات بر افزودۀ داخل جامعه‌ای)، در این حالت مالیات بر ارزش افزوده به شکل پیش‌فرض برابر با 0 خواهد بود. پایان قاعده. <br> در هر حالتی غیر از حالات ذکر شده، مالیات بر فروش برابر با 0 خواهد بود. پایان قاعده.
+VATIsUsedDesc=By default when creating prospects, invoices, orders etc. the Sales Tax rate follows the active standard rule:<br>If the seller is not subject to Sales tax, then Sales tax defaults to 0. End of rule.<br>If the (seller's country = buyer's country), then the Sales tax by default equals the Sales tax of the product in the seller's country. End of rule.<br>If the seller and buyer are both in the European Community and goods are transport-related products (haulage, shipping, airline), the default VAT is 0. This rule is dependent on the seller's country - please consult with your accountant. The VAT should be paid by the buyer to the customs office in their country and not to the seller. End of rule.<br>If the seller and buyer are both in the European Community and the buyer is not a company (with a registered intra-Community VAT number) then the VAT defaults to the VAT rate of the seller's country. End of rule.<br>If the seller and buyer are both in the European Community and the buyer is a company (with a registered intra-Community VAT number), then the VAT is 0 by default. End of rule.<br>In any other case the proposed default is Sales tax=0. End of rule.
 VATIsNotUsedDesc=مالیات بر فروش مطروحه به طور پیش‌‌فرض برابر با 0 است که می‌تواند در مورد موسسات، اشخاص و شرکت‌های کوچک به کار گرفته شود.
 VATIsUsedExampleFR=در فرانسه، به این معناست که شرکت‌ها و موسسات یک سامانۀ سیاست‌مالی حقیقی دارند (حقیقی ساده یا حقیقی عادی).  سامانه‌ای که در آن مالیات بر ارزش افزوده تعریف می‌شود.
 VATIsNotUsedExampleFR=در فرانسه، این بدان معناست که مؤسساتی که برای آن‌ها مالیات بر فروش تعریف نشده یا شرکت‌ها، سازمان‌ها یا مشاغل آزادی که سامانۀ سیاست مالی ریزسازمانی برگزیده‌اند (مالیات بر فروش طی فرانچایز-فرداد-حق‌امتیاز) و بدون تعریف مالیات برفروش مبلغ مالیات فروش فرانچایز را پرداخت کرده‌اند. این انتخاب به صورت مراجع "مالیات بر فروش اختصاص داده نمی‌شود - art-293B of CGI" در صورت‌حساب نمایش داده خواهد شد.
+VATType=VAT type
 ##### Local Taxes #####
 TypeOfSaleTaxes=Type of sales tax
 LTRate=نرخ
@@ -1120,14 +1130,10 @@ LocalTax1IsNotUsed=آیا مالیات دوم استفاده نشود
 LocalTax1IsUsedDesc=استفاده از نوع دوم مالیات (غیر از نوع اول)
 LocalTax1IsNotUsedDesc=عدم استفاده از نوع دیگری از مالیات (غیر از اولی)
 LocalTax1Management=نوع دوم مالیات
-LocalTax1IsUsedExample=
-LocalTax1IsNotUsedExample=
 LocalTax2IsNotUsed=از نوع سوم مالیات استفاده نشود
 LocalTax2IsUsedDesc=استفاده از نوع سوم مالیت (غیر از نوع اول)
 LocalTax2IsNotUsedDesc=عدم استقاده از نوع دیگری از مالیات (غیر از اولی)
 LocalTax2Management=نوع سوم مالات
-LocalTax2IsUsedExample=
-LocalTax2IsNotUsedExample=
 LocalTax1ManagementES=مدیریت RE
 LocalTax1IsUsedDescES=نرخ پیش‌فرض  RE در هنگام ساخت مشتریان‌احتمالی، صورت‌حساب‌ها، سفارش‌ها و غیره. قاعدۀ استاندار فعال را دنبال کنید: <br> در صورتی که خریدار در RE موضوعیت ندارد، بطور پیش‌فرض RE برابر با 0 خواهد بود. پایان قاعده. <br> در صورتی که خریدار در RE موضوعیت دارد به شکل پیش‌فرض برابر با RE خواهد بود. پایان قاعده. <br>
 LocalTax1IsNotUsedDescES=RE مطروحه به طور پیش‌فرض برابر با 0 است. پایان قاعده.
@@ -1202,7 +1208,6 @@ EnableMultilangInterface=Enable multilanguage support for customer or vendor rel
 EnableShowLogo=Show the company logo in the menu
 CompanyInfo=شرکت/سازمان
 CompanyIds=هویت‌های شرکت/سازمان
-CompanyName=نام
 CompanyAddress=نشانی
 CompanyZip=کدپستی
 CompanyTown=شهر
@@ -1399,8 +1404,8 @@ PHPModuleLoaded=بخش %s در PHP بارگذاری شده است
 PreloadOPCode=OPCode از پیش بارگذاری شده مورد استفاده است
 AddRefInList=Display Customer/Vendor ref. into combo lists.<br>Third Parties will appear with a name format of "CC12345 - SC45678 - The Big Company corp." instead of "The Big Company corp".
 AddVatInList=Display Customer/Vendor VAT number into combo lists.
-AddAdressInList=Display Customer/Vendor adress into combo lists.<br>Third Parties will appear with a name format of "The Big Company corp. - 21 jump street 123456 Big town - USA" instead of "The Big Company corp".
-AddEmailPhoneTownInContactList=Display Contact email (or phones if not defined) and town info list (select list or combobox)<br>Contacts will appear with a name format of "Dupond Durand - dupond.durand@email.com - Paris" or "Dupond Durand - 06 07 59 65 66 - Paris" instead of "Dupond Durand".
+AddAdressInList=Display Customer/Vendor address into combo lists.<br>Third Parties will appear with a name format of "The Big Company corp. - 21 jump street 123456 Big town - USA" instead of "The Big Company corp".
+AddEmailPhoneTownInContactList=Display Contact email (or phones if not defined) and town info list (select list or combobox)<br>Contacts will appear with a name format of "Dupond Durand - dupond.durand@example.com - Paris" or "Dupond Durand - 06 07 59 65 66 - Paris" instead of "Dupond Durand".
 AskForPreferredShippingMethod=پرسش برای روش ارسال ترجیحی برای اشخاص سوم
 FieldEdition=ویرایش بخش %s
 FillThisOnlyIfRequired=مثال: +2 (تنها در صورتی که با مشکل ناحیۀ زمانی مواجه شوید)
@@ -1419,6 +1424,8 @@ DisableForgetPasswordLinkOnLogonPage=در صفحۀ ورود پیوند "فرام
 UsersSetup=برپاسازی واحد کاربران
 UserMailRequired=برای ایجاد یک کاربر جدید یک رایانامه لازم است
 UserHideInactive=Hide inactive users from all combo lists of users (Not recommended: this may means you won't be able to filter or search on old users on some pages)
+UserHideExternal=Hide external users (not linked to a third party) from all combo lists of users (Not recommended: this may means you won't be able to filter or search on external users on some pages)
+UserHideNonEmployee=Hide non employee users from all combo lists of users (Not recommended: this may means you won't be able to filter or search on non employee users on some pages)
 UsersDocModules=Document templates for documents generated from user record
 GroupsDocModules=Document templates for documents generated from a group record
 ##### HRM setup #####
@@ -1525,7 +1532,7 @@ LDAPGroupsSynchro=گروه‌ها
 LDAPContactsSynchro=طرف‌های تماس
 LDAPMembersSynchro=اعضاء
 LDAPMembersTypesSynchro=انواع عضوها
-LDAPSynchronization=هم‌گام سازی LDAP
+LDAPSynchronization=LDAP synchronization
 LDAPFunctionsNotAvailableOnPHP=توابع LDAP در PHP شما در دسترس نیست
 LDAPToDolibarr=LDAP --> Dolibarr
 DolibarrToLDAP=Dolibarr --> LDAP
@@ -1647,7 +1654,7 @@ LDAPFieldGroupidExample=Example : gidnumber
 LDAPFieldUserid=User id
 LDAPFieldUseridExample=Example : uidnumber
 LDAPFieldHomedirectory=Home directory
-LDAPFieldHomedirectoryExample=Exemple : homedirectory
+LDAPFieldHomedirectoryExample=Example : homedirectory
 LDAPFieldHomedirectoryprefix=Home directory prefix
 LDAPSetupNotComplete=راه اندازی LDAP کامل نیست (به زبانۀ سایر بروید)
 LDAPNoUserOrPasswordProvidedAccessIsReadOnly=هیچ دسترسی‌مدیری یا گذرواژه‌ای ارائه نشده است. دسترسی به LDAP به شکل ناشناس و فقط‌خواندنی خواهد بود.
@@ -1669,7 +1676,7 @@ MemcachedModuleAvailableButNotSetup=واحد memcached برای میان‌گی�
 MemcachedAvailableAndSetup=واحد memcached مختص استفاده از سرور memcached فعال شده است.
 OPCodeCache=میان‌گیری OPCode 
 NoOPCodeCacheFound=هیچ میان‌گیری OPCode پیدا نشد. ممکن است شما OPCode غیر از XCache یا eAccelerator  (خوب)، استفاده کنید یا این که اصلا میان‌گیری OPCode  نداشته باشید (خیلی بد).
-HTTPCacheStaticResources=میان‌گیری HTTP برای منابع ایستا (css, img, javascript)
+HTTPCacheStaticResources=HTTP cache for static resources (css, img, JavaScript)
 FilesOfTypeCached=فایل‌های نوع %s توسط سرور HTTP میان‌گیری شده‌اند.
 FilesOfTypeNotCached=فایل‌های نوع %s توسط سرور HTTP میان‌گیری نشده‌اند.
 FilesOfTypeCompressed=فایل‌های نوع %s توسط سرور HTTP فشرده شده‌اند
@@ -1739,8 +1746,6 @@ BarcodeDescQRCODE=بارکد از نوع QR code
 GenbarcodeLocation=ابزار خط فرمان برای تولید بارکد (توسط موتور داخلی برای برخی انواع بارکد استفاده می‌شود). باید با "genbarcode" سازگار باشد. <br> برای مثال: /usr/local/bin/genbarcode
 BarcodeInternalEngine=موتور داخلی
 BarCodeNumberManager=اداره‌کنندۀ تعریف خودکار اعداد بارکد
-##### Prelevements #####
-WithdrawalsSetup=برپاسازی واحد برداشت‌های مستقیم
 ##### ExternalRSS #####
 ExternalRSSSetup=برپاسازی واردات RSS بیرونی
 NewRSS=خوراک RSS جدید
@@ -1773,15 +1778,15 @@ FreeLegalTextOnDeliveryReceipts=متن دلخواه در رسیدهای تحوی
 ##### FCKeditor #####
 AdvancedEditor=ویرایشگر پیشرفته
 ActivateFCKeditor=فعال کردن ویرایشگر پیشرفته برای:
-FCKeditorForNotePublic=WYSIWIG creation/edition of the field "public notes" of elements
-FCKeditorForNotePrivate=WYSIWIG creation/edition of the field "private notes" of elements
-FCKeditorForCompany=WYSIWIG creation/edition of the field description of elements (except products/services)
-FCKeditorForProductDetails=WYSIWIG creation/edition of products description or lines for objects (lines of proposals, orders, invoices, etc...).
+FCKeditorForNotePublic=WYSIWYG creation/edition of the field "public notes" of elements
+FCKeditorForNotePrivate=WYSIWYG creation/edition of the field "private notes" of elements
+FCKeditorForCompany=WYSIWYG creation/edition of the field description of elements (except products/services)
+FCKeditorForProductDetails=WYSIWYG creation/edition of products description or lines for objects (lines of proposals, orders, invoices, etc...).
 FCKeditorForProductDetails2=Warning: Using this option for this case is seriously not recommended as it can create problems with special characters and page formatting when building PDF files.
-FCKeditorForMailing= ساخت/ویرایش WYSIWIG برای ارسال رایانامۀ انبوه (ابزار->ارسال رایانامه)
-FCKeditorForUserSignature=ساخت/ویرایش امضای کاربر توسط WYSIWIG
-FCKeditorForMail=ساخت/ویرایش همۀ رایانامه‌ها با WYSIWIG (منهای ابزار->ارسال رایانامه)
-FCKeditorForTicket=WYSIWIG creation/edition for tickets
+FCKeditorForMailing= WYSIWYG creation/edition for mass eMailings (Tools->eMailing)
+FCKeditorForUserSignature=WYSIWYG creation/edition of user signature
+FCKeditorForMail=WYSIWYG creation/edition for all mail (except Tools->eMailing)
+FCKeditorForTicket=WYSIWYG creation/edition for tickets
 ##### Stock #####
 StockSetup=برپاسازی واحد انبار
 IfYouUsePointOfSaleCheckModule=در صورتی که از صندوق (POS) پیش‌فرض ارائه شده یا از یک واحد خارجی استفاده می‌نمائید، این تنظیمات ممکن است توسط واحد صندوق شما نادیده گرفته شود. اکثر واحدهای POS به‌طور پیش‌فرض طوری طراحی شده‌اند که فورا یک صورت‌حساب ایجاد کرده و بدون‌توجه به گزینه‌های ذیل، از آمار انبار را کاهش بدهند. بنابراین در صورتی که لازم باشد/یا نباشد در هنگام ثبت فروش از طریق صندوق، آمار انبار دست‌کاری شود، باید تنظیمات مربوط به واحد صندوق نصب شدۀ خود را نیز بررسی کنید.
@@ -1794,7 +1799,7 @@ NotTopTreeMenuPersonalized=فهرست‌های شخصی که به یکی از ق
 NewMenu=فهرست جدید
 MenuHandler=اداره‌کنندۀ فهرست
 MenuModule=واحد منبع
-HideUnauthorizedMenu=Hide unauthorized menus also for internal users (just greyed otherwise)
+HideUnauthorizedMenu=Hide unauthorized menus also for internal users (just grayed otherwise)
 DetailId=فهرست شناسه
 DetailMenuHandler=اداره کنندۀ فهرست برای تعیین مکان نمایش فهرست جدید
 DetailMenuModule=نام واحد در صورتی که یک قسمت از فهرست از یک واحد می‌آید
@@ -1802,7 +1807,7 @@ DetailType=نوع فهرست (بالا یا چپ)
 DetailTitre=برچسب فهرست یا کدبرچسب برای ترجمه
 DetailUrl=URL where menu send you (Relative URL link or external link with https://)
 DetailEnabled=شرایط نمایش یا عدم‌نمایش قسمت
-DetailRight=شرایط نمایش فهرست‌های خاکستری غیرمجاز
+DetailRight=Condition to display unauthorized gray menus
 DetailLangs=نام فایل ترجمه برای کد برچسب ترجمه
 DetailUser=داخل/خارج/همه
 Target=مقصد
@@ -1867,7 +1872,8 @@ CashDeskBankAccountForSell=حساب پیش‌فرض مورد استفاده بر
 CashDeskBankAccountForCheque=حساب پیش‌فرض مورد استفاده برای دریافت مبالغ از طریق چک
 CashDeskBankAccountForCB=حساب پیش‌فرض مورد استفاده برای دریافت پرداخت از طریق کارت
 CashDeskBankAccountForSumup=Default bank account to use to receive payments by SumUp
-CashDeskDoNotDecreaseStock=غیرفعال کردن کاهش از آمار موجودی در هنگام فروش از طریق صندوق (در صورتی که برابر با "خیر" باشد، کاهش موجودی با فروش از طریق صندوق انجام خواهد شد، بدون توجه به گزینۀ تنظیم شده در واحد انبار).
+CashDeskDoNotDecreaseStock=Disable stock decrease when a sale is done from Point of Sale
+CashDeskDoNotDecreaseStockHelp=If "no", stock decrease is done for each sale done from POS, irrespective of the option set in module Stock.
 CashDeskIdWareHouse=مقیدکردن و اجبار یک انبار برای استفاده در هنگام کاهش موجودی
 StockDecreaseForPointOfSaleDisabled=کاهش موجودی برای فروش از طریق صندوق غیرفعال است
 StockDecreaseForPointOfSaleDisabledbyBatch=کاهش موجودی در صندوق با واحد مدیریت شماره‌سری/ساخت سازگار نیست (فعلا فعال است)، بنابراین کاهش موجودی غیرفعال است.
@@ -1970,6 +1976,7 @@ HighlightLinesOnMouseHover=برجسته‌کردن سطور جدول در هنگ
 HighlightLinesColor=برجسته‌کردن رنگ سطر در هنگام عبور موشواره از آن (از 'ffffff' برای عدم رنگ‌دهی)
 HighlightLinesChecked=روشن‌کردن زرنگ سطر در هنگامی که کادرتائید فشرده شده است ( از 'ffffff' برای عدم روشن کردن استفاده کنید)
 UseBorderOnTable=Show left-right borders on tables
+TableLineHeight=Table line height
 BtnActionColor=Color of the action button
 TextBtnActionColor=Text color of the action button
 TextTitleColor=رنگ نوشتۀ عنوان صفحه
@@ -1991,7 +1998,7 @@ EnterAnyCode=This field contains a reference to identify the line. Enter any val
 Enter0or1=Enter 0 or 1
 UnicodeCurrency=در اینجا بین دو براکت فهرست اعداد بایت‌هائی را که نمایاندۀ نماد واحدپولی است وارد نمائید. برای مثال، برای $ مقدار [36] را وارد نمائید، برای ریال برزیل R$ مقدار [82,36] و برای €، مقدار [8364]
 ColorFormat=رنگ RGB در مبنای HEX، مثال: FF0000
-PictoHelp=Icon name in format:<br>- image.png for an image file into the current theme directory<br>- image.png@module if file is into the directory /img/ of a module<br>- fa-xxx for a FontAwesome fa-xxx picto<br>- fonwtawesome_xxx_fa_color_size for a FontAwesome fa-xxx picto (with prefix, color and size set)
+PictoHelp=Icon name in format:<br>- image.png for an image file into the current theme directory<br>- image.png@module if file is into the directory /img/ of a module<br>- fa-xxx for a FontAwesome fa-xxx picto<br>- fontawesome_xxx_fa_color_size for a FontAwesome fa-xxx picto (with prefix, color and size set)
 PositionIntoComboList=مکان سطر در فهرست‌های ترکیبی
 SellTaxRate=Sales tax rate
 RecuperableOnly=بله برای م‌ب‌اا "در نظر گرفته نمی‌شود اما قابل بازیابی است" که مربوط به برخی استان‌های فرانسه است. مقدار "خیر" را برای همۀ سایر شرایط حفظ کنید.
@@ -2082,7 +2089,7 @@ MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_TOTAL_COLUMN=Hide the total pr
 MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_UNIT_PRICE=Hide the unit price column on purchase orders
 MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_TOTAL_COLUMN=Hide the total price column on puchase orders
 MAIN_PDF_NO_SENDER_FRAME=Hide borders on sender address frame
-MAIN_PDF_NO_RECIPENT_FRAME=Hide borders on recipent address frame
+MAIN_PDF_NO_RECIPENT_FRAME=Hide borders on recipient address frame
 MAIN_PDF_HIDE_CUSTOMER_CODE=Hide customer code
 MAIN_PDF_HIDE_SENDER_NAME=Hide sender/company name in address block
 PROPOSAL_PDF_HIDE_PAYMENTTERM=Hide payments conditions
@@ -2118,7 +2125,7 @@ EMailHost=میزبان سرور IMAP رایانامه
 EMailHostPort=Port of email IMAP server
 loginPassword=Login/Password
 oauthToken=OAuth2 token
-accessType=Acces type
+accessType=Access type
 oauthService=Oauth service
 TokenMustHaveBeenCreated=Module OAuth2 must be enabled and an oauth2 token must have been created with the correct permissions (for example scope "gmail_full" with OAuth for Gmail).
 ImapEncryption = IMAP encryption method
@@ -2140,13 +2147,13 @@ EmailCollectorHideMailHeaders=Do not include the content of email header into th
 EmailCollectorHideMailHeadersHelp=When enabled, e-mail headers are not added at the end of the email content that is saved as an agenda event.
 EmailCollectorConfirmCollectTitle=تائید جمع‌آوری رایانامه
 EmailCollectorConfirmCollect=Do you want to run this collector now?
-EmailCollectorExampleToCollectTicketRequestsDesc=Collect emails that match some rules and create automatically a ticket (Module Ticket must be enabled) with the email informations. You can use this collector if you provide some support by email, so your ticket request will be automatically generated. Activate also Collect_Responses to collect answers of your client directly on the ticket view (you must reply from Dolibarr).
+EmailCollectorExampleToCollectTicketRequestsDesc=Collect emails that match some rules and create automatically a ticket (Module Ticket must be enabled) with the email information. You can use this collector if you provide some support by email, so your ticket request will be automatically generated. Activate also Collect_Responses to collect answers of your client directly on the ticket view (you must reply from Dolibarr).
 EmailCollectorExampleToCollectTicketRequests=Example collecting the ticket request (first message only)
 EmailCollectorExampleToCollectAnswersFromExternalEmailSoftwareDesc=Scan your mailbox "Sent" directory to find emails that was sent as an answer of another email directly from your email software and not from Dolibarr. If such an email is found, the event of answer is recorded into Dolibarr
 EmailCollectorExampleToCollectAnswersFromExternalEmailSoftware=Example collecting e-mail answers sent from an external e-mail software
 EmailCollectorExampleToCollectDolibarrAnswersDesc=Collect all emails that are an answer of an email sent from your application. An event (Module Agenda must be enabled) with the email response will be recorded at the good place. For example, if you send a commercial proposal, order, invoice or message for a ticket by email from the application, and the recipient answers your email, the system will automatically catch the answer and add it into your ERP.
 EmailCollectorExampleToCollectDolibarrAnswers=Example collecting all ingoing messages being answers to messages sent from Dolibarr'
-EmailCollectorExampleToCollectLeadsDesc=Collect emails that match some rules and create automatically a lead (Module Project must be enabled) with the email informations. You can use this collector if you want to follow your lead using the module Project (1 lead = 1 project), so your leads will be automatically generated. If the collector Collect_Responses is also enabled, when you send an email from your leads, proposals or any other object, you may also see answers of your customers or partners directly on the application.<br>Note: With this initial example, the title of the lead is generated including the email. If the thirdparty can't be found in database (new customer), the lead will be attached to the thirdparty with ID 1.
+EmailCollectorExampleToCollectLeadsDesc=Collect emails that match some rules and create automatically a lead (Module Project must be enabled) with the email information. You can use this collector if you want to follow your lead using the module Project (1 lead = 1 project), so your leads will be automatically generated. If the collector Collect_Responses is also enabled, when you send an email from your leads, proposals or any other object, you may also see answers of your customers or partners directly on the application.<br>Note: With this initial example, the title of the lead is generated including the email. If the third party can't be found in database (new customer), the lead will be attached to the third party with ID 1.
 EmailCollectorExampleToCollectLeads=Example collecting leads
 EmailCollectorExampleToCollectJobCandidaturesDesc=Collect emails applying to job offers (Module Recruitment must be enabled). You can complete this collector if you want to automatically create a candidature for a job request. Note: With this initial example, the title of the candidature is generated including the email.
 EmailCollectorExampleToCollectJobCandidatures=Example collecting job candidatures received by e-mail
@@ -2188,10 +2195,10 @@ Protanopia=پرانتوپیا
 Deuteranopes=دوترانوپس
 Tritanopes=تریتانوپس
 ThisValueCanOverwrittenOnUserLevel=این مقدار می‌تواند توسط هر کاربر از صفحۀ کاربری مربوطه و زبانۀ '%s' مورد بازنویسی قرار گیرد
-DefaultCustomerType=نوع پیش‌فرض شخص‌سوم در برگۀ ساخت "مشتری جدید"
+DefaultCustomerType=Default third-party type for "New customer" creation form
 ABankAccountMustBeDefinedOnPaymentModeSetup=توجه: برای این‌که این قابلیت کار کند، حساب بانکی باید در تنظیمات هر واحد مربوط به پرداخت تعریف شود (Paypal، Stripe و غیره) 
 RootCategoryForProductsToSell=دسته‌بندی ریشۀ محصولات فروشی
-RootCategoryForProductsToSellDesc=در صوری که تعین شود، تنها محصولات داخل این دسته یا زیرمجموعه‌های آن در صندوق - Point of Sale  فعال خواهند بود
+RootCategoryForProductsToSellDesc=If defined, only products inside this category or children of this category will be available in the Point Of Sale
 DebugBar=نوار اشکال‌یابی
 DebugBarDesc=نوارابزاری که ابزارهائی برای ساده‌سازی اشکال‌یابی دارد
 DebugBarSetup=برپاسازی نواراشکال‌یابی
@@ -2212,10 +2219,10 @@ ImportSetup=Setup of module Import
 InstanceUniqueID=شناسۀ منحصر به‌فرد نمونه
 SmallerThan=کوچک‌تر از
 LargerThan=بزرگتر از
-IfTrackingIDFoundEventWillBeLinked=Note that If a tracking ID of an object is found into email, or if the email is an answer of an email aready collected and linked to an object, the created event will be automatically linked to the known related object.
-WithGMailYouCanCreateADedicatedPassword=با یک حساب GMail در صورتی که تائید 2 گامی را انتخاب کرده باشید، پیشنهاد می‌شود یک گذرواژۀ دوم برای استفادۀ برنامه به‌جای گذرواژۀ خودتان برای حساب بسازید. این کار از https://myaccount.google.com/ قابل انجام است.
-EmailCollectorTargetDir=It may be a desired behaviour to move the email into another tag/directory when it was processed successfully. Just set name of directory here to use this feature (Do NOT use special characters in name). Note that you must also use a read/write login account.
-EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database (search will be done on the defined property among 'id','name','name_alias','email'). The found (or created) thirdparty will be used for following actions that need it.<br>For example, if you want to create a thirdparty with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
+IfTrackingIDFoundEventWillBeLinked=Note that If a tracking ID of an object is found into email, or if the email is an answer of an email already collected and linked to an object, the created event will be automatically linked to the known related object.
+WithGMailYouCanCreateADedicatedPassword=With a GMail account, if you enabled the 2 steps validation, it is recommended to create a dedicated second password for the application instead of using your own account password from https://myaccount.google.com/.
+EmailCollectorTargetDir=It may be a desired behavior to move the email into another tag/directory when it was processed successfully. Just set name of directory here to use this feature (Do NOT use special characters in name). Note that you must also use a read/write login account.
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing third party in your database (search will be done on the defined property among 'id','name','name_alias','email'). The found (or created) third party will be used for following actions that need it.<br>For example, if you want to create a third party with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
 FilterSearchImapHelp=Warning: a lot of email servers (like Gmail) are doing full word searches when searching on a string and will not return a result if the string is only found partially into a word. For this reason too, use special characters into a search criteria will be ignored are they are not part of existing words.<br>To make an exclude search on a word (return email if word is not found), you can use the ! character before the word (may not work on some mail servers).
 EndPointFor=نقطۀ آخر برای %s : %s
 DeleteEmailCollector=حذف جمع‌آورندۀ رایانامه
@@ -2232,12 +2239,12 @@ EmailTemplate=Template for email
 EMailsWillHaveMessageID=Emails will have a tag 'References' matching this syntax
 PDF_SHOW_PROJECT=Show project on document
 ShowProjectLabel=Project Label
-PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME=Include alias in thirdparty name
-THIRDPARTY_ALIAS=Name thirdparty - Alias thirdparty
-ALIAS_THIRDPARTY=Alias thirdparty - Name thirdparty
+PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME=Include alias in third-party name
+THIRDPARTY_ALIAS=Third-party name - Third-party alias
+ALIAS_THIRDPARTY=Third-party alias - Third-party name
 PDFIn2Languages=Show labels in the PDF in 2 different languages (this feature may not work for some couple of languages)
 PDF_USE_ALSO_LANGUAGE_CODE=If you want to have some texts in your PDF duplicated in 2 different languages in the same generated PDF, you must set here this second language so generated PDF will contains 2 different languages in same page, the one chosen when generating PDF and this one (only few PDF templates support this). Keep empty for 1 language per PDF.
-PDF_USE_A=Gererate PDF documents with format PDF/A instead of defaut format PDF
+PDF_USE_A=Generate PDF documents with format PDF/A instead of default format PDF
 FafaIconSocialNetworksDesc=Enter here the code of a FontAwesome icon. If you don't know what is FontAwesome, you can use the generic value fa-address-book.
 RssNote=Note: Each RSS feed definition provides a widget that you must enable to have it available in dashboard
 JumpToBoxes=Jump to Setup -> Widgets
@@ -2254,16 +2261,16 @@ YouMayFindSecurityAdviceHere=You may find security advisory here
 ModuleActivatedMayExposeInformation=This PHP extension may expose sensitive data. If you don't need it, disable it.
 ModuleActivatedDoNotUseInProduction=A module designed for the development has been enabled. Do not enable it on a production environment.
 CombinationsSeparator=Separator character for product combinations
-SeeLinkToOnlineDocumentation=See link to online documention on top menu for examples
+SeeLinkToOnlineDocumentation=See link to online documentation on top menu for examples
 SHOW_SUBPRODUCT_REF_IN_PDF=If the feature "%s" of module <b>%s</b> is used, show details of subproducts of a kit on PDF.
 AskThisIDToYourBank=Contact your bank to get this ID
-AdvancedModeOnly=Permision available in Advanced permission mode only
+AdvancedModeOnly=Permission available in Advanced permission mode only
 ConfFileIsReadableOrWritableByAnyUsers=The conf file is readable or writable by any users. Give permission to web server user and group only.
 MailToSendEventOrganization=Event Organization
 MailToPartnership=Partnership
 AGENDA_EVENT_DEFAULT_STATUS=Default event status when creating a event from the form
 YouShouldDisablePHPFunctions=You should disable PHP functions
-IfCLINotRequiredYouShouldDisablePHPFunctions=Except if you need to run system commands in custom code, you shoud disable PHP functions
+IfCLINotRequiredYouShouldDisablePHPFunctions=Unless you need to run system commands in custom code, you should disable PHP functions
 PHPFunctionsRequiredForCLI=For shell purpose (like scheduled job backup or running an antivirus program), you must keep PHP functions
 NoWritableFilesFoundIntoRootDir=No writable files or directories of the common programs were found into your root directory (Good)
 RecommendedValueIs=Recommended: %s
@@ -2305,8 +2312,6 @@ IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, yo
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sales tax
 LanguageAndPresentation=Language and presentation
 SkinAndColors=Skin and colors
-IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, you must enable also the first sales tax
-IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sales tax
 PDF_USE_1A=Generate PDF with PDF/A-1b format
 MissingTranslationForConfKey = Missing translation for %s
 NativeModules=Native modules
@@ -2324,10 +2329,9 @@ ExportUseLowMemoryModeHelp=Use the low memory mode to generate the dump file (co
 ModuleWebhookName = Webhook
 ModuleWebhookDesc = Interface to catch dolibarr triggers and send data of the event to an URL
 WebhookSetup = Webhook setup
-Settings = تنظیمات
 WebhookSetupPage = Webhook setup page
 ShowQuickAddLink=Show a button to quickly add an element in top right menu
-
+ShowSearchAreaInTopMenu=Show the search area in the top menu
 HashForPing=Hash used for ping
 ReadOnlyMode=Is instance in "Read Only" mode
 DEBUGBAR_USE_LOG_FILE=Use the <b>dolibarr.log</b> file to trap Logs
@@ -2356,17 +2360,16 @@ DoesNotWorkWithAllThemes=Will not work with all themes
 NoName=No name
 ShowAdvancedOptions= Show advanced options
 HideAdvancedoptions= Hide advanced options
-CIDLookupURL=The module brings an URL that can be used by an external tool to get the name of a thirdparty or contact from its phone number. URL to use is:
 OauthNotAvailableForAllAndHadToBeCreatedBefore=OAUTH2 authentication is not available for all hosts, and a token with the right permissions must have been created upstream with the OAUTH module
 MAIN_MAIL_SMTPS_OAUTH_SERVICE=OAUTH2 authentication service
 DontForgetCreateTokenOauthMod=A token with the right permissions must have been created upstream with the OAUTH module
-MAIN_MAIL_SMTPS_AUTH_TYPE=Authentification method
+MAIN_MAIL_SMTPS_AUTH_TYPE=Authentication method
 UsePassword=Use a password
 UseOauth=Use a OAUTH token
 Images=Images
 MaxNumberOfImagesInGetPost=Max number of images allowed in a HTML field submitted in a form
 MaxNumberOfPostOnPublicPagesByIP=Max number of posts on public pages with the same IP address in a month
-CIDLookupURL=The module brings an URL that can be used by an external tool to get the name of a thirdparty or contact from its phone number. URL to use is:
+CIDLookupURL=The module brings an URL that can be used by an external tool to get the name of a third party or contact from its phone number. URL to use is:
 ScriptIsEmpty=The script is empty
 ShowHideTheNRequests=Show/hide the %s SQL request(s)
 DefinedAPathForAntivirusCommandIntoSetup=Define a path for an antivirus program into <b>%s</b>
@@ -2383,6 +2386,7 @@ RECEPTION_PDF_HIDE_ORDERED=Hide the quantity ordered on the generated documents 
 MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT=Show the price on the generated documents for receptions
 WarningDisabled=Warning disabled
 LimitsAndMitigation=Access limits and mitigation
+RecommendMitigationOnURL=It is recommended to activate mitigation on critical URL. This is list of fail2ban rules you can use for the main important URLs.
 DesktopsOnly=Desktops only
 DesktopsAndSmartphones=Desktops et smartphones
 AllowOnlineSign=Allow online signing
@@ -2403,6 +2407,29 @@ Defaultfortype=پیش‌فرض
 DefaultForTypeDesc=Template used by default when creating a new email for the template type
 OptionXShouldBeEnabledInModuleY=Option "<b>%s</b>" should be enabled into module <b>%s</b>
 OptionXIsCorrectlyEnabledInModuleY=Option "<b>%s</b>" is enabled into module <b>%s</b>
+AllowOnLineSign=Allow On Line signature
 AtBottomOfPage=At bottom of page
 FailedAuth=failed authentications
 MaxNumberOfFailedAuth=Max number of failed authentication in 24h to deny login.
+AllowPasswordResetBySendingANewPassByEmail=If a user A has this permission, and even if the user A is not an "admin" user, A is allowed to reset the password of any other user B, the new password will be send to the email of the other user B but it won't be visible to A. If the user A has the "admin" flag, he will also be able to know what is the new generated password of B so he will be able to take control of the B user account.
+AllowAnyPrivileges=If a user A has this permission, he can create a user B with all privileges then use this user B, or grant himself any other group with any permission. So it means user A owns all business privileges (only system access to setup pages will be forbidden)
+ThisValueCanBeReadBecauseInstanceIsNotInProductionMode=This value can be read because your instance is not set in production mode
+SeeConfFile=See inside conf.php file on the server
+ReEncryptDesc=Reencrypt data if not yet encrypted
+PasswordFieldEncrypted=%s new record have this field been encrypted
+ExtrafieldsDeleted=Extrafields %s has been deleted
+LargeModern=Large - Modern
+SpecialCharActivation=Enable the button to open a virtual keyboard to enter special characters
+DeleteExtrafield=Delete extrafield
+ConfirmDeleteExtrafield=Do you confirm deletion of the field %s ? All data saved into this field will be definitely deleted
+ExtraFieldsSupplierInvoicesRec=ویژگی‌های تکمیلی (قالب‌های صورت‌حساب)
+ExtraFieldsSupplierInvoicesLinesRec=Complementary attributes (template invoice lines)
+ParametersForTestEnvironment=Parameters for test environment
+TryToKeepOnly=Try to keep only %s
+RecommendedForProduction=Recommended for Production
+RecommendedForDebug=Recommended for Debug
+UrlPublicInterfaceLabelAdmin=نشانی جایگزین برای رابط عمومی
+UrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface with another URL (the virtual host server must act as a proxy on the standard URL)
+ExportUseForce=Use the parameter -f
+ExportUseForceHelp=Force to continue the export even when an error is found (Backup may not be reliable)
+CustomPrompt=Custom prompts

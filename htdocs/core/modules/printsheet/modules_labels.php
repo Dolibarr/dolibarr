@@ -69,7 +69,7 @@ class ModelePDFLabels
  *	@param  DoliDB		$db					Database handler
  *	@param  array		$arrayofrecords		Array of records
  *	@param	string		$modele				Force le modele a utiliser ('' to not force)
- *	@param	Translate	$outputlangs		Objet lang a utiliser pour traduction
+ *	@param	Translate	$outputlangs		Object lang a utiliser pour traduction
  *	@param	string		$outputdir			Output directory
  *  @param  string      $template           pdf generenate document class to use default 'standardlabel'
  *  @param  string      $filename           Short file name of PDF output file
@@ -95,7 +95,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 	// Positionne le modele sur le nom du modele a utiliser
 	if (!dol_strlen($modele)) {
 		if (getDolGlobalString('ADHERENT_ETIQUETTE_TYPE')) {
-			$code = $conf->global->ADHERENT_ETIQUETTE_TYPE;
+			$code = getDolGlobalString('ADHERENT_ETIQUETTE_TYPE');
 		} else {
 			$code = $modele;
 		}
@@ -126,7 +126,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 		foreach (array('doc', 'pdf') as $prefix) {
 			$file = $prefix."_".$template.".class.php";
 
-			// On verifie l'emplacement du modele
+			// Determine the model path and validate that it exists
 			$file = dol_buildpath($reldir."core/modules/printsheet/doc/".$file, 0);
 			if (file_exists($file)) {
 				$filefound = 1;
@@ -139,7 +139,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 		}
 	}
 
-	// Charge le modele
+	// Load the model
 	if ($filefound) {
 		require_once $file;
 
@@ -185,7 +185,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 			return -1;
 		}
 	} else {
-		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file));
+		dol_print_error(null, $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file));
 		return -1;
 	}
 }

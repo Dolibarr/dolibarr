@@ -45,7 +45,7 @@ $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object,
 print $hookmanager->resPrint;
 if (empty($reshook)) {
 	$params = array();
-	$params['cols'] = key_exists('colspanvalue', $parameters) ? $parameters['colspanvalue'] : '';
+	$params['cols'] = array_key_exists('colspanvalue', $parameters) ? $parameters['colspanvalue'] : '';
 	if (!empty($parameters['tdclass'])) {
 		$params['tdclass'] = $parameters['tdclass'];
 	}

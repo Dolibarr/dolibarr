@@ -110,7 +110,7 @@ if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == '
 			$paiement->chid         = $id;	// deprecated
 			$paiement->datep        = $datepaye;
 			$paiement->amounts      = $amounts; // Tableau de montant
-			$paiement->fk_typepayment = GETPOST("paiementtype", 'alphanohtml');
+			$paiement->fk_typepayment = GETPOSTINT("paiementtype");
 			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
 			$paiement->note         = GETPOST("note", 'restricthtml');
 			$paiement->note_private = GETPOST("note", 'restricthtml');

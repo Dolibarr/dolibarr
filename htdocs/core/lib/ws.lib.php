@@ -26,7 +26,7 @@
 /**
  *  Check authentication array and set error, errorcode, errorlabel
  *
- *  @param	array	$authentication     Array with authentication informations ('login'=>,'password'=>,'entity'=>,'dolibarrkey'=>)
+ *  @param	array	$authentication     Array with authentication information ('login'=>,'password'=>,'entity'=>,'dolibarrkey'=>)
  *  @param 	int		$error				Number of errors
  *  @param  string	$errorcode			Error string code
  *  @param  string	$errorlabel			Error string label

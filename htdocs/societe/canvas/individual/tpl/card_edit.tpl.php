@@ -126,7 +126,7 @@ if ($this->control->tpl['fournisseur']) {
 
 <tr>
 	<td class="tdtop"><?php echo $langs->trans('Address'); ?></td>
-	<td colspan="3"><textarea name="adresse" cols="40" rows="3"><?php echo $this->control->tpl['address']; ?></textarea></td>
+	<td colspan="3"><textarea name="address" cols="40" rows="3"><?php echo $this->control->tpl['address']; ?></textarea></td>
 </tr>
 
 <tr>

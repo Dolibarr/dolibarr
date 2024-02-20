@@ -29,6 +29,7 @@ create table llx_categorie
 	type	        integer DEFAULT 1 NOT NULL,			-- category type (product, supplier, customer, member)
 	description 	text,								-- description of the category
     color           varchar(8),                         -- color
+	position        integer DEFAULT 0,                  -- position
 	fk_soc          integer DEFAULT NULL,				-- not used by default. Used when option CATEGORY_ASSIGNED_TO_A_CUSTOMER is set.
 	visible         tinyint DEFAULT 1 NOT NULL,			-- determine if the products are visible or not
     date_creation	datetime,							-- date creation 

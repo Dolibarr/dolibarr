@@ -37,8 +37,6 @@ class modWebsite extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
-
 		$this->db = $db;
 		$this->numero = 10000;
 
@@ -217,9 +215,8 @@ class modWebsite extends DolibarrModules
 			}
 		}
 
-		// Copy templates in dir format (recommended)
+		// Copy templates in dir format (recommended) into zip file
 		$docs = dol_dir_list($srcroot, 'directories', 0, 'website_.*$');
-
 		foreach ($docs as $cursorfile) {
 			$src = $srcroot.'/'.$cursorfile['name'];
 			$dest = $destroot.'/'.$cursorfile['name'];

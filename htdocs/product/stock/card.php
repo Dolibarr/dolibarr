@@ -7,6 +7,7 @@
  * Copyright (C) 2021		Noé Cendrier			<noe.cendrier@altairis.fr>
  * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2022-2023	Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +75,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $result = restrictedArea($user, 'stock');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('warehousecard', 'globalcard'));
+$hookmanager->initHooks(array('warehousecard', 'stocklist', 'globalcard'));
 
 $object = new Entrepot($db);
 $extrafields = new ExtraFields($db);
@@ -91,9 +92,9 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
-$usercanread = (($user->rights->stock->lire));
-$usercancreate = (($user->rights->stock->creer));
-$usercandelete = (($user->rights->stock->supprimer));
+$usercanread = (($user->hasRight('stock', 'lire')));
+$usercancreate = (($user->hasRight('stock', 'creer')));
+$usercandelete = (($user->hasRight('stock', 'supprimer')));
 
 
 /*
@@ -133,19 +134,19 @@ if (empty($reshook)) {
 
 	// Ajout entrepot
 	if ($action == 'add' && $user->hasRight('stock', 'creer')) {
-		$object->ref = (string) GETPOST("ref", "alpha");
-		$object->fk_parent = (int) GETPOST("fk_parent", "int");
-		$object->fk_project = GETPOST('projectid', 'int');
-		$object->label = (string) GETPOST("libelle", "alpha");
-		$object->description = (string) GETPOST("desc", "alpha");
-		$object->statut = GETPOST("statut", "int");
-		$object->lieu = (string) GETPOST("lieu", "alpha");
-		$object->address = (string) GETPOST("address", "alpha");
-		$object->zip = (string) GETPOST("zipcode", "alpha");
-		$object->town = (string) GETPOST("town", "alpha");
-		$object->country_id = GETPOST("country_id");
-		$object->phone = (string) GETPOST("phone", "alpha");
-		$object->fax = (string) GETPOST("fax", "alpha");
+		$object->ref          = (string) GETPOST("ref", "alpha");
+		$object->fk_parent    = GETPOSTINT("fk_parent");
+		$object->fk_project   = GETPOSTINT('projectid');
+		$object->label        = (string) GETPOST("libelle", "alpha");
+		$object->description  = (string) GETPOST("desc", "alpha");
+		$object->statut       = GETPOSTINT("statut");
+		$object->lieu         = (string) GETPOST("lieu", "alpha");
+		$object->address      = (string) GETPOST("address", "alpha");
+		$object->zip          = (string) GETPOST("zipcode", "alpha");
+		$object->town         = (string) GETPOST("town", "alpha");
+		$object->country_id   = GETPOSTINT("country_id");
+		$object->phone        = (string) GETPOST("phone", "alpha");
+		$object->fax          = (string) GETPOST("fax", "alpha");
 
 		if (!empty($object->label)) {
 			// Fill array 'array_options' with data from add form
@@ -266,7 +267,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->stock->dir_output;
-	$permissiontoadd = $user->rights->stock->creer;
+	$permissiontoadd = $user->hasRight('stock', 'creer');
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -406,7 +407,7 @@ if ($action == 'create') {
 		}
 
 		// View mode
-		if ($action <> 'edit' && $action <> 're-edit') {
+		if ($action != 'edit' && $action != 're-edit') {
 			$head = stock_prepare_head($object);
 
 			print dol_get_fiche_head($head, 'card', $langs->trans("Warehouse"), -1, 'stock');
@@ -474,7 +475,7 @@ if ($action == 'create') {
 			$morehtmlref .= '</div>';
 
 			$shownav = 1;
-			if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+			if ($user->socid && !in_array('stock', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 				$shownav = 0;
 			}
 
@@ -597,7 +598,6 @@ if ($action == 'create') {
 
 
 			// Show list of products into warehouse
-			print '<br>';
 
 
 			$totalarray = array();
@@ -608,13 +608,16 @@ if ($action == 'create') {
 
 			// TODO Create $arrayfields with all fields to show
 
-			print '<table class="noborder centpercent">';
-			print "<tr class=\"liste_titre\">";
+			print load_fiche_titre($langs->trans("Stock"), '', 'stock');
+
+			print '<div class="div-table-responsive">';
+			print '<table class="noborder centpercent liste">';
+			print '<tr class="liste_titre">';
 			$parameters = array('totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
-			print_liste_field_titre("Product", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
+			print_liste_field_titre("Products", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("NumberOfUnit", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			$totalarray['nbfield'] += 3;
@@ -857,7 +860,8 @@ if ($action == 'create') {
 			} else {
 				dol_print_error($db);
 			}
-			print "</table>\n";
+			print "</table>";
+			print '</div>';
 		}
 
 

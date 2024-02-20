@@ -55,7 +55,7 @@ if (!$object->fetch($id, $ref) > 0) {
 	dol_print_error($db);
 }
 
-$permissionnote = $user->rights->expensereport->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('expensereport', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 if ($object->id > 0) {
 	// Check current user can read this expense report

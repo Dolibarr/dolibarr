@@ -160,7 +160,7 @@ if ($action == 'updatelines' && $usercancreate) {
 				$dDLC = dol_mktime(12, 0, 0, GETPOST('dlc_'.$reg[1].'_'.$reg[2].'month', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'day', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'year', 'int'));
 			}
 
-			$newqty = price2num(GETPOST($qty, 'alpha'), 'MS');
+			$newqty = GETPOSTFLOAT($qty, 'MS');
 			//var_dump("modebatch=".$modebatch." newqty=".$newqty." ent=".$ent." idline=".$idline);
 
 			// We ask to move a qty
@@ -214,7 +214,7 @@ if ($action == 'updatelines' && $usercancreate) {
 						} else {
 							$qtystart = $expeditiondispatch->qty;
 							$expeditiondispatch->qty = $newqty;
-							$expeditiondispatch->entrepot_id = GETPOST($ent, 'int');
+							$expeditiondispatch->entrepot_id = GETPOSTINT($ent);
 
 							if ($newqty > 0) {
 								$result = $expeditiondispatch->update($user);
@@ -271,8 +271,8 @@ if ($action == 'updatelines' && $usercancreate) {
 						}
 					} else {
 						$expeditiondispatch->fk_expedition = $object->id;
-						$expeditiondispatch->entrepot_id = GETPOST($ent, 'int');
-						$expeditiondispatch->fk_origin_line = GETPOST($fk_commandedet, 'int');
+						$expeditiondispatch->entrepot_id = GETPOSTINT($ent);
+						$expeditiondispatch->fk_origin_line = GETPOSTINT($fk_commandedet);
 						$expeditiondispatch->qty = $newqty;
 
 						if ($newqty > 0) {
@@ -299,7 +299,7 @@ if ($action == 'updatelines' && $usercancreate) {
 						}
 					}
 
-					// If module stock is enabled and the stock decrease is done on edtion of this page
+					// If module stock is enabled and the stock decrease is done on edition of this page
 					/*
 					if (!$error && GETPOST($ent, 'int') > 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_DISPATCH_ORDER)) {
 						$mouv = new MouvementStock($db);

@@ -21,14 +21,14 @@
 /**
  *	\file       htdocs/core/modules/supplier_order/mod_commande_fournisseur_orchidee.php
  *	\ingroup    commande
- *	\brief      Fichier contenant la classe du modele de numerotation de reference de commande fournisseur Orchidee
+ *	\brief      File for class for 'orchidee' type numbering the supplier orders
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_order/modules_commandefournisseur.php';
 
 
 /**
- *	Classe du modele de numerotation de reference de commande fournisseur Orchidee
+ *	Class providing the 'Orchidee' numbering models for supplier orders
  */
 class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 {
@@ -123,7 +123,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	 *
 	 *  @param	Societe		$objsoc     Object third party
 	 *  @param  Object	    $object		Object
-	 *  @return string      			Value if OK, 0 if KO
+	 *  @return string|0      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc = 0, $object = '')
 	{

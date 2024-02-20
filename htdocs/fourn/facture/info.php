@@ -22,7 +22,7 @@
 /**
  *      \file       htdocs/fourn/facture/info.php
  *      \ingroup    facture, fournisseur
- *		\brief      Page des informations d'une facture fournisseur
+ *		\brief      Page des information d'une facture fournisseur
  */
 
 // Load Dolibarr environment

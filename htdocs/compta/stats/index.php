@@ -104,7 +104,7 @@ $year_end = $tmpe['year'];
 $nbofyear = ($year_end - $year_start) + 1;
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
-$modecompta = $conf->global->ACCOUNTING_MODE;
+$modecompta = getDolGlobalString('ACCOUNTING_MODE');
 if (isModEnabled('accounting')) {
 	$modecompta = 'BOOKKEEPING';
 }
@@ -188,7 +188,7 @@ if ($modecompta == "RECETTES-DEPENSES" || $modecompta == "BOOKKEEINGCOLLECTED") 
 		$calcmode .= '<input type="radio" name="modecompta" id="modecompta3" value="BOOKKEEPINGCOLLECTED"'.($modecompta == 'BOOKKEEPINGCOLLECTED' ? ' checked="checked"' : '').'><label for="modecompta3"> '.$langs->trans("CalcModeBookkeeping").'</label>';
 		$calcmode .= '<br>';
 	}*/
-	$calcmode .= '<input type="radio" name="modecompta" id="modecompta2" value="RECETTES-DEPENSES"'.($modecompta == 'RECETTES-DEPENSES' ? ' checked="checked"' : '').'><label for="modecompta2"> '.$langs->trans("CalcModeEngagement");
+	$calcmode .= '<input type="radio" name="modecompta" id="modecompta2" value="RECETTES-DEPENSES"'.($modecompta == 'RECETTES-DEPENSES' ? ' checked="checked"' : '').'><label for="modecompta2"> '.$langs->trans("CalcModePayment");
 	if (isModEnabled('accounting')) {
 		$calcmode .= ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("CalcModeNoBookKeeping").')</span>';
 	}
@@ -377,7 +377,8 @@ $now_show_delta = 0;
 $minyear = substr($minyearmonth, 0, 4);
 $maxyear = substr($maxyearmonth, 0, 4);
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$nowyearmonth = strftime("%Y-%m", dol_now());
+$nowyearmonth = dol_print_date(dol_now(), "%Y%m");
+//$nowyearmonth = strftime("%Y-%m", dol_now());
 $maxyearmonth = max($maxyearmonth, $nowyearmonth);
 $now = dol_now();
 $casenow = dol_print_date($now, "%Y-%m");
@@ -419,7 +420,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 				// Value turnover of month w/o VAT
 				print '<td class="right">';
 				if ($annee < $year_end || ($annee == $year_end && $mois <= $month_end)) {
-					if ($cum_ht[$case]) {
+					if (!empty($cum_ht[$case])) {
 						$now_show_delta = 1; // On a trouve le premier mois de la premiere annee generant du chiffre.
 						print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price($cum_ht[$case], 1).'</a>';
 					} else {

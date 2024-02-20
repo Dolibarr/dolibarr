@@ -12,7 +12,7 @@ if (empty($extrafieldsobjectkey) && is_object($object)) {
 
 // Loop to show all columns of extrafields from $obj, $extrafields and $db
 if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafieldsobjectkey])) {	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
-	if (key_exists('label', $extrafields->attributes[$extrafieldsobjectkey]) && is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label'])) {
+	if (array_key_exists('label', $extrafields->attributes[$extrafieldsobjectkey]) && is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label'])) {
 		if (empty($extrafieldsobjectprefix)) {
 			$extrafieldsobjectprefix = 'ef.';
 		}
@@ -34,7 +34,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 				}
 				// If field is a computed field, we make computation to get value
 				if ($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]) {
-					$objectoffield = $object; //For compatibily with the computed formula
+					$objectoffield = $object; //For compatibility with the computed formula
 					$value = dol_eval($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '2');
 					if (is_numeric(price2num($value)) && $extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
 						$obj->$tmpkey = price2num($value);

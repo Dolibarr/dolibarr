@@ -37,17 +37,6 @@ class box_contracts extends ModeleBoxes
 	public $depends = array("contrat"); // conf->contrat->enabled
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler
@@ -86,12 +75,12 @@ class box_contracts extends ModeleBoxes
 			$sql .= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.tms as date_modification, c.fin_validite, c.date_cloture,";
 			$sql .= " c.ref_customer, c.ref_supplier";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
-			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE c.fk_soc = s.rowid";
 			$sql .= " AND c.entity = ".$conf->entity;
-			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {

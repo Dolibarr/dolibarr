@@ -206,7 +206,8 @@ class Conf extends stdClass
 			'member' => array(),
 			'hooks' => array(),
 			'dir' => array(),
-			'syslog' => array()
+			'syslog' => array(),
+			'websitetemplates' => array()
 		);
 
 		// First level object that are modules.
@@ -316,6 +317,7 @@ class Conf extends stdClass
 			'hooks' => array(),
 			'dir' => array(),
 			'syslog' => array(),
+			'websitetemplates' => array(),
 		);
 
 		if (!is_null($db) && is_object($db)) {
@@ -375,7 +377,7 @@ class Conf extends stdClass
 									$newvalue = $arrValue;
 								} elseif (in_array($partname, array('login', 'menus', 'substitutions', 'triggers', 'tpl'))) {
 									$newvalue = '/'.$modulename.'/core/'.$partname.'/';
-								} elseif (in_array($partname, array('models', 'theme'))) {
+								} elseif (in_array($partname, array('models', 'theme', 'websitetemplates'))) {
 									$newvalue = '/'.$modulename.'/';
 								} elseif ($value == 1) {
 									$newvalue = '/'.$modulename.'/core/modules/'.$partname.'/'; // ex: partname = societe
@@ -534,6 +536,9 @@ class Conf extends stdClass
 			}
 
 			// For mycompany storage
+			$this->mycompany->multidir_output = array($this->entity => $rootfordata."/mycompany");
+			$this->mycompany->multidir_temp = array($this->entity => $rootfortemp."/mycompany/temp");
+			// For backward compatibility
 			$this->mycompany->dir_output = $rootfordata."/mycompany";
 			$this->mycompany->dir_temp = $rootfortemp."/mycompany/temp";
 
@@ -729,7 +734,7 @@ class Conf extends stdClass
 			}
 
 			if (!isset($this->global->MAIN_ENABLE_AJAX_TOOLTIP)) {
-				$this->global->MAIN_ENABLE_AJAX_TOOLTIP = 1;
+				$this->global->MAIN_ENABLE_AJAX_TOOLTIP = 0;	// Not enabled by default (still trouble of persistent tooltip)
 			}
 
 			// By default, suppliers objects can be linked to all projects
@@ -998,7 +1003,7 @@ class Conf extends stdClass
 			if (!isset($this->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) {
 				// Value 1 makes CSRF check for all POST parameters only
 				// Value 2 makes also CSRF check for GET requests with action = a sensitive requests like action=del, action=remove...
-				// Value 3 makes also CSRF check for all GET requests with a param action or massaction (except some sensitive values)
+				// Value 3 makes also CSRF check for all GET requests with a param action or massaction (except some non sensitive values)
 				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 2; // TODO Switch value to 3
 				// Note: Set MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL=1 to have a renewal of token at each page call instead of each session (not recommended)
 			}

@@ -124,7 +124,7 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	 *
 	 *  @param	Societe				$objsoc     			Object third party
 	 * 	@param	SupplierProposal	$supplier_proposal		Object commercial proposal
-	 *  @return string      								Next value
+	 *  @return string|-1      								Next value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $supplier_proposal)
 	{
@@ -151,7 +151,7 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 		}
 
 		$date = time();
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is

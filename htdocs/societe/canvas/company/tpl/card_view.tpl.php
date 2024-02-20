@@ -61,7 +61,7 @@ print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company
 <tr>
 	<td><?php echo $langs->trans('CustomerCode'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['code_client']; ?>
-	<?php if ($this->control->tpl['checkcustomercode'] <> 0) { ?>
+	<?php if ($this->control->tpl['checkcustomercode'] != 0) { ?>
 	<span class="error">(<?php echo $langs->trans("WrongCustomerCode"); ?>)</span>
 	<?php } ?>
 	</td>
@@ -72,7 +72,7 @@ print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company
 <tr>
 	<td><?php echo $langs->trans('SupplierCode'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['code_fournisseur']; ?>
-	<?php if ($this->control->tpl['checksuppliercode'] <> 0) { ?>
+	<?php if ($this->control->tpl['checksuppliercode'] != 0) { ?>
 	<span class="error">(<?php echo $langs->trans("WrongSupplierCode"); ?>)</span>
 	<?php } ?>
 	</td>

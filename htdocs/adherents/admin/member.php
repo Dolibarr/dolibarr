@@ -428,7 +428,7 @@ if (isModEnabled('facture')) {
 	if (isModEnabled("product") || isModEnabled("service")) {
 		print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
 		print '<td>';
-		$selected = (!getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') ? '' : $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+		$selected = getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS');
 		print img_picto('', 'product', 'class="pictofixedwidth"');
 		$form->select_produits($selected, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', '', 0);
 		print '</td>';
@@ -540,7 +540,7 @@ foreach ($dirmodels as $reldir) {
 									print "</td>";
 								}
 
-								// Defaut
+								// Default
 								print '<td class="center">';
 								if (getDolGlobalString('MEMBER_ADDON_PDF_ODT') == $name) {
 									print img_picto($langs->trans("Default"), 'on');

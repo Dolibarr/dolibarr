@@ -46,7 +46,7 @@ if (empty($reshook)) {
 	if (isset($tpl_context)) {
 		$params['tpl_context'] = $tpl_context;
 	}
-	$params['cols'] = key_exists('colspanvalue', $parameters) ? $parameters['colspanvalue'] : null;
+	$params['cols'] = array_key_exists('colspanvalue', $parameters) ? $parameters['colspanvalue'] : null;
 
 	print $object->showOptionals($extrafields, 'edit', $params);
 }

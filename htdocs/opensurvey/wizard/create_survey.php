@@ -198,7 +198,7 @@ if (GETPOST('choix_sondage')) {
 	print '<input type="hidden" name="choix_sondage" value="'.GETPOST('choix_sondage').'">';
 	print '<br><input type="submit" class="button" name="submit" value="'.$langs->trans("CreatePoll").' ('.(GETPOST('choix_sondage') == 'date' ? $langs->trans("TypeDate") : $langs->trans("TypeClassic")).')">';
 } else {
-	// Show image to selecte between date survey or other survey
+	// Show image to select between date survey or other survey
 	print '<br><table>'."\n";
 	print '<tr><td>'.$langs->trans("CreateSurveyDate").'</td><td></td> '."\n";
 	print '<td><input type="image" name="creation_sondage_date" value="'.$langs->trans('CreateSurveyDate').'" src="../img/calendar-32.png"></td></tr>'."\n";

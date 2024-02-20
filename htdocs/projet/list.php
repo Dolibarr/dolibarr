@@ -63,7 +63,7 @@ $title = $langs->trans("Projects");
 
 // Security check
 $socid = GETPOST('socid', 'int');
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 if ($socid > 0) {
 	$soc = new Societe($db);
 	$soc->fetch($socid);
@@ -120,7 +120,7 @@ $searchCategoryCustomerOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryCustomerOperator = GETPOST('search_category_customer_operator', 'int');
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
-	$searchCategoryCustomerOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
+	$searchCategoryCustomerOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
 $searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
 if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
@@ -184,7 +184,7 @@ if (isModEnabled('categorie')) {
 }
 
 if (GETPOSTISARRAY('search_status')) {
-	$search_status = join(',', GETPOST('search_status', 'array:intcomma'));
+	$search_status = implode(',', GETPOST('search_status', 'array:intcomma'));
 } else {
 	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : '0,1');
 }
@@ -473,7 +473,7 @@ $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfi
 
 $distinct = 'DISTINCT'; // We add distinct until filter on contact of project or task is implemented with AND EXISTS
 $sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat,";
-$sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_update, p.budget_amount,";
+$sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_modification, p.budget_amount,";
 $sql .= " p.usage_opportunity, p.usage_task, p.usage_bill_time, p.usage_organize_event,";
 $sql .= " p.email_msgid, p.import_key,";
 $sql .= " p.accept_conference_suggestions, p.accept_booth_suggestions, p.price_registration, p.price_booth,";
@@ -504,7 +504,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON p.fk_user_creat = u.rowid';
 // We'll need this table joined to the select in order to filter by sale
-// No check is done on company permission because readability is managed by public status of project and assignement.
+// No check is done on company permission because readability is managed by public status of project and assignment.
 //if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 if ($search_sale > 0) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
@@ -610,20 +610,20 @@ if ($search_opp_status) {
 if ($search_public != '') {
 	$sql .= " AND p.public = ".((int) $search_public);
 }
-// For external user, no check is done on company permission because readability is managed by public status of project and assignement.
+// For external user, no check is done on company permission because readability is managed by public status of project and assignment.
 //if ($socid > 0) $sql.= " AND s.rowid = ".((int) $socid);
 if ($search_sale > 0) {
 	$sql .= " AND sc.fk_user = ".((int) $search_sale);
 }
-// No check is done on company permission because readability is managed by public status of project and assignement.
+// No check is done on company permission because readability is managed by public status of project and assignment.
 //if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id).") OR (s.rowid IS NULL))";
 if ($search_project_user > 0) {
 	// TODO Replace this with a EXISTS and remove the link to table + DISTINCT
-	$sql .= " AND ecp.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listofprojectcontacttype))).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".((int) $search_project_user);
+	$sql .= " AND ecp.fk_c_type_contact IN (".$db->sanitize(implode(',', array_keys($listofprojectcontacttype))).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".((int) $search_project_user);
 }
 if ($search_project_contact > 0) {
 	// TODO Replace this with a EXISTS and remove the link to table + DISTINCT
-	$sql .= " AND ecp_contact.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listofprojectcontacttypeexternal))).") AND ecp_contact.element_id = p.rowid AND ecp_contact.fk_socpeople = ".((int) $search_project_contact);
+	$sql .= " AND ecp_contact.fk_c_type_contact IN (".$db->sanitize(implode(',', array_keys($listofprojectcontacttypeexternal))).") AND ecp_contact.element_id = p.rowid AND ecp_contact.fk_socpeople = ".((int) $search_project_contact);
 }
 if ($search_opp_amount != '') {
 	$sql .= natural_search('p.opp_amount', $search_opp_amount, 1);
@@ -1093,7 +1093,7 @@ if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
@@ -1807,7 +1807,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['p.opp_amount']['checked'])) {
 			print '<td class="right">';
 			//if ($obj->opp_status_code)
-			if (strcmp($obj->opp_amount, '')) {
+			if (isset($obj->opp_amount) && strcmp($obj->opp_amount, '')) {
 				print '<span class="amount">'.price($obj->opp_amount, 1, $langs, 1, -1, -1, '').'</span>';
 				if (!isset($totalarray['val']['p.opp_amount'])) {
 					$totalarray['val']['p.opp_amount'] = $obj->opp_amount;
@@ -1994,7 +1994,7 @@ while ($i < $imaxinloop) {
 		// Date modification
 		if (!empty($arrayfields['p.tms']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

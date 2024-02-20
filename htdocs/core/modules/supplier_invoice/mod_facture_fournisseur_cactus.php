@@ -176,7 +176,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	 * @param	Societe		$objsoc     Object third party
 	 * @param  	Object		$object		Object invoice
 	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return 	string      			Value if OK, <=0 if KO
+	 * @return 	string|-1      			Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object, $mode = 'next')
 	{
@@ -236,7 +236,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 			return $ref;
 		} elseif ($mode == 'next') {
 			$date = $object->date; // This is invoice date (not creation date)
-			$yymm = strftime("%y%m", $date);
+			$yymm = dol_print_date($date, "%y%m");
 
 			if ($max >= (pow(10, 4) - 1)) {
 				$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
@@ -247,7 +247,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 			dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
 			return $prefix.$yymm."-".$num;
 		} else {
-			dol_print_error('', 'Bad parameter for getNextValue');
+			dol_print_error(null, 'Bad parameter for getNextValue');
 			return -1;
 		}
 	}

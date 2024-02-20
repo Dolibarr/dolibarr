@@ -50,7 +50,7 @@ $result = $object->fetch($id_journal);
 if ($result > 0) {
 	$id_journal = $object->id;
 } elseif ($result < 0) {
-	dol_print_error('', $object->error, $object->errors);
+	dol_print_error(null, $object->error, $object->errors);
 } elseif ($result == 0) {
 	accessforbidden('ErrorRecordNotFound');
 }
@@ -61,10 +61,16 @@ $parameters = array();
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
-if (empty($date_startmonth) || empty($date_endmonth)) {
+if (empty($date_startmonth)) {
 	// Period by default on transfer
 	$dates = getDefaultDatesForTransfer();
 	$date_start = $dates['date_start'];
+	$pastmonthyear = $dates['pastmonthyear'];
+	$pastmonth = $dates['pastmonth'];
+}
+if (empty($date_endmonth)) {
+	// Period by default on transfer
+	$dates = getDefaultDatesForTransfer();
 	$date_end = $dates['date_end'];
 	$pastmonthyear = $dates['pastmonthyear'];
 	$pastmonth = $dates['pastmonth'];

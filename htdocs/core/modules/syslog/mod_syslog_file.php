@@ -45,13 +45,12 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	}
 
 	/**
-	 * Is the module active ?
+	 * Is the logger active ?
 	 *
-	 * @return int
+	 * @return int		1 if logger enabled
 	 */
 	public function isActive()
 	{
-		global $conf;
 		return !getDolGlobalString('SYSLOG_DISABLE_LOGHANDLER_FILE') ? 1 : 0; // Set SYSLOG_DISABLE_LOGHANDLER_FILE to 1 to disable this loghandler
 	}
 
@@ -113,7 +112,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 		}
 
 		if (getDolGlobalString('SYSLOG_FILE_ONEPERSESSION')) {
-			if (is_numeric($conf->global->SYSLOG_FILE_ONEPERSESSION)) {
+			if (is_numeric(getDolGlobalString('SYSLOG_FILE_ONEPERSESSION'))) {
 				if (getDolGlobalInt('SYSLOG_FILE_ONEPERSESSION') == 1) {	// file depend on instance session key name (Note that session name is same for the instance so for all users and is not a per user value)
 					$suffixinfilename .= '_'.session_name();
 				}

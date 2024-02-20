@@ -772,7 +772,7 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 				$arraythirdparties[] = array('id'=>$obj->socRowid,
 					'ref'=>$obj->ref,
 					'ref_ext'=>$obj->ref_ext,
-					'adress'=>$obj->adress,
+					'address'=>$obj->address,
 					'zip'=>$obj->zip,
 					'town'=>$obj->town,
 					'country'=>$obj->country,
@@ -861,7 +861,7 @@ function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 					$error++;
 					$errorcode = 'KO';
 					$errorlabel = $thirdparty->error;
-					dol_syslog("Function: deleteThirdParty cant delete");
+					dol_syslog("Function: deleteThirdParty can't delete");
 				}
 			} else {
 				$error++;

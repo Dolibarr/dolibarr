@@ -138,17 +138,18 @@ if (empty($reshook)) {
 		$localtax2 = 0;
 		$localtax1_type = '0';
 		$localtax2_type = '0';
-		// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+		// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes
 
 		if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
 			// We look into database using code (we can't use get_localtax() because it depends on buyer that is not known). Same in create product.
 			$vatratecode = $reg[1];
 			// Get record from code
-			$sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
+			$sql = "SELECT t.rowid, t.type_vat, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
 			$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
 			$sql .= " AND t.code = '".$db->escape($vatratecode)."'";
+			$sql .= " AND t.type_vat IN (0, 1)";	// Use only VAT rates type all or i.e. the sales type VAT rates.
 			$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 			$resql = $db->query($sql);
 			if ($resql) {
@@ -396,7 +397,7 @@ if (empty($reshook)) {
 			$localtax2 = 0;
 			$localtax1_type = '0';
 			$localtax2_type = '0';
-			// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+			// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes
 			if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
 				// We look into database using code
 				$vatratecode = $reg[1];
@@ -653,7 +654,7 @@ if (empty($reshook)) {
 		$localtax2 = 0;
 		$localtax1_type = '0';
 		$localtax2_type = '0';
-		// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+		// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes
 		if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
 			// We look into database using code
 			$vatratecode = $reg[1];
@@ -776,7 +777,7 @@ if (empty($reshook)) {
 		$localtax2 = 0;
 		$localtax1_type = '0';
 		$localtax2_type = '0';
-		// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+		// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes
 		if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
 			// We look into database using code
 			$vatratecode = $reg[1];
@@ -888,7 +889,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_value
 $object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 $shownav = 1;
-if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 	$shownav = 0;
 }
 
@@ -1021,7 +1022,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 			print '<!-- Default VAT Rate -->';
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("DefaultTaxRate").'</td><td>';
 
-			// TODO We show localtax from $object, but this properties may not be correct. Only value $object->default_vat_code is guaranted.
+			// TODO We show localtax from $object, but this properties may not be correct. Only value $object->default_vat_code is guaranteed.
 			$positiverates = '';
 			if (price2num($object->tva_tx)) {
 				$positiverates .= ($positiverates ? '<span class="opacitymedium">/</span>' : '').price2num($object->tva_tx);
@@ -1078,7 +1079,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 			} else {
 				print $langs->trans("SellingPrice").' '.$i;
 				if (!empty($conf->global->$keyforlabel)) {
-					print ' - '.$langs->trans($conf->global->$keyforlabel);
+					print ' - '.$langs->trans(getDolGlobalString($keyforlabel));
 				}
 			}
 			print '</td>';
@@ -1111,7 +1112,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {      // TODO Fix the form included into a tr instead of a td
 				print '<tr><td>'.$langs->trans("PriceByQuantity").' '.$i;
 				if (!empty($conf->global->$keyforlabel)) {
-					print ' - '.$langs->trans($conf->global->$keyforlabel);
+					print ' - '.$langs->trans(getDolGlobalString($keyforlabel));
 				}
 				print '</td><td colspan="2">';
 
@@ -1495,7 +1496,7 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 		$product->fetch($id, $ref, '', 1); //Ignore the math expression when getting the price
 		print '<tr id="price_numeric"><td>';
 		$text = $langs->trans('SellingPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 		print '</td><td>';
 		if ($object->price_base_type == 'TTC') {
 			print '<input name="price" size="10" value="'.price($product->price_ttc).'">';
@@ -1507,7 +1508,7 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 		// Price minimum
 		print '<tr><td>';
 		$text = $langs->trans('MinPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 		print '</td><td>';
 		if ($object->price_base_type == 'TTC') {
 			print '<input name="price_min" size="10" value="'.price($object->price_min_ttc).'">';
@@ -1595,7 +1596,7 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 			print '<td>';
 			$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
 			$text = $langs->trans('SellingPrice').' '.$i.' - '.getDolGlobalString($keyforlabel);
-			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 			print '</td>';
 
 			// VAT
@@ -1937,7 +1938,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		$sortfield = "soc.nom";
 	}
 
-	// Build filter to diplay only concerned lines
+	// Build filter to display only concerned lines
 	$filter = array('t.fk_product' => $object->id);
 
 	if (!empty($search_soc)) {
@@ -1988,7 +1989,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		// Price
 		print '<tr><td class="fieldrequired">';
 		$text = $langs->trans('SellingPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 		print '</td><td>';
 		if ($object->price_base_type == 'TTC') {
 			print '<input name="price" size="10" value="'.price($object->price_ttc).'">';
@@ -2000,7 +2001,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		// Price minimum
 		print '<tr><td>';
 		$text = $langs->trans('MinPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 		if ($object->price_base_type == 'TTC') {
 			print '<td><input name="price_min" size="10" value="'.price($object->price_min_ttc).'">';
 		} else {
@@ -2073,7 +2074,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		// Price
 		print '<tr><td class="fieldrequired">';
 		$text = $langs->trans('SellingPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 		print '</td><td>';
 		if ($prodcustprice->price_base_type == 'TTC') {
 			print '<input name="price" size="10" value="'.price($prodcustprice->price_ttc).'">';
@@ -2085,7 +2086,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		// Price minimum
 		print '<tr><td>';
 		$text = $langs->trans('MinPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 		print '</td><td>';
 		if ($prodcustprice->price_base_type == 'TTC') {
 			print '<input name="price_min" size="10" value="'.price($prodcustprice->price_min_ttc).'">';
@@ -2191,7 +2192,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 
 				print '<tr class="oddeven">';
 
-				print "<td>".$staticsoc->getNomUrl(1)."</td>";
+				print '<td class="tdoverflowmax125">'.$staticsoc->getNomUrl(1)."</td>";
 				print '<td>'.$line->ref_customer.'</td>';
 				print "<td>".dol_print_date($line->datec, "dayhour", 'tzuserrel')."</td>";
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
@@ -2307,10 +2308,10 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 			$pu = $object->price_ttc;
 		}
 
-		// Local tax was not saved into table llx_product on old version. So we will use value linked to VAT code.
+		// Local tax was not saved into table llx_product on old versions. So we will use the value linked to the VAT code.
 		$localtaxarray = getLocalTaxesFromRate($object->tva_tx.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), 0, $mysoc, $mysoc);
 		// Define part of HT, VAT, TTC
-		$resultarray = calcul_price_total(1, $pu, 0, $object->tva_tx, 1, 1, 0, $object->price_base_type, $object->recuperableonly, $object->type, $mysoc, $localtaxarray);
+		$resultarray = calcul_price_total(1, $pu, 0, $object->tva_tx, 1, 1, 0, $object->price_base_type, 0, $object->type, $mysoc, $localtaxarray);
 		// Calcul du total ht sans remise
 		$total_ht = $resultarray[0];
 		$total_vat = $resultarray[1];
@@ -2398,7 +2399,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 
 				print '<tr class="oddeven">';
 
-				print "<td>".$staticsoc->getNomUrl(1)."</td>";
+				print '<td class="tdoverflowmax125">'.$staticsoc->getNomUrl(1)."</td>";
 				print '<td>'.dol_escape_htmltag($line->ref_customer).'</td>';
 				print "<td>".dol_print_date($line->datec, "dayhour", 'tzuserrel')."</td>";
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
@@ -2419,7 +2420,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 					$positiverates = '0';
 				}
 
-				echo vatrate($positiverates.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), '%', ($line->tva_npr ? $line->tva_npr : $line->recuperableonly));
+				echo vatrate($positiverates.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), '%', (!empty($line->tva_npr) ? $line->tva_npr : $line->recuperableonly));
 
 				print "</td>";
 

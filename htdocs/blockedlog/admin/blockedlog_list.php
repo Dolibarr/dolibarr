@@ -415,7 +415,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 
 // Line of filters
@@ -442,7 +442,6 @@ print '</td>';
 // User
 print '<td class="liste_titre">';
 print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
-
 print '</td>';
 
 // Actions code
@@ -570,7 +569,7 @@ if (is_array($blocks)) {
 			print '<td class="nowraponall">'.dol_print_date($block->date_creation, 'dayhour').'</td>';
 
 			// User
-			print '<td>';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($block->user_fullname).'">';
 			//print $block->getUser()
 			print dol_escape_htmltag($block->user_fullname);
 			print '</td>';
@@ -580,7 +579,7 @@ if (is_array($blocks)) {
 
 			// Ref
 			print '<td class="nowraponall">';
-			print $block->ref_object;
+			print dol_escape_htmltag($block->ref_object);
 			print '</td>';
 
 			// Link to source object
@@ -596,7 +595,7 @@ if (is_array($blocks)) {
 			print '<td class="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_info($langs->trans('ShowDetails')).'</a></td>';
 
 			// Fingerprint
-			print '<td class="nowrap">';
+			print '<td class="nowraponall">';
 			$texttoshow = $langs->trans("Fingerprint").' - '.$langs->trans("Saved").':<br>'.$block->signature;
 			$texttoshow .= '<br><br>'.$langs->trans("Fingerprint").' - Recalculated sha256(previoushash * data):<br>'.$checkdetail[$block->id]['calculatedsignature'];
 			$texttoshow .= '<br><span class="opacitymedium">'.$langs->trans("PreviousHash").'='.$checkdetail[$block->id]['previoushash'].'</span>';

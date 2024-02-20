@@ -38,12 +38,12 @@ if (isset($user->socid) && $user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
 
 // Maximum elements of the tables
-$maxDraftCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$maxDraftCount = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', 500);
 $maxLatestEditCount = 5;
-$maxOpenCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$maxOpenCount = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', 500);
 
 // Security check
 restrictedArea($user, 'fournisseur', 0, '', 'facture');

@@ -52,6 +52,8 @@ $langs->load("main");
 $version = DOL_VERSION;
 $error = 0;
 
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main
@@ -218,7 +220,7 @@ if (empty($option) && count($filter) <= 0) {
 	rebuild_merge_pdf_usage();
 	exit(-1);
 }
-// Check if there is no uncompatible choice
+// Check if there is no incompatible choice
 if (in_array('payments', $filter) && in_array('nopayment', $filter)) {
 	rebuild_merge_pdf_usage();
 	exit(-1);

@@ -193,7 +193,7 @@ if ($result) {
 		}
 
 		// Break found, it's a new module to catch
-		if (isset($obj->module) && ($oldmod <> $obj->module)) {
+		if (isset($obj->module) && ($oldmod != $obj->module)) {
 			$oldmod = $obj->module;
 
 			// Break detected, we get objMod
@@ -248,7 +248,7 @@ if ($result) {
 		}
 
 		// Permission and tick
-		$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
+		$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != "PermissionAdvanced".$obj->id) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != "Permission".$obj->id) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
 		print '<td>';
 		print $permlabel;
 		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
@@ -262,7 +262,7 @@ if ($result) {
 		if ($user->admin) {
 			print '<td class="right">';
 			$htmltext = $langs->trans("ID").': '.$obj->id;
-			$htmltext .= '<br>'.$langs->trans("Permission").': user->rights->'.$obj->module.'->'.$obj->perms.($obj->subperms ? '->'.$obj->subperms : '');
+			$htmltext .= '<br>'.$langs->trans("Permission").': user->hasRight(\''.$obj->module.'\', \''.$obj->perms.'\''.($obj->subperms ? ', \''.$obj->subperms.'\'' : '').')';
 			print $form->textwithpicto('', $htmltext);
 			//print '<span class="opacitymedium">'.$obj->id.'</span>';
 			print '</td>';
