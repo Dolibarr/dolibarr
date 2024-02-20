@@ -2549,4 +2549,66 @@ class Project extends CommonObject
 
 		return $children;
 	}
+
+	/**
+	 * method for calcule weekly time spent and get a repport
+	 * @return string|int
+	 */
+	public function createWeeklyReport()
+	{
+		global $mysoc;
+		$lastWeekStart = new DateTime();
+		$lastWeekStart->modify('last monday -7 days');
+		$lastWeekEnd = clone $lastWeekStart;
+		$lastWeekEnd->modify('+6 days');
+
+		$startDate = $lastWeekStart->format('Y-m-d 00:00:00');
+		$endDate = $lastWeekEnd->format('Y-m-d 23:59:59');
+
+		$sql = "SELECT
+		u.rowid AS user_id,
+		CONCAT(u.firstname, ' ', u.lastname) AS name,
+		u.weeklyhours,
+		SUM(et.element_duration) AS total_seconds
+		FROM
+			llx_element_time AS et
+		JOIN
+			llx_user AS u ON et.fk_user = u.rowid
+		WHERE
+			et.element_date BETWEEN '".$this->db->escape($startDate)."' AND '".$this->db->escape($endDate)."'
+			AND et.elementtype = 'task'
+		GROUP BY
+			et.fk_user";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			dol_print_error($this->db);
+			return -1;
+		} else {
+			$timestampStart = $lastWeekStart->getTimestamp();
+			$timestampEnd = $lastWeekEnd->getTimestamp();
+
+			$reportContent = "Weekly time report from $startDate to $endDate\n\n";
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+			while ($obj = $this->db->fetch_object($resql)) {
+				$numHolidays = num_public_holiday($timestampStart, $timestampEnd, $mysoc->country_code, 1);
+				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY') && getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY')) {
+					$numHolidays = $numHolidays - 2;
+					$weekendEnabled = 2;
+				}
+
+				$dailyHours = $obj->weeklyhours / (7 - $weekendEnabled);
+
+				// Ajust total on seconde
+				$adjustedSeconds = $obj->total_seconds + ($numHolidays * $dailyHours * 3600);
+
+
+				$totalHours = round($adjustedSeconds / 3600, 2);
+
+				$reportContent .= "Username: {$obj->name}, Total Hours (adjusted for holidays): {$totalHours}\n";
+			}
+			return $reportContent;
+		}
+	}
 }
