@@ -935,7 +935,7 @@ if (empty($reshook)) {
 				$object->model_pdf = GETPOST('model', 'alphanohtml');
 				$object->fk_project = GETPOST('projectid', 'int');
 				$object->cond_reglement_id	= (GETPOST('type') == 3 ? 1 : GETPOSTINT('cond_reglement_id'));
-				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
+				$object->mode_reglement_id	= GETPOSTINT('mode_reglement_id');
 				$object->fk_account = GETPOST('fk_account', 'int');
 				$object->amount = price2num(GETPOST('amount'));
 				$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
