@@ -216,23 +216,31 @@ function isModEnabled($module)
 {
 	global $conf;
 
-	// Fix special cases
+	// Fix old names (map to new names)
 	$arrayconv = array(
-		'bank' => 'banque',
-		'category' => 'categorie',
-		'contract' => 'contrat',
-		'project' => 'projet',
-		'delivery_note' => 'expedition'
+		'adherent' =>	'member',
+		'banque' => 'bank',
+		'categorie' => 'category',
+		'commande' => 'order',
+		'contrat' => 'contract',
+		'expedition' => 'delivery_note',
+		'facture' => 'invoice',
+		'projet' => 'project',
+		'propale' => 'propal',
 	);
+
 	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+		// Special cases: both use the same module.
 		$arrayconv['supplier_order'] = 'fournisseur';
 		$arrayconv['supplier_invoice'] = 'fournisseur';
 	}
+
+	$module_alt = $module;
 	if (!empty($arrayconv[$module])) {
-		$module = $arrayconv[$module];
+		$module_alt = $arrayconv[$module];
 	}
 
-	return !empty($conf->modules[$module]);
+	return !empty($conf->modules[$module]) || !empty($conf->modules[$module_alt]);
 	//return !empty($conf->$module->enabled);
 }
 
