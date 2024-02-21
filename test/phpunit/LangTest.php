@@ -165,13 +165,13 @@ class LangTest extends CommonClassTest
 				$reg = array();
 				$result = preg_match('/(.*)\'notranslate\'/im', $filecontent, $reg);	// A sequence of char we don't want
 				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
-				$this->assertTrue($result == 0, 'Found a sequence tag \'notranslate\' into the translation file '.$code.'/'.$file.' in line '.$reg[1]);
+				$this->assertTrue($result == 0, 'Found a sequence tag \'notranslate\' into the translation file '.$code.'/'.$file.' in line '.empty($reg[1]) ? '' : $reg[1]);
 
 				if (!in_array($code, array('ar_SA'))) {
 					$reg = array();
 					$result = preg_match('/(.*)<([^a-z\/\s,=\(]1)/im', $filecontent, $reg);	// A sequence of char we don't want
 					//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
-					$this->assertTrue($result == 0, 'Found a sequence tag <'.$reg[2].' into the translation file '.$code.'/'.$file.' in line '.$reg[1]);
+					$this->assertTrue($result == 0, 'Found a sequence tag <'.(empty($reg[2]) ? '': $reg[2]).' into the translation file '.$code.'/'.$file.' in line '.empty($reg[1]) ? '' : $reg[1]);
 				}
 			}
 		}
