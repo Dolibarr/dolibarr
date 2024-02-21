@@ -83,42 +83,29 @@ SelectFormat=ይህን የማስመጣት ፋይል ቅርጸት ይምረጡ
 RunImportFile=ውሂብ አስመጣ
 NowClickToRunTheImport=የማስመጣት ማስመሰል ውጤቶችን ያረጋግጡ። ማናቸውንም ስህተቶች ያስተካክሉ እና እንደገና ይሞክሩ።<br>አስመሳይው ምንም ስህተት እንደሌለው ሲገልጽ ውሂቡን ወደ ዳታቤዝ ማስገባት መቀጠል ይችላሉ።
 DataLoadedWithId=የገባው ውሂብ በእያንዳንዱ የውሂብ ጎታ ሠንጠረዥ ውስጥ ይህ የማስመጣት መታወቂያ ያለው ተጨማሪ መስክ ይኖረዋል፡ <b>%s</b>፣ ከዚህ ማስመጣት ጋር የተያያዘ ችግርን በማጣራት ላይ እንዲፈለግ ለማድረግ።
-ErrorMissingMandatoryValue=አስገዳጅ ውሂብ በአምድ <b>%s<span class='notranslate'></b> ላይ ባለው የምንጭ ፋይል ውስጥ ባዶ ነው።
 TooMuchErrors=አሁንም አሉ <b>%s</b>ሌሎች የውጤት መስመሮች ግን ስህተቶች አሏቸው ተገድቧል።
 TooMuchWarnings=አሁንም አሉ <b>%s</b>ሌሎች የውጤት መስመሮች ግን ማስጠንቀቂያዎች አሉት ተገድቧል።
 EmptyLine=ባዶ መስመር (ይወገዳል)
-CorrectErrorBeforeRunningImport=አንተ <b> አለብህ</b> ሁሉንም ስህተቶች ማረም <b> notranslate'></b></span>አስመጪውን እያሄደ ነው።
 FileWasImported=ፋይሉ የመጣው በቁጥር <b>%s</b> ነው።
 YouCanUseImportIdToFindRecord=በመስክ <b>import_key='%s'በማጣራት በውሂብ ጎታህ ውስጥ ማግኘት ትችላለህ። > </b>።
-NbOfLinesOK=ምንም ስህተቶች እና ማስጠንቀቂያዎች የሌሉባቸው መስመሮች ብዛት፡ <b>%s</b><span class='notranslate'></b>
 NbOfLinesImported=በተሳካ ሁኔታ የገቡ የመስመሮች ብዛት፡ <b>%s</b>።
 DataComeFromNoWhere=የማስገባት እሴት ከምንጭ ፋይል ውስጥ ከየትም አይመጣም።
 DataComeFromFileFieldNb=የማስገባት እሴት ከአምድ <b>%s</b> ምንጭ ፋይል ይመጣል።
-DataComeFromIdFoundFromRef=ከምንጩ ፋይል የሚመጣው እሴት የሚጠቀመውን የወላጅ ነገር መታወቂያ ለማግኘት ጥቅም ላይ ይውላል (ስለዚህ ነገሩ <b>%s</span ከምንጭ ፋይል ማጣቀሻ ያለው ><span class='notranslate'></b>በመረጃ ቋቱ ውስጥ መኖር አለበት።
-DataComeFromIdFoundFromCodeId=ከምንጩ ፋይል የሚመጣው ኮድ ዋጋ የሚጠቀመው የወላጅ ነገር መታወቂያ ለማግኘት ጥቅም ላይ ይውላል (ስለዚህ ከምንጩ ፋይል የሚገኘው ኮድ በመዝገበ ቃላት <b><span class) ውስጥ መኖር አለበት ='notranslate'>%s</span></b>)። መታወቂያውን ካወቁ ከኮዱ ይልቅ በምንጭ ፋይሉ ውስጥ ሊጠቀሙበት እንደሚችሉ ልብ ይበሉ። ማስመጣት በሁለቱም ሁኔታዎች መስራት አለበት.
 DataIsInsertedInto=ከምንጩ ፋይል የሚመጣው ውሂብ በሚከተለው መስክ ውስጥ ይገባል፡-
 DataIDSourceIsInsertedInto=በምንጭ ፋይል ውስጥ ያለውን ውሂብ ተጠቅሞ የተገኘው የወላጅ ነገር መታወቂያ በሚከተለው መስክ ውስጥ ይገባል፡
 DataCodeIDSourceIsInsertedInto=ከኮድ የተገኘው የወላጅ መስመር መታወቂያ በሚከተለው መስክ ውስጥ ይገባል፡
 SourceRequired=የውሂብ ዋጋ ግዴታ ነው
 SourceExample=ሊሆን የሚችል የውሂብ እሴት ምሳሌ
 ExampleAnyRefFoundIntoElement=ለኤለመንት <b>%s</b> የተገኘ ማንኛውም ማጣቀሻ
-ExampleAnyCodeOrIdFoundIntoDictionary=መዝገበ ቃላት ውስጥ የተገኘ ማንኛውም ኮድ (ወይም መታወቂያ) <b>%s<span class='notranslate'></b>s
-CSVFormatDesc=<b>በነጠላ ሰረዝ የተለየ እሴት</b> የፋይል ቅርጸት (.csv)።b0342fccfda19 መስኮች በተከፋፋይ የሚለያዩበት የጽሑፍ ፋይል ቅርጸት ነው [ <span class='notranslate'>%s]። መለያየት በመስክ ይዘት ውስጥ ከተገኘ፣ ሜዳው በክብ ቁምፊ [%s የተጠጋጋ ነው። ክብ ቁምፊን ለማምለጥ የማምለጫ ቁምፊ [ %s ነው.
-Excel95FormatDesc=<b>Excel</b> የፋይል ቅርጸት (.xls)<span class='notranslate'><br> ይህ ነው</s napan napan የ Excel 95 ቅርጸት (BIFF5)።
-Excel2007FormatDesc=<b>Excel</b> የፋይል ቅርጸት (.xlsx)<span class='notranslate'><br> ነው የ Excel 2007 ቅርጸት (የተመን ሉህ ኤምኤል)።
-TsvFormatDesc=<b>ትር የተለየ እሴት</b> የፋይል ቅርጸት (.tsv)<span class='notranslate'>b0342fccfda19 ነው መስኮች በታቡሌተር [tab] የሚለያዩበት የጽሑፍ ፋይል ቅርጸት።
 ExportFieldAutomaticallyAdded=መስክ <b>%s</b> በቀጥታ ታክሏል። ተመሳሳይ መስመሮች እንደ የተባዛ መዝገብ እንዲታዩ ያደርግዎታል (ይህ መስክ ሲጨመር ሁሉም መስመሮች የራሳቸው መታወቂያ ይኖራቸዋል እና ይለያያሉ)።
 CsvOptions=የCSV ቅርጸት አማራጮች
 Separator=የመስክ መለያያ
 Enclosure=ሕብረቁምፊ Delimiter
 SpecialCode=ልዩ ኮድ
 ExportStringFilter=%% በጽሁፉ ውስጥ አንድ ወይም ከዚያ በላይ ቁምፊዎችን ለመተካት ይፈቅዳል.
-ExportDateFilter=YYYY, YYYYMM, YYYYMMDD: filters by one year/month/day1YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD: filters over a range of years/months/days2 > YYYY, > YYYYMM, > YYYYMMDD: filters on all following years/months/days3 < YYYY, < YYYYMM, < YYYYMMDD: filters on all previous years/months/days
-ExportNumericFilter=NNNNN filters by one value1NNNNN+NNNNN filters over a range of values2< NNNNN filters by lower values3> NNNNN filters by higher values
 ImportFromLine=ከመስመር ቁጥር ጀምሮ አስመጣ
 EndAtLineNb=በመስመር ቁጥር ጨርስ
 ImportFromToLine=ክልል ገድብ (ከ - ወደ)። ለምሳሌ. የራስጌ መስመር(ዎችን) ለመተው።
-SetThisValueTo2ToExcludeFirstLine=ለምሳሌ፣ 2ቱን የመጀመሪያ መስመሮች ለማስቀረት ይህንን እሴት ወደ 3 ያዋቅሩት።<br>የራስጌ መስመሮቹ ካልተዘለሉ፣ ይህ በአስመጪ ማስመሰያው ላይ በርካታ ስህተቶችን ያስከትላል።
 KeepEmptyToGoToEndOfFile=ሁሉንም መስመሮች እስከ ፋይሉ መጨረሻ ድረስ ለማስኬድ ይህንን መስክ ባዶ ያድርጉት።
 SelectPrimaryColumnsForUpdateAttempt=ለዝማኔ ማስመጣት እንደ ዋና ቁልፍ ለመጠቀም አምድ(ዎችን) ምረጥ
 UpdateNotYetSupportedForThisImport=ለዚህ አይነት ማስመጣት አይደገፍም (አስገባ ብቻ)

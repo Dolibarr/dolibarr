@@ -287,7 +287,6 @@ TotalVente=ከታክስ በፊት ጠቅላላ ገቢ
 TotalMarge=ጠቅላላ የሽያጭ ህዳግ
 
 DescVentilCustomer=ከመለያው ገበታ ወደ ምርት መለያ የታሰሩ (ወይም ያልሆኑ) የደንበኛ የክፍያ መጠየቂያ መስመሮችን ዝርዝር እዚህ ይመልከቱ
-DescVentilMore=በአብዛኛዎቹ ሁኔታዎች አስቀድሞ የተገለጹ ምርቶችን ወይም አገልግሎቶችን ከተጠቀሙ እና መለያውን (ከሂሳብ ሠንጠረዥ) በምርት/አገልግሎት ካርዱ ላይ ካስቀመጡት አፕሊኬሽኑ በሂሳብ መጠየቂያ መስመሮችዎ እና በገበታዎ የሂሳብ መዝገብ መካከል ያሉትን ሁሉንም ግንኙነቶች ማድረግ ይችላል። የመለያዎች፣ ልክ በአንድ ጠቅታ <strong>"%s"b0a65d071f6f6 >. መለያ በምርት/አገልግሎት ካርዶች ላይ ካልተዋቀረ ወይም አሁንም አንዳንድ ከመለያ ጋር ያልተያያዙ መስመሮች ካሉዎት ከ"<span class='notranslate'><strong><span" ምናሌ ውስጥ በእጅ ማሰር አለብዎት class='notranslate'>%s</span></strong>"።
 DescVentilDoneCustomer=የክፍያ መጠየቂያ ደረሰኞች ደንበኞችን ዝርዝር እና የምርት መለያቸውን ከመለያ ገበታ ይመልከቱ
 DescVentilTodoCustomer=የክፍያ መጠየቂያ መስመሮች አስቀድመው ከምርት መለያ ጋር ከመለያ ገበታ ላይ ያልታሰሩ
 ChangeAccount=ለተመረጡት መስመሮች የምርት/አገልግሎት መለያውን (ከሂሳብ ገበታ) በሚከተለው መለያ ይቀይሩ፡
@@ -433,15 +432,12 @@ AccountancyClosureConfirmAccountingReversal=እርግጠኛ ነዎት ለ"የተ
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=አንዳንድ አስገዳጅ የማዋቀር ደረጃዎች አልተደረጉም፣ እባክዎ ያጠናቅቁዋቸው
-ErrorNoAccountingCategoryForThisCountry=ለአገር ምንም የሂሳብ አያያዝ ቡድን የለም %s (%s ይመልከቱ - b0ecb2ec87f49fez0s <span class='notranslate'>%s)
-ErrorInvoiceContainsLinesNotYetBounded=አንዳንድ የክፍያ መጠየቂያ መጠየቂያ ደረሰኞችን <strong>%s<span class='notranslate'>b0a65d071f6fc9 ግን ለመመዝገብ ይሞክራሉ። አንዳንድ ሌሎች መስመሮች በሂሳብ አያያዝ መለያ ላይ ገና አልተገደቡም። ለዚህ ደረሰኝ የሁሉም የክፍያ መጠየቂያ መስመሮች ጋዜጠኝነት ውድቅ ተደርጓል።
 ErrorInvoiceContainsLinesNotYetBoundedShort=በክፍያ መጠየቂያ ላይ ያሉ አንዳንድ መስመሮች ከሂሳብ መዝገብ ጋር የተገናኙ አይደሉም።
 ExportNotSupported=የተቀናበረው ወደ ውጭ መላኪያ ቅርጸት በዚህ ገጽ ላይ አይደገፍም።
 BookeppingLineAlreayExists=በሂሳብ አያያዝ ውስጥ ቀድሞውኑ ያሉ መስመሮች
 NoJournalDefined=ምንም ጆርናል አልተገለጸም።
 Binded=መስመሮች ተያይዘዋል።
 ToBind=ለማሰር መስመሮች
-UseMenuToSetBindindManualy=መስመሮች ገና አልተጣመሩም ፣ ምናሌን ይጠቀሙ <a href="%s">%s<span class='notranslate'></a> binding> ለማድረግ በእጅ
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=ማስታወሻ፡ ይህ ሞጁል ወይም ገጽ ከሁኔታ ደረሰኞች የሙከራ ባህሪ ጋር ሙሉ ለሙሉ ተኳሃኝ አይደለም። አንዳንድ መረጃዎች የተሳሳቱ ሊሆኑ ይችላሉ።
 AccountancyErrorMismatchLetterCode=በማስታረቅ ኮድ ውስጥ አለመዛመድ
 AccountancyErrorMismatchBalanceAmount=ቀሪው (%s) ከ 0 ጋር እኩል አይደለም
