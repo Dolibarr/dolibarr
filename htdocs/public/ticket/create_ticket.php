@@ -337,6 +337,8 @@ if (empty($reshook)) {
 			$object->context['disableticketemail'] = 1; // Disable emails sent by ticket trigger when creation is done from this page, emails are already sent later
 			$object->context['contactid'] = GETPOSTINT('contactid'); // Disable emails sent by ticket trigger when creation is done from this page, emails are already sent later
 
+			$object->context['createdfrompublicinterface'] = 1; // To make a difference between a ticket created from the public interface and a ticket directly created from dolibarr
+
 			if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
 				$error++;
 				array_push($object->errors, $langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
