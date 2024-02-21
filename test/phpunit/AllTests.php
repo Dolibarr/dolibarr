@@ -79,6 +79,8 @@ class AllTests
 
 		//require_once dirname(__FILE__).'/CoreTest.php';
 		//$suite->addTestSuite('CoreTest');
+		require_once dirname(__FILE__).'/FilesLibRenameTest.php';
+		$suite->addTestSuite('FilesLibRenameTest');
 		require_once dirname(__FILE__).'/AdminLibTest.php';
 		$suite->addTestSuite('AdminLibTest');
 		require_once dirname(__FILE__).'/CompanyLibTest.php';
