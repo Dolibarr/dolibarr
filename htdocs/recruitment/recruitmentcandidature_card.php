@@ -487,9 +487,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$fuser->fetch($object->fk_user_creat);
 			$morehtmlref .= $fuser->getNomUrl(-1);
 		}
-		if (!empty($object->email_msgid)) {
-			$morehtmlref .= ' <small class="hideonsmartphone opacitymedium">('.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $langs->trans("EmailMsgID").': '.$object->email_msgid).')</small>';
-		}
+		$morehtmlref .= ' <small class="hideonsmartphone opacitymedium">('.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $langs->trans("EmailMsgID").': '.$object->email_msgid).')</small>';
 	} /* elseif (!empty($object->origin_email)) {
 		$morehtmlref .= $langs->trans("CreatedBy").' : ';
 		$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
