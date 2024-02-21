@@ -92,8 +92,6 @@ class FormCategory extends Form
 	 */
 	public function selectProductCategory($selected = 0, $htmlname = 'product_category_id', $showempty = 0)
 	{
-		global $conf;
-
 		$sql = "SELECT cp.fk_categorie as cat_index, cat.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_product as cp";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie as cat ON cat.rowid = cp.fk_categorie";

@@ -527,6 +527,9 @@ if ($resql) {
 	// Filter on categories
 	$moreforfilter = '';
 	if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+		$formcategory = new FormCategory($db);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $searchCategoryProductList, 'minwidth300', $searchCategoryProductList ? $searchCategoryProductList : 0);
+		/*
 		$moreforfilter .= '<div class="divsearchfield">';
 		$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
 		$categoriesProductArr = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', '', 64, 0, 1);
@@ -534,6 +537,7 @@ if ($resql) {
 		$moreforfilter .= Form::multiselectarray('search_category_product_list', $categoriesProductArr, $searchCategoryProductList, 0, 0, 'minwidth300');
 		$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_product_operator" name="search_category_product_operator" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').'/> <label for="search_category_product_operator"><span class="none">'.$langs->trans('UseOrOperatorForCategories').'</span></label>';
 		$moreforfilter .= '</div>';
+		*/
 	}
 
 	// Show/hide child products. Hidden by default
