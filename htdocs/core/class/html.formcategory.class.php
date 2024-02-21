@@ -35,7 +35,7 @@ class FormCategory extends Form
 	 * @param 	string		$type								The categorie type (e.g Categorie::TYPE_WAREHOUSE)
 	 * @param 	array		$preSelected						A list with the elements that should pre-selected
 	 * @param	string		$morecss							More CSS
-	 * @param	int			$searchCategoryProductOperator		0 or 1 to enable the checkbox to search with a or (0=not preseleted, 1=preselected)
+	 * @param	int			$searchCategoryProductOperator		0 or 1 to enable the checkbox to search with a or (0=not preseleted, 1=preselected), -1=Not used
 	 * @param	int			$multiselect						0 or 1
 	 * @param	int			$nocateg							1=Add an entry '- No Category -'
 	 * @param	string		$showempty							1 or 'string' to add an empty entry
@@ -76,7 +76,10 @@ class FormCategory extends Form
 			$filter .= $formother->select_categories($type, $preSelected[0], $htmlName, $nocateg, $tmptitle, $morecss);
 		}
 		if ($searchCategoryProductOperator >= 0) {
-			$filter .= ' <input type="checkbox" class="valignmiddle" id="'.$htmlName2.'" name="'.$htmlName2.'" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').'/><label class="none valignmiddle" for="'.$htmlName2.'">'.$langs->trans('UseOrOperatorForCategories').'</label>';
+			$filter .= ' <input type="checkbox" class="valignmiddle" id="'.$htmlName2.'" name="'.$htmlName2.'" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').' title="'.dol_escape_htmltag($langs->trans('UseOrOperatorForCategories')).'" />';
+			$filter .= '<label class="none valignmiddle" for="'.$htmlName2.'" title="'.dol_escape_htmltag($langs->trans('UseOrOperatorForCategories')).'">';
+			$filter .= $langs->trans('UseOrOperatorShort');
+			$filter .= '</label>';
 		}
 		$filter .= "</div>";
 
