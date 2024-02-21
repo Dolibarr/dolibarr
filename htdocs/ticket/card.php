@@ -577,7 +577,11 @@ if (empty($reshook)) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			// prevent browser refresh from reopening ticket several times
 			if ($object->status == Ticket::STATUS_CLOSED || $object->status == Ticket::STATUS_CANCELED) {
-				$res = $object->setStatut(Ticket::STATUS_ASSIGNED);
+				if(($object->fk_user_assign != NULL)) {
+					$res = $object->setStatut(Ticket::STATUS_ASSIGNED);
+				} else {
+					$res = $object->setStatut(Ticket::STATUS_NOT_READ);
+				}
 				if ($res) {
 					// Log action in ticket logs table
 					//$log_action = $langs->trans('TicketLogReopen');

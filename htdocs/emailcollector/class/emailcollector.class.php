@@ -2591,8 +2591,10 @@ class EmailCollector extends CommonObject
 								//var_dump($alreadycreated);
 								//var_dump($operation['type']);
 								//var_dump($actioncomm);
+								//var_dump($objectemail);
 								//exit;
 
+								// Need to re-open the if it is closed or solved in past
 								if ($errorforthisaction) {
 									$errorforactions++;
 								} else {
@@ -2600,9 +2602,25 @@ class EmailCollector extends CommonObject
 									if ($result <= 0) {
 										$errorforactions++;
 										$this->errors = $actioncomm->errors;
-									} else {
-										$operationslog .= '<br>Event created -> id='.dol_escape_htmltag($actioncomm->id);
+									} else {										
+										if ($objectemail->status == Ticket::STATUS_CLOSED || $objectemail->status == Ticket::STATUS_CANCELED) {											
+											if(($objectemail->fk_user_assign != NULL)) {
+												$res = $objectemail->setStatut(Ticket::STATUS_ASSIGNED);
+											} else {
+												$res = $objectemail->setStatut(Ticket::STATUS_NOT_READ);
+											}
+											
+											if ($res) {
+												$operationslog .= '<br>Ticket Re-Opened successfully -> ref='.$objectemail->ref;
+											} else {
+												$errorforactions++;
+												$this->error = 'Error while changing the tcket status -> ref='.$objectemail->ref;
+												$this->errors[] = $this->error;
+											}
+										}
 									}
+									
+									$operationslog .= '<br>Event created -> id='.dol_escape_htmltag($actioncomm->id);
 								}
 							}
 						} elseif ($operation['type'] == 'recordjoinpiece') {
