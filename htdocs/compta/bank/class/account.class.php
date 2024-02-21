@@ -190,6 +190,7 @@ class Account extends CommonObject
 	public $state_id;
 	public $state_code;
 	public $state;
+	public $country_id;
 
 	/**
 	 * Variable containing all account types with their respective translated label.
@@ -1637,6 +1638,40 @@ class Account extends CommonObject
 	}
 
 	/**
+	 * 	Return full address for banner
+	 *
+	 * 	@param		string		$htmlkey            HTML id to make banner content unique
+	 *  @param      Object      $object				Object (thirdparty, thirdparty of contact for contact, null for a member)
+	 *	@return		string							Full address string
+	 */
+	public function getBannerAddress($htmlkey, $object)
+	{
+		global $conf, $langs;
+
+		$out = '';
+
+		$outdone = 0;
+		$coords = $this->getFullAddress(1, ', ', getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT'));
+		if ($coords) {
+			if (!empty($conf->use_javascript_ajax)) {
+				// hideonsmatphone because copyToClipboard call jquery dialog that does not work with jmobile
+				$out .= '<a href="#" class="hideonsmartphone" onclick="return copyToClipboard(\''.dol_escape_js($coords).'\',\''.dol_escape_js($langs->trans("HelpCopyToClipboard")).'\');">';
+				$out .= img_picto($langs->trans("Address"), 'map-marker-alt');
+				$out .= '</a> ';
+			}
+			$address = dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', ');
+			if ($address) {
+				$out .= $address;
+				$outdone++;
+			}
+			$outdone++;
+		}
+
+		return $out;
+	}
+
+
+	/**
 	 * Return if a bank account is defined with detailed information (bank code, desk code, number and key).
 	 * More information on codes used by countries on page http://en.wikipedia.org/wiki/Bank_code
 	 *
@@ -2738,7 +2773,6 @@ class AccountLine extends CommonObjectLine
 
 		return '';
 	}
-
 
 	/**
 	 *	Return if a bank line was dispatched into bookkeeping
