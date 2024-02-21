@@ -2604,12 +2604,12 @@ class EmailCollector extends CommonObject
 										$this->errors = $actioncomm->errors;
 									} else {
 										if ($objectemail->status == Ticket::STATUS_CLOSED || $objectemail->status == Ticket::STATUS_CANCELED) {
-											if(($objectemail->fk_user_assign != null)) {
+											if ($objectemail->fk_user_assign != null) {
 												$res = $objectemail->setStatut(Ticket::STATUS_ASSIGNED);
 											} else {
 												$res = $objectemail->setStatut(Ticket::STATUS_NOT_READ);
 											}
-											
+
 											if ($res) {
 												$operationslog .= '<br>Ticket Re-Opened successfully -> ref='.$objectemail->ref;
 											} else {
