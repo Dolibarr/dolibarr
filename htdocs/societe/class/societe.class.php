@@ -4727,7 +4727,7 @@ class Societe extends CommonObject
 				$lib = $langs->getLabelFromKey($this->db, $fk_prospectlevel, 'c_prospectlevel', 'code', 'label');
 			}
 		}
-		return $lib;
+		return $lib ?? '';
 	}
 
 	/**
