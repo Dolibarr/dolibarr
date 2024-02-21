@@ -418,7 +418,7 @@ class doc_generic_member_odt extends ModelePDFMember
 	/**
 	 * get substitution array for object
 	 *
-	 * @param Adherent      $object         member
+	 * @param CommonObject  $object         member
 	 * @param Translate     $outputlangs    translation object
 	 * @param string        $array_key      key for array
 	 * @return array                        array of substitutions
