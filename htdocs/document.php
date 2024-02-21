@@ -290,6 +290,7 @@ if ($reshook < 0) {
 	exit;
 }
 
+
 // Permissions are ok and file found, so we return it
 top_httphead($type);
 header('Content-Description: File Transfer');
@@ -297,6 +298,7 @@ if ($encoding) {
 	header('Content-Encoding: '.$encoding);
 }
 // Add MIME Content-Disposition from RFC 2183 (inline=automatically displayed, attachment=need user action to open)
+
 if ($attachment) {
 	header('Content-Disposition: attachment; filename="'.$filename.'"');
 } else {
