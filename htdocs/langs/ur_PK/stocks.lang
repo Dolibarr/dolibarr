@@ -282,7 +282,7 @@ ModuleStockTransferName=اعلی درجے کی اسٹاک کی منتقلی
 ModuleStockTransferDesc=ٹرانسفر شیٹ کی نسل کے ساتھ اسٹاک ٹرانسفر کا جدید انتظام
 StockTransferNew=نیا اسٹاک ٹرانسفر
 StockTransferList=اسٹاک کی منتقلی کی فہرست
-ConfirmValidateStockTransfer=کیا آپ واقعی <b>%s</b><span class='notranslate'> حوالہ کے ساتھ اس اسٹاک کی منتقلی کی توثیق کرنا چاہتے ہیں span>؟
+ConfirmValidateStockTransfer=Are you sure you want to validate this stocks transfer with the reference <b>%s</b> ?
 ConfirmDestock=منتقلی کے ساتھ اسٹاک کی کمی %s
 ConfirmDestockCancel=منتقلی کے ساتھ اسٹاک کی کمی کو منسوخ کریں %s
 DestockAllProduct=اسٹاک کی کمی

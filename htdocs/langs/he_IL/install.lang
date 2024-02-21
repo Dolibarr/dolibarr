@@ -14,7 +14,7 @@ PHPSupportPOSTGETKo=ייתכן שהגדרת ה-PHP שלך לא תומכת במש
 PHPSupportSessions=PHP זה תומך בהפעלות.
 PHPSupport=PHP זה תומך בפונקציות %s.
 PHPMemoryOK=זיכרון ההפעלה המקסימלי של PHP מוגדר ל-<b>%s</b>. זה אמור להספיק.
-PHPMemoryTooLow=זיכרון ההפעלה המקסימלי של PHP מוגדר ל-<b>%s</b> בתים. זה נמוך מדי. שנה את <b>php.ini</b> שלך כדי להגדיר את <b>me class ='notranslate'></b></span> פרמטר לפחות ל-<b>%s<span class='notranslate'>789f<b>739f /span> בתים.
+PHPMemoryTooLow=Your PHP max session memory is set to <b>%s</b> bytes. This is too low. Change your <b>php.ini</b> to set <b>memory_limit</b> parameter to at least <b>%s</b> bytes.
 Recheck=לחצו כאן לבדיקה מפורטת יותר
 ErrorPHPDoesNotSupportSessions=התקנת ה-PHP שלך אינה תומכת בהפעלות. תכונה זו נדרשת כדי לאפשר ל-Dolibarr לעבוד. בדוק את הגדרת ה-PHP וההרשאות של ספריית הפעלות.
 ErrorPHPDoesNotSupport=התקנת ה-PHP שלך אינה תומכת בפונקציות %s.
@@ -56,7 +56,7 @@ CreateDatabase=צור מסד נתונים
 CreateUser=צור חשבון משתמש או הענק הרשאת חשבון משתמש במסד הנתונים של Dolibarr
 DatabaseSuperUserAccess=שרת מסד נתונים - גישת Superuser
 CheckToCreateDatabase=סמן את התיבה אם מסד הנתונים עדיין לא קיים ולכן יש ליצור אותו.<br>במקרה זה, עליך גם למלא את שם המשתמש והסיסמה עבור חשבון משתמש העל בתחתית של הדף הזה.
-CheckToCreateUser=סמן את התיבה אם:<br>חשבון המשתמש במסד הנתונים עדיין לא קיים ולכן יש ליצור אותו, או<br>אם חשבון המשתמש קיים אך מסד הנתונים אינו קיים ויש להעניק הרשאות.<br>במקרה זה, עליך להזין את חשבון המשתמש והסיסמה ו<b></span span>גם<span class='notranslate'></b> שם חשבון משתמש העל והסיסמה בתחתית עמוד זה. אם תיבה זו אינה מסומנת, הבעלים והסיסמה של מסד הנתונים חייבים כבר להתקיים.
+CheckToCreateUser=Check the box if:<br>the database user account does not yet exist and so must be created, or<br>if the user account exists but the database does not exist and permissions must be granted.<br>In this case, you must enter the user account and password and <b>also</b> the superuser account name and password at the bottom of this page. If this box is unchecked, database owner and password must already exist.
 DatabaseRootLoginDescription=שם חשבון Superuser (ליצירת מסדי נתונים חדשים או משתמשים חדשים), חובה אם מסד הנתונים או בעליו אינם קיימים כבר.
 KeepEmptyIfNoPassword=השאר ריק אם למשתמש-על אין סיסמה (לא מומלץ)
 SaveConfigurationFile=שמירת פרמטרים ל
@@ -108,15 +108,15 @@ DatabaseVersion=גרסת מסד נתונים
 ServerVersion=גרסת שרת מסד נתונים
 YouMustCreateItAndAllowServerToWrite=עליך ליצור ספרייה זו ולאפשר לשרת האינטרנט לכתוב לתוכה.
 DBSortingCollation=סדר מיון תווים
-YouAskDatabaseCreationSoDolibarrNeedToConnect=בחרת ליצור מסד נתונים <b>%s</b>, אבל בשביל זה, דוליבר צריך להתחבר לשרת <b>%s</b> עם משתמש-על <span class= הרשאות 'notranslate'><b></span>%s</b>.
-YouAskLoginCreationSoDolibarrNeedToConnect=בחרת ליצור משתמש במסד נתונים <b>%s</b>, אבל בשביל זה, Dolibr צריך להתחבר לשרת <b>%s</b> עם סופר משתמש <span class הרשאות ='notranslate'><b></span>%s</b>.
+YouAskDatabaseCreationSoDolibarrNeedToConnect=You selected create database <b>%s</b>, but for this, Dolibarr needs to connect to server <b>%s</b> with super user <b>%s</b> permissions.
+YouAskLoginCreationSoDolibarrNeedToConnect=You selected create database user <b>%s</b>, but for this, Dolibarr needs to connect to server <b>%s</b> with super user <b>%s</b> permissions.
 BecauseConnectionFailedParametersMayBeWrong=חיבור מסד הנתונים נכשל: הפרמטרים של המארח או משתמש העל חייבים להיות שגויים.
 OrphelinsPaymentsDetectedByMethod=תשלום יתומים זוהה בשיטה %s
 RemoveItManuallyAndPressF5ToContinue=הסר אותו ידנית והקש F5 כדי להמשיך.
 FieldRenamed=שם השדה שונה
 IfLoginDoesNotExistsCheckCreateUser=אם המשתמש עדיין לא קיים, עליך לסמן את האפשרות "צור משתמש"
-ErrorConnection=שרת "<b>%s</b>", שם מסד הנתונים "<b>%s</b>", login "3058e'>b368e span><span class='notranslate'>%s</b>", או שסיסמת מסד הנתונים שגויה או שגרסת לקוח PHP ישנה מדי בהשוואה לגרסת מסד הנתונים .
-InstallChoiceRecommanded=בחירה מומלצת להתקנת גרסה <b>%s</b> מהגרסה הנוכחית שלך <span> class='notranslate'><b></span>%s</b>
+ErrorConnection=Server "<b>%s</b>", database name "<b>%s</b>", login "<b>%s</b>", or database password may be wrong or the PHP client version may be too old compared to the database version.
+InstallChoiceRecommanded=Recommended choice to install version <b>%s</b> from your current version <b>%s</b>
 InstallChoiceSuggested=<b>בחירת ההתקנה שהוצעה על ידי המתקין</b>.
 MigrateIsDoneStepByStep=לגרסה הממוקדת (%s) יש פער של מספר גרסאות. אשף ההתקנה יחזור להציע העברה נוספת לאחר השלמת זו.
 CheckThatDatabasenameIsCorrect=בדוק ששם מסד הנתונים "<b>%s</b>" נכון.

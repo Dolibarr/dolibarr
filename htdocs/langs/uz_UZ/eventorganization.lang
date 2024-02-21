@@ -88,6 +88,7 @@ PriceOfRegistration=Ro'yxatdan o'tish narxi
 PriceOfRegistrationHelp=Ro'yxatdan o'tish yoki tadbirda qatnashish uchun to'lanadigan narx
 PriceOfBooth=Stendda turish uchun obuna narxi
 PriceOfBoothHelp=Stendda turish uchun obuna narxi
+EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=Konferentsiyalar uchun ICS havolasi
 ConferenceOrBoothInformation=Konferentsiya yoki stend haqida ma'lumot
 Attendees=Ishtirokchilar

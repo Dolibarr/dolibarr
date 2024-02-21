@@ -6,7 +6,7 @@ EnterNameOfObjectDesc=Kirjoita objektin nimi muotoon luo ilman välilyöntejä. 
 EnterNameOfDictionaryDesc=Kirjoita sanakirjan nimi muotoon luo ilman välilyöntejä. Käytä isoja kirjaimia erottaaksesi sanat (esimerkiksi: MyDico...). Luokka tiedosto, mutta myös SQL tiedosto luodaan.
 ModuleBuilderDesc2=Polku, jossa moduuleja luodaan/muokataan (ensimmäinen hakemisto ulkoisille moduuleille, jotka on määritetty muotoon %s): <strong>%s</strong>
 ModuleBuilderDesc3=Löytyi luotuja/muokattavia moduuleja: <strong>%s</strong>
-ModuleBuilderDesc4=Moduuli tunnistetaan moduulin rakentajan moduuliksi, kun tiedosto <strong>b0ecb2fz87f4 /span><span class='notranslate'></strong> on moduulihakemiston juuressa
+ModuleBuilderDesc4=A module is detected as a 'module for Module Builer' when the file <strong>%s</strong> exists in the root of the module directory
 NewModule=Uusi moduuli
 NewObjectInModulebuilder=Uusi kohde
 NewDictionary=Uusi sanakirja
@@ -16,7 +16,7 @@ ObjectKey=Objekti avain
 DicKey=Sanakirjan avain
 ModuleInitialized=Moduuli alustettu
 FilesForObjectInitialized=Uuden objektin %s tiedostot alustettiin
-FilesForObjectUpdated=Objektin '%s' tiedostot päivitetty (.sql-tiedostot ja .class.php <span class='notranslate'>b0590afecbb5551z0 /span>)
+FilesForObjectUpdated=Files for object '%s' updated (.sql files and .class.php file)
 ModuleBuilderDescdescription=Kirjoita tähän kaikki yleiset tiedot, jotka kuvaavat moduuliasi.
 ModuleBuilderDescspecifications=Voit kirjoittaa tähän yksityiskohtaisen kuvauksen moduulisi teknisistä tiedoista, joita ei ole jo jäsennelty muihin välilehtiin. Joten sinulla on helposti ulottuvillasi kaikki säännöt, joita voit kehittää. Myös tämä tekstisisältö sisällytetään luotuun dokumentaatioon (katso viimeinen välilehti). Voit käyttää Markdown-muotoa, mutta on suositeltavaa käyttää Asciidoc-muotoa (.md ja .asciidoc vertailu: http://asciidoctor.org/docs/user-manual/# alennukseen verrattuna).
 ModuleBuilderDescobjects=Määritä tässä objektit, joita haluat hallita moduulillasi. CRUD DAO -luokka, SQL-tiedostot, sivu objektitietueiden luetteloa varten luo/edit/view tietueen ja API syntyy.
@@ -94,7 +94,7 @@ SeeExamples=Katso esimerkkejä tästä
 EnabledDesc=Edellytys, että tämä Kenttä on aktiivinen.<br><br>Esimerkkejä:<br>1<br>isModEnabled('anothermodule')<br>LODUBAL_StringLE(OP'G'TION) =2
 VisibleDesc=Onko Kenttä näkyvissä? (Esimerkkejä: 0=ei koskaan näkyvissä, 1=näkyy luettelossa ja luo/update/view forms, 2=näkyy luettelossa vain, 3=Näkyy osoitteessa luo/update/view form only (ei luetteloissa), 4=Näkyy luetteloissa ja update /view only form (ei luo), 5=Näkyy luettelossa ja vain näytä lomake (ei luo, ei päivitystä).<br><br>Negatiivisen arvon käyttäminen tarkoittaa Kenttä ei näy oletus luettelossa, mutta se voidaan valita katseltavaksi).
 ItCanBeAnExpression=Se voi olla ilmaisu. Esimerkki:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user ->hasRight('loma', 'define_holiday')?1:5
-DisplayOnPdfDesc=Näytä tämä Kenttä yhteensopivissa PDF-dokumenteissa, voit hallita sijaintia "Position"-komennolla Kenttä. <br><strong>Asiakirjalle:</strong>b0342fccfda1>b0342fccfda1> näytetään <span class='notranslate'><br>1 = näyttö<br>2 = näyttö vain, jos se ei ole tyhjä<br> <br><strong>Asiakirjan rivit:</strong><br>0 = ei näy <br>1 = näytetään sarakkeessa<br>3 = näytetään rivin kuvaussarakkeessa kuvaus<br>4 = näytä kuvaussarakkeessa kuvauksen jälkeen vain, jos se ei ole tyhjä
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=PDF:ssä
 IsAMeasureDesc=Voidaanko Kenttä arvo kumuloida, jotta kokonaissumma saadaan luetteloon? (Esimerkkejä: 1 tai 0)
 SearchAllDesc=Käytetäänkö Kenttä haun tekemiseen pikahakutyökalulla? (Esimerkkejä: 1 tai 0)
@@ -111,7 +111,7 @@ TriggerDefDesc=Määritä triggerissä tiedosto koodi, jonka haluat suorittaa, k
 SeeIDsInUse=Katso asennuksessasi käytössä olevat tunnukset
 SeeReservedIDsRangeHere=Katso valikoima varattuja tunnuksia
 ToolkitForDevelopers=Toolkit Dolibarr-kehittäjille
-TryToUseTheModuleBuilder=Jos tiedät SQL:n ja PHP, voit käyttää ohjattua natiivimoduulin rakennustoimintoa.<br>Ota moduuli käyttöön <strong>%s</strong> b0ae6e90 the059</2span> ohjattu toiminto napsauttamalla <span class='notranslate'><span class="fa fa-bug"></span> oikeassa yläkulmassa valikko.<span> class='notranslate'><br></span>Varoitus: tämä on edistynyt kehittäjäominaisuus, <b>älä</b> kokeile tuotantopaikallesi!
+TryToUseTheModuleBuilder=If you have knowledge of SQL and PHP, you may use the native module builder wizard.<br>Enable the module <strong>%s</strong> and use the wizard by clicking the <span class="fa fa-bug"></span> on the top right menu.<br>Warning: This is an advanced developer feature, do <b>not</b> experiment on your production site!
 SeeTopRightMenu=Katso oikeasta yläkulmasta <span class="fa fa-bug"></span> valikko
 AddLanguageFile=Lisää Kieli tiedosto
 YouCanUseTranslationKey=Voit käyttää tässä avainta, joka on käännösavain kielelle Kieli tiedosto (katso Kielet-välilehti).
@@ -148,7 +148,7 @@ CSSListClass=CSS luettelolle
 NotEditable=Ei muokattavissa
 ForeignKey=Vieras avain
 ForeignKeyDesc=Jos tämän Kenttä arvon on taattava olevan olemassa toisessa taulukossa. Kirjoita tähän arvo, joka vastaa syntaksia: tablename.parentfieldtocheck
-TypeOfFieldsHelp=Esimerkki:<br>varchar(99)<br>sähköposti<br>puhelin<br>ip<br>url<br>salasana04b2fccf3 span>double(24,8)<span class='notranslate'><br>todellinen<br>text<br>html <br>päivämäärä<br>datetime<br>aikaleima <br>kokonaisluku<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]b0342bccfda<99bccf0 /span><span class='notranslate'><br>'1' tarkoittaa, että lisäämme +-painikkeen yhdistelmän jälkeen luo tietueeseen<br>'filter' on yleisen suodattimen syntaksiehto, esimerkki: '((status:=:1) ja (fk_user:=:__USER_ID__) ja (entity:IN:(__SHARED_ENTITIES__))"
+TypeOfFieldsHelp=Example:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' means we add a + button after the combo to create the record<br>'filter' is an Universal Filter syntax condition, example: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=Tämä on attribuutin Kenttä/tyyppi.
 AsciiToHtmlConverter=Ascii-HTML-muunnin
 AsciiToPdfConverter=Ascii-pdf-muunnin
@@ -180,7 +180,7 @@ FailedToAddCodeIntoDescriptor=Koodin lisääminen kuvaajaan epäonnistui. Tarkis
 DictionariesCreated=Sanakirja <b>%s</b> luotu onnistuneesti
 DictionaryDeleted=Sanakirja <b>%s</b> poistettu onnistuneesti
 PropertyModuleUpdated=Omaisuus <b>%s</b> on päivitetty onnistuneesti
-InfoForApiFile=* Kun luot tiedosto ensimmäistä kertaa, kaikki menetelmät luodaan <strong> jokaiselle objektille.</strong><br>* Kun napsautat <strong>poista<span class='notranslate'0f6f6f6f79 span> poistat vain kaikki menetelmät <strong>valitusta objektista</strong>.
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=Sivu moduulien asennukseen
 EmailingSelectors=Emails selectors
 EmailingSelectorDesc=Voit luoda ja muokata tässä luokkatiedostoja tarjotaksesi uusia sähköpostikohteen valitsimia joukkosähköpostimoduulille

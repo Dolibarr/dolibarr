@@ -117,7 +117,7 @@ class LangTest extends CommonClassTest
 
 			$result = $tmplangs->transnoentitiesnoconv("SeparatorDecimal");
 			print __METHOD__." SeparatorDecimal=".$result."\n";
-			$this->assertTrue(in_array($result, array('.',',','/',' ','','None')), 'Error on decimal separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
+			$this->assertTrue(in_array($result, array('.',',','/','。',' ','','None')), 'Error on decimal separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
 
 			$result = $tmplangs->transnoentitiesnoconv("SeparatorThousand");
 			print __METHOD__." SeparatorThousand=".$result."\n";

@@ -136,7 +136,7 @@ PrintWithoutDetailsLabelDefault=Tafsilotlarsiz chop etishda satr yorlig'i sukut 
 PrintWithoutDetails=Tafsilotlarsiz chop eting
 YearNotDefined=Yil aniqlanmagan
 TakeposBarcodeRuleToInsertProduct=Mahsulotni kiritish uchun shtrix kod qoidasi
-TakeposBarcodeRuleToInsertProductDesc=Skanerlangan shtrix-koddan mahsulot maʼlumotnomasi + miqdorni chiqarish qoidasi.<br>Agar boʻsh boʻlsa (standart qiymat), ilova mahsulotni topish uchun skanerlangan toʻliq shtrix-koddan foydalanadi.<br><br>Agar aniqlangan bo'lsa, sintaksis quyidagicha bo'lishi kerak:<br><span'>notranslate class='notranslate <b></span>ref:NB+qu:NB+qd:NB+other:NB</b><br> bu yerda skanerlangan shtrix-koddan maʼlumotlarni chiqarish uchun foydalaniladigan belgilar soni:<br><b>refb09a4b78z1f  : mahsulot ma'lumoti<br><b>qu</b>: elementni (birliklarni) kiritishda oʻrnatish elementni (oʻnlik kasr) kiritishda oʻrnatish<br><b>boshqab09a4b739f17f8>zs.
+TakeposBarcodeRuleToInsertProductDesc=Rule to extract the product reference + a quantity from a scanned barcode.<br>If empty (default value), application will use the full barcode scanned to find the product.<br><br>If defined, syntax must be:<br><b>ref:NB+qu:NB+qd:NB+other:NB</b><br>where NB is the number of characters to use to extract data from the scanned barcode with:<br><b>ref</b> : product reference<br><b>qu</b> : quantity to set when inserting item (units)<br><b>qd</b> : quantity to set when inserting item (decimals)<br><b>other</b> : others characters
 AlreadyPrinted=Allaqachon chop etilgan
 HideCategories=Kategoriyalar tanlovining butun qismini yashirish
 HideStockOnLine=Onlayn zaxiralarni yashirish

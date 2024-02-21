@@ -20,7 +20,7 @@ MailCCC=Kopi w pamięci do
 MailTopic=Temat wiadomości e-mail
 MailText=Wiadomość
 MailFile=Dołączone pliki
-MailMessage=Zawartość emaila 
+MailMessage=Zawartość emaila
 SubjectNotIn=Nie w temacie
 BodyNotIn=Nie w ciele
 ShowEMailing=Pokaż mailingi
@@ -182,7 +182,7 @@ IsAnAnswer=To odpowiedź na pierwszą wiadomość e-mail
 RecordCreatedByEmailCollector=Rekord utworzony przez moduł zbierający wiadomości e-mail %s z wiadomości e-mail %s
 DefaultBlacklistMailingStatus=Domyślna wartość pola „%s” podczas tworzenia nowego kontaktu
 DefaultStatusEmptyMandatory=Puste, ale obowiązkowe
-WarningLimitSendByDay=OSTRZEŻENIE: konfiguracja lub umowa Twojej instancji ogranicza liczbę e-maili dziennie do <b>%s<span class='notranslate' ></b></rozpiętość>. Próba wysłania większej liczby może spowodować spowolnienie lub zawieszenie instancji. Jeśli potrzebujesz większego limitu, skontaktuj się ze swoim wsparciem.
+WarningLimitSendByDay=WARNING: The setup or contract of your instance limits your number of emails per day to <b>%s</b>. Trying to send more may result in having your instance slow down or suspended. Please contact your support if you need a higher quota.
 NoMoreRecipientToSendTo=Nie ma już odbiorcy, do którego można wysłać wiadomość e-mail
 EmailOptedOut=Właściciel adresu e-mail poprosił o zaprzestanie kontaktowania się z nim za pomocą tego e-maila
 EvenUnsubscribe=Dołącz e-maile dotyczące rezygnacji
