@@ -1292,7 +1292,7 @@ if (empty($reshook)) {
 								$object->fetch_thirdparty();
 							}
 							if (!empty($object->thirdparty) && is_object($object->thirdparty) && get_class($object->thirdparty) == 'Societe') {
-								$tva_tx = get_default_tva($mysoc,$object->thirdparty);
+								$tva_tx = get_default_tva($mysoc, $object->thirdparty);
 							} else {
 								$tva_tx = 0;
 							}
