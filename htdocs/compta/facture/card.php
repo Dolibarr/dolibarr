@@ -1287,13 +1287,20 @@ if (empty($reshook)) {
 						$totaldeposits = $facture_source->getSumDepositsUsed();
 						$remain_to_pay = abs($facture_source->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits);
 
-						if ((empty($soc) || !is_object($soc) || get_class($soc) != 'Societe') && $socid >0) {
-							$soc = new Societe($db);
-							$soc->fetch($socid);
+						if (!empty($conf->global->INVOICE_VAT_TO_USE_ON_CREDIT_NOTE_WHEN_GENERATED_FROM_REMAIN_TO_PAY) && $conf->global->INVOICE_VAT_TO_USE_ON_CREDIT_NOTE_WHEN_GENERATED_FROM_REMAIN_TO_PAY == 'default') {
+							if ((empty($object->thirdparty) || !is_object($object->thirdparty) || get_class($object->thirdparty) != 'Societe')) {
+								$object->fetch_thirdparty();
+							}
+							if (!empty($object->thirdparty) && is_object($object->thirdparty) && get_class($object->thirdparty) == 'Societe') {
+								$tva_tx = get_default_tva($mysoc,$object->thirdparty);
+							} else {
+								$tva_tx = 0;
+							}
+						} elseif ((float) $conf->global->INVOICE_VAT_TO_USE_ON_CREDIT_NOTE_WHEN_GENERATED_FROM_REMAIN_TO_PAY > 0) {
+							$tva_tx = (float) $conf->global->INVOICE_VAT_TO_USE_ON_CREDIT_NOTE_WHEN_GENERATED_FROM_REMAIN_TO_PAY;
+						} else {
+							$tva_tx = 0;
 						}
-						if (!empty($soc) && is_object($soc) && get_class($soc) == 'Societe') {
-							$tva_tx = get_default_tva($mysoc, $soc);
-						} else $tva_tx = 0;
 
 						$object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'), $remain_to_pay, 1, $tva_tx, 0, 0, 0, 0, '', '', 'TTC');
 					}
