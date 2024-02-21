@@ -604,7 +604,7 @@ class Fichinter extends CommonObject
 
 					// Now we rename also files into index
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'ficheinter/".$this->db->escape($this->newref)."'";
-					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'ficheinter/".$this->db->escape($this->ref)."' and entity = ".$this->entity;
+					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'ficheinter/".$this->db->escape($this->ref)."' and entity = ".((int) $this->entity);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++; $this->error = $this->db->lasterror();
