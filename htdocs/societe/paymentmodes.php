@@ -175,7 +175,10 @@ if (empty($reshook)) {
 			$companybankaccount->cle_rib         = GETPOST('cle_rib', 'alpha');
 			$companybankaccount->bic             = GETPOST('bic', 'alpha');
 			$companybankaccount->iban            = GETPOST('iban', 'alpha');
-			$companybankaccount->domiciliation   = GETPOST('domiciliation', 'alpha');
+
+			$companybankaccount->domiciliation   = GETPOST('address', 'alpha');
+			$companybankaccount->address         = GETPOST('address', 'alpha');
+
 			$companybankaccount->proprio         = GETPOST('proprio', 'alpha');
 			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
 			$companybankaccount->frstrecur       = GETPOST('frstrecur', 'alpha');
@@ -305,7 +308,10 @@ if (empty($reshook)) {
 			$companybankaccount->cle_rib         = GETPOST('cle_rib', 'alpha');
 			$companybankaccount->bic             = GETPOST('bic', 'alpha');
 			$companybankaccount->iban            = GETPOST('iban', 'alpha');
-			$companybankaccount->domiciliation   = GETPOST('domiciliation', 'alpha');
+
+			$companybankaccount->domiciliation   = GETPOST('address', 'alpha');
+			$companybankaccount->address         = GETPOST('address', 'alpha');
+
 			$companybankaccount->proprio         = GETPOST('proprio', 'alpha');
 			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
 			$companybankaccount->frstrecur       = GETPOST('frstrecur', 'alpha');
@@ -2010,8 +2016,8 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	}
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td>';
-	print '<textarea name="domiciliation" rows="4" cols="40" maxlength="255">';
-	print $companybankaccount->domiciliation;
+	print '<textarea name="address" rows="4" cols="40" maxlength="255">';
+	print $companybankaccount->address;
 	print "</textarea></td></tr>";
 
 	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
@@ -2181,8 +2187,8 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	}
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td>';
-	print '<textarea name="domiciliation" rows="'.ROWS_4.'" class="quatrevingtpercent" maxlength="255">';
-	print GETPOST('domiciliation');
+	print '<textarea name="address" rows="'.ROWS_4.'" class="quatrevingtpercent" maxlength="255">';
+	print GETPOST('address');
 	print "</textarea></td></tr>";
 
 	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';

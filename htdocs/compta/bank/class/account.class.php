@@ -1859,7 +1859,6 @@ class Account extends CommonObject
 		$this->specimen        = 1;
 		$this->ref             = 'MBA';
 		$this->label           = 'My Big Company Bank account';
-		$this->bank            = 'MyBank';
 		$this->courant         = Account::TYPE_CURRENT;
 		$this->clos            = Account::STATUS_OPEN;
 		$this->code_banque     = '30001';
@@ -1868,7 +1867,9 @@ class Account extends CommonObject
 		$this->cle_rib         = '85';
 		$this->bic             = 'AA12';
 		$this->iban            = 'FR7630001007941234567890185';
-		$this->domiciliation   = 'Banque de France';
+
+		$this->bank            = 'MyBank';
+		$this->address         = 'Rue de Paris';
 		$this->proprio         = 'Owner';
 		$this->owner_address   = 'Owner address';
 		$this->owner_zip       = 'Owner zip';
