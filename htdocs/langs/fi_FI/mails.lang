@@ -143,11 +143,11 @@ MailSendSetupIs2=Sinun on ensin siirryttävä admin-tilillä valikkoon %sHome - 
 MailSendSetupIs3=Jos sinulla on kysyttävää SMTP-palvelimen määrittämisestä, voit kysyä osoitteesta %s.
 YouCanAlsoUseSupervisorKeyword=Voit myös lisätä avainsanan <strong>__SUPERVISOREMAIL__</strong>, jotta sähköposti lähetetään käyttäjän valvojalle (toimii vain, jos sähköposti on määritelty tälle esimiehelle)
 NbOfTargetedContacts=Kohdistettujen yhteyssähköpostien nykyinen määrä
-UseFormatFileEmailToTarget=Tuodun tiedosto muodon on oltava <strong>email;name;Etunimi;muu span class='notranslate'></strong></span>
-UseFormatInputEmailToTarget=Kirjoita merkkijono muodossa <strong>email;name;Etunimi;other<span class='notranslate'></strong>
+UseFormatFileEmailToTarget=Imported file must have format <strong>email;name;firstname;other</strong>
+UseFormatInputEmailToTarget=Enter a string with format <strong>email;name;firstname;other</strong>
 MailAdvTargetRecipients=Vastaanottajat (tarkennettu valinta)
 AdvTgtTitle=Täytä syöttökentät valitaksesi kolmannet osapuolet tai yhteystiedot/osoitteet kohdistettavaksi
-AdvTgtSearchTextHelp=Käytä %% jokerimerkeinä. Jos haluat esimerkiksi löytää kaikki kohteet, kuten <b>jean, joe, jim</b>, voit syöttää  <b>j%%</b>, voit myös käyttää ; arvon erottimena ja käytä ! paitsi tämä arvo. Esimerkiksi <b>jean;joe;jim%%;!jimo;!jima%% span><span class='notranslate'></b> kohdistaa kaikkiin jeaneihin, joihin, jotka alkavat jimillä, mutta ei jimon ja ei kaikkeen, joka alkaa jimalla
+AdvTgtSearchTextHelp=Use %% as wildcards. For example to find all item like <b>jean, joe, jim</b>, you can input <b>j%%</b>, you can also use ; as separator for value, and use ! for except this value. For example  <b>jean;joe;jim%%;!jimo;!jima%%</b> will target all jean, joe, start with jim but not jimo and not everything that starts with jima
 AdvTgtSearchIntHelp=Käytä intervallia valitaksesi int- tai float-arvon
 AdvTgtMinVal=Minimiarvo
 AdvTgtMaxVal=Suurin arvo

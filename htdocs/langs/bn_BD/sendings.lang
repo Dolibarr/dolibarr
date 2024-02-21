@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Validated
 StatusSendingProcessedShort=প্রক্রিয়াকৃত
 SendingSheet=চালান শীট
 ConfirmDeleteSending=আপনি কি এই চালানটি মুছে ফেলার বিষয়ে নিশ্চিত?
-ConfirmValidateSending=আপনি কি নিশ্চিত <b>%s</b><span class='notranslate'>রেফারেন্স সহ এই চালানটি যাচাই করতে চান >?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
 ConfirmCancelSending=আপনি কি নিশ্চিত আপনি এই চালান বাতিল করতে চান?
 DocumentModelMerou=Merou A5 মডেল
 WarningNoQtyLeftToSend=সতর্কতা, কোনো পণ্য পাঠানোর অপেক্ষায় নেই।
@@ -81,6 +81,6 @@ CreationOptions=চালান তৈরির সময় উপলব্ধ 
 ShipmentDistribution=চালান বিতরণ
 
 ErrorTooManyCombinationBatchcode=%s লাইনের জন্য কোনও প্রেরণ নেই কারণ গুদাম, পণ্য, ব্যাচ কোডের অনেকগুলি সংমিশ্রণ পাওয়া গেছে (%s)৷
-ErrorNoCombinationBatchcode=warehouse-product-lot/serial (%s, <span class='notranslate'-এর সংমিশ্রণ হিসাবে %s লাইনটি সংরক্ষণ করা যায়নি '>%s</span>, %s) স্টকে পাওয়া যায়নি৷
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
 
 ErrorTooMuchShipped=পাঠানোর পরিমাণ %s লাইনের জন্য অর্ডার করা পরিমাণের চেয়ে বেশি হওয়া উচিত নয়

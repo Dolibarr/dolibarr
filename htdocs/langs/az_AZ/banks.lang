@@ -115,7 +115,7 @@ MenuBankInternalTransfer=Daxili köçürmə
 TransferDesc=Bir hesabdan digərinə köçürmək üçün daxili köçürmədən istifadə edin, proqram iki qeyd yazacaq: mənbə hesabında debet və hədəf hesabda kredit. Bu əməliyyat üçün eyni məbləğ, etiket və tarix istifadə olunacaq.
 TransferFrom=From
 TransferTo=Kimə
-TransferFromToDone=<b>%s</b>-dan <span class='notranslate-ə transfer ><b></span>%s</b> b0aee833608<span><span= 'notranslate'>%s</b> %s qeydə alınıb.
+TransferFromToDone=A transfer from <b>%s</b> to <b>%s</b> of <b>%s</b> %s has been recorded.
 CheckTransmitter=Göndərən
 ValidateCheckReceipt=Bu çek qəbzi təsdiq edilsin?
 ConfirmValidateCheckReceipt=Bu çek qəbzini təsdiq üçün təqdim etmək istədiyinizə əminsiniz? Təsdiq edildikdən sonra heç bir dəyişiklik mümkün olmayacaq.

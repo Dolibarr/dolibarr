@@ -7,12 +7,12 @@ multicurrency_syncronize_error=সিঙ্ক্রোনাইজেশন ত
 MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=সর্বশেষ পরিচিত হার ব্যবহার না করে মুদ্রার হার খুঁজতে নথির তারিখ ব্যবহার করুন
 multicurrency_useOriginTx=যখন একটি বস্তু অন্য থেকে তৈরি করা হয়, উৎস বস্তু থেকে মূল হার রাখুন (অন্যথায় সর্বশেষ পরিচিত হার ব্যবহার করুন)
 CurrencyLayerAccount=কারেন্সি লেয়ার এপিআই
-CurrencyLayerAccount_help_to_synchronize=এই কার্যকারিতা ব্যবহার করতে আপনাকে অবশ্যই %s ওয়েবসাইটে একটি অ্যাকাউন্ট তৈরি করতে হবে।<br>আপনার <b><span class='notranslate'>পান /span>API কী<span class='notranslate'></b>।<br>আপনি যদি একটি বিনামূল্যের অ্যাকাউন্ট ব্যবহার করেন, তাহলে আপনি <span class=' পরিবর্তন করতে পারবেন না notranslate'><b></span>উৎস মুদ্রা</b> (ডিফল্টরূপে USD)।<br>যদি আপনার মূল মুদ্রা ইউএসডি না হয়, অ্যাপ্লিকেশন স্বয়ংক্রিয়ভাবে এটি পুনরায় গণনা করবে।<br><br>আপনি প্রতি মাসে 1000টি সিঙ্ক্রোনাইজেশনের মধ্যে সীমাবদ্ধ।
+CurrencyLayerAccount_help_to_synchronize=You must create an account on website %s to use this functionality.<br>Get your <b>API key</b>.<br>If you use a free account, you can't change the <b>source currency</b> (USD by default).<br>If your main currency is not USD, the application will automatically recalculate it.<br><br>You are limited to 1000 synchronizations per month.
 multicurrency_appId=API কী
 multicurrency_appCurrencySource=উৎস মুদ্রা
 multicurrency_alternateCurrencySource=বিকল্প উৎস মুদ্রা
 CurrenciesUsed=ব্যবহৃত মুদ্রা
-CurrenciesUsed_help_to_add=আপনার <b>প্রস্তাব</b>, b0aee8336058<span class='notranslate'>b0aee8336587 /span>অর্ডার<span class='notranslate'></b> ইত্যাদি
+CurrenciesUsed_help_to_add=Add the different currencies and rates you need to use on your <b>proposals</b>, <b>orders</b> etc.
 rate=হার
 MulticurrencyReceived=প্রাপ্ত, আসল মুদ্রা
 MulticurrencyRemainderToTake=অবশিষ্ট পরিমাণ, আসল মুদ্রা

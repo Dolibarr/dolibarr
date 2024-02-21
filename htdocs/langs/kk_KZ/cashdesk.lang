@@ -136,7 +136,7 @@ PrintWithoutDetailsLabelDefault=Мәліметсіз басып шығаруда
 PrintWithoutDetails=Егжей-тегжейсіз басып шығарыңыз
 YearNotDefined=Жылы анықталмаған
 TakeposBarcodeRuleToInsertProduct=Өнімді енгізу үшін штрих-код ережесі
-TakeposBarcodeRuleToInsertProductDesc=Өнім анықтамасын + сканерленген штрих-кодтан мөлшерді шығару ережесі.<br>Егер бос болса (әдепкі мән), қолданба өнімді табу үшін сканерленген толық штрих-кодты пайдаланады.<br><br>Анықталған болса, синтаксис келесідей болуы керек:<br><span'>notranslate class='notranslate <b></span>ref:NB+qu:NB+qd:NB+басқа:NB</b><br> сканерленген штрих-кодтан деректерді шығару үшін пайдаланылатын таңбалар саны:<br><b>refb09a4b789z  : өнім анықтамасы<br><b>qu</b>: элементті (бірліктер) енгізу кезінде орнату<br><b>qdb09a4b739f17f8z>quantity элементті (ондық сандар) кірістіру кезінде орнату<span class='notranslate'><br><b>басқа<span class='notranslate'>b09a4b739f17f8>0 басқа таңбалар
+TakeposBarcodeRuleToInsertProductDesc=Rule to extract the product reference + a quantity from a scanned barcode.<br>If empty (default value), application will use the full barcode scanned to find the product.<br><br>If defined, syntax must be:<br><b>ref:NB+qu:NB+qd:NB+other:NB</b><br>where NB is the number of characters to use to extract data from the scanned barcode with:<br><b>ref</b> : product reference<br><b>qu</b> : quantity to set when inserting item (units)<br><b>qd</b> : quantity to set when inserting item (decimals)<br><b>other</b> : others characters
 AlreadyPrinted=Қазірдің өзінде басып шығарылған
 HideCategories=Санат таңдауының бүкіл бөлімін жасырыңыз
 HideStockOnLine=Желідегі қорды жасыру

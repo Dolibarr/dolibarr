@@ -36,7 +36,7 @@ EventOrganizationSetup=Іс -шараны ұйымдастыру
 EventOrganization=Іс-шараны ұйымдастыру
 EventOrganizationSetupPage = Оқиғаны ұйымдастыру беті
 EVENTORGANIZATION_TASK_LABEL = Жоба расталған кезде автоматты түрде жасалатын тапсырмалар белгісі
-EVENTORGANIZATION_TASK_LABELTooltip = Ұйымдастыру үшін оқиғаны растаған кезде, кейбір тапсырмалар жобада автоматты түрде жасалуы мүмкін<br><br>Мысалы: <br>Конференцияларға шақыру жіберу<br>Конференцияларға шақыру жіберу<br></spanidateV сыныптары бойынша ұсыныстар ='notranslate'><br></span>Stencils қолданбасын тексеру<br>Қатысушылар үшін оқиғаға жазылуларды ашуb0342fccfda19b>az спикерлерге оқиға туралы<span class='notranslate'><br>Бут хостерлеріне оқиға туралы еске салу жіберу<br>Қатысушыларға оқиға туралы еске салу жіберу
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
 EVENTORGANIZATION_TASK_LABELTooltip2=Тапсырмаларды автоматты түрде жасау қажет болмаса, бос қалдырыңыз.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Біреу конференция ұсынған кезде үшінші тараптарға автоматты түрде қосылатын санат
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Үшінші тараптарға стенд ұсынылған кезде автоматты түрде қосылатын санат
@@ -88,6 +88,7 @@ PriceOfRegistration=Тіркеу бағасы
 PriceOfRegistrationHelp=Тіркелу немесе шараға қатысу үшін төлейтін баға
 PriceOfBooth=Кабинаға жазылу бағасы
 PriceOfBoothHelp=Кабинаға жазылу бағасы
+EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=Конференциялар үшін ICS сілтемесі
 ConferenceOrBoothInformation=Конференция немесе стенд туралы ақпарат
 Attendees=Қатысушылар

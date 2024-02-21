@@ -106,7 +106,7 @@ NextValueForInvoices=Valor següent (factures)
 NextValueForCreditNotes=Valor següent (notes de crèdit)
 NextValueForDeposit=Següent valor (pagament inicial)
 NextValueForReplacements=Valor següent (substitucions)
-MustBeLowerThanPHPLimit=Nota: actualment la vostra configuració de PHP limita la mida màxima dels fitxers per pujar a <b>%s</b></b> span> <span class='notranslate'>%s, independentment del valor d'aquest paràmetre
+MustBeLowerThanPHPLimit=Note: your PHP configuration currently limits the maximum filesize for upload to <b>%s</b> %s, irrespective of the value of this parameter
 NoMaxSizeByPHPLimit=Nota: No s'estableix cap límit a la configuració de PHP
 MaxSizeForUploadedFiles=Mida màxima per als fitxers penjats (0 per no permetre cap càrrega)
 UseCaptchaCode=Utilitzeu codi gràfic (CAPTCHA) a la pàgina d'inici de sessió i algunes pàgines públiques
@@ -163,7 +163,7 @@ PurgeAreaDesc=Aquesta pàgina us permet suprimir tots els fitxers generats o emm
 PurgeDeleteLogFile=Suprimeix fitxers de registre, inclosos <b>%s</b> definit per al mòdul Syslog (no risc de perdre dades)
 PurgeDeleteTemporaryFiles=Suprimeix tots els fitxers de registre i temporals (sense risc de perdre dades). El paràmetre pot ser "tempfilesold", "logfiles" o tots dos "tempfilesold+logfiles". Nota: L'eliminació dels fitxers temporals només es fa si el directori temporal es va crear fa més de 24 hores.
 PurgeDeleteTemporaryFilesShort=Suprimeix els fitxers de registre i temporals (sense risc de perdre dades)
-PurgeDeleteAllFilesInDocumentsDir=Suprimeix tots els fitxers del directori: <b>%s</b>.<span class== 'notranslate'><br></span>Això suprimirà tots els documents generats relacionats amb elements (tercers, factures, etc.), fitxers penjats al mòdul ECM, abocadors de còpia de seguretat de bases de dades i fitxers temporals.
+PurgeDeleteAllFilesInDocumentsDir=Delete all files in directory: <b>%s</b>.<br>This will delete all generated documents related to elements (third parties, invoices etc...), files uploaded into the ECM module, database backup dumps and temporary files.
 PurgeRunNow=Purga ara
 PurgeNothingToDelete=No hi ha cap directori ni fitxers per esborrar.
 PurgeNDirectoriesDeleted=<b>%s</b> fitxers o directoris suprimits.
@@ -250,8 +250,8 @@ Security=Seguretat
 Passwords=Contrasenyes
 DoNotStoreClearPassword=Xifra les contrasenyes emmagatzemades a la base de dades (NO com a text sense format). És molt recomanable activar aquesta opció.
 MainDbPasswordFileConfEncrypted=Xifra la contrasenya de la base de dades emmagatzemada a conf.php. És molt recomanable activar aquesta opció.
-InstrucToEncodePass=Per tenir la contrasenya codificada al fitxer <b>conf.php</b>, substituïu la línia <br> /span><span class='notranslate'><b>$dolibarr_main_db_pass="...";</b>b0342fccfda</span19bz0 >per<span class='notranslate'><br><b>$dolibarr_main_db_pass="crypted:%s; span class='notranslate'></b></span>
-InstrucToClearPass=Per descodificar (esborrar) la contrasenya al fitxer <b>conf.php</b>, substituïu la línia <br><b>$dolibarr_main_db_pass="crypted:...";</b><span'class=''notranslate'> ><br></span>per<br><b>$dolibarr_main_db_pass="b0f4f4span2'><b>$dolibarr_main_db_pass="z7 ";<span class='notranslate'></b>
+InstrucToEncodePass=To have password encoded into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="...";</b><br>by<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
+InstrucToClearPass=To have password decoded (clear) into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="crypted:...";</b><br>by<br><b>$dolibarr_main_db_pass="%s";</b>
 ProtectAndEncryptPdfFiles=Protegiu els fitxers PDF generats. Això NO es recomana perquè trenca la generació massiva de PDF.
 ProtectAndEncryptPdfFilesDesc=La protecció d'un document PDF el manté disponible per llegir i imprimir amb qualsevol navegador PDF. Tanmateix, l'edició i la còpia ja no són possibles. Tingueu en compte que l'ús d'aquesta funció fa que la creació d'un PDF global combinat no funcioni.
 Feature=Característica
@@ -268,7 +268,7 @@ OtherResources=Altres recursos
 ExternalResources=Recursos externs
 SocialNetworks=Xarxes socials
 SocialNetworkId=Identificador de la xarxa social
-ForDocumentationSeeWiki=Per a la documentació de l'usuari o del desenvolupador (Doc, PMF...),<br>fegeu una ullada a la wiki de Dolibarr:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%sb0e40d8dc658%sb0e40d8dc658 <span class='notranslate'></b>
+ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 ForAnswersSeeForum=Per a qualsevol altra pregunta/ajuda, podeu utilitzar el fòrum de Dolibarr:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 HelpCenterDesc1=Aquí teniu alguns recursos per obtenir ajuda i suport amb Dolibarr.
 HelpCenterDesc2=Alguns d'aquests recursos només estan disponibles a <b>anglès</b>.
@@ -290,8 +290,8 @@ EMailsSetup=Configuració de correus electrònics
 EMailsDesc=Aquesta pàgina us permet establir paràmetres o opcions per a l'enviament de correu electrònic.
 EmailSenderProfiles=Perfils de remitents de correus electrònics
 EMailsSenderProfileDesc=Podeu mantenir aquesta secció buida. Si introduïu alguns correus electrònics aquí, s'afegiran a la llista de possibles remitents al quadre combinat quan escriviu un correu electrònic nou.
-MAIN_MAIL_SMTP_PORT=Port SMTP/SMTPS (valor predeterminat a php.ini: <b>%s<span class='notranslate'>b09a4b739f17f8) >)
-MAIN_MAIL_SMTP_SERVER=Amfitrió SMTP/SMTPS (valor per defecte a php.ini: <b>%s<span class='notranslate'>b09a4b739f17f8) >)
+MAIN_MAIL_SMTP_PORT=SMTP/SMTPS Port (default value in php.ini: <b>%s</b>)
+MAIN_MAIL_SMTP_SERVER=SMTP/SMTPS Host (default value in php.ini: <b>%s</b>)
 MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike=Port SMTP/SMTPS
 MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike=Amfitrió SMTP/SMTPS
 MAIN_MAIL_EMAIL_FROM=Correu electrònic del remitent per a correus electrònics automàtics
@@ -345,12 +345,12 @@ ThisIsAlternativeProcessToFollow=Aquesta és una configuració alternativa per p
 StepNb=Pas %s
 FindPackageFromWebSite=Trobeu un paquet que proporcioni les funcions que necessiteu (per exemple, al lloc web oficial %s).
 DownloadPackageFromWebSite=Baixeu el paquet (per exemple, des del lloc web oficial %s).
-UnpackPackageInDolibarrRoot=Descomprimiu/descomprimiu els fitxers empaquetats al directori del vostre servidor Dolibarr: <b>%s<span class='notranslate'>b09a4b739f17f >
+UnpackPackageInDolibarrRoot=Unpack/unzip the packaged files into your Dolibarr server directory: <b>%s</b>
 UnpackPackageInModulesRoot=Per implementar/instal·lar un mòdul extern, heu de descomprimir/descomprimir el fitxer d'arxiu al directori del servidor dedicat als mòduls externs:<br><b>%s</b>
 SetupIsReadyForUse=S'ha acabat el desplegament del mòdul. Tanmateix, heu d'habilitar i configurar el mòdul a la vostra aplicació anant als mòduls de configuració de la pàgina: <a href="%s">%s</a>.
 NotExistsDirect=El directori arrel alternatiu no està definit per a un directori existent.<br>
 InfDirAlt=Des de la versió 3, és possible definir un directori arrel alternatiu. Això us permet emmagatzemar, en un directori dedicat, connectors i plantilles personalitzades.<br>Creeu només un directori a l'arrel de Dolibarr (per exemple: personalitzat).<br>
-InfDirExample=<br>A continuació, declara-ho al fitxer <strong>conf.php</strong><span> class='notranslate'><br></span> $dolibarr_main_url_root_alt='/custom'<br>$dolibarr_main_document_root_alt='/path/of'/dolibar='custom/h/dolibar= 'notranslate'><br></span>Si aquestes línies es comenten amb "#", per activar-les, només cal que elimineu el comentari eliminant el caràcter "#".
+InfDirExample=<br>Then declare it in the file <strong>conf.php</strong><br> $dolibarr_main_url_root_alt='/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>If these lines are commented with "#", to enable them, just uncomment by removing the "#" character.
 YouCanSubmitFile=Podeu carregar el fitxer .zip del paquet del mòdul des d'aquí:
 CurrentVersion=Dolibarr versió actual
 CallUpdatePage=Navegueu fins a la pàgina que actualitza l'estructura i les dades de la base de dades: %s.
@@ -361,14 +361,14 @@ LastActivationIP=Última IP d'activació
 LastActivationVersion=Última versió d'activació
 UpdateServerOffline=Actualitza el servidor fora de línia
 WithCounter=Gestionar un comptador
-GenericMaskCodes=Podeu introduir qualsevol màscara de numeració. En aquesta màscara, es poden utilitzar les etiquetes següents:<br><b>{000000}b09a4b739f17f8 /span> correspon a un número que s'incrementarà a cada <span class='notranslate'>%s. Introduïu tants zeros com la longitud desitjada del comptador. El comptador es completarà amb zeros des de l'esquerra per tal de tenir tants zeros com la màscara. <br><b>{000000+000}</b> igual que l'anterior s'aplica un desplaçament corresponent al número a la dreta del signe + a partir del primer %s. <br><b>{000000@x}</b> igual que l'anterior el comptador es reinicia a zero quan s'arriba al mes x (x entre 1 i 12, o 0 per utilitzar els primers mesos de l'any fiscal definits a la vostra configuració, o 99 per restablir a zero cada mes). Si s'utilitza aquesta opció i x és 2 o superior, també es requereix la seqüència {aa}{mm} o {aaaa}{mm}. <br><b>{dd}</b> dia (de l'1 al 31).<br><b>{mm}</b> mes (de l'1 al 12).<br><b>{yy}</b>, b36ae3736ae37 {yyyy}</b> o <b>{y}</b> any més de 2, 4 o 1 números. <br>
-GenericMaskCodes2=<b>{cccc}</b> el codi de client en n caràcters<br><b>{cccc000}b09a4b7390 el codi client{cccc000}b09a4b7390> en n caràcters va seguit d'un comptador dedicat al client. Aquest comptador dedicat al client es restableix al mateix temps que el comptador global.<span class='notranslate'><br><b>{tttt} </b> El codi del tipus de tercer en n caràcters (vegeu el menú Inici - Configuració - Diccionari - Tipus de tercers). Si afegiu aquesta etiqueta, el comptador serà diferent per a cada tipus de tercers.<br>
+GenericMaskCodes=You may enter any numbering mask. In this mask, the following tags can be used:<br><b>{000000}</b> corresponds to a number which will be incremented on each %s. Enter as many zeros as the desired length of the counter. The counter will be completed by zeros from the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as the previous one but an offset corresponding to the number to the right of the + sign is applied starting on the first %s. <br><b>{000000@x}</b> same as the previous one but the counter is reset to zero when month x is reached (x between 1 and 12, or 0 to use the early months of fiscal year defined in your configuration, or 99 to reset to zero every month). If this option is used and x is 2 or higher, then the sequence {yy}{mm} or {yyyy}{mm} is also required. <br><b>{dd}</b> day (01 to 31).<br><b>{mm}</b> month (01 to 12).<br><b>{yy}</b>, <b>{yyyy}</b> or <b>{y}</b> year over 2, 4 or 1 numbers. <br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated to the customer. This counter dedicated to customer is reset at same time as the global counter.<br><b>{tttt}</b> The code of third party type on n characters (see menu Home - Setup - Dictionary - Types of third parties). If you add this tag, the counter will be different for each type of third party.<br>
 GenericMaskCodes3=Tots els altres caràcters de la màscara romandran intactes.<br>No es permeten espais.<br>
 GenericMaskCodes3EAN=Tots els altres caràcters de la màscara es mantindran intactes (excepte * o ? a la 13a posició de l'EAN13).<br>No es permeten espais.<br> span>A EAN13, l'últim caràcter després de l'últim } a la 13a posició hauria de ser * o ? . Se substituirà per la clau calculada.<br>
 GenericMaskCodes4a=<u>Exemple del 99è %s del tercer TheCompany, amb data 2023-01-31:</u><br>
 GenericMaskCodes4b=<u>Exemple de tercers creat el 2023-01-31:</u><br> >
 GenericMaskCodes4c=<u>Exemple del producte creat el 31/01/2023:</u><br>
-GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> donarà b0aee837fz0 span>ABC2301-000099</b><br><b>@00+1{0@019bz0 }-ZZZ/{dd}/XXX<span class='notranslate'></b> donarà <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> donarà <b>IN2301-0099-A</b> si el tipus d'empresa "Responsable Inscripto" amb codi per al tipus que és "A_RI"
+GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC2301-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN2301-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
 GenericNumRefModelDesc=Retorna un número personalitzable segons una màscara definida.
 ServerAvailableOnIPOrPort=El servidor està disponible a l'adreça <b>%s</b> al port <b>%s</b>
 ServerNotAvailableOnIPOrPort=El servidor no està disponible a l'adreça <b>%s</b> al port <b>%s</b>
@@ -390,7 +390,7 @@ LanguageFilesCachedIntoShmopSharedMemory=Fitxers .lang carregats a la memòria c
 LanguageFile=Fitxer d'idiomes
 ExamplesWithCurrentSetup=Exemples amb la configuració actual
 ListOfDirectories=Llista de directoris de plantilles d'OpenDocument
-ListOfDirectoriesForModelGenODT=Llista de directoris que contenen fitxers de plantilles amb format OpenDocument.<br><br>Indiqueu aquí el camí complet dels directoris.<br>Afegiu un retorn de carro entre cada directori.<br>Per afegir un directori del mòdul GED, afegiu aquí <b> >DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br>b0342fccfda19><br> en aquests directorisb ha d'acabar amb <b>.odt</b> o <b><.ods ='notranslate'></b></span>.
+ListOfDirectoriesForModelGenODT=List of directories containing templates files with OpenDocument format.<br><br>Put here full path of directories.<br>Add a carriage return between eah directory.<br>To add a directory of the GED module, add here <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>Files in those directories must end with <b>.odt</b> or <b>.ods</b>.
 NumberOfModelFilesFound=Nombre de fitxers de plantilla ODT/ODS trobats en aquests directoris
 ExampleOfDirectoriesForModelGen=Exemples de sintaxi:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
 FollowingSubstitutionKeysCanBeUsed=<br>Per saber com crear les plantilles de documents odt, abans d'emmagatzemar-les en aquests directoris, llegiu la documentació wiki:
@@ -461,11 +461,11 @@ ComputedFormulaDesc=Podeu introduir aquí una fórmula utilitzant altres propiet
 Computedpersistent=Emmagatzema el camp calculat
 ComputedpersistentDesc=Els camps addicionals calculats s'emmagatzemaran a la base de dades, però el valor només es tornarà a calcular quan es canviï l'objecte d'aquest camp. Si el camp calculat depèn d'altres objectes o dades globals, aquest valor pot ser incorrecte!!
 ExtrafieldParamHelpPassword=Si deixeu aquest camp en blanc, vol dir que aquest valor s'emmagatzemarà SENSE xifratge (el camp només s'amaga amb estrelles a la pantalla).<br><br>Introduïu valor 'dolcrypt' per codificar el valor amb un algorisme de xifratge reversible. Les dades esborrades encara es poden conèixer i editar, però s'encripten a la base de dades.<br><br>Introduïu "auto" (o "md5", 'sha256', 'password_hash', ...) per utilitzar l'algorisme de xifratge de contrasenya predeterminat (o md5, sha256, password_hash...) per desar la contrasenya hash no reversible a la base de dades (no hi ha manera de recuperar el valor original)
-ExtrafieldParamHelpselect=La llista de valors ha de ser línies amb clau de format, valor (on la clau no pot ser '0')<br><br>, per exemple : <br>1,value1<br>2,value2<br>code3,value3 span class='notranslate'><br></span>...<br><br>Per tal que la llista depengui d'un altre llista d'atributs complementària:<br>1,value1|options_<i>parent_list_codeb0ae64758ba>c3:3z0ba> parent_key<span class='notranslate'><br>2,value2|options_<i>parent_list_codeb0ae64758parent_key</span>3:3 class='notranslate'><br></span><br>Per tal que la llista depengui d'una altra llista:<br>1, value1|<i>parent_list_code</i>:parent_key<br>2,value class='notranslate'><i></span>parent_list_code</i>:parent_key
-ExtrafieldParamHelpcheckbox=La llista de valors ha de ser línies amb clau de format, valor (on la clau no pot ser '0')<br><br>, per exemple : <br>1,value1<br>2,value2<br>3,value3 span class='notranslate'><br></span>...
-ExtrafieldParamHelpradio=La llista de valors ha de ser línies amb clau de format, valor (on la clau no pot ser '0')<br><br>, per exemple : <br>1,value1<br>2,value2<br>3,value3 span class='notranslate'><br></span>...
+ExtrafieldParamHelpselect=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>code3,value3<br>...<br><br>In order to have the list depending on another complementary attribute list:<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>In order to have the list depending on another list:<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
+ExtrafieldParamHelpcheckbox=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>3,value3<br>...
+ExtrafieldParamHelpradio=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>3,value3<br>...
 ExtrafieldParamHelpsellist=La llista de valors prové d'una taula<br>Sintaxi: table_name:label_field:id_field::filtersql<br>Exemple: c_typent:libelle: ::filtersql<br><br>- id_field és necessàriament una clau int primària<br> - filtersql és una condició SQL. Pot ser una prova senzilla (per exemple, active=1) per mostrar només el valor actiu<br>També podeu utilitzar $ID$ al filtre, que és l'identificador actual de l'objecte actual<br>Per utilitzar SELECT al filtre, utilitzeu la paraula clau $SEL$ per evitar la protecció anti-injecció.<br>si voleu filtrar els camps addicionals utilitzeu la sintaxi extra.fieldcode=... (on el codi del camp és el codi del camp extra)<br><br>Per tenir el llista en funció d'una altra llista d'atributs complementaris:<br>c_typent:libelle:id:options_<i>parent_list_code </i>|parent_column:filter <br><br>Per tal que la llista depengui d'una altra llista:<br>c_typent:libelle:id:<i>parent_list_code</i>:filter_column>|
-ExtrafieldParamHelpchkbxlst=La llista de valors prové d'una taula<br>Sintaxi: table_name:label_field:id_field::filtersql<br>Exemple: c_typent:libelle: ::filtersql<br><br>el filtre pot ser una prova senzilla (per exemple, active=1) per mostrar només el valor actiu<br>També podeu utilitzar $ID$ al filtre, que és l'identificador actual de l'objecte actual<br>Per fer un SELECT al filtre, utilitzeu $SEL$<br>si voleu filtrar sobre camps extra, utilitzeu la sintaxi extra.fieldcode=... (on el codi del camp és el codi del camp extra)<br><br>Per tal que la llista depengui d'una altra llista d'atributs complementaris:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br></span class='notranslate'></i>19bz0</span>notranslate'90</span><span>fcz0 </span>Per tal que la llista depengui d'una altra llista:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelpchkbxlst=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=Els paràmetres han de ser ObjectName:Classpath<br>Sintaxi: ObjectName:Classpath
 ExtrafieldParamHelpSeparator=Manteniu-lo buit per a un separador simple<br>Definiu-lo a 1 per a un separador que es replega (obert per defecte per a una sessió nova, llavors l'estat es manté per a cada sessió d'usuari)<br>Definiu-ho a 2 per a un separador que es replega (es replega de manera predeterminada per a una sessió nova, llavors l'estat es manté abans de cada sessió d'usuari)
 LibraryToBuildPDF=Biblioteca utilitzada per a la generació de PDF
@@ -633,7 +633,7 @@ Module600Long=Tingueu en compte que aquest mòdul està dedicat a enviar correus
 Module610Name=Variants de producte
 Module610Desc=Permet la creació de variants de producte en funció dels atributs (color, mida, etc.)
 Module650Name=Llistats de materials (BOM)
-Module650Desc=module per definir les vostres factures de Materials (BOM). Es pot utilitzar per a Manufacturing Resource Planificació de la module= 'notranslate'>Manufacturing</span> Comandes (MO)
+Module650Desc=Module to define your Bills Of Materials (BOM). Can be used for Manufacturing Resource Planning by the module Manufacturing Orders (MO)
 Module660Name=Manufacturing Resource Planificació (MRP)
 Module660Desc=module per gestionar Manufacturing (MO)
 Module700Name=Donacions
@@ -1197,6 +1197,7 @@ Skin=Tema visual
 DefaultSkin=Tema visual predeterminat
 MaxSizeList=Longitud màxima per llistats
 DefaultMaxSizeList=Longitud màxima per defecte per a les llistes
+DisplayGrandTotalInList=Display grand total (for all pages) in lists footer
 DefaultMaxSizeShortList=Longitud màxima per defecte en llistes curtes (per exemple, en la fitxa de client)
 MessageOfDay=Missatge del dia
 MessageLogin=Missatge en la pàgina d'inici de sessió
@@ -2290,7 +2291,7 @@ DatabasePasswordNotObfuscated=La contrasenya de la base de dades NO està ofusca
 APIsAreNotEnabled=Els mòduls API no estan habilitats
 YouShouldSetThisToOff=Hauríeu d'establir-lo a 0 o desactivar-lo
 InstallAndUpgradeLockedBy=La instal·lació i les actualitzacions estan bloquejades pel fitxer <b> %s </b>
-InstallLockedBy=La instal·lació/reinstal·lació està bloquejada pel fitxer <b>%s</b> 
+InstallLockedBy=La instal·lació/reinstal·lació està bloquejada pel fitxer <b>%s</b>
 InstallOfAddonIsNotBlocked=Les instal·lacions de mòduls no estan bloquejades. Creeu un arxiu <b>installmodules.lock</b> dins del directori <b>%s</b> per a bloquejar instal·lacions de mòduls externs.
 OldImplementation=Implementació antiga
 PDF_SHOW_LINK_TO_ONLINE_PAYMENT=Si alguns mòduls de pagament en línia estan habilitats (Paypal, Stripe, ...), afegiu un enllaç al PDF per a fer el pagament en línia
@@ -2405,8 +2406,8 @@ NotAvailableByDefaultEnabledOnModuleActivation=No creat per defecte. Creat nomé
 CSSPage=Estil CSS
 Defaultfortype=Defecte
 DefaultForTypeDesc=Plantilla utilitzada per defecte quan es crea un correu electrònic nou per al tipus de plantilla
-OptionXShouldBeEnabledInModuleY=L'opció «<b>%s</b>» s'ha d'habilitar al mòdul <b>%s</b> 
-OptionXIsCorrectlyEnabledInModuleY=L'opció «<b>%s</b>» està habilitada al mòdul <b>%s</b> 
+OptionXShouldBeEnabledInModuleY=L'opció «<b>%s</b>» s'ha d'habilitar al mòdul <b>%s</b>
+OptionXIsCorrectlyEnabledInModuleY=L'opció «<b>%s</b>» està habilitada al mòdul <b>%s</b>
 AllowOnLineSign=Permet signatura en línia
 AtBottomOfPage=A la part inferior de la pàgina
 FailedAuth=autenticacions fallides
@@ -2433,3 +2434,12 @@ UrlPublicInterfaceHelpAdmin=És possible definir un àlies al servidor web i aix
 ExportUseForce=Use the parameter -f
 ExportUseForceHelp=Force to continue the export even when an error is found (Backup may not be reliable)
 CustomPrompt=Custom prompts
+AiDescription=AI (Artificial Intelligence) features
+AiDescriptionLong=Provides AI (Artificial Intelligence) features in different part of the application. Need external AI API.
+AI_KEY_API_CHATGPT= Key for ChatGPT IA api
+AiSetup=AI module setup
+AiCustomPrompt=AI customs prompt
+AI_CONFIGURATIONS_PROMPT=Custom prompt
+ImageGeneration=Image generation
+AIPromptForFeatures=AI custom prompts for features
+EnterAnIP=Enter an IP address

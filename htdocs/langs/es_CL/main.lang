@@ -298,6 +298,7 @@ DateFormatYYYYMMDD=AAAA-MM-DD
 DateFormatYYYYMMDDHHMM=AAAA-MM-DD HH: SS
 ReportName=Reportar nombre
 ReportPeriod=Período del informe
+Reports=Reportes
 Keyword=Palabra clave
 Fill=Llenar
 Reset=Reiniciar

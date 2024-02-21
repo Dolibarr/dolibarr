@@ -144,7 +144,9 @@ if ($action == 'add' && $permissiontoadd) {
 	$object->frequency = GETPOSTINT('nbfrequency');
 	$object->maxrun = GETPOSTINT('maxrun');
 	$object->email_alert = GETPOST('email_alert');
-
+	$object->status = 0;
+	$object->processing = 0;
+	$object->lastresult = '';
 	// Add cron task
 	$result = $object->create($user);
 

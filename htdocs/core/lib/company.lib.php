@@ -71,7 +71,7 @@ function societe_prepare_head(Societe $object)
 				$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 				$sql .= $hookmanager->resPrint;
 				$sql .= " WHERE p.fk_soc = ".((int) $object->id);
-				$sql .= " AND entity IN (".getEntity($object->element).")";
+				$sql .= " AND p.entity IN (".getEntity($object->element).")";
 				// Add where from hooks
 				$parameters = array('contacttab' => true);
 				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -1692,7 +1692,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
 
-		if (get_class($filterobj) !== 'User') {
+		if (is_object($filterobj) && get_class($filterobj) !== 'User') {
 			$force_filter_contact = false;
 		} else {
 			$force_filter_contact = true;

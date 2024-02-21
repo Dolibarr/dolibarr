@@ -296,7 +296,7 @@ abstract class DoliDB implements Database
 			$oldsortorder = '';
 			$return = '';
 			$fields = explode(',', $sortfield);
-			$orders = explode(',', $sortorder);
+			$orders = (!empty($sortorder) ? explode(',', $sortorder) : array());
 			$i = 0;
 			foreach ($fields as $val) {
 				if (!$return) {

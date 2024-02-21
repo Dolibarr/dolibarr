@@ -200,6 +200,7 @@ DateFormatYYYYMM=MM-YYYY
 DateFormatYYYYMMDD=DD-MM-YYYY
 DateFormatYYYYMMDDHHMM=DD-MM-YYYY HH:SS
 ReportPeriod=Período del informe
+Reports=Reportes
 Fill=Llenar
 Reset=Reiniciar
 NotAllowed=No permitido

@@ -457,7 +457,6 @@ Module5000Name=Multi-Empresas
 Module5000Desc=Permite gerenciar várias empresas
 Module6000Name=Fluxo de trabalho entre módulos
 Module6000Desc=Gerenciamento de fluxo de trabalho entre diferentes módulos (criação automática de objeto e / ou mudança automática de status)
-Module10000Desc=CMS to create websites with a WYSIWYG editor. This is a webmaster or developer oriented Content Management System (it is better to know HTML and CSS language). Just setup your web server (Apache, Nginx, ...) to point to the dedicated Dolibarr directory to have it online on the internet with your own domain name.
 Module20000Name=Deixar o gerenciamento de solicitações
 Module20000Desc=Definir e rastrear solicitações de saída de funcionários
 Module39000Name=Lotes de Produtos

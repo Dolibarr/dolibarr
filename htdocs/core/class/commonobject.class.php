@@ -911,10 +911,10 @@ abstract class CommonObject
 				}
 				$labelextra = $langs->trans((string) $extrafields->attributes[$this->table_element]['label'][$key]);
 				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
-					$data[$key]= '<br><b><u>'. $labelextra . '</u></b>';
+					$data[$key] = '<br><b><u>'. $labelextra . '</u></b>';
 				} else {
 					$value = (empty($this->array_options['options_' . $key]) ? '' : $this->array_options['options_' . $key]);
-					$data[$key]= '<br><b>'. $labelextra . ':</b> ' . $extrafields->showOutputField($key, $value, '', $this->table_element);
+					$data[$key] = '<br><b>'. $labelextra . ':</b> ' . $extrafields->showOutputField($key, $value, '', $this->table_element);
 					$count++;
 				}
 			}
@@ -957,7 +957,7 @@ abstract class CommonObject
 	{
 		global $hookmanager;
 
-		$parameters = array('objref'=>$objref);
+		$parameters = array('objref' => $objref);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('getFormatedCustomerRef', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
@@ -976,7 +976,7 @@ abstract class CommonObject
 	{
 		global $hookmanager;
 
-		$parameters = array('objref'=>$objref);
+		$parameters = array('objref' => $objref);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('getFormatedSupplierRef', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
@@ -1441,8 +1441,8 @@ abstract class CommonObject
 						'civility' => $obj->civility,
 						'lastname' => $obj->lastname,
 						'firstname' => $obj->firstname,
-						'email'=>$obj->email,
-						'login'=> (empty($obj->login) ? '' : $obj->login),
+						'email' => $obj->email,
+						'login' => (empty($obj->login) ? '' : $obj->login),
 						'photo' => (empty($obj->photo) ? '' : $obj->photo),
 						'statuscontact' => $obj->statuscontact,
 						'rowid' => $obj->rowid,
@@ -1769,8 +1769,8 @@ abstract class CommonObject
 		if ($idtofetch) {
 			$thirdparty = new Societe($this->db);
 			$result = $thirdparty->fetch($idtofetch);
-			if ($result<0) {
-				$this->errors=array_merge($this->errors, $thirdparty->errors);
+			if ($result < 0) {
+				$this->errors = array_merge($this->errors, $thirdparty->errors);
 			}
 			$this->thirdparty = $thirdparty;
 
@@ -2980,7 +2980,7 @@ abstract class CommonObject
 		} else {
 			if (!$notrigger) {
 				// Call trigger
-				$this->context = array('shippingmethodupdate'=>1);
+				$this->context = array('shippingmethodupdate' => 1);
 				$result = $this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $userused);
 				if ($result < 0) {
 					$error++;
@@ -3320,8 +3320,8 @@ abstract class CommonObject
 			dol_print_error($this->db);
 			return -1;
 		} else {
-			$parameters=array('rowid'=>$rowid, 'rang'=>$rang, 'fieldposition' => $fieldposition);
-			$action='';
+			$parameters = array('rowid' => $rowid, 'rang' => $rang, 'fieldposition' => $fieldposition);
+			$action = '';
 			$reshook = $hookmanager->executeHooks('afterRankOfLineUpdate', $parameters, $this, $action);
 			return 1;
 		}
@@ -3965,7 +3965,7 @@ abstract class CommonObject
 		// Add module part to target type if object has $module property and isn't in core modules.
 		$targettype = ((!empty($this->module) && ! in_array($this->module, $coremodule)) ? $this->module.'_' : '').$this->element;
 
-		$parameters = array('targettype'=>$targettype);
+		$parameters = array('targettype' => $targettype);
 		// Hook for explicitly set the targettype if it must be differtent than $this->element
 		$reshook = $hookmanager->executeHooks('setLinkedObjectSourceTargetType', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
@@ -4056,7 +4056,7 @@ abstract class CommonObject
 		$withtargettype = false;
 		$withsourcetype = false;
 
-		$parameters = array('sourcetype'=>$sourcetype, 'sourceid'=>$sourceid, 'targettype'=>$targettype, 'targetid'=>$targetid);
+		$parameters = array('sourcetype' => $sourcetype, 'sourceid' => $sourceid, 'targettype' => $targettype, 'targetid' => $targetid);
 		// Hook for explicitly set the targettype if it must be differtent than $this->element
 		$reshook = $hookmanager->executeHooks('setLinkedObjectSourceTargetType', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
@@ -4750,26 +4750,26 @@ abstract class CommonObject
 			//print $id.'-'.$table.'-'.$elementname.'<br>';
 			// Check if element can be deleted
 			$sql = "SELECT COUNT(*) as nb";
-			$sql.= " FROM ".$this->db->prefix().$table." as c";
+			$sql .= " FROM ".$this->db->prefix().$table." as c";
 			if (!empty($element['parent']) && !empty($element['parentkey'])) {
-				$sql.= ", ".$this->db->prefix().$element['parent']." as p";
+				$sql .= ", ".$this->db->prefix().$element['parent']." as p";
 			}
 			if (!empty($element['fk_element'])) {
-				$sql.= " WHERE c.".$element['fk_element']." = ".((int) $id);
+				$sql .= " WHERE c.".$element['fk_element']." = ".((int) $id);
 			} else {
-				$sql.= " WHERE c.".$this->fk_element." = ".((int) $id);
+				$sql .= " WHERE c.".$this->fk_element." = ".((int) $id);
 			}
 			if (!empty($element['parent']) && !empty($element['parentkey'])) {
-				$sql.= " AND c.".$element['parentkey']." = p.rowid";
+				$sql .= " AND c.".$element['parentkey']." = p.rowid";
 			}
 			if (!empty($element['parent']) && !empty($element['parenttypefield']) && !empty($element['parenttypevalue'])) {
-				$sql.= " AND c.".$element['parenttypefield']." = '".$this->db->escape($element['parenttypevalue'])."'";
+				$sql .= " AND c.".$element['parenttypefield']." = '".$this->db->escape($element['parenttypevalue'])."'";
 			}
 			if (!empty($entity)) {
 				if (!empty($element['parent']) && !empty($element['parentkey'])) {
-					$sql.= " AND p.entity = ".((int) $entity);
+					$sql .= " AND p.entity = ".((int) $entity);
 				} else {
-					$sql.= " AND c.entity = ".((int) $entity);
+					$sql .= " AND c.entity = ".((int) $entity);
 				}
 			}
 
@@ -4973,7 +4973,7 @@ abstract class CommonObject
 			}
 		}
 
-		return array('weight'=>$totalWeight, 'volume'=>$totalVolume, 'ordered'=>$totalOrdered, 'toship'=>$totalToShip);
+		return array('weight' => $totalWeight, 'volume' => $totalVolume, 'ordered' => $totalOrdered, 'toship' => $totalToShip);
 	}
 
 
@@ -5093,7 +5093,7 @@ abstract class CommonObject
 		}
 		$extrafields->fetch_name_optionals_label($this->table_element_line);
 
-		$parameters = array('num'=>$num, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$this->table_element_line);
+		$parameters = array('num' => $num, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $this->table_element_line);
 		$reshook = $hookmanager->executeHooks('printObjectLineTitle', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if (empty($reshook)) {
 			// Output template part (modules that overwrite templates must declare this into descriptor)
@@ -5130,10 +5130,10 @@ abstract class CommonObject
 			//if (is_object($hookmanager) && (($line->product_type == 9 && !empty($line->special_code)) || !empty($line->fk_parent_line)))
 			if (is_object($hookmanager)) {   // Old code is commented on preceding line.
 				if (empty($line->fk_parent_line)) {
-					$parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$line->table_element, 'defaulttpldir'=>$defaulttpldir);
+					$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'defaulttpldir' => $defaulttpldir);
 					$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				} else {
-					$parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$line->table_element, 'fk_parent_line'=>$line->fk_parent_line, 'defaulttpldir'=>$defaulttpldir);
+					$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'fk_parent_line' => $line->fk_parent_line, 'defaulttpldir' => $defaulttpldir);
 					$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				}
 			}
@@ -5316,7 +5316,7 @@ abstract class CommonObject
 				$reshook = 0;
 				//if (is_object($hookmanager) && (($line->product_type == 9 && !empty($line->special_code)) || !empty($line->fk_parent_line))) {
 				if (is_object($hookmanager)) {   // Old code is commented on preceding line.
-					$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines);
+					$parameters = array('line' => $line, 'i' => $i, 'restrictlist' => $restrictlist, 'selectedLines' => $selectedLines);
 					if (!empty($line->fk_parent_line)) {
 						$parameters['fk_parent_line'] = $line->fk_parent_line;
 					}
@@ -5597,7 +5597,7 @@ abstract class CommonObject
 
 		$srctemplatepath = '';
 
-		$parameters = array('modelspath'=>$modelspath, 'modele'=>$modele, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'hidedesc'=>$hidedesc, 'hideref'=>$hideref, 'moreparams'=>$moreparams);
+		$parameters = array('modelspath' => $modelspath, 'modele' => $modele, 'outputlangs' => $outputlangs, 'hidedetails' => $hidedetails, 'hidedesc' => $hidedesc, 'hideref' => $hideref, 'moreparams' => $moreparams);
 		$reshook = $hookmanager->executeHooks('commonGenerateDocument', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 		if (!empty($reshook)) {
@@ -6332,7 +6332,7 @@ abstract class CommonObject
 					return 0;
 				}
 			} else {
-				$this->errors[]=$this->db->lasterror;
+				$this->errors[] = $this->db->lasterror;
 				return -1;
 			}
 		}
@@ -6653,7 +6653,7 @@ abstract class CommonObject
 
 			if (!$error && $trigger) {
 				// Call trigger
-				$this->context = array('extrafieldaddupdate'=>1);
+				$this->context = array('extrafieldaddupdate' => 1);
 				$result = $this->call_trigger($trigger, $userused);
 				if ($result < 0) {
 					$error++;
@@ -6771,7 +6771,7 @@ abstract class CommonObject
 
 			if (!$error && $trigger) {
 				// Call trigger
-				$this->context = array('extralanguagesaddupdate'=>1);
+				$this->context = array('extralanguagesaddupdate' => 1);
 				$result = $this->call_trigger($trigger, $userused);
 				if ($result < 0) {
 					$error++;
@@ -7066,7 +7066,7 @@ abstract class CommonObject
 
 			if (!$error && $trigger) {
 				// Call trigger
-				$this->context = array('extrafieldupdate'=>1);
+				$this->context = array('extrafieldupdate' => 1);
 				$result = $this->call_trigger($trigger, $userused);
 				if ($result < 0) {
 					$error++;
@@ -7197,7 +7197,7 @@ abstract class CommonObject
 		// Special case that force options and type ($type can be integer, varchar, ...)
 		if (!empty($this->fields[$key]['arrayofkeyval']) && is_array($this->fields[$key]['arrayofkeyval'])) {
 			$param['options'] = $this->fields[$key]['arrayofkeyval'];
-			$type = (($this->fields[$key]['type']=='checkbox') ? $this->fields[$key]['type'] : 'select');
+			$type = (($this->fields[$key]['type'] == 'checkbox') ? $this->fields[$key]['type'] : 'select');
 		}
 
 		$label = $this->fields[$key]['label'];
@@ -7249,7 +7249,7 @@ abstract class CommonObject
 
 		// Add validation state class
 		if (!empty($validationClass)) {
-			$morecss.= $validationClass;
+			$morecss .= $validationClass;
 		}
 
 		if (in_array($type, array('date'))) {
@@ -7375,7 +7375,7 @@ abstract class CommonObject
 						$pos++;
 					}
 					$tmpbefore = substr($InfoFieldList[4], 0, $pos);
-					$tmpafter = substr($InfoFieldList[4], $pos+1);
+					$tmpafter = substr($InfoFieldList[4], $pos + 1);
 					//var_dump($InfoFieldList[4].' -> '.$pos); var_dump($tmpafter);
 					$InfoFieldList[4] = $tmpbefore;
 					if ($tmpafter !== '') {
@@ -7796,7 +7796,7 @@ abstract class CommonObject
 			$out = '<input type="hidden" value="'.$value.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"/>';
 		}
 
-		if ($isDependList==1) {
+		if ($isDependList == 1) {
 			$out .= $this->getJSListDependancies('_common');
 		}
 		/* Add comments
@@ -7847,7 +7847,7 @@ abstract class CommonObject
 			$type = 'varchar'; // convert varchar(xx) int varchar
 		}
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-			$type = (($this->fields[$key]['type']=='checkbox') ? $this->fields[$key]['type'] : 'select');
+			$type = (($this->fields[$key]['type'] == 'checkbox') ? $this->fields[$key]['type'] : 'select');
 		}
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
 			$type = 'link';
@@ -8359,7 +8359,7 @@ abstract class CommonObject
 
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
 			$type = 'link';
-			$param['options'] = array($reg[1].':'.$reg[2]=>$reg[1].':'.$reg[2]);
+			$param['options'] = array($reg[1].':'.$reg[2] => $reg[1].':'.$reg[2]);
 		} elseif (preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4] => 'N');
 			$type = 'sellist';
@@ -8529,7 +8529,7 @@ abstract class CommonObject
 
 		$out = '';
 
-		$parameters = array('mode'=>$mode, 'params'=>$params, 'keysuffix'=>$keysuffix, 'keyprefix'=>$keyprefix, 'display_type'=>$display_type);
+		$parameters = array('mode' => $mode, 'params' => $params, 'keysuffix' => $keysuffix, 'keyprefix' => $keyprefix, 'display_type' => $display_type);
 		$reshook = $hookmanager->executeHooks('showOptionals', $parameters, $this, $action); // Note that $action and $object may have been modified by hook
 
 		if (empty($reshook)) {
@@ -8590,7 +8590,7 @@ abstract class CommonObject
 					}
 
 					$colspan = 0;
-					if (is_array($params) && count($params) > 0 && $display_type=='card') {
+					if (is_array($params) && count($params) > 0 && $display_type == 'card') {
 						if (array_key_exists('cols', $params)) {
 							$colspan = $params['cols'];
 						} elseif (array_key_exists('colspan', $params)) {	// For backward compatibility. Use cols instead now.
@@ -8677,7 +8677,7 @@ abstract class CommonObject
 						$domData .= ' data-targetid="'.$this->id.'"';
 
 						$html_id = (empty($this->id) ? '' : 'extrarow-'.$this->element.'_'.$key.'_'.$this->id);
-						if ($display_type=='card') {
+						if ($display_type == 'card') {
 							if (getDolGlobalString('MAIN_EXTRAFIELDS_USE_TWO_COLUMS') && ($e % 2) == 0) {
 								$colspan = 0;
 							}
@@ -8788,12 +8788,12 @@ abstract class CommonObject
 								break;
 						}
 
-						$out .= ($display_type=='card' ? '</td>' : '</div>');
+						$out .= ($display_type == 'card' ? '</td>' : '</div>');
 
 						if (getDolGlobalString('MAIN_EXTRAFIELDS_USE_TWO_COLUMS') && (($e % 2) == 1)) {
-							$out .= ($display_type=='card' ? '</tr>' : '</div>');
+							$out .= ($display_type == 'card' ? '</tr>' : '</div>');
 						} else {
-							$out .= ($display_type=='card' ? '</tr>' : '</div>');
+							$out .= ($display_type == 'card' ? '</tr>' : '</div>');
 						}
 
 						$e++;
@@ -10572,7 +10572,7 @@ abstract class CommonObject
 		// Process
 		foreach ($to_del as $del) {
 			if ($c->fetch($del) > 0) {
-				$result=$c->del_type($this, $type_categ);
+				$result = $c->del_type($this, $type_categ);
 				if ($result < 0) {
 					$error++;
 					$this->error = $c->error;

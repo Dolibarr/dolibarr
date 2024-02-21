@@ -17,7 +17,7 @@ ModifyIntervention=Ndryshoni ndërhyrjen
 CloseIntervention=Ndërhyrja e ngushtë
 DeleteInterventionLine=Fshi linjën e ndërhyrjes
 ConfirmDeleteIntervention=Je i sigurt që dëshiron ta fshish këtë ndërhyrje?
-ConfirmValidateIntervention=Jeni të sigurt që dëshironi ta vërtetoni këtë ndërhyrje me emrin <b>%s<span class='notranslate'>b09a4b739f17f8z ?
+ConfirmValidateIntervention=Are you sure you want to validate this intervention under name <b>%s</b>?
 ConfirmModifyIntervention=Jeni i sigurt që dëshironi ta modifikoni këtë ndërhyrje?
 ConfirmCloseIntervention=Je i sigurt që dëshiron ta mbyllësh këtë ndërhyrje?
 ConfirmDeleteInterventionLine=Je i sigurt që dëshiron ta fshish këtë linjë ndërhyrjeje?
@@ -67,7 +67,7 @@ InterLineDuration=Ndërhyrja e kohëzgjatjes së linjës
 InterLineDesc=Ndërhyrja e përshkrimit të linjës
 RepeatableIntervention=Modeli i ndërhyrjes
 ToCreateAPredefinedIntervention=Për të krijuar një ndërhyrje të paracaktuar ose të përsëritur, krijoni një ndërhyrje të përbashkët dhe shndërroni atë në shabllon ndërhyrjeje
-ConfirmReopenIntervention=Jeni i sigurt që dëshironi të hapni përsëri ndërhyrjen <b>%s<span class='notranslate'></b></s?
+ConfirmReopenIntervention=Are you sure you want to open back the intervention <b>%s</b>?
 GenerateInter=Gjeneroni ndërhyrje
 FichinterNoContractLinked=Ndërhyrja %s është krijuar pa një kontratë të lidhur.
 ErrorFicheinterCompanyDoesNotExist=Kompania nuk ekziston. Ndërhyrja nuk është krijuar.

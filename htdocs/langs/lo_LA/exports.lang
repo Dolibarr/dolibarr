@@ -114,7 +114,7 @@ Enclosure=Stim Delimiter
 SpecialCode=ລະຫັດພິເສດ
 ExportStringFilter=%% ອະນຸຍາດໃຫ້ປ່ຽນຕົວອັກສອນ ໜຶ່ງ ຕົວຫຼືຫຼາຍຕົວໃນຂໍ້ຄວາມ
 ExportDateFilter=YYYY, YYYYMM, YYYYMMDD: ການກັ່ນຕອງໂດຍ ໜຶ່ງ ປີ/ເດືອນ/ມື້ <br> YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD: ການກັ່ນຕອງໃນຊ່ວງຫຼາຍປີ/ເດືອນ/ມື້ a0342fccYY>, ປີຕໍ່ໄປ/ເດືອນ/ມື້ <br> <YYYY, <YYYYMM, <YYYYMMDD: ຕົວກັ່ນຕອງໃນທຸກປີຜ່ານມາ/ເດືອນ/ມື້
-ExportNumericFilter=NNNNN ການກັ່ນຕອງໂດຍຄ່າອັນໜຶ່ງ <br>NNNNNN+NNNNNN ການກັ່ນຕອງໃນໄລຍະຂອງຄ່າ<br><span class='notranslate'>b08912a07ede2 /span>> NNNNN ການກັ່ນຕອງໂດຍຄ່າທີ່ສູງກວ່າ
+ExportNumericFilter=NNNNN filters by one value<br>NNNNN+NNNNN filters over a range of values<br>< NNNNN filters by lower values<br>> NNNNN filters by higher values
 ImportFromLine=ການ ນຳ ເຂົ້າເລີ່ມຈາກlineາຍເລກແຖວ
 EndAtLineNb=ລົງທ້າຍດ້ວຍຕົວເລກແຖວ
 ImportFromToLine=ຂອບເຂດຈໍາກັດ (ຈາກ - ຫາ). ຕົວຢ່າງ: ເພື່ອລະເວັ້ນແຖວຫົວຂໍ້.

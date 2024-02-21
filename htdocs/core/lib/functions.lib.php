@@ -2677,7 +2677,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 	// Show address and email
 	if (method_exists($object, 'getBannerAddress') && !in_array($object->element, array('product', 'bookmark', 'ecm_directories', 'ecm_files'))) {
-		$moreaddress = $object->getBannerAddress('refaddress', $object);
+		$moreaddress = $object->getBannerAddress('refaddress', $object);	// address, email, url, social networks
 		if ($moreaddress) {
 			$morehtmlref .= '<div class="refidno refaddress">';
 			$morehtmlref .= $moreaddress;
@@ -3379,9 +3379,9 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $mor
 	$linkend = '</a>';
 
 	if ($morecss == 'float') {	// deprecated
-		return '<div class="nospan'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">'.($withpicto ? img_picto($langs->trans("Url"), 'globe').' ' : '').$link.'</div>';
+		return '<div class="nospan'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">'.($withpicto ? img_picto($langs->trans("Url"), 'globe', 'class="paddingrightonly"') : '').$link.'</div>';
 	} else {
-		return $linkstart.'<span class="nospan'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">'.($withpicto ? img_picto('', 'globe').' ' : '').$link.'</span>'.$linkend;
+		return $linkstart.'<span class="nospan'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">'.($withpicto ? img_picto('', 'globe', 'class="paddingrightonly"') : '').$link.'</span>'.$linkend;
 	}
 }
 
@@ -3399,7 +3399,10 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $mor
  */
 function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, $showinvalid = 1, $withpicto = 0)
 {
-	global $conf, $user, $langs, $hookmanager;
+	global $user, $langs, $hookmanager;
+
+	//global $conf; $conf->global->AGENDA_ADDACTIONFOREMAIL = 1;
+	//$showinvalid = 1; $email = 'rrrrr';
 
 	$newemail = dol_escape_htmltag($email);
 
@@ -3412,30 +3415,35 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 	}
 
 	if (!empty($addlink)) {
-		$newemail = '<a style="text-overflow: ellipsis;" href="';
+		$newemail = '<a class="paddingrightonly" style="text-overflow: ellipsis;" href="';
 		if (!preg_match('/^mailto:/i', $email)) {
 			$newemail .= 'mailto:';
 		}
 		$newemail .= $email;
 		$newemail .= '">';
+
+		$newemail .= ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '');
+
 		$newemail .= dol_trunc($email, $max);
 		$newemail .= '</a>';
 		if ($showinvalid && !isValidEmail($email)) {
 			$langs->load("errors");
-			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email));
+			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email), '', 'paddingrightonly');
 		}
 
 		if (($cid || $socid) && isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
 			$type = 'AC_EMAIL';
-			$link = '';
+			$linktoaddaction = '';
 			if (getDolGlobalString('AGENDA_ADDACTIONFOREMAIL')) {
-				$link = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$type.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
+				$linktoaddaction = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.urlencode($type).'&amp;contactid='.((int) $cid).'&amp;socid='.((int) $socid).'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
 			}
-			if ($link) {
-				$newemail = '<div>'.$newemail.' '.$link.'</div>';
+			if ($linktoaddaction) {
+				$newemail = '<div>'.$newemail.' '.$linktoaddaction.'</div>';
 			}
 		}
 	} else {
+		$newemail = ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '').$newemail;
+
 		if ($showinvalid && !isValidEmail($email)) {
 			$langs->load("errors");
 			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email));
@@ -3443,8 +3451,10 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 	}
 
 	//$rep = '<div class="nospan" style="margin-right: 10px">';
-	$rep = ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto)).' ' : '').$newemail;
+	//$rep = ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '').$newemail;
 	//$rep .= '</div>';
+	$rep = $newemail;
+
 	if ($hookmanager) {
 		$parameters = array('cid' => $cid, 'socid' => $socid, 'addlink' => $addlink, 'picto' => $withpicto);
 
@@ -4597,7 +4607,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'graph' => 'chart-line', 'grip_title' => 'arrows-alt', 'grip' => 'arrows-alt', 'help' => 'question-circle',
 				'generic' => 'file', 'holiday' => 'umbrella-beach',
 				'info' => 'info-circle', 'inventory' => 'boxes', 'intracommreport' => 'globe-europe', 'jobprofile' => 'cogs',
-				'knowledgemanagement' => 'ticket-alt', 'label' => 'layer-group', 'layout'=>'columns', 'line' => 'bars', 'loan' => 'money-bill-alt',
+				'knowledgemanagement' => 'ticket-alt', 'label' => 'layer-group', 'layout' => 'columns', 'line' => 'bars', 'loan' => 'money-bill-alt',
 				'member' => 'user-alt', 'meeting' => 'chalkboard-teacher', 'mrp' => 'cubes', 'next' => 'arrow-alt-circle-right',
 				'trip' => 'wallet', 'expensereport' => 'wallet', 'group' => 'users', 'movement' => 'people-carry',
 				'sign-out' => 'sign-out-alt',
@@ -6167,7 +6177,7 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0,
  *		@param	Translate|string	$outlangs		Object langs for output. '' use default lang. 'none' use international separators.
  *		@param	int					$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accuracy) before being inserted into database or after a computation, so this parameter should be useless.
  *		@param	int					$rounding		MINIMUM number of decimal to show: 0=no change, -1=we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
- *		@param	int|string			$forcerounding	MAXIMUM number of decimal to forcerounding decimal: -1=no change, 'MU' or 'MT' or numeric to round to MU or MT or to a given number of decimal
+ *		@param	int|string			$forcerounding	MAXIMUM number of decimal to forcerounding decimal: -1=no change, 'MU' or 'MT' or a numeric to round to MU or MT or to a given number of decimal
  *		@param	string				$currency_code	To add currency symbol (''=add nothing, 'auto'=Use default currency, 'XXX'=add currency symbols for XXX currency)
  *		@return	string								String with formatted amount
  *
@@ -7229,11 +7239,10 @@ function yn($yesno, $case = 1, $color = 0)
  *  @param	Object		$object			Object to use to get ref to forge the path.
  *  @param	string		$modulepart		Type of object ('invoice_supplier, 'donation', 'invoice', ...'). Use '' for autodetect from $object.
  *  @return	string						Dir to use ending. Example '' or '1/' or '1/2/'
+ *  @see getMultiDirOuput()
  */
 function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '')
 {
-	global $conf;
-
 	if (empty($modulepart) && !empty($object->module)) {
 		$modulepart = $object->module;
 	}
@@ -11960,7 +11969,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
  * 									'myobject@mymodule' or
  * 									'myobject_mysubobject' (where mymodule = myobject, like 'project_task')
  * @return  array					array('module'=>, 'classpath'=>, 'element'=>, 'subelement'=>, 'classfile'=>, 'classname'=>, 'dir_output'=>)
- * @see fetchObjectByElement()
+ * @see fetchObjectByElement(), getMultiDirOutput()
  */
 function getElementProperties($element_type)
 {

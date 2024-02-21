@@ -91,8 +91,7 @@ CountLastUrlCheckError=URL -ді соңғы тексеруге қателер с
 LastCheckBacklink=URL мекенжайын соңғы тексеру күні
 
 NewPartnershipRequest=Жаңа серіктестік сұрауы
-NewPartnershipRequestDesc=Бұл пішін серіктестік бағдарламамыздың бір бөлігі болуды сұрауға мүмкіндік береді. Бұл пішінді толтыру үшін көмек қажет болса, электрондық пошта арқылы хабарласыңыз <b>%s<span class='notranslate'></b> аралығы>.
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Бұл бетте келесі домендердің біріне кемінде бір сілтеме болуы керек: %s
 
 IPOfApplicant=Өтініш берушінің IP
-

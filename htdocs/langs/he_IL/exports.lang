@@ -87,7 +87,7 @@ ErrorMissingMandatoryValue=נתוני חובה ריקים בקובץ המקור 
 TooMuchErrors=עדיין יש <b>%s</b> שורות מקור אחרות עם שגיאות, אך יש בפלט היה מוגבל.
 TooMuchWarnings=עדיין יש <b>%s</b> שורות מקור אחרות עם אזהרות אבל הפלט מכיל היה מוגבל.
 EmptyLine=שורה ריקה (תימחק)
-CorrectErrorBeforeRunningImport=אתה <b>חייב</b> לתקן את כל השגיאות <b>before notranslate'></b></span> מריץ את הייבוא הסופי.
+CorrectErrorBeforeRunningImport=You <b>must</b> correct all errors <b>before</b> running the definitive import.
 FileWasImported=הקובץ יובא עם המספר <b>%s</b>.
 YouCanUseImportIdToFindRecord=תוכל למצוא את כל הרשומות המיובאות במסד הנתונים שלך על ידי סינון בשדה <b>import_key='%s'</b>.
 NbOfLinesOK=מספר שורות ללא שגיאות וללא אזהרות: <b>%s</b>.
@@ -104,17 +104,17 @@ SourceExample=דוגמה לערך נתונים אפשרי
 ExampleAnyRefFoundIntoElement=כל רפר נמצא עבור רכיב <b>%s</b>
 ExampleAnyCodeOrIdFoundIntoDictionary=כל קוד (או מזהה) שנמצא במילון <b>%s</b>
 CSVFormatDesc=<b>ערך מופרד בפסיק</b> פורמט קובץ (.csv).<br>This הוא פורמט קובץ טקסט שבו שדות מופרדים על ידי מפריד [ %s ]. אם נמצא מפריד בתוך תוכן שדה, השדה מעוגל לפי תו עגול [ %s ]. תו בריחה לתו עגול הוא [ %s ].
-Excel95FormatDesc=<b>Excel</b> פורמט הקובץ (.xls)<span class='notranslate'><br> </nspan>זהו הקובץ פורמט אקסל 95 (BIFF5).
+Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is the native Excel 95 format (BIFF5).
 Excel2007FormatDesc=<b>Excel</b> פורמט הקובץ (.xlsx)<br> זה  פורמט Excel 2007 (SpreadsheetML).
-TsvFormatDesc=<b>ערך מופרד בכרטיסיות</b> פורמט קובץ (.tsv)<span class='notranslate'><br> פורמט קובץ טקסט שבו שדות מופרדים על ידי טבולטור [טאב].
+TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
 ExportFieldAutomaticallyAdded=השדה <b>%s</b> נוסף אוטומטית. זה ימנע ממך להתייחס לשורות דומות כרשומה כפולה (עם הוספת שדה זה, כל השורות יהיו בעלות המזהה שלהן ויהיה שונה).
 CsvOptions=אפשרויות פורמט CSV
 Separator=מפריד שדות
 Enclosure=מפריד מחרוזות
 SpecialCode=קוד מיוחד
 ExportStringFilter=%% מאפשר החלפת תו אחד או יותר בטקסט
-ExportDateFilter=YYYY, YYYYMM, YYYYMMDD: מסננים לפי שנה/חודש/יום<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD: מסננים בטווח של שנים/יום span class='notranslate'><br></span> > YYYY, > YYYYMM, > YYYYMMDD: מסננים בכל השנים/החודשים/הימים הבאים<br> < YYYYMM, < YYYY YYYYMMDD: מסננים על כל השנים/החודשים/ימים הקודמות
-ExportNumericFilter=NNNNN מסנן לפי ערך אחד<br>NNNN+NNNNN מסנן על פני טווח של ערכים<br><span class='notranslate'>b08910a<27ede2 /span>> NNNNN מסנן לפי ערכים גבוהים יותר
+ExportDateFilter=YYYY, YYYYMM, YYYYMMDD: filters by one year/month/day<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD: filters over a range of years/months/days<br> > YYYY, > YYYYMM, > YYYYMMDD: filters on all following years/months/days<br> < YYYY, < YYYYMM, < YYYYMMDD: filters on all previous years/months/days
+ExportNumericFilter=NNNNN filters by one value<br>NNNNN+NNNNN filters over a range of values<br>< NNNNN filters by lower values<br>> NNNNN filters by higher values
 ImportFromLine=ייבוא החל ממספר שורה
 EndAtLineNb=סיים במספר שורה
 ImportFromToLine=הגבלת טווח (מ-עד). לְמָשָׁל. כדי להשמיט את שורת הכותרת.
