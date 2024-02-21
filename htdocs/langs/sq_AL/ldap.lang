@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - ldap
-YouMustChangePassNextLogon=Fjalëkalimi për përdoruesin <b>%s</b></span class=' në domenin notranslate'><b>%s</b> duhet të ndryshohet.
+YouMustChangePassNextLogon=Password for user <b>%s</b> on the domain <b>%s</b> must be changed.
 UserMustChangePassNextLogon=Përdoruesi duhet të ndryshojë fjalëkalimin në domenin %s
 LDAPInformationsForThisContact=Informacion në bazën e të dhënave LDAP për këtë kontakt
 LDAPInformationsForThisUser=Informacion në bazën e të dhënave LDAP për këtë përdorues

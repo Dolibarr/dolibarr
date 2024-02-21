@@ -115,7 +115,7 @@ MenuBankInternalTransfer=অভ্যন্তরীণ স্থানান্
 TransferDesc=এক অ্যাকাউন্ট থেকে অন্য অ্যাকাউন্টে স্থানান্তর করতে অভ্যন্তরীণ স্থানান্তর ব্যবহার করুন, অ্যাপ্লিকেশন দুটি রেকর্ড লিখবে: উত্স অ্যাকাউন্টে একটি ডেবিট এবং লক্ষ্য অ্যাকাউন্টে একটি ক্রেডিট। এই লেনদেনের জন্য একই পরিমাণ, লেবেল এবং তারিখ ব্যবহার করা হবে।
 TransferFrom=থেকে
 TransferTo=প্রতি
-TransferFromToDone=<b>%s</b> থেকে <span class='notranslate' এ স্থানান্তর b0aee83365837fz<b>%s</b> 'notranslate'>%s</span></b> %s রেকর্ড করা হয়েছে৷
+TransferFromToDone=A transfer from <b>%s</b> to <b>%s</b> of <b>%s</b> %s has been recorded.
 CheckTransmitter=প্রেরক
 ValidateCheckReceipt=এই চেক রসিদ বৈধ?
 ConfirmValidateCheckReceipt=আপনি কি নিশ্চিত যে আপনি যাচাইকরণের জন্য এই চেকের রসিদ জমা দিতে চান? একবার যাচাই করা হলে কোন পরিবর্তন সম্ভব হবে না।

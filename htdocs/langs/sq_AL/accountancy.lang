@@ -335,7 +335,6 @@ CategoryDeleted=Kategoria për llogarinë e kontabilitetit është hequr
 AccountingJournals=revista të kontabilitetit
 AccountingJournal=ditar i kontabilitetit
 NewAccountingJournal=Ditar i ri i kontabilitetit
-ShowAccountingJournal=Trego ditarin e kontabilitetit
 NatureOfJournal=Natyra e ditarit
 AccountingJournalType1=Operacione të ndryshme
 AccountingJournalType2=Shitjet
@@ -346,14 +345,14 @@ AccountingJournalType8=Inventari
 AccountingJournalType9=Fitimet e mbajtura
 GenerationOfAccountingEntries=Gjenerimi i regjistrimeve të kontabilitetit
 ErrorAccountingJournalIsAlreadyUse=Ky ditar tashmë po përdoret
-AccountingAccountForSalesTaxAreDefinedInto=Shënim: Llogaria e kontabilitetit për tatimin mbi shitjet përcaktohet në menynë <b>%sb09a4b739f17>b09a4b739f17> - <span class='notranslate'><b>%s</b>
+AccountingAccountForSalesTaxAreDefinedInto=Note: Accounting account for Sales tax are defined into menu <b>%s</b> - <b>%s</b>
 NumberOfAccountancyEntries=Numri i hyrjeve
 NumberOfAccountancyMovements=Numri i lëvizjeve
 ACCOUNTING_DISABLE_BINDING_ON_SALES=Çaktivizo lidhjen dhe transferimin në kontabilitet në shitje (faturat e klientit nuk do të merren parasysh në kontabilitet)
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Çaktivizo lidhjen dhe transferimin në kontabilitet për blerjet (faturat e shitësit nuk do të merren parasysh në kontabilitet)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Çaktivizo lidhjen dhe transferimin në kontabilitet në raportet e shpenzimeve (raportet e shpenzimeve nuk do të merren parasysh në kontabilitet)
 ACCOUNTING_ENABLE_LETTERING=Aktivizo funksionin e shkronjave në kontabilitet
-ACCOUNTING_ENABLE_LETTERING_DESC=Kur ky opsion është i aktivizuar, ju mund të përcaktoni, në çdo hyrje kontabël, një kod që të mund të gruponi lëvizje të ndryshme kontabël së bashku. Në të kaluarën, kur revista të ndryshme menaxhoheshin në mënyrë të pavarur, kjo veçori ishte e nevojshme për të grupuar linjat e lëvizjes së revistave të ndryshme së bashku. Megjithatë, me kontabilitetin Dolibarr, një kod i tillë gjurmimi, i quajtur "<b>%s<span class='notranslate'>b09a17f78zf span>" është ruajtur tashmë automatikisht, kështu që një shkronja automatike është bërë tashmë, pa rrezik gabimi, kështu që kjo veçori është bërë e padobishme për një përdorim të zakonshëm. Funksioni manual i shkronjave ofrohet për përdoruesit fundorë që vërtet nuk i besojnë motorit të kompjuterit që bën transferimin e të dhënave në kontabilitet.
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
 EnablingThisFeatureIsNotNecessary=Aktivizimi i kësaj veçorie nuk është më i nevojshëm për një menaxhim rigoroz të kontabilitetit.
 ACCOUNTING_ENABLE_AUTOLETTERING=Aktivizoni shkronjat automatike kur transferoni në kontabilitet
 ACCOUNTING_ENABLE_AUTOLETTERING_DESC=Kodi për germat gjenerohet dhe rritet automatikisht dhe nuk zgjidhet nga përdoruesi përfundimtar
@@ -468,8 +467,8 @@ AccountancyClosureConfirmAccountingReversal=Jeni i sigurt që dëshironi të reg
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Disa hapa të detyrueshëm të konfigurimit nuk u kryen, ju lutemi plotësoni ato
-ErrorNoAccountingCategoryForThisCountry=Nuk ka asnjë grup llogarish të disponueshme për shtetin %s (Shih %s - b0ecb2ec87f49>fz <span class='notranslate'>%s)
-ErrorInvoiceContainsLinesNotYetBounded=Ju përpiqeni të shkruani disa rreshta të faturës <strong>%s<span class='notranslate'>b0a65d071f6f69, disa linja të tjera nuk janë ende të kufizuara me llogarinë kontabël. Gazetarimi i të gjitha linjave të faturave për këtë faturë refuzohet.
+ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See %s - %s - %s)
+ErrorInvoiceContainsLinesNotYetBounded=You try to journalize some lines of the invoice <strong>%s</strong>, but some other lines are not yet bounded to accounting account. Journalization of all invoice lines for this invoice are refused.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Disa rreshta në faturë nuk janë të lidhura me llogarinë kontabël.
 ExportNotSupported=Formati i konfiguruar i eksportit nuk mbështetet në këtë faqe
 BookeppingLineAlreayExists=Linjat ekzistuese tashmë në kontabilitet

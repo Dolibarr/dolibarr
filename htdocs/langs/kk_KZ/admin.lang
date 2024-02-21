@@ -268,8 +268,8 @@ OtherResources=Басқа ресурстар
 ExternalResources=Сыртқы ресурстар
 SocialNetworks=Әлеуметтік желілер
 SocialNetworkId=Әлеуметтік желі идентификаторы
-ForDocumentationSeeWiki=Пайдаланушы немесе әзірлеуші құжаттамасы (Doc, FAQ...),<br>Dolibarr Wiki сайтын қараңыз:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%sb0e4078d <span class='notranslate'></b>
-ForAnswersSeeForum=Кез келген басқа сұрақтар/анықтама үшін Dolibarr форумын пайдалана аласыз:<br><b>b00fab50ead9320 /span><span class='notranslate'>%s</a></b>
+ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 HelpCenterDesc1=Міне, Dolibarr көмегімен көмек пен қолдау алуға арналған бірнеше ресурстар.
 HelpCenterDesc2=Бұл ресурстардың кейбірі <b> ағылшын тілінде </b> қол жетімді.
 CurrentMenuHandler=Ағымдағы мәзір өңдегіші
@@ -366,9 +366,9 @@ GenericMaskCodes2= <b> {cccc} </b> n таңбалы клиент коды <br> <
 GenericMaskCodes3=Масканың барлық басқа кейіпкерлері өзгеріссіз қалады. <br> Бос орындарға рұқсат жоқ. <br>
 GenericMaskCodes3EAN=Маскадағы барлық басқа таңбалар өзгеріссіз қалады ( * немесе? EAN13 -те 13 -ші позициядан басқа). <br> Бос орындарға рұқсат жоқ. <br> EAN13 кезінде 13 -ші позициядағы соңғы} -дан кейінгі соңғы таңба * немесе? . Ол есептелген кілтпен ауыстырылады. <br>
 GenericMaskCodes4a=<u>Үшінші тарап TheCompany компаниясының 99-шы %s үлгісі, 2023-01-31:</u><br>
-GenericMaskCodes4b=<u>31.01.2023 күні жасалған үшінші тараптағы мысал:</u><span class='notranslate'>b0342fccfda19b >
-GenericMaskCodes4c=<u>2023-01-31 жасалған өнім туралы мысал:</u><span class='notranslate'>b0342fccfda19b
-GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> b0aee833608 береді span>ABC2301-000099</b><br>b0aee83365837{100@ }-ZZZ/{dd}/XXX<span class='notranslate'></b> <b>0199-ZZZ/31/XXX<span class='notranslate береді '></b></span><br><b>IN{yy}{mm}-{0000}-{t}</b> <b>IN2301-0099-A<span class='notranslate'>b09a4b739f17f80 болса, береді "A_RI" түрінің коды бар "Жауапты Inscripto"
+GenericMaskCodes4b=<u>Example on third party created on 2023-01-31:</u><br>
+GenericMaskCodes4c=<u>Example on product created on 2023-01-31:</u><br>
+GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC2301-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN2301-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
 GenericNumRefModelDesc=Анықталған маска бойынша теңшелетін нөмірді қайтарады.
 ServerAvailableOnIPOrPort=Сервер <b> %s </b> а0ае83365837fz0 %s </b> портында бар
 ServerNotAvailableOnIPOrPort=<b> %s </b> <b> %s </b> адресінде сервер жоқ
@@ -464,7 +464,7 @@ ExtrafieldParamHelpPassword=Бұл өрісті бос қалдырсаңыз, �
 ExtrafieldParamHelpselect=Мәндер тізімі формат кілті бар жолдар болуы керек, онда мән (мұнда кілт '0' болмауы керек) <br> <br> 1, мән1 <br> 2, мән2 a0342fcc3f342f030429342943f04f34f34f34f34f34f34f34f34f34f3f34f319f342f34f3f34f34f34f34f34f34f34f34f31943 басқа толықтыратын атрибут тізімнен байланысты тізімі: <br> 1, 1-мән | options_ <i> parent_list_code </i>: parent_key <br> 2, 2-мән | options_ <i> parent_list_code </i>: parent_key <br> <br> басқа тізімге байланысты тізімі болуы үшін: <br> 1, значение1 | <i> parent_list_code </i>: parent_key <br> 2, мән2 | <i> parent_list_code </i>: parent_key
 ExtrafieldParamHelpcheckbox=Мәндер тізімі формат кілті бар жолдар болуы керек, мән (мұнда кілт '0' болмауы керек) <br> <br> 1, мән1 <br> 2, мән2 a0342fccff319f03
 ExtrafieldParamHelpradio=Мәндер тізімі формат кілті бар жолдар болуы керек, мән (мұнда кілт '0' болмауы керек) <br> <br> 1, мән1 <br> 2, мән2 a0342fccff319f03
-ExtrafieldParamHelpsellist=Мәндер тізімі кестеден алынған<br>Синтаксис: table_name:label_field:id_field::filtersql<br>Мысалы: c_typent: ::filtersql<br><br>- id_field міндетті түрде негізгі int кілті болып табыладыb0342fcczf01> - filtersql — SQL шарты. Бұл тек белсенді мәнді көрсету үшін қарапайым сынақ (мысалы, active=1) болуы мүмкін<span class='notranslate'><br>Сонымен қатар ағымдағы нысанның ағымдағы идентификаторы<span класы болып табылатын сүзгіде $ID$ пайдалануға болады. ='notranslate'><br></span>Сүзгіде ТАҢДАУ функциясын пайдалану үшін, инъекцияға қарсы қорғанысты айналып өту үшін $SEL$ кілт сөзін пайдаланыңыз.<br>Егер қосымша өрістерде сүзгіңіз келсе extra.fieldcode=... синтаксисін пайдаланыңыз (мұндағы өріс коды - экстра өріс коды)<br><br> басқа қосымша төлсипат тізіміне байланысты тізім:<br>c_typent:libelle:id:options_<i>parent_list_code<spante class='translate </i></span>|parent_column:сүзгі <br><br>Тізім басқа тізімге байланысты болуы үшін:<br>c_typent:libelle:id:<i>parent_list_code<span class='notranslate'>b0ae64758baclum>033npar
+ExtrafieldParamHelpsellist=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>- id_field is necessarily a primary int key<br>- filtersql is a SQL condition. It can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter which is the current id of current object<br>To use a SELECT into the filter use the keyword $SEL$ to bypass anti-injection protection.<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelpchkbxlst=Мәндер тізімі <br> кестесінен келеді Синтаксис: table_name: label_field: id_field :: filtersql <br> Мысал: c_typent: libelle: id :: filtersql <br> a0342 a0342 a03f2 a0342fccff19 $ ID $ сүзгіні қолдана алады, бұл ағымдағы нысанның идентификаторы <br> Сүзгіде SELECT жасау үшін $ SEL $ <br> пайдаланыңыз, егер сіз қосымша өрістерде сүзгіңіз келсе, extra.fieldcode = ... синтаксисін қолданыңыз (өріс коды - бұл extrafield коды) <br> <br> басқа толықтыратын атрибут тізімнен байланысты тізімі болуы үшін: <br> c_typent: Libelle: ID: options_ <i> parent_list_code </i> | parent_column: сүзгі <br> <br> басқа тізімге байланысты тізімі болуы үшін: <br> c_typent: жала жабу: идентификатор: <i> parent_list_code </i> | ата -аналық баған: сүзгі
 ExtrafieldParamHelplink=Параметрлер ObjectName болуы керек: Classpath <br> Синтаксис: ObjectName: Classpath
 ExtrafieldParamHelpSeparator=Қарапайым сепаратор үшін бос ұстаңыз күй әр пайдаланушы сеансы алдында сақталады)
@@ -483,7 +483,7 @@ ExternalModule=Сыртқы модуль
 InstalledInto=%s каталогына орнатылды
 BarcodeInitForThirdparties=Үшінші тараптар үшін жаппай штрих-код
 BarcodeInitForProductsOrServices=Штрих -кодтың жаппай басталуы немесе өнімдерге немесе қызметтерге қалпына келтіру
-CurrentlyNWithoutBarCode=Қазіргі уақытта сізде <strong>%s</strong> жазбасы <strong>%s</strong> <span class='notranslate'>b0ecb4dedefined bar8cod .
+CurrentlyNWithoutBarCode=Currently, you have <strong>%s</strong> record on <strong>%s</strong> %s without barcode defined.
 InitEmptyBarCode=%s бос штрих-кодтар үшін бастапқы мән
 EraseAllCurrentBarCode=Штрих -кодтың барлық ағымдағы мәндерін өшіріңіз
 ConfirmEraseAllCurrentBarCode=Штрих -кодтың барлық ағымдағы мәндерін шынымен өшіргіңіз келе ме?
@@ -1197,6 +1197,7 @@ Skin=Тері тақырыбы
 DefaultSkin=Терінің әдепкі тақырыбы
 MaxSizeList=Тізім үшін максималды ұзындық
 DefaultMaxSizeList=Тізімдер үшін әдепкі максималды ұзындық
+DisplayGrandTotalInList=Display grand total (for all pages) in lists footer
 DefaultMaxSizeShortList=Қысқа тізімдер үшін әдепкі максималды ұзындық (яғни тұтынушы картасында)
 MessageOfDay=Күннің хабарламасы
 MessageLogin=Кіру бетінің хабарламасы
@@ -1281,7 +1282,7 @@ AvailableModules=Қол жетімді бағдарлама/модульдер
 ToActivateModule=Модульдерді іске қосу үшін «Аймақтарды реттеу» бөліміне өтіңіз (Үй-> Орнату-> Модульдер).
 SessionTimeOut=Сеанстың уақыты
 SessionExplanation=Бұл нөмір, егер сеанс тазалағышты PHP ішкі сеанс тазалаушысымен жасаса (және басқа ештеңе жоқ) сеанстың аяқталмайтынына кепілдік береді. PHP сеансының ішкі тазалағышы осы кідірістен кейін сеанстың аяқталатынына кепілдік бермейді. Ол осы кідірістен кейін және сеанс тазалағыш іске қосылғанда аяқталады, сондықтан әрбір <b> %s/%s </b> қатынау кезінде, бірақ басқа сеанстар арқылы кіру кезінде (егер мән 0 болса, бұл тек сессияның тазалануын білдіреді) процесс). <br> Ескертпе: сыртқы сеансты тазалау механизмі бар кейбір серверлерде (cron debian, ubuntu ... астында), сеанс сыртқы орнатумен анықталған кезеңнен кейін жойылуы мүмкін, мұнда қандай мән енгізілгеніне қарамастан.
-SessionsPurgedByExternalSystem=Бұл сервердегі сеанстар сыртқы механизммен (Debian астында cron, ubuntu ...) тазартылған сияқты, мүмкін әрбір <b>%s</b> секунд (= параметрдің мәні <b>session.gc_maxlifetime<span class='notranslate</span>b09a4b739) , сондықтан мұнда мәнді өзгерту әсер етпейді. Сервер әкімшісінен сеанс кідірісін өзгертуді сұрау керек.
+SessionsPurgedByExternalSystem=Sessions on this server seems to be cleaned by an external mechanism (cron under debian, ubuntu ...), probably every <b>%s</b> seconds (= value of parameter <b>session.gc_maxlifetime</b>), so changing the value here has no effect. You must ask the server administrator to change session delay.
 TriggersAvailable=Қол жетімді триггерлер
 TriggersDesc=Триггерлер - <b> htdocs/core/</b> каталогына көшірілгеннен кейін Dolibarr жұмыс процесінің тәртібін өзгертетін файлдар. Олар Dolibarr оқиғаларында белсендірілген жаңа әрекеттерді жүзеге асырады (жаңа компания құру, шот -фактураны тексеру, ...).
 TriggerDisabledByName=Бұл файлдағы триггерлер <b> -NORUN </b> өз атауындағы жұрнақпен өшірілген.
@@ -1321,7 +1322,7 @@ PreviousDumpFiles=Бар резервтік файлдар
 PreviousArchiveFiles=Бар архив файлдары
 WeekStartOnDay=Аптаның бірінші күні
 RunningUpdateProcessMayBeRequired=Жаңарту процесін жүргізу қажет сияқты (Бағдарламаның %s нұсқасы %s мәліметтер базасынан өзгеше)
-YouMustRunCommandFromCommandLineAfterLoginToUser=Бұл пәрменді <b>%sb09a4b739f17fz0 пайдаланушысы бар қабықшаға кіргеннен кейін пәрмен жолынан орындау керек.  немесе <b>%s<span class='notranslate беру үшін пәрмен жолының соңына -W опциясын қосу керек. '></b></span> құпия сөз.
+YouMustRunCommandFromCommandLineAfterLoginToUser=You must run this command from command line after login to a shell with user <b>%s</b> or you must add -W option at end of command line to provide <b>%s</b> password.
 YourPHPDoesNotHaveSSLSupport=PHP -де SSL функциялары жоқ
 DownloadMoreSkins=Жүктеу үшін қосымша мұқабалар
 SimpleNumRefModelDesc=Анықтамалық нөмірді %syymm-nnnn форматында қайтарады, мұнда yy-жыл, мм-ай және nnnn-қалпына келтірусіз автоматты түрде қосылатын нөмір.
@@ -1860,7 +1861,7 @@ PastDelayVCalExport=Ескі оқиғаны экспорттамаңыз
 SecurityKey = Қауіпсіздік кілті
 ##### ClickToDial #####
 ClickToDialSetup=Теру үшін модульді орнату түймешігін басыңыз
-ClickToDialUrlDesc=Телефон суретін басқан кезде URL шақырылады. URL мекенжайында <br><b>__PHONETO__b09a4b739f17f8z болатын тегтерді пайдалануға болады. қоңырау шалатын адамның телефон нөмірімен ауыстырылды<span class='notranslate'><br><b>__PHONEFROM__b09a4b739f017</span7f Қоңырау шалушы тұлғаның телефон нөмірімен ауыстырылады (сіздікі)<span class='notranslate'><br><b>__LOGIN__b09a41709f span> ол басу арқылы логинмен ауыстырылады (пайдаланушы картасында анықталған)<span class='notranslate'><br><b>__PASS__ </b> ол басу арқылы терілетін құпия сөзбен ауыстырылады (пайдаланушы картасында анықталған).
+ClickToDialUrlDesc=URL called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with clicktodial login (defined on user card)<br><b>__PASS__</b> that will be replaced with clicktodial password (defined on user card).
 ClickToDialDesc=Бұл модуль жұмыс үстелінің компьютерін пайдаланған кезде телефон нөмірлерін басылатын сілтемелерге өзгертеді. Бір рет басу арқылы нөмірге қоңырау шалынады. Бұл жұмыс үстелінде жұмсақ телефонды пайдалану кезінде немесе мысалы SIP протоколына негізделген CTI жүйесін пайдалану кезінде телефон қоңырауын бастау үшін пайдаланылуы мүмкін. Ескерту: Смартфонды пайдаланған кезде телефон нөмірлері әрқашан басылады.
 ClickToDialUseTelLink=Телефон нөмірлеріндегі «tel:» сілтемесін пайдаланыңыз
 ClickToDialUseTelLinkDesc=Егер сіздің пайдаланушыларыңызда браузермен бір компьютерде орнатылған және шолғышта «tel:» деп басталатын сілтемені басқанда қоңырау шалатын телефон немесе бағдарламалық жасақтама интерфейсі болса, бұл әдісті қолданыңыз. Егер сізге «sip:» деп басталатын сілтеме немесе сервердің толық шешімі қажет болса (жергілікті бағдарламалық жасақтаманы орнатудың қажеті жоқ), оны «Жоқ» деп қойып, келесі өрісті толтыру қажет.
@@ -2114,7 +2115,7 @@ YouCanDeleteFileOnServerWith=Бұл файлды пәрмен жолы арқы�
 ChartLoaded=Есеп схемасы жүктелді
 SocialNetworkSetup=Әлеуметтік желілер модулін орнату
 EnableFeatureFor=<strong> %s </strong> мүмкіндіктерін қосу
-VATIsUsedIsOff=Ескертпе: Сату салығын немесе ҚҚС пайдалану опциясы <span class='notranslate мәзірінде <strong>Өшірулі</strong> күйіне орнатылды. '>%s</span> - %s, сондықтан сатылым салығы немесе пайдаланылған ҚҚС сату үшін әрқашан 0 болады.
+VATIsUsedIsOff=Note: The option to use Sales Tax or VAT has been set to <strong>Off</strong> in the menu %s - %s, so Sales tax or Vat used will always be 0 for sales.
 SwapSenderAndRecipientOnPDF=PDF құжаттарында жіберуші мен алушының мекенжайын ауыстырыңыз
 FeatureSupportedOnTextFieldsOnly=Ескерту, мүмкіндік тек мәтін өрістерінде және құрама тізімдерде қолдау көрсетеді. Сонымен қатар URL параметрі action = create немесе action = edit орнатылуы керек НЕМЕСЕ беттің атауы бұл мүмкіндікті іске қосу үшін 'new.php' деп аяқталуы керек.
 EmailCollector=Электрондық пошта жинаушы
@@ -2291,7 +2292,7 @@ APIsAreNotEnabled=API модульдері қосылмаған
 YouShouldSetThisToOff=Мұны 0 немесе өшіруге қою керек
 InstallAndUpgradeLockedBy=Орнату мен жаңарту <b> %s </b> файлымен құлыпталған.
 InstallLockedBy=Орнату/қайта орнату <b>%s</b> файлымен құлыпталған.
-InstallOfAddonIsNotBlocked=Қосымшалардың орнатулары құлыпталмаған. <b>installmodules.lock</b> файлын b0aee83365837fz<span>class0 каталогына жасаңыз ='notranslate'>%s</span></b> сыртқы қосымшаларды/модульдерді орнатуды блоктау үшін.
+InstallOfAddonIsNotBlocked=Installations of addons are not locked. Create a file <b>installmodules.lock</b> into directory <b>%s</b> to block installations of external addons/modules.
 OldImplementation=Ескі іске асыру
 PDF_SHOW_LINK_TO_ONLINE_PAYMENT=Кейбір онлайн төлем модульдері қосылған болса (Paypal, Stripe, ...), онлайн төлем жасау үшін PDF файлына сілтеме қосыңыз.
 DashboardDisableGlobal=Ашық нысандардың барлық бас бармақтарын жаһандық түрде өшіріңіз
@@ -2405,8 +2406,8 @@ NotAvailableByDefaultEnabledOnModuleActivation=Әдепкі бойынша жа�
 CSSPage=CSS стилі
 Defaultfortype=Әдепкі
 DefaultForTypeDesc=Үлгі түрі үшін жаңа электрондық поштаны жасау кезінде әдепкі бойынша пайдаланылатын үлгі
-OptionXShouldBeEnabledInModuleY="<b>%s</b>" опциясы <span сынып модуліне қосылуы керек ='notranslate'><b></span>%s</b>
-OptionXIsCorrectlyEnabledInModuleY="<b>%s</b>" опциясы <span class= модуліне қосылды 'notranslate'><b></span>%s</b>
+OptionXShouldBeEnabledInModuleY=Option "<b>%s</b>" should be enabled into module <b>%s</b>
+OptionXIsCorrectlyEnabledInModuleY=Option "<b>%s</b>" is enabled into module <b>%s</b>
 AllowOnLineSign=On line қолтаңбаға рұқсат беру
 AtBottomOfPage=Беттің төменгі жағында
 FailedAuth=сәтсіз аутентификациялар
@@ -2433,3 +2434,12 @@ UrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server 
 ExportUseForce=Use the parameter -f
 ExportUseForceHelp=Force to continue the export even when an error is found (Backup may not be reliable)
 CustomPrompt=Custom prompts
+AiDescription=AI (Artificial Intelligence) features
+AiDescriptionLong=Provides AI (Artificial Intelligence) features in different part of the application. Need external AI API.
+AI_KEY_API_CHATGPT= Key for ChatGPT IA api
+AiSetup=AI module setup
+AiCustomPrompt=AI customs prompt
+AI_CONFIGURATIONS_PROMPT=Custom prompt
+ImageGeneration=Image generation
+AIPromptForFeatures=AI custom prompts for features
+EnterAnIP=Enter an IP address

@@ -282,7 +282,7 @@ ModuleStockTransferName=تحويل المخزون المتقدم
 ModuleStockTransferDesc=إدارة متقدمة لتحويل المخزون مع إنشاء صحيفة التحويل
 StockTransferNew=نقل مخزون جديد
 StockTransferList=قائمة تحويلات المخزون
-ConfirmValidateStockTransfer=هل أنت متأكد أنك تريد التحقق من صحة نقل الأسهم هذا باستخدام المرجع <b>%s<span class='notranslate'></b></ فترة>؟
+ConfirmValidateStockTransfer=Are you sure you want to validate this stocks transfer with the reference <b>%s</b> ?
 ConfirmDestock=انخفاض المخزون مع التحويل %s
 ConfirmDestockCancel=إلغاء تخفيض الأسهم بالتحويل %s
 DestockAllProduct=انخفاض المخزونات
