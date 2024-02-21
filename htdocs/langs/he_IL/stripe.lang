@@ -22,7 +22,7 @@ ToOfferALinkForOnlinePaymentOnContractLine=כתובת אתר להציע %s דף 
 ToOfferALinkForOnlinePaymentOnFreeAmount=כתובת אתר להציע %s דף תשלום מקוון בכל סכום ללא אובייקט קיים
 ToOfferALinkForOnlinePaymentOnMemberSubscription=כתובת אתר להציע %s דף תשלום מקוון עבור מנוי חבר
 ToOfferALinkForOnlinePaymentOnDonation=כתובת אתר להציע %s דף תשלום מקוון לתשלום תרומה
-YouCanAddTagOnUrl=אתה יכול גם להוסיף פרמטר url <b>&tag=<i>value</i></span class='notranslate'></b> לכל אחת מכתובות ה-URL הללו (חובה רק עבור תשלום שאינו מקושר לאובייקט) כדי להוסיף תג משלך לתשלום.<br>עבור כתובת האתר של תשלומים ללא אובייקט קיים, תוכל גם להוסיף את הפרמטר <strong>&noidempotency=1</strong> אז אותו קישור עם אותו תג ניתן להשתמש מספר פעמים (מצב תשלום מסוים עשוי להגביל את התשלום ל-1 עבור כל קישור אחר ללא פרמטר זה)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
 SetupStripeToHavePaymentCreatedAutomatically=הגדר את ה-Stripe שלך עם כתובת האתר <b>%s</b> כדי ליצור את התשלום באופן אוטומטי מאומת על ידי Stripe.
 AccountParameter=פרמטרים של חשבון
 UsageParameter=פרמטרי שימוש

@@ -187,7 +187,7 @@ NoMoreRecipientToSendTo=Больше нет получателя, котором
 EmailOptedOut=Владелец электронной почты попросил больше не связываться с ним по этому адресу.
 EvenUnsubscribe=Включить электронные письма для отказа
 EvenUnsubscribeDesc=Включите электронные письма об отказе от рассылки, когда вы выбираете электронные письма в качестве целевых. Полезно для обязательных электронных писем услуга для Пример.
-XEmailsDoneYActionsDone=%s электронные письма предварительно квалифицированы, %s электронные письма успешно обработаны (для %s class='notranslate'>%s</span> запись/действия выполнены)
+XEmailsDoneYActionsDone=%s emails pre-qualified, %s emails successfully processed (for %s record/actions done)
 helpWithAi=Generate message from AI
 YouCanMakeSomeInstructionForEmail=You can make some instructions for your Email (Example: generate image in email template...)
 ModelTemplate=Email template

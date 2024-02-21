@@ -106,7 +106,7 @@ NextValueForInvoices=הערך הבא (חשבוניות)
 NextValueForCreditNotes=הערך הבא (הערות אשראי)
 NextValueForDeposit=הערך הבא (מקדמה)
 NextValueForReplacements=הערך הבא (החלפות)
-MustBeLowerThanPHPLimit=הערה: תצורת ה-PHP שלך מגבילה כרגע את גודל הקבצים המרבי להעלאה ל-<b>%sb09a4b739f17f80 span> <span class='notranslate'>%s, ללא קשר לערך של פרמטר זה
+MustBeLowerThanPHPLimit=Note: your PHP configuration currently limits the maximum filesize for upload to <b>%s</b> %s, irrespective of the value of this parameter
 NoMaxSizeByPHPLimit=הערה: אין גבול מוגדר בתצורת שלך PHP
 MaxSizeForUploadedFiles=הגודל המקסימלי של קבצים שאפשר להעלות (0 לאסור על כל ההעלאה)
 UseCaptchaCode=השתמש בקוד גרפי (CAPTCHA) בדף הכניסה ובחלק מהדפים הציבוריים
@@ -163,7 +163,7 @@ PurgeAreaDesc=דף זה מאפשר לך למחוק את כל הקבצים שנו
 PurgeDeleteLogFile=מחק קובצי יומן, כולל <b>%s</b> (לא הוגדר עבור מודול Syslog סיכון לאובדן נתונים)
 PurgeDeleteTemporaryFiles=מחק את כל היומן והקבצים הזמניים (ללא סיכון לאובדן נתונים). הפרמטר יכול להיות 'tempfilesold', 'logfiles' או שניהם 'tempfilesold+logfiles'. הערה: מחיקת קבצים זמניים מתבצעת רק אם הספרייה הזמנית נוצרה לפני יותר מ-24 שעות.
 PurgeDeleteTemporaryFilesShort=מחק יומן וקבצים זמניים (ללא סיכון לאובדן נתונים)
-PurgeDeleteAllFilesInDocumentsDir=מחק את כל הקבצים בספרייה: <b>%s</b>=.<span class 'notranslate'><br></span>זה ימחק את כל המסמכים שנוצרו הקשורים לאלמנטים (צדדים שלישיים, חשבוניות וכו'...), קבצים שהועלו למודול ה-ECM, מזימות גיבוי של מסד נתונים וקבצים זמניים.
+PurgeDeleteAllFilesInDocumentsDir=Delete all files in directory: <b>%s</b>.<br>This will delete all generated documents related to elements (third parties, invoices etc...), files uploaded into the ECM module, database backup dumps and temporary files.
 PurgeRunNow=לטהר עכשיו
 PurgeNothingToDelete=אין ספרייה או קבצים למחיקה.
 PurgeNDirectoriesDeleted=<b>%s</b> קבצים או ספריות נמחק.
@@ -250,8 +250,8 @@ Security=בטחון
 Passwords=סיסמאות
 DoNotStoreClearPassword=הצפין סיסמאות המאוחסנות במסד הנתונים (לא כטקסט רגיל). מומלץ מאוד להפעיל אפשרות זו.
 MainDbPasswordFileConfEncrypted=הצפנת סיסמת מסד הנתונים המאוחסנת ב-conf.php. מומלץ מאוד להפעיל אפשרות זו.
-InstrucToEncodePass=כדי שהסיסמה תקודד בקובץ <b>conf.php</b>, החלף את השורה b0342bz0<19 /span><span class='notranslate'><b>$dolibarr_main_db_pass="...";</b>b0342bz0fda19 >מאת<span class='notranslate'><br><b>$dolibarr_main_db_pass="crypted:b0ecb2ec87fspan>fz;<07fspan>fz; span class='notranslate'></b>
-InstrucToClearPass=כדי לפענח (נקה) את הסיסמה לקובץ <b>conf.php</b>, החלף את השורה <br><b>$dolibarr_main_db_pass="crypted:...";</b>='</notranslate' class ><br>מאת<br><b>$dolibarr_main_db_pass="<span8b>70ec49becz0></span8b>7notranslate'ec> ";</b>
+InstrucToEncodePass=To have password encoded into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="...";</b><br>by<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
+InstrucToClearPass=To have password decoded (clear) into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="crypted:...";</b><br>by<br><b>$dolibarr_main_db_pass="%s";</b>
 ProtectAndEncryptPdfFiles=הגן על קבצי PDF שנוצרו. זה לא מומלץ מכיוון שהוא שובר יצירת PDF בתפזורת.
 ProtectAndEncryptPdfFilesDesc=הגנה על מסמך PDF שומרת אותו זמין לקריאה והדפסה בכל דפדפן PDF. עם זאת, עריכה והעתקה אינן אפשריות יותר. שים לב ששימוש בתכונה זו גורם לבניית קובצי PDF ממוזגים גלובליים לא לעבוד.
 Feature=תכונה
@@ -268,7 +268,7 @@ OtherResources=משאבים אחרים
 ExternalResources=משאבים חיצוניים
 SocialNetworks=רשתות חברתיות
 SocialNetworkId=מזהה רשת חברתית
-ForDocumentationSeeWiki=לתיעוד משתמשים או מפתחים (מסמך, שאלות נפוצות...),<br>עיין ב-Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%sb0e40dc65</80>dc65 <span class='notranslate'></b>
+ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 ForAnswersSeeForum=לכל שאלה/עזרה אחרת, אתה יכול להשתמש בפורום Dolibarr:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 HelpCenterDesc1=הנה כמה משאבים לקבלת עזרה ותמיכה עם Dolibarr.
 HelpCenterDesc2=חלק ממשאבים אלו זמינים רק ב<b>אנגלית</b>.
@@ -290,8 +290,8 @@ EMailsSetup=הגדרת מיילים
 EMailsDesc=עמוד זה מאפשר לך להגדיר פרמטרים או אפשרויות לשליחת דואר אלקטרוני.
 EmailSenderProfiles=שולח אימייל פרופילי שולח
 EMailsSenderProfileDesc=אתה יכול לשמור את החלק הזה ריק. אם תזין כאן כמה הודעות דוא"ל, הם יתווספו לרשימת השולחים האפשריים לתיבת המשולבת כאשר תכתוב אימייל חדש.
-MAIN_MAIL_SMTP_PORT=יציאת SMTP/SMTPS (ערך ברירת מחדל ב-php.ini: <b>%s<span class='notranslate'>b09a4b739f17f >)
-MAIN_MAIL_SMTP_SERVER=מארח SMTP/SMTPS (ערך ברירת מחדל ב-php.ini: <b>%s<span class='notranslate'>b09a4b739f17f >)
+MAIN_MAIL_SMTP_PORT=SMTP/SMTPS Port (default value in php.ini: <b>%s</b>)
+MAIN_MAIL_SMTP_SERVER=SMTP/SMTPS Host (default value in php.ini: <b>%s</b>)
 MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike=יציאת SMTP/SMTPS
 MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike=מארח SMTP/SMTPS
 MAIN_MAIL_EMAIL_FROM=דוא"ל שולח למיילים אוטומטיים
@@ -345,12 +345,12 @@ ThisIsAlternativeProcessToFollow=זוהי הגדרה חלופית לעיבוד �
 StepNb=שלב %s
 FindPackageFromWebSite=מצא חבילה שמספקת את התכונות שאתה צריך (לדוגמה באתר האינטרנט הרשמי %s).
 DownloadPackageFromWebSite=חבילת הורדה (לדוגמה מאתר האינטרנט הרשמי %s).
-UnpackPackageInDolibarrRoot=פרק/פרק את הקבצים הארוזים לתוך ספריית שרת Dolibarr שלך: <b>%s<span class='notranslate'>b09a4b739f17f >
+UnpackPackageInDolibarrRoot=Unpack/unzip the packaged files into your Dolibarr server directory: <b>%s</b>
 UnpackPackageInModulesRoot=כדי לפרוס/להתקין מודול חיצוני, עליך לפרוק/לפרוק את קובץ הארכיון לתוך ספריית השרת המוקדשת למודולים חיצוניים:<br><b>%s</b>
 SetupIsReadyForUse=פריסת המודול הסתיימה. עם זאת, עליך להפעיל ולהגדיר את המודול ביישום שלך על ידי מעבר למודולי הגדרת הדף: <a href="%s">%s</a>.
 NotExistsDirect=ספריית השורש החלופית אינה מוגדרת לספרייה קיימת.<br>
 InfDirAlt=מאז גרסה 3, ניתן להגדיר ספריית שורש חלופית. זה מאפשר לך לאחסן, בספרייה ייעודית, יישומי פלאגין ותבניות מותאמות אישית.<br>פשוט צור ספרייה בשורש של Dolibarr (למשל: מותאם אישית).<br>
-InfDirExample=<br>לאחר מכן הכריז על זה בקובץ <strong>conf.phpb0a65d071f6fcspan9z0</span class='notranslate'><br> $dolibarr_main_url_root_alt='/custom'<br>$dolibarr_main_document_root_alt='/barrtom/of/dolibarrtom/of/dspan 'notranslate'><br></span>אם השורות האלה מוערות ב-"#", כדי לאפשר אותן, פשוט בטל את ההערה על-ידי הסרת התו "#".
+InfDirExample=<br>Then declare it in the file <strong>conf.php</strong><br> $dolibarr_main_url_root_alt='/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>If these lines are commented with "#", to enable them, just uncomment by removing the "#" character.
 YouCanSubmitFile=אתה יכול להעלות את קובץ ה-zip של חבילת המודול מכאן:
 CurrentVersion=Dolibarr הגרסה הנוכחית
 CallUpdatePage=דפדף לדף שמעדכן את מבנה מסד הנתונים והנתונים: %s.
@@ -361,14 +361,14 @@ LastActivationIP=IP ההפעלה האחרון
 LastActivationVersion=גרסת ההפעלה האחרונה
 UpdateServerOffline=עדכן את השרת במצב לא מקוון
 WithCounter=נהל מונה
-GenericMaskCodes=אתה יכול להזין כל מסכת מספור. במסכה זו, ניתן להשתמש בתגים הבאים:<br><b>{000000}b09a4f739f<017f /span> מתאים למספר אשר יוגדל בכל <span class='notranslate'>%s. הזן כמה אפסים כמו האורך הרצוי של המונה. המונה יושלם באפסים משמאל על מנת שיהיו כמה אפסים כמו המסכה. <br><b>{000000+000}</b> אך זהה לקודם היסט המתאים למספר מימין לסימן + מוחל החל ב%s הראשון. <br><b>{000000@x}</b> זהה לזה הקודם המונה מאופס לאפס כשמגיעים לחודש x (x בין 1 ל-12, או 0 כדי להשתמש בחודשים הראשונים של שנת הכספים שהוגדרו בתצורה שלך, או 99 כדי לאפס כל חודש). אם נעשה שימוש באפשרות זו ו-x הוא 2 ומעלה, נדרש גם הרצף {yy}{mm} או {yyyy}{mm}. <br><b>{dd}</b> יום (01 עד 31). span class='notranslate'><br></span><b>{mm}</b> חודש (01 עד 12).<br><b>{yy}</b>,  {yyyy}</b> או <b>{y}</b> שנה מעל 2, 4 או 1 מספרים. <br>
-GenericMaskCodes2=<b>{cccc}</b> קוד הלקוח על n תווים<br><b>{cccc000}b0917b78z קוד הלקוח על n תווים ואחריו מונה המוקדש ללקוח. מונה זה המוקדש ללקוח מאופס במקביל למונה הגלובלי.<span class='notranslate'><br><b>b06a5f451419e8z </b> הקוד של סוג צד שלישי על n תווים (ראה תפריט בית - הגדרה - מילון - סוגי צדדים שלישיים). אם תוסיף תג זה, המונה יהיה שונה עבור כל סוג של צד שלישי.<br>
+GenericMaskCodes=You may enter any numbering mask. In this mask, the following tags can be used:<br><b>{000000}</b> corresponds to a number which will be incremented on each %s. Enter as many zeros as the desired length of the counter. The counter will be completed by zeros from the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as the previous one but an offset corresponding to the number to the right of the + sign is applied starting on the first %s. <br><b>{000000@x}</b> same as the previous one but the counter is reset to zero when month x is reached (x between 1 and 12, or 0 to use the early months of fiscal year defined in your configuration, or 99 to reset to zero every month). If this option is used and x is 2 or higher, then the sequence {yy}{mm} or {yyyy}{mm} is also required. <br><b>{dd}</b> day (01 to 31).<br><b>{mm}</b> month (01 to 12).<br><b>{yy}</b>, <b>{yyyy}</b> or <b>{y}</b> year over 2, 4 or 1 numbers. <br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated to the customer. This counter dedicated to customer is reset at same time as the global counter.<br><b>{tttt}</b> The code of third party type on n characters (see menu Home - Setup - Dictionary - Types of third parties). If you add this tag, the counter will be different for each type of third party.<br>
 GenericMaskCodes3=כל הדמויות האחרות מסכת יישאר ללא שינוי. <br> מקומות אסורים. <br>
 GenericMaskCodes3EAN=כל שאר התווים במסכה יישארו שלמים (למעט * או ? במיקום 13 ב-EAN13).<br>אין מותרים רווחים.<br> span>ב-EAN13, התו האחרון אחרי ה-} האחרון במיקום ה-13 צריך להיות * או ? . הוא יוחלף במפתח המחושב.<br>
 GenericMaskCodes4a=<u>דוגמה בתאריך ה-99 של %s של הצד השלישי TheCompany, עם תאריך 2023-01-31:</u><br>
 GenericMaskCodes4b=<u>דוגמה על צד שלישי שנוצר ב-2023-01-31:</u><br> >
 GenericMaskCodes4c=<u>דוגמה על מוצר שנוצר ב-2023-01-31:</u><br>
-GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> ייתן b0aee873308 span>ABC2301-000099</b><br><b>@01+</0> }-ZZZ/{dd}/XXX<span class='notranslate'></b> ייתן <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> ייתן <b>IN2301-0099-A</b> סוג החברה הוא 'Inscripto אחראי' עם קוד לסוג שהוא 'A_RI'
+GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC2301-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN2301-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
 GenericNumRefModelDesc=להחזיר מספר להתאמה אישית על פי מסכת מוגדר.
 ServerAvailableOnIPOrPort=שרת זמין בכתובת <b>%s</b> כתובת ביציאה <b>%s</b>
 ServerNotAvailableOnIPOrPort=השרת אינו זמין <b>%s</b> כתובת ביציאה <b>%s</b>
@@ -390,7 +390,7 @@ LanguageFilesCachedIntoShmopSharedMemory=קבצים. Lang טעון בזיכרו�
 LanguageFile=קובץ שפה
 ExamplesWithCurrentSetup=דוגמאות עם תצורה נוכחית
 ListOfDirectories=רשימה של ספריות ותבניות OpenDocument
-ListOfDirectoriesForModelGenODT=רשימת ספריות המכילות קבצי תבניות בפורמט OpenDocument.<br><br>שים כאן את הנתיב המלא של ספריות.<br>הוסף החזרת כרכרה בין ספרייה אחת.<br>כדי להוסיף ספרייה של מודול GED, הוסף כאן <b> >DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br>b0342fccfdaies19bz0 במנהלים אלו חייב להסתיים ב-<b>.odt</b> או <b>.ods ='notranslate'></b></span>.
+ListOfDirectoriesForModelGenODT=List of directories containing templates files with OpenDocument format.<br><br>Put here full path of directories.<br>Add a carriage return between eah directory.<br>To add a directory of the GED module, add here <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>Files in those directories must end with <b>.odt</b> or <b>.ods</b>.
 NumberOfModelFilesFound=מספר קובצי תבנית ODT/ODS שנמצאו בספריות אלו
 ExampleOfDirectoriesForModelGen=דוגמאות לתחביר:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
 FollowingSubstitutionKeysCanBeUsed=<br> לדעת איך ליצור תבניות ODT המסמכים שלך, לפני אחסונם ספריות אלה, קרא את התיעוד wiki:
@@ -461,10 +461,10 @@ ComputedFormulaDesc=אתה יכול להזין כאן נוסחה באמצעות 
 Computedpersistent=אחסן שדה מחושב
 ComputedpersistentDesc=שדות נוספים מחושבים יאוחסנו במסד הנתונים, עם זאת, הערך יחושב מחדש רק כאשר האובייקט של שדה זה ישתנה. אם השדה המחושב תלוי באובייקטים אחרים או בנתונים גלובליים ערך זה עשוי להיות שגוי!!
 ExtrafieldParamHelpPassword=השארת שדה זה ריק פירושה שהערך הזה יאוחסן ללא הצפנה (השדה פשוט מוסתר עם כוכבים על המסך).<br><br>הזן ערך 'dolcrypt' כדי לקודד ערך עם אלגוריתם הצפנה הפיך. עדיין ניתן לדעת ולערוך נתונים ברורים, אך הם מוצפנים במסד הנתונים.<br><br>הזן 'auto' (או 'md5', 'sha256', 'password_hash', ...) כדי להשתמש באלגוריתם ברירת המחדל של הצפנת סיסמה (או md5, sha256, password_hash...) כדי לשמור את הסיסמה ה-hash הבלתי הפיכה במסד הנתונים (אין דרך לאחזר את הערך המקורי)
-ExtrafieldParamHelpselect=רשימת הערכים חייבת להיות שורות עם מפתח פורמט, ערך (כאשר המפתח לא יכול להיות '0')<br><br> למשל : <br>1,value1<br>2,value2<br></espan>code3,valu span class='notranslate'><br>...<br><br>כדי שהרשימה תהיה תלויה באחר רשימת מאפיינים משלימים:<br>1,value1|options_<i>parent_list_codeb0ae634758bac>: parent_key<span class='notranslate'><br>2,value2|options_<i>parent_list_codeb0ae64758bac33zkey class='notranslate'><br></span><br>כדי שהרשימה תהיה תלויה ברשימה אחרת:<br>1, value1|<i>parent_list_code</i>:parent_key<br></span|span>2,value class='notranslate'><i>parent_list_code</i>:parent_key
-ExtrafieldParamHelpcheckbox=רשימת הערכים חייבת להיות שורות עם מפתח פורמט, ערך (כאשר המפתח לא יכול להיות '0')<br><br> למשל : <br>1,value1<br>2,value2<br>3,value span class='notranslate'><br></span>...
-ExtrafieldParamHelpradio=רשימת הערכים חייבת להיות שורות עם מפתח פורמט, ערך (כאשר המפתח לא יכול להיות '0')<br><br> למשל : <br>1,value1<br>2,value2<br>3,value span class='notranslate'><br></span>...
-ExtrafieldParamHelpsellist=רשימת ערכים מגיעה מטבלה<br>תחביר: table_name:label_field:id_field::filtersql<br>דוגמה: c_idtypent:libelle: ::filtersql<br><br>- id_field הוא בהכרח מפתח int ראשיb0342fccfda19bz> - filtersql הוא תנאי SQL. זה יכול להיות בדיקה פשוטה (למשל active=1) להציג רק ערך פעיל<span class='notranslate'><br>אתה יכול גם להשתמש ב-$ID$ במסנן שהוא המזהה הנוכחי של האובייקט הנוכחי<br>כדי להשתמש ב-SELECT לתוך המסנן, השתמש במילת המפתח $SEL$ כדי לעקוף את ההגנה נגד הזרקה.<br>אם ברצונך לסנן על שדות נוספים. השתמש בתחביר extra.fieldcode=... (כאשר קוד השדה הוא הקוד של extrafield)<br><br>על מנת לקבל את רשימה בהתאם לרשימת מאפיינים משלימים אחרת:<br>c_typent:libelle:id:options_<i>parent_list_code </i>|parent_column:filter <br><br>כדי שהרשימה תהיה תלויה ברשימה אחרת:<br>c_typent:libelle:id:<i>parent_list_code<span class='notranslate'></i></umn>:parent|
+ExtrafieldParamHelpselect=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>code3,value3<br>...<br><br>In order to have the list depending on another complementary attribute list:<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>In order to have the list depending on another list:<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
+ExtrafieldParamHelpcheckbox=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>3,value3<br>...
+ExtrafieldParamHelpradio=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>3,value3<br>...
+ExtrafieldParamHelpsellist=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>- id_field is necessarily a primary int key<br>- filtersql is a SQL condition. It can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter which is the current id of current object<br>To use a SELECT into the filter use the keyword $SEL$ to bypass anti-injection protection.<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelpchkbxlst=רשימת ערכים מגיעה מטבלה<br>תחביר: table_name:label_field:id_field::filtersql<br>דוגמה: c_idtypent:libelle: ::filtersql<br><br>מסנן יכול להיות בדיקה פשוטה (למשל active=1) להצגת ערך פעיל בלבד<br>תוכל גם להשתמש ב-$ID$ במסנן שהוא המזהה הנוכחי של האובייקט הנוכחי<br>כדי לבצע SELECT במסנן השתמש ב-$SEL$<br>אם אתה רוצה לסנן על extrafields השתמש בתחביר extra.fieldcode=... (כאשר קוד השדה הוא הקוד של extrafield)<br><br>כדי שהרשימה תהיה תלויה ברשימת תכונות משלימה אחרת:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br></3translatespan' class=0bda10fzcfz0bda19bz0</span44758bac33z0' כדי שהרשימה תהיה תלויה ברשימה אחרת:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=הפרמטרים חייבים להיות ObjectName:Classpath<br>תחביר: ObjectName:Classpath
 ExtrafieldParamHelpSeparator=שמור ריק עבור מפריד פשוט<br>הגדר את זה ל-1 עבור מפריד מתמוטט (פתוח כברירת מחדל עבור הפעלה חדשה, ואז הסטטוס נשמר עבור כל הפעלה של משתמש)<br>הגדר את זה ל-2 עבור מפריד מכווץ (כווץ כברירת מחדל עבור הפעלה חדשה, ואז הסטטוס נשמר לפני כל הפעלת משתמש)
@@ -483,7 +483,7 @@ ExternalModule=מודול חיצוני
 InstalledInto=מותקן בספרייה %s
 BarcodeInitForThirdparties=ברקוד המוני init עבור צדדים שלישיים
 BarcodeInitForProductsOrServices=ברקוד המוני התחל או איפוס עבור מוצרים או שירותים
-CurrentlyNWithoutBarCode=נכון לעכשיו, יש לך רשומת <strong>%s</strong> ב-<strong>%s</strong> <span class='notranslate'>b0ecb>9fc87f מוגדר</4 .
+CurrentlyNWithoutBarCode=Currently, you have <strong>%s</strong> record on <strong>%s</strong> %s without barcode defined.
 InitEmptyBarCode=ערך Init עבור %s הברקודים הריקים
 EraseAllCurrentBarCode=מחק את כל ערכי הברקוד הנוכחיים
 ConfirmEraseAllCurrentBarCode=האם אתה בטוח שברצונך למחוק את כל ערכי הברקוד הנוכחיים?
@@ -1197,6 +1197,7 @@ Skin=העור נושא
 DefaultSkin=העור סגנון ברירת מחדל
 MaxSizeList=אורך מקסימלי עבור רשימה
 DefaultMaxSizeList=אורך מרבי ברירת מחדל עבור רשימות
+DisplayGrandTotalInList=Display grand total (for all pages) in lists footer
 DefaultMaxSizeShortList=ברירת המחדל של אורך מקסימלי עבור רשימות קצרות (כלומר בכרטיס לקוח)
 MessageOfDay=המסר של היום
 MessageLogin=התחברות הודעה בדף
@@ -1249,7 +1250,7 @@ SetupDescription2=שני הסעיפים הבאים הם חובה (שני הער�
 SetupDescription3=<a href="%s">%s -> %sb0e87d8cczc60e40d <br><br>פרמטרים בסיסיים המשמשים להתאמה אישית של התנהגות ברירת המחדל של היישום שלך (למשל עבור תכונות הקשורות למדינה).
 SetupDescription4=<a href="%s">%s -> %sb0e87d8cczc60e40d <br><br>תוכנה זו היא חבילה של מודולים/יישומים רבים. המודולים הקשורים לצרכים שלך חייבים להיות מופעלים ומוגדרים. ערכים בתפריט יופיעו עם הפעלת המודולים הללו.
 SetupDescription5=ערכי תפריט הגדרה אחרים מנהלים פרמטרים אופציונליים.
-SetupDescriptionLink=<a href="%s">%s - %s<span class='notranslate'>b05e87d8ccz60e87d8ccz /span>
+SetupDescriptionLink=<a href="%s">%s - %s</a>
 SetupDescription3b=פרמטרים בסיסיים המשמשים להתאמה אישית של התנהגות ברירת המחדל של האפליקציה שלך (למשל עבור תכונות הקשורות למדינה).
 SetupDescription4b=תוכנה זו היא חבילה של מודולים/יישומים רבים. יש להפעיל את המודולים הקשורים לצרכים שלך. ערכים בתפריט יופיעו עם הפעלת המודולים הללו.
 AuditedSecurityEvents=אירועי אבטחה שנבדקים
@@ -1280,8 +1281,8 @@ DisplayDesc=ניתן לשנות כאן פרמטרים המשפיעים על המ
 AvailableModules=אפליקציה/מודולים זמינים
 ToActivateModule=כדי להפעיל מודולים, ללכת על שטח ההתקנה (ראשי-> התקנה-> Modules).
 SessionTimeOut=זמן לפגישה
-SessionExplanation=מספר זה מבטיח שההפעלה לעולם לא יפוג לפני העיכוב הזה, אם ניקוי הפגישות נעשה על ידי מנקה ההפעלה הפנימי של PHP (ושום דבר אחר). מנקה הפעלות פנימי של PHP אינו מבטיח שההפעלה יפוג לאחר עיכוב זה. התוקף יפוג, לאחר עיכוב זה, וכאשר מנקה הפעלות יופעל, כך שכל <b>%s/<span class=' גישה notranslate'>%s</span></b>, אבל רק במהלך גישה שנעשתה על ידי הפעלות אחרות (אם הערך הוא 0, זה אומר שניקוי ההפעלה נעשה רק על ידי תהליך חיצוני) .<br>הערה: בשרתים מסוימים עם מנגנון ניקוי הפעלה חיצוני (cron תחת debian, ubuntu...), ההפעלות יכולות להיהרס לאחר תקופה שהוגדרה על ידי הגדרה חיצונית, לא משנה מה הערך שהוזן כאן.
-SessionsPurgedByExternalSystem=נראה כי הפעלות בשרת זה מנוקות על ידי מנגנון חיצוני (cron תחת debian, ubuntu ...), כנראה כל <b>%s</b> שניות (= ערך הפרמטר <b>session.gc_maxlifetime<span class='notranslate'>b09a4b739f</017z) , כך שלשינוי הערך כאן אין השפעה. עליך לבקש ממנהל השרת לשנות את עיכוב ההפעלה.
+SessionExplanation=This number guarantees that the session will never expire before this delay, if the session cleaner is done by Internal PHP session cleaner (and nothing else). Internal PHP session cleaner does not guarantee that the session will expire after this delay. It will expire, after this delay, and when the session cleaner is run, so every <b>%s/%s</b> access, but only during access made by other sessions (if value is 0, it means clearing of session is done only by an external process).<br>Note: on some servers with an external session cleaning mechanism (cron under debian, ubuntu ...), the sessions can be destroyed after a period defined by an external setup, no matter what the value entered here is.
+SessionsPurgedByExternalSystem=Sessions on this server seems to be cleaned by an external mechanism (cron under debian, ubuntu ...), probably every <b>%s</b> seconds (= value of parameter <b>session.gc_maxlifetime</b>), so changing the value here has no effect. You must ask the server administrator to change session delay.
 TriggersAvailable=זמין טריגרים
 TriggersDesc=טריגרים הם קבצים שישנו את ההתנהגות של זרימת העבודה של Dolibarr לאחר העתקה לספרייה <b>htdocs/core/triggers</b>. הם מבינים פעולות חדשות, המופעלות באירועי Dolibarr (יצירת חברה חדשה, אימות חשבונית, ...).
 TriggerDisabledByName=גורמים בקובץ זה אינם זמינים על ידי <b>הסיומת-NoRun</b> בשמם.
@@ -1381,7 +1382,7 @@ NewTranslationStringToShow=מחרוזת תרגום חדשה להצגה
 OriginalValueWas=התרגום המקורי מוחלף. הערך המקורי היה:<br><br>%s
 TransKeyWithoutOriginalValue=אילצת תרגום חדש למפתח התרגום '<strong>%s</strong>' שאינו קיים באף קבצי שפה
 TitleNumberOfActivatedModules=מודולים מופעלים
-TotalNumberOfActivatedModules=מודולים מופעלים: <b>%s</b> / <span' class='notranslate ><b></span>%s</b>
+TotalNumberOfActivatedModules=Activated modules: <b>%s</b> / <b>%s</b>
 YouMustEnableOneModule=עליך להפעיל לפחות מודול אחד
 YouMustEnableTranslationOverwriteBefore=תחילה עליך להפעיל את החלפת התרגום כדי לאפשר לך להחליף תרגום
 ClassNotFoundIntoPathWarning=המחלקה %s לא נמצאה בנתיב PHP
@@ -1860,7 +1861,7 @@ PastDelayVCalExport=לא יצא אירוע מבוגרת
 SecurityKey = מפתח אבטחה
 ##### ClickToDial #####
 ClickToDialSetup=לחץ כדי לחייג ההתקנה מודול
-ClickToDialUrlDesc=כתובת האתר נקראת כאשר מתבצעת לחיצה על תמונת הטלפון. ב-URL, אתה יכול להשתמש בתגים<br><b>__PHONETO__</b> שיהיה הוחלף במספר הטלפון של האדם שאליו יש להתקשר<br><b>__PHONEFROM__b09a4b739f17f80 יוחלף במספר הטלפון של האדם המתקשר (שלך)<span class='notranslate'><br><b>__LOGIN__b09a4b739f</017f span> שיוחלף בכניסה עם קליקטודיאל (מוגדר בכרטיס המשתמש)<span class='notranslate'><br><b>__PASS__ </b> שתוחלף בסיסמת קליקטודיאל (מוגדרת בכרטיס המשתמש).
+ClickToDialUrlDesc=URL called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with clicktodial login (defined on user card)<br><b>__PASS__</b> that will be replaced with clicktodial password (defined on user card).
 ClickToDialDesc=מודול זה משנה מספרי טלפון, בעת שימוש במחשב שולחני, לקישורים הניתנים ללחיצה. לחיצה תתקשר למספר. זה יכול לשמש כדי להתחיל את שיחת הטלפון בעת שימוש בטלפון רך על שולחן העבודה שלך או בעת שימוש במערכת CTI המבוססת על פרוטוקול SIP למשל. הערה: בעת שימוש בסמארטפון, מספרי טלפון תמיד ניתנים ללחיצה.
 ClickToDialUseTelLink=השתמש רק בקישור "טל:" במספרי הטלפון
 ClickToDialUseTelLinkDesc=השתמש בשיטה זו אם למשתמשים שלך יש softphone או ממשק תוכנה, המותקן על אותו מחשב כמו הדפדפן, ונקרא כאשר אתה לוחץ על קישור שמתחיל ב-"tel:" בדפדפן שלך. אם אתה צריך קישור שמתחיל ב-"sip:" או פתרון שרת מלא (אין צורך בהתקנת תוכנה מקומית), עליך להגדיר זאת ל-"No" ולמלא את השדה הבא.
@@ -1971,7 +1972,7 @@ SomethingMakeInstallFromWebNotPossible=התקנה של מודול חיצוני �
 SomethingMakeInstallFromWebNotPossible2=מסיבה זו, תהליך השדרוג המתואר כאן הוא תהליך ידני שרק משתמש בעל הרשאה רשאי לבצע.
 InstallModuleFromWebHasBeenDisabledContactUs=התקנה או פיתוח של מודולים חיצוניים או אתרים דינמיים, מהאפליקציה, נעולים כעת למטרות אבטחה. אנא צור איתנו קשר אם אתה צריך להפעיל תכונה זו.
 InstallModuleFromWebHasBeenDisabledByFile=התקנת מודול חיצוני מהאפליקציה הושבתה על ידי מנהל המערכת שלך. עליך לבקש ממנו להסיר את הקובץ <strong>%s</strong> כדי לאפשר זאת תכונה.
-ConfFileMustContainCustom=התקנה או בנייה של מודול חיצוני מהאפליקציה צריך לשמור את קבצי המודול בספרייה <strong>%s </strong>. כדי שהספרייה הזו תעבד על ידי Dolibarr, עליך להגדיר את <strong>conf/conf.php</strong> שלך כדי להוסיף את 2 שורות ההנחיה: <br><strong>$dolibarr_main_url_root_alt='/custom';b0a65fspanc90f</spancd070 ='notranslate'><br><strong>$dolibarr_main_document_root_alt='b0ecb2ec87f49fztom0;<span>/ class '></strong>
+ConfFileMustContainCustom=Installing or building an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to add the 2 directive lines:<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=הדגש קווי טבלה כאשר תנועת העכבר עוברת
 HighlightLinesColor=הדגש את צבע הקו כאשר העכבר עובר (השתמש ב-'ffffff' כדי לא להדגיש)
 HighlightLinesChecked=הדגש את צבע הקו כאשר הוא מסומן (השתמש ב-'ffffff' ללא הדגשה)
@@ -2065,7 +2066,7 @@ DetectionNotPossible=איתור לא אפשרי
 UrlToGetKeyToUseAPIs=כתובת אתר לקבלת אסימון לשימוש ב-API (לאחר קבלת האסימון הוא נשמר בטבלת המשתמשים של מסד הנתונים ויש לספק אותו בכל קריאת API)
 ListOfAvailableAPIs=רשימה של ממשקי API זמינים
 activateModuleDependNotSatisfied=מודול "%s" תלוי במודול "%s", שחסר, אז מודול " %1$s" עשוי שלא לפעול כהלכה. אנא התקן את המודול "%2$s" או השבת את המודול "%1$s" אם אתה רוצה להיות בטוח מכל הפתעה
-CommandIsNotInsideAllowedCommands=הפקודה שאתה מנסה להפעיל אינה ברשימת הפקודות המותרות המוגדרות בפרמטר <strong>$dolibarr_main_restrict_os_commands</strong> ב-<span> class='notranslate'><strong>conf.php</strong> קובץ.
+CommandIsNotInsideAllowedCommands=The command you are trying to run is not in the list of allowed commands defined in parameter <strong>$dolibarr_main_restrict_os_commands</strong> in the <strong>conf.php</strong> file.
 LandingPage=דף נחיתה
 SamePriceAlsoForSharedCompanies=אם אתה משתמש במודול מרובה חברות, עם הבחירה "מחיר יחיד", המחיר יהיה זהה גם עבור כל החברות אם מוצרים משותפים בין סביבות
 ModuleEnabledAdminMustCheckRights=מודול הופעל. הרשאות עבור מודולים מופעלים ניתנו למשתמשי אדמין בלבד. ייתכן שיהיה עליך להעניק הרשאות למשתמשים אחרים או לקבוצות באופן ידני במידת הצורך.
@@ -2291,7 +2292,7 @@ APIsAreNotEnabled=מודולי ממשקי API אינם מופעלים
 YouShouldSetThisToOff=אתה צריך להגדיר את זה ל-0 או כבוי
 InstallAndUpgradeLockedBy=ההתקנה והשדרוגים נעולים על ידי הקובץ <b>%s</b>
 InstallLockedBy=ההתקנה/התקנה מחדש ננעלת על ידי הקובץ <b>%s</b>
-InstallOfAddonIsNotBlocked=התקנות של תוספות אינן נעולות. צור קובץ <b>installmodules.lock</b> לתוך הספרייה b0aee83365837 class</span ='notranslate'>%s</b> כדי לחסום התקנות של תוספות/מודולים חיצוניים.
+InstallOfAddonIsNotBlocked=Installations of addons are not locked. Create a file <b>installmodules.lock</b> into directory <b>%s</b> to block installations of external addons/modules.
 OldImplementation=יישום ישן
 PDF_SHOW_LINK_TO_ONLINE_PAYMENT=אם כמה מודולי תשלום מקוונים מופעלים (Paypal, Stripe, ...), הוסף קישור ב-PDF כדי לבצע את התשלום המקוון
 DashboardDisableGlobal=השבת באופן גלובלי את כל האגודלים של אובייקטים פתוחים
@@ -2406,7 +2407,7 @@ CSSPage=סגנון CSS
 Defaultfortype=בְּרִירַת מֶחדָל
 DefaultForTypeDesc=התבנית משמשת כברירת מחדל בעת יצירת אימייל חדש עבור סוג התבנית
 OptionXShouldBeEnabledInModuleY=יש להפעיל את האפשרות "<b>%s</b>" למודול <b>%s</b>
-OptionXIsCorrectlyEnabledInModuleY=האפשרות "<b>%s</b>" מופעלת במודול <span class 'notranslate'><b></span>%s</b>
+OptionXIsCorrectlyEnabledInModuleY=Option "<b>%s</b>" is enabled into module <b>%s</b>
 AllowOnLineSign=אפשר חתימה On Line
 AtBottomOfPage=בתחתית העמוד
 FailedAuth=אימותים נכשלים
@@ -2433,3 +2434,12 @@ UrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server 
 ExportUseForce=Use the parameter -f
 ExportUseForceHelp=Force to continue the export even when an error is found (Backup may not be reliable)
 CustomPrompt=Custom prompts
+AiDescription=AI (Artificial Intelligence) features
+AiDescriptionLong=Provides AI (Artificial Intelligence) features in different part of the application. Need external AI API.
+AI_KEY_API_CHATGPT= Key for ChatGPT IA api
+AiSetup=AI module setup
+AiCustomPrompt=AI customs prompt
+AI_CONFIGURATIONS_PROMPT=Custom prompt
+ImageGeneration=Image generation
+AIPromptForFeatures=AI custom prompts for features
+EnterAnIP=Enter an IP address

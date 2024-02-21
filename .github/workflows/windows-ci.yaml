@@ -137,7 +137,7 @@ jobs:
           echo [php] > %INIFILE%
           echo open_basedir^="%HTDOCS_DIR%;%DATA_DIR%;%TEST_DIR%;%INITDEMO_DIR%;%PHPROOT%" >> %INIFILE%
           REM Unset PHP_INI_SCAN_DIR to disable open_basedir restritions (to limit debug effort)
-          SET PHP_INI_SCAN_DIR=
+          REM SET PHP_INI_SCAN_DIR=
           ECHO "==== Show contents of INI file to set open_basedir ==="
           type %INIFILE%
           ECHO "==== Verify it is used by PHP ==="

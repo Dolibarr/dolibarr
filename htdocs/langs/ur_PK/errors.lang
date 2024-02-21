@@ -95,7 +95,7 @@ ErrorModuleRequireJavascript=اس خصوصیت کو کام کرنے کے لیے 
 ErrorPasswordsMustMatch=دونوں ٹائپ شدہ پاس ورڈ ایک دوسرے سے مماثل ہونے چاہئیں
 ErrorContactEMail=ایک تکنیکی خرابی پیش آگئی۔ براہ کرم، مندرجہ ذیل ای میل کے لیے منتظم سے رابطہ کریں <b>%s</b> اور غلطی فراہم کریں کوڈ <b>%s</b> اپنے پیغام میں، یا اس کی اسکرین کاپی شامل کریں یہ صفحہ.
 ErrorWrongValueForField=فیلڈ <b> %s </b> : '<b> %s a09a4b739f17f8zec0839f17f8zec083839f17f8zexa83fz39fz7839f49fz083839f49fz0839fz7839f49fz0839fz7fz19 سے مماثل ہے
-ErrorHtmlInjectionForField=فیلڈ <b>%s</b>: قدر '<span class='notranslate' '><b></span>%s</b>' میں بدنیتی پر مبنی ڈیٹا کی اجازت نہیں ہے
+ErrorHtmlInjectionForField=Field <b>%s</b>: The value '<b>%s</b>' contains a malicious data not allowed
 ErrorFieldValueNotIn=فیلڈ <b> %s </b>: '<b> %s </b>' ایک قیمت میدان <b> %s </b> میں پائے کا نہیں ہے <b> %s </b>
 ErrorFieldRefNotIn=فیلڈ <b> %s </b> : '<b> %s </b>839f17f8z080839f739f17fz087839fz08739fz087fz0839fz087fz39fz087fz087fz087fz07fz087f49fz07fz09fz0839f17fz087fz087fz07fz07fz0839f17fz07fz087fz0839f17fz087fz.
 ErrorMultipleRecordFoundFromRef=ref <b>%s</b> سے تلاش کرنے پر کئی ریکارڈ ملے۔ یہ جاننے کا کوئی طریقہ نہیں کہ کون سی آئی ڈی استعمال کرنی ہے۔
@@ -263,7 +263,7 @@ ErrorReplaceStringEmpty=خرابی، جس سٹرنگ کو تبدیل کرنا ہ
 ErrorProductNeedBatchNumber=خرابی، پروڈکٹ '<b> %s </b>' بہت زیادہ/سیریل نمبر کی ضرورت ہے
 ErrorProductDoesNotNeedBatchNumber=خرابی، پروڈکٹ '<b> %s </b>' لاٹ/سیریل نمبر قبول نہیں کرتا
 ErrorFailedToReadObject=خرابی، <b> %s </b> قسم کے آبجیکٹ کو پڑھنے میں ناکام
-ErrorParameterMustBeEnabledToAllwoThisFeature=خرابی، پیرامیٹر <b>%s</b> کو <span class= میں فعال ہونا ضروری ہے۔ 'notranslate'><b></span>conf/conf.php<> اندرونی جاب شیڈولر کے ذریعہ کمانڈ لائن انٹرفیس کے استعمال کی اجازت دینے کے لیے
+ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php<> to allow use of Command Line Interface by the internal job scheduler
 ErrorLoginDateValidity=خرابی، یہ لاگ ان درست تاریخ کی حد سے باہر ہے۔
 ErrorValueLength=فیلڈ کی لمبائی '<b> %s </b>' '<b> %s a09a4b739f' سے زیادہ ہونی چاہیے۔
 ErrorReservedKeyword=لفظ '<b> %s </b>' ایک محفوظ مطلوبہ لفظ ہے۔
