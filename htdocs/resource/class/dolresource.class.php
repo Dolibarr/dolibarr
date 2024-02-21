@@ -49,31 +49,6 @@ class Dolresource extends CommonObject
 	public $picto = 'resource';
 
 	/**
-	 * @var string address variables
-	 */
-	public $address;
-
-	/**
-	 * @var string zip of town
-	 */
-	public $zip;
-
-	/**
-	 * @var string town
-	 */
-	public $town;
-
-	/**
-	 * @var int ID country
-	 */
-	public $fk_country;
-
-	/**
-	 * @var int ID state
-	 */
-	public $fk_state;
-
-	/**
 	 * @var string description
 	 */
 	public $description;
@@ -82,11 +57,6 @@ class Dolresource extends CommonObject
 	 * @var string telephone number
 	 */
 	public $phone;
-
-	/**
-	 * @var string email address
-	 */
-	public $email;
 
 	/**
 	 * @var int Maximum users
