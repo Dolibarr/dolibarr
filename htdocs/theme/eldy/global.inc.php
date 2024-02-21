@@ -2761,6 +2761,9 @@ a.tmenuimage:focus, .mainmenu.topmenuimage:focus {
 button.ui-button.ui-corner-all.ui-widget:focus {
 	outline: none;
 }
+.tmenuimage {
+	color: var(--colortextbackhmenu);
+}
 
 /* For mainmenu, we always load the img */
 
