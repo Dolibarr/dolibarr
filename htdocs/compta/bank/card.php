@@ -141,8 +141,10 @@ if (empty($reshook)) {
 		$object->iban = trim(GETPOST("iban"));
 		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
+		$object->domiciliation = trim(GETPOST("account_address", "alphanohtml"));	// deprecated
+		$object->address = trim(GETPOST("account_address", "alphanohtml"));
+
 		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
-		$object->domiciliation = trim(GETPOST("domiciliation", "alphanohtml"));
 		$object->owner_address = trim(GETPOST("owner_address", 'alphanohtml'));
 		$object->owner_zip = trim(GETPOST("owner_zip", 'alphanohtml'));
 		$object->owner_town = trim(GETPOST("owner_town", 'alphanohtml'));

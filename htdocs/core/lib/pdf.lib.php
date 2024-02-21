@@ -829,7 +829,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
  *  @param  int			$curx            		X
  *  @param  int			$cury            		Y
  *  @param  Account		$account         		Bank account object
- *  @param  int			$onlynumber      		Output only number (bank+desk+key+number according to country, but without name of bank and domiciliation)
+ *  @param  int			$onlynumber      		Output only number (bank+desk+key+number according to country, but without name of bank and address)
  *  @param	int			$default_font_size		Default font size
  *  @return	float                               The Y PDF position
  */
@@ -942,9 +942,9 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 
 	$pdf->SetFont('', '', $default_font_size - $diffsizecontent);
 
-	if (empty($onlynumber) && !empty($account->domiciliation)) {
+	if (empty($onlynumber) && (!empty($account->domiciliation) || !empty($account->address))) {
 		$pdf->SetXY($curx, $cury);
-		$val = $outputlangs->transnoentities("Residence").': '.$outputlangs->convToOutputCharset($account->domiciliation);
+		$val = $outputlangs->transnoentities("Residence").': '.$outputlangs->convToOutputCharset(empty($account->address) ? $account->domiciliation : $account->address);
 		$pdf->MultiCell(100, 3, $val, 0, 'L', 0);
 		//$nboflines=dol_nboflines_bis($val,120);
 		//$cury+=($nboflines*3)+2;
