@@ -2552,23 +2552,29 @@ class Project extends CommonObject
 
 	/**
 	 * method for calcule weekly time spent and get a repport
-	 * @return string|int
+	 * @return int   1 if OK, -1 if KO
 	 */
 	public function createWeeklyReport()
 	{
 		global $mysoc;
-		$lastWeekStart = new DateTime();
-		$lastWeekStart->modify('last monday -7 days');
-		$lastWeekEnd = clone $lastWeekStart;
-		$lastWeekEnd->modify('+6 days');
+		 $now = dol_now();
+		$nowDate = dol_getdate($now, true);
 
-		$startDate = $lastWeekStart->format('Y-m-d 00:00:00');
-		$endDate = $lastWeekEnd->format('Y-m-d 23:59:59');
+		$firstDayOfWeekTS = dol_get_first_day_week($nowDate['mday'], $nowDate['mon'], $nowDate['year']);
+
+		$firstDayOfWeekDate = dol_mktime(0, 0, 0, $nowDate['mon'], $firstDayOfWeekTS['first_day'], $nowDate['year']);
+
+		$lastWeekStartTS = dol_time_plus_duree($firstDayOfWeekDate, -7, 'd');
+
+		$lastWeekEndTS = dol_time_plus_duree($lastWeekStartTS, 6, 'd');
+
+		$startDate = dol_print_date($lastWeekStartTS, '%Y-%m-%d 00:00:00');
+		$endDate = dol_print_date($lastWeekEndTS, '%Y-%m-%d 23:59:59');
 
 		$sql = "SELECT
 		u.rowid AS user_id,
 		CONCAT(u.firstname, ' ', u.lastname) AS name,
-		u.weeklyhours,
+		u.email,u.weeklyhours,
 		SUM(et.element_duration) AS total_seconds
 		FROM
 			llx_element_time AS et
@@ -2585,14 +2591,15 @@ class Project extends CommonObject
 			dol_print_error($this->db);
 			return -1;
 		} else {
-			$timestampStart = $lastWeekStart->getTimestamp();
-			$timestampEnd = $lastWeekEnd->getTimestamp();
+			$reportContent = "<span>Weekly time report from $startDate to $endDate </span>\n\n";
+			$reportContent .= '<table border="1" style="border-collapse: collapse;">';
+			$reportContent .= '<tr><th>Nom d\'utilisateur</th><th>Temps saisi (heures)</th><th>Temps travaillé par semaine (heures)</th></tr>';
 
-			$reportContent = "Weekly time report from $startDate to $endDate\n\n";
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-
+			$weekendEnabled = 0;
+			$to = '';
 			while ($obj = $this->db->fetch_object($resql)) {
-				$numHolidays = num_public_holiday($timestampStart, $timestampEnd, $mysoc->country_code, 1);
+				$to .= $obj->email;
+				$numHolidays = num_public_holiday($lastWeekStartTS, $lastWeekEndTS, $mysoc->country_code, 1);
 				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY') && getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY')) {
 					$numHolidays = $numHolidays - 2;
 					$weekendEnabled = 2;
@@ -2600,15 +2607,28 @@ class Project extends CommonObject
 
 				$dailyHours = $obj->weeklyhours / (7 - $weekendEnabled);
 
-				// Ajust total on seconde
+				// Adjust total on seconde
 				$adjustedSeconds = $obj->total_seconds + ($numHolidays * $dailyHours * 3600);
 
 
 				$totalHours = round($adjustedSeconds / 3600, 2);
 
-				$reportContent .= "Username: {$obj->name}, Total Hours (adjusted for holidays): {$totalHours}\n";
+				$reportContent .= "<tr><td>{$obj->name}</td><td>{$totalHours}</td><td>".round($obj->weeklyhours, 2)."</td></tr>";
 			}
-			return $reportContent;
+			$reportContent .= '</table>';
+
+			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+			$subject = 'Rapport hebdomadaire des temps travaillés';
+
+			$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+
+
+			$mail = New CMailFile($subject, $to, $from, $reportContent);
+			if ($mail->sendfile()) {
+				return 1;
+			} else {
+				return -1;
+			}
 		}
 	}
 }
