@@ -2602,9 +2602,9 @@ class EmailCollector extends CommonObject
 									if ($result <= 0) {
 										$errorforactions++;
 										$this->errors = $actioncomm->errors;
-									} else {										
-										if ($objectemail->status == Ticket::STATUS_CLOSED || $objectemail->status == Ticket::STATUS_CANCELED) {											
-											if(($objectemail->fk_user_assign != NULL)) {
+									} else {
+										if ($objectemail->status == Ticket::STATUS_CLOSED || $objectemail->status == Ticket::STATUS_CANCELED) {
+											if(($objectemail->fk_user_assign != null)) {
 												$res = $objectemail->setStatut(Ticket::STATUS_ASSIGNED);
 											} else {
 												$res = $objectemail->setStatut(Ticket::STATUS_NOT_READ);
@@ -2619,7 +2619,7 @@ class EmailCollector extends CommonObject
 											}
 										}
 									}
-									
+
 									$operationslog .= '<br>Event created -> id='.dol_escape_htmltag($actioncomm->id);
 								}
 							}
