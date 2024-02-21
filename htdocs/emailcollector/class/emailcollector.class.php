@@ -2609,7 +2609,7 @@ class EmailCollector extends CommonObject
 											} else {
 												$res = $objectemail->setStatut(Ticket::STATUS_NOT_READ);
 											}
-											
+
 											if ($res) {
 												$operationslog .= '<br>Ticket Re-Opened successfully -> ref='.$objectemail->ref;
 											} else {
