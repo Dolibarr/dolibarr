@@ -56,7 +56,6 @@ RefOrderSupplier=Bestellnummer für den Lieferanten
 RefOrderSupplierShort=Lieferanten - Bestellnummer
 OrderMode=Bestellweise
 ConfirmCloneOrder=Bist du sicher, dass du die Bestellung <b>%s</b> duplizieren willst?
-SupplierOrderSubmitedInDolibarr=Purchase Order %s submitted (%s)
 SupplierOrderClassifiedBilled=Lieferantenbestellung %s  verrechnet
 OtherOrders=Weitere Bestellungen
 SupplierOrderValidated=Lieferantenbestellung ist freigegeben:

@@ -45,7 +45,7 @@ Eval=Vlerësimi
 Evals=vlerësimet
 NewEval=Vlerësim i ri
 ValidateEvaluation=Vërtetoni vlerësimin
-ConfirmValidateEvaluation=Jeni i sigurt që dëshironi ta vërtetoni këtë vlerësim me referencën <b>%s<span class='notranslate'>b09a4b739f17f8z >?
+ConfirmValidateEvaluation=Are you sure you want to validate this evaluation with the reference <b>%s</b>?
 EvaluationCard=Karta e vlerësimit
 RequiredRank=Grada e kërkuar për profilin e punës
 RequiredRankShort=Grada e kërkuar

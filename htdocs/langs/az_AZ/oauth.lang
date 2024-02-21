@@ -29,7 +29,7 @@ OAUTH_GOOGLE_SECRET=OAuth Google Gizli
 OAUTH_GITHUB_NAME=OAuth GitHub xidməti
 OAUTH_GITHUB_ID=OAuth GitHub İD
 OAUTH_GITHUB_SECRET=OAuth GitHub sirri
-OAUTH_URL_FOR_CREDENTIAL=<a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">bu səhifəyə keçin<span class="fas fa-external-link-alt paddingleft"></span><spante class='notranslate OAuth ID və Sirri yaratmaq və ya əldə etmək üçün ></a></span>
+OAUTH_URL_FOR_CREDENTIAL=Go to <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">this page<span class="fas fa-external-link-alt paddingleft"></span></a> to create or get your OAuth ID and Secret
 OAUTH_STRIPE_TEST_NAME=OAuth Stripe Testi
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Canlı
 OAUTH_ID=OAuth Müştəri ID-si

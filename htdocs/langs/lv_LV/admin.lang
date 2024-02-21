@@ -253,7 +253,7 @@ MainDbPasswordFileConfEncrypted=Šifrēt datubāzes paroli, kas saglabāta conf.
 InstrucToEncodePass=Lai paroli šifrētu <b> conf.php </b> failā, nomainiet rindiņu <br><b> $ dolibarr_main_db_pass = "..."; </b>  <br>ar<br><b> $ dolibarr_main_db_pass = "crypted: %s"; </b>
 InstrucToClearPass=Lai <b>conf.php</b> failā dekodētu (dzēstu) paroli, nomainiet rindu <br><b>$dolibarr_main_db_pass = "crypted: ..."; </b><br>ar<br> <b>$dolibarr_main_db_pass = "%s"; </b>
 ProtectAndEncryptPdfFiles=Aizsargāt ģenerētos PDF failus. Tas nav ieteicams, jo tas pārtrauc lielapjoma PDF ģenerēšanu.
-ProtectAndEncryptPdfFilesDesc=Aizsardzība PDF dokumentu saglabā to pieejamu lasīt un izdrukāt ar jebkuru PDF pārlūkprogrammu. Tomēr, rediģēšana un kopēšana nav iespējams vairs. Ņemiet vērā, ka, izmantojot šo funkciju veidojot kopējos apvienotos pdf nedarbojas (piemēram, neapmaksātiem rēķiniem). 
+ProtectAndEncryptPdfFilesDesc=Aizsardzība PDF dokumentu saglabā to pieejamu lasīt un izdrukāt ar jebkuru PDF pārlūkprogrammu. Tomēr, rediģēšana un kopēšana nav iespējams vairs. Ņemiet vērā, ka, izmantojot šo funkciju veidojot kopējos apvienotos pdf nedarbojas (piemēram, neapmaksātiem rēķiniem).
 Feature=Iespēja
 DolibarrLicense=Licence
 Developpers=Izstrādātāji/ziedotāji
@@ -366,9 +366,9 @@ GenericMaskCodes2= <b> {cccc} </b> klienta kods uz n rakstzīmēm <br> <b> {cccc
 GenericMaskCodes3=Visas citas rakstzīmes masku paliks neskartas.<br>Atstarpes nav atļautas.<br>
 GenericMaskCodes3EAN=Visas pārējās maskas rakstzīmes paliks neskartas (izņemot * vai? EAN13 13. pozīcijā). <br> Atstarpes nav atļautas. <br> EAN13, pēdējam rakstzīmei pēc pēdējā} 13. pozīcijā jābūt * vai? . To aizstās aprēķinātā atslēga. <br>
 GenericMaskCodes4a=<u>Piemērs par trešās puses TheCompany 99. piemēru %s ar datumu 2023. 01.31.:</u><br>
-GenericMaskCodes4b=<u>Piemērs par trešo pusi, izveidots 31.01.2023.:</u><span class='notranslate'>b0342fccfda</span19bz0 >
+GenericMaskCodes4b=<u>Example on third party created on 2023-01-31:</u><br>
 GenericMaskCodes4c=<u>Piemērs par produktu, kas izveidots 2023.01.31.:</u><br>
-GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> sniegs b0aee833650</837f span>ABC2301-000099<span class='notranslate'></b><br>b0aee83365837{0@0</1> }-ZZZ/{dd}/XXX<span class='notranslate'></b> sniegs <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> sniegs <b>IN2301-0099-A</b>, ja uzņēmuma veids "Atbildīgs Inscripto" ar kodu tipam, kas ir "A_RI"
+GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC2301-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN2301-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
 GenericNumRefModelDesc=Atgriež pielāgojamu numuru atbilstoši noteiktajai maskai.
 ServerAvailableOnIPOrPort=Serveris ir pieejams adresē <b>%s</b> ports <b>%s</b>
 ServerNotAvailableOnIPOrPort=Serveris nav pieejams adresē <b>%s</b> ports <b>%s</b>
@@ -464,7 +464,7 @@ ExtrafieldParamHelpPassword=Ja atstājat šo lauku tukšu, šī vērtība tiks s
 ExtrafieldParamHelpselect=Vērtību sarakstam jābūt rindām ar formāta atslēgu, vērtība (kur atslēga nevar būt '0') <br> <br>, piemēram,: 1, vērtība1 <br> 2, vērtība2 <br> kods3, vērtība3 < br> ... <br> <br> Lai saraksts būtu atkarīgs no cita papildinošā atribūtu saraksta: <br> 1, vērtība1 | opcijas_ <i> vecāku_līmeņa kods </i>: vecāku_skava <br> 2, vērtība2 | opcijas_ <i> vecāku saraksts_code </i>: parent_key <br> <br> Lai saraksts būtu atkarīgs no cita saraksta: <br> 1, vērtība1 | <i> vecāku saraksts_code </i>: vecāku_skava <br> 2, vērtība2 | <i> vecāku saraksts_code </i>: vecāku_poga
 ExtrafieldParamHelpcheckbox=Vērtību sarakstam jābūt rindām ar formāta atslēgu, vērtība (kur atslēga nevar būt '0') <br> <br>, piemēram,: 1, vērtība1 <br> 2, vērtība2 <br> 3, vērtība3 < br> ...
 ExtrafieldParamHelpradio=Vērtību sarakstam jābūt rindām ar formāta atslēgu, vērtība (kur atslēga nevar būt '0') <br> <br>, piemēram,: 1, vērtība1 <br> 2, vērtība2 <br> 3, vērtība3 < br> ...
-ExtrafieldParamHelpsellist=Vērtību saraksts nāk no tabulas<br>Sintakse: table_name:label_field:id_field::filtersql<br>Piemērs: c_idtypent:libelle ::filtersql<br><br> — lauks id_field noteikti ir primārā int atslēgab0342fccfda</span19bz0 - filtersql ir SQL nosacījums. Tas var būt vienkāršs tests (piemēram, active=1), lai parādītu tikai aktīvo vērtību<span class='notranslate'><br>Varat arī izmantot $ID$ filtrā, kas ir pašreizējā objekta pašreizējais ID<br>Lai filtrā izmantotu SELECT, izmantojiet atslēgvārdu $SEL$, lai apietu pretinjekcijas aizsardzību.<br>ja vēlaties filtrēt papildu laukus. izmantojiet sintaksi extra.fieldcode=... (kur lauka kods ir ekstralauka kods)<br><br>Lai saraksts atkarībā no cita papildu atribūtu saraksta:<br>c_typent:libelle:id:options_<i>parent_list_code </i>|parent_column:filter <br><br>Lai saraksts būtu atkarīgs no cita saraksta:<br>c_typent:libelle:id:<i>parent_list_code</i>|
+ExtrafieldParamHelpsellist=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>- id_field is necessarily a primary int key<br>- filtersql is a SQL condition. It can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter which is the current id of current object<br>To use a SELECT into the filter use the keyword $SEL$ to bypass anti-injection protection.<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelpchkbxlst=Vērtību saraksts nāk no tabulas <br> Sintakse: table_name: label_field: id_field :: filtersql <br> Piemērs: c_typent: libelle: id :: filtersql <br> <br> tikai aktīvs displejs var izmantot arī $ ID $ filtrā. ragana ir pašreizējā objekta <br> ID. Lai atlasītu filtru, izmantojiet $ SEL $ <br>, ja vēlaties filtrēt ekstra laukos, izmantojiet sintaksi extra.fieldcode = ... (kur lauka kods ir kods extrafield) <br> <br> lai būtu sarakstu atkarībā citā papildu atribūtu saraksta: <br> c_typent: Libelle: id: options_ <i> parent_list_code </i> | parent_column: filtrs <br> <br> lai iegūtu sarakstu, atkarībā no citu sarakstā: <br> c_typent: libelle: id: <i> parent_list_code </i> | parent_column: filtrs
 ExtrafieldParamHelplink=Parametriem jābūt ObjectName: Classpath <br> Sintakse: ObjectName: Classpath
 ExtrafieldParamHelpSeparator=Vienkārša atdalītāja atstāšana tukša <br> Iestatiet to uz 1 sabrūkošajam atdalītājam (pēc noklusējuma atveriet jaunu sesiju, pēc tam katras lietotāja sesijai tiek saglabāts statuss) <br> Iestatiet to uz 2 sabrukušajam atdalītājam (jaunajai sesijai pēc noklusējuma sabrūk, pēc tam katras lietotāja sesijas laikā tiek saglabāts statuss)
@@ -1197,6 +1197,7 @@ Skin=Izskats
 DefaultSkin=Noklusētais izskats
 MaxSizeList=Maksimālais saraksta garums
 DefaultMaxSizeList=Noklusētais maksimālais sarakstu garums
+DisplayGrandTotalInList=Display grand total (for all pages) in lists footer
 DefaultMaxSizeShortList=Īsu saraksta noklusējuma maksimālais garums (t.i., klienta kartē)
 MessageOfDay=Dienas ziņa
 MessageLogin=Pieteikšanās lapas paziņojums
@@ -1449,7 +1450,7 @@ MustBeInvoiceMandatory=Obligāti, lai apstiprinātu rēķinus?
 TechnicalServicesProvided=Tehniskie pakalpojumi
 ##### WebDAV #####
 WebDAVSetupDesc=Šī ir saite, lai piekļūtu WebDAV direktorijai. Tā satur "publisku" dir., Kas atvērts jebkuram lietotājam, kurš zina URL (ja publiskā kataloga piekļuve ir atļauta) un "privātu" direktoriju, kuram ir nepieciešams esošs pieteikšanās konts / parole.
-WebDavServer=%s servera%s saknes URL: 
+WebDavServer=%s servera%s saknes URL:
 ##### WebCAL setup #####
 WebCalUrlForVCalExport=Eksporta saite uz <b>%s</b> formātā ir pieejams šādā tīmekļa vietnē: %s
 ##### Invoices #####
@@ -1860,7 +1861,7 @@ PastDelayVCalExport=Neeksportē notikums, kuri vecāki par
 SecurityKey = Drošības atslēga
 ##### ClickToDial #####
 ClickToDialSetup=Klikšķiniet lai  Dial moduļa uzstādīšanas
-ClickToDialUrlDesc=URL tiek izsaukts, kad tiek noklikšķināts uz tālruņa attēla. Vietrādī URL varat izmantot tagus<br><b>__PHONETO__</b> aizstāts ar zvanāmās personas tālruņa numuru<br><b>__PHONEFROM__</b> tiks aizstāts ar zvanītās personas tālruņa numuru (jūsu)<span class='notranslate'><br><b>__LOGIN__b09a4b739f1 span>, kas tiks aizstāts ar clicktodial pieteikšanos (noteikts lietotāja kartē)<span class='notranslate'><br><b>__PASS__ </b>, kas tiks aizstāta ar clicktodial paroli (noteikta lietotāja kartē).
+ClickToDialUrlDesc=URL called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with clicktodial login (defined on user card)<br><b>__PASS__</b> that will be replaced with clicktodial password (defined on user card).
 ClickToDialDesc=Šis modulis maina tālruņu numurus, izmantojot galddatoru, uz noklikšķināmām saitēm. Klikšķis piezvanīs uz numuru. To var izmantot, lai sāktu tālruņa zvanu, kad, izmantojot darbvirsmu, izmantojat mīksto tālruni vai, piemēram, izmantojot CTI sistēmu, kuras pamatā ir SIP protokols. Piezīme. Izmantojot viedtālruni, uz tālruņu numuriem vienmēr var noklikšķināt.
 ClickToDialUseTelLink=Use just a link "tel:" on phone numbers
 ClickToDialUseTelLinkDesc=Izmantojiet šo metodi, ja jūsu lietotājiem ir programmatūra vai programmatūras saskarne, kas instalēta tajā pašā datorā, kurā atrodas pārlūkprogramma, un zvanīja, kad pārlūkprogrammā noklikšķinājāt uz saites, kas sākas ar "tel:". Ja jums nepieciešama saite, kas sākas ar "sip:", vai pilns servera risinājums (nav nepieciešama vietējās programmatūras instalēšana), jums jāiestata tā uz "Nē" un jāaizpilda nākamais lauks.
@@ -1943,7 +1944,7 @@ ShowFiscalYear=Rādīt grāmatvedības periodu
 AlwaysEditable=Vienmēr var rediģēt
 MAIN_APPLICATION_TITLE=Force visible name of application (warning: setting your own name here may break autofill login feature when using DoliDroid mobile application)
 NbMajMin=Minimālais lielo burtu skaits
-NbNumMin=Minimālais ciparu skaits 
+NbNumMin=Minimālais ciparu skaits
 NbSpeMin=Minimālais speciālo simbolu skaits
 NbIteConsecutive=Maksimālais atkārtojošos simbolu skaits
 NoAmbiCaracAutoGeneration=Do not use ambiguous characters ("1","l","i","|","0","O") for automatic generation
@@ -2433,3 +2434,12 @@ UrlPublicInterfaceHelpAdmin=Ir iespējams definēt tīmekļa servera aizstājvā
 ExportUseForce=Use the parameter -f
 ExportUseForceHelp=Force to continue the export even when an error is found (Backup may not be reliable)
 CustomPrompt=Custom prompts
+AiDescription=AI (Artificial Intelligence) features
+AiDescriptionLong=Provides AI (Artificial Intelligence) features in different part of the application. Need external AI API.
+AI_KEY_API_CHATGPT= Key for ChatGPT IA api
+AiSetup=AI module setup
+AiCustomPrompt=AI customs prompt
+AI_CONFIGURATIONS_PROMPT=Custom prompt
+ImageGeneration=Image generation
+AIPromptForFeatures=AI custom prompts for features
+EnterAnIP=Enter an IP address

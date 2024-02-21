@@ -188,7 +188,7 @@ SuppliersDraftInvoices=Xaridor hisob-fakturalari
 Unpaid=To'lanmagan
 ErrorNoPaymentDefined=Xato To'lov aniqlanmadi
 ConfirmDeleteBill=Ushbu hisob-fakturani o'chirishni xohlaysizmi?
-ConfirmValidateBill=Haqiqatan ham bu fakturani <b>%s<span class='notranslate'></b> havolasi bilan tasdiqlamoqchimisiz >?
+ConfirmValidateBill=Are you sure you want to validate this invoice with the reference <b>%s</b>?
 ConfirmUnvalidateBill=Hisob-fakturani <b> %s </b> holatini qoralama holatiga o'zgartirishni xohlaysizmi?
 ConfirmClassifyPaidBill=Hisob-fakturani <b> %s </b> ni to'langan holatga o'zgartirishni xohlaysizmi?
 ConfirmCancelBill=Hisob-fakturani bekor qilishni xohlaysizmi <b> %s </b>?
@@ -571,7 +571,7 @@ PDFCrevetteDescription=Hisob-fakturaning PDF shablonini Crevette. Vaziyat-faktur
 TerreNumRefModelDesc1=Qaytariladigan raqam standart invoyslar uchun %syymm-nnnn va kredit eslatmalari uchun %syymm-nnnn formatida, yy yil, mm - oy va nnnn - uzilishsiz va 0 ga qaytmaydigan ketma-ket avtomatik oshiruvchi raqam
 MarsNumRefModelDesc1=Qaytish raqami %sstandart hisob-fakturalar uchun yymm-nnnn, almashtiriladigan hisob-fakturalar uchun %syymm-nnnn, %syymm-nnnn dastlabki toʻlov hisob-fakturalari uchun va %syymm-nnnn kredit notalari uchun bu erda yy yil, mm oy va nnnn ketma-ket avtomatik tanaffussiz va 0 ga qaytmaydigan sonni oshirish
 TerreNumRefModelError=$ Syymm bilan boshlangan qonun loyihasi allaqachon mavjud va ushbu ketma-ketlik modeliga mos kelmaydi. Ushbu modulni faollashtirish uchun uni olib tashlang yoki nomini o'zgartiring.
-CactusNumRefModelDesc1=Qaytish raqami %sstandart hisob-fakturalar uchun yymm-nnnn, kredit eslatmalari uchun %syymm-nnnn va <span class=' formatida. notranslate'>%s</span>yymm-nnnn avans to‘lov schyot-fakturalari uchun bu yerda yy yil, mm oy va nnnn uzilishsiz va 0 ga qaytmaydigan ketma-ket avtomatik oshiruvchi raqamdir.
+CactusNumRefModelDesc1=Return number in the format %syymm-nnnn for standard invoices, %syymm-nnnn for credit notes and %syymm-nnnn for down payment invoices where yy is year, mm is month and nnnn is a sequential auto-incrementing number with no break and no return to 0
 EarlyClosingReason=Erta yopilish sababi
 EarlyClosingComment=Erta yopilish eslatmasi
 ##### Types de contacts #####

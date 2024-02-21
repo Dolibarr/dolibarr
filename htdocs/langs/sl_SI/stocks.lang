@@ -282,7 +282,7 @@ ModuleStockTransferName=Napredni prenos zalog
 ModuleStockTransferDesc=Napredno upravljanje prenosa zalog z generiranjem prenosnega lista
 StockTransferNew=Nov prenos zalog
 StockTransferList=Seznam prenosov delnic
-ConfirmValidateStockTransfer=Ali ste prepričani, da želite potrditi ta prenos delnic s sklicem <b>%s<span class='notranslate'></b></ razpon>?
+ConfirmValidateStockTransfer=Are you sure you want to validate this stocks transfer with the reference <b>%s</b> ?
 ConfirmDestock=Zmanjšanje zalog s prenosom %s
 ConfirmDestockCancel=Preklic zmanjšanja zalog z nakazilom %s
 DestockAllProduct=Zmanjšanje zalog

@@ -125,7 +125,8 @@ if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 	$account->cle_rib         = GETPOST('cle_rib', 'alpha');
 	$account->bic             = GETPOST('bic', 'alpha');
 	$account->iban            = GETPOST('iban', 'alpha');
-	$account->domiciliation   = GETPOST('domiciliation', 'alpha');
+	$account->domiciliation   = GETPOST('address', 'alpha');
+	$account->address         = GETPOST('address', 'alpha');
 	$account->proprio         = GETPOST('proprio', 'alpha');
 	$account->owner_address   = GETPOST('owner_address', 'alpha');
 
@@ -156,7 +157,8 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 	$account->cle_rib         = GETPOST('cle_rib', 'alpha');
 	$account->bic             = GETPOST('bic', 'alpha');
 	$account->iban            = GETPOST('iban', 'alpha');
-	$account->domiciliation   = GETPOST('domiciliation', 'alpha');
+	$account->domiciliation   = GETPOST('address', 'alpha');
+	$account->address         = GETPOST('address', 'alpha');
 	$account->proprio         = GETPOST('proprio', 'alpha');
 	$account->owner_address   = GETPOST('owner_address', 'alpha');
 
@@ -1004,8 +1006,8 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->hasRight('user',
 	}
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
-	print '<textarea name="domiciliation" rows="4" class="quatrevingtpercent">';
-	print dol_escape_htmltag($account->domiciliation);
+	print '<textarea name="address" rows="4" class="quatrevingtpercent">';
+	print dol_escape_htmltag($account->address);
 	print "</textarea></td></tr>";
 
 	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';

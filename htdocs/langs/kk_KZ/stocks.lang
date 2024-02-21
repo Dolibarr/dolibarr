@@ -282,7 +282,7 @@ ModuleStockTransferName=Жетілдірілген қорды тасымалда
 ModuleStockTransferDesc=Тасымалдау парағын генерациялай отырып, Stock Transfer қызметін кеңейтілген басқару
 StockTransferNew=Жаңа акцияларды аудару
 StockTransferList=Акциялар тізімі
-ConfirmValidateStockTransfer=Осы акциялардың аударымын <b>%s<span class='notranslate'></b> сілтемесі арқылы растағыңыз келетініне сенімдісіз бе span> ?
+ConfirmValidateStockTransfer=Are you sure you want to validate this stocks transfer with the reference <b>%s</b> ?
 ConfirmDestock=%s аударымымен қорлардың азаюы
 ConfirmDestockCancel=%s тасымалдау арқылы акциялардың азаюын болдырмау
 DestockAllProduct=Қорлардың азаюы
