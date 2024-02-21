@@ -141,7 +141,7 @@ if (!empty($objp->stock_physique) && $objp->stock_physique < 0) {
 $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
 $sql .= ' p.fk_product_type, p.tms as datem,';
 $sql .= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
-if (getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_COMPILED_PHYSICAL_STOCK')) {
+if (getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED_PHYSICAL_STOCK')) {
 	$sql .= ' p.stock as stock_physique';
 } else {
 	$sql .= ' SUM(s.reel) as stock_physique';
@@ -154,7 +154,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
-if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_COMPILED_PHYSICAL_STOCK')) {
+if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED_PHYSICAL_STOCK')) {
 	$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product_stock as s ON p.rowid = s.fk_product';
 }
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
@@ -181,7 +181,7 @@ if (!empty($search_categ) && $search_categ != '-1') {
 	}
 	$sql .= ")";
 }
-if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_COMPILED_PHYSICAL_STOCK')) {
+if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED_PHYSICAL_STOCK')) {
 	if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_VIRTUAL_WITH_NO_PHYSICAL')) {
 		$sql .= " AND EXISTS (SELECT e.rowid FROM " . MAIN_DB_PREFIX . "entrepot as e WHERE e.rowid = s.fk_entrepot AND e.entity IN (" . getEntity('stock') . "))";
 	} else {
@@ -253,7 +253,7 @@ if (!empty($canvas)) {
 if ($fourn_id > 0) {
 	$sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".((int) $fourn_id);
 }
-if (getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_COMPILED_PHYSICAL_STOCK')) {
+if (getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED_PHYSICAL_STOCK')) {
 	if ($search_toolowstock) {
 		$sql .= " AND p.stock < p.seuil_stock_alerte";
 	}
@@ -265,7 +265,7 @@ if (getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_COMPILED_PHYSICAL_STOCK')) 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_COMPILED_PHYSICAL_STOCK')) {
+if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED_PHYSICAL_STOCK')) {
 	$sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";
 	$sql .= " p.fk_product_type, p.tms, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock";
 }
@@ -276,7 +276,7 @@ $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $obj
 $sql .= $hookmanager->resPrint;
 
 $sql_having = '';
-if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_COMPILED_PHYSICAL_STOCK')) {
+if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED_PHYSICAL_STOCK')) {
 	if ($search_toolowstock) {
 		$sql_having .= " HAVING SUM(" . $db->ifsql('s.reel IS NULL', '0', 's.reel') . ") < p.seuil_stock_alerte";
 	}
