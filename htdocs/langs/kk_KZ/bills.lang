@@ -188,7 +188,7 @@ SuppliersDraftInvoices=Жеткізуші шот -фактуралар
 Unpaid=Төленбеген
 ErrorNoPaymentDefined=Қате Төлем анықталмады
 ConfirmDeleteBill=Бұл шот -фактураны шынымен жойғыңыз келе ме?
-ConfirmValidateBill=Осы шот-фактураны <b>%s<span class='notranslate'></b> сілтемесі арқылы растағыңыз келетініне сенімдісіз бе >?
+ConfirmValidateBill=Are you sure you want to validate this invoice with the reference <b>%s</b>?
 ConfirmUnvalidateBill=<b> %s </b> шот -фактураны жоба күйіне өзгерткіңіз келетініне сенімдісіз бе?
 ConfirmClassifyPaidBill=<b> %s </b> шот -фактураны төленген күйге өзгерткіңіз келетініне сенімдісіз бе?
 ConfirmCancelBill=<b> %s </b> шот -фактурасынан бас тартқыңыз келетініне сенімдісіз бе?
@@ -210,7 +210,7 @@ ConfirmClassifyPaidPartiallyReasonDiscountVatDesc=Кейбір елдерде б
 ConfirmClassifyPaidPartiallyReasonAvoirDesc=Егер басқалары сәйкес келмесе, бұл таңдауды қолданыңыз
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=<b> нашар клиент </b> - бұл қарызын төлеуден бас тартатын клиент.
 ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=Бұл таңдау төлем аяқталмаған кезде қолданылады, себебі кейбір өнімдер қайтарылды
-ConfirmClassifyPaidPartiallyReasonBankChargeDesc=Төленбеген сома - <b>делдалдық банк комиссиялары</b>, тікелей b0aee3836z шегеріледі. >дұрыс сома<span class='notranslate'></b> Тұтынушы төлеген.
+ConfirmClassifyPaidPartiallyReasonBankChargeDesc=The unpaid amount is <b>intermediary bank fees</b>, deducted directly from the <b>correct amount</b> paid by the Customer.
 ConfirmClassifyPaidPartiallyReasonWithholdingTaxDesc=Төленбеген сома ешқашан төленбейді, өйткені бұл ұсталатын салық
 ConfirmClassifyPaidPartiallyReasonOtherDesc=Егер басқалары сәйкес келмесе, бұл таңдауды қолданыңыз, мысалы, келесі жағдайда: <br> - кейбір өнімдер қайтарылғандықтан, төлем аяқталмады несиелік нотаны құру арқылы бухгалтерлік есеп жүйесінде.
 ConfirmClassifyPaidPartiallyReasonBadSupplierDesc=<b>жаман жеткізуші</b> - біз төлеуден бас тартатын жеткізуші.
@@ -569,9 +569,9 @@ PDFCrabeDescription=Crabe шот -фактурасының PDF үлгісі. Ш�
 PDFSpongeDescription=Шот -фактураның PDF үлгісі губка. Шот -фактураның толық үлгісі
 PDFCrevetteDescription=Шот -фактура PDF үлгісі Crevette. Жағдайлы шот -фактуралар үшін шот -фактураның толық үлгісі
 TerreNumRefModelDesc1=Стандартты шот-фактуралар үшін %syymm-nnnn және несиелік жазбалар үшін %syymm-nnnn пішіміндегі қайтару нөмірі, мұнда yy жыл, мм ай және nnnn үзіліссіз және 0-ге қайтарылмаған дәйекті автоматты өсетін сан
-MarsNumRefModelDesc1=Стандартты шот-фактуралар үшін %syymm-nnnn, ауыстыру шот-фактуралары үшін %syymm-nnnn, <span class=' пішіміндегі қайтару нөмірі notranslate'>%s</span>yymm-nnnn бастапқы төлем шоттары үшін және %syymm-nnnn несиелік ноталар үшін, мұнда yy – жыл, мм – ай және nnnn – дәйекті авто- Үзіліссіз және 0-ге қайтарылмаған көбейту
+MarsNumRefModelDesc1=Return number in the format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for down payment invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequential auto-incrementing number with no break and no return to 0
 TerreNumRefModelError=$ Syymm -ден басталатын шот бұрыннан бар және бұл реттілік моделіне сәйкес келмейді. Бұл модульді іске қосу үшін оны алып тастаңыз немесе атын өзгертіңіз.
-CactusNumRefModelDesc1=Стандартты шот-фактуралар үшін %syymm-nnnn, несиелік жазбалар үшін %syymm-nnnn және <span class=' пішіміндегі қайтару нөмірі notranslate'>%s</span>yymm-nnnn бастапқы төлем шоттары үшін, мұнда yy – жыл, мм – ай және nnnn – үзіліссіз және 0-ге қайтарылмаған дәйекті автоматты ұлғайтылатын сан.
+CactusNumRefModelDesc1=Return number in the format %syymm-nnnn for standard invoices, %syymm-nnnn for credit notes and %syymm-nnnn for down payment invoices where yy is year, mm is month and nnnn is a sequential auto-incrementing number with no break and no return to 0
 EarlyClosingReason=Ерте жабылу себебі
 EarlyClosingComment=Ерте жабылу жазбасы
 ##### Types de contacts #####

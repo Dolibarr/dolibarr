@@ -15,7 +15,6 @@ ModuleBuilderDeschooks=Esta pestaña está dedicada a los ganchos.
 ModuleBuilderDescwidgets=Esta pestaña está dedicada a administrar / construir widgets.
 ModuleBuilderDescbuildpackage=Puede generar aquí un archivo de paquete "listo para distribuir" (un archivo .zip normalizado) de su módulo y un archivo de documentación "listo para distribuir". Simplemente haga clic en el botón para crear el paquete o el archivo de documentación.
 EnterNameOfModuleToDeleteDesc=Puede eliminar su módulo. ADVERTENCIA: ¡Se eliminarán todos los archivos de codificación del módulo (generados o creados manualmente) Y los datos estructurados y la documentación!
-EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
 BuildPackage=Paquete de compilación
 BuildPackageDesc=Puede generar un paquete zip de su aplicación para que esté listo para distribuirlo en cualquier Dolibarr. También puede distribuirlo o venderlo en un mercado como <a href="https://www.dolistore.com"> DoliStore.com </a>.
 BuildDocumentation=Construir documentación

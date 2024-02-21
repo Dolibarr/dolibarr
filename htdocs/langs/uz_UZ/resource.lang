@@ -37,3 +37,5 @@ ImportDataset_resource_1=Resurslar
 
 ErrorResourcesAlreadyInUse=Ba'zi manbalardan foydalanilmoqda
 ErrorResourceUseInEvent=%s tadbirida ishlatiladigan %s
+
+MaxUsers=Maximum users (places, seats, etc.)

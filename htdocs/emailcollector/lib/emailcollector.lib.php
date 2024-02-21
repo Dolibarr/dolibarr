@@ -169,7 +169,6 @@ function getFileData($jk, $fpos, $type, $mbox)
  **/
 function saveAttachment($path, $filename, $data)
 {
-	global $lang;
 	$tmp = explode('.', $filename);
 	$ext = array_pop($tmp);
 	$filename = implode('.', $tmp);

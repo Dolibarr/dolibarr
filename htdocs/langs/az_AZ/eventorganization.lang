@@ -36,7 +36,7 @@ EventOrganizationSetup=Tədbirin təşkili
 EventOrganization=Tədbirin təşkili
 EventOrganizationSetupPage = Tədbir təşkilatının quraşdırma səhifəsi
 EVENTORGANIZATION_TASK_LABEL = Layihə təsdiq edildikdə avtomatik olaraq yaradılacaq tapşırıqların etiketi
-EVENTORGANIZATION_TASK_LABELTooltip = Tədbiri təşkil etmək üçün təsdiq etdiyiniz zaman bəzi tapşırıqlar layihədə avtomatik yaradıla bilər<br><br>Məsələn: <br>Konfranslara Zəng göndər<br>Konfranslar üçün Zəng göndər<br>V sinif təklifləri ='notranslate'><br></span>Butlar üçün ərizəni təsdiqləyin<br>İştirakçılar üçün tədbirə abunəlik açınb0342fccfda19b> xatırladın tədbir haqqında məruzəçilərə<span class='notranslate'><br>Tədbir haqqında Booth hosterlərinə xatırlatma göndər<br>İştirakçılara tədbir haqqında xatırlatma göndər
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
 EVENTORGANIZATION_TASK_LABELTooltip2=Tapşırıqları avtomatik yaratmağa ehtiyac yoxdursa, boş saxlayın.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kimsə konfrans təklif etdikdə avtomatik olaraq yaradılan üçüncü tərəflərə əlavə ediləcək kateqoriya
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Üçüncü tərəflərə əlavə ediləcək kateqoriya, onlar kabinə təklif etdikdə avtomatik olaraq yaradılır
@@ -88,6 +88,7 @@ PriceOfRegistration=Qeydiyyat qiyməti
 PriceOfRegistrationHelp=Qeydiyyatdan keçmək və ya tədbirdə iştirak etmək üçün ödənilməli qiymət
 PriceOfBooth=Bir stenddə dayanmaq üçün abunə qiyməti
 PriceOfBoothHelp=Bir stenddə dayanmaq üçün abunə qiyməti
+EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=Konfranslar üçün ICS-i əlaqələndirin
 ConferenceOrBoothInformation=Konfrans və ya Booth məlumatı
 Attendees=İştirakçılar
@@ -127,7 +128,7 @@ PublicAttendeeSubscriptionPage = Yalnız bu tədbirə qeydiyyat üçün açıq l
 MissingOrBadSecureKey = Təhlükəsizlik açarı yanlışdır və ya yoxdur
 EvntOrgWelcomeMessage = Bu forma tədbirin yeni iştirakçısı kimi qeydiyyatdan keçməyə imkan verir
 EvntOrgDuration = Bu konfrans %s tarixində başlayır və %s tarixində bitir.
-ConferenceAttendeeFee = Tədbir üçün konfransda iştirak haqqı : '%s' %s-dan <span class='notranslate'>b0ecb2ec87f49f-a qədər davam edir >.
+ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
 BoothLocationFee = Tədbir üçün stend məkanı : '%s' %s-dan %s arasında baş verir
 EventType = Hadisə növü
 LabelOfBooth=Stend etiketi

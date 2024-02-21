@@ -49,7 +49,7 @@ SetHereVirtualHost=<u>Sử dụng với Apache/NGinx/...</u><br>Tạo trên máy
 ExampleToUseInApacheVirtualHostConfig=Ví dụ để sử dụng trong thiết lập máy chủ ảo Apache:
 YouCanAlsoTestWithPHPS=<u>Sử dụng với máy chủ nhúng PHP</u> <br> Trên môi trường phát triển, bạn có thể muốn kiểm tra trang web với máy chủ web nhúng PHP (yêu cầu PHP 5.5) bằng cách chạy <br> <strong>php -S 0.0.0.0:8080 -t %s</strong>
 YouCanAlsoDeployToAnotherWHP=<u>Chạy trang web của bạn với một nhà cung cấp dịch vụ lưu trữ Dolibarr Hosting khác</u><br>Nếu bạn không có sẵn máy chủ web như Apache hoặc NGinx trên internet, bạn có thể xuất và nhập trang web của mình vào một phiên bản Dolibarr khác do nhà cung cấp dịch vụ lưu trữ Dolibarr khác cung cấp tích hợp đầy đủ với mô-đun Trang web. Bạn có thể tìm thấy danh sách một số nhà cung cấp dịch vụ lưu trữ Dolibarr trên <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
-CheckVirtualHostPerms=Ngoài ra, hãy kiểm tra xem người dùng máy chủ ảo (ví dụ: www-data) có <strong>%s</strong>  quyền đối với các tệp vào<br><strong>%s<span lớp ='notranslate'></strong></span>
+CheckVirtualHostPerms=Check also that the virtual host user (for example www-data) has <strong>%s</strong> permissions on files into<br><strong>%s</strong>
 ReadPerm=Đọc
 WritePerm=Viết
 TestDeployOnWeb=Kiểm tra / triển khai trên web

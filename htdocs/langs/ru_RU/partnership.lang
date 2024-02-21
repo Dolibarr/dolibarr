@@ -92,7 +92,6 @@ LastCheckBacklink=Дата последней проверки URL
 
 NewPartnershipRequest=Новый запрос на партнерство
 NewPartnershipRequestDesc=Эта форма позволяет вам подать заявку на участие в одной из наших партнерских программ. Если вам нужна помощь в заполнении этой формы, свяжитесь с нами по электронной почте <b> %s </b> .
-ThisUrlMustContainsAtLeastOneLinkToWebsite=Эта страница должна содержать хотя бы один ссылка в одном из доменов следующий: <span class='notranslate'>%s</ пролет>
+ThisUrlMustContainsAtLeastOneLinkToWebsite=This page must contains at least one link to one of the following domain: %s
 
 IPOfApplicant=ИП заявителя
-

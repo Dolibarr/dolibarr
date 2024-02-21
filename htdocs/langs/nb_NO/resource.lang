@@ -5,7 +5,7 @@ DeleteResource=Slett ressurs
 ConfirmDeleteResourceElement=Bekreft sletting av ressursen for dette elementet
 NoResourceInDatabase=Ingen ressurs i databasen
 NoResourceLinked=Ingen koblet ressurs
-
+ActionsOnResource=Hendelser om denne ressursen
 ResourcePageIndex=Ressursliste
 ResourceSingular=Ressurs
 ResourceCard=Ressurskort
@@ -34,3 +34,8 @@ IdResource=ID ressurs
 AssetNumber=Serienummer
 ResourceTypeCode=Ressurskode
 ImportDataset_resource_1=Ressurser
+
+ErrorResourcesAlreadyInUse=Noen ressurser er i bruk
+ErrorResourceUseInEvent=%s brukt i %s hendelse
+
+MaxUsers=Maksimalt antall brukere (plasser, seter osv.)

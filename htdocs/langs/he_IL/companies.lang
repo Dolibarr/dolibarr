@@ -335,11 +335,11 @@ CompanyHasRelativeDiscount=ללקוח זה יש הנחה ברירת מחדל ש�
 CompanyHasNoRelativeDiscount=ללקוח זה אין הנחה יחסית כברירת מחדל
 HasRelativeDiscountFromSupplier=יש לך הנחה ברירת מחדל של <b>%s%%</b> עם הספק הזה
 HasNoRelativeDiscountFromSupplier=אין הנחה יחסית ברירת מחדל אצל ספק זה
-CompanyHasAbsoluteDiscount=ללקוח זה יש הנחות זמינות (הערות זיכוי או מקדמה) עבור <b>%s</b> span> <span class='notranslate'>%s
+CompanyHasAbsoluteDiscount=This customer has discounts available (credits notes or down payments) for <b>%s</b> %s
 CompanyHasDownPaymentOrCommercialDiscount=ללקוח זה יש הנחות זמינות (מסחריות, מקדמה) עבור <b>%s</b> > %s
 CompanyHasCreditNote=ללקוח זה עדיין יש תעודות אשראי עבור <b>%s</b> %s
 HasNoAbsoluteDiscountFromSupplier=אין הנחה/אשראי זמינים מהספק הזה
-HasAbsoluteDiscountFromSupplier=יש לך הנחות זמינות (הערות זיכוי או מקדמה) עבור <b>%s</b> > <span class='notranslate'>%s מהספק הזה
+HasAbsoluteDiscountFromSupplier=You have discounts available (credits notes or down payments) for <b>%s</b> %s from this vendor
 HasDownPaymentOrCommercialDiscountFromSupplier=יש לך הנחות זמינות (מסחרי, מקדמה) עבור <b>%s</b> %s מהספק הזה
 HasCreditNoteFromSupplier=יש לך תעודות אשראי עבור <b>%s</b> %s מהספק הזה
 CompanyHasNoAbsoluteDiscount=ללקוח זה אין זיכוי הנחה זמין

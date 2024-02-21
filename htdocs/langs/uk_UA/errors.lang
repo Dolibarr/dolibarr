@@ -95,7 +95,7 @@ ErrorModuleRequireJavascript=Щоб ця функція працювала, не
 ErrorPasswordsMustMatch=Обидва введені паролі повинні відповідати один одному
 ErrorContactEMail=Сталася технічна помилка. Будь ласка, зв’яжіться з адміністратором на електронну адресу <b>%s</b> і вкажіть помилку код <b>%s</b> у своєму повідомленні або додайте копію екрана ця сторінка.
 ErrorWrongValueForField=Поле <b> %s </b>: '<b> %s A09NICFRIMS0FZ0 A0CB20FRIFTIONM0303030303030303030303030303030308520308508508352030858350835083508358358358358358358358358358583583583583583583583583583583583583583583583.
-ErrorHtmlInjectionForField=Поле <b>%s</b>: значення '<span class='notranslate "><b></span>%s</b>" містить шкідливі дані, заборонені
+ErrorHtmlInjectionForField=Field <b>%s</b>: The value '<b>%s</b>' contains a malicious data not allowed
 ErrorFieldValueNotIn=Field  <b> %s </b> : ' <b> %s </b> ' is not a value found in field  <b> %s </b>  of  <b> %s </b>
 ErrorFieldRefNotIn=Field  <b> %s </b> : ' <b> %s </b> ' is not a  <b> %s </b>  existing ref
 ErrorMultipleRecordFoundFromRef=Кілька записів знайдено під час пошуку з посилання <b>%s</b>. Немає способу дізнатися, який ідентифікатор використовувати.

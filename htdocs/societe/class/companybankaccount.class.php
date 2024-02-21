@@ -164,14 +164,33 @@ class CompanyBankAccount extends Account
 	 * @var string label
 	 */
 	public $label;
-	public $bank;
 	public $code_banque;
 	public $code_guichet;
 	public $number;
 	public $cle_rib;
 	public $bic;
 	public $iban_prefix;
+
+	public $bank;
+	/**
+	 * @var string	Bank address
+	 * @deprecated Replaced with address
+	 */
 	public $domiciliation;
+	public $address;
+
+	/**
+	 * @var int state id
+	 */
+	public $state_id;
+
+	/**
+	 * @var int country id
+	 */
+	public $fk_country;
+
+	public $country_code;
+
 
 	/**
 	 * @var string owner
@@ -187,16 +206,6 @@ class CompanyBankAccount extends Account
 	 * @var int $default_rib  1 = this object is the third party's default bank information, 0 if not
 	 */
 	public $default_rib;
-
-	/**
-	 * @var int state id
-	 */
-	public $state_id;
-
-	/**
-	 * @var id country id
-	 */
-	public $fk_country;
 
 	/**
 	 * @var string currency code
@@ -225,7 +234,6 @@ class CompanyBankAccount extends Account
 	public $cvn;
 	public $exp_date_month;
 	public $exp_date_year;
-	public $country_code;
 	public $approved;
 
 	/**
@@ -397,8 +405,11 @@ class CompanyBankAccount extends Account
 			return -1;
 		}
 
-		if (dol_strlen($this->domiciliation) > 255) {
+		if (!empty($this->domiciliation) && dol_strlen($this->domiciliation) > 255) {
 			$this->domiciliation = dol_trunc($this->domiciliation, 254, 'right', 'UTF-8', 1);
+		}
+		if (!empty($this->address) && dol_strlen($this->address) > 255) {
+			$this->address = dol_trunc($this->address, 254, 'right', 'UTF-8', 1);
 		}
 		if (dol_strlen($this->owner_address) > 255) {
 			$this->owner_address = dol_trunc($this->owner_address, 254, 'right', 'UTF-8', 1);
@@ -418,7 +429,7 @@ class CompanyBankAccount extends Account
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-		$sql .= ",domiciliation = '".$this->db->escape($this->domiciliation)."'";
+		$sql .= ",domiciliation = '".$this->db->escape($this->address ? $this->address : $this->domiciliation)."'";
 		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",default_rib = ".((int) $this->default_rib);
@@ -481,13 +492,13 @@ class CompanyBankAccount extends Account
 			return -1;
 		}
 
-		$sql = "SELECT rowid, type, fk_soc as socid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
-		$sql .= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur, date_rum,";
-		$sql .= " stripe_card_ref, stripe_account, ext_payment_site";
-		$sql .= " ,last_main_doc";
-		$sql .= " ,model_pdf";
-
+		$sql = "SELECT rowid, label, type, fk_soc as socid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban,";
+		$sql .= " domiciliation as address,";
+		$sql .= " proprio, owner_address, default_rib, datec, tms as datem, rum, frstrecur, date_rum,";
+		$sql .= " stripe_card_ref, stripe_account, ext_payment_site,";
+		$sql .= " last_main_doc, model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
+
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
 		} elseif ($socid > 0) {
@@ -517,7 +528,10 @@ class CompanyBankAccount extends Account
 				$this->cle_rib         = $obj->cle_rib;
 				$this->bic             = $obj->bic;
 				$this->iban = $obj->iban;
-				$this->domiciliation   = $obj->domiciliation;
+
+				$this->domiciliation   = $obj->address;
+				$this->address         = $obj->address;
+
 				$this->proprio         = $obj->proprio;
 				$this->owner_address   = $obj->owner_address;
 				$this->label           = $obj->label;
@@ -675,10 +689,13 @@ class CompanyBankAccount extends Account
 		$this->cle_rib         = '50';
 		$this->bic             = 'CC12';
 		$this->iban            = 'FR999999999';
-		$this->domiciliation   = 'Bank address of customer corp';
+
+		$this->address         = 'Rue de Paris';
+		$this->country_id      = 1;
+
 		$this->proprio         = 'Owner';
 		$this->owner_address   = 'Owner address';
-		$this->country_id      = 1;
+		$this->owner_country_id = 1;
 
 		$this->rum             = 'UMR-CU1212-0007-5-1475405262';
 		$this->date_rum        = dol_now() - 10000;
