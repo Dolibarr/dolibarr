@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,16 +105,19 @@ class CommonClassTest extends PHPUnit\Framework\TestCase
 		$lines = file($logfile);
 
 		$nbLinesToShow = 100;
+		if ($t instanceof PHPUnit\Framework\Error\Notice) {
+			$nbLinesToShow = 3;
+		}
 		$totalLines = count($lines);
-		$premiereLigne = max(0, $totalLines - $nbLinesToShow);
+		$first_line = max(0, $totalLines - $nbLinesToShow);
 
-		// Obtient les dernières lignes du tableau
-		$dernieresLignes = array_slice($lines, $premiereLigne, $nbLinesToShow);
+		// Get the last line of the log
+		$last_lines = array_slice($lines, $first_line, $nbLinesToShow);
 
 		// Show log file
 		print "\n----- Test fails. Show last ".$nbLinesToShow." lines of dolibarr.log file -----\n";
-		foreach ($dernieresLignes as $ligne) {
-			print $ligne . "<br>";
+		foreach ($last_lines as $line) {
+			print $line . "<br>";
 		}
 
 		parent::onNotSuccessfulTest($t);
