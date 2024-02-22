@@ -267,7 +267,13 @@ abstract class CommonObject
 	public $origin;
 
 	/**
-	 * @var int 		The id of originating object
+	 * @var string 		The type of originating object. Combined with $origin_id, it allows to reload $origin_object
+	 * @see fetch_origin()
+	 */
+	public $origin_type;
+
+	/**
+	 * @var int 		The id of originating object. Combined with $origin_type, it allows to reload $origin_object
 	 * @see fetch_origin()
 	 */
 	public $origin_id;
