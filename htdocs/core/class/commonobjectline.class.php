@@ -54,7 +54,7 @@ abstract class CommonObjectLine extends CommonObject
 	 * @var int|null                ID of the unit of measurement (rowid in llx_c_units table)
 	 * @see measuringUnitString()
 	 * @see getLabelOfUnit()
- 	 */
+	 */
 	public $fk_unit;
 
 	public $date_debut_prevue;
