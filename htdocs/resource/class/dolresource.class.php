@@ -720,10 +720,10 @@ class Dolresource extends CommonObject
 			$this->element_type = trim($this->element_type);
 		}
 		if (isset($this->busy)) {
-			$this->busy = trim($this->busy);
+			$this->busy = (int) $this->busy;
 		}
 		if (isset($this->mandatory)) {
-			$this->mandatory = trim($this->mandatory);
+			$this->mandatory = (int) $this->mandatory;
 		}
 
 		// Update request
