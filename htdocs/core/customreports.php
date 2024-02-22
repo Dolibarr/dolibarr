@@ -456,10 +456,12 @@ if (is_array($search_groupby) && count($search_groupby)) {
 			$arrayofvaluesforgroupby['g_'.$gkey]['__NULL__'] = $langs->transnoentitiesnoconv("NotDefined");
 		}
 
-		asort($arrayofvaluesforgroupby['g_'.$gkey]);
+		if (is_array($arrayofvaluesforgroupby['g_'.$gkey])) {
+			asort($arrayofvaluesforgroupby['g_'.$gkey]);
+		}
 
 		// Add a protection/error to refuse the request if number of differentr values for the group by is higher than $MAXUNIQUEVALFORGROUP
-		if (count($arrayofvaluesforgroupby['g_'.$gkey]) > $MAXUNIQUEVALFORGROUP) {
+		if (is_array($arrayofvaluesforgroupby['g_'.$gkey]) && count($arrayofvaluesforgroupby['g_'.$gkey]) > $MAXUNIQUEVALFORGROUP) {
 			$langs->load("errors");
 
 			if (strpos($fieldtocount, 'te') === 0) {			// This is a field of an extrafield
