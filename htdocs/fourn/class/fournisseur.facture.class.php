@@ -1021,7 +1021,7 @@ class FactureFournisseur extends CommonInvoice
 		// phpcs:enable
 		$this->lines = array();
 
-		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description as desc, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.vat_src_code, f.tva_tx';
+		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description as line_desc, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.vat_src_code, f.tva_tx';
 		$sql .= ', f.localtax1_tx, f.localtax2_tx, f.localtax1_type, f.localtax2_type, f.total_localtax1, f.total_localtax2, f.fk_facture_fourn, f.fk_remise_except';
 		$sql .= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
 		$sql .= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.barcode as product_barcode, p.description as product_desc';
@@ -1045,8 +1045,8 @@ class FactureFournisseur extends CommonInvoice
 
 					$line->id               = $obj->rowid;
 					$line->rowid            = $obj->rowid;
-					$line->description      = $obj->desc;
-					$line->desc             = $obj->desc;
+					$line->description      = $obj->line_desc;
+					$line->desc             = $obj->line_desc;
 					$line->date_start       = $obj->date_start;
 					$line->date_end         = $obj->date_end;
 					$line->product_ref      = $obj->product_ref;
@@ -3642,7 +3642,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public function fetch($rowid)
 	{
-		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description as desc, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx';
+		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description as line_desc, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx';
 		$sql .= ', f.localtax1_type, f.localtax2_type, f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2, f.fk_remise_except';
 		$sql .= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_facture_fourn, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
 		$sql .= ', p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc';
@@ -3668,8 +3668,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->id = $obj->rowid;
 		$this->rowid = $obj->rowid;
 		$this->fk_facture_fourn = $obj->fk_facture_fourn;
-		$this->description		= $obj->desc;
-		$this->desc				= $obj->desc;
+		$this->description		= $obj->line_desc;
+		$this->desc				= $obj->line_desc;
 		$this->date_start = $obj->date_start;
 		$this->date_end = $obj->date_end;
 		$this->product_ref		= $obj->product_ref;
