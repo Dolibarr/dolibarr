@@ -51,8 +51,9 @@ abstract class CommonObjectLine extends CommonObject
 	public $picto = 'line';
 
 	/**
-	 * Product/service unit code ('km', 'm', 'p', ...)
-	 * @var string
+	 * @var int|null                ID of the unit of measurement (rowid in llx_c_units table)
+	 * @see measuringUnitString()
+	 * @see getLabelOfUnit()
 	 */
 	public $fk_unit;
 
