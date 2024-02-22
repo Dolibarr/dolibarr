@@ -58,7 +58,7 @@ $hookmanager->initHooks(array('takeposinvoice'));
 $langs->loadLangs(array("companies", "commercial", "bills", "cashdesk", "stocks", "banks"));
 
 $action = GETPOST('action', 'aZ09');
-$idproduct = GETPOST('idproduct', 'int');
+$idproduct = GETPOSTINT('idproduct');
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 $placeid = 0; // $placeid is ID of invoice
 $mobilepage = GETPOST('mobilepage', 'alpha');
@@ -97,13 +97,13 @@ function fail($message)
 
 
 $number = GETPOST('number', 'alpha');
-$idline = GETPOST('idline', 'int');
-$selectedline = GETPOST('selectedline', 'int');
+$idline = GETPOSTINT('idline');
+$selectedline = GETPOSTINT('selectedline');
 $desc = GETPOST('desc', 'alphanohtml');
 $pay = GETPOST('pay', 'aZ09');
-$amountofpayment = price2num(GETPOST('amount', 'alpha'));
+$amountofpayment = GETPOSTFLOAT('amount');
 
-$invoiceid = GETPOST('invoiceid', 'int');
+$invoiceid = GETPOSTINT('invoiceid');
 
 $paycode = $pay;
 if ($pay == 'cash') {
@@ -281,7 +281,7 @@ if (empty($reshook)) {
 				$payment->fk_account = $bankaccount;
 				$payment->amounts[$invoice->id] = $amountofpayment;
 				if ($pay == 'LIQ') {
-					$payment->pos_change = price2num(GETPOST('excess', 'alpha'));
+					$payment->pos_change = GETPOSTFLOAT('excess');
 				}
 
 				// If user has not used change control, add total invoice payment
@@ -486,7 +486,7 @@ if (empty($reshook)) {
 		if ($action == 'creditnote') {
 			$placeid = $creditnote->id;
 		} else {
-			$placeid = (int) GETPOST('placeid', 'int');
+			$placeid = GETPOSTINT('placeid');
 		}
 		$invoice = new Facture($db);
 		$invoice->fetch($placeid);
@@ -1622,7 +1622,7 @@ if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 	if ($mobilepage == "products") {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$object = new Categorie($db);
-		$catid = GETPOST('catid', 'int');
+		$catid = GETPOSTINT('catid');
 		$result = $object->fetch($catid);
 		$prods = $object->getObjectsInCateg("product");
 		$htmlforlines = '';
