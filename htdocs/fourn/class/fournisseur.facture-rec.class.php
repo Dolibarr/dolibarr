@@ -2092,7 +2092,7 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 	{
 		$sql = 'SELECT l.rowid,';
 		$sql .= ' l.fk_facture_fourn, l.fk_parent_line, l.fk_product,';
-		$sql .= ' l.ref as ref_supplier, l.label, l.description as desc, l.pu_ht, l.pu_ttc, l.qty, l.remise_percent, l.fk_remise_except,';
+		$sql .= ' l.ref as ref_supplier, l.label, l.description as line_desc, l.pu_ht, l.pu_ttc, l.qty, l.remise_percent, l.fk_remise_except,';
 		$sql .= ' l.vat_src_code, l.tva_tx, l.localtax1_tx, l.localtax1_type, l.localtax2_tx, l.localtax2_type,';
 		$sql .= ' l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc,';
 		$sql .= ' l.product_type, l.date_start, l.date_end,';
@@ -2116,8 +2116,8 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 			$this->fk_product               = $objp->fk_product;
 			$this->ref_supplier             = $objp->ref_supplier;
 			$this->label                    = $objp->label;
-			$this->description              = $objp->desc;
-			$this->desc			            = $objp->desc;
+			$this->description              = $objp->line_desc;
+			$this->desc			            = $objp->line_desc;
 			$this->pu_ht                    = $objp->pu_ht;
 			$this->pu_ttc                   = $objp->pu_ttc;
 			$this->qty                      = $objp->qty;
