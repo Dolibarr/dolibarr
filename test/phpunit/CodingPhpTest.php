@@ -631,7 +631,7 @@ class CodingPhpTest extends CommonClassTest
 		'banque' => 'bank',
 		'categorie' => 'category',
 		'commande' => 'order',
-		'contract' => 'contrat',
+		'contrat' => 'contract',
 		'entrepot' => 'stock',
 		'facture' => 'invoice',
 		'fichinter' => 'intervention',
