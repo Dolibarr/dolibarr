@@ -299,7 +299,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			isModEnabled('salaries') ||
 			isModEnabled('supplier_invoice') ||
 			isModEnabled('loan') ||
-			isModEnabled('margins')
+			isModEnabled('margin')
 		) ? 1 : 0,
 		'perms'=>($user->hasRight('facture', 'lire') || $user->hasRight('don', 'contact', 'lire')
 			|| $user->hasRight('tax', 'charges', 'lire') || $user->hasRight('salaries', 'read')
