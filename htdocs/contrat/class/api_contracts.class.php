@@ -480,10 +480,9 @@ class Contracts extends DolibarrApi
 	/**
 	 * Update contract general fields (won't touch lines of contract)
 	 *
-	 * @param int   $id             Id of contract to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return array|mixed
+	 * @param 	int   	$id             	Id of contract to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
 	{

@@ -229,10 +229,9 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Update supplier invoice
 	 *
-	 * @param int   $id             Id of supplier invoice to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   	$id             	Id of supplier invoice to update
+	 * @param 	array 	$request_data  		Datas
+	 * @return 	Object|false				Updated object
 	 *
 	 * @throws RestException 403
 	 * @throws RestException 404

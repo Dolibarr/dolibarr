@@ -204,10 +204,9 @@ class Mos extends DolibarrApi
 	/**
 	 * Update MO
 	 *
-	 * @param int   $id             Id of MO to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   	$id             	Id of MO to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
 	{

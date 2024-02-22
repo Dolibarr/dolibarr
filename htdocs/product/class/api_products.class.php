@@ -332,17 +332,15 @@ class Products extends DolibarrApi
 	 * Update product.
 	 * Price will be updated by this API only if option is set on "One price per product". See other APIs for other price modes.
 	 *
-	 * @param  int   $id           Id of product to update
-	 * @param  array $request_data Datas
-	 * @return int
+	 * @param  	int   	$id           		Id of product to update
+	 * @param  	array 	$request_data 		Datas
+	 * @return 	Object						Updated object
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 */
 	public function put($id, $request_data = null)
 	{
-		global $conf;
-
 		if (!DolibarrApiAccess::$user->hasRight('produit', 'creer')) {
 			throw new RestException(403);
 		}
