@@ -273,9 +273,9 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Update thirdparty
 	 *
-	 * @param int   $id             Id of thirdparty to update
-	 * @param array $request_data   Datas
-	 * @return array|mixed|boolean
+	 * @param 	int   			$id             Id of thirdparty to update
+	 * @param 	array 			$request_data   Datas
+	 * @return 	Object|false					Updated object
 	 */
 	public function put($id, $request_data = null)
 	{
