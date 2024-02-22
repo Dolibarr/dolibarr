@@ -1812,9 +1812,9 @@ class BOMLine extends CommonObjectLine
 
 	/**
 	 * @var int|null                ID of the unit of measurement (rowid in llx_c_units table)
- 	 * @see measuringUnitString()
- 	 * @see getLabelOfUnit()
- 	 */
+	 * @see measuringUnitString()
+	 * @see getLabelOfUnit()
+	 */
 	public $fk_unit;
 
 	/**
