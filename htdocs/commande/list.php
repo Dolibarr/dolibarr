@@ -227,9 +227,6 @@ $object->fields = dol_sort_array($object->fields, 'position');
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-if (!$user->hasRight('societe', 'client', 'voir')) {
-	$search_sale = $user->id;
-}
 
 // Security check
 $id = (GETPOST('orderid') ? GETPOST('orderid', 'int') : GETPOST('id', 'int'));
