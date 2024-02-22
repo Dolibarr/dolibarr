@@ -1947,6 +1947,7 @@ class BOMLine extends CommonObjectLine
 			while ($obj = $this->db->fetch_object($resql)) {
 				$record = new self($this->db);
 				$record->setVarsFromFetchObj($obj);
+								$record->fetch_optionals();
 
 				$records[$record->id] = $record;
 			}

@@ -1,4 +1,5 @@
 <?php
+'@phan-var-force DolibarrModules $this';
 
 if (empty($keyforclass) || empty($keyforclassfile) || empty($keyforelement)) {
 	//print $keyforclass.' - '.$keyforclassfile.' - '.$keyforelement;

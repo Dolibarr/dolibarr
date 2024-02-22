@@ -209,10 +209,9 @@ class Donations extends DolibarrApi
 	/**
 	 * Update order general fields (won't touch lines of order)
 	 *
-	 * @param int   $id             Id of order to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   	$id             	Id of order to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
 	{

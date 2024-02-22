@@ -136,7 +136,7 @@ class modMyModule extends DolibarrModules
 
 		// Dependencies
 		// A condition to hide module
-		$this->hidden = false;
+		$this->hidden = getDolGlobalInt('MODULE_MYMODULE_DISABLED'); // A condition to disable module;
 		// List of module class names that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR')...)
 		$this->depends = array();
 		// List of module class names to disable if this one is disabled. Example: array('modModuleToDisable1', ...)

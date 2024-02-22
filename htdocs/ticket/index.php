@@ -207,7 +207,7 @@ if ($result) {
 		}
 	}
 
-	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';	// This define $badgeStatusX
 
 	$dataseries = array();
 	$colorseries = array();

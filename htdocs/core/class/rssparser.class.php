@@ -260,6 +260,7 @@ class RssParser
 				if (LIBXML_VERSION < 20900) {
 					// Avoid load of external entities (security problem).
 					// Required only if LIBXML_VERSION < 20900
+					// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 					libxml_disable_entity_loader(true);
 				}
 

@@ -206,6 +206,28 @@ function getDolUserInt($key, $default = 0, $tmpuser = null)
 	return (int) (empty($tmpuser->conf->$key) ? $default : $tmpuser->conf->$key);
 }
 
+define(
+	'DEPRECATED_MODULE_MAPPING',
+	array(
+		'actioncomm' => 'agenda',
+		'adherent' => 'member',
+		'adherent_type' => 'member_type',
+		'banque' => 'bank',
+		'categorie' => 'category',
+		'commande' => 'order',
+		'contrat' => 'contract',
+		'entrepot' => 'stock',
+		'expedition' => 'delivery_note',
+		'facture' => 'invoice',
+		'fichinter' => 'intervention',
+		'product_fournisseur_price' => 'productsupplierprice',
+		'product_price' => 'productprice',
+		'projet'  => 'project',
+		'propale' => 'propal',
+		'socpeople' => 'contact',
+	)
+);
+
 /**
  * Is Dolibarr module enabled
  *
@@ -217,17 +239,7 @@ function isModEnabled($module)
 	global $conf;
 
 	// Fix old names (map to new names)
-	$arrayconv = array(
-		'adherent' =>	'member',
-		'banque' => 'bank',
-		'categorie' => 'category',
-		'commande' => 'order',
-		'contrat' => 'contract',
-		'expedition' => 'delivery_note',
-		'facture' => 'invoice',
-		'projet' => 'project',
-		'propale' => 'propal',
-	);
+	$arrayconv = DEPRECATED_MODULE_MAPPING;
 
 	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 		// Special cases: both use the same module.
@@ -1575,6 +1587,7 @@ function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '', $bad
 		$forbidden_chars_to_remove = $badcharstoremove;
 	}
 
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrderInternal
 	return str_replace($forbidden_chars_to_replace, $newstr, str_replace($forbidden_chars_to_remove, "", $str));
 }
 
@@ -1953,6 +1966,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 
 	if (!empty($message)) {
 		// Test log level
+		// @phan-suppress-next-line PhanPluginDuplicateArrayKey
 		$logLevels = array(LOG_EMERG => 'EMERG', LOG_ALERT => 'ALERT', LOG_CRIT => 'CRITICAL', LOG_ERR => 'ERR', LOG_WARNING => 'WARN', LOG_NOTICE => 'NOTICE', LOG_INFO => 'INFO', LOG_DEBUG => 'DEBUG');
 		if (!array_key_exists($level, $logLevels)) {
 			throw new Exception('Incorrect log level');
@@ -6495,6 +6509,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
 	}*/
 
 	$ret = price($dimension, 0, $outputlangs, 0, 0, $round);
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	$ret .= ' '.measuringUnitString(0, $type, $unit, $use_short_label, $outputlangs);
 
 	return $ret;
@@ -7789,6 +7804,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					if (LIBXML_VERSION < 20900) {
 						// Avoid load of external entities (security problem).
 						// Required only if LIBXML_VERSION < 20900
+						// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 						libxml_disable_entity_loader(true);
 					}
 
@@ -10632,6 +10648,7 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 		$newdelimiter = $delimiter;
 	} else {
 		// This is a simple string
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPositionInternal
 		$newdelimiter = preg_quote($delimiter, '/');
 	}
 

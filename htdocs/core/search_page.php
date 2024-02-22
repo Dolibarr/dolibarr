@@ -146,6 +146,7 @@ if ($conf->use_javascript_ajax && 1 == 2) {   // select2 is not best with smartp
 			$accesskeyalreadyassigned[$accesskey] = $accesskey;
 		}
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$searchform .= printSearchForm($urlaction, $urlaction, $val['label'], 'minwidth200', $keysearch, $accesskey, $key, $val['img'], $showtitlebefore, ($i > 0 ? 0 : 1));
 
 		$i++;

@@ -41,6 +41,9 @@ if (empty($object) || !is_object($object)) {
 	exit;
 }
 
+'@phan-var-force CommonObject $this
+ @phan-var-force CommonObject $object';
+
 $usemargins = 0;
 if (isModEnabled('margin') && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) {
 	$usemargins = 1;

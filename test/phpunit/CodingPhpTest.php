@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,6 +119,8 @@ class CodingPhpTest extends CommonClassTest
 
 			//print 'Check php file '.$file['relativename']."\n";
 			$filecontent = file_get_contents($file['fullname']);
+
+			$this->verifyIsModuleEnabledOk($filecontent, "htdocs/{$file['relativename']}");
 
 			if (preg_match('/\.class\.php/', $file['relativename'])
 				|| preg_match('/boxes\/box_/', $file['relativename'])
@@ -274,6 +277,7 @@ class CodingPhpTest extends CommonClassTest
 			//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
 			$this->assertTrue($ok, 'Found a $this->db->idate to forge a sql request without quotes around this date field '.$file['relativename']);
 			//exit;
+
 
 
 			// Check sql string DELETE|OR|AND|WHERE|INSERT ... yyy = ".$xxx
@@ -575,4 +579,174 @@ class CodingPhpTest extends CommonClassTest
 
 		return;
 	}
+
+
+	/**
+	 * Verify that only known modules are used
+	 *
+	 * @param string $filecontent Contents to check for php code that uses a module name
+	 * @param string $filename    File name for the contents (used for reporting)
+	 *
+	 * @return void
+	 */
+	private function verifyIsModuleEnabledOk(&$filecontent, $filename)
+	{
+		// Verify that only known modules are used
+		preg_match_all("/isModEnabled\\(\s*[\"']([^\$\"']+)[\"']\\s*\\)/", $filecontent, $matches, PREG_SET_ORDER);
+
+		foreach ($matches as $key => $val) {
+			$module_name = $val[1];
+			$this->assertModuleIsOk($module_name, "isModEnabled('$module_name') in '$filename'");
+		}
+	}
+
+	/**
+	 * Assert that the module name is ok, generate appropriate notifications
+	 *
+	 * @param string $module_name Module name to check
+	 * @param string $message     Message to shown in case an assertion fails
+	 *
+	 * @return void
+	 */
+	private function assertModuleIsOk($module_name, $message = '')
+	{
+		if (isset(self::DEPRECATED_MODULE_MAPPING[$module_name])) {
+			$new_name = self::DEPRECATED_MODULE_MAPPING[$module_name];
+			print("\033[31mDeprecated module name, use '$new_name':\033[0m$message".PHP_EOL);
+
+			//trigger_error("Deprecated module name, use '$new_name': $message", E_USER_NOTICE);
+			//trigger_error("Deprecated module name, use '$new_name': $message", E_USER_DEPRECATED);
+		} else {
+			$this->assertTrue(
+				isset(self::VALID_MODULE_MAPPING[$module_name]),
+				"Unknown module: $message"
+			);
+		}
+	}
+
+	const DEPRECATED_MODULE_MAPPING = array(
+		'actioncomm' => 'agenda',
+		'adherent' => 'member',
+		'adherent_type' => 'member_type',
+		'banque' => 'bank',
+		'categorie' => 'category',
+		'commande' => 'order',
+		'contrat' => 'contract',
+		'entrepot' => 'stock',
+		'expedition' => 'delivery_note',
+		'facture' => 'invoice',
+		'fichinter' => 'intervention',
+		'product_fournisseur_price' => 'productsupplierprice',
+		'product_price' => 'productprice',
+		'projet'  => 'project',
+		'propale' => 'propal',
+		'socpeople' => 'contact',
+	);
+	const VALID_MODULE_MAPPING = array(
+		'agenda' => 1,
+		'member' => 1,
+		'member_type' => 1,
+		'bank' => 1,
+		'category' => 1,
+		'delivery_note' => 1,
+		'order' => 1,
+		'contract' => 1,
+		'stock' => 1,
+		'invoice' => 1,
+		'intervention' => 1,
+		'productsupplierprice' => 1,
+		'productprice' => 1,
+		'project' => 1,
+		'propal' => 1,
+		'contact' => 1,
+		'accounting' => 1,
+		'ai' => 1,
+		'anothermodule' => 1,
+		'api' => 1,
+		'asset' => 1,
+		'barcode' => 1,
+		'blockedlog' => 1,
+		'bom' => 1,
+		'bookcal' => 1,
+		'bookmark' => 1,
+		'cashdesk' => 1,
+		'clicktodial' => 1,
+		'comptabilite' => 1,
+		'cron' => 1,
+		'datapolicy' => 1,
+		'debugbar' => 1,
+		'deplacement' => 1,
+		'don' => 1,
+		'dynamicprices' => 1,
+		'ecm' => 1,
+		'ecotax' => 1,
+		'emailcollector' => 1,
+		'eventorganization' => 1,
+		'expensereport' => 1,
+		'export' => 1,
+		'externalsite' => 1,
+		'fckeditor' => 1,
+		'ficheinter' => 1,
+		'fournisseur' => 1,
+		'ftp' => 1,
+		'google' => 1,
+		'gravatar' => 1,
+		'holiday' => 1,
+		'hrm' => 1,
+		'import' => 1,
+		'incoterm' => 1,
+		'intracommreport' => 1,
+		'knowledgemanagement' => 1,
+		'label' => 1,
+		'ldap' => 1,
+		'loan' => 1,
+		'mailing' => 1,
+		'mailman' => 1,
+		'mailmanspip' => 1,
+		'margin' => 1,
+		'memcached' => 1,
+		'modulebuilder' => 1,
+		'mrp' => 1,
+		'multicompany' => 1,
+		'multicurrency' => 1,
+		'mymodule' => 1,
+		'notification' => 1,
+		'numberwords' => 1,
+		'openstreetmap' => 1,
+		'opensurvey' => 1,
+		'partnership' => 1,
+		'paybox' => 1,
+		'paymentbybanktransfer' => 1,
+		'paypal' => 1,
+		'paypalplus' => 1,
+		'prelevement' => 1,
+		'product' => 1,
+		'productbatch' => 1,
+		'receiptprinter' => 1,
+		'reception' => 1,
+		'recruitment' => 1,
+		'resource' => 1,
+		'salaries' => 1,
+		'service' => 1,
+		'socialnetworks' => 1,
+		'societe' => 1,
+		'stocktransfer' => 1,
+		'stripe' => 1,
+		'supplier_invoice' => 1,
+		'supplier_order' => 1,
+		'supplier_proposal' => 1,
+		'syslog' => 1,
+		'takepos' => 1,
+		'tax' => 1,
+		'ticket' => 1,
+		'user' => 1,
+		'variants' => 1,
+		'webhook' => 1,
+		'webportal' => 1,
+		'webservices' => 1,
+		'website' => 1,
+		'workflow' => 1,
+		'workstation' => 1,
+		'zapier' => 1,
+	);
 }

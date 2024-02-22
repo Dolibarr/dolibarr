@@ -29,6 +29,7 @@ if (!function_exists('json_encode')) {
 	 *
 	 * @param	mixed	$elements		PHP Object to json encode
 	 * @return 	string					Json encoded string
+	 * @phan-suppress PhanRedefineFunctionInternal
 	 */
 	function json_encode($elements)
 	{
@@ -226,6 +227,7 @@ if (!function_exists('json_decode')) {
 	 * @param	string	$json		Json encoded to PHP Object or Array
 	 * @param	bool	$assoc		False return an object, true return an array
 	 * @return 	mixed				Object or Array
+	 * @phan-suppress PhanRedefineFunctionInternal
 	 */
 	function json_decode($json, $assoc = false)
 	{
@@ -276,6 +278,7 @@ function dol_json_decode($json, $assoc = false)
 	// Return an array
 	if ($out != '') {
 		try {
+			// @phan-suppress-next-line PhanPluginUnsafeEval
 			eval('$array = '.$out.';');
 		} catch (Exception $e) {
 			$array = array();

@@ -176,7 +176,7 @@ class DolibarrApi
 		unset($object->timespent_fk_user);
 		unset($object->timespent_note);
 		unset($object->fk_delivery_address);
-		unset($object->modelpdf);
+		unset($object->model_pdf);
 		unset($object->sendtoid);
 		unset($object->name_bis);
 		unset($object->newref);
@@ -261,7 +261,6 @@ class DolibarrApi
 				unset($object->lines[$i]->thirdparty);
 				unset($object->lines[$i]->user);
 				unset($object->lines[$i]->model_pdf);
-				unset($object->lines[$i]->modelpdf);
 				unset($object->lines[$i]->note_public);
 				unset($object->lines[$i]->note_private);
 				unset($object->lines[$i]->fk_incoterms);

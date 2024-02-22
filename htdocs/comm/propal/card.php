@@ -853,7 +853,7 @@ if (empty($reshook)) {
 					$remise_percent = $originLine->remise_percent;
 					$date_start = $originLine->date_start;
 					$date_end = $originLine->date_end;
-					$ventil = 0;
+					$fk_code_ventilation = 0;
 					$info_bits = $originLine->info_bits;
 					$fk_remise_except = $originLine->fk_remise_except;
 					$price_base_type = 'HT';

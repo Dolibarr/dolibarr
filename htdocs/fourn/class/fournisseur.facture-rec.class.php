@@ -380,7 +380,7 @@ class FactureFournisseurRec extends CommonInvoice
 						$facfourn_src->lines[$i]->fk_product,
 						$facfourn_src->lines[$i]->ref_supplier,
 						$facfourn_src->lines[$i]->label,
-						$facfourn_src->lines[$i]->description,
+						$facfourn_src->lines[$i]->desc ? $facfourn_src->lines[$i]->desc : $facfourn_src->lines[$i]->description,
 						$facfourn_src->lines[$i]->pu_ht,
 						$facfourn_src->lines[$i]->pu_ttc,
 						$facfourn_src->lines[$i]->qty,
@@ -718,7 +718,7 @@ class FactureFournisseurRec extends CommonInvoice
 		*/
 
 		$sql = 'SELECT l.rowid,';
-		$sql .= ' l.fk_facture_fourn, l.fk_parent_line, l.fk_product, l.ref, l.label, l.description,';
+		$sql .= ' l.fk_facture_fourn, l.fk_parent_line, l.fk_product, l.ref, l.label, l.description as desc,';
 		$sql .= ' l.pu_ht, l.pu_ttc, l.qty, l.remise_percent, l.fk_remise_except, l.vat_src_code, l.tva_tx,';
 		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type,';
 		$sql .= ' l.total_ht, l.total_tva, l.total_ttc, total_localtax1, total_localtax2,';
@@ -749,7 +749,8 @@ class FactureFournisseurRec extends CommonInvoice
 				$line->fk_product               = $objp->fk_product;
 				$line->ref_supplier             = $objp->ref;
 				$line->label                    = $objp->label;
-				$line->description              = $objp->description;
+				$line->description              = $objp->desc;
+				$line->desc                     = $objp->desc;
 				$line->pu_ht                    = $objp->pu_ht;
 				$line->pu_ttc                   = $objp->pu_ttc;
 				$line->qty                      = $objp->qty;
@@ -2003,6 +2004,9 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 	public $fk_product;
 	public $ref_supplier;
 	public $label;
+	/**
+	 * @deprecated	Use desc
+	 */
 	public $description;
 	public $pu_ht;
 	public $pu_ttc;
@@ -2088,7 +2092,7 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 	{
 		$sql = 'SELECT l.rowid,';
 		$sql .= ' l.fk_facture_fourn, l.fk_parent_line, l.fk_product,';
-		$sql .= ' l.ref as ref_supplier, l.label, l.description, l.pu_ht, l.pu_ttc, l.qty, l.remise_percent, l.fk_remise_except,';
+		$sql .= ' l.ref as ref_supplier, l.label, l.description as desc, l.pu_ht, l.pu_ttc, l.qty, l.remise_percent, l.fk_remise_except,';
 		$sql .= ' l.vat_src_code, l.tva_tx, l.localtax1_tx, l.localtax1_type, l.localtax2_tx, l.localtax2_type,';
 		$sql .= ' l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc,';
 		$sql .= ' l.product_type, l.date_start, l.date_end,';
@@ -2112,7 +2116,8 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 			$this->fk_product               = $objp->fk_product;
 			$this->ref_supplier             = $objp->ref_supplier;
 			$this->label                    = $objp->label;
-			$this->description              = $objp->description;
+			$this->description              = $objp->desc;
+			$this->desc			            = $objp->desc;
 			$this->pu_ht                    = $objp->pu_ht;
 			$this->pu_ttc                   = $objp->pu_ttc;
 			$this->qty                      = $objp->qty;
@@ -2176,7 +2181,7 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 		$sql .= ', fk_product = ' . (int) $this->fk_product;
 		$sql .= ', ref = ' . (!empty($this->ref) ? "'" . $this->db->escape($this->ref) . "'" : 'NULL');
 		$sql .= ", label = " . (!empty($this->label) ? "'" . $this->db->escape($this->label) . "'" : 'NULL');
-		$sql .= ", description = '" . $this->db->escape($this->description) . "'";
+		$sql .= ", description = '" . $this->db->escape($this->desc ? $this->desc : $this->description) . "'";
 		$sql .= ', pu_ht = ' . price2num($this->pu_ht);
 		$sql .= ', pu_ttc = ' . price2num($this->pu_ttc);
 		$sql .= ', qty = ' . price2num($this->qty);

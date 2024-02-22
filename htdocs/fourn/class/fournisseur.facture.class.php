@@ -633,7 +633,7 @@ class FactureFournisseur extends CommonInvoice
 
 						$res = $this->updateline(
 							$idligne,
-							$this->lines[$i]->description,
+							$this->lines[$i]->desc ? $this->lines[$i]->desc : $this->lines[$i]->description,
 							$this->lines[$i]->subprice,
 							$this->lines[$i]->tva_tx.($this->lines[$i]->vat_src_code ? ' ('.$this->lines[$i]->vat_src_code.')' : ''),
 							$this->lines[$i]->localtax1_tx,
@@ -678,7 +678,7 @@ class FactureFournisseur extends CommonInvoice
 
 						$this->updateline(
 							$idligne,
-							$line->description,
+							$line->desc ? $line->desc : $line->description,
 							$line->pu_ht,
 							$line->tva_tx,
 							$line->localtax1_tx,
@@ -757,7 +757,7 @@ class FactureFournisseur extends CommonInvoice
 					}
 
 					$result_insert = $this->addline(
-						$_facrec->lines[$i]->description,
+						$_facrec->lines[$i]->desc ? $_facrec->lines[$i]->desc : $_facrec->lines[$i]->description,
 						$_facrec->lines[$i]->pu_ht,
 						$tva_tx,
 						$localtax1_tx,
@@ -1021,7 +1021,7 @@ class FactureFournisseur extends CommonInvoice
 		// phpcs:enable
 		$this->lines = array();
 
-		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.vat_src_code, f.tva_tx';
+		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description as desc, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.vat_src_code, f.tva_tx';
 		$sql .= ', f.localtax1_tx, f.localtax2_tx, f.localtax1_type, f.localtax2_type, f.total_localtax1, f.total_localtax2, f.fk_facture_fourn, f.fk_remise_except';
 		$sql .= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
 		$sql .= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.barcode as product_barcode, p.description as product_desc';
@@ -1045,7 +1045,8 @@ class FactureFournisseur extends CommonInvoice
 
 					$line->id               = $obj->rowid;
 					$line->rowid            = $obj->rowid;
-					$line->description      = $obj->description;
+					$line->description      = $obj->desc;
+					$line->desc             = $obj->desc;
 					$line->date_start       = $obj->date_start;
 					$line->date_end         = $obj->date_end;
 					$line->product_ref      = $obj->product_ref;
@@ -2045,9 +2046,9 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param    	double	$qty             	Quantity
 	 *	@param    	int		$fk_product      	Product/Service ID predefined
 	 *	@param    	double	$remise_percent  	Percentage discount of the line
-	 *	@param    	integer	$date_start      	Service start date
-	 * 	@param    	integer	$date_end        	Service expiry date
-	 * 	@param    	string	$ventil          	Accounting breakdown code
+	 *	@param    	int		$date_start      	Service start date
+	 * 	@param    	int		$date_end        	Service expiry date
+	 * 	@param    	int		$fk_code_ventilation   	Accounting breakdown code
 	 *	@param    	int		$info_bits			Line type bits
 	 *	@param    	string	$price_base_type 	HT or TTC
 	 *	@param		int		$type				Type of line (0=product, 1=service)
@@ -2063,11 +2064,11 @@ class FactureFournisseur extends CommonInvoice
 	 *  @param    	int		$fk_remise_except	Id discount used
 	 *	@return    	int             			>0 if OK, <0 if KO
 	 */
-	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = '', $date_end = '', $ventil = 0, $info_bits = '', $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = 0, $array_options = [], $fk_unit = null, $origin_id = 0, $pu_devise = 0, $ref_supplier = '', $special_code = '', $fk_parent_line = 0, $fk_remise_except = 0)
+	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = '', $date_end = '', $fk_code_ventilation = 0, $info_bits = '', $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = 0, $array_options = [], $fk_unit = null, $origin_id = 0, $pu_devise = 0, $ref_supplier = '', $special_code = '', $fk_parent_line = 0, $fk_remise_except = 0)
 	{
 		global $langs, $mysoc, $conf;
 
-		dol_syslog(get_class($this)."::addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits,$price_base_type,$type,$fk_unit,fk_remise_except=$fk_remise_except", LOG_DEBUG);
+		dol_syslog(get_class($this)."::addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$fk_code_ventilation,$info_bits,$price_base_type,$type,$fk_unit,fk_remise_except=$fk_remise_except", LOG_DEBUG);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		if ($this->statut == self::STATUS_DRAFT) {
@@ -2084,8 +2085,8 @@ class FactureFournisseur extends CommonInvoice
 			if (empty($rang)) {
 				$rang = 0;
 			}
-			if (empty($ventil)) {
-				$ventil = 0;
+			if (empty($fk_code_ventilation)) {
+				$fk_code_ventilation = 0;
 			}
 			if (empty($txtva)) {
 				$txtva = 0;
@@ -2243,7 +2244,7 @@ class FactureFournisseur extends CommonInvoice
 			$supplierinvoiceline->remise_percent = $remise_percent;
 			$supplierinvoiceline->date_start = $date_start;
 			$supplierinvoiceline->date_end = $date_end;
-			$supplierinvoiceline->fk_code_ventilation = $ventil;
+			$supplierinvoiceline->fk_code_ventilation = $fk_code_ventilation;
 			$supplierinvoiceline->rang = $rang;
 			$supplierinvoiceline->info_bits = $info_bits;
 			$supplierinvoiceline->fk_remise_except = $fk_remise_except;
@@ -2420,6 +2421,7 @@ class FactureFournisseur extends CommonInvoice
 		$line->context = $this->context;
 
 		$line->description = $desc;
+		$line->desc = $desc;
 
 		$line->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs($qty) : $qty); // For credit note, quantity is always positive and unit price negative
 		$line->subprice = ($this->type == self::TYPE_CREDIT_NOTE ? -abs($pu_ht) : $pu_ht); // For credit note, unit price always negative, always positive otherwise
@@ -3207,7 +3209,7 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $user, $langs;
+		global $langs;
 
 		$langs->load("suppliers");
 		$outputlangs->load("products");
@@ -3470,16 +3472,22 @@ class SupplierInvoiceLine extends CommonObjectLine
 	/**
 	 * Description of the line
 	 * @var string
+	 * @deprecated		Use $desc
 	 */
 	public $description;
 
 	public $date_start;
 	public $date_end;
 
+	/**
+	 * @var int
+	 */
+	public $fk_code_ventilation;
+
 	public $skip_update_total; // Skip update price total for special lines
 
 	/**
-	 * @var int Situation advance percentage
+	 * @var int 	Situation progress percentage
 	 */
 	public $situation_percent;
 
@@ -3634,7 +3642,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public function fetch($rowid)
 	{
-		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx';
+		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description as desc, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx';
 		$sql .= ', f.localtax1_type, f.localtax2_type, f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2, f.fk_remise_except';
 		$sql .= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_facture_fourn, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
 		$sql .= ', p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc';
@@ -3660,7 +3668,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->id = $obj->rowid;
 		$this->rowid = $obj->rowid;
 		$this->fk_facture_fourn = $obj->fk_facture_fourn;
-		$this->description		= $obj->description;
+		$this->description		= $obj->desc;
+		$this->desc				= $obj->desc;
 		$this->date_start = $obj->date_start;
 		$this->date_end = $obj->date_end;
 		$this->product_ref		= $obj->product_ref;
@@ -3816,7 +3825,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det SET";
-		$sql .= " description = '".$this->db->escape($this->description)."'";
+		$sql .= " description = '".$this->db->escape(empty($this->description) ? $this->desc : $this->description)."'";
 		$sql .= ", ref = '".$this->db->escape($this->ref_supplier ? $this->ref_supplier : $this->ref)."'";
 		$sql .= ", date_start = ".($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : "null");
 		$sql .= ", date_end = ".($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : "null");

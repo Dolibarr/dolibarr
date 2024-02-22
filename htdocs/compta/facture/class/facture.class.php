@@ -3756,7 +3756,7 @@ class Facture extends CommonInvoice
 	 *  @param    	double		$remise_percent  	Percent of discount on line
 	 *  @param    	int|string	$date_start      	Date start of service
 	 *  @param    	int|string	$date_end        	Date end of service
-	 *  @param    	int			$ventil          	Code of dispatching into accountancy
+	 *  @param    	int			$fk_code_ventilation   	Code of dispatching into accountancy
 	 *  @param    	int			$info_bits			Bits of type of lines
 	 *  @param    	int			$fk_remise_except	Id discount used
 	 *  @param		string		$price_base_type	'HT' or 'TTC'
@@ -3790,7 +3790,7 @@ class Facture extends CommonInvoice
 		$remise_percent = 0,
 		$date_start = '',
 		$date_end = '',
-		$ventil = 0,
+		$fk_code_ventilation = 0,
 		$info_bits = 0,
 		$fk_remise_except = 0,
 		$price_base_type = 'HT',
@@ -3838,8 +3838,8 @@ class Facture extends CommonInvoice
 			if (empty($rang)) {
 				$rang = 0;
 			}
-			if (empty($ventil)) {
-				$ventil = 0;
+			if (empty($fk_code_ventilation)) {
+				$fk_code_ventilation = 0;
 			}
 			if (empty($txtva)) {
 				$txtva = 0;
@@ -3976,7 +3976,7 @@ class Facture extends CommonInvoice
 			$this->line->remise_percent = $remise_percent;
 			$this->line->date_start = $date_start;
 			$this->line->date_end = $date_end;
-			$this->line->ventil = $ventil;
+			$this->line->fk_code_ventilation = $fk_code_ventilation;
 			$this->line->rang = $ranktouse;
 			$this->line->info_bits = $info_bits;
 			$this->line->fk_remise_except = $fk_remise_except;
@@ -6179,7 +6179,7 @@ class FactureLigne extends CommonInvoiceLine
 			$this->total_localtax1		= $objp->total_localtax1;
 			$this->total_localtax2		= $objp->total_localtax2;
 			$this->total_ttc			= $objp->total_ttc;
-			$this->fk_code_ventilation = $objp->fk_code_ventilation;
+			$this->fk_code_ventilation  = $objp->fk_code_ventilation;
 			$this->rang					= $objp->rang;
 			$this->fk_fournprice = $objp->fk_fournprice;
 			$marginInfos				= getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $this->fk_fournprice, $objp->pa_ht);
@@ -6225,7 +6225,7 @@ class FactureLigne extends CommonInvoiceLine
 	 */
 	public function insert($notrigger = 0, $noerrorifdiscountalreadylinked = 0)
 	{
-		global $langs, $user, $conf;
+		global $langs, $user;
 
 		$error = 0;
 
@@ -6332,7 +6332,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' (fk_facture, fk_parent_line, label, description, qty,';
 		$sql .= ' vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
 		$sql .= ' fk_product, product_type, remise_percent, subprice, ref_ext, fk_remise_except,';
-		$sql .= ' date_start, date_end, fk_code_ventilation, ';
+		$sql .= ' date_start, date_end, fk_code_ventilation,';
 		$sql .= ' rang, special_code, fk_product_fournisseur_price, buy_price_ht,';
 		$sql .= ' info_bits, total_ht, total_tva, total_ttc, total_localtax1, total_localtax2,';
 		$sql .= ' situation_percent, fk_prev_id,';

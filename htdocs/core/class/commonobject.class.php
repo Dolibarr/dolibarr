@@ -207,7 +207,7 @@ abstract class CommonObject
 	public $actionmsg2;
 
 	/**
-	 * @var string		Contains canvas name if record is an alternative canvas record
+	 * @var string			Contains canvas name if record is an alternative canvas record
 	 */
 	public $canvas;
 
@@ -218,13 +218,13 @@ abstract class CommonObject
 	public $project;
 
 	/**
-	 * @var int 		The related project ID
+	 * @var int 			The related project ID
 	 * @see setProject(), project
 	 */
 	public $fk_project;
 
 	/**
-	 * @var Project 	The related project object
+	 * @var Project 		The related project object
 	 * @deprecated
 	 * @see project
 	 */
@@ -237,13 +237,13 @@ abstract class CommonObject
 	public $fk_projet;
 
 	/**
-	 * @var Contact 	A related contact object
+	 * @var Contact|null 	A related contact object
 	 * @see fetch_contact()
 	 */
 	public $contact;
 
 	/**
-	 * @var int 		The related contact ID
+	 * @var int 			The related contact ID
 	 * @see fetch_contact()
 	 */
 	public $contact_id;
@@ -255,13 +255,13 @@ abstract class CommonObject
 	public $thirdparty;
 
 	/**
-	 * @var User 		A related user
+	 * @var User 			A related user
 	 * @see fetch_user()
 	 */
 	public $user;
 
 	/**
-	 * @var string 		The type of originating object ('commande', 'facture', ...). Note: on some object this field is called $origin_type
+	 * @var string 			The type of originating object ('commande', 'facture', ...). Note: on some object this field is called $origin_type
 	 * @see fetch_origin()
 	 */
 	public $origin;
@@ -358,6 +358,12 @@ abstract class CommonObject
 	 * @see getFullAddress(), state
 	 */
 	public $state_id;
+
+	/**
+	 * var	int			State ID
+	 * @deprecated	Use state_id. We can remove this property when the field 'fk_departement' have been renamed into 'state_id' in all tables
+	 */
+	public $fk_departement;
 
 	/**
 	 * @var string		State code

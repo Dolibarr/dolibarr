@@ -1283,7 +1283,7 @@ if (empty($action) || $action == 'view') {
 					print '</td>';
 					print "<td>".$companystatic->getNomUrl(0, 'customer', 16).' - '.$invoicestatic->ref;
 					// $def_tva is array[invoiceid][accountancy_code_sell_of_vat_rate_found][vatrate]=vatrate
-					//var_dump($arrayofvat[$key]); var_dump($key); var_dump($k);
+					//var_dump($arrayofvat[$key]); //var_dump($key); //var_dump($k);
 					$tmpvatrate = (empty($def_tva[$key][$k]) ? (empty($arrayofvat[$key][$k]) ? '' : $arrayofvat[$key][$k]) : implode(', ', $def_tva[$key][$k]));
 					print ' - '.$langs->trans("Taxes").' '.$tmpvatrate.' %';
 					print($numtax ? ' - Localtax '.$numtax : '');
