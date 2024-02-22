@@ -501,10 +501,10 @@ class Product extends CommonObject
 	public $ref_supplier;
 
 	/**
-	 * Unit code ('km', 'm', 'l', 'p', ...)
-	 *
-	 * @var string
-	 */
+ 	 * @var int|null                ID of the unit of measurement (rowid in llx_c_units table)
+ 	 * @see measuringUnitString()
+ 	 * @see getLabelOfUnit()
+ 	 */
 	public $fk_unit;
 
 	/**
