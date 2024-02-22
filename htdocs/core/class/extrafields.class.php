@@ -96,6 +96,7 @@ class ExtraFields
 		'chkbxlst' => 'ExtrafieldCheckBoxFromList',
 		'link' => 'ExtrafieldLink',
 		'point' => 'ExtrafieldPointGeo',
+		'multipts' => 'ExtrafieldMultiPointGeo',
 		'linestrg' => 'ExtrafieldLinestringGeo',
 		'polygon' => 'ExtrafieldPolygonGeo',
 		'separate' => 'ExtrafieldSeparator',
