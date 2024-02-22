@@ -1945,9 +1945,9 @@ class BOMLine extends CommonObjectLine
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$record = new self($this->db);                                
+				$record = new self($this->db);
 				$record->setVarsFromFetchObj($obj);
-                                $record->fetch_optionals();
+								$record->fetch_optionals();
 
 				$records[$record->id] = $record;
 			}
