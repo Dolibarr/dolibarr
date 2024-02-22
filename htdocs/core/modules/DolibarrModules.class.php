@@ -397,7 +397,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $enabled_bydefault;
 
 	/**
-	 * @var bool Whether to hide the module.
+	 * @var bool|int Whether to hide the module.
 	 */
 	public $hidden = false;
 
