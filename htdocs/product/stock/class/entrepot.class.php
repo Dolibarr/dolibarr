@@ -175,7 +175,6 @@ class Entrepot extends CommonObject
 	 */
 	public function __construct($db)
 	{
-		global $conf;
 		$this->db = $db;
 
 		$this->labelStatus[self::STATUS_CLOSED] = 'Closed2';
