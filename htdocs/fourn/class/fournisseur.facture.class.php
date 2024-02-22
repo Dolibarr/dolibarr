@@ -2046,9 +2046,9 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param    	double	$qty             	Quantity
 	 *	@param    	int		$fk_product      	Product/Service ID predefined
 	 *	@param    	double	$remise_percent  	Percentage discount of the line
-	 *	@param    	integer	$date_start      	Service start date
-	 * 	@param    	integer	$date_end        	Service expiry date
-	 * 	@param    	string	$ventil          	Accounting breakdown code
+	 *	@param    	int		$date_start      	Service start date
+	 * 	@param    	int		$date_end        	Service expiry date
+	 * 	@param    	int		$fk_code_ventilation   	Accounting breakdown code
 	 *	@param    	int		$info_bits			Line type bits
 	 *	@param    	string	$price_base_type 	HT or TTC
 	 *	@param		int		$type				Type of line (0=product, 1=service)
@@ -2064,11 +2064,11 @@ class FactureFournisseur extends CommonInvoice
 	 *  @param    	int		$fk_remise_except	Id discount used
 	 *	@return    	int             			>0 if OK, <0 if KO
 	 */
-	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = '', $date_end = '', $ventil = 0, $info_bits = '', $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = 0, $array_options = [], $fk_unit = null, $origin_id = 0, $pu_devise = 0, $ref_supplier = '', $special_code = '', $fk_parent_line = 0, $fk_remise_except = 0)
+	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = '', $date_end = '', $fk_code_ventilation = 0, $info_bits = '', $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = 0, $array_options = [], $fk_unit = null, $origin_id = 0, $pu_devise = 0, $ref_supplier = '', $special_code = '', $fk_parent_line = 0, $fk_remise_except = 0)
 	{
 		global $langs, $mysoc, $conf;
 
-		dol_syslog(get_class($this)."::addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits,$price_base_type,$type,$fk_unit,fk_remise_except=$fk_remise_except", LOG_DEBUG);
+		dol_syslog(get_class($this)."::addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$fk_code_ventilation,$info_bits,$price_base_type,$type,$fk_unit,fk_remise_except=$fk_remise_except", LOG_DEBUG);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		if ($this->statut == self::STATUS_DRAFT) {
@@ -2085,8 +2085,8 @@ class FactureFournisseur extends CommonInvoice
 			if (empty($rang)) {
 				$rang = 0;
 			}
-			if (empty($ventil)) {
-				$ventil = 0;
+			if (empty($fk_code_ventilation)) {
+				$fk_code_ventilation = 0;
 			}
 			if (empty($txtva)) {
 				$txtva = 0;
@@ -2244,7 +2244,7 @@ class FactureFournisseur extends CommonInvoice
 			$supplierinvoiceline->remise_percent = $remise_percent;
 			$supplierinvoiceline->date_start = $date_start;
 			$supplierinvoiceline->date_end = $date_end;
-			$supplierinvoiceline->fk_code_ventilation = $ventil;
+			$supplierinvoiceline->fk_code_ventilation = $fk_code_ventilation;
 			$supplierinvoiceline->rang = $rang;
 			$supplierinvoiceline->info_bits = $info_bits;
 			$supplierinvoiceline->fk_remise_except = $fk_remise_except;
@@ -3479,10 +3479,15 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $date_start;
 	public $date_end;
 
+	/**
+	 * @var int
+	 */
+	public $fk_code_ventilation;
+
 	public $skip_update_total; // Skip update price total for special lines
 
 	/**
-	 * @var int Situation advance percentage
+	 * @var int 	Situation progress percentage
 	 */
 	public $situation_percent;
 

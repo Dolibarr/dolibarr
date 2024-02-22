@@ -3838,8 +3838,8 @@ class Facture extends CommonInvoice
 			if (empty($rang)) {
 				$rang = 0;
 			}
-			if (empty($ventil)) {
-				$ventil = 0;
+			if (empty($fk_code_ventilation)) {
+				$fk_code_ventilation = 0;
 			}
 			if (empty($txtva)) {
 				$txtva = 0;
