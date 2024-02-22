@@ -1171,8 +1171,6 @@ class Task extends CommonObjectLine
 					if ($loadextras) {
 						$tasks[$i]->fetch_optionals();
 					}
-
-					$tasks[$i]->obj = $obj; // Needed for tpl/extrafields_list_print
 				}
 
 				$i++;
