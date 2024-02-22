@@ -579,7 +579,7 @@ class SupplierInvoices extends DolibarrApi
 			$request_data->remise_percent,
 			$request_data->date_start,
 			$request_data->date_end,
-			$request_data->ventil,
+			$request_data->fk_code_ventilation,
 			$request_data->info_bits,
 			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
 			$request_data->product_type,
