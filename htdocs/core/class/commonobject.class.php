@@ -6291,13 +6291,13 @@ abstract class CommonObject
 					$sql .= ", ".$name;
 				}
 				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'point') {
-					$sql .= ", ST_AsWKB(".$name.") as ".$name;
+					$sql .= ", ST_AsWKT(".$name.") as ".$name;
 				}
 				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'linestrg') {
-					$sql .= ", ST_AsWKB(".$name.") as ".$name;
+					$sql .= ", ST_AsWKT(".$name.") as ".$name;
 				}
 				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'polygon') {
-					$sql .= ", ST_AsWKB(".$name.") as ".$name;
+					$sql .= ", ST_AsWKT(".$name.") as ".$name;
 				}
 			}
 			$sql .= " FROM ".$this->db->prefix().$table_element."_extrafields";
@@ -6653,21 +6653,21 @@ abstract class CommonObject
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'point') { // for point type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_PointFromWKB('".$this->db->escape($new_array_options[$key])."')";
+						$sql .= ",ST_PointFromText('".$this->db->escape($new_array_options[$key])."')";
 					} else {
 						$sql .= ",null";
 					}
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'linestrg') { // for linestring type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_LineFromWKB('".$this->db->escape($new_array_options[$key])."')";
+						$sql .= ",ST_LineFromText('".$this->db->escape($new_array_options[$key])."')";
 					} else {
 						$sql .= ",null";
 					}
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'polygon') { // for polygon type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_PolyFromWKB('".$this->db->escape($new_array_options[$key])."')";
+						$sql .= ",ST_PolyFromText('".$this->db->escape($new_array_options[$key])."')";
 					} else {
 						$sql .= ",null";
 					}

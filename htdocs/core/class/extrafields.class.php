@@ -1627,7 +1627,7 @@ class ExtraFields
 			require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
 			$geojson = '{}';
 			if (!empty($value)) {
-				$geom = geoPHP::load($value, 'wkb');
+				$geom = geoPHP::load($value, 'wkt');
 				$geojson = $geom->out('json');
 			}
 			if (!preg_match('/search_/', $keyprefix)) {
@@ -1996,15 +1996,15 @@ class ExtraFields
 		} elseif ($type == 'point') {
 			require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
 			if (!empty($value)) {
-				$geom = geoPHP::load($value, 'wkb');
+				$geom = geoPHP::load($value, 'wkt');
 				$value = $geom->x().' '.$geom->y();
 			} else {
 				$value = '';
 			}
-		} elseif (in_array($type, ['linestrg', 'polygon'])) {
+		} elseif (in_array($type, ['multipts','linestrg', 'polygon'])) {
 			require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
 			if (!empty($value)) {
-				$geom = geoPHP::load($value, 'wkb');
+				$geom = geoPHP::load($value, 'wkt');
 				$value = get_class($geom) . ' : '. $geom->numPoints() . ' Points';
 			} else {
 				$value = '';
@@ -2284,7 +2284,7 @@ class ExtraFields
 					$geojson = GETPOST("options_".$key, 'restricthtml');
 					if ($geojson != '{}') {
 						$geom = geoPHP::load($geojson, 'json');
-						$value_key = $geom->out('wkb');
+						$value_key = $geom->out('wkt');
 					} else {
 						$value_key = '';
 					}
