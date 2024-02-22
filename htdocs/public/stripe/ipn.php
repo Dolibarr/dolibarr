@@ -59,21 +59,21 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 // You can find your endpoint's secret in your webhook settings
 if (isset($_GET['connect'])) {
 	if (isset($_GET['test'])) {
-		$endpoint_secret = $conf->global->STRIPE_TEST_WEBHOOK_CONNECT_KEY;
+		$endpoint_secret = getDolGlobalString('STRIPE_TEST_WEBHOOK_CONNECT_KEY');
 		$service = 'StripeTest';
 		$servicestatus = 0;
 	} else {
-		$endpoint_secret = $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
+		$endpoint_secret = getDolGlobalString('STRIPE_LIVE_WEBHOOK_CONNECT_KEY');
 		$service = 'StripeLive';
 		$servicestatus = 1;
 	}
 } else {
 	if (isset($_GET['test'])) {
-		$endpoint_secret = $conf->global->STRIPE_TEST_WEBHOOK_KEY;
+		$endpoint_secret = getDolGlobalString('STRIPE_TEST_WEBHOOK_KEY');
 		$service = 'StripeTest';
 		$servicestatus = 0;
 	} else {
-		$endpoint_secret = $conf->global->STRIPE_LIVE_WEBHOOK_KEY;
+		$endpoint_secret = getDolGlobalString('STRIPE_LIVE_WEBHOOK_KEY');
 		$service = 'StripeLive';
 		$servicestatus = 1;
 	}
@@ -90,7 +90,7 @@ if (empty($endpoint_secret)) {
 if (getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS')) {
 	// We set the user to use for all ipn actions in Dolibarr
 	$user = new User($db);
-	$user->fetch($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS);
+	$user->fetch(getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS'));
 	$user->getrights();
 } else {
 	httponly_accessforbidden('Error: Setup of module Stripe not complete for mode '.dol_escape_htmltag($service).'. The STRIPE_USER_ACCOUNT_FOR_ACTIONS is not defined.', 400, 1);
@@ -162,14 +162,14 @@ if (isModEnabled('multicompany') && !empty($conf->stripeconnect->enabled) && is_
 $stripe = new Stripe($db);
 
 // Subject
-$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-	$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+	$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 
 top_httphead();
 
-dol_syslog("***** Stripe IPN was called with event->type = ".$event->type);
+dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service);
 
 
 if ($event->type == 'payout.created') {
@@ -227,17 +227,17 @@ if ($event->type == 'payout.created') {
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 		$accountfrom = new Account($db);
-		$accountfrom->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS);
+		$accountfrom->fetch(getDolGlobalString('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS'));
 
 		$accountto = new Account($db);
-		$accountto->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS);
+		$accountto->fetch(getDolGlobalString('STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS'));
 
 		if (($accountto->id != $accountfrom->id) && empty($error)) {
 			$bank_line_id_from = 0;
 			$bank_line_id_to = 0;
 			$result = 0;
 
-			// By default, electronic transfert from bank to bank
+			// By default, electronic transfer from bank to bank
 			$typefrom = 'PRE';
 			$typeto = 'VIR';
 
@@ -321,7 +321,7 @@ if ($event->type == 'payout.created') {
 	global $stripearrayofkeysbyenv;
 	$error = 0;
 	$object = $event->data->object;
-	$TRANSACTIONID = $object->id;
+	$TRANSACTIONID = $object->id;	// Example pi_123456789...
 	$ipaddress = $object->metadata->ipaddress;
 	$now = dol_now();
 	$currencyCodeType = strtoupper($object->currency);
@@ -338,7 +338,6 @@ if ($event->type == 'payout.created') {
 	$sql = "SELECT pi.rowid, pi.fk_facture, pi.fk_prelevement_bons, pi.amount, pi.type, pi.traite";
 	$sql .= " FROM llx_prelevement_demande as pi";
 	$sql .= " WHERE pi.ext_payment_id = '".$db->escape($TRANSACTIONID)."'";
-	//$sql .= " AND pi.type = 'ban' AND pi.traite = '1'";
 	$sql .= " AND pi.ext_payment_site = '".$db->escape($service)."'";
 
 	$result = $db->query($sql);
@@ -374,9 +373,9 @@ if ($event->type == 'payout.created') {
 				}
 			}
 		} else {
-			dol_syslog("Payment intent not found into database, so ignored.");
-			print "Payment intent not found into database, so ignored.";
+			dol_syslog("Payment intent ".$TRANSACTIONID." not found into database, so ignored.");
 			http_response_code(200);
+			print "Payment intent ".$TRANSACTIONID." not found into database, so ignored.";
 			return 1;
 		}
 	} else {
@@ -455,7 +454,7 @@ if ($event->type == 'payout.created') {
 				// This include closing invoices to 'paid' (and trigger including unsuspending) and regenerating document
 				$paiement_id = $paiement->create($user, 1);
 				if ($paiement_id < 0) {
-					$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->errors);
+					$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . implode("<br>\n", $paiement->errors);
 					$ispostactionok = -1;
 					$error++;
 
@@ -468,7 +467,7 @@ if ($event->type == 'payout.created') {
 			}
 
 			if (!$error && isModEnabled('banque')) {
-				// Search again the payment to see if it is already linked to a bank payment record (We should always find the payement now we have created before).
+				// Search again the payment to see if it is already linked to a bank payment record (We should always find the payment that was created before).
 				$ispaymentdone = 0;
 				$sql = "SELECT p.rowid, p.fk_bank FROM llx_paiement as p";
 				$sql .= " WHERE p.ext_payment_id = '".$db->escape($paiement->ext_payment_id)."'";
@@ -493,7 +492,7 @@ if ($event->type == 'payout.created') {
 						$label = '(CustomerInvoicePayment)';
 						$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, $customer_id, '');
 						if ($result < 0) {
-							$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->errors);
+							$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . implode("<br>\n", $paiement->errors);
 							$ispostactionok = -1;
 							$error++;
 						} else {
@@ -524,7 +523,7 @@ if ($event->type == 'payout.created') {
 					if ($db->num_rows($result)) {
 						$obj = $db->fetch_object($result);
 						$idbon = $obj->idbon;
-						dol_syslog('* Set prelevement to credite');
+						dol_syslog('* Prelevement must be set to credited');
 					} else {
 						dol_syslog('* Prelevement not found or already credited');
 					}
@@ -577,7 +576,7 @@ if ($event->type == 'payout.created') {
 			dol_syslog("The payment mode of this payment is ".$paymentTypeId." in Stripe and ".$paymentTypeIdInDolibarr." in Dolibarr. This case is not managed by the IPN");
 		}
 	} else {
-		dol_syslog("Nothing to do in database");
+		dol_syslog("Nothing to do in database because we don't know paymentTypeIdInDolibarr");
 	}
 } elseif ($event->type == 'payment_intent.payment_failed') {
 	dol_syslog("A try to make a payment has failed");
@@ -588,64 +587,88 @@ if ($event->type == 'payout.created') {
 	$paymentmethodstripeid = $object->payment_method;
 	$customer_id = $object->customer;
 
-	$chargesdataarray = $object->charges->data;
+	$chargesdataarray = array();
+	$objpayid = '';
+	$objpaydesc = '';
+	$objinvoiceid = 0;
+	$objerrcode = '';
+	$objerrmessage = '';
+	$objpaymentmodetype = '';
+	if (!empty($object->charges)) {				// Old format
+		$chargesdataarray = $object->charges->data;
+		foreach ($chargesdataarray as $chargesdata) {
+			$objpayid = $chargesdata->id;
+			$objpaydesc = $chargesdata->description;
+			$objinvoiceid = 0;
+			if ($chargesdata->metadata->dol_type == 'facture') {
+				$objinvoiceid = $chargesdata->metadata->dol_id;
+			}
+			$objerrcode = $chargesdata->outcome->reason;
+			$objerrmessage = $chargesdata->outcome->seller_message;
 
-	foreach ($chargesdataarray as $chargesdata) {
-		$objpayid = $chargesdata->id;
-		$objpaydesc = $chargesdata->description;
-		$objinvoiceid = 0;
-		if ($chargesdata->metadata->dol_type == 'facture') {
-			$objinvoiceid = $chargesdata->metadata->dol_id;
+			$objpaymentmodetype = $chargesdata->payment_method_details->type;
+			break;
 		}
-		$objerrcode = $chargesdata->outcome->reason;
-		$objerrmessage = $chargesdata->outcome->seller_message;
+	}
+	if (!empty($object->last_payment_error)) {	// New format 2023-10-16
+		// $object is probably an object of type Stripe\PaymentIntent
+		$objpayid = $object->latest_charge;
+		$objpaydesc = $object->description;
+		$objinvoiceid = 0;
+		if ($object->metadata->dol_type == 'facture') {
+			$objinvoiceid = $object->metadata->dol_id;
+		}
+		$objerrcode = empty($object->last_payment_error->code) ? $object->last_payment_error->decline_code : $object->last_payment_error->code;
+		$objerrmessage = $object->last_payment_error->message;
 
-		$objpaymentmodetype = $chargesdata->payment_method_details->type;
+		$objpaymentmodetype = $object->last_payment_error->payment_method->type;
+	}
 
-		// If this is a differed payment for SEPA, add a line into agenda events
-		if ($objpaymentmodetype == 'sepa_debit') {
-			$db->begin();
+	dol_syslog("objpayid=".$objpayid." objpaymentmodetype=".$objpaymentmodetype." objerrcode=".$objerrcode);
 
-			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-			$actioncomm = new ActionComm($db);
+	// If this is a differed payment for SEPA, add a line into agenda events
+	if ($objpaymentmodetype == 'sepa_debit') {
+		$db->begin();
 
-			if ($objinvoiceid > 0) {
-				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-				$invoice = new Facture($db);
-				$invoice->fetch($objinvoiceid);
+		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+		$actioncomm = new ActionComm($db);
 
-				$actioncomm->userownerid = 0;
-				$actioncomm->percentage = -1;
+		if ($objinvoiceid > 0) {
+			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			$invoice = new Facture($db);
+			$invoice->fetch($objinvoiceid);
 
-				$actioncomm->type_code = 'AC_OTH_AUTO'; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
-				$actioncomm->code = 'AC_IPN';
+			$actioncomm->userownerid = 0;
+			$actioncomm->percentage = -1;
 
-				$actioncomm->datep = $now;
-				$actioncomm->datef = $now;
+			$actioncomm->type_code = 'AC_OTH_AUTO'; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
+			$actioncomm->code = 'AC_IPN';
 
-				$actioncomm->socid = $invoice->socid;
-				$actioncomm->fk_project = $invoice->fk_project;
-				$actioncomm->fk_element = $invoice->id;
-				$actioncomm->elementtype = 'invoice';
-				$actioncomm->ip = getUserRemoteIP();
-			}
+			$actioncomm->datep = $now;
+			$actioncomm->datef = $now;
 
-			$actioncomm->note_private = 'Error returned on payment id '.$objpayid.' after SEPA payment request '.$objpaydesc.'<br>Error code is: '.$objerrcode.'<br>Error message is: '.$objerrmessage;
-			$actioncomm->label = 'Payment error (SEPA Stripe)';
+			$actioncomm->socid = $invoice->socid;
+			$actioncomm->fk_project = $invoice->fk_project;
+			$actioncomm->fk_element = $invoice->id;
+			$actioncomm->elementtype = 'invoice';
+			$actioncomm->ip = getUserRemoteIP();
+		}
 
-			$result = $actioncomm->create($user);
-			if ($result <= 0) {
-				dol_syslog($actioncomm->error, LOG_ERR);
-				$error++;
-			}
+		$actioncomm->note_private = 'Error returned on payment id '.$objpayid.' after SEPA payment request '.$objpaydesc.'<br>Error code is: '.$objerrcode.'<br>Error message is: '.$objerrmessage;
+		$actioncomm->label = 'Payment error (SEPA Stripe)';
 
-			if (! $error) {
-				$db->commit();
-			} else {
-				$db->rollback();
-				http_response_code(500);
-				return -1;
-			}
+		$result = $actioncomm->create($user);
+		if ($result <= 0) {
+			dol_syslog($actioncomm->error, LOG_ERR);
+			$error++;
+		}
+
+		if (! $error) {
+			$db->commit();
+		} else {
+			$db->rollback();
+			http_response_code(500);
+			return -1;
 		}
 	}
 } elseif ($event->type == 'checkout.session.completed') {		// Called when making payment with new Checkout method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
@@ -732,12 +755,11 @@ if ($event->type == 'payout.created') {
 	$db->query($sql);
 	$db->commit();
 } elseif ($event->type == 'charge.succeeded') {
-	// TODO: create fees
-	// TODO: Redirect to paymentok.php
+	// Deprecated. TODO: create fees and redirect to paymentok.php
 } elseif ($event->type == 'charge.failed') {
-	// TODO: Redirect to paymentko.php
+	// Deprecated. TODO: Redirect to paymentko.php
 } elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 'three_d_secure') && ($event->data->object->three_d_secure->authenticated == true)) {
-	// This event is deprecated.
+	// Deprecated.
 }
 
 // End of page. Default return HTTP code will be 200

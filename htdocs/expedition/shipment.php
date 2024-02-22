@@ -322,8 +322,8 @@ if ($id > 0 || !empty($ref)) {
 
 		// Discounts for third party
 		if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
-			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
-			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
+			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
 		} else {
 			$filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
 			$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
@@ -600,7 +600,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.product_type as type, cd.label, cd.description,";
 		$sql .= " cd.price, cd.tva_tx, cd.subprice,";
-		$sql .= " cd.qty, cd.fk_unit,";
+		$sql .= " cd.qty, cd.fk_unit, cd.rang,";
 		$sql .= ' cd.date_start,';
 		$sql .= ' cd.date_end,';
 		$sql .= ' cd.special_code,';
@@ -623,6 +623,9 @@ if ($id > 0 || !empty($ref)) {
 			$i = 0;
 			print '<thead>';
 			print '<tr class="liste_titre">';
+			if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
+				print '<th>'.$langs->trans("Rank").'</th>';
+			}
 			print '<th>'.$langs->trans("Description").'</th>';
 			print '<th class="center">'.$langs->trans("QtyOrdered").'</th>';
 			print '<th class="center">'.$langs->trans("QtyShipped").'</th>';
@@ -660,6 +663,11 @@ if ($id > 0 || !empty($ref)) {
 					}
 
 					print '<tr class="oddeven">';
+
+					// Rank
+					if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
+						print '<td class="center">'.$objp->rang.'</td>';
+					}
 
 					// Product label
 					if ($objp->fk_product > 0) {
@@ -760,7 +768,7 @@ if ($id > 0 || !empty($ref)) {
 					// Nb of sending products for this line of order
 					$qtyAlreadyShipped = (!empty($object->expeditions[$objp->rowid]) ? $object->expeditions[$objp->rowid] : 0);
 					print $qtyAlreadyShipped;
-					print ($objp->unit_order ? ' '.$objp->unit_order : '').'</td>';
+					print($objp->unit_order ? ' '.$objp->unit_order : '').'</td>';
 
 					// Qty remains to ship
 					print '<td class="center">';
@@ -771,7 +779,7 @@ if ($id > 0 || !empty($ref)) {
 					} else {
 						print '0 <span class="opacitymedium">('.$langs->trans("Service").')</span>';
 					}
-					print ($objp->unit_order ? ' '.$objp->unit_order : '').'</td>';
+					print($objp->unit_order ? ' '.$objp->unit_order : '').'</td>';
 
 					if ($objp->fk_product > 0) {
 						$product = new Product($db);
@@ -859,7 +867,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 
 
-		// Bouton expedier avec gestion des stocks
+		// Button to create a shipment
 
 		if (isModEnabled('stock') && $object->statut == Commande::STATUS_DRAFT) {
 			print $langs->trans("ValidateOrderFirstBeforeShipment");
@@ -909,7 +917,7 @@ if ($id > 0 || !empty($ref)) {
 				$somethingshown = 1;
 			} else {
 				print '<div class="tabsAction">';
-				print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateShipment").'</a>';
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("CreateShipment").'</a>';
 				print '</div>';
 			}
 		}

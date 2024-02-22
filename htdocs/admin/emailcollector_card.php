@@ -37,7 +37,6 @@ include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
 
 use Webklex\PHPIMAP\ClientManager;
 use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
-use Webklex\PHPIMAP\Exceptions\InvalidWhereQueryCriteriaException;
 
 
 use OAuth\Common\Storage\DoliStorage;
@@ -59,7 +58,7 @@ $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'emailcollectorcard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'emailcollectorcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $operationid = GETPOST('operationid', 'int');
@@ -75,7 +74,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -181,8 +180,8 @@ if (GETPOST('addoperation', 'alpha')) {
 
 	if (in_array($emailcollectoroperation->type, array('loadthirdparty', 'loadandcreatethirdparty'))
 		&& empty($emailcollectoroperation->actionparam)) {
-			$error++;
-			setEventMessages($langs->trans("ErrorAParameterIsRequiredForThisOperation"), null, 'errors');
+		$error++;
+		setEventMessages($langs->trans("ErrorAParameterIsRequiredForThisOperation"), null, 'errors');
 	}
 
 	if (!$error) {
@@ -205,8 +204,8 @@ if ($action == 'updateoperation') {
 
 	if (in_array($emailcollectoroperation->type, array('loadthirdparty', 'loadandcreatethirdparty'))
 		&& empty($emailcollectoroperation->actionparam)) {
-			$error++;
-			setEventMessages($langs->trans("ErrorAParameterIsRequiredForThisOperation"), null, 'errors');
+		$error++;
+		setEventMessages($langs->trans("ErrorAParameterIsRequiredForThisOperation"), null, 'errors');
 	}
 
 	if (!$error) {
@@ -440,7 +439,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							getDolGlobalString('OAUTH_'.$object->oauth_service.'_ID'),
 							getDolGlobalString('OAUTH_'.$object->oauth_service.'_SECRET'),
 							getDolGlobalString('OAUTH_'.$object->oauth_service.'_URLAUTHORIZE')
-							);
+						);
 						$serviceFactory = new \OAuth\ServiceFactory();
 						$oauthname = explode('-', $OAUTH_SERVICENAME);
 

@@ -166,7 +166,9 @@ if ($action == 'specimen') { // For products
 	$product->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/product/doc/pdf_".$modele.".modules.php", 0);
@@ -238,7 +240,7 @@ if ($action == 'set') {
 	}
 }
 
-// To enable a constant whithout javascript
+// To enable a constant without javascript
 if (preg_match('/set_(.+)/', $action, $reg)) {
 	$keyforvar = $reg[1];
 	if ($keyforvar) {
@@ -247,7 +249,7 @@ if (preg_match('/set_(.+)/', $action, $reg)) {
 	}
 }
 
-// To disable a constant whithout javascript
+// To disable a constant without javascript
 if (preg_match('/del_(.+)/', $action, $reg)) {
 	$keyforvar = $reg[1];
 	if ($keyforvar) {
@@ -321,7 +323,7 @@ foreach ($dirproduct as $dirroot) {
 					dol_syslog($e->getMessage(), LOG_ERR);
 				}
 
-				$modCodeProduct = new $file;
+				$modCodeProduct = new $file();
 
 				// Show modules according to features level
 				if ($modCodeProduct->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -436,7 +438,7 @@ foreach ($dirmodels as $reldir) {
 
 							if ($modulequalified) {
 								print '<tr class="oddeven"><td width="100">';
-								print (empty($module->name) ? $name : $module->name);
+								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
 									print $module->info($langs);
@@ -458,7 +460,7 @@ foreach ($dirmodels as $reldir) {
 									print "</td>";
 								}
 
-								// Defaut
+								// Default
 								print '<td class="center">';
 								if (getDolGlobalString('PRODUCT_ADDON_PDF') == $name) {
 									print img_picto($langs->trans("Default"), 'on');
@@ -688,7 +690,7 @@ print $form->selectarray(
 print '</td>';
 print '</tr>';
 
-// Visualiser description produit dans les formulaires activation/desactivation
+// Visualiser description produit dans les formulaires activation/deactivation
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td class="right">';
@@ -763,7 +765,7 @@ if (getDolGlobalString('PRODUCT_CANVAS_ABILITY')) {
 
 						$const = "PRODUCT_SPECIAL_".strtoupper($file);
 
-						if ($conf->global->$const) {
+						if (getDolGlobalString($const)) {
 							print img_picto($langs->trans("Active"), 'tick');
 							print '</td><td class="right">';
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&spe='.urlencode($file).'&value=0">'.$langs->trans("Disable").'</a>';

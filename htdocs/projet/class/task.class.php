@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022       Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
@@ -83,19 +83,32 @@ class Task extends CommonObjectLine
 	public $duration_effective; // total of time spent on this task
 	public $planned_workload;
 	public $date_c;
-	public $date_start;
-	public $date_end;
 	public $progress;
+
+	/**
+	 * @deprecated Use date_start instead
+	 */
+	public $dateo;
+
+	public $date_start;
 
 	/**
 	 * @deprecated Use date_end instead
 	 */
 	public $datee;
 
+	public $date_end;
+
+	/**
+	 * @var int ID
+	 * @deprecated use status instead
+	 */
+	public $fk_statut;
+
 	/**
 	 * @var int ID
 	 */
-	public $fk_statut;
+	public $status;
 
 	public $priority;
 
@@ -149,7 +162,7 @@ class Task extends CommonObjectLine
 	public $tobill;
 	public $billed;
 
-	// Properties to store project informations
+	// Properties to store project information
 	public $projectref;
 	public $projectstatus;
 	public $projectlabel;
@@ -182,6 +195,30 @@ class Task extends CommonObjectLine
 	 */
 	public $project_budget_amount;
 
+	/**
+	 * Draft status
+	 */
+	const STATUS_DRAFT = 0;
+
+	/**
+	 * Validated status (To do). Note: We also have the field progress to know the progression from 0 to 100%.
+	 */
+	const STATUS_VALIDATED = 1;
+
+	/**
+	 * Finished status
+	 */
+	const STATUS_CLOSED = 3;
+
+	/**
+	 * Transferred status
+	 */
+	const STATUS_TRANSFERRED = 4;
+
+	/**
+	 * status canceled
+	 */
+	const STATUS_CANCELED = 9;
 
 
 	/**
@@ -200,7 +237,7 @@ class Task extends CommonObjectLine
 	 *
 	 *  @param	User	$user        	User that create
 	 *  @param 	int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int 		        	<0 if KO, Id of created object if OK
+	 *  @return int 		        	Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -219,9 +256,6 @@ class Task extends CommonObjectLine
 			$this->errors[] = $langs->trans('StartDateCannotBeAfterEndDate');
 			return -1;
 		}
-
-		// Check parameters
-		// Put here code to add control on parameters values
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task (";
@@ -259,7 +293,8 @@ class Task extends CommonObjectLine
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -304,14 +339,12 @@ class Task extends CommonObjectLine
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id					Id object
-	 *  @param	int		$ref				ref object
+	 *  @param	string	$ref				ref object
 	 *  @param	int		$loadparentdata		Also load parent data
-	 *  @return int 		        		<0 if KO, 0 if not found, >0 if OK
+	 *  @return int 		        		Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = '', $loadparentdata = 0)
 	{
-		global $langs, $conf;
-
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.ref,";
@@ -323,11 +356,11 @@ class Task extends CommonObjectLine
 		$sql .= " t.duration_effective,";
 		$sql .= " t.planned_workload,";
 		$sql .= " t.datec,";
-		$sql .= " t.dateo,";
-		$sql .= " t.datee,";
+		$sql .= " t.dateo as date_start,";
+		$sql .= " t.datee as date_end,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_valid,";
-		$sql .= " t.fk_statut,";
+		$sql .= " t.fk_statut as status,";
 		$sql .= " t.progress,";
 		$sql .= " t.budget_amount,";
 		$sql .= " t.priority,";
@@ -368,11 +401,12 @@ class Task extends CommonObjectLine
 				$this->duration_effective = $obj->duration_effective;
 				$this->planned_workload = $obj->planned_workload;
 				$this->date_c = $this->db->jdate($obj->datec);
-				$this->date_start = $this->db->jdate($obj->dateo);
-				$this->date_end				= $this->db->jdate($obj->datee);
+				$this->date_start = $this->db->jdate($obj->date_start);
+				$this->date_end				= $this->db->jdate($obj->date_end);
 				$this->fk_user_creat		= $obj->fk_user_creat;
 				$this->fk_user_valid		= $obj->fk_user_valid;
-				$this->fk_statut			= $obj->fk_statut;
+				$this->fk_statut		    = $obj->status;
+				$this->status			    = $obj->status;
 				$this->progress				= $obj->progress;
 				$this->budget_amount		= $obj->budget_amount;
 				$this->priority				= $obj->priority;
@@ -408,7 +442,7 @@ class Task extends CommonObjectLine
 	 *
 	 *  @param	User	$user        	User that modify
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int			         	<=0 if KO, >0 if OK
+	 *  @return int			         	Return integer <=0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -470,7 +504,8 @@ class Task extends CommonObjectLine
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Update extrafield
@@ -492,7 +527,7 @@ class Task extends CommonObjectLine
 						function ($allTasksCompleted, $task) {
 							return $allTasksCompleted && $task->progress >= 100;
 						},
-					1
+						1
 					);
 					if ($projectCompleted) {
 						if ($project->setClose($user) <= 0) {
@@ -559,12 +594,11 @@ class Task extends CommonObjectLine
 	 *
 	 *	@param	User	$user        	User that delete
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-
-		global $conf, $langs;
+		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error = 0;
@@ -603,7 +637,8 @@ class Task extends CommonObjectLine
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -613,7 +648,8 @@ class Task extends CommonObjectLine
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -623,7 +659,8 @@ class Task extends CommonObjectLine
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -674,7 +711,7 @@ class Task extends CommonObjectLine
 	/**
 	 *	Return nb of children
 	 *
-	 *	@return	int		<0 if KO, 0 if no children, >0 if OK
+	 *	@return	int		Return integer <0 if KO, 0 if no children, >0 if OK
 	 */
 	public function hasChildren()
 	{
@@ -688,7 +725,8 @@ class Task extends CommonObjectLine
 		dol_syslog(get_class($this)."::hasChildren", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		} else {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) {
@@ -707,7 +745,7 @@ class Task extends CommonObjectLine
 	/**
 	 *	Return nb of time spent
 	 *
-	 *	@return	int		<0 if KO, 0 if no children, >0 if OK
+	 *	@return	int		Return integer <0 if KO, 0 if no children, >0 if OK
 	 */
 	public function hasTimeSpent()
 	{
@@ -722,7 +760,8 @@ class Task extends CommonObjectLine
 		dol_syslog(get_class($this)."::hasTimeSpent", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		} else {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) {
@@ -818,7 +857,7 @@ class Task extends CommonObjectLine
 				$label = $langs->trans("ShowTask");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.' nowraponall"';
 		} else {
 			$linkclose .= ' class="nowraponall"';
@@ -871,7 +910,7 @@ class Task extends CommonObjectLine
 		$this->duration_effective = '';
 		$this->fk_user_creat = null;
 		$this->progress = '25';
-		$this->fk_statut = null;
+		$this->status = null;
 		$this->note = 'This is a specimen task not';
 	}
 
@@ -1106,7 +1145,8 @@ class Task extends CommonObjectLine
 					}
 
 					$tasks[$i]->progress		= $obj->progress;
-					$tasks[$i]->fk_statut = $obj->status;
+					$tasks[$i]->fk_statut		= $obj->status;
+					$tasks[$i]->status 		    = $obj->status;
 					$tasks[$i]->public = $obj->public;
 					$tasks[$i]->date_start = $this->db->jdate($obj->date_start);
 					$tasks[$i]->date_end		= $this->db->jdate($obj->date_end);
@@ -1131,8 +1171,6 @@ class Task extends CommonObjectLine
 					if ($loadextras) {
 						$tasks[$i]->fetch_optionals();
 					}
-
-					$tasks[$i]->obj = $obj; // Needed for tpl/extrafields_list_print
 				}
 
 				$i++;
@@ -1171,10 +1209,16 @@ class Task extends CommonObjectLine
 			return -1;
 		}
 
-		/* Liste des taches et role sur les projets ou taches */
-		$sql = "SELECT pt.rowid as pid, ec.element_id, ctc.code, ctc.source";
+		/* Liste des taches et role sur les projects ou taches */
+		$sql = "SELECT ";
 		if ($userp) {
-			$sql .= " FROM ".MAIN_DB_PREFIX."projet as pt";
+			$sql .= " p.rowid as pid,";
+		} else {
+			$sql .= " pt.rowid as pid,";
+		}
+		$sql .= " ec.element_id, ctc.code, ctc.source";
+		if ($userp) {
+			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		}
 		if ($usert && $filteronprojstatus > -1) {
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p, ".MAIN_DB_PREFIX."projet_task as pt";
@@ -1184,9 +1228,13 @@ class Task extends CommonObjectLine
 		}
 		$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 		$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
-		$sql .= " WHERE pt.rowid = ec.element_id";
+		if ($userp) {
+			$sql .= " WHERE p.rowid = ec.element_id";
+		} else {
+			$sql .= " WHERE pt.rowid = ec.element_id";
+		}
 		if ($userp && $filteronprojstatus > -1) {
-			$sql .= " AND pt.fk_statut = ".((int) $filteronprojstatus);
+			$sql .= " AND p.fk_statut = ".((int) $filteronprojstatus);
 		}
 		if ($usert && $filteronprojstatus > -1) {
 			$sql .= " AND pt.fk_projet = p.rowid AND p.fk_statut = ".((int) $filteronprojstatus);
@@ -1208,7 +1256,7 @@ class Task extends CommonObjectLine
 		$sql .= " AND ctc.source = 'internal'";
 		if ($projectid) {
 			if ($userp) {
-				$sql .= " AND pt.rowid IN (".$this->db->sanitize($projectid).")";
+				$sql .= " AND p.rowid IN (".$this->db->sanitize($projectid).")";
 			}
 			if ($usert) {
 				$sql .= " AND pt.fk_projet IN (".$this->db->sanitize($projectid).")";
@@ -1277,7 +1325,7 @@ class Task extends CommonObjectLine
 	 *
 	 *  @param	User	$user           User object
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return	int                     <=0 if KO, >0 if OK
+	 *  @return	int                     Return integer <=0 if KO, >0 if OK
 	 */
 	public function addTimeSpent($user, $notrigger = 0)
 	{
@@ -1290,7 +1338,7 @@ class Task extends CommonObjectLine
 
 		// Check parameters
 		if (!is_object($user)) {
-			dol_print_error('', "Method addTimeSpent was called with wrong parameter user");
+			dol_print_error(null, "Method addTimeSpent was called with wrong parameter user");
 			return -1;
 		}
 
@@ -1307,7 +1355,7 @@ class Task extends CommonObjectLine
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
 			if ($this->timespent_date < $restrictBefore) {
-				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS);
+				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'));
 				$this->errors[] = $this->error;
 				return -1;
 			}
@@ -1389,12 +1437,10 @@ class Task extends CommonObjectLine
 	 *  Fetch records of time spent of this task
 	 *
 	 *  @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
-	 *  @return int							<0 if KO, array of time spent if OK
+	 *  @return int							Return integer <0 if KO, array of time spent if OK
 	 */
 	public function fetchTimeSpentOnTask($morewherefilter = '')
 	{
-		global $langs;
-
 		$arrayres = array();
 
 		$sql = "SELECT";
@@ -1597,12 +1643,10 @@ class Task extends CommonObjectLine
 	 *  Load properties of timespent of a task from the time spent ID.
 	 *
 	 *  @param	int		$id 	Id in time spent table
-	 *  @return int		        <0 if KO, >0 if OK
+	 *  @return int		        Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchTimeSpent($id)
 	{
-		global $langs;
-
 		$timespent = new TimeSpent($this->db);
 		$timespent->fetch($id);
 
@@ -1631,7 +1675,7 @@ class Task extends CommonObjectLine
 	 *
 	 *  @param	User		$userobj			User object
 	 *  @param	string		$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
-	 *  @return array|int						<0 if KO, array of time spent if OK
+	 *  @return array|int						Return integer <0 if KO, array of time spent if OK
 	 */
 	public function fetchAllTimeSpent(User $userobj, $morewherefilter = '')
 	{
@@ -1720,7 +1764,7 @@ class Task extends CommonObjectLine
 	 *
 	 *  @param	User	$user           User id
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return	int						<0 if KO, >0 if OK
+	 *  @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function updateTimeSpent($user, $notrigger = 0)
 	{
@@ -1751,7 +1795,7 @@ class Task extends CommonObjectLine
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
 			if ($this->timespent_date < $restrictBefore) {
-				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS);
+				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'));
 				$this->errors[] = $this->error;
 				return -1;
 			}
@@ -1810,7 +1854,7 @@ class Task extends CommonObjectLine
 				}
 			}
 
-			// Update hourly rate of this time spent entry, but only if it was not set initialy
+			// Update hourly rate of this time spent entry, but only if it was not set initially
 			$res_update = 1;
 			if (empty($timespent->thm) || getDolGlobalString('TIMESPENT_ALWAYS_UPDATE_THM')) {
 				$resql_thm_user = $this->db->query("SELECT thm FROM " . MAIN_DB_PREFIX . "user WHERE rowid = " . ((int) $timespent->fk_user));
@@ -1839,7 +1883,7 @@ class Task extends CommonObjectLine
 	 *
 	 *  @param	User	$user        	User that delete
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return	int						<0 if KO, >0 if OK
+	 *  @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delTimeSpent($user, $notrigger = 0)
 	{
@@ -1852,7 +1896,7 @@ class Task extends CommonObjectLine
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
 			if ($this->timespent_date < $restrictBefore) {
-				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS);
+				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'));
 				$this->errors[] = $this->error;
 				return -1;
 			}
@@ -1876,7 +1920,8 @@ class Task extends CommonObjectLine
 			$res_del = $timespent->delete($user);
 
 			if ($res_del < 0) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -1951,7 +1996,7 @@ class Task extends CommonObjectLine
 		$obj = !getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
 		if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
 			require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
-			$modTask = new $obj;
+			$modTask = new $obj();
 			$defaultref = $modTask->getNextValue(0, $clone_task);
 		}
 
@@ -1970,22 +2015,22 @@ class Task extends CommonObjectLine
 			$projectstatic = new Project($this->db);
 			$projectstatic->fetch($ori_project_id);
 
-			//Origin project strat date
+			//Origin project start date
 			$orign_project_dt_start = $projectstatic->date_start;
 
-			//Calcultate new task start date with difference between origin proj start date and origin task start date
+			//Calculate new task start date with difference between origin proj start date and origin task start date
 			if (!empty($clone_task->date_start)) {
 				$clone_task->date_start = $now + $clone_task->date_start - $orign_project_dt_start;
 			}
 
-			//Calcultate new task end date with difference between origin proj end date and origin task end date
+			//Calculate new task end date with difference between origin proj end date and origin task end date
 			if (!empty($clone_task->date_end)) {
 				$clone_task->date_end = $now + $clone_task->date_end - $orign_project_dt_start;
 			}
 		}
 
 		if (!$clone_prog) {
-				$clone_task->progress = 0;
+			$clone_task->progress = 0;
 		}
 
 		// Create clone
@@ -2116,7 +2161,7 @@ class Task extends CommonObjectLine
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->fk_statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2217,8 +2262,8 @@ class Task extends CommonObjectLine
 	/**
 	 *  Create an intervention document on disk using template defined into PROJECT_TASK_ADDON_PDF
 	 *
-	 *  @param	string		$modele			force le modele a utiliser ('' par defaut)
-	 *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param	string		$modele			force le modele a utiliser ('' par default)
+	 *  @param	Translate	$outputlangs	object lang a utiliser pour traduction
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
 	 *  @param  int			$hideref        Hide ref
@@ -2236,7 +2281,7 @@ class Task extends CommonObjectLine
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('PROJECT_TASK_ADDON_PDF')) {
-				$modele = $conf->global->PROJECT_TASK_ADDON_PDF;
+				$modele = getDolGlobalString('PROJECT_TASK_ADDON_PDF');
 			}
 		}
 
@@ -2250,15 +2295,15 @@ class Task extends CommonObjectLine
 	/**
 	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 * @param	User	$user   Objet user
-	 * @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+	 * @param	User	$user   Object user
+	 * @return WorkboardResponse|int Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user)
 	{
 		// phpcs:enable
 		global $conf, $langs;
 
-		// For external user, no check is done on company because readability is managed by public status of project and assignement.
+		// For external user, no check is done on company because readability is managed by public status of project and assignment.
 		//$socid = $user->socid;
 		$socid = 0;
 
@@ -2268,7 +2313,7 @@ class Task extends CommonObjectLine
 		// List of tasks (does not care about permissions. Filtering will be done later)
 		$sql = "SELECT p.rowid as projectid, p.fk_statut as projectstatus,";
 		$sql .= " t.rowid as taskid, t.progress as progress, t.fk_statut as status,";
-		$sql .= " t.dateo as date_start, t.datee as datee";
+		$sql .= " t.dateo as date_start, t.datee as date_end";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 		//if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
@@ -2307,7 +2352,9 @@ class Task extends CommonObjectLine
 				$task_static->projectstatus = $obj->projectstatus;
 				$task_static->progress = $obj->progress;
 				$task_static->fk_statut = $obj->status;
-				$task_static->date_end = $this->db->jdate($obj->datee);
+				$task_static->status = $obj->status;
+				$task_static->date_start = $this->db->jdate($obj->date_start);
+				$task_static->date_end = $this->db->jdate($obj->date_end);
 
 				if ($task_static->hasDelay()) {
 					$response->nbtodolate++;
@@ -2322,18 +2369,17 @@ class Task extends CommonObjectLine
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Charge indicateurs this->nb de tableau de bord
+	 *      Load indicators this->nb for state board
 	 *
-	 *      @return     int         <0 if ko, >0 if ok
+	 *      @return     int         Return integer <0 if ko, >0 if ok
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $user;
 
-		$mine = 0; $socid = $user->socid;
+		$mine = 0;
+		$socid = $user->socid;
 
 		$projectstatic = new Project($this->db);
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $mine, 1, $socid);
@@ -2342,7 +2388,7 @@ class Task extends CommonObjectLine
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 		}
 		$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
@@ -2356,7 +2402,7 @@ class Task extends CommonObjectLine
 		if ($socid) {
 			$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 		}
-		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id).") OR (s.rowid IS NULL))";
 		}
 

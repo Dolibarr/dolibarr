@@ -30,9 +30,9 @@
  *  @param	string      $objectname		Name of object
  * 	@param	string		$newmask		New mask
  *  @param	string      $readdir		Directory source (use $destdir when not defined)
- *  @param	string		$addfieldentry	Array of 1 field entry to add array('key'=>,'type'=>,''label'=>,'visible'=>,'enabled'=>,'position'=>,'notnull'=>','index'=>,'searchall'=>,'comment'=>,'help'=>,'isameasure')
+ *  @param	array		$addfieldentry	Array of 1 field entry to add array('key'=>,'type'=>,''label'=>,'visible'=>,'enabled'=>,'position'=>,'notnull'=>','index'=>,'searchall'=>,'comment'=>,'help'=>,'isameasure')
  *  @param	string		$delfieldentry	Id of field to remove
- * 	@return	int|object					<=0 if KO, Object if OK
+ * 	@return	int|object					Return integer <=0 if KO, Object if OK
  *  @see rebuildObjectSql()
  */
 function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir = '', $addfieldentry = array(), $delfieldentry = '')
@@ -47,7 +47,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 	}
 
 	if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
-		dol_print_error('', 'Bad parameter addfieldentry with a property arrayofkeyval defined but that is not an array.');
+		dol_print_error(null, 'Bad parameter addfieldentry with a property arrayofkeyval defined but that is not an array.');
 		return -7;
 	}
 
@@ -129,7 +129,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 				}
 				$texttoinsert .= ' "enabled"=>"'.($val['enabled'] !== '' ? dol_escape_php($val['enabled']) : 1).'",';
 				$texttoinsert .= " 'position'=>".($val['position'] !== '' ? (int) $val['position'] : 50).",";
-				$texttoinsert .= " 'notnull'=>".(empty($val['notnull']) ? 0 :(int) $val['notnull']).",";
+				$texttoinsert .= " 'notnull'=>".(empty($val['notnull']) ? 0 : (int) $val['notnull']).",";
 				$texttoinsert .= ' "visible"=>"'.($val['visible'] !== '' ? dol_escape_js($val['visible']) : -1).'",';
 				if (!empty($val['noteditable'])) {
 					$texttoinsert .= ' "noteditable"=>"'.dol_escape_php($val['noteditable']).'",';
@@ -250,7 +250,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
  *  @param	string      $readdir		Directory source (use $destdir when not defined)
  *  @param	Object		$object			If object was already loaded/known, it is pass to avoid another include and new.
  *  @param	string		$moduletype		'external' or 'internal'
- * 	@return	int							<=0 if KO, >0 if OK
+ * 	@return	int							Return integer <=0 if KO, >0 if OK
  *  @see rebuildObjectClass()
  */
 function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '', $object = null, $moduletype = 'external')
@@ -429,7 +429,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
  * Get list of existing objects from directory
  *
  * @param	string      $destdir		Directory
- * @return 	array|int                    <=0 if KO, array if OK
+ * @return 	array|int                    Return integer <=0 if KO, array if OK
  */
 function dolGetListOfObjectClasses($destdir)
 {
@@ -464,7 +464,6 @@ function dolGetListOfObjectClasses($destdir)
  */
 function checkExistComment($file, $number)
 {
-
 	if (!file_exists($file)) {
 		return -1;
 	}
@@ -535,7 +534,7 @@ function compareFirstValue($a, $b)
  * @param array|null  $right           $right to update or add
  * @param string|null $objectname      name of object
  * @param string|null $module          name of module
- * @param int         $action          0 for delete, 1 for add, 2 for update, -1 when delete object completly, -2 for generate rights after add
+ * @param int         $action          0 for delete, 1 for add, 2 for update, -1 when delete object completely, -2 for generate rights after add
  * @return int                         1 if OK,-1 if KO
  */
 function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $module, $action)
@@ -598,8 +597,8 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 			$permissions[$i][4] = "\$this->rights[\$r][4] = '".$permissions[$i][4]."'";
 			$permissions[$i][5] = "\$this->rights[\$r][5] = '".$permissions[$i][5]."';\n\t\t";
 		}
-			// for group permissions by object
-			$perms_grouped = array();
+		// for group permissions by object
+		$perms_grouped = array();
 		foreach ($permissions as $perms) {
 			$object = $perms[4];
 			if (!isset($perms_grouped[$object])) {
@@ -611,7 +610,7 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 		$permissions = $perms_grouped;
 
 
-		// parcourir les objets
+		// parcourir les objects
 		$o=0;
 		foreach ($permissions as &$object) {
 			// récupérer la permission de l'objet
@@ -640,9 +639,9 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 			}
 		}
 		$rights_str = implode("", $rights);
-		// delete all permission from file
+		// delete all permissions from file
 		deletePerms($file);
-		// rewrite all permission again
+		// rewrite all permissions again
 		dolReplaceInFile($file, array('/* BEGIN MODULEBUILDER PERMISSIONS */' => '/* BEGIN MODULEBUILDER PERMISSIONS */'."\n\t\t".$rights_str));
 		return 1;
 	} else {
@@ -658,7 +657,6 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
  */
 function parsePropertyString($string)
 {
-
 	$string = str_replace("'", '', $string);
 
 	// Uses a regular expression to capture keys and values
@@ -707,7 +705,7 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 {
 
 	// stock all properties in array
-	$attributesUnique = array ('type','label', 'enabled', 'position', 'notnull', 'visible', 'noteditable', 'index', 'default' , 'foreignkey', 'arrayofkeyval', 'alwayseditable','validate', 'searchall','comment', 'isameasure', 'css', 'cssview','csslist', 'help', 'showoncombobox','picto' );
+	$attributesUnique = array('type','label', 'enabled', 'position', 'notnull', 'visible', 'noteditable', 'index', 'default' , 'foreignkey', 'arrayofkeyval', 'alwayseditable','validate', 'searchall','comment', 'isameasure', 'css', 'cssview','csslist', 'help', 'showoncombobox','picto' );
 
 	$start = "public \$fields=array(";
 	$end = ");";
@@ -861,7 +859,7 @@ function getFromFile($file, $start, $end)
 function writePermsInAsciiDoc($file, $destfile)
 {
 	global $langs;
-	//search and get all permssion in stirng
+	//search and get all permissions in string
 	$start = '/* BEGIN MODULEBUILDER PERMISSIONS */';
 	$end = '/* END MODULEBUILDER PERMISSIONS */';
 	$content = getFromFile($file, $start, $end);
@@ -953,7 +951,7 @@ function addObjectsToApiFile($file, $objects, $modulename)
 	$varcomented = "@var MyObject \$myobject {@type MyObject}";
 	$constructObj = "\$this->myobject = new MyObject(\$this->db);";
 
-	// add properties and declare them in consturctor
+	// add properties and declare them in constructor
 	foreach ($content as $lineNumber => &$lineContent) {
 		if (strpos($lineContent, $varcomented) !== false) {
 			$lineContent = '';
@@ -997,7 +995,7 @@ function addObjectsToApiFile($file, $objects, $modulename)
 /**
  * Remove Object variables and methods from API_Module File
  * @param string   $file         file api module
- * @param string   $objectname   name of object whant to remove
+ * @param string   $objectname   name of object want to remove
  * @param string   $modulename   name of module
  * @return int                    1 if OK, -1 if KO
  */
@@ -1057,10 +1055,10 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 		return -1;
 	}
 	if ($action == 0 && !empty($key)) {
-		// delete menu manuelly
+		// delete menu manually
 		array_splice($menus, array_search($menus[$key], $menus), 1);
 	} elseif ($action == 1) {
-		// add menu manualy
+		// add menu manually
 		array_push($menus, $menuWantTo);
 	} elseif ($action == 2 && !empty($key) && !empty($menuWantTo)) {
 		// update right from permissions array
@@ -1136,7 +1134,8 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 
 		dolReplaceInFile($file, array($beginMenu => $beginMenu."\n".$str_menu."\n"));
 		return 1;
-	}return -1;
+	}
+	return -1;
 }
 
 /**
@@ -1149,7 +1148,6 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
  */
 function updateDictionaryInFile($module, $file, $dicts)
 {
-
 	$isEmpty = false;
 	$dicData = "\t\t\$this->dictionaries=array(\n";
 	$module = strtolower($module);
@@ -1169,7 +1167,7 @@ function updateDictionaryInFile($module, $file, $dicts)
 			$dicData .= "array(" . implode(",", $conditions) . ")";
 		} elseif ($key === 'tabhelp') {
 			$helpItems = array();
-			foreach ($value as $key => $helpValue) {
+			foreach ($value as $helpValue) {
 				$helpItems[] = "array('code'=>\$langs->trans('".$helpValue['code']."'), 'field2' => 'field2tooltip')";
 			}
 			$dicData .= "array(" . implode(",", $helpItems) . ")";
@@ -1202,7 +1200,7 @@ function updateDictionaryInFile($module, $file, $dicts)
  * @param string $file The file path to the Dolibarr module builder file where the dictionaries are defined.
  * @param string $namedic The name of the dictionary, which will also be used as the base for the table name.
  * @param array|null $dictionnaires An optional array containing pre-existing dictionary data, including 'tabname', 'tablib', 'tabsql', etc.
- * @return void
+ * @return int|void Return int < 0 if error, return nothing on success
  */
 function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = null)
 {
@@ -1257,7 +1255,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 		}
 	}
 
-	// rewrite dictionnary if
+	// rewrite dictionary if
 	$dictionnaires['langs'] = $modulename.'@'.$modulename;
 	$dictionnaires['tabname'][] = strtolower($namedic);
 	$dictionnaires['tablib'][] = ucfirst(substr($namedic, 2));
@@ -1271,14 +1269,14 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	$dictionnaires['tabhelp'][] = (array_key_exists('code', $columns) ? array('code'=>$langs->trans('CodeTooltipHelp'), 'field2' => 'field2tooltip') : '');
 
 	// Build the dictionary string
-		$writeInfile = updateDictionaryInFile($modulename, $file, $dictionnaires);
+	$writeInfile = updateDictionaryInFile($modulename, $file, $dictionnaires);
 	if ($writeInfile > 0) {
 		setEventMessages($langs->trans("DictionariesCreated", ucfirst(substr($namedic, 2))), null);
 	}
 }
 
 /**
- * Generate Urls and add them to documentaion module
+ * Generate Urls and add them to documentation module
  *
  * @param string $file_api   filename or path of api
  * @param string $file_doc   filename or path of documentation
@@ -1317,9 +1315,9 @@ function writeApiUrlsInDoc($file_api, $file_doc)
 		$error++;
 	}
 
-	// buil format asciidoc for urls in table
+	// build format asciidoc for urls in table
 	if (!$error) {
-		$asciiDocTable = "[options=\"header\"]\n|===\n|Objet | URLs\n";
+		$asciiDocTable = "[options=\"header\"]\n|===\n|Object | URLs\n";  // phpcs:ignore
 		foreach ($groupedUrls as $objectName => $urls) {
 			$urlsList = implode(" +\n*", $urls);
 			$asciiDocTable .= "|$objectName | \n*$urlsList +\n";

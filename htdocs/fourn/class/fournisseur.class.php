@@ -53,10 +53,12 @@ class Fournisseur extends Societe
 	/**
 	 * Return nb of orders
 	 *
-	 * @return 	int		Nb of orders
+	 * @return 	int		Nb of orders for current supplier
 	 */
 	public function getNbOfOrders()
 	{
+		$num = 0;
+
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 		$sql .= " WHERE cf.fk_soc = ".((int) $this->id);
@@ -64,18 +66,13 @@ class Fournisseur extends Societe
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
-
-			if ($num == 1) {
-				$row = $this->db->fetch_row($resql);
-
-				$this->single_open_commande = $row[0];
-			}
 		}
+
 		return $num;
 	}
 
 	/**
-	 * Returns number of ref prices (not number of products).
+	 * Returns number of ref prices (not number of products) for current supplier
 	 *
 	 * @return	int		Nb of ref prices, or <0 if error
 	 */
@@ -97,15 +94,13 @@ class Fournisseur extends Societe
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load statistics indicators
 	 *
-	 * @return     int         <0 if KO, >0 if OK
+	 * @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $conf, $user, $hookmanager;
 
 		$this->nb = array();
@@ -147,7 +142,7 @@ class Fournisseur extends Societe
 	 *
 	 *  @param      User	$user       User asking creation
 	 *	@param		string	$name		Category name
-	 *  @return     int         		<0 if KO, 0 if OK
+	 *  @return     int         		Return integer <0 if KO, 0 if OK
 	 */
 	public function CreateCategory($user, $name)
 	{

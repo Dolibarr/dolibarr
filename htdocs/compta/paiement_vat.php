@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "bills"));
 
-$chid = GETPOST("id", 'int');
+$chid = GETPOSTINT("id");
 $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel');
 
@@ -240,7 +240,7 @@ if ($action == 'create') {
 	$num = 1;
 	$i = 0;
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	//print '<td>'.$langs->trans("SocialContribution").'</td>';
@@ -273,7 +273,7 @@ if ($action == 'create') {
 
 		print '<td class="center">';
 
-		if ($sumpaid <> $objp->amount) {
+		if ($sumpaid != $objp->amount) {
 			$namef = "amount_".$objp->id;
 			$nameRemain = "remain_".$objp->id;
 			/* Disabled, we autofil the amount with remain to pay by default

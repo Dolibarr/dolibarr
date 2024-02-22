@@ -76,7 +76,7 @@ if ($object->id > 0) {
 	$upload_dir = $conf->supplier_proposal->dir_output.'/'.dol_sanitizeFileName($object->ref);
 }
 
-$permissiontoadd = $user->rights->supplier_proposal->creer;
+$permissiontoadd = $user->hasRight('supplier_proposal', 'creer');
 $usercancreate = $permissiontoadd;
 
 /*
@@ -105,7 +105,7 @@ if ($object->id > 0) {
 	print dol_get_fiche_head($head, 'document', $langs->trans('CommRequest'), -1, 'supplier_proposal');
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
@@ -164,8 +164,8 @@ if ($object->id > 0) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'supplier_proposal';
-	$permissiontoadd = $user->rights->supplier_proposal->creer;
-	$permtoedit = $user->rights->supplier_proposal->creer;
+	$permissiontoadd = $user->hasRight('supplier_proposal', 'creer');
+	$permtoedit = $user->hasRight('supplier_proposal', 'creer');
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

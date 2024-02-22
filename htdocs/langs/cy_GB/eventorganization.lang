@@ -34,7 +34,6 @@ PaymentEvent=Talu digwyddiad
 NewRegistration=Cofrestru
 EventOrganizationSetup=Gosodiad Trefniadaeth Digwyddiad
 EventOrganization=Trefniadaeth digwyddiad
-Settings=Gosodiadau
 EventOrganizationSetupPage = Tudalen gosod Trefniadaeth Digwyddiad
 EVENTORGANIZATION_TASK_LABEL = Label o dasgau i'w creu'n awtomatig pan fydd y prosiect yn cael ei ddilysu
 EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
@@ -90,7 +89,7 @@ PriceOfRegistrationHelp=Pris i'w dalu i gofrestru neu gymryd rhan yn y digwyddia
 PriceOfBooth=Pris tanysgrifiad i sefyll bwth
 PriceOfBoothHelp=Pris tanysgrifiad i sefyll bwth
 EventOrganizationICSLink=Cyswllt ICS ar gyfer cynadleddau
-ConferenceOrBoothInformation=Gwybodaeth Cynhadledd Neu Booth
+ConferenceOrBoothInformation=Conference Or Booth information
 Attendees=Mynychwyr
 ListOfAttendeesOfEvent=Rhestr o fynychwyr prosiect y digwyddiad
 DownloadICSLink = Lawrlwythwch y ddolen ICS
@@ -98,6 +97,7 @@ EVENTORGANIZATION_SECUREKEY = Hedyn i sicrhau'r allwedd ar gyfer y dudalen cofre
 SERVICE_BOOTH_LOCATION = Gwasanaeth a ddefnyddir ar gyfer y rhes anfoneb am leoliad bwth
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Gwasanaeth a ddefnyddir ar gyfer y rhes anfonebau ynghylch tanysgrifiad mynychwr i ddigwyddiad
 NbVotes=Nifer y pleidleisiau
+
 #
 # Status
 #
@@ -106,9 +106,10 @@ EvntOrgSuggested = Awgrymir
 EvntOrgConfirmed = Cadarnhawyd
 EvntOrgNotQualified = Ddim yn Gymwys
 EvntOrgDone = Wedi'i wneud
-EvntOrgCancelled = Wedi'i ganslo
+EvntOrgCancelled = Canceled
+
 #
-# Public page
+# Other
 #
 SuggestForm = Tudalen awgrymiadau
 SuggestOrVoteForConfOrBooth = Tudalen ar gyfer awgrym neu bleidlais
@@ -144,13 +145,8 @@ OrganizationEventBulkMailToAttendees=Mae hwn yn atgoffa am eich cyfranogiad yn y
 OrganizationEventBulkMailToSpeakers=Dyma nodyn i'ch atgoffa o'ch cyfranogiad yn y digwyddiad fel siaradwr
 OrganizationEventLinkToThirdParty=Cyswllt i drydydd parti (cwsmer, cyflenwr neu bartner)
 OrganizationEvenLabelName=Public name of the conference or booth
-
 NewSuggestionOfBooth=Cais am fwth
 NewSuggestionOfConference=Application to hold a conference
-
-#
-# Vote page
-#
 EvntOrgRegistrationWelcomeMessage = Croeso i dudalen awgrymiadau'r gynhadledd neu'r bwth.
 EvntOrgRegistrationConfWelcomeMessage = Croeso i dudalen awgrymiadau'r gynhadledd.
 EvntOrgRegistrationBoothWelcomeMessage = Croeso i dudalen awgrymiadau'r bwth.
@@ -158,8 +154,8 @@ EvntOrgVoteHelpMessage = Yma, gallwch weld a phleidleisio ar gyfer y digwyddiada
 VoteOk = Mae eich pleidlais wedi ei derbyn.
 AlreadyVoted = Rydych chi eisoes wedi pleidleisio dros y digwyddiad hwn.
 VoteError = Mae gwall wedi digwydd yn ystod y bleidlais, ceisiwch eto.
-
 SubscriptionOk=Your registration has been recorded
+AmountOfRegistrationPaid=Amount of registration paid
 ConfAttendeeSubscriptionConfirmation = Cadarnhad o'ch tanysgrifiad i ddigwyddiad
 Attendee = Mynychwr
 PaymentConferenceAttendee = Taliad mynychwyr y gynhadledd
@@ -169,9 +165,15 @@ RegistrationAndPaymentWereAlreadyRecorder=Roedd cofrestriad a thaliad eisoes wed
 EmailAttendee=E-bost mynychwr
 EmailCompany=Company email
 EmailCompanyForInvoice=E-bost cwmni (ar gyfer anfoneb, os yw'n wahanol i e-bost mynychwr)
-ErrorSeveralCompaniesWithEmailContactUs=Mae sawl cwmni sydd â'r e-bost hwn wedi'u canfod felly ni allwn ddilysu eich cofrestriad yn awtomatig. Cysylltwch â ni yn %s i gael dilysiad â llaw
-ErrorSeveralCompaniesWithNameContactUs=Mae sawl cwmni gyda'r enw hwn wedi'u canfod felly ni allwn ddilysu eich cofrestriad yn awtomatig. Cysylltwch â ni yn %s i gael dilysiad â llaw
+ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
 NoPublicActionsAllowedForThisEvent=Nid oes unrhyw gamau gweithredu cyhoeddus yn agored i'r cyhoedd ar gyfer y digwyddiad hwn
 MaxNbOfAttendees=Max number of attendees
 DateStartEvent=Event start date
 DateEndEvent=Event end date
+ModifyStatus=Modify status
+ConfirmModifyStatus=Confirm status modification
+ConfirmModifyStatusQuestion=Are you sure you want to modify the %s selected record(s)?
+RecordsUpdated = %s Records updated
+RecordUpdated = Record updated
+NoRecordUpdated = No Record updated

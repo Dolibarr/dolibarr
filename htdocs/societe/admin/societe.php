@@ -223,7 +223,7 @@ if ($action == "setvatinlist") {
 	}
 }
 
-//Activate Set adress in list
+//Activate Set address in list
 if ($action == "setaddadressinlist") {
 	$val = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "COMPANY_SHOW_ADDRESS_SELECTLIST", $val, 'yesno', 0, '', $conf->entity);
@@ -391,7 +391,8 @@ foreach ($dirsociete as $dirroot) {
 					dol_syslog($e->getMessage(), LOG_ERR);
 				}
 
-				$modCodeTiers = new $file;
+				/** @var ModeleThirdPartyCode $modCodeTiers */
+				$modCodeTiers = new $file($db);
 
 				// Show modules according to features level
 				if ($modCodeTiers->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -477,7 +478,7 @@ foreach ($dirsociete as $dirroot) {
 					dol_syslog($e->getMessage(), LOG_ERR);
 				}
 
-				$modCodeCompta = new $file;
+				$modCodeCompta = new $file();
 
 				$arrayofmodules[$file] = $modCodeCompta;
 			}
@@ -593,9 +594,9 @@ foreach ($dirsociete as $dirroot) {
 						print "<td class=\"center\">\n";
 						//if ($conf->global->COMPANY_ADDON_PDF != "$name")
 						//{
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&token='.newToken().'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
-							print img_picto($langs->trans("Enabled"), 'switch_on');
-							print '</a>';
+						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&token='.newToken().'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
+						print img_picto($langs->trans("Enabled"), 'switch_on');
+						print '</a>';
 						//}
 						//else
 						//{
@@ -605,7 +606,7 @@ foreach ($dirsociete as $dirroot) {
 					} else {
 						if (versioncompare($module->phpmin, versionphparray()) > 0) {
 							print '<td class="center">'."\n";
-							print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion", join('.', $module->phpmin))), 'switch_off');
+							print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion", implode('.', $module->phpmin))), 'switch_off');
 							print "</td>";
 						} else {
 							print '<td class="center">'."\n";
@@ -695,9 +696,9 @@ foreach ($profid as $key => $val) {
 		$idprof_mandatory = 'SOCIETE_'.$key.'_MANDATORY';
 		$idprof_invoice_mandatory = 'SOCIETE_'.$key.'_INVOICE_MANDATORY';
 
-		$verif = (empty($conf->global->$idprof_unique) ?false:true);
-		$mandatory = (empty($conf->global->$idprof_mandatory) ?false:true);
-		$invoice_mandatory = (empty($conf->global->$idprof_invoice_mandatory) ?false:true);
+		$verif = (empty($conf->global->$idprof_unique) ? false : true);
+		$mandatory = (empty($conf->global->$idprof_mandatory) ? false : true);
+		$invoice_mandatory = (empty($conf->global->$idprof_invoice_mandatory) ? false : true);
 
 		if ($verif) {
 			print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofid&token='.newToken().'&value='.$key.'&status=0">';

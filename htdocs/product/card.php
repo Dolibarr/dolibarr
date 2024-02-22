@@ -152,14 +152,14 @@ if ($id > 0 || !empty($ref)) {
 	if ($result < 0) {
 		dol_print_error($db, $object->error, $object->errors);
 	}
-	$entity = (!empty($object->entity) ? $object->entity : $conf->entity);
+	$entity = (empty($object->entity) ? $conf->entity : $object->entity);
 	if (isModEnabled("product")) {
 		$upload_dir = $conf->product->multidir_output[$entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
 	} elseif (isModEnabled("service")) {
 		$upload_dir = $conf->service->multidir_output[$entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
 	}
 
-	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {    // For backward compatiblity, we scan also old dirs
+	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {    // For backward compatibility, we scan also old dirs
 		if (isModEnabled("product")) {
 			$upload_dirold = $conf->product->multidir_output[$entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
 		} else {
@@ -493,9 +493,9 @@ if (empty($reshook)) {
 		}
 		if (empty($ref)) {
 			if (!getDolGlobalString('PRODUCT_GENERATE_REF_AFTER_FORM')) {
-					setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('ProductRef')), null, 'errors');
-					$action = "create";
-					$error++;
+				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('ProductRef')), null, 'errors');
+				$action = "create";
+				$error++;
 			}
 		}
 		if (!empty($duration_value) && empty($duration_unit)) {
@@ -529,8 +529,11 @@ if (empty($reshook)) {
 			$vatratecode = '';
 			$tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt); // keep remove all after the numbers and dot
 			$npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
-			$localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
-			// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+			$localtax1 = 0;
+			$localtax2 = 0;
+			$localtax1_type = '0';
+			$localtax2_type = '0';
+			// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes
 			$reg = array();
 			if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
 				// We look into database using code (we can't use get_localtax() because it depends on buyer that is not known). Same in update price.
@@ -565,6 +568,7 @@ if (empty($reshook)) {
 			$object->status             	 = GETPOST('statut');
 			$object->status_buy = GETPOST('statut_buy');
 			$object->status_batch = GETPOST('status_batch');
+			$object->sell_or_eat_by_mandatory = GETPOST('sell_or_eat_by_mandatory', 'int');
 			$object->batch_mask = GETPOST('batch_mask');
 
 			$object->barcode_type = GETPOST('fk_barcode_type');
@@ -572,7 +576,7 @@ if (empty($reshook)) {
 			// Set barcode_type_xxx from barcode_type id
 			$stdobject = new GenericObject($db);
 			$stdobject->element = 'product';
-			$stdobject->barcode_type = GETPOST('fk_barcode_type');
+			$stdobject->barcode_type = GETPOSTINT('fk_barcode_type');
 			$result = $stdobject->fetch_barcode();
 			if ($result < 0) {
 				$error++;
@@ -596,8 +600,8 @@ if (empty($reshook)) {
 			$object->duration_unit      	 = $duration_unit;
 			$object->fk_default_warehouse	 = GETPOST('fk_default_warehouse', 'int');
 			$object->fk_default_workstation	 = GETPOST('fk_default_workstation', 'int');
-			$object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte') ?GETPOST('seuil_stock_alerte') : 0;
-			$object->desiredstock          = GETPOST('desiredstock') ?GETPOST('desiredstock') : 0;
+			$object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte') ? GETPOST('seuil_stock_alerte') : 0;
+			$object->desiredstock          = GETPOST('desiredstock') ? GETPOST('desiredstock') : 0;
 			$object->canvas             	 = GETPOST('canvas');
 			$object->net_measure           = GETPOST('net_measure');
 			$object->net_measure_units     = GETPOST('net_measure_units'); // This is not the fk_unit but the power of unit
@@ -762,6 +766,7 @@ if (empty($reshook)) {
 				$object->status                 = GETPOST('statut', 'int');
 				$object->status_buy             = GETPOST('statut_buy', 'int');
 				$object->status_batch = GETPOST('status_batch', 'aZ09');
+				$object->sell_or_eat_by_mandatory = GETPOST('sell_or_eat_by_mandatory', 'int');
 				$object->batch_mask = GETPOST('batch_mask', 'alpha');
 				$object->fk_default_warehouse   = GETPOST('fk_default_warehouse', 'int');
 				$object->fk_default_workstation   = GETPOST('fk_default_workstation', 'int');
@@ -814,7 +819,7 @@ if (empty($reshook)) {
 				// Set barcode_type_xxx from barcode_type id
 				$stdobject = new GenericObject($db);
 				$stdobject->element = 'product';
-				$stdobject->barcode_type = GETPOST('fk_barcode_type');
+				$stdobject->barcode_type = GETPOSTINT('fk_barcode_type');
 				$result = $stdobject->fetch_barcode();
 				if ($result < 0) {
 					$error++;
@@ -1091,7 +1096,7 @@ if (empty($reshook)) {
 			$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
 
 			// On reevalue prix selon taux tva car taux tva transaction peut etre different
-			// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+			// de ceux du produit par default (par example si pays different entre vendeur et acheteur).
 			if ($tmpvat != $tmpprodvat) {
 				if ($price_base_type != 'HT') {
 					$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
@@ -1246,7 +1251,10 @@ $formcompany = new FormCompany($db);
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
-
+$sellOrEatByMandatoryList = null;
+if (isModEnabled('productbatch')) {
+	$sellOrEatByMandatoryList = Product::getSellOrEatByMandatoryList();
+}
 
 $title = $langs->trans('ProductServiceCard');
 
@@ -1283,7 +1291,7 @@ if (isModEnabled('barcode') && getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) 
 		}
 	}
 	if ($res > 0) {
-			$modBarCodeProduct = new $module();
+		$modBarCodeProduct = new $module();
 	}
 }
 
@@ -1450,6 +1458,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print '</td></tr>';
 					}
 				}
+
+				// SellBy / EatBy mandatory list
+				if (!empty($sellOrEatByMandatoryList)) {
+					print '<tr><td>'.$langs->trans('BatchSellOrEatByMandatoryList', $langs->trans('SellByDate'), $langs->trans('EatByDate')).'</td><td>';
+					print $form->selectarray('sell_or_eat_by_mandatory', $sellOrEatByMandatoryList, GETPOST('sell_or_eat_by_mandatory', 'int'));
+					print '</td></tr>';
+				}
 			}
 
 			$showbarcode = isModEnabled('barcode');
@@ -1460,7 +1475,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if ($showbarcode) {
 				print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
 				if (GETPOSTISSET('fk_barcode_type')) {
-					$fk_barcode_type = GETPOST('fk_barcode_type')?GETPOST('fk_barcode_type'):0;
+					$fk_barcode_type = GETPOST('fk_barcode_type') ? GETPOST('fk_barcode_type') : 0;
 				} else {
 					if (empty($fk_barcode_type) && getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE')) {
 						$fk_barcode_type = getDolGlobalInt("PRODUIT_DEFAULT_BARCODE_TYPE");
@@ -1528,11 +1543,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			if ($type == $object::TYPE_SERVICE && isModEnabled("workstation")) {
-					// Default workstation
-					print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
-					print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
-					print $formproduct->selectWorkstations($object->fk_default_workstation, 'fk_default_workstation', 1);
-					print '</td></tr>';
+				// Default workstation
+				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
+				print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
+				print $formproduct->selectWorkstations($object->fk_default_workstation, 'fk_default_workstation', 1);
+				print '</td></tr>';
 			}
 
 			// Duration
@@ -1568,7 +1583,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td>'.$langs->trans("Weight").'</td><td>';
 					print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
 					print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
-					print $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTISSET('weight_units') ?GETPOST('weight_units', 'alpha') : (!getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT') ? 0 : $conf->global->MAIN_WEIGHT_DEFAULT_UNIT), 0, 2);
+					print $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTISSET('weight_units') ? GETPOST('weight_units', 'alpha') : (!getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT') ? 0 : $conf->global->MAIN_WEIGHT_DEFAULT_UNIT), 0, 2);
 					print '</td></tr>';
 				}
 
@@ -1579,21 +1594,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<input name="size" class="width50" value="'.GETPOST('size').'"> x ';
 					print '<input name="sizewidth" class="width50" value="'.GETPOST('sizewidth').'"> x ';
 					print '<input name="sizeheight" class="width50" value="'.GETPOST('sizeheight').'">';
-					print $formproduct->selectMeasuringUnits("size_units", "size", GETPOSTISSET('size_units') ?GETPOST('size_units', 'alpha') : '0', 0, 2);
+					print $formproduct->selectMeasuringUnits("size_units", "size", GETPOSTISSET('size_units') ? GETPOST('size_units', 'alpha') : '0', 0, 2);
 					print '</td></tr>';
 				}
 				if (!getDolGlobalString('PRODUCT_DISABLE_SURFACE')) {
 					// Brut Surface
 					print '<tr><td>'.$langs->trans("Surface").'</td><td>';
 					print '<input name="surface" size="4" value="'.GETPOST('surface').'">';
-					print $formproduct->selectMeasuringUnits("surface_units", "surface", GETPOSTISSET('surface_units') ?GETPOST('surface_units', 'alpha') : '0', 0, 2);
+					print $formproduct->selectMeasuringUnits("surface_units", "surface", GETPOSTISSET('surface_units') ? GETPOST('surface_units', 'alpha') : '0', 0, 2);
 					print '</td></tr>';
 				}
 				if (!getDolGlobalString('PRODUCT_DISABLE_VOLUME')) {
 					// Brut Volume
 					print '<tr><td>'.$langs->trans("Volume").'</td><td>';
 					print '<input name="volume" size="4" value="'.GETPOST('volume').'">';
-					print $formproduct->selectMeasuringUnits("volume_units", "volume", GETPOSTISSET('volume_units') ?GETPOST('volume_units', 'alpha') : '0', 0, 2);
+					print $formproduct->selectMeasuringUnits("volume_units", "volume", GETPOSTISSET('volume_units') ? GETPOST('volume_units', 'alpha') : '0', 0, 2);
 					print '</td></tr>';
 				}
 
@@ -1601,7 +1616,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					// Net Measure
 					print '<tr><td>'.$langs->trans("NetMeasure").'</td><td>';
 					print '<input name="net_measure" size="4" value="'.GETPOST('net_measure').'">';
-					print $formproduct->selectMeasuringUnits("net_measure_units", '', GETPOSTISSET('net_measure_units') ?GETPOST('net_measure_units', 'alpha') : (!getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT') ? 0 : $conf->global->MAIN_WEIGHT_DEFAULT_UNIT), 0, 0);
+					print $formproduct->selectMeasuringUnits("net_measure_units", '', GETPOSTISSET('net_measure_units') ? GETPOST('net_measure_units', 'alpha') : (!getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT') ? 0 : $conf->global->MAIN_WEIGHT_DEFAULT_UNIT), 0, 0);
 					print '</td></tr>';
 				}
 			}
@@ -1660,13 +1675,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			// Note (private, no output on invoices, propales...)
 			//if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB))       available in create mode
 			//{
-				print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
+			print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
 
-				// We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
-				$doleditor = new DolEditor('note_private', GETPOST('note_private', 'restricthtml'), '', 140, 'dolibarr_details', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE'), ROWS_8, '90%');
-				$doleditor->Create();
+			// We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
+			$doleditor = new DolEditor('note_private', GETPOST('note_private', 'restricthtml'), '', 140, 'dolibarr_details', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE'), ROWS_8, '90%');
+			$doleditor->Create();
 
-				print "</td></tr>";
+			print "</td></tr>";
 			//}
 
 			if (isModEnabled('categorie')) {
@@ -1864,7 +1879,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		 * Product card
 		 */
 
-		// Fiche en mode edition
+		// Card in edit mode
 		if ($action == 'edit' && $usercancreate) {
 			//WYSIWYG Editor
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -1949,7 +1964,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</select>';
 				print '</td></tr>';
 
-				// Batch number managment
+				// Batch number management
 				if (isModEnabled('productbatch')) {
 					if ($object->isProduct() || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 						print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
@@ -2058,6 +2073,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 							print '</td></tr>';
 						}
 					}
+
+					// SellBy / EatBy mandatory list
+					if (!empty($sellOrEatByMandatoryList)) {
+						if (GETPOSTISSET('sell_or_eat_by_mandatory')) {
+							$sellOrEatByMandatorySelectedId = GETPOST('sell_or_eat_by_mandatory', 'int');
+						} else {
+							$sellOrEatByMandatorySelectedId = $object->sell_or_eat_by_mandatory;
+						}
+						print '<tr><td>'.$langs->trans('BatchSellOrEatByMandatoryList', $langs->trans('SellByDate'), $langs->trans('EatByDate')).'</td><td>';
+						print $form->selectarray('sell_or_eat_by_mandatory', $sellOrEatByMandatoryList, $sellOrEatByMandatorySelectedId);
+						print '</td></tr>';
+					}
 				}
 
 				// Barcode
@@ -2073,7 +2100,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					} else {
 						$fk_barcode_type = $object->barcode_type;
 						if (empty($fk_barcode_type) && getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE')) {
-							$fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
+							$fk_barcode_type = getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE');
 						}
 					}
 					require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
@@ -2103,7 +2130,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if (!getDolGlobalString('PRODUCT_DISABLE_PUBLIC_URL')) {
 					print '<tr><td>'.$langs->trans("PublicUrl").'</td><td>';
 					print img_picto('', 'globe', 'class="pictofixedwidth"');
-					print '<input type="text" name="url" class="quatrevingtpercent" value="'.(GETPOSTISSET('url') ? GETPOST('url') : $object->url).'">';
+					print '<input type="text" name="url" class="maxwidth500 widthcentpercentminusx" value="'.(GETPOSTISSET('url') ? GETPOST('url') : $object->url).'">';
 					print '</td></tr>';
 				}
 
@@ -2389,7 +2416,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			print '</form>';
 		} else {
-			// Fiche en mode visu
+			// Card in view mode
 
 			$showbarcode = isModEnabled('barcode');
 			if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('barcode', 'lire_advance')) {
@@ -2406,7 +2433,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 			$shownav = 1;
-			if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+			if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 				$shownav = 0;
 			}
 
@@ -2502,6 +2529,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 							print '</td></tr>';
 						}
 					}
+
+					print '<tr><td>'.$langs->trans('BatchSellOrEatByMandatoryList', $langs->trans('SellByDate'), $langs->trans('EatByDate')).'</td><td>';
+					print $object->getSellOrEatByMandatoryLabel();
+					print '</td></tr>';
 				}
 
 				if (!getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING')) {
@@ -2607,7 +2638,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				// Description
-				print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>'.(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true)).'</td></tr>';
+				print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreakimp wrapimp">'.(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true)).'</td></tr>';
 
 				// Public URL
 				if (!getDolGlobalString('PRODUCT_DISABLE_PUBLIC_URL')) {
@@ -2622,7 +2653,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					$warehouse->fetch($object->fk_default_warehouse);
 
 					print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
-					print (!empty($warehouse->id) ? $warehouse->getNomUrl(1) : '');
+					print(!empty($warehouse->id) ? $warehouse->getNomUrl(1) : '');
 					print '</td>';
 				}
 
@@ -2631,7 +2662,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					$res = $workstation->fetch($object->fk_default_workstation);
 
 					print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
-					print (!empty($workstation->id) ? $workstation->getNomUrl(1) : '');
+					print(!empty($workstation->id) ? $workstation->getNomUrl(1) : '');
 					print '</td>';
 				}
 
@@ -2666,7 +2697,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					} elseif ($object->duration_value > 0) {
 						$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
 					}
-					print (!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? "&nbsp;".$langs->trans($dur[$object->duration_unit])."&nbsp;" : '');
+					print(!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? "&nbsp;".$langs->trans($dur[$object->duration_unit])."&nbsp;" : '');
 
 					// Mandatory period
 					if ($object->duration_value > 0) {
@@ -2888,11 +2919,11 @@ if ($action != 'create' && $action != 'edit') {
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		if ($usercancreate) {
-			if (!isset($object->no_button_edit) || $object->no_button_edit <> 1) {
+			if (!isset($object->no_button_edit) || $object->no_button_edit != 1) {
 				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '', $usercancreate);
 			}
 
-			if (!isset($object->no_button_copy) || $object->no_button_copy <> 1) {
+			if (!isset($object->no_button_copy) || $object->no_button_copy != 1) {
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
 					$cloneProductUrl = '';
 					$cloneButtonId = 'action-clone';
@@ -2903,7 +2934,7 @@ if ($action != 'create' && $action != 'edit') {
 		$object_is_used = $object->isObjectUsed($object->id);
 
 		if ($usercandelete) {
-			if (empty($object_is_used) && (!isset($object->no_button_delete) || $object->no_button_delete <> 1)) {
+			if (empty($object_is_used) && (!isset($object->no_button_delete) || $object->no_button_delete != 1)) {
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
 					print dolGetButtonAction($langs->trans('Delete'), '', 'delete', '#', 'action-delete', true);
 				} else {

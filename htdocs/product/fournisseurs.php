@@ -48,16 +48,16 @@ if (isModEnabled('barcode')) {
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'suppliers', 'bills', 'margins', 'stocks'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$rowid = GETPOST('rowid', 'int');
+$rowid = GETPOSTINT('rowid');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'pricesuppliercard';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'pricesuppliercard';
 
-$socid = GETPOST('socid', 'int');
-$cost_price = price2num(GETPOST('cost_price', 'alpha'), '', 2);
-$pmp = price2num(GETPOST('pmp', 'alpha'), '', 2);
+$socid = GETPOSTINT('socid');
+$cost_price = GETPOSTFLOAT('cost_price');
+$pmp = GETPOSTFLOAT('pmp');
 
 $backtopage = GETPOST('backtopage', 'alpha');
 $error = 0;
@@ -65,9 +65,9 @@ $error = 0;
 $extrafields = new ExtraFields($db);
 
 // If socid provided by ajax company selector
-if (GETPOST('search_fourn_id', 'int')) {
-	$_GET['id_fourn'] = GETPOST('search_fourn_id', 'int');
-	$_POST['id_fourn'] = GETPOST('search_fourn_id', 'int');
+if (GETPOSTINT('search_fourn_id')) {
+	$_GET['id_fourn'] = GETPOSTINT('search_fourn_id');
+	$_POST['id_fourn'] = GETPOSTINT('search_fourn_id');
 }
 
 // Security check
@@ -81,10 +81,10 @@ if (!$user->hasRight('fournisseur', 'lire') && (!isModEnabled('margin') && !$use
 	accessforbidden();
 }
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = (GETPOST("page", 'int') ?GETPOST("page", 'int') : 0);
+$page = GETPOSTINT("page") ? GETPOSTINT("page") : 0;
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -108,8 +108,8 @@ if ($id > 0 || $ref) {
 	$prod->fetch($id, $ref);
 }
 
-$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'lire')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
 
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
@@ -143,7 +143,7 @@ if (empty($reshook)) {
 			$result = $object->fetch($id);
 			//Need dol_clone methode 1 (same object class) because update product use hasbatch method on oldcopy
 			$object->oldcopy = dol_clone($object, 1);
-			$object->cost_price = price2num($cost_price);
+			$object->cost_price = $cost_price;
 			$result = $object->update($object->id, $user);
 			if ($result > 0) {
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
@@ -157,7 +157,7 @@ if (empty($reshook)) {
 	if ($action == 'setpmp') {
 		if ($id) {
 			$result = $object->fetch($id);
-			$object->pmp = price2num($pmp);
+			$object->pmp = $pmp;
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".((float) $object->pmp)." WHERE rowid = ".((int) $id);
 			$resql = $db->query($sql);
 			//$result = $object->update($object->id, $user);
@@ -297,20 +297,20 @@ if (empty($reshook)) {
 				$extralabels = $extrafields->fetch_name_optionals_label("product_fournisseur_price");
 				$extrafield_values = $extrafields->getOptionalsFromPost("product_fournisseur_price");
 
-				$newprice = price2num(GETPOST("price", "alpha"));
+				$newprice = GETPOSTFLOAT("price");
 
 				if (empty($packaging)) {
 					$packaging = 1;
 				}
-				/* We can have a puchase ref that need to buy 100 min for a given price and with a packaging of 50.
+				/* We can have a purchase ref that need to buy 100 min for a given price and with a packaging of 50.
 				if ($packaging < $quantity) {
 					$packaging = $quantity;
 				}*/
 				$object->packaging = $packaging;
 
 				if (isModEnabled("multicurrency")) {
-					$multicurrency_tx = price2num(GETPOST("multicurrency_tx", 'alpha'));
-					$multicurrency_price = price2num(GETPOST("multicurrency_price", 'alpha'));
+					$multicurrency_tx = GETPOSTFLOAT("multicurrency_tx");
+					$multicurrency_price = GETPOSTFLOAT("multicurrency_price");
 					$multicurrency_code = GETPOST("multicurrency_code", 'alpha');
 
 					$ret = $object->update_buyprice($quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOST("oselDispo"), $ref_fourn, $tva_tx, GETPOST("charges"), $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, GETPOST("multicurrency_price_base_type"), $multicurrency_tx, $multicurrency_code, $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
@@ -395,7 +395,7 @@ if ($id > 0 || $ref) {
 			$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 			$shownav = 1;
-			if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+			if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 				$shownav = 0;
 			}
 
@@ -640,7 +640,7 @@ if ($id > 0 || $ref) {
 						$default_vat = $object->tva_tx;
 					}
 				}
-				$vattosuggest = (GETPOSTISSET("tva_tx") ? vatrate(GETPOST("tva_tx")) : ($default_vat != '' ?vatrate($default_vat) : ''));
+				$vattosuggest = (GETPOSTISSET("tva_tx") ? vatrate(GETPOST("tva_tx")) : ($default_vat != '' ? vatrate($default_vat) : ''));
 				$vattosuggest = preg_replace('/\s*\(.*\)$/', '', $vattosuggest);
 				print '<input type="text" class="flat" size="5" name="tva_tx" value="'.$vattosuggest.'">';
 				print '</td></tr>';
@@ -697,7 +697,7 @@ if ($id > 0 || $ref) {
 					$pricesupplierincurrencytouse = (GETPOST('multicurrency_price') ? GETPOST('multicurrency_price') : (isset($object->fourn_multicurrency_price) ? $object->fourn_multicurrency_price : ''));
 					print '<td><input class="flat" name="multicurrency_price" size="8" value="'.price($pricesupplierincurrencytouse).'">';
 					print '&nbsp;';
-					print $form->selectPriceBaseType((GETPOST('multicurrency_price_base_type') ?GETPOST('multicurrency_price_base_type') : 'HT'), "multicurrency_price_base_type"); // We keep 'HT' here, multicurrency_price_base_type is not yet supported for supplier prices
+					print $form->selectPriceBaseType((GETPOST('multicurrency_price_base_type') ? GETPOST('multicurrency_price_base_type') : 'HT'), "multicurrency_price_base_type"); // We keep 'HT' here, multicurrency_price_base_type is not yet supported for supplier prices
 					print '</td></tr>';
 
 					// Price qty min
@@ -720,52 +720,49 @@ if ($id > 0 || $ref) {
 						}
 					}
 					$currencies = json_encode($currencies);
+					print "<!-- javascript to autocalculate the minimum price -->
+					<script type='text/javascript'>
+						function update_price_from_multicurrency() {
+							console.log('update_price_from_multicurrency');
+							var multicurrency_price = price2numjs($('input[name=\"multicurrency_price\"]').val());
+							var multicurrency_tx = price2numjs($('input[name=\"multicurrency_tx\"]').val());
+							if (multicurrency_tx != 0) {
+								$('input[name=\"price\"]').val(multicurrency_price / multicurrency_tx);
+								$('input[name=\"disabled_price\"]').val(multicurrency_price / multicurrency_tx);
+							} else {
+								$('input[name=\"price\"]').val('');
+								$('input[name=\"disabled_price\"]').val('');
+							}
+						}
 
-					print <<<END
-	<!-- javascript to autocalculate the minimum price -->
-    <script type="text/javascript">
-        function update_price_from_multicurrency() {
-			console.log("update_price_from_multicurrency");
-            var multicurrency_price = price2numjs($('input[name="multicurrency_price"]').val());
-            var multicurrency_tx = price2numjs($('input[name="multicurrency_tx"]').val());
-			if (multicurrency_tx != 0) {
-            	$('input[name="price"]').val(multicurrency_price / multicurrency_tx);
-            	$('input[name="disabled_price"]').val(multicurrency_price / multicurrency_tx);
-			} else {
-            	$('input[name="price"]').val('');
-            	$('input[name="disabled_price"]').val('');
-			}
-        }
+						jQuery(document).ready(function () {
+							$('input[name=\"disabled_price\"]').prop('disabled', true);
+							$('select[name=\"disabled_price_base_type\"]').prop('disabled', true);
+							update_price_from_multicurrency();
 
-        jQuery(document).ready(function () {
-            $('input[name="disabled_price"]').prop('disabled', true);
-            $('select[name="disabled_price_base_type"]').prop('disabled', true);
-            update_price_from_multicurrency();
+							$('input[name=\"multicurrency_price\"], input[name=\"multicurrency_tx\"]').keyup(function () {
+								update_price_from_multicurrency();
+							});
+							$('input[name=\"multicurrency_price\"], input[name=\"multicurrency_tx\"]').change(function () {
+								update_price_from_multicurrency();
+							});
+							$('input[name=\"multicurrency_price\"], input[name=\"multicurrency_tx\"]').on('paste', function () {
+								update_price_from_multicurrency();
+							});
 
-            $('input[name="multicurrency_price"], input[name="multicurrency_tx"]').keyup(function () {
-                update_price_from_multicurrency();
-            });
-			$('input[name="multicurrency_price"], input[name="multicurrency_tx"]').change(function () {
-                update_price_from_multicurrency();
-            });
-			$('input[name="multicurrency_price"], input[name="multicurrency_tx"]').on('paste', function () {
-                update_price_from_multicurrency();
-            });
+							$('select[name=\"multicurrency_price_base_type\"]').change(function () {
+								$('input[name=\"price_base_type\"]').val($(this).val());
+								$('select[name=\"disabled_price_base_type\"]').val($(this).val());
+							});
 
-            $('select[name="multicurrency_price_base_type"]').change(function () {
-                $('input[name="price_base_type"]').val($(this).val());
-                $('select[name="disabled_price_base_type"]').val($(this).val());
-            });
-
-            var currencies_array = $currencies;
-            $('select[name="multicurrency_code"]').change(function () {
-				console.log("We change the currency");
-                $('input[name="multicurrency_tx"]').val(currencies_array[$(this).val()]);
-                update_price_from_multicurrency();
-            });
-        });
-    </script>
-END;
+							var currencies_array = $currencies;
+							$('select[name=\"multicurrency_code\"]').change(function () {
+								console.log(\"We change the currency\");
+								$('input[name=\"multicurrency_tx\"]').val(currencies_array[$(this).val()]);
+								update_price_from_multicurrency();
+							});
+						});
+					</script>";
 				} else {
 					// Price qty min
 					print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
@@ -786,7 +783,7 @@ END;
 
 				// Discount qty min
 				print '<tr><td>'.$langs->trans("DiscountQtyMin").'</td>';
-				print '<td><input class="flat" name="remise_percent" size="4" value="'.(GETPOSTISSET('remise_percent') ? vatrate(price2num(GETPOST('remise_percent'), '', 2)) : (isset($object->fourn_remise_percent) ?vatrate($object->fourn_remise_percent) : '')).'"> %';
+				print '<td><input class="flat" name="remise_percent" size="4" value="'.(GETPOSTISSET('remise_percent') ? vatrate(price2num(GETPOST('remise_percent'), '', 2)) : (isset($object->fourn_remise_percent) ? vatrate($object->fourn_remise_percent) : '')).'"> %';
 				print '</td>';
 				print '</tr>';
 
@@ -810,7 +807,7 @@ END;
 					print '<td>'.$langs->trans('GencodBuyPrice').'</td>';
 					print '<td>';
 					print img_picto('', 'barcode', 'class="pictofixedwidth"');
-					print $formbarcode->selectBarcodeType((GETPOSTISSET('fk_barcode_type') ? GETPOST('fk_barcode_type', 'int') : ($rowid ? $object->supplier_fk_barcode_type : getDolGlobalint("PRODUIT_DEFAULT_BARCODE_TYPE"))), 'fk_barcode_type', 1);
+					print $formbarcode->selectBarcodeType((GETPOSTISSET('fk_barcode_type') ? GETPOST('fk_barcode_type', 'int') : ($rowid ? $object->supplier_fk_barcode_type : getDolGlobalInt("PRODUIT_DEFAULT_BARCODE_TYPE"))), 'fk_barcode_type', 1);
 					print ' <input class="flat" name="barcode"  value="'.(GETPOSTISSET('barcode') ? GETPOST('barcode') : ($rowid ? $object->supplier_barcode : '')).'"></td>';
 					print '</tr>';
 				}
@@ -1103,7 +1100,7 @@ END;
 				}
 
 				if (is_object($hookmanager)) {
-					$parameters = array('id_fourn'=>(!empty($id_fourn)?$id_fourn:''), 'prod_id'=>$object->id, 'nbfields'=>$nbfields);
+					$parameters = array('id_fourn'=>(!empty($id_fourn) ? $id_fourn : ''), 'prod_id'=>$object->id, 'nbfields'=>$nbfields);
 					$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
 				}
 				print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
@@ -1286,7 +1283,7 @@ END;
 						}
 
 						if (is_object($hookmanager)) {
-							$parameters = array('id_pfp'=>$productfourn->product_fourn_price_id, 'id_fourn'=>(!empty($id_fourn)?$id_fourn:''), 'prod_id'=>$object->id);
+							$parameters = array('id_pfp'=>$productfourn->product_fourn_price_id, 'id_fourn'=>(!empty($id_fourn) ? $id_fourn : ''), 'prod_id'=>$object->id);
 							$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action);
 						}
 

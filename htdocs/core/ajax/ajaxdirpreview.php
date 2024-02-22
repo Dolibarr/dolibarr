@@ -192,7 +192,7 @@ if ($type == 'directory') {
 
 	$maxlengthname = 40;
 	$excludefiles = array('^SPECIMEN\.pdf$', '^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^payments$', '^CVS$', '^thumbs$');
-	$sorting = (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC);
+	$sorting = (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC);
 
 	// Right area. If module is defined here, we are in automatic ecm.
 	$automodules = array(
@@ -293,7 +293,7 @@ if ($type == 'directory') {
 		$filter = preg_quote($search_doc_ref, '/');
 		$filearray = dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting, 1);
 
-		$perm = $user->rights->ecm->upload;
+		$perm = $user->hasRight('ecm', 'upload');
 
 		$formfile->list_of_autoecmfiles($upload_dir, $filearray, $module, $param, 1, '', $perm, 1, $textifempty, $maxlengthname, $url, 1);
 	} else {
@@ -310,7 +310,7 @@ if ($type == 'directory') {
 			  'max_file_size' => string '2097152' (length=7)
 			  'sendit' => string 'Envoyer fichier' (length=15)
 			 */
-			$relativepath = GETPOST('file', 'alpha') ?GETPOST('file', 'alpha') : GETPOST('section_dir', 'alpha');
+			$relativepath = GETPOST('file', 'alpha') ? GETPOST('file', 'alpha') : GETPOST('section_dir', 'alpha');
 			if ($relativepath && $relativepath != '/') {
 				$relativepath .= '/';
 			}

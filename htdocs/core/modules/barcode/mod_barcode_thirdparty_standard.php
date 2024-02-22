@@ -185,7 +185,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php'; // to be able to call function barcode_gen_ean_sum($ean)
 
 		if (empty($type)) {
-			$type = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
+			$type = getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY');
 		} //get barcode type configuration for companies if $type not set
 
 		// TODO
@@ -193,7 +193,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		// Get Mask value
 		$mask = '';
 		if (getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK')) {
-			$mask = $conf->global->BARCODE_STANDARD_THIRDPARTY_MASK;
+			$mask = getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK');
 		}
 
 		if (empty($mask)) {
@@ -216,8 +216,8 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 					if (strlen($numFinal)==13) {// be sure that the mask length is correct for EAN13
 						$ean = substr($numFinal, 0, 12); //take first 12 digits
 							$eansum = barcode_gen_ean_sum($ean);
-							$ean .= $eansum; //substitute the las character by the key
-							$numFinal = $ean;
+						$ean .= $eansum; //substitute the las character by the key
+						$numFinal = $ean;
 					}
 					break;
 				// Other barcode cases with key could be written here
@@ -262,7 +262,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		} else {
 			if ($this->verif_syntax($code, $type) >= 0) {
 				$is_dispo = $this->verif_dispo($db, $code, $thirdparty);
-				if ($is_dispo <> 0) {
+				if ($is_dispo != 0) {
 					$result = -3;
 				} else {
 					$result = 0;
@@ -285,9 +285,9 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	/**
 	 *	Return if a code is used (by other element)
 	 *
-	 *	@param	DoliDB		$db			Handler acces base
+	 *	@param	DoliDB		$db			Handler access base
 	 *	@param	string		$code		Code to check
-	 *	@param	Societe		$thirdparty	Objet third-party
+	 *	@param	Societe		$thirdparty	Object third-party
 	 *	@return	int						0 if available, <0 if KO
 	 */
 	public function verif_dispo($db, $code, $thirdparty)

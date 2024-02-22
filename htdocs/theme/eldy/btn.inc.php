@@ -17,7 +17,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 <?php
 if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 	print "/* For dark mode */\n";
-	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) {
 		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
 	} else {
 		print "@media not print {";
@@ -83,8 +83,8 @@ span.butAction, span.butActionDelete {
 	text-transform: uppercase;
 	font-weight: bold;
 
-	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '1'); ?>em;
-	padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
+	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.6' : '1'); ?>em;
+	padding: 0.6em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
 	display: inline-block;
 	text-align: center;
 	cursor: pointer;
@@ -105,7 +105,7 @@ span.butAction, span.butActionDelete {
 	font-weight: normal;
 
 	margin: 0em 0.3em 0 0.3em !important;
-	padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em 0.3em;
+	padding: 0.2em <?php echo($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em 0.3em;
 	font-family: <?php print $fontlist ?>;
 	display: inline-block;
 	/* text-align: center; New button are on right of screen */
@@ -182,8 +182,8 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 
 	white-space: nowrap !important;
 	cursor: not-allowed !important;
-	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
-	padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
+	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
+	padding: 0.2em <?php echo($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
 	font-family: <?php print $fontlist ?> !important;
 	display: inline-block;
 	/* text-align: center;  New button are on right of screen */
@@ -255,7 +255,7 @@ a.btnTitle.btnTitleSelected {
 	text-decoration: none;
 	box-shadow: none;
 }
-/* The buttonplus isgrowing on hover (dont know why). This is to avoid to have the cellegrowing too */
+/* The buttonplus isgrowing on hover (don't know why). This is to avoid to have the cellegrowing too */
 .btnTitlePlus:hover {
 	max-width: 24px;
 	max-height: 40px;

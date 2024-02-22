@@ -90,11 +90,15 @@ if ($action == 'update') {
 	}
 	if (GETPOSTISSET('INVOICE_ADD_ZATCA_QR_CODE')) {
 		dolibarr_set_const($db, "INVOICE_ADD_ZATCA_QR_CODE", GETPOST("INVOICE_ADD_ZATCA_QR_CODE", 'int'), 'chaine', 0, '', $conf->entity);
-		dolibarr_del_const($db, "INVOICE_ADD_SWISS_QR_CODE", $conf->entity);
+		if (GETPOSTINT('INVOICE_ADD_ZATCA_QR_CODE') == 1) {
+			dolibarr_del_const($db, "INVOICE_ADD_SWISS_QR_CODE", $conf->entity);
+		}
 	}
 	if (GETPOSTISSET('INVOICE_ADD_SWISS_QR_CODE')) {
 		dolibarr_set_const($db, "INVOICE_ADD_SWISS_QR_CODE", GETPOST("INVOICE_ADD_SWISS_QR_CODE", 'alpha'), 'chaine', 0, '', $conf->entity);
-		dolibarr_del_const($db, "INVOICE_ADD_ZATCA_QR_CODE", $conf->entity);
+		if (GETPOST('INVOICE_ADD_SWISS_QR_CODE', 'alpha') != '0') {
+			dolibarr_del_const($db, "INVOICE_ADD_ZATCA_QR_CODE", $conf->entity);
+		}
 	}
 	if (GETPOSTISSET('INVOICE_CATEGORY_OF_OPERATION')) {
 		dolibarr_set_const($db, "INVOICE_CATEGORY_OF_OPERATION", GETPOST("INVOICE_CATEGORY_OF_OPERATION", 'int'), 'chaine', 0, '', $conf->entity);

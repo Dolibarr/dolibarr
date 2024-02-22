@@ -384,7 +384,8 @@ function getProductOrService($authentication, $id = 0, $ref = '', $ref_ext = '',
 	// Check parameters
 	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext))) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
 	if (!$error) {
@@ -476,11 +477,13 @@ function getProductOrService($authentication, $id = 0, $ref = '', $ref_ext = '',
 				);
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
@@ -528,11 +531,15 @@ function createProductOrService($authentication, $product)
 	}
 
 	if (isset($product['price_net']) && $product['price_net'] > 0 && isset($product['price']) && $product['price'] > 0) {
-		$error++; $errorcode = 'KO'; $errorlabel = "You must choose between price or price_net to provide price.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "You must choose between price or price_net to provide price.";
 	}
 
 	if (!empty($product['barcode']) && empty($product['barcode_type'])) {
-		$error++; $errorcode = 'KO'; $errorlabel = "You must set a barcode type when setting a barcode.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "You must set a barcode type when setting a barcode.";
 	}
 
 	if (!$error) {
@@ -688,12 +695,16 @@ function updateProductOrService($authentication, $product)
 	}
 
 	if ($product['price_net'] > 0 && $product['price'] > 0) {
-		$error++; $errorcode = 'KO'; $errorlabel = "You must choose between price or price_net to provide price.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "You must choose between price or price_net to provide price.";
 	}
 
 
 	if ($product['barcode'] && !$product['barcode_type']) {
-		$error++; $errorcode = 'KO'; $errorlabel = "You must set a barcode type when setting a barcode.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "You must set a barcode type when setting a barcode.";
 	}
 
 	if (!$error) {
@@ -721,8 +732,8 @@ function updateProductOrService($authentication, $product)
 		$newobject->date_creation = $now;
 
 		if ($product['barcode']) {
-				$newobject->barcode = $product['barcode'];
-				$newobject->barcode_type = $product['barcode_type'];
+			$newobject->barcode = $product['barcode'];
+			$newobject->barcode_type = $product['barcode_type'];
 		}
 
 		$newobject->stock_reel = isset($product['stock_real']) ? $product['stock_real'] : null;
@@ -850,7 +861,9 @@ function deleteProductOrService($authentication, $listofidstring)
 
 	// Check parameters
 	if (count($listofid) == 0 || empty($listofid[0])) {
-		$error++; $errorcode = 'KO'; $errorlabel = "List of Id of products or services to delete are required.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "List of Id of products or services to delete are required.";
 	}
 
 	if (!$error) {
@@ -895,7 +908,7 @@ function deleteProductOrService($authentication, $listofidstring)
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel), 'nbdeleted'=>0);
 	} elseif (count($listofiddeleted) == 0) {
 		//$objectresp=array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.join(',',$listofid).' found'), 'listofid'=>$listofiddeleted);
-		$objectresp = array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.join(',', $listofid).' found'), 'nbdeleted'=>0);
+		$objectresp = array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.implode(',', $listofid).' found'), 'nbdeleted'=>0);
 	}
 
 	return $objectresp;
@@ -998,7 +1011,8 @@ function getProductsForCategory($authentication, $id, $lang = '')
 	}
 
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
@@ -1006,7 +1020,8 @@ function getProductsForCategory($authentication, $id, $lang = '')
 
 	if (!$error && !$id) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id must be provided.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id must be provided.";
 	}
 
 
@@ -1098,17 +1113,20 @@ function getProductsForCategory($authentication, $id, $lang = '')
 					'products'=> $products
 					);
 				} else {
-					$errorcode = 'NORECORDS_FOR_ASSOCIATION'; $errorlabel = 'No products associated'.$sql;
+					$errorcode = 'NORECORDS_FOR_ASSOCIATION';
+					$errorlabel = 'No products associated'.$sql;
 					$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 					dol_syslog("getProductsForCategory:: ".$errorcode, LOG_DEBUG);
 				}
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id;
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'Object not found for id='.$id;
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 

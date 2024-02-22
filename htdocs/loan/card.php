@@ -110,25 +110,29 @@ if (empty($reshook)) {
 			$rate = price2num(GETPOST('rate'));
 
 			if (!$capital) {
-				$error++; $action = 'create';
+				$error++;
+				$action = 'create';
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("LoanCapital")), null, 'errors');
 			}
 			if (!$datestart) {
-				$error++; $action = 'create';
+				$error++;
+				$action = 'create';
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateStart")), null, 'errors');
 			}
 			if (!$dateend) {
-				$error++; $action = 'create';
+				$error++;
+				$action = 'create';
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateEnd")), null, 'errors');
 			}
 			if ($rate == '') {
-				$error++; $action = 'create';
+				$error++;
+				$action = 'create';
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Rate")), null, 'errors');
 			}
 
 			if (!$error) {
 				$object->label = GETPOST('label');
-				$object->fk_bank = GETPOST('accountid');
+				$object->fk_bank = GETPOSTINT('accountid');
 				$object->capital = $capital;
 				$object->datestart = $datestart;
 				$object->dateend = $dateend;
@@ -136,7 +140,7 @@ if (empty($reshook)) {
 				$object->rate = $rate;
 				$object->note_private = GETPOST('note_private', 'restricthtml');
 				$object->note_public = GETPOST('note_public', 'restricthtml');
-				$object->fk_project = GETPOST('projectid', 'int');
+				$object->fk_project = GETPOSTINT('projectid');
 				$object->insurance_amount = GETPOST('insurance_amount', 'int');
 
 				$accountancy_account_capital = GETPOST('accountancy_account_capital');
@@ -287,11 +291,11 @@ if ($action == 'create') {
 
 	// Bank account
 	if (isModEnabled("banque")) {
-		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("BankAccount").'</td><td>';
 		$form->select_comptes(GETPOST("accountid"), "accountid", 0, "courant=1", 1); // Show list of bank account with courant
 		print '</td></tr>';
 	} else {
-		print '<tr><td>'.$langs->trans("Account").'</td><td>';
+		print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
 		print $langs->trans("NoBankAccountDefined");
 		print '</td></tr>';
 	}
@@ -357,19 +361,19 @@ if ($action == 'create') {
 		// Accountancy_account_capital
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
 		print '<td>';
-		print $formaccounting->select_account(GETPOST('accountancy_account_capital') ?GETPOST('accountancy_account_capital') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_CAPITAL'), 'accountancy_account_capital', 1, '', 1, 1);
+		print $formaccounting->select_account(GETPOST('accountancy_account_capital') ? GETPOST('accountancy_account_capital') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_CAPITAL'), 'accountancy_account_capital', 1, '', 1, 1);
 		print '</td></tr>';
 
 		// Accountancy_account_insurance
 		print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInsuranceCode").'</td>';
 		print '<td>';
-		print $formaccounting->select_account(GETPOST('accountancy_account_insurance') ?GETPOST('accountancy_account_insurance') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INSURANCE'), 'accountancy_account_insurance', 1, '', 1, 1);
+		print $formaccounting->select_account(GETPOST('accountancy_account_insurance') ? GETPOST('accountancy_account_insurance') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INSURANCE'), 'accountancy_account_insurance', 1, '', 1, 1);
 		print '</td></tr>';
 
 		// Accountancy_account_interest
 		print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInterestCode").'</td>';
 		print '<td>';
-		print $formaccounting->select_account(GETPOST('accountancy_account_interest') ?GETPOST('accountancy_account_interest') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INTEREST'), 'accountancy_account_interest', 1, '', 1, 1);
+		print $formaccounting->select_account(GETPOST('accountancy_account_interest') ? GETPOST('accountancy_account_interest') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INTEREST'), 'accountancy_account_interest', 1, '', 1, 1);
 		print '</td></tr>';
 	} else {
 		// For external software
@@ -664,7 +668,7 @@ if ($id > 0) {
 			$total_interest = 0;
 			$total_capital = 0;
 
-			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 			print '<table class="noborder paymenttable">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("RefPayment").'</td>';
@@ -770,7 +774,7 @@ if ($id > 0) {
 		}
 	} else {
 		// Loan not found
-		dol_print_error('', $object->error);
+		dol_print_error(null, $object->error);
 	}
 }
 

@@ -64,7 +64,9 @@ $object = new Ticket($db);
 
 // Security check
 $id = GETPOST("id", 'int');
-if ($user->socid > 0) $socid = $user->socid;
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'ticket', $object->id, '');
 
 // restrict access for externals users
@@ -76,7 +78,7 @@ if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $
 	accessforbidden();
 }
 
-$permissiontoadd = $user->rights->ticket->write;
+$permissiontoadd = $user->hasRight('ticket', 'write');
 
 
 /*
@@ -155,7 +157,7 @@ if ($action == 'deletecontact' && $user->hasRight('ticket', 'write')) {
 		$result = $object->delete_contact($lineid);
 
 		if ($result >= 0) {
-			Header("Location: ".$url_page_current."?id=".$object->id);
+			header("Location: ".$url_page_current."?id=".$object->id);
 			exit;
 		}
 	}
@@ -266,7 +268,7 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 
 		//print '<br>';
 
-		$permission = $user->rights->ticket->write;
+		$permission = $user->hasRight('ticket', 'write');
 
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
 		$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));

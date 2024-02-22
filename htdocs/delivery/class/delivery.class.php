@@ -83,7 +83,7 @@ class Delivery extends CommonObject
 	public $socid;
 
 	/**
-	 * @var string ref custome
+	 * @var string ref customer
 	 */
 	public $ref_customer;
 
@@ -143,8 +143,8 @@ class Delivery extends CommonObject
 	/**
 	 *  Create delivery receipt in database
 	 *
-	 *  @param 	User	$user       Objet du user qui cree
-	 *  @return int         		<0 si erreur, id delivery cree si ok
+	 *  @param 	User	$user       Object du user qui cree
+	 *  @return int         		Return integer <0 si erreur, id delivery cree si ok
 	 */
 	public function create($user)
 	{
@@ -153,7 +153,7 @@ class Delivery extends CommonObject
 		dol_syslog("Delivery::create");
 
 		if (empty($this->model_pdf)) {
-			$this->model_pdf = $conf->global->DELIVERY_ADDON_PDF;
+			$this->model_pdf = getDolGlobalString('DELIVERY_ADDON_PDF');
 		}
 
 		$error = 0;
@@ -278,7 +278,7 @@ class Delivery extends CommonObject
 	 *	@param	string	$fk_product				Id of predefined product
 	 *	@param	string	$description			Description
 	 *  @param	array	$array_options			Array options
-	 *	@return	int								<0 if KO, >0 if OK
+	 *	@return	int								Return integer <0 if KO, >0 if OK
 	 */
 	public function create_line($origin_id, $qty, $fk_product, $description, $array_options = null)
 	{
@@ -413,7 +413,7 @@ class Delivery extends CommonObject
 			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery_advance', 'validate'))) {
 			if (getDolGlobalString('DELIVERY_ADDON_NUMBER')) {
 				// Setting the command numbering module name
-				$modName = $conf->global->DELIVERY_ADDON_NUMBER;
+				$modName = getDolGlobalString('DELIVERY_ADDON_NUMBER');
 
 				if (is_readable(DOL_DOCUMENT_ROOT.'/core/modules/delivery/'.$modName.'.php')) {
 					require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/'.$modName.'.php';
@@ -481,13 +481,15 @@ class Delivery extends CommonObject
 							$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expedition/receipt/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 							$resql = $this->db->query($sql);
 							if (!$resql) {
-								$error++; $this->error = $this->db->lasterror();
+								$error++;
+								$this->error = $this->db->lasterror();
 							}
 							$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'expedition/receipt/".$this->db->escape($this->newref)."'";
 							$sql .= " WHERE filepath = 'expedition/receipt/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 							$resql = $this->db->query($sql);
 							if (!$resql) {
-								$error++; $this->error = $this->db->lasterror();
+								$error++;
+								$this->error = $this->db->lasterror();
 							}
 
 							// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -546,7 +548,7 @@ class Delivery extends CommonObject
 	 *
 	 *	@param	User	$user           User who creates
 	 *	@param  int		$sending_id		Id of the expedition that serves as a model
-	 *	@return	integer					<=0 if KO, >0 if OK
+	 *	@return	integer					Return integer <=0 if KO, >0 if OK
 	 */
 	public function create_from_sending($user, $sending_id)
 	{
@@ -598,7 +600,7 @@ class Delivery extends CommonObject
 	 *
 	 * @param 	int		$id					Id of line (livraison line)
 	 * @param	array		$array_options		extrafields array
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function update_line($id, $array_options = 0)
 	{
@@ -653,9 +655,9 @@ class Delivery extends CommonObject
 	 *	Delete line
 	 *
 	 *	@param	int		$lineid		Line id
-	 *	@return	integer				<0 if KO, 0 if nothing done, >0 if OK
+	 *	@return	integer				Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
-	public function deleteline($lineid)
+	public function deleteLine($lineid)
 	{
 		if ($this->statut == 0) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
@@ -810,7 +812,7 @@ class Delivery extends CommonObject
 		//}
 
 		$linkstart = '<a href="'.$url.'"';
-		$linkstart .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+		$linkstart .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 		$linkstart .= $dataparams.' class="'.$classfortooltip.'">';
 		$linkend = '</a>';
 
@@ -838,7 +840,7 @@ class Delivery extends CommonObject
 	/**
 	 *	Load lines insto $this->lines.
 	 *
-	 *	@return		int								<0 if KO, >0 if OK
+	 *	@return		int								Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_lines()
 	{
@@ -989,7 +991,7 @@ class Delivery extends CommonObject
 			}
 		}
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
@@ -1038,7 +1040,7 @@ class Delivery extends CommonObject
 			while ($i < $num_lines) {
 				$objSourceLine = $this->db->fetch_object($resultSourceLine);
 
-				// Get lines of sources alread delivered
+				// Get lines of sources already delivered
 				$sql = "SELECT ld.fk_origin_line, sum(ld.qty) as qty";
 				$sql .= " FROM ".MAIN_DB_PREFIX."deliverydet as ld, ".MAIN_DB_PREFIX."delivery as l,";
 				$sql .= " ".MAIN_DB_PREFIX.$this->linked_objects[0]['type']." as c";
@@ -1080,9 +1082,9 @@ class Delivery extends CommonObject
 	/**
 	 *	Set the planned delivery date
 	 *
-	 *	@param      User			$user        		Objet utilisateur qui modifie
+	 *	@param      User			$user        		Object utilisateur qui modifie
 	 *	@param      integer 		$delivery_date     Delivery date
-	 *	@return     int         						<0 if KO, >0 if OK
+	 *	@return     int         						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDeliveryDate($user, $delivery_date)
 	{
@@ -1115,7 +1117,7 @@ class Delivery extends CommonObject
 	 *  @param     int			$hideref        Hide ref
 	 *  @return    int             				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		global $conf, $langs;
 
@@ -1128,7 +1130,7 @@ class Delivery extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('DELIVERY_ADDON_PDF')) {
-				$modele = $conf->global->DELIVERY_ADDON_PDF;
+				$modele = getDolGlobalString('DELIVERY_ADDON_PDF');
 			}
 		}
 

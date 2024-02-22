@@ -124,12 +124,11 @@ function fetchConnectionToken() {
 		<?php
 		$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&token='.newToken().'&servicestatus='.urlencode($servicestatus);
 		if (getDolGlobalString('STRIPE_LOCATION')) {
-			$urlconnexiontoken .= '&location='.urlencode($conf->global->STRIPE_LOCATION);
+			$urlconnexiontoken .= '&location='.urlencode(getDolGlobalString('STRIPE_LOCATION'));
 		}
 		if (!empty($stripeacc)) {
 			$urlconnexiontoken .= '&stripeacc='.urlencode($stripeacc);
-		}
-		?>
+		} ?>
   // Do not cache or hardcode the ConnectionToken. The SDK manages the ConnectionToken's lifecycle.
   return fetch('<?php echo $urlconnexiontoken; ?>', { method: "POST" })
 	.then(function(response) {
@@ -214,7 +213,8 @@ if ($usestripeterminals && $invoice->type != $invoice::TYPE_CREDIT_NOTE) {
 		}
 	  });
 
-	<?php } } ?>
+	<?php }
+} ?>
 </script>
 <?php
 
@@ -247,7 +247,9 @@ if ($resql) {
 			$arrayOfValidPaymentModes[] = $obj;
 		}
 		if (!isModEnabled('banque')) {
-			if ($paycode == 'CASH' || $paycode == 'CB') $arrayOfValidPaymentModes[] = $obj;
+			if ($paycode == 'CASH' || $paycode == 'CB') {
+				$arrayOfValidPaymentModes[] = $obj;
+			}
 		}
 	}
 }
@@ -334,7 +336,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 	{
 		console.log("Launch Validate");
 
-		var invoiceid = <?php echo ($invoiceid > 0 ? $invoiceid : 0); ?>;
+		var invoiceid = <?php echo($invoiceid > 0 ? $invoiceid : 0); ?>;
 		var accountid = $("#selectaccountid").val();
 		var amountpayed = $("#change1").val();
 		var excess = $("#change2").val();
@@ -360,7 +362,9 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 	  const bodyContent = JSON.stringify({ amount : amount, invoiceid : invoiceid });
   <?php
 	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=createPaymentIntent&token='.newToken().'&servicestatus='.$servicestatus;
-	if (!empty($stripeacc)) $urlpaymentintent .= '&stripeacc='.$stripeacc;
+	if (!empty($stripeacc)) {
+		$urlpaymentintent .= '&stripeacc='.$stripeacc;
+	}
 	?>
   return fetch('<?php echo $urlpaymentintent; ?>', {
 	method: "POST",
@@ -443,7 +447,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 				console.log("error when capturing paymentIntent", result.error);
 			  } else {
 				document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentValidated'); ?></div>';
-				console.log("Capture paymentIntent successfull "+paymentIntentId);
+				console.log("Capture paymentIntent successful "+paymentIntentId);
 				  parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&token=<?php echo newToken(); ?>&pay=CB&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
 			if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) {
 				console.log("Close popup");
@@ -472,9 +476,13 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 		if (amountpayed > <?php echo $invoice->total_ttc; ?>) {
 			amountpayed = <?php echo $invoice->total_ttc; ?>;
 		}
+		if (amountpayed == 0) {
+			amountpayed = <?php echo $invoice->total_ttc; ?>;
+		}
+		var currencycode = "<?php echo $invoice->multicurrency_code; ?>";
 
 		// Starting sumup app
-		window.open('sumupmerchant://pay/1.0?affiliate-key=<?php echo urlencode(getDolGlobalString('TAKEPOS_SUMUP_AFFILIATE')) ?>&app-id=<?php echo urlencode(getDolGlobalString('TAKEPOS_SUMUP_APPID')) ?>&total=' + amountpayed + '&currency=EUR&title=' + invoiceid + '&callback=<?php echo DOL_MAIN_URL_ROOT ?>/takepos/smpcb.php');
+		window.open('sumupmerchant://pay/1.0?affiliate-key=<?php echo urlencode(getDolGlobalString('TAKEPOS_SUMUP_AFFILIATE')) ?>&app-id=<?php echo urlencode(getDolGlobalString('TAKEPOS_SUMUP_APPID')) ?>&amount=' + amountpayed + '&currency=' + currencycode + '&title=' + invoiceid + '&callback=<?php echo DOL_MAIN_URL_ROOT ?>/takepos/smpcb.php');
 
 		var loop = window.setInterval(function () {
 			$.ajax({
@@ -499,11 +507,11 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 
 <?php
 if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
-	echo "var line1='".$langs->trans('TotalTTC')."'.substring(0,20);";
-	echo "line1=line1.padEnd(20);";
-	echo "var line2='".price($invoice->total_ttc, 1, '', 1, -1, -1)."'.substring(0,20);";
-	echo "line2=line2.padEnd(20);";
-	echo "$.ajax({
+		echo "var line1='".$langs->trans('TotalTTC')."'.substring(0,20);";
+		echo "line1=line1.padEnd(20);";
+		echo "var line2='".price($invoice->total_ttc, 1, '', 1, -1, -1)."'.substring(0,20);";
+		echo "line2=line2.padEnd(20);";
+		echo "$.ajax({
 		type: 'GET',
 		data: { text: line1+line2 },
 		url: '".getDolGlobalString('TAKEPOS_PRINT_SERVER')."/display/index.php',
@@ -556,7 +564,7 @@ $action_buttons = array(
 		"class" => "poscolordelete"
 	),
 );
-$numpad = $conf->global->TAKEPOS_NUMPAD;
+$numpad = getDolGlobalString('TAKEPOS_NUMPAD');
 if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && getDolGlobalString('STRIPE_CARD_PRESENT')) {
 	print '<span id="card-present-alert">';
 	dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), '', 'warning', 1);
@@ -691,7 +699,9 @@ if (getDolGlobalInt("TAKEPOS_ENABLE_SUMUP")) {
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $invoice, $action); // Note that $action and $object may have been modified by hook
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 $class = ($i == 3) ? "calcbutton3" : "calcbutton2";
 foreach ($action_buttons as $button) {

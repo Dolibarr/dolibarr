@@ -46,7 +46,7 @@ $type = GETPOST('type', 'alphanohtml');
 $optioncss = GETPOST('optioncss', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -87,7 +87,8 @@ $permissiontoadd = ($user->hasRight('product', 'read') || $user->hasRight('servi
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -112,7 +113,7 @@ if (empty($reshook)) {
 		$search_field1 = '';
 		$search_field2 = '';
 		$search_date_creation = '';
-		$search_date_update = '';
+		$search_date_modification = '';
 		$toselect = array();
 		$search_array_options = array();
 	}

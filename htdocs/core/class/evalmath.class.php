@@ -30,7 +30,7 @@
  * which are stored in the object. Try it, it's fun!
  *
  * METHODS
- * $m->evalute($expr)
+ * $m->evaluate($expr)
  * Evaluates the expression and returns the result. If an error occurs,
  * prints a warning and returns false. If $expr is a function assignment,
  * returns true on success.
@@ -96,7 +96,6 @@
  */
 class EvalMath
 {
-
 	public $suppress_errors = false;
 
 	public $last_error = null;
@@ -155,8 +154,8 @@ class EvalMath
 		if (substr($expr, - 1, 1) == ';') {
 			$expr = substr($expr, 0, strlen($expr) - 1); // strip semicolons at the end
 		}
-														 // ===============
-														 // is it a variable assignment?
+		// ===============
+		// is it a variable assignment?
 		$matches = array();
 		if (preg_match('/^\s*([a-z]\w*)\s*=\s*(.+)$/', $expr, $matches)) {
 			if (in_array($matches[1], $this->vb)) { // make sure we're not assigning to a constant
@@ -244,7 +243,7 @@ class EvalMath
 		$ops_p = array('+' => 0, '-' => 0, '*' => 1, '/' => 1, '_' => 1, '^' => 2); // operator precedence
 
 		$expecting_op = false; // we use this in syntax-checking the expression
-							   // and determining when a - is a negation
+		// and determining when a - is a negation
 
 		$matches = array();
 		if (preg_match("/[^\w\s+*^\/()\.,-]/", $expr, $matches)) { // make sure the characters are all good
@@ -264,7 +263,7 @@ class EvalMath
 				return $this->trigger(4, "illegal character '_'", "_"); // but not in the input expression
 																		// ===============
 			} elseif ((in_array($op, $ops) or $ex) and $expecting_op) { // are we putting an operator on the stack?
-				if ($ex) { // are we expecting an operator but have a number/variable/function/opening parethesis?
+				if ($ex) { // are we expecting an operator but have a number/variable/function/opening parenthesis?
 					$op = '*';
 					$index--; // it's an implicit multiplication
 				}
@@ -348,7 +347,7 @@ class EvalMath
 			} elseif (in_array($op, $ops) and !$expecting_op) {
 				return $this->trigger(8, "unexpected operator '$op'", $op);
 			} else { // I don't even want to know what you did to get here
-				return $this->trigger(9, "an unexpected error occured");
+				return $this->trigger(9, "an unexpected error occurred");
 			}
 			if ($index == strlen($expr)) {
 				if (in_array($op, $ops)) { // did we end with an operator? bad.
@@ -376,14 +375,14 @@ class EvalMath
 	 *
 	 * @param array $tokens      	Expression
 	 * @param array $vars       	Array
-	 * @return string 				Output
+	 * @return string|false			Output or false if error
 	 */
 	private function pfx($tokens, $vars = array())
 	{
 		$stack = new EvalMathStack();
 
 		foreach ($tokens as $token) { // nice and easy
-									  // if the token is a binary operator, pop two values off the stack, do the operation, and push the result back on
+			// if the token is a binary operator, pop two values off the stack, do the operation, and push the result back on
 			$matches = array();
 			if (in_array($token, array('+', '-', '*', '/', '^'))) {
 				if (is_null($op2 = $stack->pop())) {
@@ -463,7 +462,7 @@ class EvalMath
 	 * @param string $code		   	Code
 	 * @param string $msg			Msg
 	 * @param string|null $info		String
-	 * @return boolean 				False
+	 * @return false
 	 */
 	public function trigger($code, $msg, $info = null)
 	{

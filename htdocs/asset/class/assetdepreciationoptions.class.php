@@ -45,7 +45,7 @@ class AssetDepreciationOptions extends CommonObject
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
 	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
@@ -106,7 +106,6 @@ class AssetDepreciationOptions extends CommonObject
 	);
 	public $fk_asset;
 	public $fk_asset_model;
-	public $tms;
 	public $fk_user_modif;
 
 	/**
@@ -114,10 +113,16 @@ class AssetDepreciationOptions extends CommonObject
 	 */
 	public $deprecation_options = array();
 
+	public $depreciation_type;
+	public $degressive_coefficient;
+	public $duration;
+	public $duration_type;
+	public $accelerated_depreciation_option;
+
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -146,7 +151,7 @@ class AssetDepreciationOptions extends CommonObject
 	 * @param	string		$mode			Depreciation mode (economic, accelerated_depreciation, ...)
 	 * @param	int			$class_type		Type (0:asset, 1:asset model)
 	 * @param	bool		$all_field		Get all fields
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setInfosForMode($mode, $class_type = 0, $all_field = false)
 	{
@@ -165,12 +170,12 @@ class AssetDepreciationOptions extends CommonObject
 				// Unset required option (notnull) if field disabled
 				if (!empty($field_info['enabled_field'])) {
 					$info = explode(':', $field_info['enabled_field']);
-					if ($this->deprecation_options[$info[0]][$info[1]] != $info[2] && isset($this->fields[$field_key]['notnull'])) {
+					if (!empty($this->deprecation_options[$info[0]][$info[1]]) && $this->deprecation_options[$info[0]][$info[1]] != $info[2] && isset($this->fields[$field_key]['notnull'])) {
 						unset($this->fields[$field_key]['notnull']);
 					}
 				}
 				// Set value of the field in the object (for createCommon and setDeprecationOptionsFromPost functions)
-				$this->{$field_key} = $this->deprecation_options[$mode][$field_key];
+				$this->{$field_key} = $this->deprecation_options[$mode][$field_key] ?? null;
 			}
 
 			$this->fields['rowid'] = array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id");
@@ -190,7 +195,7 @@ class AssetDepreciationOptions extends CommonObject
 	 *  Fill deprecation_options property of object (using for data sent by forms)
 	 *
 	 * @param	int		$class_type		Type (0:asset, 1:asset model)
-	 * @return	int						<0 if KO, >0 if OK
+	 * @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDeprecationOptionsFromPost($class_type = 0)
 	{
@@ -210,11 +215,11 @@ class AssetDepreciationOptions extends CommonObject
 				$html_name = $mode_key . '_' . $field_key;
 				if ($field_info['type'] == 'duration') {
 					if (GETPOST($html_name . 'hour') == '' && GETPOST($html_name . 'min') == '') {
-						continue; // The field was not submited to be saved
+						continue; // The field was not submitted to be saved
 					}
 				} else {
 					if (!GETPOSTISSET($html_name)) {
-						continue; // The field was not submited to be saved
+						continue; // The field was not submitted to be saved
 					}
 				}
 				// Ignore special fields
@@ -304,7 +309,7 @@ class AssetDepreciationOptions extends CommonObject
 	 *
 	 * @param	int		$asset_id			Asset ID to set
 	 * @param	int		$asset_model_id		Asset model ID to set
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchDeprecationOptions($asset_id = 0, $asset_model_id = 0)
 	{
@@ -347,7 +352,9 @@ class AssetDepreciationOptions extends CommonObject
 				$error++;
 			} elseif ($result > 0) {
 				foreach ($this->fields as $field_key => $field_info) {
-					if (in_array($field_key, array('rowid', 'fk_asset', 'fk_asset_model', 'tms', 'fk_user_modif'))) continue;
+					if (in_array($field_key, array('rowid', 'fk_asset', 'fk_asset_model', 'tms', 'fk_user_modif'))) {
+						continue;
+					}
 					$deprecation_options[$mode_key][$field_key] = $this->{$field_key};
 				}
 			}
@@ -356,7 +363,7 @@ class AssetDepreciationOptions extends CommonObject
 		foreach ($this->deprecation_options_fields as $mode_key => $mode_info) {
 			if (!empty($mode_info['enabled_field'])) {
 				$info = explode(':', $mode_info['enabled_field']);
-				if ($deprecation_options[$info[0]][$info[1]] != $info[2]) {
+				if (isset($deprecation_options[$info[0]][$info[1]]) && $deprecation_options[$info[0]][$info[1]] != $info[2]) {
 					unset($deprecation_options[$info[0]][$info[1]]);
 				}
 			}
@@ -375,7 +382,7 @@ class AssetDepreciationOptions extends CommonObject
 	 *  get general depreciation info for a mode (used in depreciation card)
 	 *
 	 * @param	string			$mode		Depreciation mode (economic, accelerated_depreciation, ...)
-	 * @return	array|int					<0 if KO otherwise array with general depreciation info
+	 * @return	array|int					Return integer <0 if KO otherwise array with general depreciation info
 	 */
 	public function getGeneralDepreciationInfoForMode($mode)
 	{
@@ -413,7 +420,7 @@ class AssetDepreciationOptions extends CommonObject
 	 * @param	int		$asset_id			Asset ID to set
 	 * @param	int		$asset_model_id		Asset model ID to set
 	 * @param	int		$notrigger			1=disable trigger UPDATE (when called by create)
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function updateDeprecationOptions($user, $asset_id = 0, $asset_model_id = 0, $notrigger = 0)
 	{
@@ -489,7 +496,9 @@ class AssetDepreciationOptions extends CommonObject
 			require_once DOL_DOCUMENT_ROOT . '/asset/class/asset.class.php';
 			$asset = new Asset($this->db);
 			$result = $asset->fetch($this->fk_asset);
-			if ($result > 0) $result = $asset->calculationDepreciation();
+			if ($result > 0) {
+				$result = $asset->calculationDepreciation();
+			}
 			if ($result < 0) {
 				$this->errors[] = $langs->trans('AssetErrorCalculationDepreciationLines');
 				$this->errors[] = $asset->errorsToString();
@@ -523,8 +532,8 @@ class AssetDepreciationOptions extends CommonObject
 	 */
 	public function getRate($mode)
 	{
-		$duration = $this->deprecation_options[$mode]["duration"] > 0 ? $this->deprecation_options[$mode]["duration"] : 0;
-		$duration_type = $this->deprecation_options[$mode]["duration_type"] > 0 ? $this->deprecation_options[$mode]["duration_type"] : 0;
+		$duration = (isset($this->deprecation_options[$mode]["duration"]) && $this->deprecation_options[$mode]["duration"] > 0) ? $this->deprecation_options[$mode]["duration"] : 0;
+		$duration_type = (isset($this->deprecation_options[$mode]["duration_type"]) && $this->deprecation_options[$mode]["duration_type"] > 0) ? $this->deprecation_options[$mode]["duration_type"] : 0;
 
 		return price(price2num($duration > 0 ? (100 * ($duration_type == 1 ? 12 : 1) / $duration) : 0, 2));
 	}

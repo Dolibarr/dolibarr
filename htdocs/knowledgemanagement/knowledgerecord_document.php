@@ -113,7 +113,7 @@ if ($object->id) {
 
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
@@ -183,10 +183,6 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'knowledgemanagement';
-	//$permission = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write');
-	$permission = 1;
-	//$permtoedit = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write');
-	$permtoedit = 1;
 	$param = '&id='.$object->id;
 
 	//$relativepathwithnofile='knowledgerecord/' . dol_sanitizeFileName($object->id).'/';

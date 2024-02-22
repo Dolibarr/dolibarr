@@ -169,7 +169,8 @@ if ((!($id > 0) && empty($ref)) || $notab) {
 	$title = $langs->trans("ListProductServiceByPopularity");
 	if ((string) $type == '0') {
 		$title = $langs->trans("ListProductByPopularity");
-	}	if ((string) $type == '1') {
+	}
+	if ((string) $type == '1') {
 		$title = $langs->trans("ListServiceByPopularity");
 	}
 
@@ -411,7 +412,7 @@ if ($result || !($id > 0)) {
 						$categ = new Categorie($db);
 						$categ->fetch($search_categ);
 						$listofprodids = $categ->getObjectsInCateg('product', 1);
-						$morefilters = ' AND d.fk_product IN ('.$db->sanitize((is_array($listofprodids) && count($listofprodids)) ? join(',', $listofprodids) : '0').')';
+						$morefilters = ' AND d.fk_product IN ('.$db->sanitize((is_array($listofprodids) && count($listofprodids)) ? implode(',', $listofprodids) : '0').')';
 					}
 					if ($search_categ == -2) {
 						$morefilters = ' AND NOT EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE d.fk_product = cp.fk_product)';

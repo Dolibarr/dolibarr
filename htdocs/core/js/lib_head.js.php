@@ -175,8 +175,8 @@ jQuery(function($){
 		dayNamesMin: tradDaysMin,
 		weekHeader: '<?php echo $langs->trans("Week"); ?>',
 		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',	/* Note dd/mm/yy means year on 4 digit in jquery format */
-		firstDay: <?php echo (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'); ?>,
-		isRTL: <?php echo ($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>,
+		firstDay: <?php echo(isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'); ?>,
+		isRTL: <?php echo($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>,
 		showMonthAfterYear: false,  	/* TODO add specific to country	*/
 		 yearSuffix: ''			/* TODO add specific to country */
 	};
@@ -269,7 +269,7 @@ function formatDate(date,format)
 {
 	// alert('formatDate date='+date+' format='+format);
 
-	// Force parametres en chaine
+	// Force parameters en chaine
 	format=format+"";
 
 	var result="";
@@ -337,7 +337,7 @@ function getDateFromFormat(val,format)
 {
 	// alert('getDateFromFormat val='+val+' format='+format);
 
-	// Force parametres en chaine
+	// Force parameters en chaine
 	val=val+"";
 	format=format+"";
 
@@ -561,14 +561,14 @@ function hideMessage(fieldId,message) {
  *
  * @param	string	url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
  * @param	string	code		Code
- * @param	string	intput		Array of complementary actions to do if success
+ * @param	string	input		Array of complementary actions to do if success
  * @param	int		entity		Entity
  * @param	int		strict		Strict
  * @param   int     forcereload Force reload
  * @param   int     userid      User id
  * @param	int		value       Value to set
  * @param   string  token       Token
- * @retun   boolean
+ * @return   boolean
  */
 function setConstant(url, code, input, entity, strict, forcereload, userid, token, value) {
 	var saved_url = url; /* avoid undefined url */
@@ -668,7 +668,7 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
  *
  * @param	{string}	url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
  * @param	{string}	code		Code
- * @param	{string}	intput		Array of complementary actions to do if success
+ * @param	{string}	input		Array of complementary actions to do if success
  * @param	{int}		entity		Entity
  * @param	{int}		strict		Strict
  * @param   {int}     forcereload Force reload
@@ -765,7 +765,7 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
  * @param	string	action		Action
  * @param	string	url			Url
  * @param	string	code		Code
- * @param	string	intput		Array of complementary actions to do if success
+ * @param	string	input		Array of complementary actions to do if success
  * @param	string	box			Box
  * @param	int		entity		Entity
  * @param	int		yesButton	yesButton
@@ -884,7 +884,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 								}
 							});
 							if ( !valid ) {
-								// remove invalid value, as it didnt match anything
+								// remove invalid value, as it didn't match anything
 								$( this ).val( "" );
 								select.val( "" );
 								input.data("ui-autocomplete").term = "";
@@ -1265,7 +1265,7 @@ function price2numjs(amount) {
 	amount = amount.replace(thousand, '');        // Replace of thousand before replace of dec to avoid pb if thousand is .
 	amount = amount.replace(dec, '.');
 
-	//console.log("amount before="+amount+" rouding="+rounding)
+	//console.log("amount before="+amount+" rounding="+rounding)
 	var res = Math.round10(amount, - rounding);
 	// Other solution is
 	// var res = dolroundjs(amount, rounding)
@@ -1300,7 +1300,10 @@ $(document).ready(function() {
 		});
 	}
 });
-<?php } ?>
+	<?php
+} ?>
+
+
 
 jQuery(document).ready(function() {
 	// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
@@ -1317,17 +1320,36 @@ jQuery(document).ready(function() {
 });
 
 
+jQuery(document).ready(function() {
+	jQuery(".butAction.dropdown-toggle").on("click", function(event) {
+		console.log("Click on .butAction.dropdown-toggle");
+		var parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown");
+			 var offset = parentholder.offset();
+		var widthdocument = $(document).width();
+		var left = offset.left;
+		var right = widthdocument - offset.left - parentholder.width();
+		var widthpopup = parentholder.children(".dropdown-content").width();
+		console.log("left="+left+" right="+right+" width="+widthpopup+" widthdocument="+widthdocument);
+		if (widthpopup + right >= widthdocument) {
+			right = 10;
+		}
+		parentholder.toggleClass("open");
+		parentholder.children(".dropdown-content").css({"right": right+"px", "left": "auto"});
+	});
+});
+
+
+<?php
+if (!getDolGlobalString('MAIN_DISABLE_SELECT2_FOCUS_PROTECTION') && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
+	?>
 /*
- * Hacky fix for a bug in select2 with jQuery 3.6.0's new nested-focus "protection"
+ * Hacky fix for a bug in select2 with jQuery 3.6.4's new nested-focus "protection"
+ * This fix needs to click a second time when clicking into a combo with ajax (see Test4d and Test5a in test_forms.php
  * see: https://github.com/select2/select2/issues/5993
  * see: https://github.com/jquery/jquery/issues/4382
  *
  * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
  */
-
-<?php
-if (!getDolGlobalString('MAIN_DISABLE_SELECT2_FOCUS_PROTECTION') && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
-	?>
 $(document).on('select2:open', (e) => {
 	console.log("Execute the focus (click on combo or use space when on component");
 	const target = $(e.target);

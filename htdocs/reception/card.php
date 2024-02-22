@@ -70,7 +70,7 @@ if (isModEnabled('productbatch')) {
 	$langs->load('productbatch');
 }
 
-$origin = GETPOST('origin', 'alpha') ?GETPOST('origin', 'alpha') : 'reception'; // Example: commande, propal
+$origin = GETPOST('origin', 'alpha') ? GETPOST('origin', 'alpha') : 'reception'; // Example: commande, propal
 $origin_id = GETPOST('id', 'int') ? GETPOST('id', 'int') : '';
 $id = $origin_id;
 if (empty($origin_id)) {
@@ -83,7 +83,7 @@ if (empty($origin_id)) {
 	$origin_id  = GETPOST('originid', 'int'); // Id of order or propal
 }
 $ref = GETPOST('ref', 'alpha');
-$line_id = GETPOST('lineid', 'int') ?GETPOST('lineid', 'int') : '';
+$line_id = GETPOSTINT('lineid') ? GETPOSTINT('lineid') : 0;
 $facid = GETPOST('facid', 'int');
 
 $action	= GETPOST('action', 'alpha');
@@ -156,17 +156,17 @@ if (isModEnabled("reception") || $origin == 'reception' || empty($origin)) {
 }
 
 if (isModEnabled("reception")) {
-	$permissiontoread = $user->rights->reception->lire;
-	$permissiontoadd = $user->rights->reception->creer;
-	$permissiondellink = $user->rights->reception->creer; // Used by the include of actions_dellink.inc.php
-	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->creer)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->reception_advance->validate)));
-	$permissiontodelete = $user->rights->reception->supprimer;
+	$permissiontoread = $user->hasRight('reception', 'lire');
+	$permissiontoadd = $user->hasRight('reception', 'creer');
+	$permissiondellink = $user->hasRight('reception', 'creer'); // Used by the include of actions_dellink.inc.php
+	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'reception_advance', 'validate')));
+	$permissiontodelete = $user->hasRight('reception', 'supprimer');
 } else {
-	$permissiontoread = $user->rights->fournisseur->commande->receptionner;
-	$permissiontoadd = $user->rights->fournisseur->commande->receptionner;
-	$permissiondellink = $user->rights->fournisseur->commande->receptionner; // Used by the include of actions_dellink.inc.php
-	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->fournisseur->commande->receptionner)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->fournisseur->commande_advance->check)));
-	$permissiontodelete = $user->rights->fournisseur->commande->receptionner;
+	$permissiontoread = $user->hasRight('fournisseur', 'commande', 'receptionner');
+	$permissiontoadd = $user->hasRight('fournisseur', 'commande', 'receptionner');
+	$permissiondellink = $user->hasRight('fournisseur', 'commande', 'receptionner'); // Used by the include of actions_dellink.inc.php
+	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('fournisseur', 'commande', 'receptionner')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('fournisseur', 'commande_advance', 'check')));
+	$permissiontodelete = $user->hasRight('fournisseur', 'commande', 'receptionner');
 }
 
 
@@ -302,7 +302,7 @@ if (empty($reshook)) {
 		$object->size_units = GETPOST('size_units', 'int');
 		$object->weight_units = GETPOST('weight_units', 'int');
 
-		// On va boucler sur chaque ligne du document d'origine pour completer objet reception
+		// On va boucler sur chaque ligne du document d'origine pour completer object reception
 		// avec info diverses + qte a livrer
 
 		if ($object->origin == "supplierorder") {
@@ -316,7 +316,7 @@ if (empty($reshook)) {
 		$object->socid = $objectsrc->socid;
 		$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
 		$object->model_pdf = GETPOST('model');
-		$object->date_delivery = $date_delivery; // Date delivery planed
+		$object->date_delivery = $date_delivery; // Date delivery planned
 		$object->fk_delivery_address = $objectsrc->fk_delivery_address;
 		$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 		$object->tracking_number = GETPOST('tracking_number', 'alpha');
@@ -530,8 +530,8 @@ if (empty($reshook)) {
 			$object->trueWidth = trim(GETPOST('trueWidth', 'int'));
 		}
 		if ($action == 'settrueHeight') {
-						$object->trueHeight = trim(GETPOST('trueHeight', 'int'));
-						$object->size_units = GETPOST('size_units', 'int');
+			$object->trueHeight = trim(GETPOST('trueHeight', 'int'));
+			$object->size_units = GETPOST('size_units', 'int');
 		}
 		if ($action == 'settrueDepth') {
 			$object->trueDepth = trim(GETPOST('trueDepth', 'int'));
@@ -657,7 +657,7 @@ if (empty($reshook)) {
 
 
 					$line->id = $line_id;
-					$line->fk_entrepot = GETPOST($stockLocation, 'int');
+					$line->fk_entrepot = GETPOSTINT($stockLocation);
 					$line->qty = GETPOST($qty, 'int');
 					$line->comment = GETPOST($comment, 'alpha');
 
@@ -733,6 +733,7 @@ if (empty($reshook)) {
 	$triggersendname = 'RECEPTION_SENTBYMAIL';
 	$paramname = 'id';
 	$mode = 'emailfromreception';
+	$autocopy = 'MAIN_MAIL_AUTOCOPY_RECEPTION_TO';
 	$trackid = 'rec'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
@@ -761,7 +762,9 @@ if ($action == 'create2') {
 	print load_fiche_titre($langs->trans("CreateReception"), '', 'dollyrevert');
 
 	print '<br>'.$langs->trans("ReceptionCreationIsDoneFromOrder");
-	$action = ''; $id = ''; $ref = '';
+	$action = '';
+	$id = '';
+	$ref = '';
 }
 
 // Mode creation.
@@ -837,7 +840,7 @@ if ($action == 'create') {
 
 			// Project
 			if (isModEnabled('project')) {
-				$projectid = GETPOST('projectid', 'int') ?GETPOST('projectid', 'int') : 0;
+				$projectid = GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : 0;
 				if (empty($projectid) && !empty($objectsrc->fk_project)) {
 					$projectid = $objectsrc->fk_project;
 				}
@@ -1006,7 +1009,7 @@ if ($action == 'create') {
 					$dispatchLines[$numAsked] = array('paramSuffix'=>$paramSuffix, 'prod' => GETPOST($prod, 'int'), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' => GETPOST($ent, 'int'), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' => GETPOST('comment'), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'), 'DLC'=> $dDLC, 'DLUO'=> $dDLUO, 'lot'=> GETPOST($lot, 'alpha'));
 				}
 
-				// If create form is coming from same page, it means that post was sent but an error occured
+				// If create form is coming from same page, it means that post was sent but an error occurred
 				if (preg_match('/^productl([0-9]+)$/i', $key, $reg)) {
 					$numAsked++;
 					$paramSuffix = $reg[1];
@@ -1099,7 +1102,7 @@ if ($action == 'create') {
 
 			$arrayofpurchaselinealreadyoutput= array();
 
-			// $_POST contains fk_commandefourndet_X_Y    where Y is num of product line and X is number of splitted line
+			// $_POST contains fk_commandefourndet_X_Y    where Y is num of product line and X is number of split lines
 			$indiceAsked = 1;
 			while ($indiceAsked <= $numAsked) {	// Loop on $dispatchLines. Warning: $dispatchLines must be sorted by fk_commandefourndet (it is a regroupment key on output)
 				$product = new Product($db);
@@ -1252,7 +1255,7 @@ if ($action == 'create') {
 							// Show warehouse combo list
 							$ent = "entl".$indiceAsked;
 							$idl = "idl".$indiceAsked;
-							$tmpentrepot_id = is_numeric(GETPOST($ent, 'int')) ?GETPOST($ent, 'int') : $warehouse_id;
+							$tmpentrepot_id = is_numeric(GETPOST($ent, 'int')) ? GETPOST($ent, 'int') : $warehouse_id;
 							if ($line->fk_product > 0) {
 								print '<!-- Show warehouse selection -->';
 								print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 0, 0, $line->fk_product, '', 1);
@@ -1364,7 +1367,7 @@ if ($action == 'create') {
 
 	$formconfirm = '';
 
-	// Confirm deleteion
+	// Confirm deletion
 	if ($action == 'delete') {
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteReception'), $langs->trans("ConfirmDeleteReception", $object->ref), 'confirm_delete', '', 0, 1);
 	}
@@ -1395,7 +1398,7 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('ValidateReception'), $text, 'confirm_valid', '', 0, 1, 250);
 	}
 
-	// Confirm cancelation
+	// Confirm cancellation
 	if ($action == 'annuler') {
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('CancelReception'), $langs->trans("ConfirmCancelReception", $object->ref), 'confirm_cancel', '', 0, 1);
 	}
@@ -1968,7 +1971,7 @@ if ($action == 'create') {
 					print '<td><input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty.'"></td>';
 					// Warehouse source
 					print '<td>'.$formproduct->selectWarehouses($lines[$i]->fk_entrepot, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
-					// Batch number managment
+					// Batch number management
 					if ($conf->productbatch->enabled && !empty($lines[$i]->product->status_batch)) {
 						print '<td class="nowraponall left"><input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"><br>';
 						if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
@@ -1989,7 +1992,7 @@ if ($action == 'create') {
 					print '<td><input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty.'"></td>';
 					// Warehouse source
 					print '<td></td>';
-					// Batch number managment
+					// Batch number management
 					print '<td></td>';
 					print '</tr>';
 				}
@@ -2013,7 +2016,7 @@ if ($action == 'create') {
 				}
 			}
 
-			// Batch number managment
+			// Batch number management
 			if (isModEnabled('productbatch')) {
 				if (isset($lines[$i]->batch)) {
 					print '<!-- Detail of lot -->';
@@ -2092,17 +2095,21 @@ if ($action == 'create') {
 		$extralabelslines = $extrafields->attributes[$lines[$i]->table_element];
 		if (!empty($extralabelslines) && is_array($extralabelslines) && count($extralabelslines) > 0) {
 			$colspan = 8;
-			if (isModEnabled('stock')) { $colspan++; }
-			if (isModEnabled('productbatch')) { $colspan++; }
+			if (isModEnabled('stock')) {
+				$colspan++;
+			}
+			if (isModEnabled('productbatch')) {
+				$colspan++;
+			}
 
 			$line = new CommandeFournisseurDispatch($db);
 			$line->id = $lines[$i]->id;
 			$line->fetch_optionals();
 
 			if ($action == 'editline' && $lines[$i]->id == $line_id) {
-				print $line->showOptionals($extrafields, 'edit', array('colspan'=>$colspan), $indiceAsked);
+				print $line->showOptionals($extrafields, 'edit', array('colspan'=>$colspan), '');
 			} else {
-				print $line->showOptionals($extrafields, 'view', array('colspan'=>$colspan), $indiceAsked);
+				print $line->showOptionals($extrafields, 'view', array('colspan'=>$colspan), '');
 			}
 		}
 	}
@@ -2201,8 +2208,8 @@ if ($action == 'create') {
 
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
-		$genallowed = $user->rights->reception->lire;
-		$delallowed = $user->rights->reception->creer;
+		$genallowed = $user->hasRight('reception', 'lire');
+		$delallowed = $user->hasRight('reception', 'creer');
 
 		print $formfile->showdocuments('reception', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
