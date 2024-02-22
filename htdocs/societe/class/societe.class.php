@@ -12,15 +12,15 @@
  * Copyright (C) 2013       Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2017       Rui Strecht			        <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018	      Philippe Grand	        <philippe.grand@atoo-net.com>
+ * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
+ * Copyright (C) 2018	    Philippe Grand	        <philippe.grand@atoo-net.com>
  * Copyright (C) 2019-2020  Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2020       Open-Dsi         		    <support@open-dsi.fr>
- * Copyright (C) 2022		    ButterflyOfFire         <butterflyoffire+dolibarr@protonmail.com>
- * Copyright (C) 2021-2024	Anthony Berton       	  <anthony.berton@bb2a.fr>
+ * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
+ * Copyright (C) 2022		ButterflyOfFire         <butterflyoffire+dolibarr@protonmail.com>
+ * Copyright (C) 2021-2024	Anthony Berton       	<anthony.berton@bb2a.fr>
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024		    William Mead			      <william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
