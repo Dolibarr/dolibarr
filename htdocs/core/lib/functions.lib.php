@@ -206,6 +206,28 @@ function getDolUserInt($key, $default = 0, $tmpuser = null)
 	return (int) (empty($tmpuser->conf->$key) ? $default : $tmpuser->conf->$key);
 }
 
+define(
+	'DEPRECATED_MODULE_MAPPING',
+	array(
+		'actioncomm' => 'agenda',
+		'adherent' => 'member',
+		'adherent_type' => 'member_type',
+		'banque' => 'bank',
+		'categorie' => 'category',
+		'commande' => 'order',
+		'contrat' => 'contract',
+		'entrepot' => 'stock',
+		'expedition' => 'delivery_note',
+		'facture' => 'invoice',
+		'fichinter' => 'intervention',
+		'product_fournisseur_price' => 'productsupplierprice',
+		'product_price' => 'productprice',
+		'projet'  => 'project',
+		'propale' => 'propal',
+		'socpeople' => 'contact',
+	)
+);
+
 /**
  * Is Dolibarr module enabled
  *
@@ -217,17 +239,7 @@ function isModEnabled($module)
 	global $conf;
 
 	// Fix old names (map to new names)
-	$arrayconv = array(
-		'adherent' =>	'member',
-		'banque' => 'bank',
-		'categorie' => 'category',
-		'commande' => 'order',
-		'contrat' => 'contract',
-		'expedition' => 'delivery_note',
-		'facture' => 'invoice',
-		'projet' => 'project',
-		'propale' => 'propal',
-	);
+	$arrayconv = DEPRECATED_MODULE_MAPPING;
 
 	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 		// Special cases: both use the same module.
