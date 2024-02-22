@@ -2316,9 +2316,7 @@ abstract class CommonObject
 			$sql .= " AND (sc.fk_user = ".((int) $user->id);
 			if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
 				$userschilds = $user->getAllChildIds();
-				foreach ($userschilds as $key => $value) {
-					$sql .= ' OR sc.fk_user = '.((int) $value);
-				}
+				$sql .= " OR sc.fk_user IN (".$this->db->sanitize(implode(',', $userschilds)).")";
 			}
 			$sql .= ')';
 		}

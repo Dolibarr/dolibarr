@@ -62,6 +62,10 @@ $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'orderlist';
 $mode        = GETPOST('mode', 'alpha');
 
+if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+	$userschilds = $user->getAllChildIds();
+}
+
 // Search Parameters
 $search_datecloture_start = GETPOST('search_datecloture_start', 'int');
 if (empty($search_datecloture_start)) {
@@ -228,6 +232,10 @@ $id = (GETPOST('orderid') ? GETPOST('orderid', 'int') : GETPOST('id', 'int'));
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+$permissiontoreadallthirdparty = $user->hasRight('societe', 'client', 'voir');
+
+
 $result = restrictedArea($user, 'commande', $id, '');
 
 $error = 0;
@@ -877,15 +885,10 @@ if ($socid > 0) {
 }
 
 // Restriction on sale representative
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$permissiontoreadallthirdparty && !$socid) {
 	$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
-	if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
-		$userschilds = $user->getAllChildIds();
-		if ($userschilds) {
-			foreach ($userschilds as $key => $value) {
-				$sql .= " OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $value).")";
-			}
-		}
+	if ($userschilds) {
+		$sql .= " OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user IN (".$db->sanitize(implode(',', $userschilds))."))";
 	}
 	$sql .= ")";
 }
