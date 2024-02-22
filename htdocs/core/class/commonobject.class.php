@@ -261,13 +261,6 @@ abstract class CommonObject
 	public $user;
 
 	/**
-	 * @var string|CommonObject			The type of the originating object ('commande', 'facture', ...). Note: on some object this field is called $origin_type
-	 * 									Or for MouvementStock, the originating object itself.
-	 * @see fetch_origin()
-	 */
-	public $origin;
-
-	/**
 	 * @var string 		The type of originating object. Combined with $origin_id, it allows to reload $origin_object
 	 * @see fetch_origin()
 	 */
@@ -283,6 +276,13 @@ abstract class CommonObject
 	 * @var	Object		Origin object. This is set by fetch_origin() from this->origin and this->origin_id.
 	 */
 	public $origin_object;
+
+	/**
+	 * @var string|CommonObject		Sometime the type of the originating object ('commande', 'facture', ...), sometime the object (like onh MouvementStock)
+	 * @deprecated					Use now $origin_type and $origin_id;
+	 * @see fetch_origin()
+	 */
+	public $origin;
 
 	// TODO Remove this. Has been replaced with ->origin_object.
 	// This is set by fetch_origin() from this->origin and this->origin_id
