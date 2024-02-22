@@ -1811,8 +1811,10 @@ class BOMLine extends CommonObjectLine
 	public $childBom = array();
 
 	/**
-	 * @var int Service unit
-	 */
+ 	 * @var int|null                ID of the unit of measurement (rowid in llx_c_units table)
+ 	 * @see measuringUnitString()
+ 	 * @see getLabelOfUnit()
+ 	 */
 	public $fk_unit;
 
 	/**
