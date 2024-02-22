@@ -537,6 +537,10 @@ class MyObject extends CommonObject
 				$record = new self($this->db);
 				$record->setVarsFromFetchObj($obj);
 
+				if (!empty($record->isextrafieldmanaged)) {
+					$record->fetch_optionals();
+				}
+
 				$records[$record->id] = $record;
 
 				$i++;
