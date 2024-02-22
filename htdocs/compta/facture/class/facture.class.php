@@ -122,13 +122,6 @@ class Facture extends CommonInvoice
 	public $fk_user_author;
 
 	/**
-	 * @var int ID
-	 * @deprecated
-	 * @see $fk_user_valid
-	 */
-	public $user_valid;
-
-	/**
 	 * @var int|null ID
 	 */
 	public $fk_user_valid;
