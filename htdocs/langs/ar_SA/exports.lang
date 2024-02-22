@@ -94,7 +94,7 @@ NbOfLinesOK=عدد الأسطر مع عدم وجود أخطاء وتحذيرات
 NbOfLinesImported=عدد خطوط المستوردة بنجاح : <b>%s.</b>
 DataComeFromNoWhere=قيمة لادخال تأتي من أي مكان في الملف المصدر.
 DataComeFromFileFieldNb=تأتي القيمة المراد إدراجها من العمود <b> %s </b> في الملف المصدر.
-DataComeFromIdFoundFromRef=سيتم استخدام القيمة التي تأتي من الملف المصدر للعثور على معرف الكائن الأصلي المراد استخدامه (وبالتالي فإن الكائن <b>%s</span <span class='notranslate'></b> الذي يحتوي على المرجع من الملف المصدر يجب أن يكون موجودًا في قاعدة البيانات).
+DataComeFromIdFoundFromRef=The value that comes from the source file will be used to find the id of the parent object to use (so the object <b>%s</b> that has the ref. from source file must exist in the database).
 DataComeFromIdFoundFromCodeId=سيتم استخدام قيمة الكود الذي يأتي من الملف المصدر للعثور على معرف الكائن الأصلي المراد استخدامه (لذا يجب أن يكون الكود من الملف المصدر موجودًا في القاموس <b>%s</b>). لاحظ أنه إذا كنت تعرف المعرف، فيمكنك أيضًا استخدامه في الملف المصدر بدلاً من الكود. يجب أن يعمل الاستيراد في كلتا الحالتين.
 DataIsInsertedInto=البيانات سوف تأتي من الملف المصدر يتم إدراجها في الحقل التالي :
 DataIDSourceIsInsertedInto=سيتم إدخال معرف الكائن الأصل ، الذي تم العثور عليه باستخدام البيانات الموجودة في الملف المصدر ، في الحقل التالي:

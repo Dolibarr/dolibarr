@@ -1218,6 +1218,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	// To ensure that all variables within the MAX() brackets are integers
 	// This avoid bad detection of max when data are noised with non numeric values at the position of the numero
 	if (getDolGlobalInt('MAIN_NUMBERING_FILTER_ON_INT_ONLY')) {
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$sql .= " AND ". $db->regexpsql($sqlstring, '^[0-9]+$', 1);
 	}
 

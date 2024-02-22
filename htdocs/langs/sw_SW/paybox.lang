@@ -18,7 +18,7 @@ YourPaymentHasBeenRecorded=Ukurasa huu unathibitisha kuwa malipo yako yamerekodi
 YourPaymentHasNotBeenRecorded=Malipo yako HAYAJAREKODIWA na muamala umeghairiwa. Asante.
 AccountParameter=Vigezo vya akaunti
 UsageParameter=Vigezo vya matumizi
-InformationToFindParameters=Usaidizi wa kupata <span class='notranslate'>%s</span> yako\n maelezo ya akaunti
+InformationToFindParameters=Help to find your %s account information
 PAYBOX_CGI_URL_V2=Url ya moduli ya Paybox CGI kwa malipo
 CSSUrlForPaymentForm=Url ya mtindo wa CSS ya fomu ya malipo
 NewPayboxPaymentReceived=Malipo mapya ya Paybox yamepokelewa

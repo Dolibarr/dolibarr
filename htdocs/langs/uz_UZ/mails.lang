@@ -182,12 +182,12 @@ IsAnAnswer=Dastlabki elektron pochtaning javobi
 RecordCreatedByEmailCollector=%s elektron pochtasidan elektron pochta yig'uvchisi %s tomonidan yaratilgan yozuv
 DefaultBlacklistMailingStatus=Yangi kontakt yaratishda "%s" maydonining standart qiymati
 DefaultStatusEmptyMandatory=Bo'sh, ammo majburiy
-WarningLimitSendByDay=OGOHLANTIRISH: Namunangizni sozlash yoki shartnomasi kunlik xatlar soningizni <b>%s<span class='notranslate' bilan cheklaydi. ></b></span>. Koʻproq yuborishga urinish misolingiz sekinlashishiga yoki toʻxtatilishiga olib kelishi mumkin. Agar sizga kattaroq kvota kerak bo'lsa, qo'llab-quvvatlash xizmatiga murojaat qiling.
+WarningLimitSendByDay=WARNING: The setup or contract of your instance limits your number of emails per day to <b>%s</b>. Trying to send more may result in having your instance slow down or suspended. Please contact your support if you need a higher quota.
 NoMoreRecipientToSendTo=E-pochtani yuborish uchun boshqa qabul qiluvchi yo'q
 EmailOptedOut=E-pochta egasi u bilan endi bu xat orqali bog‘lanmaslikni so‘radi
 EvenUnsubscribe=O'chirish xatlarini ham qo'shing
 EvenUnsubscribeDesc=Maqsad sifatida elektron pochta xabarlarini tanlaganingizda, rad etish xatlarini qo'shing. Masalan, majburiy elektron pochta xabarlari uchun foydalidir.
-XEmailsDoneYActionsDone=%s e-pochta xatlari oldindan malakali, %s xatlar muvaffaqiyatli qayta ishlandi (<span class='notranslate'>%s uchun) /bajarilgan harakatlar)
+XEmailsDoneYActionsDone=%s emails pre-qualified, %s emails successfully processed (for %s record/actions done)
 helpWithAi=Generate message from AI
 YouCanMakeSomeInstructionForEmail=You can make some instructions for your Email (Example: generate image in email template...)
 ModelTemplate=Email template

@@ -36,7 +36,7 @@ EventOrganizationSetup=Podešavanje organizacije događaja
 EventOrganization=Organizacija događaja
 EventOrganizationSetupPage = Stranica za podešavanje organizacije događaja
 EVENTORGANIZATION_TASK_LABEL = Oznaka zadataka za automatsko kreiranje kada se projekat validira
-EVENTORGANIZATION_TASK_LABELTooltip = Kada potvrdite događaj za organizaciju, neki zadaci se mogu automatski kreirati u projektu<br><br>Na primjer: <br>Pošalji poziv za konferencije<br>Pošalji poziv za štandove<br>prijedlozi Conferences of Conferences ='notranslate'><br></span>Provjeri prijavu za štandove<br>Otvori pretplatu na događaj za učesnike<br> a podsjetimo o događaju govornicima<span class='notranslate'><br>Pošalji podsjetnik na događaj domaćinima Bootha<br>Pošalji podsjetnik na događaj učesnicima
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
 EVENTORGANIZATION_TASK_LABELTooltip2=Ostavite prazno ako ne trebate automatski kreirati zadatke.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kategorija za dodavanje trećim stranama automatski kreirana kada neko predloži konferenciju
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kategorija za dodavanje trećim stranama se automatski kreira kada predlože štand
@@ -88,6 +88,7 @@ PriceOfRegistration=Cijena registracije
 PriceOfRegistrationHelp=Cijena koju treba platiti za registraciju ili učešće na događaju
 PriceOfBooth=Cijena pretplate za štand
 PriceOfBoothHelp=Cijena pretplate za štand
+EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=Link ICS za konferencije
 ConferenceOrBoothInformation=Informacije o konferenciji ili štandu
 Attendees=Polaznici
@@ -127,7 +128,7 @@ PublicAttendeeSubscriptionPage = Javni link za registraciju samo na ovaj događa
 MissingOrBadSecureKey = Sigurnosni ključ je nevažeći ili nedostaje
 EvntOrgWelcomeMessage = Ovaj obrazac vam omogućava da se registrujete kao novi učesnik događaja
 EvntOrgDuration = Ova konferencija počinje %s i završava se %s.
-ConferenceAttendeeFee = Naknada za učesnike konferencije za događaj : '%s' koja se javlja od %s do <span class='notranslate'>%s >.
+ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
 BoothLocationFee = Lokacija štanda za događaj : '%s' koji se javlja od %s do %s
 EventType = Vrsta događaja
 LabelOfBooth=Oznaka štanda

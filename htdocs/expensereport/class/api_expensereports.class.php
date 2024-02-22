@@ -407,10 +407,9 @@ class ExpenseReports extends DolibarrApi
 	/**
 	 * Update Expense Report general fields (won't touch lines of expensereport)
 	 *
-	 * @param int   $id             Id of Expense Report to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   	$id             	Id of Expense Report to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 *
 	 * @throws	RestException	401		Not allowed
 	 * @throws  RestException	404		Expense report not found
@@ -632,7 +631,7 @@ class ExpenseReports extends DolibarrApi
 			$paymentExpenseReport->$field = $this->_checkValForAPI($field, $value, $paymentExpenseReport);
 		}
 
-		if ($paymentExpenseReport->create(DolibarrApiAccess::$user, 1) < 0) {
+		if ($paymentExpenseReport->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error creating paymentExpenseReport', array_merge(array($paymentExpenseReport->error), $paymentExpenseReport->errors));
 		}
 		if (isModEnabled("banque")) {

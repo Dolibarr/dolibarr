@@ -124,8 +124,6 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public function create($user)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		$now = dol_now();

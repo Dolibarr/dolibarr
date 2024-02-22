@@ -1272,3 +1272,4 @@ Settings=Settings
 FillMessageWithALayout=Fill message with a layout
 FillMessageWithAIContent=Fill message with AI content
 EnterYourAIPromptHere=Enter your AI prompt here
+UseOrOperatorShort=Use 'or'

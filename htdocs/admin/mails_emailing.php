@@ -450,6 +450,7 @@ if ($action == 'edit') {
 
 		// SuperAdministrator access only
 		if (!isModEnabled('multicompany')  || ($user->admin && !$user->entity)) {
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print $form->selectarray('MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING', $oauthservices, $conf->global->MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING);
 		} else {
 			$text = $oauthservices[getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING')];

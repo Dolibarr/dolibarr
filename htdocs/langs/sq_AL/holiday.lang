@@ -27,9 +27,9 @@ UserForApprovalLastname=Mbiemri i përdoruesit të miratimit
 UserForApprovalLogin=Hyrja e përdoruesit të miratimit
 DescCP=Përshkrimi
 SendRequestCP=Krijo kërkesë për pushim
-DelayToRequestCP=Kërkesat për largim duhet të bëhen të paktën <b>%s ditë(a)<span class='notranslate'>b09a4b739f17f para tyre.
+DelayToRequestCP=Leave requests must be made at least <b>%s day(s)</b> before them.
 MenuConfCP=Bilanci i lejes
-SoldeCPUser=Lëreni bilancin (në ditë) : <b>%s<span class='notranslate'></b></s>
+SoldeCPUser=Leave balance (in days) : <b>%s</b>
 ErrorEndDateCP=Duhet të zgjidhni një datë përfundimi më të madhe se data e fillimit.
 ErrorSQLCreateCP=Ndodhi një gabim SQL gjatë krijimit:
 ErrorIDFicheCP=Ka ndodhur një gabim, kërkesa për pushim nuk ekziston.
@@ -109,7 +109,6 @@ TypeWasDisabledOrRemoved=Lloji i lejes (id %s) u çaktivizua ose u hoq
 LastHolidays=Kërkesat më të fundit për largim %s
 AllHolidays=Të gjitha kërkesat për pushim
 HalfDay=Gjysmë ditë
-NotTheAssignedApprover=Ju nuk jeni miratuesi i caktuar
 LEAVE_PAID=Pushime me pagesë
 LEAVE_SICK=Pushim mjekësor
 LEAVE_OTHER=Pushime të tjera

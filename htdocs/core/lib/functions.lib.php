@@ -216,23 +216,31 @@ function isModEnabled($module)
 {
 	global $conf;
 
-	// Fix special cases
+	// Fix old names (map to new names)
 	$arrayconv = array(
-		'bank' => 'banque',
-		'category' => 'categorie',
-		'contract' => 'contrat',
-		'project' => 'projet',
-		'delivery_note' => 'expedition'
+		'adherent' =>	'member',
+		'banque' => 'bank',
+		'categorie' => 'category',
+		'commande' => 'order',
+		'contrat' => 'contract',
+		'expedition' => 'delivery_note',
+		'facture' => 'invoice',
+		'projet' => 'project',
+		'propale' => 'propal',
 	);
+
 	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+		// Special cases: both use the same module.
 		$arrayconv['supplier_order'] = 'fournisseur';
 		$arrayconv['supplier_invoice'] = 'fournisseur';
 	}
+
+	$module_alt = $module;
 	if (!empty($arrayconv[$module])) {
-		$module = $arrayconv[$module];
+		$module_alt = $arrayconv[$module];
 	}
 
-	return !empty($conf->modules[$module]);
+	return !empty($conf->modules[$module]) || !empty($conf->modules[$module_alt]);
 	//return !empty($conf->$module->enabled);
 }
 
@@ -1567,6 +1575,7 @@ function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '', $bad
 		$forbidden_chars_to_remove = $badcharstoremove;
 	}
 
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrderInternal
 	return str_replace($forbidden_chars_to_replace, $newstr, str_replace($forbidden_chars_to_remove, "", $str));
 }
 
@@ -1669,7 +1678,19 @@ function dol_escape_php($stringtoescape, $stringforquotes = 2)
 }
 
 /**
- * Return a string ready to be output on a HTML page.
+ * Return a string label (so on 1 line only and that should not contains any HTML) ready to be output on HTML page
+ * To use text that is not HTML content inside an attribute, use can simply only dol_escape_htmltag(). In doubt, use dolPrintHTMLForAttribute().
+ *
+ * @param	string	$s		String to print
+ * @return	string			String ready for HTML output
+ */
+function dolPrintLabel($s)
+{
+	return dol_escape_htmltag(dol_string_nohtmltag($s, 1, 'UTF-8', 0, 0), 0, 0, '', 0, 1);
+}
+
+/**
+ * Return a string (that can be on several lines) ready to be output on a HTML page.
  * To output a text inside an attribute, you can use dolPrintHTMLForAttribute() or dolPrintHTMLForTextArea() inside a textarea
  *
  * @param	string	$s				String to print
@@ -1933,6 +1954,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 
 	if (!empty($message)) {
 		// Test log level
+		// @phan-suppress-next-line PhanPluginDuplicateArrayKey
 		$logLevels = array(LOG_EMERG => 'EMERG', LOG_ALERT => 'ALERT', LOG_CRIT => 'CRITICAL', LOG_ERR => 'ERR', LOG_WARNING => 'WARN', LOG_NOTICE => 'NOTICE', LOG_INFO => 'INFO', LOG_DEBUG => 'DEBUG');
 		if (!array_key_exists($level, $logLevels)) {
 			throw new Exception('Incorrect log level');
@@ -2674,7 +2696,6 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlref .= '<div class="refidno opacitymedium">'.$object->label.'</div>';
 		}
 	}
-
 	// Show address and email
 	if (method_exists($object, 'getBannerAddress') && !in_array($object->element, array('product', 'bookmark', 'ecm_directories', 'ecm_files'))) {
 		$moreaddress = $object->getBannerAddress('refaddress', $object);	// address, email, url, social networks
@@ -6472,6 +6493,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
 	}*/
 
 	$ret = price($dimension, 0, $outputlangs, 0, 0, $round);
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	$ret .= ' '.measuringUnitString(0, $type, $unit, $use_short_label, $outputlangs);
 
 	return $ret;
@@ -7766,6 +7788,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					if (LIBXML_VERSION < 20900) {
 						// Avoid load of external entities (security problem).
 						// Required only if LIBXML_VERSION < 20900
+						// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 						libxml_disable_entity_loader(true);
 					}
 
@@ -10609,6 +10632,7 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 		$newdelimiter = $delimiter;
 	} else {
 		// This is a simple string
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPositionInternal
 		$newdelimiter = preg_quote($delimiter, '/');
 	}
 

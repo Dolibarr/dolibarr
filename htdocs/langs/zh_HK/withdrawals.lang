@@ -32,7 +32,7 @@ InvoiceWaitingWithdraw=等待直接扣款的發票
 InvoiceWaitingPaymentByBankTransfer=Invoice waiting for credit transfer
 AmountToWithdraw=提取金額
 AmountToTransfer=Amount to transfer
-NoInvoiceToWithdraw=沒有開具“<span class='notranslate'>%s</span>”的發票\n' 在等待。轉到選項卡“<span class='notranslate'>%s</span>”\n' 在發票卡上提出請求。
+NoInvoiceToWithdraw=No invoice open for '%s' is waiting. Go on tab '%s' on invoice card to make a request.
 NoSupplierInvoiceToWithdraw=No supplier invoice with open '%s' is waiting. Go on tab '%s' on invoice card to make a request.
 ResponsibleUser=用戶負責
 WithdrawalsSetup=直接借記付款設置
@@ -151,10 +151,10 @@ USTRD="Unstructured" SEPA XML tag
 ADDDAYS=Add days to Execution Date
 NoDefaultIBANFound=No default IBAN found for this third party
 ### Notifications
-InfoCreditSubject=直接借記付款訂單<span class='notranslate'>%s</span>的支付\n 由銀行
+InfoCreditSubject=Payment of direct debit payment order %s by the bank
 InfoCreditMessage=直接借記付款訂單%s 已由銀行付款<br> 付款數據：%s
 InfoTransSubject=傳輸直接借記付款訂單%s 到銀行
-InfoTransMessage=直接借記付款訂單%s 已由 <span class='notranslate'>%s</span> 發送至銀行\n %s。 <br>  <br> 
+InfoTransMessage=The direct debit payment order %s has been sent to bank by %s %s.<br><br>
 InfoTransData=金額：%s <br> 方法：%s <br> 日期：%s
 InfoRejectSubject=直接借記付款訂單被拒絕
 InfoRejectMessage=你好，<br>  <br> 發票直接借記付款順序%s 與公司相關%s，數量為 %s 已被銀行拒絕。 <br>  <br> -- <br> %s
@@ -171,4 +171,3 @@ SalaryWaitingWithdraw=Salaries waiting for payment by credit transfer
 RefSalary=Salary
 NoSalaryInvoiceToWithdraw=No salary waiting for a '%s'. Go on tab '%s' on salary card to make a request.
 SalaryInvoiceWaitingWithdraw=Salaries waiting for payment by credit transfer
-

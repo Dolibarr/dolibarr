@@ -1832,6 +1832,7 @@ class Adherent extends CommonObject
 					$vattouse = get_default_tva($mysoc, $mysoc, $idprodsubscription);
 				}
 				//print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				$result = $invoice->addline($label, 0, 1, $vattouse, 0, 0, $idprodsubscription, 0, $datesubscription, '', 0, 0, '', 'TTC', $amount, 1);
 				if ($result <= 0) {
 					$this->error = $invoice->error;
