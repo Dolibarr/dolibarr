@@ -347,9 +347,7 @@ if ($search_country) {
 	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
 if (!empty($search_shipping_method_ids)) {
-	$sql .= " AND e.fk_shipping_method IN (". implode(',', array_filter($search_shipping_method_ids, function ($value) {
-		return (int) $value;
-	})) . ')';
+	$sql .= " AND e.fk_shipping_method IN (".$db->sanitize(implode(',', $search_shipping_method_ids)).')';
 }
 if ($search_tracking) {
 	$sql .= natural_search("e.tracking_number", $search_tracking);
