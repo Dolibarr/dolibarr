@@ -2,6 +2,7 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -707,44 +708,44 @@ class FormWebPortal extends Form
 				$out = $this->inputType('number', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
 				break;
 
-			case 'text' :
-			case 'html' :
+			case 'text':
+			case 'html':
 				$moreparam .= ($size > 0 ? ' maxlength="' . $size . '"' : '');
 				$out = $this->inputType('text', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
 				break;
 
-			case 'email' :
+			case 'email':
 				$out = $this->inputType('email', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
 				break;
 
-			case 'tel' :
+			case 'tel':
 				$out = $this->inputType('tel', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
 				break;
 
-			case 'url' :
+			case 'url':
 				$out = $this->inputType('url', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
 				break;
 
-			case 'price' :
+			case 'price':
 				if (!empty($value)) {
 					$value = price($value); // $value in memory is a php numeric, we format it into user number format.
 				}
 				$addInputLabel = ' ' . $langs->getCurrencySymbol($conf->currency);
-				$out = $this->inputType('text', $htmlName, $value, $htmlId, $morecss, $moreparam, $addInputLabel);
+				$out = $this->inputType('text', $htmlName, $value, $htmlId, $morecss, $moreparam, '', $addInputLabel);
 				break;
 
-			case 'double' :
+			case 'double':
 				if (!empty($value)) {
 					$value = price($value); // $value in memory is a php numeric, we format it into user number format.
 				}
 				$out = $this->inputType('text', $htmlName, $value, $htmlId, $morecss, $moreparam);
 				break;
 
-			case 'password' :
+			case 'password':
 				$out = $this->inputType('password', $htmlName, $value, $htmlId, $morecss, $moreparam);
 				break;
 
-			case 'radio' :
+			case 'radio':
 				foreach ($param['options'] as $keyopt => $valopt) {
 					$htmlId = $htmlName . '_' . $keyopt;
 					$htmlMoreParam = $moreparam . ($value == $keyopt ? ' checked' : '');
@@ -752,7 +753,7 @@ class FormWebPortal extends Form
 				}
 				break;
 
-			case 'select' :
+			case 'select':
 				$out = '<select class="' . $morecss . '" name="' . $htmlName . '" id="' . $htmlId . '"' . ($moreparam ? ' ' . $moreparam : '') . ' >';
 				if ($default == '' || $notNull != 1) {
 					$out .= '<option value="0">&nbsp;</option>';
@@ -771,7 +772,7 @@ class FormWebPortal extends Form
 				}
 				$out .= '</select>';
 				break;
-			case 'sellist' :
+			case 'sellist':
 				$out = '<select class="' . $morecss . '" name="' . $htmlName . '" id="' . $htmlId . '"' . ($moreparam ? ' ' . $moreparam : '') . '>';
 
 				$param_list = array_keys($param['options']);
@@ -923,7 +924,7 @@ class FormWebPortal extends Form
 				$out .= '</select>';
 				break;
 
-			case 'link' :
+			case 'link':
 				$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'
 				$showempty = (($required && $default != '') ? 0 : 1);
 
@@ -931,7 +932,7 @@ class FormWebPortal extends Form
 
 				break;
 
-			default :
+			default:
 				if (!empty($hidden)) {
 					$out = $this->inputType('hidden', $htmlName, $value, $htmlId);
 				}
