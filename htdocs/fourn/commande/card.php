@@ -1314,7 +1314,7 @@ if (empty($reshook)) {
 								}
 
 								$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
-								$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->product_desc);
+								$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : '');
 								$product_type = (!empty($lines[$i]->product_type) ? $lines[$i]->product_type : 0);
 
 								// Reset fk_parent_line for no child products and special product
