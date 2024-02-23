@@ -156,6 +156,21 @@ class modFournisseur extends DolibarrModules
 				'priority'=>51,
 				'status'=>1,
 				'datestart'=>$datestart
+			),
+			1 => array(
+				'label' => 'SendEmailsRemindersOnSupplierInvoiceDueDate',
+				'jobtype' => 'method',
+				'class' => 'fourn/class/fournisseur.facture.class.php',
+				'objectname' => 'FactureFournisseur',
+				'method' => 'sendEmailsRemindersOnSupplierInvoiceDueDate',
+				'parameters' => '10,all,EmailTemplateCode,duedate',
+				'comment' => 'Send an email when we reach the supplier invoice due date (or supplier invoice date) - n days. First param is n, the number of days before due date (or supplier invoice date) to send the remind (or after if value is negative), second parameter is "all" or a payment mode code, third parameter is the code of the email template to use (an email template with the EmailTemplateCode must exists. The version of the email template in the language of the thirdparty will be used in priority. Language of the thirdparty will be also used to update the PDF of the sent supplier invoice). The fourth parameter is the string "duedate" (default) or "invoicedate" to define which date of the supplier invoice to use.',
+				'frequency' => 1,
+				'unitfrequency' => 3600 * 24,
+				'priority' => 50,
+				'status' => 0,
+				'test'=>'$conf->fournisseur->enabled',
+				'datestart'=>$datestart
 			));
 
 

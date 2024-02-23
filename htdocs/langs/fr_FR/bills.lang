@@ -653,3 +653,7 @@ InvoiceSubtype=Sous-type de facture
 SalaryInvoice=Salaire
 BillsAndSalaries=Factures et salaires
 CreateCreditNoteWhenClientInvoiceExists=Cette option est activée uniquement lorsqu'une ou plusieurs factures validées existent pour un client ou lorsque la constante INVOICE_CREDIT_NOTE_STANDALONE est utilisée (utile pour certains pays)
+SearchUnpaidSupplierInvoicesWithDueDate=Rechercher les factures fournisseur impayées avec date d'échéance = %s
+SearchValidatedSupplierInvoicesWithDate=Rechercher les factures fournisseur impayées avec une date de validation = %s
+SupplierInvoiceUnpaidContent=La facture fournisseur __REF__ n'a pas encore été payé :
+SendEmailsRemindersOnSupplierInvoiceDueDate=Envoyer un rappel par email pour les factures fournisseur validées et impayées
