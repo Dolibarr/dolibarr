@@ -155,6 +155,7 @@ class modFournisseur extends DolibarrModules
 				'unitfrequency'=>3600 * 24,
 				'priority'=>51,
 				'status'=>1,
+				'test'=>'isModEnabled("supplier_invoice")',
 				'datestart'=>$datestart
 			),
 			1 => array(
@@ -169,7 +170,7 @@ class modFournisseur extends DolibarrModules
 				'unitfrequency' => 3600 * 24,
 				'priority' => 50,
 				'status' => 0,
-				'test'=>'$conf->fournisseur->enabled',
+				'test'=>'isModEnabled("supplier_invoice")',
 				'datestart'=>$datestart
 			));
 
