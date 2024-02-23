@@ -37,6 +37,7 @@ if (empty($user->id)) {
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class for PHPUnit tests
@@ -45,7 +46,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CommonClassTest extends PHPUnit\Framework\TestCase
+abstract class CommonClassTest extends TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -53,14 +54,23 @@ class CommonClassTest extends PHPUnit\Framework\TestCase
 	protected $savdb;
 
 	/**
+	 * Number of Dolibarr log lines to show in case of error
+	 *
+	 * @var integer
+	 */
+	public $nbLinesToShow = 100;
+
+	/**
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @param 	string	$name		Name
+	 * @param string       $name       Name
+	 * @param array        $data       Test data
+	 * @param string       $dataName   Test data name.
 	 */
-	public function __construct($name = '')
+	public function __construct($name = null, array $data = array(), $dataName = '')
 	{
-		parent::__construct($name);
+		parent::__construct($name, $data, $dataName);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -104,7 +114,7 @@ class CommonClassTest extends PHPUnit\Framework\TestCase
 
 		$lines = file($logfile);
 
-		$nbLinesToShow = 100;
+		$nbLinesToShow = $this->nbLinesToShow;
 		if ($t instanceof PHPUnit\Framework\Error\Notice) {
 			$nbLinesToShow = 3;
 		}
