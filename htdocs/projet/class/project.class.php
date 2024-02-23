@@ -2598,6 +2598,9 @@ class Project extends CommonObject
 
 			$weekendEnabled = 0;
 			$to = '';
+			$nbMailSend = 0;
+			$error = 0;
+			$errors_to = 0;
 			while ($obj = $this->db->fetch_object($resql)) {
 				$to = $obj->email;
 				$numHolidays = num_public_holiday($lastWeekStartTS, $lastWeekEndTS, $mysoc->country_code, 1);
@@ -2655,8 +2658,8 @@ class Project extends CommonObject
 					$actioncomm->authorid = $user->id; // User saving action
 					$actioncomm->userownerid = $user->id; // Owner of action
 					// Fields when action is an email (content should be added into note)
-					$actioncomm->email_msgid = $cMailFile->msgid;
-					$actioncomm->email_subject = $sendTopic;
+					$actioncomm->email_msgid = $mail->msgid;
+					$actioncomm->email_subject = $subject;
 					$actioncomm->email_from = $from;
 					$actioncomm->email_sender = '';
 					$actioncomm->email_to = $to;
@@ -2668,7 +2671,7 @@ class Project extends CommonObject
 
 					$actioncomm->create($user);
 				} else {
-					$errormesg = $cMailFile->error.' : '.$to;
+					$errormesg = $mail->error.' : '.$to;
 					$error++;
 
 					// Add a line into event table
@@ -2690,7 +2693,7 @@ class Project extends CommonObject
 					$actioncomm->authorid = $user->id; // User saving action
 					$actioncomm->userownerid = $user->id; // Owner of action
 					// Fields when action is an email (content should be added into note)
-					$actioncomm->email_msgid = $cMailFile->msgid;
+					$actioncomm->email_msgid = $mail->msgid;
 					$actioncomm->email_from = $from;
 					$actioncomm->email_sender = '';
 					$actioncomm->email_to = $to;
