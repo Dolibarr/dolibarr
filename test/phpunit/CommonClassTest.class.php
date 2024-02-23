@@ -173,4 +173,146 @@ abstract class CommonClassTest extends TestCase
 
 		print __METHOD__."\n";
 	}
+
+	/**
+	 * Map deprecated module names to new module names
+	 */
+	const DEPRECATED_MODULE_MAPPING = array(
+		'actioncomm' => 'agenda',
+		'adherent' => 'member',
+		'adherent_type' => 'member_type',
+		'banque' => 'bank',
+		'categorie' => 'category',
+		'commande' => 'order',
+		'contrat' => 'contract',
+		'entrepot' => 'stock',
+		'expedition' => 'delivery_note',
+		'facture' => 'invoice',
+		'fichinter' => 'intervention',
+		'product_fournisseur_price' => 'productsupplierprice',
+		'product_price' => 'productprice',
+		'projet'  => 'project',
+		'propale' => 'propal',
+		'socpeople' => 'contact',
+	);
+
+	/**
+	 * Map module names to the 'class' name (the class is: mod<CLASSNAME>)
+	 * Value is null when the module is not internal to the default
+	 * Dolibarr setup.
+	 */
+	const VALID_MODULE_MAPPING = array(
+		'accounting' => 'Accounting',
+		'agenda' => 'Agenda',
+		'ai' => 'Ai',
+		'anothermodule' => null,  // Not used in code, used in translations.lang
+		'api' => 'Api',
+		'asset' => 'Asset',
+		'bank' => 'Banque',
+		'barcode' => 'Barcode',
+		'blockedlog' => 'BlockedLog',
+		'bom' => 'Bom',
+		'bookcal' => 'BookCal',
+		'bookmark' => 'Bookmark',
+		'cashdesk' => null,
+		'category' => 'Categorie',
+		'clicktodial' => 'ClickToDial',
+		'TBD_COLLAB' => 'Collab',  // TODO: fill in proper name
+		'comptabilite' => 'Comptabilite',
+		'contact' => null,  // TODO: fill in proper class
+		'contract' => 'Contrat',
+		'cron' => 'Cron',
+		'datapolicy' => 'DataPolicy',
+		'TBD_DAV' => 'Dav',  // TODO: fill in proper name
+		'debugbar' => 'DebugBar',
+		'delivery_note' => 'Expedition',
+		'deplacement' => 'Deplacement',
+		"TBD_DocGen" => 'DocumentGeneration',  // TODO: fill in proper name
+		'don' => 'Don',
+		'dynamicprices' => 'DynamicPrices',
+		'ecm' => 'ECM',
+		'ecotax' => null,  // TODO: External module ?
+		'emailcollector' => 'EmailCollector',
+		'eventorganization' => 'EventOrganization',
+		'expensereport' => 'ExpenseReport',
+		'export' => 'Export',
+		'TBD_EXTERNALRSS' => 'ExternalRss',  // TODO: fill in proper name
+		'externalsite' => 'ExternalSite',
+		'fckeditor' => 'Fckeditor',
+		'fournisseur' => 'Fournisseur',
+		'ftp' => 'FTP',
+		'TBD_GEOIPMAXMIND' => 'GeoIPMaxmind',  // TODO: fill in proper name
+		'google' => null,  // External ?
+		'gravatar' => 'Gravatar',
+		'holiday' => 'Holiday',
+		'hrm' => 'HRM',
+		'import' => 'Import',
+		'incoterm' => 'Incoterm',
+		'intervention' => 'Ficheinter',
+		'intracommreport' => 'Intracommreport',
+		'invoice' => 'Facture',
+		'knowledgemanagement' => 'KnowledgeManagement',
+		'label' => 'Label',
+		'ldap' => 'Ldap',
+		'loan' => 'Loan',
+		'mailing' => 'Mailing',
+		'mailman' => null,  // Same module as mailmanspip -> MailmanSpip ??
+		'mailmanspip' => 'MailmanSpip',
+		'margin' => 'Margin',
+		'member' => 'Adherent',
+		'member_type' => null,  // TODO: External module ?
+		'memcached' => null, // TODO: External module?
+		'modulebuilder' => 'ModuleBuilder',
+		'mrp' => 'Mrp',
+		'multicompany' => null, // Not provided by default, no module tests
+		'multicurrency' => 'MultiCurrency',
+		'mymodule' => null, // modMyModule - Name used in module builder (avoid false positives)
+		'notification' => 'Notification',
+		'numberwords' => null, // Not provided by default, no module tests
+		'TBD_OAUTH' => 'Oauth', // TODO: set proper name
+		'openstreetmap' => null,  // External module?
+		'opensurvey' => 'OpenSurvey',
+		'order' => 'Commande',
+		'partnership' => 'Partnership',
+		'paybox' => 'Paybox',
+		'paymentbybanktransfer' => 'PaymentByBankTransfer',
+		'paypal' => 'Paypal',
+		'paypalplus' => null,
+		'prelevement' => 'Prelevement',
+		'TBD_PRINTING' => 'Printing', // TODO: set proper name
+		'product' => 'Product',
+		'productbatch' => 'ProductBatch',
+		'productprice' => null,
+		'productsupplierprice' => null,
+		'project' => 'Projet',
+		'propal' => 'Propale',
+		'receiptprinter' => 'ReceiptPrinter',
+		'reception' => 'Reception',
+		'recruitment' => 'Recruitment',
+		'resource' => 'Resource',
+		'salaries' => 'Salaries',
+		'service' => 'Service',
+		'socialnetworks' => 'SocialNetworks',
+		'societe' => 'Societe',
+		'stock' => 'Stock',
+		'stocktransfer' => 'StockTransfer',
+		'stripe' => 'Stripe',
+		'supplier_invoice' => null,  // Special case, uses invoice
+		'supplier_order' => null,  // Special case, uses invoice
+		'supplier_proposal' => 'SupplierProposal',
+		'syslog' => 'Syslog',
+		'takepos' => 'TakePos',
+		'tax' => 'Tax',
+		'ticket' => 'Ticket',
+		'user' => 'User',
+		'variants' => 'Variants',
+		'webhook' => 'Webhook',
+		'webportal' => 'WebPortal',
+		'webservices' => 'WebServices',
+		'TBD_WS_CLIENT' => 'WebServicesClient',  // TODO: set proper name
+		'website' => 'Website',
+		'workflow' => 'Workflow',
+		'workstation' => 'Workstation',
+		'zapier' => 'Zapier',
+	);
 }
