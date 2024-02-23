@@ -82,7 +82,7 @@ if ($action == 'setvalue') {
 		$error++;
 	}
 
-	// Create temporary encryption key if nedded
+	// Create temporary encryption key if needed
 	$res = dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE_KEY", $checkread_key, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -140,8 +140,8 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>';
 $help = img_help(1, $langs->trans("EMailHelpMsgSPFDKIM"));
 print $langs->trans("MailingEMailFrom").' '.$help.'</td><td>';
-print '<input class="minwidth100" type="text" name="MAILING_EMAIL_FROM" value="'.$conf->global->MAILING_EMAIL_FROM.'">';
-if (!empty($conf->global->MAILING_EMAIL_FROM) && !isValidEmail($conf->global->MAILING_EMAIL_FROM)) {
+print '<input class="minwidth100" type="text" name="MAILING_EMAIL_FROM" value="' . getDolGlobalString('MAILING_EMAIL_FROM').'">';
+if (getDolGlobalString('MAILING_EMAIL_FROM') && !isValidEmail($conf->global->MAILING_EMAIL_FROM)) {
 	print ' '.img_warning($langs->trans("BadEMail"));
 }
 print '</td>';
@@ -184,13 +184,13 @@ print '<tr class="oddeven">';
 print '<td>' . $langs->trans("DefaultBlacklistMailingStatus", $langs->transnoentitiesnoconv("No_Email")) . '</td>';
 print '<td>';
 $blacklist_setting=array(0=>$langs->trans('No'), 1=>$langs->trans('Yes'), 2=>$langs->trans('DefaultStatusEmptyMandatory'));
-print $form->selectarray("MAILING_CONTACT_DEFAULT_BULK_STATUS", $blacklist_setting, $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS);
+print $form->selectarray("MAILING_CONTACT_DEFAULT_BULK_STATUS", $blacklist_setting, getDolGlobalString('MAILING_CONTACT_DEFAULT_BULK_STATUS'));
 print '</td>';
 print '<td class="hideonsmartphone"></td>';
 print '</tr>';
 
 
-if (!empty($conf->use_javascript_ajax) && $conf->global->MAIN_FEATURES_LEVEL >= 1) {
+if (!empty($conf->use_javascript_ajax) && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("MailAdvTargetRecipients").'</td><td>';
 	print ajax_constantonoff('EMAILING_USE_ADVANCED_SELECTOR');

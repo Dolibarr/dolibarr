@@ -77,11 +77,11 @@ if ($user->socid > 0) {
 $isdraft = (($object->status== $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'eventorganization', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
-$permissiontoread = $user->rights->eventorganization->read;
-$permissiontoadd = $user->rights->eventorganization->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontoread = $user->hasRight('eventorganization', 'read');
+$permissiontoadd = $user->hasRight('eventorganization', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->eventorganization->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissionnote = $user->rights->eventorganization->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->eventorganization->write; // Used by the include of actions_dellink.inc.php
+$permissionnote = $user->hasRight('eventorganization', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('eventorganization', 'write'); // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->eventorganization->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check
@@ -112,7 +112,7 @@ if ($action == 'addcontact' && $permission) {	// Add a new contact
 	$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 
 	if ($result >= 0) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".((int) $object->id).(!empty($withproject)?'&withproject=1':''));
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".((int) $object->id).(!empty($withproject) ? '&withproject=1' : ''));
 		exit;
 	} else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
@@ -130,7 +130,7 @@ if ($action == 'addcontact' && $permission) {	// Add a new contact
 	$result = $object->delete_contact($lineid);
 
 	if ($result >= 0) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".((int) $object->id).(!empty($withproject)?'&withproject=1':''));
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".((int) $object->id).(!empty($withproject) ? '&withproject=1' : ''));
 		exit;
 	} else {
 		dol_print_error($db);
@@ -160,7 +160,7 @@ llxHeader('', $title, $help_url);
 /* *************************************************************************** */
 
 $result = $projectstatic->fetch($object->fk_project);
-if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
+if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
 	$projectstatic->fetchComments();
 }
 if (!empty($projectstatic->socid)) {
@@ -192,9 +192,9 @@ if (!empty($withproject)) {
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
-	if (empty($user->rights->project->all->lire)) {
+	if (!$user->hasRight('project', 'all', 'lire')) {
 		$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-		$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+		$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
 	}
 
 	dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -206,24 +206,24 @@ if (!empty($withproject)) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Usage
-	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
+	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') || !getDolGlobalString('PROJECT_HIDE_TASKS') || isModEnabled('eventorganization')) {
 		print '<tr><td class="tdtop">';
 		print $langs->trans("Usage");
 		print '</td>';
 		print '<td>';
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_opportunity ? ' checked="checked"' : '')).'"> ';
 			$htmltext = $langs->trans("ProjectFollowOpportunity");
 			print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
 			print '<br>';
 		}
-		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+		if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 			print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_task ? ' checked="checked"' : '')).'"> ';
 			$htmltext = $langs->trans("ProjectFollowTasks");
 			print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
 			print '<br>';
 		}
-		if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
+		if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_BILL_TIME_SPENT')) {
 			print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_bill_time ? ' checked="checked"' : '')).'"> ';
 			$htmltext = $langs->trans("ProjectBillTimeDescription");
 			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
@@ -249,10 +249,10 @@ if (!empty($withproject)) {
 	// Date start - end
 	print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
 	$start = dol_print_date($projectstatic->date_start, 'day');
-	print ($start ? $start : '?');
+	print($start ? $start : '?');
 	$end = dol_print_date($projectstatic->date_end, 'day');
 	print ' - ';
-	print ($end ? $end : '?');
+	print($end ? $end : '?');
 	if ($projectstatic->hasDelay()) {
 		print img_warning("Late");
 	}

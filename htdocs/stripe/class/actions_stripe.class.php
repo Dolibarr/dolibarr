@@ -18,23 +18,22 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-// TODO File not used. To remove.
+// TODO File of hooks not used yet. To remove ?
 
 /**
  *	\file       htdocs/stripe/class/actions_stripe.class.php
  *	\ingroup    stripe
  *	\brief      File Class actionsstripeconnect
  */
+
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-
-
-$langs->load("stripe@stripe");
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonhookactions.class.php';
 
 
 /**
  *	Class Actions Stripe Connect
  */
-class ActionsStripeconnect
+class ActionsStripeconnect extends CommonHookActions
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -42,10 +41,6 @@ class ActionsStripeconnect
 	public $db;
 
 	private $config = array();
-
-	// For Hookmanager return
-	public $resprints;
-	public $results = array();
 
 
 	/**
@@ -62,16 +57,16 @@ class ActionsStripeconnect
 	/**
 	 * formObjectOptions
 	 *
-	 * @param	array	$parameters		Parameters
-	 * @param	Object	$object			Object
-	 * @param	string	$action			Action
-	 * @return bool
+	 * @param	array			$parameters		Parameters
+	 * @param	CommonObject	$object			Object
+	 * @param	string			$action			Action
+	 * @return int
 	 */
 	public function formObjectOptions($parameters, &$object, &$action)
 	{
-		global $db, $conf, $user, $langs, $form;
+		global $conf, $langs;
 
-		if (isModEnabled('stripe') && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+		if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
 			$service = 'StripeTest';
 			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
 		} else {
@@ -83,7 +78,6 @@ class ActionsStripeconnect
 				$key = $value;
 			}
 		}
-
 
 		if (is_object($object) && $object->element == 'societe') {
 			$this->resprints .= '<tr><td>';
@@ -168,9 +162,10 @@ class ActionsStripeconnect
 	 */
 	public function addMoreActionsButtons($parameters, &$object, &$action)
 	{
-		global $db, $conf, $user, $langs, $form;
+		global $conf, $langs;
+
 		if (is_object($object) && $object->element == 'facture') {
-			// On verifie si la facture a des paiements
+			// Verify if the invoice has payments
 			$sql = 'SELECT pf.amount';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
 			$sql .= ' WHERE pf.fk_facture = '.((int) $object->id);

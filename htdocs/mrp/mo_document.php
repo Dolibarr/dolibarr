@@ -83,7 +83,7 @@ if ($id > 0 || !empty($ref)) {
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'mrp', $object->id, 'mrp_mo', '', 'fk_soc', 'rowid', $isdraft);
 
-$permissiontoadd = $user->rights->mrp->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+$permissiontoadd = $user->hasRight('mrp', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 
 
 /*
@@ -114,7 +114,7 @@ if ($object->id) {
 	print dol_get_fiche_head($head, 'document', $langs->trans("ManufacturingOrder"), -1, $object->picto);
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
@@ -131,7 +131,7 @@ if ($object->id) {
 	// Thirdparty
 	if (is_object($object->thirdparty)) {
 		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer');
-		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
+		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
 			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
 		}
 	}
@@ -180,8 +180,8 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'mrp';
-	$permissiontoadd = $user->rights->mrp->write;
-	$permtoedit = $user->rights->mrp->write;
+	$permissiontoadd = $user->hasRight('mrp', 'write');
+	$permtoedit = $user->hasRight('mrp', 'write');
 	$param = '&id='.$object->id;
 
 	//$relativepathwithnofile='mo/' . dol_sanitizeFileName($object->id).'/';

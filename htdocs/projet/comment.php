@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/projet/tasks/task.php
+ *	\file       htdocs/projet/comment.php
  *	\ingroup    project
- *	\brief      Page of a project task
+ *	\brief      Page of a project
  */
 
 // Load Dolibarr environment
@@ -48,8 +48,8 @@ $withproject = GETPOST('withproject', 'int');
 
 // Security check
 $socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-if (!$user->rights->projet->lire) {
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
+if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }
 
@@ -67,7 +67,7 @@ if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref); // If we create project, ref may be defined into POST but record does not yet exists into database
 	if ($ret > 0) {
 		$object->fetch_thirdparty();
-		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) {
+		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 			$object->fetchComments();
 		}
 		$id = $object->id;
@@ -116,9 +116,9 @@ if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 $morehtmlref .= '</div>';
 
 // Define a complementary filter for search of next/prev ref.
-if (empty($user->rights->projet->all->lire)) {
+if (!$user->hasRight('projet', 'all', 'lire')) {
 	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-	$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
+	$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
 }
 
 dol_banner_tab($object, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

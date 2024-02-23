@@ -36,7 +36,7 @@ $langs->load("categories");
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alphanohtml');
-$action = (GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'edit');
+$action = (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'edit');
 $confirm = GETPOST('confirm');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -45,11 +45,12 @@ $socid = (int) GETPOST('socid', 'int');
 $label = (string) GETPOST('label', 'alphanohtml');
 $description = (string) GETPOST('description', 'restricthtml');
 $color = preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('color', 'alphanohtml'));
+$position = (int) GETPOST('position', 'int');
 $visible = (int) GETPOST('visible', 'int');
 $parent = (int) GETPOST('parent', 'int');
 
 if ($id == "") {
-	dol_print_error('', 'Missing parameter id');
+	dol_print_error(null, 'Missing parameter id');
 	exit();
 }
 
@@ -59,7 +60,8 @@ $result = restrictedArea($user, 'categorie', $id, '&category');
 $object = new Categorie($db);
 $result = $object->fetch($id, $label);
 if ($result <= 0) {
-	dol_print_error($db, $object->error); exit;
+	dol_print_error($db, $object->error);
+	exit;
 }
 
 $type = $object->type;
@@ -79,7 +81,7 @@ $error = 0;
 /*
  * Actions
  */
-$parameters = array('id' => $id, 'ref' => $ref, 'cancel'=> $cancel, 'backtopage' => $backtopage, 'socid' => $socid, 'label' => $label, 'description' => $description, 'color' => $color, 'visible' => $visible, 'parent' => $parent);
+$parameters = array('id' => $id, 'ref' => $ref, 'cancel'=> $cancel, 'backtopage' => $backtopage, 'socid' => $socid, 'label' => $label, 'description' => $description, 'color' => $color, 'position' => $position, 'visible' => $visible, 'parent' => $parent);
 // Note that $action and $object may be modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {
@@ -98,11 +100,13 @@ if (empty($reshook)) {
 	}
 
 	// Action mise a jour d'une categorie
-	if ($action == 'update' && $user->rights->categorie->creer) {
-		$object->oldcopy = dol_clone($object);
+	if ($action == 'update' && $user->hasRight('categorie', 'creer')) {
+		$object->oldcopy = dol_clone($object, 2);
+
 		$object->label = $label;
 		$object->description    = dol_htmlcleanlastbr($description);
 		$object->color          = $color;
+		$object->position       = $position;
 		$object->socid          = ($socid > 0 ? $socid : 0);
 		$object->visible        = $visible;
 		$object->fk_parent = $parent != -1 ? $parent : 0;
@@ -134,7 +138,6 @@ if (empty($reshook)) {
 		}
 	}
 }
-
 
 
 /*
@@ -184,6 +187,12 @@ print '<td>'.$langs->trans("Color").'</td>';
 print '<td>';
 print $formother->selectColor($object->color, 'color');
 print '</td></tr>';
+
+// Position
+print '<tr><td>';
+print $langs->trans("Position").'</td>';
+print '<td><input type="text" size="25" id="position" name ="position" value="'.$object->position.'" />';
+print '</tr>';
 
 // Parent category
 print '<tr><td>'.$langs->trans("In").'</td><td>';

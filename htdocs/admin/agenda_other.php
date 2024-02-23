@@ -64,7 +64,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
 	$value = (GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
 	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0) {
-		Header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
 		dol_print_error($db);
@@ -74,7 +74,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
 	if (dolibarr_del_const($db, $code, $conf->entity) > 0) {
-		Header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
 		dol_print_error($db);
@@ -121,7 +121,9 @@ if ($action == 'set') {
 	$commande->thirdparty = $specimenthirdparty;
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/action/doc/pdf_".$modele.".modules.php", 0);
@@ -220,7 +222,7 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	print load_fiche_titre($langs->trans("AgendaModelModule"), '', '');
 
 	print '<table class="noborder centpercent">'."\n";
@@ -251,7 +253,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 
 						print '<tr class="oddeven">'."\n";
 						print "<td>";
-						print (empty($module->name) ? $name : $module->name);
+						print(empty($module->name) ? $name : $module->name);
 						print "</td>\n";
 						print "<td>\n";
 						require_once $dir.'/'.$file;
@@ -343,14 +345,14 @@ print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE").'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right">'."\n";
 //print ajax_constantonoff('AGENDA_USE_EVENT_TYPE');	Do not use ajax here, we need to reload page to change other combo list
-if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_USE_EVENT_TYPE&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 } else {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_USE_EVENT_TYPE&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 }
 print '</td></tr>'."\n";
 
-if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 	print '<!-- AGENDA_USE_EVENT_TYPE_DEFAULT -->';
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE_DEFAULT").'</td>'."\n";
@@ -382,9 +384,9 @@ print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_TYPE").'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right nowrap">'."\n";
 $multiselect = 0;
-if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE)) {
+if (getDolGlobalString('MAIN_ENABLE_MULTISELECT_TYPE')) {
 	// We use an option here because it adds bugs when used on agenda page "peruser" and "list"
-	$multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
+	$multiselect = (getDolGlobalString('AGENDA_USE_EVENT_TYPE'));
 }
 $formactions->select_type_actions(getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE'), "AGENDA_DEFAULT_FILTER_TYPE", '', (getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? -1 : 1), 1, $multiselect);
 print '</td></tr>'."\n";

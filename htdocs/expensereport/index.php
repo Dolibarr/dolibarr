@@ -64,7 +64,7 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "d.date_create";
 }
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 
 
 /*
@@ -88,11 +88,11 @@ $sql = "SELECT tf.code, tf.label, count(de.rowid) as nb, sum(de.total_ht) as km"
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."expensereport_det as de, ".MAIN_DB_PREFIX."c_type_fees as tf";
 $sql .= " WHERE de.fk_expensereport = d.rowid AND d.entity IN (".getEntity('expensereport').") AND de.fk_c_type_fees = tf.id";
 // RESTRICT RIGHTS
-if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance))) {
+if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')
+	&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('expensereport', 'writeall_advance'))) {
 	$childids = $user->getAllChildIds();
 	$childids[] = $user->id;
-	$sql .= " AND d.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";
+	$sql .= " AND d.fk_user_author IN (".$db->sanitize(implode(',', $childids)).")\n";
 }
 
 $sql .= " GROUP BY tf.code, tf.label";
@@ -136,7 +136,7 @@ foreach ($listoftype as $code => $label) {
 // Sort array with most important first
 $dataseries = dol_sort_array($dataseries, 1, 'desc');
 
-// Merge all entrie after the $KEEPNFIRST one into one entry called "Other..." (to avoid to have too much entries in graphic).
+// Merge all entries after the $KEEPNFIRST one into one entry called "Other..." (to avoid to have too much entries in graphic).
 $KEEPNFIRST = 7;	// Keep first $KEEPNFIRST one + 1 with the remain
 $i = 0;
 if (count($dataseries) > ($KEEPNFIRST + 1)) {
@@ -164,7 +164,7 @@ if ($conf->use_javascript_ajax) {
 	$dolgraph = new DolGraph();
 	$dolgraph->SetData($dataseries);
 	$dolgraph->setHeight(350);
-	$dolgraph->combine = empty($conf->global->MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT) ? 0.05 : $conf->global->MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT;
+	$dolgraph->combine = !getDolGlobalString('MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT') ? 0.05 : $conf->global->MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT;
 	$dolgraph->setShowLegend(2);
 	$dolgraph->setShowPercent(1);
 	$dolgraph->SetType(array('pie'));
@@ -198,11 +198,11 @@ $sql .= " d.rowid, d.ref, d.date_debut as dated, d.date_fin as datef, d.date_cre
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = d.fk_user_author";
 // RESTRICT RIGHTS
-if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance))) {
+if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')
+	&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('expensereport', 'writeall_advance'))) {
 	$childids = $user->getAllChildIds();
 	$childids[] = $user->id;
-	$sql .= " AND d.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";
+	$sql .= " AND d.fk_user_author IN (".$db->sanitize(implode(',', $childids)).")\n";
 }
 $sql .= ' AND d.entity IN ('.getEntity('expensereport').')';
 $sql .= $db->order($sortfield, $sortorder);

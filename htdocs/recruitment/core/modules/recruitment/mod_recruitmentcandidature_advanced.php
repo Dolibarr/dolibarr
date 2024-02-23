@@ -54,11 +54,12 @@ class mod_recruitmentcandidature_advanced extends ModeleNumRefRecruitmentCandida
 	/**
 	 *  Returns the description of the numbering model
 	 *
+	 *	@param		Translate	$langs		Language
 	 *  @return     string      Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $conf, $db;
 
 		$langs->load("bills");
 
@@ -118,7 +119,7 @@ class mod_recruitmentcandidature_advanced extends ModeleNumRefRecruitmentCandida
 	 * 	Return next free value
 	 *
 	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @return string|0                Next value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{

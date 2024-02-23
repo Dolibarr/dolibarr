@@ -33,7 +33,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modExternalSite extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -95,6 +94,10 @@ class modExternalSite extends DolibarrModules
 		$this->rights_class = 'externalsite'; // Permission key
 		$this->rights = array(); // Permission array used by this module
 
+		$this->module_parts = array(
+			'moduleforexternal' => 1 // allow access to external users
+		);
+
 		// Menus
 		//------
 		$r = 0;
@@ -103,7 +106,7 @@ class modExternalSite extends DolibarrModules
 			'fk_menu'=>0,
 			'type'=>'top',
 			'titre'=>'__[EXTERNALSITE_LABEL]__',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
+			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth em092"'),
 			'mainmenu'=>'externalsite',
 			'url'=>'/externalsite/frames.php',
 			'langs'=>'other',
@@ -111,7 +114,7 @@ class modExternalSite extends DolibarrModules
 			'perms'=>'',
 			'enabled'=>'$conf->externalsite->enabled',
 			'target'=>'',
-			'user'=>0
+			'user'=>2
 		);
 		$r++;
 	}

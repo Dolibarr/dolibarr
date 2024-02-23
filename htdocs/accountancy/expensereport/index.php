@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014	Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024	Alexandre Spangaro	<aspangaro@easya.solutions>
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,7 +36,7 @@ $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 $validatemonth = GETPOST('validatemonth', 'int');
 $validateyear = GETPOST('validateyear', 'int');
 
-$month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 if (GETPOST("year", 'int')) {
 	$year_start = GETPOST("year", 'int');
 } else {
@@ -166,7 +166,7 @@ if ($action == 'validatehistory') {
 		$db->rollback();
 	} else {
 		$db->commit();
-		setEventMessages($langs->trans('AutomaticBindingDone', $nbbinddone, $notpossible), null,  ($notpossible ? 'warnings' : 'mesgs'));
+		setEventMessages($langs->trans('AutomaticBindingDone', $nbbinddone, $notpossible), null, ($notpossible ? 'warnings' : 'mesgs'));
 		if ($nbbindfailed) {
 			setEventMessages($langs->trans('DoManualBindingForFailedRecord', $nbbindfailed), null, 'warnings');
 		}
@@ -177,8 +177,9 @@ if ($action == 'validatehistory') {
 /*
  * View
  */
+$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
-llxHeader('', $langs->trans("ExpenseReportsVentilation"));
+llxHeader('', $langs->trans("ExpenseReportsVentilation"), $help_url);
 
 $textprevyear = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current - 1).'">'.img_previous().'</a>';
 $textnextyear = '&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current + 1).'">'.img_next().'</a>';
@@ -193,7 +194,7 @@ print '</span><br>';
 
 $y = $year_current;
 
-$buttonbind = '<a class="butAction smallpaddingimp" href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&token='.newToken().'&year='.$year_current.'">'.img_picto('', 'link', 'class="paddingright fa-color-unset"').$langs->trans("ValidateHistory").'</a>';
+$buttonbind = '<a class="button small" href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&token='.newToken().'&year='.$year_current.'">'.img_picto('', 'link', 'class="paddingright fa-color-unset"').$langs->trans("ValidateHistory").'</a>';
 
 
 print_barre_liste(img_picto('', 'unlink', 'class="paddingright fa-color-unset"').$langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1, 0, $buttonbind);
@@ -204,7 +205,7 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="minwidth100">'.$langs->trans("Account").'</td>';
 print '<td>'.$langs->trans("Label").'</td>';
 for ($i = 1; $i <= 12; $i++) {
-	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+	$j = $i + getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1) - 1;
 	if ($j > 12) {
 		$j -= 12;
 	}
@@ -212,7 +213,7 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($cursormonth > 12) {
 		$cursormonth -= 12;
 	}
-	$cursoryear = ($cursormonth < ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1)) ? $y + 1 : $y;
+	$cursoryear = ($cursormonth < getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1)) ? $y + 1 : $y;
 	$tmp = dol_getdate(dol_get_last_day($cursoryear, $cursormonth, 'gmt'), false, 'gmt');
 
 	print '<td width="60" class="right">';
@@ -233,7 +234,7 @@ print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>'
 $sql = "SELECT ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number')." AS codecomptable,";
 $sql .= " ".$db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label')." AS intitule,";
 for ($i = 1; $i <= 12; $i++) {
-	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+	$j = $i + getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1) - 1;
 	if ($j > 12) {
 		$j -= 12;
 	}
@@ -246,8 +247,8 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = erd
 $sql .= " WHERE er.date_debut >= '".$db->idate($search_date_start)."'";
 $sql .= " AND er.date_debut <= '".$db->idate($search_date_end)."'";
 // Define begin binding date
-if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
-	$sql .= " AND er.date_debut >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
+if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
+	$sql .= " AND er.date_debut >= '".$db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'))."'";
 }
 $sql .= " AND er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.")";
 $sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
@@ -271,27 +272,27 @@ if ($resql) {
 		print '</td>';
 		print '<td>';
 		if ($row[0] == 'tobind') {
-			$startmonth = ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1);
+			$startmonth = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 			if ($startmonth > 12) {
 				$startmonth -= 12;
 			}
-			$startyear = ($startmonth < ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1)) ? $y + 1 : $y;
-			$endmonth = ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) + 11;
+			$startyear = ($startmonth < getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1)) ? $y + 1 : $y;
+			$endmonth = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1) + 11;
 			if ($endmonth > 12) {
 				$endmonth -= 12;
 			}
-			$endyear = ($endmonth < ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1)) ? $y + 1 : $y;
+			$endyear = ($endmonth < getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1)) ? $y + 1 : $y;
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/expensereport/list.php?search_date_startday=1&search_date_startmonth='.((int) $startmonth).'&search_date_startyear='.((int) $startyear).'&search_date_endday=&search_date_endmonth='.((int) $endmonth).'&search_date_endyear='.((int) $endyear), $langs->transnoentitiesnoconv("ToBind"));
 		} else {
 			print $row[1];
 		}
 		print '</td>';
 		for ($i = 2; $i <= 13; $i++) {
-			$cursormonth = (($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) + $i - 2);
+			$cursormonth = (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1) + $i - 2);
 			if ($cursormonth > 12) {
 				$cursormonth -= 12;
 			}
-			$cursoryear = ($cursormonth < ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1)) ? $y + 1 : $y;
+			$cursoryear = ($cursormonth < getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1)) ? $y + 1 : $y;
 			$tmp = dol_getdate(dol_get_last_day($cursoryear, $cursormonth, 'gmt'), false, 'gmt');
 
 			print '<td class="right nowraponall amount">';
@@ -333,7 +334,7 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="minwidth100">'.$langs->trans("Account").'</td>';
 print '<td>'.$langs->trans("Label").'</td>';
 for ($i = 1; $i <= 12; $i++) {
-	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+	$j = $i + getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1) - 1;
 	if ($j > 12) {
 		$j -= 12;
 	}
@@ -344,7 +345,7 @@ print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>'
 $sql = "SELECT ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number')." AS codecomptable,";
 $sql .= "  ".$db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label')." AS intitule,";
 for ($i = 1; $i <= 12; $i++) {
-	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+	$j = $i + getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1) - 1;
 	if ($j > 12) {
 		$j -= 12;
 	}
@@ -357,8 +358,8 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = erd
 $sql .= " WHERE er.date_debut >= '".$db->idate($search_date_start)."'";
 $sql .= " AND er.date_debut <= '".$db->idate($search_date_end)."'";
 // Define begin binding date
-if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
-	$sql .= " AND er.date_debut >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
+if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
+	$sql .= " AND er.date_debut >= '".$db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'))."'";
 }
 $sql .= " AND er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.")";
 $sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
@@ -421,7 +422,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="left">'.$langs->trans("Total").'</td>';
 	for ($i = 1; $i <= 12; $i++) {
-		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+		$j = $i + getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1) - 1;
 		if ($j > 12) {
 			$j -= 12;
 		}
@@ -431,7 +432,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 
 	$sql = "SELECT '".$db->escape($langs->trans("TotalExpenseReport"))."' AS label,";
 	for ($i = 1; $i <= 12; $i++) {
-		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+		$j = $i + getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1) - 1;
 		if ($j > 12) {
 			$j -= 12;
 		}
@@ -443,8 +444,8 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 	$sql .= " WHERE er.date_debut >= '".$db->idate($search_date_start)."'";
 	$sql .= " AND er.date_debut <= '".$db->idate($search_date_end)."'";
 	// Define begin binding date
-	if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
-		$sql .= " AND er.date_debut >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
+	if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
+		$sql .= " AND er.date_debut >= '".$db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'))."'";
 	}
 	$sql .= " AND er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.")";
 	$sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy

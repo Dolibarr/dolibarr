@@ -26,52 +26,30 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**
- *	Parent class to manage warehouse mouvement document templates
+ *	Parent class to manage warehouse movement document templates
  */
 abstract class ModelePDFMovement extends CommonDocGenerator
 {
 	/**
-	 * @var string Error code (or message)
+	 * @var DoliDB Database handler
 	 */
-	public $error = '';
+	public $db;
 
 	/**
-	 * @var int page_largeur
+	 * @var string model description (short text)
 	 */
-	public $page_largeur;
+	public $description;
 
 	/**
-	 * @var int page_hauteur
+	 * @var string document type
 	 */
-	public $page_hauteur;
+	public $type;
 
 	/**
-	 * @var array format
+	 * Dolibarr version of the loaded document
+	 * @var string
 	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-
-	public $option_codestockservice;
+	public $version = 'dolibarr';
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

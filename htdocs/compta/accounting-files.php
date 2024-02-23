@@ -77,7 +77,7 @@ $projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : 0);
 $hookmanager->initHooks(array('comptafileslist', 'globallist'));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -124,8 +124,8 @@ if (isModEnabled('multicompany') && is_object($mc)) {
 
 $entity = (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : (GETPOSTISSET('search_entity') ? GETPOST('search_entity', 'int') : $conf->entity));
 if (isModEnabled('multicompany') && is_object($mc)) {
-	if (empty($entity) && !empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES)) {
-		$entity = '0,'.join(',', array_keys($arrayofentities));
+	if (empty($entity) && getDolGlobalString('MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES')) {
+		$entity = '0,'.implode(',', array_keys($arrayofentities));
 	}
 }
 if (empty($entity)) {
@@ -136,13 +136,13 @@ $error = 0;
 
 $listofchoices = array(
 	'selectinvoices'=>array('label'=>'Invoices', 'picto'=>'bill', 'lang'=>'bills', 'enabled' => isModEnabled('facture'), 'perms' => $user->hasRight('facture', 'lire')),
-	'selectsupplierinvoices'=>array('label'=>'BillsSuppliers', 'picto'=>'supplier_invoice', 'lang'=>'bills', 'enabled' => isModEnabled('supplier_invoice'), 'perms' => !empty($user->rights->fournisseur->facture->lire)),
-	'selectexpensereports'=>array('label'=>'ExpenseReports', 'picto'=>'expensereport', 'lang'=>'trips', 'enabled' => isModEnabled('expensereport'), 'perms' => !empty($user->rights->expensereport->lire)),
-	'selectdonations'=>array('label'=>'Donations', 'picto'=>'donation', 'lang'=>'donation', 'enabled' => isModEnabled('don'), 'perms' => !empty($user->rights->don->lire)),
-	'selectsocialcontributions'=>array('label'=>'SocialContributions', 'picto'=>'bill', 'enabled' => isModEnabled('tax'), 'perms' => !empty($user->rights->tax->charges->lire)),
-	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'picto'=>'salary', 'lang'=>'salaries', 'enabled' => isModEnabled('salaries'), 'perms' => !empty($user->rights->salaries->read)),
-	'selectvariouspayment'=>array('label'=>'VariousPayment', 'picto'=>'payment', 'enabled' => isModEnabled('banque'), 'perms' => !empty($user->rights->banque->lire)),
-	'selectloanspayment'=>array('label'=>'PaymentLoan','picto'=>'loan', 'enabled' => isModEnabled('don'), 'perms' => !empty($user->rights->loan->read)),
+	'selectsupplierinvoices'=>array('label'=>'BillsSuppliers', 'picto'=>'supplier_invoice', 'lang'=>'bills', 'enabled' => isModEnabled('supplier_invoice'), 'perms' => $user->hasRight('fournisseur', 'facture', 'lire')),
+	'selectexpensereports'=>array('label'=>'ExpenseReports', 'picto'=>'expensereport', 'lang'=>'trips', 'enabled' => isModEnabled('expensereport'), 'perms' => $user->hasRight('expensereport', 'lire')),
+	'selectdonations'=>array('label'=>'Donations', 'picto'=>'donation', 'lang'=>'donation', 'enabled' => isModEnabled('don'), 'perms' => $user->hasRight('don', 'lire')),
+	'selectsocialcontributions'=>array('label'=>'SocialContributions', 'picto'=>'bill', 'enabled' => isModEnabled('tax'), 'perms' => $user->hasRight('tax', 'charges', 'lire')),
+	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'picto'=>'salary', 'lang'=>'salaries', 'enabled' => isModEnabled('salaries'), 'perms' => $user->hasRight('salaries', 'read')),
+	'selectvariouspayment'=>array('label'=>'VariousPayment', 'picto'=>'payment', 'enabled' => isModEnabled('banque'), 'perms' => $user->hasRight('banque', 'lire')),
+	'selectloanspayment'=>array('label'=>'PaymentLoan','picto'=>'loan', 'enabled' => isModEnabled('don'), 'perms' => $user->hasRight('loan', 'read')),
 );
 
 
@@ -185,7 +185,9 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " WHERE datef between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			$sql .= " AND t.fk_statut <> ".Facture::STATUS_DRAFT;
-			if (!empty($projectid)) $sql .= " AND fk_projet = ".((int) $projectid);
+			if (!empty($projectid)) {
+				$sql .= " AND fk_projet = ".((int) $projectid);
+			}
 		}
 		// Vendor invoices
 		if (GETPOST('selectsupplierinvoices') && !empty($listofchoices['selectsupplierinvoices']['perms'])) {
@@ -199,7 +201,9 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " WHERE datef between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			$sql .= " AND t.fk_statut <> ".FactureFournisseur::STATUS_DRAFT;
-			if (!empty($projectid)) $sql .= " AND fk_projet = ".((int) $projectid);
+			if (!empty($projectid)) {
+				$sql .= " AND fk_projet = ".((int) $projectid);
+			}
 		}
 		// Expense reports
 		if (GETPOST('selectexpensereports') && !empty($listofchoices['selectexpensereports']['perms']) && empty($projectid)) {
@@ -226,7 +230,9 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " WHERE datedon between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			$sql .= " AND t.fk_statut <> ".Don::STATUS_DRAFT;
-			if (!empty($projectid)) $sql .= " AND fk_projet = ".((int) $projectid);
+			if (!empty($projectid)) {
+				$sql .= " AND fk_projet = ".((int) $projectid);
+			}
 		}
 		// Payments of salaries
 		if (GETPOST('selectpaymentsofsalaries') && !empty($listofchoices['selectpaymentsofsalaries']['perms'])) {
@@ -240,7 +246,9 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " WHERE datep between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			//$sql.=" AND fk_statut <> ".PaymentSalary::STATUS_DRAFT;
-			if (!empty($projectid)) $sql .= " AND fk_projet = ".((int) $projectid);
+			if (!empty($projectid)) {
+				$sql .= " AND fk_projet = ".((int) $projectid);
+			}
 		}
 		// Social contributions
 		if (GETPOST('selectsocialcontributions') && !empty($listofchoices['selectsocialcontributions']['perms'])) {
@@ -253,8 +261,10 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as t";
 			$sql .= " WHERE t.date_ech between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
-			//$sql.=" AND fk_statut <> ".ChargeSociales::STATUS_DRAFT;
-			if (!empty($projectid)) $sql .= " AND fk_projet = ".((int) $projectid);
+			//$sql.=" AND fk_statut <> ".ChargeSociales::STATUS_UNPAID;
+			if (!empty($projectid)) {
+				$sql .= " AND fk_projet = ".((int) $projectid);
+			}
 		}
 		// Various payments
 		if (GETPOST('selectvariouspayment') && !empty($listofchoices['selectvariouspayment']['perms'])) {
@@ -267,7 +277,9 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_various as t";
 			$sql .= " WHERE datep between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
-			if (!empty($projectid)) $sql .= " AND fk_projet = ".((int) $projectid);
+			if (!empty($projectid)) {
+				$sql .= " AND fk_projet = ".((int) $projectid);
+			}
 		}
 		// Loan payments
 		if (GETPOST('selectloanspayment') && !empty($listofchoices['selectloanspayment']['perms']) && empty($projectid)) {
@@ -468,7 +480,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
  *ZIP creation
  */
 
-$dirfortmpfile = ($conf->accounting->dir_temp ? $conf->accounting->dir_temp : $conf->comptabilite->dir_temp);
+$dirfortmpfile = (!empty($conf->accounting->dir_temp) ? $conf->accounting->dir_temp : $conf->comptabilite->dir_temp);
 if (empty($dirfortmpfile)) {
 	setEventMessages($langs->trans("ErrorNoAccountingModuleEnabled"), null, 'errors');
 	$error++;
@@ -514,7 +526,7 @@ if ($result && $action == "dl" && !$error) {
 
 		dol_delete_file($zipname);
 
-		$zip = new ZipArchive;
+		$zip = new ZipArchive();
 		$res = $zip->open($zipname, ZipArchive::OVERWRITE | ZipArchive::CREATE);
 		if ($res) {
 			foreach ($filesarray as $key => $file) {
@@ -526,7 +538,7 @@ if ($result && $action == "dl" && !$error) {
 					}
 				}
 
-				$log .= '"'.$langs->trans($file['item']).'"';
+				$log .= '"'.$langs->transnoentitiesnoconv($file['item']).'"';
 				if (isModEnabled('multicompany') && is_object($mc)) {
 					$log .= ',"'.(empty($arrayofentities[$file['entity']]) ? $file['entity'] : $arrayofentities[$file['entity']]).'"';
 				}
@@ -618,16 +630,14 @@ print "\n";
 $socid = 0;
 if (isModEnabled('multicompany') && is_object($mc)) {
 	$mc->getInfo($conf->entity);
-	print '<span class="marginleftonly marginrightonly'.(empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES) ? ' opacitymedium' : '').'">('.$langs->trans("Entity").' : ';
-	print "<td>";
-	if (!empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES)) {
+	print ' &nbsp; <span class="marginleftonly marginrightonly'.(!getDolGlobalString('MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES') ? ' opacitymedium' : '').'">'.$langs->trans("Entity").' : ';
+	if (getDolGlobalString('MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES')) {
 		$socid = $mc->id;
 		print $mc->select_entities(GETPOSTISSET('search_entity') ? GETPOST('search_entity', 'int') : $mc->id, 'search_entity', '', false, false, false, false, true);
 	} else {
 		print $mc->label;
 	}
-	print "</td>";
-	print ")</span>\n";
+	print "</span>\n";
 }
 
 print '<br>';
@@ -717,7 +727,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 
 	print '<br>';
 
-	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], "item", "", $param, '', $sortfield, $sortorder, 'nowrap ');

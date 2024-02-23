@@ -46,24 +46,25 @@ class Members extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 		$this->db = $db;
 	}
 
 	/**
 	 * Get properties of a member object
 	 *
-	 * Return an array with member informations
+	 * Return an array with member information
 	 *
-	 * @param   int     $id 			ID of member
-	 * @return  Object              	Object with cleaned properties
+	 * @param   int     $id				ID of member
+	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws  RestException
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Member not found
 	 */
 	public function get($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$member = new Adherent($this->db);
@@ -86,21 +87,21 @@ class Members extends DolibarrApi
 	/**
 	 * Get properties of a member object by linked thirdparty
 	 *
-	 * Return an array with member informations
+	 * Return an array with member information
 	 *
-	 * @param     int     $thirdparty 	ID of third party
+	 * @param     int     $thirdparty	ID of third party
 	 *
-	 * @return Object 					Data without useless information
+	 * @return Object					Data without useless information
 	 *
 	 * @url GET thirdparty/{thirdparty}
 	 *
-	 * @throws RestException 401
-	 * @throws RestException 404
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Member not found
 	 */
 	public function getByThirdparty($thirdparty)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$member = new Adherent($this->db);
@@ -119,21 +120,21 @@ class Members extends DolibarrApi
 	/**
 	 * Get properties of a member object by linked thirdparty email
 	 *
-	 * Return an array with member informations
+	 * Return an array with member information
 	 *
 	 * @param  string $email            Email of third party
 	 *
-	 * @return Object 					Data without useless information
+	 * @return Object					Data without useless information
 	 *
 	 * @url GET thirdparty/email/{email}
 	 *
-	 * @throws RestException 401
-	 * @throws RestException 404
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Member or ThirdParty not found
 	 */
 	public function getByThirdpartyEmail($email)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$thirdparty = new Societe($this->db);
@@ -158,21 +159,21 @@ class Members extends DolibarrApi
 	/**
 	 * Get properties of a member object by linked thirdparty barcode
 	 *
-	 * Return an array with member informations
+	 * Return an array with member information
 	 *
-	 * @param  string $barcode      	Barcode of third party
+	 * @param  string $barcode			Barcode of third party
 	 *
-	 * @return Object 					Data without useless information
+	 * @return Object					Data without useless information
 	 *
 	 * @url GET thirdparty/barcode/{barcode}
 	 *
-	 * @throws RestException 401
-	 * @throws RestException 404
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Member or ThirdParty not found
 	 */
 	public function getByThirdpartyBarcode($barcode)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$thirdparty = new Societe($this->db);
@@ -204,21 +205,23 @@ class Members extends DolibarrApi
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
 	 * @param string    $typeid     ID of the type of member
-	 * @param int    	$category   Use this param to filter list by category
+	 * @param int		$category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma.
 	 *                              Example: "(t.ref:like:'SO-%') and ((t.date_creation:<:'20160101') or (t.nature:is:NULL))"
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of member objects
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Error on SQL filters
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		No Member found
+	 * @throws	RestException	503		Error when retrieving Member list
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $category = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $category = 0, $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$sql = "SELECT t.rowid";
@@ -263,15 +266,12 @@ class Members extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$member = new Adherent($this->db);
 				if ($member->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($member);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($member), $properties);
 				}
 				$i++;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve member list : '.$this->db->lasterror());
-		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No member found');
 		}
 
 		return $obj_ret;
@@ -282,17 +282,26 @@ class Members extends DolibarrApi
 	 *
 	 * @param array $request_data   Request data
 	 * @return int  ID of member
+	 *
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	500		Error when creating Member
 	 */
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
 		$member = new Adherent($this->db);
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$member->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$member->$field = $value;
 		}
 		if ($member->create(DolibarrApiAccess::$user) < 0) {
@@ -304,14 +313,18 @@ class Members extends DolibarrApi
 	/**
 	 * Update member
 	 *
-	 * @param int   $id             ID of member to update
-	 * @param array $request_data   Datas
-	 * @return Object				Updated object
+	 * @param 	int   		$id             ID of member to update
+	 * @param 	array 		$request_data   Datas
+	 * @return 	Object						Updated object
+	 *
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Member not found
+	 * @throws	RestException	500		Error when resiliating, validating, excluding, updating a Member
 	 */
 	public function put($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$member = new Adherent($this->db);
@@ -328,6 +341,12 @@ class Members extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$member->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			// Process the status separately because it must be updated using
 			// the validate(), resiliate() and exclude() methods of the class Adherent.
 			if ($field == 'statut') {
@@ -366,11 +385,15 @@ class Members extends DolibarrApi
 	 *
 	 * @param int $id   member ID
 	 * @return array
+	 *
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Member not found
+	 * @throws	RestException	500		Error when deleting a Member
 	 */
 	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'supprimer')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$member = new Adherent($this->db);
 		$result = $member->fetch($id);
@@ -386,8 +409,6 @@ class Members extends DolibarrApi
 		$res = $member->delete($member->id, DolibarrApiAccess::$user);
 		if ($res < 0) {
 			throw new RestException(500, "Can't delete, error occurs");
-		} elseif ($res == 0) {
-			throw new RestException(409, "Can't delete, that product is probably used");
 		}
 
 		return array(
@@ -402,7 +423,7 @@ class Members extends DolibarrApi
 	 * Validate fields before creating an object
 	 *
 	 * @param array|null    $data   Data to validate
-	 * @return array
+	 * @return array				Return array with validated mandatory fields and their value
 	 *
 	 * @throws RestException
 	 */
@@ -422,8 +443,8 @@ class Members extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   Object  $object    Object to clean
-	 * @return  Object    Object with cleaned properties
+	 * @param   Object  $object    	Object to clean
+	 * @return  Object    			Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -455,16 +476,17 @@ class Members extends DolibarrApi
 	 * @param int $id ID of member
 	 * @return array Array of subscription objects
 	 *
-	 * @throws RestException
-	 *
 	 * @url GET {id}/subscriptions
+	 *
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Member not found
 	 */
 	public function getSubscriptions($id)
 	{
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'lire')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$member = new Adherent($this->db);
@@ -483,19 +505,22 @@ class Members extends DolibarrApi
 	/**
 	 * Add a subscription for a member
 	 *
-	 * @param int 		$id             ID of member
-	 * @param string 	$start_date     Start date {@from body} {@type timestamp}
-	 * @param string 	$end_date       End date {@from body} {@type timestamp}
-	 * @param float 	$amount         Amount (may be 0) {@from body}
-	 * @param string 	$label         	Label {@from body}
+	 * @param int		$id             ID of member
+	 * @param string	$start_date     Start date {@from body} {@type timestamp}
+	 * @param string	$end_date       End date {@from body} {@type timestamp}
+	 * @param float		$amount         Amount (may be 0) {@from body}
+	 * @param string	$label			Label {@from body}
 	 * @return int  ID of subscription
 	 *
 	 * @url POST {id}/subscriptions
+	 *
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Member not found
 	 */
 	public function createSubscription($id, $start_date, $end_date, $amount, $label = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'creer')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$member = new Adherent($this->db);
@@ -519,20 +544,20 @@ class Members extends DolibarrApi
 	 * @return mixed
 	 *
 	 * @url GET {id}/categories
+	 *
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Category not found
+	 * @throws	RestException	503		Error when retrieving Category list
 	 */
 	public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->categorie->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$categories = new Categorie($this->db);
 
 		$result = $categories->getListForItem($id, 'member', $sortfield, $sortorder, $limit, $page);
-
-		if (empty($result)) {
-			throw new RestException(404, 'No category found');
-		}
 
 		if ($result < 0) {
 			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);

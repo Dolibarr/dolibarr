@@ -50,7 +50,8 @@ if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
 while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
-	$i--; $j--;
+	$i--;
+	$j--;
 }
 if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) {
 	$res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
@@ -121,7 +122,7 @@ if (!$sortorder) {
 $object = new MyObject($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mymodule->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('myobjectagenda', 'globalcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array($object->element.'agenda', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -135,8 +136,8 @@ if ($id > 0 || !empty($ref)) {
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = 0;
 if ($enablepermissioncheck) {
-	$permissiontoread = $user->rights->mymodule->myobject->read;
-	$permissiontoadd = $user->rights->mymodule->myobject->write;
+	$permissiontoread = $user->hasRight('mymodule', 'myobject', 'read');
+	$permissiontoadd = $user->hasRight('mymodule', 'myobject', 'write');
 } else {
 	$permissiontoread = 1;
 	$permissiontoadd = 1;
@@ -150,7 +151,9 @@ if ($enablepermissioncheck) {
 if (!isModEnabled("mymodule")) {
 	accessforbidden();
 }
-if (!$permissiontoread) accessforbidden();
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -186,11 +189,11 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 if ($object->id > 0) {
-	$title = $langs->trans("Agenda");
-	//if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/',getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) $title=$object->name." - ".$title;
+	$title = $langs->trans("MyObject")." - ".$langs->trans('Agenda');
+	//$title = $object->ref." - ".$langs->trans("Agenda");
 	$help_url = 'EN:Module_Agenda_En|DE:Modul_Terminplanung';
 
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-mymodule page-card_agenda');
 
 	if (isModEnabled('notification')) {
 		$langs->load("mails");
@@ -306,13 +309,13 @@ if ($object->id > 0) {
 		}
 
 		// Try to know count of actioncomm from cache
-		/*require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-		$cachekey = 'count_events_myobject_'.$object->id;
-		$nbEvent = dol_getcache($cachekey);
+		$nbEvent = 0;
+		//require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		//$cachekey = 'count_events_myobject_'.$object->id;
+		//$nbEvent = dol_getcache($cachekey);
+		$titlelist = $langs->trans("Actions").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
 
-		print_barre_liste($langs->trans("ActionsOnMyObject").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>': ''), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
-		*/
-		print_barre_liste($langs->trans("ActionsOnMyObject"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
+		print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 
 		// List of all actions
 		$filters = array();

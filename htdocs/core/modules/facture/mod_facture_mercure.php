@@ -49,9 +49,10 @@ class mod_facture_mercure extends ModeleNumRefFactures
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Descriptive text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $db, $langs;
 
@@ -79,7 +80,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		$texte .= '<tr><td><span class="opacitymedium">'.$langs->trans("Mask").' ('.$langs->trans("InvoiceStandard").'):</span></td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskinvoice" value="'.getDolGlobalString("FACTURE_MERCURE_MASK_INVOICE").'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="3">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="3">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -111,7 +112,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$old_code_type = $mysoc->typent_code;
@@ -133,7 +134,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 	 * @param	Societe		$objsoc     Object third party
 	 * @param   Facture		$invoice	Object invoice
 	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string      			Value if OK, 0 if KO
+	 * @return  string|0      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $invoice, $mode = 'next')
 	{
@@ -179,7 +180,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 	 * @param	Societe		$objsoc     	Object third party
 	 * @param	string		$objforref		Object for number to search
 	 * @param   string		$mode       	'next' for next value or 'last' for last value
-	 * @return  string      				Next free value
+	 * @return  string|0      				Next free value, 0 if KO
 	 */
 	public function getNumRef($objsoc, $objforref, $mode = 'next')
 	{

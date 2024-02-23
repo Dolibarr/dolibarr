@@ -22,27 +22,15 @@
  *      \brief      This file is CRUD class file (Create/Read/Update/Delete) for c_units dictionary
  */
 
+// Put here all includes required by your class file
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
+
 
 /**
  *	Class of dictionary of nature of product (used by imports)
  */
-class CProductNature // extends CommonObject
+class CProductNature extends CommonDict
 {
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
 	/**
 	 * @var array record
 	 */
@@ -58,31 +46,11 @@ class CProductNature // extends CommonObject
 	 */
 	public $table_element = 'c_product_nature';
 
-	/**
-	 * @var int ID
-	 */
-	public $id;
-
-	/**
-	 * @var int code
-	 */
-	public $code;
-
-	/**
-	 * @var string label
-	 */
-	public $label;
-
-	/**
-	 * @var int active
-	 */
-	public $active;
-
 
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDb		$db      Database handler
+	 *  @param      DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -95,7 +63,7 @@ class CProductNature // extends CommonObject
 	 *
 	 *  @param      User	$user        User that create
 	 *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return     int      		   	 <0 if KO, Id of created object if OK
+	 *  @return     int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -137,7 +105,7 @@ class CProductNature // extends CommonObject
 	 *
 	 *  @param      int		$id    			Id of CUnit object to fetch (rowid)
 	 *  @param		string	$code			Code
-	 *  @return     int						<0 if KO, >0 if OK
+	 *  @return     int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $code = '')
 	{
@@ -248,7 +216,7 @@ class CProductNature // extends CommonObject
 			return $this->records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -260,7 +228,7 @@ class CProductNature // extends CommonObject
 	 *
 	 *  @param      User	$user        User that modify
 	 *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return     int     		   	 <0 if KO, >0 if OK
+	 *  @return     int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -295,7 +263,7 @@ class CProductNature // extends CommonObject
 	 *
 	 *	@param  User	$user        User that delete
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -326,7 +294,7 @@ class CProductNature // extends CommonObject
 	 * Get unit from code
 	 * @param int $code code of unit
 	 * @param string $mode 0= id , short_label=Use short label as value, code=use code
-	 * @return int            <0 if KO, Id of code if OK
+	 * @return int            Return integer <0 if KO, Id of code if OK
 	 */
 	public function getProductNatureFromCode($code, $mode = 'code')
 	{

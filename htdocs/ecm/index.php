@@ -38,7 +38,7 @@ $langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal'
 // Get parameters
 $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
-$section = GETPOST('section', 'int') ?GETPOST('section', 'int') : GETPOST('section_id', 'int');
+$section = GETPOST('section', 'int') ? GETPOST('section', 'int') : GETPOST('section_id', 'int');
 if (!$section) {
 	$section = 0;
 }
@@ -101,7 +101,7 @@ $hookmanager->initHooks(array('ecmindexcard', 'globalcard'));
 //include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 // Upload file (code similar but different than actions_linkedfiles.inc.php)
-if (GETPOST("sendit", 'alphanohtml') && !empty($conf->global->MAIN_UPLOAD_DOC) && $permissiontocreate) {
+if (GETPOST("sendit", 'alphanohtml') && getDolGlobalString('MAIN_UPLOAD_DOC') && $permissiontocreate) {
 	// Define relativepath and upload_dir
 	$relativepath = '';
 	if ($ecmdir->id) {
@@ -189,7 +189,7 @@ if ($action == 'confirm_deletesection' && GETPOST('confirm', 'alpha') == 'yes' &
 }
 
 // Refresh directory view
-// This refresh list of dirs, not list of files (for preformance reason). List of files is refresh only if dir was not synchronized.
+// This refresh list of dirs, not list of files (for performance reason). List of files is refresh only if dir was not synchronized.
 // To refresh content of dir with cache, just open the dir in edit mode.
 if ($action == 'refreshmanual' && $permissiontoread) {
 	$ecmdirtmp = new EcmDirectory($db);
@@ -323,7 +323,7 @@ $moreheadjs = '';
 
 //$morejs=array();
 $morejs = array('includes/jquery/plugins/blockUI/jquery.blockUI.js', 'core/js/blockUI.js'); // Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
-if (empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+if (!getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 	$morejs[] = "includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 }
 

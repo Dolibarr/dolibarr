@@ -90,21 +90,21 @@ class modCategorie extends DolibarrModules
 		$this->rights[$r][0] = 241; // id de la permission
 		$this->rights[$r][1] = 'Lire les categories'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'lire';
 		$r++;
 
 		$this->rights[$r][0] = 242; // id de la permission
 		$this->rights[$r][1] = 'Creer/modifier les categories'; // libelle de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'creer';
 		$r++;
 
 		$this->rights[$r][0] = 243; // id de la permission
 		$this->rights[$r][1] = 'Supprimer les categories'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'supprimer';
 		$r++;
 
@@ -474,7 +474,7 @@ class modCategorie extends DolibarrModules
 			'ca.label'=>"My Category Label", 'ca.type'=>$typeexample, 'ca.description'=>"My Category description", // $typeexample built above in exports
 			'ca.fk_parent' => 'rowid or label'
 		);
-		$this->import_updatekeys_array[$r] = array('ca.label'=>'Label');
+		$this->import_updatekeys_array[$r] = array('ca.label'=>'Label', 'ca.type' => 'Type');
 
 		// 0 Products
 		if (isModEnabled("product")) {

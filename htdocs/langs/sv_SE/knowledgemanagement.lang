@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=Hantera en kunskapsbas eller helpdesk-bas
 # Admin page
 #
 KnowledgeManagementSetup = Konfiguration av kunskapsbas
-Settings = Inställningar
 KnowledgeManagementSetupPage = Inställningar för kunskapsbas
 
 
 #
 # About page
 #
-About = Om
 KnowledgeManagementAbout = Om kunskapsbasen
 KnowledgeManagementAboutPage = Kunskapsbasens om-sida
 
 KnowledgeManagementArea = Kunskapsbas
 MenuKnowledgeRecord = Kunskapsbas
+MenuKnowledgeRecordShort = Kunskapsbas
 ListKnowledgeRecord = Lista över artiklar
 NewKnowledgeRecord = Ny artikel
 ValidateReply = Bekräfta lösning
@@ -52,3 +51,9 @@ SuggestedForTicketsInGroup=Föreslås vid skapande av ärende
 SetObsolete=Ange som föråldrad
 ConfirmCloseKM=Bekräftar du att denna artikel är föråldrad och skall stängas?
 ConfirmReopenKM=Vill du återställa den här artikeln till statusen "Bekräftad"?
+BoxLastKnowledgerecordDescription=Senaste %s artiklarna
+BoxLastKnowledgerecord=Senaste artiklarna
+BoxLastKnowledgerecordContent=Senaste artiklarna
+BoxLastKnowledgerecordModifiedContent=Senast ändrade artiklar
+BoxLastModifiedKnowledgerecordDescription=Senaste %s ändrade artiklar
+BoxLastModifiedKnowledgerecord=Senast ändrade artiklar

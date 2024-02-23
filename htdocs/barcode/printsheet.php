@@ -68,209 +68,222 @@ if (!$user->hasRight('barcode', 'read')) {
 }
 restrictedArea($user, 'barcode');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('printsheettools'));
+
+$parameters = array();
+
+// Note that $action and $object may have been modified by some
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 /*
  * Actions
  */
 
-if (GETPOST('submitproduct') && GETPOST('submitproduct')) {
-	$action = ''; // We reset because we don't want to build doc
-	if (GETPOST('productid', 'int') > 0) {
-		$result = $producttmp->fetch(GETPOST('productid', 'int'));
-		if ($result < 0) {
-			setEventMessage($producttmp->error, 'errors');
-		}
-		$forbarcode = $producttmp->barcode;
-		$fk_barcode_type = $producttmp->barcode_type;
+if (empty($reshook)) {
+	if (GETPOST('submitproduct') && GETPOST('submitproduct')) {
+		$action = ''; // We reset because we don't want to build doc
+		if (GETPOST('productid', 'int') > 0) {
+			$result = $producttmp->fetch(GETPOST('productid', 'int'));
+			if ($result < 0) {
+				setEventMessage($producttmp->error, 'errors');
+			}
+			$forbarcode = $producttmp->barcode;
+			$fk_barcode_type = $producttmp->barcode_type;
 
-		if (empty($fk_barcode_type) && !empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) {
-			$fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
-		}
+			if (empty($fk_barcode_type) && getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE')) {
+				$fk_barcode_type = getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE');
+			}
 
-		if (empty($forbarcode) || empty($fk_barcode_type)) {
-			setEventMessages($langs->trans("DefinitionOfBarCodeForProductNotComplete", $producttmp->getNomUrl()), null, 'warnings');
-		}
-	}
-}
-if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty')) {
-	$action = ''; // We reset because we don't want to build doc
-	if (GETPOST('socid', 'int') > 0) {
-		$thirdpartytmp->fetch(GETPOST('socid', 'int'));
-		$forbarcode = $thirdpartytmp->barcode;
-		$fk_barcode_type = $thirdpartytmp->barcode_type_code;
-
-		if (empty($fk_barcode_type) && !empty($conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY)) {
-			$fk_barcode_type = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
-		}
-
-		if (empty($forbarcode) || empty($fk_barcode_type)) {
-			setEventMessages($langs->trans("DefinitionOfBarCodeForThirdpartyNotComplete", $thirdpartytmp->getNomUrl()), null, 'warnings');
+			if (empty($forbarcode) || empty($fk_barcode_type)) {
+				setEventMessages($langs->trans("DefinitionOfBarCodeForProductNotComplete", $producttmp->getNomUrl()), null, 'warnings');
+			}
 		}
 	}
-}
+	if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty')) {
+		$action = ''; // We reset because we don't want to build doc
+		if (GETPOST('socid', 'int') > 0) {
+			$thirdpartytmp->fetch(GETPOST('socid', 'int'));
+			$forbarcode = $thirdpartytmp->barcode;
+			$fk_barcode_type = $thirdpartytmp->barcode_type_code;
 
-if ($action == 'builddoc') {
-	$result = 0; $error = 0;
+			if (empty($fk_barcode_type) && getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY')) {
+				$fk_barcode_type = getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY');
+			}
 
-	if (empty($forbarcode)) {			// barcode value
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BarcodeValue")), null, 'errors');
-		$error++;
-	}
-	$MAXLENGTH = 51200;	// Limit set to 50Ko
-	if (dol_strlen($forbarcode) > $MAXLENGTH) {			// barcode value
-		setEventMessages($langs->trans("ErrorFieldTooLong", $langs->transnoentitiesnoconv("BarcodeValue")).' ('.$langs->trans("RequireXStringMax", $MAXLENGTH).')', null, 'errors');
-		$error++;
-	}
-	if (empty($fk_barcode_type)) {		// barcode type = barcode encoding
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BarcodeType")), null, 'errors');
-		$error++;
+			if (empty($forbarcode) || empty($fk_barcode_type)) {
+				setEventMessages($langs->trans("DefinitionOfBarCodeForThirdpartyNotComplete", $thirdpartytmp->getNomUrl()), null, 'warnings');
+			}
+		}
 	}
 
-	if (!$error) {
-		// Get encoder (barcode_type_coder) from barcode type id (barcode_type)
-		$stdobject = new GenericObject($db);
-		$stdobject->barcode_type = $fk_barcode_type;
-		$result = $stdobject->fetch_barcode();
-		if ($result <= 0) {
+	if ($action == 'builddoc') {
+		$result = 0;
+		$error = 0;
+
+		if (empty($forbarcode)) {			// barcode value
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BarcodeValue")), null, 'errors');
 			$error++;
-			setEventMessages('Failed to get bar code type information '.$stdobject->error, $stdobject->errors, 'errors');
 		}
-	}
+		$MAXLENGTH = 51200;	// Limit set to 50Ko
+		if (dol_strlen($forbarcode) > $MAXLENGTH) {			// barcode value
+			setEventMessages($langs->trans("ErrorFieldTooLong", $langs->transnoentitiesnoconv("BarcodeValue")).' ('.$langs->trans("RequireXStringMax", $MAXLENGTH).')', null, 'errors');
+			$error++;
+		}
+		if (empty($fk_barcode_type)) {		// barcode type = barcode encoding
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BarcodeType")), null, 'errors');
+			$error++;
+		}
 
-	if (!$error) {
-		$code = $forbarcode;
-		$generator = $stdobject->barcode_type_coder; // coder (loaded by fetch_barcode). Engine.
-		$encoding = strtoupper($stdobject->barcode_type_code); // code (loaded by fetch_barcode). Example 'ean', 'isbn', ...
-
-		$diroutput = $conf->barcode->dir_temp;
-		dol_mkdir($diroutput);
-
-		// Generate barcode
-		$dirbarcode = array_merge(array("/core/modules/barcode/doc/"), $conf->modules_parts['barcode']);
-
-		foreach ($dirbarcode as $reldir) {
-			$dir = dol_buildpath($reldir, 0);
-			$newdir = dol_osencode($dir);
-
-			// Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php)
-			if (!is_dir($newdir)) {
-				continue;
-			}
-
-			$result = @include_once $newdir.$generator.'.modules.php';
-			if ($result) {
-				break;
+		if (!$error) {
+			// Get encoder (barcode_type_coder) from barcode type id (barcode_type)
+			$stdobject = new GenericObject($db);
+			$stdobject->barcode_type = $fk_barcode_type;
+			$result = $stdobject->fetch_barcode();
+			if ($result <= 0) {
+				$error++;
+				setEventMessages('Failed to get bar code type information '.$stdobject->error, $stdobject->errors, 'errors');
 			}
 		}
 
-		// Load barcode class for generating barcode image
-		$classname = "mod".ucfirst($generator);
-		$module = new $classname($db);
-		if ($generator != 'tcpdfbarcode') {
-			// May be phpbarcode
-			$template = 'standardlabel';
-			$is2d = false;
-			if ($module->encodingIsSupported($encoding)) {
-				$barcodeimage = $conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
-				dol_delete_file($barcodeimage);
-				// File is created with full name $barcodeimage = $conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
-				$result = $module->writeBarCode($code, $encoding, 'Y', 4, 1);
-				if ($result <= 0 || !dol_is_file($barcodeimage)) {
+		if (!$error) {
+			$code = $forbarcode;
+			$generator = $stdobject->barcode_type_coder; // coder (loaded by fetch_barcode). Engine.
+			$encoding = strtoupper($stdobject->barcode_type_code); // code (loaded by fetch_barcode). Example 'ean', 'isbn', ...
+
+			$diroutput = $conf->barcode->dir_temp;
+			dol_mkdir($diroutput);
+
+			// Generate barcode
+			$dirbarcode = array_merge(array("/core/modules/barcode/doc/"), $conf->modules_parts['barcode']);
+
+			foreach ($dirbarcode as $reldir) {
+				$dir = dol_buildpath($reldir, 0);
+				$newdir = dol_osencode($dir);
+
+				// Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php)
+				if (!is_dir($newdir)) {
+					continue;
+				}
+
+				$result = @include_once $newdir.$generator.'.modules.php';
+				if ($result) {
+					break;
+				}
+			}
+
+			// Load barcode class for generating barcode image
+			$classname = "mod".ucfirst($generator);
+			$module = new $classname($db);
+			if ($generator != 'tcpdfbarcode') {
+				// May be phpbarcode
+				$template = 'standardlabel';
+				$is2d = false;
+				if ($module->encodingIsSupported($encoding)) {
+					$barcodeimage = $conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
+					dol_delete_file($barcodeimage);
+					// File is created with full name $barcodeimage = $conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
+					$result = $module->writeBarCode($code, $encoding, 'Y', 4, 1);
+					if ($result <= 0 || !dol_is_file($barcodeimage)) {
+						$error++;
+						setEventMessages('Failed to generate image file of barcode for code='.$code.' encoding='.$encoding.' file='.basename($barcodeimage), null, 'errors');
+						setEventMessages($module->error, null, 'errors');
+					}
+				} else {
 					$error++;
-					setEventMessages('Failed to generate image file of barcode for code='.$code.' encoding='.$encoding.' file='.basename($barcodeimage), null, 'errors');
-					setEventMessages($module->error, null, 'errors');
+					setEventMessages("Error, encoding ".$encoding." is not supported by encoder ".$generator.'. You must choose another barcode type or install a barcode generation engine that support '.$encoding, null, 'errors');
 				}
 			} else {
-				$error++;
-				setEventMessages("Error, encoding ".$encoding." is not supported by encoder ".$generator.'. You must choose another barcode type or install a barcode generation engine that support '.$encoding, null, 'errors');
+				$template = 'tcpdflabel';
+				$encoding = $module->getTcpdfEncodingType($encoding); //convert to TCPDF compatible encoding types
+				$is2d = $module->is2d;
 			}
-		} else {
-			$template = 'tcpdflabel';
-			$encoding = $module->getTcpdfEncodingType($encoding); //convert to TCPDF compatible encoding types
-			$is2d = $module->is2d;
 		}
-	}
 
-	if (!$error) {
-		// List of values to scan for a replacement
-		$substitutionarray = array(
-			'%LOGIN%' => $user->login,
-			'%COMPANY%' => $mysoc->name,
-			'%ADDRESS%' => $mysoc->address,
-			'%ZIP%' => $mysoc->zip,
-			'%TOWN%' => $mysoc->town,
-			'%COUNTRY%' => $mysoc->country,
-			'%COUNTRY_CODE%' => $mysoc->country_code,
-			'%EMAIL%' => $mysoc->email,
-			'%YEAR%' => $year,
-			'%MONTH%' => $month,
-			'%DAY%' => $day,
-			'%DOL_MAIN_URL_ROOT%' => DOL_MAIN_URL_ROOT,
-			'%SERVER%' => "http://".$_SERVER["SERVER_NAME"]."/",
-		);
-		complete_substitutions_array($substitutionarray, $langs);
+		if (!$error) {
+			// List of values to scan for a replacement
+			$substitutionarray = array(
+				'%LOGIN%' => $user->login,
+				'%COMPANY%' => $mysoc->name,
+				'%ADDRESS%' => $mysoc->address,
+				'%ZIP%' => $mysoc->zip,
+				'%TOWN%' => $mysoc->town,
+				'%COUNTRY%' => $mysoc->country,
+				'%COUNTRY_CODE%' => $mysoc->country_code,
+				'%EMAIL%' => $mysoc->email,
+				'%YEAR%' => $year,
+				'%MONTH%' => $month,
+				'%DAY%' => $day,
+				'%DOL_MAIN_URL_ROOT%' => DOL_MAIN_URL_ROOT,
+				'%SERVER%' => "http://".$_SERVER["SERVER_NAME"]."/",
+			);
+			complete_substitutions_array($substitutionarray, $langs);
 
-		// For labels
-		if ($mode == 'label') {
-			$txtforsticker = "%PHOTO%"; // Photo will be barcode image, %BARCODE% posible when using TCPDF generator
-			$textleft = make_substitutions((empty($conf->global->BARCODE_LABEL_LEFT_TEXT) ? $txtforsticker : $conf->global->BARCODE_LABEL_LEFT_TEXT), $substitutionarray);
-			$textheader = make_substitutions((empty($conf->global->BARCODE_LABEL_HEADER_TEXT) ? '' : $conf->global->BARCODE_LABEL_HEADER_TEXT), $substitutionarray);
-			$textfooter = make_substitutions((empty($conf->global->BARCODE_LABEL_FOOTER_TEXT) ? '' : $conf->global->BARCODE_LABEL_FOOTER_TEXT), $substitutionarray);
-			$textright = make_substitutions((empty($conf->global->BARCODE_LABEL_RIGHT_TEXT) ? '' : $conf->global->BARCODE_LABEL_RIGHT_TEXT), $substitutionarray);
-			$forceimgscalewidth = (empty($conf->global->BARCODE_FORCEIMGSCALEWIDTH) ? 1 : $conf->global->BARCODE_FORCEIMGSCALEWIDTH);
-			$forceimgscaleheight = (empty($conf->global->BARCODE_FORCEIMGSCALEHEIGHT) ? 1 : $conf->global->BARCODE_FORCEIMGSCALEHEIGHT);
+			// For labels
+			if ($mode == 'label') {
+				$txtforsticker = "%PHOTO%"; // Photo will be barcode image, %BARCODE% possible when using TCPDF generator
+				$textleft = make_substitutions(getDolGlobalString('BARCODE_LABEL_LEFT_TEXT', $txtforsticker), $substitutionarray);
+				$textheader = make_substitutions(getDolGlobalString('BARCODE_LABEL_HEADER_TEXT'), $substitutionarray);
+				$textfooter = make_substitutions(getDolGlobalString('BARCODE_LABEL_FOOTER_TEXT'), $substitutionarray);
+				$textright = make_substitutions(getDolGlobalString('BARCODE_LABEL_RIGHT_TEXT'), $substitutionarray);
+				$forceimgscalewidth = getDolGlobalString('BARCODE_FORCEIMGSCALEWIDTH', 1);
+				$forceimgscaleheight = getDolGlobalString('BARCODE_FORCEIMGSCALEHEIGHT', 1);
 
-			$MAXSTICKERS = 1000;
-			if ($numberofsticker <= $MAXSTICKERS) {
-				for ($i = 0; $i < $numberofsticker; $i++) {
-					$arrayofrecords[] = array(
-						'textleft'=>$textleft,
-						'textheader'=>$textheader,
-						'textfooter'=>$textfooter,
-						'textright'=>$textright,
-						'code'=>$code,
-						'encoding'=>$encoding,
-						'is2d'=>$is2d,
-						'photo'=>!empty($barcodeimage) ? $barcodeimage : ''	// Photo must be a file that exists with format supported by TCPDF
-					);
+				$MAXSTICKERS = 1000;
+				if ($numberofsticker <= $MAXSTICKERS) {
+					for ($i = 0; $i < $numberofsticker; $i++) {
+						$arrayofrecords[] = array(
+							'textleft'=>$textleft,
+							'textheader'=>$textheader,
+							'textfooter'=>$textfooter,
+							'textright'=>$textright,
+							'code'=>$code,
+							'encoding'=>$encoding,
+							'is2d'=>$is2d,
+							'photo'=>!empty($barcodeimage) ? $barcodeimage : ''	// Photo must be a file that exists with format supported by TCPDF
+						);
+					}
+				} else {
+					$mesg = $langs->trans("ErrorQuantityIsLimitedTo", $MAXSTICKERS);
+					$error++;
 				}
+			}
+
+			$i++;
+
+			// Build and output PDF
+			if (!$error && $mode == 'label') {
+				if (!count($arrayofrecords)) {
+					$mesg = $langs->trans("ErrorRecordNotFound");
+				}
+				if (empty($modellabel) || $modellabel == '-1') {
+					$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_ETIQUETTE_TYPE"));
+				}
+
+				$outfile = $langs->trans("BarCode").'_sheets_'.dol_print_date(dol_now(), 'dayhourlog').'.pdf';
+
+				if (!$mesg) {
+					$outputlangs = $langs;
+
+					// This generates and send PDF to output
+					// TODO Move
+					$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
+				}
+			}
+
+			if ($result <= 0 || $mesg || $error) {
+				if (empty($mesg)) {
+					$mesg = 'Error '.$result;
+				}
+
+				setEventMessages($mesg, null, 'errors');
 			} else {
-				$mesg = $langs->trans("ErrorQuantityIsLimitedTo", $MAXSTICKERS);
-				$error++;
+				$db->close();
+				exit;
 			}
-		}
-
-		$i++;
-
-		// Build and output PDF
-		if (!$error && $mode == 'label') {
-			if (!count($arrayofrecords)) {
-				$mesg = $langs->trans("ErrorRecordNotFound");
-			}
-			if (empty($modellabel) || $modellabel == '-1') {
-				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_ETIQUETTE_TYPE"));
-			}
-
-			$outfile = $langs->trans("BarCode").'_sheets_'.dol_print_date(dol_now(), 'dayhourlog').'.pdf';
-
-			if (!$mesg) {
-				$outputlangs = $langs;
-
-				// This generates and send PDF to output
-				// TODO Move
-				$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
-			}
-		}
-
-		if ($result <= 0 || $mesg || $error) {
-			if (empty($mesg)) {
-				$mesg = 'Error '.$result;
-			}
-
-			setEventMessages($mesg, null, 'errors');
-		} else {
-			$db->close();
-			exit;
 		}
 	}
 }
@@ -313,7 +326,7 @@ foreach (array_keys($_Avery_Labels) as $codecards) {
 	$arrayoflabels[$codecards] = $labeltoshow;
 }
 asort($arrayoflabels);
-print $form->selectarray('modellabel', $arrayoflabels, (GETPOST('modellabel') ?GETPOST('modellabel') : $conf->global->ADHERENT_ETIQUETTE_TYPE), 1, 0, 0, '', 0, 0, 0, '', '', 1);
+print $form->selectarray('modellabel', $arrayoflabels, (GETPOST('modellabel') ? GETPOST('modellabel') : $conf->global->ADHERENT_ETIQUETTE_TYPE), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '</div></div>';
 
 // Number of stickers to print
@@ -321,7 +334,7 @@ print '	<div class="tagtr">';
 print '	<div class="tagtd">';
 print $langs->trans("NumberOfStickers").' &nbsp; ';
 print '</div><div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;">';
-print '<input size="4" type="text" name="numberofsticker" value="'.(GETPOST('numberofsticker') ?GETPOST('numberofsticker', 'int') : 10).'">';
+print '<input size="4" type="text" name="numberofsticker" value="'.(GETPOST('numberofsticker') ? GETPOST('numberofsticker', 'int') : 10).'">';
 print '</div></div>';
 
 print '</div>';
@@ -393,7 +406,7 @@ jQuery(document).ready(function() {
 print '<input id="fillmanually" type="radio" '.((!GETPOST("selectorforbarcode") || GETPOST("selectorforbarcode") == 'fillmanually') ? 'checked ' : '').'name="selectorforbarcode" value="fillmanually" class="radiobarcodeselect"><label for="fillmanually"> '.$langs->trans("FillBarCodeTypeAndValueManually").'</label>';
 print '<br>';
 
-if (!empty($user->rights->produit->lire) || $user->hasRight('service', 'lire')) {
+if ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire')) {
 	print '<input id="fillfromproduct" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromproduct') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromproduct" class="radiobarcodeselect"><label for="fillfromproduct"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").'</label>';
 	print '<br>';
 	print '<div class="showforproductselector">';

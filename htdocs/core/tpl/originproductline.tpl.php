@@ -27,6 +27,7 @@ if (empty($conf) || !is_object($conf)) {
 
 <!-- BEGIN PHP TEMPLATE originproductline.tpl.php -->
 <?php
+'@phan-var-force CommonObject $this';
 print '<tr data-id="'.$this->tpl['id'].'" class="oddeven'.(empty($this->tpl['strike']) ? '' : ' strikefordisabled').'">';
 print '<td class="linecolref">'.$this->tpl['label'].'</td>';
 print '<td class="linecoldescription">'.$this->tpl['description'].'</td>';
@@ -37,7 +38,7 @@ if (isModEnabled("multicurrency")) {
 }
 
 print '<td class="linecolqty right">'.$this->tpl['qty'].'</td>';
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print '<td class="linecoluseunit left">'.$langs->trans($this->tpl['unit']).'</td>';
 }
 

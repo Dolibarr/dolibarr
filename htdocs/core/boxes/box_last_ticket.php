@@ -26,24 +26,14 @@
 require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
- * Class to manage the box
+ * Class to manage the box to show last created tickets
  */
 class box_last_ticket extends ModeleBoxes
 {
-
 	public $boxcode = "box_last_ticket";
-	public $boximg = "ticket";
+	public $boximg  = "ticket";
 	public $boxlabel;
 	public $depends = array("ticket");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-	public $info_box_head = array();
-	public $info_box_contents = array();
 
 	/**
 	 * Constructor

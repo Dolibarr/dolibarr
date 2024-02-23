@@ -37,7 +37,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modAgenda extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -72,7 +71,7 @@ class modAgenda extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->langfiles = array("companies");
+		$this->langfiles = array("companies","project");
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 
 		// Module parts
@@ -126,9 +125,9 @@ class modAgenda extends DolibarrModules
 		$r = 0;
 
 		// $this->rights[$r][0]     Id permission (unique tous modules confondus)
-		// $this->rights[$r][1]     Libelle par defaut si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
+		// $this->rights[$r][1]     Libelle par default si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
 		// $this->rights[$r][2]     Non utilise
-		// $this->rights[$r][3]     1=Permis par defaut, 0=Non permis par defaut
+		// $this->rights[$r][3]     1=Permis par default, 0=Non permis par default
 		// $this->rights[$r][4]     Niveau 1 pour nommer permission dans code
 		// $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
 		// $r++;
@@ -209,12 +208,12 @@ class modAgenda extends DolibarrModules
 			'fk_menu'=>0,
 			'type'=>'top',
 			'titre'=>'TMenuAgenda',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
+			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth"'),
 			'mainmenu'=>'agenda',
 			'url'=>'/comm/action/index.php',
 			'langs'=>'agenda',
 			'position'=>86,
-			'perms'=>'$user->rights->agenda->myactions->read || $user->rights->resource->read',
+			'perms'=>'$user->hasRight("agenda", "myactions", "read") || $user->hasRight("resource", "read")',
 			'enabled'=>'isModEnabled("agenda") || isModEnabled("resource")',
 			'target'=>'',
 			'user'=>2,
@@ -230,7 +229,7 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda',
 			'langs'=>'agenda',
 			'position'=>100,
-			'perms'=>'$user->rights->agenda->myactions->read',
+			'perms'=>'$user->hasRight("agenda", "myactions", "read")',
 			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2,
@@ -244,7 +243,7 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/card.php?mainmenu=agenda&amp;leftmenu=agenda&amp;action=create',
 			'langs'=>'commercial',
 			'position'=>101,
-			'perms'=>'($user->hasRight("agenda", "myactions", "create")||$user->hasRight("agenda", "allactions", "create"))',
+			'perms'=>'($user->hasRight("agenda", "myactions", "create") || $user->hasRight("agenda", "allactions", "create"))',
 			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
@@ -259,7 +258,7 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda',
 			'langs'=>'agenda',
 			'position'=>140,
-			'perms'=>'$user->rights->agenda->myactions->read',
+			'perms'=>'$user->hasRight("agenda", "myactions", "read")',
 			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
@@ -273,7 +272,7 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filter=mine',
 			'langs'=>'agenda',
 			'position'=>141,
-			'perms'=>'$user->rights->agenda->myactions->read',
+			'perms'=>'$user->hasRight("agenda", "myactions", "read")',
 			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
@@ -287,7 +286,7 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filter=mine',
 			'langs'=>'agenda',
 			'position'=>142,
-			'perms'=>'$user->rights->agenda->myactions->read',
+			'perms'=>'$user->hasRight("agenda", "myactions", "read")',
 			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
@@ -301,8 +300,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1',
 			'langs'=>'agenda',
 			'position'=>143,
-			'perms'=>'$user->rights->agenda->allactions->read',
-			'enabled'=>'$user->rights->agenda->allactions->read',
+			'perms'=>'$user->hasRight("agenda", "allactions", "read")',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -315,8 +314,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1',
 			'langs'=>'agenda',
 			'position'=>144,
-			'perms'=>'$user->rights->agenda->allactions->read',
-			'enabled'=>'$user->rights->agenda->allactions->read',
+			'perms'=>'$user->hasRight("agenda", "allactions", "read")',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -331,7 +330,7 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda',
 			'langs'=>'agenda',
 			'position'=>110,
-			'perms'=>'$user->rights->agenda->myactions->read',
+			'perms'=>'$user->hasRight("agenda", "myactions", "read")',
 			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
@@ -345,7 +344,7 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filter=mine',
 			'langs'=>'agenda',
 			'position'=>111,
-			'perms'=>'$user->rights->agenda->myactions->read',
+			'perms'=>'$user->hasRight("agenda", "myactions", "read")',
 			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
@@ -359,7 +358,7 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filter=mine',
 			'langs'=>'agenda',
 			'position'=>112,
-			'perms'=>'$user->rights->agenda->myactions->read',
+			'perms'=>'$user->hasRight("agenda", "myactions", "read")',
 			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
@@ -373,8 +372,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1',
 			'langs'=>'agenda',
 			'position'=>113,
-			'perms'=>'$user->rights->agenda->allactions->read',
-			'enabled'=>'$user->rights->agenda->allactions->read',
+			'perms'=>'$user->hasRight("agenda", "allactions", "read")',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -387,8 +386,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1',
 			'langs'=>'agenda',
 			'position'=>114,
-			'perms'=>'$user->rights->agenda->allactions->read',
-			'enabled'=>'$user->rights->agenda->allactions->read',
+			'perms'=>'$user->hasRight("agenda", "allactions", "read")',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -402,7 +401,7 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/rapport/index.php?mainmenu=agenda&amp;leftmenu=agenda',
 			'langs'=>'agenda',
 			'position'=>160,
-			'perms'=>'$user->rights->agenda->allactions->read',
+			'perms'=>'$user->hasRight("agenda", "allactions", "read")',
 			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
@@ -417,8 +416,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/categories/index.php?mainmenu=agenda&amp;leftmenu=agenda&type=10',
 			'langs' => 'agenda',
 			'position' => 170,
-			'perms' => '$user->rights->agenda->allactions->read',
-			'enabled' => '$conf->categorie->enabled',
+			'perms' => '$user->hasRight("agenda", "allactions", "read")',
+			'enabled' => 'isModEnabled("categorie")',
 			'target' => '',
 			'user' => 2
 		);
@@ -433,33 +432,43 @@ class modAgenda extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = "ExportDataset_event1";
 		$this->export_permission[$r] = array(array("agenda", "export"));
-		$this->export_fields_array[$r] = array('ac.id'=>"IdAgenda", 'ac.ref_ext'=>"ExternalRef", 'ac.datec'=>"DateCreation", 'ac.datep'=>"DateActionBegin",
-			'ac.datep2'=>"DateActionEnd", 'ac.label'=>"Title", 'ac.note'=>"Note", 'ac.percent'=>"Percent", 'ac.durationp'=>"Duration",
-			'cac.libelle'=>"ActionType",
+		$this->export_fields_array[$r] = array('ac.id'=>"IdAgenda", 'ac.ref_ext'=>"ExternalRef",'ac.ref'=>"Ref", 'ac.datec'=>"DateCreation", 'ac.datep'=>"DateActionBegin",
+			'ac.datep2'=>"DateActionEnd", 'ac.location' => 'Location', 'ac.label'=>"Title", 'ac.note'=>"Note", 'ac.percent'=>"Percentage", 'ac.durationp'=>"Duration",
+			'ac.fk_user_author'=>'CreatedById', 'ac.fk_user_action'=>'ActionsOwnedBy', 'ac.fk_user_mod'=>'ModifiedBy', 'ac.transparency'=>"Transparency", 'ac.priority'=>"Priority", 'ac.fk_element'=>"ElementID", 'ac.elementtype'=>"ElementType",
+			'cac.libelle'=>"ActionType", 'cac.code'=>"Code",
 			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town',
 			'co.code'=>'CountryCode', 's.phone'=>'Phone', 's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.idprof5'=>'ProfId5', 's.idprof6'=>'ProfId6',
 			's.code_compta'=>'CustomerAccountancyCode', 's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
 			'p.ref' => 'ProjectRef',
 		);
-		$this->export_TypeFields_array[$r] = array('ac.ref_ext'=>"Text", 'ac.datec'=>"Date", 'ac.datep'=>"Date",
-			'ac.datep2'=>"Date", 'ac.label'=>"Text", 'ac.note'=>"Text", 'ac.percent'=>"Numeric",
-			'ac.durationp'=>"Duree",
-			'cac.libelle'=>"List:c_actioncomm:libelle:libelle",
+		// Add multicompany field
+		if (getDolGlobalString('MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED')) {
+			$nbofallowedentities = count(explode(',', getEntity('agenda')));
+			if (isModEnabled('multicompany') && $nbofallowedentities > 1) {
+				$this->export_fields_array[$r]['ac.entity'] = 'Entity';
+			}
+		}
+		$this->export_TypeFields_array[$r] = array('ac.ref_ext'=>"Text", 'ac.ref'=>"Text", 'ac.datec'=>"Date", 'ac.datep'=>"Date",
+			'ac.datep2'=>"Date", 'ac.location' => 'Text', 'ac.label'=>"Text", 'ac.note'=>"Text", 'ac.percent'=>"Numeric",
+			'ac.durationp'=>"Duree",'ac.fk_user_author'=>'Numeric', 'ac.fk_user_action'=>'Numeric', 'ac.fk_user_mod'=>'Numeric', 'ac.transparency'=>"Numeric", 'ac.priority'=>"Numeric", 'ac.fk_element'=>"Numeric", 'ac.elementtype'=>"Text",
+			'cac.libelle'=>"List:c_actioncomm:libelle:libelle", 'cac.code'=>"Text",
 			's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text',
 			'co.code'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.idprof5'=>'Text', 's.idprof6'=>'Text',
 			's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
-			'p.ref' => 'Text',
+			'p.ref' => 'Text', 'ac.entity'=>'List:entity:label:rowid'
+
 		);
-		$this->export_entities_array[$r] = array('ac.id'=>"action", 'ac.ref_ext'=>"action", 'ac.datec'=>"action", 'ac.datep'=>"action",
-			'ac.datep2'=>"action", 'ac.label'=>"action", 'ac.note'=>"action", 'ac.percent'=>"action", 'ac.durationp'=>"action",
-			'cac.libelle'=>"action",
+		$this->export_entities_array[$r] = array('ac.id'=>"action", 'ac.ref_ext'=>"action", 'ac.ref'=>"action", 'ac.datec'=>"action", 'ac.datep'=>"action",
+			'ac.datep2'=>"action", 'ac.location' => 'action', 'ac.label'=>"action", 'ac.note'=>"action", 'ac.percent'=>"action", 'ac.durationp'=>"action",'ac.fk_user_author'=>'user', 'ac.fk_user_action'=>'user', 'ac.fk_user_mod'=>'user', 'ac.transparency'=>"action", 'ac.priority'=>"action", 'ac.fk_element'=>"action", 'ac.elementtype'=>"action",
 			's.rowid'=>"company", 's.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company',
 			'co.code'=>'company', 's.phone'=>'company', 's.siren'=>'company', 's.siret'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.idprof5'=>'company', 's.idprof6'=>'company',
 			's.code_compta'=>'company', 's.code_compta_fournisseur'=>'company', 's.tva_intra'=>'company',
 			'p.ref' => 'project',
 		);
 
-		$keyforselect = 'actioncomm'; $keyforelement = 'action'; $keyforaliasextra = 'extra';
+		$keyforselect = 'actioncomm';
+		$keyforelement = 'action';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -474,15 +483,104 @@ class modAgenda extends DolibarrModules
 		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		}
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as uc ON ac.fk_user_author = uc.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co on s.fk_pays = co.rowid';
 		$this->export_sql_end[$r] .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = ac.fk_project";
 		$this->export_sql_end[$r] .= ' WHERE ac.entity IN ('.getEntity('agenda').')';
-		if (empty($user->rights->societe->client->voir)) {
+		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.(empty($user) ? 0 : $user->id).' OR ac.fk_soc IS NULL)';
 		}
 		if (!empty($user) && !$user->hasRight('agenda', 'allactions', 'read')) {
 			$this->export_sql_end[$r] .= ' AND acr.fk_element = '.(empty($user) ? 0 : $user->id);
 		}
+		$this->export_sql_end[$r] .= ' AND ac.entity IN ('.getEntity('agenda').')';
 		$this->export_sql_order[$r] = ' ORDER BY ac.datep';
+
+		// Imports
+		$r = 0;
+
+		// Import Events
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = "ExportDataset_event1";
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = array();
+		$this->import_tables_array[$r] = array('ac' => MAIN_DB_PREFIX.'actioncomm', 'extra' => MAIN_DB_PREFIX.'actioncomm_extrafields');
+		$this->import_tables_creator_array[$r] = array('ac' => 'fk_user_author'); // Fields to store import user id
+		$this->import_fields_array[$r] = array(
+			'ac.ref_ext' => 'ExternalRef',
+			'ac.ref' => 'Ref*',
+			'ac.datec' => 'DateCreation',
+			'ac.datep' => 'DateActionBegin',
+			'ac.datep2' => 'DateActionEnd',
+			'ac.location' => 'Location',
+			'ac.label' => 'Title*',
+			'ac.note' => 'Note',
+			'ac.percent' => 'Percentage*',
+			'ac.transparency' => 'Transparency',
+			'ac.priority' => 'Priority',
+			'ac.fk_action' => 'Code*',
+			'ac.fk_soc' => 'ThirdPartyName',
+			'ac.fk_project' => 'ProjectRef',
+			'ac.fk_user_mod' => 'ModifiedBy',
+			'ac.fk_user_action' => 'AffectedTo*',
+			'ac.fk_element' => 'ElementID',
+			'ac.elementtype' => 'ElementType',
+		);
+		$import_sample = array();
+
+		// Add extra fields
+		$import_extrafield_sample = array();
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'actioncomm' AND entity IN (0, ".$conf->entity.")";
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+			}
+		}
+		// End add extra fields
+
+		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
+		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'actioncomm');
+		//$this->import_updatekeys_array[$r] = array('ac.fk_user_creat' => 'User');
+		$this->import_convertvalue_array[$r] = array(
+			'ac.fk_soc' => array(
+				'rule'    => 'fetchidfromref',
+				'file'    => '/societe/class/societe.class.php',
+				'class'   => 'Societe',
+				'method'  => 'fetch',
+				'element' => 'ThirdParty'
+			),
+			'ac.fk_user_action' => array(
+				'rule'    => 'fetchidfromref',
+				'file'    => '/user/class/user.class.php',
+				'class'   => 'User',
+				'method'  => 'fetch',
+				'element' => 'user'
+			),
+			'ac.fk_user_mod' => array(
+				'rule'    => 'fetchidfromref',
+				'file'    => '/user/class/user.class.php',
+				'class'   => 'User',
+				'method'  => 'fetch',
+				'element' => 'user'
+			),
+			'ac.fk_action' => array(
+				'rule' => 'fetchidfromcodeid',
+				'classfile' => '/comm/action/class/cactioncomm.class.php',
+				'class' => 'CActionComm',
+				'method' => 'fetch',
+				'dict' => 'DictionaryActions'
+			)
+		);
+
+		// Import Event Extra Fields
+		$keyforselect = 'actioncomm';
+		$keyforelement = 'action';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 	}
 }

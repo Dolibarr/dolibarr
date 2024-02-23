@@ -35,7 +35,7 @@ class FormCategory extends Form
 	 * @param 	string		$type								The categorie type (e.g Categorie::TYPE_WAREHOUSE)
 	 * @param 	array		$preSelected						A list with the elements that should pre-selected
 	 * @param	string		$morecss							More CSS
-	 * @param	int			$searchCategoryProductOperator		0 or 1 to enable the checkbox to search with a or (0=not preseleted, 1=preselected)
+	 * @param	int			$searchCategoryProductOperator		0 or 1 to enable the checkbox to search with a or (0=not preseleted, 1=preselected), -1=Not used
 	 * @param	int			$multiselect						0 or 1
 	 * @param	int			$nocateg							1=Add an entry '- No Category -'
 	 * @param	string		$showempty							1 or 'string' to add an empty entry
@@ -76,7 +76,10 @@ class FormCategory extends Form
 			$filter .= $formother->select_categories($type, $preSelected[0], $htmlName, $nocateg, $tmptitle, $morecss);
 		}
 		if ($searchCategoryProductOperator >= 0) {
-			$filter .= ' <input type="checkbox" class="valignmiddle" id="'.$htmlName2.'" name="'.$htmlName2.'" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').'/><label class="none valignmiddle" for="'.$htmlName2.'">'.$langs->trans('UseOrOperatorForCategories').'</label>';
+			$filter .= ' <input type="checkbox" class="valignmiddle" id="'.$htmlName2.'" name="'.$htmlName2.'" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').' title="'.dol_escape_htmltag($langs->trans('UseOrOperatorForCategories')).'" />';
+			$filter .= '<label class="none valignmiddle" for="'.$htmlName2.'" title="'.dol_escape_htmltag($langs->trans('UseOrOperatorForCategories')).'">';
+			$filter .= $langs->trans('UseOrOperatorShort');
+			$filter .= '</label>';
 		}
 		$filter .= "</div>";
 
@@ -85,15 +88,13 @@ class FormCategory extends Form
 
 	/**
 	 *    Prints a select form for products categories
-	 *    @param    string	$selected          	Id category pre-selection
+	 *    @param    int 	$selected          	Id category pre-selection
 	 *    @param    string	$htmlname          	Name of HTML field
 	 *    @param    int		$showempty         	Add an empty field
-	 *    @return	integer|null
+	 *    @return	int|null
 	 */
 	public function selectProductCategory($selected = 0, $htmlname = 'product_category_id', $showempty = 0)
 	{
-		global $conf;
-
 		$sql = "SELECT cp.fk_categorie as cat_index, cat.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_product as cp";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie as cat ON cat.rowid = cp.fk_categorie";
@@ -118,11 +119,12 @@ class FormCategory extends Form
 				}
 				$i++;
 			}
-			print ('</select>');
+			print('</select>');
 
 			return $num_rows;
 		} else {
 			dol_print_error($this->db);
+			return;
 		}
 	}
 }

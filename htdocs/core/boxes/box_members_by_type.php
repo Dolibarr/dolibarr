@@ -38,17 +38,7 @@ class box_members_by_type extends ModeleBoxes
 	public $boxlabel = "BoxTitleMembersByType";
 	public $depends = array("adherent");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -63,7 +53,7 @@ class box_members_by_type extends ModeleBoxes
 		$this->db = $db;
 
 		// disable module for such cases
-		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+		$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 		if (!in_array('adherent', $listofmodulesforexternal) && !empty($user->socid)) {
 			$this->enabled = 0; // disabled for external users
 		}
@@ -252,13 +242,13 @@ class box_members_by_type extends ModeleBoxes
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
 					'maxlength' => 500,
-					'text' => ($this->db->error() . ' sql=' . $sql)
+					'text' => ($this->db->lasterror())
 				);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

@@ -259,14 +259,15 @@ if ($action == "view_ticketlist") {
 			//'t.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 		);
 
-		if (empty($conf->global->TICKET_SHOW_PROGRESSION))
+		if (!getDolGlobalString('TICKET_SHOW_PROGRESSION')) {
 			unset($arrayfields['t.progress']);
+		}
 
 		// Extra fields
 		if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 				if ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate') {
-					$enabled = abs(dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1, 1, 0));
+					$enabled = abs(dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1, 1, '2'));
 					$enabled = (($enabled == 0 || $enabled == 3) ? 0 : $enabled);
 					$arrayfields["ef.".$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => ($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1, 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' => $enabled && $extrafields->attributes[$object->table_element]['perms'][$key]);
 				}
@@ -347,8 +348,9 @@ if ($action == "view_ticketlist") {
 		$sql .= " t.message,";
 		$sql .= " t.fk_statut,";
 		$sql .= " t.resolution,";
-		if (!empty($conf->global->TICKET_SHOW_PROGRESSION))
+		if (getDolGlobalString('TICKET_SHOW_PROGRESSION')) {
 			$sql .= " t.progress,";
+		}
 		$sql .= " t.timing,";
 		$sql .= " t.type_code,";
 		$sql .= " t.category_code,";
@@ -419,7 +421,7 @@ if ($action == "view_ticketlist") {
 				print_barre_liste($langs->trans('TicketList'), $page, 'list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket');
 
 				// Search bar
-				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" id="searchFormList" >'."\n";
+				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : '').'" id="searchFormList" >'."\n";
 				print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="view_ticketlist">';
@@ -479,7 +481,7 @@ if ($action == "view_ticketlist") {
 					print '</td>';
 				}
 
-				if ((!empty($conf->global->TICKET_SHOW_PROGRESSION)) && !empty($arrayfields['t.progress']['checked'])) {
+				if ((getDolGlobalString('TICKET_SHOW_PROGRESSION')) && !empty($arrayfields['t.progress']['checked'])) {
 					print '<td class="liste_titre"></td>';
 				}
 
@@ -544,7 +546,7 @@ if ($action == "view_ticketlist") {
 				if (!empty($arrayfields['severity.code']['checked'])) {
 					print_liste_field_titre($arrayfields['severity.code']['label'], $url_page_current, 'severity.code', '', $param, '', $sortfield, $sortorder);
 				}
-				if ((!empty($conf->global->TICKET_SHOW_PROGRESSION)) && !empty($arrayfields['t.progress']['checked'])) {
+				if ((getDolGlobalString('TICKET_SHOW_PROGRESSION')) && !empty($arrayfields['t.progress']['checked'])) {
 					print_liste_field_titre($arrayfields['t.progress']['label'], $url_page_current, 't.progress', '', $param, '', $sortfield, $sortorder);
 				}
 				if (!empty($arrayfields['t.fk_user_create']['checked'])) {
@@ -636,7 +638,7 @@ if ($action == "view_ticketlist") {
 					}
 
 					// Progression
-					if ((!empty($conf->global->TICKET_SHOW_PROGRESSION)) && !empty($arrayfields['t.progress']['checked'])) {
+					if ((getDolGlobalString('TICKET_SHOW_PROGRESSION')) && !empty($arrayfields['t.progress']['checked'])) {
 						print '<td>';
 						print $obj->progress;
 						print '</td>';
@@ -710,7 +712,7 @@ if ($action == "view_ticketlist") {
 
 				print '</form>';
 
-				print '<form method="post" id="form_view_ticket" name="form_view_ticket" action="'.dol_buildpath('/public/ticket/view.php', 1).(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" style="display:none;">';
+				print '<form method="post" id="form_view_ticket" name="form_view_ticket" action="'.dol_buildpath('/public/ticket/view.php', 1).(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : '').'" style="display:none;">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="view_ticket">';
 				print '<input type="hidden" name="btn_view_ticket_list" value="1">';
@@ -741,7 +743,7 @@ if ($action == "view_ticketlist") {
 	print '<br>';
 
 	print '<div id="form_view_ticket">';
-	print '<form method="post" name="form_view_ticketlist" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'">';
+	print '<form method="post" name="form_view_ticketlist" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : '').'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="view_ticketlist">';
 	//print '<input type="hidden" name="search_fk_status" value="non_closed">';
@@ -766,8 +768,10 @@ if ($action == "view_ticketlist") {
 	print "</div>";
 }
 
-// End of page
-htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
+if (getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER')) {
+	// End of page
+	htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
+}
 
 llxFooter('', 'public');
 

@@ -41,14 +41,18 @@ $langs->loadLangs(array('bills', 'banks', 'companies', 'salaries'));
 $id = GETPOST("id", 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 
 $salary = new Salary($db);
 
 $object = new PaymentSalary($db);
 if ($id > 0) {
 	$result = $object->fetch($id);
-	if (!$result) dol_print_error($db, 'Failed to get payment id '.$id);
+	if (!$result) {
+		dol_print_error($db, 'Failed to get payment id '.$id);
+	}
 }
 restrictedArea($user, 'salaries', $object->fk_salary, 'salary', '');	// $object is payment of salary
 
@@ -190,7 +194,7 @@ print dol_get_fiche_end();
 
 
 /*
- * List of salaries payed
+ * List of salaries paid
  */
 
 $disable_delete = 0;
@@ -209,7 +213,7 @@ if ($resql) {
 	$total = 0;
 	print '<br>';
 
-	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Salary').'</td>';
@@ -235,7 +239,7 @@ if ($resql) {
 			print '<td class="right">'.price($objp->sc_amount).'</td>';
 			// Status
 			print '<td class="center">'.$salary->getLibStatut(4, $objp->amount).'</td>';
-			// Amount payed
+			// Amount paid
 			print '<td class="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
 			if ($objp->paye == 1) {
@@ -264,7 +268,7 @@ if ($resql) {
 print '<div class="tabsAction">';
 
 if ($action == '') {
-	if ($user->rights->salaries->delete) {
+	if ($user->hasRight('salaries', 'delete')) {
 		if (!$disable_delete) {
 			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
 		} else {

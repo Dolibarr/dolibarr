@@ -53,7 +53,9 @@ $mode = GETPOST('mode', 'alpha');
 $socid = GETPOST('socid', 'int');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 
 $search_ref				= GETPOST('search_ref', 'alpha');
 $search_date_startday	= GETPOST('search_date_startday', 'int');
@@ -105,7 +107,7 @@ $arrayfields = array(
 	'u.login'				=>array('label'=>"User", 'checked'=>1, 'position'=>30),
 	'c.libelle'			=>array('label'=>"Type", 'checked'=>1, 'position'=>40),
 	'pndf.num_payment'	=>array('label'=>"Numero", 'checked'=>1, 'position'=>50, 'tooltip'=>"ChequeOrTransferNumber"),
-	'ba.label'			=>array('label'=>"Account", 'checked'=>1, 'position'=>60, 'enable'=>(isModEnabled("banque"))),
+	'ba.label'			=>array('label'=>"BankAccount", 'checked'=>1, 'position'=>60, 'enable'=>(isModEnabled("banque"))),
 	'pndf.amount'			=>array('label'=>"Amount", 'checked'=>1, 'position'=>70),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -125,7 +127,7 @@ if ($user->socid) {
 // require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 // $object = new PaiementFourn($db);
 // restrictedArea($user, $object->element);
-if (empty($user->rights->expensereport->lire)) {
+if (!$user->hasRight('expensereport', 'lire')) {
 	accessforbidden();
 }
 
@@ -189,9 +191,9 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.ro
 $sql .= ' WHERE ndf.entity IN ('.getEntity("expensereport").')';
 
 // RESTRICT RIGHTS
-if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance))) {
-	$sql .= " AND ndf.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";
+if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')
+	&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('expensereport', 'writeall_advance'))) {
+	$sql .= " AND ndf.fk_user_author IN (".$db->sanitize(implode(',', $childids)).")\n";
 }
 
 if ($search_ref) {
@@ -331,7 +333,7 @@ if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
@@ -378,10 +380,10 @@ if (!empty($arrayfields['pndf.rowid']['checked'])) {
 // Filter: Date
 if (!empty($arrayfields['pndf.datep']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -445,7 +447,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER['PHP_SELF'], '', '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -546,7 +548,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// No
-		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+		if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 			print '<td>'.(($offset * $limit) + $i).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -584,7 +586,7 @@ while ($i < $imaxinloop) {
 
 		// Pyament type
 		if (!empty($arrayfields['c.libelle']['checked'])) {
-			$payment_type = $langs->trans("PaymentType".$objp->paiement_type) != ("PaymentType".$objp->paiement_type) ? $langs->trans("PaymentType".$objp->paiement_type) : $objp->paiement_libelle;
+			$payment_type = $langs->trans("PaymentType".$objp->paiement_type) != "PaymentType".$objp->paiement_type ? $langs->trans("PaymentType".$objp->paiement_type) : $objp->paiement_libelle;
 			print '<td>'.$payment_type.' '.dol_trunc($objp->num_payment, 32).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

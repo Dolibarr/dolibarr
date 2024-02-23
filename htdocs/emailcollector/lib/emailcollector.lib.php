@@ -153,23 +153,22 @@ function getAttachments($jk, $mbox)
  */
 function getFileData($jk, $fpos, $type, $mbox)
 {
-	$mege = imap_fetchbody($mbox, $jk, $fpos, FT_UID);
-	$data = getDecodeValue($mege, $type);
+	$merge = imap_fetchbody($mbox, $jk, $fpos, FT_UID);
+	$data = getDecodeValue($merge, $type);
 
 	return $data;
 }
 
 /**
- * Save joined file into a directory with a given name
+ * Save the attached file into a directory with a given name
  *
  * @param 	string 		$path 		Path to file
  * @param 	string 		$filename 	Name of file
- * @param 	mixed 		$data 		contenu à sauvegarder
- * @return 	string 					emplacement du fichier
+ * @param 	mixed 		$data 		Content to save
+ * @return 	string|-1 				Return the path to the saved file, or -1 if error
  **/
 function saveAttachment($path, $filename, $data)
 {
-	global $lang;
 	$tmp = explode('.', $filename);
 	$ext = array_pop($tmp);
 	$filename = implode('.', $tmp);

@@ -18,9 +18,9 @@
  */
 
 /**
- * \file scripts/product/migrate_picture_path.php
+ * \file 	scripts/product/regenerate_thumbs.php
  * \ingroup scripts
- * \brief Migrate pictures from old system prior to 3.7 to new path for 3.7+
+ * \brief 	Regenerated thumbs of image files for products
  */
 
 if (!defined('NOSESSION')) {
@@ -56,6 +56,12 @@ $version = DOL_VERSION;
 $error = 0;
 $forcecommit = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+/*
+ * Main
+ */
+
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".join(',', $argv));
 
@@ -70,7 +76,7 @@ print '--- start'."\n";
 $dir = DOL_DATA_ROOT;
 $subdir = $argv[1];
 if (empty($dir) || empty($subdir)) {
-	dol_print_error('', 'dir not defined');
+	dol_print_error(null, 'dir not defined');
 	exit(1);
 }
 if (!dol_is_dir($dir.'/'.$subdir)) {
@@ -84,7 +90,7 @@ global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
 
 foreach ($filearray as $keyf => $valf) {
 	$ref = basename($valf['name']);
-	$filearrayimg = dol_dir_list($valf['fullname'], "files", 0, '(\.gif|\.png|\.jpg|\.jpeg|\.bmp)$', '(\.meta|_preview.*\.png)$');
+	$filearrayimg = dol_dir_list($valf['fullname'], "files", 0, '(\.gif|\.png|\.jpg|\.jpeg|\.bmp|\.webp)$', '(\.meta|_preview.*\.png)$');
 	foreach ($filearrayimg as $keyi => $vali) {
 		print 'Process image for ref '.$ref.' : '.$vali['name']."\n";
 

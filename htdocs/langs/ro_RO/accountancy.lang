@@ -16,8 +16,8 @@ ThisService=Acest serviciu
 ThisProduct=Acest produs
 DefaultForService=Implicit pentru servicii
 DefaultForProduct=Implicit pentru produse
-ProductForThisThirdparty=Produs pentru acest terţ
-ServiceForThisThirdparty=Serviciu pentru acest terţ
+ProductForThisThirdparty=Produs pentru acest terț
+ServiceForThisThirdparty=Serviciu pentru acest terț
 CantSuggest=Nu pot sugera
 AccountancySetupDoneFromAccountancyMenu=Cele mai multe configurări ale contabilității se fac din meniul %s
 ConfigAccountingExpert=Configurare modul Contabilitate (partidă dublă)
@@ -38,7 +38,7 @@ DeleteCptCategory=Eliminați contul contabil din grup
 ConfirmDeleteCptCategory=Sigur doriți să eliminați acest cont contabil din grupul de conturi?
 JournalizationInLedgerStatus=Stare jurnalizare
 AlreadyInGeneralLedger=Transferat deja în jurnalele contabile secundare şi Registrul jurnal
-NotYetInGeneralLedger=Netransferat încă în jurnalele secundare contabile şi Registrul Jurnal
+NotYetInGeneralLedger=Încă nu a fost transferat în jurnale contabile și registru
 GroupIsEmptyCheckSetup=Grupul este gol, verificați configurarea grupului personalizat de conturi
 DetailByAccount=Afișați detalii după cont
 DetailBy=Detaliat de
@@ -53,15 +53,13 @@ ExportAccountingSourceDocHelp=Cu acest instrument, poți căuta și exporta even
 ExportAccountingSourceDocHelp2=Pentru export jurnale, foloseşte meniul %s - %s.
 ExportAccountingProjectHelp=Specifică un proiect dacă ai nevoie de un raport contabil numai pentru un anumit proiect. Rapoartele de cheltuieli și plățile împrumuturilor nu sunt incluse în rapoartele de proiect.
 ExportAccountancy=Export în contabilitate
-WarningDataDisappearsWhenDataIsExported=Atenție, această listă conține doar înregistrările contabile care nu au fost deja exportate (data exportului este goală). Dacă vrei să incluzi înregistrările contabile deja exportate pentru a le reexporta, fă clic pe butonul de mai sus.
+WarningDataDisappearsWhenDataIsExported=Atenție, această listă conține doar înregistrările contabile care nu au fost deja exportate (data exportului este goală). Dacă vrei să incluzi înregistrările contabile deja exportate, fă clic pe butonul de mai sus.
 VueByAccountAccounting=Vizualizare după contul contabil
 VueBySubAccountAccounting=Vizualizați după subcont contabil
 
 MainAccountForCustomersNotDefined=Contul contabil principal (din Planul de Conturi) pentru clienți nu a fost definit în configurare
 MainAccountForSuppliersNotDefined=Contul contabil principal (din Planul de Conturi) pentru furnizori nu a fost definit în configurare
 MainAccountForUsersNotDefined=Contul contabil principal (din Planul de Conturi) pentru utilizatori nu a fost definit în configurare
-MainAccountForRevenueStampSaleNotDefined=Contul contabil (din Planul de Conturi) pentru taxa de venit (vânzări) nu a fost definit în configurare
-MainAccountForRevenueStampPurchaseNotDefined=Contul contabil (din Planul de Conturi) pentru taxa de venit (achiziții) nu a fost definit în configurare
 MainAccountForVatPaymentNotDefined=Contul contabil (din Planul de Conturi) pentru plata TVA nu a fost definit în configurare
 MainAccountForSubscriptionPaymentNotDefined=Contul contabil (din Planul de Conturi) pentru plată adeziune membri nu a fost definit în configurare
 MainAccountForRetainedWarrantyNotDefined=Contul contabil (din Planul de conturi) pentru garanția reținută nu a fost definit la configurare
@@ -70,13 +68,14 @@ UserAccountNotDefined=Contul contabil pentru utilizator nu a fost definit în co
 AccountancyArea=Zona contabilă
 AccountancyAreaDescIntro=Utilizarea modulului de contabilitate se face în mai multe etape:
 AccountancyAreaDescActionOnce=Următoarele acțiuni sunt executate de obicei doar o singură dată sau o dată pe an...
-AccountancyAreaDescActionOnceBis=Următorii pași ar trebui făcuți pentru a economisi timp pe viitor, ţi se va propune automat contul contabil implicit corect atunci când transferi datele în contabilitate
+AccountancyAreaDescActionOnceBis=Următorii pași ar trebui făcuți pentru a-ți economisi timp în viitor, sugerându-ți automat contul contabil implicit corect atunci când transferi date în contabilitate
 AccountancyAreaDescActionFreq=Următoarele acțiuni sunt executate de obicei în fiecare lună, săptămână sau zi pentru companii foarte mari...
 
 AccountancyAreaDescJournalSetup=PASUL %s: Verifică conținutul listei de jurnal din meniul %s
 AccountancyAreaDescChartModel=PASUL %s: Verificați dacă există un plan de conturi sau creați unul din meniul %s
 AccountancyAreaDescChart=PASUL %s: Selectaţi şi|sau completaţi planul de conturi din meniul %s
 
+AccountancyAreaDescFiscalPeriod=PAS %s: Definește implicit un an fiscal în care să integrezi înregistrările contabile. Pentru aceasta, utilizați opțiunea %s din meniu.
 AccountancyAreaDescVat=PASUL %s: Definire conturi contabile pentru fiecare cotă de TVA. Pentru aceasta, utilizați intrarea în meniu %s.
 AccountancyAreaDescDefault=PAS %s: Definiți conturile implicite de contabilitate. Pentru aceasta, utilizați intrarea în meniu %s.
 AccountancyAreaDescExpenseReport=PASUL %s: Defineşte conturile contabile implicite pentru fiecare tip de Raport de cheltuieli. Pentru aceasta, utilizează opţiunea din meniul %s.
@@ -84,19 +83,20 @@ AccountancyAreaDescSal=PASUL %s: Definire conturi contabile implicite pentru pla
 AccountancyAreaDescContrib=PASUL %s: Defineşte conturile contabile implicite pentru Taxe (cheltuieli speciale). Pentru aceasta, utilizează opţiunea din meniul %s.
 AccountancyAreaDescDonation=PASUL %s: Definire conturi contabile implicite pentru donații. Pentru aceasta, utilizați intrarea în meniu %s.
 AccountancyAreaDescSubscription=PAS %s: Definiți conturile contabile implicite  pentru abonamente pentru membri. Pentru aceasta, utilizați intrarea în meniu %s.
-AccountancyAreaDescMisc=PASUL %s: Definire conturi contabile implicite obligatorii și conturi contabile implicite pentru tranzacții diverse. Pentru aceasta, utilizați intrarea în meniu %s.
+AccountancyAreaDescMisc=PASUL %s : Definește conturile contabile implicite obligatorii și conturile contabile implicite pentru tranzacții diverse. Pentru aceasta, utilizează opțiunea %s din meniu.
 AccountancyAreaDescLoan=PASUL %s: Definire conturi contabile implicite pentru împrumuturi. Pentru aceasta, utilizați intrarea în meniu %s.
 AccountancyAreaDescBank=PASUL %s: Definire conturi contabile și codul de jurnal pentru fiecare bancă și conturi financiare. Pentru aceasta, utilizați intrarea în meniu %s.
 AccountancyAreaDescProd=PASUL %s: Defineşte conturile contabile pentru produsele/serviciile tale. Pentru aceasta, utilizează opţiunea din meniul %s. 
 
 AccountancyAreaDescBind=PASUL %s: Verifică dacă asocierea între liniile %s existente și contul contabil este făcută, astfel încât aplicația să poate scrie tranzacțiile în Cartea Mare cu un singur clic. Completați asocierile lipsă. Pentru aceasta, utilizați intrarea în meniu %s.
 AccountancyAreaDescWriteRecords=PASUL %s: Scriere tranzacţii în Registrul jurnal. Pentru aceasta, accesează meniul <strong>%s</strong>, apoi fă clic pe butonul <strong>%s</strong>.
-AccountancyAreaDescAnalyze=PASUL %s: Adaugă sau modifică tranzacțiile existente și generează rapoarte și exporturi.
+AccountancyAreaDescAnalyze=PAS %s: Citește raportări sau generează fișiere de export pentru alți contabili.
+AccountancyAreaDescClosePeriod=PAS %s: Închide perioada, astfel încât să nu mai putem transfera date în aceeași perioadă în viitor.
 
-AccountancyAreaDescClosePeriod=PASUL %s: Închide perioada, astfel încât să nu se poată modifica în viitor.
-
+TheFiscalPeriodIsNotDefined=Un pas obligatoriu în configurare nu a fost finalizat (perioada fiscală nu este definită)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Un pas obligatoriu în configurare nu a fost finalizat (contul contabil jurnal nu este definit pentru toate conturile bancare)
 Selectchartofaccounts=Selectați planul activ de conturi
+CurrentChartOfAccount=Planul de conturi activ curent
 ChangeAndLoad=Schimbați și încărcați
 Addanaccount=Adaugă un cont contabil
 AccountAccounting=Cont contabil
@@ -171,8 +171,8 @@ ACCOUNTING_MANAGE_ZERO=Permite gestionarea unui număr diferit de zerouri la sf�
 BANK_DISABLE_DIRECT_INPUT=Dezactivează înregistrarea directă a tranzacției în contul bancar
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Activați schița de export în jurnal
 ACCOUNTANCY_COMBO_FOR_AUX=Activare listă combinată pentru contul subsidiar (poate fi lent dacă aveți o mulțime de terți, întrerupe capacitatea de a căuta după o valoare parţială)
-ACCOUNTING_DATE_START_BINDING=Definiți o dată pentru a începe legarea și transferul în contabilitate. Înainte de această dată, tranzacțiile nu vor fi transferate în contabilitate.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Pentru transferul contabil, care este perioada selectată implicit 
+ACCOUNTING_DATE_START_BINDING=Dezactivare asociere și transfer în contabilitate atunci când data este mai mică decât această dată (tranzacțiile înainte de această dată vor fi excluse implicit)
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Pe pagina de transfer de date în contabilitate, perioada selectată implicit
 
 ACCOUNTING_SELL_JOURNAL=Jurnal de vânzări - vânzări și retururi
 ACCOUNTING_PURCHASE_JOURNAL=Jurnal de achiziții - achiziții și retururi
@@ -186,6 +186,8 @@ ACCOUNTING_SOCIAL_JOURNAL=Jurnal Asigurări Sociale
 ACCOUNTING_RESULT_PROFIT=Contul contabil rezultat (Profit)
 ACCOUNTING_RESULT_LOSS=Contul contabil rezultat (Pierdere)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Jurnal de închidere
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Grupe de conturi contabile utilizate pentru bilanţ (separate prin virgulă)
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Grupe conturi contabile utilizate pentru contul de profit și pierdere (separate prin virgulă)
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Cont contabil (din Planul de Conturi) care va fi utilizat ca și cont pentru transferurile bancare tranzitorii
 TransitionalAccount=Cont tranzitoriu de transfer bancar 
@@ -290,7 +292,7 @@ DescVentilDoneCustomer=Consultă aici lista liniilor de facturi clienți și con
 DescVentilTodoCustomer=Asociere linii de factură care nu sunt deja asociate cu un cont de produs din planul de conturi
 ChangeAccount=Modificare cont de produs/serviciu (din planul de conturi) pentru liniile selectate cu următorul cont:
 Vide=-
-DescVentilSupplier=Modificare cont de produs/serviciu (din planul de conturi) pentru liniile selectate cu următorul cont:
+DescVentilSupplier=Consultă aici lista liniilor de factură furnizor asociate sau neasociate încă la un cont contabil de produs din planul de conturi (sunt vizibile doar înregistrările care nu au fost deja transferate în contabilitate)
 DescVentilDoneSupplier=Consultați aici lista liniilor facturilor furnizorilor și contul lor contabil
 DescVentilTodoExpenseReport=Asociere linii de rapoarte de cheltuieli care nu sunt deja asociate unui cont contabil de cheltuieli
 DescVentilExpenseReport=Consultă aici lista liniilor de rapoarte cheltuieli asociate (sau nu) unui cont contabil de cheltuieli
@@ -298,7 +300,7 @@ DescVentilExpenseReportMore=Dacă configurezi contul contabil pe linii de raport
 DescVentilDoneExpenseReport=Consultați aici lista liniilor rapoartelor de cheltuieli și contul contabil a taxelor lor
 
 Closure=Închidere anuală
-DescClosure=Consultă aici numărul de mișcări pe lună nevalidate și blocate
+AccountancyClosureStep1Desc=Consultă aici numărul de mișcări pe lună nevalidate și blocate
 OverviewOfMovementsNotValidated=Prezentare generală a mișcărilor nevalidate și blocate
 AllMovementsWereRecordedAsValidated=Toate mișcările au fost înregistrate ca validate și blocate
 NotAllMovementsCouldBeRecordedAsValidated=Nu toate mișcările au putut fi înregistrate ca validate și blocate
@@ -341,7 +343,7 @@ AccountingJournalType3=Achiziţii
 AccountingJournalType4=Banca
 AccountingJournalType5=Rapoarte de cheltuieli
 AccountingJournalType8=Inventar
-AccountingJournalType9=Are nou
+AccountingJournalType9=Venituri reținute
 GenerationOfAccountingEntries=Generare înregistrări contabile
 ErrorAccountingJournalIsAlreadyUse=Acest jurnal este deja folosit
 AccountingAccountForSalesTaxAreDefinedInto=Notă: contul contabil pentru taxe de vânzări este definit în meniul <b>%s</b> - <b>%s</b>
@@ -352,12 +354,14 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Dezactivați legarea și transferul în 
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Dezactivați legarea și transferul în contabilitate pentru rapoartele de cheltuieli (rapoartele de cheltuieli nu vor fi luate în considerare în contabilitate)
 ACCOUNTING_ENABLE_LETTERING=Activare funcție de numerotare în contabilitate
 ACCOUNTING_ENABLE_LETTERING_DESC=Când această opțiune este activată, poți defini, pe fiecare intrare contabilă, un cod, astfel încât să poți grupa diferite mișcări contabile împreună. În trecut, când jurnalele diferite erau gestionate independent, această caracteristică era necesară pentru a grupa liniile de mișcare ale diferitelor jurnale împreună. Cu toate acestea, cu contabilitatea din sistem, un astfel de cod de urmărire, numit "<b>%s</b>" este deja salvat automat, deci o scriere automată este deja făcută, fără risc de eroare, astfel încât această caracteristică a devenit inutilă pentru o utilizare comună. Caracteristica de numerotare manuală este oferită utilizatorilor finali care nu au încredere în algoritmmul sistemului care face transferul de date în contabilitate.
-EnablingThisFeatureIsNotNecessary=Activarea acestei funcții nu mai este necesară pentru o gestiune contabilă riguroasă.
+EnablingThisFeatureIsNotNecessary=Activarea acestei funcții nu mai este necesară pentru un management contabil riguros.
 ACCOUNTING_ENABLE_AUTOLETTERING=Activare numerotare automată la transferul în contabilitate
-ACCOUNTING_ENABLE_AUTOLETTERING_DESC=Codul pentru numerotare este generat și incrementat automat și nu este ales de utilizatorul final
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=Codul pentru numerotare este generat și incrementat automat și nu poate fi  ales de utilizatorul final
+ACCOUNTING_LETTERING_NBLETTERS=Număr de litere pentru generarea codului de numerotare (implicit 3)
+ACCOUNTING_LETTERING_NBLETTERS_DESC=Unele programe de contabilitate acceptă doar un cod din două litere. Acest parametru îți permite să setezi acest aspect. Numărul implicit de litere este de trei. 
 OptionsAdvanced=Opțiuni avansate
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activare gestionare TVA cu taxare inversă la achizițiile de la furnizori
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Când această opțiune este activată, poți defini că un furnizor sau o anumită factură de furnizor trebuie să fie transferată în contabilitate în mod diferit: Un debit suplimentar și o linie de credit vor fi generate în contabilitate pentru 2 conturi date din planul de conturi definit în pagina de configurare "%s".
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Când această opțiune este activată, poți defini că un furnizor sau o anumită factură de furnizor trebuie să fie transferată în contabilitate în mod diferit: Un debit suplimentar și o linie de credit se vor genera în contabilitate pe 2 conturi date din planul de conturi definit în pagina de configurare "%s".
 
 ## Export
 NotExportLettering=Nu exporta numerotările atunci când se generează fișierul
@@ -420,7 +424,7 @@ SaleLocal=Vânzare locală
 SaleExport=Vânzare la export
 SaleEEC=Vânzări în CEE
 SaleEECWithVAT=Vânzarea în CEE cu cota TVA diferită de zero, deci presupunem că aceasta NU este o vânzare intracomunitară, iar contul contabil este cel standard al produsului. 
-SaleEECWithoutVATNumber=Vânzare în CEE fără TVA, dar codul de TVA al terților nu este definit. Revenim la contul vânzărilor standard. Poți remedia codul de TVA al terțului sau poți modifica contul de produs sugerat pentru asociere, dacă este necesar.
+SaleEECWithoutVATNumber=Vânzare în CEE fără TVA, dar codul de TVA al terțului nu este definit. Revenire la contul contabil pentru vânzări standard. Poți remedia codul de TVA al unui terți sau poți modifica contul contabil de produs sugerat pentru asociere, dacă este necesar.
 ForbiddenTransactionAlreadyExported=Interzis: Tranzacţia a fost validată şi/sau exportată.
 ForbiddenTransactionAlreadyValidated=Interzis: Tranzacţia a fost validată.
 ## Dictionary
@@ -441,16 +445,30 @@ AccountancyNoUnletteringModified=Nicio dereconciliere modificată
 AccountancyOneUnletteringModifiedSuccessfully=O dereconciliere a fost modificată cu succes
 AccountancyUnletteringModifiedSuccessfully=Dereconcilierea %s a fost modificată cu succes
 
+## Closure
+AccountancyClosureStep1=Pas 1: Validare și blocare mișcări
+AccountancyClosureStep2=Pas 2 : Închide perioada fiscală
+AccountancyClosureStep3=Pas 3 : Extragere înregistrări (Opțional)
+AccountancyClosureClose=Închidere perioadă fiscală
+AccountancyClosureAccountingReversal=Extragere și înregistrare "Venituri reținute"
+AccountancyClosureStep3NewFiscalPeriod=Următoarea perioadă fiscală
+AccountancyClosureGenerateClosureBookkeepingRecords=Generare înregistrări "Venituri reținute" pentru periada fiscală viitoare
+AccountancyClosureSeparateAuxiliaryAccounts=La generarea înregistrărilor "Venituri reținute", detaliază conturile contabile secundare
+AccountancyClosureCloseSuccessfully=Perioada fiscală a fost închisă cu succes
+AccountancyClosureInsertAccountingReversalSuccessfully=Înregistrările contabile pentru "Venituri reținute" au fost introduse cu succes
+
 ## Confirm box
 ConfirmMassUnletteringAuto=Confirmare de de-reconciliere automată în masă
 ConfirmMassUnletteringManual=Confirmare de de-reconciliere manuală în masă
 ConfirmMassUnletteringQuestion=Sigur vrei să anulezi reconcilierea înregistrăr(ilor) selectate %s ?
 ConfirmMassDeleteBookkeepingWriting=Confirmare ştergere în bloc
 ConfirmMassDeleteBookkeepingWritingQuestion=Aceasta va șterge tranzacția din contabilitate (toate intrările legate de aceeași tranzacție vor fi șterse). Sigur vrei să ștergi intrările selectate%s?
+AccountancyClosureConfirmClose=Sigur vrei să închizi perioada fiscală curentă? <span class="warning">Înțelegi că închiderea perioadei fiscale este o acțiune ireversibilă și va bloca definitiv orice modificare sau ștergere a înregistrărilor în această perioadă</span>.
+AccountancyClosureConfirmAccountingReversal=Sigur vrei să înregistrezi intrări pentru "Venituri reținute"?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Câțiva pași obligatorii de configurare nu au fost făcuți, efectuează-i
-ErrorNoAccountingCategoryForThisCountry=Nu există grupe de conturi contabile disponibile pentru țara %s (Consultă Acasă - Setări - Dicționare)
+ErrorNoAccountingCategoryForThisCountry=Nicio grupă de conturi contabile disponibilă pentru țara %s (Vezi %s - %s - %s)
 ErrorInvoiceContainsLinesNotYetBounded=Încercați să treceţi în jurnal câteva linii ale facturii <strong>%s</strong>, dar alte linii nu au un cont contabil asociat. Jurnalizarea tuturor liniilor pentru această factură este respinsă.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Unele linii de pe factură nu sunt legate de contul contabil.
 ExportNotSupported=Formatul exportat setat nu este suportat în această pagină
@@ -465,6 +483,9 @@ AccountancyErrorMismatchBalanceAmount=Soldul (%s) nu este egal cu 0
 AccountancyErrorLetteringBookkeeping=Au apărut erori cu privire la tranzacții: %s
 ErrorAccountNumberAlreadyExists=Numărul de cont contabil %s există deja
 ErrorArchiveAddFile=Nu se poate adăuga fișierul  "%s" în arhivă
+ErrorNoFiscalPeriodActiveFound=Nu a fost găsită nicio perioadă fiscală activă
+ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Data documentului contabil nu se află în perioada fiscală activă
+ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Data documentului contabil se află într-o perioada fiscală închisă
 
 ## Import
 ImportAccountingEntries=Intrări contabile

@@ -162,13 +162,13 @@ if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice') {
 if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') {
 	$description .= '<br>' . $langs->trans("RulesVATInServices");
 }
-if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$description .= '<br>' . $langs->trans("DepositsAreNotIncluded");
 }
-if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$description .= $langs->trans("SupplierDepositsAreNotIncluded");
 }
-if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) {
+if (isModEnabled('accounting')) {
 	$description .= '<br>' . $langs->trans("ThisIsAnEstimatedValue");
 }
 
@@ -251,7 +251,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			$company_static->name = $x_coll[$my_coll_rate]['company_name'][$id];
 			$company_static->name_alias = $x_coll[$my_coll_rate]['company_alias'][$id];
 			$company_static->email = $x_coll[$my_coll_rate]['company_email'][$id];
-			$company_static->tva_intra = isset($x_coll[$my_coll_rate]['tva_intra'][$id])?$x_coll[$my_coll_rate]['tva_intra'][$id]:0;
+			$company_static->tva_intra = isset($x_coll[$my_coll_rate]['tva_intra'][$id]) ? $x_coll[$my_coll_rate]['tva_intra'][$id] : 0;
 			$company_static->client = $x_coll[$my_coll_rate]['company_client'][$id];
 			$company_static->fournisseur = $x_coll[$my_coll_rate]['company_fournisseur'][$id];
 			$company_static->status = $x_coll[$my_coll_rate]['company_status'][$id];
@@ -499,8 +499,11 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					print '<td class="left">' . dol_print_date($fields['datef'], 'day') . '</td>';
 
 					// Payment date
-					if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'payment' || getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') print '<td class="left">' . dol_print_date($fields['datep'], 'day') . '</td>';
-					else print '<td></td>';
+					if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'payment' || getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') {
+						print '<td class="left">' . dol_print_date($fields['datep'], 'day') . '</td>';
+					} else {
+						print '<td></td>';
+					}
 
 					// Company name
 					print '<td class="tdmaxoverflow150">';
@@ -630,8 +633,11 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	print '<tr class="liste_titre liste_titre_topborder">';
 	print '<td class="left">' . $elementsup . '</td>';
 	print '<td class="left">' . $langs->trans("DateInvoice") . '</td>';
-	if (getDolGlobalString('TAX_MODE_BUY_PRODUCT') == 'payment' || getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'payment') print '<td class="left">' . $langs->trans("DatePayment") . '</td>';
-	else print '<td></td>';
+	if (getDolGlobalString('TAX_MODE_BUY_PRODUCT') == 'payment' || getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'payment') {
+		print '<td class="left">' . $langs->trans("DatePayment") . '</td>';
+	} else {
+		print '<td></td>';
+	}
 	print '<td class="left">' . $namesup . '</td>';
 	print '<td class="left">' . $productsup . '</td>';
 	if ($modetax != 1) {

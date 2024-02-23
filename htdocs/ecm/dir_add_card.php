@@ -23,7 +23,9 @@
  *	\brief		Main page for ECM section area
  */
 
-if (! defined('DISABLE_JS_GRAHP')) define('DISABLE_JS_GRAPH', 1);
+if (! defined('DISABLE_JS_GRAHP')) {
+	define('DISABLE_JS_GRAPH', 1);
+}
 
 // Load Dolibarr environment
 require '../main.inc.php';
@@ -61,8 +63,7 @@ if (empty($urlsection)) {
 
 if ($module == 'ecm') {
 	$upload_dir = $conf->ecm->dir_output.'/'.$urlsection;
-} else // For example $module == 'medias'
-{
+} else { // For example $module == 'medias'
 	$upload_dir = $conf->medias->multidir_output[$conf->entity];
 }
 
@@ -97,9 +98,9 @@ $permissiontoadd = 0;
 $permissiontodelete = 0;
 $permissiontoupload = 0;
 if ($module == 'ecm') {
-	$permissiontoadd = $user->rights->ecm->setup;
-	$permissiontodelete = $user->rights->ecm->setup;
-	$permissiontoupload = $user->rights->ecm->upload;
+	$permissiontoadd = $user->hasRight('ecm', 'setup');
+	$permissiontodelete = $user->hasRight('ecm', 'setup');
+	$permissiontoupload = $user->hasRight('ecm', 'upload');
 }
 if ($module == 'medias') {
 	$permissiontoadd = ($user->rights->mailing->creer || $user->rights->website->write);
@@ -166,7 +167,7 @@ if ($action == 'add' && $permissiontoadd) {
 			}
 			if (empty($dirfornewdir)) {
 				$error++;
-				dol_print_error('', 'Bad value for module. Not supported.');
+				dol_print_error(null, 'Bad value for module. Not supported.');
 			}
 
 			if (!$error) {
@@ -289,7 +290,7 @@ if (empty($action) || $action == 'delete_section') {
 	print '<div class="tabsAction">';
 
 	// Delete
-	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', $user->rights->ecm->setup);
+	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', $user->hasRight('ecm', 'setup'));
 
 	print '</div>';
 }

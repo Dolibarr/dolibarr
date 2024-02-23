@@ -59,19 +59,47 @@ class PaymentVarious extends CommonObject
 	/**
 	 * @var int timestamp
 	 */
-	public $tms;
 	public $datep;
+
+	/**
+	 * @var int timestamp
+	 */
 	public $datev;
 
 	/**
-	 * @var int sens of operation
+	 * @var int<0,1> Payment direction (debit or credit)
 	 */
 	public $sens;
+
+	/**
+	 * @var float
+	 */
 	public $amount;
+
+	/**
+	 * @var int Payment type (fk_typepayment)
+	 */
 	public $type_payment;
+
+	/**
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
+	 */
 	public $num_payment;
+
+	/**
+	 * @var string Name of cheque writer
+	 */
 	public $chqemetteur;
+
+	/**
+	 * @var string Bank of cheque writer
+	 */
 	public $chqbank;
+
+	/**
+	 * @var int Category id
+	 */
 	public $category_transaction;
 
 	/**
@@ -153,7 +181,7 @@ class PaymentVarious extends CommonObject
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
 	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
@@ -197,7 +225,7 @@ class PaymentVarious extends CommonObject
 	 *
 	 * @param   User	$user        	User that modify
 	 * @param   int		$notrigger      0=no, 1=yes (no update trigger)
-	 * @return  int         			<0 if KO, >0 if OK
+	 * @return  int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -206,7 +234,7 @@ class PaymentVarious extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->amount = trim($this->amount);
+		$this->amount = (float) price2num($this->amount);
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
 		$this->fk_bank = (int) $this->fk_bank;
@@ -267,7 +295,7 @@ class PaymentVarious extends CommonObject
 	 *
 	 *  @param	int		$id         id object
 	 *  @param  User	$user       User that load
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $user = null)
 	{
@@ -339,7 +367,7 @@ class PaymentVarious extends CommonObject
 	 *  Delete object in database
 	 *
 	 *	@param	User	$user       User that delete
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -379,19 +407,18 @@ class PaymentVarious extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-
-		$this->tms = '';
-		$this->datep = '';
-		$this->datev = '';
-		$this->sens = '';
-		$this->amount = '';
-		$this->label = '';
+		$this->tms = dol_now();
+		$this->datep = dol_now();
+		$this->datev = dol_now();
+		$this->sens = 0;
+		$this->amount = 100;
+		$this->label = 'Specimen payment';
 		$this->accountancy_code = '';
 		$this->subledger_account = '';
 		$this->note = '';
-		$this->fk_bank = '';
-		$this->fk_user_author = '';
-		$this->fk_user_modif = '';
+		$this->fk_bank = 0;
+		$this->fk_user_author = 0;
+		$this->fk_user_modif = 0;
 	}
 
 	/**
@@ -415,7 +442,7 @@ class PaymentVarious extends CommonObject
 	 *  Create in database
 	 *
 	 *  @param   User   $user   User that create
-	 *  @return  int            <0 if KO, >0 if OK
+	 *  @return  int            Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -425,7 +452,7 @@ class PaymentVarious extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->amount = price2num(trim($this->amount));
+		$this->amount = (float) price2num($this->amount);
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
 		$this->fk_bank = (int) $this->fk_bank;
@@ -500,7 +527,7 @@ class PaymentVarious extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_various");
-			$this->ref = $this->id;
+			$this->ref = (string) $this->id;
 
 			if ($this->id > 0) {
 				if (isModEnabled("banque") && !empty($this->amount)) {
@@ -589,7 +616,7 @@ class PaymentVarious extends CommonObject
 	 *  Update link between payment various and line generate into llx_bank
 	 *
 	 *  @param  int     $id_bank    Id bank account
-	 *	@return int                 <0 if KO, >0 if OK
+	 *	@return int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function update_fk_bank($id_bank)
 	{
@@ -679,7 +706,7 @@ class PaymentVarious extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -689,7 +716,7 @@ class PaymentVarious extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -744,19 +771,12 @@ class PaymentVarious extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
+				$this->user_creation = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation = $this->db->jdate($obj->datec);
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modif = $muser;
-				}
-				$this->date_modif = $this->db->jdate($obj->tms);
+				$this->date_modification = $this->db->jdate($obj->tms);
 			}
 			$this->db->free($result);
 		} else {
@@ -767,7 +787,7 @@ class PaymentVarious extends CommonObject
 	/**
 	 *	Return if a various payment linked to a bank line id was dispatched into bookkeeping
 	 *
-	 *	@return     int         <0 if KO, 0=no, 1=yes
+	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
 	 */
 	public function getVentilExportCompta()
 	{
@@ -815,7 +835,9 @@ class PaymentVarious extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'fk_bank')) {
 			$return .= ' | <span class="info-box-status ">'.$this->fk_bank.'</span>';
 		}

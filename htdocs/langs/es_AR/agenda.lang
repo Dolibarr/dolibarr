@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - agenda
 IdAgenda=ID del evento
 ActionsOwnedBy=Propietario del evento
-Event=Evento
 EventsNb=Cantidad de eventos
 ListOfActions=Lista de eventos
 EventOnFullDay=Evento de todo(s) el(los) día(s)
@@ -28,4 +27,5 @@ ShipmentValidatedInDolibarr=Envío %s validado
 ShipmentBackToDraftInDolibarr=Envío %s vuelve al estado borrador
 ShippingSentByEMail=Detalle de entrega %s enviado por correo
 ShippingValidated=Envío %s validado
+CANCELInDolibarr=Cancelada
 DateActionEnd=Fecha de fin

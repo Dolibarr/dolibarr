@@ -33,7 +33,7 @@ $langs->loadLangs(array('users', 'admin', 'companies', 'ldap'));
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userldap'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userldap'; // To manage different context of search
 
 // Security check
 $socid = 0;
@@ -66,7 +66,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	if ($action == 'dolibarr2ldap') {
 		$ldap = new Ldap();
-		$result = $ldap->connect_bind();
+		$result = $ldap->connectBind();
 
 		if ($result > 0) {
 			$info = $object->_load_ldap_info();
@@ -102,11 +102,11 @@ print dol_get_fiche_head($head, 'ldap', $title, -1, 'user');
 
 $linkback = '';
 
-if (!empty($user->rights->user->user->lire) || !empty($user->admin)) {
+if ($user->hasRight('user', 'user', 'lire') || !empty($user->admin)) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
-dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+dol_banner_tab($object, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin);
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
@@ -122,9 +122,9 @@ if ($object->ldap_sid) {
 }
 print '</tr>';
 
-if ($conf->global->LDAP_SERVER_TYPE == "activedirectory") {
+if (getDolGlobalString('LDAP_SERVER_TYPE') == "activedirectory") {
 	$ldap = new Ldap();
-	$result = $ldap->connect_bind();
+	$result = $ldap->connectBind();
 	if ($result > 0) {
 		$userSID = $ldap->getObjectSid($object->login);
 	}
@@ -169,7 +169,7 @@ if (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 
 
 
-// Affichage attributs LDAP
+// Affichage attributes LDAP
 print load_fiche_titre($langs->trans("LDAPInformationsForThisUser"));
 
 print '<table class="noborder centpercent">';
@@ -181,7 +181,7 @@ print '</tr>';
 
 // Lecture LDAP
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result > 0) {
 	$info = $object->_load_ldap_info();
 	$dn = $object->_load_ldap_dn($info, 1);

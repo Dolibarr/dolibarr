@@ -21,7 +21,7 @@
 /**
  *   \file       htdocs/core/modules/delivery/mod_delivery_jade.php
  *   \ingroup    delivery
- *   \brief      Fichier contenant la classe du modele de numerotation de reference de bon de livraison Jade
+ *   \brief      Fichier contenant la class du modele de numerotation de reference de bon de livraison Jade
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
 
 /**
  *  \class      mod_delivery_jade
- *  \brief      Classe du modele de numerotation de reference de bon de livraison Jade
+ *  \brief      Class du modele de numerotation de reference de bon de livraison Jade
  */
 
 class mod_delivery_jade extends ModeleNumRefDeliveryOrder
@@ -63,9 +63,10 @@ class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 	/**
 	 *   Returns the description of the numbering model
 	 *
-	 *   @return     string      Descriptive text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -85,9 +86,10 @@ class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @return     boolean     false if conflict, true if ok
+	 *  @param  Object		$object		Object we need next value for
+	 *  @return boolean     			false if conflict, true if ok
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $langs, $conf, $db;
 
@@ -125,7 +127,7 @@ class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 	 *
 	 *  @param	Societe		$objsoc     Object thirdparty
 	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @return string|-1      			Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -155,7 +157,7 @@ class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 		if (empty($date)) {
 			$date = dol_now();
 		}
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
@@ -174,7 +176,7 @@ class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 	 *
 	 *  @param  Societe     $objsoc         Object thirdparty
 	 *  @param  Object      $object         Object livraison
-	 *  @return string                      Descriptive text
+	 *  @return string|-1                   Value if OK, -1 if KO
 	 */
 	public function delivery_get_num($objsoc = 0, $object = '')
 	{

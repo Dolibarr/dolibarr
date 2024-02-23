@@ -16,6 +16,7 @@ jobs:
         if: false
 
       # The next uses the git API because there is no clone yet.
+      # It sets the variable steps.changed-php.outputs.all_changed_files for other steps
       # This is faster for a big repo.
       - name: Get all changed php files (if PR)
         id: changed-php
@@ -48,7 +49,7 @@ jobs:
       - name: Run pre-commit hooks
         env:
           # SKIP is used by pre-commit to not execute certain hooks
-          SKIP: no-commit-to-branch,php-cs,php-cbf,trailing-whitespace,end-of-file-fixer,check-json,check-executables-have-shebangs,check-shebang-scripts-are-executable,beautysh,yamllint,shellcheck
+          SKIP: no-commit-to-branch,php-cs,php-cbf,trailing-whitespace,end-of-file-fixer
         run: |
           set -o pipefail
           pre-commit gc

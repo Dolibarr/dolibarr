@@ -32,7 +32,7 @@ abstract class ModeleGenPassword
 	public $picto = 'generic';
 
 	/**
-	 * Flag to 1 if we must clean ambiguous charaters for the autogeneration of password (List of ambiguous char is in $this->Ambi)
+	 * Flag to 1 if we must clean ambiguous characters for the autogeneration of password (List of ambiguous char is in $this->Ambi)
 	 *
 	 * @var integer
 	 */
@@ -42,6 +42,26 @@ abstract class ModeleGenPassword
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
+
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	/**
+	 * @var Conf dolibarr conf
+	 */
+	public $conf;
+
+	/**
+	 * @var Translate Translate Object
+	 */
+	public $langs;
+
+	/**
+	 * @var User user
+	 */
+	public $user;
 
 	/**
 	 * 		Return if a module can be used or not

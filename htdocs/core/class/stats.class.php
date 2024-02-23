@@ -34,11 +34,52 @@ abstract class Stats
 	public $cachefilesuffix = ''; // Suffix to add to name of cache file (to avoid file name conflicts)
 
 	/**
+	 * @var string	To store the FROM part of the main table of the SQL request
+	 */
+	public $from;
+
+	/**
+	 * @var string	To store the WHERE part of the main table of the SQL request
+	 */
+	public $where;
+	/**
+	 * @var string	To store the FROM part of the line table of the SQL request
+	 */
+	public $from_line;
+	/**
+	 * @var string	To store the field of the date
+	 */
+	public $field_date;
+	/**
+	 * @var string	To store the field for total HT
+	 */
+	public $field;
+	/**
+	 * @var string	To store the FROM part of the line table of the SQL request
+	 */
+	public $field_line;
+
+	/**
+	 * @var string	error message
+	 */
+	public $error;
+
+	/**
+	 * @var int year
+	 */
+	public $year;
+
+	/**
+	 * @var int month
+	 */
+	public $month;
+
+	/**
 	 *  @param	int		$year 			number
 	 * 	@param	int 	$format 		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * 	@return int						value
+	 * 	@return array					array of values by month
 	 */
-	protected abstract function getNbByMonth($year, $format = 0);
+	abstract protected function getNbByMonth($year, $format = 0);
 
 	/**
 	 * Return nb of elements by month for several years
@@ -131,13 +172,13 @@ abstract class Stats
 	/**
 	 * @param	int		$year			year number
 	 * @param	int 	$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return 	int						value
+	 * @return array					array of values by month
 	 */
-	protected abstract function getAmountByMonth($year, $format = 0);
+	abstract protected function getAmountByMonth($year, $format = 0);
 
 	/**
 	 * Return amount of elements by month for several years.
-	 * Criterias used to build request are defined into the constructor of parent class into xxx/class/xxxstats.class.php
+	 * Criteria used to build request are defined into the constructor of parent class into xxx/class/xxxstats.class.php
 	 * The caller of class can add more filters into sql request by adding criteris into the $stats->where property just after
 	 * calling constructor.
 	 *
@@ -233,7 +274,7 @@ abstract class Stats
 	 * @param	int     $year           year number
 	 * @return 	array					array of values
 	 */
-	protected abstract function getAverageByMonth($year);
+	abstract protected function getAverageByMonth($year);
 
 	/**
 	 * Return average of entity by month for several years
@@ -312,8 +353,9 @@ abstract class Stats
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
 		} else {
+			// This method is defined in parent object only, not into abstract, so we disable phpstan warning
+			/** @phpstan-ignore-next-line */
 			$data = $this->getAllByProduct($year, $limit);
-			//					$data[$i][]=$datay[$year][$i][1];	// set yval for x=i
 		}
 
 		// Save cache file

@@ -1,29 +1,52 @@
 ---
-exclude: (?x)^( htdocs/includes/ckeditor/.* )
+exclude: (?x)^( htdocs/includes/ckeditor/.*|(\.[^/]*/.*))$
 repos:
   # Several miscellaneous checks and fix (on yaml files, end of files fix)
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
-      - id: no-commit-to-branch
-        args: [--branch, develop, --pattern, \d+.0]
+      # This hook test the name of the branch and return error if the name is 'develop' or an official version 'x.y'
+      # so you can't commit if your branch name is not a custom branch name. Using a custom branch name is good
+      # practice that make easier to manage PR. You can enable/disable this if you want to commit or not on branch
+      # with common names.
+      #- id: no-commit-to-branch
+      #  args: [--branch, develop, --pattern, \d+.0]
+      # This check format of xml files
+      - id: check-xml
+        exclude: |
+          (?x)^(htdocs/includes/.*)$
+      # This check format of yaml files
       - id: check-yaml
         args: [--unsafe]
+      # This checl format of json files
       - id: check-json
+      # Fix DOS end of files to get Unix end of files
       - id: mixed-line-ending
-        exclude: (?x)^(htdocs/includes/tecnickcom/tcpdf/fonts/.*)$
+        # alternative for dev/tools/fixdosfiles.sh
+        exclude: |
+          (?x)^(htdocs/includes/tecnickcom/tcpdf/fonts/.*
+               |.*/CRLF.*.php  # Files in swiftmailer
+               )$
+        args: [--fix=lf]
+      # Remove trailing whitespace.
       - id: trailing-whitespace
         exclude_types: [markdown]
+      # Fix the end of file
       - id: end-of-file-fixer
+      # Check if there is not completly merged conflict
       - id: check-merge-conflict
+      # Chech the shebangs of shell files
       - id: check-executables-have-shebangs
+      # Check that shell files are executables
       - id: check-shebang-scripts-are-executable
         exclude:
           (?x)^( dev/tools/dolibarr-postgres2mysql.php |test/other/test_serialize.php
           |test/phpunit/textutf8.txt |test/phpunit/textiso.txt |htdocs/includes/.*
           |htdocs/modulebuilder/template/.* |build/debian/dolibarr.postrm |build/debian/dolibarr.postinst
           |build/debian/dolibarr.config )$
+      # Fix the first UTF8 byte
       - id: fix-byte-order-marker
+      # ???
       - id: check-case-conflict
 
   # Beautify shell scripts
@@ -41,8 +64,8 @@ repos:
   #   ```shell
   #  #!/bin/bash
   #   MYDIR=$(dirname "$0")
-  #   CHANGED_INTERNALS=$(git diff --name-only | grep -v includes)
-  #   "$MYDIR/dev/tools/updatelicense.php" $CHANGED_INTERNALS
+  #   git diff HEAD --name-only | grep -v includes | \
+  #       xargs "$MYDIR/dev/tools/updatelicense.php"
   #   ```
   - repo: local
     hooks:
@@ -51,10 +74,34 @@ repos:
         language: system
         entry: bash -c '[ ! -x local.sh ] || ./local.sh'
         pass_filenames: false
+      - id: duplicate-lang-lines
+        stages: [manual]
+        name: Find duplicate language lines
+        files: (?x)^(htdocs/langs/en_US/.*\.lang)
+        language: script
+        entry: ./dev/tools/fixduplicatelanglines.sh
+        pass_filenames: false
+        args: [list]
+      - id: duplicate-lang-keys
+        stages: [manual]
+        name: Find duplicate language keys
+        files: (?x)^(htdocs/langs/en_US/.*\.lang)
+        language: script
+        entry: ./dev/tools/fixduplicatelangkey.sh
+        pass_filenames: false
+        args: [list]
+      - id: fix-alt-languages
+        stages: [manual]
+        name: Fix alt languages
+        # Selection: see fixaltlanguages.sh script
+        files: (?x)^(htdocs/langs/(e[lnstu]|k[akmno]|s[lqrv]|b[nrs]|c[asy]|n[bel]|[ip]t|a[mr]|d[ae]|f[ar]|h[ei]|m[sy]|t[ag]|u[kr]|gl|ja|lo|ru|vi|zh)_[^/]*/.*\.lang)
+        language: script
+        entry: ./dev/tools/fixaltlanguages_pre-commit.sh
+        pass_filenames: true
 
   # Check PHP syntax
   - repo: https://github.com/mdeweerd/pre-commit-php
-    rev: v1.6.5
+    rev: v1.6.8
     hooks:
       - id: php-cbf
         files: \.(php)$

@@ -52,7 +52,7 @@ require_once DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php";
 dol_syslog("Call Dolibarr webservices interfaces");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -109,7 +109,7 @@ $server->wsdl->addComplexType(
 );
 
 /*
- * Les catégories filles, sous tableau dez la catégorie
+ * The child categories, sub-tables of the category
  */
 $server->wsdl->addComplexType(
 	'FillesArray',
@@ -218,20 +218,22 @@ function getCategory($authentication, $id)
 	}
 
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	if (!$error && !$id) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id must be provided.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id must be provided.";
 	}
 
 	if (!$error) {
 		$fuser->getrights();
 
 		$nbmax = 10;
-		if ($fuser->rights->categorie->lire) {
+		if ($fuser->hasRight('categorie', 'lire')) {
 			$categorie = new Categorie($db);
 			$result = $categorie->fetch($id);
 			if ($result > 0) {
@@ -253,20 +255,20 @@ function getCategory($authentication, $id)
 
 				$cats = $categorie->get_filles();
 				if (count($cats) > 0) {
-					foreach ($cats as $fille) {
+					foreach ($cats as $child_cat) {
 						$dir = (!empty($conf->categorie->dir_output) ? $conf->categorie->dir_output : $conf->service->dir_output);
-						$pdir = get_exdir($fille->id, 2, 0, 0, $categorie, 'category').$fille->id."/photos/";
+						$pdir = get_exdir($child_cat->id, 2, 0, 0, $categorie, 'category').$child_cat->id."/photos/";
 						$dir = $dir.'/'.$pdir;
 						$cat['filles'][] = array(
-							'id'=>$fille->id,
+							'id'=>$child_cat->id,
 							'id_mere' => $categorie->id_mere,
-							'label'=>$fille->label,
-							'description'=>$fille->description,
-							'socid'=>$fille->socid,
-							//'visible'=>$fille->visible,
-							'type'=>$fille->type,
+							'label'=>$child_cat->label,
+							'description'=>$child_cat->description,
+							'socid'=>$child_cat->socid,
+							//'visible'=>$child_cat->visible,
+							'type'=>$child_cat->type,
 							'dir' => $pdir,
-							'photos' => $fille->liste_photos($dir, $nbmax)
+							'photos' => $child_cat->liste_photos($dir, $nbmax)
 						);
 					}
 				}
@@ -278,11 +280,13 @@ function getCategory($authentication, $id)
 				);
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id;
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'Object not found for id='.$id;
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 

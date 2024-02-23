@@ -43,7 +43,9 @@ class Subscription extends CommonObject
 	public $table_element = 'subscription';
 
 	/**
-	 * @var int  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by fk_soc, 'field@table'=Test with link by field@table
+	 * Does this object supports the multicompany module ?
+	 *
+	 * @var int|string 		0 if no test on entity, 1 if test with field entity, 2 if test with link by fk_soc, 'field@table' if test with link by field@table
 	 */
 	public $ismultientitymanaged = 'fk_adherent@adherent';
 
@@ -134,10 +136,10 @@ class Subscription extends CommonObject
 	 *	Function who permitted creation of the subscription
 	 *
 	 *	@param	User	$user			User that create
-	 *	@param  bool 	$notrigger 		false=launch triggers after, true=disable triggers
-	 *	@return	int						<0 if KO, Id subscription created if OK
+	 *	@param  int 	$notrigger 		0=launch triggers after, 1=disable triggers
+	 *	@return	int						Return integer <0 if KO, Id subscription created if OK
 	 */
-	public function create($user, $notrigger = false)
+	public function create($user, $notrigger = 0)
 	{
 		global $langs;
 
@@ -209,7 +211,7 @@ class Subscription extends CommonObject
 	 *  Method to load a subscription
 	 *
 	 *  @param	int		$rowid		Id subscription
-	 *  @return	int					<0 if KO, =0 if not found, >0 if OK
+	 *  @return	int					Return integer <0 if KO, =0 if not found, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -256,7 +258,7 @@ class Subscription extends CommonObject
 	 *
 	 *	@param	User	$user			User who updated
 	 *	@param 	int		$notrigger		0=Disable triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -320,10 +322,10 @@ class Subscription extends CommonObject
 	 *	Delete a subscription
 	 *
 	 *	@param	User	$user		User that delete
-	 *	@param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
-	 *	@return	int					<0 if KO, 0 if not found, >0 if OK
+	 *	@param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 *	@return	int					Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function delete($user, $notrigger = false)
+	public function delete($user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -429,7 +431,7 @@ class Subscription extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -475,7 +477,6 @@ class Subscription extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
 
 		//$langs->load("members");
 
@@ -531,15 +532,16 @@ class Subscription extends CommonObject
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">';
 		$return .= $this->getNomUrl(-1);
-
-		//.(property_exists($this, 'fk_adherent') ? $this->fk_adherent: $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		$return .= '</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'dateh') || property_exists($this, 'datef')) {
 			$return .= '<br><span class="info-box-status opacitymedium small">'.dol_print_date($this->dateh, 'day').' - '.dol_print_date($this->datef, 'day').'</span>';
 		}
 
 		if (!empty($arraydata['member']) && is_object($arraydata['member'])) {
-			$return .= '<br><span class="margintoponly amount inline-block">'.$arraydata['member']->getNomUrl(-4).'</span>';
+			$return .= '<br><span class="inline-block">'.$arraydata['member']->getNomUrl(-4).'</span>';
 		}
 
 		if (property_exists($this, 'amount')) {

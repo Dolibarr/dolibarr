@@ -28,13 +28,14 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -44,87 +45,8 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class ModulesTest extends PHPUnit\Framework\TestCase
+class ModulesTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 * @return BuildDocTest
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-	}
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
-	}
-
 	/**
 	 * testModulesInit
 	 *
@@ -133,12 +55,12 @@ class ModulesTest extends PHPUnit\Framework\TestCase
 	public function testModulesInit()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$modulelist=array('Accounting','Adherent','Agenda','Api','Asset','Banque','Barcode','BlockedLog','Bom','Bookmark',
+		$modulelist = array('Accounting','Adherent','Agenda','Api','Asset','Banque','Barcode','BlockedLog','Bom','Bookmark',
 		'Categorie','ClickToDial','Collab','Commande','Comptabilite','Contrat','Cron','DataPolicy','Dav','DebugBar','Deplacement','DocumentGeneration','Don','DynamicPrices',
 		'ECM','EmailCollector','EventOrganization','Expedition','ExpenseReport','Export','ExternalRss','ExternalSite',
 		'Facture','Fckeditor','Ficheinter','Fournisseur','FTP','GeoIPMaxmind','Gravatar','Holiday','HRM','Import','Incoterm','Intracommreport',
@@ -150,15 +72,17 @@ class ModulesTest extends PHPUnit\Framework\TestCase
 		'TakePos','Tax','Ticket','User','Variants','WebServices','WebServicesClient','Website','Workflow','Workstation','Zapier');
 		foreach ($modulelist as $modlabel) {
 			require_once DOL_DOCUMENT_ROOT.'/core/modules/mod'.$modlabel.'.class.php';
-			$class='mod'.$modlabel;
-			$mod=new $class($db);
-			$result=$mod->remove();
-			$result=$mod->init();
-			$this->assertLessThan($result, 0, $modlabel);
+			$class = 'mod'.$modlabel;
+			$mod = new $class($db);
+
+			$result = $mod->remove();
+			$result = $mod->init();
+
+			$this->assertLessThan($result, 0, $modlabel." ".$mod->error);
 			print __METHOD__." test remove/init for module ".$modlabel.", result=".$result."\n";
 
 			if (in_array($modlabel, array('Ldap', 'MailmanSpip'))) {
-				$result=$mod->remove();
+				$result = $mod->remove();
 			}
 		}
 

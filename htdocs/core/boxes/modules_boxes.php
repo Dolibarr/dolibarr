@@ -21,8 +21,8 @@
 
 /**
  *	    \file       htdocs/core/boxes/modules_boxes.php
- *		\ingroup    facture
- *		\brief      Fichier contenant la classe mere des boites
+ *		\ingroup    core
+ *		\brief      File containing the parent class of boxes
  */
 
 
@@ -31,12 +31,27 @@
  *
  * Boxes parent class
  */
-class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" boxes
+class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" boxes
 {
 	/**
 	 * @var DoliDB Database handler
 	 */
 	public $db;
+
+	/**
+	 * @var string param
+	 */
+	public $param;
+
+	/**
+	 * @var array box info heads
+	 */
+	public $info_box_head = array();
+
+	/**
+	 * @var array box info content
+	 */
+	public $info_box_contents = array();
 
 	/**
 	 * @var string Error message
@@ -49,7 +64,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	public $max = 5;
 
 	/**
-	 * @var int Condition to have widget enabled
+	 * @var bool|int Condition to have widget enabled
 	 */
 	public $enabled = 1;
 
@@ -142,7 +157,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	 *
 	 * @param   int $rowid  Row id to load
 	 *
-	 * @return  int         <0 if KO, >0 if OK
+	 * @return  int         Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -192,7 +207,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		$MAXLENGTHBOX = 60; // Mettre 0 pour pas de limite
+		$MAXLENGTHBOX = 60; // When set to 0: no length limit
 
 		$cachetime = 900; // 900 : 15mn
 		$cachedir = DOL_DATA_ROOT.'/boxes/temp';
@@ -223,7 +238,10 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			if (!empty($head['text']) || !empty($head['sublink']) || !empty($head['subpicto'])) {
 				$out .= '<tr class="liste_titre box_titre">';
 				$out .= '<th';
-				if ($nbcol > 0) {
+				if (!empty($head['nbcol'])) {
+					$nbcol = $head['nbcol'];
+				}
+				if ($nbcol > 1) {
 					$out .= ' colspan="'.$nbcol.'"';
 				}
 				$out .= '>';
@@ -255,13 +273,13 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 					//$out.= '<td class="nocellnopadd boxclose right nowraponall">';
 					$out .= '<div class="nocellnopadd boxclose floatright nowraponall">';
 					$out .= $sublink;
-					// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
+					// The image must have the class 'boxhandle' because it's value used in DOM draggable objects to define the area used to catch the full object
 					$out .= img_picto($langs->trans("MoveBox", $this->box_id), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove marginleftonly"');
 					$out .= img_picto($langs->trans("CloseBox", $this->box_id), 'close_title', 'class="opacitymedium boxclose cursorpointer marginleftonly" rel="x:y" id="imgclose'.$this->box_id.'"');
 					$label = $head['text'];
 					//if (!empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
 					if (!empty($head['graph'])) {
-						$label .= ' <span class="opacitymedium fa fa-bar-chart"></span>';
+						$label .= ' <span class="opacitymedium fas fa-chart-bar"></span>';
 					}
 					$out .= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
 					//$out.= '</td></tr></table>';
@@ -374,7 +392,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			$out .= "</div>\n";
 
 			$out .= "<!-- Box ".get_class($this)." end -->\n\n";
-			if (!empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
+			if (getDolGlobalString('MAIN_ACTIVATE_FILECACHE')) {
 				dol_filecache($cachedir, $filename, $out);
 			}
 		} else {
@@ -402,7 +420,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	 */
 	public static function getWidgetsList($forcedirwidget = null)
 	{
-		global $conf, $langs, $db;
+		global $langs, $db;
 
 		$files = array();
 		$fullpath = array();
@@ -518,6 +536,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			}
 			$j++;
 		}
+
 		return $widget;
 	}
 }

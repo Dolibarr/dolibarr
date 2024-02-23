@@ -59,10 +59,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productattributecard', 'globalcard'));
 
-$permissiontoread = $user->rights->variants->read;
-$permissiontoadd = $user->rights->variants->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontoedit = $user->rights->variants->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->variants->delete;
+$permissiontoread = $user->hasRight('variants', 'read');
+$permissiontoadd = $user->hasRight('variants', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontoedit = $user->hasRight('variants', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->hasRight('variants', 'delete');
 
 $error = 0;
 
@@ -191,7 +191,7 @@ if ($action == 'create') {
 
 	print '</form>';
 
-	dol_set_focus('input[name="label"]');
+	dol_set_focus('input[name="ref"]');
 } elseif (($id || $ref) && $action == 'edit') {
 	// Part to edit record
 	print load_fiche_titre($langs->trans("ProductAttribute"), '', 'object_' . $object->picto);
@@ -286,7 +286,9 @@ if ($action == 'create') {
 		print '<div class="tabsAction">' . "\n";
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
-		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
 
 		if (empty($reshook)) {
 			// Modify

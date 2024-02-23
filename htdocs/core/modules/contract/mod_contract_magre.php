@@ -30,42 +30,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
  */
 class mod_contract_magre extends ModelNumRefContracts
 {
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
-	public $version = 'dolibarr';
 
-	/**
-	 * @var string Error message
-	 */
-	public $error = '';
-
-	/**
-	 * @var string nom
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Magre';
-
-	/**
-	 * @var string name
-	 */
+	// variables inherited from ModelNumRefContracts class
 	public $name = 'Magre';
-
-	/**
-	 * @var int Automatic numbering
-	 */
+	public $version = 'dolibarr';
+	public $error = '';
 	public $code_auto = 1;
+
 
 	/**
 	 *	Return default description of numbering model
 	 *
-	 *	@return     string      text description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $langs, $db;
 
 		$langs->load("bills");
 
@@ -86,7 +67,7 @@ class mod_contract_magre extends ModelNumRefContracts
 
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskcontract" value="'.getDolGlobalString("CONTRACT_MAGRE_MASK").'">', $tooltip, 1, 1).'</td>';
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 		$texte .= '</tr>';
 		$texte .= '</table>';
 		$texte .= '</form>';
@@ -101,7 +82,7 @@ class mod_contract_magre extends ModelNumRefContracts
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
@@ -119,11 +100,11 @@ class mod_contract_magre extends ModelNumRefContracts
 	 *
 	 *	@param	Societe		$objsoc     third party object
 	 *	@param	Object		$contract	contract object
-	 *	@return string      			Value if OK, 0 if KO
+	 *	@return string|0      			Next value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $contract)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -145,7 +126,7 @@ class mod_contract_magre extends ModelNumRefContracts
 	 *
 	 *  @param	Societe		$objsoc     third party object
 	 *  @param	Object		$objforref	contract object
-	 *  @return string      			Value if OK, 0 if KO
+	 *  @return string|0      			Value if OK, 0 if KO
 	 */
 	public function contract_get_num($objsoc, $objforref)
 	{

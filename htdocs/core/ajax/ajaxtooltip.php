@@ -34,9 +34,12 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
+if (!defined('NOHEADERNOFOOTER')) {
+	define('NOHEADERNOFOOTER', '1');
+}
+
 include '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-
 
 
 $id = GETPOST('id', 'aZ09');
@@ -60,7 +63,7 @@ $module = $object->module;
 $element = $object->element;
 
 $usesublevelpermission = ($module != $element ? $element : '');
-if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
+if ($usesublevelpermission && !$user->hasRight($module, $element)) {	// There is no permission on object defined, we will check permission on module directly
 	$usesublevelpermission = '';
 }
 

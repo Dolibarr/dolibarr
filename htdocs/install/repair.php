@@ -45,7 +45,7 @@ error_reporting(0);
 @set_time_limit(120);
 error_reporting($err);
 
-$setuplang = GETPOST("selectlang", 'aZ09', 3) ?GETPOST("selectlang", 'aZ09', 3) : 'auto';
+$setuplang = GETPOST("selectlang", 'aZ09', 3) ? GETPOST("selectlang", 'aZ09', 3) : 'auto';
 $langs->setDefaultLang($setuplang);
 
 $langs->loadLangs(array("admin", "install", "other"));
@@ -78,27 +78,28 @@ $actiondone = 1;
 
 print '<h3>'.$langs->trans("Repair").'</h3>';
 
-print 'Option standard (\'test\' or \'confirmed\') is '.(GETPOST('standard', 'alpha') ?GETPOST('standard', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option standard (\'test\' or \'confirmed\') is '.(GETPOST('standard', 'alpha') ? GETPOST('standard', 'alpha') : 'undefined').'<br>'."\n";
 // Disable modules
-print 'Option force_disable_of_modules_not_found (\'test\' or \'confirmed\') is '.(GETPOST('force_disable_of_modules_not_found', 'alpha') ?GETPOST('force_disable_of_modules_not_found', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option force_disable_of_modules_not_found (\'test\' or \'confirmed\') is '.(GETPOST('force_disable_of_modules_not_found', 'alpha') ? GETPOST('force_disable_of_modules_not_found', 'alpha') : 'undefined').'<br>'."\n";
 // Files
-print 'Option restore_thirdparties_logos (\'test\' or \'confirmed\') is '.(GETPOST('restore_thirdparties_logos', 'alpha') ?GETPOST('restore_thirdparties_logos', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option restore_user_pictures (\'test\' or \'confirmed\') is '.(GETPOST('restore_user_pictures', 'alpha') ?GETPOST('restore_user_pictures', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option rebuild_product_thumbs (\'test\' or \'confirmed\') is '.(GETPOST('rebuild_product_thumbs', 'alpha') ?GETPOST('rebuild_product_thumbs', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option restore_thirdparties_logos (\'test\' or \'confirmed\') is '.(GETPOST('restore_thirdparties_logos', 'alpha') ? GETPOST('restore_thirdparties_logos', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option restore_user_pictures (\'test\' or \'confirmed\') is '.(GETPOST('restore_user_pictures', 'alpha') ? GETPOST('restore_user_pictures', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option rebuild_product_thumbs (\'test\' or \'confirmed\') is '.(GETPOST('rebuild_product_thumbs', 'alpha') ? GETPOST('rebuild_product_thumbs', 'alpha') : 'undefined').'<br>'."\n";
 // Clean tables and data
-print 'Option clean_linked_elements (\'test\' or \'confirmed\') is '.(GETPOST('clean_linked_elements', 'alpha') ?GETPOST('clean_linked_elements', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option clean_menus (\'test\' or \'confirmed\') is '.(GETPOST('clean_menus', 'alpha') ?GETPOST('clean_menus', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option clean_orphelin_dir (\'test\' or \'confirmed\') is '.(GETPOST('clean_orphelin_dir', 'alpha') ?GETPOST('clean_orphelin_dir', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option clean_product_stock_batch (\'test\' or \'confirmed\') is '.(GETPOST('clean_product_stock_batch', 'alpha') ?GETPOST('clean_product_stock_batch', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option clean_perm_table (\'test\' or \'confirmed\') is '.(GETPOST('clean_perm_table', 'alpha') ?GETPOST('clean_perm_table', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option repair_link_dispatch_lines_supplier_order_lines, (\'test\' or \'confirmed\') is '.(GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha') ?GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option clean_linked_elements (\'test\' or \'confirmed\') is '.(GETPOST('clean_linked_elements', 'alpha') ? GETPOST('clean_linked_elements', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option clean_menus (\'test\' or \'confirmed\') is '.(GETPOST('clean_menus', 'alpha') ? GETPOST('clean_menus', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option clean_orphelin_dir (\'test\' or \'confirmed\') is '.(GETPOST('clean_orphelin_dir', 'alpha') ? GETPOST('clean_orphelin_dir', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option clean_product_stock_batch (\'test\' or \'confirmed\') is '.(GETPOST('clean_product_stock_batch', 'alpha') ? GETPOST('clean_product_stock_batch', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option clean_perm_table (\'test\' or \'confirmed\') is '.(GETPOST('clean_perm_table', 'alpha') ? GETPOST('clean_perm_table', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option repair_link_dispatch_lines_supplier_order_lines, (\'test\' or \'confirmed\') is '.(GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha') ? GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha') : 'undefined').'<br>'."\n";
 // Init data
-print 'Option set_empty_time_spent_amount (\'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount', 'alpha') ?GETPOST('set_empty_time_spent_amount', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option set_empty_time_spent_amount (\'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount', 'alpha') ? GETPOST('set_empty_time_spent_amount', 'alpha') : 'undefined').'<br>'."\n";
 // Structure
-print 'Option force_utf8_on_tables (force utf8 + row=dynamic), for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha') ?GETPOST('force_utf8_on_tables', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option force_utf8_on_tables (force utf8 + row=dynamic), for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha') ? GETPOST('force_utf8_on_tables', 'alpha') : 'undefined').'<br>'."\n";
 print "Option force_utf8mb4_on_tables (force utf8mb4 + row=dynamic, EXPERIMENTAL!), for mysql/mariadb only ('test' or 'confirmed') is ".(GETPOST('force_utf8mb4_on_tables', 'alpha') ? GETPOST('force_utf8mb4_on_tables', 'alpha') : 'undefined')."<br>\n";
+print "Option force_collation_from_conf_on_tables (force ".$conf->db->character_set."/".$conf->db->dolibarr_main_db_collation." + row=dynamic), for mysql/mariadb only ('test' or 'confirmed') is ".(GETPOST('force_collation_from_conf_on_tables', 'alpha') ? GETPOST('force_collation_from_conf_on_tables', 'alpha') : 'undefined')."<br>\n";
 // Rebuild sequence
-print 'Option rebuild_sequences, for postgresql only (\'test\' or \'confirmed\') is '.(GETPOST('rebuild_sequences', 'alpha') ?GETPOST('rebuild_sequences', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option rebuild_sequences, for postgresql only (\'test\' or \'confirmed\') is '.(GETPOST('rebuild_sequences', 'alpha') ? GETPOST('rebuild_sequences', 'alpha') : 'undefined').'<br>'."\n";
 print '<br>';
 
 print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
@@ -110,7 +111,7 @@ if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_d
 	if (preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
-		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially crypted
+		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
 	} else {
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 	}
@@ -178,7 +179,7 @@ $oneoptionset = (GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_l
 	|| GETPOST('clean_orphelin_dir', 'alpha') || GETPOST('clean_product_stock_batch', 'alpha') || GETPOST('set_empty_time_spent_amount', 'alpha') || GETPOST('rebuild_product_thumbs', 'alpha')
 	|| GETPOST('clean_perm_table', 'alpha')
 	|| GETPOST('force_disable_of_modules_not_found', 'alpha')
-	|| GETPOST('force_utf8_on_tables', 'alpha') || GETPOST('force_utf8mb4_on_tables', 'alpha')
+	|| GETPOST('force_utf8_on_tables', 'alpha') || GETPOST('force_utf8mb4_on_tables', 'alpha') || GETPOST('force_collation_from_conf_on_tables', 'alpha')
 	|| GETPOST('rebuild_sequences', 'alpha'));
 
 if ($ok && $oneoptionset) {
@@ -278,7 +279,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 			}
 			print ' - Found '.count($arrayoffieldsfound).' fields into table';
 			if (count($arrayoffieldsfound) > 0) {
-				print ' <span class="opacitymedium">('.join(', ', array_keys($arrayoffieldsfound)).')</span>';
+				print ' <span class="opacitymedium">('.implode(', ', array_keys($arrayoffieldsfound)).')</span>';
 			}
 			print '<br>'."\n";
 
@@ -286,7 +287,12 @@ if ($ok && GETPOST('standard', 'alpha')) {
 			foreach ($arrayoffieldsdesc as $code => $label) {
 				if (!in_array($code, array_keys($arrayoffieldsfound))) {
 					print 'Found field '.$code.' declared into '.MAIN_DB_PREFIX.'extrafields table but not found into desc of table '.$tableextra." -> ";
-					$type = $extrafields->attributes[$elementtype]['type'][$code]; $length = $extrafields->attributes[$elementtype]['size'][$code]; $attribute = ''; $default = ''; $extra = ''; $null = 'null';
+					$type = $extrafields->attributes[$elementtype]['type'][$code];
+					$length = $extrafields->attributes[$elementtype]['size'][$code];
+					$attribute = '';
+					$default = '';
+					$extra = '';
+					$null = 'null';
 
 					if ($type == 'boolean') {
 						$typedb = 'int';
@@ -861,29 +867,40 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 				$relativefile = preg_replace('/'.preg_quote($upload_dir.'/', '/').'/', '', $file['fullname']);
 
 				//var_dump($file);
-				$id = 0; $ref = ''; $object_instance->id = 0; $object_instance->ref = ''; $label = '';
+				$id = 0;
+				$ref = '';
+				$object_instance->id = 0;
+				$object_instance->ref = '';
+				$label = '';
 
 				// To show ref or specific information according to view to show (defined by $module)
 				if ($modulepart == 'invoice') {
-					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $ref = $reg[1];
+					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
+					$ref = $reg[1];
 				}
 				if ($modulepart == 'invoice_supplier') {
-					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg); $id = empty($reg[1]) ? '' : $reg[1];
+					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg);
+					$id = empty($reg[1]) ? '' : $reg[1];
 				}
 				if ($modulepart == 'propal') {
-					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $ref = $reg[1];
+					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
+					$ref = $reg[1];
 				}
 				if ($modulepart == 'order') {
-					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $ref = $reg[1];
+					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
+					$ref = $reg[1];
 				}
 				if ($modulepart == 'order_supplier') {
-					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $ref = $reg[1];
+					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
+					$ref = $reg[1];
 				}
 				if ($modulepart == 'contract') {
-					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $ref = $reg[1];
+					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
+					$ref = $reg[1];
 				}
 				if ($modulepart == 'tax') {
-					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg); $id = $reg[1];
+					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg);
+					$id = $reg[1];
 				}
 
 				if ($id || $ref) {
@@ -910,7 +927,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 
 // clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
-	$methodtofix = GETPOST('methodtofix', 'alpha') ?GETPOST('methodtofix', 'alpha') : 'updatestock';
+	$methodtofix = GETPOST('methodtofix', 'alpha') ? GETPOST('methodtofix', 'alpha') : 'updatestock';
 
 	print '<tr><td colspan="2"><br>*** Clean table product_batch, methodtofix='.$methodtofix.' (possible values: updatestock or updatebatch)</td></tr>';
 
@@ -1096,7 +1113,7 @@ if ($ok && GETPOST('set_empty_time_spent_amount', 'alpha')) {
 
 // force_disable_of_modules_not_found
 if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha')) {
-	print '<tr><td colspan="2"><br>*** Force modules not found physicaly to be disabled (only modules adding js, css or hooks can be detected as removed physicaly)</td></tr>';
+	print '<tr><td colspan="2"><br>*** Force modules not found physically to be disabled (only modules adding js, css or hooks can be detected as removed physically)</td></tr>';
 
 	$arraylistofkey = array('hooks', 'js', 'css');
 
@@ -1366,6 +1383,62 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 	}
 }
 
+if ($ok && GETPOST('force_collation_from_conf_on_tables', 'alpha')) {
+	print '<tr><td colspan="2"><br>*** Force page code and collation of tables into '.$conf->db->character_set.'/'.$conf->db->dolibarr_main_db_collation.' and row_format=dynamic (for mysql/mariadb only)</td></tr>';
+
+	if ($db->type == "mysql" || $db->type == "mysqli") {
+		$force_collation_from_conf_on_tables = GETPOST('force_collation_from_conf_on_tables', 'alpha');
+
+		$listoftables = $db->DDLListTablesFull($db->database_name);
+
+		// Disable foreign key checking for avoid errors
+		if ($force_collation_from_conf_on_tables == 'confirmed') {
+			$sql = 'SET FOREIGN_KEY_CHECKS=0';
+			print '<!-- '.$sql.' -->';
+			$resql = $db->query($sql);
+		}
+
+		foreach ($listoftables as $table) {
+			// do not convert llx_const if mysql encrypt/decrypt is used
+			if ($conf->db->dolibarr_main_db_encryption != 0 && preg_match('/\_const$/', $table[0])) {
+				continue;
+			}
+			if ($table[1] == 'VIEW') {
+				print '<tr><td colspan="2">'.$table[0].' is a '.$table[1].' (Skipped)</td></tr>';
+				continue;
+			}
+
+			print '<tr><td colspan="2">';
+			print $table[0];
+			$sql1 = "ALTER TABLE ".$table[0]." ROW_FORMAT=dynamic";
+			$sql2 = "ALTER TABLE ".$table[0]." CONVERT TO CHARACTER SET ".$conf->db->character_set." COLLATE ".$conf->db->dolibarr_main_db_collation;
+			print '<!-- '.$sql1.' -->';
+			print '<!-- '.$sql2.' -->';
+			if ($force_collation_from_conf_on_tables == 'confirmed') {
+				$resql1 = $db->query($sql1);
+				if ($resql1) {
+					$resql2 = $db->query($sql2);
+				} else {
+					$resql2 = false;
+				}
+				print ' - Done ('.(($resql1 && $resql2) ? 'OK' : 'KO').')';
+			} else {
+				print ' - Disabled';
+			}
+			print '</td></tr>';
+		}
+
+		// Enable foreign key checking
+		if ($force_collation_from_conf_on_tables == 'confirmed') {
+			$sql = 'SET FOREIGN_KEY_CHECKS=1';
+			print '<!-- '.$sql.' -->';
+			$resql = $db->query($sql);
+		}
+	} else {
+		print '<tr><td colspan="2">Not available with database type '.$db->type.'</td></tr>';
+	}
+}
+
 // rebuild sequences for pgsql
 if ($ok && GETPOST('rebuild_sequences', 'alpha')) {
 	print '<tr><td colspan="2"><br>*** Force to rebuild sequences (for postgresql only)</td></tr>';
@@ -1432,7 +1505,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 
 			// s’il y a plusieurs lignes avec le même produit sur cette commande fournisseur,
 			// on divise la ligne de dispatch en autant de lignes qu’on en a sur la commande pour le produit
-			// et on met la quantité de la ligne dans la limite du "budget" indiqué par dispatch.qty
+			// et on met la quantité de la ligne dans la limit du "budget" indiqué par dispatch.qty
 
 			$remaining_qty = $obj_dispatch->qty;
 			$first_iteration = true;
@@ -1474,7 +1547,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 						$obj_dispatch->eatby ? "'".$db->escape($obj_dispatch->eatby)."'" : 'NULL',
 						$obj_dispatch->sellby ? "'".$db->escape($obj_dispatch->sellby)."'" : 'NULL'
 					);
-					$sql_attach_values = join(', ', $sql_attach_values);
+					$sql_attach_values = implode(', ', $sql_attach_values);
 
 					$sql_attach = 'INSERT INTO '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
 					$sql_attach .= ' (fk_commande, fk_product, fk_commandefourndet, qty, fk_entrepot, fk_user, datec, comment, status, tms, batch, eatby, sellby)';
@@ -1520,10 +1593,10 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 	$db->close();
 
 	echo '<tr><td><h3>SQL queries with errors:</h3></tr></td>';
-	echo '<tr><td>'.join('</td></tr><tr><td>', $errors).'</td></tr>';
+	echo '<tr><td>'.implode('</td></tr><tr><td>', $errors).'</td></tr>';
 }
 
-// Repair llx_commande_fournisseur to eleminate duplicate reference
+// Repair llx_commande_fournisseur to eliminate duplicate reference
 if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
 	require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
 	include_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';

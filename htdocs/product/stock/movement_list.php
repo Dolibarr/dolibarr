@@ -65,6 +65,7 @@ $ref = GETPOST('ref', 'alpha');
 $msid = GETPOST('msid', 'int');
 $idproduct = GETPOST('idproduct', 'int');
 $product_id = GETPOST("product_id", 'int');
+$show_files = GETPOST('show_files', 'int');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_date_startday = GETPOST('search_date_startday', 'int');
@@ -85,12 +86,12 @@ $search_user = trim(GETPOST("search_user"));
 $search_batch = trim(GETPOST("search_batch"));
 $search_qty = trim(GETPOST("search_qty"));
 $search_type_mouvement = GETPOST('search_type_mouvement', 'int');
-$search_fk_projet=GETPOST("search_fk_projet", 'int');
+$search_fk_project=GETPOST("search_fk_project", 'int');
 
 $type = GETPOST("type", "int");
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -147,10 +148,10 @@ $arrayfields = array(
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
-if (!empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+if (getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 	unset($arrayfields['pl.sellby']);
 }
-if (!empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+if (getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 	unset($arrayfields['pl.eatby']);
 }
 
@@ -167,19 +168,19 @@ if ($id > 0 || !empty($ref)) {
 $result = restrictedArea($user, 'stock');
 
 // Security check
-if (!$user->rights->stock->mouvement->lire) {
+if (!$user->hasRight('stock', 'mouvement', 'lire')) {
 	accessforbidden();
 }
 
 $uploaddir = $conf->stock->dir_output.'/movements';
 
-$permissiontoread = $user->rights->stock->mouvement->lire;
-$permissiontoadd = $user->rights->stock->mouvement->creer;
-$permissiontodelete = $user->rights->stock->mouvement->creer; // There is no deletion permission for stock movement as we shoul dnever delete
+$permissiontoread = $user->hasRight('stock', 'mouvement', 'lire');
+$permissiontoadd = $user->hasRight('stock', 'mouvement', 'creer');
+$permissiontodelete = $user->hasRight('stock', 'mouvement', 'creer'); // There is no deletion permission for stock movement as we should never delete
 
-$usercanread = $user->rights->stock->mouvement->lire;
-$usercancreate = $user->rights->stock->mouvement->creer;
-$usercandelete = $user->rights->stock->mouvement->creer;
+$usercanread = $user->hasRight('stock', 'mouvement', 'lire');
+$usercancreate = $user->hasRight('stock', 'mouvement', 'creer');
+$usercandelete = $user->hasRight('stock', 'mouvement', 'creer');
 
 $error = 0;
 
@@ -226,7 +227,7 @@ if (empty($reshook)) {
 		$search_user = "";
 		$search_batch = "";
 		$search_qty = '';
-		$search_fk_projet=0;
+		$search_fk_project = "";
 		$search_all = "";
 		$toselect = array();
 		$search_array_options = array();
@@ -250,10 +251,10 @@ if (empty($reshook)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-		$objecttmp = new $objectclass($db);
+		$objecttmp = new MouvementStock($db);
 		$listofobjectid = array();
 		foreach ($toselect as $toselectid) {
-			$objecttmp = new $objectclass($db); // must create new instance because instance is saved into $listofobjectref array for future use
+			$objecttmp = new MouvementStock($db); // must create new instance because instance is saved into $listofobjectref array for future use
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
 				$listofobjectid[$toselectid] = $toselectid;
@@ -310,7 +311,8 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			$langs->load("exports");
-			setEventMessages($langs->trans('FileSuccessfullyBuilt', $filename.'_'.dol_print_date($now, 'dayhourlog')), null, 'mesgs');
+			setEventMessage($langs->trans('FeatureNotYetAvailable'));
+			//setEventMessages($langs->trans('FileSuccessfullyBuilt', $filename.'_'.dol_print_date($now, 'dayhourlog')), null, 'mesgs');
 		}
 
 		$massaction = '';
@@ -465,8 +467,8 @@ if ($action == "transfert_stock" && !$cancel) {
 
 	if (!$error) {
 		if ($id) {
-			$object = new Entrepot($db);
-			$result = $object->fetch($id);
+			$warehouse = new Entrepot($db);
+			$result = $warehouse->fetch($id);
 
 			$db->begin();
 
@@ -574,7 +576,7 @@ if ($action == "transfert_stock" && !$cancel) {
 					header("Location: ".$backtopage);
 					exit;
 				} else {
-					header("Location: movement_list.php?id=".$object->id);
+					header("Location: movement_list.php?id=".$warehouse->id);
 					exit;
 				}
 			} else {
@@ -586,6 +588,45 @@ if ($action == "transfert_stock" && !$cancel) {
 	}
 }
 
+// reverse movement of stock
+if ($action == 'confirm_reverse') {
+	$listMouvement = array();
+	$toselect = array_map('intval', $toselect);
+
+	$sql = "SELECT rowid, label, inventorycode, datem";
+	$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement";
+	$sql .= " WHERE rowid IN (";
+	foreach ($toselect as $id) {
+		$sql .= ((int) $id).",";
+	}
+	$sql = rtrim($sql, ',');
+	$sql .= ")";
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
+			$object->fetch($obj->rowid);
+			$reverse = $object->reverseMouvement();
+			if ($reverse < 0) {
+				$hasError = true;
+			} else {
+				$hasSuccess = true;
+			}
+			$i++;
+		}
+		if ($hasError) {
+			setEventMessages($langs->trans("WarningAlreadyReverse", $langs->transnoentities($idAlreadyReverse)), null, 'warnings');
+		}
+		if ($hasSuccess) {
+			setEventMessages($langs->trans("ReverseConfirmed"), null);
+		}
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+}
 
 /*
  * View
@@ -599,7 +640,7 @@ if (isModEnabled('project')) {
 $productlot = new Productlot($db);
 $productstatic = new Product($db);
 $warehousestatic = new Entrepot($db);
-$movement = new MouvementStock($db);
+
 $userstatic = new User($db);
 
 $now = dol_now();
@@ -648,7 +689,7 @@ if ($msid > 0) {
 }
 $sql .= " AND m.fk_entrepot = e.rowid";
 $sql .= " AND e.entity IN (".getEntity('stock').")";
-if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 	$sql .= " AND p.fk_product_type = 0";
 }
 if ($id > 0) {
@@ -690,8 +731,8 @@ if (!empty($search_batch)) {
 if (!empty($product_id) && $product_id != '-1') {
 	$sql .= natural_search('p.rowid', $product_id);
 }
-if (!empty($search_fk_projet) && $search_fk_projet != '-1') {
-	$sql .= natural_search('m.fk_projet', $search_fk_projet);
+if (!empty($search_fk_project) && $search_fk_project != '-1') {
+	$sql .= natural_search('m.fk_projet', $search_fk_project);
 }
 if ($search_qty != '') {
 	$sql .= natural_search('m.value', $search_qty, 1);
@@ -743,13 +784,13 @@ $num = $db->num_rows($resql);
 
 
 $product = new Product($db);
-$object = new Entrepot($db);
+$warehouse = new Entrepot($db);
 
 if ($idproduct > 0) {
 	$product->fetch($idproduct);
 }
 if ($id > 0 || $ref) {
-	$result = $object->fetch($id, $ref);
+	$result = $warehouse->fetch($id, $ref);
 	if ($result < 0) {
 		dol_print_error($db);
 	}
@@ -766,8 +807,8 @@ if ($msid) {
 } else {
 	$title = $langs->trans("ListOfStockMovements");
 	if ($id) {
-		if (!empty($object->ref)) {
-			$title .= ' ('.$object->ref.')';
+		if (!empty($warehouse->ref)) {
+			$title .= ' ('.$warehouse->ref.')';
 		} else {
 			$title .= ' ('.$langs->trans("ForThisWarehouse").')';
 		}
@@ -783,8 +824,8 @@ llxHeader('', $title, $help_url);
 /*
  * Show tab only if we ask a particular warehouse
  */
-if ($object->id > 0) {
-	$head = stock_prepare_head($object);
+if ($warehouse->id > 0) {
+	$head = stock_prepare_head($warehouse);
 
 	print dol_get_fiche_head($head, 'movements', $langs->trans("Warehouse"), -1, 'stock');
 
@@ -792,7 +833,7 @@ if ($object->id > 0) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
-	$morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
+	$morehtmlref .= $langs->trans("LocationSummary").' : '.$warehouse->lieu;
 
 	// Project
 	if (isModEnabled('project')) {
@@ -800,23 +841,23 @@ if ($object->id > 0) {
 		$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
 		if ($usercancreate && 1 == 2) {
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$warehouse->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
 			if ($action == 'classify') {
-				$projectid = $object->fk_project;
-				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				$projectid = $warehouse->fk_project;
+				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$warehouse->id.'">';
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$morehtmlref .= $formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$warehouse->id, $warehouse->socid, $warehouse->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		} else {
-			if (!empty($object->fk_project)) {
+			if (!empty($warehouse->fk_project)) {
 				$proj = new Project($db);
-				$proj->fetch($object->fk_project);
+				$proj->fetch($warehouse->fk_project);
 				$morehtmlref .= ' : '.$proj->getNomUrl(1);
 				if ($proj->title) {
 					$morehtmlref .= ' - '.$proj->title;
@@ -829,11 +870,11 @@ if ($object->id > 0) {
 	$morehtmlref .= '</div>';
 
 	$shownav = 1;
-	if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+	if ($user->socid && !in_array('stock', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 		$shownav = 0;
 	}
 
-	dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
+	dol_banner_tab($warehouse, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 
 
 	print '<div class="fichecenter">';
@@ -845,10 +886,10 @@ if ($object->id > 0) {
 	print '<tr>';
 
 	// Description
-	print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.dol_htmlentitiesbr($object->description).'</td></tr>';
+	print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.dol_htmlentitiesbr($warehouse->description).'</td></tr>';
 
-	$calcproductsunique = $object->nb_different_products();
-	$calcproducts = $object->nb_products();
+	$calcproductsunique = $warehouse->nb_different_products();
+	$calcproducts = $warehouse->nb_products();
 
 	// Total nb of different products
 	print '<tr><td>'.$langs->trans("NumberOfDifferentProducts").'</td><td>';
@@ -877,7 +918,7 @@ if ($object->id > 0) {
 	// Last movement
 	$sql = "SELECT MAX(m.datem) as datem";
 	$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
-	$sql .= " WHERE m.fk_entrepot = ".((int) $object->id);
+	$sql .= " WHERE m.fk_entrepot = ".((int) $warehouse->id);
 	$resqlbis = $db->query($sql);
 	if ($resqlbis) {
 		$objbis = $db->fetch_object($resqlbis);
@@ -900,7 +941,7 @@ if ($object->id > 0) {
 	// Categories
 	if (isModEnabled('categorie')) {
 		print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
-		print $form->showCategories($object->id, Categorie::TYPE_WAREHOUSE, 1);
+		print $form->showCategories($warehouse->id, Categorie::TYPE_WAREHOUSE, 1);
 		print "</td></tr>";
 	}
 
@@ -933,14 +974,14 @@ if ((empty($action) || $action == 'list') && $id > 0) {
 	print "<div class=\"tabsAction\">\n";
 
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-																								   // modified by hook
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $warehouse, $action); // Note that $action and $warehouse may have been
+	// modified by hook
 	if (empty($reshook)) {
-		if ($user->rights->stock->mouvement->creer) {
+		if ($user->hasRight('stock', 'mouvement', 'creer')) {
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("CorrectStock").'</a>';
 		}
 
-		if ($user->rights->stock->mouvement->creer) {
+		if ($user->hasRight('stock', 'mouvement', 'creer')) {
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
 		}
 	}
@@ -962,6 +1003,9 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 }
 if ($id > 0) {
 	$param .= '&id='.urlencode($id);
+}
+if ($show_files) {
+	$param .= '&show_files='.urlencode($show_files);
 }
 if ($search_date_startday) {
 	$param .= '&search_date_startday='.urlencode($search_date_startday);
@@ -1008,11 +1052,14 @@ if ($search_user) {
 if ($idproduct > 0) {
 	$param .= '&idproduct='.urlencode($idproduct);
 }
+if ($search_fk_project != '' && $search_fk_project != '-1') {
+	$param .= '&search_fk_project='.urlencode($search_fk_project);
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $warehouse, $action); // Note that $action and $warehouse may have been modified by hook
 $param .= $hookmanager->resPrint;
 
 // List of mass actions available
@@ -1021,12 +1068,16 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	$arrayofmassactions['builddoc'] = img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("GeneratePDF");
 }
 // By default, we should never accept deletion of stock movement
-if (!empty($conf->global->STOCK_ALLOW_DELETE_OF_MOVEMENT) && $permissiontodelete) {
+if (getDolGlobalString('STOCK_ALLOW_DELETE_OF_MOVEMENT') && $permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
+if (!empty($permissiontoadd)) {
+	$arrayofmassactions['prereverse'] = img_picto('', 'add', 'class="pictofixedwidth"').$langs->trans("Reverse");
+}
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'prereverse'))) {
 	$arrayofmassactions = array();
 }
+
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -1060,8 +1111,12 @@ if ($id > 0) {
 $topicmail = "SendStockMovement";
 $modelmail = "movementstock";
 $objecttmp = new MouvementStock($db);
-$trackid = 'mov'.$object->id;
+$trackid = 'mov'.$warehouse->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+if ($massaction == 'prereverse') {
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassReverse"), $langs->trans("ConfirmMassReverseQuestion", count($toselect)), "confirm_reverse", null, '', 0, 200, 500, 1, 'Yes');
+}
+
 
 if ($search_all) {
 	$setupstring = '';
@@ -1070,13 +1125,13 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if STOCK_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>'."\n";
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>'."\n";
 }
 
 $moreforfilter = '';
 
 $parameters = array('arrayfields'=>&$arrayfields);
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $warehouse, $action); // Note that $action and $warehouse may have been modified by hook
 if (empty($reshook)) {
 	$moreforfilter .= $hookmanager->resPrint;
 } else {
@@ -1093,7 +1148,7 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
@@ -1115,11 +1170,11 @@ if (!empty($arrayfields['m.rowid']['checked'])) {
 if (!empty($arrayfields['m.datem']['checked'])) {
 	// Date
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
-	print $form->selectDate($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'), 'tzuserrel');
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'), 'tzuserrel');
 	print '</div>';
-	print '<div class="nowrap">';
-	print $form->selectDate($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'), 'tzuserrel');
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'), 'tzuserrel');
 	print '</div>';
 	print '</td>';
 }
@@ -1181,7 +1236,7 @@ if (!empty($arrayfields['origin']['checked'])) {
 if (!empty($arrayfields['m.fk_projet']['checked'])) {
 	// fk_project
 	print '<td class="liste_titre" align="left">';
-	print '&nbsp; ';
+	print $warehouse->showInputField($warehouse->fields['fk_project'], 'fk_project', $search_fk_project, '', '', 'search_', 'maxwidth125', 1);
 	print '</td>';
 }
 if (!empty($arrayfields['m.type_mouvement']['checked'])) {
@@ -1218,7 +1273,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
 $parameters = array('arrayfields'=>$arrayfields);
-$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $warehouse, $action); // Note that $action and $warehouse may have been modified by hook
 print $hookmanager->resPrint;
 // Date creation
 if (!empty($arrayfields['m.datec']['checked'])) {
@@ -1305,7 +1360,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
 // Hook fields
 $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray'=>&$totalarray);
-$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $warehouse, $action); // Note that $action and $warehouse may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['m.datec']['checked'])) {
 	print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
@@ -1343,7 +1398,7 @@ while ($i < $imaxinloop) {
 	$userstatic->firstname = $obj->firstname;
 	$userstatic->photo = $obj->photo;
 	$userstatic->email = $obj->user_email;
-	$userstatic->statut = $obj->user_status;
+	$userstatic->status = $obj->user_status;
 
 	// Multilangs
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {  // If multilang is enabled
@@ -1384,11 +1439,16 @@ while ($i < $imaxinloop) {
 	$warehousestatic->fk_parent = $obj->fk_parent;
 	$warehousestatic->statut = $obj->statut;
 
-	$movement->type = $obj->type_mouvement;
+	$object->id = $obj->mid;
+	$object->qty = $obj->qty;
+	$object->label = $obj->label;
+	$object->batch = $obj->batch;
+	$object->warehouse_id = $obj->entrepot_id;
+	$object->type = $obj->type_mouvement;
 
 	$arrayofuniqueproduct[$obj->rowid] = $obj->produit;
 	if (!empty($obj->fk_origin)) {
-		$origin = $movement->get_origin($obj->fk_origin, $obj->origintype);
+		$origin = $object->get_origin($obj->fk_origin, $obj->origintype);
 	} else {
 		$origin = '';
 	}
@@ -1399,13 +1459,14 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
+		$selected = -1;
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
-			if (in_array($object->id, $arrayofselected)) {
+			if (in_array($warehouse->id, $arrayofselected)) {
 				$selected = 1;
 			}
 		}
-		print $object->getKanbanView('', array('selected' => in_array($warehousestatic->id, $arrayofselected)));
+		print $warehouse->getKanbanView('', array('selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -1413,7 +1474,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show here line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$warehouse->id.'" class="oddeven">';
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="nowrap center">';
@@ -1432,8 +1493,8 @@ while ($i < $imaxinloop) {
 		// Id movement
 		if (!empty($arrayfields['m.rowid']['checked'])) {
 			print '<td class="nowraponall">';
-			print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
-			print $obj->mid;
+			//print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
+			print $object->getNomUrl(1);;
 			print '</td>'; // This is primary not movement id
 		}
 		if (!empty($arrayfields['m.datem']['checked'])) {
@@ -1495,14 +1556,14 @@ while ($i < $imaxinloop) {
 			// fk_project
 			print '<td>';
 			if ($obj->fk_project != 0) {
-				print $movement->get_origin($obj->fk_project, 'project');
+				print $object->get_origin($obj->fk_project, 'project');
 			}
 			print '</td>';
 		}
 		if (!empty($arrayfields['m.type_mouvement']['checked'])) {
 			// Type of movement
 			print '<td class="center">';
-			print $movement->getTypeMovement();
+			print $object->getTypeMovement();
 			print '</td>';
 		}
 		if (!empty($arrayfields['m.value']['checked'])) {
@@ -1530,7 +1591,6 @@ while ($i < $imaxinloop) {
 		}
 
 		// Extra fields
-		$object = $movement;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
 		$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
@@ -1590,10 +1650,10 @@ if (count($arrayofuniqueproduct) == 1 && !empty($year) && is_numeric($year)) {
 		$productidselected = $key;
 		$productlabelselected = $val;
 	}
-	$datebefore = dol_get_first_day($year ? $year : strftime("%Y", time()), $month ? $month : 1, true);
-	$dateafter = dol_get_last_day($year ? $year : strftime("%Y", time()), $month ? $month : 12, true);
-	$balancebefore = $movement->calculateBalanceForProductBefore($productidselected, $datebefore);
-	$balanceafter = $movement->calculateBalanceForProductBefore($productidselected, $dateafter);
+	$datebefore = dol_get_first_day($year ? $year : dol_print_date(time(), "%Y"), $month ? $month : 1, true);
+	$dateafter = dol_get_last_day($year ? $year : dol_print_date(time(), "%Y"), $month ? $month : 12, true);
+	$balancebefore = $object->calculateBalanceForProductBefore($productidselected, $datebefore);
+	$balanceafter = $object->calculateBalanceForProductBefore($productidselected, $dateafter);
 
 	//print '<tr class="total"><td class="liste_total">';
 	print $langs->trans("NbOfProductBeforePeriod", $productlabelselected, dol_print_date($datebefore, 'day', 'gmt'));
@@ -1628,7 +1688,7 @@ if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords 
 	$genallowed = $permissiontoread;
 	$delallowed = $permissiontoadd;
 
-	print $formfile->showdocuments('massfilesarea_'.$object->module, '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+	print $formfile->showdocuments('massfilesarea_stock', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 
 // End of page

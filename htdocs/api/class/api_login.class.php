@@ -26,6 +26,10 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
  */
 class Login
 {
+	/**
+	 * @var DoliDB	Database handler
+	 */
+	public $db;
 
 	/**
 	 * Constructor of the class
@@ -36,7 +40,7 @@ class Login
 		$this->db = $db;
 
 		//$conf->global->MAIN_MODULE_API_LOGIN_DISABLED = 1;
-		if (!empty($conf->global->MAIN_MODULE_API_LOGIN_DISABLED)) {
+		if (getDolGlobalString('MAIN_MODULE_API_LOGIN_DISABLED')) {
 			throw new RestException(403, "Error login APIs are disabled. You must get the token from backoffice to be able to use APIs");
 		}
 	}
@@ -89,7 +93,7 @@ class Login
 		global $conf, $dolibarr_main_authentication, $dolibarr_auto_user;
 
 		// Is the login API disabled ? The token must be generated from backoffice only.
-		if (!empty($conf->global->API_DISABLE_LOGIN_API)) {
+		if (getDolGlobalString('API_DISABLE_LOGIN_API')) {
 			dol_syslog("Warning: A try to use the login API has been done while the login API is disabled. You must generate or get the token from the backoffice.", LOG_WARNING);
 			throw new RestException(403, "Error, the login API has been disabled for security purpose. You must generate or get the token from the backoffice.");
 		}
@@ -140,7 +144,7 @@ class Login
 		// Renew the hash
 		if (empty($tmpuser->api_key) || $reset) {
 			$tmpuser->getrights();
-			if (empty($tmpuser->rights->user->self->creer)) {
+			if (!$tmpuser->hasRight('user', 'self', 'creer')) {
 				if (empty($tmpuser->api_key)) {
 					throw new RestException(403, 'No API token set for this user and user need write permission on itself to reset its API token');
 				} else {
@@ -149,7 +153,7 @@ class Login
 			}
 
 			// Generate token for user
-			$token = dol_hash($login.uniqid().(empty($conf->global->MAIN_API_KEY)?'':$conf->global->MAIN_API_KEY), 1);
+			$token = dol_hash($login.uniqid().(!getDolGlobalString('MAIN_API_KEY') ? '' : $conf->global->MAIN_API_KEY), 1);
 
 			// We store API token into database
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
@@ -163,6 +167,9 @@ class Login
 			}
 		} else {
 			$token = $tmpuser->api_key;
+			if (!utf8_check($token)) {
+				throw new RestException(500, 'Error, the API token of this user has a non valid value. Try to update it with a valid value.');
+			}
 		}
 
 		if (!ascii_check($token)) {

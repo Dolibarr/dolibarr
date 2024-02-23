@@ -20,7 +20,8 @@
 
 /**
  * 	\defgroup   api     Module Api
- *  \brief      Descriptor file for Api modulee
+ *  \brief      Module for API (REST) management
+ *
  *  \file       htdocs/core/modules/modApi.class.php
  *  \ingroup    api
  *  \brief      Description and activation file for the module Api
@@ -105,7 +106,7 @@ class modApi extends DolibarrModules
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
 		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
@@ -162,7 +163,6 @@ class modApi extends DolibarrModules
 			'langs'=>'modulebuilder',
 			'position'=>100,
 			'perms'=>'1',
-			//'enabled'=>'isModEnabled("api") && preg_match(\'/^(devtools)/\',$leftmenu)',
 			'enabled'=>'isModEnabled("api")',
 			'target'=>'_apiexplorer',
 			'user'=>0);

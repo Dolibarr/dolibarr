@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,17 +50,18 @@ $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '
 $toselect = GETPOST('toselect', 'array');
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$search_ref = GETPOST("sref", "alpha") ?GETPOST("sref", "alpha") : GETPOST("search_ref", "alpha");
-$search_label = GETPOST("snom", "alpha") ?GETPOST("snom", "alpha") : GETPOST("search_label", "alpha");
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_ref = GETPOST("sref", "alpha") ? GETPOST("sref", "alpha") : GETPOST("search_ref", "alpha");
+$search_label = GETPOST("snom", "alpha") ? GETPOST("snom", "alpha") : GETPOST("search_label", "alpha");
 $search_status = GETPOST("search_status", "int");
 
+$search_category_list = array();
 if (isModEnabled('categorie')) {
 	$search_category_list = GETPOST("search_category_".Categorie::TYPE_WAREHOUSE."_list", "array");
 }
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -89,7 +91,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alphanohtml');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -112,20 +114,20 @@ foreach ($object->fields as $key => $val) {
 
 // Definition of array of fields for columns
 $arrayfields = array(
-	'stockqty'=>array('type'=>'float', 'label'=>'PhysicalStock', 'enabled'=>1, 'visible'=>-2, 'checked'=>0, 'position'=>170),
-	'estimatedvalue'=>array('type'=>'float', 'label'=>'EstimatedStockValue', 'enabled'=>1, 'visible'=>1, 'checked'=>1, 'position'=>171),
-	'estimatedstockvaluesell'=>array('type'=>'float', 'label'=>'EstimatedStockValueSell', 'enabled'=>1, 'checked'=>1, 'visible'=>2, 'position'=>172),
+	'stockqty' => array('type' => 'float', 'label' => 'PhysicalStock', 'enabled' => 1, 'visible' => -2, 'checked' => 0, 'position' => 170),
+	'estimatedvalue' => array('type' => 'float', 'label' => 'EstimatedStockValue', 'enabled' => 1, 'visible' => 1, 'checked' => 1, 'position' => 171),
+	'estimatedstockvaluesell' => array('type' => 'float', 'label' => 'EstimatedStockValueSell', 'enabled' => 1, 'checked' => 1, 'visible' => 2, 'position' => 172),
 );
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
 		$visible = (int) dol_eval($val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
-			'label'=>$val['label'],
-			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>(abs($visible) != 3 && dol_eval($val['enabled'], 1)),
-			'position'=>$val['position'],
-			'help'=> isset($val['help']) ? $val['help'] : ''
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? 0 : 1),
+			'enabled' => (abs($visible) != 3 && dol_eval($val['enabled'], 1)),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
@@ -135,9 +137,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->stock->lire;
-$permissiontodelete = $user->rights->stock->supprimer;
-$permissiontoadd = $user->rights->stock->creer;
+$permissiontoread = $user->hasRight('stock', 'lire');
+$permissiontodelete = $user->hasRight('stock', 'supprimer');
+$permissiontoadd = $user->hasRight('stock', 'creer');
 
 // Security check
 $result = restrictedArea($user, 'stock');
@@ -217,7 +219,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 
 //For Multicompany PMP per entity
 $separatedPMP = false;
-if (!empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED) && !empty($conf->global->MULTICOMPANY_PMP_PER_ENTITY_ENABLED)) {
+if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED')) {
 	$separatedPMP = true;
 	$sql .= ", SUM(pa.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty";
 } else {
@@ -447,7 +449,7 @@ $arrayofmassactions = array(
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 	$arrayofmassactions = array();
 }
-if (isModEnabled('category') && $user->rights->stock->creer) {
+if (isModEnabled('category') && $user->hasRight('stock', 'creer')) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'label', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -468,10 +470,10 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewWarehouse'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/stock/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $user->rights->stock->creer);
+$newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewWarehouse'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/stock/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $user->hasRight('stock', 'creer'));
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'stock', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -490,7 +492,7 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if STOCK_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
@@ -556,15 +558,15 @@ foreach ($object->fields as $key => $val) {
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').($key == 'status' ? ' parentonrightofpage' : '').'">';
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100'.($key == 'status' ? ' search_status width100 onrightofpage' : ''), 1);
+			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), (isset($val['notnull']) ? $val['notnull'] : 0), 0, 0, '', 1, 0, 0, '', 'maxwidth100'.($key == 'status' ? ' search_status width100 onrightofpage' : ''), 1);
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
 			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', $cssforfield.' maxwidth250', 1);
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 			print '<div class="nowrap">';
-			print $form->selectDate($search[$key.'_dtstart'] ? $search[$key.'_dtstart'] : '', "search_".$key."_dtstart", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+			print $form->selectDate(isset($search[$key.'_dtstart']) ? $search[$key.'_dtstart'] : '', "search_".$key."_dtstart", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 			print '</div>';
 			print '<div class="nowrap">';
-			print $form->selectDate($search[$key.'_dtend'] ? $search[$key.'_dtend'] : '', "search_".$key."_dtend", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+			print $form->selectDate(isset($search[$key.'_dtend']) ? $search[$key.'_dtend'] : '', "search_".$key."_dtend", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 			print '</div>';
 		} elseif ($key == 'lang') {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
@@ -593,14 +595,14 @@ if (!empty($arrayfields["estimatedstockvaluesell"]['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
 // Status
 if (!empty($arrayfields['t.statut']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
-	print $form->selectarray('search_status', $warehouse->statuts, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status width100 onrightofpage');
+	print $form->selectarray('search_status', $warehouse->labelStatus, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 
@@ -647,23 +649,26 @@ foreach ($object->fields as $key => $val) {
 if (!empty($arrayfields["stockqty"]['checked'])) {
 	print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stockqty", '', $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
+	$totalarray['type'][$totalarray['nbfield']] = 'stock';
 }
 
 if (!empty($arrayfields["estimatedvalue"]['checked'])) {
 	print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "estimatedvalue", '', $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
+	$totalarray['type'][$totalarray['nbfield']] = 'price';
 }
 
 if (!empty($arrayfields["estimatedstockvaluesell"]['checked'])) {
 	print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
+	$totalarray['type'][$totalarray['nbfield']] = 'price';
 }
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -829,7 +834,7 @@ while ($i < $imaxinloop) {
 		// Selling value
 		if (!empty($arrayfields["estimatedstockvaluesell"]['checked'])) {
 			print '<td class="right">';
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				if ($obj->sellvalue) {
 					print '<span class="amount">'.price(price2num($obj->sellvalue, 'MT'), 1).'</span>';
 				}
@@ -849,7 +854,7 @@ while ($i < $imaxinloop) {
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
@@ -901,7 +906,7 @@ if ($num == 0) {
 
 $db->free($resql);
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -924,8 +929,8 @@ if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords 
 	$urlsource .= str_replace('&amp;', '&', $param);
 
 	$filedir = $diroutputmassaction;
-	$genallowed = $user->rights->stock->lire;
-	$delallowed = $user->rights->stock->creer;
+	$genallowed = $user->hasRight('stock', 'lire');
+	$delallowed = $user->hasRight('stock', 'creer');
 
 	print $formfile->showdocuments('massfilesarea_stock', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }

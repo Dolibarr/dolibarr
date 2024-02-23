@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "user" third parties
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=الحساب (من دليل الحساب) المستخدم افتراضيًا للأطراف الثالثة "المستخدم".
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=سيتم استخدام الحساب المخصص المحدد على بطاقة المستخدم لحساب دفتر الأستاذ الفرعي فقط. سيتم استخدام هذا لـ دفتر الأستاذ العام و كقيمة افتراضية لمحاسبة دفتر الأستاذ الفرعي إذا لم يتم تحديد حساب محاسبة المستخدم المخصص للمستخدم.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=حساب المحاسبة بشكل افتراضي لمدفوعات الأجور
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=بشكل افتراضي ، اترك خيار "إنشاء دفعة إجمالية تلقائيًا" فارغًا عند إنشاء راتب
 Salary=الراتب
@@ -24,4 +24,10 @@ SalariesStatistics=إحصائيات الرواتب
 SalariesAndPayments=الرواتب والمدفوعات
 ConfirmDeleteSalaryPayment=هل تريد حذف هذا الراتب؟
 FillFieldFirst=املأ حقل الموظف أولاً
-UpdateAmountWithLastSalary=Set amount of last salary
+UpdateAmountWithLastSalary=تعيين مقدار آخر راتب
+MakeTransferRequest=تقديم طلب النقل
+VirementOrder=طلب تحويل رصيد
+BankTransferAmount=مبلغ تحويل الائتمان
+WithdrawalReceipt=أمر تحويل رصيد
+OrderWaiting=في انتظار طلب
+FillEndOfMonth=املأ بنهاية الشهر

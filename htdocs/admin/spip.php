@@ -88,7 +88,7 @@ if ($action == 'set') {
 	}
 }
 
-// Action desactivation d'un sous module du module adherent
+// Action deactivation d'un sous module du module adherent
 if ($action == 'unset') {
 	$result = dolibarr_del_const($db, $_GET["name"], $conf->entity);
 	if ($result < 0) {
@@ -117,7 +117,7 @@ $head = mailmanspip_admin_prepare_head();
 /*
  * Spip
  */
-if (!empty($conf->global->ADHERENT_USE_SPIP)) {
+if (getDolGlobalString('ADHERENT_USE_SPIP')) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -129,7 +129,7 @@ if (!empty($conf->global->ADHERENT_USE_SPIP)) {
 	//$link.=$langs->trans("Disable");
 	$link .= img_picto($langs->trans("Activated"), 'switch_on');
 	$link .= '</a>';
-	// Edition des varibales globales
+	// Edition des variables globales
 	$constantes = array(
 		'ADHERENT_SPIP_SERVEUR',
 		'ADHERENT_SPIP_DB',

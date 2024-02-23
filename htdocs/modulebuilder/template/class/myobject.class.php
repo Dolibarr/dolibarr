@@ -49,8 +49,13 @@ class MyObject extends CommonObject
 	public $table_element = 'mymodule_myobject';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 * @var string 	If permission must be checkec with hasRight('mymodule', 'read') and not hasright('mymodyle', 'myobject', 'read'), you can uncomment this line
+	 */
+	//public $element_for_permission = 'mymodule';
+
+	/**
+	 * @var int  	Does this object support multicompany module ?
+	 * 				0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 0;
 
@@ -69,16 +74,15 @@ class MyObject extends CommonObject
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
 
-
 	/**
 	 *  'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
 	 *  	'select' (list of values are in 'options'),
-	 *  	'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]',
+	 *  	'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:SortField]]]]]]',
 	 *  	'chkbxlst:...',
 	 *  	'varchar(x)',
 	 *  	'text', 'text:none', 'html',
-	 *   	'double(24,8)', 'real', 'price',
+	 *   	'double(24,8)', 'real', 'price', 'stock',
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'mail', 'phone', 'url', 'password', 'ip'
@@ -93,7 +97,7 @@ class MyObject extends CommonObject
 	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
 	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
@@ -103,7 +107,7 @@ class MyObject extends CommonObject
 	 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
 	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
-	 *	'validate' is 1 if need to validate with $this->validateField()
+	 *	'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
 	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
@@ -179,11 +183,6 @@ class MyObject extends CommonObject
 	public $date_creation;
 
 	/**
-	 * @var integer tms
-	 */
-	public $tms;
-
-	/**
 	 * @var int ID
 	 */
 	public $fk_user_creat;
@@ -244,11 +243,11 @@ class MyObject extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
@@ -288,10 +287,10 @@ class MyObject extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		$resultcreate = $this->createCommon($user, $notrigger);
 
@@ -402,15 +401,17 @@ class MyObject extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id   Id object
-	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @param 	int    	$id   			Id object
+	 * @param 	string 	$ref  			Ref
+	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
+	 * @param	int		$nolines		0=Default to load extrafields, 1=No extrafields
+	 * @return 	int     				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = null)
+	public function fetch($id, $ref = null, $noextrafields = 0, $nolines = 0)
 	{
-		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) {
-			$this->fetchLines();
+		$result = $this->fetchCommon($id, $ref, '', $noextrafields);
+		if ($result > 0 && !empty($this->table_element_line) && empty($nolines)) {
+			$this->fetchLines($noextrafields);
 		}
 		return $result;
 	}
@@ -418,29 +419,33 @@ class MyObject extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
+	 * @return 	int         			Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetchLines()
+	public function fetchLines($noextrafields = 0)
 	{
 		$this->lines = array();
 
-		$result = $this->fetchLinesCommon();
+		$result = $this->fetchLinesCommon('', $noextrafields);
 		return $result;
 	}
 
 
 	/**
 	 * Load list of objects in memory from the database.
+	 * Using a fetchAll() with limit = 0 is a very bad practice. Instead try to forge yourself an optimized SQL request with
+	 * your own loop with start and stop pagination.
 	 *
-	 * @param  string      $sortorder    Sort Order
-	 * @param  string      $sortfield    Sort field
-	 * @param  int         $limit        limit
-	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
-	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
+	 * @param  string      	$sortorder    	Sort Order
+	 * @param  string      	$sortfield    	Sort field
+	 * @param  int         	$limit        	Limit the number of lines returned
+	 * @param  int         	$offset       	Offset
+	 * @param  string		$filter       	Filter as an Universal Search string.
+	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string      	$filtermode   	Filter mode (AND or OR)
+	 * @return array|int                 	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 1000, $offset = 0, string $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -449,31 +454,71 @@ class MyObject extends CommonObject
 		$sql = "SELECT ";
 		$sql .= $this->getFieldList('t');
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		if (isset($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
+			$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as te ON te.fk_object = t.rowid";
+		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
 			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
 		} else {
 			$sql .= " WHERE 1 = 1";
 		}
 		// Manage filter
+		/* We keep this part of code that is still used by a lot of old class. The 'else" shows how to switch to Universal Search filters
 		$sqlwhere = array();
-		if (count($filter) > 0) {
+		if (is_array($filter) && count($filter) > 0) {
+			dol_syslog("Warning: Use of an array  as filter is now forbidden and deprecated. Use an universal SQL filter string instead", LOG_WARNING);
 			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
-					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
-				} elseif ($key == 'customsql') {
+				$columnName = preg_replace('/^t\./', '', $key);
+				if ($key === 'customsql') {
+					// Never use 'customsql' with a value from a user input since it is injected as is. The value must be hard coded.
 					$sqlwhere[] = $value;
-				} elseif (strpos($value, '%') === false) {
-					$sqlwhere[] = $key." IN (".$this->db->sanitize($this->db->escape($value)).")";
-				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escapeforlike($this->db->escape($value))."%'";
+					continue;
+				} elseif (isset($this->fields[$columnName])) {
+					$type = $this->fields[$columnName]['type'];
+					if (preg_match('/^integer/', $type)) {
+						if (is_int($value)) {
+							// single value
+							$sqlwhere[] = $key . " = " . intval($value);
+						} elseif (is_array($value)) {
+							if (empty($value)) {
+								continue;
+							}
+							$sqlwhere[] = $key . ' IN (' . $this->db->sanitize(implode(',', array_map('intval', $value))) . ')';
+						}
+						continue;
+					} elseif (in_array($type, array('date', 'datetime', 'timestamp'))) {
+						$sqlwhere[] = $key . " = '" . $this->db->idate($value) . "'";
+						continue;
+					}
+				}
+
+				// when the $key doesn't fall into the previously handled categories, we do as if the column were a varchar/text
+				if (is_array($value) && count($value)) {
+					$value = implode(',', array_map(function ($v) {
+						return "'" . $this->db->sanitize($this->db->escape($v)) . "'";
+					}, $value));
+					$sqlwhere[] = $key . ' IN (' . $this->db->sanitize($value, true) . ')';
+				} elseif (is_scalar($value)) {
+					if (strpos($value, '%') === false) {
+						$sqlwhere[] = $key . " = '" . $this->db->sanitize($this->db->escape($value)) . "'";
+					} else {
+						$sqlwhere[] = $key . " LIKE '%" . $this->db->escape($this->db->escapeforlike($value)) . "%'";
+					}
 				}
 			}
+		} else { */
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+
+			return -1;
 		}
+		/*}
 		if (count($sqlwhere) > 0) {
 			$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
-		}
+		}*/
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
@@ -491,6 +536,10 @@ class MyObject extends CommonObject
 
 				$record = new self($this->db);
 				$record->setVarsFromFetchObj($obj);
+
+				if (!empty($record->isextrafieldmanaged)) {
+					$record->fetch_optionals();
+				}
 
 				$records[$record->id] = $record;
 
@@ -511,10 +560,10 @@ class MyObject extends CommonObject
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		return $this->updateCommon($user, $notrigger);
 	}
@@ -522,11 +571,11 @@ class MyObject extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param User $user       	User that deletes
+	 * @param int 	$notrigger  0=launch triggers, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
@@ -537,10 +586,10 @@ class MyObject extends CommonObject
 	 *
 	 *	@param  User	$user       User that delete
 	 *  @param	int		$idline		Id of line to delete
-	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
+	 *  @param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
 	 *  @return int         		>0 if OK, <0 if KO
 	 */
-	public function deleteLine(User $user, $idline, $notrigger = false)
+	public function deleteLine(User $user, $idline, $notrigger = 0)
 	{
 		if ($this->status < 0) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
@@ -556,11 +605,11 @@ class MyObject extends CommonObject
 	 *
 	 *	@param		User	$user     		User making status change
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -568,12 +617,12 @@ class MyObject extends CommonObject
 
 		// Protection
 		if ($this->status == self::STATUS_VALIDATED) {
-			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
+			dol_syslog(get_class($this)."::validate action abandoned: already validated", LOG_WARNING);
 			return 0;
 		}
 
-		/* if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule','write'))
-		 || (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->mymodule->myobject->myobject_advance->validate))))
+		/* if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule', 'myobject', 'write'))
+		 || (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule', 'myobject_advance', 'validate')))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -595,7 +644,10 @@ class MyObject extends CommonObject
 		if (!empty($num)) {
 			// Validate
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET ref = '".$this->db->escape($num)."',";
+			$sql .= " SET ";
+			if (!empty($this->fields['ref'])) {
+				$sql .= " ref = '".$this->db->escape($num)."',";
+			}
 			$sql .= " status = ".self::STATUS_VALIDATED;
 			if (!empty($this->fields['date_validation'])) {
 				$sql .= ", date_validation = '".$this->db->idate($now)."'";
@@ -633,13 +685,15 @@ class MyObject extends CommonObject
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'myobject/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -687,7 +741,7 @@ class MyObject extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -711,7 +765,7 @@ class MyObject extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -735,7 +789,7 @@ class MyObject extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -763,7 +817,7 @@ class MyObject extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$datas = [];
 
@@ -774,13 +828,18 @@ class MyObject extends CommonObject
 		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
-		$datas['ref'] .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (property_exists($this, 'ref')) {
+			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		}
+		if (property_exists($this, 'label')) {
+			$datas['ref'] = '<br>'.$langs->trans('Label').':</b> '.$this->label;
+		}
 
 		return $datas;
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *  @param  string  $option                     On what the link point to ('nolink', ...)
@@ -818,7 +877,7 @@ class MyObject extends CommonObject
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($url && $add_save_lastsearch_values) {
@@ -832,7 +891,7 @@ class MyObject extends CommonObject
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -935,7 +994,7 @@ class MyObject extends CommonObject
 			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -977,6 +1036,10 @@ class MyObject extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
+		if (is_null($status)) {
+			return '';
+		}
+
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule@mymodule");
@@ -1006,8 +1069,19 @@ class MyObject extends CommonObject
 	public function info($id)
 	{
 		$sql = "SELECT rowid,";
-		$sql .= " date_creation as datec, tms as datem,";
-		$sql .= " fk_user_creat, fk_user_modif";
+		$sql .= " date_creation as datec, tms as datem";
+		if (!empty($this->fields['date_validation'])) {
+			$sql .= ", date_validation as datev";
+		}
+		if (!empty($this->fields['fk_user_creat'])) {
+			$sql .= ", fk_user_creat";
+		}
+		if (!empty($this->fields['fk_user_modif'])) {
+			$sql .= ", fk_user_modif";
+		}
+		if (!empty($this->fields['fk_user_valid'])) {
+			$sql .= ", fk_user_valid";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
@@ -1018,9 +1092,13 @@ class MyObject extends CommonObject
 
 				$this->id = $obj->rowid;
 
-				$this->user_creation_id = $obj->fk_user_creat;
-				$this->user_modification_id = $obj->fk_user_modif;
-				if (!empty($obj->fk_user_valid)) {
+				if (!empty($this->fields['fk_user_creat'])) {
+					$this->user_creation_id = $obj->fk_user_creat;
+				}
+				if (!empty($this->fields['fk_user_modif'])) {
+					$this->user_modification_id = $obj->fk_user_modif;
+				}
+				if (!empty($this->fields['fk_user_valid'])) {
 					$this->user_validation_id = $obj->fk_user_valid;
 				}
 				$this->date_creation     = $this->db->jdate($obj->datec);
@@ -1102,7 +1180,7 @@ class MyObject extends CommonObject
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -1131,7 +1209,7 @@ class MyObject extends CommonObject
 	 *  Create a document onto disk according to template module.
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
-	 *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
@@ -1140,7 +1218,7 @@ class MyObject extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$result = 0;
 		$includedocgeneration = 0;
@@ -1167,6 +1245,23 @@ class MyObject extends CommonObject
 	}
 
 	/**
+	 * Return validation test result for a field.
+	 * Need MAIN_ACTIVATE_VALIDATION_RESULT to be called.
+	 *
+	 * @param  array   $fields	       		Array of properties of field to show
+	 * @param  string  $fieldKey            Key of attribute
+	 * @param  string  $fieldValue          value of attribute
+	 * @return bool 						Return false if fail, true on success, set $this->error for error message
+	 */
+	public function validateField($fields, $fieldKey, $fieldValue)
+	{
+		// Add your own validation rules here.
+		// ...
+
+		return parent::validateField($fields, $fieldKey, $fieldValue);
+	}
+
+	/**
 	 * Action executed by scheduler
 	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
 	 * Use public function doScheduledJob($param1, $param2, ...) to get parameters
@@ -1177,13 +1272,13 @@ class MyObject extends CommonObject
 	{
 		//global $conf, $langs;
 
-		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
+		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlogfile.log';
 
 		$error = 0;
 		$this->output = '';
 		$this->error = '';
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__." start", LOG_INFO);
 
 		$now = dol_now();
 
@@ -1192,6 +1287,8 @@ class MyObject extends CommonObject
 		// ...
 
 		$this->db->commit();
+
+		dol_syslog(__METHOD__." end", LOG_INFO);
 
 		return $error;
 	}
@@ -1216,7 +1313,7 @@ class MyObjectLine extends CommonObjectLine
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{

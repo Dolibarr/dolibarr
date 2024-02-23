@@ -54,7 +54,7 @@ $result = restrictedArea($user, 'commande', $id, '');
 
 $usercancreate  =  $user->hasRight("commande", "creer");
 
-$permissionnote = $user->rights->commande->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('commande', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 
 $object = new Commande($db);
@@ -83,7 +83,7 @@ if (empty($reshook)) {
  */
 $title = $object->ref." - ".$langs->trans('Notes');
 $help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-order page-card_notes');
 
 $form = new Form($db);
 
