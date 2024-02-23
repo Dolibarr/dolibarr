@@ -4595,6 +4595,7 @@ class Societe extends CommonObject
 	{
 		// phpcs:enable
 		global $langs;
+
 		$label = '';
 		if ($fk_prospectlevel != '') {
 			$label = $langs->trans("ProspectLevel".$fk_prospectlevel);
@@ -4603,6 +4604,7 @@ class Societe extends CommonObject
 				$label = $langs->getLabelFromKey($this->db, $fk_prospectlevel, 'c_prospectlevel', 'code', 'label');
 			}
 		}
+
 		return $label;
 	}
 
