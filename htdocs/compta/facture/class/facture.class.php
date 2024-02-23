@@ -107,15 +107,6 @@ class Facture extends CommonInvoice
 	 */
 	protected $table_ref_field = 'ref';
 
-	public $author;
-
-	/**
-	 * @var int ID
-	 * @deprecated
-	 * @see $fk_user_author
-	 */
-	public $user_author;
-
 	/**
 	 * @var int ID
 	 */
