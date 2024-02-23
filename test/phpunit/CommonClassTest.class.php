@@ -81,7 +81,7 @@ abstract class CommonClassTest extends TestCase
 
 		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
 		//print " - db ".$db->db;
-		print "\n";
+		print PHP_EOL;
 	}
 
 	/**
@@ -95,11 +95,13 @@ abstract class CommonClassTest extends TestCase
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
 		if (!isModEnabled('agenda')) {
-			print __METHOD__." module agenda must be enabled.\n";
+			print get_called_class()." module agenda must be enabled.".PHP_EOL;
 			die(1);
 		}
 
-		print __METHOD__."\n";
+		if (isset($_ENV['PHPUNIT_DEBUG'])) {
+			print get_called_class().PHP_EOL;
+		}
 	}
 
 	/**
@@ -125,10 +127,11 @@ abstract class CommonClassTest extends TestCase
 		$last_lines = array_slice($lines, $first_line, $nbLinesToShow);
 
 		// Show log file
-		print "\n----- Test fails. Show last ".$nbLinesToShow." lines of dolibarr.log file -----\n";
+		print PHP_EOL."----- Test fails. Show last ".$nbLinesToShow." lines of dolibarr.log file -----".PHP_EOL;
 		foreach ($last_lines as $line) {
 			print $line . "<br>";
 		}
+		print PHP_EOL;
 
 		parent::onNotSuccessfulTest($t);
 	}
@@ -147,6 +150,9 @@ abstract class CommonClassTest extends TestCase
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
+		if (isset($_ENV['PHPUNIT_DEBUG'])) {
+			print get_called_class().PHP_EOL;
+		}
 		print __METHOD__."\n";
 		//print $db->getVersion()."\n";
 	}
@@ -158,7 +164,9 @@ abstract class CommonClassTest extends TestCase
 	 */
 	protected function tearDown(): void
 	{
-		print __METHOD__."\n";
+		if (isset($_ENV['PHPUNIT_DEBUG'])) {
+			print get_called_class().PHP_EOL;
+		}
 	}
 
 	/**
@@ -170,8 +178,9 @@ abstract class CommonClassTest extends TestCase
 	{
 		global $db;
 		$db->rollback();
-
-		print __METHOD__."\n";
+		if (isset($_ENV['PHPUNIT_DEBUG'])) {
+			print get_called_class().PHP_EOL;
+		}
 	}
 
 	/**
