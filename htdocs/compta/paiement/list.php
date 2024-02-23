@@ -197,7 +197,7 @@ if (GETPOST("orphelins", "alpha")) {
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 } else {
-	$sql = "SELECT p.rowid, p.ref, p.datep, p.fk_bank, p.amount, p.statut, p.num_paiement";
+	$sql = "SELECT p.rowid, p.ref, p.datep, p.fk_bank, pf.amount, p.statut, p.num_paiement";
 	$sql .= ", c.code as paiement_code";
 	$sql .= ", ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.fk_accountancy_journal as accountancy_journal";
 	$sql .= ", s.rowid as socid, s.nom as name, s.email";
