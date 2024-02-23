@@ -219,18 +219,38 @@ if (empty($reshook)) {
 
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
-		$objectutil = dol_clone($object, 1); // To avoid to denaturate loaded object when setting some properties for clone. We use native clone to keep this->db valid.
-
-		$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
-		$objectutil->socid = $socid;
-		$result = $objectutil->createFromClone($user, $id);
-		if ($result > 0) {
-			header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$result);
-			exit();
+		if (!($socid > 0)) {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('IdThirdParty')), null, 'errors');
 		} else {
-			$langs->load("errors");
-			setEventMessages($objectutil->error, $objectutil->errors, 'errors');
-			$action = '';
+			$objectutil = dol_clone($object, 1); // To avoid to denaturate loaded object when setting some properties for clone. We use native clone to keep this->db valid.
+
+			$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
+			$objectutil->socid = $socid;
+			$result = $objectutil->createFromClone($user, $id);
+			if ($result > 0) {
+				$warningMsgLineList = array();
+				// check all product lines are to sell otherwise add a warning message for each product line is not to sell
+				foreach ($objectutil->lines as $line) {
+					if (!is_object($line->product)) {
+						$line->fetch_product();
+					}
+					if (is_object($line->product) && $line->product->id > 0) {
+						if (empty($line->product->tosell)) {
+							$warningMsgLineList[$line->id] = $langs->trans('WarningLineProductNotToSell', $line->product->ref);
+						}
+					}
+				}
+				if (!empty($warningMsgLineList)) {
+					setEventMessages('', $warningMsgLineList, 'warnings');
+				}
+
+				header("Location: " . $_SERVER['PHP_SELF'] . '?facid=' . $result);
+				exit();
+			} else {
+				$langs->load("errors");
+				setEventMessages($objectutil->error, $objectutil->errors, 'errors');
+				$action = '';
+			}
 		}
 	} elseif ($action == 'reopen' && $usercanreopen) {
 		$result = $object->fetch($id);
