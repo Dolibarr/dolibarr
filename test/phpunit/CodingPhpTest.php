@@ -618,7 +618,7 @@ class CodingPhpTest extends CommonClassTest
 			//trigger_error("Deprecated module name, use '$new_name': $message", E_USER_DEPRECATED);
 		} else {
 			$this->assertTrue(
-				isset(self::VALID_MODULE_MAPPING[$module_name]),
+				array_key_exists($module_name, self::VALID_MODULE_MAPPING),
 				"Unknown module: $message"
 			);
 		}
