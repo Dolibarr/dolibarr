@@ -1495,7 +1495,7 @@ class Commande extends CommonOrder
 	 *  @param		int				$pa_ht				Buying price (without tax)
 	 *  @param		string			$label				Label
 	 *  @param		array			$array_options		extrafields array. Example array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
-	 * 	@param 		string			$fk_unit 			Code of the unit to use. Null to use the default one
+	 * 	@param 		int|null		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param		string		    $origin				Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be 'orderdet', 'propaldet'..., else 'order','propal,'....
 	 *  @param		int			    $origin_id			Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be Id of origin object (aka line id), else object id
 	 * 	@param		double			$pu_ht_devise		Unit price in currency
@@ -3104,7 +3104,7 @@ class Commande extends CommonOrder
 	 *  @param		string			$label				Label
 	 *  @param		int				$special_code		Special code (also used by externals modules!)
 	 *  @param		array			$array_options		extrafields array
-	 * 	@param 		string			$fk_unit 			Code of the unit to use. Null to use the default one
+	 * 	@param 		int|null		$fk_unit 			Code of the unit to use. Null to use the default one
 	 *  @param		double			$pu_ht_devise		Amount in currency
 	 * 	@param		int				$notrigger			disable line update trigger
 	 * 	@param		string			$ref_ext			external reference
