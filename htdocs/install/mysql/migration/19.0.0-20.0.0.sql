@@ -32,6 +32,11 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
+-- V18 forgotten
+
+UPDATE llx_paiement SET ref = rowid WHERE ref IS NULL OR ref = '';
+
+
 -- V19 forgotten
 
 ALTER TABLE llx_resource ADD COLUMN phone varchar(255) DEFAULT NULL AFTER max_users;
