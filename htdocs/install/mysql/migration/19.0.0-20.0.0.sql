@@ -253,3 +253,6 @@ ALTER TABLE llx_socpeople ADD COLUMN geopoint point DEFAULT NULL;
 ALTER TABLE llx_socpeople ADD COLUMN georesultcode varchar(16) NULL;
 
 ALTER TABLE llx_socpeople ADD COLUMN name_alias varchar(255) NULL;
+
+-- Supplier
+INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'supplier_invoice','invoice_supplier_send','',0,null,null,'(SendingReminderEmailOnUnpaidSupplierInvoice)',100, 'isModEnabled("supplier_invoice")',1,'[__[MAIN_INFO_SOCIETE_NOM]__] - __(SupplierInvoice)__','__(Hello)__,<br /><br />__(SupplierInvoiceUnpaidContent)__<br />__URL_SUPPLIER_INVOICE__<br /><br />__(Sincerely)__<br />__USER_SIGNATURE__',null, 0);
