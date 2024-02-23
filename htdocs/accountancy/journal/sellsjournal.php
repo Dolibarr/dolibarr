@@ -9,6 +9,7 @@
  * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,7 +110,7 @@ if (empty($date_endmonth)) {
 	$pastmonth = $dates['pastmonth'];
 }
 if (getDolGlobalString('ACCOUNTANCY_JOURNAL_USE_CURRENT_MONTH')) {
-	$pastmonth+=1;
+	$pastmonth += 1;
 }
 
 if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) { // We define date_start and date_end, only if we did not submit the form
@@ -304,7 +305,7 @@ if ($result) {
 
 		$tabttc[$obj->rowid][$compta_soc] += $total_ttc;
 		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht * $situation_ratio;
-		$tva_npr = (($obj->info_bits & 1 == 1) ? 1 : 0);
+		$tva_npr = ((($obj->info_bits & 1) == 1) ? 1 : 0);
 		if (!$tva_npr) { // We ignore line if VAT is a NPR
 			$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva * $situation_ratio;
 		}
@@ -992,7 +993,7 @@ if (empty($action) || $action == 'view') {
 		$description .= $langs->trans("DepositsAreIncluded");
 	}
 
-	$listofchoices = array('notyet'=>$langs->trans("NotYetInGeneralLedger"), 'already'=>$langs->trans("AlreadyInGeneralLedger"));
+	$listofchoices = array('notyet' => $langs->trans("NotYetInGeneralLedger"), 'already' => $langs->trans("AlreadyInGeneralLedger"));
 	$period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end ? $date_end : -1, 'date_end', 0, 0, 0, '', 1, 0);
 	$period .= ' -  '.$langs->trans("JournalizationInLedgerStatus").' '.$form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 

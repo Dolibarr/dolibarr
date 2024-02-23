@@ -4169,8 +4169,8 @@ if ($action == 'create') {
 	$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 
 	$author = new User($db);
-	if ($object->user_author) {
-		$author->fetch($object->user_author);
+	if ($object->fk_user_author) {
+		$author->fetch($object->fk_user_author);
 	}
 
 	$objectidnext = $object->getIdReplacingInvoice();

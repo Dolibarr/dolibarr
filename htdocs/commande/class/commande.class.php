@@ -243,11 +243,6 @@ class Commande extends CommonOrder
 	public $user_author_id;
 
 	/**
-	 * @var int User validator ID
-	 */
-	public $user_valid;
-
-	/**
 	 * @var OrderLine one line of an order
 	 */
 	public $line;
