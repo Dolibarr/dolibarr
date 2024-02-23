@@ -79,7 +79,9 @@ abstract class CommonClassTest extends TestCase
 		$this->savlangs = $langs;
 		$this->savdb = $db;
 
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
+			print get_called_class()." db->type=".$db->type." user->id=".$user->id;
+		}
 		//print " - db ".$db->db;
 		print PHP_EOL;
 	}
@@ -99,7 +101,8 @@ abstract class CommonClassTest extends TestCase
 			die(1);
 		}
 
-		if (isset($_ENV['PHPUNIT_DEBUG'])) {
+		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
+			print get_called_class()."::".__FUNCTION__.PHP_EOL;
 			print get_called_class().PHP_EOL;
 		}
 	}
@@ -126,12 +129,24 @@ abstract class CommonClassTest extends TestCase
 		// Get the last line of the log
 		$last_lines = array_slice($lines, $first_line, $nbLinesToShow);
 
+		$failedTestMethod = $this->getName(false);
+		$className = get_called_class();
+
+		// Get the test method's reflection
+		$reflectionMethod = new ReflectionMethod($className, $failedTestMethod);
+
+		// Get the test method's data set
+		$argsText = $this->getDataSetAsString(true);
+
 		// Show log file
-		print PHP_EOL."----- Test fails. Show last ".$nbLinesToShow." lines of dolibarr.log file -----".PHP_EOL;
+		print PHP_EOL;
+		print "----- $className::$failedTestMethod failed - $argsText.".PHP_EOL;
+		print "Show last ".$nbLinesToShow." lines of dolibarr.log file -----".PHP_EOL;
 		foreach ($last_lines as $line) {
 			print $line . "<br>";
 		}
 		print PHP_EOL;
+		print "----- end of dolibarr.log for $className::$failedTestMethod".PHP_EOL;
 
 		parent::onNotSuccessfulTest($t);
 	}
@@ -150,10 +165,9 @@ abstract class CommonClassTest extends TestCase
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		if (isset($_ENV['PHPUNIT_DEBUG'])) {
-			print get_called_class().PHP_EOL;
+		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
+			print get_called_class().'::'.$this->getName(false)."::".__FUNCTION__.PHP_EOL;
 		}
-		print __METHOD__."\n";
 		//print $db->getVersion()."\n";
 	}
 
@@ -164,8 +178,8 @@ abstract class CommonClassTest extends TestCase
 	 */
 	protected function tearDown(): void
 	{
-		if (isset($_ENV['PHPUNIT_DEBUG'])) {
-			print get_called_class().PHP_EOL;
+		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
+			print get_called_class().'::'.$this->getName(false)."::".__FUNCTION__.PHP_EOL;
 		}
 	}
 
@@ -178,8 +192,8 @@ abstract class CommonClassTest extends TestCase
 	{
 		global $db;
 		$db->rollback();
-		if (isset($_ENV['PHPUNIT_DEBUG'])) {
-			print get_called_class().PHP_EOL;
+		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
+			print get_called_class()."::".__FUNCTION__.PHP_EOL;
 		}
 	}
 
