@@ -2650,7 +2650,6 @@ class Project extends CommonObject
 
 					$actioncomm->code = 'AC_EMAIL';
 					$actioncomm->label = 'createWeeklyReportOK()';
-					$actioncomm->note_private = $sendContent;
 					$actioncomm->fk_project = $this->id;
 					$actioncomm->datep = dol_now();
 					$actioncomm->datef = $actioncomm->datep;
