@@ -379,24 +379,28 @@ class CodingPhpTest extends CommonClassTest
 		// Check string sql|set|WHERE|...'".$yyy->xxx   with xxx that is not 'escape', 'idate', .... It means we forget a db->escape when forging sql request.
 		$ok = true;
 		$matches = array();
+		$found = "";
 		preg_match_all('/(sql|SET|WHERE|INSERT|VALUES|LIKE).+\s*\'"\s*\.\s*\$(.......)/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			if (! in_array($val[2], array('this->d', 'this->e', 'db->esc', 'dbs->es', 'dbs->id', 'mydb->e', 'dbsessi', 'db->ida', 'escaped', 'exclude', 'include'))) {
+				$found = $val[0];
 				$ok = false;	// This will generate error
 				break;
 			}
 			//if ($reg[0] != 'db') $ok=false;
 		}
 		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-		$this->assertTrue($ok, 'Found non escaped string in building of a sql request (case 2) in '.$file['relativename'].': '.$val[0].' - Bad.');
+		$this->assertTrue($ok, 'Found non escaped string in building of a sql request (case 2) in '.$file['relativename'].': '.$found.' - Bad.');
 		//exit;
 
 		// Check string sql|set...'.$yyy->xxx   with xxx that is not 'escape', 'idate', .... It means we forget a db->escape when forging sql request.
 		$ok = true;
 		$matches = array();
+		$found = "";
 		preg_match_all('/(\$sql|SET\s|WHERE\s|INSERT\s|VALUES\s|VALUES\().+\s*\'\s*\.\s*\$(.........)/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			if (! in_array($val[2], array('this->db-', 'db->prefi', 'db->sanit', 'dbs->pref', 'dbs->sani', 'conf->ent', 'key : \'\')', 'key])."\')', 'excludefi', 'regexstri', ''))) {
+				$found = $val[0];
 				$ok = false;
 				var_dump($matches);
 				break;
@@ -404,7 +408,7 @@ class CodingPhpTest extends CommonClassTest
 			//if ($reg[0] != 'db') $ok=false;
 		}
 		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-		$this->assertTrue($ok, 'Found non escaped string in building of a sql request (case 3) in '.$file['relativename'].': '.$val[0].' - Bad.');
+		$this->assertTrue($ok, 'Found non escaped string in building of a sql request (case 3) in '.$file['relativename'].': '.$found.' - Bad.');
 		//exit;
 
 		// Checks with IN
