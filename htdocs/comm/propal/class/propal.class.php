@@ -585,7 +585,7 @@ class Propal extends CommonObject
 	 *		@param      int|string	$date_start       	Start date of the line
 	 *		@param      int|string	$date_end         	End date of the line
 	 *      @param		array		$array_options		extrafields array
-	 * 		@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
+	 * 		@param 		int|null	$fk_unit 			Code of the unit to use. Null to use the default one
 	 *      @param		string		$origin				Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be 'orderdet', 'propaldet'..., else 'order','propal,'....
 	 *      @param		int			$origin_id			Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be Id of origin object (aka line id), else object id
 	 * 		@param		double		$pu_ht_devise		Unit price in currency
@@ -835,7 +835,7 @@ class Propal extends CommonObject
 	 *	@param      int|string	$date_start       	Start date of the line
 	 *	@param      int|string	$date_end         	End date of the line
 	 *  @param		array		$array_options		extrafields array
-	 * 	@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
+	 * 	@param 		int|null	$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param		double		$pu_ht_devise		Unit price in currency
 	 * 	@param		int			$notrigger			disable line update trigger
 	 * @param       integer $rang   line rank
