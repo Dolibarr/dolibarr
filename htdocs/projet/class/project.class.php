@@ -2549,4 +2549,176 @@ class Project extends CommonObject
 
 		return $children;
 	}
+
+	/**
+	 * Method for calculating weekly hours worked and generating a report
+	 * @return int   0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function createWeeklyReport()
+	{
+		global $mysoc, $user;
+
+		$now = dol_now();
+		$nowDate = dol_getdate($now, true);
+
+		$firstDayOfWeekTS = dol_get_first_day_week($nowDate['mday'], $nowDate['mon'], $nowDate['year']);
+
+		$firstDayOfWeekDate = dol_mktime(0, 0, 0, $nowDate['mon'], $firstDayOfWeekTS['first_day'], $nowDate['year']);
+
+		$lastWeekStartTS = dol_time_plus_duree($firstDayOfWeekDate, -7, 'd');
+
+		$lastWeekEndTS = dol_time_plus_duree($lastWeekStartTS, 6, 'd');
+
+		$startDate = dol_print_date($lastWeekStartTS, '%Y-%m-%d 00:00:00');
+		$endDate = dol_print_date($lastWeekEndTS, '%Y-%m-%d 23:59:59');
+
+		$sql = "SELECT
+		u.rowid AS user_id,
+		CONCAT(u.firstname, ' ', u.lastname) AS name,
+		u.email,u.weeklyhours,
+		SUM(et.element_duration) AS total_seconds
+		FROM
+			llx_element_time AS et
+		JOIN
+			llx_user AS u ON et.fk_user = u.rowid
+		WHERE
+			et.element_date BETWEEN '".$this->db->escape($startDate)."' AND '".$this->db->escape($endDate)."'
+			AND et.elementtype = 'task'
+		GROUP BY
+			et.fk_user";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			dol_print_error($this->db);
+			return -1;
+		} else {
+			$reportContent = "<span>Weekly time report from $startDate to $endDate </span><br><br>";
+			$reportContent .= '<table border="1" style="border-collapse: collapse;">';
+			$reportContent .= '<tr><th>Nom d\'utilisateur</th><th>Temps saisi (heures)</th><th>Temps travaillé par semaine (heures)</th></tr>';
+
+			$weekendEnabled = 0;
+			$to = '';
+			$nbMailSend = 0;
+			$error = 0;
+			$errors_to = 0;
+			while ($obj = $this->db->fetch_object($resql)) {
+				$to = $obj->email;
+				$numHolidays = num_public_holiday($lastWeekStartTS, $lastWeekEndTS, $mysoc->country_code, 1);
+				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY') && getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY')) {
+					$numHolidays = $numHolidays - 2;
+					$weekendEnabled = 2;
+				}
+
+				$dailyHours = $obj->weeklyhours / (7 - $weekendEnabled);
+
+				// Adjust total on seconde
+				$adjustedSeconds = $obj->total_seconds + ($numHolidays * $dailyHours * 3600);
+
+				$totalHours = round($adjustedSeconds / 3600, 2);
+
+				$reportContent .= "<tr><td>{$obj->name}</td><td>{$totalHours}</td><td>".round($obj->weeklyhours, 2)."</td></tr>";
+
+				$reportContent .= '</table>';
+
+				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+
+				// PREPARE EMAIL
+				$errormesg = '';
+
+				$subject = 'Rapport hebdomadaire des temps travaillés';
+
+				$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+				if (empty($from)) {
+					$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
+					$error++;
+				}
+
+				$mail = new CMailFile($subject, $to, $from, $reportContent, array(), array(), array(), '', '', 0, -1, '', '', 0, 'text/html');
+
+				if ($mail->sendfile()) {
+					$nbMailSend++;
+
+					// Add a line into event table
+					require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+					// Insert record of emails sent
+					$actioncomm = new ActionComm($this->db);
+
+					$actioncomm->type_code = 'AC_OTH_AUTO'; // Event insert into agenda automatically
+					$actioncomm->socid = $this->thirdparty->id; // To link to a company
+					$actioncomm->contact_id = 0;
+
+					$actioncomm->code = 'AC_EMAIL';
+					$actioncomm->label = 'createWeeklyReportOK()';
+					$actioncomm->fk_project = $this->id;
+					$actioncomm->datep = dol_now();
+					$actioncomm->datef = $actioncomm->datep;
+					$actioncomm->percentage = -1; // Not applicable
+					$actioncomm->authorid = $user->id; // User saving action
+					$actioncomm->userownerid = $user->id; // Owner of action
+					// Fields when action is an email (content should be added into note)
+					$actioncomm->email_msgid = $mail->msgid;
+					$actioncomm->email_subject = $subject;
+					$actioncomm->email_from = $from;
+					$actioncomm->email_sender = '';
+					$actioncomm->email_to = $to;
+
+					$actioncomm->errors_to = $errors_to;
+
+					$actioncomm->elementtype = 'project_task';
+					$actioncomm->fk_element = $this->element;
+
+					$actioncomm->create($user);
+				} else {
+					$errormesg = $mail->error.' : '.$to;
+					$error++;
+
+					// Add a line into event table
+					require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+					// Insert record of emails sent
+					$actioncomm = new ActionComm($this->db);
+
+					$actioncomm->type_code = 'AC_OTH_AUTO'; // Event insert into agenda automatically
+					$actioncomm->socid = $this->thirdparty->id; // To link to a company
+					$actioncomm->contact_id = 0;
+
+					$actioncomm->code = 'AC_EMAIL';
+					$actioncomm->label = 'createWeeklyReportKO()';
+					$actioncomm->note_private = $errormesg;
+					$actioncomm->fk_project = $this->id;
+					$actioncomm->datep = dol_now();
+					$actioncomm->datef = $actioncomm->datep;
+					$actioncomm->authorid = $user->id; // User saving action
+					$actioncomm->userownerid = $user->id; // Owner of action
+					// Fields when action is an email (content should be added into note)
+					$actioncomm->email_msgid = $mail->msgid;
+					$actioncomm->email_from = $from;
+					$actioncomm->email_sender = '';
+					$actioncomm->email_to = $to;
+
+					$actioncomm->errors_to = $errors_to;
+
+					$actioncomm->elementtype = 'project_task';
+					$actioncomm->fk_element = $this->element;
+
+					$actioncomm->create($user);
+				}
+				$this->db->commit();
+			}
+		}
+		if ($errormesg) {
+			$errorsMsg[] = $errormesg;
+		}
+
+		if (!$error) {
+			$this->output .= 'Nb of emails sent : '.$nbMailSend;
+			dol_syslog(__METHOD__." end - ".$this->output, LOG_INFO);
+			return 0;
+		} else {
+			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? implode(', ', $errorsMsg) : $error;
+			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
+			return $error;
+		}
+	}
 }

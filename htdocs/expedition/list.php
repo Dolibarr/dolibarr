@@ -55,7 +55,7 @@ $search_ref_exp = GETPOST("search_ref_exp", 'alpha');
 $search_ref_liv = GETPOST('search_ref_liv', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_company = GETPOST("search_company", 'alpha');
-$search_shipping_method_id = GETPOST('search_shipping_method_id');
+$search_shipping_method_ids = GETPOST('search_shipping_method_ids', 'array:int');
 $search_tracking = GETPOST("search_tracking", 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
@@ -191,7 +191,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_type = '';
 	$search_country = '';
 	$search_tracking = '';
-	$search_shipping_method_id = '';
+	$search_shipping_method_ids = [];
 	$search_type_thirdparty = '';
 	$search_billed = '';
 	$search_datedelivery_start = '';
@@ -346,8 +346,8 @@ if ($search_state) {
 if ($search_country) {
 	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
-if ($search_shipping_method_id > 0) {
-	$sql .= " AND e.fk_shipping_method = ".((int) $search_shipping_method_id);
+if (!empty($search_shipping_method_ids)) {
+	$sql .= " AND e.fk_shipping_method IN (".$db->sanitize(implode(',', $search_shipping_method_ids)).')';
 }
 if ($search_tracking) {
 	$sql .= natural_search("e.tracking_number", $search_tracking);
@@ -536,8 +536,10 @@ if ($search_sale > 0) {
 if ($search_company) {
 	$param .= "&search_company=".urlencode($search_company);
 }
-if ($search_shipping_method_id) {
-	$param .= "&search_shipping_method_id=".urlencode($search_shipping_method_id);
+if ($search_shipping_method_ids) {
+	foreach ($search_shipping_method_ids as $value) {
+		$param .= "&amp;search_shipping_method_ids[]=".urlencode($value);
+	}
 }
 if ($search_tracking) {
 	$param .= "&search_tracking=".urlencode($search_tracking);
@@ -767,7 +769,7 @@ if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
 	// Delivery method
 	print '<td class="liste_titre center">';
 	$shipment->fetch_delivery_methods();
-	print $form->selectarray("search_shipping_method_id", $shipment->meths, $search_shipping_method_id, 1, 0, 0, "", 1, 0, 0, '', 'maxwidth150');
+	print $form->selectarray("search_shipping_method_ids[]", $shipment->meths, $search_shipping_method_ids, 1, 0, 0, 'multiple', 1, 0, 0, '', 'maxwidth150');
 	print "</td>\n";
 }
 // Tracking number

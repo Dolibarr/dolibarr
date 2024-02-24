@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -266,7 +267,7 @@ function dol_json_decode($json, $assoc = false)
 		} else {
 			$out .= $json[$i];
 		}
-		if ($json[$i] == '"' && $json[($i - 1)] != "\\") {
+		if ($i > 0 && $json[$i] == '"' && $json[($i - 1)] != "\\") {
 			$comment = !$comment;
 		}
 	}

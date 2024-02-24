@@ -37,6 +37,7 @@ if (empty($user->id)) {
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class for PHPUnit tests
@@ -45,7 +46,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CommonClassTest extends PHPUnit\Framework\TestCase
+abstract class CommonClassTest extends TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -53,14 +54,23 @@ class CommonClassTest extends PHPUnit\Framework\TestCase
 	protected $savdb;
 
 	/**
+	 * Number of Dolibarr log lines to show in case of error
+	 *
+	 * @var integer
+	 */
+	public $nbLinesToShow = 100;
+
+	/**
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @param 	string	$name		Name
+	 * @param string       $name       Name
+	 * @param array        $data       Test data
+	 * @param string       $dataName   Test data name.
 	 */
-	public function __construct($name = '')
+	public function __construct($name = null, array $data = array(), $dataName = '')
 	{
-		parent::__construct($name);
+		parent::__construct($name, $data, $dataName);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -71,7 +81,7 @@ class CommonClassTest extends PHPUnit\Framework\TestCase
 
 		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
 		//print " - db ".$db->db;
-		print "\n";
+		print PHP_EOL;
 	}
 
 	/**
@@ -85,11 +95,13 @@ class CommonClassTest extends PHPUnit\Framework\TestCase
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
 		if (!isModEnabled('agenda')) {
-			print __METHOD__." module agenda must be enabled.\n";
+			print get_called_class()." module agenda must be enabled.".PHP_EOL;
 			die(1);
 		}
 
-		print __METHOD__."\n";
+		if (isset($_ENV['PHPUNIT_DEBUG'])) {
+			print get_called_class().PHP_EOL;
+		}
 	}
 
 	/**
@@ -104,7 +116,7 @@ class CommonClassTest extends PHPUnit\Framework\TestCase
 
 		$lines = file($logfile);
 
-		$nbLinesToShow = 100;
+		$nbLinesToShow = $this->nbLinesToShow;
 		if ($t instanceof PHPUnit\Framework\Error\Notice) {
 			$nbLinesToShow = 3;
 		}
@@ -115,10 +127,11 @@ class CommonClassTest extends PHPUnit\Framework\TestCase
 		$last_lines = array_slice($lines, $first_line, $nbLinesToShow);
 
 		// Show log file
-		print "\n----- Test fails. Show last ".$nbLinesToShow." lines of dolibarr.log file -----\n";
+		print PHP_EOL."----- Test fails. Show last ".$nbLinesToShow." lines of dolibarr.log file -----".PHP_EOL;
 		foreach ($last_lines as $line) {
 			print $line . "<br>";
 		}
+		print PHP_EOL;
 
 		parent::onNotSuccessfulTest($t);
 	}
@@ -137,6 +150,9 @@ class CommonClassTest extends PHPUnit\Framework\TestCase
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
+		if (isset($_ENV['PHPUNIT_DEBUG'])) {
+			print get_called_class().PHP_EOL;
+		}
 		print __METHOD__."\n";
 		//print $db->getVersion()."\n";
 	}
@@ -148,7 +164,9 @@ class CommonClassTest extends PHPUnit\Framework\TestCase
 	 */
 	protected function tearDown(): void
 	{
-		print __METHOD__."\n";
+		if (isset($_ENV['PHPUNIT_DEBUG'])) {
+			print get_called_class().PHP_EOL;
+		}
 	}
 
 	/**
@@ -160,7 +178,150 @@ class CommonClassTest extends PHPUnit\Framework\TestCase
 	{
 		global $db;
 		$db->rollback();
-
-		print __METHOD__."\n";
+		if (isset($_ENV['PHPUNIT_DEBUG'])) {
+			print get_called_class().PHP_EOL;
+		}
 	}
+
+	/**
+	 * Map deprecated module names to new module names
+	 */
+	const DEPRECATED_MODULE_MAPPING = array(
+		'actioncomm' => 'agenda',
+		'adherent' => 'member',
+		'adherent_type' => 'member_type',
+		'banque' => 'bank',
+		'categorie' => 'category',
+		'commande' => 'order',
+		'contrat' => 'contract',
+		'entrepot' => 'stock',
+		'expedition' => 'delivery_note',
+		'facture' => 'invoice',
+		'ficheinter' => 'intervention',
+		'product_fournisseur_price' => 'productsupplierprice',
+		'product_price' => 'productprice',
+		'projet'  => 'project',
+		'propale' => 'propal',
+		'socpeople' => 'contact',
+	);
+
+	/**
+	 * Map module names to the 'class' name (the class is: mod<CLASSNAME>)
+	 * Value is null when the module is not internal to the default
+	 * Dolibarr setup.
+	 */
+	const VALID_MODULE_MAPPING = array(
+		'accounting' => 'Accounting',
+		'agenda' => 'Agenda',
+		'ai' => 'Ai',
+		'anothermodule' => null,  // Not used in code, used in translations.lang
+		'api' => 'Api',
+		'asset' => 'Asset',
+		'bank' => 'Banque',
+		'barcode' => 'Barcode',
+		'blockedlog' => 'BlockedLog',
+		'bom' => 'Bom',
+		'bookcal' => 'BookCal',
+		'bookmark' => 'Bookmark',
+		'cashdesk' => null,
+		'category' => 'Categorie',
+		'clicktodial' => 'ClickToDial',
+		'TBD_COLLAB' => 'Collab',  // TODO: fill in proper name
+		'comptabilite' => 'Comptabilite',
+		'contact' => null,  // TODO: fill in proper class
+		'contract' => 'Contrat',
+		'cron' => 'Cron',
+		'datapolicy' => 'DataPolicy',
+		'TBD_DAV' => 'Dav',  // TODO: fill in proper name
+		'debugbar' => 'DebugBar',
+		'delivery_note' => 'Expedition',
+		'deplacement' => 'Deplacement',
+		"TBD_DocGen" => 'DocumentGeneration',  // TODO: fill in proper name
+		'don' => 'Don',
+		'dynamicprices' => 'DynamicPrices',
+		'ecm' => 'ECM',
+		'ecotax' => null,  // TODO: External module ?
+		'emailcollector' => 'EmailCollector',
+		'eventorganization' => 'EventOrganization',
+		'expensereport' => 'ExpenseReport',
+		'export' => 'Export',
+		'TBD_EXTERNALRSS' => 'ExternalRss',  // TODO: fill in proper name
+		'externalsite' => 'ExternalSite',
+		'fckeditor' => 'Fckeditor',
+		'fournisseur' => 'Fournisseur',
+		'ftp' => 'FTP',
+		'TBD_GEOIPMAXMIND' => 'GeoIPMaxmind',  // TODO: fill in proper name
+		'google' => null,  // External ?
+		'gravatar' => 'Gravatar',
+		'holiday' => 'Holiday',
+		'hrm' => 'HRM',
+		'import' => 'Import',
+		'incoterm' => 'Incoterm',
+		'intervention' => 'Ficheinter',
+		'intracommreport' => 'Intracommreport',
+		'invoice' => 'Facture',
+		'knowledgemanagement' => 'KnowledgeManagement',
+		'label' => 'Label',
+		'ldap' => 'Ldap',
+		'loan' => 'Loan',
+		'mailing' => 'Mailing',
+		'mailman' => null,  // Same module as mailmanspip -> MailmanSpip ??
+		'mailmanspip' => 'MailmanSpip',
+		'margin' => 'Margin',
+		'member' => 'Adherent',
+		'member_type' => null,  // TODO: External module ?
+		'memcached' => null, // TODO: External module?
+		'modulebuilder' => 'ModuleBuilder',
+		'mrp' => 'Mrp',
+		'multicompany' => null, // Not provided by default, no module tests
+		'multicurrency' => 'MultiCurrency',
+		'mymodule' => null, // modMyModule - Name used in module builder (avoid false positives)
+		'notification' => 'Notification',
+		'numberwords' => null, // Not provided by default, no module tests
+		'TBD_OAUTH' => 'Oauth', // TODO: set proper name
+		'openstreetmap' => null,  // External module?
+		'opensurvey' => 'OpenSurvey',
+		'order' => 'Commande',
+		'partnership' => 'Partnership',
+		'paybox' => 'Paybox',
+		'paymentbybanktransfer' => 'PaymentByBankTransfer',
+		'paypal' => 'Paypal',
+		'paypalplus' => null,
+		'prelevement' => 'Prelevement',
+		'TBD_PRINTING' => 'Printing', // TODO: set proper name
+		'product' => 'Product',
+		'productbatch' => 'ProductBatch',
+		'productprice' => null,
+		'productsupplierprice' => null,
+		'project' => 'Projet',
+		'propal' => 'Propale',
+		'receiptprinter' => 'ReceiptPrinter',
+		'reception' => 'Reception',
+		'recruitment' => 'Recruitment',
+		'resource' => 'Resource',
+		'salaries' => 'Salaries',
+		'service' => 'Service',
+		'socialnetworks' => 'SocialNetworks',
+		'societe' => 'Societe',
+		'stock' => 'Stock',
+		'stocktransfer' => 'StockTransfer',
+		'stripe' => 'Stripe',
+		'supplier_invoice' => null,  // Special case, uses invoice
+		'supplier_order' => null,  // Special case, uses invoice
+		'supplier_proposal' => 'SupplierProposal',
+		'syslog' => 'Syslog',
+		'takepos' => 'TakePos',
+		'tax' => 'Tax',
+		'ticket' => 'Ticket',
+		'user' => 'User',
+		'variants' => 'Variants',
+		'webhook' => 'Webhook',
+		'webportal' => 'WebPortal',
+		'webservices' => 'WebServices',
+		'TBD_WS_CLIENT' => 'WebServicesClient',  // TODO: set proper name
+		'website' => 'Website',
+		'workflow' => 'Workflow',
+		'workstation' => 'Workstation',
+		'zapier' => 'Zapier',
+	);
 }
