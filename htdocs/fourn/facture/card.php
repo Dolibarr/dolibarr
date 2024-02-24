@@ -3858,7 +3858,7 @@ if ($action == 'create') {
 				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td><td>&nbsp;</td></tr>';
 
 				// Remainder to pay Multicurrency
-				if (isModEnabled('multicurreny') && $object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
+				if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
 					print '<tr><td colspan="'.$nbcols.'" class="right">';
 					print '<span class="opacitymedium">';
 					print $langs->trans('RemainderToPayMulticurrency');
@@ -3892,7 +3892,7 @@ if ($action == 'create') {
 				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($sign * $resteapayeraffiche).'</td><td>&nbsp;</td></tr>';
 
 				// Remainder to pay back Multicurrency
-				if (isModEnabled('multicurreny') && $object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
+				if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
 					print '<tr><td colspan="'.$nbcols.'" class="right">';
 					print '<span class="opacitymedium">';
 					print $langs->trans('RemainderToPayBackMulticurrency');
