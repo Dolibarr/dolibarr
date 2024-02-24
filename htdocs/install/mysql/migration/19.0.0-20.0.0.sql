@@ -45,6 +45,8 @@ ALTER TABLE llx_resource ADD COLUMN url varchar(255) DEFAULT NULL AFTER email;
 ALTER TABLE llx_resource ADD COLUMN fk_state integer DEFAULT NULL AFTER fk_country;
 ALTER TABLE llx_resource ADD INDEX idx_resource_fk_state (fk_state);
 
+UPDATE llx_c_type_contact SET element = 'stocktransfer' WHERE element = 'StockTransfer';
+
 
 -- Use unique keys for extrafields
 ALTER TABLE llx_actioncomm_extrafields DROP INDEX idx_actioncomm_extrafields;
