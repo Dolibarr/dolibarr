@@ -599,17 +599,68 @@ class CodingPhpTest extends CommonClassTest
 		//    - Any character not / or *
 		//    - Any / not preceded with / and not followed by / or *
 		//    - Any * not preceded with /
-		preg_match_all('{(?:^[ \t]*|(?:(?:[^*/]|(?<![^/])/(?![*/])|(?!/)\*)(\S)))\bvar_dump\(}m', $filecontent, $matches, PREG_SET_ORDER);
+		preg_match_all('{^(?:^|^(?:[ \t]*|(?:(?:[^*/]|(?<![^/])/(?![*/])|(?!/)\*)(\S))))\bvar_dump\(}m', $filecontent, $matches, PREG_SET_ORDER);
 		$failing_string = "";
-		//var_dump($matches);
 		foreach ($matches as $key => $val) {
-			if ($val[1] != '/' && $val[1] != '*') {
+			if (!isset($val[1]) || $val[1] != '/' && $val[1] != '*') {
 				$ok = false;
 				$failing_string = $val[0];
 				break;
 			}
 		}
 		$this->assertTrue($ok, "Found string var_dump that is not just after /* or // in '$filename': $failing_string");
+	}
+
+
+	/**
+	 * Provide test data for testing the method detecting var_dump presence.
+	 *
+	 * @return array<string,array{0:string,1:bool}> Test sets
+	 */
+	public function vardumpTesterProvider()
+	{
+		return [
+			 'var_dump at start of file' => ["var_dump(\$help)\n", true],
+			 'var_dump at start of line' => ["\nvar_dump(\$help)\n", true],
+			 'var_dump after comment next line' => ["/* Hello */\nvar_dump(\$help)\n", true],
+			 'var_dump with space' => [" var_dump(\$help)\n", true],
+			 'var_dump after comment' => [" // var_dump(\$help)\n", false],
+			 '2 var_dumps after comment' => [" // var_dump(\$help); var_dump(\$help)\n", false],
+			 'var_dump before and after comment' => [" var_dump(\$help); // var_dump(\$help)\n", true],
+		];
+	}
+
+	/**
+	 * Test that verifyNoActiveVardump generates a notification
+	 *
+	 * @param string $filecontent Fake file content
+	 * @param bool   $hasVardump  When true, expect var_dump detection
+	 *
+	 * @return void
+	 *
+	 * @dataProvider vardumpTesterProvider
+	 */
+	public function testVerifyNoActiveVardump(&$filecontent, $hasVardump)
+	{
+		$this->nbLinesToShow = 1;
+		// Create some dummy file content
+		$filename = $this->getName(false);
+
+		$notification = false;
+		ob_start(); // Do not disturb the output with tests that are meant to fail.
+		try {
+			$this->verifyNoActiveVardump($filecontent, $filename);
+		} catch (Throwable $e) {
+			$notification = (string) $e;
+		}
+		$output = ob_get_clean();
+
+		// Assert that a notification was generated
+		if ($hasVardump) {
+			$this->assertStringContainsString("Found string var_dump", $notification ?? '', "Expected notification not found.");
+		} else {
+			$this->assertFalse($notification, "Unexpection detection of var_dump");
+		}
 	}
 
 	/**
