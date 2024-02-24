@@ -25,7 +25,6 @@ The following changes may create regressions for some external modules, but were
 * Properties ->date_update and ->date_modification were merged into date_modification.
 
 
-
 ***** ChangeLog for 19.0.0 compared to 18.0 *****
 
 For users:
