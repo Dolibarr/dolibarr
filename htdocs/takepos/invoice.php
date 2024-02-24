@@ -81,6 +81,7 @@ if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->la
 	}
 }
 
+$takeposterminal = isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '';
 
 /**
  * Abort invoice creation with a given error message
@@ -135,19 +136,24 @@ $invoice = new Facture($db);
 if ($invoiceid > 0) {
 	$ret = $invoice->fetch($invoiceid);
 } else {
-	$ret = $invoice->fetch('', '(PROV-POS'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '') .'-'.$place.')');
+	$ret = $invoice->fetch('', '(PROV-POS'.$takeposterminal.'-'.$place.')');
 }
 if ($ret > 0) {
 	$placeid = $invoice->id;
 }
 
-$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
+$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$takeposterminal;
 
 $soc = new Societe($db);
 if ($invoice->socid > 0) {
 	$soc->fetch($invoice->socid);
 } else {
 	$soc->fetch(getDolGlobalString($constforcompanyid));
+}
+
+// Assign a default project, if relevant
+if (isModEnabled('project') && getDolGlobalInt("CASHDESK_ID_PROJECT".$takeposterminal)) {
+	$invoice->fk_project = getDolGlobalInt("CASHDESK_ID_PROJECT".$takeposterminal);
 }
 
 // Change the currency of invoice if it was modified
