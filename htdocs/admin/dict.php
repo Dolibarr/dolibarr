@@ -633,7 +633,7 @@ if (empty($sortfield)) {
 	$tmp2 = explode(' ', $tmp1[0]);
 	$sortfield = preg_replace('/^.*\./', '', $tmp2[0]);
 	$sortorder = (!empty($tmp2[1]) ? $tmp2[1] : '');
-	//var_dump($sortfield);var_dump($sortorder);
+	//var_dump($sortfield); //var_dump($sortorder);
 }
 
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
