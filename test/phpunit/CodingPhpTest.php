@@ -131,7 +131,10 @@ class CodingPhpTest extends CommonClassTest
 		//print 'Check php file '.$file['relativename']."\n";
 		$filecontent = file_get_contents($file['fullname']);
 
-		$this->verifyIsModuleEnabledOk($filecontent, "htdocs/{$file['relativename']}");
+		// File path for reports
+		$report_filepath = "htdocs/{$file['relativename']}";
+
+		$this->verifyIsModuleEnabledOk($filecontent, $report_filepath);
 
 		if (preg_match('/\.class\.php/', $file['relativename'])
 			|| preg_match('/boxes\/box_/', $file['relativename'])
@@ -241,23 +244,9 @@ class CodingPhpTest extends CommonClassTest
 			//exit;
 		}
 
-		// Check if a var_dump has been forgotten
+		// Check for unauthorised vardumps
 		if (!preg_match('/test\/phpunit/', $file['fullname'])) {
-			$ok = true;
-			$matches = array();
-			preg_match_all('/(^|\S)[ \t]*?var_dump\(/m', $filecontent, $matches, PREG_SET_ORDER);
-			$failing_string = "";
-			//var_dump($matches);
-			foreach ($matches as $key => $val) {
-				if ($val[1] != '/' && $val[1] != '*') {
-					$ok = false;
-					$failing_string = $val[0];
-					break;
-				}
-			}
-			//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-			$this->assertTrue($ok, 'Found string var_dump that is not just after /* or // in htdocs/'.$file['relativename'].": $failing_string");
-			//exit;
+			$this->verifyNoActiveVardump($filecontent, $report_filepath);
 		}
 
 		// Check get_class followed by __METHOD__
@@ -590,6 +579,38 @@ class CodingPhpTest extends CommonClassTest
 		$this->assertTrue($ok, 'Found a CURDATE\(\) in code. Do not use this SQL method in file '.$file['relativename'].'. You must use the PHP function dol_now() instead.');
 	}
 
+
+	/**
+	 * Verify that no active var_dump was left over in the code
+	 *
+	 * @param string $filecontent Contents to check for php code that uses a module name
+	 * @param string $filename    File name for the contents (used for reporting)
+	 *
+	 * @return void
+	 */
+	private function verifyNoActiveVardump(&$filecontent, $filename)
+	{
+		$ok = true;
+		$matches = array();
+		// Match!:
+		//  - Line-start, whitespace, var_dump
+		//  - Line-start, no-comment-leader, var_dump
+		//  no-commen-leader=
+		//    - Any character not / or *
+		//    - Any / not preceded with / and not followed by / or *
+		//    - Any * not preceded with /
+		preg_match_all('{(?:^[ \t]*|(?:(?:[^*/]|(?<![^/])/(?![*/])|(?!/)\*)(\S)))\bvar_dump\(}m', $filecontent, $matches, PREG_SET_ORDER);
+		$failing_string = "";
+		//var_dump($matches);
+		foreach ($matches as $key => $val) {
+			if ($val[1] != '/' && $val[1] != '*') {
+				$ok = false;
+				$failing_string = $val[0];
+				break;
+			}
+		}
+		$this->assertTrue($ok, "Found string var_dump that is not just after /* or // in '$filename': $failing_string");
+	}
 
 	/**
 	 * Verify that only known modules are used
