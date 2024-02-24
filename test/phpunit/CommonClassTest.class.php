@@ -96,14 +96,8 @@ abstract class CommonClassTest extends TestCase
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-		if (!isModEnabled('agenda')) {
-			print get_called_class()." module agenda must be enabled.".PHP_EOL;
-			die(1);
-		}
-
 		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
 			print get_called_class()."::".__FUNCTION__.PHP_EOL;
-			print get_called_class().PHP_EOL;
 		}
 	}
 
