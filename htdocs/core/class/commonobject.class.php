@@ -879,6 +879,7 @@ abstract class CommonObject implements ArrayAccess
 		}
 	}
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterface
 	/**
 	 * Return array of data to show into a tooltip. This method must be implemented in each object class.
 	 *
@@ -891,6 +892,7 @@ abstract class CommonObject implements ArrayAccess
 		return [];
 	}
 
+	// phpcs::enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceBeforeLastUsed
 	/**
 	 * getTooltipContent
 	 *
@@ -967,6 +969,7 @@ abstract class CommonObject implements ArrayAccess
 
 		return $label;
 	}
+	// phpcs::enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceBeforeLastUsed
 
 
 	/**
@@ -1049,6 +1052,7 @@ abstract class CommonObject implements ArrayAccess
 	}
 
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceBeforeLastUsed
 	/**
 	 * Return the link of last main doc file for direct public download.
 	 *
@@ -1139,6 +1143,7 @@ abstract class CommonObject implements ArrayAccess
 		// Here $ecmfile->share is defined
 		return $linktoreturn;
 	}
+	// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceBeforeLastUsed
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1395,6 +1400,8 @@ abstract class CommonObject implements ArrayAccess
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceBeforeLastUsed
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
 	/**
 	 *    Get array of all contacts for an object
 	 *
@@ -1498,6 +1505,9 @@ abstract class CommonObject implements ArrayAccess
 			return -1;
 		}
 	}
+	// phpcs:enable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceBeforeLastUsed
+	// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
 
 
 	/**
@@ -3063,7 +3073,7 @@ abstract class CommonObject implements ArrayAccess
 		}
 	}
 
-
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceBeforeLastUsed
 	/**
 	 *		Set last model used by doc generator
 	 *
@@ -3094,6 +3104,7 @@ abstract class CommonObject implements ArrayAccess
 			return 0;
 		}
 	}
+	// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceBeforeLastUsed
 
 
 	/**
@@ -5044,6 +5055,7 @@ abstract class CommonObject implements ArrayAccess
 
 	/* This is to show add lines */
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceBeforeLastUsed
 	/**
 	 *	Show add free and predefined products/services form
 	 *
@@ -5085,6 +5097,7 @@ abstract class CommonObject implements ArrayAccess
 			}
 		}
 	}
+	// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceBeforeLastUsed
 
 
 
@@ -5179,6 +5192,7 @@ abstract class CommonObject implements ArrayAccess
 		print "</tbody><!-- end printObjectLines() -->\n";
 	}
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceBeforeLastUsed
 	/**
 	 *	Return HTML content of a detail line
 	 *	TODO Move this into an output class file (htmlline.class.php)
@@ -5307,6 +5321,7 @@ abstract class CommonObject implements ArrayAccess
 			}
 		}
 	}
+	// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceBeforeLastUsed
 
 
 	/* This is to show array of line of details of source object */
@@ -5364,6 +5379,8 @@ abstract class CommonObject implements ArrayAccess
 		}
 	}
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceBeforeLastUsed
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
 	/**
 	 * 	Return HTML with a line of table array of source object lines
 	 *  TODO Move this and previous function into output html class file (htmlline.class.php).
@@ -5508,6 +5525,8 @@ abstract class CommonObject implements ArrayAccess
 			}
 		}
 	}
+	// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceBeforeLastUsed
+	// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -7120,6 +7139,7 @@ abstract class CommonObject implements ArrayAccess
 		}
 	}
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceBeforeLastUsed
 	/**
 	 *	Update an extra language value for the current object.
 	 *  Data to describe values to update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
@@ -7146,6 +7166,7 @@ abstract class CommonObject implements ArrayAccess
 
 		return 0;
 	}
+	// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceBeforeLastUsed
 
 
 	/**
@@ -7848,6 +7869,7 @@ abstract class CommonObject implements ArrayAccess
 		return $out;
 	}
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceBeforeLastUsed
 	/**
 	 * Return HTML string to show a field into a page
 	 * Code very similar with showOutputField of extra fields
@@ -8289,6 +8311,7 @@ abstract class CommonObject implements ArrayAccess
 
 		return $out;
 	}
+	// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceBeforeLastUsed
 
 	/**
 	 * clear validation message result for a field
@@ -8538,6 +8561,7 @@ abstract class CommonObject implements ArrayAccess
 		return true;
 	}
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceBeforeLastUsed
 	/**
 	 * Function to show lines of extrafields with output data.
 	 * This function is responsible to output the <tr> and <td> according to correct number of columns received into $params['colspan'] or <div> according to $display_type
@@ -8856,6 +8880,7 @@ abstract class CommonObject implements ArrayAccess
 
 		return $out;
 	}
+	// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
 
 	/**
 	 * @param 	string 	$type	Type for prefix
@@ -9965,12 +9990,15 @@ abstract class CommonObject implements ArrayAccess
 		}
 	}
 
+
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
 	/**
 	 * Load object in memory from the database
 	 *
 	 * @param	string	$morewhere		More SQL filters (' AND ...')
 	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
 	 * @return 	int         			Return integer <0 if KO, 0 if not found, >0 if OK
+	 *
 	 */
 	public function fetchLinesCommon($morewhere = '', $noextrafields = 0)
 	{
@@ -10020,6 +10048,7 @@ abstract class CommonObject implements ArrayAccess
 			return -1;
 		}
 	}
+	// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
 
 	/**
 	 * Update object into database
@@ -10340,6 +10369,7 @@ abstract class CommonObject implements ArrayAccess
 		return $deleted;
 	}
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
 	/**
 	 *  Delete a line of object in database
 	 *
@@ -10397,7 +10427,7 @@ abstract class CommonObject implements ArrayAccess
 			return -1;
 		}
 	}
-
+	// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
 
 	/**
 	 *	Set to a status
