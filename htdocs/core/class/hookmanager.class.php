@@ -239,7 +239,7 @@ class HookManager
 					$modulealreadyexecuted[$module] = $module;
 
 					// Clean class (an error may have been set from a previous call of another method for same module/hook)
-					$actionclassinstance->error = 0;
+					$actionclassinstance->error = '';
 					$actionclassinstance->errors = array();
 
 					if (getDolGlobalInt('MAIN_HOOK_DEBUG')) {
