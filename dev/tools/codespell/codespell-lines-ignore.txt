@@ -265,6 +265,9 @@
 	public function getSumOfAmount($fuser = '', $dates = '', $datee = '')
 	return $TWeek;
 	unset($_SESSION["adresse"]);
+          - creat,unitl,alltime,datas,referers
+          - informations,medias,uptodate,reenable,crypted,developpers
+          - ned
  *	@param	array 		$TWeek			array of week numbers
  * @param	array		$TWeek					Array of week numbers
  * Copyright (C) 2019		Tim Otte    			<otte@meuser.it>
