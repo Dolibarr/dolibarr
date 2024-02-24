@@ -39,6 +39,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 use PHPUnit\Framework\TestCase;
 
+
 /**
  * Class for PHPUnit tests
  *
@@ -80,10 +81,9 @@ abstract class CommonClassTest extends TestCase
 		$this->savdb = $db;
 
 		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
-			print get_called_class()." db->type=".$db->type." user->id=".$user->id;
+			print get_called_class()." db->type=".$db->type." user->id=".$user->id.PHP_EOL;
 		}
 		//print " - db ".$db->db;
-		print PHP_EOL;
 	}
 
 	/**
@@ -137,9 +137,8 @@ abstract class CommonClassTest extends TestCase
 		print "----- $className::$failedTestMethod failed - $argsText.".PHP_EOL;
 		print "Show last ".$nbLinesToShow." lines of dolibarr.log file -----".PHP_EOL;
 		foreach ($last_lines as $line) {
-			print $line . "<br>";
+			print $line.PHP_EOL;
 		}
-		print PHP_EOL;
 		print "----- end of dolibarr.log for $className::$failedTestMethod".PHP_EOL;
 
 		parent::onNotSuccessfulTest($t);
@@ -234,17 +233,17 @@ abstract class CommonClassTest extends TestCase
 		'cashdesk' => null,
 		'category' => 'Categorie',
 		'clicktodial' => 'ClickToDial',
-		'TBD_COLLAB' => 'Collab',  // TODO: fill in proper name
+		'collab' => 'Collab',  // TODO: fill in proper name
 		'comptabilite' => 'Comptabilite',
 		'contact' => null,  // TODO: fill in proper class
 		'contract' => 'Contrat',
 		'cron' => 'Cron',
 		'datapolicy' => 'DataPolicy',
-		'TBD_DAV' => 'Dav',  // TODO: fill in proper name
+		'dav' => 'Dav',
 		'debugbar' => 'DebugBar',
 		'delivery_note' => 'Expedition',
 		'deplacement' => 'Deplacement',
-		"TBD_DocGen" => 'DocumentGeneration',  // TODO: fill in proper name
+		"documentgeneration" => 'DocumentGeneration',  // TODO: fill in proper name
 		'don' => 'Don',
 		'dynamicprices' => 'DynamicPrices',
 		'ecm' => 'ECM',
@@ -253,12 +252,12 @@ abstract class CommonClassTest extends TestCase
 		'eventorganization' => 'EventOrganization',
 		'expensereport' => 'ExpenseReport',
 		'export' => 'Export',
-		'TBD_EXTERNALRSS' => 'ExternalRss',  // TODO: fill in proper name
+		'externalrss' => 'ExternalRss',  // TODO: fill in proper name
 		'externalsite' => 'ExternalSite',
 		'fckeditor' => 'Fckeditor',
 		'fournisseur' => 'Fournisseur',
 		'ftp' => 'FTP',
-		'TBD_GEOIPMAXMIND' => 'GeoIPMaxmind',  // TODO: fill in proper name
+		'geoipmaxmind' => 'GeoIPMaxmind',  // TODO: fill in proper name
 		'google' => null,  // External ?
 		'gravatar' => 'Gravatar',
 		'holiday' => 'Holiday',
@@ -277,7 +276,6 @@ abstract class CommonClassTest extends TestCase
 		'mailmanspip' => 'MailmanSpip',
 		'margin' => 'Margin',
 		'member' => 'Adherent',
-		'member_type' => null,  // TODO: External module ?
 		'memcached' => null, // TODO: External module?
 		'modulebuilder' => 'ModuleBuilder',
 		'mrp' => 'Mrp',
@@ -286,7 +284,7 @@ abstract class CommonClassTest extends TestCase
 		'mymodule' => null, // modMyModule - Name used in module builder (avoid false positives)
 		'notification' => 'Notification',
 		'numberwords' => null, // Not provided by default, no module tests
-		'TBD_OAUTH' => 'Oauth', // TODO: set proper name
+		'oauth' => 'Oauth',
 		'openstreetmap' => null,  // External module?
 		'opensurvey' => 'OpenSurvey',
 		'order' => 'Commande',
@@ -296,7 +294,7 @@ abstract class CommonClassTest extends TestCase
 		'paypal' => 'Paypal',
 		'paypalplus' => null,
 		'prelevement' => 'Prelevement',
-		'TBD_PRINTING' => 'Printing', // TODO: set proper name
+		'printing' => 'Printing', // TODO: set proper name
 		'product' => 'Product',
 		'productbatch' => 'ProductBatch',
 		'productprice' => null,
@@ -326,7 +324,7 @@ abstract class CommonClassTest extends TestCase
 		'webhook' => 'Webhook',
 		'webportal' => 'WebPortal',
 		'webservices' => 'WebServices',
-		'TBD_WS_CLIENT' => 'WebServicesClient',  // TODO: set proper name
+		'webservicesclient' => 'WebServicesClient',  // TODO: set proper name
 		'website' => 'Website',
 		'workflow' => 'Workflow',
 		'workstation' => 'Workstation',
