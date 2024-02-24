@@ -243,6 +243,9 @@ class ExtraFields
 			} elseif ($type == 'point') {
 				$typedb = 'point';
 				$lengthdb = '';
+			} elseif ($type == 'multipts') {
+				$typedb = 'multipoint';
+				$lengthdb = '';
 			} elseif ($type == 'linestrg') {
 				$typedb = 'linestring';
 				$lengthdb = '';
@@ -607,6 +610,9 @@ class ExtraFields
 				$lengthdb = '11';
 			} elseif ($type == 'point') {
 				$typedb = 'point';
+				$lengthdb = '';
+			} elseif ($type == 'multipts') {
+				$typedb = 'multipoint';
 				$lengthdb = '';
 			} elseif ($type == 'linestrg') {
 				$typedb = 'linestring';
@@ -1623,17 +1629,20 @@ class ExtraFields
 
 			//$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '');
 			$out = $form->selectForForms($tmparray[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '', $element.':options_'.$key);
-		} elseif (in_array($type, ['point', 'linestrg', 'polygon'])) {
+		} elseif (in_array($type, ['point', 'multipts', 'linestrg', 'polygon'])) {
 			require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
 			$geojson = '{}';
+			$centroidjson = getDolGlobalString('MAIN_INFO_SOCIETE_GEO_COORDINATES', '{}');
 			if (!empty($value)) {
 				$geom = geoPHP::load($value, 'wkt');
 				$geojson = $geom->out('json');
+				$centroid = $geom->getCentroid();
+				$centroidjson = $centroid->out('json');
 			}
 			if (!preg_match('/search_/', $keyprefix)) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/geomapeditor.class.php';
 				$geomapeditor = new GeoMapEditor();
-				$out .= $geomapeditor->getHtml($keyprefix.$key.$keysuffix, $geojson, $type);
+				$out .= $geomapeditor->getHtml($keyprefix.$key.$keysuffix, $geojson, $centroidjson, $type);
 			} else {
 				// If keyprefix is search_ or search_options_, we must just use a simple text field
 				$out = '';
@@ -2192,7 +2201,7 @@ class ExtraFields
 					continue;
 				}
 
-				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'checkbox', 'chkbxlst', 'point', 'linestrg', 'polygon')))) {
+				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'checkbox', 'chkbxlst', 'point', 'multipts', 'linestrg', 'polygon')))) {
 					//when unticking boolean field, it's not set in POST
 					continue;
 				}
@@ -2278,7 +2287,7 @@ class ExtraFields
 					$value_key = price2num(GETPOST("options_".$key, 'alpha')).':'.GETPOST("options_".$key."currency_id", 'alpha');
 				} elseif (in_array($key_type, array('html'))) {
 					$value_key = GETPOST("options_".$key, 'restricthtml');
-				} elseif (in_array($key_type, ['point', 'linestrg', 'polygon'])) {
+				} elseif (in_array($key_type, ['point', 'multipts', 'linestrg', 'polygon'])) {
 					// construct point
 					require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
 					$geojson = GETPOST("options_".$key, 'restricthtml');
