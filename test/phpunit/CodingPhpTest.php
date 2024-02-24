@@ -131,6 +131,9 @@ class CodingPhpTest extends CommonClassTest
 		//print 'Check php file '.$file['relativename']."\n";
 		$filecontent = file_get_contents($file['fullname']);
 
+		// We are not interested in the comments
+		$filecontent = $this->removePhpComments(file_get_contents($file['fullname']));
+
 		// File path for reports
 		$report_filepath = "htdocs/{$file['relativename']}";
 
@@ -704,5 +707,73 @@ class CodingPhpTest extends CommonClassTest
 				"Unknown module: $message"
 			);
 		}
+	}
+
+
+	/**
+	 * Remove php comments from source string
+	 *
+	 * @param string $string The string from which the PHP comments are removed
+	 *
+	 * @return string The string without the comments
+	 */
+	private function removePhpComments($string)
+	{
+		return preg_replace_callback(
+			'{(//.*?$)|(/\*.*?\*/)}ms',
+			static function ($match) {
+				if (isset($match[2])) {
+					// Count the number of newline characters in the comment
+					$num_newlines = substr_count($match[0], "\n");
+					// Generate whitespace equivalent to the number of newlines
+					if ($num_newlines == 0) {
+						// /* Comment on single line -> space
+						return " ";
+					} else {
+						// /* Comment on multiple lines -> new lines
+						return str_repeat("\n", $num_newlines);
+					}
+				} else {
+					// Double slash comment, just remove
+					return "";
+				}
+			},
+			$string
+		);
+	}
+
+	/**
+	 * Provide test data for testing the comments remover
+	 *
+	 * @return array<string,array{0:string,1:string}> Test sets
+	 */
+	public function commentRemovalTestProvider()
+	{
+		return [
+			 'complete line 1' => ["/*Comment complete line*/", " "],
+			 'complete line 2' => ["// Comment complete line", ""],
+			 'partial line 1' => ["a/*Comment complete line*/b", "a b"],
+			 'partial line 2' => ["a// Comment complete line", "a"],
+			 'multi line full 1' => ["/*Comment\ncomplete line*/", "\n"],
+			 'multi line full 2' => ["/*Comment\ncomplete line*/\n", "\n\n"],
+			 'multi line partials 1' => ["a/*Comment\ncomplete line*/b", "a\nb"],
+		];
+	}
+
+	/**
+	 * Test that comments are properly removed
+	 *
+	 * @param string $source	Fake file content
+	 * @param bool   $expected	When true, expect var_dump detection
+	 *
+	 * @return void
+	 *
+	 * @dataProvider commentRemovalTestProvider
+	 */
+	public function testRemovePhpComments(&$source, &$expected)
+	{
+		$this->nbLinesToShow = 0;
+
+		$this->assertEquals($expected, $this->removePhpComments($source), "Comments not removed as expected");
 	}
 }
