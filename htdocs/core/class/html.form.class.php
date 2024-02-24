@@ -1341,7 +1341,7 @@ class Form
 			}
 
 			// mode 1
-			$urloption = 'htmlname=' . urlencode(str_replace('.', '_', $htmlname)) . '&outjson=1&filter=' . urlencode($filter) . (empty($excludeids) ? '' : '&excludeids=' . join(',', $excludeids)) . ($showtype ? '&showtype=' . urlencode($showtype) : '') . ($showcode ? '&showcode=' . urlencode($showcode) : '');
+			$urloption = 'htmlname=' . urlencode(str_replace('.', '_', $htmlname)) . '&outjson=1&filter=' . urlencode($filter) . (empty($excludeids) ? '' : '&excludeids=' . implode(',', $excludeids)) . ($showtype ? '&showtype=' . urlencode($showtype) : '') . ($showcode ? '&showcode=' . urlencode($showcode) : '');
 
 			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
 			if (empty($hidelabel)) {
@@ -1466,7 +1466,7 @@ class Form
 			$sql .= " AND s.status <> 0";
 		}
 		if (!empty($excludeids)) {
-			$sql .= " AND s.rowid NOT IN (" . $this->db->sanitize(join(',', $excludeids)) . ")";
+			$sql .= " AND s.rowid NOT IN (" . $this->db->sanitize(implode(',', $excludeids)) . ")";
 		}
 		// Add where from hooks
 		$parameters = array();
@@ -2431,7 +2431,7 @@ class Form
 
 			$events = array();
 			$out .= img_picto('', 'resource', 'class="pictofixedwidth"');
-			$out .= $formresources->select_resource_list(0, $htmlname, '', 1, 1, 0, $events, '', 2, null);
+			$out .= $formresources->select_resource_list(0, $htmlname, [], 1, 1, 0, $events, '', 2, 0);
 			//$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
 			$out .= ' <input type="submit" disabled class="button valignmiddle smallpaddingimp reposition" id="' . $action . 'assignedtoresource" name="' . $action . 'assignedtoresource" value="' . dol_escape_htmltag($langs->trans("Add")) . '">';
 			$out .= '<br>';
@@ -6046,9 +6046,9 @@ class Form
 			print '</form>';
 		} else {
 			if (!empty($rate)) {
-				print price($rate, 1, $langs, 1, 0);
+				print price($rate, 1, $langs, 0, 0);
 				if ($currency && $rate != 1) {
-					print ' &nbsp; (' . price($rate, 1, $langs, 1, 0) . ' ' . $currency . ' = 1 ' . $conf->currency . ')';
+					print ' &nbsp; (' . price($rate, 1, $langs, 0, 0) . ' ' . $currency . ' = 1 ' . $conf->currency . ')';
 				}
 			} else {
 				print 1;
@@ -8404,7 +8404,7 @@ class Form
 	 *	Return a HTML select string, built from an array of key+value.
 	 *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
 	 *
-	 * @param string 		$htmlname 			Name of html select area. Must start with "multi" if this is a multiselect
+	 * @param string 		$htmlname 			Name of html select area. Try to start name with "multi" or "search_multi" if this is a multiselect
 	 * @param array 		$array 				Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
 	 * @param string|string[] $id				Preselected key or preselected keys for multiselect. Use 'ifone' to autoselect record if there is only one record.
 	 * @param int|string 	$show_empty 		0 no empty value allowed, 1 or string to add an empty value into list (If 1: key is -1 and value is '' or '&nbsp;', If placeholder string: key is -1 and value is the string), <0 to add an empty value with key that is this value.
@@ -9938,7 +9938,7 @@ class Form
 		} else {
 			// Generic case to show photos
 			// TODO Implement this method in previous objects so we can always use this generic method.
-			if (method_exists($object, 'getDataToShowPhoto')) {
+			if ($modulepart != "unknown" && method_exists($object, 'getDataToShowPhoto')) {
 				$tmpdata = $object->getDataToShowPhoto($modulepart, $imagesize);
 
 				$dir = $tmpdata['dir'];
@@ -10312,7 +10312,7 @@ class Form
 											method: "POST",
 											dataType: "json",
 											data: { fk_c_exp_tax_cat: $(this).val(), token: \'' . currentToken() . '\' },
-											url: "' . (DOL_URL_ROOT . '/expensereport/ajax/ajaxik.php?' . join('&', $params)) . '",
+											url: "' . (DOL_URL_ROOT . '/expensereport/ajax/ajaxik.php?' . implode('&', $params)) . '",
 										}).done(function( data, textStatus, jqXHR ) {
 											console.log(data);
 											if (typeof data.up != "undefined") {
@@ -10699,40 +10699,9 @@ class Form
 			// Split the criteria on each AND
 			//var_dump($search_component_params_hidden);
 
-			$nbofchars = dol_strlen($search_component_params_hidden);
-			$arrayofandtags = array();
-			$i = 0;
-			$s = '';
-			$countparenthesis = 0;
-			while ($i < $nbofchars) {
-				$char = dol_substr($search_component_params_hidden, $i, 1);
+			$arrayofandtags = dolForgeExplodeAnd($search_component_params_hidden);
 
-				if ($char == '(') {
-					$countparenthesis++;
-				} elseif ($char == ')') {
-					$countparenthesis--;
-				}
-
-				if ($countparenthesis == 0) {
-					$char2 = dol_substr($search_component_params_hidden, $i+1, 1);
-					$char3 = dol_substr($search_component_params_hidden, $i+2, 1);
-					if ($char == 'A' && $char2 == 'N' && $char3 == 'D') {
-						// We found a AND
-						$arrayofandtags[] = trim($s);
-						$s = '';
-						$i+=2;
-					} else {
-						$s .= $char;
-					}
-				} else {
-					$s .= $char;
-				}
-				$i++;
-			}
-			if ($s) {
-				$arrayofandtags[] = trim($s);
-			}
-
+			// $arrayofandtags is now array( '...' , '...', ...)
 			// Show each AND part
 			foreach ($arrayofandtags as $tmpkey => $tmpval) {
 				$errormessage = '';
@@ -10762,7 +10731,7 @@ class Form
 			$ret .= '<input type="hidden" name="show_search_component_params_hidden" value="1">';
 		}
 		$ret .= "<!-- We store the full Universal Search String into this field. For example: (t.ref:like:'SO-%') AND ((t.ref:like:'CO-%') OR (t.ref:like:'AA%')) -->";
-		$ret .= '<input type="hidden" name="search_component_params_hidden" value="' . dol_escape_htmltag($search_component_params_hidden) . '">';
+		$ret .= '<input type="hidden" id="search_component_params_hidden" name="search_component_params_hidden" value="' . dol_escape_htmltag($search_component_params_hidden) . '">';
 		// $ret .= "<!-- sql= ".forgeSQLFromUniversalSearchCriteria($search_component_params_hidden, $errormessage)." -->";
 
 		// For compatibility with forms that show themself the search criteria in addition of this component, we output these fields
@@ -10792,21 +10761,38 @@ class Form
 		$ret .= '</div>';
 
 		$ret .= "<!-- Field to enter a generic filter string: t.ref:like:'SO-%', t.date_creation:<:'20160101', t.date_creation:<:'2016-01-01 12:30:00', t.nature:is:NULL, t.field2:isnot:NULL -->\n";
-		$ret .= '<input type="text" placeholder="' . $langs->trans("Search") . '" name="search_component_params_input" class="noborderbottom search_component_input" value="">';
+		$ret .= '<input type="text" placeholder="' . $langs->trans("Filters") . '" id="search_component_params_input" name="search_component_params_input" class="noborderbottom search_component_input" value="">';
 
 		$ret .= '</div>';
 		$ret .= '</div>';
 
 		$ret .= '<script>
-		jQuery(".tagsearchdelete").click(function() {
-			var filterid = $(this).parents().data("ufilterid");
-			console.log("We click to delete a criteria nb "+filterid);
-			// TODO Update the search_component_params_hidden with all data-ufilter except the one delete and post page
+		jQuery(".tagsearchdelete").click(function(e) {
+			var filterid = $(this).parents().attr("data-ufilterid");
+			console.log("We click to delete the criteria nb "+filterid);
 
+			// Regenerate the search_component_params_hidden with all data-ufilter except the one to delete, and post the page
+			var newparamstring = \'\';
+			$(\'.tagsearch\').each(function(index, element) {
+				tmpfilterid = $(this).attr("data-ufilterid");
+				if (tmpfilterid != filterid) {
+					// We keep this criteria
+					if (newparamstring == \'\') {
+						newparamstring = $(this).attr("data-ufilter");
+					} else {
+						newparamstring = newparamstring + \' AND \' + $(this).attr("data-ufilter");
+					}
+				}
+			});
+			console.log("newparamstring = "+newparamstring);
+
+			jQuery("#search_component_params_hidden").val(newparamstring);
+
+			// We repost the form
+			$(this).closest(\'form\').submit();
 		});
 		</script>
 		';
-
 
 		return $ret;
 	}

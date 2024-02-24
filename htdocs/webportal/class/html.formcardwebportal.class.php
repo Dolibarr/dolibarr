@@ -562,7 +562,7 @@ class FormCardWebPortal
 		$html .= '<div class="grid">';
 		$html .= '<div class="card-left">';
 		foreach ($object->fields as $key => $val) {
-			if (!key_exists($key, $fieldShowList)) {
+			if (!array_key_exists($key, $fieldShowList)) {
 				continue; // not to show
 			}
 

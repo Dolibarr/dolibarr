@@ -47,7 +47,8 @@ class Boms extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
+
 		$this->db = $db;
 		$this->bom = new BOM($this->db);
 	}
@@ -179,7 +180,7 @@ class Boms extends DolibarrApi
 	 * Create bom object
 	 *
 	 * @param array $request_data   Request datas
-	 * @return int  ID of bom
+	 * @return int  				ID of bom
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	500		Error retrieving list of boms
@@ -213,10 +214,9 @@ class Boms extends DolibarrApi
 	/**
 	 * Update bom
 	 *
-	 * @param int   $id             Id of bom to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   		$id             Id of bom to update
+	 * @param 	array 		$request_data   Datas
+	 * @return 	Object						Object after update
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		BOM not found

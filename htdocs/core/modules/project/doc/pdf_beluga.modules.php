@@ -770,7 +770,7 @@ class pdf_beluga extends ModelePDFProjects
 	 *  @param  Project		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -826,6 +826,8 @@ class pdf_beluga extends ModelePDFProjects
 		}
 
 		$pdf->SetTextColor(0, 0, 60);
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

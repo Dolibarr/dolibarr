@@ -1919,20 +1919,17 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount, 0, $outputlangs), 0, 'R', 0);
 			}
 
-			/*
-			 if ($object->close_code == Facture::CLOSECODE_DISCOUNTVAT)
-			 {
-			 $index++;
-			 $pdf->SetFillColor(255, 255, 255);
+			if ($object->close_code == Facture::CLOSECODE_DISCOUNTVAT) {
+				$index++;
+				$pdf->SetFillColor(255, 255, 255);
 
-			 $pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-			 $pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOfferedShort").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("EscompteOfferedShort") : ''), $useborder, 'L', 1);
-			 $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-			 $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 0, $outputlangs), $useborder, 'R', 1);
+				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOfferedShort").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("EscompteOfferedShort") : ''), $useborder, 'L', 1);
+				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+				$pdf->MultiCell($largcol2, $tab2_hl, price(price2num($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT'), 0, $outputlangs), $useborder, 'R', 1);
 
-			 $resteapayer = 0;
-			 }
-			 */
+				$resteapayer = 0;
+			}
 
 			$index++;
 			$pdf->SetTextColor(0, 0, 60);
@@ -2049,7 +2046,7 @@ class pdf_sponge extends ModelePDFFactures
 	 *  @param  int	    	$showaddress    0=no, 1=yes (usually set to 1 for first page, and 0 for next pages)
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
-	 *  @return	array							top shift of linked object lines
+	 *  @return	array						top shift of linked object lines
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
@@ -2427,6 +2424,7 @@ class pdf_sponge extends ModelePDFFactures
 		$pdf->SetTextColor(0, 0, 0);
 
 		$pagehead = array('top_shift' => $top_shift, 'shipp_shift' => $shipp_shift);
+
 		return $pagehead;
 	}
 

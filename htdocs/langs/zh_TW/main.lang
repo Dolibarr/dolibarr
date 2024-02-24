@@ -9,7 +9,7 @@ DIRECTION=ltr
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil
+# freeserif is for Tamil or Ethiopian
 FONTFORPDF=msungstdlight
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
@@ -420,6 +420,8 @@ TotalTTCShort=總計（含稅）
 TotalHT=總計（不含稅）
 TotalHTforthispage=此頁總計（不含稅）
 Totalforthispage=此頁總計
+GrandTotal=Grand total
+TotalforAllPages=Total for all pages
 TotalTTC=金額總計(含稅)
 TotalTTCToYourCredit=信用總額度（含稅)
 TotalVAT=總稅金
@@ -647,6 +649,7 @@ ReportName=報表名稱
 ReportPeriod=報表期間
 ReportDescription=詳細描述
 Report=報表
+Reports=Reports
 Keyword=關鍵字
 Origin=原始
 Legend=舊有
@@ -963,6 +966,7 @@ AutomaticallyCalculated=自動計算
 TitleSetToDraft=回到草稿
 ConfirmSetToDraft=您確定要返回“草稿”狀態嗎？
 ImportId=匯入ID
+Event=事件
 Events=事件
 EMailTemplates=電子郵件範本
 FileNotShared=檔案未共享給外部
@@ -1180,7 +1184,6 @@ ConfirmAffectUserQuestion=您確定要指派使用者至%s已選紀錄？
 ConfirmSetSupervisorQuestion=您確定要將管理者設定至%s已選紀錄？
 ConfirmUpdatePriceQuestion=您確定要更新%s已選紀錄的價格嗎？
 CategTypeNotFound=找不到記錄類型的標籤類型
-Rate=稅率
 SupervisorNotFound=找不到主管
 CopiedToClipboard=複製到剪貼簿
 InformationOnLinkToContract=這個金額只是合約所有行的總和。沒有考慮時間的因素。
@@ -1213,6 +1216,7 @@ CanceledHidden=取消隱藏
 CanceledShown=已取消顯示
 Terminate=終止
 Terminated=已終止
+Position=職位
 AddLineOnPosition=在位置增加行（如果為空，則在末尾）
 ConfirmAllocateCommercial=分配業務代表確認
 ConfirmAllocateCommercialQuestion=您確定要分配 %s 選定的記錄嗎？
@@ -1230,6 +1234,7 @@ ExternalUser=外部用戶
 NoSpecificContactAddress=沒有具體的聯絡方式或地址
 NoSpecificContactAddressBis=This tab is dedicated to force specific contacts or addresses for the current object. Use it only if you want to define one or several specific contacts or addresses for the object when the information on the third party is not enough or not accurate.
 HideOnVCard=隱藏%s
+ShowOnVCard=Show %s
 AddToContacts=增加地址至我的聯絡人
 LastAccess=最後的訪問
 UploadAnImageToSeeAPhotoHere=從分頁 %s 上傳圖片以在此處查看照片
@@ -1259,4 +1264,7 @@ AmountSalary=Salary amount
 InvoiceSubtype=Invoice subtype
 ConfirmMassReverse=Bulk Reverse confirmation
 ConfirmMassReverseQuestion=Are you sure you want to reverse the %s selected record(s)?
-
+ElementType=Element type
+ElementId=Element Id
+Encrypted=Encrypted
+Settings=設定

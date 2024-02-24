@@ -70,7 +70,6 @@ class MouvementStock extends CommonObject
 	 */
 	public $type;
 
-	public $tms = '';
 	public $datem = '';
 	public $price;
 
@@ -1136,10 +1135,12 @@ class MouvementStock extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', 'stock', 'class="pictofixedwidth"').'<u>'.$langs->trans("Movement").' '.$this->id.'</u>';
+		$label = img_picto('', 'stock', 'class="pictofixedwidth"').'<u>'.$langs->trans("StockMovement").'</u>';
 		$label .= '<div width="100%">';
-		$label .= '<b>'.$langs->trans('Label').':</b> '.$this->label;
-		$label .= '<br><b>'.$langs->trans('Qty').':</b> '.($this->qty > 0 ? '+' : '').$this->qty;
+		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->id;
+		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
+		$qtylabel = (($this->qty > 0) ? '<span class="stockmovemententry">+' :  '<span class="stockmovementexit">') . $this->qty . '</span>';
+		$label .= '<br><b>'.$langs->trans('Qty').':</b> ' . $qtylabel;
 		if ($this->batch) {
 			$label .= '<br><b>'.$langs->trans('Batch').':</b> '.$this->batch;
 		}
@@ -1218,7 +1219,7 @@ class MouvementStock extends CommonObject
 	 *  @param     int			$hideref        Hide ref
 	 *  @return    int             				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		global $conf, $user, $langs;
 

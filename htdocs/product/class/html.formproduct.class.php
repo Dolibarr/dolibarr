@@ -346,7 +346,7 @@ class FormProduct
 					$out .= ' selected';
 				}
 			} else {
-				if ($selected == $id || (preg_match('/^ifone/', $selected) && $nbofwarehouses == 1)) {
+				if ($selected == $id || (!empty($selected) && preg_match('/^ifone/', $selected) && $nbofwarehouses == 1)) {
 					$out .= ' selected';
 				}
 			}

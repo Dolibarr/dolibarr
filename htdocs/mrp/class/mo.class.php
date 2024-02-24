@@ -155,11 +155,6 @@ class Mo extends CommonObject
 	 */
 	public $date_valid;
 
-	/**
-	 * @var integer|string date_validation
-	 */
-	public $tms;
-
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
@@ -381,6 +376,13 @@ class Mo extends CommonObject
 		unset($object->fk_user_creat);
 		unset($object->import_key);
 
+		// Remove produced and consumed lines
+		foreach ($object->lines as $key => $line) {
+			if (in_array($line->role, array('consumed', 'produced'))) {
+				unset($object->lines[$key]);
+			}
+		}
+
 		// Clear fields
 		$object->ref = empty($this->fields['ref']['default']) ? "copy_of_".$object->ref : $this->fields['ref']['default'];
 		$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
@@ -541,7 +543,7 @@ class Mo extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -2038,7 +2040,6 @@ class MoLine extends CommonObjectLine
 	public $fk_mrp_production;
 	public $fk_stock_movement;
 	public $date_creation;
-	public $tms;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
@@ -2189,7 +2190,7 @@ class MoLine extends CommonObjectLine
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}

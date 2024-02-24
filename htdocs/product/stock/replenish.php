@@ -392,7 +392,7 @@ if ($search_label) {
 	$sql .= natural_search('p.label', $search_label);
 }
 $sql .= ' AND p.tobuy = 1';
-if (!empty($conf->variants->enabled) && !getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT')) {	// Add test to exclude products that has variants
+if (isModEnabled('variants') && !getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT')) {	// Add test to exclude products that has variants
 	$sql .= ' AND p.rowid NOT IN (SELECT pac.fk_product_parent FROM '.MAIN_DB_PREFIX.'product_attribute_combination as pac WHERE pac.entity IN ('.getEntity('product').'))';
 }
 if ($fk_supplier > 0) {
@@ -950,7 +950,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		print '<td class="right"><a href="replenishorders.php?search_product='.$prod->id.'">'.$ordered.'</a> '.$picto.'</td>';
 
 		// To order
-		print '<td class="right"><input type="text" size="4" name="tobuy'.$i.'" value="'.((getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) > 0 ? $stocktobuywarehouse : $stocktobuy).'"></td>';
+		$tobuy = ((getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) > 0 ? $stocktobuywarehouse : $stocktobuy);
+		print '<td class="right"><input type="text" size="4" name="tobuy'.$i.'" value="'.$tobuy.'"></td>';
 
 		// Supplier
 		print '<td class="right">';
@@ -958,7 +959,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		print '</td>';
 
 		// Fields from hook
-		$parameters = array('objp'=>$objp);
+		$parameters = array('objp'=>$objp, 'i'=>$i, 'tobuy'=>$tobuy);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 

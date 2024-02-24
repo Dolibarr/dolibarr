@@ -522,7 +522,7 @@ class Utils
 					} elseif ($compression == 'gz') {
 						gzclose($handle);
 					} elseif ($compression == 'bz') {
-						bzclose($handle);
+						fclose($handle);
 					} elseif ($compression == 'zstd') {
 						fclose($handle);
 					}
@@ -556,7 +556,7 @@ class Utils
 				} elseif ($compression == 'gz') {
 					gzclose($handle);
 				} elseif ($compression == 'bz') {
-					bzclose($handle);
+					fclose($handle);
 				} elseif ($compression == 'zstd') {
 					fclose($handle);
 				}

@@ -256,7 +256,7 @@ class Societe extends CommonObject
 		'localtax2_value' =>array('type'=>'double(6,3)', 'label'=>'Localtax2 value', 'enabled'=>1, 'visible'=>-1, 'position'=>355),
 		'vat_reverse_charge' =>array('type'=>'tinyint(4)', 'label'=>'Vat reverse charge', 'enabled'=>1, 'visible'=>-1, 'position'=>335),
 		'barcode' =>array('type'=>'varchar(255)', 'label'=>'Barcode', 'enabled'=>1, 'visible'=>-1, 'position'=>360),
-		'price_level' =>array('type'=>'integer', 'label'=>'Price level', 'enabled'=>'$conf->global->PRODUIT_MULTIPRICES || $conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES', 'visible'=>-1, 'position'=>365),
+		'price_level' =>array('type'=>'integer', 'label'=>'Price level', 'enabled'=>'$conf->global->PRODUIT_MULTIPRICES || getDolGlobalString("PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES")', 'visible'=>-1, 'position'=>365),
 		'default_lang' =>array('type'=>'varchar(6)', 'label'=>'Default lang', 'enabled'=>1, 'visible'=>-1, 'position'=>370),
 		'canvas' =>array('type'=>'varchar(32)', 'label'=>'Canvas', 'enabled'=>1, 'visible'=>-1, 'position'=>375),
 		'fk_barcode_type' =>array('type'=>'integer', 'label'=>'Fk barcode type', 'enabled'=>1, 'visible'=>-1, 'position'=>405),
@@ -925,7 +925,7 @@ class Societe extends CommonObject
 		if (empty($this->status)) {
 			$this->status = 0;
 		}
-		$this->name = $this->name ? trim($this->name) : trim($this->nom);
+		$this->name = $this->name ? trim($this->name) : trim((string) $this->nom);
 		$this->setUpperOrLowerCase();
 		$this->nom = $this->name; // For backward compatibility
 		if (empty($this->client)) {
@@ -934,12 +934,12 @@ class Societe extends CommonObject
 		if (empty($this->fournisseur)) {
 			$this->fournisseur = 0;
 		}
-		$this->import_key = trim($this->import_key);
+		$this->import_key = trim((string) $this->import_key);
 
-		$this->accountancy_code_customer = trim($this->code_compta);
-		$this->accountancy_code_supplier = trim($this->code_compta_fournisseur);
-		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
-		$this->accountancy_code_sell = trim($this->accountancy_code_sell);
+		$this->accountancy_code_customer = trim((string) $this->code_compta);
+		$this->accountancy_code_supplier = trim((string) $this->code_compta_fournisseur);
+		$this->accountancy_code_buy = trim((string) $this->accountancy_code_buy);
+		$this->accountancy_code_sell = trim((string) $this->accountancy_code_sell);
 
 		if (!empty($this->multicurrency_code)) {
 			$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
@@ -1071,7 +1071,7 @@ class Societe extends CommonObject
 					$this->db->commit();
 					return $this->id;
 				} else {
-					dol_syslog(get_class($this)."::Create echec update ".$this->error.(empty($this->errors) ? '' : ' '.join(',', $this->errors)), LOG_ERR);
+					dol_syslog(get_class($this)."::Create echec update ".$this->error.(empty($this->errors) ? '' : ' '.implode(',', $this->errors)), LOG_ERR);
 					$this->db->rollback();
 					return -4;
 				}
@@ -1088,7 +1088,7 @@ class Societe extends CommonObject
 			}
 		} else {
 			$this->db->rollback();
-			dol_syslog(get_class($this)."::Create fails verify ".join(',', $this->errors), LOG_WARNING);
+			dol_syslog(get_class($this)."::Create fails verify ".implode(',', $this->errors), LOG_WARNING);
 			return -3;
 		}
 	}
@@ -1365,35 +1365,35 @@ class Societe extends CommonObject
 		// Clean parameters
 		$this->id 			= $id;
 		$this->entity 		= ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
-		$this->name 		= $this->name ? trim($this->name) : trim($this->nom);
+		$this->name 		= $this->name ? trim($this->name) : trim((string) $this->nom);
 		$this->nom 			= $this->name; // For backward compatibility
-		$this->name_alias 	= trim($this->name_alias);
-		$this->ref_ext		= trim($this->ref_ext);
-		$this->address		= trim($this->address);
-		$this->zip 			= trim($this->zip);
-		$this->town 		= trim($this->town);
+		$this->name_alias 	= trim((string) $this->name_alias);
+		$this->ref_ext		= (empty($this->ref_ext) ? '' : trim($this->ref_ext));
+		$this->address		= trim((string) $this->address);
+		$this->zip 			= trim((string) $this->zip);
+		$this->town 		= trim((string) $this->town);
 		$this->state_id 	= (is_numeric($this->state_id)) ? (int) trim($this->state_id) : 0;
 		$this->country_id 	= ($this->country_id > 0) ? $this->country_id : 0;
-		$this->phone		= trim($this->phone);
+		$this->phone		= trim((string) $this->phone);
 		$this->phone		= preg_replace("/\s/", "", $this->phone);
 		$this->phone		= preg_replace("/\./", "", $this->phone);
-		$this->phone_mobile		= trim($this->phone_mobile);
+		$this->phone_mobile		= trim((string) $this->phone_mobile);
 		$this->phone_mobile		= preg_replace("/\s/", "", $this->phone_mobile);
 		$this->phone_mobile		= preg_replace("/\./", "", $this->phone_mobile);
-		$this->fax			= trim($this->fax);
+		$this->fax			= trim((string) $this->fax);
 		$this->fax			= preg_replace("/\s/", "", $this->fax);
 		$this->fax			= preg_replace("/\./", "", $this->fax);
-		$this->email		= trim($this->email);
+		$this->email		= trim((string) $this->email);
 		$this->url			= $this->url ? clean_url($this->url, 0) : '';
-		$this->note_private = trim($this->note_private);
-		$this->note_public  = trim($this->note_public);
-		$this->idprof1		= trim($this->idprof1);
-		$this->idprof2		= trim($this->idprof2);
-		$this->idprof3		= trim($this->idprof3);
-		$this->idprof4		= trim($this->idprof4);
+		$this->note_private = (empty($this->note_private) ? '' : trim($this->note_private));
+		$this->note_public  = (empty($this->note_public) ? '' : trim($this->note_public));
+		$this->idprof1		= trim((string) $this->idprof1);
+		$this->idprof2		= trim((string) $this->idprof2);
+		$this->idprof3		= trim((string) $this->idprof3);
+		$this->idprof4		= trim((string) $this->idprof4);
 		$this->idprof5		= (!empty($this->idprof5) ? trim($this->idprof5) : '');
 		$this->idprof6		= (!empty($this->idprof6) ? trim($this->idprof6) : '');
-		$this->prefix_comm 	= trim($this->prefix_comm);
+		$this->prefix_comm 	= trim((string) $this->prefix_comm);
 		$this->outstanding_limit = price2num($this->outstanding_limit);
 		$this->order_min_amount = price2num($this->order_min_amount);
 		$this->supplier_order_min_amount = price2num($this->supplier_order_min_amount);
@@ -1438,7 +1438,7 @@ class Societe extends CommonObject
 
 		$this->code_compta_client = trim(empty($this->code_compta) ? $this->code_compta_client : $this->code_compta);
 		$this->code_compta = $this->code_compta_client; // for backward compatibility
-		$this->code_compta_fournisseur = trim($this->code_compta_fournisseur);
+		$this->code_compta_fournisseur = (empty($this->code_compta_fournisseur) ? '' : trim($this->code_compta_fournisseur));
 
 		// Check parameters. More tests are done later in the ->verify()
 		if (!is_numeric($this->client) && !is_numeric($this->fournisseur)) {
@@ -1477,8 +1477,8 @@ class Societe extends CommonObject
 		$this->webservices_url = $this->webservices_url ? clean_url($this->webservices_url, 0) : '';
 		$this->webservices_key = trim($this->webservices_key);
 
-		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
-		$this->accountancy_code_sell = trim($this->accountancy_code_sell);
+		$this->accountancy_code_buy = (empty($this->accountancy_code_buy) ? '' : trim($this->accountancy_code_buy));
+		$this->accountancy_code_sell = (empty($this->accountancy_code_sell) ? '' : trim($this->accountancy_code_sell));
 
 		//Incoterms
 		$this->fk_incoterms = (int) $this->fk_incoterms;
@@ -1776,7 +1776,7 @@ class Societe extends CommonObject
 			}
 		} else {
 			$this->db->rollback();
-			dol_syslog(get_class($this)."::Update fails verify ".join(',', $this->errors), LOG_WARNING);
+			dol_syslog(get_class($this)."::Update fails verify ".implode(',', $this->errors), LOG_WARNING);
 			return -3;
 		}
 	}
@@ -2862,16 +2862,17 @@ class Societe extends CommonObject
 	/**
 	 *    	Return a link on thirdparty (with picto)
 	 *
-	 *		@param	int		$withpicto		          Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
-	 *		@param	string	$option			          Target of link ('', 'customer', 'prospect', 'supplier', 'project')
-	 *		@param	int		$maxlen			          Max length of name
-	 *      @param	int  	$notooltip		          1=Disable tooltip
-	 *      @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *      @param	int		$noaliasinname			  1=Do not add alias into the link ref
-	 *      @param	string	$target			  		  add attribute target
-	 *		@return	string					          String with URL
+	 *		@param	int		$withpicto		          	Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
+	 *		@param	string	$option			          	Target of link ('', 'customer', 'prospect', 'supplier', 'project')
+	 *		@param	int		$maxlen			          	Max length of name
+	 *      @param	int  	$notooltip		          	1=Disable tooltip
+	 *      @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *      @param	int		$noaliasinname			  	1=Do not add alias into the link ref
+	 *      @param	string	$target			  		  	add attribute target
+	 *      @param	string	$morecss					More CSS
+	 *		@return	string					          	String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0, $target = '')
+	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0, $target = '', $morecss = '')
 	{
 		global $conf, $langs, $hookmanager, $user;
 
@@ -2975,13 +2976,13 @@ class Societe extends CommonObject
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
-			$linkclose .= $dataparams.' class="'.$classfortooltip.' refurl valignmiddle"';
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').' refurl valignmiddle"';
 			$target_value = array('_self', '_blank', '_parent', '_top');
 			if (in_array($target, $target_value)) {
 				$linkclose .= ' target="'.dol_escape_htmltag($target).'"';
 			}
 		} else {
-			$linkclose .= ' class="valignmiddle"';
+			$linkclose .= ' class="valignmiddle'.($morecss ? ' '.$morecss : '').'"';
 		}
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
@@ -4318,7 +4319,7 @@ class Societe extends CommonObject
 			}
 		} else {
 			// $this->error deja positionne
-			dol_syslog(get_class($this)."::create_from_member - 2 - ".$this->error." - ".join(',', $this->errors), LOG_ERR);
+			dol_syslog(get_class($this)."::create_from_member - 2 - ".$this->error." - ".implode(',', $this->errors), LOG_ERR);
 
 			$this->db->rollback();
 			return $result;
@@ -4611,14 +4612,17 @@ class Societe extends CommonObject
 	{
 		// phpcs:enable
 		global $langs;
+
+		$label = '';
 		if ($fk_prospectlevel != '') {
-			$lib = $langs->trans("ProspectLevel".$fk_prospectlevel);
-			// If lib not found in language file, we get label from cache/database
-			if ($lib == "ProspectLevel".$fk_prospectlevel) {
-				$lib = $langs->getLabelFromKey($this->db, $fk_prospectlevel, 'c_prospectlevel', 'code', 'label');
+			$label = $langs->trans("ProspectLevel".$fk_prospectlevel);
+			// If label is not found in language file, we get label from cache/database
+			if ($label == "ProspectLevel".$fk_prospectlevel) {
+				$label = $langs->getLabelFromKey($this->db, $fk_prospectlevel, 'c_prospectlevel', 'code', 'label');
 			}
 		}
-		return $lib;
+
+		return $label;
 	}
 
 	/**
@@ -5241,16 +5245,12 @@ class Societe extends CommonObject
 		$tab = array();
 
 		$sql = "SELECT sc.rowid, sc.fk_socpeople as id, sc.fk_c_type_contact"; // This field contains id of llx_socpeople or id of llx_user
-
 		$sql .= ", t.fk_soc as socid, t.statut as statuscontact";
-
 		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
 		$sql .= ", tc.source, tc.element, tc.code, tc.libelle as type_label";
 		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc";
 		$sql .= ", ".$this->db->prefix()."societe_contacts sc";
-
 		$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople t on sc.fk_socpeople = t.rowid";
-
 		$sql .= " WHERE sc.fk_soc = ".((int) $this->id);
 		$sql .= " AND sc.fk_c_type_contact = tc.rowid";
 		if (!empty($element)) {
@@ -5261,7 +5261,7 @@ class Societe extends CommonObject
 		}
 		$sql .= " AND sc.entity IN (".getEntity($this->element).")";
 		$sql .= " AND tc.source = 'external'";
-		$sql .= " AND tc.active=1";
+		$sql .= " AND tc.active = 1";
 
 		$sql .= " ORDER BY t.lastname ASC";
 
@@ -5343,12 +5343,16 @@ class Societe extends CommonObject
 				'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
 				'stcomm_id', 'outstanding_limit', 'order_min_amount', 'supplier_order_min_amount', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
 				'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
-				'model_pdf', 'webservices_url', 'webservices_key', 'accountancy_code_sell', 'accountancy_code_buy'
+				'model_pdf', 'webservices_url', 'webservices_key', 'accountancy_code_sell', 'accountancy_code_buy', 'typent_id'
 			);
 			foreach ($listofproperties as $property) {
 				if (empty($this->$property)) {
 					$this->$property = $soc_origin->$property;
 				}
+			}
+
+			if ($this->typent_id == -1) {
+				$this->typent_id = $soc_origin->typent_id;
 			}
 
 			// Concat some data

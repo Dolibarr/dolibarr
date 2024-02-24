@@ -295,7 +295,7 @@ if (empty($reshook)) {
 				$listofaccountsforgroup2[] = "'".$db->escape($tmpval['id'])."'";
 			}
 		}
-		$filter['t.search_accounting_code_in'] = join(',', $listofaccountsforgroup2);
+		$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);
 		$param .= '&search_account_category='.urlencode($search_account_category);
 	}
 	if (!empty($search_accountancy_code_start)) {

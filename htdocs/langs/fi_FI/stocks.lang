@@ -164,14 +164,14 @@ InventoryCode=Liike- tai varastokoodi
 IsInPackage=Pakkauksessa mukana
 WarehouseAllowNegativeTransfer=Varasto voi olla negatiivinen
 qtyToTranferIsNotEnough=Sinulla ei ole tarpeeksi varastoa lähdevarastostasi ja, asetukset eivät salli negatiivisia varastoja.
-qtyToTranferLotIsNotEnough=Sinulla ei ole tarpeeksi varastoa tälle eränumerolle lähdevarastostasi ja, asetukset eivät salli negatiivisia varastoja (määrä tuotteelle  %s" erällä "%s" on %s varastossa '<span class='notranslate'>b9fz'07f4b9fz80 /span>').
+qtyToTranferLotIsNotEnough=You don't have enough stock, for this lot number, from your source warehouse and your setup does not allow negative stocks (Qty for product '%s' with lot '%s' is %s in warehouse '%s').
 ShowWarehouse=Näytä varasto
 MovementCorrectStock=Varastokorjaus tuotteelle %s
 MovementTransferStock=Tuotteen %s varastosiirto toiseen varastoon
 BatchStockMouvementAddInGlobal=Erävarasto siirtyy globaaliin varastoon (tuote ei enää käytä erää)
 InventoryCodeShort=Inv./Mov. koodi
 NoPendingReceptionOnSupplierOrder=Ei odottavaa vastaanottoa avoimen Hankinta tilauksen vuoksi
-ThisSerialAlreadyExistWithDifferentDate=Tämä erä/Sarjanumero (<strong>%s</strong>) on jo olemassa, mutta sillä on eri eatby tai sellby päiväys (löytyi <strong><span' class='no >%s</span></strong> mutta kirjoitat <strong>b0ecb2ec87f4><span9fz87f4 class='notranslate'></strong>).
+ThisSerialAlreadyExistWithDifferentDate=This lot/serial number (<strong>%s</strong>) already exists but with different eatby or sellby date (found <strong>%s</strong> but you enter <strong>%s</strong>).
 OpenAnyMovement=Avaa (kaikki liikkeet)
 OpenInternal=Avoin (vain sisäinen liike)
 UseDispatchStatus=Käytä lähetystilaa (hyväksyä/refuse) tuotelinjoille Hankinta tilauksen vastaanotossa
@@ -282,7 +282,7 @@ ModuleStockTransferName=Edistynyt osakesiirto
 ModuleStockTransferDesc=Edistynyt varastonsiirron hallinta siirtoarkin luomisen kanssa
 StockTransferNew=Uuden osakkeen siirto
 StockTransferList=Osakkeiden siirtoluettelo
-ConfirmValidateStockTransfer=Haluatko varmasti vahvistaa tämän osakkeiden siirron viitenumerolla <b>%s</b><span class='notranslate'> span> ?
+ConfirmValidateStockTransfer=Are you sure you want to validate this stocks transfer with the reference <b>%s</b> ?
 ConfirmDestock=vähentää osakkeita siirrolla %s
 ConfirmDestockCancel=Peru vähentää osakkeita siirtämällä %s
 DestockAllProduct=vähentää osakkeista
@@ -314,7 +314,6 @@ StockStransferIncrementedShort=Osakkeet siirretty
 StockStransferIncrementedShortCancel=Kohteen Varastot korotus peruutettu
 StockTransferNoBatchForProduct=Tuote %s ei käytä erää, tyhjennä erä rivillä ja yritä uudelleen
 StockTransferSetup = Osakkeiden siirtomoduulin konfigurointi
-Settings=Asetukset
 StockTransferSetupPage = Varastojen siirtomoduulin konfigurointisivu
 StockTransferRightRead=Lue osakesiirrot
 StockTransferRightCreateUpdate=luo/Päivitä osakesiirrot
@@ -324,7 +323,6 @@ StockEntryDate=päiväys / <br> varastossa
 StockMovementWillBeRecorded=Osakeliikkeet kirjataan
 StockMovementNotYetRecorded=Tämä vaihe ei vaikuta varastojen liikkeisiin
 ReverseConfirmed=Osakeliikkeet on kääntynyt onnistuneesti
-
 WarningThisWIllAlsoDeleteStock=Varoitus, tämä tuhoaa myös kaikki varastossa olevat määrät
 ValidateInventory=Varaston validointi
 IncludeSubWarehouse=Sisällytä alivarasto?
@@ -334,4 +332,3 @@ ConfirmDeleteBatch=Haluatko varmasti poistaa erän/sarjan?
 WarehouseUsage=Varaston käyttö
 InternalWarehouse=Sisäinen varasto
 ExternalWarehouse=Ulkoinen varasto
-WarningThisWIllAlsoDeleteStock=Varoitus, tämä tuhoaa myös kaikki varastossa olevat määrät

@@ -14,7 +14,8 @@
  * Copyright (C) 2017      Josep Lluís Amador    <joseplluis@lliuretic.cat>
  * Copyright (C) 2018      Charlene Benke        <charlie@patas-monkey.com>
  * Copyright (C) 2019-2021 Alexandre Spangaro    <aspangaro@open-dsi.fr>
- * Copyright (C) 2023		Nick Fragoulis
+ * Copyright (C) 2023	   Nick Fragoulis
+ * Copyright (C) 2023	   Joachim Kueter		 <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -438,6 +439,19 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 						$totaldeposits = $facture->getSumDepositsUsed();
 						$totalpay = $paiementAmount + $totalcreditnotes + $totaldeposits;
 						$remaintopay = price2num($facture->total_ttc - $totalpay);
+
+						// hook to finalize the remaining amount, considering e.g. cash discount agreements
+						$parameters = array('remaintopay'=>$remaintopay);
+						$reshook = $hookmanager->executeHooks('finalizeAmountOfInvoice', $parameters, $facture, $action); // Note that $action and $object may have been modified by some hooks
+						if ($reshook > 0) {
+							if (!empty($remain = $hookmanager->resArray['remaintopay'])) {
+								$remaintopay = $remain;
+							}
+						} elseif ($reshook < 0) {
+							$error++;
+							setEventMessages($facture->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
+						}
+
 						if ($remaintopay != 0) {
 							$resultBank = $facture->setBankAccount($bankid);
 							if ($resultBank < 0) {
@@ -502,7 +516,20 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 				$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
 				$totaldeposits = $objecttmp->getSumDepositsUsed();
 				$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
-				if ($objecttmp->status == Facture::STATUS_DRAFT) {
+
+				// hook to finalize the remaining amount, considering e.g. cash discount agreements
+				$parameters = array('remaintopay'=>$objecttmp->resteapayer);
+				$reshook = $hookmanager->executeHooks('finalizeAmountOfInvoice', $parameters, $objecttmp, $action); // Note that $action and $object may have been modified by some hooks
+				if ($reshook > 0) {
+					if (!empty($remaintopay = $hookmanager->resArray['remaintopay'])) {
+						$objecttmp->resteapayer = $remaintopay;
+					}
+				} elseif ($reshook < 0) {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
+				}
+
+				if ($objecttmp->statut == Facture::STATUS_DRAFT) {
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
 				} elseif ($objecttmp->paye || $objecttmp->resteapayer == 0) {
@@ -610,7 +637,7 @@ $sql .= ' f.fk_user_author,';
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
 $sql .= ' f.datef, f.date_valid, f.date_lim_reglement as datelimite, f.module_source, f.pos_source,';
 $sql .= ' f.paye as paye, f.fk_statut, f.close_code,';
-$sql .= ' f.datec as date_creation, f.tms as date_update, f.date_closing as date_closing,';
+$sql .= ' f.datec as date_creation, f.tms as date_modification, f.date_closing as date_closing,';
 $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
 $sql .= " s.parent as fk_parent,";
@@ -1253,7 +1280,7 @@ if ($sall) {
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).implode(', ', $fieldstosearchall).'</div>';
 }
 
 // If the user can view prospects other than his'
@@ -2626,7 +2653,7 @@ if ($num > 0) {
 			// Date modification
 			if (!empty($arrayfields['f.tms']['checked'])) {
 				print '<td class="nowraponall center">';
-				print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+				print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

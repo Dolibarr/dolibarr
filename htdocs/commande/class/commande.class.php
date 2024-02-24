@@ -145,8 +145,8 @@ class Commande extends CommonOrder
 	public $cond_reglement_doc;
 
 	/**
-	 * @var string 	Deposit percent for payment terms.
-	 *				Populated by setPaymentTerms().
+	 * @var float 	Deposit percent for payment terms.
+	 *				Populated by $CommonObject->setPaymentTerms().
 	 * @see setPaymentTerms()
 	 */
 	public $deposit_percent;
@@ -241,11 +241,6 @@ class Commande extends CommonOrder
 	 * @var int User author ID
 	 */
 	public $user_author_id;
-
-	/**
-	 * @var int User validator ID
-	 */
-	public $user_valid;
 
 	/**
 	 * @var OrderLine one line of an order
@@ -1230,7 +1225,7 @@ class Commande extends CommonOrder
 			if ($objsoc->fetch($socid) > 0) {
 				$this->socid = $objsoc->id;
 				$this->cond_reglement_id	= (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-				$this->deposit_percent		= (!empty($objsoc->deposit_percent) ? $objsoc->deposit_percent : null);
+				$this->deposit_percent		= (!empty($objsoc->deposit_percent) ? $objsoc->deposit_percent : 0);
 				$this->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
 				$this->fk_project = 0;
 				$this->fk_delivery_address = 0;
@@ -1495,7 +1490,7 @@ class Commande extends CommonOrder
 	 *  @param		int				$pa_ht				Buying price (without tax)
 	 *  @param		string			$label				Label
 	 *  @param		array			$array_options		extrafields array. Example array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
-	 * 	@param 		string			$fk_unit 			Code of the unit to use. Null to use the default one
+	 * 	@param 		int|null		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param		string		    $origin				Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be 'orderdet', 'propaldet'..., else 'order','propal,'....
 	 *  @param		int			    $origin_id			Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be Id of origin object (aka line id), else object id
 	 * 	@param		double			$pu_ht_devise		Unit price in currency
@@ -3104,7 +3099,7 @@ class Commande extends CommonOrder
 	 *  @param		string			$label				Label
 	 *  @param		int				$special_code		Special code (also used by externals modules!)
 	 *  @param		array			$array_options		extrafields array
-	 * 	@param 		string			$fk_unit 			Code of the unit to use. Null to use the default one
+	 * 	@param 		int|null		$fk_unit 			Code of the unit to use. Null to use the default one
 	 *  @param		double			$pu_ht_devise		Amount in currency
 	 * 	@param		int				$notrigger			disable line update trigger
 	 * 	@param		string			$ref_ext			external reference

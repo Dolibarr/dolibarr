@@ -136,7 +136,7 @@ class modMyModule extends DolibarrModules
 
 		// Dependencies
 		// A condition to hide module
-		$this->hidden = false;
+		$this->hidden = getDolGlobalInt('MODULE_MYMODULE_DISABLED'); // A condition to disable module;
 		// List of module class names that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR')...)
 		$this->depends = array();
 		// List of module class names to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
@@ -368,9 +368,9 @@ class modMyModule extends DolibarrModules
 		/* BEGIN MODULEBUILDER EXPORT MYOBJECT */
 		/*
 		$langs->load("mymodule@mymodule");
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='myobject@mymodule';
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = 'MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_icon[$r] = $this->picto;
 		// Define $this->export_fields_array, $this->export_TypeFields_array and $this->export_entities_array
 		$keyforclass = 'MyObject'; $keyforclassfile='/mymodule/class/myobject.class.php'; $keyforelement='myobject@mymodule';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
@@ -387,8 +387,8 @@ class modMyModule extends DolibarrModules
 		//$this->export_examplevalues_array[$r] = array('t.field'=>'Example');
 		//$this->export_help_array[$r] = array('t.field'=>'FieldDescHelp');
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'myobject as t';
-		//$this->export_sql_end[$r]  =' LEFT JOIN '.MAIN_DB_PREFIX.'myobject_line as tl ON tl.fk_myobject = t.rowid';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'mymodule_myobject as t';
+		//$this->export_sql_end[$r]  =' LEFT JOIN '.MAIN_DB_PREFIX.'mymodule_myobject_line as tl ON tl.fk_myobject = t.rowid';
 		$this->export_sql_end[$r] .=' WHERE 1 = 1';
 		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('myobject').')';
 		$r++; */
@@ -399,9 +399,9 @@ class modMyModule extends DolibarrModules
 		/* BEGIN MODULEBUILDER IMPORT MYOBJECT */
 		/*
 		$langs->load("mymodule@mymodule");
-		$this->import_code[$r]=$this->rights_class.'_'.$r;
-		$this->import_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->import_icon[$r]='myobject@mymodule';
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = 'MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->import_icon[$r] = $this->picto;
 		$this->import_tables_array[$r] = array('t' => MAIN_DB_PREFIX.'mymodule_myobject', 'extra' => MAIN_DB_PREFIX.'mymodule_myobject_extrafields');
 		$this->import_tables_creator_array[$r] = array('t' => 'fk_user_author'); // Fields to store import user id
 		$import_sample = array();
@@ -452,11 +452,12 @@ class modMyModule extends DolibarrModules
 		// Create extrafields during init
 		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		//$extrafields = new ExtraFields($this->db);
-		//$result1=$extrafields->addExtraField('mymodule_myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
-		//$result2=$extrafields->addExtraField('mymodule_myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
-		//$result3=$extrafields->addExtraField('mymodule_myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
-		//$result4=$extrafields->addExtraField('mymodule_myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
-		//$result5=$extrafields->addExtraField('mymodule_myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
+		//$result0=$extrafields->addExtraField('mymodule_separator1', "Separator 1", 'separator', 1,  0, 'thirdparty',   0, 0, '', array('options'=>array(1=>1)), 1, '', 1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
+		//$result1=$extrafields->addExtraField('mymodule_myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', -1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
+		//$result2=$extrafields->addExtraField('mymodule_myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', -1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
+		//$result3=$extrafields->addExtraField('mymodule_myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', -1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
+		//$result4=$extrafields->addExtraField('mymodule_myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', -1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
+		//$result5=$extrafields->addExtraField('mymodule_myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', -1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
 
 		// Permissions
 		$this->remove($options);

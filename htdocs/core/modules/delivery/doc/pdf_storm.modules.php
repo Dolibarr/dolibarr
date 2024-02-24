@@ -270,6 +270,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 
@@ -679,11 +680,11 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 *  @param  Delivery	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf, $langs;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -845,6 +846,8 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		}
 
 		$pdf->SetTextColor(0, 0, 60);
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -1009,6 +1012,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		if ($reshook < 0) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		} elseif (empty($reshook)) {
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrderInternal
 			$this->cols = array_replace($this->cols, $hookmanager->resArray); // array_replace is used to preserve keys
 		} else {
 			$this->cols = $hookmanager->resArray;

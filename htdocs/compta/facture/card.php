@@ -46,14 +46,13 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-
 if (isModEnabled('commande')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
@@ -110,7 +109,7 @@ $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (getDolGloba
 // Number of lines for predefined product/service choices
 $NBLINES = 4;
 
-$usehm = (getDolGlobalString('MAIN_USE_HOURMIN_IN_DATE_RANGE') ? $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE : 0);
+$usehm = getDolGlobalInt('MAIN_USE_HOURMIN_IN_DATE_RANGE');
 
 $object = new Facture($db);
 $extrafields = new ExtraFields($db);
@@ -219,18 +218,38 @@ if (empty($reshook)) {
 
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
-		$objectutil = dol_clone($object, 1); // To avoid to denaturate loaded object when setting some properties for clone. We use native clone to keep this->db valid.
-
-		$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
-		$objectutil->socid = $socid;
-		$result = $objectutil->createFromClone($user, $id);
-		if ($result > 0) {
-			header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$result);
-			exit();
+		if (!($socid > 0)) {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('IdThirdParty')), null, 'errors');
 		} else {
-			$langs->load("errors");
-			setEventMessages($objectutil->error, $objectutil->errors, 'errors');
-			$action = '';
+			$objectutil = dol_clone($object, 1); // To avoid to denaturate loaded object when setting some properties for clone. We use native clone to keep this->db valid.
+
+			$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
+			$objectutil->socid = $socid;
+			$result = $objectutil->createFromClone($user, $id);
+			if ($result > 0) {
+				$warningMsgLineList = array();
+				// check all product lines are to sell otherwise add a warning message for each product line is not to sell
+				foreach ($objectutil->lines as $line) {
+					if (!is_object($line->product)) {
+						$line->fetch_product();
+					}
+					if (is_object($line->product) && $line->product->id > 0) {
+						if (empty($line->product->tosell)) {
+							$warningMsgLineList[$line->id] = $langs->trans('WarningLineProductNotToSell', $line->product->ref);
+						}
+					}
+				}
+				if (!empty($warningMsgLineList)) {
+					setEventMessages('', $warningMsgLineList, 'warnings');
+				}
+
+				header("Location: " . $_SERVER['PHP_SELF'] . '?facid=' . $result);
+				exit();
+			} else {
+				$langs->load("errors");
+				setEventMessages($objectutil->error, $objectutil->errors, 'errors');
+				$action = '';
+			}
 		}
 	} elseif ($action == 'reopen' && $usercanreopen) {
 		$result = $object->fetch($id);
@@ -446,7 +465,7 @@ if (empty($reshook)) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id.'&action=editinvoicedate&token='.newToken());
 			exit;
 		}
-		if ($newdate > (dol_now('tzuserrel') + (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY') ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+		if ($newdate > (dol_now('tzuserrel') + getDolGlobalInt('INVOICE_MAX_FUTURE_DELAY'))) {
 			if (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY')) {
 				setEventMessages($langs->trans("WarningInvoiceDateInFuture"), null, 'warnings');
 			} else {
@@ -1029,7 +1048,7 @@ if (empty($reshook)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 				$action = 'create';
-			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY') ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + getDolGlobalInt('INVOICE_MAX_FUTURE_DELAY'))) {
 				$error++;
 				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
 				$action = 'create';
@@ -1088,7 +1107,7 @@ if (empty($reshook)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 				$action = 'create';
-			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY') ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + getDolGlobalInt('INVOICE_MAX_FUTURE_DELAY'))) {
 				$error++;
 				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
 				$action = 'create';
@@ -1288,7 +1307,22 @@ if (empty($reshook)) {
 						$totaldeposits = $facture_source->getSumDepositsUsed();
 						$remain_to_pay = abs($facture_source->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits);
 
-						$object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'), $remain_to_pay, 1, 0, 0, 0, 0, 0, '', '', 'TTC');
+						if (getDolGlobalString('INVOICE_VAT_TO_USE_ON_CREDIT_NOTE_WHEN_GENERATED_FROM_REMAIN_TO_PAY') == 'default') {
+							if ((empty($object->thirdparty) || !is_object($object->thirdparty) || get_class($object->thirdparty) != 'Societe')) {
+								$object->fetch_thirdparty();
+							}
+							if (!empty($object->thirdparty) && is_object($object->thirdparty) && get_class($object->thirdparty) == 'Societe') {
+								$tva_tx = get_default_tva($mysoc, $object->thirdparty);
+							} else {
+								$tva_tx = 0;
+							}
+						} elseif ((float) getDolGlobalString('INVOICE_VAT_TO_USE_ON_CREDIT_NOTE_WHEN_GENERATED_FROM_REMAIN_TO_PAY') > 0) {
+							$tva_tx = (float) getDolGlobalString('INVOICE_VAT_TO_USE_ON_CREDIT_NOTE_WHEN_GENERATED_FROM_REMAIN_TO_PAY');
+						} else {
+							$tva_tx = 0;
+						}
+
+						$object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'), $remain_to_pay, 1, $tva_tx, 0, 0, 0, 0, '', '', 'TTC');
 					}
 				}
 
@@ -1312,7 +1346,7 @@ if (empty($reshook)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 				$action = 'create';
-			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY') ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + getDolGlobalInt('INVOICE_MAX_FUTURE_DELAY'))) {
 				$error++;
 				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
 				$action = 'create';
@@ -1372,7 +1406,7 @@ if (empty($reshook)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 				$action = 'create';
-			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY') ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + getDolGlobalInt('INVOICE_MAX_FUTURE_DELAY'))) {
 				$error++;
 				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
 				$action = 'create';
@@ -1604,7 +1638,7 @@ if (empty($reshook)) {
 									$tva, // vat rate
 									0, // localtax1_tx
 									0, // localtax2_tx
-									(!getDolGlobalString('INVOICE_PRODUCTID_DEPOSIT') ? 0 : $conf->global->INVOICE_PRODUCTID_DEPOSIT), // fk_product
+									getDolGlobalInt('INVOICE_PRODUCTID_DEPOSIT'), // fk_product
 									0, // remise_percent
 									0, // date_start
 									0, // date_end
@@ -1691,6 +1725,7 @@ if (empty($reshook)) {
 
 									$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
 									$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : '');
+
 									if ($object->situation_counter == 1) {
 										$lines[$i]->situation_percent = 0;
 									}
@@ -1830,8 +1865,7 @@ if (empty($reshook)) {
 
 						// Now we create same links to contact than the ones found on origin object
 						/* Useless, already into the create
-						if (!empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
-						{
+						if (getDolGlobalString('MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN')) {
 							$originforcontact = $object->origin;
 							$originidforcontact = $object->origin_id;
 							if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
@@ -1890,7 +1924,7 @@ if (empty($reshook)) {
 				$error++;
 				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date"));
 				setEventMessages($mesg, null, 'errors');
-			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY') ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + getDolGlobalInt('INVOICE_MAX_FUTURE_DELAY'))) {
 				$error++;
 				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
 				$action = 'create';
@@ -2913,7 +2947,7 @@ if (empty($reshook)) {
 					$remise_percent = $originLine->remise_percent;
 					$date_start = $originLine->date_start;
 					$date_end = $originLine->date_end;
-					$ventil = 0;
+					$fk_code_ventilation = 0;
 					$info_bits = $originLine->info_bits;
 					$fk_remise_except = $originLine->fk_remise_except;
 					$price_base_type = 'HT';
@@ -2937,7 +2971,7 @@ if (empty($reshook)) {
 					$fk_unit = $originLine->fk_unit;
 					$pu_ht_devise = $originLine->multicurrency_subprice;
 
-					$res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $ventil, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc, $type, $rang, $special_code, $origin, $origin_id, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $array_options, $situation_percent, $fk_prev_id, $fk_unit, $pu_ht_devise);
+					$res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $fk_code_ventilation, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc, $type, $rang, $special_code, $origin, $origin_id, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $array_options, $situation_percent, $fk_prev_id, $fk_unit, $pu_ht_devise);
 
 					if ($res > 0) {
 						$importCount++;
@@ -3830,7 +3864,7 @@ if ($action == 'create') {
 					$retained_warranty = $objectsrc->retained_warranty;
 				}
 			}
-			$retained_warranty_js_default = !empty($retained_warranty) ? $retained_warranty : $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT;
+			$retained_warranty_js_default = !empty($retained_warranty) ? $retained_warranty : getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT');
 
 			print '<tr class="retained-warranty-line" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('RetainedWarranty').'</td><td colspan="2">';
 			print '<input id="new-situation-invoice-retained-warranty" name="retained_warranty" type="number" value="'.$retained_warranty.'" step="0.01" min="0" max="100" />%';
@@ -4133,8 +4167,6 @@ if ($action == 'create') {
 
 	// We can also use bcadd to avoid pb with floating points
 	// For example print 239.2 - 229.3 - 9.9; does not return 0.
-	// $resteapayer=bcadd($object->total_ttc,$totalpaid,$conf->global->MAIN_MAX_DECIMALS_TOT);
-	// $resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
 	$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 	// Multicurrency
@@ -4170,8 +4202,8 @@ if ($action == 'create') {
 	$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 
 	$author = new User($db);
-	if ($object->user_author) {
-		$author->fetch($object->user_author);
+	if ($object->fk_user_author) {
+		$author->fetch($object->fk_user_author);
 	}
 
 	$objectidnext = $object->getIdReplacingInvoice();
@@ -4305,7 +4337,7 @@ if ($action == 'create') {
 									array('type' => 'other', 'name' => 'idwarehouse', 'label' => $label, 'value' => $value));
 			}
 		}
-		if ($object->type != Facture::TYPE_CREDIT_NOTE && $object->total_ttc < 0) { 		// Can happen only if $conf->global->FACTURE_ENABLE_NEGATIVE is on
+		if ($object->type != Facture::TYPE_CREDIT_NOTE && $object->total_ttc < 0) { 		// Can happen only if getDolGlobalString('FACTURE_ENABLE_NEGATIVE') is on
 			$text .= '<br>'.img_warning().' '.$langs->trans("ErrorInvoiceOfThisTypeMustBePositive");
 		}
 
@@ -4513,8 +4545,8 @@ if ($action == 'create') {
 		$morehtmlref .= '<br>';
 	}
 	// Ref customer
-	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':' . getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_customer, $object, $usercancreate, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_customer, $object, $usercancreate, 'string'.(getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') ? ':' . getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
 	if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
@@ -4880,7 +4912,7 @@ if ($action == 'create') {
 					print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 					$retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
 					$retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $object->retained_warranty_fk_cond_reglement;
-					$retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
+					$retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID');
 					print $form->getSelectConditionsPaiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
 					print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					print '</form>';
@@ -5644,7 +5676,8 @@ if ($action == 'create') {
 		if (empty($reshook)) {
 			$params = array(
 				'attr' => array(
-					'class' => 'classfortooltip'
+					'class' => 'classfortooltip',
+					'title' => ''
 				)
 			);
 			// Edit a validated invoice without any payment and not transferred to accounting
@@ -5656,7 +5689,7 @@ if ($action == 'create') {
 					if (getDolGlobalString('INVOICE_CAN_BE_EDITED_EVEN_IF_PAYMENT_DONE') || ($resteapayer == price2num($object->total_ttc, 'MT', 1) && empty($object->paye))) {
 						if (!$objectidnext && $object->is_last_in_cycle()) {
 							if ($usercanunvalidate) {
-								$params['attr']['title'] = '';
+								unset($params['attr']['title']);
 								print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=modif&token='.newToken(), '', true, $params);
 							} else {
 								$params['attr']['title'] = $langs->trans('NotEnoughPermissions');
@@ -5687,7 +5720,7 @@ if ($action == 'create') {
 				&& ($object->statut == Facture::STATUS_CLOSED || $object->status == Facture::STATUS_ABANDONED || ($object->status == 1 && $object->paye == 1))   // Condition ($object->statut == 1 && $object->paye == 1) should not happened but can be found due to corrupted data
 				&& ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercancreate) || $usercanreopen)) {				// A paid invoice (partially or completely)
 				if ($object->close_code != 'replaced' || (!$objectidnext)) { 				// Not replaced by another invoice or replaced but the replacement invoice has been deleted
-					$params['attr']['title'] = '';
+					unset($params['attr']['title']);
 					print dolGetButtonAction($langs->trans('ReOpen'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=reopen&token='.newToken(), '', true, $params);
 				} else {
 					$params['attr']['title'] = $langs->trans("DisabledBecauseReplacedInvoice");
@@ -5709,7 +5742,7 @@ if ($action == 'create') {
 			// Validate
 			if ($object->status == Facture::STATUS_DRAFT && count($object->lines) > 0 && ((($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA || $object->type == Facture::TYPE_SITUATION) && (getDolGlobalString('FACTURE_ENABLE_NEGATIVE') || $object->total_ttc >= 0)) || ($object->type == Facture::TYPE_CREDIT_NOTE && $object->total_ttc <= 0))) {
 				if ($usercanvalidate) {
-					$params['attr']['title'] = '';
+					unset($params['attr']['title']);
 					print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=valid&token='.newToken(), '', true, $params);
 				}
 			}
@@ -5721,10 +5754,10 @@ if ($action == 'create') {
 						print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendMail').'</span>';
 					} else {
 						if ($usercansend) {
-							$params['attr']['title'] = '';
+							unset($params['attr']['title']);
 							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=presend&mode=init#formmailbeforetitle', '', true, $params);
 						} else {
-							$params['attr']['title'] = '';
+							unset($params['attr']['title']);
 							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', '#', '', false, $params);
 						}
 					}
@@ -5767,8 +5800,8 @@ if ($action == 'create') {
 					} else {
 						// Sometimes we can receive more, so we accept to enter more and will offer a button to convert into discount (but it is not a credit note, just a prepayment done)
 						//print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/paiement.php?facid='.$object->id.'&amp;action=create&amp;accountid='.$object->fk_account.'">'.$langs->trans('DoPayment').'</a>';
-						$params['attr']['title'] = '';
-						print dolGetButtonAction($langs->trans('DoPayment'), '', 'default', DOL_URL_ROOT.'/compta/paiement.php?facid='.$object->id.'&amp;action=create&amp;accountid='.$object->fk_account, '', true, $params);
+						unset($params['attr']['title']);
+						print dolGetButtonAction($langs->trans('DoPayment'), '', 'default', DOL_URL_ROOT.'/compta/paiement.php?facid='.$object->id.'&amp;action=create'.($object->fk_account > 0 ? '&amp;accountid='.$object->fk_account : ''), '', true, $params);
 					}
 				}
 			}
@@ -5795,7 +5828,7 @@ if ($action == 'create') {
 				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->status == Facture::STATUS_VALIDATED && $object->paye == 0 && $usercancreate
 					&& (getDolGlobalString('INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED') || $sumofpayment == 0) && $object->total_ht < 0
 					) {
-					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReduc2")).'">'.$langs->trans('ConvertToReduc').'</a>';
+					print '<a class="butAction classfortooltip'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReduc2")).'">'.$langs->trans('ConvertToReduc').'</a>';
 				}
 				// For down payment invoice (deposit)
 
@@ -5804,7 +5837,7 @@ if ($action == 'create') {
 					if (price2num($object->total_ttc, 'MT') == price2num($sumofpaymentall, 'MT') || getDolGlobalInt('DEPOSIT_AS_CREDIT_AVAILABLE_EVEN_UNPAID') || ($object->type == Facture::STATUS_ABANDONED && in_array($object->close_code, array('bankcharge', 'discount_vat', 'other')))) {
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a>';
 					} else {
-						print '<span class="butActionRefused" title="'.$langs->trans("AmountPaidMustMatchAmountOfDownPayment").'">'.$langs->trans('ConvertToReduc').'</span>';
+						print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("AmountPaidMustMatchAmountOfDownPayment").'">'.$langs->trans('ConvertToReduc').'</span>';
 					}
 				}
 			}
@@ -5821,7 +5854,7 @@ if ($action == 'create') {
 					$params['attr']['title'] = $langs->trans('AmountPaidMustMatchAmountOfDownPayment');
 					print dolGetButtonAction($langs->trans('ClassifyPaid'), '', 'default', '#', '', false, $params);
 				} else {
-					$params['attr']['title'] = '';
+					unset($params['attr']['title']);
 					print dolGetButtonAction($langs->trans('ClassifyPaid'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid', '', true, $params);
 				}
 			}
@@ -5867,14 +5900,14 @@ if ($action == 'create') {
 
 			// Clone
 			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $usercancreate) {
-				$params['attr']['title'] = '';
+				unset($params['attr']['title']);
 				print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=clone&amp;object=invoice', '', true, $params);
 			}
 
 			// Clone as predefined / Create template
 			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $object->status == 0 && $usercancreate) {
 				if (!$objectidnext && count($object->lines) > 0) {
-					$params['attr']['title'] = '';
+					unset($params['attr']['title']);
 					print dolGetButtonAction($langs->trans('ChangeIntoRepeatableInvoice'), '', 'default', DOL_URL_ROOT.'/compta/facture/card-rec.php?facid='.$object->id.'&amp;action=create', '', true, $params);
 				}
 			}
@@ -5928,10 +5961,10 @@ if ($action == 'create') {
 					$deleteHref = $_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=delete&token='.newToken();
 					$enableDelete = true;
 				}
-				$params['attr']['title'] = '';
+				unset($params['attr']['title']);
 				print dolGetButtonAction($htmltooltip, $langs->trans('Delete'), 'delete', $deleteHref, '', $enableDelete, $params);
 			} else {
-				$params['attr']['title'] = '';
+				unset($params['attr']['title']);
 				print dolGetButtonAction($htmltooltip, $langs->trans('Delete'), 'delete', '#', '', false);
 			}
 		}

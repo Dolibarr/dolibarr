@@ -852,7 +852,7 @@ class pdf_squille extends ModelePdfReception
 	 *  @param  Reception	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -1088,6 +1088,8 @@ class pdf_squille extends ModelePdfReception
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

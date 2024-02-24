@@ -336,7 +336,7 @@ if ($module == 'ecm') {
 			$i++;
 		}
 	} else {
-		$s .= join(' -> ', explode('/', $section));
+		$s .= implode(' -> ', explode('/', $section));
 	}
 	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> '.$s;
 }

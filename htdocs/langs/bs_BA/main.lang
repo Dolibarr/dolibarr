@@ -9,7 +9,7 @@ DIRECTION=ltr
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil
+# freeserif is for Tamil or Ethiopian
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=8
 SeparatorDecimal=,
@@ -68,7 +68,7 @@ ErrorNoRequestInError=Nema greške u zahtjevu
 ErrorServiceUnavailableTryLater=Usluga trenutno nije dostupna. Pokušajte ponovo kasnije.
 ErrorDuplicateField=Duplicirana vrijednost u unikatnom polju
 ErrorSomeErrorWereFoundRollbackIsDone=Pronađene su neke greške. Promjene su vraćene.
-ErrorConfigParameterNotDefined=Parametar <b>%s</b> nije definiran u <span konfiguraciji Dolibarr class='notranslate'><b></span>conf.php</b>.
+ErrorConfigParameterNotDefined=Parameter <b>%s</b> is not defined in the Dolibarr config file <b>conf.php</b>.
 ErrorCantLoadUserFromDolibarrDatabase=Neuspjelo traženje korisnika <b>%s</b> u Dolibarr bazi podataka.
 ErrorNoVATRateDefinedForSellerCountry=Greška, nije definirana PDV stopa za državu '%s'.
 ErrorNoSocialContributionForSellerCountry=Greška, nisu definirane vrste doprinosa i poreza za državu '%s'.
@@ -420,6 +420,8 @@ TotalTTCShort=Ukupno (uklj. PDV)
 TotalHT=Ukupno (bez poreza)
 TotalHTforthispage=Ukupno (bez poreza) za ovu stranicu
 Totalforthispage=Ukupno za ovu stranicu
+GrandTotal=Grand total
+TotalforAllPages=Total for all pages
 TotalTTC=Ukupno (uklj. PDV)
 TotalTTCToYourCredit=Ukupno (uklj. PDV) u vašu korist
 TotalVAT=Ukupan porez
@@ -647,6 +649,7 @@ ReportName=Naziv izvještaja
 ReportPeriod=Period izvještaja
 ReportDescription=Opis
 Report=Izvještaj
+Reports=Reports
 Keyword=Ključna riječ
 Origin=Porijeklo
 Legend=Objašnjenje
@@ -963,6 +966,7 @@ AutomaticallyCalculated=Automatski izračunato
 TitleSetToDraft=Nazad na nacrt
 ConfirmSetToDraft=Jeste li sigurni da se želite vratiti na status Nacrta?
 ImportId=Uvoz id
+Event=Događaj
 Events=Događaji
 EMailTemplates=Šabloni e-pošte
 FileNotShared=Fajl se ne dijeli sa eksternom javnošću
@@ -1180,7 +1184,6 @@ ConfirmAffectUserQuestion=Jeste li sigurni da želite dodijeliti korisnike %s od
 ConfirmSetSupervisorQuestion=Jeste li sigurni da želite postaviti nadzornika na %s odabrane zapise?
 ConfirmUpdatePriceQuestion=Jeste li sigurni da želite ažurirati cijenu %s odabranih zapisa?
 CategTypeNotFound=Nije pronađen tip oznake za vrstu zapisa
-Rate=Stopa
 SupervisorNotFound=Supervizor nije pronađen
 CopiedToClipboard=Kopirano u međuspremnik
 InformationOnLinkToContract=Ovaj iznos je samo zbir svih stavki ugovora. Nijedan pojam vremena se ne uzima u obzir.
@@ -1213,6 +1216,7 @@ CanceledHidden=Otkazano skriveno
 CanceledShown=Otkazano je prikazano
 Terminate=Deaktiviraj
 Terminated=Prekinuto
+Position=Pozicija
 AddLineOnPosition=Dodajte red na poziciju (na kraju ako je prazan)
 ConfirmAllocateCommercial=Dodijelite potvrdu prodajnog predstavnika
 ConfirmAllocateCommercialQuestion=Jeste li sigurni da želite dodijeliti %s odabrane zapise?
@@ -1230,6 +1234,7 @@ ExternalUser=Vanjski korisnik
 NoSpecificContactAddress=Nema konkretnog kontakta ili adrese
 NoSpecificContactAddressBis=Ova kartica je posvećena prisiljavanju određenih kontakata ili adresa za trenutni objekt. Koristite ga samo ako želite da definišete jedan ili više konkretnih kontakata ili adresa za objekat kada podaci treće strane nisu dovoljni ili nisu tačni.
 HideOnVCard=Sakrij %s
+ShowOnVCard=Show %s
 AddToContacts=Dodaj adresu mojim kontaktima
 LastAccess=Poslednji pristup
 UploadAnImageToSeeAPhotoHere=Otpremite sliku sa kartice %s da vidite fotografiju ovdje
@@ -1259,4 +1264,7 @@ AmountSalary=Visina plate
 InvoiceSubtype=Podtip fakture
 ConfirmMassReverse=Bulk Reverse potvrda
 ConfirmMassReverseQuestion=Jeste li sigurni da želite poništiti %s odabrane zapise?
-
+ElementType=Element type
+ElementId=Element Id
+Encrypted=Encrypted
+Settings=Settings

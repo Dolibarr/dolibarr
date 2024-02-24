@@ -9,7 +9,7 @@ DIRECTION=ltr
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil
+# freeserif is for Tamil or Ethiopian
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -420,6 +420,8 @@ TotalTTCShort=Totalt (inkl. moms)
 TotalHT=Totalt (exkl. moms)
 TotalHTforthispage=Totalt (exkl. moms) för denna sida
 Totalforthispage=Totalt för denna sida
+GrandTotal=Grand total
+TotalforAllPages=Total for all pages
 TotalTTC=Totalt (inkl. moms)
 TotalTTCToYourCredit=Totalt (inkl. moms) för kreditering
 TotalVAT=Summa moms
@@ -647,6 +649,7 @@ ReportName=Rapportnamn
 ReportPeriod=Rapportperiod
 ReportDescription=Beskrivning
 Report=Rapport
+Reports=Rapporter
 Keyword=Nyckelord
 Origin=Ursprung
 Legend=Legend
@@ -963,6 +966,7 @@ AutomaticallyCalculated=Automatiskt beräknad
 TitleSetToDraft=Gå tillbaka till utkast
 ConfirmSetToDraft=Är du säker på att du vill gå tillbaka till utkaststatus?
 ImportId=Importera ID
+Event=Händelse
 Events=Händelser
 EMailTemplates=E-postmallar
 FileNotShared=Filen delas inte externt
@@ -1180,7 +1184,6 @@ ConfirmAffectUserQuestion=Är du säker på att du vill tilldela användare till
 ConfirmSetSupervisorQuestion=Är du säker på att du vill ställa in överordnad för post(erna) %s?
 ConfirmUpdatePriceQuestion=Är du säker på att du vill uppdatera priset för post(erna) %s?
 CategTypeNotFound=Ingen taggtyp hittades för typ av poster
-Rate=Kurs
 SupervisorNotFound=Överordnad hittades inte
 CopiedToClipboard=Kopieras till urklipp
 InformationOnLinkToContract=Detta belopp är endast summan av alla rader i kontraktet. Ingen tidsåtgång har tagits med i beräkningen.
@@ -1213,6 +1216,7 @@ CanceledHidden=Ångra dolt
 CanceledShown=Ångra visa
 Terminate=Avsluta
 Terminated=Avslutad
+Position=Position
 AddLineOnPosition=Lägg till rad vid position (i slutet om tomt)
 ConfirmAllocateCommercial=Bekräfta att tilldela säljare
 ConfirmAllocateCommercialQuestion=Är du säker att du vill tilldela %s markerade post(er)?
@@ -1230,6 +1234,7 @@ ExternalUser=Extern användare
 NoSpecificContactAddress=Ingen specifik kontakt eller adress
 NoSpecificContactAddressBis=Den här fliken är avsedd att tvinga fram specifika kontakter eller adresser för det aktuella objektet. Använd den endast om du vill definiera en eller flera specifika kontakter eller adresser för objektet när informationen om den tredje parten inte räcker till eller inte är korrekt.
 HideOnVCard=Dölj %s
+ShowOnVCard=Show %s
 AddToContacts=Lägg till adress till mina kontakter
 LastAccess=Senaste åtkomst
 UploadAnImageToSeeAPhotoHere=Ladda upp en bild från fliken %s för att se ett foto här
@@ -1259,4 +1264,7 @@ AmountSalary=Lönebelopp
 InvoiceSubtype=Fakturaundertyp
 ConfirmMassReverse=Bulk Omvänd bekräftelse
 ConfirmMassReverseQuestion=Är du säker på att du vill vända de %s valda posterna?
-
+ElementType=Element type
+ElementId=Element Id
+Encrypted=Encrypted
+Settings=Inställningar

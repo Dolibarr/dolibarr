@@ -124,7 +124,9 @@
 		$out .= "<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"]) ? dol_htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT) : '')."<br>\n";
 		$reday = GETPOST('reday', 'int');
 		$reday = GETPOSTINT('reday');
+		$sql  = "SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_modification, p.budget_amount";
 		$sql  = "SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount";
+		$sql  = 'SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_modification, p.budget_amount';
 		$sql  = 'SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount';
 		$sql .= "   (cs.periode IS NOT NULL AND cs.periode between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 		$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
@@ -150,8 +152,8 @@
 		$sql = "SELECT p.rowid, p.fk_statut as status, p.fk_opp_status, p.datee as datee";
 		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".$this->db->prefix()."links";
 		$sql = 'SELECT c.rowid, date_creation as datec, tms as datem, date_valid as date_validation, date_approve as datea, date_approve2 as datea2,';
+		$test = "<IMG SRC=\"jav&#x0D;ascript:alert('XSS');\">";	// Same
 		$test = '/javas:cript/google.com';
-		$test="<IMG SRC=\"jav&#x0D;ascript:alert('XSS');\">";	// Same
 		$this->periode = $this->date_creation + 3600 * 24 * 30;
 		$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Referers');
 		$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Referers');
@@ -263,6 +265,9 @@
 	public function getSumOfAmount($fuser = '', $dates = '', $datee = '')
 	return $TWeek;
 	unset($_SESSION["adresse"]);
+          - creat,unitl,alltime,datas,referers
+          - informations,medias,uptodate,reenable,crypted,developpers
+          - ned
  *	@param	array 		$TWeek			array of week numbers
  * @param	array		$TWeek					Array of week numbers
  * Copyright (C) 2019		Tim Otte    			<otte@meuser.it>
@@ -293,7 +298,9 @@ $permissiontoread = $user->hasRight('stock', 'mouvement', 'lire');
 $sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, cs.fk_account, c.libelle, c.accountancy_code, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, pay.code";
 $sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode, cs.fk_account,";
 $sql .= " cs.rowid, cs.libelle as label_sc, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total, cs.paye,";
+$sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_modification, p.budget_amount,";
 $sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_update, p.budget_amount,";
+$sql .= " t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_modification,";
 $sql .= " t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_update,";
 $sql .= dolSqlDateFilter('p.datee', $search_eday, $search_emonth, $search_eyear);
 $sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.datee as projectdatee, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate, p.usage_bill_time,";
@@ -312,6 +319,7 @@ $usercanread = (($user->hasRight('stock', 'mouvement', 'lire')));
 * The hook contaxt thirdpartycard has been renamed thirdpartycontact
 * The private array ->status_short, ->statuts and ->status_long are now array ->labelStatusShort and ->labelStatus everywhere.
 - New: Add proposals into referer page of thirdparty.
+for /F "tokens=2 delims=," %%i in ('tasklist /FI "IMAGENAME eq php.exe" /FO CSV /NH') do (
 foreach ($TWeek as $week_number) {
 function checkES($IentOfi, $InumCta)
 function getFirstDayOfEachWeek($TWeek, $year)

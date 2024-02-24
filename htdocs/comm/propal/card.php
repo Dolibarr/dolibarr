@@ -226,6 +226,22 @@ if (empty($reshook)) {
 
 				$result = $object->createFromClone($user, $socid, (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : null), (GETPOST('update_prices', 'aZ') ? true : false), (GETPOST('update_desc', 'aZ') ? true : false));
 				if ($result > 0) {
+					$warningMsgLineList = array();
+					// check all product lines are to sell otherwise add a warning message for each product line is not to sell
+					foreach ($object->lines as $line) {
+						if (!is_object($line->product)) {
+							$line->fetch_product();
+						}
+						if (is_object($line->product) && $line->product->id > 0) {
+							if (empty($line->product->tosell)) {
+								$warningMsgLineList[$line->id] = $langs->trans('WarningLineProductNotToSell', $line->product->ref);
+							}
+						}
+					}
+					if (!empty($warningMsgLineList)) {
+						setEventMessages('', $warningMsgLineList, 'warnings');
+					}
+
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 					exit();
 				} else {
@@ -444,7 +460,7 @@ if (empty($reshook)) {
 					$object->warehouse_id = GETPOSTINT('warehouse_id');
 					$object->duree_validite = $duration;
 					$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
-					$object->deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
+					$object->deposit_percent = GETPOSTFLOAT('cond_reglement_id_deposit_percent');
 					$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
 					$object->fk_account = GETPOSTINT('fk_account');
 					$object->socid = GETPOSTINT('socid');
@@ -475,7 +491,7 @@ if (empty($reshook)) {
 				$object->warehouse_id = GETPOSTINT('warehouse_id');
 				$object->duree_validite = price2num(GETPOST('duree_validite', 'alpha'));
 				$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
-				$object->deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
+				$object->deposit_percent = GETPOSTFLOAT('cond_reglement_id_deposit_percent');
 				$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
 				$object->fk_account = GETPOSTINT('fk_account');
 				$object->contact_id = GETPOSTINT('contactid');
@@ -561,7 +577,7 @@ if (empty($reshook)) {
 							$num = count($lines);
 							for ($i = 0; $i < $num; $i++) {
 								$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
-								$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->label);
+								$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : '');
 
 								// Positive line
 								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
@@ -853,7 +869,7 @@ if (empty($reshook)) {
 					$remise_percent = $originLine->remise_percent;
 					$date_start = $originLine->date_start;
 					$date_end = $originLine->date_end;
-					$ventil = 0;
+					$fk_code_ventilation = 0;
 					$info_bits = $originLine->info_bits;
 					$fk_remise_except = $originLine->fk_remise_except;
 					$price_base_type = 'HT';

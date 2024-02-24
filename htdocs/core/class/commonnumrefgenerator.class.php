@@ -29,46 +29,76 @@
 abstract class CommonNumRefGenerator
 {
 	/**
-	 * @var string Model name
+	 * @var string              Model name
 	 */
 	public $name = '';
 
 	/**
-	 * @var string Version
+	 * @var string              Version
 	 */
 	public $version = '';
 
 	/**
-	 * @var string Error code (or message)
+	 * @var string              Error code (or message)
 	 */
 	public $error = '';
 
 	/**
-	 * @var string[]    Array of error strings
+	 * @var string[]            Array of error strings
 	 */
 	public $errors = array();
 
 	/**
-	 * @var DoliDB Database handler.
+	 * @var DoliDB              Database handler.
 	 */
 	protected $db;
 
+	/**
+	 * @var int<0,1>            Code facultatif
+	 */
+	public $code_null;
 
-	/**     Return model name
-	 * 		TODO Replace with getName()
+	/**
+	 * @var int<0,1>            Code modifiable
+	 */
+	public $code_modifiable;
+
+	/**
+	 * @var int<0,1>            Code modifiable si il est invalid
+	 */
+	public $code_modifiable_invalide;
+
+	/**
+	 * @var int<0,1>            Code modifiable si il est null
+	 */
+	public $code_modifiable_null;
+
+	/**
+	 * @var int<0,1>            Automatic numbering
+	 */
+	public $code_auto;
+
+	/**
+	 * @var int<0,1>            Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
+	 */
+	public $prefixIsRequired;
+
+	/** Return model name
 	 *
-	 *		@param	Translate	$langs		Object langs
-	 *      @return string      			Model name
+	 *  @param	Translate	$langs		Object langs
+	 *  @return string      			Model name
+	 *  @deprecated
+	 *  @see getName()
 	 */
 	public function getNom($langs)
 	{
-		return empty($this->name) ? get_class($this) : $this->name;
+		return $this->getName($langs);
 	}
 
-	/**     Return model name
+	/** Return model name
 	 *
-	 *		@param	Translate	$langs		Object langs
-	 *      @return string      			Model name
+	 *  @param	Translate	$langs		Object langs
+	 *  @return string      			Model name
 	 */
 	public function getName($langs)
 	{

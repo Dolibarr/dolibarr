@@ -467,7 +467,7 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if MYOBJECT_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>'."\n";
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>'."\n";
 }
 
 $moreforfilter = '';
@@ -477,6 +477,9 @@ $moreforfilter.= '</div>';*/
 
 // Filter on categories
 if (getDolGlobalString('MAIN_SEARCH_CATEGORY_PRODUCT_ON_LISTS') && isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+	$formcategory = new FormCategory($db);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $searchCategoryProductList, 'minwidth300', $searchCategoryProductList ? $searchCategoryProductList : 0);
+	/*
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->transnoentities('ProductsCategoriesShort');
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
@@ -486,6 +489,7 @@ if (getDolGlobalString('MAIN_SEARCH_CATEGORY_PRODUCT_ON_LISTS') && isModEnabled(
 	$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_product_operator" name="search_category_product_operator" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').'/>';
 	$moreforfilter .= $form->textwithpicto('', $langs->trans('UseOrOperatorForCategories') . ' : ' . $tmptitle, 1, 'help', '', 0, 2, 'tooltip_cat_pro'); // Tooltip on click
 	$moreforfilter .= '</div>';
+	*/
 }
 
 $parameters = array();

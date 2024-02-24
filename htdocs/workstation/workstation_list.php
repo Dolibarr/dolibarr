@@ -465,7 +465,7 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if WORKSTATION_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
@@ -555,7 +555,7 @@ if (!empty($arrayfields['wug.fk_usergroup']['checked'])) {
 // resources
 if (!empty($arrayfields['wr.fk_resource']['checked'])) {
 	print '<td class="liste_titre">';
-	print $formresource->select_resource_list($resources, 'resources', '', '', 0, '', '', $conf->entity, true, 0, '', true);
+	print $formresource->select_resource_list($resources, 'resources', [], '', 0, '', '', $conf->entity, true, 0, '', true);
 	print '</td>';
 }
 

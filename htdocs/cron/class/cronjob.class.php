@@ -58,11 +58,6 @@ class Cronjob extends CommonObject
 	public $jobtype;
 
 	/**
-	 * @var string|int     Date for last cron object update
-	 */
-	public $tms = '';
-
-	/**
 	 * @var string|int     Date for cron job create
 	 */
 	public $datec = '';
@@ -488,7 +483,7 @@ class Cronjob extends CommonObject
 				$this->datenextrun = $this->db->jdate($obj->datenextrun);
 				$this->dateend = $this->db->jdate($obj->dateend);
 				$this->datestart = $this->db->jdate($obj->datestart);
-				$this->lastresult = $obj->lastresult;
+				$this->lastresult = (string) $obj->lastresult;
 				$this->lastoutput = $obj->lastoutput;
 				$this->datelastresult = $this->db->jdate($obj->datelastresult);
 				$this->unitfrequency = $obj->unitfrequency;
@@ -804,9 +799,9 @@ class Cronjob extends CommonObject
 		$sql .= " datelastresult=".(dol_strlen($this->datelastresult) != 0 ? "'".$this->db->idate($this->datelastresult)."'" : 'null').",";
 		$sql .= " lastresult=".(isset($this->lastresult) ? "'".$this->db->escape($this->lastresult)."'" : "null").",";
 		$sql .= " lastoutput=".(isset($this->lastoutput) ? "'".$this->db->escape($this->lastoutput)."'" : "null").",";
-		$sql .= " unitfrequency=".(isset($this->unitfrequency) ?: "null").",";
-		$sql .= " frequency=".(isset($this->frequency) ?: "null").",";
-		$sql .= " status=".(isset($this->status) ?: "null").",";
+		$sql .= " unitfrequency=".(isset($this->unitfrequency) ? "'".$this->db->escape($this->unitfrequency)."'" : "null").",";
+		$sql .= " frequency=".(isset($this->frequency) ? ((int) $this->frequency) : "null").",";
+		$sql .= " status=".(isset($this->status) ? ((int) $this->status) : "null").",";
 		$sql .= " processing=".((isset($this->processing) && $this->processing > 0) ? $this->processing : "0").",";
 		$sql .= " pid=".(isset($this->pid) ? ((int) $this->pid) : "null").",";
 		$sql .= " email_alert = ".(isset($this->email_alert) ? "'".$this->db->escape($this->email_alert)."'" : "null").",";
@@ -946,7 +941,7 @@ class Cronjob extends CommonObject
 		$this->id = 0;
 		$this->ref = '';
 		$this->entity = 0;
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->datec = '';
 		$this->label = '';
 		$this->jobtype = '';
@@ -1309,7 +1304,7 @@ class Cronjob extends CommonObject
 						$errmsg .= $object->error;
 					}
 					if (is_array($object->errors) && count($object->errors)) {
-						$errmsg .= (($errmsg ? ', ' : '').join(', ', $object->errors));
+						$errmsg .= (($errmsg ? ', ' : '').implode(', ', $object->errors));
 					}
 					if (empty($errmsg)) {
 						$errmsg = $langs->trans('ErrorUnknown');

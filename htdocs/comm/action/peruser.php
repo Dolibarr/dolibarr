@@ -1570,16 +1570,16 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		$ids3 = '';
 		$ids4 = '';
 		if (!empty($cases1[$h]) && is_array($cases1[$h]) && count($cases1[$h]) && array_keys($cases1[$h])) {
-			$ids1 = join(', ', array_keys($cases1[$h]));
+			$ids1 = implode(', ', array_keys($cases1[$h]));
 		}
 		if (!empty($cases2[$h]) && is_array($cases2[$h]) && count($cases2[$h]) && array_keys($cases2[$h])) {
-			$ids2 = join(', ', array_keys($cases2[$h]));
+			$ids2 = implode(', ', array_keys($cases2[$h]));
 		}
 		if (!empty($cases3[$h]) && is_array($cases3[$h]) && count($cases3[$h]) && array_keys($cases3[$h])) {
-			$ids3 = join(',', array_keys($cases3[$h]));
+			$ids3 = implode(',', array_keys($cases3[$h]));
 		}
 		if (!empty($cases4[$h]) && is_array($cases4[$h]) && count($cases4[$h]) && array_keys($cases4[$h])) {
-			$ids4 = join(',', array_keys($cases4[$h]));
+			$ids4 = implode(',', array_keys($cases4[$h]));
 		}
 
 		if ($h == $begin_h) {

@@ -4,6 +4,7 @@
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2022      Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2023      Alexandre Janniaux  <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,8 +47,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "core";
 		$this->description = "Triggers of this module allows to manage workflows";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = self::VERSION_DOLIBARR;
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'technic';
 	}
 
@@ -62,7 +62,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 	 * @param conf		    $conf       Object conf
 	 * @return int         				Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		if (empty($conf->workflow) || empty($conf->workflow->enabled)) {
 			return 0; // Module not active, we do nothing
@@ -97,7 +97,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 
 				$object->clearObjectLinkedCache();
 
-				return $ret;
+				return (int) $ret;
 			}
 		}
 
@@ -203,7 +203,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						foreach ($object->linkedObjects['shipping'] as $element) {
 							$ret = $element->setClosed();
 							if ($ret < 0) {
-								return $ret;
+								return (int) $ret;
 							}
 						}
 					}
@@ -224,7 +224,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						foreach ($object->linkedObjects['shipping'] as $element) {
 							$ret = $element->setBilled();
 							if ($ret < 0) {
-								return $ret;
+								return (int) $ret;
 							}
 						}
 					}
@@ -372,7 +372,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				// The original sale order is id in $object->origin_id
 				// Find all shipments on sale order origin
 
-				if (($object->origin == 'order' || $object->origin = 'commande') && $object->origin_id > 0) {
+				if (in_array($object->origin, array('order', 'commande')) && $object->origin_id > 0) {
 					require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 					$order = new Commande($this->db);
 					$ret = $order->fetch($object->origin_id);
@@ -446,7 +446,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				// The original purchase order is id in $object->origin_id
 				// Find all reception on purchase order origin
 
-				if (($object->origin == 'order_supplier' || $object->origin == 'supplier_order' || $object->origin = 'commandeFournisseur') && $object->origin_id > 0) {
+				if (in_array($object->origin, array('order_supplier', 'supplier_order', 'commandeFournisseur')) && $object->origin_id > 0) {
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 					$order = new CommandeFournisseur($this->db);
 					$ret = $order->fetch($object->origin_id);

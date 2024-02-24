@@ -19,7 +19,6 @@
  */
 
 use Luracast\Restler\RestException;
-use Luracast\Restler\Format\UploadFormat;
 
 require_once DOL_DOCUMENT_ROOT.'/main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
@@ -762,6 +761,7 @@ class Documents extends DolibarrApi
 
 			if (is_object($object)) {
 				if ($fetchbyid) {
+					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					$result = $object->fetch($ref);
 				} else {
 					$result = $object->fetch('', $ref);
@@ -873,8 +873,8 @@ class Documents extends DolibarrApi
 		if (empty($disablevirusscan) && file_exists($src_file)) {
 			$checkvirusarray = dolCheckVirus($src_file, $dest_file);
 			if (count($checkvirusarray)) {
-				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.join(',', $checkvirusarray), LOG_WARNING);
-				throw new RestException(500, 'ErrorFileIsInfectedWithAVirus: '.join(',', $checkvirusarray));
+				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.implode(',', $checkvirusarray), LOG_WARNING);
+				throw new RestException(500, 'ErrorFileIsInfectedWithAVirus: '.implode(',', $checkvirusarray));
 			}
 		}
 

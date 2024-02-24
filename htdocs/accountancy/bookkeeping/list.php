@@ -340,7 +340,7 @@ if (empty($reshook)) {
 				$listofaccountsforgroup2[] = "'".$db->escape($tmpval['id'])."'";
 			}
 		}
-		$filter['t.search_accounting_code_in'] = join(',', $listofaccountsforgroup2);
+		$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);
 		$param .= '&search_account_category='.urlencode($search_account_category);
 	}
 	if (!empty($search_accountancy_code)) {
@@ -645,7 +645,7 @@ if (count($filter) > 0) {
 			$sqlwhere[] = 't.lettering_code IS NULL';
 		} elseif ($key == 't.code_journal' && !empty($value)) {
 			if (is_array($value)) {
-				$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+				$sqlwhere[] = natural_search("t.code_journal", implode(',', $value), 3, 1);
 			} else {
 				$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
 			}

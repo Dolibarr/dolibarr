@@ -313,9 +313,9 @@ class Members extends DolibarrApi
 	/**
 	 * Update member
 	 *
-	 * @param int   $id             ID of member to update
-	 * @param array $request_data   Datas
-	 * @return Object				Updated object
+	 * @param 	int   		$id             ID of member to update
+	 * @param 	array 		$request_data   Datas
+	 * @return 	Object						Updated object
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		Member not found

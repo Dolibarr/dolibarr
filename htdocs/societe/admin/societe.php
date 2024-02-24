@@ -391,7 +391,8 @@ foreach ($dirsociete as $dirroot) {
 					dol_syslog($e->getMessage(), LOG_ERR);
 				}
 
-				$modCodeTiers = new $file();
+				/** @var ModeleThirdPartyCode $modCodeTiers */
+				$modCodeTiers = new $file($db);
 
 				// Show modules according to features level
 				if ($modCodeTiers->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -605,7 +606,7 @@ foreach ($dirsociete as $dirroot) {
 					} else {
 						if (versioncompare($module->phpmin, versionphparray()) > 0) {
 							print '<td class="center">'."\n";
-							print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion", join('.', $module->phpmin))), 'switch_off');
+							print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion", implode('.', $module->phpmin))), 'switch_off');
 							print "</td>";
 						} else {
 							print '<td class="center">'."\n";

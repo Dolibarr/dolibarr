@@ -267,7 +267,7 @@ if (empty($reshook)) {
 		$search_datelastlogin = "";
 		$search_datepreviouslogin = "";
 		$search_date_creation = "";
-		$search_date_update = "";
+		$search_date_modification = "";
 		$search_categ = 0;
 		$toselect = array();
 		$search_array_options = array();
@@ -372,7 +372,7 @@ $sql .= " u.fk_user,";
 $sql .= " u.ref_employee, u.national_registration_number, u.job, u.salary, u.datelastlogin, u.datepreviouslogin,";
 $sql .= " u.datestartvalidity, u.dateendvalidity,";
 $sql .= " u.ldap_sid, u.statut as status, u.entity,";
-$sql .= " u.tms as date_update, u.datec as date_creation,";
+$sql .= " u.tms as date_modification, u.datec as date_creation,";
 $sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.office_phone as ofice_phone2, u2.user_mobile as user_mobile2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2, u2.statut as status2,";
 $sql .= " s.nom as name, s.canvas";
 // Add fields from extrafields
@@ -491,7 +491,7 @@ if ($search_warehouse > 0) {
 	$sql .= " AND u.fk_warehouse = ".((int) $search_warehouse);
 }
 if (isModEnabled('salaries') && $contextpage == 'employeelist' && !$user->hasRight("salaries", "readall")) {
-	$sql .= " AND u.rowid IN (".$db->sanitize(join(',', $childids)).")";
+	$sql .= " AND u.rowid IN (".$db->sanitize(implode(',', $childids)).")";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -692,7 +692,7 @@ if ($search_all) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
 	print '<!-- Search done like if USER_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
@@ -1180,7 +1180,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['u.email']['checked'])) {
-			print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 'AC_EMAIL', 0, 0, 1)."</td>\n";
+			print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 1, 0, 0, 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1324,7 +1324,7 @@ while ($i < $imaxinloop) {
 		// Date modification
 		if (!empty($arrayfields['u.tms']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

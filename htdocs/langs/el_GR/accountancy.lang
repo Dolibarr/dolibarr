@@ -24,8 +24,8 @@ ConfigAccountingExpert=Διαμόρφωση της ενότητας λογιστ
 Journalization=Καταχώρηση ημερολογίου
 Journals=Ημερολόγια
 JournalFinancial=Οικονομικά ημερολόγια
-BackToChartofaccounts=Επιστροφή στο λογιστικό σχέδιο 
-Chartofaccounts=Λογιστικό σχέδιο 
+BackToChartofaccounts=Επιστροφή στο λογιστικό σχέδιο
+Chartofaccounts=Λογιστικό σχέδιο
 ChartOfSubaccounts=Λογιστικό σχέδιο μεμονωμένων λογαριασμών
 ChartOfIndividualAccountsOfSubsidiaryLedger=Λογιστικό σχέδιο μεμονωμένων λογαριασμών του θυγατρικού καθολικού
 CurrentDedicatedAccountingAccount=Τρέχων αποκλειστικός λογαριασμός
@@ -52,7 +52,7 @@ AccountantFiles=Εξαγωγή εγγράφων πηγής
 ExportAccountingSourceDocHelp=Με αυτό το εργαλείο, μπορείτε να αναζητήσετε και να εξαγάγετε τα συμβάντα πηγής που χρησιμοποιούνται για τη δημιουργία της λογιστικής σας. <br> Το εξαγόμενο αρχείο ZIP θα περιέχει τις λίστες των ζητούμενων στοιχείων σε CSV, καθώς και τα συνημμένα αρχεία τους στην αρχική τους μορφή (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Για να εξαγάγετε τα ημερολόγια σας, χρησιμοποιήστε την καταχώριση μενού %s - %s.
 ExportAccountingProjectHelp=Προσδιορίστε ένα έργο εάν χρειάζεστε μια λογιστική αναφορά μόνο για ένα συγκεκριμένο έργο. Οι αναφορές εξόδων και οι πληρωμές δανείων δεν περιλαμβάνονται στις αναφορές του έργου.
-ExportAccountancy=Εξαγωγή λογιστικής 
+ExportAccountancy=Εξαγωγή λογιστικής
 WarningDataDisappearsWhenDataIsExported=Προειδοποίηση, αυτή η λίστα περιέχει μόνο τις λογιστικές εγγραφές που δεν έχουν ήδη εξαχθεί (η ημερομηνία εξαγωγής είναι κενή). Εάν θέλετε να συμπεριλάβετε τις λογιστικές εγγραφές που έχουν ήδη εξαχθεί, κάντε κλικ στο παραπάνω κουμπί.
 VueByAccountAccounting=Προβολή ανά λογαριασμό λογιστικής
 VueBySubAccountAccounting=Προβολή ανά υπολογαριασμό λογιστικής
@@ -65,7 +65,7 @@ MainAccountForSubscriptionPaymentNotDefined=Ο λογαριασμός (από τ
 MainAccountForRetainedWarrantyNotDefined=Λογαριασμός (από το Λογιστικό Σχέδιο) για τη διατηρηθείσα εγγύηση που δεν έχει καθοριστεί στη ρύθμιση
 UserAccountNotDefined=Ο λογαριασμός λογιστικής για τον χρήστη δεν έχει οριστεί κατά τη ρύθμιση
 
-AccountancyArea=Τομέας Λογιστικής 
+AccountancyArea=Τομέας Λογιστικής
 AccountancyAreaDescIntro=Η χρήση της ενότητας λογιστικής πραγματοποιείται σε διάφορα στάδια:
 AccountancyAreaDescActionOnce=Οι ακόλουθες ενέργειες εκτελούνται συνήθως μόνο μία φορά ή μία φορά το χρόνο ...
 AccountancyAreaDescActionOnceBis=Τα επόμενα βήματα πρέπει να γίνουν για να εξοικονομήσετε χρόνο στο μέλλον, προτείνοντάς σας αυτόματα τον σωστό προκαθορισμένο λογαριασμό λογιστικής κατά τη μεταφορά δεδομένων στη λογιστική
@@ -118,7 +118,7 @@ MenuLoanAccounts=Λογαριασμοί δανείων
 MenuProductsAccounts=Λογαριασμοί προϊόντων
 MenuClosureAccounts=Κλείσιμο Λογαριασμών
 MenuAccountancyClosure=Κλείσιμο
-MenuExportAccountancy=Εξαγωγή λογιστικής 
+MenuExportAccountancy=Εξαγωγή λογιστικής
 MenuAccountancyValidationMovements=Επικύρωση κινήσεων
 ProductsBinding=Λογαριασμοί προϊόντων
 TransferInAccounting=Μεταφορά στη λογιστική
@@ -318,7 +318,7 @@ FicheVentilation=Καρτέλα Δεσμεύσεων
 GeneralLedgerIsWritten=Οι συναλλαγές καταχωρήθηκαν στο Καθολικό
 GeneralLedgerSomeRecordWasNotRecorded=Δεν ήταν δυνατή η καταγραφή ορισμένων από τις συναλλαγές. Εάν δεν υπάρχει άλλο μήνυμα σφάλματος, αυτό πιθανότατα οφείλεται στο ότι είχαν ήδη καταχωρηθεί στο ημερολόγιο.
 NoNewRecordSaved=Δεν υπάρχει άλλη εγγραφή για μεταφορά
-ListOfProductsWithoutAccountingAccount=Κατάλογος προϊόντων που δεν δεσμεύονται σε κανένα λογαριασμό  του λογιστικού σχεδίου 
+ListOfProductsWithoutAccountingAccount=Κατάλογος προϊόντων που δεν δεσμεύονται σε κανένα λογαριασμό  του λογιστικού σχεδίου
 ChangeBinding=Αλλάξτε τη δέσμευση
 Accounted=Καταχωρήθηκε στο καθολικό
 NotYetAccounted=Δεν έχει μεταφερθεί ακόμη στη λογιστική
@@ -335,7 +335,6 @@ CategoryDeleted=Η κατηγορία για τον λογαριασμό λογ�
 AccountingJournals=Λογιστικά ημερολόγια
 AccountingJournal=Λογιστικό ημερολόγιο
 NewAccountingJournal=Νέο λογιστικό ημερολόγιο
-ShowAccountingJournal=Εμφάνιση ημερολογίου λογιστικής
 NatureOfJournal=Φύση του ημερολογίου
 AccountingJournalType1=Διάφορες εργασίες
 AccountingJournalType2=Πωλήσεις
@@ -365,7 +364,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Όταν είναι ενεργο
 
 ## Export
 NotExportLettering=Μην εξάγετε τη συμφωνία κατά τη δημιουργία του αρχείου
-NotifiedExportDate=Επισήμανση γραμμών που δεν έχουν εξαχθεί ακόμη ως Εξαγόμενες <span class="warning"> (για να τροποποιήσετε μια γραμμή που έχει επισημανθεί ως εξαγόμενη, θα χρειαστεί να διαγράψετε ολόκληρη τη συναλλαγή και να τη μεταφέρετε ξανά στη λογιστική) </span> 
+NotifiedExportDate=Επισήμανση γραμμών που δεν έχουν εξαχθεί ακόμη ως Εξαγόμενες <span class="warning"> (για να τροποποιήσετε μια γραμμή που έχει επισημανθεί ως εξαγόμενη, θα χρειαστεί να διαγράψετε ολόκληρη τη συναλλαγή και να τη μεταφέρετε ξανά στη λογιστική) </span>
 NotifiedValidationDate=Επικύρωση και Κλείδωμα των εξαγόμενων καταχωρήσεων που δεν έχουν ήδη κλειδωθεί <span class="warning"> (το ίδιο αποτέλεσμα με τη δυνατότητα "%s", η τροποποίηση και η διαγραφή των γραμμών ΣΙΓΟΥΡΑ δεν θα είναι δυνατή) </span>
 NotifiedExportFull=Εξαγωγή εγγράφων ;
 DateValidationAndLock=Ημερομηνία επικύρωσης και κλειδώματος
@@ -393,7 +392,7 @@ Modelcsv_winfic=Εξαγωγή για Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Εξαγωγή για Gestinum (v3)
 Modelcsv_Gestinumv5=Εξαγωγή για Gestinum (v5)
 Modelcsv_charlemagne=Εξαγωγή για το Aplim Charlemagne
-ChartofaccountsId=Αναγνωριστικό λογιστικού σχεδίου 
+ChartofaccountsId=Αναγνωριστικό λογιστικού σχεδίου
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Έναρξη λογιστικής
@@ -474,7 +473,7 @@ ErrorInvoiceContainsLinesNotYetBoundedShort=Ορισμένες γραμμές σ
 ExportNotSupported=Η διαμορφωμένη μορφή εξαγωγής δεν υποστηρίζεται σε αυτή τη σελίδα
 BookeppingLineAlreayExists=Γραμμές που υπάρχουν ήδη στη λογιστική
 NoJournalDefined=Δεν βρέθηκε ημερολόγιο
-Binded=Δεσμευμένες γραμμές 
+Binded=Δεσμευμένες γραμμές
 ToBind=Γραμμές προς δέσμευση
 UseMenuToSetBindindManualy=Γραμμές που δεν έχουν ακόμη δεσμευτεί, χρησιμοποιήστε το μενού <a href="%s">%s</a> για να κάνετε τη δέσμευση χειροκίνητα
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Σημείωση: αυτή η ενότητα ή η σελίδα δεν είναι απολύτως συμβατή με την πειραματική λειτουργία των τιμολογίων κατάστασης. Ορισμένα δεδομένα μπορεί να είναι λάθος.
@@ -482,7 +481,7 @@ AccountancyErrorMismatchLetterCode=Αναντιστοιχία στον κώδι�
 AccountancyErrorMismatchBalanceAmount=Το ισοζύγιο (%s) δεν είναι ίσο με 0
 AccountancyErrorLetteringBookkeeping=Παρουσιάστηκαν σφάλματα σχετικά με τις συναλλαγές: %s
 ErrorAccountNumberAlreadyExists=Ο λογιστικός αριθμός %s υπάρχει ήδη
-ErrorArchiveAddFile=Δεν είναι δυνατή η αρχειοθέτηση του αρχείου "%s" 
+ErrorArchiveAddFile=Δεν είναι δυνατή η αρχειοθέτηση του αρχείου "%s"
 ErrorNoFiscalPeriodActiveFound=Δεν βρέθηκε ενεργή φορολογική περίοδος
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Η ημερομηνία του εγγράφου λογιστικής δεν βρίσκεται εντός της ενεργής φορολογικής περιόδου.
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Η ημερομηνία του εγγράφου λογιστικής βρίσκεται εντός μιας κλειστής φορολογικής περιόδου

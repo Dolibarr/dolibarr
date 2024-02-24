@@ -25,7 +25,6 @@ StockCorrection=Corrección de inventario
 CorrectStock=Inventario correcto
 StockTransfer=Transferencia de inventario
 TransferStock=Transferir inventario
-MassStockTransferShort=Transferencia de inventario masiva
 StockMovement=Movimiento de inventario
 StockMovements=Movimiento de inventario
 NumberOfUnit=Número de unidades

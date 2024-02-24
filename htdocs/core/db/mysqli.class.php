@@ -1273,6 +1273,7 @@ class mysqliDoli extends mysqli
 		if (PHP_VERSION_ID >= 80100) {
 			parent::__construct();
 		} else {
+			// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 			parent::init();
 		}
 		if (strpos($host, 'ssl://') === 0) {

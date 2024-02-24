@@ -332,17 +332,15 @@ class Products extends DolibarrApi
 	 * Update product.
 	 * Price will be updated by this API only if option is set on "One price per product". See other APIs for other price modes.
 	 *
-	 * @param  int   $id           Id of product to update
-	 * @param  array $request_data Datas
-	 * @return int
+	 * @param  	int   	$id           		Id of product to update
+	 * @param  	array 	$request_data 		Datas
+	 * @return 	Object						Updated object
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 */
 	public function put($id, $request_data = null)
 	{
-		global $conf;
-
 		if (!DolibarrApiAccess::$user->hasRight('produit', 'creer')) {
 			throw new RestException(403);
 		}
@@ -517,7 +515,7 @@ class Products extends DolibarrApi
 	 *
 	 * @param  int $id            Id of parent product/service
 	 * @param  int $subproduct_id Id of child product/service
-	 * @param  int $qty           Quantity
+	 * @param  float $qty         Quantity
 	 * @param  int $incdec        1=Increase/decrease stock of child when parent stock increase/decrease
 	 * @return int
 	 *
@@ -599,7 +597,7 @@ class Products extends DolibarrApi
 		$result = $categories->getListForItem($id, 'product', $sortfield, $sortorder, $limit, $page);
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieve category list : '.join(',', array_merge(array($categories->error), $categories->errors)));
+			throw new RestException(503, 'Error when retrieve category list : '.implode(',', array_merge(array($categories->error), $categories->errors)));
 		}
 
 		return $result;
@@ -632,7 +630,7 @@ class Products extends DolibarrApi
 		}
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieve prices list : '.join(',', array_merge(array($this->product->error), $this->product->errors)));
+			throw new RestException(503, 'Error when retrieve prices list : '.implode(',', array_merge(array($this->product->error), $this->product->errors)));
 		}
 
 		return array(
@@ -723,7 +721,7 @@ class Products extends DolibarrApi
 		}
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieve prices list : '.join(',', array_merge(array($this->product->error), $this->product->errors)));
+			throw new RestException(503, 'Error when retrieve prices list : '.implode(',', array_merge(array($this->product->error), $this->product->errors)));
 		}
 
 		return array(

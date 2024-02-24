@@ -41,6 +41,9 @@ if (empty($object) || !is_object($object)) {
 	exit;
 }
 
+'@phan-var-force CommonObject $this
+ @phan-var-force CommonObject $object';
+
 $usemargins = 0;
 if (isModEnabled('margin') && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) {
 	$usemargins = 1;
@@ -831,6 +834,17 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 						} else {
 							console.log("objectline_create.tpl set content of price_ht");
 							jQuery("#price_ht").val(data.price_ht);
+						}
+
+						// Set values for any fields in the form options_SOMETHING
+						for (var key in data.array_options) {
+							if (data.array_options.hasOwnProperty(key)) {
+								var field = jQuery("#" + key);
+								if(field.length > 0){
+									console.log("objectline_create.tpl set content of options_" + key);
+									field.val(data.array_options[key]);
+								}
+							}
 						}
 
 						var tva_tx = data.tva_tx;

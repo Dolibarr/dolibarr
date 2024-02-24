@@ -198,11 +198,6 @@ class Ticket extends CommonObject
 	public $datec;
 
 	/**
-	 * @var int Last modification date
-	 */
-	public $tms;
-
-	/**
 	 * @var int Read date
 	 */
 	public $date_read;
@@ -286,12 +281,12 @@ class Ticket extends CommonObject
 	/**
 	 * Status
 	 */
-	const STATUS_NOT_READ = 0;
-	const STATUS_READ = 1;
-	const STATUS_ASSIGNED = 2;
-	const STATUS_IN_PROGRESS = 3;
-	const STATUS_NEED_MORE_INFO = 5;	// waiting requester feedback
-	const STATUS_WAITING = 7;			// on hold
+	const STATUS_NOT_READ = 0;			// Draft. Not take into account yet.
+	const STATUS_READ = 1;				// Ticket was read.
+	const STATUS_ASSIGNED = 2;			// Ticket was just assigned to someone. Not in progress yet.
+	const STATUS_IN_PROGRESS = 3;		// In progress
+	const STATUS_NEED_MORE_INFO = 5;	// Waiting requester feedback
+	const STATUS_WAITING = 7;			// On hold
 	const STATUS_CLOSED = 8;			// Closed - Solved
 	const STATUS_CANCELED = 9;			// Closed - Not solved
 
@@ -585,9 +580,20 @@ class Ticket extends CommonObject
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."ticket");
 			}
 
-			if (!$error && getDolGlobalString('TICKET_ADD_AUTHOR_AS_CONTACT')) {
+			if (!$error && getDolGlobalString('TICKET_ADD_AUTHOR_AS_CONTACT') && empty($this->context["createdfrompublicinterface"])) {
 				// add creator as contributor
-				if ($this->add_contact($user->id, 'CONTRIBUTOR', 'internal') < 0) {
+
+				// We first check the type of contact (internal or external)
+				if (!empty($user->socid) && !empty($user->contact_id) && getDolGlobalInt('TICKET_ADD_AUTHOR_AS_CONTACT') == 2) {
+					$contact_type = 'external';
+					$contributor_id = $user->contact_id;
+				} else {
+					$contact_type = 'internal';
+					$contributor_id = $user->id;
+				}
+
+				// We add the creator as contributor
+				if ($this->add_contact($contributor_id, 'CONTRIBUTOR', $contact_type) < 0) {
 					$error++;
 				}
 			}
@@ -630,7 +636,7 @@ class Ticket extends CommonObject
 			}
 		} else {
 			$this->db->rollback();
-			dol_syslog(get_class($this)."::Create fails verify ".join(',', $this->errors), LOG_WARNING);
+			dol_syslog(get_class($this)."::Create fails verify ".implode(',', $this->errors), LOG_WARNING);
 			return -3;
 		}
 	}
@@ -1683,7 +1689,7 @@ class Ticket extends CommonObject
 					return 1;
 				} else {
 					$this->db->rollback();
-					$this->error = join(',', $this->errors);
+					$this->error = implode(',', $this->errors);
 					dol_syslog(get_class($this)."::markAsRead ".$this->error, LOG_ERR);
 					return -1;
 				}
@@ -1741,7 +1747,7 @@ class Ticket extends CommonObject
 				return 1;
 			} else {
 				$this->db->rollback();
-				$this->error = join(',', $this->errors);
+				$this->error = implode(',', $this->errors);
 				dol_syslog(get_class($this)."::assignUser ".$this->error, LOG_ERR);
 				return -1;
 			}
@@ -1831,7 +1837,7 @@ class Ticket extends CommonObject
 		}
 
 		if (!empty($mimefilename_list) && is_array($mimefilename_list)) {
-			$actioncomm->note_private = dol_concatdesc($actioncomm->note_private, "\n".$langs->transnoentities("AttachedFiles").': '.join(';', $mimefilename_list));
+			$actioncomm->note_private = dol_concatdesc($actioncomm->note_private, "\n".$langs->transnoentities("AttachedFiles").': '.implode(';', $mimefilename_list));
 		}
 
 		$actionid = $actioncomm->create($user);
@@ -1958,7 +1964,7 @@ class Ticket extends CommonObject
 					return 1;
 				} else {
 					$this->db->rollback();
-					$this->error = join(',', $this->errors);
+					$this->error = implode(',', $this->errors);
 					dol_syslog(get_class($this)."::close ".$this->error, LOG_ERR);
 					return -1;
 				}

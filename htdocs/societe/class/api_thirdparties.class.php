@@ -273,9 +273,9 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Update thirdparty
 	 *
-	 * @param int   $id             Id of thirdparty to update
-	 * @param array $request_data   Datas
-	 * @return array|mixed|boolean
+	 * @param 	int   			$id             Id of thirdparty to update
+	 * @param 	array 			$request_data   Datas
+	 * @return 	Object|false					Updated object
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -1095,7 +1095,7 @@ class Thirdparties extends DolibarrApi
 		 * We select all the records that match the socid
 		 */
 
-		$sql = "SELECT rowid, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
+		$sql = "SELECT rowid, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation as address, proprio,";
 		$sql .= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
 		if ($id) {

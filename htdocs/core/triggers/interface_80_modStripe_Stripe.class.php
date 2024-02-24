@@ -47,7 +47,7 @@ class InterfaceStripe extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = 'stripe';
 		$this->description = "Triggers of the module Stripe";
-		$this->version = self::VERSION_DOLIBARR; // 'development', 'experimental', 'dolibarr' or version
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'stripe';
 	}
 
@@ -63,7 +63,7 @@ class InterfaceStripe extends DolibarrTriggers
 	 * @param 	Conf 			$conf 		Object conf
 	 * @return 	int              			Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		// Put here code you want to execute when a Dolibarr business event occurs.
 		// Data and type of action are stored into $object and $action
@@ -163,6 +163,7 @@ class InterfaceStripe extends DolibarrTriggers
 									$taxids = $customer->allTaxIds($customer->id);
 									if (is_array($taxids->data)) {
 										foreach ($taxids->data as $taxidobj) {
+											// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 											$customer->deleteTaxId($customer->id, $taxidobj->id);
 										}
 									}

@@ -143,6 +143,7 @@ $arrayfields = array(
 	'fd.date'=>array('label'=>'DateOfLine', 'checked'=>1, 'enabled'=>!getDolGlobalString('FICHINTER_DISABLE_DETAILS') ? 1 : 0),
 	'fd.duree'=>array('label'=>'DurationOfLine', 'type'=> 'duration', 'checked'=>1, 'enabled'=>!getDolGlobalString('FICHINTER_DISABLE_DETAILS') ? 1 : 0), //type duration is here because in database, column 'duree' is double
 );
+'@phan-var-force array{label:string,type?:string,checked:int,position?:int,enabled?:int,langfile?:string,help:string} $arrayfields';
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -249,7 +250,7 @@ foreach ($arrayfields as $tmpkey => $tmpval) {
 }
 
 $sql = "SELECT";
-$sql .= " f.ref, f.ref_client, f.rowid, f.fk_statut as status, f.description, f.datec as date_creation, f.tms as date_update, f.note_public, f.note_private,";
+$sql .= " f.ref, f.ref_client, f.rowid, f.fk_statut as status, f.description, f.datec as date_creation, f.tms as date_modification, f.note_public, f.note_private,";
 if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') && $atleastonefieldinlines) {
 	$sql .= " fd.rowid as lineid, fd.description as descriptiondetail, fd.date as dp, fd.duree,";
 }
@@ -538,7 +539,7 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if MYOBJECT_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>'."\n";
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>'."\n";
 }
 
 $moreforfilter = '';
@@ -935,7 +936,7 @@ while ($i < $imaxinloop) {
 		// Date modification
 		if (!empty($arrayfields['f.tms']['checked'])) {
 			print '<td class="center">';
-			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

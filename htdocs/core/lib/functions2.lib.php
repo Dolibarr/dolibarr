@@ -6,6 +6,7 @@
  * Copyright (C) 2015       Ferran Marcet               <fmarcet@2byte.es>
  * Copyright (C) 2015-2016  Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,11 +72,13 @@ function jsUnEscape($source)
 
 
 /**
- * Return list of modules directories. We detect directories that contains a subdirectory /core/modules
- * We discard directory modules that contains 'disabled' into their name.
+ * Return list of directories that contain modules.
  *
- * @param	string	$subdir		Sub directory (Example: '/mailings')
- * @return	array				Array of directories that can contains module descriptors
+ * Detects directories that contain a subdirectory /core/modules.
+ * Modules that contains 'disabled' in their name are excluded.
+ *
+ * @param	string					$subdir	Sub directory (Example: '/mailings' will look for /core/modules/mailings/)
+ * @return	array<string,string>			Array of directories that can contain module descriptors ($key==value)
  */
 function dolGetModulesDirs($subdir = '')
 {
@@ -97,7 +100,7 @@ function dolGetModulesDirs($subdir = '')
 					continue; // We discard module if it contains disabled into name.
 				}
 
-				if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS' && $file != 'includes') {
+				if (substr($file, 0, 1) != '.' && is_dir($dirroot.'/'.$file) && strtoupper(substr($file, 0, 3)) != 'CVS' && $file != 'includes') {
 					if (is_dir($dirroot.'/'.$file.'/core/modules'.$subdir.'/')) {
 						$modulesdir[$dirroot.'/'.$file.'/core/modules'.$subdir.'/'] = $dirroot.'/'.$file.'/core/modules'.$subdir.'/';
 					}
@@ -1215,6 +1218,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	// To ensure that all variables within the MAX() brackets are integers
 	// This avoid bad detection of max when data are noised with non numeric values at the position of the numero
 	if (getDolGlobalInt('MAIN_NUMBERING_FILTER_ON_INT_ONLY')) {
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$sql .= " AND ". $db->regexpsql($sqlstring, '^[0-9]+$', 1);
 	}
 
@@ -1654,9 +1658,9 @@ function numero_semaine($time)
 	$numeroSemaine = (
 		(
 		date("z", mktime(12, 0, 0, date("m", $jeudiSemaine), date("d", $jeudiSemaine), date("Y", $jeudiSemaine)))
-	-
-	date("z", mktime(12, 0, 0, date("m", $premierJeudiAnnee), date("d", $premierJeudiAnnee), date("Y", $premierJeudiAnnee)))
-	) / 7
+		-
+		date("z", mktime(12, 0, 0, date("m", $premierJeudiAnnee), date("d", $premierJeudiAnnee), date("Y", $premierJeudiAnnee)))
+		) / 7
 	) + 1;
 
 	// Cas particulier de la semaine 53
@@ -2027,8 +2031,8 @@ function getSoapParams()
 	$response_timeout = (!getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT') ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT); // Response timeout
 	//print extension_loaded('soap');
 	if ($proxyuse) {
-		$params = array('connection_timeout'=>$timeout,
-					  'response_timeout'=>$response_timeout,
+		$params = array('connection_timeout' => $timeout,
+					  'response_timeout' => $response_timeout,
 					  'proxy_use'      => 1,
 					  'proxy_host'     => $proxyhost,
 					  'proxy_port'     => $proxyport,
@@ -2037,8 +2041,8 @@ function getSoapParams()
 					  'trace'		   => 1
 		);
 	} else {
-		$params = array('connection_timeout'=>$timeout,
-					  'response_timeout'=>$response_timeout,
+		$params = array('connection_timeout' => $timeout,
+					  'response_timeout' => $response_timeout,
 					  'proxy_use'      => 0,
 					  'proxy_host'     => false,
 					  'proxy_port'     => false,
@@ -2286,14 +2290,14 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
 		$sql .= " SET ".$fieldfkparent." = 0";
-		$sql .= " WHERE rowid IN (".$db->sanitize(join(',', $listofidtoclean)).")"; // So we update only records detected wrong
+		$sql .= " WHERE rowid IN (".$db->sanitize(implode(',', $listofidtoclean)).")"; // So we update only records detected wrong
 		$resql = $db->query($sql);
 		if ($resql) {
 			$nb = $db->affected_rows($sql);
 			if ($nb > 0) {
 				// Removed orphelins records
 				print '<br>Some records were detected to have parent that is a child, we set them as root record for id: ';
-				print join(',', $listofidtoclean);
+				print implode(',', $listofidtoclean);
 			}
 
 			$totalnb += $nb;
@@ -2303,14 +2307,14 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		// Check and clean orphelins
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
 		$sql .= " SET ".$fieldfkparent." = 0";
-		$sql .= " WHERE ".$fieldfkparent." NOT IN (".$db->sanitize(join(',', $listofid), 1).")"; // So we update only records linked to a non existing parent
+		$sql .= " WHERE ".$fieldfkparent." NOT IN (".$db->sanitize(implode(',', $listofid), 1).")"; // So we update only records linked to a non existing parent
 		$resql = $db->query($sql);
 		if ($resql) {
 			$nb = $db->affected_rows($sql);
 			if ($nb > 0) {
 				// Removed orphelins records
 				print '<br>Some orphelins were found and modified to be parent so records are visible again for id: ';
-				print join(',', $listofid);
+				print implode(',', $listofid);
 			}
 
 			$totalnb += $nb;
@@ -2569,8 +2573,8 @@ function colorHexToHsl($hex, $alpha = false, $returnArray = false)
 		$saturation += 1;
 	}
 
-	$lightness = round($lightness*100);
-	$saturation = round($saturation*100);
+	$lightness = round($lightness * 100);
+	$saturation = round($saturation * 100);
 
 	if ($returnArray) {
 		return array(
@@ -2672,6 +2676,10 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'accountancy';
 	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions', 'partnerships', 'recruitments'))) {
 		$moduledirforclass = preg_replace('/s$/', '', $moduleobject);
+	} elseif ($moduleobject == 'paymentsalaries') {
+		$moduledirforclass = 'salaries';
+	} elseif ($moduleobject == 'paymentexpensereports') {
+		$moduledirforclass = 'expensereport';
 	}
 
 	return $moduledirforclass;
@@ -2711,7 +2719,7 @@ if (!function_exists('dolEscapeXML')) {
 	 */
 	function dolEscapeXML($string)
 	{
-		return strtr($string, array('\''=>'&apos;', '"'=>'&quot;', '&'=>'&amp;', '<'=>'&lt;', '>'=>'&gt;'));
+		return strtr($string, array('\'' => '&apos;', '"' => '&quot;', '&' => '&amp;', '<' => '&lt;', '>' => '&gt;'));
 	}
 }
 
@@ -2844,8 +2852,8 @@ function phpSyntaxError($code)
 		if (preg_match("'syntax error, (.+) in .+ on line (\d+)$'s", $code, $code)) {
 			$code[2] = (int) $code[2];
 			$code = $code[2] <= $braces
-			? array($code[1], $code[2])
-			: array('unexpected $end'.substr($code[1], 14), $braces);
+				? array($code[1], $code[2])
+				: array('unexpected $end'.substr($code[1], 14), $braces);
 		} else {
 			$code = array('syntax error', 0);
 		}

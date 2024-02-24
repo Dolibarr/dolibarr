@@ -9,7 +9,7 @@ DIRECTION=ltr
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil
+# freeserif is for Tamil or Ethiopian
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -420,6 +420,8 @@ TotalTTCShort=Total (termasuk pajak)
 TotalHT=Total (tidak termasuk pajak)
 TotalHTforthispage=Total (tidak termasuk pajak) pada halaman ini
 Totalforthispage=Total untuk halaman ini
+GrandTotal=Grand total
+TotalforAllPages=Total for all pages
 TotalTTC=Total (termasuk pajak)
 TotalTTCToYourCredit=Total (termasuk pajak) ke kredit Anda
 TotalVAT=Total pajak
@@ -647,6 +649,7 @@ ReportName=Nama laporan
 ReportPeriod=Periode laporan
 ReportDescription=Keterangan
 Report=Melaporkan
+Reports=Laporan
 Keyword=Kata kunci
 Origin=Asal
 Legend=Legenda
@@ -963,6 +966,7 @@ AutomaticallyCalculated=Dihitung secara otomatis
 TitleSetToDraft=Kembali ke konsep
 ConfirmSetToDraft=Apakah Anda yakin ingin kembali ke status Draft?
 ImportId=Impor id
+Event=Event
 Events=Perihal
 EMailTemplates=Template email
 FileNotShared=File tidak dibagikan kepada publik eksternal
@@ -1180,7 +1184,6 @@ ConfirmAffectUserQuestion=Are you sure you want to assign users to the %s select
 ConfirmSetSupervisorQuestion=Are you sure you want to set supervisor to the %s selected record(s)?
 ConfirmUpdatePriceQuestion=Are you sure you want to update the price of the %s selected record(s)?
 CategTypeNotFound=Tidak ada jenis tag yang ditemukan untuk jenis rekaman
-Rate=Menilai
 SupervisorNotFound=Supervisor not found
 CopiedToClipboard=Disalin ke papan klip
 InformationOnLinkToContract=Jumlah ini hanyalah total dari semua garis kontrak. Tidak ada gagasan tentang waktu yang dipertimbangkan.
@@ -1213,6 +1216,7 @@ CanceledHidden=Canceled hidden
 CanceledShown=Canceled shown
 Terminate=Terminate
 Terminated=Terminated
+Position=Posisi
 AddLineOnPosition=Add line on position (at the end if empty)
 ConfirmAllocateCommercial=Assign sales representative confirmation
 ConfirmAllocateCommercialQuestion=Are you sure you want to assign the %s selected record(s)?
@@ -1230,6 +1234,7 @@ ExternalUser=Pengguna eksternal
 NoSpecificContactAddress=No specific contact or address
 NoSpecificContactAddressBis=This tab is dedicated to force specific contacts or addresses for the current object. Use it only if you want to define one or several specific contacts or addresses for the object when the information on the third party is not enough or not accurate.
 HideOnVCard=Hide %s
+ShowOnVCard=Show %s
 AddToContacts=Add address to my contacts
 LastAccess=Last access
 UploadAnImageToSeeAPhotoHere=Upload an image from the tab %s to see a photo here
@@ -1259,4 +1264,7 @@ AmountSalary=Salary amount
 InvoiceSubtype=Invoice subtype
 ConfirmMassReverse=Bulk Reverse confirmation
 ConfirmMassReverseQuestion=Are you sure you want to reverse the %s selected record(s)?
-
+ElementType=Element type
+ElementId=Element Id
+Encrypted=Encrypted
+Settings=Pengaturan

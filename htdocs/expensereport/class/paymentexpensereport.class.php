@@ -56,7 +56,6 @@ class PaymentExpenseReport extends CommonObject
 	public $fk_expensereport;
 
 	public $datec = '';
-	public $tms = '';
 	public $datep = '';
 	public $amount; // Total amount of payment
 	public $amounts = array(); // Array of amounts
@@ -66,6 +65,10 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public $fk_typepayment;
 
+	/**
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
+	 */
 	public $num_payment;
 
 	/**
@@ -121,8 +124,6 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public function create($user)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		$now = dol_now();
@@ -502,7 +503,7 @@ class PaymentExpenseReport extends CommonObject
 
 		$this->fk_expensereport = 0;
 		$this->datec = '';
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->datep = '';
 		$this->amount = '';
 		$this->fk_typepayment = 0;

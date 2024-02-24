@@ -1,7 +1,6 @@
 <?php
 /* Copyright (C) 2016-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +21,8 @@
  *		\ingroup    website
  *		\brief      Page to website view/edit
  */
+
+/** @phan-file-suppress PhanPluginSuspiciousParamPosition */
 
 // We allow POST of rich content with js and style, but only for this php file and if into some given POST variable
 define('NOSCANPOSTFORINJECTION', array('PAGE_CONTENT', 'WEBSITE_JS_INLINE', 'WEBSITE_HTML_HEADER'));
@@ -183,6 +184,7 @@ if ($pageid < 0) {
 }
 if (($pageid > 0 || $pageref) && $action != 'addcontainer') {
 	$res = $objectpage->fetch($pageid, ($object->id > 0 ? $object->id : null), $pageref);
+	// @phan-suppress
 	if ($res == 0) {
 		$res = $objectpage->fetch($pageid, ($object->id > 0 ? $object->id : null), null, $pageref);
 	}
@@ -714,7 +716,7 @@ if ($action == 'addsite' && $usercanedit) {
 		$tmpobject->ref = GETPOST('WEBSITE_REF', 'alpha');
 		$tmpobject->description = GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml');
 		$tmpobject->lang = GETPOST('WEBSITE_LANG', 'aZ09');
-		$tmpobject->otherlang = join(',', $arrayotherlang);
+		$tmpobject->otherlang = implode(',', $arrayotherlang);
 		$tmpobject->virtualhost = GETPOST('virtualhost', 'alpha');
 
 		$result = $tmpobject->create($user);
@@ -1503,7 +1505,7 @@ if ($action == 'updatecss' && $usercanedit) {
 
 				$object->virtualhost = $tmpvirtualhost;
 				$object->lang = GETPOST('WEBSITE_LANG', 'aZ09');
-				$object->otherlang = join(',', $arrayotherlang);
+				$object->otherlang = implode(',', $arrayotherlang);
 				$object->use_manifest = GETPOSTINT('use_manifest');
 
 				$result = $object->update($user);
@@ -3296,7 +3298,7 @@ if (!GETPOST('hide_websitemenu')) {
 			if ($action == 'createfromclone') {
 				// Create an array for form
 				$formquestion = array(
-					array('type' => 'text', 'name' => 'siteref', 'label'=> $langs->trans("WebSite"), 'value'=> 'copy_of_'.$object->ref)
+					array('type' => 'text', 'name' => 'siteref', 'label' => $langs->trans("WebSite"), 'value' => 'copy_of_'.$object->ref)
 				);
 
 				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloneSite'), '', 'confirm_createfromclone', $formquestion, 0, 1, 200);
@@ -3326,16 +3328,16 @@ if (!GETPOST('hide_websitemenu')) {
 						$textifempty = $langs->trans("Default");
 					}
 					$formquestion = array(
-						array('type' => 'hidden', 'name' => 'sourcepageurl', 'value'=> $objectpage->pageurl),
-						array('type' => 'other', 'tdclass'=>'fieldrequired', 'name' => 'newwebsite', 'label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0)),
-						array('type' => 'text', 'tdclass'=>'maxwidth200 fieldrequired', 'moreattr'=>'autofocus="autofocus"', 'name' => 'newtitle', 'label'=> $langs->trans("WEBSITE_TITLE"), 'value'=> $langs->trans("CopyOf").' '.$objectpage->title),
-						array('type' => 'text', 'tdclass'=>'maxwidth200', 'name' => 'newpageurl', 'label'=> $langs->trans("WEBSITE_PAGENAME"), 'value'=> '')
+						array('type' => 'hidden', 'name' => 'sourcepageurl', 'value' => $objectpage->pageurl),
+						array('type' => 'other', 'tdclass' => 'fieldrequired', 'name' => 'newwebsite', 'label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0)),
+						array('type' => 'text', 'tdclass' => 'maxwidth200 fieldrequired', 'moreattr' => 'autofocus="autofocus"', 'name' => 'newtitle', 'label' => $langs->trans("WEBSITE_TITLE"), 'value' => $langs->trans("CopyOf").' '.$objectpage->title),
+						array('type' => 'text', 'tdclass' => 'maxwidth200', 'name' => 'newpageurl', 'label' => $langs->trans("WEBSITE_PAGENAME"), 'value' => '')
 						);
 					if (count($onlylang) > 1) {
-						$formquestion[] = array('type' => 'checkbox', 'tdclass'=>'maxwidth200', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0, 'morecss'=>'margintoponly');
+						$formquestion[] = array('type' => 'checkbox', 'tdclass' => 'maxwidth200', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0, 'morecss' => 'margintoponly');
 					}
 
-					$value= $formadmin->select_language($preselectedlanguage, 'newlang', 0, null, $textifempty, 0, 0, 'minwidth200', 1, 0, 0, $onlylang, 1);
+					$value = $formadmin->select_language($preselectedlanguage, 'newlang', 0, null, $textifempty, 0, 0, 'minwidth200', 1, 0, 0, $onlylang, 1);
 					$formquestion[] = array('type' => 'other', 'name' => 'newlang', 'label' => $form->textwithpicto($langs->trans("Language"), $langs->trans("DefineListOfAltLanguagesInWebsiteProperties")), 'value' => $value);
 
 					$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, 300, 550);
@@ -3819,7 +3821,7 @@ if ($action == 'editcss') {
 	print $form->textwithpicto($langs->trans('WEBSITE_CSS_INLINE'), $htmlhelp, 1, 'help', '', 0, 2, 'csstooltip');
 	print '</td><td>';
 
-	$poscursor = array('x'=>GETPOST('WEBSITE_CSS_INLINE_x'), 'y'=>GETPOST('WEBSITE_CSS_INLINE_y'));
+	$poscursor = array('x' => GETPOST('WEBSITE_CSS_INLINE_x'), 'y' => GETPOST('WEBSITE_CSS_INLINE_y'));
 	$doleditor = new DolEditor('WEBSITE_CSS_INLINE', $csscontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '', $poscursor);
 	print $doleditor->Create(1, '', true, 'CSS', 'css');
 
@@ -3833,7 +3835,7 @@ if ($action == 'editcss') {
 
 	print '</td><td>';
 
-	$poscursor = array('x'=>GETPOST('WEBSITE_JS_INLINE_x'), 'y'=>GETPOST('WEBSITE_JS_INLINE_y'));
+	$poscursor = array('x' => GETPOST('WEBSITE_JS_INLINE_x'), 'y' => GETPOST('WEBSITE_JS_INLINE_y'));
 	$doleditor = new DolEditor('WEBSITE_JS_INLINE', $jscontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '', $poscursor);
 	print $doleditor->Create(1, '', true, 'JS', 'javascript');
 
@@ -3849,7 +3851,7 @@ if ($action == 'editcss') {
 	print $form->textwithpicto($textwithhelp, $htmlhelp2, 1, 'warning', '', 0, 2, 'htmlheadertooltip2');
 	print '</td><td>';
 
-	$poscursor = array('x'=>GETPOST('WEBSITE_HTML_HEADER_x'), 'y'=>GETPOST('WEBSITE_HTML_HEADER_y'));
+	$poscursor = array('x' => GETPOST('WEBSITE_HTML_HEADER_x'), 'y' => GETPOST('WEBSITE_HTML_HEADER_y'));
 	$doleditor = new DolEditor('WEBSITE_HTML_HEADER', $htmlheadercontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '', $poscursor);
 	print $doleditor->Create(1, '', true, 'HTML Header', 'html');
 
@@ -3860,7 +3862,7 @@ if ($action == 'editcss') {
 	print $langs->trans('WEBSITE_ROBOT');
 	print '</td><td>';
 
-	$poscursor = array('x'=>GETPOST('WEBSITE_ROBOT_x'), 'y'=>GETPOST('WEBSITE_ROBOT_y'));
+	$poscursor = array('x' => GETPOST('WEBSITE_ROBOT_x'), 'y' => GETPOST('WEBSITE_ROBOT_y'));
 	$doleditor = new DolEditor('WEBSITE_ROBOT', $robotcontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '', $poscursor);
 	print $doleditor->Create(1, '', true, 'Robot file', 'text');
 
@@ -3871,7 +3873,7 @@ if ($action == 'editcss') {
 	print $langs->trans('WEBSITE_HTACCESS');
 	print '</td><td>';
 
-	$poscursor = array('x'=>GETPOST('WEBSITE_HTACCESS_x'), 'y'=>GETPOST('WEBSITE_HTACCESS_y'));
+	$poscursor = array('x' => GETPOST('WEBSITE_HTACCESS_x'), 'y' => GETPOST('WEBSITE_HTACCESS_y'));
 	$doleditor = new DolEditor('WEBSITE_HTACCESS', $htaccesscontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '', $poscursor);
 	print $doleditor->Create(1, '', true, $langs->trans("File").' .htaccess', 'text');
 
@@ -3885,7 +3887,7 @@ if ($action == 'editcss') {
 	print '</td><td>';
 	print $langs->trans("UseManifest").': '.$form->selectyesno('use_manifest', $website->use_manifest, 1).'<br>';
 
-	$poscursor = array('x'=>GETPOST('WEBSITE_MANIFEST_JSON_x'), 'y'=>GETPOST('WEBSITE_MANIFEST_JSON_y'));
+	$poscursor = array('x' => GETPOST('WEBSITE_MANIFEST_JSON_x'), 'y' => GETPOST('WEBSITE_MANIFEST_JSON_y'));
 	$doleditor = new DolEditor('WEBSITE_MANIFEST_JSON', $manifestjsoncontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '', $poscursor);
 	print $doleditor->Create(1, '', true, $langs->trans("File").' manifest.json', 'text');
 	print '</td></tr>';
@@ -3896,7 +3898,7 @@ if ($action == 'editcss') {
 	print $form->textwithpicto($langs->trans("File").' README.md', $htmlhelp, 1, 'help', '', 0, 2, 'readmetooltip');
 	print '</td><td>';
 
-	$poscursor = array('x'=>GETPOST('WEBSITE_README_x'), 'y'=>GETPOST('WEBSITE_README_y'));
+	$poscursor = array('x' => GETPOST('WEBSITE_README_x'), 'y' => GETPOST('WEBSITE_README_y'));
 	$doleditor = new DolEditor('WEBSITE_README', $readmecontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '', $poscursor);
 	print $doleditor->Create(1, '', true, $langs->trans("File").' README.md', 'text');
 
@@ -3908,7 +3910,7 @@ if ($action == 'editcss') {
 	print $form->textwithpicto($langs->trans("File").' LICENSE', $htmlhelp, 1, 'help', '', 0, 2, 'licensetooltip');
 	print '</td><td>';
 
-	$poscursor = array('x'=>GETPOST('WEBSITE_LICENSE_x'), 'y'=>GETPOST('WEBSITE_LICENSE_y'));
+	$poscursor = array('x' => GETPOST('WEBSITE_LICENSE_x'), 'y' => GETPOST('WEBSITE_LICENSE_y'));
 	$doleditor = new DolEditor('WEBSITE_LICENSE', $licensecontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '', $poscursor);
 	print $doleditor->Create(1, '', true, $langs->trans("File").' LICENSE', 'text');
 
@@ -4460,7 +4462,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	$htmlhelp .= dol_htmlentitiesbr($htmlheadercontentdefault);
 	print $form->textwithpicto($langs->trans('HtmlHeaderPage'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
 	print '</td><td>';
-	$poscursor = array('x'=>GETPOST('htmlheader_x'), 'y'=>GETPOST('htmlheader_y'));
+	$poscursor = array('x' => GETPOST('htmlheader_x'), 'y' => GETPOST('htmlheader_y'));
 	$doleditor = new DolEditor('htmlheader', $pagehtmlheader, '', '120', 'ace', 'In', true, false, 'ace', ROWS_3, '100%', '', $poscursor);
 	print $doleditor->Create(1, '', true, 'HTML Header', 'html');
 	print '</td></tr>';
@@ -4492,7 +4494,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		print '<br><input class="flat paddingtop" type="checkbox" name="grabimages" value="1" checked="checked"> '.$langs->trans("GrabImagesInto");
 		print ' ';
 		print $langs->trans("ImagesShouldBeSavedInto").' ';
-		$arraygrabimagesinto = array('root'=>$langs->trans("WebsiteRootOfImages"), 'subpage'=>$langs->trans("SubdirOfPage"));
+		$arraygrabimagesinto = array('root' => $langs->trans("WebsiteRootOfImages"), 'subpage' => $langs->trans("SubdirOfPage"));
 		print $form->selectarray('grabimagesinto', $arraygrabimagesinto, GETPOSTISSET('grabimagesinto') ? GETPOST('grabimagesinto') : 'root', 0, 0, 0, '', 0, 0, 0, '', '', 1);
 		print '<br>';
 
@@ -4610,7 +4612,7 @@ if ($action == 'editsource') {
 		}
 	}
 
-	$poscursor = array('x'=>GETPOST('PAGE_CONTENT_x'), 'y'=>GETPOST('PAGE_CONTENT_y'));
+	$poscursor = array('x' => GETPOST('PAGE_CONTENT_x'), 'y' => GETPOST('PAGE_CONTENT_y'));
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor = new DolEditor('PAGE_CONTENT', $contentforedit, '', $maxheightwin, 'Full', '', true, true, 'ace', ROWS_5, '40%', 0, $poscursor);
 	$doleditor->Create(0, '', false, 'HTML Source', 'php');
@@ -4629,8 +4631,8 @@ if ($action == 'editcontent') {
 	$contentforedit = preg_replace('/(<img.*src=")(?!http)/', '\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $contentforedit, -1, $nbrep);
 
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$poscursor = array('x'=>GETPOST('PAGE_CONTENT_x'), 'y'=>GETPOST('PAGE_CONTENT_y'));
-	$doleditor=new DolEditor('PAGE_CONTENT', $contentforedit, '', 500, 'Full', '', true, true, true, ROWS_5, '90%', 0, $poscursor);
+	$poscursor = array('x' => GETPOST('PAGE_CONTENT_x'), 'y' => GETPOST('PAGE_CONTENT_y'));
+	$doleditor = new DolEditor('PAGE_CONTENT', $contentforedit, '', 500, 'Full', '', true, true, true, ROWS_5, '90%', 0, $poscursor);
 	$doleditor->Create(0, '', false);
 }
 
@@ -4927,13 +4929,13 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					// Type of container
 					print '<td>';
 					$translateofrecordtype = array(
-						'website_csscontent'=>'WEBSITE_CSS_INLINE',
-						'website_jscontent'=>'WEBSITE_JS_INLINE',
-						'website_robotcontent'=>'WEBSITE_ROBOT',
-						'website_htmlheadercontent'=>'WEBSITE_HTML_HEADER',
-						'website_htaccess'=>'WEBSITE_HTACCESS',
-						'website_readme'=>'WEBSITE_README',
-						'website_manifestjson'=>'WEBSITE_MANIFEST_JSON'
+						'website_csscontent' => 'WEBSITE_CSS_INLINE',
+						'website_jscontent' => 'WEBSITE_JS_INLINE',
+						'website_robotcontent' => 'WEBSITE_ROBOT',
+						'website_htmlheadercontent' => 'WEBSITE_HTML_HEADER',
+						'website_htaccess' => 'WEBSITE_HTACCESS',
+						'website_readme' => 'WEBSITE_README',
+						'website_manifestjson' => 'WEBSITE_MANIFEST_JSON'
 					);
 					if (!empty($translateofrecordtype[$answerrecord['type']])) {
 						print $langs->trans($translateofrecordtype[$answerrecord['type']]);

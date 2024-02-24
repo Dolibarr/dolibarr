@@ -90,7 +90,7 @@ function emailcollectorPrepareHead($object)
  * Get parts of a message
  *
  * @param 	object 			$structure 		Structure of message
- * @return 	object|boolean 					Parties du message|false en cas d'erreur
+ * @return 	array[false						Array of parts of the message|false if error
  */
 function getParts($structure)
 {
@@ -119,6 +119,7 @@ function getAttachments($jk, $mbox)
 {
 	$structure = imap_fetchstructure($mbox, $jk, FT_UID);
 	$parts = getParts($structure);
+
 	$fpos = 2;
 	$attachments = array();
 	$nb = count($parts);
@@ -169,7 +170,6 @@ function getFileData($jk, $fpos, $type, $mbox)
  **/
 function saveAttachment($path, $filename, $data)
 {
-	global $lang;
 	$tmp = explode('.', $filename);
 	$ext = array_pop($tmp);
 	$filename = implode('.', $tmp);

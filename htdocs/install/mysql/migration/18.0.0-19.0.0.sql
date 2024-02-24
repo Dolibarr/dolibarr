@@ -40,6 +40,8 @@ ALTER TABLE llx_product_perentity ADD COLUMN pmp double(24,8);
 
 ALTER TABLE llx_projet_task ADD COLUMN fk_user_modif integer after fk_user_creat;
 
+UPDATE llx_paiement SET ref = rowid WHERE ref IS NULL OR ref = '';
+
 
 -- v19
 
@@ -92,6 +94,7 @@ ALTER TABLE llx_adherent DROP COLUMN whatsapp;
 ALTER TABLE llx_societe DROP COLUMN skype;
 
 ALTER TABLE llx_user ADD COLUMN email_oauth2 varchar(255);
+ALTER TABLE llx_user ADD COLUMN last_main_doc varchar(255);
 
 ALTER TABLE llx_prelevement_demande ADD INDEX idx_prelevement_demande_ext_payment_id (ext_payment_id);
 
@@ -155,7 +158,7 @@ ALTER TABLE llx_resource ADD COLUMN zip varchar(25) DEFAULT NULL AFTER address;
 ALTER TABLE llx_resource ADD COLUMN town varchar(50) DEFAULT NULL AFTER zip;
 ALTER TABLE llx_resource ADD COLUMN photo_filename varchar(255) DEFAULT NULL AFTER town;
 ALTER TABLE llx_resource ADD COLUMN max_users integer DEFAULT NULL AFTER photo_filename;
-ALTER TABLE llx_resource ADD COLUMN phone varchar(255) DEFAULT NULL AFTER user_places;
+ALTER TABLE llx_resource ADD COLUMN phone varchar(255) DEFAULT NULL AFTER max_users;
 ALTER TABLE llx_resource ADD COLUMN email varchar(255) DEFAULT NULL AFTER phone;
 ALTER TABLE llx_resource ADD COLUMN url varchar(255) DEFAULT NULL AFTER email;
 ALTER TABLE llx_resource ADD COLUMN fk_state integer DEFAULT NULL AFTER fk_country;
@@ -208,3 +211,5 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (1,'66','Soci√
 ALTER TABLE llx_prelevement_lignes ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_bom_bomline ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+UPDATE llx_c_type_contact SET element = 'stocktransfer' WHERE element = 'StockTransfer';

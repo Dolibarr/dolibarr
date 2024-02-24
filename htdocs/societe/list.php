@@ -5,15 +5,15 @@
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2016-2018  Josep Lluis Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2016-2024  Josep Lluis Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2016       Ferran Marcet      	    <fmarcet@2byte.es>
  * Copyright (C) 2017       Rui Strecht      	    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2017       Juanjo Menent      	    <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
- * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
- * Copyright (C) 2022		Anthony Berton			<anthony.berton@bb2a.fr>
- * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2020       Open-Dsi                <support@open-dsi.fr>
+ * Copyright (C) 2021       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022       Anthony Berton          <anthony.berton@bb2a.fr>
+ * Copyright (C) 2023       William Mead            <william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
-
+if (isModEnabled('categorie')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta", "categories", "cashdesk"));
@@ -96,6 +99,23 @@ $search_vat = trim(GETPOST('search_vat', 'alpha'));
 $search_sale = GETPOST("search_sale", 'int');
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
 $search_categ_sup = GETPOST("search_categ_sup", 'int');
+$searchCategoryCustomerOperator = 0;
+$searchCategorySupplierOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
+	$searchCategorySupplierOperator = GETPOSTINT('search_category_supplier_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategoryCustomerOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+	$searchCategorySupplierOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
+$searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
+if (!empty($search_categ_cus) && empty($searchCategoryCustomerList)) {
+	$searchCategoryCustomerList = array($search_categ_cus);
+}
+$searchCategorySupplierList = GETPOST('search_category_supplier_list', 'array');
+if (!empty($search_categ_sup) && empty($searchCategorySupplierList)) {
+	$searchCategorySupplierList = array($search_categ_sup);
+}
 $search_country = GETPOST("search_country", 'intcomma');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_price_level = GETPOST('search_price_level', 'int');
@@ -373,6 +393,10 @@ if (empty($reshook)) {
 		$search_alias = '';
 		$search_categ_cus = 0;
 		$search_categ_sup = 0;
+		$searchCategoryCustomerOperator = 0;
+		$searchCategorySupplierOperator = 0;
+		$searchCategoryCustomerList = array();
+		$searchCategorySupplierList = array();
 		$search_sale = '';
 		$search_barcode = "";
 		$search_customer_code = '';
@@ -517,7 +541,7 @@ $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.address, s.tow
 $sql .= " s.entity,";
 $sql .= " st.libelle as stcomm, st.picto as stcomm_picto, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
 $sql .= " s.email, s.phone, s.phone_mobile, s.fax, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
-$sql .= " s.tms as date_update, s.datec as date_creation, s.import_key,";
+$sql .= " s.tms as date_modification, s.datec as date_creation, s.import_key,";
 $sql .= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent,s.price_level,";
 $sql .= " s2.nom as name2,";
 $sql .= " typent.code as typent_code,";
@@ -568,8 +592,7 @@ if ($search_sale && $search_sale != '-1') {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user = ".((int) $search_sale).")";
 	}
 }
-$searchCategoryCustomerList = $search_categ_cus ? array($search_categ_cus) : array();
-$searchCategoryCustomerOperator = 0;
+
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
 if (!empty($searchCategoryCustomerList)) {
 	$searchCategoryCustomerSqlList = array();
@@ -598,9 +621,7 @@ if (!empty($searchCategoryCustomerList)) {
 		}
 	}
 }
-// Search Supplier Categories
-$searchCategorySupplierList = $search_categ_sup ? array($search_categ_sup) : array();
-$searchCategorySupplierOperator = 0;
+
 // Search for tag/category ($searchCategorySupplierList is an array of ID)
 if (!empty($searchCategorySupplierList)) {
 	$searchCategorySupplierSqlList = array();
@@ -747,10 +768,10 @@ if ($search_parent_name) {
 	$sql .= natural_search("s2.nom", $search_parent_name);
 }
 if ($search_level) {
-	$sql .= natural_search("s.fk_prospectlevel", join(',', $search_level), 3);
+	$sql .= natural_search("s.fk_prospectlevel", implode(',', $search_level), 3);
 }
 if ($search_stcomm) {
-	$sql .= natural_search("s.fk_stcomm", join(',', $search_stcomm), 2);
+	$sql .= natural_search("s.fk_stcomm", implode(',', $search_stcomm), 2);
 }
 if ($search_import_key) {
 	$sql .= natural_search("s.import_key", $search_import_key);
@@ -844,7 +865,15 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && ($
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+$paramsCat = '';
+foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
+	$paramsCat .= "&search_category_customer_list[]=".urlencode($searchCategoryCustomer);
+}
+foreach ($searchCategorySupplierList as $searchCategorySupplier) {
+	$paramsCat .= "&search_category_supplier_list[]=".urlencode($searchCategorySupplier);
+}
+
+llxHeader('', $title, $help_url, '', 0, 0, array(), array(), $paramsCat);
 
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
@@ -870,6 +899,18 @@ if ($search_categ_cus > 0) {
 }
 if ($search_categ_sup > 0) {
 	$param .= '&search_categ_sup='.urlencode($search_categ_sup);
+}
+if ($searchCategoryCustomerOperator == 1) {
+	$param .= "&search_category_customer_operator=".urlencode($searchCategoryCustomerOperator);
+}
+if ($searchCategorySupplierOperator == 1) {
+	$param .= "&search_category_supplier_operator=".urlencode($searchCategorySupplierOperator);
+}
+foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
+	$param .= "&search_category_customer_list[]=".urlencode($searchCategoryCustomer);
+}
+foreach ($searchCategorySupplierList as $searchCategorySupplier) {
+	$param .= "&search_category_supplier_list[]=".urlencode($searchCategorySupplier);
 }
 if ($search_sale > 0) {
 	$param .= '&search_sale='.urlencode($search_sale);
@@ -1152,6 +1193,14 @@ $objecttmp = new Societe($db);
 $trackid = 'thi'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
+if (!empty($search_categ_cus) || !empty($search_categ_sup)) {
+	print "<div id='ways'>";
+	$c = new Categorie($db);
+	$ways = $c->print_all_ways(' &gt; ', 'societe/list.php');
+	print " &gt; ".$ways[0]."<br>\n";
+	print "</div><br>";
+}
+
 if ($search_all) {
 	$setupstring = '';
 	foreach ($fieldstosearchall as $key => $val) {
@@ -1159,29 +1208,22 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if SOCIETE_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
+// Filter on categories
 $moreforfilter = '';
 if (empty($type) || $type == 'c' || $type == 'p') {
-	if (isModEnabled('categorie') && $user->hasRight("categorie", "lire")) {
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-		$moreforfilter .= '<div class="divsearchfield">';
-		$tmptitle = $langs->trans('Categories');
-		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
-		$moreforfilter .= $formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $langs->trans('CustomersProspectsCategoriesShort'));
-		$moreforfilter .= '</div>';
+	if (isModEnabled('categorie') && $user->hasRight('categorie', 'read')) {
+		$formcategory = new FormCategory($db);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth300', $searchCategoryCustomerOperator ? $searchCategoryCustomerOperator : 0);
 	}
 }
 
 if (empty($type) || $type == 'f') {
-	if (isModEnabled("fournisseur") && isModEnabled('categorie') && $user->hasRight("categorie", "lire")) {
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-		$moreforfilter .= '<div class="divsearchfield">';
-		$tmptitle = $langs->trans('Categories');
-		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
-		$moreforfilter .= $formother->select_categories('supplier', $search_categ_sup, 'search_categ_sup', 1, $langs->trans('SuppliersCategoriesShort'));
-		$moreforfilter .= '</div>';
+	if (isModEnabled("fournisseur") && isModEnabled('categorie') && $user->hasRight('categorie', 'read')) {
+		$formcategory = new FormCategory($db);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SUPPLIER, $searchCategorySupplierList, 'minwidth300', $searchCategorySupplierOperator ? $searchCategorySupplierOperator : 0);
 	}
 }
 
@@ -1922,7 +1964,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['s.email']['checked'])) {
-			print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->rowid, 'AC_EMAIL', 0, 0, 1)."</td>\n";
+			print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->rowid, 1, 0, 0, 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2061,7 +2103,7 @@ while ($i < $imaxinloop) {
 		// Date modification
 		if (!empty($arrayfields['s.tms']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

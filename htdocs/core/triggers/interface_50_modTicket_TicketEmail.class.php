@@ -43,7 +43,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "ticket";
 		$this->description = "Triggers of the module ticket to send notifications to internal users and to third-parties";
-		$this->version = self::VERSION_DOLIBARR; // 'development', 'experimental', 'dolibarr' or version
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'ticket';
 	}
 
@@ -58,7 +58,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 *      @param  conf      $conf   Object conf
 	 *      @return int                     Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		global $mysoc;
 

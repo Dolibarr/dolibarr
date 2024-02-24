@@ -187,8 +187,8 @@ if (empty($reshook)) {
 
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $usercancreate) {
-		if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
-			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
+		if (!($socid > 0)) {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('IdThirdParty')), null, 'errors');
 		} else {
 			if ($object->id > 0) {
 				// Because createFromClone modifies the object, we must clone it so that we can restore it later
@@ -196,6 +196,22 @@ if (empty($reshook)) {
 
 				$result = $object->createFromClone($user, $socid);
 				if ($result > 0) {
+					$warningMsgLineList = array();
+					// check all product lines are to sell otherwise add a warning message for each product line is not to sell
+					foreach ($object->lines as $line) {
+						if (!is_object($line->product)) {
+							$line->fetch_product();
+						}
+						if (is_object($line->product) && $line->product->id > 0) {
+							if (empty($line->product->tosell)) {
+								$warningMsgLineList[$line->id] = $langs->trans('WarningLineProductNotToSell', $line->product->ref);
+							}
+						}
+					}
+					if (!empty($warningMsgLineList)) {
+						setEventMessages('', $warningMsgLineList, 'warnings');
+					}
+
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 					exit;
 				} else {
@@ -294,7 +310,7 @@ if (empty($reshook)) {
 			$object->ref_client = GETPOST('ref_client', 'alpha');
 			$object->model_pdf = GETPOST('model');
 			$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
-			$object->deposit_percent = (float) GETPOST('cond_reglement_id_deposit_percent', 'int');
+			$object->deposit_percent = GETPOSTFLOAT('cond_reglement_id_deposit_percent');
 			$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
 			$object->fk_account = GETPOSTINT('fk_account');
 			$object->availability_id = GETPOSTINT('availability_id');
@@ -594,7 +610,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setconditions' && $usercancreate) {
-		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'), GETPOST('cond_reglement_id_deposit_percent', 'alpha'));
+		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'), GETPOSTFLOAT('cond_reglement_id_deposit_percent'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		} else {
@@ -616,7 +632,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
 		// Set incoterm
-		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTFLOAT('location_incoterms'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -1335,7 +1351,7 @@ if (empty($reshook)) {
 				$error = 0;
 				$deposit = null;
 
-				$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
+				$deposit_percent_from_payment_terms = (float) getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
 				if (
 					GETPOST('generate_deposit', 'alpha') == 'on' && !empty($deposit_percent_from_payment_terms)
@@ -1541,7 +1557,7 @@ if (empty($reshook)) {
 					$remise_percent = $originLine->remise_percent;
 					$date_start = $originLine->date_start;
 					$date_end = $originLine->date_end;
-					$ventil = 0;
+					$fk_code_ventilation = 0;
 					$info_bits = $originLine->info_bits;
 					$fk_remise_except = $originLine->fk_remise_except;
 					$price_base_type = 'HT';
@@ -1669,10 +1685,10 @@ if ($action == 'create' && $usercancreate) {
 
 	$currency_code = $conf->currency;
 
-	$cond_reglement_id = GETPOST('cond_reglement_id', 'int');
-	$deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
-	$mode_reglement_id = GETPOST('mode_reglement_id', 'int');
-	$fk_account = GETPOST('fk_account', 'int');
+	$cond_reglement_id = GETPOSTINT('cond_reglement_id');
+	$deposit_percent = GETPOSTFLOAT('cond_reglement_id_deposit_percent');
+	$mode_reglement_id = GETPOSTINT('mode_reglement_id');
+	$fk_account = GETPOSTINT('fk_account');
 
 	if (!empty($origin) && !empty($originid)) {
 		// Parse element/subelement (ex: project_task)
@@ -1784,16 +1800,16 @@ if ($action == 'create' && $usercancreate) {
 	// If form was posted (but error returned), we must reuse the value posted in priority (standard Dolibarr behaviour)
 	if (!GETPOST('changecompany')) {
 		if (GETPOSTISSET('cond_reglement_id')) {
-			$cond_reglement_id = GETPOST('cond_reglement_id', 'int');
+			$cond_reglement_id = GETPOSTINT('cond_reglement_id');
 		}
 		if (GETPOSTISSET('deposit_percent')) {
-			$deposit_percent = price2num(GETPOST('deposit_percent', 'alpha'));
+			$deposit_percent = GETPOSTFLOAT('deposit_percent');
 		}
 		if (GETPOSTISSET('mode_reglement_id')) {
-			$mode_reglement_id = GETPOST('mode_reglement_id', 'int');
+			$mode_reglement_id = GETPOSTINT('mode_reglement_id');
 		}
 		if (GETPOSTISSET('cond_reglement_id')) {
-			$fk_account = GETPOST('fk_account', 'int');
+			$fk_account = GETPOSTINT('fk_account');
 		}
 	}
 
@@ -2224,7 +2240,7 @@ if ($action == 'create' && $usercancreate) {
 				// Suggestion to create invoice during order validation is not enabled by default.
 				// Such choice should be managed by the workflow module and trigger. This option generates conflicts with some setup.
 				// It may also break step of creating an order when invoicing must be done from proposals and not from orders
-				$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
+				$deposit_percent_from_payment_terms = (float) getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
 				if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && $user->hasRight('facture', 'creer')) {
 					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';

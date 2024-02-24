@@ -123,7 +123,6 @@ class Position extends CommonObject
 	public $ref;
 	public $description;
 	public $date_creation;
-	public $tms;
 	public $fk_contrat;
 	public $fk_user;
 	public $fk_job;
@@ -436,7 +435,7 @@ class Position extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}

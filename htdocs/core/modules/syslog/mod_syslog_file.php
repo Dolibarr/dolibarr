@@ -45,13 +45,12 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	}
 
 	/**
-	 * Is the module active ?
+	 * Is the logger active ?
 	 *
-	 * @return int
+	 * @return int		1 if logger enabled
 	 */
 	public function isActive()
 	{
-		global $conf;
 		return !getDolGlobalString('SYSLOG_DISABLE_LOGHANDLER_FILE') ? 1 : 0; // Set SYSLOG_DISABLE_LOGHANDLER_FILE to 1 to disable this loghandler
 	}
 
@@ -159,6 +158,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 				print 'Failed to open log file '.($dolibarr_main_prod ? basename($logfile) : $logfile);
 			}
 		} else {
+			// @phan-suppress PhanPluginDuplicateArrayKey
 			$logLevels = array(
 				LOG_EMERG => 'EMERG',
 				LOG_ALERT => 'ALERT',

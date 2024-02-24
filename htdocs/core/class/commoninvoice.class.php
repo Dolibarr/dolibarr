@@ -1518,7 +1518,7 @@ abstract class CommonInvoice extends CommonObject
 									$actioncomm->type_code = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 									$actioncomm->code = 'AC_' . $actioncode;
 									$actioncomm->label = $description;
-									$actioncomm->note_private = join(",\n", $postactionmessages);
+									$actioncomm->note_private = implode(",\n", $postactionmessages);
 									$actioncomm->fk_project = $this->fk_project;
 									$actioncomm->datep = $now;
 									$actioncomm->datef = $now;
@@ -1922,13 +1922,15 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 
 	/**
 	 * Local tax 1 type
-	 * @var string
+	 * @var int<0,6>		From 1 to 6, or 0 if not found
+	 * @see getLocalTaxesFromRate()
 	 */
 	public $localtax1_type;
 
 	/**
 	 * Local tax 2 type
-	 * @var string
+	 * @var int<0,6>		From 1 to 6, or 0 if not found
+	 * @see getLocalTaxesFromRate()
 	 */
 	public $localtax2_type;
 
@@ -1995,7 +1997,13 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 
 	public $special_code = 0;
 
+	/**
+	 * @deprecated	Use user_creation_id
+	 */
 	public $fk_user_author;
+	/**
+	 * @deprecated	Use user_modification_id
+	 */
 	public $fk_user_modif;
 
 	public $fk_accounting_account;

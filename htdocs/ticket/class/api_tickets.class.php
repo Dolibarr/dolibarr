@@ -353,10 +353,9 @@ class Tickets extends DolibarrApi
 	/**
 	 * Update ticket
 	 *
-	 * @param int   $id             Id of ticket to update
-	 * @param array $request_data   Datas
-	 * @return int
-	 *
+	 * @param 	int   	$id             	Id of ticket to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
 	{

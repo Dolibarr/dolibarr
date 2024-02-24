@@ -204,6 +204,7 @@ foreach ($fulltree as $key => $val) {
 	$entry .= '<span class="noborderoncategories" '.$color.'>'.$li.'</span>';
 	$entry .= '</td>';
 
+	// Add column counter
 	$entry .= $counter;
 
 	$entry .= '<td class="right" width="20px;">';

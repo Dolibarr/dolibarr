@@ -218,6 +218,8 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	 * @param int	$epaisseur			Epaisseur
 	 * @param int	$taille             Size
 	 * @return void
+	 *
+	 * @phan-suppress PhanPluginSuspiciousParamPosition
 	 */
 	protected function _Croix(&$pdf, $x1 = 0, $y1 = 0, $x2 = 210, $y2 = 297, $epaisseur = 1, $taille = 4)
 	{

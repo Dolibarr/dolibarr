@@ -114,7 +114,7 @@ EstimatedStockValueSell=Vlera per shitje
 EstimatedStockValueShort=Vlera e aksioneve hyrëse
 EstimatedStockValue=Vlera e aksioneve hyrëse
 DeleteAWarehouse=Fshi një magazinë
-ConfirmDeleteWarehouse=Jeni të sigurt që dëshironi të fshini magazinën <b>%s<span class='notranslate'>b09a4b739f17f8z?
+ConfirmDeleteWarehouse=Are you sure you want to delete the warehouse <b>%s</b>?
 PersonalStock=Aksione personale %s
 ThisWarehouseIsPersonalStock=Kjo magazinë përfaqëson stokun personal të %s %s
 SelectWarehouseForStockDecrease=Zgjidhni depon për t'u përdorur për uljen e stokut
@@ -171,7 +171,7 @@ MovementTransferStock=Transferimi i aksioneve të produktit %s në një depo tje
 BatchStockMouvementAddInGlobal=Stoku i grupit kalon në magazinë globale (produkti nuk përdor më grup)
 InventoryCodeShort=Inv./Mov. kodi
 NoPendingReceptionOnSupplierOrder=Nuk ka pritje në pritje për shkak të porosisë së hapur të blerjes
-ThisSerialAlreadyExistWithDifferentDate=Ky lot/numër serial (<strong>%s</strong> tashmë ekziston, por me>) data e ndryshme eatby ose sellby (u gjet <span class='notranslate'><strong>%sb0a65d071f6fc90 por ju shkruani <spanfc90 span class='notranslate'><strong>%s</strong>).
+ThisSerialAlreadyExistWithDifferentDate=This lot/serial number (<strong>%s</strong>) already exists but with different eatby or sellby date (found <strong>%s</strong> but you enter <strong>%s</strong>).
 OpenAnyMovement=Hapur (të gjitha lëvizjet)
 OpenInternal=E hapur (vetëm lëvizje e brendshme)
 UseDispatchStatus=Përdorni një status dërgimi (mirato/refuzoj) për linjat e produkteve në marrjen e porosisë së blerjes
@@ -253,7 +253,7 @@ DisableStockChangeOfSubProduct=Çaktivizoni ndryshimin e stokut për të gjithë
 ImportFromCSV=Importoni listën e lëvizjes CSV
 ChooseFileToImport=Ngarkoni skedarin më pas klikoni në ikonën %s për të zgjedhur skedarin si skedar importues burimi...
 SelectAStockMovementFileToImport=zgjidhni një skedar të lëvizjes së aksioneve për të importuar
-InfoTemplateImport=Skedari i ngarkuar duhet të ketë këtë format (* janë fusha të detyrueshme):<br>Depoja e burimit* | Magazina e synuar* | Produkt* | Sasia* | Loti/numri serial<br>Ndarësi i karaktereve CSV duhet të jetë "<b>b0ecb2ec80f49 span class='notranslate'></b>"
+InfoTemplateImport=Uploaded file needs to have this format (* are mandatory fields):<br>Source Warehouse* | Target Warehouse* | Product* | Quantity* | Lot/serial number<br>CSV character separator must be "<b>%s</b>"
 LabelOfInventoryMovemement=Inventari %s
 ReOpen=Rihap
 ConfirmFinish=A e konfirmoni mbylljen e inventarit? Kjo do të gjenerojë të gjitha lëvizjet e aksioneve për të përditësuar stokun tuaj në sasinë reale që keni futur në inventar.
@@ -282,7 +282,7 @@ ModuleStockTransferName=Transferim i avancuar i aksioneve
 ModuleStockTransferDesc=Menaxhimi i avancuar i transferimit të aksioneve, me gjenerimin e fletës së transfertave
 StockTransferNew=Transferimi i aksioneve të reja
 StockTransferList=Lista e transfertave të aksioneve
-ConfirmValidateStockTransfer=Jeni i sigurt që dëshironi të vërtetoni këtë transferim të aksioneve me referencën <b>%s<span class='notranslate'>b09a4b739f17f shtrirje> ?
+ConfirmValidateStockTransfer=Are you sure you want to validate this stocks transfer with the reference <b>%s</b> ?
 ConfirmDestock=Ulja e aksioneve me transferim %s
 ConfirmDestockCancel=Anulo uljen e aksioneve me transferimin %s
 DestockAllProduct=Ulja e stoqeve
@@ -314,7 +314,6 @@ StockStransferIncrementedShort=Stoqet e transferuara
 StockStransferIncrementedShortCancel=Anulohet rritja e depove të destinacionit
 StockTransferNoBatchForProduct=Produkti %s nuk përdor grup, fshij grupin në linjë dhe provo sërish
 StockTransferSetup = Konfigurimi i modulit të transferimit të aksioneve
-Settings=Cilësimet
 StockTransferSetupPage = Faqja e konfigurimit për modulin e transferimit të aksioneve
 StockTransferRightRead=Lexoni transfertat e aksioneve
 StockTransferRightCreateUpdate=Krijo/Përditëso transfertat e aksioneve
@@ -324,7 +323,6 @@ StockEntryDate=Data e <br>hyrjes në magazinë
 StockMovementWillBeRecorded=Lëvizja e aksioneve do të regjistrohet
 StockMovementNotYetRecorded=Lëvizja e aksioneve nuk do të ndikohet nga ky hap
 ReverseConfirmed=Lëvizja e aksioneve është kthyer me sukses
-
 WarningThisWIllAlsoDeleteStock=Kujdes, kjo do të shkatërrojë gjithashtu të gjitha sasitë në magazinë
 ValidateInventory=Vleresimi i inventarit
 IncludeSubWarehouse=Përfshini nën-magazinë?
@@ -334,4 +332,3 @@ ConfirmDeleteBatch=Jeni i sigurt që dëshironi të fshini lotin/serialin?
 WarehouseUsage=Përdorimi i magazinës
 InternalWarehouse=Magazina e brendshme
 ExternalWarehouse=Depo e jashtme
-WarningThisWIllAlsoDeleteStock=Kujdes, kjo do të shkatërrojë gjithashtu të gjitha sasitë në magazinë

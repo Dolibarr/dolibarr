@@ -335,7 +335,6 @@ CategoryDeleted=Categorie van deze grootboekrekening is verwijderd
 AccountingJournals=Dagboeken
 AccountingJournal=Dagboek
 NewAccountingJournal=Nieuw dagboek
-ShowAccountingJournal=Toon dagboek
 NatureOfJournal=Journaaltype
 AccountingJournalType1=Overige bewerkingen
 AccountingJournalType2=Verkopen
@@ -434,10 +433,10 @@ Formula=Formule
 
 ## Reconcile
 LetteringAuto=Automatisch afstemmen
-LetteringManual=Handboek afstemmen
+LetteringManual=Handmatig afletteren
 Unlettering=niet afstemmen
 UnletteringAuto=Auto niet afstemmen
-UnletteringManual=niet-afstemmen handleiding
+UnletteringManual=handmatig afletteren verwijderen
 AccountancyNoLetteringModified=Geen afstemming gewijzigd
 AccountancyOneLetteringModifiedSuccessfully=Eén afstemming succesvol gewijzigd
 AccountancyLetteringModifiedSuccessfully=%s afstemming succesvol gewijzigd

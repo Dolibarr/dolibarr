@@ -34,7 +34,6 @@ PaymentEvent=دفع الحدث
 NewRegistration=تسجيل
 EventOrganizationSetup=إعداد تنظيم الحدث
 EventOrganization=تنظيم الأحداث
-Settings=إعدادات
 EventOrganizationSetupPage = صفحة إعداد تنظيم الحدث
 EVENTORGANIZATION_TASK_LABEL = تسمية المهام التي سيتم إنشاؤها تلقائيًا عند التحقق من صحة المشروع
 EVENTORGANIZATION_TASK_LABELTooltip = عند التحقق من صحة حدث لتنظيمه ، يمكن إنشاء بعض المهام تلقائيًا في المشروع <br> <br> على سبيل المثال: <br> Send Call for Conferences <br> Send Call for Booths <br>19 <br> أرسل تذكيرًا بالحدث إلى المتحدثين <br> أرسل تذكيرًا بالحدث إلى Booth hosters <br> أرسل تذكيرًا بالحدث إلى الحضور

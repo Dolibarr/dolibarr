@@ -259,8 +259,8 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 			}
 
 			// We ask to move a qty
-			$qtytomove = (float) price2num(GETPOST($qty, 'alphanohtml'));
-			$puformove = (float) price2num(GETPOST($pu, 'alphanohtml'));
+			$qtytomove = GETPOSTFLOAT($qty);
+			$puformove = GETPOSTFLOAT($pu);
 			if ($qtytomove != 0) {
 				if (!(GETPOST($ent, 'int') > 0)) {
 					dol_syslog('No dispatch for line '.$key.' as no warehouse was chosen.');
@@ -270,7 +270,7 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 				}
 
 				if (!$error) {
-					$result = $object->dispatchProduct($user, GETPOSTINT($prod), $qtytomove, GETPOSTINT($ent), $puformove, GETPOST('comment'), '', '', '', GETPOST($fk_commandefourndet, 'int'), $notrigger);
+					$result = $object->dispatchProduct($user, GETPOSTINT($prod), $qtytomove, GETPOSTINT($ent), $puformove, GETPOST('comment'), '', '', '', GETPOSTINT($fk_commandefourndet), $notrigger);
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
@@ -329,8 +329,8 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 			}
 
 			// We ask to move a qty
-			$qtytomove = (float) price2num(GETPOST($qty, 'alphanohtml'));
-			$puformove = (float) price2num(GETPOST($pu, 'alphanohtml'));
+			$qtytomove = GETPOSTFLOAT($qty);
+			$puformove = GETPOSTFLOAT($pu);
 			if ($qtytomove > 0) {
 				$productId = GETPOSTINT($prod);
 
@@ -358,7 +358,7 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 				}
 
 				if (!$error) {
-					$result = $object->dispatchProduct($user, $productId, $qtytomove, GETPOSTINT($ent), $puformove, GETPOST('comment'), $dDLUO, $dDLC, GETPOST($lot, 'alpha'), GETPOST($fk_commandefourndet, 'int'), $notrigger);
+					$result = $object->dispatchProduct($user, $productId, $qtytomove, GETPOSTINT($ent), $puformove, GETPOST('comment'), $dDLUO, $dDLC, GETPOST($lot, 'alpha'), GETPOSTINT($fk_commandefourndet), $notrigger);
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
@@ -461,14 +461,14 @@ if ($action == 'updateline' && $permissiontoreceive) {
 		$qty = $supplierorderdispatch->qty;
 		$entrepot = $supplierorderdispatch->fk_entrepot;
 		$product = $supplierorderdispatch->fk_product;
-		$price = price2num(GETPOST('price'), '', 2);
+		$price = GETPOSTFLOAT('price');
 		$comment = $supplierorderdispatch->comment;
 		$eatby = $supplierorderdispatch->eatby;
 		$sellby = $supplierorderdispatch->sellby;
 		$batch = $supplierorderdispatch->batch;
 
-		$supplierorderdispatch->qty = price2num(GETPOST('qty', 'alpha'), 'MS', 2);
-		$supplierorderdispatch->fk_entrepot = GETPOST('fk_entrepot');
+		$supplierorderdispatch->qty = GETPOSTFLOAT('qty', 'MS');
+		$supplierorderdispatch->fk_entrepot = GETPOSTINT('fk_entrepot');
 		$result = $supplierorderdispatch->update($user);
 	}
 	if ($result < 0) {

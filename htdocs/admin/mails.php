@@ -50,16 +50,18 @@ if ($action == 'test' || ($action == 'send' && $trackid = 'test')) {
 $substitutionarrayfortest = array(
 	'__USER_LOGIN__' => $user->login,
 	'__USER_EMAIL__' => $user->email,
+	'__USER_FIRSTNAME__' => $user->firstname,
+	'__USER_LASTNAME__' => $user->lastname,
 	'__USER_SIGNATURE__' => (($user->signature && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $usersignature : ''), // Done into actions_sendmails
 	'__SENDEREMAIL_SIGNATURE__' => (($user->signature && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $usersignature : ''), // Done into actions_sendmails
-	'__ID__' => 'RecipientID',
+	//'__ID__' => 'RecipientID',
 	//'__EMAIL__' => 'RecipientEMail',				// Done into actions_sendmails
-	'__LASTNAME__' => 'RecipientLastname',
-	'__FIRSTNAME__' => 'RecipientFirstname',
-	'__ADDRESS__'=> 'RecipientAddress',
-	'__ZIP__'=> 'RecipientZip',
-	'__TOWN_'=> 'RecipientTown',
-	'__COUNTRY__'=> 'RecipientCountry',
+	'__LASTNAME__' => $langs->trans("Lastname").' ('.$langs->trans("Recipient").')',
+	'__FIRSTNAME__' => $langs->trans("Firstname").' ('.$langs->trans("Recipient").')',
+	//'__ADDRESS__'=> $langs->trans("Address").' ('.$langs->trans("Recipient").')',
+	//'__ZIP__'=> $langs->trans("Zip").' ('.$langs->trans("Recipient").')',
+	//'__TOWN_'=> $langs->trans("Town").' ('.$langs->trans("Recipient").')',
+	//'__COUNTRY__'=> $langs->trans("Country").' ('.$langs->trans("Recipient").')',
 	'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
 	'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefinedtag&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefinedtag", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0" />',
 );
@@ -810,7 +812,7 @@ if ($action == 'edit') {
 			$linktosetvar2 = '</a>';
 			$messagetoshow = str_replace('{s1}', $linktosetvar1, $messagetoshow);
 			$messagetoshow = str_replace('{s2}', $linktosetvar2, $messagetoshow);
-
+			//print $messagetoshow;
 			print info_admin($messagetoshow, 0, 0, 'warning nomargintop');
 		}
 
@@ -1091,11 +1093,11 @@ if ($action == 'edit') {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->trackid = (($action == 'testhtml') ? "testhtml" : "test");
-		$formmail->fromname = (GETPOSTISSET('fromname') ? GETPOST('fromname') : $conf->global->MAIN_MAIL_EMAIL_FROM);
-		$formmail->frommail = (GETPOSTISSET('frommail') ? GETPOST('frommail') : $conf->global->MAIN_MAIL_EMAIL_FROM);
+		$formmail->fromname = (GETPOSTISSET('fromname') ? GETPOST('fromname') : getDolGlobalString('MAIN_MAIL_EMAIL_FROM'));
+		$formmail->frommail = (GETPOSTISSET('frommail') ? GETPOST('frommail') : getDolGlobalString('MAIN_MAIL_EMAIL_FROM'));
 		$formmail->fromid = $user->id;
 		$formmail->fromalsorobot = 1;
-		$formmail->fromtype = (GETPOSTISSET('fromtype') ? GETPOST('fromtype', 'aZ09') : (getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE') ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
+		$formmail->fromtype = (GETPOSTISSET('fromtype') ? GETPOST('fromtype', 'aZ09') : getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE', 'user'));
 		$formmail->withfromreadonly = 1;
 		$formmail->withsubstit = 1;
 		$formmail->withfrom = 1;
@@ -1106,6 +1108,8 @@ if ($action == 'edit') {
 		$formmail->withtopic = (GETPOSTISSET('subject') ? GETPOST('subject') : $langs->trans("Test"));
 		$formmail->withtopicreadonly = 0;
 		$formmail->withfile = 2;
+		$formmail->withlayout = 1;
+		$formmail->withaiprompt = 1;
 		$formmail->withbody = (GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : ($action == 'testhtml' ? $langs->transnoentities("PredefinedMailTestHtml") : $langs->transnoentities("PredefinedMailTest")));
 		$formmail->withbodyreadonly = 0;
 		$formmail->withcancel = 1;
@@ -1130,10 +1134,12 @@ if ($action == 'edit') {
 		print dol_get_fiche_end();
 
 		// References
-		print '<br><br>';
-		print '<span class="opacitymedium">'.$langs->trans("EMailsWillHaveMessageID").': ';
-		print dol_escape_htmltag('<timestamp.*@'.dol_getprefix('email').'>');
-		print '</span>';
+		if (!empty($user->admin)) {
+			print '<br><br>';
+			print '<span class="opacitymedium">'.$langs->trans("EMailsWillHaveMessageID").': ';
+			print dol_escape_htmltag('<timestamp.*@'.dol_getprefix('email').'>');
+			print '</span>';
+		}
 	}
 }
 

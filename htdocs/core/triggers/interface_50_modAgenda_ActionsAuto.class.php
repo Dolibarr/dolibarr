@@ -50,8 +50,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "agenda";
 		$this->description = "Triggers of this module add actions in agenda according to setup made in agenda setup.";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = self::VERSION_DOLIBARR;
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'action';
 	}
 
@@ -77,7 +76,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	 * @param conf		    $conf       Object conf
 	 * @return int         				Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		if (!isModEnabled('agenda')) {
 			return 0; // Module not active, we do nothing
@@ -1575,7 +1574,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$_SESSION['LAST_ACTION_CREATED'] = $ret;
 			return 1;
 		} else {
-			$this->error = "Failed to insert event : ".$actioncomm->error." ".join(',', $actioncomm->errors);
+			$this->error = "Failed to insert event : ".$actioncomm->error." ".implode(',', $actioncomm->errors);
 			$this->errors = $actioncomm->errors;
 
 			dol_syslog("interface_modAgenda_ActionsAuto.class.php: ".$this->error, LOG_ERR);

@@ -324,6 +324,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// Set $this->atleastonediscount if you have at least one discount
@@ -1663,6 +1664,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			// Show recipient name
 			$pdf->SetXY($posx + 2, $posy + 3);
 			$pdf->SetFont('', 'B', $default_font_size);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$pdf->MultiCell($widthrecbox, 2, $carac_client_name, 0, $ltrdirection);
 
 			$posy = $pdf->getY();
@@ -1674,6 +1676,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
 		return $top_shift;
 	}
 

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2020   Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2023	Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +55,7 @@ class Invoices extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 		$this->db = $db;
 		$this->invoice = new Facture($this->db);
 		$this->template_invoice = new FactureRec($this->db);
@@ -156,6 +157,10 @@ class Invoices extends DolibarrApi
 
 		$this->invoice->fetchObjectLinked();
 
+		// Add online_payment_url, copied from order
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+		$this->invoice->online_payment_url = getOnlinePaymentUrl(0, 'invoice', $this->invoice->ref);
+
 		return $this->_cleanObjectDatas($this->invoice);
 	}
 
@@ -179,8 +184,6 @@ class Invoices extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
 		if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 			throw new RestException(403);
 		}
@@ -263,6 +266,10 @@ class Invoices extends DolibarrApi
 					if (is_array($tmparray)) {
 						$invoice_static->contacts_ids = $tmparray;
 					}
+					// Add online_payment_url, copied from order
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+					$invoice_static->online_payment_url = getOnlinePaymentUrl(0, 'invoice', $invoice_static->ref);
+
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($invoice_static), $properties);
 				}
 				$i++;
@@ -960,6 +967,10 @@ class Invoices extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
+		// copy from order
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+		$this->invoice->online_payment_url = getOnlinePaymentUrl(0, 'invoice', $this->invoice->ref);
 
 		return $this->_cleanObjectDatas($this->invoice);
 	}

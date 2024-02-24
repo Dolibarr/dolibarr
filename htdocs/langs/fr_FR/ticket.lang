@@ -69,7 +69,7 @@ Read=Lu
 Assigned=Assigné
 NeedMoreInformation=Attente retour demandeur
 NeedMoreInformationShort=En attente de retour
-Answered=Répondu
+TicketAnswered=Répondu
 Waiting=En attente
 SolvedClosed=Résolu
 Deleted=Supprimé
@@ -88,7 +88,6 @@ MailToSendTicketMessage=Pour envoyer un e-mail depuis un ticket
 #
 TicketSetup=Configuration du module de ticket
 TicketSettings=Paramètres
-TicketSetupPage=
 TicketPublicAccess=Une interface publique ne nécessitant aucune identification est disponible à l'url suivante
 TicketSetupDictionaries=Les types de ticket, sévérité et codes analytiques sont paramétrables à partir des dictionnaires
 TicketParamModule=Configuration des variables du module

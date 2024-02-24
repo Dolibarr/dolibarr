@@ -63,7 +63,7 @@ class pdf_einstein extends ModelePDFCommandes
 	public $description;
 
 	/**
-	 * @var string 	Save the name of generated file as the main doc when generating a doc with this template
+	 * @var int 	Save the name of generated file as the main doc when generating a doc with this template, 1 for yes, 0 if not
 	 */
 	public $update_main_doc_field;
 
@@ -287,6 +287,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// Set $this->atleastonediscount if you have at least one discount
@@ -1243,7 +1244,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
 	 *  @param	string		$titlekey		Translation key to show as title of document
-	 *  @return	int                         Return topshift value
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null, $titlekey = "PdfOrderTitle")
 	{
@@ -1489,10 +1490,12 @@ class pdf_einstein extends ModelePDFCommandes
 			// Show recipient information
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetXY($posx + 2, $posy);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, $ltrdirection);
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
 		return $top_shift;
 	}
 

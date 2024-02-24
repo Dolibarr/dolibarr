@@ -43,7 +43,6 @@ class Productbatch extends CommonObject
 
 	private static $_table_element = 'product_batch'; //!< Name of table without prefix where object is stored
 
-	public $tms = '';
 	public $fk_product_stock;
 
 	public $batch = '';
@@ -342,7 +341,7 @@ class Productbatch extends CommonObject
 	{
 		$this->id = 0;
 
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->fk_product_stock = '';
 		$this->sellby = '';
 		$this->eatby = '';

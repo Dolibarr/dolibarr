@@ -50,7 +50,7 @@ class box_activity extends ModeleBoxes
 		$this->db = $db;
 
 		// FIXME: Pb into some status
-		$this->enabled = (getDolGlobalString('MAIN_FEATURES_LEVEL')); // Not enabled by default due to bugs (see previous comments)
+		$this->enabled = getDolGlobalInt('MAIN_FEATURES_LEVEL'); // Not enabled by default due to bugs (see previous comments)
 
 		$this->hidden = !(
 			(isModEnabled('facture') && $user->hasRight('facture', 'read'))

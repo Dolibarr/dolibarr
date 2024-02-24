@@ -47,7 +47,7 @@ NbOfProjects=প্রকল্পের সংখ্যা
 NbOfTasks=কাজের সংখ্যা
 TimeEntry=সময় ট্র্যাকিং
 TimeSpent=সময় অতিবাহিত
-TimeSpentSmall=Time spent
+TimeSpentSmall=সময় অতিবাহিত
 TimeSpentByYou=তোমার কাটানো সময়
 TimeSpentByUser=ব্যবহারকারীর দ্বারা ব্যয় করা সময়
 TaskId=টাস্ক আইডি
@@ -249,7 +249,7 @@ LatestProjects=সর্বশেষ %s প্রকল্প
 LatestModifiedProjects=সর্বশেষ %s পরিবর্তিত প্রকল্প
 OtherFilteredTasks=অন্যান্য ফিল্টার করা কাজ
 NoAssignedTasks=কোন বরাদ্দকৃত কাজ পাওয়া যায়নি (এতে সময় লিখতে শীর্ষ নির্বাচন বাক্স থেকে বর্তমান ব্যবহারকারীকে প্রকল্প/কাজ বরাদ্দ করুন)
-ThirdPartyRequiredToGenerateInvoice=এটি চালান করতে সক্ষম হতে একটি তৃতীয় পক্ষকে প্রকল্পে সংজ্ঞায়িত করতে হবে।
+ThirdPartyRequiredToGenerateIntervention=A third party must be defined on project to be able to create intervention.
 ThirdPartyRequiredToGenerateInvoice=এটি চালান করতে সক্ষম হতে একটি তৃতীয় পক্ষকে প্রকল্পে সংজ্ঞায়িত করতে হবে।
 ChooseANotYetAssignedTask=এমন একটি টাস্ক বেছে নিন যা আপনাকে এখনও অ্যাসাইন করা হয়নি
 # Comments trans

@@ -190,6 +190,7 @@ class Account extends CommonObject
 	public $state_id;
 	public $state_code;
 	public $state;
+	public $country_id;
 
 	/**
 	 * Variable containing all account types with their respective translated label.
@@ -199,9 +200,9 @@ class Account extends CommonObject
 	public $type_lib = array();
 
 	/**
-	 * Variable containing all account statuses with their respective translated label.
+	 * Array listing all the potential status of an account.
 	 * Defined in __construct
-	 * @var array
+	 * @var array<int, string>		array: int of the status => translated label of the status
 	 */
 	public $status = array();
 
@@ -796,7 +797,7 @@ class Account extends CommonObject
 				$accline = new AccountLine($this->db);
 				$accline->datec = $now;
 				$accline->label = '('.$langs->trans("InitialBankBalance").')';
-				$accline->amount = price2num($balance);
+				$accline->amount = (float) price2num($balance);
 				$accline->fk_user_author = $user->id;
 				$accline->fk_account = $this->id;
 				$accline->datev = $this->date_solde;
@@ -1092,7 +1093,6 @@ class Account extends CommonObject
 
 				$this->date_creation  = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
-				$this->date_update    = $this->date_modification;	// For compatibility
 
 				$this->ics           = $obj->ics;
 				$this->ics_transfer  = $obj->ics_transfer;
@@ -1638,6 +1638,40 @@ class Account extends CommonObject
 	}
 
 	/**
+	 * 	Return full address for banner
+	 *
+	 * 	@param		string		$htmlkey            HTML id to make banner content unique
+	 *  @param      Object      $object				Object (thirdparty, thirdparty of contact for contact, null for a member)
+	 *	@return		string							Full address string
+	 */
+	public function getBannerAddress($htmlkey, $object)
+	{
+		global $conf, $langs;
+
+		$out = '';
+
+		$outdone = 0;
+		$coords = $this->getFullAddress(1, ', ', getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT'));
+		if ($coords) {
+			if (!empty($conf->use_javascript_ajax)) {
+				// hideonsmatphone because copyToClipboard call jquery dialog that does not work with jmobile
+				$out .= '<a href="#" class="hideonsmartphone" onclick="return copyToClipboard(\''.dol_escape_js($coords).'\',\''.dol_escape_js($langs->trans("HelpCopyToClipboard")).'\');">';
+				$out .= img_picto($langs->trans("Address"), 'map-marker-alt');
+				$out .= '</a> ';
+			}
+			$address = dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', ');
+			if ($address) {
+				$out .= $address;
+				$outdone++;
+			}
+			$outdone++;
+		}
+
+		return $out;
+	}
+
+
+	/**
 	 * Return if a bank account is defined with detailed information (bank code, desk code, number and key).
 	 * More information on codes used by countries on page http://en.wikipedia.org/wiki/Bank_code
 	 *
@@ -1825,7 +1859,6 @@ class Account extends CommonObject
 		$this->specimen        = 1;
 		$this->ref             = 'MBA';
 		$this->label           = 'My Big Company Bank account';
-		$this->bank            = 'MyBank';
 		$this->courant         = Account::TYPE_CURRENT;
 		$this->clos            = Account::STATUS_OPEN;
 		$this->code_banque     = '30001';
@@ -1834,7 +1867,9 @@ class Account extends CommonObject
 		$this->cle_rib         = '85';
 		$this->bic             = 'AA12';
 		$this->iban            = 'FR7630001007941234567890185';
-		$this->domiciliation   = 'Banque de France';
+
+		$this->bank            = 'MyBank';
+		$this->address         = 'Rue de Paris';
 		$this->proprio         = 'Owner';
 		$this->owner_address   = 'Owner address';
 		$this->owner_zip       = 'Owner zip';
@@ -2367,6 +2402,32 @@ class AccountLine extends CommonObjectLine
 	}
 
 
+	/**
+	 *		Update bank account record label in database
+	 *
+	 *		@return	int						Return integer <0 if KO, >0 if OK
+	 */
+	public function updateLabel()
+	{
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
+		$sql .= " label = '".$this->db->escape($this->label)."'";
+		$sql .= " WHERE rowid = ".((int) $this->rowid);
+
+		dol_syslog(get_class($this)."::update_label", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
+			$this->error = $this->db->error();
+			return -1;
+		}
+	}
+
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Update conciliation field
@@ -2599,12 +2660,15 @@ class AccountLine extends CommonObjectLine
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $option = '', $notooltip = 0)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$result = '';
 
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("BankTransactionLine").'</u>:<br>';
 		$label .= '<b>'.$langs->trans("Ref").':</b> '.$this->ref;
+		if ($this->amount) {
+			$label .= '<br><strong>'.$langs->trans("Amount").':</strong> '.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency);
+		}
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.((int) $this->id).'&save_lastsearch_values=1" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
@@ -2616,6 +2680,7 @@ class AccountLine extends CommonObjectLine
 		if ($withpicto != 2) {
 			$result .= ($this->ref ? $this->ref : $this->id);
 		}
+
 		$result .= $linkend;
 
 		if ($option == 'showall' || $option == 'showconciliated' || $option == 'showconciliatedandaccounted') {
@@ -2713,7 +2778,6 @@ class AccountLine extends CommonObjectLine
 
 		return '';
 	}
-
 
 	/**
 	 *	Return if a bank line was dispatched into bookkeeping

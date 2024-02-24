@@ -106,7 +106,7 @@ NextValueForInvoices=Sljedeća vrijednost (fakture)
 NextValueForCreditNotes=Sljedeća vrijednost (KO)
 NextValueForDeposit=Sljedeća vrijednost (kapara)
 NextValueForReplacements=Slijedeća vrijednost (zamjene)
-MustBeLowerThanPHPLimit=Napomena: vaša PHP konfiguracija trenutno ograničava maksimalnu veličinu datoteke za otpremanje na <b>%s</b> span> <span class='notranslate'>%s, bez obzira na vrijednost ovog parametra
+MustBeLowerThanPHPLimit=Note: your PHP configuration currently limits the maximum filesize for upload to <b>%s</b> %s, irrespective of the value of this parameter
 NoMaxSizeByPHPLimit=Napomena: U vašoj PHP konfiguraciji nije postavljeno ograničenje
 MaxSizeForUploadedFiles=Maksimalna veličina za otpremljene fajlove (0 da zabrani bilo kakvo otpremanje)
 UseCaptchaCode=Koristite grafički kod (CAPTCHA) na stranici za prijavu i nekim javnim stranicama
@@ -149,7 +149,6 @@ MaxNbOfLinesForBoxes=Max. broj redova za widgete
 AllWidgetsWereEnabled=Svi dostupni widgeti su omogućeni
 WidgetAvailable=Widget dostupan
 PositionByDefault=Pretpostavljeni red
-Position=Pozicija
 MenusDesc=Menadžeri menija postavljaju sadržaj dve trake menija (horizontalna i vertikalna).
 MenusEditorDesc=Uređivač menija vam omogućava da definišete prilagođene unose menija. Koristite ga pažljivo da biste izbjegli nestabilnost i trajno nedostupnih unosa menija.<br>Neki moduli dodaju unose menija (u meniju <b>Sve</b> uglavnom). Ako greškom uklonite neke od ovih unosa, možete ih vratiti tako što ćete onemogućiti i ponovo omogućiti modul.
 MenuForUsers=Meni za korisnike
@@ -220,11 +219,10 @@ ModulesMarketPlaces=Pronađite eksternu aplikaciju/module
 ModulesDevelopYourModule=Razvijte vlastitu aplikaciju/module
 ModulesDevelopDesc=Također možete razviti vlastiti modul ili pronaći partnera koji će ga razviti za vas.
 DOLISTOREdescriptionLong=Umjesto da uključite <a href="https://www.dolistore.com">www.dolistore.com</a> web stranicu kako biste pronašli vanjski modul, možete koristiti ovaj ugrađeni alat koji izvršit će pretragu na vanjskom tržištu umjesto vas (možda je spor, potreban vam je pristup internetu)...
-NewModule=Novi modul
 FreeModule=Besplatno
 CompatibleUpTo=Kompatibilan s verzijom %s
-NotCompatible=Čini se da ovaj modul nije kompatibilan s vašim Dolibarr %s (Min %s - Max <span class='notranslate'>b0ecb2ec87f49 raspon>).
-CompatibleAfterUpdate=Ovaj modul zahtijeva ažuriranje vašeg Dolibarra %s (Min %s - Max <span class='notranslate'>%s >).
+NotCompatible=This module does not seem compatible with your Dolibarr %s (Min %s - Max %s).
+CompatibleAfterUpdate=This module requires an update to your Dolibarr %s (Min %s - Max %s).
 SeeInMarkerPlace=Vidi u Market place
 SeeSetupOfModule=Pogledajte postavljanje modula %s
 SeeSetupPage=Pogledajte stranicu za postavljanje na %s
@@ -252,7 +250,7 @@ Security=Sigurnost
 Passwords=Lozinke
 DoNotStoreClearPassword=Šifrirajte lozinke pohranjene u bazi podataka (NE kao običan tekst). Preporučuje se aktiviranje ove opcije.
 MainDbPasswordFileConfEncrypted=Šifrirajte lozinku baze podataka pohranjenu u conf.php. Preporučuje se aktiviranje ove opcije.
-InstrucToEncodePass=Za šifriranje lozinke u datoteku <b>conf.php</b>, zamijenite redak b0342fccfda19bz /span><span class='notranslate'><b>$dolibarr_main_db_pass="...";</b>b0392bzcfda >od<br><b>$dolibarr_main_db_pass="crypted:b0ecb2ec87f49"; span class='notranslate'></b>
+InstrucToEncodePass=To have password encoded into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="...";</b><br>by<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
 InstrucToClearPass=Da bi lozinka bila dekodirana (obrisana) u datoteku <b>conf.php</b>, zamijenite redak <br><b>$dolibarr_main_db_pass="crypted:...";</b>'<span' ><br></span>od<br><b>$dolibarr_main_db_pass="<span>fccfda19bz0</span><b>$dolibarr_main_db_pass="<span>fccfda19bz0</span>fccfda19bz0</span> ";</b>
 ProtectAndEncryptPdfFiles=Zaštitite generirane PDF datoteke. Ovo se NE preporučuje jer prekida masovno generiranje PDF-a.
 ProtectAndEncryptPdfFilesDesc=Zaštita PDF dokumenta čini ga dostupnim za čitanje i štampanja u bilo kojem PDF pretraživaču. Međutim, uređivanje i kopiranja više nije moguće. Imajte na umu da korištenje ove funkcije čini da izgradnja globalnih spojenih PDF-ova ne funkcionira.
@@ -271,7 +269,7 @@ ExternalResources=Eksterni resursi
 SocialNetworks=Društvene mreže
 SocialNetworkId=ID društvene mreže
 ForDocumentationSeeWiki=Za dokumentaciju za korisnike ili programere (Doc, FAQ...),<br>pogledajte Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%sb0e40dccz05 </b>
-ForAnswersSeeForum=Za sva druga pitanja/pomoć možete koristiti Dolibarr forum:<br><b><a href="%s" target="_blank" rel="noopener noreferrer"> /span><span class='notranslate'>%s</a></b>
+ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 HelpCenterDesc1=Evo nekih resursa za dobijanje pomoći i podrške za Dolibarr.
 HelpCenterDesc2=Neki od ovih resursa dostupni su samo na <b>engleskom</b>.
 CurrentMenuHandler=Trenutni rukovalac menijem
@@ -292,8 +290,8 @@ EMailsSetup=Podešavanje e-pošte
 EMailsDesc=Ova stranica vam omogućava da postavite parametre ili opcije za slanje e-pošte.
 EmailSenderProfiles=Profili pošiljaoca e-pošte
 EMailsSenderProfileDesc=Ovaj odjeljak možete ostaviti praznim. Ako ovdje unesete neke e-mailove, oni će biti dodati na listu mogućih pošiljatelja u kombobox kada napišete novu e-poštu.
-MAIN_MAIL_SMTP_PORT=SMTP/SMTPS port (zadana vrijednost u php.ini: <b>%s<span class='notranslate'>b09a4b739f17f8f8 >)
-MAIN_MAIL_SMTP_SERVER=SMTP/SMTPS Host (podrazumevana vrijednost u php.ini: <b>%s<span class='notranslate'>b09a4b839f17f17f >)
+MAIN_MAIL_SMTP_PORT=SMTP/SMTPS Port (default value in php.ini: <b>%s</b>)
+MAIN_MAIL_SMTP_SERVER=SMTP/SMTPS Host (default value in php.ini: <b>%s</b>)
 MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike=SMTP/SMTPS port
 MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike=SMTP/SMTPS Host
 MAIN_MAIL_EMAIL_FROM=E-pošta pošiljaoca za automatske e-poruke
@@ -304,7 +302,7 @@ MAIN_DISABLE_ALL_MAILS=Onemogućite svo slanje e-pošte (u svrhu testiranja ili 
 MAIN_MAIL_FORCE_SENDTO=Pošaljite sve e-poruke na (umjesto stvarnim primaocima, u svrhu testiranja)
 MAIN_MAIL_ENABLED_USER_DEST_SELECT=Predložite mejlove zaposlenih (ako je definisano) na listu unapred definisanih primalaca kada pišete novu e-poštu
 MAIN_MAIL_NO_WITH_TO_SELECTED=Ne birajte podrazumevanog primaoca čak i ako postoji samo 1 mogući izbor
-MAIN_MAIL_SENDMODE=Način slanja e-pošte
+MAIN_MAIL_SENDMODE=Sending method
 MAIN_MAIL_SMTPS_ID=SMTP ID (ako server za slanje zahtijeva autentifikaciju)
 MAIN_MAIL_SMTPS_PW=SMTP lozinka (ako server za slanje zahtijeva autentifikaciju)
 MAIN_MAIL_EMAIL_TLS=Koristite TLS (SSL) enkripciju
@@ -347,12 +345,12 @@ ThisIsAlternativeProcessToFollow=Ovo je alternativno podešavanje za ručnu obra
 StepNb=Korak %s
 FindPackageFromWebSite=Pronađite paket koji pruža funkcije koje su vam potrebne (na primjer na službenoj web stranici %s).
 DownloadPackageFromWebSite=Preuzmite paket (na primjer sa službene web stranice %s).
-UnpackPackageInDolibarrRoot=Raspakirajte/raspakujte upakovane datoteke u direktorij vašeg Dolibarr servera: <b>%s<span class='notranslate'>b09a4b839f17f17f >
+UnpackPackageInDolibarrRoot=Unpack/unzip the packaged files into your Dolibarr server directory: <b>%s</b>
 UnpackPackageInModulesRoot=Da biste postavili/instalirali eksterni modul, morate raspakirati/raspakovati arhivsku datoteku u serverski direktorij posvećen vanjskim modulima:<br><b>%s</b>
 SetupIsReadyForUse=Postavljanje modula je završeno. Međutim, morate omogućiti i postavljanje modula u vašoj aplikaciji tako što ćete otići na stranicu za podešavanje modula: <a href="%s">%s</a>.
 NotExistsDirect=Alternativni korijenski direktorij nije definiran u postojećem direktoriju.<br>
 InfDirAlt=Od verzije 3, moguće je definirati alternativni korijenski direktorij. Ovo vam omogućava da pohranite, u namjenski direktorij, dodatke i prilagođene šablone.<br>Samo kreirajte direktorij u korijenu od Dolibarra (npr. prilagođeno).<br>
-InfDirExample=<br>Zatim ga deklarirajte u datoteci <strong>conf.php</strong><span><span> class='notranslate'><br></span> $dolibarr_main_url_root_alt='/custom'<br>$dolibarr_main_document_rootth_alt/of/docs<br>$dolibarr_main_document_rootth_alt/of/dot='/palibarr 'notranslate'><br></span>Ako su ovi redovi komentarisani sa "#", da biste ih omogućili, samo dekomentirajte uklanjanjem znaka "#".
+InfDirExample=<br>Then declare it in the file <strong>conf.php</strong><br> $dolibarr_main_url_root_alt='/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>If these lines are commented with "#", to enable them, just uncomment by removing the "#" character.
 YouCanSubmitFile=Ovdje možete učitati .zip datoteku modul paketa:
 CurrentVersion=Dolibarr trenutna verzija
 CallUpdatePage=Dođite do stranice koja ažurira strukturu baze podataka i podaci: %s.
@@ -363,14 +361,14 @@ LastActivationIP=Najnovija IP adresa za aktivaciju
 LastActivationVersion=Najnovija verzija za aktivaciju
 UpdateServerOffline=Ažurirajte server van mreže
 WithCounter=Upravljajte šalterom
-GenericMaskCodes=Možete uneti bilo koju masku za numerisanje. U ovoj maski se mogu koristiti sljedeće oznake:<br><b>{000000}b09a4b739f17f17 /span> odgovara broju koji će biti povećan na svakom <span class='notranslate'>%s. Unesite onoliko nula koliko je željena dužina brojača. Brojač će biti upotpunjen nulama s lijeve strane kako bi imali onoliko nula koliko je maska. <br><b>{000000+000}</b>, ali isto kao i prethodni pomak koji odgovara broju desno od znaka + primjenjuje se počevši od prvog %s. <br><b>{000000@x}</b> isto kao i prethodni brojač se resetuje na nulu kada se dostigne mesec x (x između 1 i 12, ili 0 da se koriste prvi meseci fiskalne godine definisane u vašoj konfiguraciji, ili 99 da se vrati na nula svakog mjeseca). Ako se koristi ova opcija i x je 2 ili više, tada je potreban niz {yy}{mm} ili {yyyy}{mm}. <br><b>{dd}</b> dan (01 do 31). span class='notranslate'><br></span><b>{mm}</b> mjesec (01 do 12).<span). class='notranslate'><br></span><b>{yy}</b>, <span class='notranslate80b3365e87b36b739f17f8z0 </span>{yyyy}</b> ili <b>{y}</b> godine preko 2, 4 ili 1 broja. <span class='notranslate'><br>
-GenericMaskCodes2=<b>{cccc}</b> klijentski kod na n znakova<br><b>{cccc000}b09a7b7839f kod klijenta na n znakova slijedi brojač posvećen kupcu. Ovaj brojač posvećen kupcu se resetuje u isto vreme kada i globalni brojač.<span class='notranslate'><br><b>{tttt} </b> Kôd tipa treće strane na n znakova (pogledajte meni Početna - Podešavanje - Rečnik - Tipovi trećih strana). Ako dodate ovu oznaku, brojač će biti drugačiji za svaku vrstu treće strane.<br>
+GenericMaskCodes=You may enter any numbering mask. In this mask, the following tags can be used:<br><b>{000000}</b> corresponds to a number which will be incremented on each %s. Enter as many zeros as the desired length of the counter. The counter will be completed by zeros from the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as the previous one but an offset corresponding to the number to the right of the + sign is applied starting on the first %s. <br><b>{000000@x}</b> same as the previous one but the counter is reset to zero when month x is reached (x between 1 and 12, or 0 to use the early months of fiscal year defined in your configuration, or 99 to reset to zero every month). If this option is used and x is 2 or higher, then the sequence {yy}{mm} or {yyyy}{mm} is also required. <br><b>{dd}</b> day (01 to 31).<br><b>{mm}</b> month (01 to 12).<br><b>{yy}</b>, <b>{yyyy}</b> or <b>{y}</b> year over 2, 4 or 1 numbers. <br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated to the customer. This counter dedicated to customer is reset at same time as the global counter.<br><b>{tttt}</b> The code of third party type on n characters (see menu Home - Setup - Dictionary - Types of third parties). If you add this tag, the counter will be different for each type of third party.<br>
 GenericMaskCodes3=Svi ostali znakovi u maski će ostati netaknuti.<br>Razmaci nisu dozvoljeni.<br>
 GenericMaskCodes3EAN=Svi ostali znakovi u maski će ostati netaknuti (osim * ili ? na 13. poziciji u EAN13).<br>Razmaci nisu dozvoljeni.<br> span>U EAN13, posljednji znak nakon posljednjeg } na 13. poziciji treba biti * ili ? . Bit će zamijenjen izračunatim ključem.<br>
 GenericMaskCodes4a=<u>Primjer na 99. %s treće strane TheCompany, sa datumom 31.01.2023:</u><br>
-GenericMaskCodes4b=<u>Primjer treće strane kreiran 31.01.2023:</u><span class='notranslate'><br> >
+GenericMaskCodes4b=<u>Example on third party created on 2023-01-31:</u><br>
 GenericMaskCodes4c=<u>Primjer proizvoda kreiranog 31.01.2023:</u><br>
-GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> će dati b0aee833365 span>ABC2301-000099</b><br>b0aee83365837{000@0000 }-ZZZ/{dd}/XXX<span class='notranslate'></b> će dati <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> će dati <b>IN2301-0099-A</b> tip kompanije 'Responsable Inscripto' sa kodom za tip koji je 'A_RI'
+GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC2301-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN2301-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
 GenericNumRefModelDesc=Vraća prilagodljivi broj prema definiranoj maski.
 ServerAvailableOnIPOrPort=Server je dostupan na adresi <b>%s</b> na portu <b>%s</b>
 ServerNotAvailableOnIPOrPort=Server nije dostupan na adresi <b>%s</b> na portu <b>%s</b>
@@ -392,7 +390,7 @@ LanguageFilesCachedIntoShmopSharedMemory=Fajlovi .lang učitani u dijeljenu memo
 LanguageFile=Jezički fajl
 ExamplesWithCurrentSetup=Primjeri sa trenutnom konfiguracijom
 ListOfDirectories=Lista direktorija OpenDocument predložaka
-ListOfDirectoriesForModelGenODT=Lista direktorija koji sadrže datoteke šablona u OpenDocument formatu.<br><br>Ovdje stavite punu putanju direktorija.<br>Dodajte povratnu kartu između eah direktorija.<br>Da dodate direktorij GED modula, dodajte ovdje b0aee83365837f >DOL_DATA_ROOT/ecm/yourdirectoryname<span class='notranslate'></b>.<br>b0342fccfda19b te direktorije mora završiti sa <span class='notranslate'><b>.odt</b> ili <b>.ods. ='notranslate'></b></span>.
+ListOfDirectoriesForModelGenODT=List of directories containing templates files with OpenDocument format.<br><br>Put here full path of directories.<br>Add a carriage return between eah directory.<br>To add a directory of the GED module, add here <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>Files in those directories must end with <b>.odt</b> or <b>.ods</b>.
 NumberOfModelFilesFound=Broj ODT/ODS datoteka predložaka pronađenih u ovim direktorijima
 ExampleOfDirectoriesForModelGen=Primjeri sintakse:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
 FollowingSubstitutionKeysCanBeUsed=<br>Da biste znali kako kreirati svoje odt šablone dokumenata, prije nego što ih pohranite u te direktorije, pročitajte wiki dokumentaciju:
@@ -435,6 +433,7 @@ MassConvert=Pokrenite masovnu konverziju
 PriceFormatInCurrentLanguage=Format cijene na trenutnom jeziku
 String=String
 String1Line=Niz (1 red)
+Text=Text
 TextLong=Dugačak tekst
 TextLongNLines=Dugačak tekst (n reda)
 HtmlText=Html tekst
@@ -461,11 +460,11 @@ ComputedFormula=Izračunato polje
 ComputedFormulaDesc=Ovdje možete unijeti formulu koristeći druga svojstva objekta ili bilo koje PHP kodiranje da biste dobili dinamičku izračunatu vrijednost. Možete koristiti bilo koju PHP kompatibilnu formulu uključujući "?" operator uvjeta, i sljedeći globalni objekat: <strong>$db, $conf, $langs, $mysoc, $user, $objectoffield </strong>.<br><strong>UPOZORENJE<span><br></span><strong>UPOZORENJE<span>b01cf607f67 </span>: Ako su vam potrebna svojstva objekta koji nije učitan, samo dohvatite sebi objekat u svoju formulu kao u drugom primjeru.<br>Upotreba izračunatog polja znači da možete' t unesite sebi bilo koju vrijednost iz interfejsa. Također, ako postoji sintaksička greška, formula može ništa vratiti.<br><br>Primjer formule:<br>$objectoffield->id < 10 ? round($objectoffield->id / 2, 2): ($objectoffield->id + 2 * $user->id) * ( int) substr($mysoc->zip, 1, 2)<br><br>Primjer za ponovno učitavanje objekta<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0 ? $reloadedobj->array_options['options_extrafieldkey'] * >capital / 5: '-1')<br><br>Drugi primjer formule za prisilno učitavanje objekta i njegov nadređeni objekat:<br>(($reloadedobj = novi zadatak($db)) && ($reloadedobj->fetchNoCompute-($objectoffield) ) > 0) && ($secondloadedobj = novi projekat($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Nadređeni projekat nije pronađen'
 Computedpersistent=Spremite izračunato polje
 ComputedpersistentDesc=Izračunata dodatna polja će biti pohranjena u bazi podataka, međutim, vrijednost će biti ponovo izračunata samo kada se promijeni objekt ovog polja. Ako izračunato polje ovisi o drugim objektima ili globalnim podacima, ova vrijednost može biti pogrešna!!
-ExtrafieldParamHelpPassword=Ako ovo polje ostavite praznim, znači da će ova vrijednost biti pohranjena BEZ šifriranja (polje je samo skriveno sa zvijezdama na ekranu).<br><br>Unesite vrijednost 'dolcrypt' za kodiranje vrijednosti pomoću reverzibilnog algoritma šifriranja. Čisti podaci se i dalje mogu znati i uređivati, ali su šifrirani u bazi podataka.<br><span class='notranslate'><br> span>Unesite 'auto' (ili 'md5', 'sha256', 'password_hash', ...) da koristite zadani algoritam šifriranja lozinke (ili md5, sha256, password_hash...) za spremanje nepovratne heširane lozinke u baza podataka (nema načina da se povrati originalna vrijednost)
-ExtrafieldParamHelpselect=Lista vrijednosti mora biti redova s ključem formata, vrijednosti (gdje ključ ne može biti '0')<br><br> na primjer : <br>1,value1<br>2,value2<br>3code span class='notranslate'><br></span>...<br><br>Da bi lista zavisila od drugog komplementarna lista atributa:<br>1,value1|options_<i>parent_list_codeb0bac34z08b0ae6475</span> parent_key<br>2,value2|options_<i>parent_list_codeb0ae64758>b0ae64758bacy: class='notranslate'><br><br>Da bi lista zavisila od druge liste:<br>1, value1|<i>parent_list_code</i>:parent_key<br>2,bz0</span>2 class='notranslate'><i></span>parent_list_code</i>:parent_key
-ExtrafieldParamHelpcheckbox=Lista vrijednosti mora biti redova s ključem formata, vrijednosti (gdje ključ ne može biti '0')<br><br> na primjer : <br>1,value1<br>2,value2b0342fccfda19bzval03, span class='notranslate'><br></span>...
-ExtrafieldParamHelpradio=Lista vrijednosti mora biti redova s ključem formata, vrijednosti (gdje ključ ne može biti '0')<br><br> na primjer : <br>1,value1<br>2,value2b0342fccfda19bzval03, span class='notranslate'><br></span>...
-ExtrafieldParamHelpsellist=Lista vrijednosti dolazi iz tabele<br>Sintaksa: table_name:label_field:id_field::filtersql<br>Primjer: c_typent:libelle: ::filtersql<br><br>- id_field je nužno primarni int ključ<br> - filtersql je SQL uvjet. To može biti jednostavan test (npr. active=1) za prikaz samo aktivne vrijednosti<span class='notranslate'><br>Možete koristiti i $ID$ u filteru koji je trenutni ID trenutnog objekta<br>Da biste koristili SELECT u filteru, koristite ključnu riječ $SEL$ da biste zaobišli zaštitu protiv ubrizgavanja.<br>ako želite filtrirati po ekstrapoljima koristite sintaksu extra.fieldcode=... (gdje je kod polja kod extrafield)<br><br>Da biste imali lista u zavisnosti od druge komplementarne liste atributa:<br>c_typent:libelle:id:options_<i>parent_list_code </i>|parent_column:filter <br><br>Da bi lista zavisila od druge liste:<br>c_typent:libelle:id:<i>parent_list_code</i>m
+ExtrafieldParamHelpPassword=Leaving this field blank means this value will be stored WITHOUT encryption (field is just hidden with stars on screen).<br><br>Enter value 'dolcrypt' to encode value with a reversible encryption algorithm. Clear data can still be known and edited but is encrypted into database.<br><br>Enter 'auto' (or 'md5', 'sha256', 'password_hash', ...) to use the default password encryption algorithm (or md5, sha256, password_hash...) to save the non reversible hashed password into database (no way to retrieve original value)
+ExtrafieldParamHelpselect=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>code3,value3<br>...<br><br>In order to have the list depending on another complementary attribute list:<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>In order to have the list depending on another list:<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
+ExtrafieldParamHelpcheckbox=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>3,value3<br>...
+ExtrafieldParamHelpradio=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>3,value3<br>...
+ExtrafieldParamHelpsellist=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>- id_field is necessarily a primary int key<br>- filtersql is a SQL condition. It can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter which is the current id of current object<br>To use a SELECT into the filter use the keyword $SEL$ to bypass anti-injection protection.<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelpchkbxlst=Lista vrijednosti dolazi iz tabele<br>Sintaksa: table_name:label_field:id_field::filtersql<br>Primjer: c_typent:libelle: ::filtersql<br><br>filter može biti jednostavan test (npr. active=1) za prikaz samo aktivne vrijednosti<br>Također možete koristiti $ID$ u filteru koji je trenutni id trenutnog objekta<br>Da izvršite SELECT u filteru koristite $SEL$<br>ako želite filtrirati po extrafields koristite sintaksu extra.fieldcode=... (gdje je kod polja kod extrafield)<br><br>Da bi lista zavisila od druge komplementarne liste atributa:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br>fccfda19bz0</span>fccfda19bz0</span><spanlate'2 </span>Da bi lista zavisila od druge liste:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=Parametri moraju biti ObjectName:Classpath<br>Sintaksa: ObjectName:Classpath
 ExtrafieldParamHelpSeparator=Ostavite prazno za jednostavan separator<br>Postavite ovo na 1 za separator koji se sažima (otvoreno prema zadanim postavkama za novu sesiju, tada se status čuva za svaku korisničku sesiju)<br>Postavite ovo na 2 za sažimajući separator (sažeto prema zadanim postavkama za novu sesiju, tada se status čuva za svaku korisničku sesiju)
@@ -519,7 +518,7 @@ DependsOn=Ovaj modul treba modul(e)
 RequiredBy=Ovaj modul je potreban za modul(i)
 TheKeyIsTheNameOfHtmlField=Ovo je naziv HTML polja. Za čitanje sadržaja HTML stranice potrebno je tehničko znanje da biste dobili ključno ime polja.
 PageUrlForDefaultValues=Morate unijeti relativnu putanju URL-a stranice. Ako u URL uključite parametre, to će biti efektivno ako svi parametri u pregledanom URL-u imaju vrijednost definiranu ovdje.
-PageUrlForDefaultValuesCreate=<br>Primjer:<br>Za obrazac za kreiranje nove treće strane, to je <strong> /span><span class='notranslate'>%s</strong>.<br>Za URL vanjskih modula instaliranih u prilagođeni direktorij, nemojte uključivati "custom/", pa koristite putanju kao što je <strong>mymodule/mypage.php</strong> i ne custom/mymodule/mypage.php.<br>Ako želite zadanu vrijednost samo ako url ima neki parametar, možete koristiti <strong>%s</strong>
+PageUrlForDefaultValuesCreate=<br>Example:<br>For the form to create a new third party, it is <strong>%s</strong>.<br>For URL of external modules installed into custom directory, do not include the "custom/", so use path like <strong>mymodule/mypage.php</strong> and not custom/mymodule/mypage.php.<br>If you want default value only if url has some parameter, you can use <strong>%s</strong>
 PageUrlForDefaultValuesList=<br>Primjer:<br>Za stranicu koja navodi treće strane, to je <strong> >%s</strong>.<br>Za URL vanjskih modula instaliranih u prilagođeni direktorij , nemojte uključivati "custom/" pa koristite putanju kao što je <strong>mymodule/mypagelist.php</strong> i ne custom/mymodule/mypagelist.php.<br>Ako želite zadanu vrijednost samo ako url ima neki parametar, možete koristiti <strong>%s</strong>
 AlsoDefaultValuesAreEffectiveForActionCreate=Također imajte na umu da prepisivanje zadanih vrijednosti za kreiranje obrasca radi samo za stranice koje su ispravno dizajnirane (pa s parametrom action=create ili presen...)
 EnableDefaultValues=Omogućite prilagođavanje zadanih vrijednosti
@@ -685,7 +684,7 @@ Module5000Desc=Omogućava vam upravljanje više kompanija
 Module6000Name=Inter-modules Workflow
 Module6000Desc=Upravljanje tokom rada između različitih modula (automatsko kreiranje objekta i/ili automatska promjena statusa)
 Module10000Name=Web stranice
-Module10000Desc=Kreirajte web stranice (javne) pomoću WYSIWYG uređivača. Ovo je CMS orijentiran na webmastera ili programera (bolje je znati HTML i CSS jezik). Samo postavite svoj web server (Apache, Nginx, ...) da ukaže na namjenski Dolibarr direktorij kako biste ga imali online na internetu sa svojim imenom domene.
+Module10000Desc=CMS to create websites with a WYSIWYG editor. This is a webmaster or developer oriented Content Management System (it is better to know HTML and CSS language). Just setup your web server (Apache, Nginx, ...) to point to the dedicated Dolibarr directory to have it online on the internet with your own domain name.
 Module20000Name=Upravljanje zahtjevima za napuštanje
 Module20000Desc=Definirajte i praćenje zahtjeva za odsustvo zaposlenika
 Module39000Name=Product Lots
@@ -1119,7 +1118,7 @@ BackToModuleList=Povratak na listu modula
 BackToDictionaryList=Povratak na listu rječnika
 TypeOfRevenueStamp=Vrsta porezne marke
 VATManagement=Upravljanje porezom na promet
-VATIsUsedDesc=Prema zadanim postavkama kada kreirate izglede, fakture, narudžbe itd. Stopa poreza na promet slijedi aktivno standardno pravilo:<br>Ako prodavac ne podliježe porezu na promet, tada je porez na promet zadano 0 . Kraj pravila.<br>Ako je (zemlja prodavca = zemlja kupca), tada je porez na promet prema zadanim postavkama jednak porezu na promet proizvoda u zemlji prodavca. Kraj pravila.<br>Ako su prodavac i kupac obojica u Evropskoj zajednici b01f882f7e6484 /span> roba su proizvodi vezani za transport (prevoz, otprema, avio kompanija), zadani PDV je 0. Ovo pravilo zavisi od zemlje prodavca - konsultujte se sa svojim računovođom. Kupac treba da plati PDV carinarnici u svojoj zemlji <span class='notranslate'>i, a ne prodavcu. Kraj pravila.<br>Ako su prodavac i kupac obojica u Evropskoj zajednici b01f882f7e6484 /span> kupac nije kompanija (sa registrovanim PDV brojem unutar Zajednice) tada je PDV zadana stopa PDV-a u zemlji prodavca. Kraj pravila.<span class='notranslate'><br>Ako su prodavac i kupac obojica u Evropskoj zajednici b01f882f7e6484 /span> kupac je kompanija (sa registrovanim PDV brojem unutar zajednice), tada je PDV po defaultu 0. Kraj pravila.<span class='notranslate'><br>U svakom drugom slučaju predložena zadana vrijednost je porez na promet=0. Kraj vladavine.
+VATIsUsedDesc=By default when creating prospects, invoices, orders etc. the Sales Tax rate follows the active standard rule:<br>If the seller is not subject to Sales tax, then Sales tax defaults to 0. End of rule.<br>If the (seller's country = buyer's country), then the Sales tax by default equals the Sales tax of the product in the seller's country. End of rule.<br>If the seller and buyer are both in the European Community and goods are transport-related products (haulage, shipping, airline), the default VAT is 0. This rule is dependent on the seller's country - please consult with your accountant. The VAT should be paid by the buyer to the customs office in their country and not to the seller. End of rule.<br>If the seller and buyer are both in the European Community and the buyer is not a company (with a registered intra-Community VAT number) then the VAT defaults to the VAT rate of the seller's country. End of rule.<br>If the seller and buyer are both in the European Community and the buyer is a company (with a registered intra-Community VAT number), then the VAT is 0 by default. End of rule.<br>In any other case the proposed default is Sales tax=0. End of rule.
 VATIsNotUsedDesc=Podrazumevano je predloženi porez na promet 0 koji se može koristiti za slučajeve kao što su udruženja, pojedinci ili male kompanije.
 VATIsUsedExampleFR=U Francuskoj, to znači kompanije ili organizacije koje imaju stvarni fiskalni sistem (pojednostavljeni realni ili normalni real). Sistem u kojem se deklarira PDV.
 VATIsNotUsedExampleFR=U Francuskoj, to znači udruženja koja nisu prijavljena poreza na promet ili kompanije, organizacije ili slobodne profesije koje su odabrale fiskalni sistem mikro preduzeća (porez na promet u franšizi) i su platile franšizu za prodaju poreza bez ikakve prijave poreza na promet. Ovaj izbor će prikazati referencu "Neprimenjivi porez na promet - art-293B CGI" na fakturama.
@@ -1131,14 +1130,10 @@ LocalTax1IsNotUsed=Nemojte koristiti drugi porez
 LocalTax1IsUsedDesc=Koristite drugu vrstu poreza (osim prve)
 LocalTax1IsNotUsedDesc=Nemojte koristiti drugu vrstu poreza (osim prvog)
 LocalTax1Management=Druga vrsta poreza
-LocalTax1IsUsedExample=
-LocalTax1IsNotUsedExample=
 LocalTax2IsNotUsed=Ne koristite treći porez
 LocalTax2IsUsedDesc=Koristite treću vrstu poreza (osim prve)
 LocalTax2IsNotUsedDesc=Nemojte koristiti drugu vrstu poreza (osim prvog)
 LocalTax2Management=Treća vrsta poreza
-LocalTax2IsUsedExample=
-LocalTax2IsNotUsedExample=
 LocalTax1ManagementES=RE Management
 LocalTax1IsUsedDescES=Stopa RE prema zadanim postavkama kada kreirate izglede, fakture, narudžbe itd. slijedi aktivno standardno pravilo:<br>Ako kupac nije podvrgnut RE, RE po defaultu=0. Kraj pravila.<br>Ako je kupac podvrgnut RE, onda RE prema zadanim postavkama. Kraj pravila.<br>
 LocalTax1IsNotUsedDescES=Po defaultu predloženi RE je 0. Kraj pravila.
@@ -1202,6 +1197,7 @@ Skin=Tema kože
 DefaultSkin=Zadana tema kože
 MaxSizeList=Maksimalna dužina liste
 DefaultMaxSizeList=Zadana maksimalna dužina za liste
+DisplayGrandTotalInList=Display grand total (for all pages) in lists footer
 DefaultMaxSizeShortList=Zadana maksimalna dužina za kratke liste (tj. u korisničkoj kartici)
 MessageOfDay=Poruka dana
 MessageLogin=Poruka stranice za prijavu
@@ -1213,7 +1209,6 @@ EnableMultilangInterface=Omogućite višejezičnu podršku za odnose s kupcima i
 EnableShowLogo=Prikažite logo kompanije u meniju
 CompanyInfo=Kompanija/organizacija
 CompanyIds=Identiteti kompanije/organizacije
-CompanyName=Naziv
 CompanyAddress=Adresa
 CompanyZip=Zip
 CompanyTown=Town
@@ -1255,7 +1250,7 @@ SetupDescription2=Sljedeća dva odjeljka su obavezna (dva prva unosa u izborniku
 SetupDescription3=<a href="%s">%s -> %sb0e870cz80e47dcz <br><br>Osnovni parametri koji se koriste za prilagođavanje zadanog ponašanja vaše aplikacije (npr. za funkcije vezane za zemlju).
 SetupDescription4=<a href="%s">%s -> %sb0e870cz80e47dcz <br><br>Ovaj softver je paket mnogih modula/aplikacija. Moduli koji se odnose na vaše potrebe moraju biti omogućeni i konfigurirani. Unosi u meni će se pojaviti sa aktivacijom ovih modula.
 SetupDescription5=Drugi unosi menija za podešavanje upravljaju opcionim parametrima.
-SetupDescriptionLink=<a href="%s">%s - %s<span class='notranslate'>b0e87dccz<span class='notranslate'>b0e87dccz /span>
+SetupDescriptionLink=<a href="%s">%s - %s</a>
 SetupDescription3b=Osnovni parametri koji se koriste za prilagođavanje zadanog ponašanja vaše aplikacije (npr. za funkcije vezane za zemlju).
 SetupDescription4b=Ovaj softver je skup mnogih modula/aplikacija. Moduli koji se odnose na vaše potrebe moraju biti aktivirani. Unosi u meni će se pojaviti sa aktivacijom ovih modula.
 AuditedSecurityEvents=Sigurnosni događaji koji se revidiraju
@@ -1287,7 +1282,7 @@ AvailableModules=Dostupne aplikacije/moduli
 ToActivateModule=Da biste aktivirali module, idite na Područje za podešavanje (Home->Setup->Modules).
 SessionTimeOut=Tajm aut za sesiju
 SessionExplanation=Ovaj broj garantuje da sesija nikada neće isteći prije ovog kašnjenja, ako čišćenje sesije vrši interni čistač PHP sesije (i ništa drugo). Interni čistač PHP sesije ne garantuje da će sesija isteći nakon ovog kašnjenja. Isteći će nakon ovog kašnjenja, i kada se pokrene čistač sesije, tako da svaki <b>%s/%s</b> pristup, ali samo tokom pristupa koji su napravile druge sesije (ako je vrijednost 0, znači brisanje sesije vrši samo vanjski proces).<br>Napomena: na nekim serverima s vanjskim mehanizmom za čišćenje sesije (cron pod debianom, ubuntu...), sesije može se uništiti nakon perioda definiranog vanjskim podešavanjem, bez obzira koja je vrijednost unesena ovdje.
-SessionsPurgedByExternalSystem=Čini se da su sesije na ovom serveru očišćene vanjskim mehanizmom (cron pod debianom, ubuntu...), vjerovatno svaki <b>%s</b> sekundi (= vrijednost parametra <b>session.gc_maxlifetime<span class='notranslate'>b09a17b73z) , tako da promjena vrijednosti ovdje nema efekta. Morate zamoliti administratora servera da promijeni kašnjenje sesije.
+SessionsPurgedByExternalSystem=Sessions on this server seems to be cleaned by an external mechanism (cron under debian, ubuntu ...), probably every <b>%s</b> seconds (= value of parameter <b>session.gc_maxlifetime</b>), so changing the value here has no effect. You must ask the server administrator to change session delay.
 TriggersAvailable=Dostupni okidači
 TriggersDesc=Okidači su datoteke koje će modificirati ponašanje Dolibarr toka posla nakon kopiranja u direktorij <b>htdocs/core/triggers</b>. Realizuju nove akcije, aktivirane na Dolibarr događajima (kreiranje nove kompanije, validacija računa,...).
 TriggerDisabledByName=Okidači u ovoj datoteci su onemogućeni sufiksom <b>-NORUN</b> u njihovom nazivu.
@@ -1313,7 +1308,7 @@ NoEventFoundWithCriteria=Nije pronađen nijedan sigurnosni događaj za ovaj krit
 SeeLocalSendMailSetup=Pogledajte vaše lokalne postavke sendmaila
 BackupDesc=<b>potpuna</b> sigurnosna kopija Dolibarr instalacije zahtijeva dva koraka.
 BackupDesc2=Napravite sigurnosnu kopiju sadržaja direktorija "dokumenti" (<b>%s</b>) koji sadrži sve učitane i datoteke. Ovo će također uključiti sve dump datoteke generirane u koraku 1. Ova operacija može trajati nekoliko minuta.
-BackupDesc3=Napravite sigurnosnu kopiju strukture i sadržaja vaše baze podataka (<b>%s<span klasa ='notranslate'></b></span>) u dump datoteku. Za to možete koristiti sljedećeg pomoćnika.
+BackupDesc3=Backup the structure and contents of your database (<b>%s</b>) into a dump file. For this, you can use the following assistant.
 BackupDescX=Arhivirani direktorij treba biti pohranjen na sigurnom mjestu.
 BackupDescY=Generirani dump fajl treba da bude pohranjen na bezbednom mestu.
 BackupPHPWarning=Sigurnosna kopija se ne može garantirati ovom metodom. Prethodni se preporučuje.
@@ -1430,8 +1425,8 @@ DisableForgetPasswordLinkOnLogonPage=Ne prikazujte vezu "Zaboravljena lozinka" n
 UsersSetup=Podešavanje korisničkog modula
 UserMailRequired=E-mail je potreban za kreiranje novog korisnika
 UserHideInactive=Sakrij neaktivne korisnike sa svih kombinovanih lista korisnika (Ne preporučuje se: ovo može značiti da nećete moći filtrirati ili pretraživati stare korisnike na nekim stranicama)
-UserHideExternal=Hide external users (not linked to a third party) from all combo lists of users (Not recommended: this may means you won't be able to filter or search on external users on some pages)
-UserHideNonEmployee=Hide non employee users from all combo lists of users (Not recommended: this may means you won't be able to filter or search on non employee users on some pages)
+UserHideExternal=Sakrij eksterne korisnike (nisu povezani sa trećom stranom) sa svih kombinovanih lista korisnika (Ne preporučuje se: ovo može značiti da nećete moći filtrirati ili pretraživati vanjske korisnike na nekim stranicama)
+UserHideNonEmployee=Sakrij korisnike koji nisu zaposleni sa svih kombinovanih lista korisnika (Ne preporučuje se: ovo može značiti da nećete moći filtrirati ili pretraživati korisnike koji nisu zaposleni na nekim stranicama)
 UsersDocModules=Predlošci dokumenata za dokumente generirani iz korisničkog zapisa
 GroupsDocModules=Predlošci dokumenata za dokumente generirani iz grupnog zapisa
 ##### HRM setup #####
@@ -1485,7 +1480,7 @@ ProposalsNumberingModules=Modeli numeriranja komercijalnih prijedloga
 ProposalsPDFModules=Modeli dokumenata komercijalnih prijedloga
 SuggestedPaymentModesIfNotDefinedInProposal=Predloženi način plaćanja na prijedlogu prema zadanim postavkama ako nije definiran u prijedlogu
 FreeLegalTextOnProposal=Slobodan tekst o komercijalnim prijedlozima
-WatermarkOnDraftProposal=Vodeni žig na nacrte komercijalnih prijedloga (ništa, ako je prazno) 
+WatermarkOnDraftProposal=Vodeni žig na nacrte komercijalnih prijedloga (ništa, ako je prazno)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Zatražite odredište bankovnog računa ponude
 ##### SupplierProposal #####
 SupplierProposalSetup=Podešavanje modula za zahtjeve dobavljača
@@ -1503,7 +1498,7 @@ OrdersSetup=Podešavanje upravljanja prodajnim nalozima
 OrdersNumberingModules=Modeli numerisanja narudžbi
 OrdersModelModule=Naručite modele dokumenata
 FreeLegalTextOnOrders=Besplatan tekst za narudžbe
-WatermarkOnDraftOrders=Vodeni žig na nacrte naloga (ništa, ako je prazno) 
+WatermarkOnDraftOrders=Vodeni žig na nacrte naloga (ništa, ako je prazno)
 ShippableOrderIconInList=Dodajte ikonu u listu narudžbi koja označava da li se narudžba može isporučiti
 BANK_ASK_PAYMENT_BANK_DURING_ORDER=Zatražite odredište bankovnog računa za narudžbu
 ##### Interventions #####
@@ -1511,7 +1506,7 @@ InterventionsSetup=Postavljanje modula za intervencije
 FreeLegalTextOnInterventions=Slobodan tekst na dokumentima intervencije
 FicheinterNumberingModules=Modeli interventnog numeriranja
 TemplatePDFInterventions=Modeli dokumenata interventnih kartica
-WatermarkOnDraftInterventionCards=Vodeni žig na nacrte kartica za intervencije (ništa, ako je prazno) 
+WatermarkOnDraftInterventionCards=Vodeni žig na nacrte kartica za intervencije (ništa, ako je prazno)
 ##### Contracts #####
 ContractsSetup=Podešavanje modula Ugovori/Pretplate
 ContractsNumberingModules=Moduli numeracije ugovora
@@ -1669,7 +1664,7 @@ LDAPDescUsers=Ova stranica vam omogućava da definirate naziv LDAP atributa u LD
 LDAPDescGroups=Ova stranica vam omogućava da definirate ime LDAP atributa u LDAP stablu za svaki podatak koji se nalazi na Dolibarr grupama.
 LDAPDescMembers=Ova stranica vam omogućava da definirate ime LDAP atributa u LDAP stablu za svaki podatak koji se nalazi u modulu članova Dolibarr.
 LDAPDescMembersTypes=Ova stranica vam omogućava da definirate ime LDAP atributa u LDAP stablu za svaki podatak koji se nalazi na tipovima članova Dolibarr.
-LDAPDescValues=Primjer vrijednosti su dizajnirane za <b>OpenLDAP</b> sa sljedećim učitanim shemama: b0aee3733658 core.schema, cosine.schema, inetorgperson.schema</b>). Ako koristite te vrijednosti i OpenLDAP, izmijenite svoju LDAP konfiguracijsku datoteku <b>slapd.conf<span class='notranslate40b7b7b7 </span> da se sve te šeme učitaju.
+LDAPDescValues=Example values are designed for <b>OpenLDAP</b> with following loaded schemas: <b>core.schema, cosine.schema, inetorgperson.schema</b>). If you use thoose values and OpenLDAP, modify your LDAP config file <b>slapd.conf</b> to have all thoose schemas loaded.
 ForANonAnonymousAccess=Za provjereni pristup (za pristup za pisanje na primjer)
 PerfDolibarr=Izvještaj o perfomansama postavki/optimizacije
 YouMayFindPerfAdviceHere=Ova stranica pruža neke provjere ili savjete vezane za performanse.
@@ -1677,7 +1672,7 @@ NotInstalled=Nije instalirano.
 NotSlowedDownByThis=Ne usporava ovo.
 NotRiskOfLeakWithThis=S ovim nema opasnosti od curenja.
 ApplicativeCache=Aplikativni cache
-MemcachedNotAvailable=Nije pronađen aplikativni keš. Možete poboljšati performanse instaliranjem keš servera Memcached i modula koji može koristiti ovaj keš server.<br>Više informacija ovdje <a href="http://wiki.dolibarr.org/index.php/Module_MemCached_EN">http://wiki.dolibarr.org/index.php/Module_MemCached_EN</a>.<span class='notranslate'>b0344f0344 /span>Imajte na umu da mnogi web hosting provajderi ne pružaju takav keš server.
+MemcachedNotAvailable=No applicative cache found. You can enhance performance by installing a cache server Memcached and a module able to use this cache server.<br>More information here <a href="http://wiki.dolibarr.org/index.php/Module_MemCached_EN">http://wiki.dolibarr.org/index.php/Module_MemCached_EN</a>.<br>Note that a lot of web hosting provider does not provide such cache server.
 MemcachedModuleAvailableButNotSetup=Modul memcached za aplikativnu keš memoriju je pronađen, ali postavljanje modula nije završeno.
 MemcachedAvailableAndSetup=Modul memcached namijenjen za korištenje memcached servera je omogućen.
 OPCodeCache=OPCode cache
@@ -1752,8 +1747,6 @@ BarcodeDescQRCODE=Bar kod tipa QR kod
 GenbarcodeLocation=Alat komandne linije za generiranje bar koda (koristi ga interni motor za neke vrste bar kodova). Mora biti kompatibilan sa "genbarcode".<br>Na primjer: /usr/local/bin/genbarcode
 BarcodeInternalEngine=Unutrašnji motor
 BarCodeNumberManager=Menadžer za automatsko određivanje barkod brojeva
-##### Prelevements #####
-WithdrawalsSetup=Postavljanje modula Direktno zaduživanje plaćanja
 ##### ExternalRSS #####
 ExternalRSSSetup=Podešavanje eksternog RSS uvoza
 NewRSS=Novi RSS Feed
@@ -1868,7 +1861,7 @@ PastDelayVCalExport=Nemojte izvoziti događaj stariji od
 SecurityKey = Sigurnosni ključ
 ##### ClickToDial #####
 ClickToDialSetup=Kliknite za podešavanje modula za biranje
-ClickToDialUrlDesc=URL se poziva kada se klikne na sliku telefona. U URL-u možete koristiti oznake<br><b>__PHONETO__</b> koje će biti zamijenjen sa brojem telefona osobe koju treba pozvati<span class='notranslate'><br><b>__PHONEFROM__b09a4b739f17f da bit će zamijenjen brojem telefona osobe koja poziva (vaš)<span class='notranslate'><br><b>__LOGIN__b09a4b78z01 span> koji će biti zamijenjen klikom za prijavu (definirano na korisničkoj kartici)<br><b>__PASS__ </b> koja će biti zamijenjena lozinkom za biranje klikom (definiranom na korisničkoj kartici).
+ClickToDialUrlDesc=URL called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with clicktodial login (defined on user card)<br><b>__PASS__</b> that will be replaced with clicktodial password (defined on user card).
 ClickToDialDesc=Ovaj modul mijenja telefonske brojeve, kada koristite desktop računar, u linkove na koje se može kliknuti. Klik će pozvati broj. Ovo se može koristiti za pokretanje telefonskog poziva kada koristite softverski telefon na vašem desktopu ili kada koristite CTI sistem baziran na SIP protokolu, na primjer. Napomena: Kada koristite pametni telefon, telefonski brojevi se uvijek mogu kliknuti.
 ClickToDialUseTelLink=Koristite samo link "tel:" na brojevima telefona
 ClickToDialUseTelLinkDesc=Koristite ovu metodu ako vaši korisnici imaju softverski telefon ili softverski interfejs, instaliran na istom računaru kao i pretraživač, i pozvan kada kliknete na link koji počinje sa "tel:" u vaš pretraživač. Ako vam je potrebna veza koja počinje sa "sip:" ili potpuno serversko rješenje (nema potrebe za instalacijom lokalnog softvera), ovo morate postaviti na "Ne" i ispunite sljedeći polje.
@@ -1928,7 +1921,7 @@ IfSetToYesDontForgetPermission=Ako je postavljena na vrijednost koja nije null, 
 GeoIPMaxmindSetup=Podešavanje GeoIP Maxmind modula
 PathToGeoIPMaxmindCountryDataFile=Put do datoteke koja sadrži Maxmind ip u prijevod zemlje
 NoteOnPathLocation=Imajte na umu da vaša datoteka sa podacima o IP-u i državi mora biti unutar direktorija koji vaš PHP može čitati (Provjerite dopuštenja vašeg PHP open_basedir podešavanja i).
-YouCanDownloadFreeDatFileTo=Možete preuzeti <b>besplatnu demo verziju</b> datoteke zemlje Maxmind GeoIP na <span class='notranslate'>b0ecb2ecz87f<span class='notranslate'>b0ecb2ecz87f /span>.
+YouCanDownloadFreeDatFileTo=You can download a <b>free demo version</b> of the Maxmind GeoIP country file at %s.
 YouCanDownloadAdvancedDatFileTo=Također možete preuzeti više <b>kompletnu verziju, sa ažuriranjima,</b> Maxmind GeoIP zemlje na %s.
 TestGeoIPResult=Test IP konverzije -> zemlja
 ##### Projects #####
@@ -1979,7 +1972,7 @@ SomethingMakeInstallFromWebNotPossible=Instalacija eksternog modula nije moguća
 SomethingMakeInstallFromWebNotPossible2=Iz tog razloga, proces za nadogradnju opisan ovdje je ručni proces koji samo privilegirani korisnik može izvršiti.
 InstallModuleFromWebHasBeenDisabledContactUs=Instalacija ili razvoj vanjskih modula ili dinamičkih web stranica iz aplikacije je trenutno zaključan iz sigurnosnih razloga. Molimo kontaktirajte nas ako trebate omogućiti ovu funkciju.
 InstallModuleFromWebHasBeenDisabledByFile=Vaš administrator je onemogućio instalaciju eksternog modula iz aplikacije. Morate ga zamoliti da ukloni datoteku <strong>%s</strong> kako bi ovo dozvolio karakteristika.
-ConfFileMustContainCustom=Instaliranje ili izgradnja eksternog modula iz aplikacije mora spremiti datoteke modula u direktorij <strong>%s </strong>. Da bi Dolibarr obradio ovaj direktorij, morate postaviti svoj <strong>conf/conf.php</strong> da dodate 2 linije direktive: <br><strong>$dolibarr_main_url_root_alt='/custom';b0a65fc07>b0a65fc07 ='notranslate'><br><strong>$dolibarr_main_document_root_alt='b0ecb2ec87f49f49fz0'; '></strong>
+ConfFileMustContainCustom=Installing or building an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to add the 2 directive lines:<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Označite linije tabele kada pređete mišem
 HighlightLinesColor=Označite boju linije kada miš prijeđe (koristite 'ffffff' za bez isticanja)
 HighlightLinesChecked=Istaknite boju linije kada je označena (koristite 'ffffff' da nema isticanja)
@@ -2073,7 +2066,7 @@ DetectionNotPossible=Detekcija nije moguća
 UrlToGetKeyToUseAPIs=Url za dobivanje tokena za korištenje API-ja (kada je token primljen, pohranjuje se u korisničku tablicu baze podataka i mora biti naveden pri svakom API pozivu)
 ListOfAvailableAPIs=Lista dostupnih API-ja
 activateModuleDependNotSatisfied=Modul "%s" zavisi od modula "%s", koji nedostaje, pa modul " %1$s" možda neće raditi ispravno. Molimo instalirajte modul "%2$s" ili onemogućite modul "%1$s" ako želite biti sigurni od bilo kakvog iznenađenja
-CommandIsNotInsideAllowedCommands=Naredba koju pokušavate pokrenuti nije na listi dozvoljenih komandi definiranih u parametru <strong>$dolibarr_main_restrict_os_commands</strong> u class='notranslate'><strong></span>conf.php</strong> fajl.
+CommandIsNotInsideAllowedCommands=The command you are trying to run is not in the list of allowed commands defined in parameter <strong>$dolibarr_main_restrict_os_commands</strong> in the <strong>conf.php</strong> file.
 LandingPage=Landing page
 SamePriceAlsoForSharedCompanies=Ako koristite modul za više kompanija, uz izbor "Jedinstvena cijena", cijena će također biti ista za sve kompanije ako se proizvodi dijele između okruženja
 ModuleEnabledAdminMustCheckRights=Modul je aktiviran. Dozvole za aktivirani modul(e) su date samo administratorskim korisnicima. Možda ćete morati ručno dodijeliti dozvole drugim korisnicima ili grupama ako je potrebno.
@@ -2270,7 +2263,7 @@ ModuleActivatedMayExposeInformation=Ova PHP ekstenzija može otkriti osjetljive 
 ModuleActivatedDoNotUseInProduction=Omogućen je modul dizajniran za razvoj. Nemojte ga omogućiti u proizvodnom okruženju.
 CombinationsSeparator=Znak za razdvajanje za kombinacije proizvoda
 SeeLinkToOnlineDocumentation=Za primjere pogledajte vezu do online dokumentacije u gornjem meniju
-SHOW_SUBPRODUCT_REF_IN_PDF=Ako je karakteristika "%s" modula <b>%s<span class= Koristi se 'notranslate'></b></span>, prikaži detalje podproizvoda kompleta u PDF-u.
+SHOW_SUBPRODUCT_REF_IN_PDF=If the feature "%s" of module <b>%s</b> is used, show details of subproducts of a kit on PDF.
 AskThisIDToYourBank=Kontaktirajte svoju banku da dobijete ovaj ID
 AdvancedModeOnly=Dozvola je dostupna samo u naprednom načinu rada
 ConfFileIsReadableOrWritableByAnyUsers=Konf datoteku može čitati ili pisati bilo koji korisnik. Dajte dozvolu samo grupi korisnika i web servera.
@@ -2299,7 +2292,7 @@ APIsAreNotEnabled=API moduli nisu omogućeni
 YouShouldSetThisToOff=Trebali biste ovo postaviti na 0 ili isključeno
 InstallAndUpgradeLockedBy=Instaliranje i nadogradnje je zaključano datotekom <b>%s</b>
 InstallLockedBy=Instalacija/ponovna instalacija je zaključana datotekom <b>%s</b>
-InstallOfAddonIsNotBlocked=Instalacije dodataka nisu zaključane. Kreirajte datoteku <b>installmodules.lock</b> u direktorij <b> ='notranslate'>%s</b> za blokiranje instalacije vanjskih dodataka/modula.
+InstallOfAddonIsNotBlocked=Installations of addons are not locked. Create a file <b>installmodules.lock</b> into directory <b>%s</b> to block installations of external addons/modules.
 OldImplementation=Stara implementacija
 PDF_SHOW_LINK_TO_ONLINE_PAYMENT=Ako su neki moduli za online plaćanje omogućeni (Paypal, Stripe, ...), dodajte link na PDF da izvršite online plaćanje
 DashboardDisableGlobal=Onemogućite globalno sve palčeve otvorenih objekata
@@ -2320,8 +2313,6 @@ IfYouUseASecondTaxYouMustSetYouUseTheMainTax=Ako želite koristiti drugi porez, 
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=Ako želite koristiti treći porez, morate omogućiti i prvi porez na promet
 LanguageAndPresentation=Jezik i prezentacije
 SkinAndColors=Boje kože i
-IfYouUseASecondTaxYouMustSetYouUseTheMainTax=Ako želite koristiti drugi porez, morate omogućiti i prvi porez na promet
-IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=Ako želite koristiti treći porez, morate omogućiti i prvi porez na promet
 PDF_USE_1A=Generirajte PDF u PDF/A-1b formatu
 MissingTranslationForConfKey = Nedostaje prijevod za %s
 NativeModules=Izvorni moduli
@@ -2339,7 +2330,6 @@ ExportUseLowMemoryModeHelp=Koristite režim niske memorije da generišete dump f
 ModuleWebhookName = Webhook
 ModuleWebhookDesc = Interfejs za hvatanje dolibarr okidača i šalje podatke o događaju na URL
 WebhookSetup = Webhook setup
-Settings = Postavke
 WebhookSetupPage = Stranica za podešavanje Webhooka
 ShowQuickAddLink=Prikaži dugme za brzo dodavanje elementa u gornji desni meni
 ShowSearchAreaInTopMenu=Prikažite područje pretraživanja u gornjem meniju
@@ -2371,7 +2361,6 @@ DoesNotWorkWithAllThemes=Neće raditi sa svim temama
 NoName=Bez imena
 ShowAdvancedOptions= Prikaži napredne opcije
 HideAdvancedoptions= Sakrij napredne opcije
-CIDLookupURL=Modul donosi URL koji može koristiti eksterni alat za dobijanje imena treće strane ili kontakta sa njenog broja telefona. URL za korištenje je:
 OauthNotAvailableForAllAndHadToBeCreatedBefore=OAUTH2 autentifikacija nije dostupna za sve hostove, i token s pravim dozvolama mora biti kreiran uzvodno s OAUTH modulom
 MAIN_MAIL_SMTPS_OAUTH_SERVICE=OAUTH2 usluga provjere autentičnosti
 DontForgetCreateTokenOauthMod=Token s pravim dozvolama mora biti kreiran uzvodno s OAUTH modulom
@@ -2440,3 +2429,17 @@ ParametersForTestEnvironment=Parametri za testno okruženje
 TryToKeepOnly=Pokušajte zadržati samo %s
 RecommendedForProduction=Preporučeno za proizvodnju
 RecommendedForDebug=Preporučeno za otklanjanje grešaka
+UrlPublicInterfaceLabelAdmin=Alternative URL for public interface
+UrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface with another URL (the virtual host server must act as a proxy on the standard URL)
+ExportUseForce=Use the parameter -f
+ExportUseForceHelp=Force to continue the export even when an error is found (Backup may not be reliable)
+CustomPrompt=Custom prompts
+AiDescription=AI (Artificial Intelligence) features
+AiDescriptionLong=Provides AI (Artificial Intelligence) features in different part of the application. Need external AI API.
+AI_KEY_API_CHATGPT= Key for ChatGPT IA api
+AiSetup=AI module setup
+AiCustomPrompt=AI customs prompt
+AI_CONFIGURATIONS_PROMPT=Custom prompt
+ImageGeneration=Image generation
+AIPromptForFeatures=AI custom prompts for features
+EnterAnIP=Enter an IP address

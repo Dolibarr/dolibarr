@@ -616,6 +616,7 @@ class FormTicket
 				// If no socid, set to -1 to avoid full contacts list
 				$selectedCompany = ($this->withfromsocid > 0) ? $this->withfromsocid : -1;
 				print img_picto('', 'contact', 'class="paddingright"');
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				print $form->selectcontacts($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 0, 'minwidth200');
 				print ' ';
 				$formcompany->selectTypeContact($ticketstatic, '', 'type', 'external', '', 0, 'maginleftonly');
@@ -1004,7 +1005,7 @@ class FormTicket
 				$sql .= " FROM ".$this->db->prefix()."c_ticket_category as ctc";
 				$sql .= " JOIN ".$this->db->prefix()."c_ticket_category as ctcjoin ON ctc.fk_parent = ctcjoin.rowid";
 				$sql .= " WHERE ctc.active > 0 AND ctc.entity = ".((int) $conf->entity);
-				$sql .= " AND ctc.rowid NOT IN (".$this->db->sanitize(join(',', $arrayidusedconcat)).")";
+				$sql .= " AND ctc.rowid NOT IN (".$this->db->sanitize(implode(',', $arrayidusedconcat)).")";
 
 				if ($filtertype == 'public=1') {
 					$sql .= " AND ctc.public = 1";

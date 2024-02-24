@@ -46,7 +46,7 @@ if ($id > 0) {
 if (empty($object->thirdparty)) {
 	$object->fetch_thirdparty();
 }
-$socid = $object->thirdparty->id;
+$socid = !empty($object->thirdparty->id) ? $object->thirdparty->id : null;
 
 // Sort & Order fields
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -153,7 +153,7 @@ print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
 print $object->getCivilityLabel();
 print '</td></tr>';
 
-if ($object->thirdparty->client) {
+if (!empty($object->thirdparty->client)) {
 	$thirdTypeArray['customer'] = $langs->trans("customer");
 	if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 		$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
@@ -173,7 +173,7 @@ if (isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire')) {
 	$elementTypeArray['fichinter'] = $langs->transnoentitiesnoconv('Interventions');
 }
 
-if ($object->thirdparty->fournisseur) {
+if (!empty($object->thirdparty->fournisseur)) {
 	$thirdTypeArray['supplier'] = $langs->trans("supplier");
 	if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'facture', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
 		$elementTypeArray['supplier_invoice'] = $langs->transnoentitiesnoconv('SuppliersInvoices');
@@ -364,7 +364,9 @@ $param .= "&sref=".urlencode($sref);
 $param .= "&month=".urlencode($month);
 $param .= "&year=".urlencode($year);
 $param .= "&sprod_fulldescr=".urlencode($sprod_fulldescr);
-$param .= "&socid=".urlencode($socid);
+if (!empty($socid)) {
+	$param .= "&socid=".urlencode($socid);
+}
 $param .= "&type_element=".urlencode($type_element);
 
 $total_qty = 0;
@@ -377,7 +379,7 @@ if ($sql_select) {
 
 	$num = $db->num_rows($resql);
 
-	$param = "&socid=".urlencode($socid)."&type_element=".urlencode($type_element)."&id=".urlencode($id);
+	$param = (!empty($socid) ? "&socid=".urlencode($socid) : "")."&type_element=".urlencode($type_element)."&id=".urlencode($id);
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}

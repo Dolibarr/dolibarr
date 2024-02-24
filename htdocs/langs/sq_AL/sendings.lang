@@ -39,7 +39,7 @@ StatusSendingValidatedShort=E vërtetuar
 StatusSendingProcessedShort=Të përpunuara
 SendingSheet=Fleta e dërgesës
 ConfirmDeleteSending=Jeni i sigurt që dëshironi ta fshini këtë dërgesë?
-ConfirmValidateSending=Jeni i sigurt që dëshironi ta vërtetoni këtë dërgesë me referencën <b>%s<span class='notranslate'>b09a4b739f17 >?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
 ConfirmCancelSending=Jeni i sigurt që dëshironi ta anuloni këtë dërgesë?
 DocumentModelMerou=Modeli Merou A5
 WarningNoQtyLeftToSend=Paralajmërim, nuk ka produkte që presin për t'u dërguar.
@@ -59,7 +59,7 @@ ProductQtyInCustomersOrdersRunning=Sasia e produktit nga porositë e shitjeve t�
 ProductQtyInSuppliersOrdersRunning=Sasia e produktit nga porositë e hapura të blerjes
 ProductQtyInShipmentAlreadySent=Sasia e produktit nga porosia e hapur e shitjes është dërguar tashmë
 ProductQtyInSuppliersShipmentAlreadyRecevied=Sasia e produktit nga porositë e hapura të blerjes të marra tashmë
-NoProductToShipFoundIntoStock=Nuk u gjet asnjë produkt për dërgim në magazinë <b>%s<span class='notranslate'></b></s. Korrigjoni stokun ose kthehuni për të zgjedhur një magazinë tjetër.
+NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
 WeightVolShort=Peshë/Vëll
 ValidateOrderFirstBeforeShipment=Së pari duhet të vërtetoni porosinë përpara se të jeni në gjendje të bëni dërgesa.
 NoLineGoOnTabToAddSome=Nuk ka rresht, shkoni në skedën "%s" për të shtuar

@@ -71,7 +71,7 @@ function societe_prepare_head(Societe $object)
 				$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 				$sql .= $hookmanager->resPrint;
 				$sql .= " WHERE p.fk_soc = ".((int) $object->id);
-				$sql .= " AND entity IN (".getEntity($object->element).")";
+				$sql .= " AND p.entity IN (".getEntity($object->element).")";
 				// Add where from hooks
 				$parameters = array('contacttab' => true);
 				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -842,7 +842,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 		print '<div class="div-table-responsive">'."\n";
 		print '<table class="noborder centpercent">';
 
-		$sql  = "SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount";
+		$sql  = "SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_modification, p.budget_amount";
 		$sql .= ", cls.code as opp_status_code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
@@ -1692,7 +1692,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
 
-		if (get_class($filterobj) !== 'User') {
+		if (is_object($filterobj) && get_class($filterobj) !== 'User') {
 			$force_filter_contact = false;
 		} else {
 			$force_filter_contact = true;

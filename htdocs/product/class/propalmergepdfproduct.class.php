@@ -61,7 +61,6 @@ class Propalmergepdfproduct extends CommonObject
 	 */
 	public $fk_user_mod;
 	public $datec = '';
-	public $tms = '';
 
 	/**
 	 * @var string lang code
@@ -311,13 +310,13 @@ class Propalmergepdfproduct extends CommonObject
 		// Clean parameters
 
 		if (isset($this->fk_product)) {
-			$this->fk_product = trim($this->fk_product);
+			$this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->file_name)) {
 			$this->file_name = trim($this->file_name);
 		}
 		if (isset($this->fk_user_mod)) {
-			$this->fk_user_mod = trim($this->fk_user_mod);
+			$this->fk_user_mod = (int) $this->fk_user_mod;
 		}
 		if (isset($this->lang)) {
 			$this->lang = trim($this->lang);
@@ -559,7 +558,7 @@ class Propalmergepdfproduct extends CommonObject
 		$this->fk_user_author = 0;
 		$this->fk_user_mod = 0;
 		$this->datec = '';
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->import_key = '';
 	}
 }

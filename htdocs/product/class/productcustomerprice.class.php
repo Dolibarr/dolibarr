@@ -61,7 +61,6 @@ class ProductCustomerPrice extends CommonObject
 	public $entity;
 
 	public $datec = '';
-	public $tms = '';
 
 	/**
 	 * @var int ID

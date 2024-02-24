@@ -55,11 +55,15 @@ class Tva extends CommonObject
 	 */
 	public $total;
 
-	public $tms;
 	public $datep;
 	public $datev;
 	public $amount;
 	public $type_payment;
+
+	/**
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
+	 */
 	public $num_payment;
 
 	/**
@@ -415,7 +419,7 @@ class Tva extends CommonObject
 	{
 		$this->id = 0;
 
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->datep = '';
 		$this->datev = '';
 		$this->amount = '';

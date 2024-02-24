@@ -85,7 +85,7 @@ if ($conf->browser->layout == 'phone') {
 	$maxcategbydefaultforthisdevice = 8;
 	$maxproductbydefaultforthisdevice = 16;
 	//REDIRECT TO BASIC LAYOUT IF TERMINAL SELECTED AND BASIC MOBILE LAYOUT FORCED
-	if (!empty($_SESSION["takeposterminal"]) && getDolGlobalInt('TAKEPOS_PHONE_BASIC_LAYOUT') == 1) {
+	if (!empty($_SESSION["takeposterminal"]) && getDolGlobalString('TAKEPOS_BAR_RESTAURANT') && getDolGlobalInt('TAKEPOS_PHONE_BASIC_LAYOUT') == 1) {
 		$_SESSION["basiclayout"] = 1;
 		header("Location: phone.php?mobilepage=invoice");
 		exit;
@@ -246,6 +246,7 @@ function PrintCategories(first) {
 		<?php }	?>
 		$("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[parseInt(i)+parseInt(first)]['rowid']);
 		$("#catdiv"+i).data("rowid",categories[parseInt(i)+parseInt(first)]['rowid']);
+		$("#catdiv"+i).attr("data-rowid",categories[parseInt(i)+parseInt(first)]['rowid']);
 		$("#catdiv"+i).attr('class', 'wrapper');
 		$("#catwatermark"+i).show();
 	}
@@ -288,6 +289,7 @@ function MoreCategories(moreorless) {
 		<?php } ?>
 		$("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[i+(<?php echo($MAXCATEG - 2); ?> * pagecategories)]['rowid']);
 		$("#catdiv"+i).data("rowid",categories[i+(<?php echo($MAXCATEG - 2); ?> * pagecategories)]['rowid']);
+		$("#catdiv"+i).attr("data-rowid",categories[i+(<?php echo($MAXCATEG - 2); ?> * pagecategories)]['rowid']);
 		$("#catwatermark"+i).show();
 	}
 
@@ -296,18 +298,25 @@ function MoreCategories(moreorless) {
 
 // LoadProducts
 function LoadProducts(position, issubcat) {
-	console.log("LoadProducts");
+	console.log("LoadProducts position="+position+" issubcat="+issubcat);
 	var maxproduct = <?php echo($MAXPRODUCT - 2); ?>;
 
-	if (position=="supplements") currentcat="supplements";
-	else
-	{
+	if (position=="supplements") {
+		currentcat="supplements";
+	} else {
 		$('#catimg'+position).animate({opacity: '0.5'}, 1);
 		$('#catimg'+position).animate({opacity: '1'}, 100);
-		if (issubcat==true) currentcat=$('#prodiv'+position).data('rowid');
-		else currentcat=$('#catdiv'+position).data('rowid');
+		if (issubcat == true) {
+			currentcat=$('#prodiv'+position).data('rowid');
+		} else {
+			console.log('#catdiv'+position);
+			currentcat=$('#catdiv'+position).data('rowid');
+			console.log("currentcat="+currentcat);
+		}
 	}
-	if (currentcat == undefined) return;
+	if (currentcat == undefined) {
+		return;
+	}
 	pageproducts=0;
 	ishow=0; //product to show counter
 
@@ -326,7 +335,9 @@ function LoadProducts(position, issubcat) {
 			$("#proprice"+ishow).html("");
 			$("#proimg"+ishow).attr("src","genimg/index.php?query=cat&id="+val.rowid);
 			$("#prodiv"+ishow).data("rowid",val.rowid);
+			$("#prodiv"+ishow).attr("data-rowid",val.rowid);
 			$("#prodiv"+ishow).data("iscat",1);
+			$("#prodiv"+ishow).attr("data-iscat",1);
 			$("#prowatermark"+ishow).show();
 			ishow++;
 		}
@@ -341,9 +352,11 @@ function LoadProducts(position, issubcat) {
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&thirdpartyid=' + jQuery('#thirdpartyid').val() + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset=0', function(data) {
 		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat+" then loop on result to fill image thumbs");
 		console.log(data);
+
 		while (ishow < maxproduct) {
-			//console.log("ishow"+ishow+" idata="+idata);
-			console.log(data[idata]);
+			console.log("ishow"+ishow+" idata="+idata);
+			//console.log(data[idata]);
+
 			if (typeof (data[idata]) == "undefined") {
 				<?php if (!getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) {
 					echo '$("#prodivdesc"+ishow).hide();';
@@ -356,7 +369,10 @@ function LoadProducts(position, issubcat) {
 				}?>
 				$("#proprice"+ishow).attr("class", "hidden");
 				$("#proprice"+ishow).html("");
+
 				$("#prodiv"+ishow).data("rowid","");
+				$("#prodiv"+ishow).attr("data-rowid","");
+
 				$("#prodiv"+ishow).attr("class","wrapper2 divempty");
 			} else  {
 				<?php
@@ -395,11 +411,14 @@ function LoadProducts(position, issubcat) {
 					?>
 				}
 				console.log("#prodiv"+ishow+".data(rowid)="+data[idata]['id']);
-				console.log($("#prodiv"+ishow));
 
 				$("#prodiv"+ishow).data("rowid", data[idata]['id']);
+				$("#prodiv"+ishow).attr("data-rowid", data[idata]['id']);
 				console.log($('#prodiv4').data('rowid'));
+
 				$("#prodiv"+ishow).data("iscat", 0);
+				$("#prodiv"+ishow).attr("data-iscat", 0);
+
 				$("#prodiv"+ishow).attr("class","wrapper2");
 
 				<?php
@@ -466,6 +485,7 @@ function MoreProducts(moreorless) {
 				$("#proprice"+ishow).html("");
 				$("#proimg"+ishow).attr("src","genimg/empty.png");
 				$("#prodiv"+ishow).data("rowid","");
+				$("#prodiv"+ishow).attr("data-rowid","");
 			} else {
 				$("#prodivdesc"+ishow).show();
 				<?php if (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 1) { ?>
@@ -493,6 +513,7 @@ function MoreProducts(moreorless) {
 				}
 				$("#proimg"+ishow).attr("src","genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
+				$("#prodiv"+ishow).attr("data-rowid",data[idata]['id']);
 				$("#prodiv"+ishow).data("iscat",0);
 			}
 			$("#prowatermark"+ishow).hide();
@@ -568,6 +589,14 @@ function Reduction() {
 }
 
 function CloseBill() {
+	<?php
+	if (!empty($conf->global->TAKEPOS_FORBID_SALES_TO_DEFAULT_CUSTOMER)) {
+		echo "customerAnchorTag = document.querySelector('a[id=\"customer\"]'); ";
+		echo "if (customerAnchorTag && customerAnchorTag.innerText.trim() === '".$langs->trans("Customer")."') { ";
+		echo "alert('".$langs->trans("NoClientErrorMessage")."'); ";
+		echo "return; } \n";
+	}
+	?>
 	invoiceid = $("#invoiceid").val();
 	console.log("Open popup to enter payment on invoiceid="+invoiceid);
 	<?php
@@ -666,6 +695,7 @@ function Search2(keyCodeForEnter, moreorless) {
 		$("[id^=proprice]").html("");
 		$("[id^=proimg]").attr("src", "genimg/empty.png");
 		$("[id^=prodiv]").data("rowid", "");
+		$("[id^=prodiv]").attr("data-rowid", "");
 		return;
 	}
 
@@ -697,6 +727,7 @@ function Search2(keyCodeForEnter, moreorless) {
 						$("#proprice" + i).html("");
 						$("#proimg" + i).attr("src", "genimg/empty.png");
 						$("#prodiv" + i).data("rowid", "");
+						$("#prodiv" + i).attr("data-rowid", "");
 						continue;
 					}
 					<?php
@@ -736,7 +767,9 @@ function Search2(keyCodeForEnter, moreorless) {
 						$("#proimg" + i).attr("src", "genimg/index.php?query=pro&id=" + data[i]['rowid']);
 					}
 					$("#prodiv" + i).data("rowid", data[i]['rowid']);
+					$("#prodiv" + i).attr("data-rowid", data[i]['rowid']);
 					$("#prodiv" + i).data("iscat", 0);
+					$("#prodiv" + i).attr("data-iscat", 0);
 
 					<?php
 					// Add js from hooks

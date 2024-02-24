@@ -4271,7 +4271,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		$user = new User($db);	// To avoid error during migration
 	}
 
-	dolibarr_install_syslog("upgrade2::migrate_reload_modules force=".$force.", listofmodule=".join(',', array_keys($listofmodule)));
+	dolibarr_install_syslog("upgrade2::migrate_reload_modules force=".$force.", listofmodule=".implode(',', array_keys($listofmodule)));
 
 	$reloadactionformodules = array(
 		'MAIN_MODULE_AGENDA' => array('class' => 'modAgenda', 'remove'=> 1),

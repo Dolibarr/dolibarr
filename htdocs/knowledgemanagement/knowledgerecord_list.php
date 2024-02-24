@@ -488,7 +488,7 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if KNOWLEDGEMANAGEMENT_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>'."\n";
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>'."\n";
 }
 
 $moreforfilter = '';
@@ -499,6 +499,9 @@ $moreforfilter.= '</div>';*/
 // Filter on categories
 $moreforfilter = '';
 if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+	$formcategory = new FormCategory($db);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_KNOWLEDGEMANAGEMENT, $searchCategoryKnowledgemanagementList, 'minwidth300', $searchCategoryKnowledgemanagementList ? $searchCategoryKnowledgemanagementList : 0);
+	/*
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
 	$categoriesKnowledgeArr = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', '', 64, 0, 1);
@@ -506,6 +509,7 @@ if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	$moreforfilter .= Form::multiselectarray('search_category_knowledgemanagement_list', $categoriesKnowledgeArr, $searchCategoryKnowledgemanagementList, 0, 0, 'minwidth300');
 	$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_knowledgemanagement_operator" name="search_category_knowledgemanagement_operator" value="1"'.($searchCategoryKnowledgemanagementOperator == 1 ? ' checked="checked"' : '').'/><label class="none valignmiddle" for="search_category_knowledgemanagement_operator">'.$langs->trans('UseOrOperatorForCategories').'</label>';
 	$moreforfilter .= '</div>';
+	*/
 }
 
 $parameters = array();

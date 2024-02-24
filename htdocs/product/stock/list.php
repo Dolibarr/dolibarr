@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +55,7 @@ $search_ref = GETPOST("sref", "alpha") ? GETPOST("sref", "alpha") : GETPOST("sea
 $search_label = GETPOST("snom", "alpha") ? GETPOST("snom", "alpha") : GETPOST("search_label", "alpha");
 $search_status = GETPOST("search_status", "int");
 
+$search_category_list = array();
 if (isModEnabled('categorie')) {
 	$search_category_list = GETPOST("search_category_".Categorie::TYPE_WAREHOUSE."_list", "array");
 }
@@ -112,20 +114,20 @@ foreach ($object->fields as $key => $val) {
 
 // Definition of array of fields for columns
 $arrayfields = array(
-	'stockqty'=>array('type'=>'float', 'label'=>'PhysicalStock', 'enabled'=>1, 'visible'=>-2, 'checked'=>0, 'position'=>170),
-	'estimatedvalue'=>array('type'=>'float', 'label'=>'EstimatedStockValue', 'enabled'=>1, 'visible'=>1, 'checked'=>1, 'position'=>171),
-	'estimatedstockvaluesell'=>array('type'=>'float', 'label'=>'EstimatedStockValueSell', 'enabled'=>1, 'checked'=>1, 'visible'=>2, 'position'=>172),
+	'stockqty' => array('type' => 'float', 'label' => 'PhysicalStock', 'enabled' => 1, 'visible' => -2, 'checked' => 0, 'position' => 170),
+	'estimatedvalue' => array('type' => 'float', 'label' => 'EstimatedStockValue', 'enabled' => 1, 'visible' => 1, 'checked' => 1, 'position' => 171),
+	'estimatedstockvaluesell' => array('type' => 'float', 'label' => 'EstimatedStockValueSell', 'enabled' => 1, 'checked' => 1, 'visible' => 2, 'position' => 172),
 );
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
 		$visible = (int) dol_eval($val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
-			'label'=>$val['label'],
-			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>(abs($visible) != 3 && dol_eval($val['enabled'], 1)),
-			'position'=>$val['position'],
-			'help'=> isset($val['help']) ? $val['help'] : ''
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? 0 : 1),
+			'enabled' => (abs($visible) != 3 && dol_eval($val['enabled'], 1)),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
@@ -468,8 +470,8 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewWarehouse'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/stock/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $user->hasRight('stock', 'creer'));
 
@@ -490,7 +492,7 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if STOCK_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
@@ -593,7 +595,7 @@ if (!empty($arrayfields["estimatedstockvaluesell"]['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -666,7 +668,7 @@ if (!empty($arrayfields["estimatedstockvaluesell"]['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -852,7 +854,7 @@ while ($i < $imaxinloop) {
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
@@ -904,7 +906,7 @@ if ($num == 0) {
 
 $db->free($resql);
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
