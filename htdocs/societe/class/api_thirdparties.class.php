@@ -2,7 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018   Pierre Chéné            <pierre.chene44@gmail.com>
  * Copyright (C) 2019   Cedric Ancelin          <icedo.anc@gmail.com>
- * Copyright (C) 2020-2021  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023       Alexandre Janniaux  <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -472,9 +472,12 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @param int		$id					Id of thirdparty
 	 * @param int       $representative_id	Id of representative
-	 * @return Object|void
+	 * @return int							Return integer <=0 if KO, >0 if OK
 	 *
 	 * @url POST {id}/representative/{representative_id}
+	 *
+	 * @throws RestException 401 Access not allowed for your login
+ 	 * @throws RestException 404 User or Thirdparty not found
 	 */
 	public function addRepresentative($id, $representative_id)
 	{
@@ -503,9 +506,12 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @param int		$id					Id of thirdparty
 	 * @param int       $representative_id	Id of representative
-	 * @return Object|void
+	 * @return int							Return integer <=0 if KO, >0 if OK
 	 *
 	 * @url DELETE {id}/representative/{representative_id}
+	 *
+	 * @throws RestException 401 Access not allowed for your login
+ 	 * @throws RestException 404 User or Thirdparty not found
 	 */
 	public function deleteRepresentative($id, $representative_id)
 	{
