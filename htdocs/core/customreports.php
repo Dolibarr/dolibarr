@@ -940,7 +940,7 @@ if ($sql) {
 				}
 				$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->transnoentitiesnoconv("Empty") : $langs->transnoentitiesnoconv("NotDefined")));
 
-				if ($oldlabeltouse && ($labeltouse != $oldlabeltouse)) {
+				if ($oldlabeltouse !== '' && ($labeltouse != $oldlabeltouse)) {
 					$xi++; // Increase $xi
 				}
 				//var_dump($labeltouse.' '.$oldlabeltouse.' '.$xi);
