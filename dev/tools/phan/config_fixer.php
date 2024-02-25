@@ -4,44 +4,6 @@
 define('DOL_PROJECT_ROOT', __DIR__.'/../../..');
 define('DOL_DOCUMENT_ROOT', DOL_PROJECT_ROOT.'/htdocs');
 define('PHAN_DIR', __DIR__);
-$dolPostFilter
-	= '/^(array:)?(?:'.implode(
-		'|',
-		array(
-			// Documented:
-			'none',
-			'array',
-			'int',
-			'intcomma',
-			'alpha',
-			'alphawithlgt',
-			'alphanohtml',
-			'MS',
-			'aZ',
-			'aZ09',
-			'aZ09arobase',
-			'aZ09comma',
-			'san_alpha',
-			'restricthtml',
-			'nohtml',
-			'custom',
-			// Not documented:
-			'email',
-			'restricthtmlallowclass',
-			'restricthtmlallowunvalid',
-			'restricthtmlnolink',
-			//'ascii',
-			//'categ_id',
-			//'chaine',
-
-			//'html',
-			//'boolean',
-			//'double',
-			//'float',
-			//'string',
-		)
-	).')*$/';
-
 /**
  * This configuration will be read and overlaid on top of the
  * default configuration. Command line arguments will be applied
@@ -120,13 +82,12 @@ return [
 	//
 	// Alternately, you can pass in the full path to a PHP file
 	// with the plugin's implementation (e.g. 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php')
-	'ParamMatchRegexPlugin' => [
-		'/^GETPOST$/' => [1, $dolPostFilter],
-	],
 	'plugins' => [
-		__DIR__.'/plugins/NoVarDumpPlugin.php',
-		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
-		'DeprecateAliasPlugin',
+		//'DeprecateAliasPlugin',
+		// __DIR__.'/plugins/NoVarDumpPlugin.php',
+		//'PHPDocToRealTypesPlugin',
+
+	/*
 		//'EmptyMethodAndFunctionPlugin',
 		'InvalidVariableIssetPlugin',
 		//'MoreSpecificElementTypePlugin',
@@ -145,7 +106,7 @@ return [
 		'NonBoolBranchPlugin', // Requires test on bool, nont on ints
 		'NonBoolInLogicalArithPlugin',
 		'NumericalComparisonPlugin',
-		// 'PHPDocToRealTypesPlugin',  // Report/Add types to function definitions
+		'PHPDocToRealTypesPlugin',
 		'PHPDocInWrongCommentPlugin', // Missing /** (/* was used)
 		//'ShortArrayPlugin', // Checks that [] is used
 		//'StrictLiteralComparisonPlugin',
@@ -153,7 +114,6 @@ return [
 		'UnknownElementTypePlugin',
 		'WhitespacePlugin',
 		//'RemoveDebugStatementPlugin', // Reports echo, print, ...
-		'SimplifyExpressionPlugin',
 		//'StrictComparisonPlugin', // Expects ===
 		'SuspiciousParamOrderPlugin',
 		'UnsafeCodePlugin',
@@ -172,6 +132,7 @@ return [
 		'UseReturnValuePlugin',
 		'EmptyStatementListPlugin',
 		'LoopVariableReusePlugin',
+	*/
 	],
 
 	// Add any issue types (such as 'PhanUndeclaredMethod')
@@ -181,11 +142,13 @@ return [
 		'PhanPluginCanUsePHP71Void',	// Dolibarr is maintaining 7.0 compatibility
 		'PhanPluginShortArray',			// Dolibarr uses array()
 		'PhanPluginShortArrayList',		// Dolibarr uses array()
+		// The following may require that --quick is not used
 		// Fixers From PHPDocToRealTypesPlugin:
-		'PhanPluginCanUseParamType',			// Fixer - Report/Add types in the function definition (function abc(string $var) (adds string)
-		'PhanPluginCanUseReturnType',			// Fixer - Report/Add return types in the function definition (function abc(string $var) (adds string)
+		'PhanPluginCanUseParamType',	// Fixer - Report/Add types in the function definition (function abc(string $var) (adds string)
+		'PhanPluginCanUseReturnType',	// Fixer - Report/Add return types in the function definition (function abc(string $var) (adds string)
 		'PhanPluginCanUseNullableParamType',	// Fixer - Report/Add nullable parameter types in the function definition
 		'PhanPluginCanUseNullableReturnType',	// Fixer - Report/Add nullable return types in the function definition
+
 		'PhanPluginNonBoolBranch',			// Not essential - 31240+ occurrences
 		'PhanPluginNumericalComparison',	// Not essential - 19870+ occurrences
 		'PhanTypeMismatchArgument',			// Not essential - 12300+ occurrences
