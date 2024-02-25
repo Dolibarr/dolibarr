@@ -172,7 +172,7 @@ class ExtraFields
 			$err2 = $this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')) {
 				$this->error = '';
-				$this->errno = 0;
+				$this->errno = '0';
 				return 1;
 			} else {
 				return -2;
