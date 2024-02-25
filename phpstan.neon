@@ -52,7 +52,6 @@ parameters:
 		- '#(\$force_dolibarr_lib|\$dolibarr_main_db).*in empty\(\) is never defined.#'
 		- '#Sprain\\SwissQrBill\\#'
 		- '#Constructor of class .* has an unused parameter #'
-		- '#Default value of the parameter#'
 	internalErrorsCountLimit: 50
 	cache:
 		nodesByFileCountMax: 512
