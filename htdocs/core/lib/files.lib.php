@@ -2660,14 +2660,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 	}
 	// Fix modulepart for backward compatibility
-	if ($modulepart == 'users') {
+	if ($modulepart == 'facture') {
+		$modulepart = 'invoice';
+	} elseif ($modulepart == 'users') {
 		$modulepart = 'user';
-	}
-	if ($modulepart == 'tva') {
+	} elseif ($modulepart == 'tva') {
 		$modulepart = 'tax-vat';
-	}
-	// Fix modulepart delivery
-	if ($modulepart == 'expedition' && strpos($original_file, 'receipt/') === 0) {
+	} elseif ($modulepart == 'expedition' && strpos($original_file, 'receipt/') === 0) {
+		// Fix modulepart delivery
 		$modulepart = 'delivery';
 	}
 
