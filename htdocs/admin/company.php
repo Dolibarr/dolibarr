@@ -481,7 +481,7 @@ print '</td></tr>'."\n";
 // Phone
 print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
 print img_picto('', 'object_phoning', '', false, 0, 0, '', 'pictofixedwidth');
-print '<input class="maxwidth150 widthcentpercentminusx" name="tel" id="phone" value="'.dol_escape_htmltag((GETPOSTISSET('tel') ? GETPOST('tel', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_TEL') ? $conf->global->MAIN_INFO_SOCIETE_TEL : ''))).'"></td></tr>';
+print '<input class="maxwidth150 widthcentpercentminusx" name="phone" id="phone" value="'.dol_escape_htmltag((GETPOSTISSET('phone') ? GETPOST('phone', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_TEL') ? $conf->global->MAIN_INFO_SOCIETE_TEL : ''))).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Fax
