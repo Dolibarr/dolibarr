@@ -77,9 +77,14 @@ class Website extends CommonObject
 	public $description;
 
 	/**
-	 * @var string Main language of web site
+	 * @var string Main language on 5 chars of web site
 	 */
 	public $lang;
+
+	/**
+	 * @var string Main language on 2 chars of web site
+	 */
+	public $shortlang;
 
 	/**
 	 * @var string List of languages of web site ('fr', 'es_MX', ...)

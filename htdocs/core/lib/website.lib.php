@@ -676,13 +676,13 @@ function getStructuredData($type, $data = array())
 		$ret .= '{
 			"@context": "https://schema.org",
 			"@type": "Organization",
-			"name": "'.dol_escape_json($data['name'] ? $data['name'] : $companyname).'",
-			"url": "'.dol_escape_json($data['url'] ? $data['url'] : $url).'",
+			"name": "'.dol_escape_json(!empty($data['name']) ? $data['name'] : $companyname).'",
+			"url": "'.dol_escape_json(!empty($data['url']) ? $data['url'] : $url).'",
 			"logo": "'.($data['logo'] ? dol_escape_json($data['logo']) : '/wrapper.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo)).'",
 			"contactPoint": {
 				"@type": "ContactPoint",
 				"contactType": "Contact",
-				"email": "'.dol_escape_json($data['email'] ? $data['email'] : $mysoc->email).'"
+				"email": "'.dol_escape_json(!empty($data['email']) ? $data['email'] : $mysoc->email).'"
 			}'."\n";
 		if (is_array($mysoc->socialnetworks) && count($mysoc->socialnetworks) > 0) {
 			$ret .= ",\n";
