@@ -696,9 +696,9 @@ if (count($output_phan_json) != 0) {
 			}
 			$code_url_attr = dol_escape_htmltag($urlgit.$path.$line_range);
 			if ($phan_nblines < 20) {
-				$tmpphan = '<tr class="nohidden">';
+				$tmpphan .= '<tr class="nohidden">';
 			} else {
-				$tmpphan = '<tr class="hidden sourcephan">';
+				$tmpphan .= '<tr class="hidden sourcephan">';
 			}
 			$tmpphan .= '<td>'.dolPrintHTML($path).'</td>';
 			$tmpphan .= '<td class="">';
@@ -706,6 +706,7 @@ if (count($output_phan_json) != 0) {
 			$tmpphan .= '</td>';
 			$tmpphan .= '<td class="tdoverflowmax300">'.dolPrintHTML($notice['description']).'</td>';
 			$tmpphan .= '</tr>';
+			$tmpphan .= "\n";
 
 			$phan_nblines++;
 		}
