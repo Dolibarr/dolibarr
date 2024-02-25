@@ -69,7 +69,7 @@ if (!$sortfield) {
 $search_month = GETPOST('search_month', 'int');
 $search_year = GETPOST('search_year', 'int');
 if (GETPOSTISARRAY('search_status')) {
-	$search_status = join(',', GETPOST('search_status', 'array:intcomma'));
+	$search_status = implode(',', GETPOST('search_status', 'array:intcomma'));
 } else {
 	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
 }
@@ -100,7 +100,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$object = $product;
 
-	$parameters = array('id'=>$id);
+	$parameters = array('id' => $id);
 	$reshook = $hookmanager->executeHooks('doActions', $parameters, $product, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
