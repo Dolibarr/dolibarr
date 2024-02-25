@@ -223,7 +223,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 	public function get_substitutionarray_project_contacts($contact, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
 		$pc = 'projcontacts_'; // prefix to avoid typos
 
 		$ret = array(
@@ -281,8 +280,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 	public function get_substitutionarray_project_file($file, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
-
 		return array(
 			'projfile_name'=>$file['name'],
 			'projfile_date'=>dol_print_date($file['date'], 'day'),
@@ -318,23 +315,23 @@ class doc_generic_project_odt extends ModelePDFProjects
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$taskressource			Reference array
-	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @return	array								Return a substitution array
+	 *	@param  array			$taskresource			Reference array
+	 *	@param  Translate		$outputlangs        	Lang object to use for output
+	 *  @return	array									Return a substitution array
 	 */
-	public function get_substitutionarray_tasksressource($taskressource, $outputlangs)
+	public function get_substitutionarray_tasksressource($taskresource, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
+
 		//dol_syslog(get_class($this).'::get_substitutionarray_tasksressource taskressource='.var_export($taskressource,true),LOG_DEBUG);
 		return array(
-		'taskressource_rowid'=>$taskressource['rowid'],
-		'taskressource_role'=>$taskressource['libelle'],
-		'taskressource_lastname'=>$taskressource['lastname'],
-		'taskressource_firstname'=>$taskressource['firstname'],
-		'taskressource_fullcivname'=>$taskressource['fullname'],
-		'taskressource_socname'=>$taskressource['socname'],
-		'taskressource_email'=>$taskressource['email']
+			'taskressource_rowid' => $taskresource['rowid'],
+			'taskressource_role' => $taskresource['libelle'],
+			'taskressource_lastname' => $taskresource['lastname'],
+			'taskressource_firstname' => $taskresource['firstname'],
+			'taskressource_fullcivname' => $taskresource['fullname'],
+			'taskressource_socname' => $taskresource['socname'],
+			'taskressource_email' => $taskresource['email']
 		);
 	}
 
@@ -342,28 +339,26 @@ class doc_generic_project_odt extends ModelePDFProjects
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  object			$tasktime			times object
+	 *	@param  array			$tasktime			Array of times object
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
 	public function get_substitutionarray_taskstime($tasktime, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
-
 		return array(
-		'tasktime_rowid'=>$tasktime['rowid'],
-		'tasktime_task_date'=>dol_print_date($tasktime['task_date'], 'day'),
-		'tasktime_task_duration_sec'=>$tasktime['task_duration'],
-		'tasktime_task_duration'=>convertSecondToTime($tasktime['task_duration'], 'all'),
-		'tasktime_note'=>$tasktime['note'],
-		'tasktime_fk_user'=>$tasktime['fk_user'],
-		'tasktime_user_name'=>$tasktime['name'],
-		'tasktime_user_first'=>$tasktime['firstname'],
-		'tasktime_fullcivname'=>$tasktime['fullcivname'],
-		'tasktime_amountht'=>$tasktime['amountht'],
-		'tasktime_amountttc'=>$tasktime['amountttc'],
-		'tasktime_thm'=>$tasktime['thm'],
+			'tasktime_rowid'=>$tasktime['rowid'],
+			'tasktime_task_date'=>dol_print_date($tasktime['task_date'], 'day'),
+			'tasktime_task_duration_sec'=>$tasktime['task_duration'],
+			'tasktime_task_duration'=>convertSecondToTime($tasktime['task_duration'], 'all'),
+			'tasktime_note'=>$tasktime['note'],
+			'tasktime_fk_user'=>$tasktime['fk_user'],
+			'tasktime_user_name'=>$tasktime['name'],
+			'tasktime_user_first'=>$tasktime['firstname'],
+			'tasktime_fullcivname'=>$tasktime['fullcivname'],
+			'tasktime_amountht'=>$tasktime['amountht'],
+			'tasktime_amountttc'=>$tasktime['amountttc'],
+			'tasktime_thm'=>$tasktime['thm'],
 		);
 	}
 
@@ -378,12 +373,10 @@ class doc_generic_project_odt extends ModelePDFProjects
 	public function get_substitutionarray_task_file($file, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
-
 		return array(
-		'tasksfile_name'=>$file['name'],
-		'tasksfile_date'=>dol_print_date($file['date'], 'day'),
-		'tasksfile_size'=>$file['size']
+			'tasksfile_name'=>$file['name'],
+			'tasksfile_date'=>dol_print_date($file['date'], 'day'),
+			'tasksfile_size'=>$file['size']
 		);
 	}
 
