@@ -669,12 +669,13 @@ if (!empty($output_arrtd)) {
 			$tmp .= '</td>';
 			$tmp .= '<td class="tdoverflowmax300" title="'.dolPrintHTMLForAttribute($reg[4]).'">'.dolPrintHTML($reg[4]).'</td>';
 			$tmp .= '</tr>'."\n";
+
 			$nblines++;
 		}
 	}
 }
 
-
+$tmpphan = '';
 $phan_nblines = 0;
 if (count($output_phan_json) != 0) {
 	$phan_notices = json_decode($output_phan_json[count($output_phan_json) - 1], true);
@@ -695,18 +696,18 @@ if (count($output_phan_json) != 0) {
 			}
 			$code_url_attr = dol_escape_htmltag($urlgit.$path.$line_range);
 			if ($phan_nblines < 20) {
-				$tmp = '<tr class="nohidden">';
+				$tmpphan .= '<tr class="nohidden">';
 			} else {
-				$tmp = '<tr class="hidden sourcephan">';
+				$tmpphan .= '<tr class="hidden sourcephan">';
 			}
-			$tmp .= '<td>'.dolPrintHTML($path).'</td>';
-			$tmp .= '<td class="">';
-			$tmp .= '<a href="'.$code_url_attr.'" target="_blank">'.$line_range_txt.'</a>';
-			$tmp .= '</td>';
-			$tmp .= '<td class="tdoverflowmax300">'.dolPrintHTML($notice['description']).'</td>';
-			$tmp .= '</tr>';
+			$tmpphan .= '<td>'.dolPrintHTML($path).'</td>';
+			$tmpphan .= '<td class="">';
+			$tmpphan .= '<a href="'.$code_url_attr.'" target="_blank">'.$line_range_txt.'</a>';
+			$tmpphan .= '</td>';
+			$tmpphan .= '<td class="tdoverflowmax300">'.dolPrintHTML($notice['description']).'</td>';
+			$tmpphan .= '</tr>';
+			$tmpphan .= "\n";
 
-			$phan_items[] = $tmp;
 			$phan_nblines++;
 		}
 	}
@@ -813,7 +814,7 @@ if ($phan_nblines != 0) {
 	$html .= '<div class="div-table-responsive">'."\n";
 	$html .= '<table class="list_technical_debt centpercent">'."\n";
 	$html .= '<thead><tr class="trgroup"><td>File</td><td>Line</td><td>Detail</td></tr></thead><tbody>'."\n";
-	$html .= implode("\n", $phan_items);
+	$html .= $tmpphan;
 	$html .= '</tbody></table>';
 	// Disabled, no more required as list is managed with datatable
 	//$html .= '<div><span class="seedetail" data-source="phan" id="sourcephan">Show all...</span></div>';
