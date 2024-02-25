@@ -7235,6 +7235,9 @@ function yn($yesno, $case = 1, $color = 0)
 		if ($case == 3) {
 			$result = '<input type="checkbox" value="1" checked disabled> '.$result;
 		}
+		if ($case == 4) {
+			$result = img_picto('check', 'check');
+		}
 
 		$classname = 'ok';
 	} elseif ($yesno == 0 || strtolower($yesno) == 'no' || strtolower($yesno) == 'false') {
@@ -7247,6 +7250,9 @@ function yn($yesno, $case = 1, $color = 0)
 		}
 		if ($case == 3) {
 			$result = '<input type="checkbox" value="0" disabled> '.$result;
+		}
+		if ($case == 4) {
+			$result = img_picto('uncheck', 'uncheck');
 		}
 
 		if ($color == 2) {
