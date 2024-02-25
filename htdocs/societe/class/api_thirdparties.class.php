@@ -32,7 +32,7 @@ class Thirdparties extends DolibarrApi
 {
 	/**
 	 *
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var array   $FIELDS     Mandatory fields, checked when we create and update the object
 	 */
 	public static $FIELDS = array(
 		'name'
@@ -477,7 +477,7 @@ class Thirdparties extends DolibarrApi
 	 * @url POST {id}/representative/{representative_id}
 	 *
 	 * @throws RestException 401 Access not allowed for your login
- 	 * @throws RestException 404 User or Thirdparty not found
+	 * @throws RestException 404 User or Thirdparty not found
 	 */
 	public function addRepresentative($id, $representative_id)
 	{
@@ -511,7 +511,7 @@ class Thirdparties extends DolibarrApi
 	 * @url DELETE {id}/representative/{representative_id}
 	 *
 	 * @throws RestException 401 Access not allowed for your login
- 	 * @throws RestException 404 User or Thirdparty not found
+	 * @throws RestException 404 User or Thirdparty not found
 	 */
 	public function deleteRepresentative($id, $representative_id)
 	{
