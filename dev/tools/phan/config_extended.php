@@ -43,6 +43,149 @@ $dolPostFilter
 	).')*$/';
 
 /**
+ * Map deprecated module names to new module names
+ */
+$DEPRECATED_MODULE_MAPPING = array(
+	'actioncomm' => 'agenda',
+	'adherent' => 'member',
+	'adherent_type' => 'member_type',
+	'banque' => 'bank',
+	'categorie' => 'category',
+	'commande' => 'order',
+	'contrat' => 'contract',
+	'entrepot' => 'stock',
+	'expedition' => 'delivery_note',
+	'facture' => 'invoice',
+	'ficheinter' => 'intervention',
+	'product_fournisseur_price' => 'productsupplierprice',
+	'product_price' => 'productprice',
+	'projet'  => 'project',
+	'propale' => 'propal',
+	'socpeople' => 'contact',
+);
+
+/**
+ * Map module names to the 'class' name (the class is: mod<CLASSNAME>)
+ * Value is null when the module is not internal to the default
+ * Dolibarr setup.
+ */
+$VALID_MODULE_MAPPING = array(
+	'accounting' => 'Accounting',
+	'agenda' => 'Agenda',
+	'ai' => 'Ai',
+	'anothermodule' => null,  // Not used in code, used in translations.lang
+	'api' => 'Api',
+	'asset' => 'Asset',
+	'bank' => 'Banque',
+	'barcode' => 'Barcode',
+	'blockedlog' => 'BlockedLog',
+	'bom' => 'Bom',
+	'bookcal' => 'BookCal',
+	'bookmark' => 'Bookmark',
+	'cashdesk' => null,
+	'category' => 'Categorie',
+	'clicktodial' => 'ClickToDial',
+	'collab' => 'Collab',  // TODO: fill in proper name
+	'comptabilite' => 'Comptabilite',
+	'contact' => null,  // TODO: fill in proper class
+	'contract' => 'Contrat',
+	'cron' => 'Cron',
+	'datapolicy' => 'DataPolicy',
+	'dav' => 'Dav',
+	'debugbar' => 'DebugBar',
+	'delivery_note' => 'Expedition',
+	'deplacement' => 'Deplacement',
+	"documentgeneration" => 'DocumentGeneration',  // TODO: fill in proper name
+	'don' => 'Don',
+	'dynamicprices' => 'DynamicPrices',
+	'ecm' => 'ECM',
+	'ecotax' => null,  // TODO: External module ?
+	'emailcollector' => 'EmailCollector',
+	'eventorganization' => 'EventOrganization',
+	'expensereport' => 'ExpenseReport',
+	'export' => 'Export',
+	'externalrss' => 'ExternalRss',  // TODO: fill in proper name
+	'externalsite' => 'ExternalSite',
+	'fckeditor' => 'Fckeditor',
+	'fournisseur' => 'Fournisseur',
+	'ftp' => 'FTP',
+	'geoipmaxmind' => 'GeoIPMaxmind',  // TODO: fill in proper name
+	'google' => null,  // External ?
+	'gravatar' => 'Gravatar',
+	'holiday' => 'Holiday',
+	'hrm' => 'HRM',
+	'import' => 'Import',
+	'incoterm' => 'Incoterm',
+	'intervention' => 'Ficheinter',
+	'intracommreport' => 'Intracommreport',
+	'invoice' => 'Facture',
+	'knowledgemanagement' => 'KnowledgeManagement',
+	'label' => 'Label',
+	'ldap' => 'Ldap',
+	'loan' => 'Loan',
+	'mailing' => 'Mailing',
+	'mailman' => null,  // Same module as mailmanspip -> MailmanSpip ??
+	'mailmanspip' => 'MailmanSpip',
+	'margin' => 'Margin',
+	'member' => 'Adherent',
+	'memcached' => null, // TODO: External module?
+	'modulebuilder' => 'ModuleBuilder',
+	'mrp' => 'Mrp',
+	'multicompany' => null, // Not provided by default, no module tests
+	'multicurrency' => 'MultiCurrency',
+	'mymodule' => null, // modMyModule - Name used in module builder (avoid false positives)
+	'notification' => 'Notification',
+	'numberwords' => null, // Not provided by default, no module tests
+	'oauth' => 'Oauth',
+	'openstreetmap' => null,  // External module?
+	'opensurvey' => 'OpenSurvey',
+	'order' => 'Commande',
+	'partnership' => 'Partnership',
+	'paybox' => 'Paybox',
+	'paymentbybanktransfer' => 'PaymentByBankTransfer',
+	'paypal' => 'Paypal',
+	'paypalplus' => null,
+	'prelevement' => 'Prelevement',
+	'printing' => 'Printing', // TODO: set proper name
+	'product' => 'Product',
+	'productbatch' => 'ProductBatch',
+	'productprice' => null,
+	'productsupplierprice' => null,
+	'project' => 'Projet',
+	'propal' => 'Propale',
+	'receiptprinter' => 'ReceiptPrinter',
+	'reception' => 'Reception',
+	'recruitment' => 'Recruitment',
+	'resource' => 'Resource',
+	'salaries' => 'Salaries',
+	'service' => 'Service',
+	'socialnetworks' => 'SocialNetworks',
+	'societe' => 'Societe',
+	'stock' => 'Stock',
+	'stocktransfer' => 'StockTransfer',
+	'stripe' => 'Stripe',
+	'supplier_invoice' => null,  // Special case, uses invoice
+	'supplier_order' => null,  // Special case, uses invoice
+	'supplier_proposal' => 'SupplierProposal',
+	'syslog' => 'Syslog',
+	'takepos' => 'TakePos',
+	'tax' => 'Tax',
+	'ticket' => 'Ticket',
+	'user' => 'User',
+	'variants' => 'Variants',
+	'webhook' => 'Webhook',
+	'webportal' => 'WebPortal',
+	'webservices' => 'WebServices',
+	'webservicesclient' => 'WebServicesClient',  // TODO: set proper name
+	'website' => 'Website',
+	'workflow' => 'Workflow',
+	'workstation' => 'Workstation',
+	'zapier' => 'Zapier',
+);
+
+$moduleNameRegex = '/^(?:'.implode('|', array_merge(array_keys($DEPRECATED_MODULE_MAPPING), array_keys($VALID_MODULE_MAPPING))).')$/';
+
+/**
  * This configuration will be read and overlaid on top of the
  * default configuration. Command line arguments will be applied
  * after this file is read.
@@ -122,6 +265,7 @@ return [
 	// with the plugin's implementation (e.g. 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php')
 	'ParamMatchRegexPlugin' => [
 		'/^GETPOST$/' => [1, $dolPostFilter],
+		'/^isModEnabled$/' => [0, $moduleNameRegex],
 	],
 	'plugins' => [
 		__DIR__.'/plugins/NoVarDumpPlugin.php',
