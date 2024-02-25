@@ -83,6 +83,7 @@ return [
 	// Alternately, you can pass in the full path to a PHP file
 	// with the plugin's implementation (e.g. 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php')
 	'plugins' => [
+		__DIR__.'/plugins/NoVarDumpPlugin.php',
 		'DeprecateAliasPlugin',
 		//'EmptyMethodAndFunctionPlugin',
 		'InvalidVariableIssetPlugin',
@@ -102,7 +103,7 @@ return [
 		'NonBoolBranchPlugin', // Requires test on bool, nont on ints
 		'NonBoolInLogicalArithPlugin',
 		'NumericalComparisonPlugin',
-		'PHPDocToRealTypesPlugin',
+		// 'PHPDocToRealTypesPlugin',  // Report/Add types to function definitions
 		'PHPDocInWrongCommentPlugin', // Missing /** (/* was used)
 		//'ShortArrayPlugin', // Checks that [] is used
 		//'StrictLiteralComparisonPlugin',
@@ -138,10 +139,11 @@ return [
 		'PhanPluginCanUsePHP71Void',	// Dolibarr is maintaining 7.0 compatibility
 		'PhanPluginShortArray',			// Dolibarr uses array()
 		'PhanPluginShortArrayList',		// Dolibarr uses array()
-		// The following may require that --quick is not used
-		'PhanPluginCanUseParamType',	// Does not seem useful: is reporting types already in PHPDoc?
-		'PhanPluginCanUseReturnType',	// Does not seem useful: is reporting types already in PHPDoc?
-		'PhanPluginCanUseNullableParamType',	// Does not seem useful: is reporting types already in PHPDoc?
+		// Fixers From PHPDocToRealTypesPlugin:
+		'PhanPluginCanUseParamType',			// Fixer - Report/Add types in the function definition (function abc(string $var) (adds string)
+		'PhanPluginCanUseReturnType',			// Fixer - Report/Add return types in the function definition (function abc(string $var) (adds string)
+		'PhanPluginCanUseNullableParamType',	// Fixer - Report/Add nullable parameter types in the function definition
+		'PhanPluginCanUseNullableReturnType',	// Fixer - Report/Add nullable return types in the function definition
 		'PhanPluginNonBoolBranch',			// Not essential - 31240+ occurrences
 		'PhanPluginNumericalComparison',	// Not essential - 19870+ occurrences
 		'PhanTypeMismatchArgument',			// Not essential - 12300+ occurrences
