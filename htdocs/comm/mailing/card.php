@@ -547,7 +547,11 @@ if (empty($reshook)) {
 		$mesgs = array();
 
 		$object->messtype       = (string) GETPOST("messtype");
-		$object->email_from     = (string) GETPOST("from", 'alphawithlgt'); // Must allow 'name <email>'
+		if ($object->messtype == 'sms') {
+			$object->email_from     = (string) GETPOST("from_phone", 'alphawithlgt'); // Must allow 'name <email>'
+		} else {
+			$object->email_from     = (string) GETPOST("from", 'alphawithlgt'); // Must allow 'name <email>'
+		}
 		$object->email_replyto  = (string) GETPOST("replyto", 'alphawithlgt'); // Must allow 'name <email>'
 		$object->email_errorsto = (string) GETPOST("errorsto", 'alphawithlgt'); // Must allow 'name <email>'
 		$object->title          = (string) GETPOST("title");
@@ -823,7 +827,8 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 
 	print '<tr class="fieldsforemail"><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailFrom").'</td><td><input class="flat minwidth200" name="from" value="'.(GETPOSTISSET('from') ? GETPOST('from') : getDolGlobalString('MAILING_EMAIL_FROM')).'"></td></tr>';
-	print '<tr class="fieldsforsms hidden"><td class="fieldrequired titlefieldcreate">'.$langs->trans("PhoneFrom").'</td><td><input class="flat minwidth200" name="from" value="'.(GETPOSTISSET('from') ? GETPOST('from') : getDolGlobalString('MAILING_SMS_FROM')).'" placeholder="+123..."></td></tr>';
+
+	print '<tr class="fieldsforsms hidden"><td class="fieldrequired titlefieldcreate">'.$langs->trans("PhoneFrom").'</td><td><input class="flat minwidth200" name="fromphone" value="'.(GETPOSTISSET('fromphone') ? GETPOST('fromphone') : getDolGlobalString('MAILING_SMS_FROM')).'" placeholder="+123..."></td></tr>';
 
 	print '<tr class="fieldsforemail"><td>'.$langs->trans("MailErrorsTo").'</td><td><input class="flat minwidth200" name="errorsto" value="'.getDolGlobalString('MAILING_EMAIL_ERRORSTO', getDolGlobalString('MAIN_MAIL_ERRORS_TO')).'"></td></tr>';
 
