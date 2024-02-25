@@ -261,3 +261,6 @@ INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private,
 
 
 ALTER TABLE llx_societe ADD COLUMN phone_mobile varchar(20) after phone;
+
+ALTER TABLE llx_facture ADD INDEX idx_facture_tms (tms);
+ALTER TABLE llx_facture_fourn ADD INDEX idx_facture_fourn_tms (tms);

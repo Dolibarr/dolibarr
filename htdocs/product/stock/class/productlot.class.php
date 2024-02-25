@@ -1225,8 +1225,8 @@ class Productlot extends CommonObject
 		$this->sellby = $now - 100000;
 		$this->datec = $now - 3600;
 		$this->tms = $now;
-		$this->fk_user_creat = null;
-		$this->fk_user_modif = null;
+		$this->fk_user_creat = 0;
+		$this->fk_user_modif = 0;
 		$this->import_key = '123456';
 	}
 
