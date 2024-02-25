@@ -90,7 +90,7 @@ function emailcollectorPrepareHead($object)
  * Get parts of a message
  *
  * @param 	object 			$structure 		Structure of message
- * @return 	array[false						Array of parts of the message|false if error
+ * @return 	array|false						Array of parts of the message|false if error
  */
 function getParts($structure)
 {
