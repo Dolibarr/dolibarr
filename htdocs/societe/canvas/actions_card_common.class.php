@@ -402,8 +402,8 @@ abstract class ActionsCardCommon
 		$this->object->town					= GETPOST("town");
 		$this->object->country_id = GETPOST("country_id") ? GETPOST("country_id") : $mysoc->country_id;
 		$this->object->state_id = GETPOST("state_id");
-		$this->object->phone				= GETPOST("tel");
-		$this->object->phone_mobile			= GETPOST("mob");
+		$this->object->phone				= GETPOST("phone");
+		$this->object->phone_mobile			= GETPOST("phone_mobile");
 		$this->object->fax					= GETPOST("fax");
 		$this->object->email				= GETPOST("email", 'alphawithlgt');
 		$this->object->url					= GETPOST("url");
