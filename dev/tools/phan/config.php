@@ -4,7 +4,7 @@
 define('DOL_PROJECT_ROOT', __DIR__.'/../../..');
 define('DOL_DOCUMENT_ROOT', DOL_PROJECT_ROOT.'/htdocs');
 define('PHAN_DIR', __DIR__);
-$dolPostFilter
+$sanitizeRegex
 	= '/^(array:)?(?:'.implode(
 		'|',
 		array(
@@ -73,7 +73,7 @@ $VALID_MODULE_MAPPING = array(
 	'accounting' => 'Accounting',
 	'agenda' => 'Agenda',
 	'ai' => 'Ai',
-	'anothermodule' => null,  // Not used in code, used in translations.lang
+	'anothermodule' => null,
 	'api' => 'Api',
 	'asset' => 'Asset',
 	'bank' => 'Banque',
@@ -82,10 +82,10 @@ $VALID_MODULE_MAPPING = array(
 	'bom' => 'Bom',
 	'bookcal' => 'BookCal',
 	'bookmark' => 'Bookmark',
-	'cashdesk' => null,
+	'cashdesk' => null,  // TODO: fill in proper class
 	'category' => 'Categorie',
 	'clicktodial' => 'ClickToDial',
-	'collab' => 'Collab',  // TODO: fill in proper name
+	'collab' => 'Collab',
 	'comptabilite' => 'Comptabilite',
 	'contact' => null,  // TODO: fill in proper class
 	'contract' => 'Contrat',
@@ -95,7 +95,7 @@ $VALID_MODULE_MAPPING = array(
 	'debugbar' => 'DebugBar',
 	'delivery_note' => 'Expedition',
 	'deplacement' => 'Deplacement',
-	"documentgeneration" => 'DocumentGeneration',  // TODO: fill in proper name
+	"documentgeneration" => 'DocumentGeneration',
 	'don' => 'Don',
 	'dynamicprices' => 'DynamicPrices',
 	'ecm' => 'ECM',
@@ -104,12 +104,12 @@ $VALID_MODULE_MAPPING = array(
 	'eventorganization' => 'EventOrganization',
 	'expensereport' => 'ExpenseReport',
 	'export' => 'Export',
-	'externalrss' => 'ExternalRss',  // TODO: fill in proper name
+	'externalrss' => 'ExternalRss',
 	'externalsite' => 'ExternalSite',
 	'fckeditor' => 'Fckeditor',
 	'fournisseur' => 'Fournisseur',
 	'ftp' => 'FTP',
-	'geoipmaxmind' => 'GeoIPMaxmind',  // TODO: fill in proper name
+	'geoipmaxmind' => 'GeoIPMaxmind',
 	'google' => null,  // External ?
 	'gravatar' => 'Gravatar',
 	'holiday' => 'Holiday',
@@ -146,7 +146,7 @@ $VALID_MODULE_MAPPING = array(
 	'paypal' => 'Paypal',
 	'paypalplus' => null,
 	'prelevement' => 'Prelevement',
-	'printing' => 'Printing', // TODO: set proper name
+	'printing' => 'Printing',
 	'product' => 'Product',
 	'productbatch' => 'ProductBatch',
 	'productprice' => null,
@@ -176,7 +176,7 @@ $VALID_MODULE_MAPPING = array(
 	'webhook' => 'Webhook',
 	'webportal' => 'WebPortal',
 	'webservices' => 'WebServices',
-	'webservicesclient' => 'WebServicesClient',  // TODO: set proper name
+	'webservicesclient' => 'WebServicesClient',
 	'website' => 'Website',
 	'workflow' => 'Workflow',
 	'workstation' => 'Workstation',
@@ -265,8 +265,9 @@ return [
 	// Alternately, you can pass in the full path to a PHP file
 	// with the plugin's implementation (e.g. 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php')
 	'ParamMatchRegexPlugin' => [
-		'/^GETPOST$/' => [1, $dolPostFilter],
+		'/^GETPOST$/' => [1, $sanitizeRegex],
 		'/^isModEnabled$/' => [0, $moduleNameRegex],
+		'/^sanitizeVal$/' => [1, $sanitizeRegex],
 	],
 	'plugins' => [
 		__DIR__.'/plugins/NoVarDumpPlugin.php',
