@@ -4,6 +4,43 @@
 define('DOL_PROJECT_ROOT', __DIR__.'/../../..');
 define('DOL_DOCUMENT_ROOT', DOL_PROJECT_ROOT.'/htdocs');
 define('PHAN_DIR', __DIR__);
+$dolPostFilter
+	= '/^(array:)?(?:'.implode(
+		'|',
+		array(
+			// Documented:
+			'none',
+			'array',
+			'int',
+			'intcomma',
+			'alpha',
+			'alphawithlgt',
+			'alphanohtml',
+			'MS',
+			'aZ',
+			'aZ09',
+			'aZ09arobase',
+			'aZ09comma',
+			'san_alpha',
+			'restricthtml',
+			'nohtml',
+			'custom',
+			// Not documented:
+			'email',
+			'restricthtmlallowclass',
+			'restricthtmlallowunvalid',
+			'restricthtmlnolink',
+			//'ascii',
+			//'categ_id',
+			//'chaine',
+
+			//'html',
+			//'boolean',
+			//'double',
+			//'float',
+			//'string',
+		)
+	).')*$/';
 /**
  * This configuration will be read and overlaid on top of the
  * default configuration. Command line arguments will be applied
@@ -71,6 +108,7 @@ return [
 		.'|htdocs/includes/restler/.*'  // @phpstan-ignore-line
 		// Included as stub (did not seem properly analysed by phan without it)
 		.'|htdocs/includes/stripe/.*'  // @phpstan-ignore-line
+		// .'|htdocs/[^h].*/.*'  // For testing @phpstan-ignore-line
 		.')@',  // @phpstan-ignore-line
 
 	// A list of plugin files to execute.
@@ -82,8 +120,12 @@ return [
 	//
 	// Alternately, you can pass in the full path to a PHP file
 	// with the plugin's implementation (e.g. 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php')
+	'ParamMatchRegexPlugin' => [
+		'/^GETPOST$/' => [1, $dolPostFilter],
+	],
 	'plugins' => [
 		__DIR__.'/plugins/NoVarDumpPlugin.php',
+		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
 		// checks if a function, closure or method unconditionally returns.
 		// can also be written as 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php'
 		//'DeprecateAliasPlugin',
