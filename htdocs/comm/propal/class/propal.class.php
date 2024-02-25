@@ -514,6 +514,7 @@ class Propal extends CommonObject
 
 			$line = new PropaleLigne($this->db);
 
+			$this->line = $line;
 			$this->line->context = $this->context;
 
 			$line->fk_propal = $this->id;
