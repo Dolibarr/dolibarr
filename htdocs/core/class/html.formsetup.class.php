@@ -249,7 +249,7 @@ class FormSetup
 	 * saveConfFromPost
 	 *
 	 * @param 	bool 		$noMessageInUpdate display event message on errors and success
-	 * @return	 int        -1 if KO, 1 if OK
+	 * @return	int|null    Return -1 if KO, 1 if OK, null if no items
 	 */
 	public function saveConfFromPost($noMessageInUpdate = false)
 	{
@@ -265,7 +265,6 @@ class FormSetup
 		if ($reshook > 0) {
 			return $reshook;
 		}
-
 
 		if (empty($this->items)) {
 			return null;
