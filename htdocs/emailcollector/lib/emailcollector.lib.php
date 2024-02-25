@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +102,7 @@ function getParts($structure)
  * Array with joined files
  *
  * @param 	object 			$part 		Part of message
- * @return 	object|boolean 				Definition of message|false en cas d'erreur
+ * @return 	object|boolean 				Definition of message|false in case of error
  */
 function getDParameters($part)
 {
@@ -112,7 +113,7 @@ function getDParameters($part)
  * Get attachments of a given mail
  *
  * @param 	integer $jk 	Number of email
- * @param 	object 	$mbox 	object connection imaap
+ * @param 	object 	$mbox 	object connection imap
  * @return 	array 			type, filename, pos
  */
 function getAttachments($jk, $mbox)

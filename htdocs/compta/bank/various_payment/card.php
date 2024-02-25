@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2023       Joachim Kueter     		<git-jk@bloxera.com>
  *
@@ -264,7 +264,8 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 	$object->fetch($id);
 
 	if ($object->id > 0) {
-		$object->id = $object->ref = null;
+		unset($object->id);
+		unset($object->ref);
 
 		if (GETPOST('clone_label', 'alphanohtml')) {
 			$object->label = GETPOST('clone_label', 'alphanohtml');
