@@ -5,7 +5,7 @@
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2021-2023	Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2023	Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -827,19 +827,9 @@ if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"').$formother->select_categories(Categorie::TYPE_MEMBER, $search_categ, 'search_categ', 1, $langs->trans("MembersCategoriesShort"));
 	$moreforfilter .= '</div>';
 }
-// Status if field not selected
-if (empty($arrayfields['d.statut']['checked'])) {
-	$moreforfilter .= '<div class="divsearchfield">';
-	$liststatus = array(
-		Adherent::STATUS_DRAFT => $langs->trans("Draft"),
-		Adherent::STATUS_VALIDATED => $langs->trans("Validated"),
-		Adherent::STATUS_RESILIATED => $langs->trans("MemberStatusResiliatedShort"),
-		Adherent::STATUS_EXCLUDED =>$langs->trans("MemberStatusExcludedShort")
-	);
-	$moreforfilter .= $form->selectarray('search_status', $liststatus, $search_status, -3, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
-	$moreforfilter .= '</div>';
-}
-$parameters = array();
+$parameters = array(
+	'arrayfields' => &$arrayfields,
+);
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	$moreforfilter .= $hookmanager->resPrint;
