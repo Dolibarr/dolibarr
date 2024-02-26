@@ -13,16 +13,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Note: This tool can be included into a list page with:
- * define('USE_CUSTOM_REPORT_AS_INCLUDE', 1);
- * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
 
 /**
- *   	\file       htdocs/core/customreports.php
- *		\ingroup    core
- *		\brief      Page to make custom reports. Page can be used alone or as a tab among other tabs of an object
+ * \file       htdocs/core/customreports.php
+ * \ingroup    core
+ * \brief      Page to make custom reports. Page can also be used alone or as a tab among other tabs of an object
+ *
+ * To include this tool into another PHP page:
+ * define('USE_CUSTOM_REPORT_AS_INCLUDE', 1);
+ * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
 
 if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
@@ -74,10 +74,23 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$pagenext = $page + 1;
 
 	$diroutputmassaction = $conf->user->dir_temp.'/'.$user->id.'/customreport';
+
+	$object = null;
+} else {
+	$langs->load("main");
+	$search_measures = array();
+
+	if (empty($object)) {
+		print 'Page is called as an include but $object is not defined. We stop here.';
+		exit(-1);
+	}
 }
 
+require_once DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/html.form.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/company.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/dolgraph.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php";
@@ -92,7 +105,6 @@ $hookmanager->initHooks(array('customreport')); // Note that conf->hooks_modules
 $title = '';
 $picto = '';
 $head = array();
-$object = null;
 $ObjectClassName = '';
 // Objects available by default
 $arrayoftype = array(
@@ -566,9 +578,11 @@ if (empty($conf->use_javascript_ajax)) {
 print '</div><div class="clearboth"></div>';
 
 // Filter (you can use param &show_search_component_params_hidden=1 for debug)
-print '<div class="divadvancedsearchfield quatrevingtpercent">';
-print $form->searchComponent(array($object->element => $object->fields), $search_component_params, array(), $search_component_params_hidden);
-print '</div>';
+if (!empty($object)) {
+	print '<div class="divadvancedsearchfield quatrevingtpercent">';
+	print $form->searchComponent(array($object->element => $object->fields), $search_component_params, array(), $search_component_params_hidden);
+	print '</div>';
+}
 
 // YAxis (add measures into array)
 $count = 0;
@@ -1101,13 +1115,12 @@ print '<div>';
 
 if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	print dol_get_fiche_end();
+
+	llxFooter();
+	// End of page
 }
 
-// End of page
-llxFooter();
-
 $db->close();
-
 
 
 
@@ -1127,6 +1140,9 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 {
 	global $langs, $extrafields, $db;
 
+	if (empty($object)) {	// Protection against bad use of method
+		return array();
+	}
 	if ($level > 10) {	// Protection against infinite loop
 		return $arrayofmesures;
 	}
@@ -1259,6 +1275,9 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 {
 	global $langs, $extrafields, $db;
 
+	if (empty($object)) {	// Protection against bad use of method
+		return array();
+	}
 	if ($level >= 3) {	// Limit scan on 2 levels max
 		return $arrayofxaxis;
 	}
@@ -1425,6 +1444,9 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 {
 	global $langs, $extrafields, $db;
 
+	if (empty($object)) {	// Protection against bad use of method
+		return array();
+	}
 	if ($level >= 3) {
 		return $arrayofgroupby;
 	}
