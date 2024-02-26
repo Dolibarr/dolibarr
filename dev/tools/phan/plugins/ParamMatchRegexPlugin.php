@@ -3,22 +3,33 @@
  * Copyright (C) 2024        MDW                            <mdeweerd@users.noreply.github.com>
  *
  * Phan Plugin to validate that arguments match a regex
+ *
+ *
+ *  "ParamMatchRegexPlugin" => [
+ *      "/^test1$/" => [ 0, "/^OK$/"],  // Argument 0 must be 'OK'
+ *      "/^test2$/" => [ 1, "/^NOK$/", "Test2Arg1NokError"], // Argument 1 must be 'NOK', error code
+ *      "/^\\MyTest::mymethod$/" => [ 0, "/^NOK$/"], // Argument 0 must be 'NOK'
+ *  ],
+ *  'plugins' => [
+ *      ".phan/plugins/ParamMatchRegexPlugin.php",
+ *      // [...]
+ *  ],
  */
 declare(strict_types=1);
 
 
 use ast\Node;
-use Phan\Codebase;
 use Phan\Config;
-use Phan\Language\Context;
-use Phan\AST\ContextNode;
 use Phan\AST\UnionTypeVisitor;
-use Phan\Exception\CodeBaseException;
 //use Phan\Language\Element\FunctionInterface;
 use Phan\Language\UnionType;
+use Phan\Language\Type;
 use Phan\PluginV3;
 use Phan\PluginV3\PluginAwarePostAnalysisVisitor;
 use Phan\PluginV3\PostAnalyzeNodeCapability;
+use Phan\Exception\NodeException;
+use Phan\Language\FQSEN\FullyQualifiedClassName;
+use Phan\Exception\FQSENException;
 
 /**
  * ParamMatchPlugin hooks into one event:
@@ -63,6 +74,82 @@ class ParamMatchVisitor extends PluginAwarePostAnalysisVisitor
 
 	/**
 	 * @override
+	 * @param    Node $node Node to analyze
+	 *
+	 * @return void
+	 */
+	public function visitMethodCall(Node $node): void
+	{
+		$method_name = $node->children['method'] ?? null;
+		if (!\is_string($method_name)) {
+			return; // Not handled, TODO: handle variable(?) methods
+			// throw new NodeException($node);
+		}
+		try {
+			// Fetch the list of valid classes, and warn about any undefined classes.
+			$union_type = UnionTypeVisitor::unionTypeFromNode($this->code_base, $this->context, $node->children['expr']);
+		} catch (Exception $_) {
+			// Phan should already throw for this
+			return;
+		}
+
+		$class_list = [];
+		foreach ($union_type->getTypeSet() as $type) {
+			$class_fqsen = "NoFSQENType";
+			if ($type instanceof Type) {
+				try {
+					$class_fqsen = (string) FullyQualifiedClassName::fromFullyQualifiedString($type->getName());
+				} catch (FQSENException $_) {
+					// var_dump([$_, $node]);
+					continue;
+				}
+			} else {
+				//    var_dump( $type) ;
+				continue;
+			}
+			$class_name = (string) $class_fqsen;
+			$class_list[] = $class_name;
+		}
+
+		/* May need to check list of classes
+		*/
+
+		/*
+		if (!$class->hasMethodWithName($this->code_base, $method_name, true)) {
+			throw new NodeException($expr, 'does not have method');
+		}
+		$class_name = $class->getName();
+		*/
+		foreach ($class_list as $class_name) {
+			$this->checkRule($node, "$class_name::$method_name");
+		}
+	}
+
+	/**
+	 * @override
+	 * @param    Node $node Node to analyze
+	 *
+	 * @return void
+	 */
+	public function visitStaticCall(Node $node): void
+	{
+		$class_name = $node->children['class']->children['name'] ?? null;
+		if (!\is_string($class_name)) {
+			throw new NodeException($expr, 'does not have class');
+		}
+		try {
+			$class_name = (string) FullyQualifiedClassName::fromFullyQualifiedString($class_name);
+		} catch (FQSENException $_) {
+		}
+		$method_name = $node->children['method'] ?? null;
+
+		if (!\is_string($method_name)) {
+			return;
+		}
+		$this->checkRule($node, "$class_name::$method_name");
+	}
+	/**
+	 * @override
 	 *
 	 * @param Node $node A node to analyze
 	 *
@@ -71,39 +158,54 @@ class ParamMatchVisitor extends PluginAwarePostAnalysisVisitor
 	public function visitCall(Node $node): void
 	{
 		$name = $node->children['expr']->children['name'] ?? null;
-		if (!is_string($name)) {
+		if (!\is_string($name)) {
 			return;
 		}
 
-		$rules = Config::getValue('ParamMatchRegexPlugin');
 
+		$this->checkRule($node, $name);
+	}
+
+	/**
+	 *
+	 * @param Node   $node A node to analyze
+	 * @param string $name function name or fqsn of class::<method>
+	 *
+	 * @return void
+	 */
+	public function checkRule(Node $node, string $name)
+	{
+		$rules = Config::getValue('ParamMatchRegexPlugin');
 		foreach ($rules as $regex => $rule) {
 			if (preg_match($regex, $name)) {
-				$this->checkParam($node, $rule[0], $rule[1]);
+				$this->checkParam($node, $rule[0], $rule[1], $name, $rule[2] ?? null);
 			}
 		}
 	}
 
 	/**
-	 * @param Node   $node        Visited node for which to verify arguments match regex
-	 * @param int    $argPosition Position of argument to check
-	 * @param string $argRegex    Regex to validate against argument
+	 * Check that argument matches regex at node
+	 *
+	 * @param Node   $node         Visited node for which to verify arguments match regex
+	 * @param int    $argPosition  Position of argument to check
+	 * @param string $argRegex     Regex to validate against argument
+	 * @param string $functionName Function name for report
+	 * @param string $messageCode  Message code to provide in message
 	 *
 	 * @return void
 	 */
-	public function checkParam(Node $node, int $argPosition, string $argRegex): void
+	public function checkParam(Node $node, int $argPosition, string $argRegex, $functionName, $messageCode = null): void
 	{
-		$functionName = $node->children['expr']->children['name'] ?? null;
 		$args = $node->children['args']->children;
 
 		if (!array_key_exists($argPosition, $args)) {
 			/*
 			$this->emitPluginIssue(
-				$this->code_base,
-				$this->context,
-				'ParamMatchMissingArgument',
-				"Argument at %s for %s is missing",
-				[$argPosition, $function_name]
+			$this->code_base,
+			$this->context,
+			'ParamMatchMissingArgument',
+			"Argument at %s for %s is missing",
+			[$argPosition, $function_name]
 			);
 			*/
 			return;
@@ -126,12 +228,12 @@ class ParamMatchVisitor extends PluginAwarePostAnalysisVisitor
 		}
 
 		foreach ($list as $argValue) {
-			if (!preg_match($argRegex, $argValue)) {
+			if (!\preg_match($argRegex, $argValue)) {
 				// Emit an issue if the argument does not match the expected regex pattern
 				$this->emitPluginIssue(
 					$this->code_base,
 					$this->context,
-					'ParamMatchRegexError',
+					$messageCode ?? 'ParamMatchRegexError',
 					"Argument {POS} function {FUNCTION} can have value '{VALUE}' that does not match the expected pattern '{PATTERN}'",
 					[$argPosition, $functionName, $argValue, $argRegex]
 				);
