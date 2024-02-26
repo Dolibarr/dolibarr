@@ -13,6 +13,7 @@
  * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020-2022  Open-Dsi                <support@open-dsi.fr>
+ * Copyright (C) 2024		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1758,6 +1759,13 @@ if ($id > 0) {
 				$showfield = 0;
 			}
 
+			// Other fk_s
+			$isforaign = false;
+			$posfk = strpos($value, 'fk_');
+			if ($posfk !== false) {
+				$isforaign = true;
+			}
+
 			if ($showfield) {
 				if ($value == 'country') {
 					print '<td class="liste_titre">';
@@ -2239,6 +2247,16 @@ if ($id > 0) {
 							} elseif ($value == 'price' || preg_match('/^amount/i', $value)) {
 								$valuetoshow = price($valuetoshow);
 							}
+
+							// Is Foraign fk_s
+							$isforaign = false;
+							$posfk = strpos($value, 'fk_');
+							$fieldelement = $value;
+							if ($posfk !== false) {
+								$isforaign = true;
+								$fieldelement = substr($value, 3); // fk_ <-- Without
+							}
+							
 							if ($value == 'private') {
 								$valuetoshow = yn($valuetoshow);
 							} elseif ($value == 'libelle_facture') {
@@ -2382,6 +2400,10 @@ if ($id > 0) {
 								if (!empty($obj->{$value}) && array_key_exists($obj->{$value}, $TDurationTypes)) {
 									$valuetoshow = $TDurationTypes[$obj->{$value}];
 								}
+							} elseif ($isforaign) { // Foraign, other fk_s
+								$langs->load('other');
+								$key = $langs->trans($obj->{'label_'.$fieldelement});
+								$valuetoshow = ($obj->{'label_'.$fieldelement} && $key != strtoupper($obj->{'label_'.$fieldelement}) ? $key : $obj->{$value});
 							}
 							$class .= ($class ? ' ' : '').'tddict';
 							if ($value == 'note' && $id == 10) {
@@ -2581,6 +2603,36 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 			continue;
 		}
 
+		// Is Foraign Create or Update select
+		$isforaign = false;
+		$posfk = strpos($value, 'fk_');
+		$fieldelement = $value;
+		if ($posfk !== false) {
+			$isforaign = true;
+			$fieldelement = substr($value, 3); // fk_ <-- Without
+
+			// Create Array element Other dictionaries
+			$tablef = 'c_'.$fieldelement;
+			$sqlf = "SELECT rowid, label FROM ".$db->prefix().$tablef;
+			$sqlf .= " WHERE active = 1";
+			$resqlf = $db->query($sqlf);
+			if ($resqlf) {
+				$numf = $db->num_rows($resqlf);
+				$if = 0;
+				while ($if < $numf) {
+					$objf = $db->fetch_object($resqlf);
+				
+					if ($objf) {
+						$elementList[$objf->rowid] = $objf->label;
+					}
+					$if++;
+				}
+				
+			} else {
+				dol_print_error($db);
+			}
+		}
+
 		if (in_array($value, array('code', 'libelle', 'type')) && $tabname == "c_actioncomm" && isset($obj->$value) && in_array($obj->type, array('system', 'systemauto'))) {
 			$hidden = (!empty($obj->{$value}) ? $obj->{$value} : '');
 			print '<td>';
@@ -2746,6 +2798,13 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 		} elseif ($value == 'type_duration') {
 			print '<td>';
 			print $form->selectTypeDuration('', (empty($obj->type_duration) ? '' : $obj->type_duration), array('i','h'));
+			print '</td>';
+		} elseif ($isforaign) {	// Other fk_s
+			$tmparray = array();
+			$tmparray = $elementList;
+			$fieldValue = isset($obj->{$value}) ? $obj->{$value} : ''; // <-- fk_value
+			print '<td>';
+			print $form->selectarray($value, $tmparray, $fieldValue, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth250');
 			print '</td>';
 		} else {
 			$fieldValue = isset($obj->{$value}) ? $obj->{$value} : '';
