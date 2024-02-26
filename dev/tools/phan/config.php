@@ -183,7 +183,7 @@ $VALID_MODULE_MAPPING = array(
 	'zapier' => 'Zapier',
 );
 
-$moduleNameRegex = '/^(?:'.implode('|', array_merge(array_keys($DEPRECATED_MODULE_MAPPING), array_keys($VALID_MODULE_MAPPING))).')$/';
+$moduleNameRegex = '/^(?:'.implode('|', array_merge(array_keys($DEPRECATED_MODULE_MAPPING), array_keys($VALID_MODULE_MAPPING), array('\$modulename'))).')$/';
 
 /**
  * This configuration will be read and overlaid on top of the
