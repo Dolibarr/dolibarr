@@ -9348,7 +9348,7 @@ function dol_htmloutput_events($disabledoutputofmessages = 0)
  *  @see    dol_htmloutput_errors()
  *  @see    setEventMessages()
  */
-function get_htmloutput_mesg($mesgstring = '', $mesgarray = '', $style = 'ok', $keepembedded = 0)
+function get_htmloutput_mesg($mesgstring = '', $mesgarray = [], $style = 'ok', $keepembedded = 0)
 {
 	global $conf, $langs;
 
