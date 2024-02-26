@@ -48,7 +48,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public $table_element = 'eventorganization_conferenceorboothattendee';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
+	 * @var int|string  Does this object support multicompany module ?
 	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 'fk_project@projet';
