@@ -595,7 +595,7 @@ if (isModEnabled('ficheinter')) {
 	}
 }
 
-print '</div><div class="fichetwothirdright">';
+print '<div class="fichetwothirdright">';
 
 /*
  * Last modified customers or prospects
@@ -1131,6 +1131,7 @@ if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
 	}
 }
 
+print '</div>';
 print '</div>';
 print '</div>';
 
