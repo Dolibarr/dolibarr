@@ -425,7 +425,7 @@ if ($action == 'confirm_generateinvoice') {
 
 		$db->begin();
 		$idprod = GETPOST('productid', 'int');
-		$generateinvoicemode = GETPOST('generateinvoicemode', 'string');
+		$generateinvoicemode = GETPOST('generateinvoicemode', 'alphanohtml');
 		$invoiceToUse = GETPOST('invoiceid', 'int');
 
 		$prodDurationHoursBase = 1.0;

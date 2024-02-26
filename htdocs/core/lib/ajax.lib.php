@@ -526,7 +526,9 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 						if ($(data.element).attr("data-html") != undefined) {
 							/* If property html set, we decode html entities and use this. */
 							/* Note that HTML content must have been sanitized from js with dol_escape_htmltag(xxx, 0, 0, \'\', 0, 1) when building the select option. */
-							return htmlEntityDecodeJs($(data.element).attr("data-html"));
+							if (typeof htmlEntityDecodeJs === "function") {
+								return htmlEntityDecodeJs($(data.element).attr("data-html"));
+							}
 						}
 						return data.text;
 					},

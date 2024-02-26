@@ -663,11 +663,11 @@ if (!empty($output_arrtd)) {
 			} else {
 				$tmp .= '<tr class="hidden sourcephpstan">';
 			}
-			$tmp .= '<td>'.dolPrintHTML($reg[1]).'</td>';
+			$tmp .= '<td>'.dolPrintLabel($reg[1]).'</td>';
 			$tmp .= '<td class="">';
-			$tmp .= '<a href="'.($urlgit.$reg[1].'#L'.$reg[2]).'" target="_blank">'.dolPrintHTML($reg[2]).'</a>';
+			$tmp .= '<a href="'.($urlgit.$reg[1].'#L'.$reg[2]).'" target="_blank">'.dolPrintLabel($reg[2]).'</a>';
 			$tmp .= '</td>';
-			$tmp .= '<td class="tdoverflowmax300" title="'.dolPrintHTMLForAttribute($reg[4]).'">'.dolPrintHTML($reg[4]).'</td>';
+			$tmp .= '<td class="tdoverflowmax300" title="'.dolPrintHTMLForAttribute($reg[4]).'">'.dolPrintLabel($reg[4]).'</td>';
 			$tmp .= '</tr>'."\n";
 
 			$nblines++;
@@ -700,11 +700,11 @@ if (count($output_phan_json) != 0) {
 			} else {
 				$tmpphan .= '<tr class="hidden sourcephan">';
 			}
-			$tmpphan .= '<td>'.dolPrintHTML($path).'</td>';
+			$tmpphan .= '<td>'.dolPrintLabel($path).'</td>';
 			$tmpphan .= '<td class="">';
 			$tmpphan .= '<a href="'.$code_url_attr.'" target="_blank">'.$line_range_txt.'</a>';
 			$tmpphan .= '</td>';
-			$tmpphan .= '<td class="tdoverflowmax300">'.dolPrintHTML($notice['description']).'</td>';
+			$tmpphan .= '<td class="tdoverflowmax300">'.dolPrintLabel($notice['description']).'</td>';
 			$tmpphan .= '</tr>';
 			$tmpphan .= "\n";
 

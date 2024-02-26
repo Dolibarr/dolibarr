@@ -2727,7 +2727,7 @@ while ($i < $imaxinloop) {
 
 		// Billed
 		if (!empty($arrayfields['c.facture']['checked'])) {
-			print '<td class="center">'.yn($obj->billed).'</td>';
+			print '<td class="center">'.yn($obj->billed, 4).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
