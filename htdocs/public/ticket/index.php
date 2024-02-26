@@ -76,7 +76,7 @@ if (empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	exit;
 }
 $arrayofjs = array();
-$arrayofcss = array('/ticket/css/styles.css.php');
+$arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/ticket/').'css/styles.css.php');
 
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
