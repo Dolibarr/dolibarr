@@ -188,7 +188,7 @@ SuppliersDraftInvoices=Satıcıların hesab-fakturaları
 Unpaid=Ödənilməmiş
 ErrorNoPaymentDefined=Xəta Heç bir ödəniş müəyyən edilməmişdir
 ConfirmDeleteBill=Bu fakturanı silmək istədiyinizə əminsiniz?
-ConfirmValidateBill=Bu fakturanı <b>%s<span class='notranslate'></b> istinadı ilə doğrulamaq istədiyinizə əminsiniz >?
+ConfirmValidateBill=Are you sure you want to validate this invoice with the reference <b>%s</b>?
 ConfirmUnvalidateBill=<b>%s</b> fakturasını qaralama statusuna dəyişmək istədiyinizə əminsiniz ?
 ConfirmClassifyPaidBill=<b>%s</b> fakturasını ödənişli statusuna dəyişmək istədiyinizə əminsiniz ?
 ConfirmCancelBill=<b>%s</b> fakturasını ləğv etmək istədiyinizə əminsiniz?
@@ -210,14 +210,14 @@ ConfirmClassifyPaidPartiallyReasonDiscountVatDesc=Bəzi ölkələrdə bu seçim 
 ConfirmClassifyPaidPartiallyReasonAvoirDesc=Bütün digərləri uyğun gəlmirsə, bu seçimdən istifadə edin
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=<b>pis müştəri</b> borcunu ödəməkdən imtina edən müştəridir.
 ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=Bəzi məhsullar geri qaytarıldığı üçün ödəniş tamamlanmadıqda bu seçim istifadə olunur
-ConfirmClassifyPaidPartiallyReasonBankChargeDesc=Ödənilməmiş məbləğ <b>vasitəçi bank haqları</b>, birbaşa b0aee3730z-dan çıxılır. >düzgün məbləğ<span class='notranslate'></b> Müştəri tərəfindən ödənilir.
+ConfirmClassifyPaidPartiallyReasonBankChargeDesc=The unpaid amount is <b>intermediary bank fees</b>, deducted directly from the <b>correct amount</b> paid by the Customer.
 ConfirmClassifyPaidPartiallyReasonWithholdingTaxDesc=Ödənilməmiş məbləğ heç vaxt ödənilməyəcək, çünki bu, vergi tutulmasıdır
 ConfirmClassifyPaidPartiallyReasonOtherDesc=Bütün digərləri uyğun deyilsə, məsələn, aşağıdakı vəziyyətdə bu seçimi istifadə edin:<br>- ödəniş tamamlanmayıb, çünki bəzi məhsullar geri göndərilib<br>- endirim unudulmuş olduğu üçün iddia edilən məbləğ çox mühümdür<br>Bütün hallarda həddindən artıq tələb olunan məbləğ kredit qeydi yaratmaqla mühasibatlıq sistemində düzəldilməlidir.
 ConfirmClassifyPaidPartiallyReasonBadSupplierDesc=<b>pis təchizatçı</b> ödəməkdən imtina etdiyimiz təchizatçıdır.
 ConfirmClassifyAbandonReasonOther=Digər
 ConfirmClassifyAbandonReasonOtherDesc=Bu seçim bütün digər hallarda istifadə olunacaq. Məsələn, əvəzedici faktura yaratmağı planlaşdırdığınız üçün.
-ConfirmCustomerPayment=<b>%s</b> <span class= üçün bu ödəniş daxiletməsini təsdiq edirsiniz? 'notranslate'>%s</span>?
-ConfirmSupplierPayment=<b>%s</b> <span class= üçün bu ödəniş daxiletməsini təsdiq edirsiniz? 'notranslate'>%s</span>?
+ConfirmCustomerPayment=Do you confirm this payment input for <b>%s</b> %s?
+ConfirmSupplierPayment=Do you confirm this payment input for <b>%s</b> %s?
 ConfirmValidatePayment=Bu ödənişi təsdiqləmək istədiyinizə əminsiniz? Ödəniş təsdiqləndikdən sonra heç bir dəyişiklik edilə bilməz.
 ValidateBill=Fakturanı təsdiq edin
 UnvalidateBill=Fakturanı etibarsız edin
@@ -377,7 +377,7 @@ DisabledBecauseReplacedInvoice=Faktura dəyişdirildiyi üçün əməliyyat deak
 DescTaxAndDividendsArea=Bu sahə xüsusi xərclər üçün edilən bütün ödənişlərin xülasəsini təqdim edir. Burada yalnız müəyyən edilmiş il ərzində ödənişləri olan qeydlər daxil edilir.
 NbOfPayments=Ödənişlərin sayı
 SplitDiscount=Endirimi ikiye böl
-ConfirmSplitDiscount=<b>%s</b> endirimini bölmək istədiyinizə əminsiniz span class='notranslate'>%s</span> iki kiçik endirimə çevrilsin?
+ConfirmSplitDiscount=Are you sure you want to split this discount of <b>%s</b> %s into two smaller discounts?
 TypeAmountOfEachNewDiscount=İki hissənin hər biri üçün giriş məbləği:
 TotalOfTwoDiscountMustEqualsOriginal=İki yeni endirimin cəmi ilkin endirim məbləğinə bərabər olmalıdır.
 ConfirmRemoveDiscount=Bu endirimi silmək istədiyinizə əminsiniz?
@@ -403,7 +403,7 @@ FrequencyPer_d=Hər %s gündən bir
 FrequencyPer_m=Hər %s aydan bir
 FrequencyPer_y=Hər %s ildən bir
 FrequencyUnit=Tezlik vahidi
-toolTipFrequency=Nümunələr:<br><b>Set 7, Gün</b></spanice: yeni invo> verin: hər 7 gündən bir<span class='notranslate'><br><b>Set 3, Ay</b> yenisini verin: hər 3 aydan bir faktura
+toolTipFrequency=Examples:<br><b>Set 7, Day</b>: give a new invoice every 7 days<br><b>Set 3, Month</b>: give a new invoice every 3 month
 NextDateToExecution=Növbəti faktura yaratmaq üçün tarix
 NextDateToExecutionShort=Növbəti nəsil tarix.
 DateLastGeneration=Ən son nəslin tarixi
@@ -569,9 +569,9 @@ PDFCrabeDescription=Faktura pdf şablon Crabe. Tam faktura şablonu (Sponge şab
 PDFSpongeDescription=Faktura pdf şablon Sponge. Tam faktura şablonu
 PDFCrevetteDescription=Faktura pdf şablon Crevette. Vəziyyət fakturaları üçün tam faktura şablonu
 TerreNumRefModelDesc1=Standart hesab-fakturalar üçün %syymm-nnnn və yy-nin il olduğu kredit qeydləri üçün %syymm-nnnn formatında qaytarın aydır və nnnn fasiləsiz və 0-a qayıtmayan ardıcıl avtomatik artan nömrədir
-MarsNumRefModelDesc1=Standart fakturalar üçün %syymm-nnnn, əvəzedici fakturalar üçün %syymm-nnnn, <span class=' formatında qaytarın notranslate'>%s</span>ilkin ödəniş fakturaları üçün yymm-nnnn və yy il, mm ay və nnnn ardıcıl avtomatik olduğu kredit qeydləri üçün %syymm-nnnn fasiləsiz və 0-a qayıtmadan artan nömrə
+MarsNumRefModelDesc1=Return number in the format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for down payment invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequential auto-incrementing number with no break and no return to 0
 TerreNumRefModelError=$syymm ilə başlayan qanun layihəsi artıq mövcuddur və bu ardıcıllıq modeli ilə uyğun gəlmir. Bu modulu aktivləşdirmək üçün onu silin və ya adını dəyişin.
-CactusNumRefModelDesc1=Standart fakturalar üçün %syymm-nnnn, kredit qeydləri üçün %syymm-nnnn və <span class=' formatında qaytarın notranslate'>%s</span>yymm-nnnn ilkin ödəniş fakturaları üçün burada yy il, mm ay və nnnn fasiləsiz və 0-a qayıtmayan ardıcıl avtomatik artan nömrədir
+CactusNumRefModelDesc1=Return number in the format %syymm-nnnn for standard invoices, %syymm-nnnn for credit notes and %syymm-nnnn for down payment invoices where yy is year, mm is month and nnnn is a sequential auto-incrementing number with no break and no return to 0
 EarlyClosingReason=Erkən bağlanma səbəbi
 EarlyClosingComment=Erkən yekun qeyd
 ##### Types de contacts #####
@@ -613,8 +613,8 @@ TotalSituationInvoice=Ümumi vəziyyət
 invoiceLineProgressError=Faktura xəttinin gedişatı növbəti faktura xəttindən çox və ya ona bərabər ola bilməz
 updatePriceNextInvoiceErrorUpdateline=Xəta: faktura xəttində qiyməti yeniləyin: %s
 ToCreateARecurringInvoice=Bu müqavilə üçün təkrarlanan faktura yaratmaq üçün əvvəlcə bu qaralama fakturanı yaradın, sonra onu faktura şablonuna çevirin və gələcək hesab-fakturaların yaradılması tezliyini müəyyənləşdirin.
-ToCreateARecurringInvoiceGene=Gələcək fakturaları müntəzəm və əl ilə yaratmaq üçün <strong>%s - b0ecb2ec807f49f49 menyusuna daxil olun. span> - <span class='notranslate'>%s</strong>.
-ToCreateARecurringInvoiceGeneAuto=Əgər belə hesab-fakturaların avtomatik yaradılmasına ehtiyacınız varsa, administratorunuzdan <strong>%s<span class='notranslate modulunu aktiv edib quraşdırmasını xahiş edin. '></strong></span>. Qeyd edək ki, hər iki üsul (əllə və avtomatik) təkrarlanma riski olmadan birlikdə istifadə edilə bilər.
+ToCreateARecurringInvoiceGene=To generate future invoices regularly and manually, just go on menu <strong>%s - %s - %s</strong>.
+ToCreateARecurringInvoiceGeneAuto=If you need to have such invoices generated automatically, ask your administrator to enable and setup module <strong>%s</strong>. Note that both methods (manual and automatic) can be used together with no risk of duplication.
 DeleteRepeatableInvoice=Şablon fakturanı silin
 ConfirmDeleteRepeatableInvoice=Şablon fakturanı silmək istədiyinizə əminsiniz?
 CreateOneBillByThird=Üçüncü tərəf üçün bir faktura yaradın (əks halda, hər seçilmiş obyekt üçün bir faktura)

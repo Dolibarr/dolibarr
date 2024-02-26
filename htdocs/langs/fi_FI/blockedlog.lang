@@ -20,7 +20,7 @@ Fingerprint=Sormenjälki
 DownloadLogCSV=Vie arkistoidut lokit (CSV)
 DataOfArchivedEvent=Täydelliset tiedot arkistoidusta tapahtumasta
 ImpossibleToReloadObject=Alkuperäistä objektia (tyyppi %s, tunnus %s) ei ole linkitetty (katso "Täydelliset tiedot" -sarake saadaksesi muuttumattomia tallennettuja tietoja)
-BlockedLogAreRequiredByYourCountryLegislation=Maasi lainsäädäntö saattaa edellyttää muuttumattomien lokien moduulia. Tämän moduulin poistaminen käytöstä voi tehdä tulevista tapahtumista mitättömiä ja laillisten ohjelmistojen käytön kannalta, koska niitä ei voi vahvistaa <span class='notranslate'>vero</span> tarkastus.
+BlockedLogAreRequiredByYourCountryLegislation=Unalterable Logs module may be required by the legislation of your country. Disabling this module may render any future transactions invalid with respect to the law and the use of legal software as they can not be validated by a tax audit.
 BlockedLogActivatedBecauseRequiredByYourCountryLegislation=Muuttamattomat lokit -moduuli otettiin käyttöön maasi lainsäädännön vuoksi. Tämän moduulin poistaminen käytöstä voi tehdä tulevista tapahtumista mitättömiä ja laillisten ohjelmistojen käytön kannalta, koska niitä ei voi vahvistaa vero. span> tarkastus.
 BlockedLogDisableNotAllowedForCountry=Luettelo maista, joissa tämän moduulin käyttö on pakollista (että moduulia ei voida poistaa käytöstä virheellisesti, jos maasi on tässä luettelossa, moduulin poistaminen käytöstä ei ole mahdollista muokkaamatta ensin tätä luetteloa. Huomaa myös, että tämän moduulin käyttöönotto/poistaminen käytöstä seurata muuttumatonta Loki).
 OnlyNonValid=Ei kelvollinen

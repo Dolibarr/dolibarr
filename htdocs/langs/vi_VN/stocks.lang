@@ -282,7 +282,7 @@ ModuleStockTransferName=Chuyển nhượng cổ phiếu nâng cao
 ModuleStockTransferDesc=Quản lý nâng cao việc chuyển nhượng chứng khoán, với việc tạo bảng chuyển nhượng
 StockTransferNew=Chuyển nhượng cổ phiếu mới
 StockTransferList=Danh sách chuyển nhượng cổ phiếu
-ConfirmValidateStockTransfer=Bạn có chắc chắn muốn xác thực việc chuyển nhượng cổ phiếu này bằng tham chiếu <b>%s<span class='notranslate'></b></ khoảng> ?
+ConfirmValidateStockTransfer=Are you sure you want to validate this stocks transfer with the reference <b>%s</b> ?
 ConfirmDestock=Giảm cổ phiếu khi chuyển %s
 ConfirmDestockCancel=Hủy giảm cổ phiếu bằng cách chuyển %s
 DestockAllProduct=Giảm cổ phiếu

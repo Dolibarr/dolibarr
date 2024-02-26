@@ -335,7 +335,6 @@ CategoryDeleted=Kategori för bokföringskonto har tagits bort
 AccountingJournals=Bokföringsloggbok
 AccountingJournal=Bokföringsloggbok
 NewAccountingJournal=Ny bokföringsloggbok
-ShowAccountingJournal=Visa loggböcker
 NatureOfJournal=Journalens natur
 AccountingJournalType1=Övrig verksamhet
 AccountingJournalType2=Försäljning
@@ -353,7 +352,7 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Inaktivera bindning och överföring av bokf
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Inaktivera bindning och överföring av bokföring vid köp (leverantörsfakturor kommer inte att beaktas vid redovisning)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Inaktivera bindning och överföring i bokföring på kostnadsrapporter (kostnadsrapporter kommer inte att beaktas vid redovisning)
 ACCOUNTING_ENABLE_LETTERING=Aktivera bokstäverfunktionen i bokföringen
-ACCOUNTING_ENABLE_LETTERING_DESC=När detta alternativ är aktiverat kan du definiera en kod för varje bokföringspost så att du kan gruppera olika bokföringsrörelser. Tidigare, när olika tidskrifter hanterades oberoende, var denna funktion nödvändig för att gruppera rörelserader för olika tidskrifter tillsammans. Men med Dolibarr-bokföring, en sådan spårningskod, som heter "<b>%s<span class='notranslate'></b> span>" sparas redan automatiskt, så en automatisk bokstäver är redan gjord, utan risk för fel så denna funktion har blivit värdelös för en vanlig användning. Manuell bokstäverfunktion tillhandahålls för slutanvändare som verkligen inte litar på datormotorn som gör överföringen av data i bokföring.
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
 EnablingThisFeatureIsNotNecessary=Att aktivera den här funktionen är inte längre nödvändigt för en rigorös redovisningshantering.
 ACCOUNTING_ENABLE_AUTOLETTERING=Aktivera den automatiska bokstäverna vid överföring till bokföring
 ACCOUNTING_ENABLE_AUTOLETTERING_DESC=Koden för bokstäverna genereras automatiskt och inkrementeras och väljs inte av slutanvändaren

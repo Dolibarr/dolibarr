@@ -69,7 +69,7 @@ Read=Lexoni
 Assigned=Caktuar
 NeedMoreInformation=Në pritje të komenteve të gazetarëve
 NeedMoreInformationShort=Në pritje të komenteve
-TicketAnswered=Answered
+TicketAnswered=U përgjigj
 Waiting=Ne pritje
 SolvedClosed=E zgjidhur
 Deleted=U fshi
@@ -233,7 +233,7 @@ TicketMessageMailIntroText=Përshëndetje,<br>Një përgjigje e re është shtua
 TicketMessageMailIntroHelpAdmin=Ky tekst do të futet përpara përgjigjes kur i përgjigjeni një bilete nga Dolibarr
 TicketMessageMailFooter=Fundi i mesazhit
 TicketMessageMailFooterHelp=Ky tekst shtohet vetëm në fund të mesazhit të dërguar me email dhe nuk do të ruhet.
-TicketMessageMailFooterText=Mesazh i dërguar nga <b>%s<span class='notranslate'></b></spanr> nëpërmjet
+TicketMessageMailFooterText=Message sent by <b>%s</b> via Dolibarr
 TicketMessageMailFooterHelpAdmin=Ky tekst do të futet pas mesazhit të përgjigjes.
 TicketMessageHelp=Vetëm ky tekst do të ruhet në listën e mesazheve në kartën e biletës.
 TicketMessageSubstitutionReplacedByGenericValues=Variablat e zëvendësimeve zëvendësohen me vlera gjenerike.
@@ -320,7 +320,7 @@ ViewTicket=Shiko biletën
 ViewMyTicketList=Shikoni listën time të biletave
 ErrorEmailMustExistToCreateTicket=Gabim: adresa e emailit nuk u gjet në bazën tonë të të dhënave
 TicketNewEmailSubjectAdmin=Bileta e re u krijua - Ref %s (ID-ja e biletës publike %s)
-TicketNewEmailBodyAdmin=<p>Bileta sapo është krijuar me ID #%s, shiko informacionin:<span class='notranslate'>b0679c9z3a6a64 >
+TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
 SeeThisTicketIntomanagementInterface=Shihni biletën në ndërfaqen e menaxhimit
 TicketPublicInterfaceForbidden=Ndërfaqja publike për biletat nuk u aktivizua
 ErrorEmailOrTrackingInvalid=Vlera e keqe për ndjekjen e ID-së ose emailit

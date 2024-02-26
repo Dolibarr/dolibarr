@@ -275,6 +275,7 @@ function dol_setshmop($memoryid, $data, $expire)
 		if ($shm_bytes_written1 + $shm_bytes_written2 != 6 + dol_strlen($newdata)) {
 			print "Couldn't write the entire length of data\n";
 		}
+		// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 		shmop_close($handle);
 		return ($shm_bytes_written1 + $shm_bytes_written2);
 	} else {
@@ -312,6 +313,7 @@ function dol_getshmop($memoryid)
 		} else {
 			return -1;
 		}
+		// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 		shmop_close($handle);
 	} else {
 		return null; // Can't open existing block, so we suppose it was not created, so nothing were cached yet for the memoryid

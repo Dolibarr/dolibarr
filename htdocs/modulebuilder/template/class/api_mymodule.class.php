@@ -224,9 +224,9 @@ class MyModuleApi extends DolibarrApi
 	/**
 	 * Update myobject
 	 *
-	 * @param int   $id             Id of myobject to update
-	 * @param array $request_data   Datas
-	 * @return int
+	 * @param 	int   		$id             Id of myobject to update
+	 * @param 	array 		$request_data   Datas
+	 * @return 	Object						Object after update
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found

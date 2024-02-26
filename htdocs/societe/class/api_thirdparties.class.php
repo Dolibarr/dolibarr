@@ -2,7 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018   Pierre Chéné            <pierre.chene44@gmail.com>
  * Copyright (C) 2019   Cedric Ancelin          <icedo.anc@gmail.com>
- * Copyright (C) 2020-2021  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023       Alexandre Janniaux  <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,7 +32,7 @@ class Thirdparties extends DolibarrApi
 {
 	/**
 	 *
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var array   $FIELDS     Mandatory fields, checked when we create and update the object
 	 */
 	public static $FIELDS = array(
 		'name'
@@ -273,9 +273,9 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Update thirdparty
 	 *
-	 * @param int   $id             Id of thirdparty to update
-	 * @param array $request_data   Datas
-	 * @return array|mixed|boolean
+	 * @param 	int   			$id             Id of thirdparty to update
+	 * @param 	array 			$request_data   Datas
+	 * @return 	Object|false					Updated object
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -472,9 +472,12 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @param int		$id					Id of thirdparty
 	 * @param int       $representative_id	Id of representative
-	 * @return Object|void
+	 * @return int							Return integer <=0 if KO, >0 if OK
 	 *
 	 * @url POST {id}/representative/{representative_id}
+	 *
+	 * @throws RestException 401 Access not allowed for your login
+	 * @throws RestException 404 User or Thirdparty not found
 	 */
 	public function addRepresentative($id, $representative_id)
 	{
@@ -503,9 +506,12 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @param int		$id					Id of thirdparty
 	 * @param int       $representative_id	Id of representative
-	 * @return Object|void
+	 * @return int							Return integer <=0 if KO, >0 if OK
 	 *
 	 * @url DELETE {id}/representative/{representative_id}
+	 *
+	 * @throws RestException 401 Access not allowed for your login
+	 * @throws RestException 404 User or Thirdparty not found
 	 */
 	public function deleteRepresentative($id, $representative_id)
 	{
@@ -1095,7 +1101,7 @@ class Thirdparties extends DolibarrApi
 		 * We select all the records that match the socid
 		 */
 
-		$sql = "SELECT rowid, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
+		$sql = "SELECT rowid, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation as address, proprio,";
 		$sql .= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
 		if ($id) {

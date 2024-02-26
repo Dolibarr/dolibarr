@@ -350,7 +350,7 @@ class Users extends DolibarrApi
 	 *
 	 * @param	int			$id					Id of account to update
 	 * @param	array		$request_data		Datas
-	 * @return	array|mixed						Record after update
+	 * @return 	Object							Updated object
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found

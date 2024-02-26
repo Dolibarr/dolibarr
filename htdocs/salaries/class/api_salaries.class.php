@@ -162,9 +162,9 @@ class Salaries extends DolibarrApi
 	/**
 	 * Update salary
 	 *
-	 * @param int    $id              ID of salary
-	 * @param array  $request_data    data
-	 * @return int
+	 * @param 	int    	$id              	ID of salary
+	 * @param 	array  	$request_data    	Data
+	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
 	{

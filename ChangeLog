@@ -3,7 +3,7 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
-***** ChangeLog for 20.0.0 compared to 19.0.0 *****
+***** ChangeLog for 20.0.0 compared to 19.0 *****
 
 For users:
 ----------
@@ -25,8 +25,7 @@ The following changes may create regressions for some external modules, but were
 * Properties ->date_update and ->date_modification were merged into date_modification.
 
 
-
-***** ChangeLog for 19.0.0 compared to 18.0.0 *****
+***** ChangeLog for 19.0.0 compared to 18.0 *****
 
 For users:
 ----------
@@ -353,6 +352,7 @@ FIX: update price extrafield on propal card
 FIX: user filter in per user view of event list (#28049)
 FIX: use the currency for propal signature page
 
+
 ***** ChangeLog for 18.0.4 compared to 18.0.3 *****
 FIX: $this->newref already exists and could have been modified by trigger but we still use a local variable for the filesystem-based renaming
 FIX: 16.0 only, backport fix for SQL error on global search product
@@ -541,7 +541,7 @@ FIX: url to check keyword not saved on partnership from public form
 FIX: when adding new times on a survey, all hours would be erased.
 
 
-***** ChangeLog for 18.0.0 compared to 17.0.0 *****
+***** ChangeLog for 18.0.0 compared to 17.0 *****
 
 For users:
 ----------

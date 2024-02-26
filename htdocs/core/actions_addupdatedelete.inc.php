@@ -22,6 +22,23 @@
  */
 
 
+'
+@phan-var-force CommonObject $this
+@phan-var-force ?string $action
+@phan-var-force ?string $cancel
+@phan-var-force CommonObject $object
+@phan-var-force string $permissiontoadd
+@phan-var-force ?string $permissionedit
+@phan-var-force string $permissiontodelete
+@phan-var-force string $backurlforlist
+@phan-var-force ?string $backtopage
+@phan-var-force ?string $noback
+@phan-var-force ?string $triggermodname
+@phan-var-force string $hidedetails
+@phan-var-force string $hidedesc
+@phan-var-force string $hideref
+';
+
 // $action or $cancel must be defined
 // $object must be defined
 // $permissiontoadd must be defined

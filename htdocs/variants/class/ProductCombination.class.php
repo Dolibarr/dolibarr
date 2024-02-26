@@ -1151,7 +1151,7 @@ class ProductCombinationLevel
 		}
 
 		$this->id = $obj->rowid;
-		$this->fk_product_attribute_combination = (float) $obj->fk_product_attribute_combination;
+		$this->fk_product_attribute_combination = (int) $obj->fk_product_attribute_combination;
 		$this->fk_price_level = intval($obj->fk_price_level);
 		$this->variation_price = (float) $obj->variation_price;
 		$this->variation_price_percentage = (bool) $obj->variation_price_percentage;

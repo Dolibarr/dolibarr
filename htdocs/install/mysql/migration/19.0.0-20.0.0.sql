@@ -32,6 +32,11 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
+-- V18 forgotten
+
+UPDATE llx_paiement SET ref = rowid WHERE ref IS NULL OR ref = '';
+
+
 -- V19 forgotten
 
 ALTER TABLE llx_resource ADD COLUMN phone varchar(255) DEFAULT NULL AFTER max_users;
@@ -39,6 +44,8 @@ ALTER TABLE llx_resource ADD COLUMN email varchar(255) DEFAULT NULL AFTER phone;
 ALTER TABLE llx_resource ADD COLUMN url varchar(255) DEFAULT NULL AFTER email;
 ALTER TABLE llx_resource ADD COLUMN fk_state integer DEFAULT NULL AFTER fk_country;
 ALTER TABLE llx_resource ADD INDEX idx_resource_fk_state (fk_state);
+
+UPDATE llx_c_type_contact SET element = 'stocktransfer' WHERE element = 'StockTransfer';
 
 
 -- Use unique keys for extrafields
@@ -248,3 +255,12 @@ ALTER TABLE llx_socpeople ADD COLUMN geopoint point DEFAULT NULL;
 ALTER TABLE llx_socpeople ADD COLUMN georesultcode varchar(16) NULL;
 
 ALTER TABLE llx_socpeople ADD COLUMN name_alias varchar(255) NULL;
+
+-- Supplier
+INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'supplier_invoice','invoice_supplier_send','',0,null,null,'(SendingReminderEmailOnUnpaidSupplierInvoice)',100, 'isModEnabled("supplier_invoice")',1,'[__[MAIN_INFO_SOCIETE_NOM]__] - __(SupplierInvoice)__','__(Hello)__,<br /><br />__(SupplierInvoiceUnpaidContent)__<br />__URL_SUPPLIER_INVOICE__<br /><br />__(Sincerely)__<br />__USER_SIGNATURE__',null, 0);
+
+
+ALTER TABLE llx_societe ADD COLUMN phone_mobile varchar(20) after phone;
+
+ALTER TABLE llx_facture ADD INDEX idx_facture_tms (tms);
+ALTER TABLE llx_facture_fourn ADD INDEX idx_facture_fourn_tms (tms);

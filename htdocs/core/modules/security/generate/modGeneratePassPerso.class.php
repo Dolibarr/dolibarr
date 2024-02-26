@@ -153,6 +153,8 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 *  Build new password
 	 *
 	 *  @return     string      Return a new generated password
+	 *
+	 *  @phan-suppress PhanPossiblyInfiniteRecursionSameParams
 	 */
 	public function getNewGeneratedPassword()
 	{

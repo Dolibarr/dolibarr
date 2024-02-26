@@ -117,7 +117,7 @@ class LangTest extends CommonClassTest
 
 			$result = $tmplangs->transnoentitiesnoconv("SeparatorDecimal");
 			print __METHOD__." SeparatorDecimal=".$result."\n";
-			$this->assertTrue(in_array($result, array('.',',','/',' ','','None')), 'Error on decimal separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
+			$this->assertTrue(in_array($result, array('.',',','/','。',' ','','None')), 'Error on decimal separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
 
 			$result = $tmplangs->transnoentitiesnoconv("SeparatorThousand");
 			print __METHOD__." SeparatorThousand=".$result."\n";
@@ -161,6 +161,18 @@ class LangTest extends CommonClassTest
 				$result = preg_match('/<<<<</m', $filecontent);	// A sequence of char we don't want
 				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
 				$this->assertTrue($result == 0, 'Found a sequence <<<<< into the translation file '.$code.'/'.$file.'. Probably a bad merge of code were done.');
+
+				$reg = array();
+				$result = preg_match('/(.*)\'notranslate\'/im', $filecontent, $reg);	// A sequence of char we don't want
+				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
+				$this->assertTrue($result == 0, 'Found a sequence tag \'notranslate\' into the translation file '.$code.'/'.$file.' in line '.empty($reg[1]) ? '' : $reg[1]);
+
+				if (!in_array($code, array('ar_SA'))) {
+					$reg = array();
+					$result = preg_match('/(.*)<([^a-z\/\s,=\(]1)/im', $filecontent, $reg);	// A sequence of char we don't want
+					//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
+					$this->assertTrue($result == 0, 'Found a sequence tag <'.(empty($reg[2]) ? '': $reg[2]).' into the translation file '.$code.'/'.$file.' in line '.empty($reg[1]) ? '' : $reg[1]);
+				}
 			}
 		}
 

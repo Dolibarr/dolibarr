@@ -493,7 +493,7 @@ CurrentOutstandingBill=Avoin lasku
 OutstandingBill=Avointen laskujen enimmäismäärä
 OutstandingBillReached=Avointen laskujen enimmäismäärä saavutettu
 OrderMinAmount=Vähimmäistilausmäärä
-MonkeyNumRefModelDesc=Palauta numero muodossa %syymm-nnnn asiakaskoodille ja b0ecb2ec87f49fez span>yymm-nnnn <span class='notranslate'>Toimittaja-koodille, jossa yy on vuosi, mm on kuukausi ja nnnn on peräkkäinen automaattisesti kasvava numero ilman taukoa ja ei paluuta nollaan.
+MonkeyNumRefModelDesc=Return a number in the format %syymm-nnnn for the customer code and %syymm-nnnn for the vendor code where yy is year, mm is month and nnnn is a sequential auto-incrementing number with no break and no return to 0.
 LeopardNumRefModelDesc=Asiakas / toimittaja-koodi on maksuton. Tämä koodi voidaan muuttaa milloin tahansa.
 ManagingDirectors=Johtajien nimet (TJ, johtaja, päällikkö...)
 MergeOriginThirdparty=Monista sidosryhmä (sidosryhmä jonka haluat poistaa)

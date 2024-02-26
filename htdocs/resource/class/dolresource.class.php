@@ -49,31 +49,6 @@ class Dolresource extends CommonObject
 	public $picto = 'resource';
 
 	/**
-	 * @var string address variables
-	 */
-	public $address;
-
-	/**
-	 * @var string zip of town
-	 */
-	public $zip;
-
-	/**
-	 * @var string town
-	 */
-	public $town;
-
-	/**
-	 * @var int ID country
-	 */
-	public $fk_country;
-
-	/**
-	 * @var int ID state
-	 */
-	public $fk_state;
-
-	/**
 	 * @var string description
 	 */
 	public $description;
@@ -82,11 +57,6 @@ class Dolresource extends CommonObject
 	 * @var string telephone number
 	 */
 	public $phone;
-
-	/**
-	 * @var string email address
-	 */
-	public $email;
 
 	/**
 	 * @var int Maximum users
@@ -750,10 +720,10 @@ class Dolresource extends CommonObject
 			$this->element_type = trim($this->element_type);
 		}
 		if (isset($this->busy)) {
-			$this->busy = trim($this->busy);
+			$this->busy = (int) $this->busy;
 		}
 		if (isset($this->mandatory)) {
-			$this->mandatory = trim($this->mandatory);
+			$this->mandatory = (int) $this->mandatory;
 		}
 
 		// Update request

@@ -362,7 +362,7 @@ if ($action == 'create') {
 
 	// Picto
 	print '<tr><td class="fieldrequired">'.$langs->trans('Image').'</td>';
-	print '<td><input type="text" class="minwidth300" name="picto" value="'.dol_escape_htmltag(GETPOST("picto", 'alphanohtmlallowclass')).'"></td><td>'.$langs->trans('Example').': fa-global</td></tr>';
+	print '<td><input type="text" class="minwidth300" name="picto" value="'.dol_escape_htmltag(GETPOST("picto", 'alphanohtml')).'"></td><td>'.$langs->trans('Example').': fa-global</td></tr>';
 
 	// URL
 	print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td>';
