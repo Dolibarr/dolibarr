@@ -2621,13 +2621,13 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 				$if = 0;
 				while ($if < $numf) {
 					$objf = $db->fetch_object($resqlf);
-				
+
 					if ($objf) {
 						$elementList[$objf->rowid] = $objf->label;
 					}
 					$if++;
 				}
-				
+
 			} else {
 				dol_print_error($db);
 			}
