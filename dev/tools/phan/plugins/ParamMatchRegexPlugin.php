@@ -235,7 +235,7 @@ class ParamMatchVisitor extends PluginAwarePostAnalysisVisitor
 					$this->code_base,
 					$this->context,
 					$messageCode ?? 'ParamMatchRegexError',
-					"Argument {POS} function {FUNCTION} can have value {VALUE} that does not match the expected pattern '{PATTERN}'",
+					"Argument {INDEX} function {FUNCTION} can have value {STRING_LITERAL} that does not match the expected pattern '{STRING_LITERAL}'",
 					[$argPosition, $functionName, json_encode($argValue), $argRegex]
 				);
 			}
