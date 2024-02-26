@@ -1175,7 +1175,7 @@ class User extends CommonObject
 
 
 	/**
-	 *	Load permissions granted to user into object user
+	 *	Load permissions granted to a user->id into object user->rights
 	 *
 	 *	@param  string	$moduletag		Limit permission for a particular module ('' by default means load all permissions)
 	 *  @param	int		$forcereload	Force reload of permissions even if they were already loaded (ignore cache)

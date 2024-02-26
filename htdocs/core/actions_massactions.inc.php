@@ -1684,7 +1684,7 @@ if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
 	$typeholiday = GETPOST('typeholiday', 'alpha');
-	$nbdaysholidays = GETPOST('nbdaysholidays', 'double');
+	$nbdaysholidays = GETPOSTFLOAT('nbdaysholidays');	// May be 1.5
 
 	if ($nbdaysholidays <= 0) {
 		setEventMessages($langs->trans("WrongAmount"), "", 'errors');

@@ -70,7 +70,7 @@ $id = GETPOST('id', 'int');
 $action		= GETPOST('action', 'aZ09');
 $mode = GETPOST('mode', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
-$group = GETPOST("group", "int", 3);
+$group = GETPOSTINT("group", 3);
 $cancel		= GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'useracard'; // To manage different context of search
 

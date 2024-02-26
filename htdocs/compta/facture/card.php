@@ -442,13 +442,13 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setretainedwarranty' && $user->hasRight('facture', 'creer')) {
 		$object->fetch($id);
-		$result = $object->setRetainedWarranty(GETPOST('retained_warranty', 'float'));
+		$result = $object->setRetainedWarranty(GETPOSTFLOAT('retained_warranty'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
 	} elseif ($action == 'setretainedwarrantydatelimit' && $user->hasRight('facture', 'creer')) {
 		$object->fetch($id);
-		$result = $object->setRetainedWarrantyDateLimit(GETPOST('retained_warranty_date_limit', 'float'));
+		$result = $object->setRetainedWarrantyDateLimit(GETPOSTFLOAT('retained_warranty_date_limit'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
@@ -1372,7 +1372,7 @@ if (empty($reshook)) {
 				$object->ref_client         = $object->ref_customer;
 				$object->model_pdf          = GETPOST('model');
 				$object->fk_project         = GETPOST('projectid', 'int');
-				$object->cond_reglement_id	= (GETPOST('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
+				$object->cond_reglement_id	= (GETPOSTINT('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
 				$object->fk_account         = GETPOST('fk_account', 'int');
 				$object->amount             = price2num(GETPOST('amount'));
@@ -1459,7 +1459,7 @@ if (empty($reshook)) {
 				$object->ref_customer		= GETPOST('ref_client');
 				$object->model_pdf          = GETPOST('model');
 				$object->fk_project			= GETPOST('projectid', 'int');
-				$object->cond_reglement_id	= (GETPOST('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
+				$object->cond_reglement_id	= (GETPOSTINT('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account         = GETPOST('fk_account', 'int');
 				$object->amount             = price2num(GETPOST('amount'));
@@ -3496,7 +3496,7 @@ if ($action == 'create') {
 			// Deposit - Down payment
 			if (!getDolGlobalString('INVOICE_DISABLE_DEPOSIT')) {
 				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-				$tmp = '<input type="radio" id="radio_deposit" name="type" value="3"'.(GETPOST('type') == 3 ? ' checked' : '').'> ';
+				$tmp = '<input type="radio" id="radio_deposit" name="type" value="3"'.(GETPOSTINT('type') == 3 ? ' checked' : '').'> ';
 				print '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					jQuery("#typestandardinvoice, #valuestandardinvoice").click(function() {
