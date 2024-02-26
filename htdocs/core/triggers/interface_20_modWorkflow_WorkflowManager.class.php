@@ -398,7 +398,11 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 								}
 
 								foreach ($shipping->lines as $shippingline) {
-									$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
+									if (isset($qtyshipped[$shippingline->fk_product])) {
+										$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
+									} else {
+										$qtyshipped[$shippingline->fk_product] = $shippingline->qty;
+									}
 								}
 							}
 						}
@@ -411,7 +415,12 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 							if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $orderline->product_type > 0) {
 								continue;
 							}
-							$qtyordred[$orderline->fk_product] += $orderline->qty;
+							if (isset($qtyordred[$shippingline->fk_product])) {
+								$qtyordred[$orderline->fk_product] += $orderline->qty;
+							} else {
+								$qtyordred[$orderline->fk_product] = $orderline->qty;
+							}
+							
 						}
 					}
 					//dol_syslog(var_export($qtyordred,true),LOG_DEBUG);
