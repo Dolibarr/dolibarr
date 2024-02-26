@@ -4,187 +4,6 @@
 define('DOL_PROJECT_ROOT', __DIR__.'/../../..');
 define('DOL_DOCUMENT_ROOT', DOL_PROJECT_ROOT.'/htdocs');
 define('PHAN_DIR', __DIR__);
-$sanitizeRegex
-	= '/^(array:)?(?:'.implode(
-		'|',
-		array(
-			// Documented:
-			'none',
-			'array',
-			'int',
-			'intcomma',
-			'alpha',
-			'alphawithlgt',
-			'alphanohtml',
-			'MS',
-			'aZ',
-			'aZ09',
-			'aZ09arobase',
-			'aZ09comma',
-			'san_alpha',
-			'restricthtml',
-			'nohtml',
-			'custom',
-			// Not documented:
-			'email',
-			'restricthtmlallowclass',
-			'restricthtmlallowunvalid',
-			'restricthtmlnolink',
-			//'ascii',
-			//'categ_id',
-			//'chaine',
-
-			//'html',
-			//'boolean',
-			//'double',
-			//'float',
-			//'string',
-		)
-	).')*$/';
-
-/**
- * Map deprecated module names to new module names
- */
-$DEPRECATED_MODULE_MAPPING = array(
-	'actioncomm' => 'agenda',
-	'adherent' => 'member',
-	'adherent_type' => 'member_type',
-	'banque' => 'bank',
-	'categorie' => 'category',
-	'commande' => 'order',
-	'contrat' => 'contract',
-	'entrepot' => 'stock',
-	'expedition' => 'delivery_note',
-	'facture' => 'invoice',
-	'ficheinter' => 'intervention',
-	'product_fournisseur_price' => 'productsupplierprice',
-	'product_price' => 'productprice',
-	'projet'  => 'project',
-	'propale' => 'propal',
-	'socpeople' => 'contact',
-);
-
-/**
- * Map module names to the 'class' name (the class is: mod<CLASSNAME>)
- * Value is null when the module is not internal to the default
- * Dolibarr setup.
- */
-$VALID_MODULE_MAPPING = array(
-	'accounting' => 'Accounting',
-	'agenda' => 'Agenda',
-	'ai' => 'Ai',
-	'anothermodule' => null,
-	'api' => 'Api',
-	'asset' => 'Asset',
-	'bank' => 'Banque',
-	'barcode' => 'Barcode',
-	'blockedlog' => 'BlockedLog',
-	'bom' => 'Bom',
-	'bookcal' => 'BookCal',
-	'bookmark' => 'Bookmark',
-	'cashdesk' => null,  // TODO: fill in proper class
-	'category' => 'Categorie',
-	'clicktodial' => 'ClickToDial',
-	'collab' => 'Collab',
-	'comptabilite' => 'Comptabilite',
-	'contact' => null,  // TODO: fill in proper class
-	'contract' => 'Contrat',
-	'cron' => 'Cron',
-	'datapolicy' => 'DataPolicy',
-	'dav' => 'Dav',
-	'debugbar' => 'DebugBar',
-	'delivery_note' => 'Expedition',
-	'deplacement' => 'Deplacement',
-	"documentgeneration" => 'DocumentGeneration',
-	'don' => 'Don',
-	'dynamicprices' => 'DynamicPrices',
-	'ecm' => 'ECM',
-	'ecotax' => null,  // TODO: External module ?
-	'emailcollector' => 'EmailCollector',
-	'eventorganization' => 'EventOrganization',
-	'expensereport' => 'ExpenseReport',
-	'export' => 'Export',
-	'externalrss' => 'ExternalRss',
-	'externalsite' => 'ExternalSite',
-	'fckeditor' => 'Fckeditor',
-	'fournisseur' => 'Fournisseur',
-	'ftp' => 'FTP',
-	'geoipmaxmind' => 'GeoIPMaxmind',
-	'google' => null,  // External ?
-	'gravatar' => 'Gravatar',
-	'holiday' => 'Holiday',
-	'hrm' => 'HRM',
-	'import' => 'Import',
-	'incoterm' => 'Incoterm',
-	'intervention' => 'Ficheinter',
-	'intracommreport' => 'Intracommreport',
-	'invoice' => 'Facture',
-	'knowledgemanagement' => 'KnowledgeManagement',
-	'label' => 'Label',
-	'ldap' => 'Ldap',
-	'loan' => 'Loan',
-	'mailing' => 'Mailing',
-	'mailman' => null,  // Same module as mailmanspip -> MailmanSpip ??
-	'mailmanspip' => 'MailmanSpip',
-	'margin' => 'Margin',
-	'member' => 'Adherent',
-	'memcached' => null, // TODO: External module?
-	'modulebuilder' => 'ModuleBuilder',
-	'mrp' => 'Mrp',
-	'multicompany' => null, // Not provided by default, no module tests
-	'multicurrency' => 'MultiCurrency',
-	'mymodule' => null, // modMyModule - Name used in module builder (avoid false positives)
-	'notification' => 'Notification',
-	'numberwords' => null, // Not provided by default, no module tests
-	'oauth' => 'Oauth',
-	'openstreetmap' => null,  // External module?
-	'opensurvey' => 'OpenSurvey',
-	'order' => 'Commande',
-	'partnership' => 'Partnership',
-	'paybox' => 'Paybox',
-	'paymentbybanktransfer' => 'PaymentByBankTransfer',
-	'paypal' => 'Paypal',
-	'paypalplus' => null,
-	'prelevement' => 'Prelevement',
-	'printing' => 'Printing',
-	'product' => 'Product',
-	'productbatch' => 'ProductBatch',
-	'productprice' => null,
-	'productsupplierprice' => null,
-	'project' => 'Projet',
-	'propal' => 'Propale',
-	'receiptprinter' => 'ReceiptPrinter',
-	'reception' => 'Reception',
-	'recruitment' => 'Recruitment',
-	'resource' => 'Resource',
-	'salaries' => 'Salaries',
-	'service' => 'Service',
-	'socialnetworks' => 'SocialNetworks',
-	'societe' => 'Societe',
-	'stock' => 'Stock',
-	'stocktransfer' => 'StockTransfer',
-	'stripe' => 'Stripe',
-	'supplier_invoice' => null,  // Special case, uses invoice
-	'supplier_order' => null,  // Special case, uses invoice
-	'supplier_proposal' => 'SupplierProposal',
-	'syslog' => 'Syslog',
-	'takepos' => 'TakePos',
-	'tax' => 'Tax',
-	'ticket' => 'Ticket',
-	'user' => 'User',
-	'variants' => 'Variants',
-	'webhook' => 'Webhook',
-	'webportal' => 'WebPortal',
-	'webservices' => 'WebServices',
-	'webservicesclient' => 'WebServicesClient',
-	'website' => 'Website',
-	'workflow' => 'Workflow',
-	'workstation' => 'Workstation',
-	'zapier' => 'Zapier',
-);
-
-$moduleNameRegex = '/^(?:'.implode('|', array_merge(array_keys($DEPRECATED_MODULE_MAPPING), array_keys($VALID_MODULE_MAPPING))).')$/';
-
 /**
  * This configuration will be read and overlaid on top of the
  * default configuration. Command line arguments will be applied
@@ -263,15 +82,12 @@ return [
 	//
 	// Alternately, you can pass in the full path to a PHP file
 	// with the plugin's implementation (e.g. 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php')
-	'ParamMatchRegexPlugin' => [
-		'/^GETPOST$/' => [1, $sanitizeRegex],
-		'/^isModEnabled$/' => [0, $moduleNameRegex],
-		'/^sanitizeVal$/' => [1, $sanitizeRegex],
-	],
 	'plugins' => [
-		__DIR__.'/plugins/NoVarDumpPlugin.php',
-		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
-		'DeprecateAliasPlugin',
+		//'DeprecateAliasPlugin',
+		// __DIR__.'/plugins/NoVarDumpPlugin.php',
+		//'PHPDocToRealTypesPlugin',
+
+	/*
 		//'EmptyMethodAndFunctionPlugin',
 		'InvalidVariableIssetPlugin',
 		//'MoreSpecificElementTypePlugin',
@@ -290,7 +106,7 @@ return [
 		'NonBoolBranchPlugin', // Requires test on bool, nont on ints
 		'NonBoolInLogicalArithPlugin',
 		'NumericalComparisonPlugin',
-		// 'PHPDocToRealTypesPlugin',  // Report/Add types to function definitions
+		'PHPDocToRealTypesPlugin',
 		'PHPDocInWrongCommentPlugin', // Missing /** (/* was used)
 		//'ShortArrayPlugin', // Checks that [] is used
 		//'StrictLiteralComparisonPlugin',
@@ -298,7 +114,6 @@ return [
 		'UnknownElementTypePlugin',
 		'WhitespacePlugin',
 		//'RemoveDebugStatementPlugin', // Reports echo, print, ...
-		'SimplifyExpressionPlugin',
 		//'StrictComparisonPlugin', // Expects ===
 		'SuspiciousParamOrderPlugin',
 		'UnsafeCodePlugin',
@@ -317,6 +132,7 @@ return [
 		'UseReturnValuePlugin',
 		'EmptyStatementListPlugin',
 		'LoopVariableReusePlugin',
+	*/
 	],
 
 	// Add any issue types (such as 'PhanUndeclaredMethod')
@@ -326,11 +142,13 @@ return [
 		'PhanPluginCanUsePHP71Void',	// Dolibarr is maintaining 7.0 compatibility
 		'PhanPluginShortArray',			// Dolibarr uses array()
 		'PhanPluginShortArrayList',		// Dolibarr uses array()
+		// The following may require that --quick is not used
 		// Fixers From PHPDocToRealTypesPlugin:
-		'PhanPluginCanUseParamType',			// Fixer - Report/Add types in the function definition (function abc(string $var) (adds string)
-		'PhanPluginCanUseReturnType',			// Fixer - Report/Add return types in the function definition (function abc(string $var) (adds string)
+		'PhanPluginCanUseParamType',	// Fixer - Report/Add types in the function definition (function abc(string $var) (adds string)
+		'PhanPluginCanUseReturnType',	// Fixer - Report/Add return types in the function definition (function abc(string $var) (adds string)
 		'PhanPluginCanUseNullableParamType',	// Fixer - Report/Add nullable parameter types in the function definition
 		'PhanPluginCanUseNullableReturnType',	// Fixer - Report/Add nullable return types in the function definition
+
 		'PhanPluginNonBoolBranch',			// Not essential - 31240+ occurrences
 		'PhanPluginNumericalComparison',	// Not essential - 19870+ occurrences
 		'PhanTypeMismatchArgument',			// Not essential - 12300+ occurrences
