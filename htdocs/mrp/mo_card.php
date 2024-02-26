@@ -203,7 +203,7 @@ if (empty($reshook)) {
 		}
 
 		$error = 0;
-		$deleteChilds = GETPOST('deletechilds', 'boolean');
+		$deleteChilds = GETPOST('deletechilds', 'aZ');
 
 		// Start the database transaction
 		$db->begin();

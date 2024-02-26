@@ -35,7 +35,7 @@ class FormCategory extends Form
 	 * @param 	string		$type								The categorie type (e.g Categorie::TYPE_WAREHOUSE)
 	 * @param 	array		$preSelected						A list with the elements that should pre-selected
 	 * @param	string		$morecss							More CSS
-	 * @param	int			$searchCategoryProductOperator		0 or 1 to enable the checkbox to search with a or (0=not preseleted, 1=preselected), -1=Not used
+	 * @param	int			$searchCategoryProductOperator		Used only if $multiselect is 1. Set to 0 or 1 to enable the checkbox to search with a or (0=not preseleted, 1=preselected), -1=Checkbox never shown.
 	 * @param	int			$multiselect						0 or 1
 	 * @param	int			$nocateg							1=Add an entry '- No Category -'
 	 * @param	string		$showempty							1 or 'string' to add an empty entry
@@ -75,11 +75,23 @@ class FormCategory extends Form
 
 			$filter .= $formother->select_categories($type, $preSelected[0], $htmlName, $nocateg, $tmptitle, $morecss);
 		}
-		if ($searchCategoryProductOperator >= 0) {
-			$filter .= ' <input type="checkbox" class="valignmiddle" id="'.$htmlName2.'" name="'.$htmlName2.'" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').' title="'.dol_escape_htmltag($langs->trans('UseOrOperatorForCategories')).'" />';
-			$filter .= '<label class="none valignmiddle" for="'.$htmlName2.'" title="'.dol_escape_htmltag($langs->trans('UseOrOperatorForCategories')).'">';
+		if ($multiselect && $searchCategoryProductOperator >= 0) {
+			$filter .= ' <input type="checkbox" class="valignmiddle '.$htmlName2.'" id="'.$htmlName2.'" name="'.$htmlName2.'" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').' title="'.dol_escape_htmltag($langs->trans('UseOrOperatorForCategories')).'" />';
+			$filter .= '<label class="none valignmiddle '.$htmlName2.'" for="'.$htmlName2.'" title="'.dol_escape_htmltag($langs->trans('UseOrOperatorForCategories')).'">';
 			$filter .= $langs->trans('UseOrOperatorShort');
 			$filter .= '</label>';
+
+			$filter .= '<script>'."\n";;
+			$filter .= "var nbSelected = jQuery('#".$htmlName."').val().length;";
+			$filter .= "console.log('Nb of element now = '+nbSelected);\n";
+			$filter .= "if (nbSelected > 1) { jQuery('.".$htmlName2."').show(); } else { jQuery('.".$htmlName2."').hide(); }\n";
+			$filter .= "jQuery('#".$htmlName."').change(function() {\n";
+			$filter .= "console.log('Content of select box has been modified.');";
+			$filter .= 'var nbSelected = $(this).val().length;';
+			$filter .= "console.log('Nb of element now = '+nbSelected);\n";
+			$filter .= "if (nbSelected > 1) { jQuery('.".$htmlName2."').show(); } else { jQuery('.".$htmlName2."').hide(); }\n";
+			$filter .= '});'."\n";
+			$filter .= '</script>'."\n";
 		}
 		$filter .= "</div>";
 

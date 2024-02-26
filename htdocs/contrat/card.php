@@ -1052,7 +1052,7 @@ if (empty($reshook)) {
 
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes') {
-		if (!GETPOST('socid', 3)) {
+		if (!GETPOSTINT('socid', 3)) {
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		} else {
 			if ($object->id > 0) {
