@@ -25,7 +25,7 @@
 /** @phan-file-suppress PhanPluginSuspiciousParamPosition */
 
 // We allow POST of rich content with js and style, but only for this php file and if into some given POST variable
-define('NOSCANPOSTFORINJECTION', array('PAGE_CONTENT', 'WEBSITE_JS_INLINE', 'WEBSITE_HTML_HEADER', 'htmlheader'));
+define('NOSCANPOSTFORINJECTION', array('PAGE_CONTENT', 'WEBSITE_CSS_INLINE', 'WEBSITE_JS_INLINE', 'WEBSITE_HTML_HEADER', 'htmlheader'));
 
 define('USEDOLIBARREDITOR', 1);
 define('FORCE_CKEDITOR', 1); // We need CKEditor, even if module is off.
