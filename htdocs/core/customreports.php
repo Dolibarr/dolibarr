@@ -36,10 +36,6 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$objecttype = GETPOST('objecttype', 'aZ09arobase');
 	$tabfamily  = GETPOST('tabfamily', 'aZ09');
 
-	if (empty($objecttype)) {
-		$objecttype = 'thirdparty';
-	}
-
 	$search_measures = GETPOST('search_measures', 'array');
 	if (empty($search_measures)) {
 		$search_measures = array(0 => 't.count');
@@ -80,10 +76,21 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$langs->load("main");
 	$search_measures = array();
 
+	if (empty($user) || empty($user->id)) {
+		print 'Page is called as an include but $user and its permission loaded with getrights() are not defined. We stop here.';
+		exit(-1);
+	}
 	if (empty($object)) {
 		print 'Page is called as an include but $object is not defined. We stop here.';
 		exit(-1);
 	}
+}
+
+if (!empty($object)) {
+	$objecttype = $object->element.($object->module ? '@'.$object->module : '');
+}
+if (empty($objecttype)) {
+	$objecttype = 'thirdparty';
 }
 
 require_once DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php";
@@ -157,10 +164,14 @@ if ($objecttype) {
 		dol_include_once($fileforclass);
 
 		$ObjectClassName = $arrayoftype[$objecttype]['ObjectClassName'];
-		if (class_exists($ObjectClassName)) {
-			$object = new $ObjectClassName($db);
+		if (!empty($ObjectClassName)) {
+			if (class_exists($ObjectClassName)) {
+				$object = new $ObjectClassName($db);
+			} else {
+				print 'Failed to load class for type '.$objecttype.'. Class file found but Class object named '.$ObjectClassName.' not found.';
+			}
 		} else {
-			print 'Failed to load class for type '.$objecttype.'. Class file found but class object '.$ObjectClassName.' not found.';
+			print 'Failed to load class for type '.$objecttype.'. Class file name is unknown.';
 		}
 	} catch (Exception $e) {
 		print 'Failed to load class for type '.$objecttype.'. Class path not found.';

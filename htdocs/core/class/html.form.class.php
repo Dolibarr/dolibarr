@@ -8419,7 +8419,7 @@ class Form
 	 * @param int 			$addjscombo 		Add js combo
 	 * @param string 		$moreparamonempty 	Add more param on the empty option line. Not used if show_empty not set
 	 * @param int 			$disablebademail 	1=Check if a not valid email, 2=Check string '---', and if found into value, disable and colorize entry
-	 * @param int 			$nohtmlescape 		No html escaping.
+	 * @param int 			$nohtmlescape 		No html escaping (not recommended, use 'data-html' if you need to use label with HTML content).
 	 * @return string							HTML select string.
 	 * @see multiselectarray(), selectArrayAjax(), selectArrayFilter()
 	 */
@@ -8522,12 +8522,12 @@ class Form
 						$out .= ' selected'; // To preselect a value
 					}
 				}
-				if ($nohtmlescape) {
+				if (!empty($nohtmlescape)) {
 					$out .= ' data-html="' . dol_escape_htmltag($selectOptionValue) . '"';
 				}
 				if (is_array($tmpvalue)) {
 					foreach ($tmpvalue as $keyforvalue => $valueforvalue) {
-						if (preg_match('/^data-/', $keyforvalue)) {
+						if (preg_match('/^data-/', $keyforvalue)) {	// The best solution if you want to use HTML values into the list is to use data-html.
 							$out .= ' '.$keyforvalue.'="'.dol_escape_htmltag($valueforvalue).'"';
 						}
 					}
