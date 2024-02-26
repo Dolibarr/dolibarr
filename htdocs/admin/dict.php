@@ -1760,10 +1760,10 @@ if ($id > 0) {
 			}
 
 			// Other fk_s
-			$isforaign = false;
+			$isforeign = false;
 			$posfk = strpos($value, 'fk_');
 			if ($posfk !== false) {
-				$isforaign = true;
+				$isforeign = true;
 			}
 
 			if ($showfield) {
@@ -2249,14 +2249,14 @@ if ($id > 0) {
 							}
 
 							// Is Foraign fk_s
-							$isforaign = false;
+							$isforeign = false;
 							$posfk = strpos($value, 'fk_');
 							$fieldelement = $value;
 							if ($posfk !== false) {
-								$isforaign = true;
+								$isforeign = true;
 								$fieldelement = substr($value, 3); // fk_ <-- Without
 							}
-							
+
 							if ($value == 'private') {
 								$valuetoshow = yn($valuetoshow);
 							} elseif ($value == 'libelle_facture') {
@@ -2400,7 +2400,7 @@ if ($id > 0) {
 								if (!empty($obj->{$value}) && array_key_exists($obj->{$value}, $TDurationTypes)) {
 									$valuetoshow = $TDurationTypes[$obj->{$value}];
 								}
-							} elseif ($isforaign) { // Foraign, other fk_s
+							} elseif ($isforeign) { // Foraign, other fk_s
 								$langs->load('other');
 								$key = $langs->trans($obj->{'label_'.$fieldelement});
 								$valuetoshow = ($obj->{'label_'.$fieldelement} && $key != strtoupper($obj->{'label_'.$fieldelement}) ? $key : $obj->{$value});
@@ -2604,11 +2604,11 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 		}
 
 		// Is Foraign Create or Update select
-		$isforaign = false;
+		$isforeign = false;
 		$posfk = strpos($value, 'fk_');
 		$fieldelement = $value;
 		if ($posfk !== false) {
-			$isforaign = true;
+			$isforeign = true;
 			$fieldelement = substr($value, 3); // fk_ <-- Without
 
 			// Create Array element Other dictionaries
@@ -2621,13 +2621,11 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 				$if = 0;
 				while ($if < $numf) {
 					$objf = $db->fetch_object($resqlf);
-
 					if ($objf) {
 						$elementList[$objf->rowid] = $objf->label;
 					}
 					$if++;
 				}
-
 			} else {
 				dol_print_error($db);
 			}
@@ -2799,7 +2797,7 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 			print '<td>';
 			print $form->selectTypeDuration('', (empty($obj->type_duration) ? '' : $obj->type_duration), array('i','h'));
 			print '</td>';
-		} elseif ($isforaign) {	// Other fk_s
+		} elseif ($isforeign) {	// Other fk_s
 			$tmparray = array();
 			$tmparray = $elementList;
 			$fieldValue = isset($obj->{$value}) ? $obj->{$value} : ''; // <-- fk_value
