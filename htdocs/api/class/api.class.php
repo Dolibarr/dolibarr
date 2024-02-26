@@ -75,10 +75,10 @@ class DolibarrApi
 	 *
 	 * Display a short message an return a http code 200
 	 *
-	 * @param	string		$field		Field name
-	 * @param	mixed		$value		Value to check/clean
-	 * @param	Object		$object		Object
-	 * @return 	string					Value cleaned
+	 * @param	string			$field		Field name
+	 * @param	string|array	$value		Value to check/clean
+	 * @param	Object			$object		Object
+	 * @return 	string|array				Value cleaned
 	 */
 	protected function _checkValForAPI($field, $value, $object)
 	{

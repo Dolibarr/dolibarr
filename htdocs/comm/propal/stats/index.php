@@ -41,8 +41,8 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 $mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
 
 $object_status = GETPOST('object_status', 'intcomma');
-$typent_id = GETPOST('typent_id', 'int');
-$categ_id = GETPOST('categ_id', 'categ_id');
+$typent_id = GETPOSTINT('typent_id');
+$categ_id = GETPOSTINT('categ_id');
 
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int');

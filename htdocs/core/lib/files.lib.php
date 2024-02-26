@@ -80,12 +80,17 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 			}
 		}
 		dol_syslog("files.lib.php::dol_dir_list path=".$utf8_path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter).$error_info);
-		//print 'xxx'."files.lib.php::dol_dir_list path=".$utf8_path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter);
+		// print 'xxx'."files.lib.php::dol_dir_list path=".$utf8_path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($exclude_array);
 		if (!$filters_ok) {
 			// Return empty array when filters are invalid
 			return array();
 		}
+	} else {
+		// Already computed before
+		$exclude_array = $excludefilter;
 	}
+	// Define excludefilterarray (before while, for speed)
+	$excludefilterarray = array_merge(array('^\.'), $exclude_array);
 
 	$loaddate = ($mode == 1 || $mode == 2 || $nbsecondsold != 0 || $sortcriteria == 'date');
 	$loadsize = ($mode == 1 || $mode == 3 || $sortcriteria == 'size');
@@ -109,7 +114,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 			'types' => $types,
 			'recursive' => $recursive,
 			'filter' => $filter,
-			'excludefilter' => $excludefilter,
+			'excludefilter' => $exclude_array,  // Already converted to array.
 			'sortcriteria' => $sortcriteria,
 			'sortorder' => $sortorder,
 			'loaddate' => $loaddate,
@@ -131,6 +136,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 			$filedate = '';
 			$filesize = '';
 			$fileperm = '';
+
 			while (false !== ($os_file = readdir($dir))) {        // $utf8_file is always a basename (in directory $os_path)
 				$os_fullpathfile = ($os_path ? $os_path.'/' : '').$os_file;
 
@@ -143,13 +149,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 				$qualified = 1;
 
 				$utf8_fullpathfile = "$utf8_path/$utf8_file";  // Temp variable for speed
-				// Define excludefilterarray
-				$excludefilterarray = array('^\.');
-				if (is_array($excludefilter)) {
-					$excludefilterarray = array_merge($excludefilterarray, $excludefilter);
-				} elseif ($excludefilter) {
-					$excludefilterarray[] = $excludefilter;
-				}
+
 				// Check if file is qualified
 				foreach ($excludefilterarray as $filt) {
 					if (preg_match('/'.$filt.'/i', $utf8_file) || preg_match('/'.$filt.'/i', $utf8_fullpathfile)) {
@@ -162,7 +162,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 				if ($qualified) {
 					$isdir = is_dir($os_fullpathfile);
 					// Check whether this is a file or directory and whether we're interested in that type
-					if ($isdir && (($types == "directories") || ($types == "all") || $recursive > 0)) {
+					if ($isdir) {
 						// Add entry into file_list array
 						if (($types == "directories") || ($types == "all")) {
 							if ($loaddate || $sortcriteria == 'date') {
@@ -195,12 +195,12 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 
 						// if we're in a directory and we want recursive behavior, call this function again
 						if ($recursive > 0) {
-							if (empty($donotfollowsymlinks) || !is_link($utf8_fullpathfile)) {
+							if (empty($donotfollowsymlinks) || !is_link($os_fullpathfile)) {
 								//var_dump('eee '. $utf8_fullpathfile. ' '.is_dir($utf8_fullpathfile).' '.is_link($utf8_fullpathfile));
-								$file_list = array_merge($file_list, dol_dir_list($utf8_fullpathfile, $types, $recursive + 1, $filter, $excludefilter, $sortcriteria, $sortorder, $mode, $nohook, ($relativename != '' ? $relativename.'/' : '').$utf8_file, $donotfollowsymlinks, $nbsecondsold));
+								$file_list = array_merge($file_list, dol_dir_list($utf8_fullpathfile, $types, $recursive + 1, $filter, $exclude_array, $sortcriteria, $sortorder, $mode, $nohook, ($relativename != '' ? $relativename.'/' : '').$utf8_file, $donotfollowsymlinks, $nbsecondsold));
 							}
 						}
-					} elseif (!$isdir && (($types == "files") || ($types == "all"))) {
+					} elseif (in_array($types, array("files", "all"))) {
 						// Add file into file_list array
 						if ($loaddate || $sortcriteria == 'date') {
 							$filedate = dol_filemtime($utf8_fullpathfile);
@@ -2660,14 +2660,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 	}
 	// Fix modulepart for backward compatibility
-	if ($modulepart == 'users') {
+	if ($modulepart == 'facture') {
+		$modulepart = 'invoice';
+	} elseif ($modulepart == 'users') {
 		$modulepart = 'user';
-	}
-	if ($modulepart == 'tva') {
+	} elseif ($modulepart == 'tva') {
 		$modulepart = 'tax-vat';
-	}
-	// Fix modulepart delivery
-	if ($modulepart == 'expedition' && strpos($original_file, 'receipt/') === 0) {
+	} elseif ($modulepart == 'expedition' && strpos($original_file, 'receipt/') === 0) {
+		// Fix modulepart delivery
 		$modulepart = 'delivery';
 	}
 

@@ -111,6 +111,7 @@ $arrayoftype = array(
 	'cotisation' => array('label' => 'Subscriptions', 'picto'=>'member', 'ObjectClassName' => 'Subscription', 'enabled' => isModEnabled('adherent'), 'ClassPath' => "/adherents/class/subscription.class.php", 'langs'=>'members'),
 );
 
+
 // Complete $arrayoftype by external modules
 $parameters = array('objecttype'=>$objecttype, 'tabfamily'=>$tabfamily);
 $reshook = $hookmanager->executeHooks('loadDataForCustomReports', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -302,7 +303,11 @@ $formother = new FormOther($db);
 if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	llxHeader('', $langs->transnoentitiesnoconv('CustomReports'), '');
 
-	print dol_get_fiche_head($head, 'customreports', $title, -1, $picto);
+	if (empty($head)) {
+		print dol_get_fiche_head($head, 'customreports', $title, -2, $picto);
+	} else {
+		print dol_get_fiche_head($head, 'customreports', $title, -1, $picto);
+	}
 }
 
 $newarrayoftype = array();
@@ -935,7 +940,7 @@ if ($sql) {
 				}
 				$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->transnoentitiesnoconv("Empty") : $langs->transnoentitiesnoconv("NotDefined")));
 
-				if ($oldlabeltouse && ($labeltouse != $oldlabeltouse)) {
+				if ($oldlabeltouse !== '' && ($labeltouse != $oldlabeltouse)) {
 					$xi++; // Increase $xi
 				}
 				//var_dump($labeltouse.' '.$oldlabeltouse.' '.$xi);

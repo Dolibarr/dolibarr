@@ -95,9 +95,11 @@ class DocumentController extends Controller
 		// Security check
 		if (empty($modulepart)) {
 			httponly_accessforbidden('Bad link. Bad value for parameter modulepart', 400);
+			exit;
 		}
 		if (empty($original_file)) {
 			httponly_accessforbidden('Bad link. Missing identification to find file (original_file)', 400);
+			exit;
 		}
 
 		// get original file

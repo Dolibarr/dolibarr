@@ -261,13 +261,13 @@ abstract class CommonObject
 	public $user;
 
 	/**
-	 * @var string 			The type of originating object ('commande', 'facture', ...). Note: on some object this field is called $origin_type
+	 * @var string 		The type of originating object. Combined with $origin_id, it allows to reload $origin_object
 	 * @see fetch_origin()
 	 */
-	public $origin;
+	public $origin_type;
 
 	/**
-	 * @var int 		The id of originating object
+	 * @var int 		The id of originating object. Combined with $origin_type, it allows to reload $origin_object
 	 * @see fetch_origin()
 	 */
 	public $origin_id;
@@ -276,6 +276,13 @@ abstract class CommonObject
 	 * @var	Object		Origin object. This is set by fetch_origin() from this->origin and this->origin_id.
 	 */
 	public $origin_object;
+
+	/**
+	 * @var string|CommonObject		Sometime the type of the originating object ('commande', 'facture', ...), sometime the object (like onh MouvementStock)
+	 * @deprecated					Use now $origin_type and $origin_id;
+	 * @see fetch_origin()
+	 */
+	public $origin;
 
 	// TODO Remove this. Has been replaced with ->origin_object.
 	// This is set by fetch_origin() from this->origin and this->origin_id
@@ -470,12 +477,14 @@ abstract class CommonObject
 	public $fk_multicurrency;
 
 	/**
-	 * @var string		Multicurrency code
+	 * @var string|array<int,string>    Multicurrency code
+	 *                                  Or, just for the Paiement object, an array: invoice ID => currency code for that invoice.
 	 */
 	public $multicurrency_code;
 
 	/**
-	 * @var float		Multicurrency rate
+	 * @var float|array<int,float>      Multicurrency rate ("tx" = "taux" in French)
+	 *                                  Or, just for the Paiement object, an array: invoice ID => currency rate for that invoice.
 	 */
 	public $multicurrency_tx;
 
@@ -1485,7 +1494,7 @@ abstract class CommonObject
 		$sql .= " tc.code, tc.libelle as type_label";
 		$sql .= " FROM (".$this->db->prefix()."element_contact as ec, ".$this->db->prefix()."c_type_contact as tc)";
 		$sql .= " WHERE ec.rowid =".((int) $rowid);
-		$sql .= " AND ec.fk_c_type_contact=tc.rowid";
+		$sql .= " AND ec.fk_c_type_contact = tc.rowid";
 		$sql .= " AND tc.element = '".$this->db->escape($this->element)."'";
 
 		dol_syslog(get_class($this)."::swapContactStatus", LOG_DEBUG);

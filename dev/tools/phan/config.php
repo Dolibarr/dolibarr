@@ -83,6 +83,7 @@ return [
 	// Alternately, you can pass in the full path to a PHP file
 	// with the plugin's implementation (e.g. 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php')
 	'plugins' => [
+		__DIR__.'/plugins/NoVarDumpPlugin.php',
 		// checks if a function, closure or method unconditionally returns.
 		// can also be written as 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php'
 		//'DeprecateAliasPlugin',
@@ -149,9 +150,13 @@ return [
 		'PhanPluginShortArray',
 		'PhanPluginNumericalComparison',
 		'PhanPluginUnknownObjectMethodCall',
-		'PhanPluginCanUseParamType',
 		'PhanPluginNonBoolInLogicalArith',
-		'PhanPluginCanUseReturnType',
+		// Fixers From PHPDocToRealTypesPlugin:
+		'PhanPluginCanUseParamType',			// Fixer - Report/Add types in the function definition (function abc(string $var) (adds string)
+		'PhanPluginCanUseReturnType',			// Fixer - Report/Add return types in the function definition (function abc(string $var) (adds string)
+		'PhanPluginCanUseNullableParamType',	// Fixer - Report/Add nullable parameter types in the function definition
+		'PhanPluginCanUseNullableReturnType',	// Fixer - Report/Add nullable return types in the function definition
+
 		// 'PhanPluginNotFullyQualifiedFunctionCall',
 		'PhanPluginConstantVariableScalar',
 		// 'PhanPluginNoCommentOnPublicProperty',
@@ -166,7 +171,6 @@ return [
 		'PhanPluginUnknownArrayMethodReturnType',
 		'PhanTypeMismatchArgumentInternal',
 		'PhanPluginDuplicateAdjacentStatement',
-		'PhanPluginCanUseNullableParamType',
 		'PhanTypeInvalidLeftOperandOfNumericOp',
 		'PhanTypeMismatchProperty',
 		// 'PhanPluginNoCommentOnPublicMethod',
@@ -190,7 +194,6 @@ return [
 		'PhanTypeInvalidLeftOperandOfAdd',
 		// 'PhanPluginNoCommentOnPrivateProperty',
 		// 'PhanPluginNoCommentOnFunction',
-		'PhanPluginCanUseNullableReturnType',
 		'PhanPluginUnknownArrayFunctionParamType',
 		// 'PhanPluginDescriptionlessCommentOnPublicProperty',
 		'PhanPluginUnknownFunctionParamType',

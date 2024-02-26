@@ -219,7 +219,7 @@ class pdf_einstein extends ModelePDFCommandes
 				// Possibility to use suffix for proforma
 				$suffix = '';
 				if (getDolGlobalString('PROFORMA_PDF_WITH_SUFFIX')) {
-					$suffix = (GETPOST('model', 2)=='proforma') ? $conf->global->PROFORMA_PDF_WITH_SUFFIX : '';
+					$suffix = (GETPOST('model') == 'proforma') ? $conf->global->PROFORMA_PDF_WITH_SUFFIX : '';
 					$suffix = dol_sanitizeFileName($suffix);
 				}
 

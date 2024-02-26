@@ -208,6 +208,7 @@ class Societe extends CommonObject
 		'fk_departement' =>array('type'=>'integer', 'label'=>'State', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'fk_pays' =>array('type'=>'integer:Ccountry:core/class/ccountry.class.php', 'label'=>'Country', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
 		'phone' =>array('type'=>'varchar(20)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
+		'phone_mobile' =>array('type'=>'varchar(20)', 'label'=>'PhoneMobile', 'enabled'=>1, 'visible'=>-1, 'position'=>102),
 		'fax' =>array('type'=>'varchar(20)', 'label'=>'Fax', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
 		'url' =>array('type'=>'varchar(255)', 'label'=>'Url', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
 		'email' =>array('type'=>'varchar(128)', 'label'=>'Email', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
@@ -351,6 +352,11 @@ class Societe extends CommonObject
 	 * @var string
 	 */
 	public $phone;
+	/**
+	 * PhoneMobile number
+	 * @var string
+	 */
+	public $phone_mobile;
 	/**
 	 * Fax number
 	 * @var string
@@ -1371,6 +1377,9 @@ class Societe extends CommonObject
 		$this->phone		= trim((string) $this->phone);
 		$this->phone		= preg_replace("/\s/", "", $this->phone);
 		$this->phone		= preg_replace("/\./", "", $this->phone);
+		$this->phone_mobile		= trim((string) $this->phone_mobile);
+		$this->phone_mobile		= preg_replace("/\s/", "", $this->phone_mobile);
+		$this->phone_mobile		= preg_replace("/\./", "", $this->phone_mobile);
 		$this->fax			= trim((string) $this->fax);
 		$this->fax			= preg_replace("/\s/", "", $this->fax);
 		$this->fax			= preg_replace("/\./", "", $this->fax);
@@ -1521,6 +1530,7 @@ class Societe extends CommonObject
 			$sql .= ",fk_pays = ".((!empty($this->country_id) && $this->country_id > 0) ? ((int) $this->country_id) : 'null');
 
 			$sql .= ",phone = ".(!empty($this->phone) ? "'".$this->db->escape($this->phone)."'" : "null");
+			$sql .= ",phone_mobile = ".(!empty($this->phone_mobile) ? "'".$this->db->escape($this->phone_mobile)."'" : "null");
 			$sql .= ",fax = ".(!empty($this->fax) ? "'".$this->db->escape($this->fax)."'" : "null");
 			$sql .= ",email = ".(!empty($this->email) ? "'".$this->db->escape($this->email)."'" : "null");
 			$sql .= ",socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
@@ -1801,7 +1811,7 @@ class Societe extends CommonObject
 		$sql .= ', s.status, s.fk_warehouse';
 		$sql .= ', s.price_level';
 		$sql .= ', s.tms as date_modification, s.fk_user_creat, s.fk_user_modif';
-		$sql .= ', s.phone, s.fax, s.email';
+		$sql .= ', s.phone, s.phone_mobile, s.fax, s.email';
 		$sql .= ', s.socialnetworks';
 		$sql .= ', s.url, s.zip, s.town, s.note_private, s.note_public, s.client, s.fournisseur';
 		$sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6';
@@ -1945,6 +1955,7 @@ class Societe extends CommonObject
 
 				$this->url = $obj->url;
 				$this->phone = $obj->phone;
+				$this->phone_mobile = $obj->phone_mobile;
 				$this->fax = $obj->fax;
 
 				$this->parent = $obj->parent;
@@ -2769,10 +2780,14 @@ class Societe extends CommonObject
 		if (!empty($this->url)) {
 			$datas['url'] = '<br>'.img_picto('', 'globe', 'class="pictofixedwidth"').$this->url;
 		}
-		if (!empty($this->phone) || !empty($this->fax)) {
+		if (!empty($this->phone) || !empty($this->phone_mobile) || !empty($this->fax)) {
 			$phonelist = array();
 			if ($this->phone) {
 				$phonelist[] = dol_print_phone($this->phone, $this->country_code, $this->id, 0, '', '&nbsp', 'phone');
+			}
+			// deliberately not making new list because fax uses same list as phone
+			if ($this->phone_mobile) {
+				$phonelist[] = dol_print_phone($this->phone_mobile, $this->country_code, $this->id, 0, '', '&nbsp', 'phone_mobile');
 			}
 			if ($this->fax) {
 				$phonelist[] = dol_print_phone($this->fax, $this->country_code, $this->id, 0, '', '&nbsp', 'fax');
@@ -4383,6 +4398,7 @@ class Societe extends CommonObject
 		}
 
 		$this->phone = getDolGlobalString('MAIN_INFO_SOCIETE_TEL');
+		$this->phone_mobile = getDolGlobalString('MAIN_INFO_SOCIETE_MOBILE');
 		$this->fax = getDolGlobalString('MAIN_INFO_SOCIETE_FAX');
 		$this->url = getDolGlobalString('MAIN_INFO_SOCIETE_WEB');
 
@@ -4477,6 +4493,7 @@ class Societe extends CommonObject
 		$this->url = 'http://www.specimen.com';
 
 		$this->phone = '0909090901';
+		$this->phone_mobile = '0909090901';
 		$this->fax = '0909090909';
 
 		$this->code_client = 'CC-'.dol_print_date($now, 'dayhourlog');
@@ -4595,6 +4612,7 @@ class Societe extends CommonObject
 	{
 		// phpcs:enable
 		global $langs;
+
 		$label = '';
 		if ($fk_prospectlevel != '') {
 			$label = $langs->trans("ProspectLevel".$fk_prospectlevel);
@@ -4603,6 +4621,7 @@ class Societe extends CommonObject
 				$label = $langs->getLabelFromKey($this->db, $fk_prospectlevel, 'c_prospectlevel', 'code', 'label');
 			}
 		}
+
 		return $label;
 	}
 
@@ -5226,16 +5245,12 @@ class Societe extends CommonObject
 		$tab = array();
 
 		$sql = "SELECT sc.rowid, sc.fk_socpeople as id, sc.fk_c_type_contact"; // This field contains id of llx_socpeople or id of llx_user
-
 		$sql .= ", t.fk_soc as socid, t.statut as statuscontact";
-
 		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
 		$sql .= ", tc.source, tc.element, tc.code, tc.libelle as type_label";
 		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc";
 		$sql .= ", ".$this->db->prefix()."societe_contacts sc";
-
 		$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople t on sc.fk_socpeople = t.rowid";
-
 		$sql .= " WHERE sc.fk_soc = ".((int) $this->id);
 		$sql .= " AND sc.fk_c_type_contact = tc.rowid";
 		if (!empty($element)) {
@@ -5246,7 +5261,7 @@ class Societe extends CommonObject
 		}
 		$sql .= " AND sc.entity IN (".getEntity($this->element).")";
 		$sql .= " AND tc.source = 'external'";
-		$sql .= " AND tc.active=1";
+		$sql .= " AND tc.active = 1";
 
 		$sql .= " ORDER BY t.lastname ASC";
 
@@ -5323,7 +5338,7 @@ class Societe extends CommonObject
 			$this->client = $this->client | $soc_origin->client;
 			$this->fournisseur = $this->fournisseur | $soc_origin->fournisseur;
 			$listofproperties = array(
-				'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'fax', 'email', 'socialnetworks', 'url', 'barcode',
+				'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_mobile', 'fax', 'email', 'socialnetworks', 'url', 'barcode',
 				'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
 				'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
 				'stcomm_id', 'outstanding_limit', 'order_min_amount', 'supplier_order_min_amount', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',

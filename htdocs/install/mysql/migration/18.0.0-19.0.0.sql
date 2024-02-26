@@ -40,6 +40,8 @@ ALTER TABLE llx_product_perentity ADD COLUMN pmp double(24,8);
 
 ALTER TABLE llx_projet_task ADD COLUMN fk_user_modif integer after fk_user_creat;
 
+UPDATE llx_paiement SET ref = rowid WHERE ref IS NULL OR ref = '';
+
 
 -- v19
 
@@ -209,3 +211,5 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (1,'66','Soci√
 ALTER TABLE llx_prelevement_lignes ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_bom_bomline ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+UPDATE llx_c_type_contact SET element = 'stocktransfer' WHERE element = 'StockTransfer';

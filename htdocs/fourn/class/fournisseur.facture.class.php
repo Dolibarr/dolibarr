@@ -250,55 +250,55 @@ class FactureFournisseur extends CommonInvoice
 	public $fk_fac_rec_source;
 
 	public $fields = array(
-		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'ref' =>array('type'=>'varchar(255)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>15),
-		'ref_supplier' =>array('type'=>'varchar(255)', 'label'=>'RefSupplier', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
-		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>25, 'index'=>1),
-		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>30),
-		'type' =>array('type'=>'smallint(6)', 'label'=>'Type', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
-		'subtype' =>array('type'=>'smallint(6)', 'label'=>'InvoiceSubtype', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>36),
-		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'notnull'=>1, 'position'=>40),
-		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-		'datef' =>array('type'=>'date', 'label'=>'Date', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
-		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>55),
-		'libelle' =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
-		'paye' =>array('type'=>'smallint(6)', 'label'=>'Paye', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>65),
-		'amount' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>70),
-		'remise' =>array('type'=>'double(24,8)', 'label'=>'Discount', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
-		'close_code' =>array('type'=>'varchar(16)', 'label'=>'CloseCode', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
-		'close_note' =>array('type'=>'varchar(128)', 'label'=>'CloseNote', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
-		'tva' =>array('type'=>'double(24,8)', 'label'=>'Tva', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
-		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'Localtax1', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
-		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'Localtax2', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
-		'total_ht' =>array('type'=>'double(24,8)', 'label'=>'TotalHT', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
-		'total_tva' =>array('type'=>'double(24,8)', 'label'=>'TotalVAT', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
-		'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'TotalTTC', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
-		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
-		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>130),
-		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
-		'fk_facture_source' =>array('type'=>'integer', 'label'=>'Fk facture source', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>145),
-		'fk_account' =>array('type'=>'integer', 'label'=>'Account', 'enabled'=>'isModEnabled("banque")', 'visible'=>-1, 'position'=>150),
-		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'PaymentTerm', 'enabled'=>1, 'visible'=>-1, 'position'=>155),
-		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'PaymentMode', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
-		'date_lim_reglement' =>array('type'=>'date', 'label'=>'DateLimReglement', 'enabled'=>1, 'visible'=>-1, 'position'=>165),
-		'note_private' =>array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>170),
-		'note_public' =>array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>175),
-		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'ModelPdf', 'enabled'=>1, 'visible'=>0, 'position'=>180),
-		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
-		'fk_incoterms' =>array('type'=>'integer', 'label'=>'IncotermCode', 'enabled'=>1, 'visible'=>-1, 'position'=>195),
-		'location_incoterms' =>array('type'=>'varchar(255)', 'label'=>'IncotermLocation', 'enabled'=>1, 'visible'=>-1, 'position'=>200),
-		'fk_multicurrency' =>array('type'=>'integer', 'label'=>'MulticurrencyId', 'enabled'=>1, 'visible'=>-1, 'position'=>205),
-		'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'MulticurrencyCode', 'enabled'=>1, 'visible'=>-1, 'position'=>210),
-		'multicurrency_tx' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyRate', 'enabled'=>1, 'visible'=>-1, 'position'=>215),
-		'multicurrency_total_ht' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyTotalHT', 'enabled'=>1, 'visible'=>-1, 'position'=>220),
-		'multicurrency_total_tva' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyTotalVAT', 'enabled'=>1, 'visible'=>-1, 'position'=>225),
-		'multicurrency_total_ttc' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyTotalTTC', 'enabled'=>1, 'visible'=>-1, 'position'=>230),
-		'date_pointoftax' =>array('type'=>'date', 'label'=>'Date pointoftax', 'enabled'=>1, 'visible'=>-1, 'position'=>235),
-		'date_valid' =>array('type'=>'date', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>240),
-		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'Last main doc', 'enabled'=>1, 'visible'=>-1, 'position'=>245),
-		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
+		'ref' => array('type' => 'varchar(255)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 15),
+		'ref_supplier' => array('type' => 'varchar(255)', 'label' => 'RefSupplier', 'enabled' => 1, 'visible' => -1, 'position' => 20),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 25, 'index' => 1),
+		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 30),
+		'type' => array('type' => 'smallint(6)', 'label' => 'Type', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 35),
+		'subtype' => array('type' => 'smallint(6)', 'label' => 'InvoiceSubtype', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 36),
+		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'notnull' => 1, 'position' => 40),
+		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 45),
+		'datef' => array('type' => 'date', 'label' => 'Date', 'enabled' => 1, 'visible' => -1, 'position' => 50),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 55),
+		'libelle' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => -1, 'position' => 60),
+		'paye' => array('type' => 'smallint(6)', 'label' => 'Paye', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 65),
+		'amount' => array('type' => 'double(24,8)', 'label' => 'Amount', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 70),
+		'remise' => array('type' => 'double(24,8)', 'label' => 'Discount', 'enabled' => 1, 'visible' => -1, 'position' => 75),
+		'close_code' => array('type' => 'varchar(16)', 'label' => 'CloseCode', 'enabled' => 1, 'visible' => -1, 'position' => 80),
+		'close_note' => array('type' => 'varchar(128)', 'label' => 'CloseNote', 'enabled' => 1, 'visible' => -1, 'position' => 85),
+		'tva' => array('type' => 'double(24,8)', 'label' => 'Tva', 'enabled' => 1, 'visible' => -1, 'position' => 90),
+		'localtax1' => array('type' => 'double(24,8)', 'label' => 'Localtax1', 'enabled' => 1, 'visible' => -1, 'position' => 95),
+		'localtax2' => array('type' => 'double(24,8)', 'label' => 'Localtax2', 'enabled' => 1, 'visible' => -1, 'position' => 100),
+		'total_ht' => array('type' => 'double(24,8)', 'label' => 'TotalHT', 'enabled' => 1, 'visible' => -1, 'position' => 105),
+		'total_tva' => array('type' => 'double(24,8)', 'label' => 'TotalVAT', 'enabled' => 1, 'visible' => -1, 'position' => 110),
+		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'TotalTTC', 'enabled' => 1, 'visible' => -1, 'position' => 115),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'position' => 125),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 130),
+		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 135),
+		'fk_facture_source' => array('type' => 'integer', 'label' => 'Fk facture source', 'enabled' => 1, 'visible' => -1, 'position' => 140),
+		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 145),
+		'fk_account' => array('type' => 'integer', 'label' => 'Account', 'enabled' => 'isModEnabled("banque")', 'visible' => -1, 'position' => 150),
+		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'PaymentTerm', 'enabled' => 1, 'visible' => -1, 'position' => 155),
+		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'PaymentMode', 'enabled' => 1, 'visible' => -1, 'position' => 160),
+		'date_lim_reglement' => array('type' => 'date', 'label' => 'DateLimReglement', 'enabled' => 1, 'visible' => -1, 'position' => 165),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 170),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 175),
+		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'ModelPdf', 'enabled' => 1, 'visible' => 0, 'position' => 180),
+		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 190),
+		'fk_incoterms' => array('type' => 'integer', 'label' => 'IncotermCode', 'enabled' => 1, 'visible' => -1, 'position' => 195),
+		'location_incoterms' => array('type' => 'varchar(255)', 'label' => 'IncotermLocation', 'enabled' => 1, 'visible' => -1, 'position' => 200),
+		'fk_multicurrency' => array('type' => 'integer', 'label' => 'MulticurrencyId', 'enabled' => 1, 'visible' => -1, 'position' => 205),
+		'multicurrency_code' => array('type' => 'varchar(255)', 'label' => 'MulticurrencyCode', 'enabled' => 1, 'visible' => -1, 'position' => 210),
+		'multicurrency_tx' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyRate', 'enabled' => 1, 'visible' => -1, 'position' => 215),
+		'multicurrency_total_ht' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyTotalHT', 'enabled' => 1, 'visible' => -1, 'position' => 220),
+		'multicurrency_total_tva' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyTotalVAT', 'enabled' => 1, 'visible' => -1, 'position' => 225),
+		'multicurrency_total_ttc' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyTotalTTC', 'enabled' => 1, 'visible' => -1, 'position' => 230),
+		'date_pointoftax' => array('type' => 'date', 'label' => 'Date pointoftax', 'enabled' => 1, 'visible' => -1, 'position' => 235),
+		'date_valid' => array('type' => 'date', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'position' => 240),
+		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'Last main doc', 'enabled' => 1, 'visible' => -1, 'position' => 245),
+		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 900),
 	);
 
 
@@ -1021,7 +1021,7 @@ class FactureFournisseur extends CommonInvoice
 		// phpcs:enable
 		$this->lines = array();
 
-		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description as desc, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.vat_src_code, f.tva_tx';
+		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description as line_desc, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.vat_src_code, f.tva_tx';
 		$sql .= ', f.localtax1_tx, f.localtax2_tx, f.localtax1_type, f.localtax2_type, f.total_localtax1, f.total_localtax2, f.fk_facture_fourn, f.fk_remise_except';
 		$sql .= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
 		$sql .= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.barcode as product_barcode, p.description as product_desc';
@@ -1045,8 +1045,8 @@ class FactureFournisseur extends CommonInvoice
 
 					$line->id               = $obj->rowid;
 					$line->rowid            = $obj->rowid;
-					$line->description      = $obj->desc;
-					$line->desc             = $obj->desc;
+					$line->description      = $obj->line_desc;
+					$line->desc             = $obj->line_desc;
 					$line->date_start       = $obj->date_start;
 					$line->date_end         = $obj->date_end;
 					$line->product_ref      = $obj->product_ref;
@@ -1350,7 +1350,7 @@ class FactureFournisseur extends CommonInvoice
 				$facligne->rang = 1;
 				$linecount = count($this->lines);
 				for ($ii = 1; $ii <= $linecount; $ii++) {
-					$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii+1);
+					$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
 				}
 			}
 
@@ -2038,31 +2038,31 @@ class FactureFournisseur extends CommonInvoice
 	 *	by the get_default_tva method(vendor_company, buying company, idprod) and the desc must
 	 *	already have the right value (the caller has to manage the multilanguage).
 	 *
-	 *	@param    	string	$desc            	Description of the line
-	 *	@param    	double	$pu              	Unit price (HT or TTC according to price_base_type, > 0 even for credit note)
-	 *	@param    	double	$txtva           	Force Vat rate to use, -1 for auto.
-	 *	@param		double	$txlocaltax1		LocalTax1 Rate
-	 *	@param		double	$txlocaltax2		LocalTax2 Rate
-	 *	@param    	double	$qty             	Quantity
-	 *	@param    	int		$fk_product      	Product/Service ID predefined
-	 *	@param    	double	$remise_percent  	Percentage discount of the line
-	 *	@param    	int		$date_start      	Service start date
-	 * 	@param    	int		$date_end        	Service expiry date
-	 * 	@param    	int		$fk_code_ventilation   	Accounting breakdown code
-	 *	@param    	int		$info_bits			Line type bits
-	 *	@param    	string	$price_base_type 	HT or TTC
-	 *	@param		int		$type				Type of line (0=product, 1=service)
-	 *  @param      int		$rang            	Position of line
-	 *  @param		int		$notrigger			Disable triggers
-	 *  @param		array	$array_options		extrafields array
-	 * 	@param 		string	$fk_unit 			Code of the unit to use. Null to use the default one
-	 *  @param      int     $origin_id          id origin document
-	 *  @param		double	$pu_devise			Amount in currency
-	 *  @param		string	$ref_supplier		Supplier ref
-	 *  @param      string  $special_code       Special code
-	 *  @param		int		$fk_parent_line		Parent line id
-	 *  @param    	int		$fk_remise_except	Id discount used
-	 *	@return    	int             			>0 if OK, <0 if KO
+	 *	@param      string      $desc                   Description of the line
+	 *	@param      double      $pu                     Unit price (HT or TTC according to price_base_type, > 0 even for credit note)
+	 *	@param      double      $txtva                  Force Vat rate to use, -1 for auto.
+	 *	@param      double      $txlocaltax1            LocalTax1 Rate
+	 *	@param      double      $txlocaltax2            LocalTax2 Rate
+	 *	@param      double      $qty                    Quantity
+	 *	@param      int         $fk_product             Product/Service ID predefined
+	 *	@param      double      $remise_percent         Percentage discount of the line
+	 *	@param      int         $date_start             Service start date
+	 *	@param      int         $date_end               Service expiry date
+	 *	@param      int         $fk_code_ventilation    Accounting breakdown code
+	 *	@param      int         $info_bits              Line type bits
+	 *	@param      string      $price_base_type        HT or TTC
+	 *	@param      int         $type                   Type of line (0=product, 1=service)
+	 *	@param      int         $rang                   Position of line
+	 *	@param      int         $notrigger              Disable triggers
+	 *	@param      array       $array_options          extrafields array
+	 *	@param      int|null    $fk_unit                Code of the unit to use. Null to use the default one
+	 *	@param      int         $origin_id              id origin document
+	 *	@param      double      $pu_devise              Amount in currency
+	 *	@param      string      $ref_supplier           Supplier ref
+	 *	@param      string      $special_code           Special code
+	 *	@param      int         $fk_parent_line         Parent line id
+	 *	@param      int         $fk_remise_except       Id discount used
+	 *	@return     int                                 >0 if OK, <0 if KO
 	 */
 	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = '', $date_end = '', $fk_code_ventilation = 0, $info_bits = '', $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = 0, $array_options = [], $fk_unit = null, $origin_id = 0, $pu_devise = 0, $ref_supplier = '', $special_code = '', $fk_parent_line = 0, $fk_remise_except = 0)
 	{
@@ -2321,7 +2321,7 @@ class FactureFournisseur extends CommonInvoice
 	 * @param      	integer 	$date_start     	Date start of service
 	 * @param      	integer     $date_end       	Date end of service
 	 * @param		array		$array_options		extrafields array
-	 * @param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
+	 * @param 		int|null	$fk_unit 			Code of the unit to use. Null to use the default one
 	 * @param		double		$pu_devise			Amount in currency
 	 * @param		string		$ref_supplier		Supplier ref
 	 * @param	integer	$rang	line rank
@@ -2658,7 +2658,7 @@ class FactureFournisseur extends CommonInvoice
 				}
 				if ($qualified) {
 					$paymentornot = ($obj->fk_paiementfourn ? 1 : 0);
-					$return[$obj->rowid] = array('ref'=>$obj->ref, 'status'=>$obj->fk_statut, 'type'=>$obj->type, 'paye'=>$obj->paye, 'paymentornot'=>$paymentornot);
+					$return[$obj->rowid] = array('ref' => $obj->ref, 'status' => $obj->fk_statut, 'type' => $obj->type, 'paye' => $obj->paye, 'paymentornot' => $paymentornot);
 				}
 			}
 
@@ -2922,7 +2922,7 @@ class FactureFournisseur extends CommonInvoice
 		}
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -3389,6 +3389,313 @@ class FactureFournisseur extends CommonInvoice
 			return 0;
 		}
 	}
+
+	/**
+	 *  Send reminders by emails for supplier invoices validated that are due.
+	 *  CAN BE A CRON TASK
+	 *
+	 *  @param	int			$nbdays				Delay before due date (or after if delay is negative)
+	 *  @param	string		$paymentmode		'' or 'all' by default (no filter), or 'LIQ', 'CHQ', CB', ...
+	 *  @param	int|string	$template			Name (or id) of email template (Must be a template of type 'invoice_supplier_send')
+	 *  @param	string		$datetouse			'duedate' (default) or 'invoicedate'
+	 *  @param	string		$forcerecipient		Force email of recipient (for example to send the email to an accountant supervisor instead of the customer)
+	 *  @return int         					0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendEmailsRemindersOnSupplierInvoiceDueDate($nbdays = 0, $paymentmode = 'all', $template = '', $datetouse = 'duedate', $forcerecipient = '')
+	{
+		global $conf, $langs, $user;
+
+		$error = 0;
+		$this->output = '';
+		$this->error = '';
+		$nbMailSend = 0;
+		$errorsMsg = array();
+
+		$langs->load('bills');
+
+		if (!isModEnabled(empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) ? 'fournisseur' : 'supplier_invoice')) {	// Should not happen. If module disabled, cron job should not be visible.
+			$this->output .= $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv('Suppliers'));
+			return 0;
+		}
+		if (!in_array($datetouse, array('duedate', 'invoicedate'))) {
+			$this->output .= 'Bad value for parameter datetouse. Must be "duedate" or "invoicedate"';
+			return 0;
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+		$formmail = new FormMail($this->db);
+
+		$now = dol_now();
+		$tmpidate = dol_get_first_hour(dol_time_plus_duree($now, $nbdays, 'd'), 'gmt');
+
+		$tmpinvoice = new FactureFournisseur($this->db);
+
+		dol_syslog(__METHOD__." start", LOG_INFO);
+
+		// Select all action comm reminder
+		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+		if (!empty($paymentmode) && $paymentmode != 'all') {
+			$sql .= ", ".MAIN_DB_PREFIX."c_paiement as cp";
+		}
+		$sql .= " WHERE f.paye = 0";	// Only unpaid
+		$sql .= " AND f.fk_statut = ".self::STATUS_VALIDATED;	// Only validated status
+		if ($datetouse == 'invoicedate') {
+			$sql .= " AND f.datef = '".$this->db->idate($tmpidate, 'gmt')."'";
+		} else {
+			$sql .= " AND f.date_lim_reglement = '".$this->db->idate($tmpidate, 'gmt')."'";
+		}
+		$sql .= " AND f.entity IN (".getEntity('supplier_invoice', 0).")";	// One batch process only one company (no sharing)
+		if (!empty($paymentmode) && $paymentmode != 'all') {
+			$sql .= " AND f.fk_mode_reglement = cp.id AND cp.code = '".$this->db->escape($paymentmode)."'";
+		}
+		// TODO Add a filter to check there is no payment started yet
+		if ($datetouse == 'invoicedate') {
+			$sql .= $this->db->order("datef", "ASC");
+		} else {
+			$sql .= $this->db->order("date_lim_reglement", "ASC");
+		}
+
+		$resql = $this->db->query($sql);
+
+		$stmpidate = dol_print_date($tmpidate, 'day', 'gmt');
+		if ($datetouse == 'invoicedate') {
+			$this->output .= $langs->transnoentitiesnoconv("SearchValidatedSupplierInvoicesWithDate", $stmpidate);
+		} else {
+			$this->output .= $langs->transnoentitiesnoconv("SearchUnpaidSupplierInvoicesWithDueDate", $stmpidate);
+		}
+		if (!empty($paymentmode) && $paymentmode != 'all') {
+			$this->output .= ' ('.$langs->transnoentitiesnoconv("PaymentMode").' '.$paymentmode.')';
+		}
+		$this->output .= '<br>';
+
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				if (!$error) {
+					// Load event
+					$res = $tmpinvoice->fetch($obj->id);
+					if ($res > 0) {
+						$tmpinvoice->fetch_thirdparty();
+
+						$outputlangs = new Translate('', $conf);
+						if ($tmpinvoice->thirdparty->default_lang) {
+							$outputlangs->setDefaultLang($tmpinvoice->thirdparty->default_lang);
+							$outputlangs->loadLangs(array("main", "suppliers"));
+						} else {
+							$outputlangs = $langs;
+						}
+
+						// Select email template according to language of recipient
+						$templateId = 0;
+						$templateLabel = '';
+						if (empty($template) || $template == 'EmailTemplateCode') {
+							$templateLabel = '(SendingReminderEmailOnUnpaidSupplierInvoice)';
+						} else {
+							if (is_numeric($template)) {
+								$templateId = $template;
+							} else {
+								$templateLabel = $template;
+							}
+						}
+
+						$arraymessage = $formmail->getEMailTemplate($this->db, 'invoice_supplier_send', $user, $outputlangs, $templateId, 1, $templateLabel);
+						if (is_numeric($arraymessage) && $arraymessage <= 0) {
+							$langs->load("errors");
+							$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
+							return 0;
+						}
+
+						// PREPARE EMAIL
+						$errormesg = '';
+
+						// Make substitution in email content
+						$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, '', $tmpinvoice);
+
+						complete_substitutions_array($substitutionarray, $outputlangs, $tmpinvoice);
+
+						// Topic
+						$sendTopic = make_substitutions(empty($arraymessage->topic) ? $outputlangs->transnoentitiesnoconv('InformationMessage') : $arraymessage->topic, $substitutionarray, $outputlangs, 1);
+
+						// Content
+						$content = $outputlangs->transnoentitiesnoconv($arraymessage->content);
+
+						$sendContent = make_substitutions($content, $substitutionarray, $outputlangs, 1);
+
+						// Recipient
+						$to = array();
+						if ($forcerecipient) {	// If a recipient was forced
+							$to = array($forcerecipient);
+						} else {
+							$res = $tmpinvoice->fetch_thirdparty();
+							$recipient = $tmpinvoice->thirdparty;
+							if ($res > 0) {
+								$tmparraycontact = $tmpinvoice->liste_contact(-1, 'internal', 0, 'SALESREPFOLL');
+								if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
+									foreach ($tmparraycontact as $data_email) {
+										if (!empty($data_email['email'])) {
+											$to[] = $data_email['email'];
+										}
+									}
+								}
+								if (empty($to) && !empty($recipient->email)) {
+									$to[] = $recipient->email;
+								}
+								if (empty($to)) {
+									$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->socid.". No email defined for supplier invoice or customer.";
+									$error++;
+								}
+							} else {
+								$errormesg = "Failed to load recipient with thirdparty id=".$tmpinvoice->socid;
+								$error++;
+							}
+						}
+
+						// Sender
+						$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+						if (!empty($arraymessage->email_from)) {	// If a sender is defined into template, we use it in priority
+							$from = $arraymessage->email_from;
+						}
+						if (empty($from)) {
+							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
+							$error++;
+						}
+
+						if (!$error && !empty($to)) {
+							$this->db->begin();
+
+							$to = implode(',', $to);
+							if (!empty($arraymessage->email_to)) {	// If a recipient is defined into template, we add it
+								$to = $to.','.$arraymessage->email_to;
+							}
+
+							// Errors Recipient
+							$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
+
+							$trackid = 'inv'.$tmpinvoice->id;
+							$sendcontext = 'standard';
+
+							$email_tocc = '';
+							if (!empty($arraymessage->email_tocc)) {	// If a CC is defined into template, we use it
+								$email_tocc = $arraymessage->email_tocc;
+							}
+
+							$email_tobcc = '';
+							if (!empty($arraymessage->email_tobcc)) {	// If a BCC is defined into template, we use it
+								$email_tobcc = $arraymessage->email_tobcc;
+							}
+
+							// Mail Creation
+							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), $email_tocc, $email_tobcc, 0, 1, $errors_to, '', $trackid, '', $sendcontext, '');
+
+							// Sending Mail
+							if ($cMailFile->sendfile()) {
+								$nbMailSend++;
+
+								// Add a line into event table
+								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+								// Insert record of emails sent
+								$actioncomm = new ActionComm($this->db);
+
+								$actioncomm->type_code = 'AC_OTH_AUTO'; // Event insert into agenda automatically
+								$actioncomm->socid = $tmpinvoice->thirdparty->id; // To link to a company
+								$actioncomm->contact_id = 0;
+
+								$actioncomm->code = 'AC_EMAIL';
+								$actioncomm->label = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' template='.$template.' datetouse='.$datetouse.' forcerecipient='.$forcerecipient.')';
+								$actioncomm->note_private = $sendContent;
+								$actioncomm->fk_project = $tmpinvoice->fk_project;
+								$actioncomm->datep = dol_now();
+								$actioncomm->datef = $actioncomm->datep;
+								$actioncomm->percentage = -1; // Not applicable
+								$actioncomm->authorid = $user->id; // User saving action
+								$actioncomm->userownerid = $user->id; // Owner of action
+								// Fields when action is an email (content should be added into note)
+								$actioncomm->email_msgid = $cMailFile->msgid;
+								$actioncomm->email_subject = $sendTopic;
+								$actioncomm->email_from = $from;
+								$actioncomm->email_sender = '';
+								$actioncomm->email_to = $to;
+								//$actioncomm->email_tocc = $sendtocc;
+								//$actioncomm->email_tobcc = $sendtobcc;
+								//$actioncomm->email_subject = $subject;
+								$actioncomm->errors_to = $errors_to;
+
+								$actioncomm->elementtype = 'invoice_supplier';
+								$actioncomm->fk_element = $tmpinvoice->id;
+
+								//$actioncomm->extraparams = $extraparams;
+
+								$actioncomm->create($user);
+							} else {
+								$errormesg = $cMailFile->error.' : '.$to;
+								$error++;
+
+								// Add a line into event table
+								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+								// Insert record of emails sent
+								$actioncomm = new ActionComm($this->db);
+
+								$actioncomm->type_code = 'AC_OTH_AUTO'; // Event insert into agenda automatically
+								$actioncomm->socid = $tmpinvoice->thirdparty->id; // To link to a company
+								$actioncomm->contact_id = 0;
+
+								$actioncomm->code = 'AC_EMAIL';
+								$actioncomm->label = 'sendEmailsRemindersOnInvoiceDueDateKO';
+								$actioncomm->note_private = $errormesg;
+								$actioncomm->fk_project = $tmpinvoice->fk_project;
+								$actioncomm->datep = dol_now();
+								$actioncomm->datef = $actioncomm->datep;
+								$actioncomm->percentage = -1; // Not applicable
+								$actioncomm->authorid = $user->id; // User saving action
+								$actioncomm->userownerid = $user->id; // Owner of action
+								// Fields when action is an email (content should be added into note)
+								$actioncomm->email_msgid = $cMailFile->msgid;
+								$actioncomm->email_from = $from;
+								$actioncomm->email_sender = '';
+								$actioncomm->email_to = $to;
+								//$actioncomm->email_tocc = $sendtocc;
+								//$actioncomm->email_tobcc = $sendtobcc;
+								//$actioncomm->email_subject = $subject;
+								$actioncomm->errors_to = $errors_to;
+
+								//$actioncomm->extraparams = $extraparams;
+
+								$actioncomm->create($user);
+							}
+
+							$this->db->commit();	// We always commit
+						}
+
+						if ($errormesg) {
+							$errorsMsg[] = $errormesg;
+						}
+					} else {
+						$errorsMsg[] = 'Failed to fetch record invoice with ID = '.$obj->id;
+						$error++;
+					}
+				}
+			}
+		} else {
+			$error++;
+		}
+
+		if (!$error) {
+			$this->output .= 'Nb of emails sent : '.$nbMailSend;
+
+			dol_syslog(__METHOD__." end - ".$this->output, LOG_INFO);
+
+			return 0;
+		} else {
+			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? implode(', ', $errorsMsg) : $error;
+
+			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
+
+			return $error;
+		}
+	}
 }
 
 
@@ -3642,7 +3949,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public function fetch($rowid)
 	{
-		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description as desc, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx';
+		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description as line_desc, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx';
 		$sql .= ', f.localtax1_type, f.localtax2_type, f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2, f.fk_remise_except';
 		$sql .= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_facture_fourn, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
 		$sql .= ', p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc';
@@ -3668,8 +3975,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->id = $obj->rowid;
 		$this->rowid = $obj->rowid;
 		$this->fk_facture_fourn = $obj->fk_facture_fourn;
-		$this->description		= $obj->desc;
-		$this->desc				= $obj->desc;
+		$this->description		= $obj->line_desc;
+		$this->desc				= $obj->line_desc;
 		$this->date_start = $obj->date_start;
 		$this->date_end = $obj->date_end;
 		$this->product_ref		= $obj->product_ref;
