@@ -17,7 +17,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 <?php
 if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 	print "/* For dark mode */\n";
-	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) {
 		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
 	} else {
 		print "@media not print {";
@@ -79,8 +79,8 @@ span.butAction, span.butActionDelete {
 	font-weight: bold;
 	line-height: 1.8em;
 
-	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
-	padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
+	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
+	padding: 0.6em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
 	font-family: <?php print $fontlist ?>;
 	display: inline-block;
 	text-align: center;
@@ -101,7 +101,7 @@ span.butAction, span.butActionDelete {
 	font-weight: normal;
 
 	margin: 0em 0.3em 0 0.3em !important;
-	padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em 0.3em;
+	padding: 0.2em <?php echo($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em 0.3em;
 	font-family: <?php print $fontlist ?>;
 	display: inline-block;
 	/* text-align: center; New button are on right of screen */
@@ -111,8 +111,8 @@ span.butAction, span.butActionDelete {
 .button {
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 	display: inline-block;
-	padding: 0.4em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
-	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
+	padding: 0.4em <?php echo($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
+	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
 	line-height: 20px;
 	text-align: center;
 	vertical-align: middle;
@@ -140,8 +140,8 @@ span.butAction, span.butActionDelete {
 	text-decoration: none;
 	/* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
 	display: inline-block;
-	padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
-	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
+	padding: 0.2em <?php echo($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
+	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
 	line-height: 20px;
 	/* text-align: center;  New button are on right of screen */
 	vertical-align: middle;
@@ -249,8 +249,8 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 
 	white-space: nowrap !important;
 	cursor: not-allowed !important;
-	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
-	padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
+	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
+	padding: 0.6em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
 	font-family: <?php print $fontlist ?> !important;
 	display: inline-block;
 	text-align: center;
@@ -269,8 +269,8 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 
 	white-space: nowrap !important;
 	cursor: not-allowed !important;
-	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
-	padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
+	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
+	padding: 0.2em <?php echo($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
 	font-family: <?php print $fontlist ?> !important;
 	display: inline-block;
 	/* text-align: center;  New button are on right of screen */
@@ -379,7 +379,7 @@ div.pagination .btnTitle:hover .btnTitle-label{
 	border-color: #ddd;
 }
 
-/* The buttonplus isgrowing on hover (dont know why). This is to avoid to have the cellegrowing too */
+/* The buttonplus isgrowing on hover (don't know why). This is to avoid to have the cellegrowing too */
 .btnTitlePlus:hover {
 	max-width: 24px;
 	max-height: 40px;

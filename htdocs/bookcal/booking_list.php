@@ -22,9 +22,9 @@
  */
 
 /**
- *	\file       htdocs/compta/facture/prelevement.php
- *	\ingroup    facture
- *	\brief      Management of direct debit order or credit tranfer of invoices
+ *	\file       htdocs/bookcal/booking_list.php
+ *	\ingroup    bookcal
+ *	\brief      Management of direct debit order or credit transfer of invoices
  */
 
 // Load Dolibarr environment
@@ -42,7 +42,7 @@ require_once __DIR__.'/class/calendar.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("bookcal@bookcal", "other"));
 
-$id = (GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');

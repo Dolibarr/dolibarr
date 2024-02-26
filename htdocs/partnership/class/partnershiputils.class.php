@@ -47,7 +47,7 @@ class PartnershipUtils
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -82,7 +82,7 @@ class PartnershipUtils
 		$this->error = '';
 		$partnershipsprocessed = array();
 
-		$gracedelay = $conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL;
+		$gracedelay = getDolGlobalString('PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL');
 		if ($gracedelay < 1) {
 			$this->error = 'BadValueForDelayBeforeCancelCheckSetup';
 			return -1;
@@ -117,7 +117,9 @@ class PartnershipUtils
 
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
-					if (!empty($partnershipsprocessed[$obj->rowid])) continue;
+					if (!empty($partnershipsprocessed[$obj->rowid])) {
+						continue;
+					}
 
 					if ($somethingdoneonpartnership >= $MAXPERCALL) {
 						dol_syslog("We reach the limit of ".$MAXPERCALL." partnership processed, so we quit loop for this batch doCancelStatusOfMemberPartnership to avoid to reach email quota.", LOG_WARNING);
@@ -139,8 +141,11 @@ class PartnershipUtils
 							$error++;
 							$this->error = $object->error;
 							if (is_array($object->errors) && count($object->errors)) {
-								if (is_array($this->errors)) $this->errors = array_merge($this->errors, $object->errors);
-								else $this->errors = $object->errors;
+								if (is_array($this->errors)) {
+									$this->errors = array_merge($this->errors, $object->errors);
+								} else {
+									$this->errors = $object->errors;
+								}
 							}
 						} else {
 							$partnershipsprocessed[$object->id] = $object->ref;
@@ -158,7 +163,9 @@ class PartnershipUtils
 							// Define output language
 							$outputlangs = $langs;
 							$newlang = '';
-							if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+							if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+								$newlang = GETPOST('lang_id', 'aZ09');
+							}
 							if (!empty($newlang)) {
 								$outputlangs = new Translate("", $conf);
 								$outputlangs->setDefaultLang($newlang);
@@ -191,7 +198,9 @@ class PartnershipUtils
 							if (!$result || !empty($cmail->error) || !empty($cmail->errors)) {
 								$erroremail .= ($erroremail ? ', ' : '').$cmail->error;
 								$this->errors[] = $cmail->error;
-								if (is_array($cmail->errors) && count($cmail->errors) > 0) $this->errors += $cmail->errors;
+								if (is_array($cmail->errors) && count($cmail->errors) > 0) {
+									$this->errors += $cmail->errors;
+								}
 							} else {
 								// Initialisation of datas of object to call trigger
 								if (is_object($object)) {
@@ -200,7 +209,8 @@ class PartnershipUtils
 
 									$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 									$object->actionmsg = $arraydefaultmessage->topic."\n".$arraydefaultmessage->content; // Long text
-									$object->actionmsg2 = $langs->transnoentities("PartnershipSentByEMail", $object->ref);; // Short text ($langs->transnoentities('MailSentBy')...);
+									$object->actionmsg2 = $langs->transnoentities("PartnershipSentByEMail", $object->ref);
+									; // Short text ($langs->transnoentities('MailSentBy')...);
 									if (getDolGlobalString('MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT')) {
 										$object->actionmsg2		= $subject; // Short text
 									}
@@ -240,12 +250,16 @@ class PartnershipUtils
 		if (!$error) {
 			$this->db->commit();
 			$this->output = $numofexpiredmembers.' expired partnership members found'."\n";
-			if ($erroremail) $this->output .= '. Got errors when sending some email : '.$erroremail;
+			if ($erroremail) {
+				$this->output .= '. Got errors when sending some email : '.$erroremail;
+			}
 		} else {
 			$this->db->rollback();
 			$this->output = "Rollback after error\n";
 			$this->output .= $numofexpiredmembers.' expired partnership members found'."\n";
-			if ($erroremail) $this->output .= '. Got errors when sending some email : '.$erroremail;
+			if ($erroremail) {
+				$this->output .= '. Got errors when sending some email : '.$erroremail;
+			}
 		}
 
 		return ($error ? 1 : 0);
@@ -307,7 +321,7 @@ class PartnershipUtils
 		}
 		$sql .= " WHERE p.".$fk_partner." > 0";
 		$sql .= " AND p.status = ".((int) $partnership::STATUS_APPROVED); // Only accepted and not yet canceled
-		$sql .= " AND (p.last_check_backlink IS NULL OR p.last_check_backlink <= '".$this->db->idate($now - 24 * 3600)."')"; // Never more than 1 check every day to check that website contains a referal link.
+		$sql .= " AND (p.last_check_backlink IS NULL OR p.last_check_backlink <= '".$this->db->idate($now - 24 * 3600)."')"; // Never more than 1 check every day to check that website contains a referral link.
 		$sql .= $this->db->order('p.rowid', 'ASC');
 		// Limit is managed into loop later
 
@@ -374,7 +388,9 @@ class PartnershipUtils
 									// Define output language
 									$outputlangs = $langs;
 									$newlang = '';
-									if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+									if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+										$newlang = GETPOST('lang_id', 'aZ09');
+									}
 									if (!empty($newlang)) {
 										$outputlangs = new Translate("", $conf);
 										$outputlangs->setDefaultLang($newlang);
@@ -402,7 +418,9 @@ class PartnershipUtils
 									if (!$result || !empty($cmail->error) || !empty($cmail->errors)) {
 										$erroremail .= ($erroremail ? ', ' : '').$cmail->error;
 										$this->errors[] = $cmail->error;
-										if (is_array($cmail->errors) && count($cmail->errors) > 0) $this->errors += $cmail->errors;
+										if (is_array($cmail->errors) && count($cmail->errors) > 0) {
+											$this->errors += $cmail->errors;
+										}
 									} else {
 										// Initialisation of datas of object to call trigger
 										if (is_object($object)) {
@@ -414,7 +432,8 @@ class PartnershipUtils
 											}
 											$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 											$object->actionmsg = $arraydefaultmessage->topic."\n".$arraydefaultmessage->content; // Long text
-											$object->actionmsg2 = $langs->transnoentities("PartnershipSentByEMail", $object->ref);; // Short text ($langs->transnoentities('MailSentBy')...);
+											$object->actionmsg2 = $langs->transnoentities("PartnershipSentByEMail", $object->ref);
+											; // Short text ($langs->transnoentities('MailSentBy')...);
 											if (getDolGlobalString('MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT')) {
 												$object->actionmsg2		= $subject; // Short text
 											}
@@ -475,9 +494,15 @@ class PartnershipUtils
 			$this->output = "Rollback after error\n";
 		}
 		$this->output .= $numofexpiredmembers.' partnership checked'."\n";
-		if ($erroremail) $this->output .= '. Got errors when sending some email : '.$erroremail."\n";
-		if ($emailnotfound) $this->output .= '. Email not found for some partner : '.$emailnotfound."\n";
-		if ($websitenotfound) $this->output .= '. Website not found for some partner : '.$websitenotfound."\n";
+		if ($erroremail) {
+			$this->output .= '. Got errors when sending some email : '.$erroremail."\n";
+		}
+		if ($emailnotfound) {
+			$this->output .= '. Email not found for some partner : '.$emailnotfound."\n";
+		}
+		if ($websitenotfound) {
+			$this->output .= '. Website not found for some partner : '.$websitenotfound."\n";
+		}
 		$this->output .= "\nSQL used to find partnerships to scan: ".$sql;
 
 		return ($error ? 1 : 0);

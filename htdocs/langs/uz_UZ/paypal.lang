@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=Postning barcha harakatlarida orqaga qaytaris
 ValidationOfPaymentFailed=To'lov tasdiqlanmadi
 CardOwner=Karta egasi
 PayPalBalance=Paypal krediti
+OnlineSubscriptionPaymentLine=Online subscription recorded on %s<br>Paid via %s<br>Originating IP address: %s<br>Transaction ID: %s

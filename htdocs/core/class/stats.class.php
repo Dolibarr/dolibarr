@@ -77,9 +77,9 @@ abstract class Stats
 	/**
 	 *  @param	int		$year 			number
 	 * 	@param	int 	$format 		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * 	@return int						value
+	 * 	@return array					array of values by month
 	 */
-	protected abstract function getNbByMonth($year, $format = 0);
+	abstract protected function getNbByMonth($year, $format = 0);
 
 	/**
 	 * Return nb of elements by month for several years
@@ -172,13 +172,13 @@ abstract class Stats
 	/**
 	 * @param	int		$year			year number
 	 * @param	int 	$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return 	int						value
+	 * @return array					array of values by month
 	 */
-	protected abstract function getAmountByMonth($year, $format = 0);
+	abstract protected function getAmountByMonth($year, $format = 0);
 
 	/**
 	 * Return amount of elements by month for several years.
-	 * Criterias used to build request are defined into the constructor of parent class into xxx/class/xxxstats.class.php
+	 * Criteria used to build request are defined into the constructor of parent class into xxx/class/xxxstats.class.php
 	 * The caller of class can add more filters into sql request by adding criteris into the $stats->where property just after
 	 * calling constructor.
 	 *
@@ -274,7 +274,7 @@ abstract class Stats
 	 * @param	int     $year           year number
 	 * @return 	array					array of values
 	 */
-	protected abstract function getAverageByMonth($year);
+	abstract protected function getAverageByMonth($year);
 
 	/**
 	 * Return average of entity by month for several years

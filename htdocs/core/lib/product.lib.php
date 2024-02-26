@@ -23,7 +23,7 @@
 
 /**
  * \file       htdocs/core/lib/product.lib.php
- * \brief      Ensemble de fonctions de base pour le module produit et service
+ * \brief      Ensemble de functions de base pour le module produit et service
  * \ingroup	product
  */
 
@@ -39,11 +39,11 @@ function product_prepare_head($object)
 	$langs->load("products");
 
 	$label = $langs->trans('Product');
-	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'read');
+	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_prices') : $user->hasRight('product', 'read');
 
 	if ($object->isService()) {
 		$label = $langs->trans('Service');
-		$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'read');
+		$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_prices') : $user->hasRight('service', 'read');
 	}
 
 	$h = 0;
@@ -313,7 +313,7 @@ function productlot_prepare_head($object)
 
 
 /**
-*  Return array head with list of tabs to view object informations.
+*  Return array head with list of tabs to view object information.
 *
 *  @return	array   	        head array with tabs
 */
@@ -374,7 +374,7 @@ function product_admin_prepare_head()
 
 
 /**
- * Return array head with list of tabs to view object informations.
+ * Return array head with list of tabs to view object information.
  *
  * @return	array   	        head array with tabs
  */
@@ -799,7 +799,7 @@ function measuring_units_string($scale = '', $measuring_style = '', $unit = 0, $
  *  @param	string  	$scale				Scale of unit: '0', '-3', '6', ...
  *  @param	int			$use_short_label	1=Use short label ('g' instead of 'gram'). Short labels are not translated.
  *  @param	Translate	$outputlangs		Language object
- *	@return	string	   			         	Unit string
+ *	@return	string|-1	   			        Unit string if OK, -1 if KO
  * 	@see	formproduct->selectMeasuringUnits()
  */
 function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_short_label = 0, $outputlangs = null)

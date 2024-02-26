@@ -79,7 +79,7 @@ $object->fetch($id, $ref);
 $upload_dir = $conf->ficheinter->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'fichinter';
 
-$permissiontoadd = $user->rights->ficheinter->creer; // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->hasRight('ficheinter', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -106,7 +106,7 @@ if ($object->id) {
 
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
@@ -164,7 +164,7 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'ficheinter';
-	$permtoedit = $user->rights->ficheinter->creer;
+	$permtoedit = $user->hasRight('ficheinter', 'creer');
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

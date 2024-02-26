@@ -54,7 +54,7 @@ $search_account = GETPOST('search_account', 'int');
 $search_amount = GETPOST('search_amount', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -93,7 +93,7 @@ $arrayfields = array(
 	'bc.ref'            => array('label'=>"Ref", 'checked'=>1, 'position'=>10),
 	'bc.type'			=> array('label'=>"Type", 'checked'=>1, 'position'=>20),
 	'bc.date_bordereau' => array('label'=>"DateCreation", 'checked'=>1, 'position'=>30),
-	'ba.label'			=> array('label'=>"Account", 'checked'=>1, 'position'=>40),
+	'ba.label'			=> array('label'=>"BankAccount", 'checked'=>1, 'position'=>40),
 	'bc.nbcheque'		=> array('label'=>"NbOfCheques", 'checked'=>1, 'position'=>50),
 	'bc.amount'			=> array('label'=>"Amount", 'checked'=>1, 'position'=>60),
 	'bc.statut'			=> array('label'=>"Status", 'checked'=>1, 'position'=>70)
@@ -312,10 +312,10 @@ if ($resql) {
 	// Filter: Date
 	if (!empty($arrayfields['bc.date_bordereau']['checked'])) {
 		print '<td class="liste_titre center">';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';

@@ -104,7 +104,8 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 $path = ''; // This value may be used in future for external module to overwrite theme
 $theme = 'md'; // Value of theme
 if (getDolGlobalString('MAIN_OVERWRITE_THEME_RES')) {
-	$path = '/' . getDolGlobalString('MAIN_OVERWRITE_THEME_RES'); $theme = $conf->global->MAIN_OVERWRITE_THEME_RES;
+	$path = '/' . getDolGlobalString('MAIN_OVERWRITE_THEME_RES');
+	$theme = getDolGlobalString('MAIN_OVERWRITE_THEME_RES');
 }
 
 // Define image path files and other constants
@@ -207,7 +208,7 @@ if (empty($colortopbordertitle1)) {
 }
 
 // Set text color to black or white
-$colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
+$colorbackhmenu1 = implode(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbackhmenu1);
 $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) {
@@ -216,7 +217,7 @@ if ($tmpval <= 460) {
 	$colortextbackhmenu = '000000';
 }
 
-$colorbackvmenu1 = join(',', colorStringToArray($colorbackvmenu1)); // Normalize value to 'x,y,z'
+$colorbackvmenu1 = implode(',', colorStringToArray($colorbackvmenu1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbackvmenu1);
 $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) {
@@ -225,22 +226,24 @@ if ($tmpval <= 460) {
 	$colortextbackvmenu = '000000';
 }
 
-$colortopbordertitle1 = join(',', colorStringToArray($colortopbordertitle1)); // Normalize value to 'x,y,z'
+$colortopbordertitle1 = implode(',', colorStringToArray($colortopbordertitle1)); // Normalize value to 'x,y,z'
 
-$colorbacktitle1 = join(',', colorStringToArray($colorbacktitle1)); // Normalize value to 'x,y,z'
+$colorbacktitle1 = implode(',', colorStringToArray($colorbacktitle1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbacktitle1);
 if ($colortexttitle == '') {
 	$tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
 	if ($tmpval <= 460) {
-		$colortexttitle = 'FFFFFF'; $colorshadowtitle = '888888';
+		$colortexttitle = 'FFFFFF';
+		$colorshadowtitle = '888888';
 	} else {
-		$colortexttitle = '101010'; $colorshadowtitle = 'FFFFFF';
+		$colortexttitle = '101010';
+		$colorshadowtitle = 'FFFFFF';
 	}
 } else {
 	$colorshadowtitle = '888888';
 }
 
-$colorbacktabcard1 = join(',', colorStringToArray($colorbacktabcard1)); // Normalize value to 'x,y,z'
+$colorbacktabcard1 = implode(',', colorStringToArray($colorbacktabcard1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbacktabcard1);
 $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) {
@@ -250,26 +253,26 @@ if ($tmpval <= 460) {
 }
 
 // Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
-$colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1));
-$colorbackvmenu1 = join(',', colorStringToArray($colorbackvmenu1));
-$colorbacktitle1 = join(',', colorStringToArray($colorbacktitle1));
-$colorbacktabcard1 = join(',', colorStringToArray($colorbacktabcard1));
-$colorbacktabactive = join(',', colorStringToArray($colorbacktabactive));
-$colorbacklineimpair1 = join(',', colorStringToArray($colorbacklineimpair1));
-$colorbacklineimpair2 = join(',', colorStringToArray($colorbacklineimpair2));
-$colorbacklinepair1 = join(',', colorStringToArray($colorbacklinepair1));
-$colorbacklinepair2 = join(',', colorStringToArray($colorbacklinepair2));
+$colorbackhmenu1 = implode(',', colorStringToArray($colorbackhmenu1));
+$colorbackvmenu1 = implode(',', colorStringToArray($colorbackvmenu1));
+$colorbacktitle1 = implode(',', colorStringToArray($colorbacktitle1));
+$colorbacktabcard1 = implode(',', colorStringToArray($colorbacktabcard1));
+$colorbacktabactive = implode(',', colorStringToArray($colorbacktabactive));
+$colorbacklineimpair1 = implode(',', colorStringToArray($colorbacklineimpair1));
+$colorbacklineimpair2 = implode(',', colorStringToArray($colorbacklineimpair2));
+$colorbacklinepair1 = implode(',', colorStringToArray($colorbacklinepair1));
+$colorbacklinepair2 = implode(',', colorStringToArray($colorbacklinepair2));
 if ($colorbacklinepairhover != '') {
-	$colorbacklinepairhover = join(',', colorStringToArray($colorbacklinepairhover));
+	$colorbacklinepairhover = implode(',', colorStringToArray($colorbacklinepairhover));
 }
 if ($colorbacklinepairchecked != '') {
-	$colorbacklinepairchecked = join(',', colorStringToArray($colorbacklinepairchecked));
+	$colorbacklinepairchecked = implode(',', colorStringToArray($colorbacklinepairchecked));
 }
-$colorbackbody = join(',', colorStringToArray($colorbackbody));
-$colortexttitlenotab = join(',', colorStringToArray($colortexttitlenotab));
-$colortexttitle = join(',', colorStringToArray($colortexttitle));
-$colortext = join(',', colorStringToArray($colortext));
-$colortextlink = join(',', colorStringToArray($colortextlink));
+$colorbackbody = implode(',', colorStringToArray($colorbackbody));
+$colortexttitlenotab = implode(',', colorStringToArray($colortexttitlenotab));
+$colortexttitle = implode(',', colorStringToArray($colortexttitle));
+$colortext = implode(',', colorStringToArray($colortext));
+$colortextlink = implode(',', colorStringToArray($colortextlink));
 
 $nbtopmenuentries = $menumanager->showmenu('topnb');
 $nbtopmenuentriesreal = $nbtopmenuentries;
@@ -358,7 +361,7 @@ print '*/'."\n";
 	--amountremaintopaybackcolor:none;
 	--productlinestockod: #002200;
 	--productlinestocktoolow: #884400;
-	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
+	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #2b2d2f, #2b2d2f, #2b2d2f, #e4efe8);
 	--tablevalidbgcolor: rgb(252, 248, 227);
 	--butactionbg : #<?php print $butactionbg; ?>;
 	--textbutaction : #<?php print $textbutaction; ?>;
@@ -370,7 +373,7 @@ print '*/'."\n";
 <?php
 if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 	print "/* For dark mode */\n";
-	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) {
 		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
 	} else {
 		print "@media not print {";
@@ -451,7 +454,7 @@ body {
 }
 
 .thumbstat { font-weight: bold !important; }
-th a { font-weight: <?php echo ($useboldtitle ? 'bold' : 'normal'); ?> !important; }
+th a { font-weight: <?php echo($useboldtitle ? 'bold' : 'normal'); ?> !important; }
 a.tab { font-weight: 500 !important; }
 
 a:link, a:visited, a:hover, a:active, .classlink { font-family: <?php print $fontlist ?>; font-weight: normal; color: var(--colortextlink); text-decoration: none;  }
@@ -824,6 +827,10 @@ input:-webkit-autofill {
 input[type=checkbox], input[type=radio] {
 	margin: 0 3px 0 3px;
 }
+.kanban input.checkforselect {
+	margin-right: 0px;
+	margin-top: 5px;
+}
 
 /* CSS for placeholder */
 .placeholder { color: #ccc; }
@@ -1038,10 +1045,10 @@ textarea.centpercent {
 }
 
 .flip {
-	transform: scaleX(-1) translate(<?php print ($left == 'left' ? '' : '-'); ?>2px, 0);
+	transform: scaleX(-1) translate(<?php print($left == 'left' ? '' : '-'); ?>2px, 0);
 }
 .rotate90 {
-	transform: rotate(90deg) translate(0, <?php print ($left == 'left' ? '' : '-'); ?>2px);
+	transform: rotate(90deg) translate(0, <?php print($left == 'left' ? '' : '-'); ?>2px);
 }
 .center {
 	text-align: center;
@@ -1075,13 +1082,13 @@ textarea.centpercent {
 	float: right!important;
 }
 .nowrap {
-	white-space: <?php print ($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
+	white-space: <?php print($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
 }
 .nowraponsmartphone {
-	white-space: <?php print ($dol_optimize_smallscreen ? 'nowrap' : 'normal'); ?>;
+	white-space: <?php print($dol_optimize_smallscreen ? 'nowrap' : 'normal'); ?>;
 }
 .wraponsmartphone {
-	white-space: <?php print ($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
+	white-space: <?php print($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
 }
 .liste_titre .nowrap {
 	white-space: nowrap;
@@ -1089,14 +1096,18 @@ textarea.centpercent {
 .nowraponall {	/* no wrap on all devices */
 	white-space: nowrap;
 }
-.wrapimp {
+.nowrapfordate {	/* no wrap on all devices for dates */
+	white-space: nowrap;
+	display: inline-block;
+}
+.wrapimp, .wrapimp pre {
 	white-space: normal !important;
 }
 .wordwrap {
 	word-wrap: break-word;
 }
 .wordbreakimp {
-	word-break: break-word;
+	word-break: break-word !important;
 }
 .wordbreak {
 	word-break: break-word;	/* cut fist between word, inside word if not possible */
@@ -1104,7 +1115,7 @@ textarea.centpercent {
 .wordbreakall {
 	word-break: break-all;
 }
-td.wordbreak img {
+td.wordbreak img, td.wordbreakimp img {
 	max-width: 100%;
 }
 .bold {
@@ -1278,7 +1289,7 @@ body[class*="colorblind-"] .text-success{
 	color : <?php print $textDanger; ?>
 }
 
-.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfielda span.fa-crop,
+.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfielda span.fa-crop, .editfielda span.fa-eye,
 .editfieldlang {
 	color: #ccc !important;
 }
@@ -1441,7 +1452,8 @@ if ($conf->browser->layout == 'phone') {
 .divsearchfieldfilter {
 	   white-space: nowrap;
 }
-<?php } ?>
+	<?php
+} ?>
 
 
 .a-filter, .a-mesure {
@@ -1669,6 +1681,12 @@ select.flat.selectlimit {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+.tdoverflowmax350 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 350px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 .tdoverflowmax400 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 400px;
 	overflow: hidden;
@@ -1788,6 +1806,15 @@ div.fiche>form>div.div-table-responsive {
 	min-height: 392px;
 }
 
+.display-flex {
+	display: flex;
+	flex-wrap: wrap;
+	  justify-content: space-between;
+}
+.flex-item {
+	flex:1;
+}
+
 .flexcontainer {
 	<?php if (in_array($conf->browser->name, array('chrome', 'firefox'))) {
 		echo 'display: inline-flex;'."\n";
@@ -1857,6 +1884,7 @@ tr.nobottom td {
 .minwidth25  { min-width: 25px; }
 .minwidth50  { min-width: 50px; }
 .minwidth75  { min-width: 75px; }
+.nominwidth { min-width: fit-content !important; }
 /* rule for not too small screen only */
 @media only screen and (min-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)
 {
@@ -2085,7 +2113,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	}
 
 	div.fiche {
-		margin-top: <?php print ($dol_hide_topmenu ? '12' : '6'); ?>px !important;
+		margin-top: <?php print($dol_hide_topmenu ? '12' : '6'); ?>px !important;
 	}
 	.border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
 		height: 40px !important;
@@ -2146,7 +2174,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		width: <?php print dol_size(300, 'width'); ?>px;
 	}
 
-	/* intput, input[type=text], */
+	/* input, input[type=text], */
 	select {
 		width: 98%;
 		min-width: 40px;
@@ -2418,8 +2446,8 @@ div.fiche {
 <?php } ?>
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '30' : '6')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '28' : '6')); ?>px;
+	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '30' : '6')); ?>px;
+	margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '28' : '6')); ?>px;
 	<?php if (!empty($dol_hide_leftmenu) && !empty($dol_hide_topmenu)) {
 		print 'margin-top: 12px;';
 	} ?>
@@ -2482,7 +2510,7 @@ div.fichehalfright {
 	} ?>
 }
 
-/* Force values on one colum for small screen */
+/* Force values on one column for small screen */
 @media only screen and (max-width: 1499px)
 {
 	div.fichehalfleft-lg {
@@ -2506,12 +2534,12 @@ div.secondcolumn div.box {
 	padding-left: 10px;
 }*/
 
-/* Force values on one colum for small screen */
+/* Force values on one column for small screen */
 @media only screen and (max-width: 900px)
 {
 	div.fiche {
-		margin-<?php print $left; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : ($dol_hide_leftmenu ? '4' : '20')); ?>px;
-		margin-<?php print $right; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 8 : 16); ?>px;
+		margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : ($dol_hide_leftmenu ? '4' : '20')); ?>px;
+		margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 8 : 16); ?>px;
 		<?php if (!empty($conf->dol_hide_leftmenu) && !empty($conf->dol_hide_topmenu)) {
 			print 'margin-top: 4px;';
 		} ?>
@@ -2748,7 +2776,10 @@ $heightmenu2 = 48; /* height of top menu, ârt with login  */
 $disableimages = 0;
 $maxwidthloginblock = 110;
 if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1) {
-	$heightmenu = 30; $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu = 0;
+	$heightmenu = 30;
+	$disableimages = 1;
+	$maxwidthloginblock = 180;
+	$minwidthtmenu = 0;
 }
 ?>
 
@@ -2771,7 +2802,7 @@ div#tmenu_tooltip {
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 	display:none;
 <?php } else { ?>
-	/* padding-<?php echo $right; ?>: <?php echo ($maxwidthloginblock - 10); ?>px; */
+	/* padding-<?php echo $right; ?>: <?php echo($maxwidthloginblock - 10); ?>px; */
 <?php } ?>
 }
 
@@ -2829,7 +2860,7 @@ span.mainmenuaspan.tmenudisabled {
 	cursor: not-allowed;
 }
 
-a.disabled {
+a.disabled, span.tmenu {
 	color: #aaa;
 	text-decoration: none !important;
 	cursor: default;
@@ -2937,7 +2968,7 @@ div.mainmenu {
 	position : relative;
 	background-repeat:no-repeat;
 	background-position:center top;
-	height: <?php echo ($heightmenu - 22); ?>px;
+	height: <?php echo($heightmenu - 22); ?>px;
 	margin-left: 0px;
 	min-width: 40px;
 }
@@ -2992,7 +3023,8 @@ div.mainmenu.menu {
 		}
 		//print "XXX".$val;
 
-		$found = 0; $url = '';
+		$found = 0;
+		$url = '';
 		$constformoduleicon = 'MAIN_MODULE_'.strtoupper($val).'_ICON';
 		$iconformodule = getDolGlobalString($constformoduleicon);
 		if ($iconformodule) {
@@ -3033,7 +3065,7 @@ div.mainmenu.menu {
 		}
 	}
 	// End of part to add more div class css
-}	// End test if $dol_hide_topmenu ?>
+}	// End test if $dol_hide_topmenu?>
 
 
 .tmenuimage {
@@ -3428,7 +3460,7 @@ a.help:link, a.help:visited, a.help:hover, a.help:active, span.help {
 	font-size: x-small;
 	vertical-align: super;
 	opacity: 0.95;
-	transform: rotate(<?php echo ($left == 'left' ? '55deg' : '305deg'); ?>);
+	transform: rotate(<?php echo($left == 'left' ? '55deg' : '305deg'); ?>);
 }
 
 div.blockvmenulogo
@@ -3821,7 +3853,7 @@ span.tabspan {
 
 #undertopmenu {
 	background-repeat: repeat-x;
-	margin-top: <?php echo ($dol_hide_topmenu ? '6' : '0'); ?>px;
+	margin-top: <?php echo($dol_hide_topmenu ? '6' : '0'); ?>px;
 }
 
 .paddingrightonly {
@@ -4031,7 +4063,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-bottom-color:  #BBB;
 	border-bottom-style: solid;
 
-	margin: 0px 0px 15px 0px;
+	margin: 0px 0px 20px 0px;
 
 	-webkit-border-radius: 0.1em;
 	border-radius: 0.1em;
@@ -4356,30 +4388,27 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 	-webkit-box-shadow: unset;
 }
 
-.oddeven, .evenodd, .impair, .nohover .impair:hover, tr.impair td.nohover, .tagtr.oddeven
+.oddeven, .evenodd, .impair, .pair, .nohover .impair:hover, tr.impair td.nohover, tr.pair td.nohover, .tagtr.oddeven
 {
 	font-family: <?php print $fontlist ?>;
 	border: 0px;
 	margin-bottom: 1px;
-	color: var(--oddeven);
+	color: var(--oddevencolor);
 }
 .impair, .nohover .impair:hover, tr.impair td.nohover
 {
 	background: var(--colorbacklineimpair2);
 }
-#GanttChartDIV {
-	background-color: var(--colorbacklineimpair2);
-}
-
-.oddeven, .evenodd, .pair, .nohover .pair:hover, tr.pair td.nohover, .tagtr.oddeven {
-	font-family: <?php print $fontlist ?>;
-	margin-bottom: 1px;
-	color: var(--oddevencolor);
-}
 .pair, .nohover .pair:hover, tr.pair td.nohover {
 	background-color: var(--colorbacklinepair1);
 }
+tr.oddeven.oddevendouble {
+	height: 60px !important;
+}
 
+#GanttChartDIV {
+	background-color: var(--colorbacklineimpair2);
+}
 table.dataTable tr.oddeven {
 	background-color: var(--colorbacklinepair1) !important;
 }
@@ -4430,7 +4459,7 @@ div.liste_titre .tagtd {
 	vertical-align: middle;
 }
 div.liste_titre {
-	min-height: 26px !important;	/* We cant use height because it's a div and it should be higher if content is more. but min-height doe not work either for div */
+	min-height: 26px !important;	/* We can't use height because it's a div and it should be higher if content is more. but min-height doe not work either for div */
 
 	padding-top: 2px;
 	padding-bottom: 2px;
@@ -4484,7 +4513,7 @@ tr.liste_titre th, tr.liste_titre td, th.liste_titre
 {
 	border-bottom: 1px solid #aaa;
 }
-/* TODO Once title line is moved under title search, make border bottom of all th black and force to whit when it's first tr */
+/* TODO Once the title line is moved under title search, make th border bottoms black and force to white when it's the first tr */
 tr:first-child th.liste_titre, tr:first-child th.liste_titre_sel {
 	border-bottom: 1px solid #FFF ! important;
 }
@@ -5795,7 +5824,7 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 .ui-widget {
 	font-family:<?php echo $fontlist; ?>;
 }
-.ui-button { margin-left: -2px; <?php print (preg_match('/chrome/', $conf->browser->name) ? 'padding-top: 1px;' : ''); ?> }
+.ui-button { margin-left: -2px; <?php print(preg_match('/chrome/', $conf->browser->name) ? 'padding-top: 1px;' : ''); ?> }
 .ui-button-icon-only .ui-button-text { height: 8px; }
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
 .ui-button-text
@@ -6006,7 +6035,7 @@ pre#editfilecontentaceeditorid {
 /* ============================================================================== */
 
 div.scroll2 {
-	width: <?php print isset($_SESSION['dol_screenwidth']) ?max((int) $_SESSION['dol_screenwidth'] - 830, 450) : '450'; ?>px !important;
+	width: <?php print isset($_SESSION['dol_screenwidth']) ? max((int) $_SESSION['dol_screenwidth'] - 830, 450) : '450'; ?>px !important;
 }
 
 div#GanttChartDIVglisthead, div#GanttChartDIVgcharthead {
@@ -6951,7 +6980,7 @@ a.ui-link {
 	text-overflow: clip; /* "hidden" : do not exists as a text-overflow value (https://developer.mozilla.org/fr/docs/Web/CSS/text-overflow) */
 }
 
-/* Warning: setting this may make screen not beeing refreshed after a combo selection */
+/* Warning: setting this may make screen not being refreshed after a combo selection */
 /*.ui-body-c {
 	background: #fff;
 }*/
@@ -7533,7 +7562,7 @@ span.clipboardCPValueToPrint, div.clipboardCPValueToPrint {
 }
 span.clipboardCPValue.hidewithsize {
 	width: 0 !important;
-	display: inline-block;	/* this will be modifiy on the fly by the copy-paste js code in lib_foot.js.php to have copy feature working */
+	display: inline-block;	/* this will be modify on the fly by the copy-paste js code in lib_foot.js.php to have copy feature working */
 	color: transparent;
 	white-space: nowrap;
 	overflow-x: hidden;
@@ -7550,7 +7579,7 @@ div.clipboardCPValue.hidewithsize {
 	display: none;
 }
 
-/* To make a div popup, we must use a position aboluste inside a position relative */
+/* To make a div popup, we must use a position absolute inside a position relative */
 
 .clipboardCPText {
 	position: relative;
@@ -7686,6 +7715,28 @@ table.jPicker {
 
 
 /* ============================================================================== */
+/* CSS style used for BookCal                                                     */
+/* ============================================================================== */
+
+.center.bookingtab {
+	margin-left: 20px;
+}
+#bookinghoursection {
+	width: 145px;
+	height: 320px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	text-align: left;
+}
+.bookcalform {
+	border: 1px solid #000;
+	padding: 15px;
+	border-radius: 5px;
+	margin-bottom: 15px;
+}
+
+
+/* ============================================================================== */
 /* CSS style used for small screen                                                */
 /* ============================================================================== */
 
@@ -7735,6 +7786,17 @@ table.jPicker {
 		margin-left: 10px;
 		margin-right: 10px;
 		text-align: start;
+	}
+
+	.bookcalform.boxtable .minwidth75 {
+		min-width: auto;
+	}
+	.center.bookingtab {
+		margin-left: 6px;
+	}
+	#bookinghoursection {
+		font-size: small;
+		width: 122px;
 	}
 }
 
@@ -7793,6 +7855,9 @@ table.jPicker {
 		max-width: <?php echo max(24, ceil(300 / ($nbtopmenuentriesreal + 2))); ?>px;	/* size of viewport */
 		text-overflow: clip;
 	}
+	.menuhider div.tmenucenter {
+		max-width: 28px;
+	}
 	.mainmenuaspan {
 		  font-size: 10px;
 		  padding-left: 0;
@@ -7821,9 +7886,17 @@ table.jPicker {
 	li.tmenu, li.tmenusel {
 		min-width: 30px;
 	}
+	a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active,
+	a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
+		padding-left: 1px;
+		padding-right: 1px;
+	}
 
 	div.login_block {
 		border-right: 1px solid rgba(0,0,0,0.3);
+	}
+	.loginbuttonexternal {
+		width: 260px;
 	}
 
 	div.tmenucenter {
@@ -7927,6 +8000,7 @@ table.jPicker {
 
 <?php
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
+include dol_buildpath($path.'/theme/eldy/emaillayout.inc.php', 0); // actually md use same style as eldy theme
 include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/eldy/timeline.inc.php', 0); // actually md use same style as eldy theme

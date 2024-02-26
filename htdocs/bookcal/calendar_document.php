@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       calendar_document.php
+ *  \file       htdocs/bookcal/calendar_document.php
  *  \ingroup    bookcal
  *  \brief      Tab for documents linked to Calendar
  */
@@ -50,7 +50,8 @@ if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
 while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
-	$i--; $j--;
+	$i--;
+	$j--;
 }
 if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) {
 	$res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
@@ -126,8 +127,8 @@ if ($id > 0 || !empty($ref)) {
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = 0;
 if ($enablepermissioncheck) {
-	$permissiontoread = $user->rights->bookcal->calendar->read;
-	$permissiontoadd = $user->rights->bookcal->calendar->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+	$permissiontoread = $user->hasRight('bookcal', 'calendar', 'read');
+	$permissiontoadd = $user->hasRight('bookcal', 'calendar', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 } else {
 	$permissiontoread = 1;
 	$permissiontoadd = 1;
@@ -175,7 +176,7 @@ print dol_get_fiche_head($head, 'document', $langs->trans("Calendar"), -1, $obje
 
 
 // Build file list
-$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 $totalsize = 0;
 foreach ($filearray as $key => $file) {
 	$totalsize += $file['size'];
@@ -244,10 +245,6 @@ print '</div>';
 print dol_get_fiche_end();
 
 $modulepart = 'bookcal';
-//$permissiontoadd = $user->rights->bookcal->calendar->write;
-$permissiontoadd = 1;
-//$permtoedit = $user->rights->bookcal->calendar->write;
-$permtoedit = 1;
 $param = '&id='.$object->id;
 
 //$relativepathwithnofile='calendar/' . dol_sanitizeFileName($object->id).'/';

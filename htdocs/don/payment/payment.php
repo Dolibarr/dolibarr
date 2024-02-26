@@ -139,8 +139,8 @@ if ($action == 'add_payment') {
  */
 
 $form = new Form($db);
-
-llxHeader();
+$title = $langs->trans("Payment");
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-donation page-payment');
 
 
 $sql = "SELECT sum(p.amount) as total";
@@ -264,7 +264,7 @@ if ($action == 'create') {
 		print "</tr>\n";
 		/*$total+=$objp->total;
 		$total_ttc+=$objp->total_ttc;
-		$totalrecu+=$objp->am;*/    //Useless code ?
+		$totalrecu+=$objp->am;*/	//Useless code ?
 		$i++;
 	}
 	/*if ($i > 1)
@@ -277,7 +277,7 @@ if ($action == 'create') {
 		print "<td class=\"right\"><b>".price($total_ttc - $totalrecu)."</b></td>";
 		print '<td class="center">&nbsp;</td>';
 		print "</tr>\n";
-	}*/    //Useless code ?
+	}*/	//Useless code ?
 
 	print "</table>";
 

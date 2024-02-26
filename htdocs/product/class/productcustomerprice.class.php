@@ -61,7 +61,6 @@ class ProductCustomerPrice extends CommonObject
 	public $entity;
 
 	public $datec = '';
-	public $tms = '';
 
 	/**
 	 * @var int ID
@@ -105,7 +104,7 @@ class ProductCustomerPrice extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db handler
+	 * @param DoliDB $db handler
 	 */
 	public function __construct($db)
 	{
@@ -118,24 +117,23 @@ class ProductCustomerPrice extends CommonObject
 	 * @param User $user that creates
 	 * @param int $notrigger triggers after, 1=disable triggers
 	 * @param int $forceupdateaffiliate update price on each soc child
-	 * @return int <0 if KO, Id of created object if OK
+	 * @return int Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0, $forceupdateaffiliate = 0)
 	{
-
 		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
 
 		if (isset($this->entity)) {
-			$this->entity = trim($this->entity);
+			$this->entity = (int) $this->entity;
 		}
 		if (isset($this->fk_product)) {
-			$this->fk_product = trim($this->fk_product);
+			$this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->fk_soc)) {
-			$this->fk_soc = trim($this->fk_soc);
+			$this->fk_soc = (int) $this->fk_soc;
 		}
 		if (isset($this->ref_customer)) {
 			$this->ref_customer = trim($this->ref_customer);
@@ -168,14 +166,14 @@ class ProductCustomerPrice extends CommonObject
 			$this->localtax2_tx = trim($this->localtax2_tx);
 		}
 		if (isset($this->fk_user)) {
-			$this->fk_user = trim($this->fk_user);
+			$this->fk_user = (int) $this->fk_user;
 		}
 		if (isset($this->import_key)) {
 			$this->import_key = trim($this->import_key);
 		}
 
-			// Check parameters
-			// Put here code to add control on parameters values
+		// Check parameters
+		// Put here code to add control on parameters values
 
 		if ($this->price != '' || $this->price == 0) {
 			if ($this->price_base_type == 'TTC') {
@@ -296,7 +294,7 @@ class ProductCustomerPrice extends CommonObject
 	 * Load object in memory from the database
 	 *
 	 * @param 	int 	$id 	ID of customer price
-	 * @return 	int 			<0 if KO, 0 if not found, >0 if OK
+	 * @return 	int 			Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -374,7 +372,7 @@ class ProductCustomerPrice extends CommonObject
 	 * @param 	int 	$limit 		page
 	 * @param 	int 	$offset 	offset
 	 * @param 	array 	$filter 	Filter for select
-	 * @return 	int 				<0 if KO, >0 if OK
+	 * @return 	int 				Return integer <0 if KO, >0 if OK
 	 * @since dolibarr v17
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
@@ -492,7 +490,7 @@ class ProductCustomerPrice extends CommonObject
 	 * @param 	int 	$limit 		page
 	 * @param 	int 	$offset 	offset
 	 * @param 	array 	$filter 	Filter for sql request
-	 * @return 	int 			<0 if KO, >0 if OK
+	 * @return 	int 			Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAllLog($sortorder, $sortfield, $limit, $offset, $filter = array())
 	{
@@ -597,24 +595,23 @@ class ProductCustomerPrice extends CommonObject
 	 * @param User $user that modifies
 	 * @param int $notrigger triggers after, 1=disable triggers
 	 * @param int $forceupdateaffiliate update price on each soc child
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
-	public function update($user = 0, $notrigger = 0, $forceupdateaffiliate = 0)
+	public function update(User $user, $notrigger = 0, $forceupdateaffiliate = 0)
 	{
-
 		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
 
 		if (isset($this->entity)) {
-			$this->entity = trim($this->entity);
+			$this->entity = (int) $this->entity;
 		}
 		if (isset($this->fk_product)) {
-			$this->fk_product = trim($this->fk_product);
+			$this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->fk_soc)) {
-			$this->fk_soc = trim($this->fk_soc);
+			$this->fk_soc = (int) $this->fk_soc;
 		}
 		if (isset($this->ref_customer)) {
 			$this->ref_customer = trim($this->ref_customer);
@@ -647,14 +644,14 @@ class ProductCustomerPrice extends CommonObject
 			$this->localtax2_tx = trim($this->localtax2_tx);
 		}
 		if (isset($this->fk_user)) {
-			$this->fk_user = trim($this->fk_user);
+			$this->fk_user = (int) $this->fk_user;
 		}
 		if (isset($this->import_key)) {
 			$this->import_key = trim($this->import_key);
 		}
 
-			// Check parameters
-			// Put here code to add a control on parameters values
+		// Check parameters
+		// Put here code to add a control on parameters values
 
 		if ($this->price != '' || $this->price == 0) {
 			if ($this->price_base_type == 'TTC') {
@@ -813,7 +810,7 @@ class ProductCustomerPrice extends CommonObject
 	 *
 	 * @param 	User $user 					User that modifies
 	 * @param 	int $forceupdateaffiliate 	update price on each soc child
-	 * @return 	int 						<0 if KO, 0 = action disabled, >0 if OK
+	 * @return 	int 						Return integer <0 if KO, 0 = action disabled, >0 if OK
 	 */
 	public function setPriceOnAffiliateThirdparty($user, $forceupdateaffiliate)
 	{
@@ -908,7 +905,7 @@ class ProductCustomerPrice extends CommonObject
 	 *
 	 * @param User $user that deletes
 	 * @param int $notrigger triggers after, 1=disable triggers
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -1007,14 +1004,13 @@ class ProductCustomerPrice extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-
 		$this->id = 0;
 
-		$this->entity = '';
+		$this->entity = 0;
 		$this->datec = '';
-		$this->tms = '';
-		$this->fk_product = '';
-		$this->fk_soc = '';
+		$this->tms = dol_now();
+		$this->fk_product = 0;
+		$this->fk_soc = 0;
 		$this->ref_customer = '';
 		$this->price = '';
 		$this->price_ttc = '';
@@ -1026,7 +1022,7 @@ class ProductCustomerPrice extends CommonObject
 		$this->recuperableonly = '';
 		$this->localtax1_tx = '';
 		$this->localtax2_tx = '';
-		$this->fk_user = '';
+		$this->fk_user = 0;
 		$this->import_key = '';
 	}
 }

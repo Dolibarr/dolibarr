@@ -99,7 +99,9 @@ if ($action == 'updateMaskTask') {
 	$project->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/project/doc/pdf_".$modele.".modules.php", 0);
@@ -133,7 +135,9 @@ if ($action == 'updateMaskTask') {
 	$project->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/project/task/doc/pdf_".$modele.".modules.php", 0);
@@ -294,6 +298,7 @@ print '<br>';
 
 print load_fiche_titre($langs->trans("ProjectsNumberingModules"), '', '');
 
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
@@ -318,7 +323,7 @@ foreach ($dirmodels as $reldir) {
 
 					require_once $dir.$file.'.php';
 
-					$module = new $file;
+					$module = new $file();
 
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -383,13 +388,15 @@ foreach ($dirmodels as $reldir) {
 	}
 }
 
-print '</table><br>';
-
+print '</table>';
+print '</div>';
+print '<br>';
 
 if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 	// Task numbering module
 	print load_fiche_titre($langs->trans("TasksNumberingModules"), '', '');
 
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td width="100">'.$langs->trans("Name").'</td>';
@@ -414,7 +421,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 
 						require_once $dir.$file.'.php';
 
-						$module = new $file;
+						$module = new $file();
 
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -479,7 +486,9 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 		}
 	}
 
-	print '</table><br>';
+	print '</table>';
+	print '</div>';
+	print '<br>';
 }
 
 
@@ -511,8 +520,9 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-print "<table class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+print '<table class="noborder" width="100%">'."\n";
+print '<tr class="liste_titre">'."\n";
 print '  <td width="100">'.$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Description")."</td>\n";
 print '<td class="center" width="60">'.$langs->trans("Activated")."</td>\n";
@@ -555,7 +565,7 @@ foreach ($dirmodels as $reldir) {
 
 							if ($modulequalified) {
 								print '<tr class="oddeven"><td width="100">';
-								print (empty($module->name) ? $name : $module->name);
+								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
 									print $module->info($langs);
@@ -618,7 +628,9 @@ foreach ($dirmodels as $reldir) {
 	}
 }
 
-print '</table><br>';
+print '</table>';
+print '</div>';
+print '<br>';
 
 
 
@@ -651,8 +663,9 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 		dol_print_error($db);
 	}
 
-	print "<table class=\"noborder\" width=\"100%\">\n";
-	print "<tr class=\"liste_titre\">\n";
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+	print '<table class="noborder" width="100%">'."\n";
+	print '<tr class="liste_titre">'."\n";
 	print '  <td width="100">'.$langs->trans("Name")."</td>\n";
 	print "  <td>".$langs->trans("Description")."</td>\n";
 	print '<td class="center" width="60">'.$langs->trans("Activated")."</td>\n";
@@ -695,7 +708,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 
 								if ($modulequalified) {
 									print '<tr class="oddeven"><td width="100">';
-									print (empty($module->name) ? $name : $module->name);
+									print(empty($module->name) ? $name : $module->name);
 									print "</td><td>\n";
 									if (method_exists($module, 'info')) {
 										print $module->info($langs);
@@ -717,7 +730,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 										print "</td>";
 									}
 
-									// Defaut
+									// Default
 									print '<td class="center">';
 									if ($conf->global->PROJECT_TASK_ADDON_PDF == "$name") {
 										print img_picto($langs->trans("Default"), 'on');
@@ -757,7 +770,9 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 		}
 	}
 
-	print '</table><br>';
+	print '</table>';
+	print '</div>';
+	print '<br>';
 }
 
 
@@ -771,6 +786,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateoptions">';
 print '<input type="hidden" name="page_y" value="">';
 
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameters")."</td>\n";
@@ -790,7 +806,7 @@ if (!$conf->use_javascript_ajax) {
 		'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
 		'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
 	);
-	print $form->selectarray("activate_PROJECT_USE_SEARCH_TO_SELECT", $arrval, $conf->global->PROJECT_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_PROJECT_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString("PROJECT_USE_SEARCH_TO_SELECT"));
 	print '</td><td class="right">';
 	print '<input type="submit" class="button small reposition" name="PROJECT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
@@ -826,7 +842,7 @@ print '<input type="submit" class="button small reposition" name="PROJECT_TIMESH
 print '</td>';
 print '</tr>';
 print '</table>';
-
+print '</div>';
 
 print '</form>';
 

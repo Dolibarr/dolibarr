@@ -38,7 +38,7 @@ $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_type = GETPOST("search_type", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -46,7 +46,7 @@ $type = GETPOST("type", "int");
 
 $diroutputmassaction = $conf->product->dir_output.'/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -65,14 +65,16 @@ if (!$sortorder) {
 }
 
 // Initialize context for list
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'intracommreportlist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'intracommreportlist';
 if ((string) $type == '1') {
-	$contextpage = 'DESlist'; if ($search_type == '') {
+	$contextpage = 'DESlist';
+	if ($search_type == '') {
 		$search_type = '1';
 	}
 }
 if ((string) $type == '0') {
-	$contextpage = 'DEBlist'; if ($search_type == '') {
+	$contextpage = 'DEBlist';
+	if ($search_type == '') {
 		$search_type = '0';
 	}
 }
@@ -151,8 +153,8 @@ if ($search_type == '0') {
 	$result = restrictedArea($user, 'produit|service', '', '', '', '', '', 0);
 }
 
-$permissiontoread = $user->rights->intracommreport->read;
-$permissiontodelete = $user->rights->intracommreport->delete;
+$permissiontoread = $user->hasRight('intracommreport', 'read');
+$permissiontodelete = $user->hasRight('intracommreport', 'delete');
 
 
 /*
@@ -408,7 +410,7 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if INTRACOMM_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $parameters = array();

@@ -82,7 +82,7 @@ if ($action == 'setvalue') {
 		$error++;
 	}
 
-	// Create temporary encryption key if nedded
+	// Create temporary encryption key if needed
 	$res = dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE_KEY", $checkread_key, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -184,7 +184,7 @@ print '<tr class="oddeven">';
 print '<td>' . $langs->trans("DefaultBlacklistMailingStatus", $langs->transnoentitiesnoconv("No_Email")) . '</td>';
 print '<td>';
 $blacklist_setting=array(0=>$langs->trans('No'), 1=>$langs->trans('Yes'), 2=>$langs->trans('DefaultStatusEmptyMandatory'));
-print $form->selectarray("MAILING_CONTACT_DEFAULT_BULK_STATUS", $blacklist_setting, $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS);
+print $form->selectarray("MAILING_CONTACT_DEFAULT_BULK_STATUS", $blacklist_setting, getDolGlobalString('MAILING_CONTACT_DEFAULT_BULK_STATUS'));
 print '</td>';
 print '<td class="hideonsmartphone"></td>';
 print '</tr>';

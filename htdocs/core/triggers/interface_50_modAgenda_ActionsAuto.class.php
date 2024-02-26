@@ -7,6 +7,8 @@
  * Copyright (C) 2015		Bahfir Abbes			<bafbes@gmail.com>
  * Copyright (C) 2022		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,8 +50,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "agenda";
 		$this->description = "Triggers of this module add actions in agenda according to setup made in agenda setup.";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = self::VERSION_DOLIBARR;
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'action';
 	}
 
@@ -73,9 +74,9 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	 * @param User		    $user       Object user
 	 * @param Translate 	$langs      Object langs
 	 * @param conf		    $conf       Object conf
-	 * @return int         				<0 if KO, 0 if no triggered ran, >0 if OK
+	 * @return int         				Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		if (!isModEnabled('agenda')) {
 			return 0; // Module not active, we do nothing
@@ -136,7 +137,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			// For merge event, we add a mention
 			if (!empty($object->context['mergefromname'])) {
-				$object->actionmsg = dol_concatdesc($object->actionmsg, $langs->trans("DataFromWasMerged", $object->context['mergefromname']));
+				$object->actionmsg = dol_concatdesc($object->actionmsg, $langs->trans("DataFromWasMerged", $object->context['mergefromname'].' (id='.$object->context['mergefromname'].')'));
 			}
 
 			$object->sendtoid = 0;
@@ -852,7 +853,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			if (empty($object->actionmsg2)) {
 				if (empty($object->context['actionmsg2'])) {
-					$object->actionmsg2 = $langs->transnoentities("SupplierOrderSubmitedInDolibarr", ($object->newref ? $object->newref : $object->ref));
+					$object->actionmsg2 = $langs->transnoentities("SupplierOrderSubmitedInDolibarr", ($object->newref ?: $object->ref), $object->getInputMethod());
 				} else {
 					$object->actionmsg2 = $object->context['actionmsg2'];
 				}
@@ -1253,6 +1254,16 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			// Parameters $object->sendtoid defined by caller
 			//$object->sendtoid=0;
+		} elseif ($action == 'PROJECT_DELETE') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "projects"));
+
+			if (empty($object->actionmsg2)) {
+				$object->actionmsg2 = $langs->transnoentities("ProjectDeletedInDolibarr", $object->ref);
+			}
+			$object->actionmsg = $langs->transnoentities("ProjectDeletedInDolibarr", $object->ref);
+
+			$object->sendtoid = 0;
 		} elseif ($action == 'PROJECT_CLOSE') {
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "projects"));
@@ -1356,7 +1367,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			// TODO Merge all previous cases into this generic one
 			// $action = PASSWORD, BILL_DELETE, TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, CONTACT_SENTBYMAIL, RECRUITMENTCANDIDATURE_MODIFY, ...
 			// Can also be a value defined by an external module like SENTBYSMS, COMPANY_SENTBYSMS, MEMBER_SENTBYSMS, ...
-			// Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function).
+			// Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at beginning of this function).
 			// Note that these key can be set in agenda setup, only if defined into llx_c_action_trigger
 			if (!empty($object->context['actionmsg']) && empty($object->actionmsg)) {	// For description
 				$object->actionmsg = $object->context['actionmsg'];
@@ -1447,9 +1458,9 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$now = dol_now();
 
 		if (isset($_SESSION['listofnames-'.$object->trackid])) {
-			$attachs = $_SESSION['listofnames-'.$object->trackid];
-			if ($attachs && strpos($action, 'SENTBYMAIL')) {
-				$object->actionmsg = dol_concatdesc($object->actionmsg, "\n".$langs->transnoentities("AttachedFiles").': '.$attachs);
+			$attachments = $_SESSION['listofnames-'.$object->trackid];
+			if ($attachments && strpos($action, 'SENTBYMAIL')) {
+				$object->actionmsg = dol_concatdesc($object->actionmsg, "\n".$langs->transnoentities("AttachedFiles").': '.$attachments);
 			}
 		}
 
@@ -1563,7 +1574,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$_SESSION['LAST_ACTION_CREATED'] = $ret;
 			return 1;
 		} else {
-			$this->error = "Failed to insert event : ".$actioncomm->error." ".join(',', $actioncomm->errors);
+			$this->error = "Failed to insert event : ".$actioncomm->error." ".implode(',', $actioncomm->errors);
 			$this->errors = $actioncomm->errors;
 
 			dol_syslog("interface_modAgenda_ActionsAuto.class.php: ".$this->error, LOG_ERR);

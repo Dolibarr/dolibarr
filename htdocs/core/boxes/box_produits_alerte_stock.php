@@ -41,17 +41,6 @@ class box_produits_alerte_stock extends ModeleBoxes
 	public $depends = array("produit");
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB	$db      	Database handler
@@ -63,8 +52,8 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 		$this->db = $db;
 
-		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
-		$tmpentry = array('enabled'=>((isModEnabled("product") || isModEnabled("service")) && isModEnabled('stock')), 'perms'=>!empty($user->rights->stock->lire), 'module'=>'product|service|stock');
+		$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
+		$tmpentry = array('enabled'=>((isModEnabled("product") || isModEnabled("service")) && isModEnabled('stock')), 'perms'=>$user->hasRight('stock', 'lire'), 'module'=>'product|service|stock');
 		$showmode = isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 		$this->hidden = ($showmode != 1);
 	}
@@ -169,7 +158,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 					if (!isModEnabled('dynamicprices') || empty($objp->fk_price_expression)) {
 						$price_base_type = $langs->trans($objp->price_base_type);
-						$price = ($objp->price_base_type == 'HT') ?price($objp->price) : $price = price($objp->price_ttc);
+						$price = ($objp->price_base_type == 'HT') ? price($objp->price) : $price = price($objp->price_ttc);
 					} else { //Parse the dynamic price
 						$productstatic->fetch($objp->rowid, '', '', 1);
 
@@ -229,8 +218,8 @@ class box_produits_alerte_stock extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

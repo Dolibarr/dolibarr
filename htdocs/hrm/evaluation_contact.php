@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/class/job.class.php';
 $langs->loadLangs(array('hrm', 'companies', 'other', 'mails'));
 
 // Get Parameters
-$id     = (GETPOST('id') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id     = (GETPOST('id') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref    = GETPOST('ref', 'alpha');
 $lineid = GETPOST('lineid', 'int');
 $socid  = GETPOST('socid', 'int');
@@ -57,7 +57,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
 // Permissions
-$permission = $user->rights->hrm->evaluation->write;
+$permission = $user->hasRight('hrm', 'evaluation', 'write');
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();

@@ -76,9 +76,9 @@ if ($object->id > 0) {
 } else {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
-$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
-$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'lire')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
+$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'supprimer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'supprimer')));
 
 
 /*
@@ -235,7 +235,7 @@ if ($id > 0 || !empty($ref)) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$shownav = 1;
-		if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+		if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 			$shownav = 0;
 		}
 
@@ -321,7 +321,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$nbofsubsubproducts = count($prods_arbo); // This include sub sub product into nb
 		$prodschild = $object->getChildsArbo($id, 1);
-		$nbofsubproducts = count($prodschild); // This include only first level of childs
+		$nbofsubproducts = count($prodschild); // This include only first level of children
 
 
 		print '<div class="fichecenter">';
@@ -389,6 +389,10 @@ if ($id > 0 || !empty($ref)) {
 		if (isModEnabled('stock')) {
 			print '<td class="right">'.$langs->trans('Stock').'</td>';
 		}
+		// Hook fields
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
 		// Qty in kit
 		print '<td class="right">'.$langs->trans('Qty').'</td>';
 		// Stoc inc/dev
@@ -399,8 +403,8 @@ if ($id > 0 || !empty($ref)) {
 
 		$totalsell = 0;
 		$total = 0;
-		if (count($prods_arbo))	{
-			foreach ($prods_arbo as $value)	{
+		if (count($prods_arbo)) {
+			foreach ($prods_arbo as $value) {
 				$productstatic->fetch($value['id']);
 
 				if ($value['level'] <= 1) {
@@ -425,7 +429,9 @@ if ($id > 0 || !empty($ref)) {
 						if ($product_fourn->product_fourn_price_id > 0) {
 							print $product_fourn->display_price_product_fournisseur(0, 0);
 						} else {
-							print $langs->trans("NotDefined"); $notdefined++; $atleastonenotdefined++;
+							print $langs->trans("NotDefined");
+							$notdefined++;
+							$atleastonenotdefined++;
 						}
 					}
 					print '</td>';
@@ -440,7 +446,7 @@ if ($id > 0 || !empty($ref)) {
 					$total +=  $totalline;
 
 					print '<td class="right nowraponall">';
-					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : '').'<span class="amount">'.price($unitline, '', '', 0, 0, -1, $conf->currency)).'</span>';
+					print($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : '').'<span class="amount">'.price($unitline, '', '', 0, 0, -1, $conf->currency)).'</span>';
 					print '</td>';
 
 					// Best selling price
@@ -452,7 +458,7 @@ if ($id > 0 || !empty($ref)) {
 						$totalsell += $totallinesell;
 					}
 					print '<td class="right" colspan="2">';
-					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : ''));
+					print($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : ''));
 					if (is_numeric($pricesell)) {
 						print '<span class="amount">'.price($pricesell, '', '', 0, 0, -1, $conf->currency).'</span>';
 					} else {
@@ -464,6 +470,11 @@ if ($id > 0 || !empty($ref)) {
 					if (isModEnabled('stock')) {
 						print '<td class="right">'.$value['stock'].'</td>'; // Real stock
 					}
+
+					// Hook fields
+					$parameters = array();
+					$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
 
 					// Qty + IncDec
 					if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
@@ -515,6 +526,11 @@ if ($id > 0 || !empty($ref)) {
 						print '<td></td>'; // Real stock
 					}
 
+					// Hook fields
+					$parameters = array();
+					$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
+
 					// Qty in kit
 					print '<td class="right">'.dol_escape_htmltag($value['nb']).'</td>';
 
@@ -551,7 +567,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($atleastonenotdefined) {
 				print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
 			}
-			print ($atleastonenotdefined ? '' : price($total, '', '', 0, 0, -1, $conf->currency));
+			print($atleastonenotdefined ? '' : price($total, '', '', 0, 0, -1, $conf->currency));
 			print '</td>';
 
 			// Minimum selling price
@@ -563,7 +579,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($atleastonenotdefined) {
 				print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
 			}
-			print ($atleastonenotdefined ? '' : price($totalsell, '', '', 0, 0, -1, $conf->currency));
+			print($atleastonenotdefined ? '' : price($totalsell, '', '', 0, 0, -1, $conf->currency));
 			print '</td>';
 
 			// Stock

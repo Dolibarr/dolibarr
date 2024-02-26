@@ -23,12 +23,12 @@ AddLoan=Створити позику
 FinancialCommitment=Фінансові зобов'язання
 InterestAmount=Інтерес
 CapitalRemain=Залишається капітал
-TermPaidAllreadyPaid = Цей термін уже оплачений
-CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+TermPaidAllreadyPaid = Цей срок вже оплачений
+CantUseScheduleWithLoanStartedToPaid = Не вдається створити графік для позики з початим платежем
 CantModifyInterestIfScheduleIsUsed = Ви не можете змінити відсотки, якщо використовуєте розклад
 # Admin
 ConfigLoan=Конфігурація модульної позики
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Рахунок (з плану рахунків), який буде використовуватися за умовчанням для капіталу (модуль позики)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Рахунок (з плану рахунків), який буде використовуватися за умовчанням для нарахування відсотків (модуль позики)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Рахунок (з плану рахунків), який буде використовуватися за замовчуванням для страхування (модуль позики)
 CreateCalcSchedule=Відредагувати фінансові зобов'язання

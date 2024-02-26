@@ -39,21 +39,21 @@ StatusSendingValidatedShort=Xác nhận
 StatusSendingProcessedShort=Xử lý
 SendingSheet=Lô hàng
 ConfirmDeleteSending=Bạn có chắc chắn muốn xóa lô hàng này?
-ConfirmValidateSending=Bạn có chắc chắn muốn xác nhận lô hàng này với tham chiếu <b>%s</b> ?
+ConfirmValidateSending=Bạn có chắc chắn muốn xác thực lô hàng này với tham chiếu <b>%s</b>?
 ConfirmCancelSending=Bạn có chắc chắn muốn hủy lô hàng này?
 DocumentModelMerou=Mô hình Merou A5
 WarningNoQtyLeftToSend=Cảnh báo, không có sản phẩm chờ đợi để được vận chuyển.
-StatsOnShipmentsOnlyValidated=Statistics are only for validated shipments. Date used is the date of validation of shipment (planned delivery date is not always known)
+StatsOnShipmentsOnlyValidated=Số liệu thống kê chỉ dành cho các lô hàng đã được xác nhận. Ngày được sử dụng là ngày xác nhận lô hàng (ngày giao hàng dự kiến không phải lúc nào cũng được biết)
 DateDeliveryPlanned=Ngày giao hàng theo kế hoạch
 RefDeliveryReceipt=Tham chiếu biên nhận giao hàng
 StatusReceipt=Trạng thái biên nhận giao hàng
 DateReceived=Đã nhận ngày giao hàng
-ClassifyReception=Classify Received
+ClassifyReception=Phân loại đã nhận
 SendShippingByEMail=Gửi hàng qua email
 SendShippingRef=Nộp hồ sơ lô hàng %s
 ActionsOnShipping=Các sự kiện trên lô hàng
 LinkToTrackYourPackage=Liên kết để theo dõi gói của bạn
-ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
+ShipmentCreationIsDoneFromOrder=Hiện tại, việc tạo lô hàng mới được thực hiện từ bản ghi Đơn đặt hàng.
 ShipmentLine=Đường vận chuyển
 ProductQtyInCustomersOrdersRunning=Số lượng sản phẩm từ các đơn bán hàng mở
 ProductQtyInSuppliersOrdersRunning=Số lượng sản phẩm từ đơn mua hàng mở
@@ -62,11 +62,12 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Số lượng sản phẩm từ cá
 NoProductToShipFoundIntoStock=Không có sản phẩm nào được tìm thấy trong kho <b>%s</b> . Làm đúng tồn kho hoặc quay trở lại để chọn một kho khác.
 WeightVolShort=Trọng lượng / Khối lượng.
 ValidateOrderFirstBeforeShipment=Trước tiên, bạn phải xác nhận đơn đặt hàng trước khi có thể thực hiện chuyển hàng.
+NoLineGoOnTabToAddSome=Không có dòng nào, vào tab "%s" để thêm
 
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Mô hình tài liệu đầy đủ hơn cho hóa đơn giao hàng (logo ...)
-DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
+DocumentModelStorm=Mô hình tài liệu hoàn chỉnh hơn cho biên lai giao hàng và khả năng tương thích với các trường ngoại vi (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER liên tục không được xác định
 SumOfProductVolumes=Tổng khối lượng sản phẩm
 SumOfProductWeights=Tổng trọng lượng sản phẩm
@@ -74,8 +75,12 @@ SumOfProductWeights=Tổng trọng lượng sản phẩm
 # warehouse details
 DetailWarehouseNumber= Chi tiết kho
 DetailWarehouseFormat= W: %s (Số lượng: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Hiển thị ngày nhập kho cuối cùng trong quá trình tạo lô hàng cho số sê-ri hoặc lô
+CreationOptions=Các tùy chọn có sẵn trong quá trình tạo lô hàng
 
-ShipmentDistribution=Shipment distribution
+ShipmentDistribution=Phân phối lô hàng
 
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.
+ErrorTooManyCombinationBatchcode=Không có công văn nào cho dòng %s vì tìm thấy quá nhiều kết hợp kho, sản phẩm, mã lô (%s).
+ErrorNoCombinationBatchcode=Không thể lưu dòng %s dưới dạng kết hợp của Warehouse-product-lot/serial (%s, %s, %s) không được tìm thấy trong kho.
+
+ErrorTooMuchShipped=Số lượng vận chuyển không được lớn hơn số lượng đặt hàng cho dòng %s

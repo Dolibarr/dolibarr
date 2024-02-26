@@ -348,7 +348,7 @@ if ($action == 'update') {
 						$params['options'] = array($parameters=>null);
 					}
 				} else {
-					//Esle it's separated key/value and coma list
+					//Else it's separated key/value and coma list
 					foreach ($parameters_array as $param_ligne) {
 						list($key, $value) = explode(',', $param_ligne);
 						if (!array_key_exists('options', $params)) {
@@ -378,7 +378,7 @@ if ($action == 'update') {
 					$pos,
 					$params,
 					(GETPOST('alwayseditable', 'alpha') ? 1 : 0),
-					(GETPOST('perms', 'alpha') ?GETPOST('perms', 'alpha') : ''),
+					(GETPOST('perms', 'alpha') ? GETPOST('perms', 'alpha') : ''),
 					$visibility,
 					GETPOST('help', 'alpha'),
 					GETPOST('default_value', 'alpha'),

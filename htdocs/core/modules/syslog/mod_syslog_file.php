@@ -45,13 +45,12 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	}
 
 	/**
-	 * Is the module active ?
+	 * Is the logger active ?
 	 *
-	 * @return int
+	 * @return int		1 if logger enabled
 	 */
 	public function isActive()
 	{
-		global $conf;
 		return !getDolGlobalString('SYSLOG_DISABLE_LOGHANDLER_FILE') ? 1 : 0; // Set SYSLOG_DISABLE_LOGHANDLER_FILE to 1 to disable this loghandler
 	}
 
@@ -69,7 +68,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 				'name' => $langs->trans('SyslogFilename'),
 				'constant' => 'SYSLOG_FILE',
 				'default' => 'DOL_DATA_ROOT/dolibarr.log',
-				'attr' => 'size="60"'
+				'css' => 'minwidth300 maxwidth500'
 			)
 		);
 	}
@@ -113,7 +112,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 		}
 
 		if (getDolGlobalString('SYSLOG_FILE_ONEPERSESSION')) {
-			if (is_numeric($conf->global->SYSLOG_FILE_ONEPERSESSION)) {
+			if (is_numeric(getDolGlobalString('SYSLOG_FILE_ONEPERSESSION'))) {
 				if (getDolGlobalInt('SYSLOG_FILE_ONEPERSESSION') == 1) {	// file depend on instance session key name (Note that session name is same for the instance so for all users and is not a per user value)
 					$suffixinfilename .= '_'.session_name();
 				}
@@ -156,9 +155,10 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 			if (!defined('SYSLOG_FILE_NO_ERROR') || !constant('SYSLOG_FILE_NO_ERROR')) {
 				// Do not break dolibarr usage if log fails
 				//throw new Exception('Failed to open log file '.basename($logfile));
-				print 'Failed to open log file '.($dolibarr_main_prod ?basename($logfile) : $logfile);
+				print 'Failed to open log file '.($dolibarr_main_prod ? basename($logfile) : $logfile);
 			}
 		} else {
+			// @phan-suppress PhanPluginDuplicateArrayKey
 			$logLevels = array(
 				LOG_EMERG => 'EMERG',
 				LOG_ALERT => 'ALERT',
@@ -177,7 +177,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 				$this->lastTime = $now;
 			}
 
-			$message = dol_print_date(dol_now('gmt'), 'standard', 'gmt').$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident > 0 ?str_pad('', $this->ident, ' ') : '').$content['message'];
+			$message = dol_print_date(dol_now('gmt'), 'standard', 'gmt').$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident > 0 ? str_pad('', $this->ident, ' ') : '').$content['message'];
 			fwrite($filefd, $message."\n");
 			fclose($filefd);
 			dolChmod($logfile);

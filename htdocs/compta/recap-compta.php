@@ -35,7 +35,7 @@ if (isModEnabled('facture')) {
 	$langs->load("bills");
 }
 
-$id = GETPOST('id') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
+$id = GETPOST('id') ? GETPOST('id', 'int') : GETPOST('socid', 'int');
 
 // Security check
 if ($user->socid) {
@@ -52,7 +52,7 @@ if ($id > 0) {
 $hookmanager->initHooks(array('recapcomptacard', 'globalcard'));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -240,13 +240,16 @@ if ($id > 0) {
 		if (empty($TData)) {
 			print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
 		} else {
-			// Sort array by date ASC to calucalte balance
+			// Sort array by date ASC to calculate balance
 			$TData = dol_sort_array($TData, 'datefieldforsort', 'ASC');
 
 			// Balance calculation
 			$balance = 0;
 			foreach ($TData as &$data1) {
 				$balance += $data1['amount'];
+				if (!isset($data1['balance'])) {
+					$data1['balance'] = 0;
+				}
 				$data1['balance'] += $balance;
 			}
 

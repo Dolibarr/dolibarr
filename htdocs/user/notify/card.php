@@ -45,7 +45,7 @@ if (!isset($id) || empty($id)) {
 $action = GETPOST('action', 'aZ09');
 $actionid = GETPOST('actionid', 'int');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -71,7 +71,7 @@ if ($id > 0 || !empty($ref)) {
 	$object->getrights();
 }
 
-$permissiontoadd = (($object->id == $user->id) || (!empty($user->rights->user->user->lire)));
+$permissiontoadd = (($object->id == $user->id) || ($user->hasRight('user', 'user', 'lire')));
 
 // Security check
 if ($user->socid) {
@@ -539,7 +539,7 @@ if ($result > 0) {
 
 	print '</form>';
 } else {
-	dol_print_error('', 'RecordNotFound');
+	dol_print_error(null, 'RecordNotFound');
 }
 
 // End of page

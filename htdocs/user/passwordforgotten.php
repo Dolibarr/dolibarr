@@ -84,7 +84,9 @@ $parameters = array('username' => $username);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	$message = $hookmanager->error;
-} else $message = '';
+} else {
+	$message = '';
+}
 
 if (empty($reshook)) {
 	// Validate new password
@@ -180,7 +182,7 @@ $dol_url_root = DOL_URL_ROOT;
 // Title
 $title = 'Dolibarr '.DOL_VERSION;
 if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-	$title = $conf->global->MAIN_APPLICATION_TITLE;
+	$title = getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 
 // Select templates

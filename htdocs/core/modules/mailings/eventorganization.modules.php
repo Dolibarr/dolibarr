@@ -61,7 +61,7 @@ class mailing_eventorganization extends MailingTargets
 	 *    This is the main function that returns the array of emails
 	 *
 	 *    @param	int		$mailing_id    	Id of mailing. No need to use it.
-	 *    @return   int 					<0 if error, number of emails added if ok
+	 *    @return   int 					Return integer <0 if error, number of emails added if ok
 	 */
 	public function add_to_target($mailing_id)
 	{
@@ -99,7 +99,7 @@ class mailing_eventorganization extends MailingTargets
 			$old = '';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email) {
+				if ($old != $obj->email) {
 					$otherTxt = ($obj->ref ? $langs->transnoentities("Project").'='.$obj->ref : '');
 					if (strlen($addDescription) > 0 && strlen($otherTxt) > 0) {
 						$otherTxt .= ";";
@@ -141,7 +141,7 @@ class mailing_eventorganization extends MailingTargets
 	 */
 	public function getSqlArrayForStats()
 	{
-		// CHANGE THIS: Optionnal
+		// CHANGE THIS: Optional
 
 		//var $statssql=array();
 		//$this->statssql[0]="SELECT field1 as label, count(distinct(email)) as nb FROM mytable WHERE email IS NOT NULL";

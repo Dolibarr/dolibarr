@@ -5,7 +5,6 @@ SupplierInvoices=Facturas del vendedor / proveedor
 ShowSupplierInvoice=Mostrar factura del proveedor
 ListOfSuppliers=Lista de proveedores
 ShowSupplier=Mostrar vendedor/proveedor
-OrderDate=Fecha de orden
 TotalBuyingPriceMinShort=Total de subproductos de los precios de compra
 TotalSellingPriceMinShort=Total de subproductos precios de venta
 ChangeSupplierPrice=Cambiar el precio de compra

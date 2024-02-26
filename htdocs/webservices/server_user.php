@@ -340,13 +340,15 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext))) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
 	if (!$error) {
@@ -393,11 +395,13 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 				);
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
@@ -427,7 +431,8 @@ function getListOfGroups($authentication)
 	// Init and check authentication
 	$objectresp = array();
 	$arraygroups = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
@@ -493,7 +498,8 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 	}
 
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
@@ -504,7 +510,8 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 
 	if (!$error && !$thirdpartywithuser) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter thirdparty must be provided.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter thirdparty must be provided.";
 	}
 
 	if (!$error) {
@@ -527,7 +534,8 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 				$row = $db->fetch_object($resql);
 				if ($row) {
 					$error++;
-					$errorcode = 'ALREADY_EXIST'; $errorlabel = 'Object not create : company or contact exists '.$thirdpartywithuser['email'];
+					$errorcode = 'ALREADY_EXIST';
+					$errorlabel = 'Object not create : company or contact exists '.$thirdpartywithuser['email'];
 				} else {
 					$db->begin();
 					/*
@@ -629,11 +637,13 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 								}
 							} else {
 								$error++;
-								$errorcode = 'NOT_CREATE'; $errorlabel = 'Object not create : '.$edituser->error;
+								$errorcode = 'NOT_CREATE';
+								$errorlabel = 'Object not create : '.$edituser->error;
 							}
 						} else {
 							$error++;
-							$errorcode = 'NOT_CREATE'; $errorlabel = 'Object not create : '.$contact->error;
+							$errorcode = 'NOT_CREATE';
+							$errorlabel = 'Object not create : '.$contact->error;
 						}
 
 						if (!$error) {
@@ -643,17 +653,19 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 						}
 					} else {
 						$error++;
-						$errorcode = join(', ', ($thirdparty->error ? array($thirdparty->error) : $thirdparty->errors));
+						$errorcode = implode(', ', ($thirdparty->error ? array($thirdparty->error) : $thirdparty->errors));
 					}
 				}
 			} else {
 				// retour creation KO
 				$error++;
-				$errorcode = 'NOT_CREATE'; $errorlabel = 'Object not create';
+				$errorcode = 'NOT_CREATE';
+				$errorlabel = 'Object not create';
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
@@ -677,7 +689,6 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
  */
 function setUserPassword($authentication, $shortuser)
 {
-
 	global $db, $conf;
 
 	dol_syslog("Function: setUserPassword login=".$authentication['login']);
@@ -687,7 +698,8 @@ function setUserPassword($authentication, $shortuser)
 	}
 
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
@@ -698,7 +710,8 @@ function setUserPassword($authentication, $shortuser)
 
 	if (!$error && !$shortuser) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter shortuser must be provided.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter shortuser must be provided.";
 	}
 
 	if (!$error) {
@@ -711,7 +724,8 @@ function setUserPassword($authentication, $shortuser)
 				$res = $userstat->setPassword($userstat, $shortuser['password']);
 				if (is_int($res) && $res < 0) {
 					$error++;
-					$errorcode = 'NOT_MODIFIED'; $errorlabel = 'Error when changing password';
+					$errorcode = 'NOT_MODIFIED';
+					$errorlabel = 'Error when changing password';
 				} else {
 					$objectresp = array(
 						'result'=>array('result_code' => 'OK', 'result_label' => ''),
@@ -719,11 +733,13 @@ function setUserPassword($authentication, $shortuser)
 				}
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'User not found';
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'User not found';
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 

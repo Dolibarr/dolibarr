@@ -156,14 +156,14 @@ function dol_ch_controle_bvrb($bvrb)
 	// Clean data
 	$bv = str_replace(' ', '', $bvrb);
 
-	// Make control
+	// Check (verify/validate)
 	$report = 0;
 	while (dol_strlen($bv) > 1) {
 		$match = substr($bv, 0, 1);
 		$report = $tableau[$report][$match];
 		$bv = substr($bv, 1);
 	}
-	$controle = $tableau[$report][10];
+	$check = $tableau[$report][10];
 
-	return ($controle == $bv);
+	return ($check == $bv);
 }

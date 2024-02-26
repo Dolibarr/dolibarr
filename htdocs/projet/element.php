@@ -150,14 +150,14 @@ if (isModEnabled('eventorganization')) {
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$datesrfc = GETPOST('datesrfc');
-$dateerfc = GETPOST('dateerfc');
+$datesrfc = GETPOST('datesrfc');	// deprecated
+$dateerfc = GETPOST('dateerfc');	// deprecated
 $dates = dol_mktime(0, 0, 0, GETPOST('datesmonth'), GETPOST('datesday'), GETPOST('datesyear'));
 $datee = dol_mktime(23, 59, 59, GETPOST('dateemonth'), GETPOST('dateeday'), GETPOST('dateeyear'));
-if (empty($dates) && !empty($datesrfc)) {
+if (empty($dates) && !empty($datesrfc)) {	// deprecated
 	$dates = dol_stringtotime($datesrfc);
 }
-if (empty($datee) && !empty($dateerfc)) {
+if (empty($datee) && !empty($dateerfc)) {	// deprecated
 	$datee = dol_stringtotime($dateerfc);
 }
 if (!GETPOSTISSET('datesrfc') && !GETPOSTISSET('datesday') && getDolGlobalString('PROJECT_LINKED_ELEMENT_DEFAULT_FILTER_YEAR')) {
@@ -185,7 +185,7 @@ if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($obj
 
 // Security check
 $socid = $object->socid;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $object->id, 'projet&project');
 
 $hookmanager->initHooks(array('projectOverview'));
@@ -239,7 +239,7 @@ $morehtmlref .= '</div>';
 // Define a complementary filter for search of next/prev ref.
 if (!$user->hasRight('projet', 'all', 'lire')) {
 	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-	$object->next_prev_filter = "te.rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+	$object->next_prev_filter = "te.rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
 }
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -331,10 +331,10 @@ print '</td></tr>';
 // Date start - end project
 print '<tr><td>'.$langs->trans("Dates").'</td><td>';
 $start = dol_print_date($object->date_start, 'day');
-print ($start ? $start : '?');
+print($start ? $start : '?');
 $end = dol_print_date($object->date_end, 'day');
 print ' - ';
-print ($end ? $end : '?');
+print($end ? $end : '?');
 if ($object->hasDelay()) {
 	print img_warning("Late");
 }
@@ -376,7 +376,7 @@ print dol_get_fiche_end();
 print '<br>';
 
 /*
- * Referers types
+ * Referrer types
  */
 
 $listofreferent = array(
@@ -676,7 +676,7 @@ if (getDolGlobalString('PROJECT_ELEMENTS_FOR_PLUS_MARGIN')) {
 			unset($listofreferent[$key]['margin']);
 		}
 	}
-	$newelementforplusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_PLUS_MARGIN);
+	$newelementforplusmargin = explode(',', getDolGlobalString('PROJECT_ELEMENTS_FOR_PLUS_MARGIN'));
 	foreach ($newelementforplusmargin as $value) {
 		$listofreferent[trim($value)]['margin'] = 'add';
 	}
@@ -687,7 +687,7 @@ if (getDolGlobalString('PROJECT_ELEMENTS_FOR_MINUS_MARGIN')) {
 			unset($listofreferent[$key]['margin']);
 		}
 	}
-	$newelementforminusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN);
+	$newelementforminusmargin = explode(',', getDolGlobalString('PROJECT_ELEMENTS_FOR_MINUS_MARGIN'));
 	foreach ($newelementforminusmargin as $value) {
 		$listofreferent[trim($value)]['margin'] = 'minus';
 	}
@@ -888,7 +888,7 @@ foreach ($listofreferent as $key => $value) {
 									|| !empty($dates) && empty($datee) && $loanSchedule->datep >= $dates && $loanSchedule->datep <= dol_now()
 									|| empty($dates) && !empty($datee) && $loanSchedule->datep <= $datee
 									) {
-										$total_ht_by_line -= $loanSchedule->amount_capital;
+									$total_ht_by_line -= $loanSchedule->amount_capital;
 								}
 							}
 						}
@@ -1003,6 +1003,7 @@ print '<br><br>';
 print '<br>';
 
 
+$total_time = 0;
 
 // Detail
 foreach ($listofreferent as $key => $value) {
@@ -1248,7 +1249,7 @@ foreach ($listofreferent as $key => $value) {
 				// Remove link
 				print '<td style="width: 24px">';
 				if ($tablename != 'projet_task' && $tablename != 'stock_mouvement') {
-					if (!getDolGlobalString('PROJECT_DISABLE_UNLINK_FROM_OVERVIEW') || $user->admin) {		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by defaut, so this test true
+					if (!getDolGlobalString('PROJECT_DISABLE_UNLINK_FROM_OVERVIEW') || $user->admin) {		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by default, so this test true
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=unlink&tablename='.$tablename.'&elementselect='.$element->id.($project_field ? '&projectfield='.$project_field : '').'" class="reposition">';
 						print img_picto($langs->trans('Unlink'), 'unlink');
 						print '</a>';
@@ -1312,7 +1313,8 @@ foreach ($listofreferent as $key => $value) {
 				print "</td>\n";
 
 				// Date or TimeSpent
-				$date = ''; $total_time_by_line = null; $total_time = 0;
+				$date = '';
+				$total_time_by_line = null;
 				if ($tablename == 'expensereport_det') {
 					$date = $element->date; // No draft status on lines
 				} elseif ($tablename == 'stock_mouvement') {
@@ -1533,8 +1535,11 @@ foreach ($listofreferent as $key => $value) {
 					$total_ht_by_third += $total_ht_by_line;
 					$total_ttc_by_third += $total_ttc_by_line;
 
-					if (!isset($total_time)) $total_time = $total_time_by_line;
-					else $total_time += $total_time_by_line;
+					if (!isset($total_time)) {
+						$total_time = $total_time_by_line;
+					} else {
+						$total_time += $total_time_by_line;
+					}
 				}
 
 				if (canApplySubtotalOn($tablename)) {
@@ -1611,9 +1616,6 @@ foreach ($listofreferent as $key => $value) {
 				print '<tr><td>'.$elementarray.'</td></tr>';
 			} else {
 				$colspan = 7;
-				if (in_array($tablename, array('projet_task'))) {
-					$colspan = 5;
-				}
 				if ($tablename == 'fichinter') {
 					$colspan++;
 				}

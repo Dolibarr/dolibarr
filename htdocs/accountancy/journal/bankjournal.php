@@ -104,10 +104,16 @@ $error = 0;
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
-if (empty($date_startmonth) || empty($date_endmonth)) {
+if (empty($date_startmonth)) {
 	// Period by default on transfer
 	$dates = getDefaultDatesForTransfer();
 	$date_start = $dates['date_start'];
+	$pastmonthyear = $dates['pastmonthyear'];
+	$pastmonth = $dates['pastmonth'];
+}
+if (empty($date_endmonth)) {
+	// Period by default on transfer
+	$dates = getDefaultDatesForTransfer();
 	$date_end = $dates['date_end'];
 	$pastmonthyear = $dates['pastmonthyear'];
 	$pastmonth = $dates['pastmonth'];
@@ -240,7 +246,7 @@ if ($result) {
 				$lineisasale = 1;
 			}
 		}
-		//var_dump($obj->type_payment); var_dump($obj->type_payment_supplier);
+		//var_dump($obj->type_payment); //var_dump($obj->type_payment_supplier);
 		//var_dump($lineisapurchase); //var_dump($lineisasale);
 
 		// Set accountancy code for bank
@@ -306,16 +312,30 @@ if ($result) {
 
 		// get_url may return -1 which is not traversable
 		if (is_array($links) && count($links) > 0) {
+			// Test if entry is for a social contribution, salary or expense report.
+			// In such a case, we will ignore the bank url line for user
 			$is_sc = false;
+			$is_salary = false;
+			$is_expensereport = false;
 			foreach ($links as $v) {
 				if ($v['type'] == 'sc') {
 					$is_sc = true;
 					break;
 				}
+				if ($v['type'] == 'payment_salary') {
+					$is_salary = true;
+					break;
+				}
+				if ($v['type'] == 'payment_expensereport') {
+					$is_expensereport = true;
+					break;
+				}
 			}
 			// Now loop on each link of record in bank (code similar to bankentries_list.php)
 			foreach ($links as $key => $val) {
-				if ($links[$key]['type'] == 'user' && !$is_sc) continue;
+				if ($links[$key]['type'] == 'user' && !$is_sc && !$is_salary && !$is_expensereport) {
+					continue;
+				}
 				if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'member', 'payment_loan', 'payment_salary', 'payment_various'))) {
 					// So we excluded 'company' and 'user' here. We want only payment lines
 
@@ -363,6 +383,7 @@ if ($result) {
 					$userstatic->firstname = $tabuser[$obj->rowid]['firstname'];
 					$userstatic->lastname = $tabuser[$obj->rowid]['lastname'];
 					$userstatic->statut = $tabuser[$obj->rowid]['status'];
+					$userstatic->status = $tabuser[$obj->rowid]['status'];
 					$userstatic->accountancy_code = $tabuser[$obj->rowid]['accountancy_code'];
 					if ($userstatic->id > 0) {
 						$tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(1, 'accountancy', 0);
@@ -434,7 +455,7 @@ if ($result) {
 					$tabpay[$obj->rowid]["lib"] .= ' '.$paymentsalstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentsalid"] = $paymentsalstatic->id;
 
-					// This part of code is no more required. it is here to solve case where a link were missing (ith v14.0.0) and keep writing in accountancy complete.
+					// This part of code is no more required. it is here to solve case where a link were missing (with v14.0.0) and keep writing in accountancy complete.
 					// Note: A better way to fix this is to delete payment of salary and recreate it, or to fix the bookkeeping table manually after.
 					if (getDolGlobalString('ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USER_ON_SALARY_BANK_PAYMENT')) {
 						$tmpsalary = new Salary($db);
@@ -523,7 +544,7 @@ if ($result) {
 
 		// If no links were found to know the amount on thirdparty, we try to guess it.
 		// This may happens on bank entries without the links lines to 'company'.
-		if (empty($tabtp[$obj->rowid]) && !empty($tabmoreinfo[$obj->rowid]['withdraw'])) {	// If we dont find 'company' link because it is an old 'withdraw' record
+		if (empty($tabtp[$obj->rowid]) && !empty($tabmoreinfo[$obj->rowid]['withdraw'])) {	// If we don't find 'company' link because it is an old 'withdraw' record
 			foreach ($links as $key => $val) {
 				if ($links[$key]['type'] == 'payment') {
 					// Get thirdparty
@@ -586,16 +607,16 @@ if (!$error && $action == 'writebookkeeping') {
 	$now = dol_now();
 
 	$accountingaccountcustomer = new AccountingAccount($db);
-	$accountingaccountcustomer->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, true);
+	$accountingaccountcustomer->fetch(null, getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER'), true);
 
 	$accountingaccountsupplier = new AccountingAccount($db);
-	$accountingaccountsupplier->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER, true);
+	$accountingaccountsupplier->fetch(null, getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER'), true);
 
 	$accountingaccountpayment = new AccountingAccount($db);
-	$accountingaccountpayment->fetch(null, $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT, true);
+	$accountingaccountpayment->fetch(null, getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT'), true);
 
 	$accountingaccountsuspense = new AccountingAccount($db);
-	$accountingaccountsuspense->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE, true);
+	$accountingaccountsuspense->fetch(null, getDolGlobalString('ACCOUNTING_ACCOUNT_SUSPENSE'), true);
 
 	$error = 0;
 	foreach ($tabpay as $key => $val) {		// $key is rowid into llx_bank
@@ -715,23 +736,23 @@ if (!$error && $action == 'writebookkeeping') {
 							$lettering = true;
 							$bookkeeping->subledger_account = $k; // For payment, the subledger account is stored as $key of $tabtp
 							$bookkeeping->subledger_label = $tabcompany[$key]['name']; // $tabcompany is defined only if we are sure there is 1 thirdparty for the bank transaction
-							$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
+							$bookkeeping->numero_compte = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER');
 							$bookkeeping->label_compte = $accountingaccountcustomer->label;
 						} elseif ($tabtype[$key] == 'payment_supplier') {	// If payment is payment of supplier invoice, we get ref of invoice
 							$lettering = true;
 							$bookkeeping->subledger_account = $k; // For payment, the subledger account is stored as $key of $tabtp
 							$bookkeeping->subledger_label = $tabcompany[$key]['name']; // $tabcompany is defined only if we are sure there is 1 thirdparty for the bank transaction
-							$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
+							$bookkeeping->numero_compte = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER');
 							$bookkeeping->label_compte = $accountingaccountsupplier->label;
 						} elseif ($tabtype[$key] == 'payment_expensereport') {
 							$bookkeeping->subledger_account = $tabuser[$key]['accountancy_code'];
 							$bookkeeping->subledger_label = $tabuser[$key]['name'];
-							$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+							$bookkeeping->numero_compte = getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT');
 							$bookkeeping->label_compte = $accountingaccountpayment->label;
 						} elseif ($tabtype[$key] == 'payment_salary') {
 							$bookkeeping->subledger_account = $tabuser[$key]['accountancy_code'];
 							$bookkeeping->subledger_label = $tabuser[$key]['name'];
-							$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+							$bookkeeping->numero_compte = getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT');
 							$bookkeeping->label_compte = $accountingaccountpayment->label;
 						} elseif (in_array($tabtype[$key], array('sc', 'payment_sc'))) {   // If payment is payment of social contribution
 							$bookkeeping->subledger_account = '';
@@ -780,7 +801,7 @@ if (!$error && $action == 'writebookkeeping') {
 								// Temporary account
 								$bookkeeping->subledger_account = '';
 								$bookkeeping->subledger_label = '';
-								$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE;
+								$bookkeeping->numero_compte = getDolGlobalString('ACCOUNTING_ACCOUNT_SUSPENSE');
 								$bookkeeping->label_compte = $accountingaccountsuspense->label;
 							}
 						}
@@ -997,7 +1018,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 					print "\n";
 				}
 			}
-		} else {	// If thirdparty unkown, output the waiting account
+		} else {	// If thirdparty unknown, output the waiting account
 			foreach ($tabbq[$key] as $k => $mt) {
 				if ($mt) {
 					$reflabel = '';
@@ -1105,7 +1126,7 @@ if (empty($action) || $action == 'view') {
 	if (getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == '-1'
 		|| getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == '-1'
 		|| getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == "" || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1') {
-		print ($desc ? '' : '<br>').'<div class="warning">'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
+		print($desc ? '' : '<br>').'<div class="warning">'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
 		$desc = ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '{link}');
 		$desc = str_replace('{link}', '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>', $desc);
 		print $desc;
@@ -1284,7 +1305,7 @@ if (empty($action) || $action == 'view') {
 							if (!getDolGlobalString('ACCOUNTING_ACCOUNT_SUSPENSE') || getDolGlobalString('ACCOUNTING_ACCOUNT_SUSPENSE') == '-1') {
 								$accounttoshow = '<span class="error small">'.$langs->trans('UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking').'</span>';
 							} else {
-								$accounttoshow = '<span class="warning small">'.$langs->trans('UnknownAccountForThirdparty', length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE)).'</span>'; // We will use a waiting account
+								$accounttoshow = '<span class="warning small">'.$langs->trans('UnknownAccountForThirdparty', length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_SUSPENSE'))).'</span>'; // We will use a waiting account
 							}
 						} else {
 							// We will refuse writing
@@ -1375,18 +1396,13 @@ if (empty($action) || $action == 'view') {
 					{
 						print '<span class="error">'.$langs->trans("WaitAccountNotDefined").'</span>';
 					}
-					else */ print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE);
+					else */
+					print length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_SUSPENSE'));
 					print "</td>";
 					// Subledger account
 					print "<td>";
-					/*if (empty($accounttoshowsubledger) || $accounttoshowsubledger == 'NotDefined')
-					{
-						print '<span class="error">'.$langs->trans("WaitAccountNotDefined").'</span>';
-					}
-					else print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE);
-					*/
 					print "</td>";
-					print "<td>".$reflabel."</td>";
+					print "<td>".dol_escape_htmltag($reflabel)."</td>";
 					print '<td class="center">'.$val["type_payment"]."</td>";
 					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";

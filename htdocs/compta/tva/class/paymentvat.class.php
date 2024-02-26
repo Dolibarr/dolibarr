@@ -53,7 +53,7 @@ class PaymentVAT extends CommonObject
 	public $fk_tva;
 
 	public $datec = '';
-	public $tms = '';
+
 	public $datep = '';
 
 	/**
@@ -73,11 +73,13 @@ class PaymentVAT extends CommonObject
 	/**
 	 * @var string
 	 * @deprecated
+	 * @see $num_payment
 	 */
 	public $num_paiement;
 
 	/**
-	 * @var string
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
@@ -113,7 +115,7 @@ class PaymentVAT extends CommonObject
 	 */
 	public $datepaye;
 
-		/**
+	/**
 	 * @var string
 	 */
 	public $type_code;
@@ -154,7 +156,7 @@ class PaymentVAT extends CommonObject
 	 *
 	 *  @param      User	$user   				User making payment
 	 *	@param		int		$closepaidvat			1=Also close paid contributions to paid, 0=Do nothing more
-	 *  @return     int     						<0 if KO, id of payment if OK
+	 *  @return     int     						Return integer <0 if KO, id of payment if OK
 	 */
 	public function create($user, $closepaidvat = 0)
 	{
@@ -166,7 +168,7 @@ class PaymentVAT extends CommonObject
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
-		// Validate parametres
+		// Validate parameters
 		if (!$this->datepaye) {
 			$this->error = 'ErrorBadValueForParameterCreatePaymentVAT';
 			return -1;
@@ -233,7 +235,7 @@ class PaymentVAT extends CommonObject
 				// Insert table of amounts / invoices
 				foreach ($this->amounts as $key => $amount) {
 					$contribid = $key;
-					if (is_numeric($amount) && $amount <> 0) {
+					if (is_numeric($amount) && $amount != 0) {
 						$amount = price2num($amount);
 
 						// If we want to closed paid invoices
@@ -281,7 +283,7 @@ class PaymentVAT extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id         Id object
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -349,7 +351,7 @@ class PaymentVAT extends CommonObject
 	 *
 	 *  @param	User	$user        	User that modify
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			<0 if KO, >0 if OK
+	 *  @return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -430,7 +432,7 @@ class PaymentVAT extends CommonObject
 	 *
 	 *  @param	User	$user        	User that delete
 	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
-	 *  @return int						<0 if KO, >0 if OK
+	 *  @return int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -533,13 +535,12 @@ class PaymentVAT extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-
 		$this->fk_tva = 0;
-		$this->datec = '';
-		$this->tms = '';
+		$this->datec = dol_now();
+		$this->tms = dol_now();
 		$this->datep = '';
 		$this->amount = '';
-		$this->fk_typepaiement = '';
+		$this->fk_typepaiement = 0;
 		$this->num_payment = '';
 		$this->note_private = '';
 		$this->note_public = '';
@@ -559,7 +560,7 @@ class PaymentVAT extends CommonObject
 	 *      @param  int		$accountid          Id of bank account to do link with
 	 *      @param  string	$emetteur_nom       Name of transmitter
 	 *      @param  string	$emetteur_banque    Name of bank
-	 *      @return int                 		<0 if KO, >0 if OK
+	 *      @return int                 		Return integer <0 if KO, >0 if OK
 	 */
 	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
 	{
@@ -640,7 +641,7 @@ class PaymentVAT extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Update link between vat payment and line in llx_bank generated
 	 *
@@ -649,7 +650,7 @@ class PaymentVAT extends CommonObject
 	 */
 	public function update_fk_bank($id_bank)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_vat SET fk_bank = ".((int) $id_bank)." WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
@@ -674,7 +675,7 @@ class PaymentVAT extends CommonObject
 		return $this->LibStatut($this->statut, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the label of a given status
 	 *
@@ -684,7 +685,7 @@ class PaymentVAT extends CommonObject
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		$langs->load('compta');
@@ -772,7 +773,7 @@ class PaymentVAT extends CommonObject
 				$result .= ' ';
 			}
 			if ($withpicto != 2) {
-				$result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
+				$result .= $link.($maxlen ? dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
 			}
 		}
 

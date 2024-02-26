@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job posi
 # Admin page
 #
 RecruitmentSetup = Recruitment setup
-Settings = Подесувања
 RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
 RecruitmentArea=Recruitement area
 PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Enable public pages of open jobs
 #
 # About page
 #
-About = About
 RecruitmentAbout = About Recruitment
 RecruitmentAboutPage = Recruitment about page
 NbOfEmployeesExpected=Expected nb of employees
@@ -77,3 +75,6 @@ ExtrafieldsApplication=Complementary attributes (job applications)
 MakeOffer=Make an offer
 WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
 NoPositionOpen=No positions open at the moment
+ConfirmClose=Confirm cancellation
+ConfirmCloseAsk=Are you sure you want to cancel this recruitment candidature
+recruitment=Recruitment

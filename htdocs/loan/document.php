@@ -72,7 +72,7 @@ if ($id > 0) {
 $upload_dir = $conf->loan->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'loan';
 
-$permissiontoadd = $user->rights->loan->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+$permissiontoadd = $user->hasRight('loan', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 
 
 /*
@@ -147,7 +147,7 @@ if ($object->id) {
 
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
@@ -164,8 +164,8 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'loan';
-	$permissiontoadd = $user->rights->loan->write;
-	$permtoedit = $user->rights->loan->write;
+	$permissiontoadd = $user->hasRight('loan', 'write');
+	$permtoedit = $user->hasRight('loan', 'write');
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

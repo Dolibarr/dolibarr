@@ -283,13 +283,15 @@ function getActionComm($authentication, $id)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if ($error || (!$id)) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
 	if (!$error) {
@@ -347,11 +349,13 @@ function getActionComm($authentication, $id)
 					'actioncomm'=>$actioncomm_result_fields);
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id;
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'Object not found for id='.$id;
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
@@ -381,7 +385,8 @@ function getListActionCommType($authentication)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
@@ -397,16 +402,18 @@ function getListActionCommType($authentication)
 					$resultarray[] = array('code'=>$code, 'libelle'=>$libeller);
 				}
 
-				 $objectresp = array(
+				$objectresp = array(
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
 					'actioncommtypes'=>$resultarray);
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Failed to execute liste_array';
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'Failed to execute liste_array';
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
@@ -422,12 +429,12 @@ function getListActionCommType($authentication)
  * Create ActionComm
  *
  * @param	array		$authentication		Array of authentication information
- * @param	ActionComm	$actioncomm		    $actioncomm
+ * @param	array		$actioncomm		    $actioncomm
  * @return	array							Array result
  */
 function createActionComm($authentication, $actioncomm)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
@@ -439,7 +446,8 @@ function createActionComm($authentication, $actioncomm)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
@@ -452,6 +460,7 @@ function createActionComm($authentication, $actioncomm)
 		$newobject->socid = $actioncomm['socid'];
 		$newobject->fk_project = $actioncomm['projectid'];
 		$newobject->note = $actioncomm['note'];
+		$newobject->note_private = $actioncomm['note'];
 		$newobject->contact_id = $actioncomm['contactid'];
 		$newobject->userownerid = $actioncomm['userownerid'];
 		$newobject->label = $actioncomm['label'];
@@ -504,12 +513,12 @@ function createActionComm($authentication, $actioncomm)
  * Create ActionComm
  *
  * @param	array		$authentication		Array of authentication information
- * @param	ActionComm	$actioncomm		    $actioncomm
+ * @param	array		$actioncomm		    $actioncomm
  * @return	array							Array result
  */
 function updateActionComm($authentication, $actioncomm)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
@@ -521,12 +530,15 @@ function updateActionComm($authentication, $actioncomm)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (empty($actioncomm['id'])) {
-		$error++; $errorcode = 'KO'; $errorlabel = "Actioncomm id is mandatory.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "Actioncomm id is mandatory.";
 	}
 
 	if (!$error) {

@@ -197,13 +197,13 @@ foreach ($modulesdir as $dir) {
 									dol_syslog("Module ".get_class($objMod)." not qualified");
 								}
 							} catch (Exception $e) {
-								 dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
+								dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 							}
 						} else {
-							print "Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
+							print info_admin("Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)", 0, 0, '1', 'warning');
 						}
 					} catch (Exception $e) {
-						 dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
+						dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 					}
 				}
 			}
@@ -375,7 +375,7 @@ if ($mode == 'feature') {
 		$i = 0;
 		foreach ($objMod->depends as $modulestringorarray) {
 			if (is_array($modulestringorarray)) {
-				$text .= ($i ? ', ' : '').join(', ', $modulestringorarray);
+				$text .= ($i ? ', ' : '').implode(', ', $modulestringorarray);
 			} else {
 				$text .= ($i ? ', ' : '').$modulestringorarray;
 			}
@@ -391,7 +391,7 @@ if ($mode == 'feature') {
 		$i = 0;
 		foreach ($objMod->requiredby as $modulestringorarray) {
 			if (is_array($modulestringorarray)) {
-				$text .= ($i ? ', ' : '').join(', ', $modulestringorarray);
+				$text .= ($i ? ', ' : '').implode(', ', $modulestringorarray);
 			} else {
 				$text .= ($i ? ', ' : '').$modulestringorarray;
 			}

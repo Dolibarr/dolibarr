@@ -39,7 +39,7 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 $id = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('id', 'int'));
 $ref = GETPOST('ref', 'alpha');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userdoc'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userdoc'; // To manage different context of search
 
 if (!isset($id) || empty($id)) {
 	accessforbidden();
@@ -62,7 +62,7 @@ if ($id) {
 	$caneditfield = ((($user->id == $id) && $user->hasRight("user", "self", "write"))
 	|| (($user->id != $id) && $user->hasRight("user", "user", "write")));
 	$caneditpassword = ((($user->id == $id) && $user->hasRight("user", "self", "password"))
-	|| (($user->id != $id) && $user->hasRight("user", "user", "passsword")));
+	|| (($user->id != $id) && $user->hasRight("user", "user", "password")));
 }
 
 $permissiontoadd = $caneditfield;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
@@ -77,7 +77,7 @@ $feature2 = 'user';
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
-if ($user->id <> $id && !$canreaduser) {
+if ($user->id != $id && !$canreaduser) {
 	accessforbidden();
 }
 
@@ -169,7 +169,7 @@ if ($object->id) {
 	print '<div class="underbanner clearboth"></div>';
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
@@ -199,7 +199,7 @@ if ($object->id) {
 	}
 	print '</tr>';
 
-	// Nunber of files
+	// Number of files
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
 
 	// Total size

@@ -224,7 +224,9 @@ $( document ).ready(function() {
 	<h1>
 	<?php if ($floor > 1) { ?>
 	<img class="valignmiddle" src="./img/arrow-prev.png" width="5%" onclick="location.href='floors.php?floor=<?php if ($floor > 1) {
-		$floor--; echo $floor; $floor++;
+		$floor--;
+		echo $floor;
+		$floor++;
 																											 } else {
 																												 echo "1";
 																											 } ?>';">

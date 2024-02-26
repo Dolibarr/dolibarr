@@ -87,13 +87,6 @@ class UserGroup extends CommonObject
 	public $datec;
 
 	/**
-	 * Date modification record (tms)
-	 *
-	 * @var integer
-	 */
-	public $tms;
-
-	/**
 	 * @var string Description
 	 */
 	public $note;
@@ -144,9 +137,9 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *    Constructor de la classe
+	 *    Class constructor
 	 *
-	 *    @param   DoliDb  $db     Database handler
+	 *    @param   DoliDB  $db     Database handler
 	 */
 	public function __construct($db)
 	{
@@ -156,12 +149,12 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *  Charge un objet group avec toutes ses caracteristiques (except ->members array)
+	 *  Charge un object group avec toutes ses caracteristiques (except ->members array)
 	 *
 	 *	@param      int		$id				Id of group to load
 	 *	@param      string	$groupname		Name of group to load
 	 *  @param		boolean	$load_members	Load all members of the group
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id = 0, $groupname = '', $load_members = false)
 	{
@@ -458,7 +451,7 @@ class UserGroup extends CommonObject
 		if (!empty($rid)) {
 			$module = $perms = $subperms = '';
 
-			// Si on a demande supression d'un droit en particulier, on recupere
+			// Si on a demande suppression d'un droit en particulier, on recupere
 			// les caracteristiques module, perms et subperms de ce droit.
 			$sql = "SELECT module, perms, subperms";
 			$sql .= " FROM ".$this->db->prefix()."rights_def";
@@ -489,7 +482,7 @@ class UserGroup extends CommonObject
 			}
 
 			// Pour compatibilite, si lowid = 0, on est en mode suppression de tout
-			// TODO A virer quand sera gere par l'appelant
+			// TODO To remove when this will be implemented by the caller
 			//if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
 		} else {
 			// Add permission of the list $wherefordel
@@ -565,10 +558,10 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *  Charge dans l'objet group, la liste des permissions auquels le groupe a droit
+	 *  Load the list of permissions for the user into the group object
 	 *
 	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
-	 *	@return     int						<0 if KO, >=0 if OK
+	 *  @return     int						Return integer <0 if KO, >=0 if OK
 	 */
 	public function getrights($moduletag = '')
 	{
@@ -656,7 +649,7 @@ class UserGroup extends CommonObject
 	 *	Delete a group
 	 *
 	 *	@param	User	$user		User that delete
-	 *	@return int    				<0 if KO, > 0 if OK
+	 *	@return int    				Return integer <0 if KO, > 0 if OK
 	 */
 	public function delete(User $user)
 	{
@@ -667,7 +660,7 @@ class UserGroup extends CommonObject
 	 *	Create group into database
 	 *
 	 *	@param		int		$notrigger	0=triggers enabled, 1=triggers disabled
-	 *	@return     int					<0 if KO, >=0 if OK
+	 *	@return     int					Return integer <0 if KO, >=0 if OK
 	 */
 	public function create($notrigger = 0)
 	{
@@ -689,7 +682,7 @@ class UserGroup extends CommonObject
 	 *		Update group into database
 	 *
 	 *      @param      int		$notrigger	    0=triggers enabled, 1=triggers disabled
-	 *    	@return     int						<0 if KO, >=0 if OK
+	 *    	@return     int						Return integer <0 if KO, >=0 if OK
 	 */
 	public function update($notrigger = 0)
 	{
@@ -790,7 +783,7 @@ class UserGroup extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the user card (with optionaly the picto)
+	 *  Return a link to the user card (with optionally the picto)
 	 *  Use this->id,this->lastname, this->firstname
 	 *
 	 *  @param  int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
@@ -848,7 +841,7 @@ class UserGroup extends CommonObject
 				$label = $langs->trans("ShowGroup");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		}
 
@@ -898,7 +891,7 @@ class UserGroup extends CommonObject
 			$dn = getDolGlobalString('LDAP_KEY_GROUPS') . "=".$info[getDolGlobalString('LDAP_KEY_GROUPS')]."," . getDolGlobalString('LDAP_GROUP_DN');
 		}
 		if ($mode == 1) {
-			$dn = $conf->global->LDAP_GROUP_DN;
+			$dn = getDolGlobalString('LDAP_GROUP_DN');
 		}
 		if ($mode == 2) {
 			$dn = getDolGlobalString('LDAP_KEY_GROUPS') . "=".$info[getDolGlobalString('LDAP_KEY_GROUPS')];
@@ -912,7 +905,7 @@ class UserGroup extends CommonObject
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
-	 *	@return		array		Tableau info des attributs
+	 *	@return		array		Tableau info des attributes
 	 */
 	public function _load_ldap_info()
 	{
@@ -922,7 +915,7 @@ class UserGroup extends CommonObject
 		$info = array();
 
 		// Object classes
-		$info["objectclass"] = explode(',', $conf->global->LDAP_GROUP_OBJECT_CLASS);
+		$info["objectclass"] = explode(',', getDolGlobalString('LDAP_GROUP_OBJECT_CLASS'));
 
 		// Champs
 		if ($this->name && getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')) {
@@ -960,7 +953,7 @@ class UserGroup extends CommonObject
 	{
 		global $conf, $user, $langs;
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
@@ -996,7 +989,7 @@ class UserGroup extends CommonObject
 		// Positionne le modele sur le nom du modele a utiliser
 		if (!dol_strlen($modele)) {
 			if (getDolGlobalString('USERGROUP_ADDON_PDF')) {
-				$modele = $conf->global->USERGROUP_ADDON_PDF;
+				$modele = getDolGlobalString('USERGROUP_ADDON_PDF');
 			} else {
 				$modele = 'grass';
 			}
@@ -1007,7 +1000,7 @@ class UserGroup extends CommonObject
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 
-		/**
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)

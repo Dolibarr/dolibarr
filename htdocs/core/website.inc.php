@@ -67,7 +67,7 @@ if (!is_object($weblangs)) {
 if (!is_object($pagelangs)) {
 	$pagelangs = new Translate('', $conf);
 }
-if ($pageid > 0) {
+if (!empty($pageid) && $pageid > 0) {
 	$websitepage->fetch($pageid);
 
 	$weblangs->setDefaultLang(GETPOSTISSET('lang') ? GETPOST('lang', 'aZ09') : (empty($_COOKIE['weblangs-shortcode']) ? 'auto' : preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['weblangs-shortcode'])));

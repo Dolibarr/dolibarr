@@ -41,14 +41,14 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'compta', 'companies'));
 
-$action				= GETPOST('action', 'alpha');
-$massaction			= GETPOST('massaction', 'alpha');
-$confirm			= GETPOST('confirm', 'alpha');
+$action = GETPOST('action', 'alpha');
+$massaction = GETPOST('massaction', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
-$contextpage		= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'paymentlist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'paymentlist';
 
-$facid				= GETPOST('facid', 'int');
-$socid				= GETPOST('socid', 'int');
+$facid = GETPOST('facid', 'int');
+$socid = GETPOST('socid', 'int');
 $userid = GETPOST('userid', 'int');
 
 $search_ref = GETPOST("search_ref", "alpha");
@@ -68,9 +68,10 @@ $search_amount = GETPOST("search_amount", 'alpha'); // alpha because we must be 
 $search_status = GETPOST('search_status', 'intcomma');
 $search_sale = GETPOST('search_sale', 'int');
 
+$mode = GETPOST('mode', 'alpha');
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield			= GETPOST('sortfield', 'aZ09comma');
-$sortorder			= GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
 if (empty($page) || $page == -1) {
@@ -103,7 +104,7 @@ $arrayfields = array(
 	's.nom'				=> array('label'=>"ThirdParty", 'checked'=>1, 'position'=>30),
 	'c.libelle'			=> array('label'=>"Type", 'checked'=>1, 'position'=>40),
 	'transaction'		=> array('label'=>"BankTransactionLine", 'checked'=>1, 'position'=>50, 'enabled'=>(isModEnabled("banque"))),
-	'ba.label'			=> array('label'=>"Account", 'checked'=>1, 'position'=>60, 'enabled'=>(isModEnabled("banque"))),
+	'ba.label'			=> array('label'=>"BankAccount", 'checked'=>1, 'position'=>60, 'enabled'=>(isModEnabled("banque"))),
 	'p.num_paiement'	=> array('label'=>"Numero", 'checked'=>1, 'position'=>70, 'tooltip'=>"ChequeOrTransferNumber"),
 	'p.amount'			=> array('label'=>"Amount", 'checked'=>1, 'position'=>80),
 	'p.statut'			=> array('label'=>"Status", 'checked'=>1, 'position'=>90, 'enabled'=>(getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION'))),
@@ -119,7 +120,9 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 }
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'facture', $facid, '');
 
 
@@ -174,9 +177,11 @@ $bankline = new AccountLine($db);
 llxHeader('', $langs->trans('ListPayment'));
 
 if (GETPOST("orphelins", "alpha")) {
-	// Payments not linked to an invoice. Should not happend. For debug only.
+	// Payments not linked to an invoice. Should not happen. For debug only.
 	$sql = "SELECT p.rowid, p.ref, p.datep, p.amount, p.statut, p.num_paiement as num_payment,";
 	$sql .= " c.code as paiement_code";
+
+	$sqlfields = $sql; // $sql fields to remove for count total
 
 	// Add fields from hooks
 	$parameters = array();
@@ -192,10 +197,13 @@ if (GETPOST("orphelins", "alpha")) {
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 } else {
-	$sql = "SELECT p.rowid, p.ref, p.datep, p.fk_bank, p.amount, p.statut, p.num_paiement as num_payment";
+	$sql = "SELECT p.rowid, p.ref, p.datep, p.fk_bank, p.statut, p.num_paiement as num_payment, p.amount";
 	$sql .= ", c.code as paiement_code";
 	$sql .= ", ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.fk_accountancy_journal as accountancy_journal";
 	$sql .= ", s.rowid as socid, s.nom as name, s.email";
+	// We need an aggregate because we added a left join to get the thirdparty. In real world, it should be the same thirdparty if payment is same (but not in database structure)
+	// so SUM(pf.amount) should be equal to p.amount but if we filter on $socid, it may differ
+	$sql .= ", SUM(pf.amount) as totalamount, COUNT(f.rowid) as nbinvoices";
 
 	// Add fields from hooks
 	$parameters = array();
@@ -208,18 +216,21 @@ if (GETPOST("orphelins", "alpha")) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
+
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
+
 	$sql .= " WHERE p.entity IN (".getEntity('invoice').")";
 	if ($socid > 0) {
-		$sql .= " AND f.fk_soc = ".((int) $socid);
+		$sql .= " AND EXISTS (SELECT f.fk_soc FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement_facture as pf";
+		$sql .= " WHERE p.rowid = pf.fk_paiement AND pf.fk_facture = f.rowid AND f.fk_soc = ".((int) $socid).")";
 	}
 	if ($userid) {
 		if ($userid == -1) {
-			$sql .= " AND f.fk_user_author IS NULL";
+			$sql .= " AND p.fk_user_creat IS NULL";
 		} else {
-			$sql .= " AND f.fk_user_author = ".((int) $userid);
+			$sql .= " AND p.fk_user_creat = ".((int) $userid);
 		}
 	}
 
@@ -243,7 +254,10 @@ if (GETPOST("orphelins", "alpha")) {
 		$sql .= natural_search('p.num_paiement', $search_payment_num);
 	}
 	if ($search_amount) {
-		$sql .= natural_search('p.amount', $search_amount, 1);
+		$sql .= " AND (".natural_search('p.amount', $search_amount, 1, 1);
+		$sql .= " OR ";
+		$sql .= natural_search('pf.amount', $search_amount, 1, 1);
+		$sql .= ")";
 	}
 	if ($search_company) {
 		$sql .= natural_search('s.nom', $search_company);
@@ -265,13 +279,18 @@ if (GETPOST("orphelins", "alpha")) {
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
+
+	$sql .= " GROUP BY p.rowid, p.ref, p.datep, p.fk_bank, p.statut, p.num_paiement, p.amount";
+	$sql .= ", c.code";
+	$sql .= ", ba.rowid, ba.ref, ba.label, ba.number, ba.account_number, ba.fk_accountancy_journal";
+	$sql .= ", s.rowid, s.nom, s.email";
 }
 
 // Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(DISTINCT p.rowid) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
@@ -293,6 +312,7 @@ $sql .= $db->order($sortfield, $sortorder);
 if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }
+//print $sql;
 
 $resql = $db->query($sql);
 if (!$resql) {
@@ -372,7 +392,7 @@ if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
@@ -414,10 +434,10 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 // Filter: Date
 if (!empty($arrayfields['p.datep']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -576,6 +596,8 @@ while ($i < $imaxinloop) {
 
 	$object->id = $objp->rowid;
 	$object->ref = ($objp->ref ? $objp->ref : $objp->rowid);
+	$object->date = $db->jdate($objp->datep);
+	$object->amount = $objp->amount;
 
 	$companystatic->id = $objp->socid;
 	$companystatic->name = $objp->name;
@@ -711,7 +733,12 @@ while ($i < $imaxinloop) {
 
 		// Amount
 		if (!empty($arrayfields['p.amount']['checked'])) {
-			print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
+			print '<td class="right">';
+			if ($objp->nbinvoices > 1 || ($objp->totalamount && $objp->amount != $objp->totalamount)) {
+				print $form->textwithpicto('', $langs->trans("PaymentMadeForSeveralInvoices"));
+			}
+			print '<span class="amount">'.price($objp->amount).'</span>';
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'amount';

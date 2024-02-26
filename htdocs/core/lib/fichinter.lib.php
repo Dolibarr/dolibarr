@@ -23,7 +23,7 @@
 
 /**
  *	\file       htdocs/core/lib/fichinter.lib.php
- *	\brief      Ensemble de fonctions de base pour le module fichinter
+ *	\brief      Ensemble de functions de base pour le module fichinter
  *	\ingroup    fichinter
  */
 
@@ -68,7 +68,7 @@ function fichinter_prepare_head($object)
 		require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 		$objectres = new Dolresource($db);
 		$linked_resources = $objectres->getElementResources('fichinter', $object->id);
-		$nbResource = (is_array($linked_resources) ?count($linked_resources) : 0);
+		$nbResource = (is_array($linked_resources) ? count($linked_resources) : 0);
 		// if (is_array($objectres->available_resources))
 		// {
 		// 	foreach ($objectres->available_resources as $modresources => $resources)
@@ -162,7 +162,7 @@ function fichinter_prepare_head($object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array   	        head array with tabs
  */

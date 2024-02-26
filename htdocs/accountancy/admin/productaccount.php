@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2022 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
- * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
+ * Copyright (C) 2014       Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2015       Ari Elbaz (elarifr) <github@accedinfo.com>
+ * Copyright (C) 2021       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ if (empty($accounting_product_mode)) {
 	$accounting_product_mode = 'ACCOUNTANCY_SELL';
 }
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : getDolGlobalInt('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : getDolGlobalInt('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -136,7 +136,8 @@ if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -184,7 +185,9 @@ if ($action == 'update') {
 			//$msg .= '<div><span class="accountingprocessing">' . count($chk_prod) . ' ' . $langs->trans("SelectedLines") . '</span></div>';
 			$arrayofdifferentselectedvalues = array();
 
-			$cpt = 0; $ok = 0; $ko = 0;
+			$cpt = 0;
+			$ok = 0;
+			$ko = 0;
 			foreach ($chk_prod as $productid) {
 				$accounting_account_id = GETPOST('codeventil_'.$productid);
 
@@ -293,14 +296,14 @@ $aacompta_prodsell_export   = getDolGlobalString('ACCOUNTING_PRODUCT_SOLD_EXPORT
 
 
 $title = $langs->trans("ProductsBinding");
-$helpurl = '';
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
 $paramsCat = '';
 foreach ($searchCategoryProductList as $searchCategoryProduct) {
 	$paramsCat .= "&search_category_product_list[]=".urlencode($searchCategoryProduct);
 }
 
-llxHeader('', $title, $helpurl, '', 0, 0, array(), array(), $paramsCat, '');
+llxHeader('', $title, $help_url, '', 0, 0, array(), array(), $paramsCat, '');
 
 $pcgverid = getDolGlobalString('CHARTOFACCOUNTS');
 $pcgvercode = dol_getIdFromCode($db, $pcgverid, 'accounting_system', 'rowid', 'pcg_version');
@@ -524,6 +527,9 @@ if ($resql) {
 	// Filter on categories
 	$moreforfilter = '';
 	if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+		$formcategory = new FormCategory($db);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $searchCategoryProductList, 'minwidth300', $searchCategoryProductList ? $searchCategoryProductList : 0);
+		/*
 		$moreforfilter .= '<div class="divsearchfield">';
 		$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
 		$categoriesProductArr = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', '', 64, 0, 1);
@@ -531,6 +537,7 @@ if ($resql) {
 		$moreforfilter .= Form::multiselectarray('search_category_product_list', $categoriesProductArr, $searchCategoryProductList, 0, 0, 'minwidth300');
 		$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_product_operator" name="search_category_product_operator" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').'/> <label for="search_category_product_operator"><span class="none">'.$langs->trans('UseOrOperatorForCategories').'</span></label>';
 		$moreforfilter .= '</div>';
+		*/
 	}
 
 	// Show/hide child products. Hidden by default

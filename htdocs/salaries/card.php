@@ -7,6 +7,7 @@
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023       Maxime Nicolas          <maxime@oarces.com>
  * Copyright (C) 2023       Benjamin GREMBI         <benjamin@oarces.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +60,7 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $confirm = GETPOST('confirm');
 
 $label = GETPOST('label', 'alphanohtml');
-$projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
+$projectid = GETPOSTINT('projectid') ? GETPOSTINT('projectid') : GETPOSTINT('fk_project');
 $accountid = GETPOST('accountid', 'int') > 0 ? GETPOST('accountid', 'int') : 0;
 if (GETPOSTISSET('auto_create_paiement') || $action === 'add') {
 	$auto_create_paiement = GETPOST("auto_create_paiement", "int");
@@ -213,8 +214,9 @@ if ($action == 'reopen' && $permissiontoadd) {
 if ($action == 'setmode' && $permissiontoadd) {
 	$object->fetch($id);
 	$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
-	if ($result < 0)
+	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
+	}
 }
 
 // bank account
@@ -229,9 +231,11 @@ if ($action == 'setbankaccount' && $permissiontoadd) {
 if ($action == 'add' && empty($cancel)) {
 	$error = 0;
 
-	if (empty($datev)) $datev = $datep;
+	if (empty($datev)) {
+		$datev = $datep;
+	}
 
-	$type_payment = GETPOST("paymenttype", 'alpha');
+	$type_payment = GETPOSTINT("paymenttype");
 	$amount = price2num(GETPOST("amount", 'alpha'), 'MT', 2);
 
 	$object->accountid = GETPOST("accountid", 'int') > 0 ? GETPOST("accountid", "int") : 0;
@@ -294,14 +298,14 @@ if ($action == 'add' && empty($cancel)) {
 		if (!empty($auto_create_paiement) && !$error) {
 			// Create a line of payments
 			$paiement = new PaymentSalary($db);
-			$paiement->id           = $object->id;
+			$paiement->fk_salary    = $object->id;
 			$paiement->chid         = $object->id;	// deprecated
 			$paiement->datep        = $datep;
 			$paiement->datev		= $datev;
 			$paiement->amounts      = array($object->id=>$amount); // Tableau de montant
-			$paiement->paiementtype = $type_payment;
+			$paiement->fk_typepayment = $type_payment;
 			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
-			$paiement->note = GETPOST("note", 'restricthtml');
+			$paiement->note_private = GETPOST("note", 'restricthtml');
 
 			if (!$error) {
 				$paymentid = $paiement->create($user, (int) GETPOST('closepaidsalary'));
@@ -326,7 +330,7 @@ if ($action == 'add' && empty($cancel)) {
 
 			if (GETPOST('saveandnew', 'alpha')) {
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-				header("Location: card.php?action=create&fk_project=" . urlencode($projectid) . "&accountid=" . urlencode($accountid) . '&paymenttype=' . urlencode(GETPOST('paymenttype', 'az09')) . '&datepday=' . GETPOST("datepday", 'int') . '&datepmonth=' . GETPOST("datepmonth", 'int') . '&datepyear=' . GETPOST("datepyear", 'int'));
+				header("Location: card.php?action=create&fk_project=" . urlencode($projectid) . "&accountid=" . urlencode($accountid) . '&paymenttype=' . urlencode(GETPOST('paymenttype', 'aZ09')) . '&datepday=' . GETPOST("datepday", 'int') . '&datepmonth=' . GETPOST("datepmonth", 'int') . '&datepyear=' . GETPOST("datepyear", 'int'));
 				exit;
 			} else {
 				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $object->id);
@@ -413,8 +417,12 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 		$newdatestart = dol_mktime(0, 0, 0, GETPOST('clone_date_startmonth', 'int'), GETPOST('clone_date_startday', 'int'), GETPOST('clone_date_startyear', 'int'));
 		$newdateend = dol_mktime(0, 0, 0, GETPOST('clone_date_endmonth', 'int'), GETPOST('clone_date_endday', 'int'), GETPOST('clone_date_endyear', 'int'));
 
-		if ($newdatestart) $object->datesp = $newdatestart;
-		if ($newdateend) $object->dateep = $newdateend;
+		if ($newdatestart) {
+			$object->datesp = $newdatestart;
+		}
+		if ($newdateend) {
+			$object->dateep = $newdateend;
+		}
 
 		$id = $object->create($user);
 		if ($id > 0) {
@@ -466,7 +474,9 @@ if ($action == "update_extras" && $permissiontoadd) {
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-if (isModEnabled('project')) $formproject = new FormProjets($db);
+if (isModEnabled('project')) {
+	$formproject = new FormProjets($db);
+}
 
 $title = $langs->trans('Salary')." - ".$object->ref;
 if ($action == 'create') {
@@ -487,7 +497,7 @@ if ($id > 0) {
 // Create
 if ($action == 'create' && $permissiontoadd) {
 	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-	$pastmonth = strftime("%m", dol_now()) - 1;
+	$pastmonth = dol_print_date(dol_now(), "%m") - 1;
 	$pastmonthyear = $year_current;
 	if ($pastmonth == 0) {
 		$pastmonth = 12;
@@ -504,7 +514,8 @@ if ($action == 'create' && $permissiontoadd) {
 	$dateep = dol_mktime(23, 59, 59, $dateepmonth, $dateepday, $dateepyear);
 
 	if (empty($datesp) || empty($dateep)) { // We define date_start and date_end
-		$datesp = dol_get_first_day($pastmonthyear, $pastmonth, false); $dateep = dol_get_last_day($pastmonthyear, $pastmonth, false);
+		$datesp = dol_get_first_day($pastmonthyear, $pastmonth, false);
+		$dateep = dol_get_last_day($pastmonthyear, $pastmonth, false);
 	}
 
 	print '<form name="salary" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -563,7 +574,7 @@ if ($action == 'create' && $permissiontoadd) {
 	// Label
 	print '<tr><td>';
 	print $form->editfieldkey('Label', 'label', '', $object, 0, 'string', '', 1).'</td><td>';
-	print '<input name="label" id="label" class="minwidth300" value="'.(GETPOST("label") ?GETPOST("label") : $langs->trans("Salary")).'">';
+	print '<input name="label" id="label" class="minwidth300" value="'.(GETPOST("label") ? GETPOST("label") : $langs->trans("Salary")).'">';
 	print '</td></tr>';
 
 	// Date start period
@@ -635,7 +646,7 @@ if ($action == 'create' && $permissiontoadd) {
 	// Date value for bank
 	print '<tr class="hide_if_no_auto_create_payment"><td>';
 	print $form->editfieldkey('DateValue', 'datev', '', $object, 0).'</td><td>';
-	print $form->selectDate((empty($datev) ?-1 : $datev), "datev", '', '', '', 'add', 1, 1);
+	print $form->selectDate((empty($datev) ? -1 : $datev), "datev", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
 	// Number
@@ -683,7 +694,7 @@ if ($action == 'create' && $permissiontoadd) {
 	print '</form>';
 	print '<script>';
 	print '$( document ).ready(function() {';
-		print '$("#updateAmountWithLastSalary").on("click", function updateAmountWithLastSalary() {
+	print '$("#updateAmountWithLastSalary").on("click", function updateAmountWithLastSalary() {
 					var fk_user = $("#fk_user").val()
 					var url = "'.DOL_URL_ROOT.'/salaries/ajax/ajaxsalaries.php?fk_user="+fk_user;
 					console.log("We click on link to autofill salary amount url="+url);
@@ -867,6 +878,7 @@ if ($id > 0) {
 	$morehtmlref .= '</div>';
 
 	$totalpaid = $object->getSommePaiement();
+	$object->alreadypaid = $totalpaid;
 	$object->totalpaid = $totalpaid;
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
@@ -919,8 +931,9 @@ if ($id > 0) {
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('DefaultPaymentMode');
 	print '</td>';
-	if ($action != 'editmode')
+	if ($action != 'editmode') {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+	}
 	print '</tr></table>';
 	print '</td><td>';
 
@@ -986,9 +999,10 @@ if ($id > 0) {
 		$totalpaid = 0;
 
 		$num = $db->num_rows($resql);
-		$i = 0; $total = 0;
+		$i = 0;
+		$total = 0;
 
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder paymenttable">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("RefPayment").'</td>';
@@ -1000,15 +1014,23 @@ if ($id > 0) {
 		print '<td class="right">'.$langs->trans("Amount").'</td>';
 		print '</tr>';
 
+		$paymentsalarytemp = new PaymentSalary($db);
+
 		if ($num > 0) {
 			$bankaccountstatic = new Account($db);
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
+				$paymentsalarytemp->id = $objp->rowid;
+				$paymentsalarytemp->ref = $objp->rowid;
+				$paymentsalarytemp->num_payment = $objp->num_payment;
+				$paymentsalarytemp->datep = $objp->dp;
+
 				print '<tr class="oddeven"><td>';
-				print '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a></td>';
+				print $paymentsalarytemp->getNomUrl(1);
+				print '</td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp), 'dayhour', 'tzuserrel')."</td>\n";
-				$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
+				$labeltype = $langs->trans("PaymentType".$objp->type_code) != "PaymentType".$objp->type_code ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 				print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
 				if (isModEnabled("banque")) {
 					$bankaccountstatic->id = $objp->baid;
@@ -1026,8 +1048,9 @@ if ($id > 0) {
 					}
 
 					print '<td class="right">';
-					if ($bankaccountstatic->id)
+					if ($bankaccountstatic->id) {
 						print $bankaccountstatic->getNomUrl(1, 'transactions');
+					}
 					print '</td>';
 				}
 				print '<td class="right nowrap amountcard">'.price($objp->amount)."</td>\n";
@@ -1081,7 +1104,7 @@ if ($id > 0) {
 	if ($action != 'edit') {
 		// Dynamic send mail button
 		$parameters = array();
-			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			if (empty($user->socid)) {
 				$canSendMail = true;
@@ -1122,7 +1145,7 @@ if ($id > 0) {
 		if ($permissiontodelete && empty($totalpaid)) {
 			print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
 		} else {
-			print dolGetButtonAction($langs->trans('DisabledBecausePayments'), $langs->trans('Delete'),  'default', $_SERVER['PHP_SELF'].'#', '', false);
+			print dolGetButtonAction($langs->trans('DisabledBecausePayments'), $langs->trans('Delete'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
 		}
 	}
 	print "</div>";

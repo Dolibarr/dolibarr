@@ -64,7 +64,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -81,12 +81,12 @@ if (empty($action) && empty($id) && empty($ref)) {
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 // Permissions
-$permissiontoread = $user->rights->hrm->evaluation->read;
-$permissiontoadd = $user->rights->hrm->evaluation->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontovalidate = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->rights->hrm->evaluation_advance->validate) || (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $permissiontoadd);
-$permissiontoClose = $user->rights->hrm->evaluation->write;
-$permissiontodelete = $user->rights->hrm->evaluation->delete/* || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT)*/;
-$permissiondellink = $user->rights->hrm->evaluation->write; // Used by the include of actions_dellink.inc.php
+$permissiontoread = $user->hasRight('hrm', 'evaluation', 'read');
+$permissiontoadd = $user->hasRight('hrm', 'evaluation', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontovalidate = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('hrm', 'evaluation_advance', 'validate')) || (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $permissiontoadd);
+$permissiontoClose = $user->hasRight('hrm', 'evaluation', 'write');
+$permissiontodelete = $user->hasRight('hrm', 'evaluation', 'delete')/* || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT)*/;
+$permissiondellink = $user->hasRight('hrm', 'evaluation', 'write'); // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1].'/evaluation';
 
 // Security check (enable the most restrictive one)
@@ -97,7 +97,9 @@ $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->enti
 if (!isModEnabled("hrm")) {
 	accessforbidden();
 }
-if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) accessforbidden();
+if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
+	accessforbidden();
+}
 
 
 /*
@@ -210,7 +212,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'reopen' ) {
+	if ($action == 'reopen') {
 		// no update here we just change the evaluation status
 		$object->setStatut(Evaluation::STATUS_VALIDATED);
 	}
@@ -611,9 +613,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			print '</table>';
-			print '</div>';
-
-			?>
+			print '</div>'; ?>
 
 			<script>
 
@@ -691,8 +691,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$relativepath = $objref.'/'.$objref.'.pdf';
 			$filedir = $conf->hrm->dir_output.'/'.$object->element.'/'.$objref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $user->rights->hrm->evaluation->read; // If you can read, you can build the PDF to read content
-			$delallowed = $user->rights->hrm->evaluation->write; // If you can create/edit, you can remove a file on card
+			$genallowed = $user->hasRight('hrm', 'evaluation', 'read'); // If you can read, you can build the PDF to read content
+			$delallowed = $user->hasRight('hrm', 'evaluation', 'write'); // If you can create/edit, you can remove a file on card
 			print $formfile->showdocuments('hrm:Evaluation', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang, '', $object, 0, 'remove_file_comfirm');
 		}
 

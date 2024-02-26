@@ -317,13 +317,15 @@ function getInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext))) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
 	if (!$error) {
@@ -347,8 +349,8 @@ function getInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 												'vat_rate'=>$line->tva_tx,
 												'qty'=>$line->qty,
 												'unitprice'=> $line->subprice,
-												'date_start'=> $line->date_start ?dol_print_date($line->date_start, 'dayrfc') : '',
-												'date_end'=> $line->date_end ?dol_print_date($line->date_end, 'dayrfc') : '',
+												'date_start'=> $line->date_start ? dol_print_date($line->date_start, 'dayrfc') : '',
+												'date_end'=> $line->date_end ? dol_print_date($line->date_end, 'dayrfc') : '',
 												'product_id'=>$line->fk_product,
 												'product_ref'=>$line->product_ref,
 												'product_label'=>$line->product_label,
@@ -367,11 +369,11 @@ function getInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 						'thirdparty_id' => $invoice->socid,
 						'fk_user_author' => $invoice->fk_user_author ? $invoice->fk_user_author : '',
 						'fk_user_valid' => $invoice->user_validation_id ? $invoice->user_validation_id : '',
-						'date' => $invoice->date ?dol_print_date($invoice->date, 'dayrfc') : '',
-						'date_due' => $invoice->date_lim_reglement ?dol_print_date($invoice->date_lim_reglement, 'dayrfc') : '',
-						'date_creation' => $invoice->date_creation ?dol_print_date($invoice->date_creation, 'dayhourrfc') : '',
-						'date_validation' => $invoice->date_validation ?dol_print_date($invoice->date_creation, 'dayhourrfc') : '',
-						'date_modification' => $invoice->datem ?dol_print_date($invoice->datem, 'dayhourrfc') : '',
+						'date' => $invoice->date ? dol_print_date($invoice->date, 'dayrfc') : '',
+						'date_due' => $invoice->date_lim_reglement ? dol_print_date($invoice->date_lim_reglement, 'dayrfc') : '',
+						'date_creation' => $invoice->date_creation ? dol_print_date($invoice->date_creation, 'dayhourrfc') : '',
+						'date_validation' => $invoice->date_validation ? dol_print_date($invoice->date_creation, 'dayhourrfc') : '',
+						'date_modification' => $invoice->datem ? dol_print_date($invoice->datem, 'dayhourrfc') : '',
 						'type' => $invoice->type,
 						'total_net' => $invoice->total_ht,
 						'total_vat' => $invoice->total_tva,
@@ -387,11 +389,13 @@ function getInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 					));
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
@@ -422,7 +426,8 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
@@ -433,7 +438,8 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 	// Check parameters
 	if (!$error && empty($idthirdparty)) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = 'Parameter idthirdparty is not provided';
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = 'Parameter idthirdparty is not provided';
 	}
 
 	if (!$error) {
@@ -460,7 +466,8 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 				// Sécurité pour utilisateur externe
 				if ($socid && ($socid != $invoice->socid)) {
 					$error++;
-					$errorcode = 'PERMISSION_DENIED'; $errorlabel = $invoice->socid.' User does not have permission for this request';
+					$errorcode = 'PERMISSION_DENIED';
+					$errorlabel = $invoice->socid.' User does not have permission for this request';
 				}
 
 				if (!$error) {
@@ -476,8 +483,8 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 							'vat_rate'=>$line->tva_tx,
 							'qty'=>$line->qty,
 							'unitprice'=> $line->subprice,
-							'date_start'=> $line->date_start ?dol_print_date($line->date_start, 'dayrfc') : '',
-							'date_end'=> $line->date_end ?dol_print_date($line->date_end, 'dayrfc') : '',
+							'date_start'=> $line->date_start ? dol_print_date($line->date_start, 'dayrfc') : '',
+							'date_end'=> $line->date_end ? dol_print_date($line->date_end, 'dayrfc') : '',
 							'product_id'=>$line->fk_product,
 							'product_ref'=>$line->product_ref,
 							'product_label'=>$line->product_label,
@@ -492,11 +499,11 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 						'ref_ext' => $invoice->ref_ext ? $invoice->ref_ext : '', // If not defined, field is not added into soap
 						'fk_user_author' => $invoice->fk_user_author ? $invoice->fk_user_author : '',
 						'fk_user_valid' => $invoice->user_validation_id ? $invoice->user_validation_id : '',
-						'date' => $invoice->date ?dol_print_date($invoice->date, 'dayrfc') : '',
-						'date_due' => $invoice->date_lim_reglement ?dol_print_date($invoice->date_lim_reglement, 'dayrfc') : '',
-						'date_creation' => $invoice->date_creation ?dol_print_date($invoice->date_creation, 'dayhourrfc') : '',
-						'date_validation' => $invoice->date_validation ?dol_print_date($invoice->date_creation, 'dayhourrfc') : '',
-						'date_modification' => $invoice->datem ?dol_print_date($invoice->datem, 'dayhourrfc') : '',
+						'date' => $invoice->date ? dol_print_date($invoice->date, 'dayrfc') : '',
+						'date_due' => $invoice->date_lim_reglement ? dol_print_date($invoice->date_lim_reglement, 'dayrfc') : '',
+						'date_creation' => $invoice->date_creation ? dol_print_date($invoice->date_creation, 'dayhourrfc') : '',
+						'date_validation' => $invoice->date_validation ? dol_print_date($invoice->date_creation, 'dayhourrfc') : '',
+						'date_modification' => $invoice->datem ? dol_print_date($invoice->datem, 'dayhourrfc') : '',
 						'type' => $invoice->type,
 						'total_net' => $invoice->total_ht,
 						'total_vat' => $invoice->total_tva,
@@ -522,7 +529,8 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 			);
 		} else {
 			$error++;
-			$errorcode = $db->lasterrno(); $errorlabel = $db->lasterror();
+			$errorcode = $db->lasterrno();
+			$errorlabel = $db->lasterror();
 		}
 	}
 
@@ -555,13 +563,16 @@ function createInvoice($authentication, $invoice)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	// Check parameters
 	if (empty($invoice['id']) && empty($invoice['ref']) && empty($invoice['ref_ext'])) {
-		$error++; $errorcode = 'KO'; $errorlabel = "Invoice id or ref or ref_ext is mandatory.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "Invoice id or ref or ref_ext is mandatory.";
 	}
 
 	if (!$error) {
@@ -669,7 +680,8 @@ function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = ''
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	if ($fuser->socid) {
@@ -678,7 +690,9 @@ function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = ''
 
 	// Check parameters
 	if (empty($id_order) && empty($ref_order) && empty($ref_ext_order)) {
-		$error++; $errorcode = 'KO'; $errorlabel = "order id or ref or ref_ext is mandatory.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "order id or ref or ref_ext is mandatory.";
 	}
 
 	//////////////////////
@@ -692,7 +706,8 @@ function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = ''
 				// Security for external user
 				if ($socid && ($socid != $order->socid)) {
 					$error++;
-					$errorcode = 'PERMISSION_DENIED'; $errorlabel = $order->socid.'User does not have permission for this request';
+					$errorcode = 'PERMISSION_DENIED';
+					$errorlabel = $order->socid.'User does not have permission for this request';
 				}
 
 				if (!$error) {
@@ -706,11 +721,13 @@ function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = ''
 				}
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id_order.' nor ref='.$ref_order.' nor ref_ext='.$ref_ext_order;
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'Object not found for id='.$id_order.' nor ref='.$ref_order.' nor ref_ext='.$ref_ext_order;
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
@@ -727,7 +744,7 @@ function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = ''
  * Uddate an invoice, only change the state of an invoice
  *
  * @param	array		$authentication		Array of authentication information
- * @param	Facture		$invoice			Invoice
+ * @param	array		$invoice			Invoice
  * @return	array							Array result
  */
 function updateInvoice($authentication, $invoice)
@@ -743,13 +760,16 @@ function updateInvoice($authentication, $invoice)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	// Check parameters
 	if (empty($invoice['id']) && empty($invoice['ref']) && empty($invoice['ref_ext'])) {
-		$error++; $errorcode = 'KO'; $errorlabel = "Invoice id or ref or ref_ext is mandatory.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "Invoice id or ref or ref_ext is mandatory.";
 	}
 
 	if (!$error) {

@@ -211,7 +211,7 @@ class BlockedLog
 		// Add more action to track from a conf variable
 		// For example: STOCK_MOVEMENT,...
 		if (getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED')) {
-			$tmparrayofmoresupportedevents = explode(',', $conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED);
+			$tmparrayofmoresupportedevents = explode(',', getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED'));
 			foreach ($tmparrayofmoresupportedevents as $val) {
 				$this->trackedevents[$val] = 'log'.$val;
 			}
@@ -315,6 +315,15 @@ class BlockedLog
 			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 			$object = new MouvementStock($this->db);
+			if ($object->fetch($this->fk_object) > 0) {
+				return $object->getNomUrl(1);
+			} else {
+				$this->error++;
+			}
+		} elseif ($this->element === 'project') {
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+			$object = new Project($this->db);
 			if ($object->fetch($this->fk_object) > 0) {
 				return $object->getNomUrl(1);
 			} else {
@@ -762,7 +771,7 @@ class BlockedLog
 				$this->date_creation 	= $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->tms);
 
-				$this->amounts			= (double) $obj->amounts;
+				$this->amounts			= (float) $obj->amounts;
 				$this->action 			= $obj->action;
 				$this->element			= $obj->element;
 
@@ -797,7 +806,7 @@ class BlockedLog
 	 * Encode data
 	 *
 	 * @param	string	$data	Data to serialize
-	 * @param	string	$mode	0=serialize, 1=json_encode
+	 * @param	int		$mode	0=serialize, 1=json_encode
 	 * @return 	string			Value serialized, an object (stdClass)
 	 */
 	public function dolEncodeBlockedData($data, $mode = 0)
@@ -817,7 +826,7 @@ class BlockedLog
 	 * Decode data
 	 *
 	 * @param	string	$data	Data to unserialize
-	 * @param	string	$mode	0=unserialize, 1=json_decode
+	 * @param	int		$mode	0=unserialize, 1=json_decode
 	 * @return 	object			Value unserialized, an object (stdClass)
 	 */
 	public function dolDecodeBlockedData($data, $mode = 0)
@@ -840,7 +849,6 @@ class BlockedLog
 	 */
 	public function setCertified()
 	{
-
 		$res = $this->db->query("UPDATE ".MAIN_DB_PREFIX."blockedlog SET certified=1 WHERE rowid=".((int) $this->id));
 		if (!$res) {
 			return false;
@@ -853,8 +861,8 @@ class BlockedLog
 	 *	Create blocked log in database.
 	 *
 	 *	@param	User	$user      			Object user that create
-	 *  @param	int		$forcesignature		Force signature (for example '0000000000' when we disabled the module)
-	 *	@return	int							<0 if KO, >0 if OK
+	 *  @param	string		$forcesignature		Force signature (for example '0000000000' when we disabled the module)
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $forcesignature = '')
 	{
@@ -865,7 +873,7 @@ class BlockedLog
 		$error = 0;
 
 		// Clean data
-		$this->amounts = (double) $this->amounts;
+		$this->amounts = (float) $this->amounts;
 
 		dol_syslog(get_class($this).'::create action='.$this->action.' fk_user='.$this->fk_user.' user_fullname='.$this->user_fullname, LOG_DEBUG);
 
@@ -904,7 +912,7 @@ class BlockedLog
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
-		$this->signature_line = dol_hash($keyforsignature, '5'); // Not really usefull
+		$this->signature_line = dol_hash($keyforsignature, '5'); // Not really useful
 		$this->signature = dol_hash($previoushash.$keyforsignature, '5');
 		if ($forcesignature) {
 			$this->signature = $forcesignature;
@@ -991,7 +999,7 @@ class BlockedLog
 		// Recalculate hash
 		$keyforsignature = $this->buildKeyForSignature();
 
-		//$signature_line = dol_hash($keyforsignature, '5'); // Not really usefull
+		//$signature_line = dol_hash($keyforsignature, '5'); // Not really useful
 		$signature = dol_hash($previoushash.$keyforsignature, 'sha256');
 		//var_dump($previoushash); var_dump($keyforsignature); var_dump($signature_line); var_dump($signature);
 
@@ -1017,7 +1025,7 @@ class BlockedLog
 	/**
 	 * Return a string for signature.
 	 * Note: rowid of line not included as it is not a business data and this allow to make backup of a year
-	 * and restore it into another database with different id wihtout comprimising checksums
+	 * and restore it into another database with different id without comprimising checksums
 	 *
 	 * @return string		Key for signature
 	 */
@@ -1073,7 +1081,7 @@ class BlockedLog
 	}
 
 	/**
-	 *	Return array of log objects (with criterias)
+	 *	Return array of log objects (with criteria)
 	 *
 	 *	@param	string 	$element      	element to search
 	 *	@param	int 	$fk_object		id of object to search

@@ -39,7 +39,7 @@ expenseReportCoef=Koeffizient
 expenseReportCoefUndefined=(Wert nicht definiert)
 expenseReportOffset=Auslage
 expenseReportPrintExample=offset + (d x coef) = %s
-expenseReportRangeDisabled=Periode deaktiviert - Wörterbuch c_exp_tax_range
+expenseReportRangeDisabled=Periode deaktiviert - siehe Stammdaten zu c_exp_tax_range
 expenseReportRangeFromTo=von %d bis %d
 expenseReportRangeMoreThan=mehr als %d
 expenseReportTotalForFive=Beispiel mit <u>d</u> = 5
@@ -103,7 +103,7 @@ ShowExpenseReport=Spesenabrechnung anzeigen
 ShowTrip=Spesenabrechnung anzeigen
 TripCard=Reisekosten – Übersicht
 TripId=Spesenabrechnung ID
-TripNDF=Hinweise Spesenabrechnung 
+TripNDF=Informationen zur Spesenabrechnung
 TripSociete=Information zum Unternehmen
 Trips=Spesenabrechnungen
 TripsAndExpenses=Spesenabrechnungen

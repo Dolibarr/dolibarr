@@ -56,7 +56,7 @@ if ($this->control->tpl['action_delete']) {
 <tr>
 	<td><?php echo $langs->trans('CustomerCode'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['code_client']; ?>
-	<?php if ($this->control->tpl['checkcustomercode'] <> 0) { ?>
+	<?php if ($this->control->tpl['checkcustomercode'] != 0) { ?>
 	<span class="error">(<?php echo $langs->trans("WrongCustomerCode"); ?>)</span>
 	<?php } ?>
 	</td>
@@ -67,7 +67,7 @@ if ($this->control->tpl['action_delete']) {
 <tr>
 	<td><?php echo $langs->trans('SupplierCode'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['code_fournisseur']; ?>
-	<?php if ($this->control->tpl['checksuppliercode'] <> 0) { ?>
+	<?php if ($this->control->tpl['checksuppliercode'] != 0) { ?>
 	<span class="error">(<?php echo $langs->trans("WrongSupplierCode"); ?>)</span>
 	<?php } ?>
 	</td>
@@ -106,6 +106,8 @@ if ($this->control->tpl['action_delete']) {
 <tr>
 	<td><?php echo $langs->trans('Phone'); ?></td>
 	<td><?php echo $this->control->tpl['phone']; ?></td>
+	<td><?php echo $langs->trans('PhoneMobile'); ?></td>
+	<td><?php echo $this->control->tpl['phone_mobile']; ?></td>
 	<td><?php echo $langs->trans('Fax'); ?></td>
 	<td><?php echo $this->control->tpl['fax']; ?></td>
 </tr>

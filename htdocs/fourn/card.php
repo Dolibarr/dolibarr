@@ -435,7 +435,7 @@ if ($object->id > 0) {
 	$boxstat = '';
 
 	// Nbre max d'elements des petites listes
-	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+	$MAXLIST = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
 
 	print '<div class="underbanner underbanner-before-box clearboth"></div>';
 	print '<br>';
@@ -487,7 +487,7 @@ if ($object->id > 0) {
 		}
 	}
 
-	if (isModEnabled("supplier_invoice")) {
+	if (isModEnabled("supplier_invoice") && ($user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'read'))) {
 		$warn = '';
 		$tmp = $object->getOutstandingBills('supplier');
 		$outstandingOpened = $tmp['opened'];
@@ -556,7 +556,7 @@ if ($object->id > 0) {
 	print $boxstat;
 
 
-	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+	$MAXLIST = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
 
 
 	/*
@@ -718,7 +718,7 @@ if ($object->id > 0) {
 			$sql2 .= " AND c.fk_statut IN (".$db->sanitize(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY).")"; //  Must match filter in htdocs/fourn/commande/list.php
 		} else {
 			// CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.", ".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY
-			$sql2 .= " AND c.fk_statut IN (".$db->sanitize($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS).")";
+			$sql2 .= " AND c.fk_statut IN (".$db->sanitize(getDolGlobalString('SUPPLIER_ORDER_TO_INVOICE_STATUS')).")";
 		}
 		$sql2 .= " AND c.billed = 0";
 		// Find order that are not already invoiced
@@ -852,7 +852,7 @@ if ($object->id > 0) {
 				print '<td class="tdoverflowmax200">';
 				print '<span class="nowraponall">'.$facturestatic->getNomUrl(1).'</span>';
 				print $obj->ref_supplier ? ' - '.$obj->ref_supplier : '';
-				print ($obj->label ? ' - ' : '').dol_trunc($obj->label, 14);
+				print($obj->label ? ' - ' : '').dol_trunc($obj->label, 14);
 				print '</td>';
 				print '<td class="center nowrap">'.dol_print_date($facturestatic->date, 'day').'</td>';
 				print '<td class="right nowrap"><span class="amount">'.price($facturestatic->total_ttc).'</span></td>';
@@ -869,6 +869,15 @@ if ($object->id > 0) {
 		} else {
 			dol_print_error($db);
 		}
+	}
+
+	// Allow external modules to add their own shortlist of recent objects
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreRecentObjects', $parameters, $object, $action);
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	} else {
+		print $hookmanager->resPrint;
 	}
 
 	print '</div></div>';
@@ -895,7 +904,7 @@ if ($object->id > 0) {
 			if ($object->status == 1) {
 				print dolGetButtonAction('', $langs->trans('AddSupplierProposal'), 'default', DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&amp;socid='.$object->id, '');
 			} else {
-				print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('AddSupplierProposal'),  'default', $_SERVER['PHP_SELF'].'#', '', false);
+				print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('AddSupplierProposal'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
 			}
 		}
 
@@ -904,7 +913,7 @@ if ($object->id > 0) {
 			if ($object->status == 1) {
 				print dolGetButtonAction('', $langs->trans('AddSupplierOrderShort'), 'default', DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;token='.newToken().'&amp;socid='.$object->id, '');
 			} else {
-				print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('AddSupplierOrderShort'),  'default', $_SERVER['PHP_SELF'].'#', '', false);
+				print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('AddSupplierOrderShort'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
 			}
 		}
 
@@ -914,10 +923,10 @@ if ($object->id > 0) {
 					// Company is open
 					print dolGetButtonAction('', $langs->trans('CreateInvoiceForThisSupplier'), 'default', DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->id.'&amp;search_billed=0&amp;autoselectall=1', '');
 				} else {
-					print dolGetButtonAction('', $langs->trans('CreateInvoiceForThisCustomer'),  'default', $_SERVER['PHP_SELF'].'#', '', false);
+					print dolGetButtonAction('', $langs->trans('CreateInvoiceForThisCustomer'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
 				}
 			} else {
-				print dolGetButtonAction($langs->trans("NoOrdersToInvoice").' ('.$langs->trans("WithReceptionFinished").')', $langs->trans('CreateInvoiceForThisCustomer'),  'default', $_SERVER['PHP_SELF'].'#', '', false);
+				print dolGetButtonAction($langs->trans("NoOrdersToInvoice").' ('.$langs->trans("WithReceptionFinished").')', $langs->trans('CreateInvoiceForThisCustomer'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
 			}
 		}
 
@@ -926,7 +935,7 @@ if ($object->id > 0) {
 			if ($object->status == 1) {
 				print dolGetButtonAction('', $langs->trans('AddBill'), 'default', DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;socid='.$object->id, '');
 			} else {
-				print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('AddBill'),  'default', $_SERVER['PHP_SELF'].'#', '', false);
+				print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('AddBill'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
 			}
 		}
 
@@ -935,7 +944,7 @@ if ($object->id > 0) {
 			if ($user->hasRight("agenda", "myactions", "create")) {
 				print dolGetButtonAction('', $langs->trans('AddAction'), 'default', DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;socid='.$object->id, '');
 			} else {
-				print dolGetButtonAction($langs->trans('NotAllowed'), $langs->trans('AddAction'),  'default', $_SERVER['PHP_SELF'].'#', '', false);
+				print dolGetButtonAction($langs->trans('NotAllowed'), $langs->trans('AddAction'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
 			}
 		}
 	}
