@@ -6,7 +6,7 @@
  * Copyright (C) 2011-2023 Philippe Grand	     <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Florian Henry	     <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2023      Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024 Frédéric France       <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -599,10 +599,10 @@ class Delivery extends CommonObject
 	 * Update a livraison line (only extrafields)
 	 *
 	 * @param 	int		$id					Id of line (livraison line)
-	 * @param	array		$array_options		extrafields array
+	 * @param	array	$array_options		extrafields array
 	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
-	public function update_line($id, $array_options = 0)
+	public function update_line($id, $array_options = [])
 	{
 		// phpcs:enable
 		global $conf;

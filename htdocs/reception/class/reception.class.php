@@ -937,7 +937,7 @@ class Reception extends CommonObject
 			$this->fk_user_valid = trim($this->fk_user_valid);
 		}
 		if (isset($this->shipping_method_id)) {
-			$this->shipping_method_id = trim($this->shipping_method_id);
+			$this->shipping_method_id = (int) $this->shipping_method_id;
 		}
 		if (isset($this->tracking_number)) {
 			$this->tracking_number = trim($this->tracking_number);
