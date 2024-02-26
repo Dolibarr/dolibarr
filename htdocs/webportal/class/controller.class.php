@@ -164,11 +164,11 @@ class Controller
 	}
 
 	/**
-	 * Load a template
+	 * Load a template .tpl file
 	 *
-	 * @param	string	$templateName	Template name
+	 * @param	string	$templateName	Template file name (without the .tpl.php)
 	 * @param	mixed	$vars			Data to transmit to template
-	 * @return	bool	True if template found, else false
+	 * @return	bool					True if template found, else false
 	 */
 	public function loadTemplate($templateName, $vars = false)
 	{
