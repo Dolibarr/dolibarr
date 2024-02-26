@@ -221,21 +221,22 @@ class ParamMatchVisitor extends PluginAwarePostAnalysisVisitor
 		if (!is_object($expr_value)) {
 			$list = [(string) $expr_value];
 		} elseif ($expr_value instanceof UnionType) {
-			$list = $expr_value->asStringScalarValues();
+			$list = $expr_value->asScalarValues();
 		} else {
 			// Note: maybe more types could be supported
 			return;
 		}
 
 		foreach ($list as $argValue) {
-			if (!\preg_match($argRegex, $argValue)) {
+			if (!\preg_match($argRegex, (string) $argValue)) {
 				// Emit an issue if the argument does not match the expected regex pattern
+				// var_dump([$node,$expr_value,$expr_type->getRealUnionType()]); // Information about node
 				$this->emitPluginIssue(
 					$this->code_base,
 					$this->context,
 					$messageCode ?? 'ParamMatchRegexError',
-					"Argument {POS} function {FUNCTION} can have value '{VALUE}' that does not match the expected pattern '{PATTERN}'",
-					[$argPosition, $functionName, $argValue, $argRegex]
+					"Argument {POS} function {FUNCTION} can have value {VALUE} that does not match the expected pattern '{PATTERN}'",
+					[$argPosition, $functionName, json_encode($argValue), $argRegex]
 				);
 			}
 		}
