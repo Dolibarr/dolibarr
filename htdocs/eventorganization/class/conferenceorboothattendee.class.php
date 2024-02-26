@@ -258,7 +258,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		if ($result > 0) {
 			$result = $this->fetch($result);
 			if ($result > 0) {
-				$this->ref = $this->id;
+				$this->ref = (string) $this->id;
 				$result = $this->update($user);
 			}
 		}
@@ -333,10 +333,9 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		} else {
-			$object->ref = $object->id;
+			$object->ref = (string) $object->id;
 			$result = $object->update($user);
 		}
 
