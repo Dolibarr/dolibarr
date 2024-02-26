@@ -45,8 +45,7 @@ class InterfaceContactRoles extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "agenda";
 		$this->description = "Triggers of this module auto link contact to company.";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = self::VERSION_DOLIBARR;
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'company';
 	}
 
@@ -63,9 +62,9 @@ class InterfaceContactRoles extends DolibarrTriggers
 	 * @param User $user		Object user
 	 * @param Translate $langs	Object langs
 	 * @param conf $conf		Object conf
-	 * @return int <0 if KO, 0 if no triggered ran, >0 if OK
+	 * @return int Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		if ($action === 'PROPAL_CREATE' || $action === 'ORDER_CREATE' || $action === 'BILL_CREATE'
 			|| $action === 'ORDER_SUPPLIER_CREATE' || $action === 'BILL_SUPPLIER_CREATE' || $action === 'PROPOSAL_SUPPLIER_CREATE'

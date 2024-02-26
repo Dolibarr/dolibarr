@@ -53,7 +53,7 @@ class ActionsCardProduct
 	//! Template container
 	public $tpl = array();
 
-	// List of fiels for action=list
+	// List of fields for action=list
 	public $field_list = array();
 
 	/**

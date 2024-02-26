@@ -34,7 +34,7 @@ if (empty($user->admin)) {
 $langs->loadLangs(array("install", "other", "admin"));
 
 $optioncss = GETPOST('optioncss', 'alpha');
-$contextpage		= GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'moduleoverview';
+$contextpage		= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'moduleoverview';
 
 $search_name		= GETPOST("search_name", 'alpha');
 $search_id = GETPOST("search_id", 'alpha');
@@ -67,7 +67,7 @@ $arrayfields = array(
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
 $param = '';
-
+$info_admin = '';
 
 /*
  * Actions
@@ -120,7 +120,7 @@ foreach ($modulesdir as $dir) {
 								dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 							}
 						} else {
-							print "Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
+							$info_admin .= info_admin("Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)", 0, 0, '1', 'warning');
 						}
 					}
 				}
@@ -157,7 +157,7 @@ foreach ($modules as $key => $module) {
 			if (empty($rights[0])) {
 				continue;
 			}
-			$arrayofpermissions[$rights[0]] = array('label'=> 'user->rights->'.$module->rights_class.'->'.$rights[4].(empty($rights[5]) ? '' : '->'.$rights[5]));
+			$arrayofpermissions[$rights[0]] = array('label'=> 'user->hasRight(\''.$module->rights_class.'\', \''.$rights[4].'\''.(empty($rights[5]) ? '' : ', \''.$rights[5].'\'').')');
 			$permission[] = $rights[0];
 
 			array_push($rights_ids, $rights[0]);
@@ -202,7 +202,7 @@ foreach ($modules as $key => $module) {
  */
 
 llxHeader();
-
+print $info_admin;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';

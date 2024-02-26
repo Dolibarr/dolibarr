@@ -160,7 +160,7 @@ if ($source == 'proposal') {
 	$object = new CompanyBankAccount($db);
 	$result= $object->fetch($ref);
 } else {
-	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source", 400, 1);
+	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source. Value not supported.", 400, 1);
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -226,7 +226,7 @@ $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $langs->trans("OnlineSignature"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1);
 
 if ($action == 'refusepropal') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany')?'&entity='.$entity:''), $langs->trans('RefusePropal'), $langs->trans('ConfirmRefusePropal', $object->ref), 'confirm_refusepropal', '', '', 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.$entity : ''), $langs->trans('RefusePropal'), $langs->trans('ConfirmRefusePropal', $object->ref), 'confirm_refusepropal', '', '', 1);
 }
 
 // Check link validity for param 'source' to avoid use of the examples as value
@@ -262,9 +262,9 @@ $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_SIGN_LOGO_'.$suffix;
 if (!empty($conf->global->$paramlogo)) {
-	$logosmall = $conf->global->$paramlogo;
+	$logosmall = getDolGlobalString($paramlogo);
 } elseif (getDolGlobalString('ONLINE_SIGN_LOGO')) {
-	$logosmall = $conf->global->ONLINE_SIGN_LOGO;
+	$logosmall = getDolGlobalString('ONLINE_SIGN_LOGO');
 }
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
@@ -361,9 +361,13 @@ if ($source == 'proposal') {
 	print '</td></tr>'."\n";
 
 	// Amount
+
 	$amount = '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
 	$amount .= '</td><td class="CTableRow2">';
 	$amount .= '<b>'.price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</b>';
+	if ($object->multicurrency_code != $conf->currency) {
+		$amount .= ' ('.price($object->multicurrency_total_ttc, 0, $langs, 1, -1, -1, $object->multicurrency_code).')';
+	}
 	$amount .= '</td></tr>'."\n";
 
 	// Call Hook amountPropalSign
@@ -663,19 +667,22 @@ print '<tr><td class="center">';
 
 if ($action == "dosign" && empty($cancel)) {
 	print '<div class="tablepublicpayment">';
-	print '<input type="button" class="buttonDelete small" id="clearsignature" value="'.$langs->trans("ClearSignature").'">';
-	print '<input type="text" class="paddingleftonly marginleftonly paddingrightonly marginrightonly" id="name"  placeholder="'.$langs->trans("Lastname").'">';
+	print '<input type="text" class="paddingleftonly marginleftonly paddingrightonly marginrightonly marginbottomonly" id="name"  placeholder="'.$langs->trans("Lastname").'" autofocus>';
 	print '<div id="signature" style="border:solid;"></div>';
 	print '</div>';
+	print '<input type="button" class="small noborderbottom cursorpointer buttonreset" id="clearsignature" value="'.$langs->trans("ClearSignature").'">';
+
 	// Do not use class="reposition" here: It breaks the submit and there is a message on top to say it's ok, so going back top is better.
-	print '<input type="button" class="button" id="signbutton" value="'.$langs->trans("Sign").'">';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<div>';
+	print '<input type="button" class="button marginleftonly marginrightonly" id="signbutton" value="'.$langs->trans("Sign").'">';
+	print '<input type="submit" class="button butActionDelete marginleftonly marginrightonly" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	// Add js code managed into the div #signature
 	print '<script language="JavaScript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jSignature/jSignature.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function() {
-	  $("#signature").jSignature({ color:"#000", lineWidth:0, '.(empty($conf->dol_optimize_smallscreen) ? '' : 'width: 280, ' ).'height: 180});
+	  $("#signature").jSignature({ color:"#000", lineWidth:0, '.(empty($conf->dol_optimize_smallscreen) ? '' : 'width: 280, ').'height: 180});
 
 	  $("#signature").on("change",function(){
 		$("#clearsignature").css("display","");
@@ -683,7 +690,8 @@ if ($action == "dosign" && empty($cancel)) {
 		if(!$._data($("#signbutton")[0], "events")){
 			$("#signbutton").on("click",function(){
 				console.log("We click on button sign");
-				$("#signbutton").val(\''.dol_escape_js($langs->transnoentities('PleaseBePatient')).'\');
+				document.body.style.cursor = \'wait\';
+				/* $("#signbutton").val(\''.dol_escape_js($langs->transnoentities('PleaseBePatient')).'\'); */
 				var signature = $("#signature").jSignature("getData", "image");
 				var name = document.getElementById("name").value;
 				$.ajax({
@@ -703,7 +711,7 @@ if ($action == "dosign" && empty($cancel)) {
 					success: function(response) {
 						if(response == "success"){
 							console.log("Success on saving signature");
-							window.location.replace("'.$_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&source='.urlencode($source).'&message=signed&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany')?'&entity='.$entity:'').'");
+							window.location.replace("'.$_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&source='.urlencode($source).'&message=signed&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.$entity : '').'");
 						}else{
 							console.error(response);
 						}
@@ -762,7 +770,7 @@ if ($action == "dosign" && empty($cancel)) {
 		if ($message == 'signed') {
 			print '<span class="ok">'.$langs->trans(dol_ucfirst($source)."Signed").'</span>';
 		} else {
-				print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("Sign".dol_ucfirst($source)).'">';
+			print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("Sign".dol_ucfirst($source)).'">';
 		}
 	}
 }

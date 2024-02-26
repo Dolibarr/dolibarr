@@ -49,8 +49,8 @@ foreach ($dirmenus as $dirmenu) {
 
 $action = GETPOST('action', 'aZ09');
 
-$menu_handler_top = $conf->global->MAIN_MENU_STANDARD;
-$menu_handler_smartphone = $conf->global->MAIN_MENU_SMARTPHONE;
+$menu_handler_top = getDolGlobalString('MAIN_MENU_STANDARD');
+$menu_handler_smartphone = getDolGlobalString('MAIN_MENU_SMARTPHONE');
 $menu_handler_top = preg_replace('/_backoffice.php/i', '', $menu_handler_top);
 $menu_handler_top = preg_replace('/_frontoffice.php/i', '', $menu_handler_top);
 $menu_handler_smartphone = preg_replace('/_backoffice.php/i', '', $menu_handler_smartphone);
@@ -164,7 +164,8 @@ if ($action == 'add') {
 
 if ($action == 'update') {
 	if (!$cancel) {
-		$leftmenu = ''; $mainmenu = '';
+		$leftmenu = '';
+		$mainmenu = '';
 		if (GETPOST('menuIdParent', 'alphanohtml') && !is_numeric(GETPOST('menuIdParent', 'alphanohtml'))) {
 			$tmp = explode('&', GETPOST('menuIdParent', 'alphanohtml'));
 			foreach ($tmp as $s) {
@@ -278,7 +279,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head();
 
-	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="border centpercent">';
 
 	// Id
@@ -361,7 +362,7 @@ if ($action == 'create') {
 
 	// Picto
 	print '<tr><td class="fieldrequired">'.$langs->trans('Image').'</td>';
-	print '<td><input type="text" class="minwidth300" name="picto" value="'.dol_escape_htmltag(GETPOST("picto", 'alphanohtmlallowclass')).'"></td><td>'.$langs->trans('Example').': fa-global</td></tr>';
+	print '<td><input type="text" class="minwidth300" name="picto" value="'.dol_escape_htmltag(GETPOST("picto", 'alphanohtml')).'"></td><td>'.$langs->trans('Example').': fa-global</td></tr>';
 
 	// URL
 	print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td>';
@@ -411,7 +412,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head();
 
-	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="border centpercent">';
 
 	$menu = new Menubase($db);

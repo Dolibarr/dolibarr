@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'productbatch', 'categories'));
 
-$action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
+$action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
@@ -63,7 +63,7 @@ $sbarcode = GETPOST("sbarcode", 'int');
 $search_stock_physique = GETPOST('search_stock_physique', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -75,7 +75,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $object = new Product($db);
 $search_sale = GETPOST("search_sale");
 if (GETPOSTISSET('catid')) {
@@ -101,7 +101,7 @@ if (!$sortorder) {
 }
 
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
@@ -210,10 +210,10 @@ if (empty($reshook)) {
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
-			$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
+		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
 	}
 
-		// Mass actions
+	// Mass actions
 		/*$objectclass = 'MyObject';
 		$objectlabel = 'MyObject';
 		$uploaddir = $conf->mymodule->dir_output;
@@ -574,7 +574,7 @@ if (isModEnabled('categorie')) {
 	$moreforfilter .= '</div>';
 }
 
-$moreforfilter.='<label for="search_subjecttolotserial">'.$langs->trans("SubjectToLotSerialOnly").' </label><input type="checkbox" id="search_subjecttolotserial" name="search_subjecttolotserial" value="1"'.($search_subjecttolotserial?' checked':'').'>';
+$moreforfilter.='<label for="search_subjecttolotserial">'.$langs->trans("SubjectToLotSerialOnly").' </label><input type="checkbox" id="search_subjecttolotserial" name="search_subjecttolotserial" value="1"'.($search_subjecttolotserial ? ' checked' : '').'>';
 
 
 if (!empty($moreforfilter)) {
@@ -830,17 +830,25 @@ while ($i < $imaxinloop) {
 	//if ($objp->seuil_stock_alerte && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
 	if (is_null($objp->stock_physique)) {
 		if (!empty($objp->reel)) {
-			if ($objp->reel < 0) { print '<span class="warning">'; }
+			if ($objp->reel < 0) {
+				print '<span class="warning">';
+			}
 			print price2num($objp->reel, 'MS');
-			if ($objp->reel < 0) { print '</span>'; }
-			print ($objp->stock_physique < 0 ? ' '.img_warning() : '');
+			if ($objp->reel < 0) {
+				print '</span>';
+			}
+			print($objp->stock_physique < 0 ? ' '.img_warning() : '');
 		}
 	} else {
 		if (!empty($objp->stock_physique)) {
-			if ($objp->stock_physique < 0) { print '<span class="warning">'; }
+			if ($objp->stock_physique < 0) {
+				print '<span class="warning">';
+			}
 			print price2num($objp->stock_physique, 'MS');
-			if ($objp->stock_physique < 0) { print '</span>'; }
-			print ($objp->stock_physique < 0 ? ' '.img_warning() : (($objp->stock_physique > 1 && $objp->tobatch == 2) ? ' '.img_warning($langs->trans('IlligalQtyForSerialNumbers')): ''));
+			if ($objp->stock_physique < 0) {
+				print '</span>';
+			}
+			print($objp->stock_physique < 0 ? ' '.img_warning() : (($objp->stock_physique > 1 && $objp->tobatch == 2) ? ' '.img_warning($langs->trans('IlligalQtyForSerialNumbers')) : ''));
 		}
 	}
 	print '</td>';

@@ -30,7 +30,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/action/rapport.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("agenda", "commercial"));
@@ -40,7 +39,7 @@ $month = GETPOST('month', 'int');
 $year = GETPOST('year', 'int');
 
 $optioncss = GETPOST('optioncss', 'alpha');
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -59,7 +58,7 @@ if (!$sortfield) {
 // Security check
 //$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 if (!$user->hasRight("agenda", "allactions", "read")) {
-	accessForbidden();
+	accessforbidden();
 }
 
 
@@ -68,8 +67,10 @@ if (!$user->hasRight("agenda", "allactions", "read")) {
  */
 
 if ($action == 'builddoc') {
-	$cat = new CommActionRapport($db, $month, $year);
-	$result = $cat->write_file(GETPOST('id', 'int'));
+	require_once DOL_DOCUMENT_ROOT.'/core/modules/action/doc/pdf_standard_actions.class.php';
+
+	$cat = new pdf_standard_actions($db, $month, $year);
+	$result = $cat->write_file(0, $langs);
 	if ($result < 0) {
 		setEventMessages($cat->error, $cat->errors, 'errors');
 	}
@@ -169,7 +170,7 @@ if ($resql) {
 			$modulepart = 'actionsreport';
 			$documenturl = DOL_URL_ROOT.'/document.php';
 			if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
-				$documenturl = $conf->global->DOL_URL_ROOT_DOCUMENT_PHP; // To use another wrapper
+				$documenturl = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP'); // To use another wrapper
 			}
 
 			if (file_exists($file)) {

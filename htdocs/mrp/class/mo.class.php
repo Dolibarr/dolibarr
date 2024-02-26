@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020  Lenin Rivas		   <lenin@leninrivas.com>
- * Copyright (C) 2023       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /**
- * \file        class/mo.class.php
+ * \file        mrp/class/mo.class.php
  * \ingroup     mrp
  * \brief       This file is a CRUD class file for Mo (Create/Read/Update/Delete)
  */
@@ -26,6 +26,7 @@
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
+
 
 /**
  * Class for Mo
@@ -77,7 +78,7 @@ class Mo extends CommonObject
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
 	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'maxwidth200', 'wordbreak', 'tdoverflowmax200'
@@ -113,8 +114,8 @@ class Mo extends CommonObject
 		'date_valid' => array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>502,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'user.rowid', 'csslist'=>'tdoverflowmax100'),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'position'=>511, 'notnull'=>-1, 'csslist'=>'tdoverflowmax100'),
-		'date_start_planned' => array('type'=>'datetime', 'label'=>'DateStartPlannedMo', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'notnull'=>-1, 'index'=>1, 'help'=>'KeepEmptyForAsap', 'alwayseditable'=>1),
-		'date_end_planned' => array('type'=>'datetime', 'label'=>'DateEndPlannedMo', 'enabled'=>1, 'visible'=>1, 'position'=>56, 'notnull'=>-1, 'index'=>1, 'alwayseditable'=>1),
+		'date_start_planned' => array('type'=>'datetime', 'label'=>'DateStartPlannedMo', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'notnull'=>-1, 'index'=>1, 'help'=>'KeepEmptyForAsap', 'alwayseditable'=>1, 'csslist'=>'nowraponall'),
+		'date_end_planned' => array('type'=>'datetime', 'label'=>'DateEndPlannedMo', 'enabled'=>1, 'visible'=>1, 'position'=>56, 'notnull'=>-1, 'index'=>1, 'alwayseditable'=>1, 'csslist'=>'nowraponall'),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'default'=>0, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '2'=>'InProgress', '3'=>'StatusMOProduced', '9'=>'Canceled')),
@@ -153,11 +154,6 @@ class Mo extends CommonObject
 	 * @var integer|string date_validation
 	 */
 	public $date_valid;
-
-	/**
-	 * @var integer|string date_validation
-	 */
-	public $tms;
 
 	public $fk_user_creat;
 	public $fk_user_modif;
@@ -257,7 +253,7 @@ class Mo extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -293,10 +289,10 @@ class Mo extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <=0 if KO, Id of created object if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <=0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		$error = 0;
 		$idcreated = 0;
@@ -316,7 +312,7 @@ class Mo extends CommonObject
 		$this->db->begin();
 
 		if ($this->fk_bom > 0) {
-			// If there is a nown BOM, we force the type of MO to the type of BOM
+			// If there is a known BOM, we force the type of MO to the type of BOM
 			include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 			$tmpbom = new BOM($this->db);
 			$tmpbom->fetch($this->fk_bom);
@@ -380,6 +376,13 @@ class Mo extends CommonObject
 		unset($object->fk_user_creat);
 		unset($object->import_key);
 
+		// Remove produced and consumed lines
+		foreach ($object->lines as $key => $line) {
+			if (in_array($line->role, array('consumed', 'produced'))) {
+				unset($object->lines[$key]);
+			}
+		}
+
 		// Clear fields
 		$object->ref = empty($this->fields['ref']['default']) ? "copy_of_".$object->ref : $this->fields['ref']['default'];
 		$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
@@ -440,7 +443,7 @@ class Mo extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -457,7 +460,7 @@ class Mo extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines()
 	{
@@ -540,7 +543,7 @@ class Mo extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -550,7 +553,7 @@ class Mo extends CommonObject
 	 * Get list of lines linked to current line for a defined role.
 	 *
 	 * @param  	string 	$role      	Get lines linked to current line with the selected role ('consumed', 'produced', ...)
-	 * @param	int		$lineid		Id of production line to filter childs
+	 * @param	int		$lineid		Id of production line to filter children
 	 * @return 	array             	Array of lines
 	 */
 	public function fetchLinesLinked($role, $lineid = 0)
@@ -637,10 +640,10 @@ class Mo extends CommonObject
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -671,10 +674,10 @@ class Mo extends CommonObject
 	 * Erase and update the line to consume and to produce.
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function createProduction(User $user, $notrigger = true)
+	public function createProduction(User $user, $notrigger = 0)
 	{
 		$error = 0;
 		$role = "";
@@ -739,11 +742,13 @@ class Mo extends CommonObject
 							$moline->fk_mo = $this->id;
 							$moline->origin_id = $line->id;
 							$moline->origin_type = 'bomline';
-							if (!empty($line->fk_unit)) $moline->fk_unit = $line->fk_unit;
+							if (!empty($line->fk_unit)) {
+								$moline->fk_unit = $line->fk_unit;
+							}
 							if ($line->qty_frozen) {
 								$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
 							} else {
-								$moline->qty = price2num(($line->qty / ( !empty($bom->qty) ? $bom->qty : 1 ) ) * $this->qty / ( !empty($line->efficiency) ? $line->efficiency : 1 ), 'MS'); // Calculate with Qty to produce and  more presition
+								$moline->qty = price2num(($line->qty / (!empty($bom->qty) ? $bom->qty : 1)) * $this->qty / (!empty($line->efficiency) ? $line->efficiency : 1), 'MS'); // Calculate with Qty to produce and  more presition
 							}
 							if ($moline->qty <= 0) {
 								$error++;
@@ -755,7 +760,9 @@ class Mo extends CommonObject
 								$moline->position = $line->position;
 								$moline->qty_frozen = $line->qty_frozen;
 								$moline->disable_stock_change = $line->disable_stock_change;
-								if (!empty($line->fk_default_workstation)) $moline->fk_default_workstation = $line->fk_default_workstation;
+								if (!empty($line->fk_default_workstation)) {
+									$moline->fk_default_workstation = $line->fk_default_workstation;
+								}
 
 								$resultline = $moline->create($user, false); // Never use triggers here
 								if ($resultline <= 0) {
@@ -785,14 +792,16 @@ class Mo extends CommonObject
 	 * Update quantities in lines to consume and/or lines to produce.
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function updateProduction(User $user, $notrigger = true)
+	public function updateProduction(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
-		if ($this->status != self::STATUS_DRAFT) return 1;
+		if ($this->status != self::STATUS_DRAFT) {
+			return 1;
+		}
 
 		$this->db->begin();
 
@@ -805,14 +814,18 @@ class Mo extends CommonObject
 				while ($obj = $this->db->fetch_object($resql)) {
 					$moLine = new MoLine($this->db);
 					$res = $moLine->fetch($obj->rowid);
-					if (!$res) $error++;
+					if (!$res) {
+						$error++;
+					}
 
 					if ($moLine->role == 'toconsume' || $moLine->role == 'toproduce') {
 						if (empty($moLine->qty_frozen)) {
 							$qty = $newQty * $moLine->qty / $oldQty;
 							$moLine->qty = price2num($qty, 'MS');
 							$res = $moLine->update($user);
-							if (!$res) $error++;
+							if (!$res) {
+								$error++;
+							}
 						}
 					}
 				}
@@ -832,11 +845,11 @@ class Mo extends CommonObject
 	 * Delete object in database
 	 *
 	 * @param	User	$user										User that deletes
-	 * @param	bool	$notrigger									false=launch triggers after, true=disable triggers
+	 * @param	int		$notrigger									0=launch triggers after, 1=disable triggers
 	 * @param	bool	$also_cancel_consumed_and_produced_lines  	true if the consumed and produced lines will be deleted (and stocks incremented/decremented back) (false by default)
-	 * @return	int													<0 if KO, >0 if OK
+	 * @return	int													Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false, $also_cancel_consumed_and_produced_lines = false)
+	public function delete(User $user, $notrigger = 0, $also_cancel_consumed_and_produced_lines = false)
 	{
 		$error = 0;
 		$this->db->begin();
@@ -867,12 +880,13 @@ class Mo extends CommonObject
 	/**
 	 *  Delete a line of object in database
 	 *
-	 *	@param  User	$user       User that delete
-	 *  @param	int		$idline		Id of line to delete
-	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
-	 *  @return int         		>0 if OK, <0 if KO
+	 *	@param  User	$user       	User that delete
+	 *  @param	int		$idline			Id of line to delete
+	 *  @param 	int 	$notrigger  	0=launch triggers after, 1=disable triggers
+	 *  @param	int		$fk_movement	Movement
+	 *  @return int         			Return >0 if OK, <0 if KO
 	 */
-	public function deleteLine(User $user, $idline, $notrigger = false)
+	public function deleteLine(User $user, $idline, $notrigger = 0, $fk_movement = 0)
 	{
 		global $langs;
 		$langs->loadLangs(array('stocks', 'mrp'));
@@ -882,7 +896,6 @@ class Mo extends CommonObject
 			return -2;
 		}
 		$productstatic = new Product($this->db);
-		$fk_movement = GETPOST('fk_movement', 'int');
 		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);
 
 		if (!empty($arrayoflines)) {
@@ -965,7 +978,7 @@ class Mo extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('MRP_MO_ADDON') . ".php";
-			$classname = $conf->global->MRP_MO_ADDON;
+			$classname = getDolGlobalString('MRP_MO_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -977,7 +990,7 @@ class Mo extends CommonObject
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -1002,7 +1015,7 @@ class Mo extends CommonObject
 	 *
 	 *	@param		User	$user     		User making status change
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -1014,7 +1027,7 @@ class Mo extends CommonObject
 
 		// Protection
 		if ($this->status == self::STATUS_VALIDATED) {
-			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
+			dol_syslog(get_class($this)."::validate action abandoned: already validated", LOG_WARNING);
 			return 0;
 		}
 
@@ -1074,13 +1087,15 @@ class Mo extends CommonObject
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'mrp/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'mrp/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filepath = 'mrp/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -1127,7 +1142,7 @@ class Mo extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -1152,7 +1167,7 @@ class Mo extends CommonObject
 	 *	@param	User	$user										Object user that modify
 	 *  @param	int		$notrigger									1=Does not execute triggers, 0=Execute triggers
 	 *  @param	bool	$also_cancel_consumed_and_produced_lines  	true if the consumed and produced lines will be deleted (and stocks incremented/decremented back) (false by default)
-	 *	@return	int													<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int													Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0, $also_cancel_consumed_and_produced_lines = false)
 	{
@@ -1199,7 +1214,7 @@ class Mo extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -1222,10 +1237,10 @@ class Mo extends CommonObject
 	 *	Cancel consumed and produced lines (movement stocks)
 	 *
 	 *	@param	User	$user					Object user that modify
-	 *  @param  bool	$mode  					Type line supported (0 by default) (0: consumed and produced lines; 1: consumed lines; 2: produced lines)
+	 *  @param  int 	$mode  					Type line supported (0 by default) (0: consumed and produced lines; 1: consumed lines; 2: produced lines)
 	 *  @param  bool	$also_delete_lines  	true if the consumed/produced lines is deleted (false by default)
 	 *  @param	int		$notrigger				1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int								<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int								Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancelConsumedAndProducedLines($user, $mode = 0, $also_delete_lines = false, $notrigger = 0)
 	{
@@ -1374,7 +1389,7 @@ class Mo extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *  @param  string  $option                     On what the link point to ('nolink', '', 'production', ...)
@@ -1430,7 +1445,7 @@ class Mo extends CommonObject
 				$label = $langs->trans("ShowMo");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1574,7 +1589,9 @@ class Mo extends CommonObject
 		$objectline = new MoLine($this->db);
 
 		$TFilters = array('customsql'=>'fk_mo = '.((int) $this->id));
-		if (!empty($rolefilter)) $TFilters['role'] = $rolefilter;
+		if (!empty($rolefilter)) {
+			$TFilters['role'] = $rolefilter;
+		}
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, $TFilters);
 
 		if (is_numeric($result)) {
@@ -1591,7 +1608,7 @@ class Mo extends CommonObject
 	 *  Create a document onto disk according to template module.
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
-	 *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
@@ -1611,7 +1628,7 @@ class Mo extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('MO_ADDON_PDF')) {
-				$modele = $conf->global->MO_ADDON_PDF;
+				$modele = getDolGlobalString('MO_ADDON_PDF');
 			}
 		}
 
@@ -1713,7 +1730,9 @@ class Mo extends CommonObject
 				$reshook = 0;
 				if (is_object($hookmanager)) {
 					$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines);
-					if (!empty($line->fk_parent_line)) { $parameters['fk_parent_line'] = $line->fk_parent_line; }
+					if (!empty($line->fk_parent_line)) {
+						$parameters['fk_parent_line'] = $line->fk_parent_line;
+					}
 					$reshook = $hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				}
 				if (empty($reshook)) {
@@ -1741,19 +1760,18 @@ class Mo extends CommonObject
 	 */
 	public function printOriginLine($line, $var, $restrictlist = '', $defaulttpldir = '/core/tpl', $selectedLines = array())
 	{
-		global $langs, $conf;
+		$productstatic = new Product($this->db);
 
 		$this->tpl['id'] = $line->id;
 
 		$this->tpl['label'] = '';
-		if (!empty($line->fk_product)) {
-			$productstatic = new Product($this->db);
+		if (!empty($line->fk_product) && $line->fk_product > 0) {
 			$productstatic->fetch($line->fk_product);
 			$productstatic->load_virtual_stock();
 			$this->tpl['label'] .= $productstatic->getNomUrl(1);
 			//$this->tpl['label'].= ' - '.$productstatic->label;
 		} else {
-			// If origin MRP line is not a product, but another MRP
+			// If origin MO line is not a product, but another MO
 			// TODO
 		}
 
@@ -1771,8 +1789,8 @@ class Mo extends CommonObject
 		$this->tpl['disable_stock_change'] = $line->disable_stock_change;
 		$this->tpl['efficiency'] = $line->efficiency;
 
-		$tpl = DOL_DOCUMENT_ROOT.'/mrp/tpl/originproductline.tpl.php';
-		$res = include $tpl;
+		global $conf;	// used into template
+		$res = include DOL_DOCUMENT_ROOT.'/mrp/tpl/originproductline.tpl.php';
 	}
 
 	/**
@@ -1792,13 +1810,12 @@ class Mo extends CommonObject
 
 
 	/**
-	 * Function used to return childs of Mo
+	 * Function used to return children of Mo
 	 *
 	 * @return Mo[]|int 			array if OK, -1 if KO
 	 */
 	public function getMoChilds()
 	{
-
 		$TMoChilds = array();
 		$error = 0;
 
@@ -1814,8 +1831,11 @@ class Mo extends CommonObject
 				while ($obj = $this->db->fetch_object($resql)) {
 					$MoChild = new Mo($this->db);
 					$res = $MoChild->fetch($obj->rowid);
-					if ($res > 0) $TMoChilds[$MoChild->id] = $MoChild;
-					else $error++;
+					if ($res > 0) {
+						$TMoChilds[$MoChild->id] = $MoChild;
+					} else {
+						$error++;
+					}
 				}
 			}
 		} else {
@@ -1837,16 +1857,22 @@ class Mo extends CommonObject
 	 */
 	public function getAllMoChilds($depth = 0)
 	{
-		if ($depth > 1000) return -1;
+		if ($depth > 1000) {
+			return -1;
+		}
 
 		$TMoChilds = array();
 		$error = 0;
 
 		$childMoList = $this->getMoChilds();
 
-		if ($childMoList == -1) return -1;
+		if ($childMoList == -1) {
+			return -1;
+		}
 
-		foreach ($childMoList as $childMo) $TMoChilds[$childMo->id] = $childMo;
+		foreach ($childMoList as $childMo) {
+			$TMoChilds[$childMo->id] = $childMo;
+		}
 
 		foreach ($childMoList as $childMo) {
 			$childMoChildren = $childMo->getAllMoChilds($depth + 1);
@@ -1870,7 +1896,7 @@ class Mo extends CommonObject
 
 
 	/**
-	 * Function used to return childs of Mo
+	 * Function used to return children of Mo
 	 *
 	 * @return Mo|int			MO object if OK, -1 if KO, 0 if not exist
 	 */
@@ -1889,7 +1915,9 @@ class Mo extends CommonObject
 			if ($this->db->num_rows($resql) > 0) {
 				$obj = $this->db->fetch_object($resql);
 				$res = $MoParent->fetch($obj->id_moparent);
-				if ($res < 0) $error++;
+				if ($res < 0) {
+					$error++;
+				}
 			} else {
 				return 0;
 			}
@@ -1938,7 +1966,7 @@ class Mo extends CommonObject
 			$return .= '<br><span class="info-box-label">'.$langs->trans('Quantity').' : '.$this->qty.'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -2012,7 +2040,6 @@ class MoLine extends CommonObjectLine
 	public $fk_mrp_production;
 	public $fk_stock_movement;
 	public $date_creation;
-	public $tms;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
@@ -2027,7 +2054,7 @@ class MoLine extends CommonObjectLine
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -2065,10 +2092,10 @@ class MoLine extends CommonObjectLine
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		if (empty($this->qty)) {
 			$this->error = 'BadValueForQty';
@@ -2083,7 +2110,7 @@ class MoLine extends CommonObjectLine
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -2163,7 +2190,7 @@ class MoLine extends CommonObjectLine
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -2173,10 +2200,10 @@ class MoLine extends CommonObjectLine
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		return $this->updateCommon($user, $notrigger);
 	}
@@ -2184,11 +2211,11 @@ class MoLine extends CommonObjectLine
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param User 	$user       User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);

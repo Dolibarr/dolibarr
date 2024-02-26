@@ -56,7 +56,7 @@ $donstatic = new Don($db);
 
 $help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';
 
-llxHeader('', $langs->trans("Donations"), $help_url);
+llxHeader('', $langs->trans("Donations"), $help_url, '', 0, 0, '', '', '', 'mod-donation page-index');
 
 $nb = array();
 $somme = array();
@@ -176,7 +176,7 @@ foreach ($listofstatus as $status) {
 	print '<td><a href="list.php?search_status='.$status.'">'.$donstatic->LibStatut($status, 4).'</a></td>';
 	print '<td class="right">'.(!empty($nb[$status]) ? $nb[$status] : '&nbsp;').'</td>';
 	print '<td class="right nowraponall amount">'.(!empty($nb[$status]) ? price($somme[$status], 'MT') : '&nbsp;').'</td>';
-	print '<td class="right nowraponall">'.(!empty($nb[$status]) ?price(price2num($somme[$status] / $nb[$status], 'MT')) : '&nbsp;').'</td>';
+	print '<td class="right nowraponall">'.(!empty($nb[$status]) ? price(price2num($somme[$status] / $nb[$status], 'MT')) : '&nbsp;').'</td>';
 	$totalnb += (!empty($nb[$status]) ? $nb[$status] : 0);
 	$total += (!empty($somme[$status]) ? $somme[$status] : 0);
 	print "</tr>";
@@ -186,7 +186,7 @@ print '<tr class="liste_total">';
 print '<td>'.$langs->trans("Total").'</td>';
 print '<td class="right nowraponall">'.$totalnb.'</td>';
 print '<td class="right nowraponall">'.price($total, 'MT').'</td>';
-print '<td class="right nowraponall">'.($totalnb ?price(price2num($total / $totalnb, 'MT')) : '&nbsp;').'</td>';
+print '<td class="right nowraponall">'.($totalnb ? price(price2num($total / $totalnb, 'MT')) : '&nbsp;').'</td>';
 print '</tr>';
 print "</table>";
 
@@ -231,7 +231,7 @@ if ($resql) {
 			print '<td class="nobordernopadding">';
 			print $obj->societe;
 			print ($obj->societe && ($obj->lastname || $obj->firstname) ? ' / ' : '');
-			print dolGetFirstLastname($obj->lastname, $obj->firstname);
+			print dolGetFirstLastname($obj->firstname, $obj->lastname);
 			print '</td>';
 
 			print '<td class="right nobordernopadding nowraponall amount">';

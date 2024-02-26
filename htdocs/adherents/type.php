@@ -8,6 +8,7 @@
  * Copyright (C) 2019-2022	Thibault Foucart		<support@ptibogxiv.net>
  * Copyright (C) 2020		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Waël Almoman			<info@almoman.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $toselect 	= GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
-$mode = GETPOST('mode', 'alopha');
+$mode = GETPOST('mode', 'alpha');
 
 $sall = GETPOST("sall", "alpha");
 $filter = GETPOST("filter", 'alpha');
@@ -200,7 +201,7 @@ if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 	$object->note_public = trim($comment);
 	$object->note_private = '';
 	$object->mail_valid = trim($mail_valid);
-	$object->vote = (boolean) trim($vote);
+	$object->vote = (bool) trim($vote);
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -534,7 +535,7 @@ if ($rowid > 0) {
 
 		// Amount
 		print '<tr><td class="titlefield">'.$langs->trans("Amount").'</td><td>';
-		print ((is_null($object->amount) || $object->amount === '') ? '' : '<span class="amount">'.price($object->amount).'</span>');
+		print((is_null($object->amount) || $object->amount === '') ? '' : '<span class="amount">'.price($object->amount).'</span>');
 		print '</tr>';
 
 		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmount")).'</td><td>';
@@ -551,7 +552,7 @@ if ($rowid > 0) {
 		} elseif ($object->duration_value > 0) {
 			$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
 		}
-		print (!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
+		print(!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
 		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
@@ -972,7 +973,7 @@ if ($rowid > 0) {
 
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>';
 		print '<input name="amount" size="5" value="';
-		print ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
+		print((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
 		print '">';
 		print '</td></tr>';
 

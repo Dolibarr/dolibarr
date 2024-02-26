@@ -45,7 +45,7 @@ $action = GETPOST('action', 'aZ09');
 $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
 $label = GETPOST('label', 'alpha');
-$scandir = GETPOST('scandir', 'alpha');
+$scandir = GETPOST('scan_dir', 'alpha');
 $type = 'ticket';
 
 $error = 0;
@@ -288,7 +288,7 @@ foreach ($dirmodels as $reldir) {
 
 					include_once $dir.'/'.$file.'.php';
 
-					$module = new $file;
+					$module = new $file();
 
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -433,7 +433,7 @@ foreach ($dirmodels as $reldir) {
 
 							if ($modulequalified) {
 								print '<tr class="oddeven"><td width="100">';
-								print (empty($module->name) ? $name : $module->name);
+								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
 									print $module->info($langs);
@@ -473,8 +473,6 @@ foreach ($dirmodels as $reldir) {
 								}
 								print '</td>';
 
-								print "</tr>\n";
-
 								// Info
 								$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
 								$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
@@ -494,6 +492,8 @@ foreach ($dirmodels as $reldir) {
 								print '<td class="center">';
 								print $formcategory->textwithpicto('', $htmltooltip, 1, 0);
 								print '</td>';
+
+								print "</tr>\n";
 							}
 						}
 					}

@@ -131,7 +131,9 @@ if (!$rowid) {
 			// Ref
 			if (!empty($stripeacc)) {
 				$connect = $stripeacc.'/';
-			} else $connect = null;
+			} else {
+				$connect = null;
+			}
 
 			$url = 'https://dashboard.stripe.com/'.$connect.'test/payouts/'.$payout->id;
 			if ($servicestatus) {

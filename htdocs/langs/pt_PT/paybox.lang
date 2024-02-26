@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Configurar módulo PayBox
-PayBoxDesc=Este módulo oferece uma página para permitir o pagamento de clientes no <a href="http://www.paybox.com" target="_blank">Paybox</a>. Isto pode ser utilizado para pagamento livre ou para um pagamento em particular de um objeto Dolibarr (fatura, ordem, ...)
+PayBoxDesc=Esta módulo oferece páginas que permitem pagamentos em <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> por clientes. Isso pode ser usado para um pagamento gratuito ou para um pagamento em um objeto Dolibarr específico (fatura, encomenda, ...)
 FollowingUrlAreAvailableToMakePayments=As seguintes URL estão disponiveis para permitir a um cliente efectuar um pagamento
 PaymentForm=Forma de pagamento
 WelcomeOnPaymentPage=Bem-vindo ao nosso serviço de pagamento online
@@ -10,22 +10,21 @@ ToComplete=A completar
 YourEMail=E-Mail de confirmação de pagamento
 Creditor=Beneficiario
 PaymentCode=Código de pagamento
-PayBoxDoPayment=Pay with Paybox
+PayBoxDoPayment=Pague com Paybox
 YouWillBeRedirectedOnPayBox=Você será redirecionado para a página Paybox não se esqueça de introduzir a informação do seu cartão de crédito
 Continue=Continuar
-SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
+SetupPayBoxToHavePaymentCreatedAutomatically=Configure seu Paybox com o URL <b>%s</b> para que o pagamento seja criado automaticamente quando validado pelo Paybox.
 YourPaymentHasBeenRecorded=Esta página confirma que o pagamento tenha sido gravada. Obrigado.
-YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
+YourPaymentHasNotBeenRecorded=Seu pagamento NÃO foi registrado e a transação foi cancelada. Obrigado.
 AccountParameter=Conta parâmetros
 UsageParameter=Parâmetros de uso
 InformationToFindParameters=Ajuda para encontrar informações de sua conta %s
 PAYBOX_CGI_URL_V2=Url de Paybox módulo CGI para pagamento
-VendorName=Nome do fornecedor
 CSSUrlForPaymentForm=CSS url folha de estilo para forma de pagamento
 NewPayboxPaymentReceived=Novo pagamento Paybox recebido
 NewPayboxPaymentFailed=Nova tentativa de pagamento Paybox falhou
-PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+PAYBOX_PAYONLINE_SENDEMAIL=Notificação por e-mail após tentativa de pagamento (sucesso ou falha)
 PAYBOX_PBX_SITE=Valor para PBX SITE
 PAYBOX_PBX_RANG=Valor para PBX Rang
 PAYBOX_PBX_IDENTIFIANT=Valor para ID de PBX
-PAYBOX_HMAC_KEY=HMAC key
+PAYBOX_HMAC_KEY=Chave HMAC

@@ -95,7 +95,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'expedition', $object->id, '');
 
-$permissiontoadd = $user->rights->expedition->creer;	// Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->hasRight('expedition', 'creer');	// Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -124,7 +124,7 @@ if ($id > 0 || !empty($ref)) {
 
 
 		// Build file list
-		$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+		$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 		$totalsize = 0;
 		foreach ($filearray as $key => $file) {
 			$totalsize += $file['size'];
@@ -185,8 +185,8 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_end();
 
 		$modulepart = 'expedition';
-		$permissiontoadd = $user->rights->expedition->creer;
-		$permtoedit = $user->rights->expedition->creer;
+		$permissiontoadd = $user->hasRight('expedition', 'creer');
+		$permtoedit = $user->hasRight('expedition', 'creer');
 		$param = '&id='.$object->id;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 	} else {

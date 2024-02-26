@@ -10,7 +10,7 @@
  * Copyright (C) 2018-2022 	Philippe Grand       	<philippe.grand@atoo-net.com>
  * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2023       Benjamin Grembi         <benjamin@oarces.fr>
- * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 $mesg = GETPOST('msg', 'alpha');
 $origin = GETPOST('origin', 'alpha');
-$originid = (GETPOST('originid', 'int') ?GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
+$originid = (GETPOSTINT('originid') ? GETPOSTINT('originid') : GETPOSTINT('origin_id')); // For backward compatibility
 $note_public = GETPOST('note_public', 'restricthtml');
 $note_private = GETPOST('note_private', 'restricthtml');
 $lineid = GETPOST('line_id', 'int');
@@ -96,7 +96,7 @@ if ($id > 0 || !empty($ref)) {
 		$ret = $object->fetch_thirdparty();
 	}
 	if ($ret < 0) {
-		dol_print_error('', $object->error);
+		dol_print_error(null, $object->error);
 	}
 }
 
@@ -280,7 +280,8 @@ if (empty($reshook)) {
 					$element = $subelement = 'commande';
 				}
 				if ($element == 'propal') {
-					$element = 'comm/propal'; $subelement = 'propal';
+					$element = 'comm/propal';
+					$subelement = 'propal';
 				}
 				if ($element == 'contract') {
 					$element = $subelement = 'contrat';
@@ -662,7 +663,7 @@ if (empty($reshook)) {
 			dol_print_error($db);
 			exit;
 		}
-		$result = $objectline->deleteline($user);
+		$result = $objectline->deleteLine($user);
 
 		if ($object->fetch($objectline->fk_fichinter) <= 0) {
 			dol_print_error($db);
@@ -743,7 +744,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->ficheinter->dir_output;
-	$permissiontoadd = $user->rights->ficheinter->creer;
+	$permissiontoadd = $user->hasRight('ficheinter', 'creer');
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'update_extras') {
@@ -858,7 +859,8 @@ if ($action == 'create') {
 				$element = $subelement = 'commande';
 			}
 			if ($element == 'propal') {
-				$element = 'comm/propal'; $subelement = 'propal';
+				$element = 'comm/propal';
+				$subelement = 'propal';
 			}
 			if ($element == 'contract') {
 				$element = $subelement = 'contrat';
@@ -900,7 +902,7 @@ if ($action == 'create') {
 
 	$object->date = dol_now();
 
-	$obj = $conf->global->FICHEINTER_ADDON;
+	$obj = getDolGlobalString('FICHEINTER_ADDON');
 	$obj = "mod_".$obj;
 
 	//$modFicheinter = new $obj;
@@ -1119,7 +1121,7 @@ if ($action == 'create') {
 
 	// Confirm validation
 	if ($action == 'validate') {
-		// on verifie si l'objet est en numerotation provisoire
+		// Verify if the object's number os temporary
 		$ref = substr($object->ref, 1, 4);
 		if ($ref == 'PROV') {
 			$numref = $object->getNextNumRef($soc);
@@ -1131,13 +1133,26 @@ if ($action == 'create') {
 			$numref = $object->ref;
 		}
 		$text = $langs->trans('ConfirmValidateIntervention', $numref);
+		if (isModEnabled('notification')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+			$notify = new Notify($db);
+			$text .= '<br>';
+			$text .= $notify->confirmMessage('FICHINTER_VALIDATE', $object->socid, $object);
+		}
 
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate', '', 1, 1);
 	}
 
 	// Confirm done
 	if ($action == 'classifydone') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloseIntervention'), $langs->trans('ConfirmCloseIntervention'), 'confirm_done', '', 0, 1);
+		$text = $langs->trans('ConfirmCloseIntervention');
+		if (isModEnabled('notification')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+			$notify = new Notify($db);
+			$text .= '<br>';
+			$text .= $notify->confirmMessage('FICHINTER_CLOSE', $object->socid, $object);
+		}
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloseIntervention'), $text, 'confirm_done', '', 0, 1);
 	}
 
 	// Confirm back to draft
@@ -1407,10 +1422,10 @@ if ($action == 'create') {
 					print '</td>';
 
 					// Date
-					print '<td class="center" width="150">'.(!getDolGlobalString('FICHINTER_DATE_WITHOUT_HOUR') ?dol_print_date($db->jdate($objp->date_intervention), 'dayhour') : dol_print_date($db->jdate($objp->date_intervention), 'day')).'</td>';
+					print '<td class="center" width="150">'.(!getDolGlobalString('FICHINTER_DATE_WITHOUT_HOUR') ? dol_print_date($db->jdate($objp->date_intervention), 'dayhour') : dol_print_date($db->jdate($objp->date_intervention), 'day')).'</td>';
 
 					// Duration
-					print '<td class="right" width="150">'.(!getDolGlobalString('FICHINTER_WITHOUT_DURATION') ?convertSecondToTime($objp->duree) : '').'</td>';
+					print '<td class="right" width="150">'.(!getDolGlobalString('FICHINTER_WITHOUT_DURATION') ? convertSecondToTime($objp->duree) : '').'</td>';
 
 					print "</td>\n";
 
@@ -1510,7 +1525,7 @@ if ($action == 'create') {
 			$db->free($resql);
 
 			// Add new line
-			if ($object->statut == 0 && $user->hasRight('ficheinter', 'creer') && $action <> 'editline' && !getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
+			if ($object->statut == 0 && $user->hasRight('ficheinter', 'creer') && $action != 'editline' && !getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
 				if (!$num) {
 					print '<br>';
 					print '<table class="noborder centpercent">';
@@ -1587,7 +1602,7 @@ if ($action == 'create') {
 					if (getDolGlobalString('INTERVENTION_ADDLINE_FREEDUREATION')) {
 						$selectmode = 'text';
 					}
-					$form->select_duration('duration', (!GETPOST('durationhour', 'int') && !GETPOST('durationmin', 'int')) ? 3600 : (60 * 60 * GETPOST('durationhour', 'int') + 60 * GETPOST('durationmin', 'int')), 0, $selectmode);
+					$form->select_duration('duration', (!GETPOST('durationhour', 'int') && !GETPOST('durationmin', 'int')) ? 3600 : (60 * 60 * GETPOSTINT('durationhour') + 60 * GETPOSTINT('durationmin')), 0, $selectmode);
 				}
 				print '</td>';
 
@@ -1622,7 +1637,7 @@ if ($action == 'create') {
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-																								  // modified by hook
+	// modified by hook
 	if (empty($reshook)) {
 		if ($user->socid == 0) {
 			if ($action != 'editdescription' && ($action != 'presend')) {
@@ -1732,8 +1747,8 @@ if ($action == 'create') {
 		$filename = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->ficheinter->dir_output."/".$filename;
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-		$genallowed = $user->rights->ficheinter->lire;
-		$delallowed = $user->rights->ficheinter->creer;
+		$genallowed = $user->hasRight('ficheinter', 'lire');
+		$delallowed = $user->hasRight('ficheinter', 'creer');
 		print $formfile->showdocuments('ficheinter', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 		// Show links to link elements
@@ -1751,7 +1766,7 @@ if ($action == 'create') {
 			print '<br><!-- Link to sign -->';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 
-			print showOnlineSignatureUrl('fichinter', $object->ref).'<br>';
+			print showOnlineSignatureUrl('fichinter', $object->ref, $object).'<br>';
 		}
 
 		print '</div><div class="fichehalfright">';

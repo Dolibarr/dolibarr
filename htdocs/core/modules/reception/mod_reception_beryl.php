@@ -99,7 +99,7 @@ class mod_reception_beryl extends ModelNumRefReception
 	 *
 	 *	@param	Societe		$objsoc     Third party object
 	 *	@param	Object		$reception	Reception object
-	 *	@return string      			Value if OK, 0 if KO
+	 *	@return string|-1      			Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $reception)
 	{
@@ -125,7 +125,7 @@ class mod_reception_beryl extends ModelNumRefReception
 		}
 
 		$date = time();
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
@@ -143,7 +143,7 @@ class mod_reception_beryl extends ModelNumRefReception
 	 *
 	 *	@param	Societe		$objsoc     Third party object
 	 *	@param	Object		$objforref	Shipment object
-	 *	@return string      			Next free value
+	 *	@return string|-1      			Next free value, -1 if KO
 	 */
 	public function reception_get_num($objsoc, $objforref)
 	{

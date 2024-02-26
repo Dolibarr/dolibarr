@@ -19,44 +19,24 @@
 
 /**
  *  \file       htdocs/core/modules/holiday/mod_holiday_immaculate.php
- *  \ingroup    contract
- *  \brief      File of class to manage contract numbering rules Magre
+ *  \ingroup    holiday
+ *  \brief      File of class to manage holiday numbering rules Immaculate
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/holiday/modules_holiday.php';
 
 /**
- *	Class to manage contract numbering rules Magre
+ *	Class to manage holiday numbering rules Immaculate
  */
 class mod_holiday_immaculate extends ModelNumRefHolidays
 {
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
-	public $version = 'dolibarr';
 
-	/**
-	 * @var string Error message
-	 */
-	public $error = '';
-
-	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Immaculate';
-
-	/**
-	 * @var string model name
-	 */
+	// variables inherited from ModelNumRefHolidays class
 	public $name = 'Immaculate';
-
-	/**
-	 * @var int Automatic numbering
-	 */
+	public $version = 'dolibarr';
+	public $error = '';
 	public $code_auto = 1;
+
 
 	/**
 	 *	Return default description of numbering model
@@ -120,7 +100,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 *
 	 *	@param	Societe		$objsoc     third party object
 	 *	@param	Object		$holiday	holiday object
-	 *	@return string      			Value if OK, 0 if KO
+	 *	@return string|0      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $holiday)
 	{
@@ -146,7 +126,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 *
 	 *  @param  User		$fuser     	User object
 	 *  @param  Object		$objforref	Holiday object
-	 *  @return string      			Value if OK, 0 if KO
+	 *  @return string|0      			Value if OK, 0 if KO
 	 */
 	public function holiday_get_num($fuser, $objforref)
 	{

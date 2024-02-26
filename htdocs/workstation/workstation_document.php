@@ -114,7 +114,7 @@ if ($object->id) {
 
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
@@ -184,12 +184,7 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'workstation';
-	//$permission = $user->rights->workstation->workstation->write;
-	$permission = 1;
-	//$permtoedit = $user->rights->workstation->workstation->write;
-	$permtoedit = 1;
 	$param = '&id='.$object->id;
-
 	//$relativepathwithnofile='workstation/' . dol_sanitizeFileName($object->id).'/';
 	$relativepathwithnofile = 'workstation/'.dol_sanitizeFileName($object->ref).'/';
 

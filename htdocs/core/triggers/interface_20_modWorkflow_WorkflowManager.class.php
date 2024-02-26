@@ -4,6 +4,7 @@
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2022      Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2023      Alexandre Janniaux  <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,8 +47,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "core";
 		$this->description = "Triggers of this module allows to manage workflows";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = self::VERSION_DOLIBARR;
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'technic';
 	}
 
@@ -60,9 +60,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 	 * @param User		    $user       Object user
 	 * @param Translate 	$langs      Object langs
 	 * @param conf		    $conf       Object conf
-	 * @return int         				<0 if KO, 0 if no triggered ran, >0 if OK
+	 * @return int         				Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		if (empty($conf->workflow) || empty($conf->workflow->enabled)) {
 			return 0; // Module not active, we do nothing
@@ -97,7 +97,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 
 				$object->clearObjectLinkedCache();
 
-				return $ret;
+				return (int) $ret;
 			}
 		}
 
@@ -188,7 +188,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				}
 			}
 
-			// Set shipment to "Closed" if WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE is set (deprecated, WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE instead))
+			// Set shipment to "Closed" if WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE is set (deprecated, has been replaced with WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE instead))
 			if (isModEnabled("expedition") && !empty($conf->workflow->enabled) && getDolGlobalString('WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE')) {
 				$object->fetchObjectLinked('', 'shipping', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
@@ -203,7 +203,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						foreach ($object->linkedObjects['shipping'] as $element) {
 							$ret = $element->setClosed();
 							if ($ret < 0) {
-								return $ret;
+								return (int) $ret;
 							}
 						}
 					}
@@ -224,7 +224,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						foreach ($object->linkedObjects['shipping'] as $element) {
 							$ret = $element->setBilled();
 							if ($ret < 0) {
-								return $ret;
+								return (int) $ret;
 							}
 						}
 					}
@@ -368,59 +368,63 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			) {
 				$qtyshipped = array();
 				$qtyordred = array();
-				require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
-				// Find all shipments on order origin
-				$order = new Commande($this->db);
-				$ret = $order->fetch($object->origin_id);
-				if ($ret < 0) {
-					$this->setErrorsFromObject($order);
-					return $ret;
-				}
-				$ret = $order->fetchObjectLinked($order->id, 'commande', null, 'shipping');
-				if ($ret < 0) {
-					$this->setErrorsFromObject($order);
-					return $ret;
-				}
-				//Build array of quantity shipped by product for an order
-				if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
-					foreach ($order->linkedObjects as $type => $shipping_array) {
-						if ($type != 'shipping' || !is_array($shipping_array) || count($shipping_array) == 0) {
-							continue;
-						}
-						/** @var Expedition[] $shipping_array */
-						foreach ($shipping_array as $shipping) {
-							if ($shipping->status <= 0 || !is_array($shipping->lines) || count($shipping->lines) == 0) {
-								continue;
-							}
+				// The original sale order is id in $object->origin_id
+				// Find all shipments on sale order origin
 
-							foreach ($shipping->lines as $shippingline) {
-								$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
-							}
-						}
-					}
-				}
-
-				//Build array of quantity ordered to be shipped
-				if (is_array($order->lines) && count($order->lines) > 0) {
-					foreach ($order->lines as $orderline) {
-						// Exclude lines not qualified for shipment, similar code is found into calcAndSetStatusDispatch() for vendors
-						if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $orderline->product_type > 0) {
-							continue;
-						}
-						$qtyordred[$orderline->fk_product] += $orderline->qty;
-					}
-				}
-				//dol_syslog(var_export($qtyordred,true),LOG_DEBUG);
-				//dol_syslog(var_export($qtyshipped,true),LOG_DEBUG);
-				//Compare array
-				$diff_array = array_diff_assoc($qtyordred, $qtyshipped);
-				if (count($diff_array) == 0) {
-					//No diff => mean everythings is shipped
-					$ret = $order->setStatut(Commande::STATUS_CLOSED, $object->origin_id, $object->origin, 'ORDER_CLOSE');
+				if (in_array($object->origin, array('order', 'commande')) && $object->origin_id > 0) {
+					require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+					$order = new Commande($this->db);
+					$ret = $order->fetch($object->origin_id);
 					if ($ret < 0) {
 						$this->setErrorsFromObject($order);
 						return $ret;
+					}
+					$ret = $order->fetchObjectLinked($order->id, 'commande', null, 'shipping');
+					if ($ret < 0) {
+						$this->setErrorsFromObject($order);
+						return $ret;
+					}
+					//Build array of quantity shipped by product for an order
+					if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
+						foreach ($order->linkedObjects as $type => $shipping_array) {
+							if ($type != 'shipping' || !is_array($shipping_array) || count($shipping_array) == 0) {
+								continue;
+							}
+							/** @var Expedition[] $shipping_array */
+							foreach ($shipping_array as $shipping) {
+								if ($shipping->status <= 0 || !is_array($shipping->lines) || count($shipping->lines) == 0) {
+									continue;
+								}
+
+								foreach ($shipping->lines as $shippingline) {
+									$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
+								}
+							}
+						}
+					}
+
+					//Build array of quantity ordered to be shipped
+					if (is_array($order->lines) && count($order->lines) > 0) {
+						foreach ($order->lines as $orderline) {
+							// Exclude lines not qualified for shipment, similar code is found into calcAndSetStatusDispatch() for vendors
+							if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $orderline->product_type > 0) {
+								continue;
+							}
+							$qtyordred[$orderline->fk_product] += $orderline->qty;
+						}
+					}
+					//dol_syslog(var_export($qtyordred,true),LOG_DEBUG);
+					//dol_syslog(var_export($qtyshipped,true),LOG_DEBUG);
+					//Compare array
+					$diff_array = array_diff_assoc($qtyordred, $qtyshipped);
+					if (count($diff_array) == 0) {
+						//No diff => mean everything is shipped
+						$ret = $order->setStatut(Commande::STATUS_CLOSED, $object->origin_id, $object->origin, 'ORDER_CLOSE');
+						if ($ret < 0) {
+							$this->setErrorsFromObject($order);
+							return $ret;
+						}
 					}
 				}
 			}
@@ -430,7 +434,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		if (($action == 'RECEPTION_VALIDATE') || ($action == 'RECEPTION_CLOSED')) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			if ((isModEnabled("fournisseur") || isModEnabled("supplier_order")) && isModEnabled("reception") && !empty($conf->workflow->enabled) &&
+			if ((isModEnabled("fournisseur") || isModEnabled("supplier_order")) && isModEnabled("reception") && isModEnabled('workflow') &&
 				(
 					(getDolGlobalString('WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION') && ($action == 'RECEPTION_VALIDATE')) ||
 					(getDolGlobalString('WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED') && ($action == 'RECEPTION_CLOSED'))
@@ -438,59 +442,64 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			) {
 				$qtyshipped = array();
 				$qtyordred = array();
-				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
+				// The original purchase order is id in $object->origin_id
 				// Find all reception on purchase order origin
-				$order = new CommandeFournisseur($this->db);
-				$ret = $order->fetch($object->origin_id);
-				if ($ret < 0) {
-					$this->setErrorsFromObject($order);
-					return $ret;
-				}
-				$ret = $order->fetchObjectLinked($order->id, $order->element, null, 'reception');
-				if ($ret < 0) {
-					$this->setErrorsFromObject($order);
-					return $ret;
-				}
-				//Build array of quantity received by product for a purchase order
-				if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
-					foreach ($order->linkedObjects as $type => $shipping_array) {
-						if ($type != 'reception' || !is_array($shipping_array) || count($shipping_array) == 0) {
-							continue;
-						}
 
-						foreach ($shipping_array as $shipping) {
-							if (!is_array($shipping->lines) || count($shipping->lines) == 0) {
-								continue;
-							}
-
-							foreach ($shipping->lines as $shippingline) {
-								$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
-							}
-						}
-					}
-				}
-
-				//Build array of quantity ordered to be received
-				if (is_array($order->lines) && count($order->lines) > 0) {
-					foreach ($order->lines as $orderline) {
-						// Exclude lines not qualified for shipment, similar code is found into calcAndSetStatusDispatch() for vendors
-						if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $orderline->product_type > 0) {
-							continue;
-						}
-						$qtyordred[$orderline->fk_product] += $orderline->qty;
-					}
-				}
-				//dol_syslog(var_export($qtyordred,true),LOG_DEBUG);
-				//dol_syslog(var_export($qtyshipped,true),LOG_DEBUG);
-				//Compare array
-				$diff_array = array_diff_assoc($qtyordred, $qtyshipped);
-				if (count($diff_array) == 0) {
-					//No diff => mean everythings is received
-					$ret = $order->setStatut(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY, null, null, 'SUPPLIER_ORDER_CLOSE');
+				if (in_array($object->origin, array('order_supplier', 'supplier_order', 'commandeFournisseur')) && $object->origin_id > 0) {
+					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+					$order = new CommandeFournisseur($this->db);
+					$ret = $order->fetch($object->origin_id);
 					if ($ret < 0) {
 						$this->setErrorsFromObject($order);
 						return $ret;
+					}
+					$ret = $order->fetchObjectLinked($order->id, $order->element, null, 'reception');
+					if ($ret < 0) {
+						$this->setErrorsFromObject($order);
+						return $ret;
+					}
+
+					// Build array of quantity received by product for a purchase order
+					if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
+						foreach ($order->linkedObjects as $type => $shipping_array) {
+							if ($type != 'reception' || !is_array($shipping_array) || count($shipping_array) == 0) {
+								continue;
+							}
+
+							foreach ($shipping_array as $shipping) {
+								if (!is_array($shipping->lines) || count($shipping->lines) == 0) {
+									continue;
+								}
+
+								foreach ($shipping->lines as $shippingline) {
+									$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
+								}
+							}
+						}
+					}
+
+					// Build array of quantity ordered to be received
+					if (is_array($order->lines) && count($order->lines) > 0) {
+						foreach ($order->lines as $orderline) {
+							// Exclude lines not qualified for shipment, similar code is found into calcAndSetStatusDispatch() for vendors
+							if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $orderline->product_type > 0) {
+								continue;
+							}
+							$qtyordred[$orderline->fk_product] += $orderline->qty;
+						}
+					}
+					//dol_syslog(var_export($qtyordred,true),LOG_DEBUG);
+					//dol_syslog(var_export($qtyshipped,true),LOG_DEBUG);
+					//Compare array
+					$diff_array = array_diff_assoc($qtyordred, $qtyshipped);
+					if (count($diff_array) == 0) {
+						//No diff => mean everything is received
+						$ret = $order->setStatut(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY, null, null, 'SUPPLIER_ORDER_CLOSE');
+						if ($ret < 0) {
+							$this->setErrorsFromObject($order);
+							return $ret;
+						}
 					}
 				}
 			}
@@ -527,7 +536,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					break;
 				}
 				if ($number_contracts_found == 0) {
-					if (empty(NOLOGIN)) setEventMessage($langs->trans('TicketNoContractFoundToLink'), 'mesgs');
+					if (empty(NOLOGIN)) {
+						setEventMessage($langs->trans('TicketNoContractFoundToLink'), 'mesgs');
+					}
 				}
 			}
 			// Automatically create intervention

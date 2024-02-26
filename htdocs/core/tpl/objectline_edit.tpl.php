@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
+/* Copyright (C) 2010-2012	Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2022	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -85,7 +85,7 @@ $coldisplay = 0;
 ?>
 <tr class="oddeven tredited">
 <?php if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) { ?>
-		<td class="linecolnum center"><?php $coldisplay++; ?><?php echo ($i + 1); ?></td>
+		<td class="linecolnum center"><?php $coldisplay++; ?><?php echo($i + 1); ?></td>
 <?php }
 
 $coldisplay++;
@@ -103,8 +103,7 @@ $coldisplay++;
 		if (empty($canchangeproduct)) {
 			if ($line->fk_parent_line > 0) {
 				echo img_picto('', 'rightarrow');
-			}
-			?>
+			} ?>
 			<a href="<?php echo DOL_URL_ROOT.'/product/card.php?id='.$line->fk_product; ?>">
 			<?php
 			if ($line->product_type == 1) {
@@ -112,8 +111,7 @@ $coldisplay++;
 			} else {
 				print img_object($langs->trans('ShowProduct'), 'product');
 			}
-			echo ' '.$line->ref;
-			?>
+			echo ' '.$line->ref; ?>
 			</a>
 			<?php
 			echo ' - '.nl2br($line->product_label);
@@ -138,6 +136,7 @@ $coldisplay++;
 
 	$situationinvoicelinewithparent = 0;
 	if ($line->fk_prev_id != null && in_array($object->element, array('facture', 'facturedet'))) {
+		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 		if ($object->type == $object::TYPE_SITUATION) {	// The constant TYPE_SITUATION exists only for object invoice
 			// Set constant to disallow editing during a situation cycle
 			$situationinvoicelinewithparent = 1;
@@ -145,7 +144,7 @@ $coldisplay++;
 	}
 
 	// Do not allow editing during a situation cycle
-	// but in some situations that is required (update legal informations for example)
+	// but in some situations that is required (update legal information for example)
 	if (getDolGlobalString('INVOICE_SITUATION_CAN_FORCE_UPDATE_DESCRIPTION')) {
 		$situationinvoicelinewithparent = 0;
 	}
@@ -155,7 +154,7 @@ $coldisplay++;
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$nbrows = ROWS_2;
 		if (getDolGlobalString('MAIN_INPUT_DESC_HEIGHT')) {
-			$nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
+			$nbrows = getDolGlobalString('MAIN_INPUT_DESC_HEIGHT');
 		}
 		$enable = (isset($conf->global->FCKEDITOR_ENABLE_DETAILS) ? $conf->global->FCKEDITOR_ENABLE_DETAILS : 0);
 		$toolbarname = 'dolibarr_details';
@@ -180,7 +179,7 @@ $coldisplay++;
 		}
 	}
 
-	// Show autofill date for recuring invoices
+	// Show autofill date for recurring invoices
 	if (isModEnabled("service") && $line->product_type == 1 && ($line->element == 'facturedetrec' || $line->element == 'invoice_supplier_det_rec')) {
 		if ($line->element == 'invoice_supplier_det_rec') {
 			$line->date_start_fill = $line->date_start;
@@ -199,8 +198,7 @@ $coldisplay++;
 
 	<?php
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
-		$coldisplay++;
-		?>
+		$coldisplay++; ?>
 		<td class="right linecolrefsupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth100 maxwidth125onsmartphone" value="<?php echo GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref') : ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
 		<?php
 		print '<input type="hidden" id="fournprice" name="fournprice"  class="" value="'.$line->fk_fournprice.'">';
@@ -208,9 +206,14 @@ $coldisplay++;
 
 	// VAT Rate
 	$coldisplay++;
+	if ($object->element == 'propal' || $object->element == 'commande' || $object->element == 'facture' || $object->element == 'facturerec') {
+		$type_tva = 1;
+	} elseif ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {
+		$type_tva = 2;
+	}
 	if (!$situationinvoicelinewithparent) {
 		print '<td class="right">';
-		print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : ($line->tva_tx.($line->vat_src_code ? (' ('.$line->vat_src_code.')') : '')), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1);
+		print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : ($line->tva_tx.($line->vat_src_code ? (' ('.$line->vat_src_code.')') : '')), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1, $type_tva);
 		print '</td>';
 	} else {
 		print '<td class="right"><input size="1" type="text" class="flat right" name="tva_tx" value="'.price($line->tva_tx).'" readonly />%</td>';
@@ -304,22 +307,22 @@ $coldisplay++;
 
 	if (!empty($usemargins)) {
 		if ($user->hasRight('margins', 'creer')) {
-			$coldisplay++;
-			?>
+			$coldisplay++; ?>
 		<td class="margininfos right">
 			<!-- For predef product -->
 			<?php if (isModEnabled("product") || isModEnabled("service")) { ?>
 			<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp right" style="display: none;"></select>
 			<?php } ?>
 			<!-- For free product -->
-			<input class="flat maxwidth75 right" type="text" id="buying_price" name="buying_price" class="hideobject" value="<?php echo (GETPOSTISSET('buying_price') ? GETPOST('buying_price') : price($line->pa_ht, 0, '', 0)); ?>">
+			<input class="flat maxwidth75 right" type="text" id="buying_price" name="buying_price" class="hideobject" value="<?php echo(GETPOSTISSET('buying_price') ? GETPOST('buying_price') : price($line->pa_ht, 0, '', 0)); ?>">
 		</td>
-		<?php }
+			<?php
+		}
 
 		if ($user->hasRight('margins', 'creer')) {
 			if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 				$margin_rate = (GETPOSTISSET("np_marginRate") ? GETPOST("np_marginRate", "alpha", 2) : (($line->pa_ht == 0) ? '' : price($line->marge_tx)));
-				// if credit note, dont allow to modify margin
+				// if credit note, don't allow to modify margin
 				if ($line->subprice < 0) {
 					echo '<td class="right nowrap margininfos">'.$margin_rate.'<span class="opacitymedium hideonsmartphone">%</span></td>';
 				} else {
@@ -329,7 +332,7 @@ $coldisplay++;
 			}
 			if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 				$mark_rate = (GETPOSTISSET("np_markRate") ? GETPOST("np_markRate", 'alpha', 2) : price($line->marque_tx));
-				// if credit note, dont allow to modify margin
+				// if credit note, don't allow to modify margin
 				if ($line->subprice < 0) {
 					echo '<td class="right nowrap margininfos">'.$mark_rate.'<span class="opacitymedium hideonsmartphone">%</span></td>';
 				} else {
@@ -371,8 +374,8 @@ $coldisplay++;
 		}
 
 		$res = $line->fetch_product();
-		if ($res  > 0  ) {
-			if ( $line->product->isMandatoryPeriod() && $line->product->isService()) {
+		if ($res  > 0) {
+			if ($line->product->isMandatoryPeriod() && $line->product->isService()) {
 				print  'jQuery("#date_start").addClass("error");';
 			}
 		}
@@ -387,7 +390,7 @@ $coldisplay++;
 
 		$res = $line->fetch_product();
 		// on doit fetch le product là !!! pour connaître le type
-		if ($res  > 0  ) {
+		if ($res  > 0) {
 			if ($line->product->isMandatoryperiod() && $line->product->isService()) {
 				print  'jQuery("#date_end").addClass("error");';
 			}
@@ -422,8 +425,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 				return checkFreeLine(e, "np_markRate");
 			});
 		<?php
-	}
-	?>
+	} ?>
 	});
 
 	/* TODO This does not work for number with thousand separator that is , */
@@ -468,7 +470,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			else if (npRate == "np_markRate")
 				price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
 		}
-		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value
+		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
 
 		return true;
 	}
@@ -514,11 +516,11 @@ jQuery(document).ready(function()
 	if (isModEnabled('margin')) {
 		?>
 		/* Add rule to clear margin when we change some data, so when we change sell or buy price, margin will be recalculated after submitting form */
-		jQuery("#tva_tx").click(function() {						/* somtimes field is a text, sometimes a combo */
+		jQuery("#tva_tx").click(function() {						/* sometimes field is a text, sometimes a combo */
 			jQuery("input[name='np_marginRate']:first").val('');
 			jQuery("input[name='np_markRate']:first").val('');
 		});
-		jQuery("#tva_tx").keyup(function() {						/* somtimes field is a text, sometimes a combo */
+		jQuery("#tva_tx").keyup(function() {						/* sometimes field is a text, sometimes a combo */
 			jQuery("input[name='np_marginRate']:first").val('');
 			jQuery("input[name='np_markRate']:first").val('');
 		});

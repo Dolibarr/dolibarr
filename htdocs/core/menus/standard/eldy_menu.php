@@ -197,7 +197,7 @@ class MenuManager
 					print $val['titre'];
 					print '</a>'."\n";
 
-					// Search submenu fot this mainmenu entry
+					// Search submenu for this mainmenu entry
 					$tmpmainmenu = $val['mainmenu'];
 					$tmpleftmenu = 'all';
 					$submenu = new Menu();
@@ -304,8 +304,7 @@ class MenuManager
 									//print ' data-ajax="false"';
 									print '>';
 									$lastlevel2[$val2['level']] = 'enabled';
-								} else // Not allowed but visible (greyed)
-								{
+								} else { // Not allowed but visible (greyed)
 									print '<a href="#" class="vsmenudisabled">';
 									$lastlevel2[$val2['level']] = 'greyed';
 								}
@@ -320,8 +319,6 @@ class MenuManager
 							// Add font-awesome (if $val2['level'] == 0, we are on level2
 							if ($val2['level'] == 0 && !empty($val2['prefix'])) {
 								print $val2['prefix'];	// the picto must have class="pictofixedwidth paddingright"
-							} else {
-								print '<span class="paddingright"></span>';	// we also add class="paddingright". width similar to pictofixedwidth is managed by class=lilevel2
 							}
 
 							print $val2['titre'];

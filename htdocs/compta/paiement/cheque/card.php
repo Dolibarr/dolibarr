@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'compta'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -61,7 +61,7 @@ if (!$sortfield) {
 if (empty($page) || $page == -1) {
 	$page = 0;
 }
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
 $upload_dir = $conf->bank->multidir_output[$object->entity ? $object->entity : $conf->entity]."/checkdeposits";
@@ -84,11 +84,11 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque', '', 'fk_user_author', $fieldname);
 
-$usercanread = $user->rights->banque->cheque;
-$usercancreate = $user->rights->banque->cheque;
-$usercandelete = $user->rights->banque->cheque;
+$usercanread = $user->hasRight('banque', 'cheque');
+$usercancreate = $user->hasRight('banque', 'cheque');
+$usercandelete = $user->hasRight('banque', 'cheque');
 
-$permissiontodelete = $user->rights->banque->cheque;
+$permissiontodelete = $user->hasRight('banque', 'cheque');
 
 // List of payment mode to support
 // Example: BANK_PAYMENT_MODES_FOR_DEPOSIT_MANAGEMENT = 'CHQ','TRA'
@@ -416,10 +416,10 @@ if ($action == 'new') {
 	}
 	print '</td><td>';
 	// filter by dates from / to
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start, 'search_date_start_', 0, 0, 1, '', 1, 1, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end, 'search_date_end_', 0, 0, 1, '', 1, 1, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td></tr>';

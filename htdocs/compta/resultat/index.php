@@ -112,7 +112,7 @@ $nbofyear = ($year_end - $year_start) + 1;
 //var_dump("year_start=".$year_start." year_end=".$year_end." nbofyear=".$nbofyear." date_start=".dol_print_date($date_start, 'dayhour')." date_end=".dol_print_date($date_end, 'dayhour'));
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
-$modecompta = $conf->global->ACCOUNTING_MODE;
+$modecompta = getDolGlobalString('ACCOUNTING_MODE');
 if (isModEnabled('accounting')) {
 	$modecompta = 'BOOKKEEPING';
 }
@@ -189,12 +189,12 @@ if (isModEnabled('accounting')) {
 	$calcmode .= '<input type="radio" name="modecompta" id="modecompta3" value="BOOKKEEPING"'.($modecompta == 'BOOKKEEPING' ? ' checked="checked"' : '').'><label for="modecompta3"> '.$langs->trans("CalcModeBookkeeping").'</label>';
 	$calcmode .= '<br>';
 }
-$calcmode .= '<input type="radio" name="modecompta" id="modecompta1" value="RECETTES-DEPENSES"'.($modecompta == 'RECETTES-DEPENSES' ? ' checked="checked"' : '').'><label for="modecompta1"> '.$langs->trans("CalcModeDebt");
+$calcmode .= '<input type="radio" name="modecompta" id="modecompta1" value="RECETTES-DEPENSES"'.($modecompta == 'RECETTES-DEPENSES' ? ' checked="checked"' : '').'><label for="modecompta1"> '.$langs->trans("CalcModePayment");
 if (isModEnabled('accounting')) {
 	$calcmode .= ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("CalcModeNoBookKeeping").')</span>';
 }
 $calcmode .= '</label>';
-$calcmode .= '<br><input type="radio" name="modecompta" id="modecompta2" value="CREANCES-DETTES"'.($modecompta == 'CREANCES-DETTES' ? ' checked="checked"' : '').'><label for="modecompta2"> '.$langs->trans("CalcModeEngagement");
+$calcmode .= '<br><input type="radio" name="modecompta" id="modecompta2" value="CREANCES-DETTES"'.($modecompta == 'CREANCES-DETTES' ? ' checked="checked"' : '').'><label for="modecompta2"> '.$langs->trans("CalcModeDebt");
 if (isModEnabled('accounting')) {
 	$calcmode .= ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("CalcModeNoBookKeeping").')</span>';
 }
@@ -1013,7 +1013,7 @@ for ($annee = $year_start; $annee <= $year_end_for_table; $annee++) {
 }
 print '</tr>';
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
-// Loop on each year to ouput
+// Loop on each year to output
 for ($annee = $year_start; $annee <= $year_end_for_table; $annee++) {
 	print '<td class="liste_titre" align="center">';
 	$htmlhelp = '';
@@ -1044,8 +1044,8 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 		if ($mois > 12) {
 			$annee_decalage = $annee + 1;
 		}
-		$case = strftime("%Y-%m", dol_mktime(12, 0, 0, $mois_modulo, 1, $annee_decalage));
-
+		//$case = strftime("%Y-%m", dol_mktime(12, 0, 0, $mois_modulo, 1, $annee_decalage));
+		$case = dol_print_date(dol_mktime(12, 0, 0, $mois_modulo, 1, $annee_decalage), "%Y-%m");
 		print '<td class="right">';
 		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'BOOKKEEPING') {
 			if (isset($decaiss[$case]) && $decaiss[$case] != 0) {
@@ -1102,8 +1102,8 @@ if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'BOOKKEEPING') {
 print '</td>';
 for ($annee = $year_start; $annee <= $year_end_for_table; $annee++) {
 	$nbcols += 2;
-	print '<td class="nowrap right">'.(isset($totsorties[$annee]) ?price(price2num($totsorties[$annee], 'MT')) : '&nbsp;').'</td>';
-	print '<td class="nowrap right" style="border-right: 1px solid #DDD">'.(isset($totentrees[$annee]) ?price(price2num($totentrees[$annee], 'MT')) : '&nbsp;').'</td>';
+	print '<td class="nowrap right">'.(isset($totsorties[$annee]) ? price(price2num($totsorties[$annee], 'MT')) : '&nbsp;').'</td>';
+	print '<td class="nowrap right" style="border-right: 1px solid #DDD">'.(isset($totentrees[$annee]) ? price(price2num($totentrees[$annee], 'MT')) : '&nbsp;').'</td>';
 }
 print "</tr>\n";
 
@@ -1118,8 +1118,8 @@ print '<tr class="liste_total"><td>'.$langs->trans("AccountingResult").'</td>';
 for ($annee = $year_start; $annee <= $year_end_for_table; $annee++) {
 	print '<td colspan="2" class="borderrightlight right"> ';
 	if (isset($totentrees[$annee]) || isset($totsorties[$annee])) {
-		$in = (isset($totentrees[$annee]) ?price2num($totentrees[$annee], 'MT') : 0);
-		$out = (isset($totsorties[$annee]) ?price2num($totsorties[$annee], 'MT') : 0);
+		$in = (isset($totentrees[$annee]) ? price2num($totentrees[$annee], 'MT') : 0);
+		$out = (isset($totsorties[$annee]) ? price2num($totsorties[$annee], 'MT') : 0);
 		print price(price2num($in - $out, 'MT')).'</td>';
 		//  print '<td>&nbsp;</td>';
 	}

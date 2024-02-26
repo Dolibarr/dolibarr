@@ -47,7 +47,7 @@ if ($user->socid > 0) {
 $langs->loadLangs(array("companies", "admin", "users", "other","withdrawals"));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -214,29 +214,36 @@ $sql .= " WHERE e.entity IN (".getEntity('event').")";
 if ($date_start !== '') {
 	$sql .= " AND e.dateevent >= '".$db->idate($date_start)."'";
 }
-if ($date_end !== '' ) {
+if ($date_end !== '') {
 	$sql .= " AND e.dateevent <= '".$db->idate($date_end)."'";
 }
 if ($search_rowid) {
-	$usefilter++; $sql .= natural_search("e.rowid", $search_rowid, 1);
+	$usefilter++;
+	$sql .= natural_search("e.rowid", $search_rowid, 1);
 }
 if ($search_code) {
-	$usefilter++; $sql .= natural_search("e.type", $search_code, 0);
+	$usefilter++;
+	$sql .= natural_search("e.type", $search_code, 0);
 }
 if ($search_ip) {
-	$usefilter++; $sql .= natural_search("e.ip", $search_ip, 0);
+	$usefilter++;
+	$sql .= natural_search("e.ip", $search_ip, 0);
 }
 if ($search_user) {
-	$usefilter++; $sql .= natural_search("u.login", $search_user, 0);
+	$usefilter++;
+	$sql .= natural_search("u.login", $search_user, 0);
 }
 if ($search_desc) {
-	$usefilter++; $sql .= natural_search("e.description", $search_desc, 0);
+	$usefilter++;
+	$sql .= natural_search("e.description", $search_desc, 0);
 }
 if ($search_ua) {
-	$usefilter++; $sql .= natural_search("e.user_agent", $search_ua, 0);
+	$usefilter++;
+	$sql .= natural_search("e.user_agent", $search_ua, 0);
 }
 if ($search_prefix_session) {
-	$usefilter++; $sql .= natural_search("e.prefix_session", $search_prefix_session, 0);
+	$usefilter++;
+	$sql .= natural_search("e.prefix_session", $search_prefix_session, 0);
 }
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -489,15 +496,17 @@ if ($result) {
 		print dol_escape_htmltag($text);
 		print '</td>';
 
-			// User agent
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->user_agent).'">';
-			print dol_escape_htmltag($obj->user_agent);
-			print '</td>';
+		// User agent
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->user_agent).'">';
+		print dol_escape_htmltag($obj->user_agent);
+		print '</td>';
 
-			// User agent
+		// Prefix
+		if (!empty($arrayfields['e.prefix_session']['checked'])) {
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->prefix_session).'">';
 			print dol_escape_htmltag($obj->prefix_session);
 			print '</td>';
+		}
 
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

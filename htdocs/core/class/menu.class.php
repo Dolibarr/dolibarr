@@ -19,7 +19,7 @@
 /**
  *  \file       htdocs/core/class/menu.class.php
  *  \ingroup    core
- *  \brief      Fichier de la classe de gestion du menu gauche
+ *  \brief      Fichier de la class de gestion du menu gauche
  */
 
 
@@ -35,7 +35,7 @@ class Menu
 	 */
 	public function __construct()
 	{
-		  $this->liste = array();
+		$this->liste = array();
 	}
 
 	/**

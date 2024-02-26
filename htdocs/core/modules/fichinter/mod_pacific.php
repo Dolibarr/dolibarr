@@ -20,7 +20,7 @@
 
 /**
  *  \file       htdocs/core/modules/fichinter/mod_pacific.php
- *  \ingroup    fiche intervention
+ *  \ingroup    Intervention card
  *  \brief      File with Pacific numbering module for interventions
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
@@ -147,7 +147,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 
 		//$date=time();
 		$date = $object->datec;
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is

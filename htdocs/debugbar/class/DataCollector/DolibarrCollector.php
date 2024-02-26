@@ -24,7 +24,6 @@
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\Renderable;
-use DebugBar\DebugBarException;
 
 /**
  * DolibarrCollector class
@@ -87,7 +86,7 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 		$info .= $langs->trans('Locale').': <strong>' . getDolGlobalString('MAIN_LANG_DEFAULT').'</strong><br>';
 		$info .= $langs->trans('Currency').': <strong>'.$conf->currency.'</strong><br>';
 		$info .= $langs->trans('Entity').': <strong>'.$conf->entity.'</strong><br>';
-		$info .= $langs->trans('MaxSizeList').': <strong>'.($conf->liste_limit ?: $conf->global->MAIN_SIZE_LISTE_LIMIT).'</strong><br>';
+		$info .= $langs->trans('MaxSizeList').': <strong>'.($conf->liste_limit ?: getDolGlobalString('MAIN_SIZE_LISTE_LIMIT')).'</strong><br>';
 		$info .= $langs->trans('MaxSizeForUploadedFiles').': <strong>' . getDolGlobalString('MAIN_UPLOAD_DOC').'</strong><br>';
 		$info .= '$dolibarr_main_prod = <strong>'.$dolibarr_main_prod.'</strong><br>';
 		$info .= '$dolibarr_nocsrfcheck = <strong>'.$dolibarr_nocsrfcheck.'</strong><br>';

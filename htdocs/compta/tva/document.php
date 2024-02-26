@@ -80,7 +80,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'tax', '', 'tva', 'charges');
 
-$permissiontoadd = $user->rights->tax->charges->creer;	// Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->hasRight('tax', 'charges', 'creer');	// Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -133,7 +133,7 @@ if ($object->id) {
 	print '<div class="underbanner clearboth"></div>';
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
@@ -152,8 +152,8 @@ if ($object->id) {
 
 	print dol_get_fiche_end();
 
-	$permissiontoadd = $user->rights->tax->charges->creer;
-	$permtoedit = $user->rights->tax->charges->creer;
+	$permissiontoadd = $user->hasRight('tax', 'charges', 'creer');
+	$permtoedit = $user->hasRight('tax', 'charges', 'creer');
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

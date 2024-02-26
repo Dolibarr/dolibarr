@@ -66,7 +66,7 @@ class CompanyBankAccount extends Account
 	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
 	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
@@ -131,13 +131,23 @@ class CompanyBankAccount extends Account
 		'stripe_account' => array('type'=>'varchar(128)', 'label'=>'Stripeaccount', 'enabled'=>'1', 'position'=>215, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
 		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>0, 'position'=>230),
 	);
+
+	/**
+	 * @var int ID
+	 */
 	public $id;
+
+	/**
+	 * @var string type
+	 */
 	public $type;
+
 	/**
 	 * @var int		Thirdparty ID
 	 * @deprecated	Use socid
 	 */
 	public $fk_soc;
+
 	/**
 	 * @var int		Thirdparty ID
 	 */
@@ -149,26 +159,67 @@ class CompanyBankAccount extends Account
 	 * @var integer
 	 */
 	public $datec;
+
+	/**
+	 * @var string label
+	 */
 	public $label;
-	public $bank;
 	public $code_banque;
 	public $code_guichet;
 	public $number;
 	public $cle_rib;
 	public $bic;
 	public $iban_prefix;
+
+	public $bank;
+	/**
+	 * @var string	Bank address
+	 * @deprecated Replaced with address
+	 */
 	public $domiciliation;
+	public $address;
+
+	/**
+	 * @var int state id
+	 */
+	public $state_id;
+
+	/**
+	 * @var int country id
+	 */
+	public $fk_country;
+
+	public $country_code;
+
+
+	/**
+	 * @var string owner
+	 */
 	public $proprio;
+
+	/**
+	 * @var string owner address
+	 */
 	public $owner_address;
 
 	/**
-	 * @var bool $default_rib  1 = this object is the third party's default bank information
+	 * @var int $default_rib  1 = this object is the third party's default bank information, 0 if not
 	 */
 	public $default_rib;
-	public $state_id;
-	public $fk_country;
+
+	/**
+	 * @var string currency code
+	 */
 	public $currency_code;
+
+	/**
+	 * @var string rum
+	 */
 	public $rum;
+
+	/**
+	 * @var int date rum
+	 */
 	public $date_rum;
 
 	/**
@@ -183,8 +234,11 @@ class CompanyBankAccount extends Account
 	public $cvn;
 	public $exp_date_month;
 	public $exp_date_year;
-	public $country_code;
 	public $approved;
+
+	/**
+	 * @var string email
+	 */
 	public $email;
 	public $ending_date;
 	public $max_total_amount_of_all_payments;
@@ -193,8 +247,19 @@ class CompanyBankAccount extends Account
 	public $total_amount_of_all_payments;
 
 
+	/**
+	 * @var string external payment site
+	 */
 	public $ext_payment_site;	// Name of the external payment system ('StripeLive', 'StripeTest', 'StancerLive', 'StancerTest', ...)
+
+	/**
+	 * @var string comment
+	 */
 	public $comment;
+
+	/**
+	 * @var string ip address
+	 */
 	public $ipaddress;
 
 
@@ -254,7 +319,7 @@ class CompanyBankAccount extends Account
 	 *
 	 * @param   User|null   $user		User
 	 * @param   int    		$notrigger  1=Disable triggers
-	 * @return	int						<0 if KO, > 0 if OK (ID of newly created company bank account information)
+	 * @return	int						Return integer <0 if KO, > 0 if OK (ID of newly created company bank account information)
 	 */
 	public function create(User $user = null, $notrigger = 0)
 	{
@@ -262,7 +327,7 @@ class CompanyBankAccount extends Account
 
 		$error = 0;
 
-		// Check paramaters
+		// Check parameters
 		if (empty($this->socid)) {
 			$this->error = 'BadValueForParameter';
 			$this->errors[] = $this->error;
@@ -328,7 +393,7 @@ class CompanyBankAccount extends Account
 	 *
 	 *	@param	User|null	$user	     Object user
 	 *  @param  int     	$notrigger   1=Disable triggers
-	 *	@return	int					     <=0 if KO, >0 if OK
+	 *	@return	int					     Return integer <=0 if KO, >0 if OK
 	 */
 	public function update(User $user = null, $notrigger = 0)
 	{
@@ -340,8 +405,11 @@ class CompanyBankAccount extends Account
 			return -1;
 		}
 
-		if (dol_strlen($this->domiciliation) > 255) {
+		if (!empty($this->domiciliation) && dol_strlen($this->domiciliation) > 255) {
 			$this->domiciliation = dol_trunc($this->domiciliation, 254, 'right', 'UTF-8', 1);
+		}
+		if (!empty($this->address) && dol_strlen($this->address) > 255) {
+			$this->address = dol_trunc($this->address, 254, 'right', 'UTF-8', 1);
 		}
 		if (dol_strlen($this->owner_address) > 255) {
 			$this->owner_address = dol_trunc($this->owner_address, 254, 'right', 'UTF-8', 1);
@@ -361,7 +429,7 @@ class CompanyBankAccount extends Account
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-		$sql .= ",domiciliation = '".$this->db->escape($this->domiciliation)."'";
+		$sql .= ",domiciliation = '".$this->db->escape($this->address ? $this->address : $this->domiciliation)."'";
 		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",default_rib = ".((int) $this->default_rib);
@@ -415,8 +483,8 @@ class CompanyBankAccount extends Account
 	 *	@param	int		$id			Id of record
 	 * 	@param	int		$socid		Id of company. If this is filled, function will return the first entry found (matching $default and $type)
 	 *  @param	int		$default	If id of company filled, we say if we want first record among all (-1), default record (1) or non default record (0)
-	 *  @param	int		$type		If id of company filled, we say if we want record of this type only
-	 * 	@return	int					<0 if KO, >0 if OK
+	 *  @param	string	$type		If id of company filled, we say if we want record of this type only
+	 * 	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $socid = 0, $default = 1, $type = 'ban')
 	{
@@ -424,13 +492,13 @@ class CompanyBankAccount extends Account
 			return -1;
 		}
 
-		$sql = "SELECT rowid, type, fk_soc as socid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
-		$sql .= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur, date_rum,";
-		$sql .= " stripe_card_ref, stripe_account, ext_payment_site";
-		$sql .= " ,last_main_doc";
-		$sql .= " ,model_pdf";
-
+		$sql = "SELECT rowid, label, type, fk_soc as socid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban,";
+		$sql .= " domiciliation as address,";
+		$sql .= " proprio, owner_address, default_rib, datec, tms as datem, rum, frstrecur, date_rum,";
+		$sql .= " stripe_card_ref, stripe_account, ext_payment_site,";
+		$sql .= " last_main_doc, model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
+
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
 		} elseif ($socid > 0) {
@@ -460,7 +528,10 @@ class CompanyBankAccount extends Account
 				$this->cle_rib         = $obj->cle_rib;
 				$this->bic             = $obj->bic;
 				$this->iban = $obj->iban;
-				$this->domiciliation   = $obj->domiciliation;
+
+				$this->domiciliation   = $obj->address;
+				$this->address         = $obj->address;
+
 				$this->proprio         = $obj->proprio;
 				$this->owner_address   = $obj->owner_address;
 				$this->label           = $obj->label;
@@ -490,7 +561,7 @@ class CompanyBankAccount extends Account
 	 *
 	 *	@param		User|null	$user		User deleting
 	 *	@param  	int			$notrigger	1=Disable triggers
-	 *  @return		int		    	        <0 if KO, >0 if OK
+	 *  @return		int		    	        Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user = null, $notrigger = 0)
 	{
@@ -615,13 +686,16 @@ class CompanyBankAccount extends Account
 		$this->code_banque     = '123';
 		$this->code_guichet    = '456';
 		$this->number          = 'CUST12345';
-		$this->cle_rib         = 50;
+		$this->cle_rib         = '50';
 		$this->bic             = 'CC12';
 		$this->iban            = 'FR999999999';
-		$this->domiciliation   = 'Bank address of customer corp';
+
+		$this->address         = 'Rue de Paris';
+		$this->country_id      = 1;
+
 		$this->proprio         = 'Owner';
 		$this->owner_address   = 'Owner address';
-		$this->country_id      = 1;
+		$this->owner_country_id = 1;
 
 		$this->rum             = 'UMR-CU1212-0007-5-1475405262';
 		$this->date_rum        = dol_now() - 10000;

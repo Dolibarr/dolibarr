@@ -11,7 +11,7 @@ WEBSITE_ALIASALT=Enwau tudalennau eraill/enwau eraill
 WEBSITE_ALIASALTDesc=Defnyddiwch yma restr o enwau/aliasau eraill fel y gellir cyrchu'r dudalen hefyd gan ddefnyddio'r enwau/enwau eraill hyn (er enghraifft yr hen enw ar ôl ailenwi'r arallenw i gadw backlink ar hen ddolen/enw yn gweithio). Cystrawen yw: <br> enw amgen1, enw amgen2, ...
 WEBSITE_CSS_URL=URL y ffeil CSS allanol
 WEBSITE_CSS_INLINE=Cynnwys ffeil CSS (cyffredin i bob tudalen)
-WEBSITE_JS_INLINE=Cynnwys ffeil javascript (cyffredin i bob tudalen)
+WEBSITE_JS_INLINE=JavaScript file content (common to all pages)
 WEBSITE_HTML_HEADER=Ychwanegiad ar waelod Pennawd HTML (cyffredin i bob tudalen)
 WEBSITE_ROBOT=Ffeil robot (robots.txt)
 WEBSITE_HTACCESS=Gwefan .htaccess ffeil
@@ -25,7 +25,7 @@ EditTheWebSiteForACommonHeader=Nodyn: Os ydych chi am ddiffinio pennyn wedi'i be
 MediaFiles=Llyfrgell y cyfryngau
 EditCss=Golygu priodweddau gwefan
 EditMenu=Golygu dewislen
-EditMedias=Golygu cyfryngau
+EditMedias=Edit media
 EditPageMeta=Golygu tudalen / priodweddau cynhwysydd
 EditInLine=Golygu ar-lein
 AddWebsite=Ychwanegu gwefan
@@ -60,10 +60,11 @@ NoPageYet=Dim tudalennau eto
 YouCanCreatePageOrImportTemplate=Gallwch greu tudalen newydd neu fewnforio templed gwefan llawn
 SyntaxHelp=Cymorth ar awgrymiadau cystrawen penodol
 YouCanEditHtmlSourceckeditor=Gallwch olygu cod ffynhonnell HTML gan ddefnyddio'r botwm "Ffynhonnell" yn y golygydd.
-YouCanEditHtmlSource= <br> <span class="fa fa-bug"> </span> Gallwch chi gynnwys cod PHP i'r ffynhonnell hon gan ddefnyddio tagiau <strong> &lt;?php ?a0012c67d abefc0700? Mae'r newidynnau byd-eang canlynol ar gael: $conf, $db, $mysoc, $user, $gwefan, $gwefan, $weblangs, $pagelangs. <br> <br> <span class="fa fa-bug"> </span> Gallwch hefyd gynnwys cynnwys Tudalen/Cynhwysydd arall gyda'r gystrawen ganlynol: <br> a0e7843bz0 a0e7843bz0 a0e7843907conclude_conclude ? &gt; </strong> <br> <br> <span class="fa fa-bug"> </span> Gallwch wneud ailgyfeirio i dudalen / Cynhwysydd arall gyda'r chystrawen canlynol (Noder: nid ydynt allbwn unrhyw gynnwys cyn i ailgyfeirio):? <br> <strong> &lt; php redirectToContainer ( 'alias_of_container_to_redirect_to'); ? &gt; </strong> <br> <br> <span class="fa fa-link"> </span> I ychwanegu dolen i dudalen arall, defnyddiwch y chystrawen: <br> <strong> &lt;a href = "alias_of_page_to_link_to.php" &gt;mylink&lt;a&gt; </strong> <br> <br> <span class="fa fa-download"> </span> I gynnwys dolen <strong> i lawrlwytho am </strong> ffeil ei storio mewn i'r dogfennau <strong> cyfeiriadur </strong>, defnyddiwch y <strong> document.php </strong> deunydd lapio: <br> enghraifft, am ffeil i mewn i ddogfennau / ECM (angen bod wedi logio i), cystrawen yw:? <br> <strong> &lt;a href = "/ document.php modulepart = ECM & file = [relative_dir / ]enw'r ffeil.ext"&gt; </strong> <br> Ar gyfer ffeil i mewn i ddogfennau/cyfryngau (cyfeiriadur agored ar gyfer mynediad cyhoeddus), cystrawen yw: <br> a0e78439407 h0342fccfda19bz0 <br>78439407 ac060003: "/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt; </strong> <br> Ar gyfer ffeil sy'n cael ei rhannu gyda dolen rhannu (mynediad agored gan ddefnyddio allwedd rhannu hash y ffeil), sy'n cyfateb i acfda903030603603: acfda1903 acfda19bz: acfda1903603: acfda190303: acfda190303: acfda190307: acfda /document.php?hashp=publicsharekeyoffile"&gt; </strong> <br> <br> <span class="fa fa-picture-o"> </span> i gynnwys </strong> delwedd <strong> storio mewn i'r dogfennau <strong> </strong> cyfeiriadur, defnyddiwch y <strong> viewimage.php </strong> deunydd lapio: <br> enghraifft, ar gyfer delwedd i mewn i ddogfennau / cyfryngau (ar agor cyfeiriadur ar gyfer mynediad i'r cyhoedd), cystrawen yw: <br> <strong> &lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]700zfc6006000000000000000000
-#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper.<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=Ar gyfer delwedd a rennir gyda dolen rhannu (mynediad agored gan ddefnyddio'r allwedd rhannu hash o ffeil), cystrawen yw: <br> <strong> &lt;img src="/viewimage.php?hashp=123456790012..."
-YouCanEditHtmlSourceMore= <br> Mwy o enghreifftiau o HTML neu god deinamig ar gael ar <a href="%s" target="_blank" rel="noopener noreferrer external"> dogfennaeth wici </a> <br> .
+YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentation</a>.<br>
 ClonePage=Tudalen clonio/cynhwysydd
 CloneSite=Safle clôn
 SiteAdded=Ychwanegwyd y wefan
@@ -91,7 +92,7 @@ SorryWebsiteIsCurrentlyOffLine=Mae'n ddrwg gennym, nid yw'r wefan hon ar-lein ar
 WEBSITE_USE_WEBSITE_ACCOUNTS=Galluogi tabl cyfrif y wefan
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Galluogi'r tabl i storio cyfrifon gwefan (mewngofnodi/pasio) ar gyfer pob gwefan / trydydd parti
 YouMustDefineTheHomePage=Yn gyntaf rhaid i chi ddiffinio'r dudalen Hafan rhagosodedig
-OnlyEditionOfSourceForGrabbedContentFuture=Rhybudd: Mae creu tudalen we trwy fewnforio tudalen we allanol wedi'i gadw ar gyfer defnyddwyr profiadol. Yn dibynnu ar gymhlethdod y dudalen ffynhonnell, gall canlyniad mewnforio fod yn wahanol i'r gwreiddiol. Hefyd, os yw'r dudalen ffynhonnell yn defnyddio arddulliau CSS cyffredin neu javascript sy'n gwrthdaro, gall dorri edrychiad neu nodweddion golygydd y Wefan wrth weithio ar y dudalen hon. Mae'r dull hwn yn ffordd gyflymach o greu tudalen ond argymhellir creu eich tudalen newydd o'r dechrau neu o dempled tudalen a awgrymir. <br> Sylwch hefyd efallai na fydd y golygydd mewnol yn gweithio'n gywir pan gaiff ei ddefnyddio ar dudalen allanol sydd wedi'i chipio.
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor may not works correctty when used on a grabbed external page.
 OnlyEditionOfSourceForGrabbedContent=Dim ond argraffiad o ffynhonnell HTML sy'n bosibl pan gipiwyd cynnwys o wefan allanol
 GrabImagesInto=Cydio hefyd delweddau a ddarganfuwyd i mewn i css a thudalen.
 ImagesShouldBeSavedInto=Dylid cadw delweddau yn y cyfeiriadur
@@ -112,13 +113,13 @@ GoTo=Mynd i
 DynamicPHPCodeContainsAForbiddenInstruction=Rydych chi'n ychwanegu cod PHP deinamig sy'n cynnwys y cyfarwyddyd PHP ' <strong> %s </strong> ' sydd wedi'i wahardd yn ddiofyn fel cynnwys deinamig (gweler y dewisiadau cudd WEBSITE_PHP_ALLOW_xxx i gynyddu'r rhestr o orchmynion a ganiateir).
 NotAllowedToAddDynamicContent=Nid oes gennych ganiatâd i ychwanegu neu olygu cynnwys deinamig PHP mewn gwefannau. Gofynnwch am ganiatâd neu cadwch y cod yn y tagiau php heb eu haddasu.
 ReplaceWebsiteContent=Chwilio neu Amnewid cynnwys gwefan
-DeleteAlsoJs=Dileu hefyd yr holl ffeiliau javascript sy'n benodol i'r wefan hon?
-DeleteAlsoMedias=Dileu hefyd yr holl ffeiliau cyfryngau sy'n benodol i'r wefan hon?
+DeleteAlsoJs=Delete also all JavaScript files specific to this website?
+DeleteAlsoMedias=Delete also all media files specific to this website?
 MyWebsitePages=Tudalennau fy ngwefan
 SearchReplaceInto=Chwilio | Amnewid i mewn
 ReplaceString=Llinyn newydd
 CSSContentTooltipHelp=Rhowch gynnwys CSS yma. Er mwyn osgoi unrhyw wrthdaro â CSS y cais, gwnewch yn siŵr eich bod yn rhag-redeg pob datganiad gyda'r dosbarth .bodywebsite. Er enghraifft: <br> <br> #mycssselector, mewnbwn.myclass:hover {... } <br> rhaid fod yn <br> .bodywebsite #mycssselector, .bodywebsa0193:442Ffeil <br> wedi ei <br> .bodywebsite #mycssselector, .bodywebsa033...bodywebda0394: ffeil fawrcfda19bz0 <br> wedi mewnbwn.mycssselector... y rhagddodiad hwn, gallwch ddefnyddio 'lessc' i'w drosi i atodi'r rhagddodiad .bodywebsite ym mhobman.
-LinkAndScriptsHereAreNotLoadedInEditor=Rhybudd: Dim ond pan fydd gweinydd yn cyrchu'r wefan y caiff y cynnwys hwn ei allbwn. Nid yw'n cael ei ddefnyddio yn y modd Golygu felly os oes angen i chi lwytho ffeiliau javascript hefyd yn y modd golygu, ychwanegwch eich tag 'script src=...' i'r dudalen.
+LinkAndScriptsHereAreNotLoadedInEditor=Warning: This content is output only when site is accessed from a server. It is not used in Edit mode so if you need to load JavaScript files also in edit mode, just add your tag 'script src=...' into the page.
 Dynamiccontent=Sampl o dudalen gyda chynnwys deinamig
 ImportSite=Mewnforio templed gwefan
 EditInLineOnOff=Modd 'Golygu yn unol' yw %s
@@ -157,3 +158,9 @@ Booking=Booking
 Reservation=Reservation
 PagesViewedPreviousMonth=Pages viewed (previous month)
 PagesViewedTotal=Pages viewed (total)
+Visibility=Visibility
+Everyone=Everyone
+AssignedContacts=Assigned contacts
+WebsiteTypeLabel=Type of Web site
+WebsiteTypeDolibarrWebsite=Web site (CMS Dolibarr)
+WebsiteTypeDolibarrPortal=Native Dolibarr portal

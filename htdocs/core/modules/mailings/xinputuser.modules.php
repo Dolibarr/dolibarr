@@ -117,7 +117,7 @@ class mailing_xinputuser extends MailingTargets
 	 *  Ajoute destinataires dans table des cibles
 	 *
 	 *  @param	int		$mailing_id    	Id of emailing
-	 *  @return int           			< 0 si erreur, nb ajout si ok
+	 *  @return int           			Return integer < 0 si erreur, nb ajout si ok
 	 */
 	public function add_to_target($mailing_id)
 	{
@@ -135,7 +135,7 @@ class mailing_xinputuser extends MailingTargets
 
 		$cibles = array();
 		if (!empty($email)) {
-			if (isValidEMail($email)) {
+			if (isValidEmail($email)) {
 				$cibles[] = array(
 					'email' => $email,
 					'lastname' => $lastname,

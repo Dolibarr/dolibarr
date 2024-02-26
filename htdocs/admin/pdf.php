@@ -376,7 +376,7 @@ for ($i = 1; $i <= 6; $i++) {
 		if ($conf->use_javascript_ajax) {
 			print ajax_constantonoff($keyforconstant);
 		} else {
-			print $form->selectyesno($keyforconstant, isset($conf->global->$keyforconstant) ? $conf->global->$keyforconstant : 0, 1, $noCountryCode);
+			print $form->selectyesno($keyforconstant, getDolGlobalString($keyforconstant, 0), 1, $noCountryCode);
 		}
 		print '</td></tr>';
 	}
@@ -412,7 +412,7 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
-// Place customer adress to the ISO location
+// Place customer address to the ISO location
 
 print '<tr class="oddeven"><td>'.$langs->trans("PlaceCustomerAddressToIsoLocation").'</td><td>';
 if ($conf->use_javascript_ajax) {
@@ -577,7 +577,7 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
-// Swicth in Bold
+// Switch in Bold
 
 print '<tr class="oddeven"><td>'.$langs->trans("BoldLabelOnPDF").'</td><td>';
 if ($conf->use_javascript_ajax) {
@@ -587,7 +587,7 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
-// Swicth in Bold
+// Switch in Bold
 
 print '<tr class="oddeven"><td>'.$langs->trans("BoldRefAndPeriodOnPDF").'</td><td>';
 if ($conf->use_javascript_ajax) {
