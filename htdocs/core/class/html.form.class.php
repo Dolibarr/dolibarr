@@ -8807,7 +8807,7 @@ class Form
 		}
 
 		$useenhancedmultiselect = 0;
-		if (!empty($conf->use_javascript_ajax) && (getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') || defined('REQUIRE_JQUERY_MULTISELECT'))) {
+		if (!empty($conf->use_javascript_ajax) && !defined('MAIN_DO_NOT_USE_JQUERY_MULTISELECT') && (getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') || defined('REQUIRE_JQUERY_MULTISELECT'))) {
 			if ($addjscombo) {
 				$useenhancedmultiselect = 1;	// Use the js multiselect in one line. Possible only if $addjscombo not 0.
 			}
@@ -8866,9 +8866,12 @@ class Form
 			if ($addjscombo == 1) {
 				$tmpplugin = !getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') ? constant('REQUIRE_JQUERY_MULTISELECT') : $conf->global->MAIN_USE_JQUERY_MULTISELECT;
 				$out .= 'function formatResult(record, container) {' . "\n";
-				// If property html set, we decode html entities and use this.
+				// If property data-html set, we decode html entities and use this.
 				// Note that HTML content must have been sanitized from js with dol_escape_htmltag(xxx, 0, 0, '', 0, 1) when building the select option.
-				$out .= '	if ($(record.element).attr("data-html") != undefined) { return htmlEntityDecodeJs($(record.element).attr("data-html")); }'."\n";
+				$out .= '	if ($(record.element).attr("data-html") != undefined && typeof htmlEntityDecodeJs === "function") {';
+				//$out .= '		console.log("aaa");';
+				$out .= '		return htmlEntityDecodeJs($(record.element).attr("data-html"));';
+				$out .= '	}'."\n";
 				$out .= '	return record.text;';
 				$out .= '}' . "\n";
 				$out .= 'function formatSelection(record) {' . "\n";
@@ -8889,7 +8892,7 @@ class Form
 				}
 				$out .= '		dir: \'ltr\',
 								containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag (ko with multiselect) */
-								dropdownCssClass: \'' . $morecss . '\',				/* Line to add class on the new <span class="select2-selection...> tag (ok with multiselect) */
+								dropdownCssClass: \'' . $morecss . '\',				/* Line to add class on the new <span class="select2-selection...> tag (ok with multiselect). Need full version of select2. */
 								// Specify format function for dropdown item
 								formatResult: formatResult,
 							 	templateResult: formatResult,		/* For 4.0 */

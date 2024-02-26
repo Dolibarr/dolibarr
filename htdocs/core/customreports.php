@@ -37,9 +37,6 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$tabfamily  = GETPOST('tabfamily', 'aZ09');
 
 	$search_measures = GETPOST('search_measures', 'array');
-	if (empty($search_measures)) {
-		$search_measures = array(0 => 't.count');
-	}
 
 	//$search_xaxis = GETPOST('search_xaxis', 'array');
 	if (GETPOST('search_xaxis', 'alpha') && GETPOST('search_xaxis', 'alpha') != '-1') {
@@ -86,6 +83,9 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	}
 }
 
+if (empty($search_measures)) {
+	$search_measures = array(0 => 't.count');
+}
 if (!empty($object)) {
 	$objecttype = $object->element.($object->module ? '@'.$object->module : '');
 }
