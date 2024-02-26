@@ -442,13 +442,13 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setretainedwarranty' && $user->hasRight('facture', 'creer')) {
 		$object->fetch($id);
-		$result = $object->setRetainedWarranty(GETPOST('retained_warranty', 'float'));
+		$result = $object->setRetainedWarranty(GETPOSTFLOAT('retained_warranty'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
 	} elseif ($action == 'setretainedwarrantydatelimit' && $user->hasRight('facture', 'creer')) {
 		$object->fetch($id);
-		$result = $object->setRetainedWarrantyDateLimit(GETPOST('retained_warranty_date_limit', 'float'));
+		$result = $object->setRetainedWarrantyDateLimit(GETPOSTFLOAT('retained_warranty_date_limit'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
