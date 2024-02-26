@@ -591,7 +591,7 @@ if (isModEnabled('ficheinter')) {
 		addSummaryTableLine(3, $num, $nbofloop, $total, "NoIntervention");
 		finishSimpleTable(true);
 
-		print "</table></div>";
+		$db->free($resql);
 	}
 }
 
