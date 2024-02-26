@@ -84,7 +84,7 @@ if (!isModEnabled('ticket')) {
  */
 
 if ($cancel) {
-	$backtopage = DOL_URL_ROOT.'/public/ticket/index.php';
+	$backtopage = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', DOL_URL_ROOT.'/public/ticket/');
 
 	if (!empty($backtopage)) {
 		header("Location: ".$backtopage);
@@ -355,8 +355,10 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			$formticket->track_id = $object->dao->track_id;
 			$formticket->trackid = 'tic'.$object->dao->id;
 
+			$baseurl = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', DOL_URL_ROOT.'/public/ticket/');
+
 			$formticket->param = array('track_id' => $object->dao->track_id, 'fk_user_create' => '-1',
-									   'returnurl' => DOL_URL_ROOT.'/public/ticket/view.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:''));
+									   'returnurl' => $baseurl.'view.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:''));
 
 			$formticket->withfile = 2;
 			$formticket->withcancel = 1;
@@ -365,7 +367,9 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		}
 
 		if ($action != 'presend') {
-			print '<form method="post" id="form_view_ticket_list" name="form_view_ticket_list" action="'.DOL_URL_ROOT.'/public/ticket/list.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'">';
+			$baseurl = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', DOL_URL_ROOT.'/public/ticket/');
+
+			print '<form method="post" id="form_view_ticket_list" name="form_view_ticket_list" action="'.$baseurl.'list.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="view_ticketlist">';
 			print '<input type="hidden" name="track_id" value="'.$object->dao->track_id.'">';

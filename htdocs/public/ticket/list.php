@@ -92,7 +92,7 @@ if (!isModEnabled('ticket')) {
  */
 
 if ($cancel) {
-	$backtopage = DOL_URL_ROOT.'/public/ticket/index.php';
+	$backtopage = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', DOL_URL_ROOT.'/public/ticket/');
 
 	header("Location: ".$backtopage);
 	exit;
@@ -710,7 +710,9 @@ if ($action == "view_ticketlist") {
 
 				print '</form>';
 
-				print '<form method="post" id="form_view_ticket" name="form_view_ticket" action="'.dol_buildpath('/public/ticket/view.php', 1).(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" style="display:none;">';
+				$url_public_ticket = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 1));
+
+				print '<form method="post" id="form_view_ticket" name="form_view_ticket" action="'.$url_public_ticket.'view.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" style="display:none;">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="view_ticket">';
 				print '<input type="hidden" name="btn_view_ticket_list" value="1">';

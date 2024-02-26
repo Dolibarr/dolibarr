@@ -2763,13 +2763,7 @@ class Ticket extends CommonObject
 								}
 
 								// If public interface is not enable, use link to internal page into mail
-								$url_public_ticket = "";
-								if(!empty(getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE'))) {
-									$url_public_ticket = getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE') . '/view.php';
-								}else {
-									$url_public_ticket = dol_buildpath('/public/ticket/view.php', 2);
-								}
-								$url_public_ticket .= '?track_id='.$object->track_id;
+								$url_public_ticket = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/view.php', 2)) . '/view.php?track_id='.$object->track_id;
 								$message .= '<br>'.$langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$object->track_id.'</a><br>';
 
 								// Build final message
