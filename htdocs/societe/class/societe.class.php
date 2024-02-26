@@ -18,7 +18,6 @@
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
  * Copyright (C) 2022		ButterflyOfFire         <butterflyoffire+dolibarr@protonmail.com>
- * Copyright (C) 2021-2024	Anthony Berton       	<anthony.berton@bb2a.fr>
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
@@ -4433,7 +4432,6 @@ class Societe extends CommonObject
 		$this->logo_squarred = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED');
 		$this->logo_squarred_small = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL');
 		$this->logo_squarred_mini = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI');
-		$this->termsofsale = getDolGlobalString('MAIN_INFO_SOCIETE_TERMSOFSALE');
 
 		// Define if company use vat or not
 		$this->tva_assuj = getDolGlobalInt('FACTURE_TVAOPTION');
