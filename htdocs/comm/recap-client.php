@@ -34,7 +34,7 @@ if (isModEnabled('facture')) {
 }
 
 // Security check
-$socid = GETPOST("socid", 'int');
+$socid = GETPOSTINT("socid");
 if ($user->socid > 0) {
 	$action = '';
 	$id = $user->socid;
