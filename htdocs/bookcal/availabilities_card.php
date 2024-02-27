@@ -156,10 +156,10 @@ if (empty($reshook)) {
 		setEventMessages($langs->trans("ErrorIncoherentDates"), null, 'errors');
 	}
 
-	if (!$error) {
+
 		// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
-	}
+
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';
 
@@ -227,8 +227,7 @@ if ($action == 'create') {
 	}
 
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Availabilities")), '', 'object_'.$object->picto);
-
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].''.($error = 0 ? '' : '?action=create').'">';
+	print '<form method="POST" action="'.($error == 0 ? $_SERVER["PHP_SELF"] : $_SERVER["PHP_SELF"].'?action=create').'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
