@@ -222,7 +222,7 @@ define(
 		'fichinter' => 'intervention',
 		'product_fournisseur_price' => 'productsupplierprice',
 		'product_price' => 'productprice',
-		'project'  => 'projet',
+		'projet'  => 'project',
 		'propale' => 'propal',
 		'socpeople' => 'contact',
 	)
@@ -240,6 +240,7 @@ function isModEnabled($module)
 
 	// Fix old names (map to new names)
 	$arrayconv = DEPRECATED_MODULE_MAPPING;
+	$arrayconvbis = array_flip(DEPRECATED_MODULE_MAPPING);
 
 	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 		// Special cases: both use the same module.
@@ -251,8 +252,12 @@ function isModEnabled($module)
 	if (!empty($arrayconv[$module])) {
 		$module_alt = $arrayconv[$module];
 	}
+	$module_bis = $module;
+	if (!empty($arrayconvbis[$module])) {
+		$module_bis = $arrayconvbis[$module];
+	}
 
-	return !empty($conf->modules[$module]) || !empty($conf->modules[$module_alt]);
+	return !empty($conf->modules[$module]) || !empty($conf->modules[$module_alt]) || !empty($conf->modules[$module_bis]);
 	//return !empty($conf->$module->enabled);
 }
 
@@ -4468,6 +4473,11 @@ function getPictoForType($key)
 		'checkbox' => 'check-square',
 		'chkbxlst' => 'check-square',
 		'link' => 'link',
+		'icon' => "question",
+		'point' => "country",
+		'multipts' => 'country',
+		'linestrg' => "country",
+		'polygon' => "country",
 		'separate' => 'minus'
 	);
 
