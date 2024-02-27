@@ -43,13 +43,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 }
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 if (isModEnabled("supplier_invoice")) {
@@ -58,10 +58,10 @@ if (isModEnabled("supplier_invoice")) {
 if (isModEnabled("supplier_order")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 }
-if (isModEnabled('contrat')) {
+if (isModEnabled('contract')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
-if (isModEnabled('ficheinter')) {
+if (isModEnabled('intervention')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
 if (isModEnabled('deplacement')) {

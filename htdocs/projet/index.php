@@ -41,7 +41,7 @@ $hookmanager->initHooks(array('projectsindex'));
 $langs->loadLangs(array('projects', 'companies'));
 
 $action = GETPOST('action', 'aZ09');
-$search_project_user = GETPOST('search_project_user', 'int');
+$search_project_user = GETPOSTINT('search_project_user');
 $mine = GETPOST('mode', 'aZ09') == 'mine' ? 1 : 0;
 if ($mine == 0 && $search_project_user === '') {
 	$search_project_user = (empty($user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX) ? '' : $user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX);
@@ -74,7 +74,7 @@ if ($reshook < 0) {
 }
 if (empty($reshook)) {
 	if ($action == 'refresh_search_project_user') {
-		$search_project_user = GETPOST('search_project_user', 'int');
+		$search_project_user = GETPOSTINT('search_project_user');
 		$tabparam = array("MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX" => $search_project_user);
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

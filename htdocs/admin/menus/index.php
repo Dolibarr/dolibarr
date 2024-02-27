@@ -75,7 +75,7 @@ if ($action == 'up') {
 	// Get current position
 	$sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE m.rowid = ".GETPOST("menuId", "int");
+	$sql .= " WHERE m.rowid = ".GETPOSTINT("menuId");
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
@@ -92,7 +92,7 @@ if ($action == 'up') {
 	// Menu before
 	$sql = "SELECT m.rowid, m.position";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE (m.position < ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid < ".GETPOST("menuId", "int")."))";
+	$sql .= " WHERE (m.position < ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid < ".GETPOSTINT("menuId")."))";
 	$sql .= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
 	$sql .= " AND m.entity = ".$conf->entity;
 	$sql .= " AND m.type = '".$db->escape($current['type'])."'";
@@ -126,7 +126,7 @@ if ($action == 'up') {
 	// Get current position
 	$sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE m.rowid = ".GETPOST("menuId", "int");
+	$sql .= " WHERE m.rowid = ".GETPOSTINT("menuId");
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
@@ -143,7 +143,7 @@ if ($action == 'up') {
 	// Menu after
 	$sql = "SELECT m.rowid, m.position";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE (m.position > ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid > ".GETPOST("menuId", "int")."))";
+	$sql .= " WHERE (m.position > ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid > ".GETPOSTINT("menuId")."))";
 	$sql .= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
 	$sql .= " AND m.entity = ".$conf->entity;
 	$sql .= " AND m.type = '".$db->escape($current['type'])."'";
@@ -174,7 +174,7 @@ if ($action == 'up') {
 	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
-	$sql .= " WHERE rowid = ".GETPOST('menuId', 'int');
+	$sql .= " WHERE rowid = ".GETPOSTINT('menuId');
 	$resql = $db->query($sql);
 	if ($resql) {
 		$db->commit();
@@ -231,11 +231,11 @@ print "<br>\n";
 if ($action == 'delete') {
 	$sql = "SELECT m.titre as title";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE m.rowid = ".GETPOST('menuId', 'int');
+	$sql .= " WHERE m.rowid = ".GETPOSTINT('menuId');
 	$result = $db->query($sql);
 	$obj = $db->fetch_object($result);
 
-	print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOST('menuId', 'int'), $langs->trans("DeleteMenu"), $langs->trans("ConfirmDeleteMenu", $obj->title), "confirm_delete");
+	print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOSTINT('menuId'), $langs->trans("DeleteMenu"), $langs->trans("ConfirmDeleteMenu", $obj->title), "confirm_delete");
 }
 
 $newcardbutton = '';

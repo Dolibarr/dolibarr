@@ -49,7 +49,7 @@ $toselect = GETPOST('toselect', 'array');
 
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -92,7 +92,7 @@ if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 	$arrayofmassactions = array();
 }
 
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
 	$arrayofmassactions = array();
 }
 

@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
 $langs->loadLangs(array("stocks", "other"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
@@ -147,7 +147,7 @@ if (empty($reshook)) {
 		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'MYOBJECT_MODIFY');
 	}*/
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 
 	// Actions to send emails

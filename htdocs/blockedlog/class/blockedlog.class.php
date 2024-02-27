@@ -146,7 +146,7 @@ class BlockedLog
 		$this->trackedevents = array();
 
 		// Customer Invoice/Facture / Payment
-		if (isModEnabled('facture')) {
+		if (isModEnabled('invoice')) {
 			$this->trackedevents['BILL_VALIDATE'] = 'logBILL_VALIDATE';
 			$this->trackedevents['BILL_DELETE'] = 'logBILL_DELETE';
 			$this->trackedevents['BILL_SENTBYMAIL'] = 'logBILL_SENTBYMAIL';
@@ -188,14 +188,14 @@ class BlockedLog
 		 */
 
 		// Members
-		if (isModEnabled('adherent')) {
+		if (isModEnabled('member')) {
 			$this->trackedevents['MEMBER_SUBSCRIPTION_CREATE'] = 'logMEMBER_SUBSCRIPTION_CREATE';
 			$this->trackedevents['MEMBER_SUBSCRIPTION_MODIFY'] = 'logMEMBER_SUBSCRIPTION_MODIFY';
 			$this->trackedevents['MEMBER_SUBSCRIPTION_DELETE'] = 'logMEMBER_SUBSCRIPTION_DELETE';
 		}
 
 		// Bank
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			$this->trackedevents['PAYMENT_VARIOUS_CREATE'] = 'logPAYMENT_VARIOUS_CREATE';
 			$this->trackedevents['PAYMENT_VARIOUS_MODIFY'] = 'logPAYMENT_VARIOUS_MODIFY';
 			$this->trackedevents['PAYMENT_VARIOUS_DELETE'] = 'logPAYMENT_VARIOUS_DELETE';

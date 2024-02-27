@@ -34,7 +34,7 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 
 $object = new ChargeSociales($db);
@@ -43,7 +43,7 @@ if ($id > 0) {
 }
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }

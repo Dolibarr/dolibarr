@@ -2108,7 +2108,7 @@ class ExtraFields
 		$expand_display = false;
 		if (is_array($extrafield_param_list) && count($extrafield_param_list) > 0) {
 			$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
-			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? (empty($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) ? false : true) : ($extrafield_collapse_display_value == 2 ? false : true));
+			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOSTINT('ignorecollapsesetup')) ? (empty($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) ? false : true) : ($extrafield_collapse_display_value == 2 ? false : true));
 		}
 		$disabledcookiewrite = 0;
 		if ($mode == 'create') {
@@ -2266,13 +2266,13 @@ class ExtraFields
 
 				if (in_array($key_type, array('date'))) {
 					// Clean parameters
-					$value_key = dol_mktime(12, 0, 0, GETPOST("options_".$key."month", 'int'), GETPOST("options_".$key."day", 'int'), GETPOST("options_".$key."year", 'int'));
+					$value_key = dol_mktime(12, 0, 0, GETPOSTINT("options_".$key."month"), GETPOSTINT("options_".$key."day"), GETPOSTINT("options_".$key."year"));
 				} elseif (in_array($key_type, array('datetime'))) {
 					// Clean parameters
-					$value_key = dol_mktime(GETPOST("options_".$key."hour", 'int'), GETPOST("options_".$key."min", 'int'), GETPOST("options_".$key."sec", 'int'), GETPOST("options_".$key."month", 'int'), GETPOST("options_".$key."day", 'int'), GETPOST("options_".$key."year", 'int'), 'tzuserrel');
+					$value_key = dol_mktime(GETPOSTINT("options_".$key."hour"), GETPOSTINT("options_".$key."min"), GETPOSTINT("options_".$key."sec"), GETPOSTINT("options_".$key."month"), GETPOSTINT("options_".$key."day"), GETPOSTINT("options_".$key."year"), 'tzuserrel');
 				} elseif (in_array($key_type, array('datetimegmt'))) {
 					// Clean parameters
-					$value_key = dol_mktime(GETPOST("options_".$key."hour", 'int'), GETPOST("options_".$key."min", 'int'), GETPOST("options_".$key."sec", 'int'), GETPOST("options_".$key."month", 'int'), GETPOST("options_".$key."day", 'int'), GETPOST("options_".$key."year", 'int'), 'gmt');
+					$value_key = dol_mktime(GETPOSTINT("options_".$key."hour"), GETPOSTINT("options_".$key."min"), GETPOSTINT("options_".$key."sec"), GETPOSTINT("options_".$key."month"), GETPOSTINT("options_".$key."day"), GETPOSTINT("options_".$key."year"), 'gmt');
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					$value_arr = GETPOST("options_".$key, 'array'); // check if an array
 					if (!empty($value_arr)) {
@@ -2373,14 +2373,14 @@ class ExtraFields
 						$value_key = array();
 						// values provided as a component year, month, day, etc.
 						if (GETPOST($dateparamname_start . 'year')) {
-							$value_key['start'] = dol_mktime(0, 0, 0, GETPOST($dateparamname_start . 'month', 'int'), GETPOST($dateparamname_start . 'day', 'int'), GETPOST($dateparamname_start . 'year', 'int'));
+							$value_key['start'] = dol_mktime(0, 0, 0, GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'));
 						}
 						if (GETPOST($dateparamname_start . 'year')) {
-							$value_key['end'] = dol_mktime(23, 59, 59, GETPOST($dateparamname_end . 'month', 'int'), GETPOST($dateparamname_end . 'day', 'int'), GETPOST($dateparamname_end . 'year', 'int'));
+							$value_key['end'] = dol_mktime(23, 59, 59, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'));
 						}
 					} elseif (GETPOST($keysuffix."options_".$key.$keyprefix."year")) {
 						// Clean parameters
-						$value_key = dol_mktime(12, 0, 0, GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'));
+						$value_key = dol_mktime(12, 0, 0, GETPOSTINT($keysuffix."options_".$key.$keyprefix."month"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."day"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."year"));
 					} else {
 						continue; // Value was not provided, we should not set it.
 					}
@@ -2389,26 +2389,26 @@ class ExtraFields
 					$dateparamname_end   = $keysuffix . 'options_' . $key . $keyprefix . '_end';
 					if (GETPOST($dateparamname_start . 'year') && GETPOST($dateparamname_end . 'year')) {
 						// values provided as a date pair (start date + end date), each date being broken down as year, month, day, etc.
-						$dateparamname_end_hour = GETPOST($dateparamname_end . 'hour', 'int') != '-1' ? GETPOST($dateparamname_end . 'hour', 'int') : '23';
-						$dateparamname_end_min = GETPOST($dateparamname_end . 'min', 'int') != '-1' ? GETPOST($dateparamname_end . 'min', 'int') : '59';
-						$dateparamname_end_sec = GETPOST($dateparamname_end . 'sec', 'int') != '-1' ? GETPOST($dateparamname_end . 'sec', 'int') : '59';
+						$dateparamname_end_hour = GETPOSTINT($dateparamname_end . 'hour') != '-1' ? GETPOSTINT($dateparamname_end . 'hour') : '23';
+						$dateparamname_end_min = GETPOSTINT($dateparamname_end . 'min') != '-1' ? GETPOSTINT($dateparamname_end . 'min') : '59';
+						$dateparamname_end_sec = GETPOSTINT($dateparamname_end . 'sec') != '-1' ? GETPOSTINT($dateparamname_end . 'sec') : '59';
 						if ($key_type == 'datetimegmt') {
 							$value_key = array(
-								'start' => dol_mktime(GETPOST($dateparamname_start . 'hour', 'int'), GETPOST($dateparamname_start . 'min', 'int'), GETPOST($dateparamname_start . 'sec', 'int'), GETPOST($dateparamname_start . 'month', 'int'), GETPOST($dateparamname_start . 'day', 'int'), GETPOST($dateparamname_start . 'year', 'int'), 'gmt'),
-								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOST($dateparamname_end . 'month', 'int'), GETPOST($dateparamname_end . 'day', 'int'), GETPOST($dateparamname_end . 'year', 'int'), 'gmt')
+								'start' => dol_mktime(GETPOSTINT($dateparamname_start . 'hour'), GETPOSTINT($dateparamname_start . 'min'), GETPOSTINT($dateparamname_start . 'sec'), GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'gmt'),
+								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'), 'gmt')
 							);
 						} else {
 							$value_key = array(
-								'start' => dol_mktime(GETPOST($dateparamname_start . 'hour', 'int'), GETPOST($dateparamname_start . 'min', 'int'), GETPOST($dateparamname_start . 'sec', 'int'), GETPOST($dateparamname_start . 'month', 'int'), GETPOST($dateparamname_start . 'day', 'int'), GETPOST($dateparamname_start . 'year', 'int'), 'tzuserrel'),
-								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOST($dateparamname_end . 'month', 'int'), GETPOST($dateparamname_end . 'day', 'int'), GETPOST($dateparamname_end . 'year', 'int'), 'tzuserrel')
+								'start' => dol_mktime(GETPOSTINT($dateparamname_start . 'hour'), GETPOSTINT($dateparamname_start . 'min'), GETPOSTINT($dateparamname_start . 'sec'), GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'tzuserrel'),
+								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'), 'tzuserrel')
 							);
 						}
 					} elseif (GETPOST($keysuffix."options_".$key.$keyprefix."year")) {
 						// Clean parameters
 						if ($key_type == 'datetimegmt') {
-							$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."sec", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'), 'gmt');
+							$value_key = dol_mktime(GETPOSTINT($keysuffix."options_".$key.$keyprefix."hour"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."min"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."sec"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."month"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."day"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."year"), 'gmt');
 						} else {
-							$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."sec", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'), 'tzuserrel');
+							$value_key = dol_mktime(GETPOSTINT($keysuffix."options_".$key.$keyprefix."hour"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."min"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."sec"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."month"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."day"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."year"), 'tzuserrel');
 						}
 					} else {
 						continue; // Value was not provided, we should not set it.

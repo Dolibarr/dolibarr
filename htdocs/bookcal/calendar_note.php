@@ -80,7 +80,7 @@ dol_include_once('/bookcal/lib/bookcal_calendar.lib.php');
 $langs->loadLangs(array("bookcal@bookcal", "companies"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');

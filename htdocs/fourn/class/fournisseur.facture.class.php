@@ -278,7 +278,7 @@ class FactureFournisseur extends CommonInvoice
 		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 135),
 		'fk_facture_source' => array('type' => 'integer', 'label' => 'Fk facture source', 'enabled' => 1, 'visible' => -1, 'position' => 140),
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 145),
-		'fk_account' => array('type' => 'integer', 'label' => 'Account', 'enabled' => 'isModEnabled("banque")', 'visible' => -1, 'position' => 150),
+		'fk_account' => array('type' => 'integer', 'label' => 'Account', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 150),
 		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'PaymentTerm', 'enabled' => 1, 'visible' => -1, 'position' => 155),
 		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'PaymentMode', 'enabled' => 1, 'visible' => -1, 'position' => 160),
 		'date_lim_reglement' => array('type' => 'date', 'label' => 'DateLimReglement', 'enabled' => 1, 'visible' => -1, 'position' => 165),
@@ -425,12 +425,12 @@ class FactureFournisseur extends CommonInvoice
 			// Fields coming from GUI
 			// @TODO Value of template should be used as default value on the form on the GUI, and we should here always use the value from GUI
 			// set by posted page with $object->xxx = ... and this section should be removed.
-			$this->fk_project = GETPOST('projectid', 'int') > 0 ? ((int) GETPOST('projectid', 'int')) : $_facrec->fk_project;
+			$this->fk_project = GETPOSTINT('projectid') > 0 ? (GETPOSTINT('projectid')) : $_facrec->fk_project;
 			$this->note_public = GETPOST('note_public', 'restricthtml') ? GETPOST('note_public', 'restricthtml') : $_facrec->note_public;
 			$this->note_private = GETPOST('note_private', 'restricthtml') ? GETPOST('note_private', 'restricthtml') : $_facrec->note_private;
 			$this->model_pdf = GETPOST('model', 'alpha') ? GETPOST('model', 'alpha') : $_facrec->model_pdf;
-			$this->cond_reglement_id = GETPOST('cond_reglement_id', 'int') > 0 ? ((int) GETPOST('cond_reglement_id', 'int')) : $_facrec->cond_reglement_id;
-			$this->mode_reglement_id = GETPOST('mode_reglement_id', 'int') > 0 ? ((int) GETPOST('mode_reglement_id', 'int')) : $_facrec->mode_reglement_id;
+			$this->cond_reglement_id = GETPOSTINT('cond_reglement_id') > 0 ? (GETPOSTINT('cond_reglement_id')) : $_facrec->cond_reglement_id;
+			$this->mode_reglement_id = GETPOSTINT('mode_reglement_id') > 0 ? (GETPOSTINT('mode_reglement_id')) : $_facrec->mode_reglement_id;
 			$this->fk_account = GETPOST('fk_account') > 0 ? ((int) GETPOST('fk_account')) : $_facrec->fk_account;
 
 			// Set here to have this defined for substitution into notes, should be recalculated after adding lines to get same result

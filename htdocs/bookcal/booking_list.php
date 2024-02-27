@@ -42,9 +42,9 @@ require_once __DIR__.'/class/calendar.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("bookcal@bookcal", "other"));
 
-$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 $type = GETPOST('type', 'aZ09');
 

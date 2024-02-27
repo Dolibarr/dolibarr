@@ -43,7 +43,7 @@ if (isModEnabled('incoterm')) {
 
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
@@ -51,11 +51,11 @@ $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page will be used
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
-$qty = GETPOST('qty', 'int');
-$fk_product = GETPOST('fk_product', 'int');
-$fk_warehouse_source = GETPOST('fk_warehouse_source', 'int');
-$fk_warehouse_destination = GETPOST('fk_warehouse_destination', 'int');
-$lineid   = GETPOST('lineid', 'int');
+$qty = GETPOSTINT('qty');
+$fk_product = GETPOSTINT('fk_product');
+$fk_warehouse_source = GETPOSTINT('fk_warehouse_source');
+$fk_warehouse_destination = GETPOSTINT('fk_warehouse_destination');
+$lineid   = GETPOSTINT('lineid');
 $label = GETPOST('label', 'alpha');
 $batch = GETPOST('batch', 'alpha');
 $code_inv = GETPOST('inventorycode', 'alphanohtml');
@@ -152,10 +152,10 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 
 	if ($action == 'addline' && $permissiontoadd) {
@@ -371,7 +371,7 @@ if (empty($reshook)) {
 
 	// Set incoterm
 	if ($action == 'set_incoterms' && isModEnabled('incoterm') && $permissiontoadd) {
-		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTINT('location_incoterms'));
 	}
 	// Actions to send emails
 	$triggersendname = 'STOCKTRANSFER_SENTBYMAIL';
@@ -749,7 +749,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	$formproduct = new FormProduct($db);
 	print '<div class="div-table-responsive-no-min">';
-	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
+	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOSTINT('lineid')).'" method="POST">
 		<input type="hidden" name="token" value="' . newToken().'">
 		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 		<input type="hidden" name="mode" value="">

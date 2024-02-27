@@ -383,7 +383,7 @@ if ($action == 'presend') {
 	// Array of other parameters
 	$formmail->param['action'] = 'send';
 	$formmail->param['models'] = $modelmail;
-	$formmail->param['models_id'] = GETPOST('modelmailselected', 'int');
+	$formmail->param['models_id'] = GETPOSTINT('modelmailselected');
 	$formmail->param['id'] = $object->id;
 	$formmail->param['returnurl'] = $_SERVER["PHP_SELF"].'?id='.$object->id;
 	$formmail->param['fileinit'] = array($file);

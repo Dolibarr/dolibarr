@@ -42,7 +42,7 @@ class OrderListController extends Controller
 	 */
 	public function checkAccess()
 	{
-		$this->accessRight = isModEnabled('commande') && getDolGlobalInt('WEBPORTAL_ORDER_LIST_ACCESS');
+		$this->accessRight = isModEnabled('order') && getDolGlobalInt('WEBPORTAL_ORDER_LIST_ACCESS');
 
 		return parent::checkAccess();
 	}

@@ -8367,7 +8367,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = '__THIRDPARTY_NOTE_PUBLIC__';
 				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = '__THIRDPARTY_NOTE_PRIVATE__';
 			}
-			if (isModEnabled('adherent') && (!is_object($object) || $object->element == 'adherent') && (empty($exclude) || !in_array('member', $exclude)) && (empty($include) || in_array('member', $include))) {
+			if (isModEnabled('member') && (!is_object($object) || $object->element == 'adherent') && (empty($exclude) || !in_array('member', $exclude)) && (empty($include) || in_array('member', $include))) {
 				$substitutionarray['__MEMBER_ID__'] = '__MEMBER_ID__';
 				$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
 				$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
@@ -8401,7 +8401,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				/*$substitutionarray['__PROJECT_NOTE_PUBLIC__'] = '__PROJECT_NOTE_PUBLIC__';
 				$substitutionarray['__PROJECT_NOTE_PRIVATE__'] = '__PROJECT_NOTE_PRIVATE__';*/
 			}
-			if (isModEnabled('contrat') && (!is_object($object) || $object->element == 'contract') && (empty($exclude) || !in_array('contract', $exclude)) && (empty($include) || in_array('contract', $include))) {
+			if (isModEnabled('contract') && (!is_object($object) || $object->element == 'contract') && (empty($exclude) || !in_array('contract', $exclude)) && (empty($include) || in_array('contract', $include))) {
 				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = 'Highest date planned for a service start';
 				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = 'Highest date and hour planned for service start';
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = 'Lowest data for planned expiration of service';
@@ -8410,7 +8410,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			if (isModEnabled("propal") && (!is_object($object) || $object->element == 'propal') && (empty($exclude) || !in_array('propal', $exclude)) && (empty($include) || in_array('propal', $include))) {
 				$substitutionarray['__ONLINE_SIGN_URL__'] = 'ToOfferALinkForOnlineSignature';
 			}
-			if (isModEnabled("ficheinter") && (!is_object($object) || $object->element == 'fichinter') && (empty($exclude) || !in_array('intervention', $exclude)) && (empty($include) || in_array('intervention', $include))) {
+			if (isModEnabled("intervention") && (!is_object($object) || $object->element == 'fichinter') && (empty($exclude) || !in_array('intervention', $exclude)) && (empty($include) || in_array('intervention', $include))) {
 				$substitutionarray['__ONLINE_SIGN_FICHINTER_URL__'] = 'ToOfferALinkForOnlineSignature';
 			}
 			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
@@ -8427,7 +8427,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = 'Direct download url of a contract';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__'] = 'Direct download url of a supplier proposal';
 
-			if (isModEnabled("expedition") && (!is_object($object) || $object->element == 'shipping')) {
+			if (isModEnabled("delivery_note") && (!is_object($object) || $object->element == 'shipping')) {
 				$substitutionarray['__SHIPPINGTRACKNUM__'] = 'Shipping tracking number';
 				$substitutionarray['__SHIPPINGTRACKNUMURL__'] = 'Shipping tracking url';
 				$substitutionarray['__SHIPPINGMETHOD__'] = 'Shipping method';

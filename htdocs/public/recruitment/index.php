@@ -49,15 +49,15 @@ $langs->loadLangs(array("companies", "other", "recruitment"));
 $action   = GETPOST('action', 'aZ09');
 $cancel   = GETPOST('cancel', 'alpha');
 $SECUREKEY = GETPOST("securekey");
-$entity = GETPOST('entity', 'int') ? GETPOST('entity', 'int') : $conf->entity;
+$entity = GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity;
 $backtopage = '';
 $suffix = "";
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1 or if we click on clear filters

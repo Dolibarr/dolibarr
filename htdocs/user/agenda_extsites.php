@@ -51,7 +51,7 @@ $MAXAGENDA = getDolGlobalString('AGENDA_EXT_NB');
 $colorlist = array('BECEDD', 'DDBECE', 'BFDDBE', 'F598B4', 'F68654', 'CBF654', 'A4A4A5');
 
 // Security check
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 if (!isset($id) || empty($id)) {
 	accessforbidden();
