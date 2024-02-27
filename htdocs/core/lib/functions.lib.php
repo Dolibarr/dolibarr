@@ -219,7 +219,7 @@ define(
 		'entrepot' => 'stock',
 		'expedition' => 'delivery_note',
 		'facture' => 'invoice',
-		'fichinter' => 'intervention',
+		'ficheinter' => 'intervention',
 		'product_fournisseur_price' => 'productsupplierprice',
 		'product_price' => 'productprice',
 		'projet'  => 'project',
