@@ -132,7 +132,7 @@ if ($object->id) {
 		print dol_get_fiche_end();
 	}
 
-	if (!$user->socid && !empty(getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')) {
+	if (!$user->socid && !empty(getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY'))) {
 		$object->next_prev_filter = "te.fk_user_assign = ".((int) $user->id);
 	} elseif ($user->socid > 0) {
 		$object->next_prev_filter = "te.fk_soc = ".((int) $user->socid);
