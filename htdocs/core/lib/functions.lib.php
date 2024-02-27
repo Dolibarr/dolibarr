@@ -4473,11 +4473,6 @@ function getPictoForType($key)
 		'checkbox' => 'check-square',
 		'chkbxlst' => 'check-square',
 		'link' => 'link',
-		'icon' => "question",
-		'point' => "country",
-		'multipts' => 'country',
-		'linestrg' => "country",
-		'polygon' => "country",
 		'separate' => 'minus'
 	);
 
