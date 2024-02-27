@@ -85,7 +85,7 @@ if (!$error && $massaction == 'confirm_presend') {
 	$listofobjectref = array();
 	$contactidtosend = array();
 	$attachedfilesThirdpartyObj = array();
-	$oneemailperrecipient = (GETPOST('oneemailperrecipient', 'int') ? 1 : 0);
+	$oneemailperrecipient = (GETPOSTINT('oneemailperrecipient') ? 1 : 0);
 
 	if (!$error) {
 		$objecttmp = new $objectclass($db);
@@ -1270,7 +1270,7 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 if (!$error && ($action == 'updateprice' && $confirm == 'yes') && $permissiontoadd) {
 	$db->begin();
 	if (GETPOSTISSET('pricerate')) {
-		$pricepercentage=GETPOST('pricerate', 'int');
+		$pricepercentage=GETPOSTINT('pricerate');
 		if ($pricepercentage == 0) {
 			setEventMessages($langs->trans("RecordsModified", 0), null);
 		} else {
@@ -1768,7 +1768,7 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 			$taskid = $clone_task->create($user);
 
 			if ($taskid > 0) {
-				$result = $clone_task->add_contact(GETPOST("userid", 'int'), 'TASKEXECUTIVE', 'internal');
+				$result = $clone_task->add_contact(GETPOSTINT("userid"), 'TASKEXECUTIVE', 'internal');
 				$num++;
 			} else {
 				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
@@ -1786,7 +1786,7 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 
 	if (!$error) {
 		setEventMessage($langs->trans('NumberOfTasksCloned', $num));
-		header("Refresh: 1;URL=".DOL_URL_ROOT.'/projet/tasks.php?id=' . GETPOST('projectid', 'int'));
+		header("Refresh: 1;URL=".DOL_URL_ROOT.'/projet/tasks.php?id=' . GETPOSTINT('projectid'));
 	}
 }
 
