@@ -409,7 +409,7 @@ if ($resql) {
 
 	// Filter on categories
 	$moreforfilter = '';
-	if (isModEnabled('categorie')) {
+	if (isModEnabled('category')) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
 		$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1);
