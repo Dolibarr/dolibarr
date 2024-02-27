@@ -35,9 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 $langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal", "bills", "contracts"));
 
 // Get parameters
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
-$section = GETPOST('section', 'int') ? GETPOST('section', 'int') : GETPOST('section_id', 'int');
+$section = GETPOSTINT('section') ? GETPOSTINT('section') : GETPOSTINT('section_id');
 $module = GETPOST('module', 'alpha');
 if (!$section) {
 	$section = 0;
@@ -46,10 +46,10 @@ $section_dir = GETPOST('section_dir', 'alpha');
 
 $search_doc_ref = GETPOST('search_doc_ref', 'alpha');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
