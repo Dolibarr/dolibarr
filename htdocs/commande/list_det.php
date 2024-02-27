@@ -48,7 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
@@ -79,7 +79,7 @@ $search_dateorder_end = dol_mktime(23, 59, 59, GETPOSTINT('search_dateorder_end_
 $search_datedelivery_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datedelivery_start_month'), GETPOSTINT('search_datedelivery_start_day'), GETPOSTINT('search_datedelivery_start_year'));
 $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datedelivery_end_month'), GETPOSTINT('search_datedelivery_end_day'), GETPOSTINT('search_datedelivery_end_year'));
 
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	$search_product_category_array = GETPOST("search_category_".Categorie::TYPE_PRODUCT."_list", "array");
 	$searchCategoryProductOperator = 0;
 	if (GETPOSTISSET('formfilteraction')) {
@@ -197,7 +197,7 @@ $arrayfields = array(
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers, 'position'=>55),
 	'c.date_commande'=>array('label'=>"OrderDateShort", 'checked'=>1, 'position'=>60),
 	'c.date_delivery'=>array('label'=>"DateDeliveryPlanned", 'checked'=>1, 'enabled'=>!getDolGlobalString('ORDER_DISABLE_DELIVERY_DATE'), 'position'=>65),
-	'c.fk_shipping_method'=>array('label'=>"SendingMethod", 'checked'=>-1, 'position'=>66 , 'enabled'=>isModEnabled('expedition')),
+	'c.fk_shipping_method'=>array('label'=>"SendingMethod", 'checked'=>-1, 'position'=>66 , 'enabled'=>isModEnabled('delivery_note')),
 	'c.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>-1, 'position'=>67),
 	'c.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>-1, 'position'=>68),
 	'c.fk_input_reason'=>array('label'=>"Channel", 'checked'=>-1, 'position'=>69),
@@ -221,7 +221,7 @@ $arrayfields = array(
 	'c.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>130),
 	'c.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(!getDolGlobalString('MAIN_LIST_ALLOW_PUBLIC_NOTES')), 'position'=>135),
 	'c.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(!getDolGlobalString('MAIN_LIST_ALLOW_PRIVATE_NOTES')), 'position'=>140),
-	'shippable'=>array('label'=>"Shippable", 'checked'=>1,'enabled'=>(isModEnabled('expedition')), 'position'=>990),
+	'shippable'=>array('label'=>"Shippable", 'checked'=>1,'enabled'=>(isModEnabled('delivery_note')), 'position'=>990),
 	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'enabled'=>(!getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')), 'position'=>995),
 	'c.import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>999),
 	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
@@ -472,7 +472,7 @@ if ($search_billed != '' && $search_billed >= 0) {
 }
 if ($search_status != '') {
 	if ($search_status <= 3 && $search_status >= -1) {	// status from -1 to 3 are real status (other are virtual combination)
-		if ($search_status == 1 && !isModEnabled('expedition')) {
+		if ($search_status == 1 && !isModEnabled('delivery_note')) {
 			$sql .= ' AND c.fk_statut IN (1,2)'; // If module expedition disabled, we include order with status "sent" into "validated"
 		} else {
 			$sql .= ' AND c.fk_statut = '.((int) $search_status); // draft, validated, in process or canceled
@@ -687,7 +687,7 @@ if ($resql) {
 		$title .= ' - '.$langs->trans('StatusOrderToProcessShort');
 	}
 	if ($search_status == -3) {
-		$title .= ' - '.$langs->trans('StatusOrderValidated').', '.(!isModEnabled('expedition') ? '' : $langs->trans("StatusOrderSent").', ').$langs->trans('StatusOrderToBill');
+		$title .= ' - '.$langs->trans('StatusOrderValidated').', '.(!isModEnabled('delivery_note') ? '' : $langs->trans("StatusOrderSent").', ').$langs->trans('StatusOrderToBill');
 	}
 	if ($search_status == -4) {
 		$title .= ' - '.$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort");
@@ -937,11 +937,11 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	// Filter on categories
-	if (isModEnabled("categorie") && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
+	if (isModEnabled("category") && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 		$formcategory = new FormCategory($db);
 		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $search_product_category_array, 'minwidth300imp minwidth300', $searchCategoryProductOperator ? $searchCategoryProductOperator : 0);
 	}
-	if (isModEnabled("categorie") && $user->hasRight('categorie', 'lire')) {
+	if (isModEnabled("category") && $user->hasRight('categorie', 'lire')) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('CustomersProspectsCategoriesShort');
@@ -1678,7 +1678,7 @@ if ($resql) {
 			print $getNomUrl_cache[$obj->socid];
 
 			// If module invoices enabled and user with invoice creation permissions
-			if (isModEnabled('facture') && getDolGlobalString('ORDER_BILLING_ALL_CUSTOMER')) {
+			if (isModEnabled('invoice') && getDolGlobalString('ORDER_BILLING_ALL_CUSTOMER')) {
 				if ($user->hasRight('facture', 'creer')) {
 					if (($obj->fk_statut > 0 && $obj->fk_statut < 3) || ($obj->fk_statut == 3 && $obj->billed == 0)) {
 						print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$companystatic->id.'&search_billed=0&autoselectall=1">';
@@ -2124,7 +2124,7 @@ if ($resql) {
 							$stock_order = 0;
 							$stock_order_supplier = 0;
 							if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') || getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {    // What about other options ?
-								if (isModEnabled('commande')) {
+								if (isModEnabled('order')) {
 									if (empty($productstat_cache[$obj->fk_product]['stats_order_customer'])) {
 										$generic_product->load_stats_commande(0, '1,2');
 										$productstat_cache[$obj->fk_product]['stats_order_customer'] = $generic_product->stats_commande['qty'];
