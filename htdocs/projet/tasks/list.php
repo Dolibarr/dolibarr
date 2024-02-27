@@ -39,16 +39,16 @@ $langs->loadLangs(array('projects', 'users', 'companies'));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'aZ09');
 $mode = GETPOST('mode', 'aZ');
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$search_categ = GETPOST("search_categ", 'int');
+$search_categ = GETPOSTINT("search_categ");
 
 $search_projectstatus = GETPOST('search_projectstatus');
 if (!isset($search_projectstatus) || $search_projectstatus === '') {
@@ -65,8 +65,8 @@ $search_task_ref = GETPOST('search_task_ref');
 $search_task_label = GETPOST('search_task_label');
 $search_task_description = GETPOST('search_task_description');
 $search_task_ref_parent = GETPOST('search_task_ref_parent');
-$search_project_user = GETPOST('search_project_user', 'int');
-$search_task_user = GETPOST('search_task_user', 'int');
+$search_project_user = GETPOSTINT('search_project_user');
+$search_task_user = GETPOSTINT('search_task_user');
 $search_task_progress = GETPOST('search_task_progress');
 $search_task_budget_amount = GETPOST('search_task_budget_amount');
 $search_societe = GETPOST('search_societe');
@@ -74,7 +74,7 @@ $search_societe_alias = GETPOST('search_societe_alias');
 $search_opp_status = GETPOST("search_opp_status", 'alpha');
 $searchCategoryCustomerOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
-	$searchCategoryCustomerOperator = GETPOST('search_category_customer_operator', 'int');
+	$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
 	$searchCategoryCustomerOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
@@ -87,20 +87,20 @@ if ($mine) {
 }
 $type = GETPOST('type');
 
-$search_date_startday = GETPOST('search_date_startday', 'int');
-$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
-$search_date_startyear = GETPOST('search_date_startyear', 'int');
-$search_date_endday = GETPOST('search_date_endday', 'int');
-$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
-$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_startday = GETPOSTINT('search_date_startday');
+$search_date_startmonth = GETPOSTINT('search_date_startmonth');
+$search_date_startyear = GETPOSTINT('search_date_startyear');
+$search_date_endday = GETPOSTINT('search_date_endday');
+$search_date_endmonth = GETPOSTINT('search_date_endmonth');
+$search_date_endyear = GETPOSTINT('search_date_endyear');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
-$search_datelimit_startday = GETPOST('search_datelimit_startday', 'int');
-$search_datelimit_startmonth = GETPOST('search_datelimit_startmonth', 'int');
-$search_datelimit_startyear = GETPOST('search_datelimit_startyear', 'int');
-$search_datelimit_endday = GETPOST('search_datelimit_endday', 'int');
-$search_datelimit_endmonth = GETPOST('search_datelimit_endmonth', 'int');
-$search_datelimit_endyear = GETPOST('search_datelimit_endyear', 'int');
+$search_datelimit_startday = GETPOSTINT('search_datelimit_startday');
+$search_datelimit_startmonth = GETPOSTINT('search_datelimit_startmonth');
+$search_datelimit_startyear = GETPOSTINT('search_datelimit_startyear');
+$search_datelimit_endday = GETPOSTINT('search_datelimit_endday');
+$search_datelimit_endmonth = GETPOSTINT('search_datelimit_endmonth');
+$search_datelimit_endyear = GETPOSTINT('search_datelimit_endyear');
 $search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $search_datelimit_startday, $search_datelimit_startyear);
 $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
 
@@ -125,10 +125,10 @@ if (!$user->hasRight('projet', 'lire')) {
 
 $diroutputmassaction = $conf->project->dir_output.'/tasks/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -717,7 +717,7 @@ $arrayofmassactions = array(
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -781,7 +781,7 @@ if ($search_all) {
 $moreforfilter = '';
 
 // Filter on categories
-if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ProjectCategories');
@@ -810,7 +810,7 @@ $moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form-
 $moreforfilter .= '</div>';
 
 // Filter on customer categories
-if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_TASK_LIST') && isModEnabled("categorie") && $user->hasRight('categorie', 'lire')) {
+if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_TASK_LIST') && isModEnabled("category") && $user->hasRight('categorie', 'lire')) {
 	$formcategory = new FormCategory($db);
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth300', $searchCategoryCustomerList ? $searchCategoryCustomerList : 0);
 	/*

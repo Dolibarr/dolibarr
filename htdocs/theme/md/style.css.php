@@ -94,7 +94,7 @@ if (GETPOST('lang', 'aZ09')) {
 }
 
 if (GETPOSTISSET('THEME_DARKMODEENABLED')) {
-	$conf->global->THEME_DARKMODEENABLED = GETPOST('THEME_DARKMODEENABLED', 'int'); // If darkmode was forced on URL
+	$conf->global->THEME_DARKMODEENABLED = GETPOSTINT('THEME_DARKMODEENABLED'); // If darkmode was forced on URL
 }
 
 $langs->load("main", 0, 1);

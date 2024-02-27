@@ -131,7 +131,7 @@ function print_actions_filter(
 		print '</div>';
 	}
 
-	if (isModEnabled('projet') && $user->hasRight('projet', 'lire')) {
+	if (isModEnabled('project') && $user->hasRight('projet', 'lire')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 		$formproject = new FormProjets($db);
 
@@ -141,7 +141,7 @@ function print_actions_filter(
 		print '</div>';
 	}
 
-	if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+	if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 		$formother = new FormOther($db);

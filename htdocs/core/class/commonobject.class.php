@@ -6177,11 +6177,11 @@ abstract class CommonObject
 			if (in_array($key_type, array('date'))) {
 				// Clean parameters
 				// TODO GMT date in memory must be GMT so we should add gm=true in parameters
-				$value_key = dol_mktime(0, 0, 0, GETPOST($postfieldkey."month", 'int'), GETPOST($postfieldkey."day", 'int'), GETPOST($postfieldkey."year", 'int'));
+				$value_key = dol_mktime(0, 0, 0, GETPOSTINT($postfieldkey."month"), GETPOSTINT($postfieldkey."day"), GETPOSTINT($postfieldkey."year"));
 			} elseif (in_array($key_type, array('datetime'))) {
 				// Clean parameters
 				// TODO GMT date in memory must be GMT so we should add gm=true in parameters
-				$value_key = dol_mktime(GETPOST($postfieldkey."hour", 'int'), GETPOST($postfieldkey."min", 'int'), 0, GETPOST($postfieldkey."month", 'int'), GETPOST($postfieldkey."day", 'int'), GETPOST($postfieldkey."year", 'int'));
+				$value_key = dol_mktime(GETPOSTINT($postfieldkey."hour"), GETPOSTINT($postfieldkey."min"), 0, GETPOSTINT($postfieldkey."month"), GETPOSTINT($postfieldkey."day"), GETPOSTINT($postfieldkey."year"));
 			} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 				$value_arr = GETPOST($postfieldkey, 'array'); // check if an array
 				if (!empty($value_arr)) {
@@ -7760,9 +7760,9 @@ abstract class CommonObject
 					}
 					$paramforthenewlink = '';
 					$paramforthenewlink .= (GETPOSTISSET('action') ? '&action='.GETPOST('action', 'aZ09') : '');
-					$paramforthenewlink .= (GETPOSTISSET('id') ? '&id='.GETPOST('id', 'int') : '');
+					$paramforthenewlink .= (GETPOSTISSET('id') ? '&id='.GETPOSTINT('id') : '');
 					$paramforthenewlink .= (GETPOSTISSET('origin') ? '&origin='.GETPOST('origin', 'aZ09') : '');
-					$paramforthenewlink .= (GETPOSTISSET('originid') ? '&originid='.GETPOST('originid', 'int') : '');
+					$paramforthenewlink .= (GETPOSTISSET('originid') ? '&originid='.GETPOSTINT('originid') : '');
 					$paramforthenewlink .= '&fk_'.strtolower($class).'=--IDFORBACKTOPAGE--';
 					// TODO Add JavaScript code to add input fields already filled into $paramforthenewlink so we won't loose them when going back to main page
 					$out .= '<a class="butActionNew" title="'.$langs->trans("New").'" href="'.$url_path.'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].($paramforthenewlink ? '?'.$paramforthenewlink : '')).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';

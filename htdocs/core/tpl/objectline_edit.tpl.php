@@ -129,7 +129,7 @@ $coldisplay++;
 
 	<?php
 	if (is_object($hookmanager)) {
-		$fk_parent_line = (GETPOST('fk_parent_line') ? GETPOST('fk_parent_line', 'int') : $line->fk_parent_line);
+		$fk_parent_line = (GETPOST('fk_parent_line') ? GETPOSTINT('fk_parent_line') : $line->fk_parent_line);
 		$parameters = array('line'=>$line, 'fk_parent_line'=>$fk_parent_line, 'var'=>$var, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer);
 		$reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
 	}
@@ -187,10 +187,10 @@ $coldisplay++;
 		}
 		echo '<br>';
 		echo $langs->trans('AutoFillDateFrom').' ';
-		echo $form->selectyesno('date_start_fill', GETPOSTISSET('date_start_fill') ? GETPOST('date_start_fill', 'int') : $line->date_start_fill, 1);
+		echo $form->selectyesno('date_start_fill', GETPOSTISSET('date_start_fill') ? GETPOSTINT('date_start_fill') : $line->date_start_fill, 1);
 		echo ' - ';
 		echo $langs->trans('AutoFillDateTo').' ';
-		echo $form->selectyesno('date_end_fill', GETPOSTISSET('date_end_fill') ? GETPOST('date_end_fill', 'int') : $line->date_end_fill, 1);
+		echo $form->selectyesno('date_end_fill', GETPOSTISSET('date_end_fill') ? GETPOSTINT('date_end_fill') : $line->date_end_fill, 1);
 	}
 
 	?>

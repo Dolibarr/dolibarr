@@ -155,9 +155,9 @@ class InterfaceNotification extends DolibarrTriggers
 						$qualified = 0;
 					} elseif ($element == 'withdraw' && !isModEnabled('prelevement')) {
 						$qualified = 0;
-					} elseif ($element == 'shipping' && !isModEnabled('expedition')) {
+					} elseif ($element == 'shipping' && !isModEnabled('delivery_note')) {
 						$qualified = 0;
-					} elseif ($element == 'member' && !isModEnabled('adherent')) {
+					} elseif ($element == 'member' && !isModEnabled('member')) {
 						$qualified = 0;
 					} elseif (($element == 'expense_report' || $element == 'expensereport') && !isModEnabled('expensereport')) {
 						$qualified = 0;

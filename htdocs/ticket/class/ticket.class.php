@@ -1559,7 +1559,7 @@ class Ticket extends CommonObject
 			$datas['date_modification'] = '<br><b>'.$langs->trans('DateModification').':</b> '.dol_print_date($this->date_modification, 'dayhour');
 		}
 		// show categories for this record only in ajax to not overload lists
-		if (isModEnabled('categorie') && !$nofetch) {
+		if (isModEnabled('category') && !$nofetch) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$form = new Form($this->db);
 			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_TICKET, 1);
@@ -1927,7 +1927,7 @@ class Ticket extends CommonObject
 				$error = 0;
 
 				// Valid and close fichinter linked
-				if (isModEnabled('ficheinter') && getDolGlobalString('WORKFLOW_TICKET_CLOSE_INTERVENTION')) {
+				if (isModEnabled('intervention') && getDolGlobalString('WORKFLOW_TICKET_CLOSE_INTERVENTION')) {
 					dol_syslog("We have closed the ticket, so we close all linked interventions");
 					$this->fetchObjectLinked($this->id, $this->element, null, 'fichinter');
 					if ($this->linkedObjectsIds) {
@@ -2620,7 +2620,7 @@ class Ticket extends CommonObject
 			$object->message = GETPOST("message", "restricthtml");
 			$object->private = GETPOST("private_message", "alpha");
 
-			$send_email = GETPOST('send_email', 'int');
+			$send_email = GETPOSTINT('send_email');
 
 			// Copy attached files (saved into $_SESSION) as linked files to ticket. Return array with final name used.
 			$resarray = $object->copyFilesForTicket();

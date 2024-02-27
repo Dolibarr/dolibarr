@@ -61,7 +61,7 @@ $month = GETPOSTINT('month');
 $year = GETPOSTINT('year');
 
 $search_ref = GETPOST('search_ref', 'alpha');
-$search_account = GETPOST('search_account', 'int');
+$search_account = GETPOSTINT('search_account');
 $search_paymenttype = GETPOST('search_paymenttype');
 $search_amount = GETPOST('search_amount', 'alpha'); // alpha because we must be able to search on "< x"
 $search_company = GETPOST('search_company', 'alpha');
@@ -216,7 +216,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOST($key, 'int'));
+				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOSTINT($key));
 			}
 		}
 
@@ -226,7 +226,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			// If bank module is on, account is required to enter a payment
 			if (GETPOST('accountid') <= 0) {
 				setEventMessages($langs->transnoentities('ErrorFieldRequired', $langs->transnoentities('AccountToCredit')), null, 'errors');
@@ -268,7 +268,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_paiement' && $confirm == 'yes') {
 		$error = 0;
 
-		$datepaye = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+		$datepaye = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 
 		$multicurrency_code = array();
 		$multicurrency_tx = array();
@@ -385,7 +385,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	$object = new FactureFournisseur($db);
 	$result = $object->fetch($facid);
 
-	$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+	$datefacture = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 	$dateinvoice = ($datefacture == '' ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $datefacture);
 
 	$sql = 'SELECT s.nom as name, s.rowid as socid,';
@@ -514,7 +514,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
 			$form->select_types_paiements(!GETPOST('paiementid') ? $obj->fk_mode_reglement : GETPOST('paiementid'), 'paiementid');
 			print '</td>';
-			if (isModEnabled("banque")) {
+			if (isModEnabled("bank")) {
 				print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
 				print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 				print $form->select_comptes(empty($accountid) ? $obj->fk_account : $accountid, 'accountid', 0, '', 2, '', 0, 'widthcentpercentminusx maxwidth500', 1);

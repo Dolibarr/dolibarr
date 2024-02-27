@@ -51,11 +51,11 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'sk
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $TSkillsToAdd = GETPOST('fk_skill', 'array');
 $objecttype = GETPOST('objecttype', 'alpha');
 $TNote = GETPOST('TNote', 'array');
-$lineid = GETPOST('lineid', 'int');
+$lineid = GETPOSTINT('lineid');
 
 if (empty($objecttype)) {
 	$objecttype = 'job';

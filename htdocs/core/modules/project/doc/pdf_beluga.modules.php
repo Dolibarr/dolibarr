@@ -330,7 +330,7 @@ class pdf_beluga extends ModelePDFProjects
 						'class'=>'Commande',
 						'table'=>'commande',
 						'datefieldname'=>'date_commande',
-						'test'=> isModEnabled('commande') && $user->hasRight('commande', 'lire'),
+						'test'=> isModEnabled('order') && $user->hasRight('commande', 'lire'),
 						'lang'=>'orders'),
 					'invoice'=>array(
 						'name'=>"CustomersInvoices",
@@ -339,7 +339,7 @@ class pdf_beluga extends ModelePDFProjects
 						'margin'=>'add',
 						'table'=>'facture',
 						'datefieldname'=>'datef',
-						'test'=> isModEnabled('facture') && $user->hasRight('facture', 'lire'),
+						'test'=> isModEnabled('invoice') && $user->hasRight('facture', 'lire'),
 						'lang'=>'bills'),
 					'invoice_predefined'=>array(
 						'name'=>"PredefinedInvoices",
@@ -347,7 +347,7 @@ class pdf_beluga extends ModelePDFProjects
 						'class'=>'FactureRec',
 						'table'=>'facture_rec',
 						'datefieldname'=>'datec',
-						'test'=> isModEnabled('facture') && $user->hasRight('facture', 'lire'),
+						'test'=> isModEnabled('invoice') && $user->hasRight('facture', 'lire'),
 						'lang'=>'bills'),
 					'order_supplier'=>array(
 						'name'=>"SuppliersOrders",
@@ -372,7 +372,7 @@ class pdf_beluga extends ModelePDFProjects
 						'class'=>'Contrat',
 						'table'=>'contrat',
 						'datefieldname'=>'date_contrat',
-						'test'=> isModEnabled('contrat') && $user->hasRight('contrat', 'lire'),
+						'test'=> isModEnabled('contract') && $user->hasRight('contrat', 'lire'),
 						'lang'=>'contract'),
 					'intervention'=>array(
 						'name'=>"Interventions",
@@ -381,7 +381,7 @@ class pdf_beluga extends ModelePDFProjects
 						'table'=>'fichinter',
 						'datefieldname'=>'date_valid',
 						'disableamount'=>1,
-						'test'=>isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire'),
+						'test'=>isModEnabled('intervention') && $user->hasRight('ficheinter', 'lire'),
 						'lang'=>'interventions'),
 					'trip'=>array(
 						'name'=>"TripsAndExpenses",

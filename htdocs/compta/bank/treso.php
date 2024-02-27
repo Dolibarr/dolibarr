@@ -80,8 +80,8 @@ if (GETPOST("account") || GETPOST("ref")) {
 	}
 
 	$object = new Account($db);
-	if (GETPOST("account", 'int')) {
-		$result = $object->fetch(GETPOST("account", 'int'));
+	if (GETPOSTINT("account")) {
+		$result = $object->fetch(GETPOSTINT("account"));
 	}
 	if (GETPOST("ref")) {
 		$result = $object->fetch(0, GETPOST("ref"));

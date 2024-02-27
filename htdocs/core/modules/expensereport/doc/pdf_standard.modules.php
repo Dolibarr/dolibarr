@@ -1036,7 +1036,7 @@ class pdf_standard extends ModeleExpenseReport
 		$pdf->MultiCell(15, 3, $outputlangs->transnoentities("Amount"), 0, 'C', 0);
 		$pdf->SetXY($tab3_posx + 35, $tab3_top + 1);
 		$pdf->MultiCell(30, 3, $outputlangs->transnoentities("Type"), 0, 'L', 0);
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			$pdf->SetXY($tab3_posx + 65, $tab3_top + 1);
 			$pdf->MultiCell(25, 3, $outputlangs->transnoentities("BankAccount"), 0, 'L', 0);
 		}
@@ -1076,7 +1076,7 @@ class pdf_standard extends ModeleExpenseReport
 				$oper = $outputlangs->transnoentitiesnoconv("PaymentTypeShort".$row->p_code);
 
 				$pdf->MultiCell(40, 3, $oper, 0, 'L', 0);
-				if (isModEnabled("banque")) {
+				if (isModEnabled("bank")) {
 					$pdf->SetXY($tab3_posx + 65, $tab3_top + $y + 1);
 					$pdf->MultiCell(30, 3, $row->baref, 0, 'L', 0);
 				}

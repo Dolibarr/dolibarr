@@ -42,10 +42,10 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'cr
 
 $id = GETPOSTINT('id');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -61,11 +61,11 @@ if (!$sortorder) {
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'aZ09');
 //Search criteria
-$search_status = (GETPOSTISSET('search_status') ? GETPOST('search_status', 'int') : GETPOST('status', 'int'));
+$search_status = (GETPOSTISSET('search_status') ? GETPOSTINT('search_status') : GETPOSTINT('status'));
 $search_label = GETPOST("search_label", 'alpha');
 $search_module_name = GETPOST("search_module_name", 'alpha');
 $search_lastresult = GETPOST("search_lastresult", "alphawithlgt");
-$search_processing = GETPOST("search_processing", "int");
+$search_processing = GETPOSTINT("search_processing");
 $securitykey = GETPOST('securitykey', 'alpha');
 
 $outputdir = $conf->cron->dir_output;
@@ -385,7 +385,7 @@ $arrayofmassactions = array(
 if ($user->hasRight('cron', 'delete')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);

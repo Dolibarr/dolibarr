@@ -32,7 +32,7 @@ dol_include_once('/core/lib/product.lib.php');
 $langs->loadLangs(array('other', 'products'));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 

@@ -40,11 +40,11 @@ require_once '../../core/lib/functions2.lib.php';
 
 $langs->loadLangs(array("main", "install", "other"));
 
-$conf->dol_hide_topmenu = GETPOST('dol_hide_topmenu', 'int');
-$conf->dol_hide_leftmenu = GETPOST('dol_hide_leftmenu', 'int');
-$conf->dol_optimize_smallscreen = GETPOST('dol_optimize_smallscreen', 'int');
-$conf->dol_no_mouse_hover = GETPOST('dol_no_mouse_hover', 'int');
-$conf->dol_use_jmobile = GETPOST('dol_use_jmobile', 'int');
+$conf->dol_hide_topmenu = GETPOSTINT('dol_hide_topmenu');
+$conf->dol_hide_leftmenu = GETPOSTINT('dol_hide_leftmenu');
+$conf->dol_optimize_smallscreen = GETPOSTINT('dol_optimize_smallscreen');
+$conf->dol_no_mouse_hover = GETPOSTINT('dol_no_mouse_hover');
+$conf->dol_use_jmobile = GETPOSTINT('dol_use_jmobile');
 
 // Security check
 global $dolibarr_main_demo;
