@@ -236,11 +236,11 @@ class AssetDepreciationOptions extends CommonObject
 				if (in_array($field_info['type'], array('text', 'html'))) {
 					$value = GETPOST($html_name, 'restricthtml');
 				} elseif ($field_info['type'] == 'date') {
-					$value = dol_mktime(12, 0, 0, GETPOST($html_name . 'month', 'int'), GETPOST($html_name . 'day', 'int'), GETPOST($html_name . 'year', 'int')); // for date without hour, we use gmt
+					$value = dol_mktime(12, 0, 0, GETPOSTINT($html_name . 'month'), GETPOSTINT($html_name . 'day'), GETPOSTINT($html_name . 'year')); // for date without hour, we use gmt
 				} elseif ($field_info['type'] == 'datetime') {
-					$value = dol_mktime(GETPOST($html_name . 'hour', 'int'), GETPOST($html_name . 'min', 'int'), GETPOST($html_name . 'sec', 'int'), GETPOST($html_name . 'month', 'int'), GETPOST($html_name . 'day', 'int'), GETPOST($html_name . 'year', 'int'), 'tzuserrel');
+					$value = dol_mktime(GETPOSTINT($html_name . 'hour'), GETPOSTINT($html_name . 'min'), GETPOSTINT($html_name . 'sec'), GETPOSTINT($html_name . 'month'), GETPOSTINT($html_name . 'day'), GETPOSTINT($html_name . 'year'), 'tzuserrel');
 				} elseif ($field_info['type'] == 'duration') {
-					$value = 60 * 60 * GETPOST($html_name . 'hour', 'int') + 60 * GETPOST($html_name . 'min', 'int');
+					$value = 60 * 60 * GETPOSTINT($html_name . 'hour') + 60 * GETPOSTINT($html_name . 'min');
 				} elseif (preg_match('/^(integer|price|real|double)/', $field_info['type'])) {
 					$value = price2num(GETPOST($html_name, 'alphanohtml')); // To fix decimal separator according to lang setup
 				} elseif ($field_info['type'] == 'boolean') {

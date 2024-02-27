@@ -1736,21 +1736,21 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'alphawithlgt'), // Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
 				'visible'=>GETPOST('propvisible', 'alphanohtml'),
 				'enabled'=>GETPOST('propenabled', 'alphanohtml'),
-				'position'=>GETPOST('propposition', 'int'),
-				'notnull'=>GETPOST('propnotnull', 'int'),
-				'index'=>GETPOST('propindex', 'int'),
+				'position'=>GETPOSTINT('propposition'),
+				'notnull'=>GETPOSTINT('propnotnull'),
+				'index'=>GETPOSTINT('propindex'),
 				'foreignkey'=>GETPOST('propforeignkey', 'alpha'),
-				'searchall'=>GETPOST('propsearchall', 'int'),
-				'isameasure'=>GETPOST('propisameasure', 'int'),
+				'searchall'=>GETPOSTINT('propsearchall'),
+				'isameasure'=>GETPOSTINT('propisameasure'),
 				'comment'=>GETPOST('propcomment', 'alpha'),
 				'help'=>GETPOST('prophelp', 'alpha'),
 				'css'=>GETPOST('propcss', 'alpha'),        // Can be 'maxwidth500 widthcentpercentminusxx' for example
 				'cssview'=>GETPOST('propcssview', 'alpha'),
 				'csslist'=>GETPOST('propcsslist', 'alpha'),
 				'default'=>GETPOST('propdefault', 'restricthtml'),
-				'noteditable'=>intval(GETPOST('propnoteditable', 'int')),
+				'noteditable'=>intval(GETPOSTINT('propnoteditable')),
 				//'alwayseditable'=>intval(GETPOST('propalwayseditable', 'int')),
-				'validate' => GETPOST('propvalidate', 'int')
+				'validate' => GETPOSTINT('propvalidate')
 			);
 
 			if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
@@ -2445,7 +2445,7 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright')&& e
 	}
 }
 // Delete permission
-if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOST('permskey', 'int')) {
+if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOSTINT('permskey')) {
 	$error = 0;
 	// load class and check if right exist
 	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
@@ -2461,7 +2461,7 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOST('p
 	}
 
 	$permissions = $moduleobj->rights;
-	$key = (int) GETPOST('permskey', 'int')-1;
+	$key = GETPOSTINT('permskey')-1;
 
 	if (!$error) {
 		// check if module is enabled
@@ -2607,7 +2607,7 @@ if ($action == 'reset' && $user->admin) {
 }
 
 // delete menu
-if ($dirins && $action == 'confirm_deletemenu' && GETPOST('menukey', 'int')) {
+if ($dirins && $action == 'confirm_deletemenu' && GETPOSTINT('menukey')) {
 	// check if module is enabled
 	if (isModEnabled(strtolower($module))) {
 		$result = unActivateModule(strtolower($module));
@@ -2638,7 +2638,7 @@ if ($dirins && $action == 'confirm_deletemenu' && GETPOST('menukey', 'int')) {
 	$result = array_map('strtolower', $objects);
 
 	$menus = $moduleobj->menu;
-	$key = (int) GETPOST('menukey', 'int');
+	$key = GETPOSTINT('menukey');
 	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 
 	$checkcomment = checkExistComment($moduledescriptorfile, 0);
@@ -2819,7 +2819,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 }
 
 // Modify a menu entry
-if ($dirins && $action == "update_menu" && GETPOST('menukey', 'int') && GETPOST('tabobj')) {
+if ($dirins && $action == "update_menu" && GETPOSTINT('menukey') && GETPOST('tabobj')) {
 	$objectname =  GETPOST('tabobj');
 	$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
 	$destdir = $dirins.'/'.strtolower($module);
@@ -2850,7 +2850,7 @@ if ($dirins && $action == "update_menu" && GETPOST('menukey', 'int') && GETPOST(
 			}
 		}
 		$menus = $moduleobj->menu;
-		$key = (int) GETPOST('menukey', 'int') - 1;
+		$key = GETPOSTINT('menukey') - 1;
 
 		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 		//stock forms in array
@@ -4186,6 +4186,7 @@ if ($module == 'initmodule') {
 								print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&token='.newToken().'&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 								print $form->textwithpicto('', $langs->trans("InfoForApiFile"), 1, 'warning');
 								print ' &nbsp; ';
+								// @phan-suppress-next-line ParamMatchRegexError
 								if (!isModEnabled($modulelowercase)) {	// If module is not activated
 									print '<a href="#" class="classfortooltip" target="apiexplorer" title="'.$langs->trans("ModuleMustBeEnabled", $module).'"><strike>'.$langs->trans("ApiExplorer").'</strike></a>';
 								} else {
@@ -4689,7 +4690,7 @@ if ($module == 'initmodule') {
 
 			if ($action == 'deletedict') {
 				$formconfirm = $form->formconfirm(
-					$_SERVER["PHP_SELF"].'?dictionnarykey='.urlencode(GETPOST('dictionnarykey', 'int')).'&tab='.urlencode($tab).'&module='.urlencode($module),
+					$_SERVER["PHP_SELF"].'?dictionnarykey='.urlencode(GETPOSTINT('dictionnarykey')).'&tab='.urlencode($tab).'&module='.urlencode($module),
 					$langs->trans('Delete'),
 					$langs->trans('Confirm Delete Dictionnary', GETPOST('dictionnarykey', 'alpha')),
 					'confirm_deletedictionary',
@@ -4798,7 +4799,7 @@ if ($module == 'initmodule') {
 						$i = 0;
 						$maxi = count($dicts['tabname']);
 						while ($i < $maxi) {
-							if ($action == 'editdict' && $i == (int) GETPOST('dictionnarykey', 'int')-1) {
+							if ($action == 'editdict' && $i == GETPOSTINT('dictionnarykey')-1) {
 								print '<tr class="oddeven">';
 								print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 								print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -5057,9 +5058,9 @@ if ($module == 'initmodule') {
 
 			if ($action == 'deletemenu') {
 				$formconfirms = $form->formconfirm(
-					$_SERVER["PHP_SELF"].'?menukey='.urlencode(GETPOST('menukey', 'int')).'&tab='.urlencode($tab).'&module='.urlencode($module),
+					$_SERVER["PHP_SELF"].'?menukey='.urlencode(GETPOSTINT('menukey')).'&tab='.urlencode($tab).'&module='.urlencode($module),
 					$langs->trans('Delete'),
-					($menus[GETPOST('menukey')]['fk_menu'] === 'fk_mainmenu='.strtolower($module) ? $langs->trans('Warning: you will delete all menus linked to this one.', GETPOST('menukey', 'int')) : $langs->trans('Confirm Delete Menu', GETPOST('menukey', 'int'))),
+					($menus[GETPOST('menukey')]['fk_menu'] === 'fk_mainmenu='.strtolower($module) ? $langs->trans('Warning: you will delete all menus linked to this one.', GETPOSTINT('menukey')) : $langs->trans('Confirm Delete Menu', GETPOSTINT('menukey'))),
 					'confirm_deletemenu',
 					'',
 					0,
@@ -5201,7 +5202,7 @@ if ($module == 'initmodule') {
 
 						//$tabobject = '';	// We can't know what is $tabobject in most cases
 
-						if ($action == 'editmenu' && GETPOST('menukey', 'int') == $i) {
+						if ($action == 'editmenu' && GETPOSTINT('menukey') == $i) {
 							//var_dump($propPerms);exit;
 							print '<tr class="oddeven">';
 							print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -5489,7 +5490,7 @@ if ($module == 'initmodule') {
 
 			if ($action == 'deleteright') {
 				$formconfirm = $form->formconfirm(
-					$_SERVER["PHP_SELF"].'?permskey='.urlencode(GETPOST('permskey', 'int')).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj),
+					$_SERVER["PHP_SELF"].'?permskey='.urlencode(GETPOSTINT('permskey')).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj),
 					$langs->trans('Delete'),
 					$langs->trans('Confirm Delete Right', GETPOST('permskey', 'alpha')),
 					'confirm_deleteright',
@@ -5570,7 +5571,7 @@ if ($module == 'initmodule') {
 						$i++;
 
 						// section for editing right
-						if ($action == 'edit_right' && $perm[0] == (int) GETPOST('permskey', 'int')) {
+						if ($action == 'edit_right' && $perm[0] == GETPOSTINT('permskey')) {
 							print '<tr class="oddeven">';
 							print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="modifPerms">';
 							print '<input type="hidden" name="token" value="'.newToken().'">';

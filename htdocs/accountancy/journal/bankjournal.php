@@ -66,14 +66,14 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 $langs->loadLangs(array("companies", "other", "compta", "banks", "bills", "donations", "loan", "accountancy", "trips", "salaries", "hrm", "members"));
 
 // Multi journal
-$id_journal = GETPOST('id_journal', 'int');
+$id_journal = GETPOSTINT('id_journal');
 
-$date_startmonth = GETPOST('date_startmonth', 'int');
-$date_startday = GETPOST('date_startday', 'int');
-$date_startyear = GETPOST('date_startyear', 'int');
-$date_endmonth = GETPOST('date_endmonth', 'int');
-$date_endday = GETPOST('date_endday', 'int');
-$date_endyear = GETPOST('date_endyear', 'int');
+$date_startmonth = GETPOSTINT('date_startmonth');
+$date_startday = GETPOSTINT('date_startday');
+$date_startyear = GETPOSTINT('date_startyear');
+$date_endmonth = GETPOSTINT('date_endmonth');
+$date_endday = GETPOSTINT('date_endday');
+$date_endyear = GETPOSTINT('date_endyear');
 $in_bookkeeping = GETPOST('in_bookkeeping', 'aZ09');
 if ($in_bookkeeping == '') {
 	$in_bookkeeping = 'notyet';

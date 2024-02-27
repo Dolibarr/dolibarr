@@ -249,7 +249,7 @@ class FormSetup
 	 * saveConfFromPost
 	 *
 	 * @param 	bool 		$noMessageInUpdate display event message on errors and success
-	 * @return	 int        -1 if KO, 1 if OK
+	 * @return	int|null    Return -1 if KO, 1 if OK, null if no items
 	 */
 	public function saveConfFromPost($noMessageInUpdate = false)
 	{
@@ -265,7 +265,6 @@ class FormSetup
 		if ($reshook > 0) {
 			return $reshook;
 		}
-
 
 		if (empty($this->items)) {
 			return null;
@@ -775,10 +774,10 @@ class FormSetupItem
 		// Modify constant only if key was posted (avoid resetting key to the null value)
 		if ($this->type != 'title') {
 			if (preg_match('/category:/', $this->type)) {
-				if (GETPOST($this->confKey, 'int') == '-1') {
+				if (GETPOSTINT($this->confKey) == '-1') {
 					$val_const = '';
 				} else {
-					$val_const = GETPOST($this->confKey, 'int');
+					$val_const = GETPOSTINT($this->confKey);
 				}
 			} elseif ($this->type == 'multiselect') {
 				$val = GETPOST($this->confKey, 'array');

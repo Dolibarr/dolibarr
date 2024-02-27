@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
@@ -40,7 +40,7 @@ if (isModEnabled("banque")) {
 $langs->loadLangs(array('bills', 'banks', 'companies'));
 
 // Security check
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'aZ09');
 if ($user->socid) {
@@ -146,7 +146,7 @@ print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $
 print '<tr><td>'.$langs->trans('Note').'</td><td class="wordbreak sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlcleanlastbr($object->note_private)).'</td></tr>';
 
 // Bank account
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	if ($object->bank_account) {
 		$bankline = new AccountLine($db);
 		$bankline->fetch($object->bank_line);

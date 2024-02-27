@@ -43,20 +43,20 @@ if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {
 require '../../main.inc.php';
 
 $htmlname = GETPOST('htmlname', 'aZ09');
-$socid = GETPOST('socid', 'int');
-$type = GETPOST('type', 'int');
-$mode = GETPOST('mode', 'int');
-$status = ((GETPOST('status', 'int') >= 0) ? GETPOST('status', 'int') : - 1);	// status buy when mode = customer , status purchase when mode = supplier
-$status_purchase = ((GETPOST('status_purchase', 'int') >= 0) ? GETPOST('status_purchase', 'int') : - 1);	// status purchase when mode = customer
-$outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
-$price_level = GETPOST('price_level', 'int');
+$socid = GETPOSTINT('socid');
+$type = GETPOSTINT('type');
+$mode = GETPOSTINT('mode');
+$status = ((GETPOSTINT('status') >= 0) ? GETPOSTINT('status') : - 1);	// status buy when mode = customer , status purchase when mode = supplier
+$status_purchase = ((GETPOSTINT('status_purchase') >= 0) ? GETPOSTINT('status_purchase') : - 1);	// status purchase when mode = customer
+$outjson = (GETPOSTINT('outjson') ? GETPOSTINT('outjson') : 0);
+$price_level = GETPOSTINT('price_level');
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
-$price_by_qty_rowid = GETPOST('pbq', 'int');
-$finished = GETPOST('finished', 'int');
-$alsoproductwithnosupplierprice = GETPOST('alsoproductwithnosupplierprice', 'int');
+$id = GETPOSTINT('id');
+$price_by_qty_rowid = GETPOSTINT('pbq');
+$finished = GETPOSTINT('finished');
+$alsoproductwithnosupplierprice = GETPOSTINT('alsoproductwithnosupplierprice');
 $warehouseStatus = GETPOST('warehousestatus', 'alpha');
-$hidepriceinlabel = GETPOST('hidepriceinlabel', 'int');
+$hidepriceinlabel = GETPOSTINT('hidepriceinlabel');
 
 // Security check
 restrictedArea($user, 'produit|service|commande|propal|facture', 0, 'product&product');
@@ -228,7 +228,7 @@ if ($action == 'fetch' && !empty($id)) {
 		$product_outdefault_vat_code = $outdefault_vat_code;
 
 		// If we ask the price according to buyer, we change it.
-		if (GETPOST('addalsovatforthirdpartyid', 'int')) {
+		if (GETPOSTINT('addalsovatforthirdpartyid')) {
 			$thirdparty_buyer = new Societe($db);
 			$thirdparty_buyer->fetch($socid);
 

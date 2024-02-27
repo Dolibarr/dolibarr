@@ -5365,7 +5365,7 @@ class Product extends CommonObject
 			}
 		}
 		// show categories for this record only in ajax to not overload lists
-		if (isModEnabled('categorie') && !$nofetch) {
+		if (isModEnabled('category') && !$nofetch) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$form = new Form($this->db);
 			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_PRODUCT, 1);
@@ -5865,14 +5865,14 @@ class Product extends CommonObject
 
 		//dol_syslog("load_virtual_stock");
 
-		if (isModEnabled('commande')) {
+		if (isModEnabled('order')) {
 			$result = $this->load_stats_commande(0, '1,2', 1);
 			if ($result < 0) {
 				dol_print_error($this->db, $this->error);
 			}
 			$stock_commande_client = $this->stats_commande['qty'];
 		}
-		if (isModEnabled("expedition")) {
+		if (isModEnabled("delivery_note")) {
 			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 			$filterShipmentStatus = '';
 			if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {

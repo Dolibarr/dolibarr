@@ -88,7 +88,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		global $conf;
 
 		// phpcs:enable
-		$key = GETPOST('filter', 'int');
+		$key = GETPOSTINT('filter');
 
 		$cibles = array();
 		$j = 0;

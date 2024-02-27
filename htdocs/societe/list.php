@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 }
@@ -56,7 +56,7 @@ $langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bi
 // Get parameters
 $action 	= GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm 	= GETPOST('confirm', 'alpha');
 $toselect 	= GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'thirdpartylist';
@@ -70,7 +70,7 @@ $mode = GETPOST("mode", 'alpha');
 $search_all = trim(GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 
-$search_id = trim(GETPOST("search_id", "int"));
+$search_id = trim(GETPOSTINT("search_id"));
 $search_nom = trim(GETPOST("search_nom", 'restricthtml'));
 $search_alias = trim(GETPOST("search_alias", 'restricthtml'));
 $search_nom_only = trim(GETPOST("search_nom_only", 'restricthtml'));
@@ -86,6 +86,7 @@ $search_state = trim(GETPOST("search_state", 'alpha'));
 $search_region = trim(GETPOST("search_region", 'alpha'));
 $search_email = trim(GETPOST('search_email', 'alpha'));
 $search_phone = trim(GETPOST('search_phone', 'alpha'));
+$search_phone_mobile = trim(GETPOST('search_phone_mobile', 'alpha'));
 $search_fax = trim(GETPOST('search_fax', 'alpha'));
 $search_url = trim(GETPOST('search_url', 'alpha'));
 $search_idprof1 = trim(GETPOST('search_idprof1', 'alpha'));
@@ -95,9 +96,9 @@ $search_idprof4 = trim(GETPOST('search_idprof4', 'alpha'));
 $search_idprof5 = trim(GETPOST('search_idprof5', 'alpha'));
 $search_idprof6 = trim(GETPOST('search_idprof6', 'alpha'));
 $search_vat = trim(GETPOST('search_vat', 'alpha'));
-$search_sale = GETPOST("search_sale", 'int');
-$search_categ_cus = GETPOST("search_categ_cus", 'int');
-$search_categ_sup = GETPOST("search_categ_sup", 'int');
+$search_sale = GETPOSTINT("search_sale");
+$search_categ_cus = GETPOSTINT("search_categ_cus");
+$search_categ_sup = GETPOSTINT("search_categ_sup");
 $searchCategoryCustomerOperator = 0;
 $searchCategorySupplierOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
@@ -116,32 +117,32 @@ if (!empty($search_categ_sup) && empty($searchCategorySupplierList)) {
 	$searchCategorySupplierList = array($search_categ_sup);
 }
 $search_country = GETPOST("search_country", 'intcomma');
-$search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
-$search_price_level = GETPOST('search_price_level', 'int');
-$search_staff = GETPOST("search_staff", 'int');
-$search_status = GETPOST("search_status", 'int');
+$search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
+$search_price_level = GETPOSTINT('search_price_level');
+$search_staff = GETPOSTINT("search_staff");
+$search_status = GETPOSTINT("search_status");
 $search_type = GETPOST('search_type', 'alpha');
 $search_level = GETPOST("search_level", "array:alpha");
 $search_stcomm = GETPOST('search_stcomm', "array:int");
 $search_import_key  = trim(GETPOST("search_import_key", "alpha"));
 $search_parent_name = trim(GETPOST('search_parent_name', 'alpha'));
 
-$search_date_creation_startmonth = GETPOST('search_date_creation_startmonth', 'int');
-$search_date_creation_startyear = GETPOST('search_date_creation_startyear', 'int');
-$search_date_creation_startday = GETPOST('search_date_creation_startday', 'int');
+$search_date_creation_startmonth = GETPOSTINT('search_date_creation_startmonth');
+$search_date_creation_startyear = GETPOSTINT('search_date_creation_startyear');
+$search_date_creation_startday = GETPOSTINT('search_date_creation_startday');
 $search_date_creation_start = dol_mktime(0, 0, 0, $search_date_creation_startmonth, $search_date_creation_startday, $search_date_creation_startyear);	// Use tzserver
-$search_date_creation_endmonth = GETPOST('search_date_creation_endmonth', 'int');
-$search_date_creation_endyear = GETPOST('search_date_creation_endyear', 'int');
-$search_date_creation_endday = GETPOST('search_date_creation_endday', 'int');
+$search_date_creation_endmonth = GETPOSTINT('search_date_creation_endmonth');
+$search_date_creation_endyear = GETPOSTINT('search_date_creation_endyear');
+$search_date_creation_endday = GETPOSTINT('search_date_creation_endday');
 $search_date_creation_end = dol_mktime(23, 59, 59, $search_date_creation_endmonth, $search_date_creation_endday, $search_date_creation_endyear);	// Use tzserver
 
-$search_date_modif_startmonth = GETPOST('search_date_modif_startmonth', 'int');
-$search_date_modif_startyear = GETPOST('search_date_modif_startyear', 'int');
-$search_date_modif_startday = GETPOST('search_date_modif_startday', 'int');
+$search_date_modif_startmonth = GETPOSTINT('search_date_modif_startmonth');
+$search_date_modif_startyear = GETPOSTINT('search_date_modif_startyear');
+$search_date_modif_startday = GETPOSTINT('search_date_modif_startday');
 $search_date_modif_start = dol_mktime(0, 0, 0, $search_date_modif_startmonth, $search_date_modif_startday, $search_date_modif_startyear);	// Use tzserver
-$search_date_modif_endmonth = GETPOST('search_date_modif_endmonth', 'int');
-$search_date_modif_endyear = GETPOST('search_date_modif_endyear', 'int');
-$search_date_modif_endday = GETPOST('search_date_modif_endday', 'int');
+$search_date_modif_endmonth = GETPOSTINT('search_date_modif_endmonth');
+$search_date_modif_endyear = GETPOSTINT('search_date_modif_endyear');
+$search_date_modif_endday = GETPOSTINT('search_date_modif_endday');
 $search_date_modif_end = dol_mktime(23, 59, 59, $search_date_modif_endmonth, $search_date_modif_endday, $search_date_modif_endyear);	// Use tzserver
 
 
@@ -151,10 +152,10 @@ $place = GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'; // $place is
 $diroutputmassaction = $conf->societe->dir_output.'/temp/massgeneration/'.$user->id;
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (!$sortorder) {
 	$sortorder = "ASC";
 }
@@ -229,6 +230,7 @@ $fieldstosearchall = array(
 	's.siret'=>"ProfId2",
 	's.ape'=>"ProfId3",
 	's.phone'=>"Phone",
+	's.phone_mobile'=>"PhoneMobile",
 	's.fax'=>"Fax",
 );
 if (($tmp = $langs->transnoentities("ProfId4".$mysoc->country_code)) && $tmp != "ProfId4".$mysoc->country_code && $tmp != '-') {
@@ -287,6 +289,7 @@ $arrayfields = array(
 	's.fax'=>array('label'=>"Fax", 'position'=>28, 'checked'=>0),
 	'typent.code'=>array('label'=>"ThirdPartyType", 'position'=>29, 'checked'=>$checkedtypetiers),
 	'staff.code'=>array('label'=>"Workforce", 'position'=>31, 'checked'=>0),
+	's.phone_mobile'=>array('label'=>"PhoneMobile", 'position'=>32, 'checked'=>0),
 	's.siren'=>array('label'=>"ProfId1Short", 'position'=>40, 'checked'=>$checkedprofid1),
 	's.siret'=>array('label'=>"ProfId2Short", 'position'=>41, 'checked'=>$checkedprofid2),
 	's.ape'=>array('label'=>"ProfId3Short", 'position'=>42, 'checked'=>$checkedprofid3),
@@ -317,7 +320,7 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -330,7 +333,7 @@ $result = restrictedArea($user, 'societe', $socid, '');
  */
 
 if ($action == "change" && $user->hasRight('takepos', 'run')) {	// Change customer for TakePOS
-	$idcustomer = GETPOST('idcustomer', 'int');
+	$idcustomer = GETPOSTINT('idcustomer');
 
 	// Check if draft invoice already exists, if not create it
 	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' AND entity IN (".getEntity('invoice').")";
@@ -408,6 +411,7 @@ if (empty($reshook)) {
 		$search_country = '';
 		$search_email = '';
 		$search_phone = '';
+		$search_phone_mobile = '';
 		$search_fax = '';
 		$search_url = '';
 		$search_idprof1 = '';
@@ -536,7 +540,7 @@ if ($resql) {
 $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.address, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, s.logo,";
 $sql .= " s.entity,";
 $sql .= " st.libelle as stcomm, st.picto as stcomm_picto, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
-$sql .= " s.email, s.phone, s.fax, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
+$sql .= " s.email, s.phone, s.phone_mobile, s.fax, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
 $sql .= " s.tms as date_modification, s.datec as date_creation, s.import_key,";
 $sql .= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent,s.price_level,";
 $sql .= " s2.nom as name2,";
@@ -704,6 +708,9 @@ if ($search_email) {
 }
 if (strlen($search_phone)) {
 	$sql .= natural_search("s.phone", $search_phone);
+}
+if (strlen($search_phone_mobile)) {
+	$sql .= natural_search("s.phone_mobile", $search_phone_mobile);
 }
 if (strlen($search_fax)) {
 	$sql .= natural_search("s.fax", $search_fax);
@@ -929,6 +936,9 @@ if ($search_town != '') {
 if ($search_phone != '') {
 	$param .= "&search_phone=".urlencode($search_phone);
 }
+if ($search_phone_mobile != '') {
+	$param .= "&search_phone_mobile=".urlencode($search_phone_mobile);
+}
 if ($search_fax != '') {
 	$param .= "&search_fax=".urlencode($search_fax);
 }
@@ -1096,7 +1106,7 @@ if ($user->hasRight("societe", "creer")) {
 if ($user->hasRight('societe', 'supprimer')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -1204,14 +1214,14 @@ if ($search_all) {
 // Filter on categories
 $moreforfilter = '';
 if (empty($type) || $type == 'c' || $type == 'p') {
-	if (isModEnabled('categorie') && $user->hasRight('categorie', 'read')) {
+	if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
 		$formcategory = new FormCategory($db);
 		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth300', $searchCategoryCustomerOperator ? $searchCategoryCustomerOperator : 0);
 	}
 }
 
 if (empty($type) || $type == 'f') {
-	if (isModEnabled("fournisseur") && isModEnabled('categorie') && $user->hasRight('categorie', 'read')) {
+	if (isModEnabled("fournisseur") && isModEnabled('category') && $user->hasRight('categorie', 'read')) {
 		$formcategory = new FormCategory($db);
 		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SUPPLIER, $searchCategorySupplierList, 'minwidth300', $searchCategorySupplierOperator ? $searchCategorySupplierOperator : 0);
 	}
@@ -1370,6 +1380,12 @@ if (!empty($arrayfields['s.phone']['checked'])) {
 	// Phone
 	print '<td class="liste_titre">';
 	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_phone" value="'.dol_escape_htmltag($search_phone).'">';
+	print '</td>';
+}
+if (!empty($arrayfields['s.phone_mobile']['checked'])) {
+	// PhoneMobile
+	print '<td class="liste_titre">';
+	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_phone_mobile" value="'.dol_escape_htmltag($search_phone_mobile).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['s.fax']['checked'])) {
@@ -1597,6 +1613,10 @@ if (!empty($arrayfields['s.email']['checked'])) {
 }
 if (!empty($arrayfields['s.phone']['checked'])) {
 	print_liste_field_titre($arrayfields['s.phone']['label'], $_SERVER["PHP_SELF"], "s.phone", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['s.phone_mobile']['checked'])) {
+	print_liste_field_titre($arrayfields['s.phone_mobile']['label'], $_SERVER["PHP_SELF"], "s.phone_mobile", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.fax']['checked'])) {
@@ -1951,6 +1971,12 @@ while ($i < $imaxinloop) {
 		}
 		if (!empty($arrayfields['s.phone']['checked'])) {
 			print '<td class="nowraponall">'.dol_print_phone($obj->phone, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		if (!empty($arrayfields['s.phone_mobile']['checked'])) {
+			print '<td class="nowraponall">'.dol_print_phone($obj->phone_mobile, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone_mobile')."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

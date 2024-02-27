@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 $langs->loadLangs(array("contacts", "companies", "projects"));
 
 // Security check
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context

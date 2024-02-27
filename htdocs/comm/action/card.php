@@ -58,15 +58,15 @@ $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $socpeopleassigned = GETPOST('socpeopleassigned', 'array');
 $origin = GETPOST('origin', 'alpha');
-$originid = GETPOST('originid', 'int');
+$originid = GETPOSTINT('originid');
 $confirm = GETPOST('confirm', 'alpha');
 
 $fulldayevent = GETPOST('fullday', 'alpha');
 
-$aphour = GETPOST('aphour', 'int');
-$apmin = GETPOST('apmin', 'int');
-$p2hour = GETPOST('p2hour', 'int');
-$p2min = GETPOST('p2min', 'int');
+$aphour = GETPOSTINT('aphour');
+$apmin = GETPOSTINT('apmin');
+$p2hour = GETPOSTINT('p2hour');
+$p2min = GETPOSTINT('p2min');
 
 $addreminder = GETPOST('addreminder', 'alpha');
 $offsetvalue = GETPOSTINT('offsetvalue');
@@ -82,12 +82,12 @@ if ($complete == 'na' || $complete == -2) {
 if ($fulldayevent) {
 	$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 	// For "full day" events, we must store date in GMT (It must be viewed as same moment everywhere)
-	$datep = dol_mktime('00', '00', 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
-	$datef = dol_mktime('23', '59', '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
+	$datep = dol_mktime('00', '00', 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
+	$datef = dol_mktime('23', '59', '59', GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), $tzforfullday ? $tzforfullday : 'tzuserrel');
 	//print $db->idate($datep); exit;
 } else {
-	$datep = dol_mktime($aphour, $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuserrel');
-	$datef = dol_mktime($p2hour, $p2min, '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuserrel');
+	$datep = dol_mktime($aphour, $apmin, 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), 'tzuserrel');
+	$datef = dol_mktime($p2hour, $p2min, '59', GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
 }
 $reg = array();
 if (GETPOST('datep')) {
@@ -99,8 +99,8 @@ if (GETPOST('datep')) {
 }
 
 // Security check
-$socid = GETPOST('socid', 'int');
-$id = GETPOST('id', 'int');
+$socid = GETPOSTINT('socid');
+$id = GETPOSTINT('id');
 if ($user->socid && ($socid != $user->socid)) {
 	accessforbidden();
 }
@@ -269,7 +269,7 @@ if (empty($reshook) && (GETPOST('addassignedtoresource') || GETPOST('updateassig
 if (empty($reshook) && $action == 'classin' && ($user->hasRight('agenda', 'allactions', 'create') ||
 	(($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create')))) {
 	//$object->fetch($id);
-	$object->setProject(GETPOST('projectid', 'int'));
+	$object->setProject(GETPOSTINT('projectid'));
 }
 
 // Action clone object
@@ -283,7 +283,7 @@ if (empty($reshook) && $action == 'confirm_clone' && $confirm == 'yes') {
 				reset($object->socpeopleassigned);
 				$object->contact_id = key($object->socpeopleassigned);
 			}
-			$result = $object->createFromClone($user, GETPOST('socid', 'int'));
+			$result = $object->createFromClone($user, GETPOSTINT('socid'));
 			if ($result > 0) {
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 				exit();
@@ -316,17 +316,17 @@ if (empty($reshook) && $action == 'add') {
 		exit;
 	}
 
-	$percentage = in_array(GETPOST('status'), array(-1, 100)) ? GETPOST('status') : (in_array($complete, array(-1, 100)) ? $complete : GETPOST("percentage", 'int')); // If status is -1 or 100, percentage is not defined and we must use status
+	$percentage = in_array(GETPOST('status'), array(-1, 100)) ? GETPOST('status') : (in_array($complete, array(-1, 100)) ? $complete : GETPOSTINT("percentage")); // If status is -1 or 100, percentage is not defined and we must use status
 
 	// Clean parameters
 	if ($fulldayevent) {
 		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 		// For "full day" events, we must store date in GMT (It must be viewed as same moment everywhere)
-		$datep = dol_mktime('00', '00', '00', GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
-		$datef = dol_mktime('23', '59', '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
+		$datep = dol_mktime('00', '00', '00', GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
+		$datef = dol_mktime('23', '59', '59', GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), $tzforfullday ? $tzforfullday : 'tzuserrel');
 	} else {
-		$datep = dol_mktime(GETPOST("aphour", 'int'), GETPOST("apmin", 'int'), GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuserrel');
-		$datef = dol_mktime(GETPOST("p2hour", 'int'), GETPOST("p2min", 'int'), GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuserrel');
+		$datep = dol_mktime(GETPOSTINT("aphour"), GETPOSTINT("apmin"), GETPOSTINT("apsec"), GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), 'tzuserrel');
+		$datef = dol_mktime(GETPOSTINT("p2hour"), GETPOSTINT("p2min"), GETPOSTINT("apsec"), GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
 	}
 
 	// Check parameters
@@ -356,7 +356,7 @@ if (empty($reshook) && $action == 'add') {
 
 	if (!$error) {
 		// Initialisation object actioncomm
-		$object->priority = GETPOSTISSET("priority") ? GETPOST("priority", "int") : 0;
+		$object->priority = GETPOSTISSET("priority") ? GETPOSTINT("priority") : 0;
 		$object->fulldayevent = ($fulldayevent ? 1 : 0);
 		$object->location = GETPOST("location", 'alphanohtml');
 		$object->label = GETPOST('label', 'alphanohtml');
@@ -386,7 +386,7 @@ if (empty($reshook) && $action == 'add') {
 				}
 			}
 		}
-		$object->fk_project = GETPOSTISSET("projectid") ? GETPOST("projectid", 'int') : 0;
+		$object->fk_project = GETPOSTISSET("projectid") ? GETPOSTINT("projectid") : 0;
 
 		$taskid = GETPOSTINT('taskid');
 		if (!empty($taskid)) {
@@ -437,7 +437,7 @@ if (empty($reshook) && $action == 'add') {
 		$object->contact = $contact;
 	}
 
-	if (GETPOST('socid', 'int') > 0) {
+	if (GETPOSTINT('socid') > 0) {
 		$object->socid = GETPOSTINT('socid');
 		$object->fetch_thirdparty();
 
@@ -511,7 +511,7 @@ if (empty($reshook) && $action == 'add') {
 		if ($userepeatevent && !empty($selectedrecurrulefreq) && $selectedrecurrulefreq != 'no') {
 			$eventisrecurring = 1;
 			$object->recurid = dol_print_date(dol_now('gmt'), 'dayhourlog', 'gmt');
-			$object->recurdateend = dol_mktime(0, 0, 0, GETPOST('limitmonth', 'int'), GETPOST('limitday', 'int'), GETPOST('limityear', 'int'));
+			$object->recurdateend = dol_mktime(0, 0, 0, GETPOSTINT('limitmonth'), GETPOSTINT('limitday'), GETPOSTINT('limityear'));
 		} else {
 			unset($object->recurid);
 			unset($object->recurrule);
@@ -609,22 +609,22 @@ if (empty($reshook) && $action == 'add') {
 		if ($eventisrecurring) {
 			// We set first date of recurrence and offsets
 			if ($selectedrecurrulefreq == 'WEEKLY' && !empty($selectedrecurrulebyday)) {
-				$firstdatearray = dol_get_first_day_week(GETPOST("apday", 'int'), GETPOST("apmonth", 'int'), GETPOST("apyear", 'int'));
-				$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), $firstdatearray['month'], $firstdatearray['first_day'], $firstdatearray['year'], $tzforfullday ? $tzforfullday : 'tzuserrel');
+				$firstdatearray = dol_get_first_day_week(GETPOSTINT("apday"), GETPOSTINT("apmonth"), GETPOSTINT("apyear"));
+				$datep = dol_mktime($fulldayevent ? '00' : GETPOSTINT("aphour"), $fulldayevent ? '00' : GETPOSTINT("apmin"), $fulldayevent ? '00' : GETPOSTINT("apsec"), $firstdatearray['month'], $firstdatearray['first_day'], $firstdatearray['year'], $tzforfullday ? $tzforfullday : 'tzuserrel');
 				$datep = dol_time_plus_duree($datep, $selectedrecurrulebyday + 6, 'd');//We begin the week after
 				$dayoffset = 7;
 				$monthoffset = 0;
 			} elseif ($selectedrecurrulefreq == 'MONTHLY' && !empty($selectedrecurrulebymonthday)) {
 				$firstday = $selectedrecurrulebymonthday;
-				$firstmonth = GETPOST("apday") > $selectedrecurrulebymonthday ? GETPOST("apmonth", 'int') + 1 : GETPOST("apmonth", 'int');//We begin the week after
-				$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), $firstmonth, $firstday, GETPOST("apyear", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
+				$firstmonth = GETPOST("apday") > $selectedrecurrulebymonthday ? GETPOSTINT("apmonth") + 1 : GETPOSTINT("apmonth");//We begin the week after
+				$datep = dol_mktime($fulldayevent ? '00' : GETPOSTINT("aphour"), $fulldayevent ? '00' : GETPOSTINT("apmin"), $fulldayevent ? '00' : GETPOSTINT("apsec"), $firstmonth, $firstday, GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
 				$dayoffset = 0;
 				$monthoffset = 1;
 			} else {
 				$error++;
 			}
 			// End date
-			$repeateventlimitdate = dol_mktime(23, 59, 59, GETPOSTISSET("limitmonth") ? GETPOST("limitmonth", 'int') : 1, GETPOSTISSET("limitday") ? GETPOST("limitday", 'int') : 1, GETPOSTISSET("limityear") && GETPOST("limityear", 'int') < 2100 ? GETPOST("limityear", 'int') : 2100, $tzforfullday ? $tzforfullday : 'tzuserrel');
+			$repeateventlimitdate = dol_mktime(23, 59, 59, GETPOSTISSET("limitmonth") ? GETPOSTINT("limitmonth") : 1, GETPOSTISSET("limitday") ? GETPOSTINT("limitday") : 1, GETPOSTISSET("limityear") && GETPOSTINT("limityear") < 2100 ? GETPOSTINT("limityear") : 2100, $tzforfullday ? $tzforfullday : 'tzuserrel');
 			// Set date of end of event
 			$deltatime = num_between_day($object->datep, $datep);
 			$datef = dol_time_plus_duree($datef, $deltatime, 'd');
@@ -743,11 +743,11 @@ if (empty($reshook) && $action == 'add') {
 if (empty($reshook) && $action == 'update') {
 	if (empty($cancel)) {
 		$fulldayevent = GETPOST('fullday');
-		$aphour = GETPOST('aphour', 'int');
-		$apmin = GETPOST('apmin', 'int');
-		$p2hour = GETPOST('p2hour', 'int');
-		$p2min = GETPOST('p2min', 'int');
-		$percentage = in_array(GETPOST('status'), array(-1, 100)) ? GETPOST('status') : (in_array($complete, array(-1, 100)) ? $complete : GETPOST("percentage", 'int')); // If status is -1 or 100, percentage is not defined and we must use status
+		$aphour = GETPOSTINT('aphour');
+		$apmin = GETPOSTINT('apmin');
+		$p2hour = GETPOSTINT('p2hour');
+		$p2min = GETPOSTINT('p2min');
+		$percentage = in_array(GETPOST('status'), array(-1, 100)) ? GETPOST('status') : (in_array($complete, array(-1, 100)) ? $complete : GETPOSTINT("percentage")); // If status is -1 or 100, percentage is not defined and we must use status
 
 		// Clean parameters
 		if ($aphour == -1) {
@@ -772,11 +772,11 @@ if (empty($reshook) && $action == 'update') {
 		if ($fulldayevent) {
 			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 			// For "full day" events, we must store date in GMT (It must be viewed as same moment everywhere)
-			$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
-			$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
+			$datep = dol_mktime($fulldayevent ? '00' : GETPOSTINT("aphour"), $fulldayevent ? '00' : GETPOSTINT("apmin"), $fulldayevent ? '00' : GETPOSTINT("apsec"), GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
+			$datef = dol_mktime($fulldayevent ? '23' : GETPOSTINT("p2hour"), $fulldayevent ? '59' : GETPOSTINT("p2min"), $fulldayevent ? '59' : GETPOSTINT("apsec"), GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), $tzforfullday ? $tzforfullday : 'tzuserrel');
 		} else {
-			$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuserrel');
-			$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuserrel');
+			$datep = dol_mktime($fulldayevent ? '00' : GETPOSTINT("aphour"), $fulldayevent ? '00' : GETPOSTINT("apmin"), $fulldayevent ? '00' : GETPOSTINT("apsec"), GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), 'tzuserrel');
+			$datef = dol_mktime($fulldayevent ? '23' : GETPOSTINT("p2hour"), $fulldayevent ? '59' : GETPOSTINT("p2min"), $fulldayevent ? '59' : GETPOSTINT("apsec"), GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
 		}
 
 		if ($object->elementtype == 'ticket') {	// code should be TICKET_MSG, TICKET_MSG_PRIVATE, TICKET_MSG_SENTBYMAIL, TICKET_MSG_PRIVATE_SENTBYMAIL
@@ -805,21 +805,21 @@ if (empty($reshook) && $action == 'update') {
 		$object->datep       = $datep;
 		$object->datef       = $datef;
 		$object->percentage  = $percentage;
-		$object->priority    = GETPOST("priority", "int");
+		$object->priority    = GETPOSTINT("priority");
 		$object->fulldayevent = GETPOST("fullday") ? 1 : 0;
 		$object->location    = GETPOST('location', "alphanohtml");
-		$object->socid       = GETPOST("socid", "int");
+		$object->socid       = GETPOSTINT("socid");
 		$socpeopleassigned   = GETPOST("socpeopleassigned", 'array');
 		$object->socpeopleassigned = array();
 		foreach ($socpeopleassigned as $cid) {
 			$object->socpeopleassigned[$cid] = array('id' => $cid);
 		}
-		$object->contact_id = GETPOST("contactid", 'int');
+		$object->contact_id = GETPOSTINT("contactid");
 		if (empty($object->contact_id) && !empty($object->socpeopleassigned)) {
 			reset($object->socpeopleassigned);
 			$object->contact_id = key($object->socpeopleassigned);
 		}
-		$object->fk_project  = GETPOST("projectid", 'int');
+		$object->fk_project  = GETPOSTINT("projectid");
 		$object->note_private = trim(GETPOST("note", "restricthtml"));
 
 		if (GETPOST("elementtype", 'alpha')) {
@@ -830,7 +830,7 @@ if (empty($reshook) && $action == 'update') {
 				$hasPermissionOnLinkedObject = 1;
 			}
 			if ($hasPermissionOnLinkedObject) {
-				$object->fk_element = GETPOST("fk_element", 'int');
+				$object->fk_element = GETPOSTINT("fk_element");
 				$object->elementtype = GETPOST("elementtype", 'alpha');
 			}
 		}
@@ -876,7 +876,7 @@ if (empty($reshook) && $action == 'update') {
 
 		if (getDolGlobalString('AGENDA_ENABLE_DONEBY')) {
 			if (GETPOST("doneby")) {
-				$object->userdoneid = GETPOST("doneby", "int");
+				$object->userdoneid = GETPOSTINT("doneby");
 			}
 		}
 
@@ -1448,7 +1448,7 @@ if ($action == 'create') {
 	// Done by
 	if (getDolGlobalString('AGENDA_ENABLE_DONEBY')) {
 		print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td>';
-		print $form->select_dolusers(GETPOSTISSET("doneby") ? GETPOST("doneby", 'int') : (!empty($object->userdoneid) && $percent == 100 ? $object->userdoneid : 0), 'doneby', 1);
+		print $form->select_dolusers(GETPOSTISSET("doneby") ? GETPOSTINT("doneby") : (!empty($object->userdoneid) && $percent == 100 ? $object->userdoneid : 0), 'doneby', 1);
 		print '</td></tr>';
 	}
 
@@ -1457,7 +1457,7 @@ if ($action == 'create') {
 		print '<tr><td>'.$langs->trans("Location").'</td><td><input type="text" name="location" class="minwidth300 maxwidth150onsmartphone" value="'.(GETPOST('location') ? GETPOST('location') : $object->location).'"></td></tr>';
 	}
 
-	if (isModEnabled('categorie')) {
+	if (isModEnabled('category')) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 1);
@@ -1498,7 +1498,7 @@ if ($action == 'create') {
 	if (GETPOSTISSET('status')) {
 		$percent = GETPOST('status');
 	} elseif (GETPOSTISSET('percentage')) {
-		$percent = GETPOST('percentage', 'int');
+		$percent = GETPOSTINT('percentage');
 	} else {
 		if ($complete == '0' || GETPOST("afaire") == 1) {
 			$percent = '0';
@@ -1520,11 +1520,11 @@ if ($action == 'create') {
 	if (isModEnabled("societe")) {
 		// Related company
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
-		if (GETPOST('socid', 'int') > 0) {
+		if (GETPOSTINT('socid') > 0) {
 			$societe = new Societe($db);
-			$societe->fetch(GETPOST('socid', 'int'));
+			$societe->fetch(GETPOSTINT('socid'));
 			print $societe->getNomUrl(1);
-			print '<input type="hidden" id="socid" name="socid" value="'.GETPOST('socid', 'int').'">';
+			print '<input type="hidden" id="socid" name="socid" value="'.GETPOSTINT('socid').'">';
 		} else {
 			$events = array();
 			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
@@ -1540,11 +1540,11 @@ if ($action == 'create') {
 		// Related contact
 		print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
 		$preselectedids = GETPOST('socpeopleassigned', 'array');
-		if (GETPOST('contactid', 'int')) {
-			$preselectedids[GETPOST('contactid', 'int')] = GETPOST('contactid', 'int');
+		if (GETPOSTINT('contactid')) {
+			$preselectedids[GETPOSTINT('contactid')] = GETPOSTINT('contactid');
 		}
 		if ($origin=='contact') {
-			$preselectedids[GETPOST('originid', 'int')] = GETPOST('originid', 'int');
+			$preselectedids[GETPOSTINT('originid')] = GETPOSTINT('originid');
 		}
 		// select "all" or "none" contact by default
 		if (getDolGlobalInt('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT')) {
@@ -1561,7 +1561,7 @@ if ($action == 'create') {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 
-		$projectid = GETPOST('projectid', 'int');
+		$projectid = GETPOSTINT('projectid');
 
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td id="project-input-container">';
 		print img_picto('', 'project', 'class="pictofixedwidth"');
@@ -1596,7 +1596,7 @@ if ($action == 'create') {
 			$projectsListId = $projectid;
 		}
 
-		$tid = GETPOSTISSET("projecttaskid") ? GETPOST("projecttaskid", 'int') : (GETPOSTISSET("taskid") ? GETPOST("taskid", 'int') : '');
+		$tid = GETPOSTISSET("projecttaskid") ? GETPOSTINT("projecttaskid") : (GETPOSTISSET("taskid") ? GETPOSTINT("taskid") : '');
 
 		$formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 24, 0, '1', 1, 0, 0, 'maxwidth500 widthcentpercentminusxx', $projectsListId);
 		print '</td></tr>';
@@ -1632,7 +1632,7 @@ if ($action == 'create') {
 	// Priority
 	if (getDolGlobalString('AGENDA_SUPPORT_PRIORITY_IN_EVENTS')) {
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td colspan="3">';
-		print '<input type="text" name="priority" value="'.(GETPOSTISSET('priority') ? GETPOST('priority', 'int') : ($object->priority ? $object->priority : '')).'" size="5">';
+		print '<input type="text" name="priority" value="'.(GETPOSTISSET('priority') ? GETPOSTINT('priority') : ($object->priority ? $object->priority : '')).'" size="5">';
 		print '</td></tr>';
 	}
 
@@ -1666,7 +1666,7 @@ if ($action == 'create') {
 
 		//Reminder
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
-		print '<input class="width50" type="number" name="offsetvalue" value="'.(GETPOSTISSET('offsetvalue') ? GETPOST('offsetvalue', 'int') : getDolGlobalInt('AGENDA_REMINDER_DEFAULT_OFFSET', 30)).'"> ';
+		print '<input class="width50" type="number" name="offsetvalue" value="'.(GETPOSTISSET('offsetvalue') ? GETPOSTINT('offsetvalue') : getDolGlobalInt('AGENDA_REMINDER_DEFAULT_OFFSET', 30)).'"> ';
 		print $form->selectTypeDuration('offsetunit', 'i', array('y', 'm'));
 		print '</td></tr>';
 
@@ -1744,10 +1744,10 @@ if ($id > 0) {
 	$result5 = $object->fetch_optionals();
 
 	if ($listUserAssignedUpdated || $donotclearsession) {
-		$percentage = in_array(GETPOST('status'), array(-1, 100)) ? GETPOST('status') : (in_array($complete, array(-1, 100)) ? $complete : GETPOST("percentage", 'int')); // If status is -1 or 100, percentage is not defined and we must use status
+		$percentage = in_array(GETPOST('status'), array(-1, 100)) ? GETPOST('status') : (in_array($complete, array(-1, 100)) ? $complete : GETPOSTINT("percentage")); // If status is -1 or 100, percentage is not defined and we must use status
 
-		$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuserrel');
-		$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuserrel');
+		$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), 'tzuserrel');
+		$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
 
 		$object->type_id     = dol_getIdFromCode($db, GETPOST("actioncode", 'aZ09'), 'c_actioncomm');
 		$object->label       = GETPOST("label", "alphanohtml");
@@ -1757,13 +1757,13 @@ if ($id > 0) {
 		$object->priority    = GETPOST("priority", "alphanohtml");
 		$object->fulldayevent = GETPOST("fullday") ? 1 : 0;
 		$object->location    = GETPOST('location', "alphanohtml");
-		$object->socid       = GETPOST("socid", "int");
+		$object->socid       = GETPOSTINT("socid");
 		$socpeopleassigned   = GETPOST("socpeopleassigned", 'array');
 		foreach ($socpeopleassigned as $tmpid) {
 			$object->socpeopleassigned[$id] = array('id' => $tmpid);
 		}
-		$object->contact_id   = GETPOST("contactid", 'int');
-		$object->fk_project  = GETPOST("projectid", 'int');
+		$object->contact_id   = GETPOSTINT("contactid");
+		$object->fk_project  = GETPOSTINT("projectid");
 
 		$object->note_private = GETPOST("note", 'restricthtml');
 	}
@@ -2022,12 +2022,12 @@ if ($id > 0) {
 
 		// Status
 		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
-		$percent = GETPOSTISSET("percentage") ? GETPOST("percentage", "int") : $object->percentage;
+		$percent = GETPOSTISSET("percentage") ? GETPOSTINT("percentage") : $object->percentage;
 		$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
 		print '</td></tr>';
 
 		// Tags-Categories
-		if (isModEnabled('categorie')) {
+		if (isModEnabled('category')) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 1);
 			$c = new Categorie($db);
@@ -2452,7 +2452,7 @@ if ($id > 0) {
 		}
 
 		// Categories
-		if (isModEnabled('categorie')) {
+		if (isModEnabled('category')) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($object->id, Categorie::TYPE_ACTIONCOMM, 1);
 			print "</td></tr>";

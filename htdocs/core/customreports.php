@@ -13,16 +13,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Note: This tool can be included into a list page with:
- * define('USE_CUSTOM_REPORT_AS_INCLUDE', 1);
- * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
 
 /**
- *   	\file       htdocs/core/customreports.php
- *		\ingroup    core
- *		\brief      Page to make custom reports. Page can be used alone or as a tab among other tabs of an object
+ * \file       htdocs/core/customreports.php
+ * \ingroup    core
+ * \brief      Page to make custom reports. Page can also be used alone or as a tab among other tabs of an object
+ *
+ * To include this tool into another PHP page:
+ * define('USE_CUSTOM_REPORT_AS_INCLUDE', 1);
+ * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
 
 if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
@@ -32,18 +32,11 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 	$massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 
-	$mode = GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'graph';
+	$mode = GETPOST('mode', 'alpha');
 	$objecttype = GETPOST('objecttype', 'aZ09arobase');
 	$tabfamily  = GETPOST('tabfamily', 'aZ09');
 
-	if (empty($objecttype)) {
-		$objecttype = 'thirdparty';
-	}
-
 	$search_measures = GETPOST('search_measures', 'array');
-	if (empty($search_measures)) {
-		$search_measures = array(0 => 't.count');
-	}
 
 	//$search_xaxis = GETPOST('search_xaxis', 'array');
 	if (GETPOST('search_xaxis', 'alpha') && GETPOST('search_xaxis', 'alpha') != '-1') {
@@ -62,10 +55,10 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$search_graph = GETPOST('search_graph', 'restricthtml');
 
 	// Load variable for pagination
-	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 	$sortfield = GETPOST('sortfield', 'aZ09comma');
 	$sortorder = GETPOST('sortorder', 'aZ09comma');
-	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 	if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
 		$page = 0;
 	}     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
@@ -74,10 +67,40 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$pagenext = $page + 1;
 
 	$diroutputmassaction = $conf->user->dir_temp.'/'.$user->id.'/customreport';
+
+	$object = null;
+} else {
+	$langs->load("main");
+	// $search_measures, $search_xaxis or $search_yaxis may have been defined by the parent.
+
+	if (empty($user) || empty($user->id)) {
+		print 'Page is called as an include but $user and its permission loaded with getrights() are not defined. We stop here.';
+		exit(-1);
+	}
+	if (empty($object)) {
+		print 'Page is called as an include but $object is not defined. We stop here.';
+		exit(-1);
+	}
 }
 
+if (empty($mode)) {
+	$mode = 'graph';
+}
+if (!isset($search_measures)) {
+	$search_measures = array(0 => 't.count');
+}
+if (!empty($object)) {
+	$objecttype = $object->element.($object->module ? '@'.$object->module : '');
+}
+if (empty($objecttype)) {
+	$objecttype = 'thirdparty';
+}
+
+require_once DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/html.form.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/company.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/dolgraph.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php";
@@ -92,27 +115,27 @@ $hookmanager->initHooks(array('customreport')); // Note that conf->hooks_modules
 $title = '';
 $picto = '';
 $head = array();
-$object = null;
 $ObjectClassName = '';
 // Objects available by default
 $arrayoftype = array(
-	'thirdparty' => array('langs'=>'companies', 'label' => 'ThirdParties', 'picto'=>'company', 'ObjectClassName' => 'Societe', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/societe/class/societe.class.php"),
-	'contact' => array('label' => 'Contacts', 'picto'=>'contact', 'ObjectClassName' => 'Contact', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/contact/class/contact.class.php"),
-	'proposal' => array('label' => 'Proposals', 'picto'=>'proposal', 'ObjectClassName' => 'Propal', 'enabled' => isModEnabled('propal'), 'ClassPath' => "/comm/propal/class/propal.class.php"),
-	'order' => array('label' => 'Orders', 'picto'=>'order', 'ObjectClassName' => 'Commande', 'enabled' => isModEnabled('commande'), 'ClassPath' => "/commande/class/commande.class.php"),
-	'invoice' => array('langs'=>'facture', 'label' => 'Invoices', 'picto'=>'bill', 'ObjectClassName' => 'Facture', 'enabled' => isModEnabled('facture'), 'ClassPath' => "/compta/facture/class/facture.class.php"),
-	'invoice_template'=>array('label' => 'PredefinedInvoices', 'picto'=>'bill', 'ObjectClassName' => 'FactureRec', 'enabled' => isModEnabled('facture'), 'ClassPath' => "/compta/class/facturerec.class.php", 'langs'=>'bills'),
-	'contract' => array('label' => 'Contracts', 'picto'=>'contract', 'ObjectClassName' => 'Contrat', 'enabled' => isModEnabled('contrat'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
-	'contractdet' => array('label' => 'ContractLines', 'picto'=>'contract', 'ObjectClassName' => 'ContratLigne', 'enabled' => isModEnabled('contrat'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
-	'bom' => array('label' => 'BOM', 'picto'=>'bom', 'ObjectClassName' => 'Bom', 'enabled' => isModEnabled('bom')),
-	'mrp' => array('label' => 'MO', 'picto'=>'mrp', 'ObjectClassName' => 'Mo', 'enabled' => isModEnabled('mrp'), 'ClassPath' => "/mrp/class/mo.class.php"),
-	'ticket' => array('label' => 'Ticket', 'picto'=>'ticket', 'ObjectClassName' => 'Ticket', 'enabled' => isModEnabled('ticket')),
-	'member' => array('label' => 'Adherent', 'picto'=>'member', 'ObjectClassName' => 'Adherent', 'enabled' => isModEnabled('adherent'), 'ClassPath' => "/adherents/class/adherent.class.php", 'langs'=>'members'),
-	'cotisation' => array('label' => 'Subscriptions', 'picto'=>'member', 'ObjectClassName' => 'Subscription', 'enabled' => isModEnabled('adherent'), 'ClassPath' => "/adherents/class/subscription.class.php", 'langs'=>'members'),
+	'thirdparty' => array('langs' => 'companies', 'label' => 'ThirdParties', 'picto' => 'company', 'ObjectClassName' => 'Societe', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/societe/class/societe.class.php"),
+	'contact' => array('label' => 'Contacts', 'picto' => 'contact', 'ObjectClassName' => 'Contact', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/contact/class/contact.class.php"),
+	'proposal' => array('label' => 'Proposals', 'picto' => 'proposal', 'ObjectClassName' => 'Propal', 'enabled' => isModEnabled('propal'), 'ClassPath' => "/comm/propal/class/propal.class.php"),
+	'order' => array('label' => 'Orders', 'picto' => 'order', 'ObjectClassName' => 'Commande', 'enabled' => isModEnabled('order'), 'ClassPath' => "/commande/class/commande.class.php"),
+	'invoice' => array('langs' => 'facture', 'label' => 'Invoices', 'picto' => 'bill', 'ObjectClassName' => 'Facture', 'enabled' => isModEnabled('invoice'), 'ClassPath' => "/compta/facture/class/facture.class.php"),
+	'invoice_template' => array('label' => 'PredefinedInvoices', 'picto' => 'bill', 'ObjectClassName' => 'FactureRec', 'enabled' => isModEnabled('invoice'), 'ClassPath' => "/compta/class/facturerec.class.php", 'langs' => 'bills'),
+	'contract' => array('label' => 'Contracts', 'picto' => 'contract', 'ObjectClassName' => 'Contrat', 'enabled' => isModEnabled('contract'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs' => 'contracts'),
+	'contractdet' => array('label' => 'ContractLines', 'picto' => 'contract', 'ObjectClassName' => 'ContratLigne', 'enabled' => isModEnabled('contract'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs' => 'contracts'),
+	'bom' => array('label' => 'BOM', 'picto' => 'bom', 'ObjectClassName' => 'Bom', 'enabled' => isModEnabled('bom')),
+	'mrp' => array('label' => 'MO', 'picto' => 'mrp', 'ObjectClassName' => 'Mo', 'enabled' => isModEnabled('mrp'), 'ClassPath' => "/mrp/class/mo.class.php"),
+	'ticket' => array('label' => 'Ticket', 'picto' => 'ticket', 'ObjectClassName' => 'Ticket', 'enabled' => isModEnabled('ticket')),
+	'member' => array('label' => 'Adherent', 'picto' => 'member', 'ObjectClassName' => 'Adherent', 'enabled' => isModEnabled('member'), 'ClassPath' => "/adherents/class/adherent.class.php", 'langs' => 'members'),
+	'cotisation' => array('label' => 'Subscriptions', 'picto' => 'member', 'ObjectClassName' => 'Subscription', 'enabled' => isModEnabled('member'), 'ClassPath' => "/adherents/class/subscription.class.php", 'langs' => 'members'),
 );
 
+
 // Complete $arrayoftype by external modules
-$parameters = array('objecttype'=>$objecttype, 'tabfamily'=>$tabfamily);
+$parameters = array('objecttype' => $objecttype, 'tabfamily' => $tabfamily);
 $reshook = $hookmanager->executeHooks('loadDataForCustomReports', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -144,10 +167,14 @@ if ($objecttype) {
 		dol_include_once($fileforclass);
 
 		$ObjectClassName = $arrayoftype[$objecttype]['ObjectClassName'];
-		if (class_exists($ObjectClassName)) {
-			$object = new $ObjectClassName($db);
+		if (!empty($ObjectClassName)) {
+			if (class_exists($ObjectClassName)) {
+				$object = new $ObjectClassName($db);
+			} else {
+				print 'Failed to load class for type '.$objecttype.'. Class file found but Class object named '.$ObjectClassName.' not found.';
+			}
 		} else {
-			print 'Failed to load class for type '.$objecttype.'. Class file found but class object '.$ObjectClassName.' not found.';
+			print 'Failed to load class for type '.$objecttype.'. Class file name is unknown.';
 		}
 	} catch (Exception $e) {
 		print 'Failed to load class for type '.$objecttype.'. Class path not found.';
@@ -302,7 +329,11 @@ $formother = new FormOther($db);
 if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	llxHeader('', $langs->transnoentitiesnoconv('CustomReports'), '');
 
-	print dol_get_fiche_head($head, 'customreports', $title, -1, $picto);
+	if (empty($head)) {
+		print dol_get_fiche_head($head, 'customreports', $title, -2, $picto);
+	} else {
+		print dol_get_fiche_head($head, 'customreports', $title, -1, $picto);
+	}
 }
 
 $newarrayoftype = array();
@@ -513,156 +544,161 @@ $startyear = $endyear - 2;
 
 $param = '';
 
-print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" autocomplete="off">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="viewgraph">';
-print '<input type="hidden" name="tabfamily" value="'.$tabfamily.'">';
 
-$viewmode = '';
+if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
+	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" autocomplete="off">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="viewgraph">';
+	print '<input type="hidden" name="tabfamily" value="'.$tabfamily.'">';
 
-$viewmode .= '<div class="divadvancedsearchfield">';
-$arrayofgraphs = array('bars' => 'Bars', 'lines' => 'Lines'); // also 'pies'
-$viewmode .= '<div class="inline-block opacitymedium"><span class="fas fa-chart-area paddingright" title="'.$langs->trans("Graph").'"></span>'.$langs->trans("Graph").'</div> ';
-$viewmode .= $form->selectarray('search_graph', $arrayofgraphs, $search_graph, 0, 0, 0, '', 1, 0, 0, '', 'graphtype width100');
-$viewmode .= '</div>';
+	$viewmode = '';
 
-$num = 0;
-$massactionbutton = '';
-$nav = '';
-$newcardbutton = '';
-$limit = 0;
+	$viewmode .= '<div class="divadvancedsearchfield">';
+	$arrayofgraphs = array('bars' => 'Bars', 'lines' => 'Lines'); // also 'pies'
+	$viewmode .= '<div class="inline-block opacitymedium"><span class="fas fa-chart-area paddingright" title="'.$langs->trans("Graph").'"></span>'.$langs->trans("Graph").'</div> ';
+	$viewmode .= $form->selectarray('search_graph', $arrayofgraphs, $search_graph, 0, 0, 0, '', 1, 0, 0, '', 'graphtype width100');
+	$viewmode .= '</div>';
 
-print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
+	$num = 0;
+	$massactionbutton = '';
+	$nav = '';
+	$newcardbutton = '';
+	$limit = 0;
 
-
-foreach ($newarrayoftype as $tmpkey => $tmpval) {
-	$newarrayoftype[$tmpkey]['label'] = img_picto('', $tmpval['picto'], 'class="pictofixedwidth"').$langs->trans($tmpval['label']);
-}
-
-print '<div class="liste_titre liste_titre_bydiv liste_titre_bydiv_inlineblock centpercent">';
-
-// Select object
-print '<div class="divadvancedsearchfield center floatnone">';
-print '<div class="inline-block"><span class="opacitymedium">'.$langs->trans("StatisticsOn").'</span></div> ';
-print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', 'minwidth200', 1, '', 0, 1);
-if (empty($conf->use_javascript_ajax)) {
-	print '<input type="submit" class="button buttongen button-save nomargintop" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
-} else {
-	print '<!-- js code to reload page with good object type -->
-	<script nonce="'.getNonce().'" type="text/javascript">
-        jQuery(document).ready(function() {
-        	jQuery("#objecttype").change(function() {
-        		console.log("Reload for "+jQuery("#objecttype").val());
-                location.href = "'.$_SERVER["PHP_SELF"].'?objecttype="+jQuery("#objecttype").val()+"'.($tabfamily ? '&tabfamily='.urlencode($tabfamily) : '').(GETPOST('show_search_component_params_hidden', 'int') ? '&show_search_component_params_hidden='.((int) GETPOST('show_search_component_params_hidden', 'int')) : '').'";
-        	});
-        });
-    </script>';
-}
-print '</div><div class="clearboth"></div>';
-
-// Filter (you can use param &show_search_component_params_hidden=1 for debug)
-print '<div class="divadvancedsearchfield quatrevingtpercent">';
-print $form->searchComponent(array($object->element => $object->fields), $search_component_params, array(), $search_component_params_hidden);
-print '</div>';
-
-// YAxis (add measures into array)
-$count = 0;
-//var_dump($arrayofmesures);
-print '<div class="divadvancedsearchfield clearboth">';
-print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span><span class="fas fa-caret-left caretleftaxis" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span></div>';
-$simplearrayofmesures = array();
-foreach ($arrayofmesures as $key => $val) {
-	$simplearrayofmesures[$key] = $arrayofmesures[$key]['label'];
-}
-print $form->multiselectarray('search_measures', $simplearrayofmesures, $search_measures, 0, 0, 'minwidth300', 1, 0, '', '', $langs->trans("Measures"));	// Fill the array $arrayofmeasures with possible fields
-print '</div>';
-
-// XAxis
-$count = 0;
-print '<div class="divadvancedsearchfield">';
-print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span><span class="fas fa-caret-down caretdownaxis" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span></div>';
-//var_dump($arrayofxaxis);
-print $formother->selectXAxisField($object, $search_xaxis, $arrayofxaxis, $langs->trans("XAxis"), 'minwidth300 maxwidth400');	// Fill the array $arrayofxaxis with possible fields
-print '</div>';
-
-// Group by
-$count = 0;
-print '<div class="divadvancedsearchfield">';
-print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-horizontal paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("GroupBy")).'"></span></div>';
-print $formother->selectGroupByField($object, $search_groupby, $arrayofgroupby, 'minwidth250 maxwidth300', $langs->trans("GroupBy"));	// Fill the array $arrayofgroupby with possible fields
-print '</div>';
+	print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
 
 
-if ($mode == 'grid') {
-	// YAxis
-	print '<div class="divadvancedsearchfield">';
-	foreach ($object->fields as $key => $val) {
-		if (empty($val['measure']) && (!isset($val['enabled']) || dol_eval($val['enabled'], 1, 1, '1'))) {
-			if (in_array($key, array('id', 'rowid', 'entity', 'last_main_doc', 'extraparams'))) {
-				continue;
-			}
-			if (preg_match('/^fk_/', $key)) {
-				continue;
-			}
-			if (in_array($val['type'], array('html', 'text'))) {
-				continue;
-			}
-			if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-				$arrayofyaxis['t.'.$key.'-year'] = array(
-					'label' => $langs->trans($val['label']).' ('.$YYYY.')',
-					'position' => $val['position'],
-					'table' => $object->table_element
-				);
-				$arrayofyaxis['t.'.$key.'-month'] = array(
-					'label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.')',
-					'position' => $val['position'],
-					'table' => $object->table_element
-				);
-				$arrayofyaxis['t.'.$key.'-day'] = array(
-					'label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.'-'.$DD.')',
-					'position' => $val['position'],
-					'table' => $object->table_element
-				);
-			} else {
-				$arrayofyaxis['t.'.$key] = array(
-					'label' => $val['label'],
-					'position' => (int) $val['position'],
-					'table' => $object->table_element
-				);
-			}
-		}
+	foreach ($newarrayoftype as $tmpkey => $tmpval) {
+		$newarrayoftype[$tmpkey]['label'] = img_picto('', $tmpval['picto'], 'class="pictofixedwidth"').$langs->trans($tmpval['label']);
 	}
-	// Add measure from extrafields
-	if ($object->isextrafieldmanaged) {
-		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-			if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
-				$arrayofyaxis['te.'.$key] = array(
-					'label' => $extrafields->attributes[$object->table_element]['label'][$key],
-					'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key],
-					'table' => $object->table_element
-				);
-			}
-		}
+
+	print '<div class="liste_titre liste_titre_bydiv liste_titre_bydiv_inlineblock centpercent">';
+
+	// Select object
+	print '<div class="divadvancedsearchfield center floatnone">';
+	print '<div class="inline-block"><span class="opacitymedium">'.$langs->trans("StatisticsOn").'</span></div> ';
+	print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', 'minwidth200', 1, '', 0, 1);
+	if (empty($conf->use_javascript_ajax)) {
+		print '<input type="submit" class="button buttongen button-save nomargintop" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
+	} else {
+		print '<!-- js code to reload page with good object type -->
+		<script nonce="'.getNonce().'" type="text/javascript">
+	        jQuery(document).ready(function() {
+	        	jQuery("#objecttype").change(function() {
+	        		console.log("Reload for "+jQuery("#objecttype").val());
+	                location.href = "'.$_SERVER["PHP_SELF"].'?objecttype="+jQuery("#objecttype").val()+"'.($tabfamily ? '&tabfamily='.urlencode($tabfamily) : '').(GETPOSTINT('show_search_component_params_hidden') ? '&show_search_component_params_hidden='.((int) GETPOSTINT('show_search_component_params_hidden')) : '').'";
+	        	});
+	        });
+	    </script>';
 	}
-	$arrayofyaxis = dol_sort_array($arrayofyaxis, 'position');
-	$arrayofyaxislabel = array();
-	foreach ($arrayofyaxis as $key => $val) {
-		$arrayofyaxislabel[$key] = $val['label'];
+	print '</div><div class="clearboth"></div>';
+
+	// Filter (you can use param &show_search_component_params_hidden=1 for debug)
+	if (!empty($object)) {
+		print '<div class="divadvancedsearchfield quatrevingtpercent">';
+		print $form->searchComponent(array($object->element => $object->fields), $search_component_params, array(), $search_component_params_hidden);
+		print '</div>';
 	}
-	print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-vertical paddingright" title="'.$langs->trans("YAxis").'"></span>'.$langs->trans("YAxis").'</div> ';
-	print $form->multiselectarray('search_yaxis', $arrayofyaxislabel, $search_yaxis, 0, 0, 'minwidth100', 1);
+
+	// YAxis (add measures into array)
+	$count = 0;
+	//var_dump($arrayofmesures);
+	print '<div class="divadvancedsearchfield clearboth">';
+	print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span><span class="fas fa-caret-left caretleftaxis" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span></div>';
+	$simplearrayofmesures = array();
+	foreach ($arrayofmesures as $key => $val) {
+		$simplearrayofmesures[$key] = $arrayofmesures[$key]['label'];
+	}
+	print $form->multiselectarray('search_measures', $simplearrayofmesures, $search_measures, 0, 0, 'minwidth300', 1, 0, '', '', $langs->trans("Measures"));	// Fill the array $arrayofmeasures with possible fields
 	print '</div>';
-}
 
-if ($mode == 'graph') {
-	//
-}
+	// XAxis
+	$count = 0;
+	print '<div class="divadvancedsearchfield">';
+	print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span><span class="fas fa-caret-down caretdownaxis" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span></div>';
+	//var_dump($arrayofxaxis);
+	print $formother->selectXAxisField($object, $search_xaxis, $arrayofxaxis, $langs->trans("XAxis"), 'minwidth300 maxwidth400');	// Fill the array $arrayofxaxis with possible fields
+	print '</div>';
 
-print '<div class="divadvancedsearchfield">';
-print '<input type="submit" class="button buttongen button-save nomargintop" value="'.$langs->trans("Refresh").'">';
-print '</div>';
-print '</div>';
-print '</form>';
+	// Group by
+	$count = 0;
+	print '<div class="divadvancedsearchfield">';
+	print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-horizontal paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("GroupBy")).'"></span></div>';
+	print $formother->selectGroupByField($object, $search_groupby, $arrayofgroupby, 'minwidth250 maxwidth300', $langs->trans("GroupBy"));	// Fill the array $arrayofgroupby with possible fields
+	print '</div>';
+
+
+	if ($mode == 'grid') {
+		// YAxis
+		print '<div class="divadvancedsearchfield">';
+		foreach ($object->fields as $key => $val) {
+			if (empty($val['measure']) && (!isset($val['enabled']) || dol_eval($val['enabled'], 1, 1, '1'))) {
+				if (in_array($key, array('id', 'rowid', 'entity', 'last_main_doc', 'extraparams'))) {
+					continue;
+				}
+				if (preg_match('/^fk_/', $key)) {
+					continue;
+				}
+				if (in_array($val['type'], array('html', 'text'))) {
+					continue;
+				}
+				if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
+					$arrayofyaxis['t.'.$key.'-year'] = array(
+						'label' => $langs->trans($val['label']).' ('.$YYYY.')',
+						'position' => $val['position'],
+						'table' => $object->table_element
+					);
+					$arrayofyaxis['t.'.$key.'-month'] = array(
+						'label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.')',
+						'position' => $val['position'],
+						'table' => $object->table_element
+					);
+					$arrayofyaxis['t.'.$key.'-day'] = array(
+						'label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.'-'.$DD.')',
+						'position' => $val['position'],
+						'table' => $object->table_element
+					);
+				} else {
+					$arrayofyaxis['t.'.$key] = array(
+						'label' => $val['label'],
+						'position' => (int) $val['position'],
+						'table' => $object->table_element
+					);
+				}
+			}
+		}
+		// Add measure from extrafields
+		if ($object->isextrafieldmanaged) {
+			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
+					$arrayofyaxis['te.'.$key] = array(
+						'label' => $extrafields->attributes[$object->table_element]['label'][$key],
+						'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key],
+						'table' => $object->table_element
+					);
+				}
+			}
+		}
+		$arrayofyaxis = dol_sort_array($arrayofyaxis, 'position');
+		$arrayofyaxislabel = array();
+		foreach ($arrayofyaxis as $key => $val) {
+			$arrayofyaxislabel[$key] = $val['label'];
+		}
+		print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-vertical paddingright" title="'.$langs->trans("YAxis").'"></span>'.$langs->trans("YAxis").'</div> ';
+		print $form->multiselectarray('search_yaxis', $arrayofyaxislabel, $search_yaxis, 0, 0, 'minwidth100', 1);
+		print '</div>';
+	}
+
+	if ($mode == 'graph') {
+		//
+	}
+
+	print '<div class="divadvancedsearchfield">';
+	print '<input type="submit" class="button buttongen button-save nomargintop" value="'.$langs->trans("Refresh").'">';
+	print '</div>';
+	print '</div>';
+	print '</form>';
+}
 
 // Generate the SQL request
 $sql = '';
@@ -935,7 +971,7 @@ if ($sql) {
 				}
 				$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->transnoentitiesnoconv("Empty") : $langs->transnoentitiesnoconv("NotDefined")));
 
-				if ($oldlabeltouse && ($labeltouse != $oldlabeltouse)) {
+				if ($oldlabeltouse !== '' && ($labeltouse != $oldlabeltouse)) {
 					$xi++; // Increase $xi
 				}
 				//var_dump($labeltouse.' '.$oldlabeltouse.' '.$xi);
@@ -1087,7 +1123,7 @@ if ($mode == 'graph') {
 	}
 }
 
-if ($sql) {
+if ($sql && !defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	// Show admin info
 	print '<br>'.info_admin($langs->trans("SQLUsedForExport").':<br> '.$sql, 0, 0, 1, '', 'TechnicalInformation');
 }
@@ -1096,13 +1132,12 @@ print '<div>';
 
 if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	print dol_get_fiche_end();
+
+	llxFooter();
+	// End of page
 }
 
-// End of page
-llxFooter();
-
 $db->close();
-
 
 
 
@@ -1122,6 +1157,9 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 {
 	global $langs, $extrafields, $db;
 
+	if (empty($object)) {	// Protection against bad use of method
+		return array();
+	}
 	if ($level > 10) {	// Protection against infinite loop
 		return $arrayofmesures;
 	}
@@ -1187,28 +1225,28 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 				$arrayofmesures[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-sum'] = array(
 					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>',
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
-					'position' => ($position+($count * 100000)).'.1',
+					'position' => ($position + ($count * 100000)).'.1',
 					'table' => $object->table_element,
 					'tablefromt' => $tablepath
 				);
 				$arrayofmesures[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-average'] = array(
 					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Average").')</span>',
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
-					'position' => ($position+($count * 100000)).'.2',
+					'position' => ($position + ($count * 100000)).'.2',
 					'table' => $object->table_element,
 					'tablefromt' => $tablepath
 				);
 				$arrayofmesures[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-min'] = array(
 					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Minimum").')</span>',
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
-					'position' => ($position+($count * 100000)).'.3',
+					'position' => ($position + ($count * 100000)).'.3',
 					'table' => $object->table_element,
 					'tablefromt' => $tablepath
 				);
 				$arrayofmesures[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-max'] = array(
 					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Maximum").')</span>',
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
-					'position' => ($position+($count * 100000)).'.4',
+					'position' => ($position + ($count * 100000)).'.4',
 					'table' => $object->table_element,
 					'tablefromt' => $tablepath
 				);
@@ -1254,6 +1292,9 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 {
 	global $langs, $extrafields, $db;
 
+	if (empty($object)) {	// Protection against bad use of method
+		return array();
+	}
 	if ($level >= 3) {	// Limit scan on 2 levels max
 		return $arrayofxaxis;
 	}
@@ -1420,6 +1461,9 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 {
 	global $langs, $extrafields, $db;
 
+	if (empty($object)) {	// Protection against bad use of method
+		return array();
+	}
 	if ($level >= 3) {
 		return $arrayofgroupby;
 	}

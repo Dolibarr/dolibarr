@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2023       Joachim Kueter     		<git-jk@bloxera.com>
  *
@@ -144,7 +144,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 			$error++;
 		}
-		if (isModEnabled("banque") && !$object->accountid > 0) {
+		if (isModEnabled("bank") && !$object->accountid > 0) {
 			$langs->load('errors');
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 			$error++;
@@ -264,7 +264,8 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 	$object->fetch($id);
 
 	if ($object->id > 0) {
-		$object->id = $object->ref = null;
+		unset($object->id);
+		unset($object->ref);
 
 		if (GETPOST('clone_label', 'alphanohtml')) {
 			$object->label = GETPOST('clone_label', 'alphanohtml');
@@ -434,7 +435,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Bank
-	if (isModEnabled("banque")) {
+	if (isModEnabled("bank")) {
 		print '<tr><td>';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
@@ -449,7 +450,7 @@ if ($action == 'create') {
 	print '</tr>';
 
 	// Number
-	if (isModEnabled("banque")) {
+	if (isModEnabled("bank")) {
 		print '<tr><td><label for="num_payment">'.$langs->trans('Numero');
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '</label></td>';
@@ -686,7 +687,7 @@ if ($id) {
 
 	$bankaccountnotfound = 0;
 
-	if (isModEnabled('banque')) {
+	if (isModEnabled('bank')) {
 		print '<tr>';
 		print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 		print '<td colspan="3">';

@@ -136,7 +136,7 @@ $confirm			= GETPOST('confirm', 'alpha');
 $step				= (GETPOST('step') ? GETPOST('step') : 1);
 $import_name = GETPOST('import_name');
 $hexa				= GETPOST('hexa');
-$importmodelid = GETPOST('importmodelid', 'int');
+$importmodelid = GETPOSTINT('importmodelid');
 $excludefirstline = (GETPOST('excludefirstline') ? GETPOST('excludefirstline') : 2);
 $endatlinenb		= (GETPOST('endatlinenb') ? GETPOST('endatlinenb') : '');
 $updatekeys			= (GETPOST('updatekeys', 'array') ? GETPOST('updatekeys', 'array') : array());
@@ -219,8 +219,8 @@ if ($action=='downfield' || $action=='upfield')
 // }
 
 if ($action == 'deleteprof') {
-	if (GETPOST("id", 'int')) {
-		$objimport->fetch(GETPOST("id", 'int'));
+	if (GETPOSTINT("id")) {
+		$objimport->fetch(GETPOSTINT("id"));
 		$result = $objimport->delete($user);
 	}
 }

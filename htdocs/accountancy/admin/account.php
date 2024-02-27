@@ -35,8 +35,8 @@ $langs->loadLangs(array('accountancy', 'admin', 'bills', 'compta', 'salaries'));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
-$id = GETPOST('id', 'int');
-$rowid = GETPOST('rowid', 'int');
+$id = GETPOSTINT('id');
+$rowid = GETPOSTINT('rowid');
 $massaction = GETPOST('massaction', 'aZ09');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'accountingaccountlist'; // To manage different context of search
@@ -49,10 +49,10 @@ $search_accountparent = GETPOST('search_accountparent', 'alpha');
 $search_pcgtype = GETPOST('search_pcgtype', 'alpha');
 $search_import_key = GETPOST('search_import_key', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $confirm = GETPOST('confirm', 'alpha');
 
-$chartofaccounts = GETPOST('chartofaccounts', 'int');
+$chartofaccounts = GETPOSTINT('chartofaccounts');
 
 $permissiontoadd = $user->hasRight('accounting', 'chartofaccount');
 $permissiontodelete = $user->hasRight('accounting', 'chartofaccount');
@@ -66,10 +66,10 @@ if (!$user->hasRight('accounting', 'chartofaccount')) {
 }
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -147,11 +147,12 @@ if (empty($reshook)) {
 		$search_import_key = "";
 		$search_array_options = array();
 	}
-	if ((GETPOST('valid_change_chart', 'alpha') && GETPOST('chartofaccounts', 'int') > 0)	// explicit click on button 'Change and load' with js on
-		|| (GETPOST('chartofaccounts', 'int') > 0 && GETPOST('chartofaccounts', 'int') != getDolGlobalInt('CHARTOFACCOUNTS'))) {	// a submit of form is done and chartofaccounts combo has been modified
+	if ((GETPOSTINT('valid_change_chart') && GETPOSTINT('chartofaccounts') > 0)	// explicit click on button 'Change and load' with js on
+		|| (GETPOSTINT('chartofaccounts') > 0 && GETPOSTINT('chartofaccounts') != getDolGlobalInt('CHARTOFACCOUNTS'))) {	// a submit of form is done and chartofaccounts combo has been modified
 		$error = 0;
 
 		if ($chartofaccounts > 0 && $permissiontoadd) {
+			$country_code = '';
 			// Get language code for this $chartofaccounts
 			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_country as c, '.MAIN_DB_PREFIX.'accounting_system as a';
 			$sql .= ' WHERE c.rowid = a.fk_country AND a.rowid = '.(int) $chartofaccounts;
@@ -199,7 +200,7 @@ if (empty($reshook)) {
 
 	if ($action == 'disable' && $permissiontoadd) {
 		if ($accounting->fetch($id)) {
-			$mode = GETPOST('mode', 'int');
+			$mode = GETPOSTINT('mode');
 			$result = $accounting->accountDeactivate($id, $mode);
 		}
 
@@ -209,7 +210,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'enable' && $permissiontoadd) {
 		if ($accounting->fetch($id)) {
-			$mode = GETPOST('mode', 'int');
+			$mode = GETPOSTINT('mode');
 			$result = $accounting->accountActivate($id, $mode);
 		}
 		$action = 'update';

@@ -58,8 +58,8 @@ if ($nbmodulesnotautoenabled <= getDolGlobalString('MAIN_MIN_NB_ENABLED_MODULE_F
 }
 if (GETPOST('addbox')) {	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'int');
-	$userid = GETPOST('userid', 'int');
+	$zone = GETPOSTINT('areacode');
+	$userid = GETPOSTINT('userid');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
 
@@ -206,7 +206,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD')) {
 	}
 
 	// Number of sales orders
-	if (isModEnabled('commande')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_CUSTOMER') && $user->hasRight('commande', 'lire')) {
+	if (isModEnabled('order')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_CUSTOMER') && $user->hasRight('commande', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 		$board = new Commande($db);
 		// Number of customer orders to be shipped (validated and in progress)
@@ -228,7 +228,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD')) {
 	}
 
 	// Number of contract / services enabled (delayed)
-	if (isModEnabled('contrat')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_CONTRACT') && $user->hasRight('contrat', 'lire')) {
+	if (isModEnabled('contract')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_CONTRACT') && $user->hasRight('contrat', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 		$board = new Contrat($db);
 		$dashboardlines[$board->element.'_inactive'] = $board->load_board($user, "inactive");
@@ -246,7 +246,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD')) {
 	}
 
 	// Number of invoices customers (paid)
-	if (isModEnabled('facture') && !getDolGlobalString('MAIN_DISABLE_BLOCK_CUSTOMER') && $user->hasRight('facture', 'lire')) {
+	if (isModEnabled('invoice') && !getDolGlobalString('MAIN_DISABLE_BLOCK_CUSTOMER') && $user->hasRight('facture', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$board = new Facture($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
@@ -260,7 +260,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD')) {
 	}
 
 	// Number of transactions to conciliate
-	if (isModEnabled('banque')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_BANK') && $user->hasRight('banque', 'lire') && !$user->socid) {
+	if (isModEnabled('bank')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_BANK') && $user->hasRight('banque', 'lire') && !$user->socid) {
 		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$board = new Account($db);
 		$nb = $board->countAccountToReconcile(); // Get nb of account to reconciliate
@@ -271,7 +271,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD')) {
 
 
 	// Number of cheque to send
-	if (isModEnabled('banque')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_BANK') && $user->hasRight('banque', 'lire') && !$user->socid) {
+	if (isModEnabled('bank')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_BANK') && $user->hasRight('banque', 'lire') && !$user->socid) {
 		if (!getDolGlobalString('BANK_DISABLE_CHECK_DEPOSIT')) {
 			include_once DOL_DOCUMENT_ROOT . '/compta/paiement/cheque/class/remisecheque.class.php';
 			$board = new RemiseCheque($db);
@@ -290,7 +290,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD')) {
 	}
 
 	// Number of foundation members
-	if (isModEnabled('adherent')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_ADHERENT') && $user->hasRight('adherent', 'lire') && !$user->socid) {
+	if (isModEnabled('member')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_ADHERENT') && $user->hasRight('adherent', 'lire') && !$user->socid) {
 		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$board = new Adherent($db);
 		$dashboardlines[$board->element.'_shift'] = $board->load_board($user, 'shift');

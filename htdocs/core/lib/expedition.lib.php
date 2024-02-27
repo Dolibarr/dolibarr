@@ -35,7 +35,7 @@
 function expedition_prepare_head(Expedition $object)
 {
 	global $langs, $conf, $user;
-	if (isModEnabled("expedition")) {
+	if (isModEnabled("delivery_note")) {
 		$langs->load("sendings");
 	}
 	$langs->load("orders");

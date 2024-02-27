@@ -41,7 +41,7 @@ $langs->loadLangs(array('errors', 'admin', 'modulebuilder', 'exports'));
 
 $mode = GETPOST('mode', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 if (empty($mode)) {
 	$mode = 'desc';
 }
@@ -200,7 +200,7 @@ foreach ($modulesdir as $dir) {
 								dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 							}
 						} else {
-							print "Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
+							print info_admin("Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)", 0, 0, '1', 'warning');
 						}
 					} catch (Exception $e) {
 						dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);

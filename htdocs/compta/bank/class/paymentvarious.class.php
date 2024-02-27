@@ -472,11 +472,11 @@ class PaymentVarious extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -5;
 		}
-		if (isModEnabled("banque") && (empty($this->fk_account) || $this->fk_account <= 0)) {
+		if (isModEnabled("bank") && (empty($this->fk_account) || $this->fk_account <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("BankAccount"));
 			return -6;
 		}
-		if (isModEnabled("banque") && (empty($this->type_payment) || $this->type_payment <= 0)) {
+		if (isModEnabled("bank") && (empty($this->type_payment) || $this->type_payment <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 			return -7;
 		}
@@ -530,7 +530,7 @@ class PaymentVarious extends CommonObject
 			$this->ref = (string) $this->id;
 
 			if ($this->id > 0) {
-				if (isModEnabled("banque") && !empty($this->amount)) {
+				if (isModEnabled("bank") && !empty($this->amount)) {
 					// Insert into llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 

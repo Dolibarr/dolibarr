@@ -192,9 +192,9 @@ if (session_id() && !empty($_SESSION["dol_entity"])) {
 } elseif (!empty($_ENV["dol_entity"])) {
 	// Entity inside a CLI script
 	$conf->entity = $_ENV["dol_entity"];
-} elseif (GETPOSTISSET("loginfunction") && (GETPOST("entity", 'int') || GETPOST("switchentity", 'int'))) {
+} elseif (GETPOSTISSET("loginfunction") && (GETPOSTINT("entity") || GETPOSTINT("switchentity"))) {
 	// Just after a login page
-	$conf->entity = (GETPOSTISSET("entity") ? GETPOST("entity", 'int') : GETPOST("switchentity", 'int'));
+	$conf->entity = (GETPOSTISSET("entity") ? GETPOSTINT("entity") : GETPOSTINT("switchentity"));
 } elseif (defined('DOLENTITY') && is_numeric(constant('DOLENTITY'))) {
 	// For public page with MultiCompany module
 	$conf->entity = constant('DOLENTITY');

@@ -34,8 +34,8 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $search_opp_status = GETPOST("search_opp_status", 'alpha');
 
-$userid = GETPOST('userid', 'int');
-$socid = GETPOST('socid', 'int');
+$userid = GETPOSTINT('userid');
+$socid = GETPOSTINT('socid');
 // Security check
 if ($user->socid > 0) {
 	$action = '';

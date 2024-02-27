@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 
@@ -937,7 +937,7 @@ class Reception extends CommonObject
 			$this->fk_user_valid = trim($this->fk_user_valid);
 		}
 		if (isset($this->shipping_method_id)) {
-			$this->shipping_method_id = trim($this->shipping_method_id);
+			$this->shipping_method_id = (int) $this->shipping_method_id;
 		}
 		if (isset($this->tracking_number)) {
 			$this->tracking_number = trim($this->tracking_number);

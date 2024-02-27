@@ -48,10 +48,10 @@ if (empty($mode)) {
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 
 
-$search_statut = GETPOST('search_statut', 'int');
+$search_statut = GETPOSTINT('search_statut');
 if ($search_statut == '' || $search_statut == '0') {
 	$search_statut = '1';
 }

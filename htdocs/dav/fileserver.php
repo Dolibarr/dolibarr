@@ -81,7 +81,7 @@ if (getDolGlobalString('DAV_RESTRICT_ON_IP')) {
 }
 
 
-$entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
+$entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : (!empty($conf->entity) ? $conf->entity : 1));
 
 // settings
 $publicDir = $conf->dav->multidir_output[$entity].'/public';
@@ -126,7 +126,7 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $p
 	}
 
 	$authmode = explode(',', $dolibarr_main_authentication);
-	$entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
+	$entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : (!empty($conf->entity) ? $conf->entity : 1));
 
 	if (checkLoginPassEntity($username, $password, $entity, $authmode, 'dav') != $username) {
 		return false;

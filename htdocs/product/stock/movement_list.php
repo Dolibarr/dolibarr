@@ -60,22 +60,22 @@ $backtopage = GETPOST("backtopage", "alpha");
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$msid = GETPOST('msid', 'int');
-$idproduct = GETPOST('idproduct', 'int');
-$product_id = GETPOST("product_id", 'int');
-$show_files = GETPOST('show_files', 'int');
+$msid = GETPOSTINT('msid');
+$idproduct = GETPOSTINT('idproduct');
+$product_id = GETPOSTINT("product_id");
+$show_files = GETPOSTINT('show_files');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$search_date_startday = GETPOST('search_date_startday', 'int');
-$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
-$search_date_startyear = GETPOST('search_date_startyear', 'int');
-$search_date_endday = GETPOST('search_date_endday', 'int');
-$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
-$search_date_endyear = GETPOST('search_date_endyear', 'int');
-$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'), 'tzuserrel');
-$search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'), 'tzuserrel');
+$search_date_startday = GETPOSTINT('search_date_startday');
+$search_date_startmonth = GETPOSTINT('search_date_startmonth');
+$search_date_startyear = GETPOSTINT('search_date_startyear');
+$search_date_endday = GETPOSTINT('search_date_endday');
+$search_date_endmonth = GETPOSTINT('search_date_endmonth');
+$search_date_endyear = GETPOSTINT('search_date_endyear');
+$search_date_start = dol_mktime(0, 0, 0, GETPOSTINT('search_date_startmonth'), GETPOSTINT('search_date_startday'), GETPOSTINT('search_date_startyear'), 'tzuserrel');
+$search_date_end = dol_mktime(23, 59, 59, GETPOSTINT('search_date_endmonth'), GETPOSTINT('search_date_endday'), GETPOSTINT('search_date_endyear'), 'tzuserrel');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_movement = GETPOST("search_movement");
 $search_product_ref = trim(GETPOST("search_product_ref"));
@@ -85,16 +85,16 @@ $search_inventorycode = trim(GETPOST("search_inventorycode"));
 $search_user = trim(GETPOST("search_user"));
 $search_batch = trim(GETPOST("search_batch"));
 $search_qty = trim(GETPOST("search_qty"));
-$search_type_mouvement = GETPOST('search_type_mouvement', 'int');
-$search_fk_project=GETPOST("search_fk_project", 'int');
+$search_type_mouvement = GETPOSTINT('search_type_mouvement');
+$search_fk_project=GETPOSTINT("search_fk_project");
 
-$type = GETPOST("type", "int");
+$type = GETPOSTINT("type");
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -110,7 +110,7 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-$pdluoid = GETPOST('pdluoid', 'int');
+$pdluoid = GETPOSTINT('pdluoid');
 
 // Initialize technical objects
 $object = new MouvementStock($db);
@@ -366,9 +366,9 @@ if ($action == "correct_stock") {
 		$origin_element = '';
 		$origin_id = null;
 
-		if (GETPOST('projectid', 'int')) {
+		if (GETPOSTINT('projectid')) {
 			$origin_element = 'project';
-			$origin_id = GETPOST('projectid', 'int');
+			$origin_id = GETPOSTINT('projectid');
 		}
 
 		if ($product->hasbatch()) {
@@ -376,14 +376,14 @@ if ($action == "correct_stock") {
 
 			//$eatby=GETPOST('eatby');
 			//$sellby=GETPOST('sellby');
-			$eatby = dol_mktime(0, 0, 0, GETPOST('eatbymonth', 'int'), GETPOST('eatbyday', 'int'), GETPOST('eatbyyear', 'int'));
-			$sellby = dol_mktime(0, 0, 0, GETPOST('sellbymonth', 'int'), GETPOST('sellbyday', 'int'), GETPOST('sellbyyear', 'int'));
+			$eatby = dol_mktime(0, 0, 0, GETPOSTINT('eatbymonth'), GETPOSTINT('eatbyday'), GETPOSTINT('eatbyyear'));
+			$sellby = dol_mktime(0, 0, 0, GETPOSTINT('sellbymonth'), GETPOSTINT('sellbyday'), GETPOSTINT('sellbyyear'));
 
 			$result = $product->correct_stock_batch(
 				$user,
 				$id,
-				GETPOST("nbpiece", 'int'),
-				GETPOST("mouvement", 'int'),
+				GETPOSTINT("nbpiece"),
+				GETPOSTINT("mouvement"),
 				GETPOST("label", 'alphanohtml'),
 				price2num(GETPOST('unitprice'), 'MT'),
 				$eatby,
@@ -399,8 +399,8 @@ if ($action == "correct_stock") {
 			$result = $product->correct_stock(
 				$user,
 				$id,
-				GETPOST("nbpiece", 'int'),
-				GETPOST("mouvement", "int"),
+				GETPOSTINT("nbpiece"),
+				GETPOSTINT("mouvement"),
 				GETPOST("label", 'alphanohtml'),
 				price2num(GETPOST('unitprice'), 'MT'),
 				GETPOST('inventorycode', 'alphanohtml'),
@@ -433,7 +433,7 @@ if ($action == "transfert_stock" && !$cancel) {
 		$result = $product->fetch($product_id);
 	}
 
-	if (!(GETPOST("id_entrepot_destination", 'int') > 0)) {
+	if (!(GETPOSTINT("id_entrepot_destination") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 		$error++;
 		$action = 'transfert';
@@ -443,12 +443,12 @@ if ($action == "transfert_stock" && !$cancel) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		$action = 'transfert';
 	}
-	if (!GETPOST("nbpiece", 'int')) {
+	if (!GETPOSTINT("nbpiece")) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$error++;
 		$action = 'transfert';
 	}
-	if ($id == GETPOST("id_entrepot_destination", 'int')) {
+	if ($id == GETPOSTINT("id_entrepot_destination")) {
 		setEventMessages($langs->trans("ErrorSrcAndTargetWarehouseMustDiffers"), null, 'errors');
 		$error++;
 		$action = 'transfert';
@@ -507,7 +507,7 @@ if ($action == "transfert_stock" && !$cancel) {
 					$result1 = $product->correct_stock_batch(
 						$user,
 						$srcwarehouseid,
-						GETPOST("nbpiece", 'int'),
+						GETPOSTINT("nbpiece"),
 						1,
 						GETPOST("label", 'san_alpha'),
 						$pricesrc,
@@ -523,8 +523,8 @@ if ($action == "transfert_stock" && !$cancel) {
 					// Add stock
 					$result2 = $product->correct_stock_batch(
 						$user,
-						GETPOST("id_entrepot_destination", 'int'),
-						GETPOST("nbpiece", 'int'),
+						GETPOSTINT("id_entrepot_destination"),
+						GETPOSTINT("nbpiece"),
 						0,
 						GETPOST("label", 'san_alpha'),
 						$pricedest,
@@ -939,7 +939,7 @@ if ($warehouse->id > 0) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	// Categories
-	if (isModEnabled('categorie')) {
+	if (isModEnabled('category')) {
 		print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
 		print $form->showCategories($warehouse->id, Categorie::TYPE_WAREHOUSE, 1);
 		print "</td></tr>";
@@ -1074,7 +1074,7 @@ if (getDolGlobalString('STOCK_ALLOW_DELETE_OF_MOVEMENT') && $permissiontodelete)
 if (!empty($permissiontoadd)) {
 	$arrayofmassactions['prereverse'] = img_picto('', 'add', 'class="pictofixedwidth"').$langs->trans("Reverse");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'prereverse'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete', 'prereverse'))) {
 	$arrayofmassactions = array();
 }
 
