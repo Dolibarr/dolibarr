@@ -35,7 +35,7 @@ $langs->loadLangs(array('companies', 'products', 'admin', 'users', 'languages', 
 // Defini si peux lire/modifier permissions
 $canreaduser = ($user->admin || $user->hasRight("user", "user", "read"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userihm'; // To manage different context of search
 
@@ -111,7 +111,7 @@ if (empty($reshook)) {
 			}
 
 			if (GETPOST("check_SIZE_LISTE_LIMIT") == "on") {
-				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = GETPOST("MAIN_SIZE_LISTE_LIMIT", 'int');
+				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = GETPOSTINT("MAIN_SIZE_LISTE_LIMIT");
 			} else {
 				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = '';
 			}
