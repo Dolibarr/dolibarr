@@ -95,7 +95,7 @@ $arrayfields = array(
 	'd.firstname'=>array('label'=>"Firstname", 'checked'=>1),
 	'd.login'=>array('label'=>"Login", 'checked'=>1),
 	't.libelle'=>array('label'=>"Label", 'checked'=>1),
-	'd.bank'=>array('label'=>"BankAccount", 'checked'=>1, 'enabled'=>(isModEnabled('banque'))),
+	'd.bank'=>array('label'=>"BankAccount", 'checked'=>1, 'enabled'=>(isModEnabled('bank'))),
 	/*'d.note_public'=>array('label'=>"NotePublic", 'checked'=>0),
 	 'd.note_private'=>array('label'=>"NotePrivate", 'checked'=>0),*/
 	'c.dateadh'=>array('label'=>"DateSubscription", 'checked'=>1, 'position'=>100),
