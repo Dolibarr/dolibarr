@@ -1030,7 +1030,7 @@ if ($user->hasRight("user", "user", "lire")) {
 	$moreforfilter .= '</div>';
 }
 // If the user can view prospects other than his'
-if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
+if (isModEnabled('category') && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
@@ -1039,7 +1039,7 @@ if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire') && ($user-
 	$moreforfilter .= '</div>';
 }
 
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('SuppliersCategoriesShort');
