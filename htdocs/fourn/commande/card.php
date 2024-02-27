@@ -12,6 +12,7 @@
  * Copyright (C) 2022      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023 	   Joachim Kueter       <git-jk@bloxera.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under	the	terms of the GNU General Public	License	as published by
@@ -173,7 +174,7 @@ $error = 0;
  * Actions
  */
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -553,7 +554,7 @@ if (empty($reshook)) {
 
 				//If text set in desc is the same as product descpription (as now it's preloaded) we add it only one time
 				if (trim($product_desc) == trim($desc) && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
-					$product_desc='';
+					$product_desc = '';
 				}
 
 				if (!empty($product_desc) && getDolGlobalString('MAIN_NO_CONCAT_DESCRIPTION')) {
@@ -1146,10 +1147,8 @@ if (empty($reshook)) {
 					$langs->load("deliveries");
 					setEventMessages($langs->trans("DeliveryStateSaved"), null);
 					$action = '';
-				} elseif ($result == -3) {
-					$error++;
-					setEventMessages($object->error, $object->errors, 'errors');
 				} else {
+					//if ($result == -3) {}
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -1442,11 +1441,11 @@ if (empty($reshook)) {
 		// NS and Authentication parameters
 		$ws_ns = 'http://www.dolibarr.org/ns/';
 		$ws_authentication = array(
-			'dolibarrkey'=>$ws_key,
-			'sourceapplication'=>'DolibarrWebServiceClient',
-			'login'=>$ws_user,
-			'password'=>$ws_password,
-			'entity'=>$ws_entity
+			'dolibarrkey' => $ws_key,
+			'sourceapplication' => 'DolibarrWebServiceClient',
+			'login' => $ws_user,
+			'password' => $ws_password,
+			'entity' => $ws_entity
 		);
 
 		//Is sync supplier web services module activated? and everything filled?
@@ -1501,7 +1500,7 @@ if (empty($reshook)) {
 				'lines'         => $order_lines
 			);
 
-			$ws_parameters = array('authentication'=>$ws_authentication, 'order' => $order);
+			$ws_parameters = array('authentication' => $ws_authentication, 'order' => $order);
 			$result_order = $soapclient_order->call("createOrder", $ws_parameters, $ws_ns, '');
 
 			if (empty($result_order["result"]["result_code"])) { //No result, check error str
@@ -2036,7 +2035,7 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
-	$parameters = array('formConfirm' => $formconfirm, 'lineid'=>$lineid);
+	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$formconfirm .= $hookmanager->resPrint;
@@ -2805,11 +2804,11 @@ if ($action == 'create') {
 			// NS and Authentication parameters
 			$ws_ns = 'http://www.dolibarr.org/ns/';
 			$ws_authentication = array(
-			'dolibarrkey'=>$ws_key,
-			'sourceapplication'=>'DolibarrWebServiceClient',
-			'login'=>$ws_user,
-			'password'=>$ws_password,
-			'entity'=>''
+			'dolibarrkey' => $ws_key,
+			'sourceapplication' => 'DolibarrWebServiceClient',
+			'login' => $ws_user,
+			'password' => $ws_password,
+			'entity' => ''
 			);
 
 			print load_fiche_titre($langs->trans('CreateRemoteOrder'), '');
@@ -2865,7 +2864,7 @@ if ($action == 'create') {
 				$soapclient_user->decodeUTF8(false);
 
 				//Get the thirdparty associated to user
-				$ws_parameters = array('authentication'=>$ws_authentication, 'id' => '', 'ref'=>$ws_user);
+				$ws_parameters = array('authentication' => $ws_authentication, 'id' => '', 'ref' => $ws_user);
 				$result_user = $soapclient_user->call("getUser", $ws_parameters, $ws_ns, '');
 				$user_status_code = $result_user["result"]["result_code"];
 
