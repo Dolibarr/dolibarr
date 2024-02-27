@@ -56,7 +56,7 @@ $langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bi
 // Get parameters
 $action 	= GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm 	= GETPOST('confirm', 'alpha');
 $toselect 	= GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'thirdpartylist';
@@ -70,7 +70,7 @@ $mode = GETPOST("mode", 'alpha');
 $search_all = trim(GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 
-$search_id = trim(GETPOST("search_id", "int"));
+$search_id = trim(GETPOSTINT("search_id"));
 $search_nom = trim(GETPOST("search_nom", 'restricthtml'));
 $search_alias = trim(GETPOST("search_alias", 'restricthtml'));
 $search_nom_only = trim(GETPOST("search_nom_only", 'restricthtml'));
@@ -96,9 +96,9 @@ $search_idprof4 = trim(GETPOST('search_idprof4', 'alpha'));
 $search_idprof5 = trim(GETPOST('search_idprof5', 'alpha'));
 $search_idprof6 = trim(GETPOST('search_idprof6', 'alpha'));
 $search_vat = trim(GETPOST('search_vat', 'alpha'));
-$search_sale = GETPOST("search_sale", 'int');
-$search_categ_cus = GETPOST("search_categ_cus", 'int');
-$search_categ_sup = GETPOST("search_categ_sup", 'int');
+$search_sale = GETPOSTINT("search_sale");
+$search_categ_cus = GETPOSTINT("search_categ_cus");
+$search_categ_sup = GETPOSTINT("search_categ_sup");
 $searchCategoryCustomerOperator = 0;
 $searchCategorySupplierOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
@@ -117,32 +117,32 @@ if (!empty($search_categ_sup) && empty($searchCategorySupplierList)) {
 	$searchCategorySupplierList = array($search_categ_sup);
 }
 $search_country = GETPOST("search_country", 'intcomma');
-$search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
-$search_price_level = GETPOST('search_price_level', 'int');
-$search_staff = GETPOST("search_staff", 'int');
-$search_status = GETPOST("search_status", 'int');
+$search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
+$search_price_level = GETPOSTINT('search_price_level');
+$search_staff = GETPOSTINT("search_staff");
+$search_status = GETPOSTINT("search_status");
 $search_type = GETPOST('search_type', 'alpha');
 $search_level = GETPOST("search_level", "array:alpha");
 $search_stcomm = GETPOST('search_stcomm', "array:int");
 $search_import_key  = trim(GETPOST("search_import_key", "alpha"));
 $search_parent_name = trim(GETPOST('search_parent_name', 'alpha'));
 
-$search_date_creation_startmonth = GETPOST('search_date_creation_startmonth', 'int');
-$search_date_creation_startyear = GETPOST('search_date_creation_startyear', 'int');
-$search_date_creation_startday = GETPOST('search_date_creation_startday', 'int');
+$search_date_creation_startmonth = GETPOSTINT('search_date_creation_startmonth');
+$search_date_creation_startyear = GETPOSTINT('search_date_creation_startyear');
+$search_date_creation_startday = GETPOSTINT('search_date_creation_startday');
 $search_date_creation_start = dol_mktime(0, 0, 0, $search_date_creation_startmonth, $search_date_creation_startday, $search_date_creation_startyear);	// Use tzserver
-$search_date_creation_endmonth = GETPOST('search_date_creation_endmonth', 'int');
-$search_date_creation_endyear = GETPOST('search_date_creation_endyear', 'int');
-$search_date_creation_endday = GETPOST('search_date_creation_endday', 'int');
+$search_date_creation_endmonth = GETPOSTINT('search_date_creation_endmonth');
+$search_date_creation_endyear = GETPOSTINT('search_date_creation_endyear');
+$search_date_creation_endday = GETPOSTINT('search_date_creation_endday');
 $search_date_creation_end = dol_mktime(23, 59, 59, $search_date_creation_endmonth, $search_date_creation_endday, $search_date_creation_endyear);	// Use tzserver
 
-$search_date_modif_startmonth = GETPOST('search_date_modif_startmonth', 'int');
-$search_date_modif_startyear = GETPOST('search_date_modif_startyear', 'int');
-$search_date_modif_startday = GETPOST('search_date_modif_startday', 'int');
+$search_date_modif_startmonth = GETPOSTINT('search_date_modif_startmonth');
+$search_date_modif_startyear = GETPOSTINT('search_date_modif_startyear');
+$search_date_modif_startday = GETPOSTINT('search_date_modif_startday');
 $search_date_modif_start = dol_mktime(0, 0, 0, $search_date_modif_startmonth, $search_date_modif_startday, $search_date_modif_startyear);	// Use tzserver
-$search_date_modif_endmonth = GETPOST('search_date_modif_endmonth', 'int');
-$search_date_modif_endyear = GETPOST('search_date_modif_endyear', 'int');
-$search_date_modif_endday = GETPOST('search_date_modif_endday', 'int');
+$search_date_modif_endmonth = GETPOSTINT('search_date_modif_endmonth');
+$search_date_modif_endyear = GETPOSTINT('search_date_modif_endyear');
+$search_date_modif_endday = GETPOSTINT('search_date_modif_endday');
 $search_date_modif_end = dol_mktime(23, 59, 59, $search_date_modif_endmonth, $search_date_modif_endday, $search_date_modif_endyear);	// Use tzserver
 
 
@@ -152,10 +152,10 @@ $place = GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'; // $place is
 $diroutputmassaction = $conf->societe->dir_output.'/temp/massgeneration/'.$user->id;
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (!$sortorder) {
 	$sortorder = "ASC";
 }
@@ -320,7 +320,7 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -333,7 +333,7 @@ $result = restrictedArea($user, 'societe', $socid, '');
  */
 
 if ($action == "change" && $user->hasRight('takepos', 'run')) {	// Change customer for TakePOS
-	$idcustomer = GETPOST('idcustomer', 'int');
+	$idcustomer = GETPOSTINT('idcustomer');
 
 	// Check if draft invoice already exists, if not create it
 	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' AND entity IN (".getEntity('invoice').")";
@@ -1106,7 +1106,7 @@ if ($user->hasRight("societe", "creer")) {
 if ($user->hasRight('societe', 'supprimer')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
