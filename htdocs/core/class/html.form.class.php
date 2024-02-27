@@ -17,7 +17,7 @@
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2022  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
@@ -2465,7 +2465,7 @@ class Form
 	 *										            'warehouseclosed' = count products from closed warehouses,
 	 *										            'warehouseinternal' = count products from warehouses for internal correct/transfer only
 	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
-	 *  @param		string		$nooutput				No print, return the output into a string
+	 *  @param		int 		$nooutput				No print if 1, return the output into a string
 	 *  @param		int			$status_purchase		Purchase status: -1=No filter on purchase status, 0=Products not on purchase, 1=Products on purchase
 	 *  @return		void|string
 	 */
