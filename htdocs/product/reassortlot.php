@@ -560,14 +560,14 @@ if ($search_categ > 0) {
 
 // Filter on categories
 $moreforfilter = '';
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= img_picto($langs->trans('ProductsCategoriesShort'), 'category', 'class="pictofixedwidth"');
 	$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1, $langs->trans("ProductsCategoryShort"), 'maxwidth400');
 	$moreforfilter .= '</div>';
 }
 // Filter on warehouse categories
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= img_picto($langs->trans('StockCategoriesShort'), 'category', 'class="pictofixedwidth"');
 	$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_WAREHOUSE, $search_warehouse_categ, 'search_warehouse_categ', 1, $langs->trans("StockCategoriesShort"), 'maxwidth400');
