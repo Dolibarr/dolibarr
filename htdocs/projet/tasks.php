@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -672,7 +672,7 @@ if ($id > 0 || !empty($ref)) {
 	print '</td></tr>';
 
 	// Categories
-	if (isModEnabled('categorie')) {
+	if (isModEnabled('category')) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
