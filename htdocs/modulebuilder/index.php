@@ -4186,6 +4186,7 @@ if ($module == 'initmodule') {
 								print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&token='.newToken().'&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 								print $form->textwithpicto('', $langs->trans("InfoForApiFile"), 1, 'warning');
 								print ' &nbsp; ';
+								// @phan-suppress-next-line ParamMatchRegexError
 								if (!isModEnabled($modulelowercase)) {	// If module is not activated
 									print '<a href="#" class="classfortooltip" target="apiexplorer" title="'.$langs->trans("ModuleMustBeEnabled", $module).'"><strike>'.$langs->trans("ApiExplorer").'</strike></a>';
 								} else {
