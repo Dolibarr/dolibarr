@@ -9,7 +9,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018       Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2020       Open-Dsi      			<support@open-dsi.fr>
  *
@@ -1629,6 +1629,8 @@ while ($i < $imaxinloop) {
 				$option_link = 'customer';
 				if ($objsoc->client == 0 && $objsoc->fournisseur > 0) {
 					$option_link = 'supplier';
+				} elseif ($objsoc->client == 0 && $objsoc->fournisseur == 0) {
+					$option_link = '';
 				}
 				if ($contextpage == 'poslist') {
 					print $objsoc->name;
