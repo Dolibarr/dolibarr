@@ -43,13 +43,13 @@ if (isModEnabled('margin')) {
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($socid < 0) {
 	$socid = 0;
 }
@@ -218,7 +218,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setdatep' && GETPOST('datepday') && $user->hasRight('facture', 'paiement')) {
-		$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
+		$datepaye = dol_mktime(GETPOSTINT('datephour'), GETPOSTINT('datepmin'), GETPOSTINT('datepsec'), GETPOSTINT('datepmonth'), GETPOSTINT('datepday'), GETPOSTINT('datepyear'));
 		$res = $object->update_date($datepaye);
 		if ($res === 0) {
 			setEventMessages($langs->trans('PaymentDateUpdateSucceeded'), null, 'mesgs');
@@ -237,7 +237,7 @@ if (empty($reshook)) {
 				$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
 			}
 
-			$bankaccountid = GETPOST('accountid', 'int');
+			$bankaccountid = GETPOSTINT('accountid');
 			if ($bankaccountid > 0) {
 				$object->paiementcode = $object->type_code;
 				$object->amounts = $object->getAmountsArray();
