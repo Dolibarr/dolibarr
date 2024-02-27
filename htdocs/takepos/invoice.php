@@ -195,7 +195,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($bankaccount <= 0 && $pay != "delayed" && isModEnabled("banque")) {
+		if ($bankaccount <= 0 && $pay != "delayed" && isModEnabled("bank")) {
 			$errormsg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount"));
 			$error++;
 		}
@@ -1438,7 +1438,7 @@ $( document ).ready(function() {
 
 	// Module Adherent
 	$s = '';
-	if (isModEnabled('adherent') && $invoice->socid > 0 && $invoice->socid != getDolGlobalInt($constforcompanyid)) {
+	if (isModEnabled('member') && $invoice->socid > 0 && $invoice->socid != getDolGlobalInt($constforcompanyid)) {
 		$s = '<span class="small">';
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$langs->load("members");
