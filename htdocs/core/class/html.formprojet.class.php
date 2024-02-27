@@ -75,7 +75,7 @@ class FormProjets extends Form
 	 * @param int 		$nooutput 		No print output. Return it only.
 	 * @param int 		$forceaddid 	Force to add project id in list, event if not qualified
 	 * @param string 	$morecss 		More css
-	 * @param int 		$htmlid 		Html id to use instead of htmlname
+	 * @param string	$htmlid 		Html id to use instead of htmlname, by example id="htmlid"
 	 * @param string 	$morefilter 	More filters (Must be a sql sanitized string)
 	 * @return string                   Return html content
 	 */
