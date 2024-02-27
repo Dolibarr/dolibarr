@@ -71,7 +71,7 @@ class DonationStats extends Stats
 	 * @param   int		$typentid  	Id of type of third party for filter
 	 * @param   int		$status    	Status of donation for filter
 	 */
-	public function __construct($db, $socid, $mode, $userid = 0, $typentid = 0, $status)
+	public function __construct($db, $socid, $mode, $userid = 0, $typentid = 0, $status = 0)
 	{
 		global $conf;
 
