@@ -231,7 +231,7 @@ if ($result > 0) {
 
 	$allow_delete = 1;
 	// Bank account
-	if (isModEnabled("banque")) {
+	if (isModEnabled("bank")) {
 		if ($object->fk_account) {
 			$bankline = new AccountLine($db);
 			$bankline->fetch($object->bank_line);
