@@ -51,7 +51,7 @@ if (getDolGlobalString('DATAPOLICY_USE_SPECIFIC_DELAY_FOR_CONTACT')) {
 		'DATAPOLICY_CONTACT_FOURNISSEUR'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'contact', 'class="pictofixedwidth"')),
 	);
 }
-if (isModEnabled('adherent')) {
+if (isModEnabled('member')) {
 	$arrayofparameters['Member'] = array(
 		'DATAPOLICY_ADHERENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'member', 'class="pictofixedwidth"')),
 	);
