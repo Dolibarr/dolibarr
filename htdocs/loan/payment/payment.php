@@ -167,6 +167,7 @@ if ($action == 'add_payment') {
 			}
 
 			if (!$error) {
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$result = $payment->addPaymentToBank($user, $chid, 'payment_loan', '(LoanPayment)', $payment->fk_bank, '', '');
 				if (!($result > 0)) {
 					setEventMessages($payment->error, $payment->errors, 'errors');
