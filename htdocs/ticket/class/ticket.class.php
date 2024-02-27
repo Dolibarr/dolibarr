@@ -1424,8 +1424,8 @@ class Ticket extends CommonObject
 		// phpcs:enable
 		global $langs, $hookmanager;
 
-		$labelStatus = !empty($status) ? $this->labelStatus[$status] : '';
-		$labelStatusShort = !empty($status) ? $this->labelStatusShort[$status] : '';
+		$labelStatus = (isset($status) && !empty($this->labelStatus[$status])) ? $this->labelStatus[$status] : '';
+		$labelStatusShort = (isset($status) && !empty($this->labelStatusShort[$status]))? $this->labelStatusShort[$status] : '';
 
 		switch ($status) {
 			case self::STATUS_NOT_READ:
