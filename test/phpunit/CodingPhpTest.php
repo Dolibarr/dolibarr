@@ -700,7 +700,7 @@ class CodingPhpTest extends CommonClassTest
 			print("\033[31mDeprecated module name, use '$new_name':\033[0m$message".PHP_EOL);
 
 			//trigger_error("Deprecated module name, use '$new_name': $message", E_USER_NOTICE);
-			//trigger_error("Deprecated module name, use '$new_name': $message", E_USER_DEPRECATED);
+			trigger_error("Deprecated module name, use '$new_name': $message", E_USER_DEPRECATED);
 		} else {
 			$this->assertTrue(
 				array_key_exists($module_name, self::VALID_MODULE_MAPPING),
