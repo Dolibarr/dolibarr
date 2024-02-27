@@ -215,7 +215,7 @@ if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
 
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
-if (isModEnabled('facture') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	if ($modecompta == 'CREANCES-DETTES') {
 		$sql = "SELECT sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -272,7 +272,7 @@ if (isModEnabled('facture') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 	// Nothing from this table
 }
 
-if (isModEnabled('facture') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	// On ajoute les paiements clients anciennes version, non lies par paiement_facture
 	if ($modecompta != 'CREANCES-DETTES') {
 		$sql = "SELECT sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
@@ -327,7 +327,7 @@ if (isModEnabled('facture') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
 
-if (isModEnabled('facture') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	if ($modecompta == 'CREANCES-DETTES') {
 		$sql = "SELECT sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
@@ -799,7 +799,7 @@ if (isModEnabled('don') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "
  * Various Payments
  */
 
-if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_VARPAY') && isModEnabled("banque") && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_VARPAY') && isModEnabled("bank") && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	// decaiss
 
 	$sql = "SELECT date_format(p.datep, '%Y-%m') AS dm, SUM(p.amount) AS amount FROM ".MAIN_DB_PREFIX."payment_various as p";
