@@ -139,6 +139,9 @@ if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 	$sql .= ", cc.rowid as country_id, cc.code as country_code";
 	$sql .= ", sum(pf.amount) as am";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays, ".MAIN_DB_PREFIX."facture as f";
+	if (getDolGlobalString("INVOICE_LAST_MODIFIED_INVOICE_FORCE_INDEX_TMS")) {
+		$sql .= " USE INDEX (idx_facture_tms)";
+	}
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
 	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
