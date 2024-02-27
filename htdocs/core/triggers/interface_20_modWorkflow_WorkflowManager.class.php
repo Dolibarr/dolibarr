@@ -420,7 +420,6 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 							} else {
 								$qtyordred[$orderline->fk_product] = $orderline->qty;
 							}
-							
 						}
 					}
 					//dol_syslog(var_export($qtyordred,true),LOG_DEBUG);
