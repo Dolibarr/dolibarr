@@ -152,6 +152,7 @@ if (empty($reshook)) {
 		$error = 0;
 
 		if ($chartofaccounts > 0 && $permissiontoadd) {
+			$country_code = '';
 			// Get language code for this $chartofaccounts
 			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_country as c, '.MAIN_DB_PREFIX.'accounting_system as a';
 			$sql .= ' WHERE c.rowid = a.fk_country AND a.rowid = '.(int) $chartofaccounts;
