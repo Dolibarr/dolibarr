@@ -1049,9 +1049,9 @@ if ($resql) {
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '</div>';
 
-	if (isModEnabled('categorie')) {
+	if (isModEnabled('category')) {
 		// Categories
-		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+		if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 			$langs->load('categories');
 
 			// Bank line
