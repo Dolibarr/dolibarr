@@ -92,7 +92,7 @@ if (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE')) {
 	$list_account[] = 'ACCOUNTING_VAT_BUY_REVERSE_CHARGES_CREDIT';
 	$list_account[] = 'ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT';
 }
-if (isModEnabled('banque')) {
+if (isModEnabled('bank')) {
 	$list_account[] = 'ACCOUNTING_ACCOUNT_TRANSFER_CASH';
 }
 if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
@@ -101,7 +101,7 @@ if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 if (isModEnabled('don')) {
 	$list_account[] = 'DONATION_ACCOUNTINGACCOUNT';
 }
-if (isModEnabled('adherent')) {
+if (isModEnabled('member')) {
 	$list_account[] = 'ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT';
 }
 if (isModEnabled('loan')) {
