@@ -64,15 +64,15 @@ if (isModEnabled('commande')) {
 $langs->loadLangs(array('bills', 'companies', 'products', 'categories'));
 
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
+$projectid = (GETPOST('projectid') ? GETPOSTINT('projectid') : 0);
 
-$id = (GETPOST('id', 'int') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOSTINT('socid');
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -87,8 +87,8 @@ $lineid = GETPOSTINT('lineid');
 $userid = GETPOSTINT('userid');
 $search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refcustomer = GETPOST('search_refcustomer', 'alpha');
-$search_type = GETPOST('search_type', 'int');
-$search_subtype = GETPOST('search_subtype', 'int');
+$search_type = GETPOSTINT('search_type');
+$search_subtype = GETPOSTINT('search_subtype');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
@@ -106,8 +106,8 @@ $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'a
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $search_status = GETPOST('search_status', 'intcomma');
-$search_paymentmode = GETPOST('search_paymentmode', 'int');
-$search_paymentterms = GETPOST('search_paymentterms', 'int');
+$search_paymentmode = GETPOSTINT('search_paymentmode');
+$search_paymentterms = GETPOSTINT('search_paymentterms');
 $search_module_source = GETPOST('search_module_source', 'alpha');
 $search_pos_source = GETPOST('search_pos_source', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
@@ -115,9 +115,9 @@ $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
 $search_country = GETPOST("search_country", 'alpha');
 $search_customer_code = GETPOST("search_customer_code", 'alphanohtml');
-$search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
-$search_user = GETPOST('search_user', 'int');
-$search_sale = GETPOST('search_sale', 'int');
+$search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
+$search_user = GETPOSTINT('search_user');
+$search_sale = GETPOSTINT('search_sale');
 $search_date_startday = GETPOSTINT('search_date_startday');
 $search_date_startmonth = GETPOSTINT('search_date_startmonth');
 $search_date_startyear = GETPOSTINT('search_date_startyear');
@@ -142,8 +142,8 @@ $search_datelimit_endmonth = GETPOSTINT('search_datelimit_endmonth');
 $search_datelimit_endyear = GETPOSTINT('search_datelimit_endyear');
 $search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $search_datelimit_startday, $search_datelimit_startyear);
 $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
-$search_categ_cus = GETPOST("search_categ_cus", 'int');
-$search_product_category = GETPOST('search_product_category', 'int');
+$search_categ_cus = GETPOSTINT("search_categ_cus");
+$search_product_category = GETPOSTINT('search_product_category');
 $search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
@@ -157,7 +157,7 @@ $filtre = GETPOST('filtre', 'alpha');
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1 or if we click on clear filters
