@@ -41,48 +41,48 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
-if (isModEnabled("expedition")) {
+if (isModEnabled("delivery_note")) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
-if (isModEnabled('contrat')) {
+if (isModEnabled('contract')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
-if (isModEnabled('adherent')) {
+if (isModEnabled('member')) {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 }
-if (isModEnabled('ficheinter')) {
+if (isModEnabled('intervention')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'banks'));
 
-if (isModEnabled('contrat')) {
+if (isModEnabled('contract')) {
 	$langs->load("contracts");
 }
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	$langs->load("orders");
 }
-if (isModEnabled("expedition")) {
+if (isModEnabled("delivery_note")) {
 	$langs->load("sendings");
 }
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	$langs->load("bills");
 }
 if (isModEnabled('project')) {
 	$langs->load("projects");
 }
-if (isModEnabled('ficheinter')) {
+if (isModEnabled('intervention')) {
 	$langs->load("interventions");
 }
 if (isModEnabled('notification')) {
@@ -440,7 +440,7 @@ if ($object->id > 0) {
 	print "</td>";
 	print '</tr>';
 
-	if (isModEnabled("banque")) {
+	if (isModEnabled("bank")) {
 		// Default bank account for payments
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
@@ -512,7 +512,7 @@ if ($object->id > 0) {
 	}
 
 	if ($object->client) {
-		if (isModEnabled('commande') && getDolGlobalString('ORDER_MANAGE_MIN_AMOUNT')) {
+		if (isModEnabled('order') && getDolGlobalString('ORDER_MANAGE_MIN_AMOUNT')) {
 			print '<!-- Minimum amount for orders -->'."\n";
 			print '<tr class="nowrap">';
 			print '<td>';
@@ -607,7 +607,7 @@ if ($object->id > 0) {
 	}
 
 	// Categories
-	if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+	if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 		$langs->load("categories");
 		print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
 		print '<td>';
@@ -623,7 +623,7 @@ if ($object->id > 0) {
 	include DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php';
 
 	// Module Adherent
-	if (isModEnabled('adherent')) {
+	if (isModEnabled('member')) {
 		$langs->load("members");
 		$langs->load("users");
 
@@ -721,7 +721,7 @@ if ($object->id > 0) {
 		}
 	}
 
-	if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
+	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
 		// Box commandes
 		$tmp = $object->getOutstandingOrders();
 		$outstandingOpened = $tmp['opened'];
@@ -742,7 +742,7 @@ if ($object->id > 0) {
 		}
 	}
 
-	if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
+	if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 		// Box factures
 		$tmp = $object->getOutstandingBills('customer', 0);
 		$outstandingOpened = $tmp['opened'];
@@ -917,7 +917,7 @@ if ($object->id > 0) {
 	/*
 	 * Latest orders
 	 */
-	if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
+	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
 		$param ="";
 
 		$sql = "SELECT s.nom, s.rowid";
@@ -1028,7 +1028,7 @@ if ($object->id > 0) {
 	/*
 	 *   Latest shipments
 	 */
-	if (isModEnabled("expedition") && $user->hasRight('expedition', 'lire')) {
+	if (isModEnabled("delivery_note") && $user->hasRight('expedition', 'lire')) {
 		$sql = 'SELECT e.rowid as id';
 		$sql .= ', e.ref, e.entity';
 		$sql .= ', e.date_creation';
@@ -1126,7 +1126,7 @@ if ($object->id > 0) {
 	/*
 	 * Latest contracts
 	 */
-	if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
+	if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut as contract_status, c.datec as dc, c.date_contrat as dcon, c.ref_customer as refcus, c.ref_supplier as refsup, c.entity,";
 		$sql .= " c.last_main_doc, c.model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
@@ -1234,7 +1234,7 @@ if ($object->id > 0) {
 	/*
 	 * Latest interventions
 	 */
-	if (isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire')) {
+	if (isModEnabled('intervention') && $user->hasRight('ficheinter', 'lire')) {
 		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.fk_statut, f.duree as duration, f.datei as startdate, f.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
@@ -1320,7 +1320,7 @@ if ($object->id > 0) {
 	/*
 	 *   Latest invoices templates
 	 */
-	if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
+	if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 		$sql = 'SELECT f.rowid as id, f.titre as ref';
 		$sql .= ', f.total_ht';
 		$sql .= ', f.total_tva';
@@ -1421,7 +1421,7 @@ if ($object->id > 0) {
 	/*
 	 *   Latest invoices
 	 */
-	if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
+	if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 		$sql = 'SELECT f.rowid as facid, f.ref, f.type';
 		$sql .= ', f.total_ht';
 		$sql .= ', f.total_tva';
@@ -1579,7 +1579,7 @@ if ($object->id > 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a></div>';
 		}
 
-		if (isModEnabled('commande') && $user->hasRight('commande', 'creer') && $object->status == 1) {
+		if (isModEnabled('order') && $user->hasRight('commande', 'creer') && $object->status == 1) {
 			$langs->load("orders");
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a></div>';
 		}
@@ -1589,7 +1589,7 @@ if ($object->id > 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddContract").'</a></div>';
 		}
 
-		if (isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'creer') && $object->status == 1) {
+		if (isModEnabled('intervention') && $user->hasRight('ficheinter', 'creer') && $object->status == 1) {
 			$langs->load("fichinter");
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a></div>';
 		}
@@ -1601,14 +1601,14 @@ if ($object->id > 0) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddTrip").'</a></div>';
 			}
 
-			if (isModEnabled('facture') && $object->status == 1) {
+			if (isModEnabled('invoice') && $object->status == 1) {
 				if (!$user->hasRight('facture', 'creer')) {
 					$langs->load("bills");
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
 				} else {
 					$langs->loadLangs(array("orders", "bills"));
 
-					if (isModEnabled('commande')) {
+					if (isModEnabled('order')) {
 						if ($object->client != 0 && $object->client != 2) {
 							if (!empty($orders2invoice) && $orders2invoice > 0) {
 								print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'&search_billed=0&autoselectall=1">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';

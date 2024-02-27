@@ -504,7 +504,7 @@ class PaymentLoan extends CommonObject
 		$error = 0;
 		$this->db->begin();
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$acc = new Account($this->db);

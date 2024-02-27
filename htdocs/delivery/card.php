@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (isModEnabled("product") || isModEnabled("service")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
-if (isModEnabled('expedition')) {
+if (isModEnabled('delivery_note')) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
 if (isModEnabled('stock')) {
@@ -311,7 +311,7 @@ if ($action == 'create') {
 			 *   Delivery
 			 */
 
-			if ($typeobject == 'commande' && $expedition->origin_id > 0 && isModEnabled('commande')) {
+			if ($typeobject == 'commande' && $expedition->origin_id > 0 && isModEnabled('order')) {
 				$objectsrc = new Commande($db);
 				$objectsrc->fetch($expedition->origin_id);
 			}
@@ -391,7 +391,7 @@ if ($action == 'create') {
 			*/
 
 			// Document origine
-			if ($typeobject == 'commande' && $expedition->origin_id && isModEnabled('commande')) {
+			if ($typeobject == 'commande' && $expedition->origin_id && isModEnabled('order')) {
 				print '<tr><td class="titlefield">'.$langs->trans("RefOrder").'</td>';
 				$order = new Commande($db);
 				$order->fetch($expedition->origin_id);

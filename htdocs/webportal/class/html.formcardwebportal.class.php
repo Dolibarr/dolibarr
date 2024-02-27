@@ -382,7 +382,7 @@ class FormCardWebPortal
 					}
 				}
 
-				if (isModEnabled('categorie')) {
+				if (isModEnabled('category')) {
 					$categories = GETPOST('categories', 'array');
 					if (method_exists($object, 'setCategories')) {
 						$object->setCategories($categories);

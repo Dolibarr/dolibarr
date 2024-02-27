@@ -29,7 +29,7 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
@@ -55,7 +55,7 @@ $search_label = GETPOST("snom", "alpha") ? GETPOST("snom", "alpha") : GETPOST("s
 $search_status = GETPOSTINT("search_status");
 
 $search_category_list = array();
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	$search_category_list = GETPOST("search_category_".Categorie::TYPE_WAREHOUSE."_list", "array");
 }
 
@@ -496,7 +496,7 @@ if ($search_all) {
 
 $moreforfilter = '';
 
-if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	$formcategory = new FormCategory($db);
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_WAREHOUSE, $search_category_list);
 }

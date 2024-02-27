@@ -2738,7 +2738,7 @@ function printDropdownQuickadd()
 				"title" => "MenuNewMember@members",
 				"name" => "Adherent@members",
 				"picto" => "object_member",
-				"activation" => isModEnabled('adherent') && $user->hasRight("adherent", "write"), // vs hooking
+				"activation" => isModEnabled('member') && $user->hasRight("adherent", "write"), // vs hooking
 				"position" => 5,
 			),
 			array(
@@ -2771,7 +2771,7 @@ function printDropdownQuickadd()
 				"title" => "NewOrder@orders",
 				"name" => "Order@orders",
 				"picto" => "object_order",
-				"activation" => isModEnabled('commande') && $user->hasRight("commande", "write"), // vs hooking
+				"activation" => isModEnabled('order') && $user->hasRight("commande", "write"), // vs hooking
 				"position" => 40,
 			),
 			array(
@@ -2779,7 +2779,7 @@ function printDropdownQuickadd()
 				"title" => "NewBill@bills",
 				"name" => "Bill@bills",
 				"picto" => "object_bill",
-				"activation" => isModEnabled('facture') && $user->hasRight("facture", "write"), // vs hooking
+				"activation" => isModEnabled('invoice') && $user->hasRight("facture", "write"), // vs hooking
 				"position" => 50,
 			),
 			array(
@@ -2787,7 +2787,7 @@ function printDropdownQuickadd()
 				"title" => "NewContractSubscription@contracts",
 				"name" => "Contract@contracts",
 				"picto" => "object_contract",
-				"activation" => isModEnabled('contrat') && $user->hasRight("contrat", "write"), // vs hooking
+				"activation" => isModEnabled('contract') && $user->hasRight("contrat", "write"), // vs hooking
 				"position" => 60,
 			),
 			array(
@@ -2827,7 +2827,7 @@ function printDropdownQuickadd()
 				"title" => "NewIntervention@interventions",
 				"name" => "Intervention@interventions",
 				"picto" => "intervention",
-				"activation" => isModEnabled('ficheinter') && $user->hasRight("ficheinter", "creer"), // vs hooking
+				"activation" => isModEnabled('intervention') && $user->hasRight("ficheinter", "creer"), // vs hooking
 				"position" => 110,
 			),
 			array(

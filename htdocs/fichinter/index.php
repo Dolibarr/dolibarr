@@ -172,7 +172,7 @@ if ($resql) {
 /*
  * Draft orders
  */
-if (isModEnabled('ficheinter')) {
+if (isModEnabled('intervention')) {
 	$sql = "SELECT f.rowid, f.ref, s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -295,7 +295,7 @@ if ($resql) {
  * interventions to process
  */
 
-if (isModEnabled('ficheinter')) {
+if (isModEnabled('intervention')) {
 	$sql = "SELECT f.rowid, f.ref, f.fk_statut, s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";

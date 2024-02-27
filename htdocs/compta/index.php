@@ -50,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	$langs->load("orders");
 }
 
@@ -103,7 +103,7 @@ print load_fiche_titre($langs->trans("InvoicesArea"), '', 'bill');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	print getNumberInvoicesPieChart('customers');
 	print '<br>';
 }
@@ -113,7 +113,7 @@ if (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) {
 	print '<br>';
 }
 
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	print getCustomerInvoiceDraftTable($max, $socid);
 	print '<br>';
 }
@@ -127,7 +127,7 @@ print '</div><div class="fichetwothirdright">';
 
 
 // Latest modified customer invoices
-if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
+if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 	$langs->load("boxes");
 	$tmpinvoice = new Facture($db);
 
@@ -580,7 +580,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 /*
  * Customers orders to be billed
  */
-if (isModEnabled('facture') && isModEnabled('commande') && $user->hasRight("commande", "lire") && !getDolGlobalString('WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER')) {
+if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("commande", "lire") && !getDolGlobalString('WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER')) {
 	$commandestatic = new Commande($db);
 	$langs->load("orders");
 

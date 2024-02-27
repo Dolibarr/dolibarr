@@ -169,14 +169,14 @@ if (isModEnabled('societe')) {
 }
 
 // Synchro member active
-if (isModEnabled('adherent')) {
+if (isModEnabled('member')) {
 	print '<tr class="oddeven"><td>' . $langs->trans("LDAPDnMemberActive") . '</td><td>';
 	print $formldap->selectLdapDnSynchroActive(getDolGlobalInt('LDAP_MEMBER_ACTIVE'), 'activemembers', array(), 2);
 	print '</td><td><span class="opacitymedium">' . $langs->trans("LDAPDnMemberActiveExample") . '</span></td></tr>';
 }
 
 // Synchro member type active
-if (isModEnabled('adherent')) {
+if (isModEnabled('member')) {
 	print '<tr class="oddeven"><td>' . $langs->trans("LDAPDnMemberTypeActive") . '</td><td>';
 	print $formldap->selectLdapDnSynchroActive(getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE'), 'activememberstypes', array(), 2);
 	print '</td><td><span class="opacitymedium">' . $langs->trans("LDAPDnMemberTypeActiveExample") . '</span></td></tr>';

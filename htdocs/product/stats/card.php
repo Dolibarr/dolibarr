@@ -214,7 +214,7 @@ if ($result || !($id > 0)) {
 		print '</td></tr>';
 
 		// Tag
-		if (isModEnabled('categorie')) {
+		if (isModEnabled('category')) {
 			print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
 			$moreforfilter .= img_picto($langs->trans("Categories"), 'category', 'class="pictofixedwidth"');
 			$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1, 1, 'widthcentpercentminusx maxwidth400');
@@ -368,7 +368,7 @@ if ($result || !($id > 0)) {
 			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode], $langs->transnoentitiesnoconv("SuppliersOrders")));
 	}
 
-	if (isModEnabled('facture')) {
+	if (isModEnabled('invoice')) {
 		$graphfiles['invoices'] = array('modulepart'=>'productstats_invoices',
 			'file' => $object->id.'/invoices12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode], $langs->transnoentitiesnoconv("Invoices")));
@@ -380,7 +380,7 @@ if ($result || !($id > 0)) {
 			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode], $langs->transnoentitiesnoconv("SupplierInvoices")));
 	}
 
-	if (isModEnabled('contrat')) {
+	if (isModEnabled('contract')) {
 		$graphfiles['contracts'] = array('modulepart'=>'productstats_contracts',
 			'file' => $object->id.'/contracts12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode], $langs->transnoentitiesnoconv("Contracts")));

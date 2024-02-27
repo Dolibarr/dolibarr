@@ -2667,7 +2667,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Bank Account
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
 			// when bank account is empty (means not override by payment mode form a other object, like third-party), try to use default value
 			print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
@@ -3431,7 +3431,7 @@ if ($action == 'create') {
 			}
 
 			// Bank Account
-			if (isModEnabled("banque")) {
+			if (isModEnabled("bank")) {
 				print '<tr><td class="nowrap">';
 				print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 				print $langs->trans('BankAccount');
@@ -3609,7 +3609,7 @@ if ($action == 'create') {
 			if (isModEnabled('project')) {
 				$nbrows++;
 			}
-			if (isModEnabled("banque")) {
+			if (isModEnabled("bank")) {
 				$nbrows++;
 				$nbcols++;
 			}
@@ -3651,7 +3651,7 @@ if ($action == 'create') {
 				print '<td class="liste_titre">'.($object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')).'</td>';
 				print '<td>'.$langs->trans('Date').'</td>';
 				print '<td>'.$langs->trans('Type').'</td>';
-				if (isModEnabled("banque")) {
+				if (isModEnabled("bank")) {
 					print '<td class="right">'.$langs->trans('BankAccount').'</td>';
 				}
 				print '<td class="right">'.$langs->trans('Amount').'</td>';
@@ -3680,7 +3680,7 @@ if ($action == 'create') {
 						print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($s).'">';
 						print $s;
 						print '</td>';
-						if (isModEnabled("banque")) {
+						if (isModEnabled("bank")) {
 							$bankaccountstatic->id = $objp->baid;
 							$bankaccountstatic->ref = $objp->baref;
 							$bankaccountstatic->label = $objp->baref;

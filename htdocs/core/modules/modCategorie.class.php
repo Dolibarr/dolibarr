@@ -136,7 +136,7 @@ class modCategorie extends DolibarrModules
 		if (isModEnabled("societe")) {
 			$typeexample .= ($typeexample ? " / " : "")."2=Customer-Prospect";
 		}
-		if (isModEnabled('adherent')) {
+		if (isModEnabled('member')) {
 			$typeexample .= ($typeexample ? " / " : "")."3=Member";
 		}
 		if (isModEnabled("societe")) {
@@ -538,7 +538,7 @@ class modCategorie extends DolibarrModules
 		}
 
 		// 3 Members
-		if (isModEnabled('adherent')) {
+		if (isModEnabled('member')) {
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_3_'.Categorie::$MAP_ID_TO_CODE[3];
 			$this->import_label[$r] = "CatMembersLinks"; // Translation key

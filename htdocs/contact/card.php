@@ -873,7 +873,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Categories
-			if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+			if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 				print '<tr><td>'.$form->editfieldkey('Categories', 'contcats', '', $object, 0).'</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, 'parent', null, null, 1);
 				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), null, null, null, null, '90%');
@@ -1169,7 +1169,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 
 			// Categories
-			if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+			if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 				$arrayselected = array();
 				print '<tr><td>'.$form->editfieldkey('Categories', 'contcats', '', $object, 0).'</td>';
 				print '<td colspan="3">';
@@ -1197,7 +1197,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			$object->load_ref_elements();
 
-			if (isModEnabled('commande')) {
+			if (isModEnabled('order')) {
 				print '<tr><td>'.$langs->trans("ContactForOrders").'</td><td colspan="3">';
 				print $object->ref_commande ? $object->ref_commande : ('<span class="opacitymedium">'.$langs->trans("NoContactForAnyOrder").'</span>');
 				print '</td></tr>';
@@ -1209,13 +1209,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 			}
 
-			if (isModEnabled('contrat')) {
+			if (isModEnabled('contract')) {
 				print '<tr><td>'.$langs->trans("ContactForContracts").'</td><td colspan="3">';
 				print $object->ref_contrat ? $object->ref_contrat : ('<span class="opacitymedium">'.$langs->trans("NoContactForAnyContract").'</span>');
 				print '</td></tr>';
 			}
 
-			if (isModEnabled('facture')) {
+			if (isModEnabled('invoice')) {
 				print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
 				print $object->ref_facturation ? $object->ref_facturation : ('<span class="opacitymedium">'.$langs->trans("NoContactForAnyInvoice").'</span>');
 				print '</td></tr>';
@@ -1436,7 +1436,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Categories
-		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+		if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 			print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td>';
 			print '<td>';
 			print $form->showCategories($object->id, Categorie::TYPE_CONTACT, 1);
@@ -1462,29 +1462,29 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 		}
 
-		if (isModEnabled('commande') || isModEnabled("expedition")) {
+		if (isModEnabled('order') || isModEnabled("delivery_note")) {
 			print '<tr><td class="titlefield tdoverflow">';
-			if (isModEnabled("expedition")) {
+			if (isModEnabled("delivery_note")) {
 				print $langs->trans("ContactForOrdersOrShipments");
 			} else {
 				print $langs->trans("ContactForOrders");
 			}
 			print '</td><td>';
 			$none = $langs->trans("NoContactForAnyOrder");
-			if (isModEnabled("expedition")) {
+			if (isModEnabled("delivery_note")) {
 				$none = $langs->trans("NoContactForAnyOrderOrShipments");
 			}
 			print $object->ref_commande ? $object->ref_commande : $none;
 			print '</td></tr>';
 		}
 
-		if (isModEnabled('contrat')) {
+		if (isModEnabled('contract')) {
 			print '<tr><td class="tdoverflow">'.$langs->trans("ContactForContracts").'</td><td>';
 			print $object->ref_contrat ? $object->ref_contrat : $langs->trans("NoContactForAnyContract");
 			print '</td></tr>';
 		}
 
-		if (isModEnabled('facture')) {
+		if (isModEnabled('invoice')) {
 			print '<tr><td class="tdoverflow">'.$langs->trans("ContactForInvoices").'</td><td>';
 			print $object->ref_facturation ? $object->ref_facturation : $langs->trans("NoContactForAnyInvoice");
 			print '</td></tr>';

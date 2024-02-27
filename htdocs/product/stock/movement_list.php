@@ -939,7 +939,7 @@ if ($warehouse->id > 0) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	// Categories
-	if (isModEnabled('categorie')) {
+	if (isModEnabled('category')) {
 		print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
 		print $form->showCategories($warehouse->id, Categorie::TYPE_WAREHOUSE, 1);
 		print "</td></tr>";

@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -73,7 +73,7 @@ $endyear = $year;
 /*
  * View
  */
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	$langs->load('categories');
 }
 $form = new Form($db);
@@ -298,7 +298,7 @@ if ($user->admin) {
 print '</td></tr>';
 
 // Category
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	if ($mode == 'customer') {
 		$cat_type = Categorie::TYPE_CUSTOMER;
 		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));

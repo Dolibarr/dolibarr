@@ -197,7 +197,7 @@ if ($action == 'search') {
 		}
 		$sql .= natural_search($params, $key);
 	}
-	if (isModEnabled('categorie') && !empty($parent) && $parent != -1) {
+	if (isModEnabled('category') && !empty($parent) && $parent != -1) {
 		$sql .= " AND cp.fk_categorie ='".$db->escape($parent)."'";
 	}
 	$sql .= " ORDER BY p.ref ASC";
@@ -625,7 +625,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<br>';
 
 			$rowspan = 1;
-			if (isModEnabled('categorie')) {
+			if (isModEnabled('category')) {
 				$rowspan++;
 			}
 
@@ -638,7 +638,7 @@ if ($id > 0 || !empty($ref)) {
 			print $langs->trans("KeywordFilter").': ';
 			print '<input type="text" name="key" value="'.$key.'"> &nbsp; ';
 			print '</div>';
-			if (isModEnabled('categorie')) {
+			if (isModEnabled('category')) {
 				require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 				print '<div class="inline-block">'.$langs->trans("CategoryFilter").': ';
 				print $form->select_all_categories(Categorie::TYPE_PRODUCT, $parent, 'parent').' &nbsp; </div>';

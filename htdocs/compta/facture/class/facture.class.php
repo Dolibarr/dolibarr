@@ -5632,7 +5632,7 @@ class Facture extends CommonInvoice
 
 		$langs->load("bills");
 
-		if (!isModEnabled('facture')) {	// Should not happen. If module disabled, cron job should not be visible.
+		if (!isModEnabled('invoice')) {	// Should not happen. If module disabled, cron job should not be visible.
 			$this->output .= $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Facture"));
 			return 0;
 		}

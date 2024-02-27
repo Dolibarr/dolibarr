@@ -53,7 +53,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 if (isModEnabled('project')) {
@@ -3909,7 +3909,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Bank Account
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
 			print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 			print $form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
@@ -4814,7 +4814,7 @@ if ($action == 'create') {
 		}
 
 		// Bank Account
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			print '<tr><td class="nowrap">';
 			print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 			print $langs->trans('BankAccount');
@@ -5087,7 +5087,7 @@ if ($action == 'create') {
 		if (isModEnabled('project')) {
 			$nbrows++;
 		}
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			$nbrows++;
 			$nbcols++;
 		}
@@ -5116,7 +5116,7 @@ if ($action == 'create') {
 			print '<td>'.$langs->trans('ListOfSituationInvoices').'</td>';
 			print '<td></td>';
 			print '<td class="center">'.$langs->trans('Situation').'</td>';
-			if (isModEnabled("banque")) {
+			if (isModEnabled("bank")) {
 				print '<td class="right"></td>';
 			}
 			print '<td class="right">'.$langs->trans('AmountHT').'</td>';
@@ -5140,7 +5140,7 @@ if ($action == 'create') {
 					print '<td>'.$prev_invoice->getNomUrl(1).'</td>';
 					print '<td></td>';
 					print '<td align="center" >'.(($prev_invoice->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$prev_invoice->situation_counter.'</td>';
-					if (isModEnabled("banque")) {
+					if (isModEnabled("bank")) {
 						print '<td class="right"></td>';
 					}
 					print '<td class="right"><span class="amount">'.price($prev_invoice->total_ht).'</span></td>';
@@ -5160,7 +5160,7 @@ if ($action == 'create') {
 			print '<td>'.$object->getNomUrl(1).'</td>';
 			print '<td></td>';
 			print '<td class="center">'.(($object->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$object->situation_counter.'</td>';
-			if (isModEnabled("banque")) {
+			if (isModEnabled("bank")) {
 				print '<td class="right"></td>';
 			}
 			print '<td class="right"><span class="amount">'.price($object->total_ht).'</span></td>';
@@ -5183,7 +5183,7 @@ if ($action == 'create') {
 				$i++;
 			}
 			print '</td>';
-			if (isModEnabled("banque")) {
+			if (isModEnabled("bank")) {
 				print '<td></td>';
 			}
 			print '<td class="right"><b>'.price($total_global_ht).'</b></td>';
@@ -5215,7 +5215,7 @@ if ($action == 'create') {
 					print '<td>'.$next_invoice->getNomUrl(1).'</td>';
 					print '<td></td>';
 					print '<td class="center">'.(($next_invoice->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$next_invoice->situation_counter.'</td>';
-					if (isModEnabled("banque")) {
+					if (isModEnabled("bank")) {
 						print '<td class="right"></td>';
 					}
 					print '<td class="right"><span class="amount">'.price($next_invoice->total_ht).'</span></td>';
@@ -5229,7 +5229,7 @@ if ($action == 'create') {
 
 				print '<tr class="oddeven">';
 				print '<td colspan="3" class="right"></td>';
-				if (isModEnabled("banque")) {
+				if (isModEnabled("bank")) {
 					print '<td class="right"></td>';
 				}
 				print '<td class="right"><b>'.price($total_global_ht).'</b></td>';
@@ -5256,7 +5256,7 @@ if ($action == 'create') {
 		print '<td class="liste_titre">'.($object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')).'</td>';
 		print '<td class="liste_titre"><span class="hideonsmartphone">'.$langs->trans('Date').'</span></td>';
 		print '<td class="liste_titre"><span class="hideonsmartphone">'.$langs->trans('Type').'</span></td>';
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			print '<td class="liste_titre"><span class="hideonsmartphone">'.$langs->trans('BankAccount').'</span></td>';
 		}
 		print '<td class="liste_titre right">'.$langs->trans('Amount').'</td>';
@@ -5306,7 +5306,7 @@ if ($action == 'create') {
 
 					$label = ($langs->trans("PaymentType".$objp->payment_code) != "PaymentType".$objp->payment_code) ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_label;
 					print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($label.' '.$objp->num_payment).'">'.dol_escape_htmltag($label.' '.$objp->num_payment).'</td>';
-					if (isModEnabled("banque")) {
+					if (isModEnabled("bank")) {
 						$bankaccountstatic->id = $objp->baid;
 						$bankaccountstatic->ref = $objp->baref;
 						$bankaccountstatic->label = $objp->baref;
@@ -5730,7 +5730,7 @@ if ($action == 'create') {
 
 			// Create contract
 			if (getDolGlobalString('CONTRACT_CREATE_FROM_INVOICE')) {
-				if (isModEnabled('contrat') && $object->status == Facture::STATUS_VALIDATED) {
+				if (isModEnabled('contract') && $object->status == Facture::STATUS_VALIDATED) {
 					$langs->load("contracts");
 
 					if ($usercancreatecontract) {

@@ -780,7 +780,7 @@ if ($id > 0 || $ref) {
 			$found = 0;
 			$helpondiff = '<strong>'.$langs->trans("StockDiffPhysicTeoric").':</strong><br>';
 			// Number of sales orders running
-			if (isModEnabled('commande')) {
+			if (isModEnabled('order')) {
 				if ($found) {
 					$helpondiff .= '<br>';
 				} else {
@@ -795,7 +795,7 @@ if ($id > 0 || $ref) {
 			}
 
 			// Number of product from sales order already sent (partial shipping)
-			if (isModEnabled("expedition")) {
+			if (isModEnabled("delivery_note")) {
 				require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 				$filterShipmentStatus = '';
 				if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {

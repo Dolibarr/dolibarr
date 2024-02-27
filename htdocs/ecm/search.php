@@ -127,17 +127,17 @@ if (isModEnabled("propal")) {
 	$rowspan++;
 	$sectionauto[] = array('level'=>1, 'module'=>'propal', 'test'=>isModEnabled('propal'), 'label'=>$langs->trans("Proposals"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Proposals")));
 }
-if (isModEnabled('contrat')) {
+if (isModEnabled('contract')) {
 	$rowspan++;
-	$sectionauto[] = array('level'=>1, 'module'=>'contract', 'test'=>isModEnabled('contrat'), 'label'=>$langs->trans("Contracts"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Contracts")));
+	$sectionauto[] = array('level'=>1, 'module'=>'contract', 'test'=>isModEnabled('contract'), 'label'=>$langs->trans("Contracts"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Contracts")));
 }
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	$rowspan++;
-	$sectionauto[] = array('level'=>1, 'module'=>'order', 'test'=>isModEnabled('commande'), 'label'=>$langs->trans("CustomersOrders"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Orders")));
+	$sectionauto[] = array('level'=>1, 'module'=>'order', 'test'=>isModEnabled('order'), 'label'=>$langs->trans("CustomersOrders"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Orders")));
 }
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	$rowspan++;
-	$sectionauto[] = array('level'=>1, 'module'=>'invoice', 'test'=>isModEnabled('facture'), 'label'=>$langs->trans("CustomersInvoices"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Invoices")));
+	$sectionauto[] = array('level'=>1, 'module'=>'invoice', 'test'=>isModEnabled('invoice'), 'label'=>$langs->trans("CustomersInvoices"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Invoices")));
 }
 if (isModEnabled('supplier_proposal')) {
 	$langs->load("supplier_proposal");
@@ -161,10 +161,10 @@ if (isModEnabled('project')) {
 	$rowspan++;
 	$sectionauto[] = array('level'=>1, 'module'=>'project', 'test'=>isModEnabled('project'), 'label'=>$langs->trans("Projects"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Projects")));
 }
-if (isModEnabled('ficheinter')) {
+if (isModEnabled('intervention')) {
 	$langs->load("interventions");
 	$rowspan++;
-	$sectionauto[] = array('level'=>1, 'module'=>'fichinter', 'test'=>isModEnabled('ficheinter'), 'label'=>$langs->trans("Interventions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Interventions")));
+	$sectionauto[] = array('level'=>1, 'module'=>'fichinter', 'test'=>isModEnabled('intervention'), 'label'=>$langs->trans("Interventions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Interventions")));
 }
 if (isModEnabled('expensereport')) {
 	$langs->load("trips");
@@ -176,10 +176,10 @@ if (isModEnabled('holiday')) {
 	$rowspan++;
 	$sectionauto[] = array('level'=>1, 'module'=>'holiday', 'test'=>isModEnabled('holiday'), 'label'=>$langs->trans("Holidays"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Holidays")));
 }
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	$langs->load("banks");
 	$rowspan++;
-	$sectionauto[] = array('level'=>1, 'module'=>'banque', 'test'=>isModEnabled('banque'), 'label'=>$langs->trans("BankAccount"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("BankAccount")));
+	$sectionauto[] = array('level'=>1, 'module'=>'banque', 'test'=>isModEnabled('bank'), 'label'=>$langs->trans("BankAccount"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("BankAccount")));
 }
 if (isModEnabled('mrp')) {
 	$langs->load("mrp");

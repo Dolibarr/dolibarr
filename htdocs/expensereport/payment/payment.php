@@ -78,7 +78,7 @@ if ($action == 'add_payment') {
 		$error++;
 	}
 
-	if (isModEnabled("banque") && !($accountid > 0)) {
+	if (isModEnabled("bank") && !($accountid > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToDebit")), null, 'errors');
 		$error++;
 	}
@@ -247,7 +247,7 @@ if ($action == 'create' || empty($action)) {
 	print "</td>\n";
 	print '</tr>';
 
-	if (isModEnabled("banque")) {
+	if (isModEnabled("bank")) {
 		print '<tr>';
 		print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 		print '<td colspan="2">';

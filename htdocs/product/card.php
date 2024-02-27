@@ -60,10 +60,10 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (isModEnabled('propal')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 }
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 if (isModEnabled('accounting')) {
@@ -83,7 +83,7 @@ $langs->loadLangs(array('products', 'other'));
 if (isModEnabled('stock')) {
 	$langs->load("stocks");
 }
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	$langs->load("bills");
 }
 if (isModEnabled('productbatch')) {
@@ -1685,7 +1685,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print "</td></tr>";
 			//}
 
-			if (isModEnabled('categorie')) {
+			if (isModEnabled('category')) {
 				// Categories
 				print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
@@ -2295,7 +2295,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				// Tags-Categories
-				if (isModEnabled('categorie')) {
+				if (isModEnabled('category')) {
 					print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 					$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
 					$c = new Categorie($db);
@@ -2825,7 +2825,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 				// Categories
-				if (isModEnabled('categorie')) {
+				if (isModEnabled('category')) {
 					print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 					print $form->showCategories($object->id, Categorie::TYPE_PRODUCT, 1);
 					print "</td></tr>";
@@ -2988,7 +2988,7 @@ if (getDolGlobalString('PRODUCT_ADD_FORM_ADD_TO') && $object->id && ($action == 
 	}
 
 	// Commande
-	if (isModEnabled('commande') && $user->hasRight('commande', 'creer')) {
+	if (isModEnabled('order') && $user->hasRight('commande', 'creer')) {
 		$commande = new Commande($db);
 
 		$langs->load("orders");
@@ -3008,7 +3008,7 @@ if (getDolGlobalString('PRODUCT_ADD_FORM_ADD_TO') && $object->id && ($action == 
 	}
 
 	// Factures
-	if (isModEnabled('facture') && $user->hasRight('facture', 'creer')) {
+	if (isModEnabled('invoice') && $user->hasRight('facture', 'creer')) {
 		$invoice = new Facture($db);
 
 		$langs->load("bills");
