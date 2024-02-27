@@ -285,7 +285,7 @@ abstract class ActionsContactCardCommon
 		// phpcs:enable
 		global $langs, $mysoc;
 
-		$this->object->socid = GETPOST("socid", 'int');
+		$this->object->socid = GETPOSTINT("socid");
 		$this->object->lastname			= GETPOST("name");
 		$this->object->firstname		= GETPOST("firstname");
 		$this->object->civility_id = GETPOST("civility_id");
