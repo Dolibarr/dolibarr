@@ -482,7 +482,7 @@ print '</td>';
 // Chq number
 print '<td class="liste_titre"><input name="search_chq_number" class="flat width50" type="text" value="'.$db->escape($search_chq_number).'"></td>';
 
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	// Bank transaction
 	print '<td class="liste_titre">';
 	print '<input class="flat width50" type="text" name="search_fk_bank" value="'.$db->escape($search_fk_bank).'">';
@@ -539,7 +539,7 @@ print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pst.code", "", $pa
 $totalarray['nbfield']++;
 print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "s.num_payment", "", $param, '', $sortfield, $sortorder, '', 'ChequeOrTransferNumber');
 $totalarray['nbfield']++;
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	print_liste_field_titre("BankTransactionLine", $_SERVER["PHP_SELF"], "s.fk_bank", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 	print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
@@ -702,7 +702,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Account
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			// Bank transaction
 			print '<td>';
 			$accountlinestatic->id = $obj->fk_bank;
