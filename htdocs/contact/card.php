@@ -205,7 +205,7 @@ if (empty($reshook)) {
 			$object->canvas = $canvas;
 		}
 
-		$object->entity = (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : $conf->entity);
+		$object->entity = (GETPOSTISSET('entity') ? GETPOSTINT('entity') : $conf->entity);
 		$object->socid = $socid;
 		$object->lastname = (string) GETPOST("lastname", 'alpha');
 		$object->firstname = (string) GETPOST("firstname", 'alpha');
@@ -214,8 +214,8 @@ if (empty($reshook)) {
 		$object->address = (string) GETPOST("address", 'alpha');
 		$object->zip = (string) GETPOST("zipcode", 'alpha');
 		$object->town = (string) GETPOST("town", 'alpha');
-		$object->country_id = (int) GETPOST("country_id", 'int');
-		$object->state_id = (int) GETPOST("state_id", 'int');
+		$object->country_id = GETPOSTINT("country_id");
+		$object->state_id = GETPOSTINT("state_id");
 		$object->socialnetworks = array();
 		if (isModEnabled('socialnetworks')) {
 			foreach ($socialnetworks as $key => $value) {
@@ -238,7 +238,7 @@ if (empty($reshook)) {
 		$object->statut = 1; //Default status to Actif
 
 		// Note: Correct date should be completed with location to have exact GM time of birth.
-		$object->birthday = dol_mktime(0, 0, 0, GETPOST("birthdaymonth", 'int'), GETPOST("birthdayday", 'int'), GETPOST("birthdayyear", 'int'));
+		$object->birthday = dol_mktime(0, 0, 0, GETPOSTINT("birthdaymonth"), GETPOSTINT("birthdayday"), GETPOSTINT("birthdayyear"));
 		$object->birthday_alert = GETPOSTINT("birthday_alert");
 
 		//Default language
@@ -342,7 +342,7 @@ if (empty($reshook)) {
 			$action = 'edit';
 		}
 
-		if (isModEnabled('mailing') && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2 && GETPOST("no_email", "int") == -1 && !empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
+		if (isModEnabled('mailing') && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2 && GETPOSTINT("no_email") == -1 && !empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
 			$error++;
 			$errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("No_Email"));
 			$action = 'edit';
@@ -356,7 +356,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$contactid = GETPOST("contactid", 'int');
+			$contactid = GETPOSTINT("contactid");
 			$object->fetch($contactid);
 			$object->fetchRoles();
 
@@ -413,11 +413,11 @@ if (empty($reshook)) {
 			$object->address = (string) GETPOST("address", 'alpha');
 			$object->zip = (string) GETPOST("zipcode", 'alpha');
 			$object->town = (string) GETPOST("town", 'alpha');
-			$object->state_id = GETPOST("state_id", 'int');
-			$object->country_id = GETPOST("country_id", 'int');
+			$object->state_id = GETPOSTINT("state_id");
+			$object->country_id = GETPOSTINT("country_id");
 
 			$object->email = (string) GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
-			$object->no_email = GETPOST("no_email", "int");
+			$object->no_email = GETPOSTINT("no_email");
 			$object->socialnetworks = array();
 			if (isModEnabled('socialnetworks')) {
 				foreach ($socialnetworks as $key => $value) {
@@ -430,7 +430,7 @@ if (empty($reshook)) {
 			$object->phone_perso = (string) GETPOST("phone_perso", 'alpha');
 			$object->phone_mobile = (string) GETPOST("phone_mobile", 'alpha');
 			$object->fax = (string) GETPOST("fax", 'alpha');
-			$object->priv = (string) GETPOST("priv", 'int');
+			$object->priv = (string) GETPOSTINT("priv");
 			$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 
@@ -455,7 +455,7 @@ if (empty($reshook)) {
 
 					// Update mass emailing flag into table mailing_unsubscribe
 					if (GETPOSTISSET('no_email') && $object->email) {
-						$no_email = GETPOST('no_email', 'int');
+						$no_email = GETPOSTINT('no_email');
 						$result = $object->setNoEmail($no_email);
 						if ($result < 0) {
 							setEventMessages($object->error, $object->errors, 'errors');
@@ -500,14 +500,14 @@ if (empty($reshook)) {
 
 	// Update extrafields
 	if ($action == "update_extras" && !empty($permissiontoadd)) {
-		$object->fetch(GETPOST('id', 'int'));
+		$object->fetch(GETPOSTINT('id'));
 
 		$attributekey = GETPOST('attribute', 'alpha');
 		$attributekeylong = 'options_'.$attributekey;
 
 		if (GETPOSTISSET($attributekeylong.'day') && GETPOSTISSET($attributekeylong.'month') && GETPOSTISSET($attributekeylong.'year')) {
 			// This is properties of a date
-			$object->array_options['options_'.$attributekey] = dol_mktime(GETPOST($attributekeylong.'hour', 'int'), GETPOST($attributekeylong.'min', 'int'), GETPOST($attributekeylong.'sec', 'int'), GETPOST($attributekeylong.'month', 'int'), GETPOST($attributekeylong.'day', 'int'), GETPOST($attributekeylong.'year', 'int'));
+			$object->array_options['options_'.$attributekey] = dol_mktime(GETPOSTINT($attributekeylong.'hour'), GETPOSTINT($attributekeylong.'min'), GETPOSTINT($attributekeylong.'sec'), GETPOSTINT($attributekeylong.'month'), GETPOSTINT($attributekeylong.'day'), GETPOSTINT($attributekeylong.'year'));
 			//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
 		} else {
 			$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, 'alpha');
@@ -628,10 +628,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			 */
 			$object->canvas = $canvas;
 
-			$object->state_id = GETPOST("state_id", "int");
+			$object->state_id = GETPOSTINT("state_id");
 
 			// We set country_id, country_code and label for the selected country
-			$object->country_id = GETPOST("country_id") ? GETPOST("country_id", "int") : (empty($objsoc->country_id) ? $mysoc->country_id : $objsoc->country_id);
+			$object->country_id = GETPOST("country_id") ? GETPOSTINT("country_id") : (empty($objsoc->country_id) ? $mysoc->country_id : $objsoc->country_id);
 			if ($object->country_id) {
 				$tmparray = getCountry($object->country_id, 'all');
 				$object->country_code = $tmparray['code'];
@@ -848,7 +848,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
 				print '<td>';
 				// Default value is in MAILING_CONTACT_DEFAULT_BULK_STATUS that you can modify in setup of module emailing
-				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS')), 1, false, (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2));
+				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOSTINT("no_email") : getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS')), 1, false, (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2));
 				print '</td>';
 				print '</tr>';
 			}
@@ -1002,7 +1002,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 				print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
-				print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(GETPOST('socid', 'int') ? GETPOST('socid', 'int') : ($object->socid ? $object->socid : -1), 'socid', '', $langs->trans("SelectThirdParty"));
+				print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(GETPOSTINT('socid') ? GETPOSTINT('socid') : ($object->socid ? $object->socid : -1), 'socid', '', $langs->trans("SelectThirdParty"));
 				print '</td>';
 				print '</tr>';
 			}
@@ -1126,7 +1126,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
 				print '<td>';
 				$useempty = (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2);
-				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $object->no_email), 1, false, $useempty);
+				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOSTINT("no_email") : $object->no_email), 1, false, $useempty);
 				print '</td>';
 				print '</tr>';
 			}
