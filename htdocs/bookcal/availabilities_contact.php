@@ -32,10 +32,10 @@ require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal_availabilities.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("agenda", "companies", "other", "mails"));
 
-$id     = (GETPOST('id') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id     = (GETPOST('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref    = GETPOST('ref', 'alpha');
-$lineid = GETPOST('lineid', 'int');
-$socid  = GETPOST('socid', 'int');
+$lineid = GETPOSTINT('lineid');
+$socid  = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 
 // Initialize technical objects
@@ -78,7 +78,7 @@ if (!$permissiontoread) {
  */
 
 if ($action == 'addcontact' && $permission) {
-	$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+	$contactid = (GETPOST('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 	$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 	$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 
@@ -95,7 +95,7 @@ if ($action == 'addcontact' && $permission) {
 	}
 } elseif ($action == 'swapstatut' && $permission) {
 	// Toggle the status of a contact
-	$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
+	$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 } elseif ($action == 'deletecontact' && $permission) {
 	// Deletes a contact
 	$result = $object->delete_contact($lineid);
