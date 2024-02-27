@@ -230,7 +230,7 @@ if ($action == 'updateMask') {
 		}
 	}
 } elseif ($action == 'set_INVOICE_CHECK_POSTERIOR_DATE') {
-	$check_posterior_date = GETPOST('INVOICE_CHECK_POSTERIOR_DATE', 'int');
+	$check_posterior_date = GETPOSTINT('INVOICE_CHECK_POSTERIOR_DATE');
 	$res = dolibarr_set_const($db, 'INVOICE_CHECK_POSTERIOR_DATE', $check_posterior_date, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
