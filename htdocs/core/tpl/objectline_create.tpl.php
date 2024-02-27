@@ -322,7 +322,7 @@ if ($nolinesbefore) {
 				}
 			}
 
-			$parentId = GETPOST('parentId', 'int');
+			$parentId = GETPOSTINT('parentId');
 
 			$addproducton = (isModEnabled('product') && $user->hasRight('produit', 'creer'));
 			$addserviceon = (isModEnabled('service') && $user->hasRight('service', 'creer'));
@@ -382,7 +382,7 @@ if ($nolinesbefore) {
 		}
 
 		if (is_object($hookmanager) && empty($senderissupplier)) {
-			$parameters = array('fk_parent_line'=>GETPOST('fk_parent_line', 'int'));
+			$parameters = array('fk_parent_line'=>GETPOSTINT('fk_parent_line'));
 			$reshook = $hookmanager->executeHooks('formCreateProductOptions', $parameters, $object, $action);
 			if (!empty($hookmanager->resPrint)) {
 				print $hookmanager->resPrint;
