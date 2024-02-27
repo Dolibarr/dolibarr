@@ -83,11 +83,11 @@ class DonationStats extends Stats
 		$this->cachefilesuffix = $mode;
 		$this->join = '';
 
-		if ($status === '0' || $status === '1' || $status === '2') {
+		if ($status == '0' || $status == '1' || $status == '2') {
 			$this->where = ' d.fk_statut IN ('.$db->sanitize($status).')';
-		} elseif ($status === '3') {
+		} elseif ($status == '3') {
 			$this->where = ' d.fk_statut IN (-1)';
-		} elseif ($status === 4) {
+		} elseif ($status == 4) {
 			$this->where = ' d.fk_statut >= 0';
 		}
 

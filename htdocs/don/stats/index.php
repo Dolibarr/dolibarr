@@ -39,8 +39,8 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 // Load translation files required by the page
 $langs->loadLangs("donations");
 
-$userid = GETPOST('userid', 'int');
-$socid = GETPOST('socid', 'int');
+$userid = GETPOSTINT('userid', 'int');
+$socid = GETPOSTINT('socid', 'int');
 // Security check
 if ($user->socid > 0) {
 	$action = '';
