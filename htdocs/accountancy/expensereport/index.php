@@ -33,12 +33,12 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
-$validatemonth = GETPOST('validatemonth', 'int');
-$validateyear = GETPOST('validateyear', 'int');
+$validatemonth = GETPOSTINT('validatemonth');
+$validateyear = GETPOSTINT('validateyear');
 
 $month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-if (GETPOST("year", 'int')) {
-	$year_start = GETPOST("year", 'int');
+if (GETPOSTINT("year")) {
+	$year_start = GETPOSTINT("year");
 } else {
 	$year_start = dol_print_date(dol_now(), '%Y');
 	if (dol_print_date(dol_now(), '%m') < $month_start) {
