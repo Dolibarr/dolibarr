@@ -234,7 +234,7 @@ if (isModEnabled('supplier_order')) {
 	print '</div>';
 }
 
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	print load_fiche_titre($langs->trans("Invoices"), '', 'bill');
 
 	print '<div class="div-table-responsive-no-min">';
