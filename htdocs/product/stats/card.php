@@ -41,19 +41,19 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', 160);
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'products', 'stocks', 'bills', 'other'));
 
-$id		= GETPOST('id', 'int'); // For this page, id can also be 'all'
+$id		= GETPOSTINT('id'); // For this page, id can also be 'all'
 $ref	= GETPOST('ref', 'alpha');
 $mode = (GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'byunit');
-$search_year   = GETPOST('search_year', 'int');
-$search_categ  = GETPOST('search_categ', 'int');
-$notab = GETPOST('notab', 'int');
+$search_year   = GETPOSTINT('search_year');
+$search_categ  = GETPOSTINT('search_categ');
+$notab = GETPOSTINT('notab');
 $type = GETPOST('type', 'alpha');
 
 $error = 0;
 $mesg = '';
 $graphfiles = array();
 
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
@@ -102,7 +102,7 @@ if (!($id > 0) && empty($ref) || $notab) {
 
 	llxHeader("", $langs->trans("ProductStatistics"));
 
-	$type = GETPOST('type', 'int');
+	$type = GETPOSTINT('type');
 
 	$helpurl = '';
 	if ($type == '0') {
@@ -255,7 +255,7 @@ if ($result || !($id > 0)) {
 
 
 	$param = '';
-	$param .= (GETPOSTISSET('id') ? '&id='.GETPOST('id', 'int') : '&id='.$object->id).(($type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&search_year='.((int) $search_year).($notab ? '&notab='.$notab : '');
+	$param .= (GETPOSTISSET('id') ? '&id='.GETPOSTINT('id') : '&id='.$object->id).(($type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&search_year='.((int) $search_year).($notab ? '&notab='.$notab : '');
 	if ($socid > 0) {
 		$param .= '&socid='.((int) $socid);
 	}
@@ -519,7 +519,7 @@ if ($result || !($id > 0)) {
 			} else {
 				$dategenerated = ($mesg ? '<span class="error">'.$mesg.'</span>' : $langs->trans("ChartNotGenerated"));
 			}
-			$linktoregenerate = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?'.(GETPOSTISSET('id') ? 'id='.GETPOST('id', 'int') : 'id='.$object->id).(((string) $type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&action=recalcul&mode='.urlencode($mode).'&search_year='.((int) $search_year).($search_categ > 0 ? '&search_categ='.((int) $search_categ) : '').'">';
+			$linktoregenerate = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?'.(GETPOSTISSET('id') ? 'id='.GETPOSTINT('id') : 'id='.$object->id).(((string) $type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&action=recalcul&mode='.urlencode($mode).'&search_year='.((int) $search_year).($search_categ > 0 ? '&search_categ='.((int) $search_categ) : '').'">';
 			$linktoregenerate .= img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')', 'refresh');
 			$linktoregenerate .= '</a>';
 
