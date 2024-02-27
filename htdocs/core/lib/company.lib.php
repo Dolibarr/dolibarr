@@ -180,7 +180,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	// Related items
-	if ((isModEnabled('commande') || isModEnabled('propal') || isModEnabled('facture') || isModEnabled('ficheinter') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
+	if ((isModEnabled('order') || isModEnabled('propal') || isModEnabled('invoice') || isModEnabled('intervention') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
 		&& !getDolGlobalString('THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB')) {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Referers");
