@@ -1355,7 +1355,7 @@ if (empty($reshook)) {
 
 				if (
 					GETPOST('generate_deposit', 'alpha') == 'on' && !empty($deposit_percent_from_payment_terms)
-					&& isModEnabled('facture') && $user->hasRight('facture', 'creer')
+					&& isModEnabled('invoice') && $user->hasRight('facture', 'creer')
 				) {
 					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
@@ -1946,14 +1946,14 @@ if ($action == 'create' && $usercancreate) {
 		print '</td></tr>';
 
 		// Bank Account
-		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_ORDER') && isModEnabled("banque")) {
+		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_ORDER') && isModEnabled("bank")) {
 			print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
 			print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 			print '</td></tr>';
 		}
 
 		// Shipping Method
-		if (isModEnabled('expedition')) {
+		if (isModEnabled('delivery_note')) {
 			print '<tr><td>'.$langs->trans('SendingMethod').'</td><td>';
 			print img_picto('', 'object_dolly', 'class="pictofixedwidth"');
 			$form->selectShippingMethod(((GETPOSTISSET('shipping_method_id') && GETPOSTINT('shipping_method_id') != 0) ? GETPOST('shipping_method_id') : $shipping_method_id), 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
@@ -2242,7 +2242,7 @@ if ($action == 'create' && $usercancreate) {
 				// It may also break step of creating an order when invoicing must be done from proposals and not from orders
 				$deposit_percent_from_payment_terms = (float) getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
-				if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && $user->hasRight('facture', 'creer')) {
+				if (!empty($deposit_percent_from_payment_terms) && isModEnabled('invoice') && $user->hasRight('facture', 'creer')) {
 					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
 					$object->fetchObjectLinked();
@@ -2593,7 +2593,7 @@ if ($action == 'create' && $usercancreate) {
 			print '</td></tr>';
 
 			// Shipping Method
-			if (isModEnabled('expedition')) {
+			if (isModEnabled('delivery_note')) {
 				print '<tr><td>';
 				$editenable = $usercancreate;
 				print $form->editfieldkey("SendingMethod", 'shippingmethod', '', $object, $editenable);
@@ -2750,7 +2750,7 @@ if ($action == 'create' && $usercancreate) {
 			}
 
 			// Bank Account
-			if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_ORDER') && isModEnabled("banque")) {
+			if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_ORDER') && isModEnabled("bank")) {
 				print '<tr><td>';
 				$editenable = $usercancreate;
 				print $form->editfieldkey("BankAccount", 'bankaccount', '', $object, $editenable);
@@ -2971,7 +2971,7 @@ if ($action == 'create' && $usercancreate) {
 				}*/
 
 				// Create intervention
-				$arrayforbutaction[] = array('lang'=>'interventions', 'enabled'=>(isModEnabled("ficheinter") && $object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0), 'perm'=>$user->hasRight('ficheinter', 'creer'), 'label'=>'AddIntervention', 'url'=>'/fichinter/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid);
+				$arrayforbutaction[] = array('lang'=>'interventions', 'enabled'=>(isModEnabled("intervention") && $object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0), 'perm'=>$user->hasRight('ficheinter', 'creer'), 'label'=>'AddIntervention', 'url'=>'/fichinter/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid);
 				/*if (isModEnabled('ficheinter')) {
 					$langs->load("interventions");
 
@@ -2985,7 +2985,7 @@ if ($action == 'create' && $usercancreate) {
 				}*/
 
 				// Create contract
-				$arrayforbutaction[] = array('lang'=>'contracts', 'enabled'=>(isModEnabled("contrat") && ($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_SHIPMENTONPROCESS || $object->statut == Commande::STATUS_CLOSED)), 'perm'=>$user->hasRight('contrat', 'creer'), 'label'=>'AddContract', 'url'=>'/contrat/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid);
+				$arrayforbutaction[] = array('lang'=>'contracts', 'enabled'=>(isModEnabled("contract") && ($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_SHIPMENTONPROCESS || $object->statut == Commande::STATUS_CLOSED)), 'perm'=>$user->hasRight('contrat', 'creer'), 'label'=>'AddContract', 'url'=>'/contrat/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid);
 				/*if (isModEnabled('contrat') && ($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_SHIPMENTONPROCESS || $object->statut == Commande::STATUS_CLOSED)) {
 					$langs->load("contracts");
 
@@ -2995,14 +2995,14 @@ if ($action == 'create' && $usercancreate) {
 				}*/
 
 				$numshipping = 0;
-				if (isModEnabled('expedition')) {
+				if (isModEnabled('delivery_note')) {
 					$numshipping = $object->countNbOfShipments();
 				}
 
 				// Create shipment
 				if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
 					if ((getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->hasRight('expedition', 'creer')) || (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->hasRight('expedition', 'delivery', 'creer'))) {
-						$arrayforbutaction[] = array('lang'=>'sendings', 'enabled'=>(isModEnabled("expedition") && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')))), 'perm'=>$user->hasRight('expedition', 'creer'), 'label'=>'CreateShipment', 'url'=>'/expedition/shipment.php?id='.$object->id);
+						$arrayforbutaction[] = array('lang'=>'sendings', 'enabled'=>(isModEnabled("delivery_note") && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')))), 'perm'=>$user->hasRight('expedition', 'creer'), 'label'=>'CreateShipment', 'url'=>'/expedition/shipment.php?id='.$object->id);
 						/*
 						if ($user->hasRight('expedition', 'creer')) {
 						print dolGetButtonAction('', $langs->trans('CreateShipment'), 'default', DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id, '');
@@ -3018,7 +3018,7 @@ if ($action == 'create' && $usercancreate) {
 				// Create bill
 				$arrayforbutaction[] = array(
 					'lang'=>'bills',
-					'enabled'=>(isModEnabled('facture') && $object->statut > Commande::STATUS_DRAFT && !$object->billed && $object->total_ttc >= 0),
+					'enabled'=>(isModEnabled('invoice') && $object->statut > Commande::STATUS_DRAFT && !$object->billed && $object->total_ttc >= 0),
 					'perm'=>($user->hasRight('facture', 'creer') && !getDolGlobalInt('WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER')),
 					'label'=>'CreateBill',
 					'url'=>'/compta/facture/card.php?action=create&amp;token='.newToken().'&amp;origin='.urlencode($object->element).'&amp;originid='.$object->id.'&amp;socid='.$object->socid
