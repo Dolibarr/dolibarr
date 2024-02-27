@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->load("accountancy");
 
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 
 // Security check
 if ($user->socid > 0) {
@@ -63,14 +63,14 @@ if (!$sortfield) {
 }
 
 // Date range
-$year = GETPOST("year", 'int');
-$month = GETPOST("month", 'int');
-$date_startyear = GETPOST("date_startyear", 'int');
-$date_startmonth = GETPOST("date_startmonth", 'int');
-$date_startday = GETPOST("date_startday", 'int');
-$date_endyear = GETPOST("date_endyear", 'int');
-$date_endmonth = GETPOST("date_endmonth", 'int');
-$date_endday = GETPOST("date_endday", 'int');
+$year = GETPOSTINT("year");
+$month = GETPOSTINT("month");
+$date_startyear = GETPOSTINT("date_startyear");
+$date_startmonth = GETPOSTINT("date_startmonth");
+$date_startday = GETPOSTINT("date_startday");
+$date_endyear = GETPOSTINT("date_endyear");
+$date_endmonth = GETPOSTINT("date_endmonth");
+$date_endday = GETPOSTINT("date_endday");
 if (empty($year)) {
 	$year_current = dol_print_date(dol_now(), '%Y');
 	$month_current = dol_print_date(dol_now(), '%m');
