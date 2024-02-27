@@ -2648,6 +2648,7 @@ class EmailCollector extends CommonObject
 								//var_dump($alreadycreated);
 								//var_dump($operation['type']);
 								//var_dump($actioncomm);
+								//var_dump($objectemail);
 								//exit;
 
 								if ($errorforthisaction) {
@@ -2658,22 +2659,42 @@ class EmailCollector extends CommonObject
 										$errorforactions++;
 										$this->errors = $actioncomm->errors;
 									} else {
-										if (($fk_element_type == 'ticket') && (!empty($attachments))) {
-											// There is an attachment for the ticket -> store attachment
-											$ticket = New Ticket($this->db);
-											$ticket->fetch($fk_element_id);
-											$destdir = $conf->ticket->dir_output.'/'.$ticket->ref;
-											if (!dol_is_dir($destdir)) {
-												dol_mkdir($destdir);
-											}
-											if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
-												foreach ($attachments as $attachment) {
-													$attachment->save($destdir.'/');
+										
+										
+										if ($fk_element_type == "ticket") {
+											if ($objectemail->status == Ticket::STATUS_CLOSED || $objectemail->status == Ticket::STATUS_CANCELED) {
+												if(($objectemail->fk_user_assign != null)) {
+													$res = $objectemail->setStatut(Ticket::STATUS_ASSIGNED);
+												} else {
+													$res = $objectemail->setStatut(Ticket::STATUS_NOT_READ);
 												}
-											} else {
-												$this->getmsg($connection, $imapemail, $destdir);
+
+												if ($res) {
+													$operationslog .= '<br>Ticket Re-Opened successfully -> ref='.$objectemail->ref;
+												} else {
+													$errorforactions++;
+													$this->error = 'Error while changing the tcket status -> ref='.$objectemail->ref;
+													$this->errors[] = $this->error;
+												}
+											}											
+											if (!empty($attachments)) {
+												// There is an attachment for the ticket -> store attachment
+												$ticket = New Ticket($this->db);
+												$ticket->fetch($fk_element_id);
+												$destdir = $conf->ticket->dir_output.'/'.$ticket->ref;
+												if (!dol_is_dir($destdir)) {
+													dol_mkdir($destdir);
+												}
+												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+													foreach ($attachments as $attachment) {
+														$attachment->save($destdir.'/');
+													}
+												} else {
+													$this->getmsg($connection, $imapemail, $destdir);
+												}
 											}
 										}
+
 										$operationslog .= '<br>Event created -> id='.dol_escape_htmltag($actioncomm->id);
 									}
 								}
