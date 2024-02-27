@@ -144,6 +144,7 @@ $dolibarr_main_url_root_alt = (empty($dolibarr_main_url_root_alt) ? '' : trim($d
 $dolibarr_main_document_root = trim($dolibarr_main_document_root);
 $dolibarr_main_document_root_alt = (empty($dolibarr_main_document_root_alt) ? '' : trim($dolibarr_main_document_root_alt));
 
+// TODO incompatibility with socket connection
 if (empty($dolibarr_main_db_port)) {
 	$dolibarr_main_db_port = 3306; // For compatibility with old configs, if not defined, we take 'mysql' type
 }
