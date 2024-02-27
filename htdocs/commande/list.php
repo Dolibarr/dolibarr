@@ -179,7 +179,7 @@ $arrayfields = array(
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers, 'position'=>55),
 	'c.date_commande'=>array('label'=>"OrderDateShort", 'checked'=>1, 'position'=>60, 'csslist'=>'nowraponall'),
 	'c.date_delivery'=>array('label'=>"DateDeliveryPlanned", 'checked'=>1, 'enabled'=>!getDolGlobalString('ORDER_DISABLE_DELIVERY_DATE'), 'position'=>65, 'csslist'=>'nowraponall'),
-	'c.fk_shipping_method'=>array('label'=>"SendingMethod", 'checked'=>-1, 'position'=>66 , 'enabled'=>isModEnabled("expedition")),
+	'c.fk_shipping_method'=>array('label'=>"SendingMethod", 'checked'=>-1, 'position'=>66 , 'enabled'=>isModEnabled("delivery_note")),
 	'c.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>-1, 'position'=>67),
 	'c.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>-1, 'position'=>68),
 	'c.fk_input_reason'=>array('label'=>"Channel", 'checked'=>-1, 'position'=>69),
@@ -202,7 +202,7 @@ $arrayfields = array(
 	'c.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>130),
 	'c.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position'=>135, 'searchall'=>1),
 	'c.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position'=>140),
-	'shippable'=>array('label'=>"Shippable", 'checked'=>1,'enabled'=>(isModEnabled("expedition")), 'position'=>990),
+	'shippable'=>array('label'=>"Shippable", 'checked'=>1,'enabled'=>(isModEnabled("delivery_note")), 'position'=>990),
 	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'enabled'=>(!getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')), 'position'=>995),
 	'c.import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>999),
 	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
@@ -893,7 +893,7 @@ if ($search_billed != '' && $search_billed >= 0) {
 }
 if ($search_status != '') {
 	if ($search_status <= 3 && $search_status >= -1) {	// status from -1 to 3 are real status (other are virtual combination)
-		if ($search_status == 1 && !isModEnabled('expedition')) {
+		if ($search_status == 1 && !isModEnabled('delivery_note')) {
 			$sql .= ' AND c.fk_statut IN (1,2)'; // If module expedition disabled, we include order with status "sent" into "validated"
 		} else {
 			$sql .= ' AND c.fk_statut = '.((int) $search_status); // draft, validated, in process or canceled
@@ -1150,7 +1150,7 @@ if ($search_status == -2) {
 	$title .= ' - '.$langs->trans('StatusOrderToProcessShort');
 }
 if ($search_status == -3) {
-	$title .= ' - '.$langs->trans('StatusOrderValidated').', '.(!isModEnabled('expedition') ? '' : $langs->trans("StatusOrderSent").', ').$langs->trans('StatusOrderToBill');
+	$title .= ' - '.$langs->trans('StatusOrderValidated').', '.(!isModEnabled('delivery_note') ? '' : $langs->trans("StatusOrderSent").', ').$langs->trans('StatusOrderToBill');
 }
 if ($search_status == -4) {
 	$title .= ' - '.$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort");
@@ -1327,7 +1327,7 @@ if ($permissiontovalidate) {
 if ($permissiontoclose) {
 	$arrayofmassactions['preshipped'] = img_picto('', 'dollyrevert', 'class="pictofixedwidth"').$langs->trans("ClassifyShipped");
 }
-if (isModEnabled('facture') && $user->hasRight("facture", "creer")) {
+if (isModEnabled('invoice') && $user->hasRight("facture", "creer")) {
 	$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisCustomer");
 }
 if ($permissiontoclose) {
@@ -1466,7 +1466,7 @@ if ($user->hasRight("user", "user", "lire")) {
 }
 
 // If the user can view other products/services than his own
-if (isModEnabled('categorie') && $user->hasRight("categorie", "lire") && ($user->hasRight("produit", "lire") || $user->hasRight("service", "lire"))) {
+if (isModEnabled('category') && $user->hasRight("categorie", "lire") && ($user->hasRight("produit", "lire") || $user->hasRight("service", "lire"))) {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
@@ -1475,7 +1475,7 @@ if (isModEnabled('categorie') && $user->hasRight("categorie", "lire") && ($user-
 	$moreforfilter .= '</div>';
 }
 // If Categories are enabled & user has rights to see
-if (isModEnabled('categorie') && $user->hasRight("categorie", "lire")) {
+if (isModEnabled('category') && $user->hasRight("categorie", "lire")) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('CustomersProspectsCategoriesShort');
@@ -2192,7 +2192,7 @@ while ($i < $imaxinloop) {
 			}
 
 			// If module invoices enabled and user with invoice creation permissions
-			if (isModEnabled('facture') && getDolGlobalString('ORDER_BILLING_ALL_CUSTOMER')) {
+			if (isModEnabled('invoice') && getDolGlobalString('ORDER_BILLING_ALL_CUSTOMER')) {
 				if ($user->hasRight('facture', 'creer')) {
 					if (($obj->fk_statut > 0 && $obj->fk_statut < 3) || ($obj->fk_statut == 3 && $obj->billed == 0)) {
 						print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$companystatic->id.'&search_billed=0&autoselectall=1">';
@@ -2665,7 +2665,7 @@ while ($i < $imaxinloop) {
 								$stock_order = 0;
 								$stock_order_supplier = 0;
 								if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') || getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {    // What about other options ?
-									if (isModEnabled('commande')) {
+									if (isModEnabled('order')) {
 										if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'])) {
 											$generic_product->load_stats_commande(0, '1,2');
 											$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'] = $generic_product->stats_commande['qty'];
