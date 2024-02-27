@@ -246,7 +246,7 @@ if ($resql) {
 			$arrayOfValidBankAccount[getDolGlobalInt($accountname)] = getDolGlobalInt($accountname);
 			$arrayOfValidPaymentModes[] = $obj;
 		}
-		if (!isModEnabled('banque')) {
+		if (!isModEnabled('bank')) {
 			if ($paycode == 'CASH' || $paycode == 'CB') {
 				$arrayOfValidPaymentModes[] = $obj;
 			}
