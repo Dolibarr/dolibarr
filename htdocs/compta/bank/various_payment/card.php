@@ -144,7 +144,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 			$error++;
 		}
-		if (isModEnabled("banque") && !$object->accountid > 0) {
+		if (isModEnabled("bank") && !$object->accountid > 0) {
 			$langs->load('errors');
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 			$error++;
@@ -435,7 +435,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Bank
-	if (isModEnabled("banque")) {
+	if (isModEnabled("bank")) {
 		print '<tr><td>';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
@@ -450,7 +450,7 @@ if ($action == 'create') {
 	print '</tr>';
 
 	// Number
-	if (isModEnabled("banque")) {
+	if (isModEnabled("bank")) {
 		print '<tr><td><label for="num_payment">'.$langs->trans('Numero');
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '</label></td>';
@@ -687,7 +687,7 @@ if ($id) {
 
 	$bankaccountnotfound = 0;
 
-	if (isModEnabled('banque')) {
+	if (isModEnabled('bank')) {
 		print '<tr>';
 		print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 		print '<td colspan="3">';
