@@ -41,7 +41,7 @@ class mailing_fraise extends MailingTargets
 
 	public $require_module = array('adherent');
 
-	public $enabled = 'isModEnabled("adherent")';
+	public $enabled = 'isModEnabled("member")';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
