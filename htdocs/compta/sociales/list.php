@@ -109,7 +109,7 @@ $arrayfields = array(
 	'cs.paye'		=>array('label'=>"Status", 'checked'=>1, 'position'=>110),
 );
 
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	$arrayfields['cs.fk_account'] = array('checked'=>-1, 'position'=>90, 'label'=>"DefaultBankAccount");
 }
 
