@@ -54,7 +54,7 @@ if (isModEnabled('salaries')) {
 }
 
 
-$id = GETPOST('rowid', 'int');
+$id = GETPOSTINT('rowid');
 $rowid = GETPOSTINT('rowid');
 $accountoldid = GETPOSTINT('account');		// GETPOST('account') is old account id
 $accountid = GETPOSTINT('accountid');		// GETPOST('accountid') is new account id
@@ -102,20 +102,20 @@ if ($cancel) {
 
 if ($user->hasRight('banque', 'consolidate') && $action == 'donext') {
 	$al = new AccountLine($db);
-	$al->dateo_next(GETPOST("rowid", 'int'));
+	$al->dateo_next(GETPOSTINT("rowid"));
 } elseif ($user->hasRight('banque', 'consolidate') && $action == 'doprev') {
 	$al = new AccountLine($db);
-	$al->dateo_previous(GETPOST("rowid", 'int'));
+	$al->dateo_previous(GETPOSTINT("rowid"));
 } elseif ($user->hasRight('banque', 'consolidate') && $action == 'dvnext') {
 	$al = new AccountLine($db);
-	$al->datev_next(GETPOST("rowid", 'int'));
+	$al->datev_next(GETPOSTINT("rowid"));
 } elseif ($user->hasRight('banque', 'consolidate') && $action == 'dvprev') {
 	$al = new AccountLine($db);
-	$al->datev_previous(GETPOST("rowid", 'int'));
+	$al->datev_previous(GETPOSTINT("rowid"));
 }
 
 if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->hasRight('banque', 'modifier')) {
-	$cat1 = GETPOST("cat1", 'int');
+	$cat1 = GETPOSTINT("cat1");
 	if (!empty($rowid) && !empty($cat1)) {
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".((int) $rowid)." AND fk_categ = ".((int) $cat1);
 		if (!$db->query($sql)) {
@@ -139,8 +139,8 @@ if ($user->hasRight('banque', 'modifier') && $action == "update") {
 	$acsource->fetch($accountoldid);
 
 	$actarget = new Account($db);
-	if (GETPOST('accountid', 'int') > 0 && !$object->rappro && !$object->getVentilExportCompta()) {	// We ask to change bank account
-		$actarget->fetch(GETPOST('accountid', 'int'));
+	if (GETPOSTINT('accountid') > 0 && !$object->rappro && !$object->getVentilExportCompta()) {	// We ask to change bank account
+		$actarget->fetch(GETPOSTINT('accountid'));
 	} else {
 		$actarget->fetch($accountoldid);
 	}
@@ -351,7 +351,7 @@ if ($result) {
 
 		// Confirmations
 		if ($action == 'delete_categ') {
-			print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".urlencode($rowid)."&cat1=".urlencode(GETPOST("fk_categ", 'int'))."&orig_account=".urlencode($orig_account), $langs->trans("RemoveFromRubrique"), $langs->trans("RemoveFromRubriqueConfirm"), "confirm_delete_categ", '', 'yes', 1);
+			print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".urlencode($rowid)."&cat1=".urlencode(GETPOSTINT("fk_categ"))."&orig_account=".urlencode($orig_account), $langs->trans("RemoveFromRubrique"), $langs->trans("RemoveFromRubriqueConfirm"), "confirm_delete_categ", '', 'yes', 1);
 		}
 
 		print '<form name="update" method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$rowid.'">';
