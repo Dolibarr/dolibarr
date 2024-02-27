@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'compta', 'bills', 'other'));
-if (isModEnabled('adherent')) {
+if (isModEnabled('member')) {
 	$langs->load("members");
 }
 if (isModEnabled('don')) {
@@ -621,7 +621,7 @@ if ($result) {
 		print "</tr>";
 
 		// Categories
-		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+		if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 			$langs->load('categories');
 
 			// Bank line
