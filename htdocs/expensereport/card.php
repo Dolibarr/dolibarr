@@ -1919,7 +1919,7 @@ if ($action == 'create') {
 			// List of payments already done
 			$nbcols = 3;
 			$nbrows = 0;
-			if (isModEnabled("banque")) {
+			if (isModEnabled("bank")) {
 				$nbrows++;
 				$nbcols++;
 			}
@@ -1930,7 +1930,7 @@ if ($action == 'create') {
 			print '<td class="liste_titre">'.$langs->trans('Payments').'</td>';
 			print '<td class="liste_titre">'.$langs->trans('Date').'</td>';
 			print '<td class="liste_titre">'.$langs->trans('Type').'</td>';
-			if (isModEnabled("banque")) {
+			if (isModEnabled("bank")) {
 				print '<td class="liste_titre right">'.$langs->trans('BankAccount').'</td>';
 			}
 			print '<td class="liste_titre right">'.$langs->trans('Amount').'</td>';
@@ -1973,7 +1973,7 @@ if ($action == 'create') {
 					$labeltype = $langs->trans("PaymentType".$objp->payment_code) != "PaymentType".$objp->payment_code ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_type;
 					print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
 					// Bank account
-					if (isModEnabled("banque")) {
+					if (isModEnabled("bank")) {
 						$bankaccountstatic->id = $objp->baid;
 						$bankaccountstatic->ref = $objp->baref;
 						$bankaccountstatic->label = $objp->baref;
@@ -2782,7 +2782,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	}
 
 	// If bank module is used
-	if ($user->hasRight('expensereport', 'to_paid') && isModEnabled("banque") && $object->status == ExpenseReport::STATUS_APPROVED) {
+	if ($user->hasRight('expensereport', 'to_paid') && isModEnabled("bank") && $object->status == ExpenseReport::STATUS_APPROVED) {
 		// Pay
 		if ($remaintopay == 0) {
 			print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</span></div>';
@@ -2792,7 +2792,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	}
 
 	// If bank module is not used
-	if (($user->hasRight('expensereport', 'to_paid') || empty(isModEnabled("banque"))) && $object->status == ExpenseReport::STATUS_APPROVED) {
+	if (($user->hasRight('expensereport', 'to_paid') || empty(isModEnabled("bank"))) && $object->status == ExpenseReport::STATUS_APPROVED) {
 		//if ((round($remaintopay) == 0 || !isModEnabled("banque")) && $object->paid == 0)
 		if ($object->paid == 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=set_paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
