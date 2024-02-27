@@ -2603,19 +2603,21 @@ class EmailCollector extends CommonObject
 										$errorforactions++;
 										$this->errors = $actioncomm->errors;
 									} else {
-										if ($objectemail->status == Ticket::STATUS_CLOSED || $objectemail->status == Ticket::STATUS_CANCELED) {
-											if(($objectemail->fk_user_assign != null)) {
-												$res = $objectemail->setStatut(Ticket::STATUS_ASSIGNED);
-											} else {
-												$res = $objectemail->setStatut(Ticket::STATUS_NOT_READ);
-											}
+										if ($fk_element_type == "ticket") {
+											if ($objectemail->status == Ticket::STATUS_CLOSED || $objectemail->status == Ticket::STATUS_CANCELED) {
+												if(($objectemail->fk_user_assign != null)) {
+													$res = $objectemail->setStatut(Ticket::STATUS_ASSIGNED);
+												} else {
+													$res = $objectemail->setStatut(Ticket::STATUS_NOT_READ);
+												}
 
-											if ($res) {
-												$operationslog .= '<br>Ticket Re-Opened successfully -> ref='.$objectemail->ref;
-											} else {
-												$errorforactions++;
-												$this->error = 'Error while changing the tcket status -> ref='.$objectemail->ref;
-												$this->errors[] = $this->error;
+												if ($res) {
+													$operationslog .= '<br>Ticket Re-Opened successfully -> ref='.$objectemail->ref;
+												} else {
+													$errorforactions++;
+													$this->error = 'Error while changing the tcket status -> ref='.$objectemail->ref;
+													$this->errors[] = $this->error;
+												}
 											}
 										}
 									}
