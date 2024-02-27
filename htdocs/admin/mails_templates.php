@@ -62,7 +62,7 @@ $confirm = GETPOST('confirm', 'alpha'); // Result of a confirmation
 $mode = GETPOST('mode', 'aZ09');
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $rowid = GETPOST('rowid', 'alpha');
 $search_label = GETPOST('search_label', 'alphanohtml'); // Must allow value like 'Abc Def' or '(MyTemplateName)'
 $search_type_template = GETPOST('search_type_template', 'alpha');
@@ -81,10 +81,10 @@ $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"')
 $listoffset = GETPOST('listoffset', 'alpha');
 $listlimit = GETPOST('listlimit', 'alpha') > 0 ? GETPOST('listlimit', 'alpha') : 1000;
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -401,12 +401,12 @@ if (empty($reshook)) {
 					if (!$user->admin) {	// A non admin user can only edit its own template
 						$sql .= " ".((int) $user->id);
 					} else {
-						$sql .= " ".((int) GETPOST($keycode, 'int'));
+						$sql .= " ".(GETPOSTINT($keycode));
 					}
 				} elseif ($keycode == 'content') {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
 				} elseif (in_array($keycode, array('joinfiles', 'defaultfortype', 'private', 'position', 'entity'))) {
-					$sql .= (int) GETPOST($keycode, 'int');
+					$sql .= GETPOSTINT($keycode);
 				} else {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'alphanohtml'))."'";
 				}
@@ -454,7 +454,7 @@ if (empty($reshook)) {
 				}
 
 				// Rename some POST variables into a generic name
-				if ($field == 'fk_user' && !(GETPOST('fk_user', 'int') > 0)) {
+				if ($field == 'fk_user' && !(GETPOSTINT('fk_user') > 0)) {
 					$_POST['fk_user'] = '';
 				}
 				if ($field == 'topic') {
@@ -483,12 +483,12 @@ if (empty($reshook)) {
 					if (!$user->admin) {	// A non admin user can only edit its own template
 						$sql .= " ".((int) $user->id);
 					} else {
-						$sql .= " ".((int) GETPOST($keycode, 'int'));
+						$sql .= " ".(GETPOSTINT($keycode));
 					}
 				} elseif ($keycode == 'content') {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
 				} elseif (in_array($keycode, array('joinfiles', 'defaultfortype', 'private', 'position'))) {
-					$sql .= (int) GETPOST($keycode, 'int');
+					$sql .= GETPOSTINT($keycode);
 				} else {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'alphanohtml'))."'";
 				}
@@ -693,8 +693,8 @@ if ($action == 'create') {
 	$obj->label = GETPOST('label');
 	$obj->lang = GETPOST('lang');
 	$obj->type_template = GETPOST('type_template');
-	$obj->fk_user = GETPOST('fk_user', 'int');
-	$obj->private = GETPOST('private', 'int');
+	$obj->fk_user = GETPOSTINT('fk_user');
+	$obj->private = GETPOSTINT('private');
 	$obj->position = GETPOST('position');
 	$obj->topic = GETPOST('topic');
 	$obj->joinfiles = GETPOST('joinfiles');

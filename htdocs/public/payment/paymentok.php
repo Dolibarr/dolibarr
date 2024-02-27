@@ -111,7 +111,7 @@ $source = GETPOST('s', 'alpha') ? GETPOST('s', 'alpha') : GETPOST('source', 'alp
 $ref = GETPOST('ref');
 
 $suffix = GETPOST("suffix", 'aZ09');
-$membertypeid = GETPOST("membertypeid", 'int');
+$membertypeid = GETPOSTINT("membertypeid");
 
 
 // Detect $paymentmethod

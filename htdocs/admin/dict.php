@@ -49,9 +49,9 @@ $langs->loadLangs(array("errors", "admin", "main", "companies", "resource", "hol
 
 $action = GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $rowid = GETPOST('rowid', 'alpha');
-$entity = GETPOST('entity', 'int');
+$entity = GETPOSTINT('entity');
 $code = GETPOST('code', 'alpha');
 
 $acts = array(); $actl = array();
@@ -65,7 +65,7 @@ $listoffset = GETPOST('listoffset');
 $listlimit = GETPOST('listlimit') > 0 ? GETPOST('listlimit') : 1000; // To avoid too long dictionaries
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -74,7 +74,7 @@ $offset = $listlimit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$search_country_id = GETPOST('search_country_id', 'int');
+$search_country_id = GETPOSTINT('search_country_id');
 $search_code = GETPOST('search_code', 'alpha');
 $search_active = GETPOST('search_active', 'alpha');
 
@@ -931,13 +931,13 @@ if (empty($reshook)) {
 				}
 
 				if ($keycode == 'sortorder') {		// For column name 'sortorder', we use the field name 'position'
-					$sql .= (int) GETPOST('position', 'int');
+					$sql .= GETPOSTINT('position');
 				} elseif (GETPOST($keycode) == '' && !($keycode == 'code' && $id == 10)) {
 					$sql .= "null"; // For vat, we want/accept code = ''
 				} elseif ($keycode == 'content') {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
 				} elseif (in_array($keycode, array('joinfile', 'private', 'pos', 'position', 'scale', 'use_default'))) {
-					$sql .= (int) GETPOST($keycode, 'int');
+					$sql .= GETPOSTINT($keycode);
 				} else {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'alphanohtml'))."'";
 				}
@@ -952,8 +952,8 @@ if (empty($reshook)) {
 				setEventMessages($langs->transnoentities("RecordCreatedSuccessfully"), null, 'mesgs');
 
 				// Clean $_POST array, we keep only id of dictionary
-				if ($id == 10 && GETPOST('country', 'int') > 0) {
-					$search_country_id = GETPOST('country', 'int');
+				if ($id == 10 && GETPOSTINT('country') > 0) {
+					$search_country_id = GETPOSTINT('country');
 				}
 				$_POST = array('id'=>$id);
 			} else {
@@ -1000,13 +1000,13 @@ if (empty($reshook)) {
 				}
 				$sql .= $field."=";
 				if ($listfieldvalue[$i] == 'sortorder') {		// For column name 'sortorder', we use the field name 'position'
-					$sql .= (int) GETPOST('position', 'int');
+					$sql .= GETPOSTINT('position');
 				} elseif (GETPOST($keycode) == '' && !($keycode == 'code' && $id == 10)) {
 					$sql .= "null"; // For vat, we want/accept code = ''
 				} elseif ($keycode == 'content') {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
 				} elseif (in_array($keycode, array('joinfile', 'private', 'pos', 'position', 'scale', 'use_default'))) {
-					$sql .= (int) GETPOST($keycode, 'int');
+					$sql .= GETPOSTINT($keycode);
 				} else {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'alphanohtml'))."'";
 				}
@@ -2305,10 +2305,10 @@ if ($id > 0) {
 								$showfield = 0;
 							} elseif ($value == 'unicode') {
 								$valuetoshow = $langs->getCurrencySymbol($obj->code, 1);
-							} elseif ($value == 'label' && $tabname[GETPOST("id", 'int')] == 'c_units') {
+							} elseif ($value == 'label' && $tabname[GETPOSTINT("id")] == 'c_units') {
 								$langs->load("products");
 								$valuetoshow = $langs->trans($obj->$value);
-							} elseif ($value == 'short_label' && $tabname[GETPOST("id", 'int')] == 'c_units') {
+							} elseif ($value == 'short_label' && $tabname[GETPOSTINT("id")] == 'c_units') {
 								$langs->load("products");
 								$valuetoshow = $langs->trans($obj->$value);
 							} elseif (($value == 'unit') && ($tabname[$id] == 'c_paper_format')) {

@@ -55,10 +55,10 @@ if (!$sortfield) {
 	$sortfield = "nom";
 }
 
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 
 // Category
-$selected_cat = (int) GETPOST('search_categ', 'int');
+$selected_cat = GETPOSTINT('search_categ');
 if ($selected_cat == -1) {
 	$selected_cat = '';
 }
@@ -82,18 +82,18 @@ if (isModEnabled('accounting')) {
 $hookmanager->initHooks(array('casoclist'));
 
 // Date range
-$year = GETPOST("year", 'int');
-$month = GETPOST("month", 'int');
+$year = GETPOSTINT("year");
+$month = GETPOSTINT("month");
 $search_societe = GETPOST("search_societe", 'alpha');
 $search_zip = GETPOST("search_zip", 'alpha');
 $search_town = GETPOST("search_town", 'alpha');
 $search_country = GETPOST("search_country", 'alpha');
-$date_startyear = GETPOST("date_startyear", 'int');
-$date_startmonth = GETPOST("date_startmonth", 'int');
-$date_startday = GETPOST("date_startday", 'int');
-$date_endyear = GETPOST("date_endyear", 'int');
-$date_endmonth = GETPOST("date_endmonth", 'int');
-$date_endday = GETPOST("date_endday", 'int');
+$date_startyear = GETPOSTINT("date_startyear");
+$date_startmonth = GETPOSTINT("date_startmonth");
+$date_startday = GETPOSTINT("date_startday");
+$date_endyear = GETPOSTINT("date_endyear");
+$date_endmonth = GETPOSTINT("date_endmonth");
+$date_endday = GETPOSTINT("date_endday");
 if (empty($year)) {
 	$year_current = dol_print_date(dol_now(), '%Y');
 	$month_current = dol_print_date(dol_now(), '%m');
@@ -107,7 +107,7 @@ $date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_star
 $date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzserver');		// We use timezone of server so report is same from everywhere
 // Quarter
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
-	$q = GETPOST("q", "int") ? GETPOST("q", "int") : 0;
+	$q = GETPOSTINT("q") ? GETPOSTINT("q") : 0;
 	if (empty($q)) {
 		// We define date_start and date_end
 		$month_start = GETPOST("month") ? GETPOST("month") : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);

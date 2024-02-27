@@ -65,7 +65,7 @@ if (isModEnabled('productbatch')) {
 // Get parameters
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 
@@ -77,7 +77,7 @@ $search_ref_supplier = GETPOST("search_ref_supplier", 'alpha');
 $search_barcode = GETPOST("search_barcode", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
 $search_default_workstation = GETPOST("search_default_workstation", 'alpha');
-$search_type = GETPOST("search_type", 'int');
+$search_type = GETPOSTINT("search_type");
 $search_vatrate = GETPOST("search_vatrate", 'alpha');
 $searchCategoryProductOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
@@ -86,26 +86,26 @@ if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryProductOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
 $searchCategoryProductList = GETPOST('search_category_product_list', 'array');
-$catid = GETPOST('catid', 'int');
+$catid = GETPOSTINT('catid');
 if (!empty($catid) && empty($searchCategoryProductList)) {
 	$searchCategoryProductList = array($catid);
 }
-$search_tosell = GETPOST("search_tosell", 'int');
-$search_tobuy = GETPOST("search_tobuy", 'int');
-$search_country = GETPOST("search_country", 'int');
-$search_state = GETPOST("state_id", 'int');
-$fourn_id = GETPOST("fourn_id", 'int');
-$search_tobatch = GETPOST("search_tobatch", 'int');
+$search_tosell = GETPOSTINT("search_tosell");
+$search_tobuy = GETPOSTINT("search_tobuy");
+$search_country = GETPOSTINT("search_country");
+$search_state = GETPOSTINT("state_id");
+$fourn_id = GETPOSTINT("fourn_id");
+$search_tobatch = GETPOSTINT("search_tobatch");
 $search_accountancy_code_sell = GETPOST("search_accountancy_code_sell", 'alpha');
 $search_accountancy_code_sell_intra = GETPOST("search_accountancy_code_sell_intra", 'alpha');
 $search_accountancy_code_sell_export = GETPOST("search_accountancy_code_sell_export", 'alpha');
 $search_accountancy_code_buy = GETPOST("search_accountancy_code_buy", 'alpha');
 $search_accountancy_code_buy_intra = GETPOST("search_accountancy_code_buy_intra", 'alpha');
 $search_accountancy_code_buy_export = GETPOST("search_accountancy_code_buy_export", 'alpha');
-$search_finished = GETPOST("search_finished", 'int');
-$search_units = GETPOST('search_units', 'int');
+$search_finished = GETPOSTINT("search_finished");
+$search_units = GETPOSTINT('search_units');
 $optioncss = GETPOST('optioncss', 'alpha');
-$type = GETPOST("type", "int");
+$type = GETPOSTINT("type");
 $mode = GETPOST('mode', 'alpha');
 
 // Show/hide child product variants
@@ -117,10 +117,10 @@ if (isModEnabled('variants')) {
 $diroutputmassaction = $conf->product->dir_output.'/temp/massgeneration/'.$user->id;
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;

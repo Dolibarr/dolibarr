@@ -44,7 +44,7 @@ $hookmanager->initHooks(array('interventionindex'));
 $langs->load("interventions");
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;

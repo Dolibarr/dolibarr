@@ -147,7 +147,7 @@ if (isModEnabled('eventorganization')) {
 //	$langs->load("stockstransfer");
 //}
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $datesrfc = GETPOST('datesrfc');	// deprecated
@@ -711,7 +711,7 @@ if ($action == "addelement") {
 } elseif ($action == "unlink") {
 	$tablename = GETPOST("tablename", "aZ09");
 	$projectField = GETPOSTISSET('projectfield') ? GETPOST('projectfield', 'aZ09') : 'fk_projet';
-	$elementselectid = GETPOST("elementselect", "int");
+	$elementselectid = GETPOSTINT("elementselect");
 
 	$result = $object->remove_element($tablename, $elementselectid, $projectField);
 	if ($result < 0) {

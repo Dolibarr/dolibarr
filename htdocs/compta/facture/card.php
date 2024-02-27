@@ -79,32 +79,32 @@ if (isModEnabled('margin')) {
 }
 
 // General $Variables
-$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int'));    // For backward compatibility
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid'));    // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
-$lineid = GETPOST('lineid', 'int');
-$userid = GETPOST('userid', 'int');
+$lineid = GETPOSTINT('lineid');
+$userid = GETPOSTINT('userid');
 $search_ref = GETPOST('sf_ref', 'alpha') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_societe = GETPOST('search_societe', 'alpha');
 $search_montant_ht = GETPOST('search_montant_ht', 'alpha');
 $search_montant_ttc = GETPOST('search_montant_ttc', 'alpha');
 $origin = GETPOST('origin', 'alpha');
-$originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
-$fac_rec = GETPOST('fac_rec', 'int');
-$facid = GETPOST('facid', 'int');
-$ref_client = GETPOST('ref_client', 'int');
-$rank = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
-$projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : 0);
+$originid = (GETPOSTINT('originid') ? GETPOSTINT('originid') : GETPOSTINT('origin_id')); // For backward compatibility
+$fac_rec = GETPOSTINT('fac_rec');
+$facid = GETPOSTINT('facid');
+$ref_client = GETPOSTINT('ref_client');
+$rank = (GETPOSTINT('rank') > 0) ? GETPOSTINT('rank') : -1;
+$projectid = (GETPOSTINT('projectid') ? GETPOSTINT('projectid') : 0);
 $selectedLines = GETPOST('toselect', 'array');
 
 // PDF
-$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
-$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
-$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
+$hidedetails = (GETPOSTINT('hidedetails') ? GETPOSTINT('hidedetails') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
+$hidedesc = (GETPOSTINT('hidedesc') ? GETPOSTINT('hidedesc') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
+$hideref = (GETPOSTINT('hideref') ? GETPOSTINT('hideref') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
 
 // Number of lines for predefined product/service choices
 $NBLINES = 4;
@@ -223,7 +223,7 @@ if (empty($reshook)) {
 		} else {
 			$objectutil = dol_clone($object, 1); // To avoid to denaturate loaded object when setting some properties for clone. We use native clone to keep this->db valid.
 
-			$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
+			$objectutil->date = dol_mktime(12, 0, 0, GETPOSTINT('newdatemonth'), GETPOSTINT('newdateday'), GETPOSTINT('newdateyear'));
 			$objectutil->socid = $socid;
 			$result = $objectutil->createFromClone($user, $id);
 			if ($result > 0) {
@@ -295,7 +295,7 @@ if (empty($reshook)) {
 		$object->fetch($id);
 		$object->fetch_thirdparty();
 
-		$result = $object->deleteLine(GETPOST('lineid', 'int'));
+		$result = $object->deleteLine(GETPOSTINT('lineid'));
 		if ($result > 0) {
 			// reorder lines
 			$object->line_order(true);
@@ -413,17 +413,17 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'classin' && $usercancreate) {
 		$object->fetch($id);
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	} elseif ($action == 'setmode' && $usercancreate) {
 		$object->fetch($id);
-		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
+		$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
 	} elseif ($action == 'setretainedwarrantyconditions' && $user->hasRight('facture', 'creer')) {
 		$object->fetch($id);
 		$object->retained_warranty_fk_cond_reglement = 0; // To clean property
-		$result = $object->setRetainedWarrantyPaymentTerms(GETPOST('retained_warranty_fk_cond_reglement', 'int'));
+		$result = $object->setRetainedWarrantyPaymentTerms(GETPOSTINT('retained_warranty_fk_cond_reglement'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
@@ -455,11 +455,11 @@ if (empty($reshook)) {
 	} elseif ($action == 'setmulticurrencycode' && $usercancreate) {	 // Multicurrency Code
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {	// Multicurrency rate
-		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')), GETPOST('calculation_mode', 'int'));
+		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')), GETPOSTINT('calculation_mode'));
 	} elseif ($action == 'setinvoicedate' && $usercancreate) {
 		$object->fetch($id);
 		$old_date_lim_reglement = $object->date_lim_reglement;
-		$newdate = dol_mktime(0, 0, 0, GETPOST('invoicedatemonth', 'int'), GETPOST('invoicedateday', 'int'), GETPOST('invoicedateyear', 'int'), 'tzserver');
+		$newdate = dol_mktime(0, 0, 0, GETPOSTINT('invoicedatemonth'), GETPOSTINT('invoicedateday'), GETPOSTINT('invoicedateyear'), 'tzserver');
 		if (empty($newdate)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 			header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id.'&action=editinvoicedate&token='.newToken());
@@ -489,7 +489,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'setdate_pointoftax' && $usercancreate) {
 		$object->fetch($id);
 
-		$date_pointoftax = dol_mktime(0, 0, 0, GETPOST('date_pointoftaxmonth', 'int'), GETPOST('date_pointoftaxday', 'int'), GETPOST('date_pointoftaxyear', 'int'), 'tzserver');
+		$date_pointoftax = dol_mktime(0, 0, 0, GETPOSTINT('date_pointoftaxmonth'), GETPOSTINT('date_pointoftaxday'), GETPOSTINT('date_pointoftaxyear'), 'tzserver');
 
 		$object->date_pointoftax = $date_pointoftax;
 		$result = $object->update($user);
@@ -506,7 +506,7 @@ if (empty($reshook)) {
 		$db->begin();
 
 		if (!$error) {
-			$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
+			$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'));
 			if ($result < 0) {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -536,7 +536,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setpaymentterm' && $usercancreate) {
 		$object->fetch($id);
-		$object->date_lim_reglement = dol_mktime(12, 0, 0, GETPOST('paymenttermmonth', 'int'), GETPOST('paymenttermday', 'int'), GETPOST('paymenttermyear', 'int'));
+		$object->date_lim_reglement = dol_mktime(12, 0, 0, GETPOSTINT('paymenttermmonth'), GETPOSTINT('paymenttermday'), GETPOSTINT('paymenttermyear'));
 		if ($object->date_lim_reglement < $object->date) {
 			$object->date_lim_reglement = $object->calculate_date_lim_reglement();
 			setEventMessages($langs->trans("DatePaymentTermCantBeLowerThanObjectDate"), null, 'warnings');
@@ -578,9 +578,9 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {		// Set incoterm
-		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTINT('location_incoterms'));
 	} elseif ($action == 'setbankaccount' && $usercancreate) {	// bank account
-		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
+		$result = $object->setBankAccount(GETPOSTINT('fk_account'));
 	} elseif ($action == 'setremisepercent' && $usercancreate) {
 		$object->fetch($id);
 		$result = $object->setDiscount($user, price2num(GETPOST('remise_percent'), '', 2));
@@ -589,10 +589,10 @@ if (empty($reshook)) {
 		$db->begin();
 
 		// We use the credit to reduce amount of invoice
-		if (GETPOST("remise_id", 'int') > 0) {
+		if (GETPOSTINT("remise_id") > 0) {
 			$ret = $object->fetch($id);
 			if ($ret > 0) {
-				$result = $object->insert_discount(GETPOST("remise_id", 'int'));
+				$result = $object->insert_discount(GETPOSTINT("remise_id"));
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -602,10 +602,10 @@ if (empty($reshook)) {
 			}
 		}
 		// We use the credit to reduce remain to pay
-		if (GETPOST("remise_id_for_payment", 'int') > 0) {
+		if (GETPOSTINT("remise_id_for_payment") > 0) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 			$discount = new DiscountAbsolute($db);
-			$discount->fetch(GETPOST("remise_id_for_payment", 'int'));
+			$discount->fetch(GETPOSTINT("remise_id_for_payment"));
 
 			//var_dump($object->getRemainToPay(0));
 			//var_dump($discount->amount_ttc);exit;
@@ -667,7 +667,7 @@ if (empty($reshook)) {
 		$object->set_ref_client(GETPOST('ref_client'));
 	} elseif ($action == 'confirm_valid' && $confirm == 'yes' && $usercanvalidate) {
 		// Classify to validated
-		$idwarehouse = GETPOST('idwarehouse', 'int');
+		$idwarehouse = GETPOSTINT('idwarehouse');
 
 		$object->fetch($id);
 		$object->fetch_thirdparty();
@@ -727,7 +727,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_modif' && $usercanunvalidate) {
 		// Go back to draft status (unvalidate)
-		$idwarehouse = GETPOST('idwarehouse', 'int');
+		$idwarehouse = GETPOSTINT('idwarehouse');
 
 		$object->fetch($id);
 		$object->fetch_thirdparty();
@@ -1007,7 +1007,7 @@ if (empty($reshook)) {
 		$object->fetch($id);
 		if ($object->status == Facture::STATUS_VALIDATED && $object->paye == 0) {
 			$paiement = new Paiement($db);
-			$result = $paiement->fetch(GETPOST('paiement_id', 'int'));
+			$result = $paiement->fetch(GETPOSTINT('paiement_id'));
 			if ($result > 0) {
 				$result = $paiement->delete(); // If fetch ok and found
 				if ($result >= 0) {
@@ -1025,7 +1025,7 @@ if (empty($reshook)) {
 			$object->socid = GETPOSTINT('socid');
 		}
 
-		if (GETPOST('type', 'int') === '') {
+		if (GETPOSTINT('type') === '') {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 		}
 
@@ -1039,8 +1039,8 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		$dateinvoice = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'), 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server
-		$date_pointoftax = dol_mktime(0, 0, 0, GETPOST('date_pointoftaxmonth', 'int'), GETPOST('date_pointoftaxday', 'int'), GETPOST('date_pointoftaxyear', 'int'), 'tzserver');
+		$dateinvoice = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'), 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server
+		$date_pointoftax = dol_mktime(0, 0, 0, GETPOSTINT('date_pointoftaxmonth'), GETPOSTINT('date_pointoftaxday'), GETPOSTINT('date_pointoftaxyear'), 'tzserver');
 
 		// Replacement invoice
 		if (GETPOST('type') == Facture::TYPE_REPLACEMENT) {
@@ -1054,7 +1054,7 @@ if (empty($reshook)) {
 				$action = 'create';
 			}
 
-			if (!(GETPOST('fac_replacement', 'int') > 0)) {
+			if (!(GETPOSTINT('fac_replacement') > 0)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ReplaceInvoice")), null, 'errors');
 				$action = 'create';
@@ -1062,7 +1062,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// This is a replacement invoice
-				$result = $object->fetch(GETPOST('fac_replacement', 'int'));
+				$result = $object->fetch(GETPOSTINT('fac_replacement'));
 				$object->fetch_thirdparty();
 
 				$object->date               = $dateinvoice;
@@ -1072,19 +1072,19 @@ if (empty($reshook)) {
 				$object->ref_client			= GETPOST('ref_client', 'alphanohtml');
 				$object->ref_customer		= GETPOST('ref_client', 'alphanohtml');
 				$object->model_pdf          = GETPOST('model', 'alphanohtml');
-				$object->fk_project			= GETPOST('projectid', 'int');
-				$object->cond_reglement_id	= GETPOST('cond_reglement_id', 'int');
-				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
-				$object->fk_account         = GETPOST('fk_account', 'int');
+				$object->fk_project			= GETPOSTINT('projectid');
+				$object->cond_reglement_id	= GETPOSTINT('cond_reglement_id');
+				$object->mode_reglement_id	= GETPOSTINT('mode_reglement_id');
+				$object->fk_account         = GETPOSTINT('fk_account');
 				//$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU', 2);
 				//$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
-				$object->fk_incoterms       = GETPOST('incoterm_id', 'int');
+				$object->fk_incoterms       = GETPOSTINT('incoterm_id');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
+				$object->multicurrency_tx   = GETPOSTINT('originmulticurrency_tx');
 
 				// Special properties of replacement invoice
-				$object->fk_facture_source = GETPOST('fac_replacement', 'int');
+				$object->fk_facture_source = GETPOSTINT('fac_replacement');
 				$object->type              = Facture::TYPE_REPLACEMENT;
 
 				$id = $object->createFromCurrent($user);
@@ -1096,7 +1096,7 @@ if (empty($reshook)) {
 
 		// Credit note invoice
 		if (GETPOST('type') == Facture::TYPE_CREDIT_NOTE) {
-			$sourceinvoice = GETPOST('fac_avoir', 'int');
+			$sourceinvoice = GETPOSTINT('fac_avoir');
 			if (!($sourceinvoice > 0) && !getDolGlobalString('INVOICE_CREDIT_NOTE_STANDALONE')) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CorrectInvoice")), null, 'errors');
@@ -1133,16 +1133,16 @@ if (empty($reshook)) {
 				$object->ref_client			= GETPOST('ref_client', 'alphanohtml');
 				$object->ref_customer		= GETPOST('ref_client', 'alphanohtml');
 				$object->model_pdf          = GETPOST('model');
-				$object->fk_project			= GETPOST('projectid', 'int');
+				$object->fk_project			= GETPOSTINT('projectid');
 				$object->cond_reglement_id	= 0;		// No payment term for a credit note
-				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
-				$object->fk_account         = GETPOST('fk_account', 'int');
+				$object->mode_reglement_id	= GETPOSTINT('mode_reglement_id');
+				$object->fk_account         = GETPOSTINT('fk_account');
 				//$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
 				//$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
-				$object->fk_incoterms       = GETPOST('incoterm_id', 'int');
+				$object->fk_incoterms       = GETPOSTINT('incoterm_id');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
+				$object->multicurrency_tx   = GETPOSTINT('originmulticurrency_tx');
 
 				// Special properties of replacement invoice
 				$object->fk_facture_source = $sourceinvoice > 0 ? $sourceinvoice : '';
@@ -1178,7 +1178,7 @@ if (empty($reshook)) {
 				// NOTE: fields total on credit note are stored as delta both on total of lines and on invoice total (good)
 				// NOTE: fields situation_percent on situation invoice are stored as cumulative values on lines (bad)
 				// NOTE: fields situation_percent on credit note are stored as delta on lines (good)
-				if (GETPOST('invoiceAvoirWithLines', 'int') == 1 && $id > 0) {
+				if (GETPOSTINT('invoiceAvoirWithLines') == 1 && $id > 0) {
 					if (!empty($facture_source->lines)) {
 						$fk_parent_line = 0;
 
@@ -1300,7 +1300,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				if (GETPOST('invoiceAvoirWithPaymentRestAmount', 'int') == 1 && $id > 0) {
+				if (GETPOSTINT('invoiceAvoirWithPaymentRestAmount') == 1 && $id > 0) {
 					if ($facture_source->fetch($object->fk_facture_source) > 0) {
 						$totalpaid = $facture_source->getSommePaiement();
 						$totalcreditnotes = $facture_source->getSumCreditNotesUsed();
@@ -1341,7 +1341,7 @@ if (empty($reshook)) {
 		}
 
 		// Standard invoice or Deposit invoice, created from a Predefined template invoice
-		if ((GETPOST('type') == Facture::TYPE_STANDARD || GETPOST('type') == Facture::TYPE_DEPOSIT) && GETPOST('fac_rec', 'int') > 0) {
+		if ((GETPOST('type') == Facture::TYPE_STANDARD || GETPOST('type') == Facture::TYPE_DEPOSIT) && GETPOSTINT('fac_rec') > 0) {
 			if (empty($dateinvoice)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
@@ -1371,20 +1371,20 @@ if (empty($reshook)) {
 				$object->ref_customer       = GETPOST('ref_client');
 				$object->ref_client         = $object->ref_customer;
 				$object->model_pdf          = GETPOST('model');
-				$object->fk_project         = GETPOST('projectid', 'int');
+				$object->fk_project         = GETPOSTINT('projectid');
 				$object->cond_reglement_id	= (GETPOSTINT('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
-				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
-				$object->fk_account         = GETPOST('fk_account', 'int');
+				$object->mode_reglement_id	= GETPOSTINT('mode_reglement_id');
+				$object->fk_account         = GETPOSTINT('fk_account');
 				$object->amount             = price2num(GETPOST('amount'));
 				//$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
 				//$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
-				$object->fk_incoterms       = GETPOST('incoterm_id', 'int');
+				$object->fk_incoterms       = GETPOSTINT('incoterm_id');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
+				$object->multicurrency_tx   = GETPOSTINT('originmulticurrency_tx');
 
 				// Source facture
-				$object->fac_rec = GETPOST('fac_rec', 'int');
+				$object->fac_rec = GETPOSTINT('fac_rec');
 
 				$id = $object->create($user); // This include recopy of links from recurring invoice and recurring invoice lines
 			}
@@ -1396,7 +1396,7 @@ if (empty($reshook)) {
 			$valuestandardinvoice = price2num(str_replace('%', '', GETPOST('valuestandardinvoice', 'alpha')), 'MU');
 			$valuedeposit = price2num(str_replace('%', '', GETPOST('valuedeposit', 'alpha')), 'MU');
 
-			if (GETPOST('socid', 'int') < 1) {
+			if (GETPOSTINT('socid') < 1) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), null, 'errors');
 				$action = 'create';
@@ -1458,17 +1458,17 @@ if (empty($reshook)) {
 				$object->ref_client			= GETPOST('ref_client');
 				$object->ref_customer		= GETPOST('ref_client');
 				$object->model_pdf          = GETPOST('model');
-				$object->fk_project			= GETPOST('projectid', 'int');
+				$object->fk_project			= GETPOSTINT('projectid');
 				$object->cond_reglement_id	= (GETPOSTINT('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
-				$object->fk_account         = GETPOST('fk_account', 'int');
+				$object->fk_account         = GETPOSTINT('fk_account');
 				$object->amount             = price2num(GETPOST('amount'));
 				//$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
 				//$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
-				$object->fk_incoterms       = GETPOST('incoterm_id', 'int');
+				$object->fk_incoterms       = GETPOSTINT('incoterm_id');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
+				$object->multicurrency_tx   = GETPOSTINT('originmulticurrency_tx');
 
 				if (GETPOST('type') == Facture::TYPE_SITUATION) {
 					$object->situation_counter = 1;
@@ -1477,8 +1477,8 @@ if (empty($reshook)) {
 				}
 
 				if (in_array($object->type, $retainedWarrantyInvoiceAvailableType)) {
-					$object->retained_warranty = GETPOST('retained_warranty', 'int');
-					$object->retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
+					$object->retained_warranty = GETPOSTINT('retained_warranty');
+					$object->retained_warranty_fk_cond_reglement = GETPOSTINT('retained_warranty_fk_cond_reglement');
 				} else {
 					$object->retained_warranty = 0;
 					$object->retained_warranty_fk_cond_reglement = 0;
@@ -1904,12 +1904,12 @@ if (empty($reshook)) {
 					$id = $object->create($user);
 
 					for ($i = 1; $i <= $NBLINES; $i++) {
-						if (GETPOST('idprod'.$i, 'int')) {
+						if (GETPOSTINT('idprod'.$i)) {
 							$product = new Product($db);
-							$product->fetch(GETPOST('idprod'.$i, 'int'));
+							$product->fetch(GETPOSTINT('idprod'.$i));
 							$startday = dol_mktime(12, 0, 0, GETPOST('date_start'.$i.'month'), GETPOST('date_start'.$i.'day'), GETPOST('date_start'.$i.'year'));
 							$endday = dol_mktime(12, 0, 0, GETPOST('date_end'.$i.'month'), GETPOST('date_end'.$i.'day'), GETPOST('date_end'.$i.'year'));
-							$result = $object->addline($product->description, $product->price, price2num(GETPOST('qty'.$i), 'MS'), $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, GETPOST('idprod'.$i, 'int'), price2num(GETPOST('remise_percent'.$i), '', 2), $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', $product->fk_unit, 0, '', 1);
+							$result = $object->addline($product->description, $product->price, price2num(GETPOST('qty'.$i), 'MS'), $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, GETPOSTINT('idprod'.$i), price2num(GETPOST('remise_percent'.$i), '', 2), $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', $product->fk_unit, 0, '', 1);
 						}
 					}
 
@@ -1930,7 +1930,7 @@ if (empty($reshook)) {
 				$action = 'create';
 			}
 
-			if (!(GETPOST('situations', 'int') > 0)) {
+			if (!(GETPOSTINT('situations') > 0)) {
 				$error++;
 				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSituation"));
 				setEventMessages($mesg, null, 'errors');
@@ -1938,8 +1938,8 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				$result = $object->fetch(GETPOST('situations', 'int'));
-				$object->fk_facture_source = GETPOST('situations', 'int');
+				$result = $object->fetch(GETPOSTINT('situations'));
+				$object->fk_facture_source = GETPOSTINT('situations');
 				$object->type = Facture::TYPE_SITUATION;
 
 				if (!empty($origin) && !empty($originid)) {
@@ -1950,13 +1950,13 @@ if (empty($reshook)) {
 
 					// retained warranty
 					if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
-						$retained_warranty = GETPOST('retained_warranty', 'int');
+						$retained_warranty = GETPOSTINT('retained_warranty');
 						if (price2num($retained_warranty) > 0) {
 							$object->retained_warranty = price2num($retained_warranty);
 						}
 
-						if (GETPOST('retained_warranty_fk_cond_reglement', 'int') > 0) {
-							$object->retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
+						if (GETPOSTINT('retained_warranty_fk_cond_reglement') > 0) {
+							$object->retained_warranty_fk_cond_reglement = GETPOSTINT('retained_warranty_fk_cond_reglement');
 						}
 
 						$retained_warranty_date_limit = GETPOST('retained_warranty_date_limit');
@@ -2006,12 +2006,12 @@ if (empty($reshook)) {
 				$object->note_private = trim(GETPOST('note', 'restricthtml'));
 				$object->ref_client = GETPOST('ref_client', 'alpha');
 				$object->model_pdf = GETPOST('model', 'alpha');
-				$object->fk_project = GETPOST('projectid', 'int');
-				$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
-				$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
+				$object->fk_project = GETPOSTINT('projectid');
+				$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
+				$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
 				//$object->remise_absolue =price2num(GETPOST('remise_absolue'), 'MU', 2);
 				//$object->remise_percent = price2num(GETPOST('remise_percent'), '', 2);
-				$object->fk_account = GETPOST('fk_account', 'int');
+				$object->fk_account = GETPOSTINT('fk_account');
 
 
 				// Special properties of replacement invoice
@@ -2119,7 +2119,7 @@ if (empty($reshook)) {
 		if ($prod_entry_mode == 'free') {
 			$idprod = 0;
 		} else {
-			$idprod = GETPOST('idprod', 'int');
+			$idprod = GETPOSTINT('idprod');
 
 			if (getDolGlobalString('MAIN_DISABLE_FREE_LINES') && $idprod <= 0) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")), null, 'errors');
@@ -2232,7 +2232,7 @@ if (empty($reshook)) {
 				$label = ((GETPOST('product_label') && GETPOST('product_label') != $prod->label) ? GETPOST('product_label') : '');
 
 				// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
-				$pqp = (GETPOST('pbq', 'int') ? GETPOST('pbq', 'int') : 0);
+				$pqp = (GETPOSTINT('pbq') ? GETPOSTINT('pbq') : 0);
 
 				$datapriceofproduct = $prod->getSellPrice($mysoc, $object->thirdparty, $pqp);
 
@@ -2592,13 +2592,13 @@ if (empty($reshook)) {
 		}
 
 		// Define special_code for special lines
-		$special_code = GETPOST('special_code', 'int');
+		$special_code = GETPOSTINT('special_code');
 		if ($special_code == 3) {
 			$special_code = 0;	// Options should not exists on invoices
 		}
 
 		$line = new FactureLigne($db);
-		$line->fetch(GETPOST('lineid', 'int'));
+		$line->fetch(GETPOSTINT('lineid'));
 		$percent = $line->get_prev_progress($object->id);
 		$progress = price2num(GETPOST('progress', 'alpha'));
 
@@ -2625,7 +2625,7 @@ if (empty($reshook)) {
 		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
 
 		// Check minimum price
-		$productid = GETPOST('productid', 'int');
+		$productid = GETPOSTINT('productid');
 		if (!empty($productid)) {
 			$product = new Product($db);
 			$product->fetch($productid);
@@ -2693,7 +2693,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			if (empty($usercancreatemargin)) {
 				foreach ($object->lines as &$line) {
-					if ($line->id == GETPOST('lineid', 'int')) {
+					if ($line->id == GETPOSTINT('lineid')) {
 						$fournprice = $line->fk_fournprice;
 						$buyingprice = $line->pa_ht;
 						break;
@@ -2709,7 +2709,7 @@ if (empty($reshook)) {
 			}
 
 			$result = $object->updateline(
-				GETPOST('lineid', 'int'),
+				GETPOSTINT('lineid'),
 				$description,
 				$pu,
 				$qty,
@@ -2722,7 +2722,7 @@ if (empty($reshook)) {
 				$price_base_type,
 				$info_bits,
 				$type,
-				GETPOST('fk_parent_line', 'int'),
+				GETPOSTINT('fk_parent_line'),
 				0,
 				$fournprice,
 				$buyingprice,
@@ -2796,7 +2796,7 @@ if (empty($reshook)) {
 			dol_print_error($db);
 		}
 		if (GETPOST('all_progress') != "") {
-			$all_progress = GETPOST('all_progress', 'int');
+			$all_progress = GETPOSTINT('all_progress');
 			foreach ($object->lines as $line) {
 				$percent = $line->get_prev_progress($object->id);
 				if ((float) $all_progress < (float) $percent) {
@@ -3055,7 +3055,7 @@ if (empty($reshook)) {
 		} elseif ($action == 'swapstatut') {
 			// toggle the status of a contact
 			if ($object->fetch($id)) {
-				$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
+				$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 			} else {
 				dol_print_error($db);
 			}
@@ -3119,9 +3119,9 @@ if ($action == 'create') {
 
 	$currency_code = $conf->currency;
 
-	$cond_reglement_id = GETPOST('cond_reglement_id', 'int');
-	$mode_reglement_id = GETPOST('mode_reglement_id', 'int');
-	$fk_account = GETPOST('fk_account', 'int');
+	$cond_reglement_id = GETPOSTINT('cond_reglement_id');
+	$mode_reglement_id = GETPOSTINT('mode_reglement_id');
+	$fk_account = GETPOSTINT('fk_account');
 
 	// Load objectsrc
 	//$remise_absolue = 0;
@@ -3251,24 +3251,24 @@ if ($action == 'create') {
 	// If form was posted (but error returned), we must reuse the value posted in priority (standard Dolibarr behaviour)
 	if (!GETPOST('changecompany')) {
 		if (GETPOSTISSET('cond_reglement_id')) {
-			$cond_reglement_id = GETPOST('cond_reglement_id', 'int');
+			$cond_reglement_id = GETPOSTINT('cond_reglement_id');
 		}
 		if (GETPOSTISSET('mode_reglement_id')) {
-			$mode_reglement_id = GETPOST('mode_reglement_id', 'int');
+			$mode_reglement_id = GETPOSTINT('mode_reglement_id');
 		}
 		if (GETPOSTISSET('cond_reglement_id')) {
-			$fk_account = GETPOST('fk_account', 'int');
+			$fk_account = GETPOSTINT('fk_account');
 		}
 	}
 
 	// when payment condition is empty (means not override by payment condition form a other object, like third-party), try to use default value
 	if (empty($cond_reglement_id)) {
-		$cond_reglement_id = GETPOST("cond_reglement_id", 'int');
+		$cond_reglement_id = GETPOSTINT("cond_reglement_id");
 	}
 
 	// when payment mode is empty (means not override by payment mode form a other object, like third-party), try to use default value
 	if (empty($mode_reglement_id)) {
-		$mode_reglement_id = GETPOST("mode_reglement_id", 'int');
+		$mode_reglement_id = GETPOSTINT("mode_reglement_id");
 	}
 
 	// when bank account is empty (means not override by payment mode form a other object, like third-party), try to use default value
@@ -3335,12 +3335,12 @@ if ($action == 'create') {
 
 		$exampletemplateinvoice = new FactureRec($db);
 		$invoice_predefined = new FactureRec($db);
-		if (empty($origin) && empty($originid) && GETPOST('fac_rec', 'int') > 0) {
-			$invoice_predefined->fetch(GETPOST('fac_rec', 'int'));
+		if (empty($origin) && empty($originid) && GETPOSTINT('fac_rec') > 0) {
+			$invoice_predefined->fetch(GETPOSTINT('fac_rec'));
 		}
 
 		// Thirdparty
-		if ($soc->id > 0 && (!GETPOST('fac_rec', 'int') || !empty($invoice_predefined->frequency))) {
+		if ($soc->id > 0 && (!GETPOSTINT('fac_rec') || !empty($invoice_predefined->frequency))) {
 			// If thirdparty known and not a predefined invoiced without a recurring rule
 			print '<tr><td class="fieldrequired">'.$langs->trans('Customer').'</td>';
 			print '<td colspan="2">';
@@ -3386,7 +3386,7 @@ if ($action == 'create') {
 				});
 				</script>';
 			}
-			if (!GETPOST('fac_rec', 'int')) {
+			if (!GETPOSTINT('fac_rec')) {
 				print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 			}
 			print '</td>';
@@ -3394,8 +3394,8 @@ if ($action == 'create') {
 		}
 
 		// Overwrite some values if creation of invoice is from a predefined invoice
-		if (empty($origin) && empty($originid) && GETPOST('fac_rec', 'int') > 0) {
-			$invoice_predefined->fetch(GETPOST('fac_rec', 'int'));
+		if (empty($origin) && empty($originid) && GETPOSTINT('fac_rec') > 0) {
+			$invoice_predefined->fetch(GETPOSTINT('fac_rec'));
 
 			$dateinvoice = $invoice_predefined->date_when; // To use next gen date by default later
 			if (empty($projectid)) {
@@ -3431,9 +3431,9 @@ if ($action == 'create') {
 					while ($i < $num) {
 						$objp = $db->fetch_object($resql);
 						print '<option value="'.$objp->rowid.'"';
-						if (GETPOST('fac_rec', 'int') == $objp->rowid) {
+						if (GETPOSTINT('fac_rec') == $objp->rowid) {
 							print ' selected';
-							$exampletemplateinvoice->fetch(GETPOST('fac_rec', 'int'));
+							$exampletemplateinvoice->fetch(GETPOSTINT('fac_rec'));
 						}
 						print '>'.$objp->title.' ('.price($objp->total_ttc).' '.$langs->trans("TTC").')</option>';
 						$i++;
@@ -3469,7 +3469,7 @@ if ($action == 'create') {
 
 		// Standard invoice
 		print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-		$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOST('type', 'int') ? '' : ' checked').'> ';
+		$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOSTINT('type') ? '' : ' checked').'> ';
 		$tmp  = $tmp.'<label for="radio_standard" >'.$langs->trans("InvoiceStandardAsk").'</label>';
 		$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3, 'standardonsmartphone');
 		print '<table class="nobordernopadding"><tr>';
@@ -3540,7 +3540,7 @@ if ($action == 'create') {
 						'variablealllines' => $langs->transnoentitiesnoconv('VarAmountAllLines')
 					);
 					$typedeposit = GETPOST('typedeposit', 'aZ09');
-					$valuedeposit = GETPOST('valuedeposit', 'int');
+					$valuedeposit = GETPOSTINT('valuedeposit');
 					if (empty($typedeposit) && !empty($objectsrc->deposit_percent)) {
 						$origin_payment_conditions_deposit_percent = getDictionaryValue('c_payment_term', 'deposit_percent', $objectsrc->cond_reglement_id);
 						if (!empty($origin_payment_conditions_deposit_percent)) {
@@ -3573,10 +3573,10 @@ if ($action == 'create') {
 				print '</div></div>';
 
 				// Next situation invoice
-				$opt = $form->selectSituationInvoices(GETPOST('originid', 'int'), $socid);
+				$opt = $form->selectSituationInvoices(GETPOSTINT('originid'), $socid);
 
 				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-				$tmp = '<input type="radio" name="type" value="5"'.(GETPOST('type') == 5 && GETPOST('originid', 'int') ? ' checked' : '');
+				$tmp = '<input type="radio" name="type" value="5"'.(GETPOST('type') == 5 && GETPOSTINT('originid') ? ' checked' : '');
 				if ($opt == ('<option value ="0" selected>'.$langs->trans('NoSituations').'</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande')) {
 					$tmp .= ' disabled';
 				}
@@ -3606,7 +3606,7 @@ if ($action == 'create') {
 				if (is_array($facids)) {
 					foreach ($facids as $facparam) {
 						$options .= '<option value="'.$facparam ['id'].'"';
-						if ($facparam['id'] == GETPOST('fac_replacement', 'int')) {
+						if ($facparam['id'] == GETPOSTINT('fac_replacement')) {
 							$options .= ' selected';
 						}
 						$options .= '>'.$facparam['ref'];
@@ -3743,8 +3743,8 @@ if ($action == 'create') {
 					print $desc;
 
 					print '<div id="credit_note_options" class="clearboth paddingtop marginbottomonly">';
-					print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="$(\'#credit_note_options input[type=checkbox]\').not(this).prop(\'checked\', false);" '.(GETPOST('invoiceAvoirWithLines', 'int') > 0 ? 'checked' : '').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
-					print '<br>&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="$(\'#credit_note_options input[type=checkbox]\').not(this).prop(\'checked\', false);" '.(GETPOST('invoiceAvoirWithPaymentRestAmount', 'int') > 0 ? 'checked' : '').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
+					print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="$(\'#credit_note_options input[type=checkbox]\').not(this).prop(\'checked\', false);" '.(GETPOSTINT('invoiceAvoirWithLines') > 0 ? 'checked' : '').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
+					print '<br>&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="$(\'#credit_note_options input[type=checkbox]\').not(this).prop(\'checked\', false);" '.(GETPOSTINT('invoiceAvoirWithPaymentRestAmount') > 0 ? 'checked' : '').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
 					print '</div>';
 
 					print '</div></div>';
@@ -3828,8 +3828,8 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 
-		$newdateinvoice = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'), 'tzserver');
-		$date_pointoftax = dol_mktime(0, 0, 0, GETPOST('date_pointoftaxmonth', 'int'), GETPOST('date_pointoftaxday', 'int'), GETPOST('date_pointoftaxyear', 'int'), 'tzserver');
+		$newdateinvoice = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'), 'tzserver');
+		$date_pointoftax = dol_mktime(0, 0, 0, GETPOSTINT('date_pointoftaxmonth'), GETPOSTINT('date_pointoftaxday'), GETPOSTINT('date_pointoftaxyear'), 'tzserver');
 
 		// Date invoice
 		print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td colspan="2">';
@@ -3854,11 +3854,11 @@ if ($action == 'create') {
 
 		if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 			$rwStyle = 'display:none;';
-			if (in_array(GETPOST('type', 'int'), $retainedWarrantyInvoiceAvailableType)) {
+			if (in_array(GETPOSTINT('type'), $retainedWarrantyInvoiceAvailableType)) {
 				$rwStyle = '';
 			}
 
-			$retained_warranty = GETPOST('retained_warranty', 'int');
+			$retained_warranty = GETPOSTINT('retained_warranty');
 			if (empty($retained_warranty)) {
 				if (!empty($objectsrc->retained_warranty)) { // use previous situation value
 					$retained_warranty = $objectsrc->retained_warranty;
@@ -3871,7 +3871,7 @@ if ($action == 'create') {
 
 			// Retained warranty payment term
 			print '<tr class="retained-warranty-line" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('PaymentConditionsShortRetainedWarranty').'</td><td colspan="2">';
-			$retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
+			$retained_warranty_fk_cond_reglement = GETPOSTINT('retained_warranty_fk_cond_reglement');
 			if (empty($retained_warranty_fk_cond_reglement)) {
 				$retained_warranty_fk_cond_reglement = getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID');
 				if (!empty($objectsrc->retained_warranty_fk_cond_reglement)) { // use previous situation value
@@ -3986,7 +3986,7 @@ if ($action == 'create') {
 
 		// Help of substitution key
 		$htmltext = '';
-		if (GETPOST('fac_rec', 'int') > 0) {
+		if (GETPOSTINT('fac_rec') > 0) {
 			$dateexample = ($newdateinvoice ? $newdateinvoice : $dateinvoice);
 			if (empty($dateexample)) {
 				$dateexample = dol_now();
@@ -4910,7 +4910,7 @@ if ($action == 'create') {
 					print '<input type="hidden" name="action" value="setretainedwarrantyconditions">';
 					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-					$retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
+					$retained_warranty_fk_cond_reglement = GETPOSTINT('retained_warranty_fk_cond_reglement');
 					$retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $object->retained_warranty_fk_cond_reglement;
 					$retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID');
 					print $form->getSelectConditionsPaiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);

@@ -1973,7 +1973,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 		$linkObject->entity = $conf->entity;
 		$linkObject->url = $link;
 		$linkObject->objecttype = GETPOST('objecttype', 'alpha');
-		$linkObject->objectid = GETPOST('objectid', 'int');
+		$linkObject->objectid = GETPOSTINT('objectid');
 		$linkObject->label = GETPOST('label', 'alpha');
 		$res = $linkObject->create($user);
 

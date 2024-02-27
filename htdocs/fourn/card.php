@@ -61,7 +61,7 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
 // Security check
-$id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
+$id = (GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id'));
 if ($user->socid) {
 	$id = $user->socid;
 }
@@ -123,7 +123,7 @@ if (empty($reshook)) {
 	// Set payment terms of the settlement
 	if ($action == 'setconditions' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
-		$result = $object->setPaymentTerms(GETPOST('cond_reglement_supplier_id', 'int'));
+		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_supplier_id'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
@@ -131,7 +131,7 @@ if (empty($reshook)) {
 	// Payment mode
 	if ($action == 'setmode' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
-		$result = $object->setPaymentMethods(GETPOST('mode_reglement_supplier_id', 'int'));
+		$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_supplier_id'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
@@ -140,7 +140,7 @@ if (empty($reshook)) {
 	// Bank account
 	if ($action == 'setbankaccount' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
-		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
+		$result = $object->setBankAccount(GETPOSTINT('fk_account'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}

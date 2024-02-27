@@ -80,7 +80,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		$param_showordernb = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showordernb';
 		$autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
 		if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode, $autosetarray)) {
-			$year = GETPOST($param_year, 'int');
+			$year = GETPOSTINT($param_year);
 			$showinvoicenb = GETPOST($param_showinvoicenb, 'alpha');
 			$showpropalnb = GETPOST($param_showpropalnb, 'alpha');
 			$showordernb = GETPOST($param_showordernb, 'alpha');

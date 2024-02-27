@@ -41,7 +41,7 @@ $object = new Subscription($db);
 $errmsg = '';
 
 $action = GETPOST("action", 'alpha');
-$rowid = GETPOST("rowid", "int") ? GETPOST("rowid", "int") : GETPOST("id", "int");
+$rowid = GETPOSTINT("rowid") ? GETPOSTINT("rowid") : GETPOSTINT("id");
 $typeid = GETPOSTINT("typeid");
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm');
@@ -86,8 +86,8 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'update' &&
 
 		$errmsg = '';
 
-		$newdatestart = dol_mktime(GETPOST('datesubhour', 'int'), GETPOST('datesubmin', 'int'), 0, GETPOST('datesubmonth', 'int'), GETPOST('datesubday', 'int'), GETPOST('datesubyear', 'int'));
-		$newdateend = dol_mktime(GETPOST('datesubendhour', 'int'), GETPOST('datesubendmin', 'int'), 0, GETPOST('datesubendmonth', 'int'), GETPOST('datesubendday', 'int'), GETPOST('datesubendyear', 'int'));
+		$newdatestart = dol_mktime(GETPOSTINT('datesubhour'), GETPOSTINT('datesubmin'), 0, GETPOSTINT('datesubmonth'), GETPOSTINT('datesubday'), GETPOSTINT('datesubyear'));
+		$newdateend = dol_mktime(GETPOSTINT('datesubendhour'), GETPOSTINT('datesubendmin'), 0, GETPOSTINT('datesubendmonth'), GETPOSTINT('datesubendday'), GETPOSTINT('datesubendyear'));
 
 		if ($object->fk_bank > 0) {
 			$accountline = new AccountLine($db);

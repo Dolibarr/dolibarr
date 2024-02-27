@@ -51,14 +51,14 @@ $langs->loadLangs(array('products', 'stocks', 'companies', 'categories'));
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm');
-$projectid = GETPOST('projectid', 'int');
+$projectid = GETPOSTINT('projectid');
 
-$id = GETPOST('id', 'int');
-$socid = GETPOST('socid', 'int');
+$id = GETPOSTINT('id');
+$socid = GETPOSTINT('socid');
 $ref = GETPOST('ref', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 if (!$sortfield) {
@@ -184,7 +184,7 @@ if (empty($reshook)) {
 
 	// Delete warehouse
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('stock', 'supprimer')) {
-		$object->fetch(GETPOST('id', 'int'));
+		$object->fetch(GETPOSTINT('id'));
 		$result = $object->delete($user);
 		if ($result > 0) {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
@@ -257,7 +257,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'classin' && $usercancreate) {
 		// Link to a project
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 
 	if ($cancel == $langs->trans("Cancel")) {
@@ -315,7 +315,7 @@ if ($action == 'create') {
 
 	// Parent entrepot
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-	print img_picto('', 'stock').$formproduct->selectWarehouses((GETPOSTISSET('fk_parent') ? GETPOST('fk_parent', 'int') : 'ifone'), 'fk_parent', '', 1);
+	print img_picto('', 'stock').$formproduct->selectWarehouses((GETPOSTISSET('fk_parent') ? GETPOSTINT('fk_parent') : 'ifone'), 'fk_parent', '', 1);
 	print '</td></tr>';
 
 	// Project
@@ -397,7 +397,7 @@ if ($action == 'create') {
 
 	print '</form>';
 } else {
-	$id = GETPOST("id", 'int');
+	$id = GETPOSTINT("id");
 	if ($id > 0 || $ref) {
 		$object = new Entrepot($db);
 		$result = $object->fetch($id, $ref);

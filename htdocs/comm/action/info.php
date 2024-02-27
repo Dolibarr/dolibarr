@@ -37,7 +37,7 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->load("commercial");
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('actioncard', 'globalcard'));

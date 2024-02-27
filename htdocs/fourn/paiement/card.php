@@ -40,7 +40,7 @@ $langs->loadLangs(array('banks', 'bills', 'companies', 'suppliers'));
 
 
 // Get Parameters
-$id 		= GETPOST('id', 'int');
+$id 		= GETPOSTINT('id');
 $action		= GETPOST('action', 'alpha');
 $confirm 	= GETPOST('confirm', 'alpha');
 
@@ -130,7 +130,7 @@ if ($action == 'setnum_paiement' && GETPOST('num_paiement')) {
 
 if ($action == 'setdatep' && GETPOST('datepday')) {
 	$object->fetch($id);
-	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
+	$datepaye = dol_mktime(GETPOSTINT('datephour'), GETPOSTINT('datepmin'), GETPOSTINT('datepsec'), GETPOSTINT('datepmonth'), GETPOSTINT('datepday'), GETPOSTINT('datepyear'));
 	$res = $object->update_date($datepaye);
 	if ($res === 0) {
 		setEventMessages($langs->trans('PaymentDateUpdateSucceeded'), null, 'mesgs');

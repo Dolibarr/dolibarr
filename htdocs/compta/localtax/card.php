@@ -32,19 +32,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'banks', 'bills'));
 
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 $action = GETPOST("action", "aZ09");
 $cancel = GETPOST('cancel', 'aZ09');
 
-$refund = GETPOST("refund", "int");
+$refund = GETPOSTINT("refund");
 if (empty($refund)) {
 	$refund = 0;
 }
 
-$lttype = GETPOST('localTaxType', 'int');
+$lttype = GETPOSTINT('localTaxType');
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -188,7 +188,7 @@ if ($action == 'create') {
 		// Bank account
 		print '<tr><td class="fieldrequired" id="label_fk_account">'.$langs->trans("BankAccount").'</td><td>';
 		print img_picto('', 'bank_account', 'pictofixedwidth');
-		$form->select_comptes(GETPOST("accountid", "int"), "accountid", 0, "courant=1", 2, '', 0, 'maxwidth500 widthcentpercentminusx'); // Affiche liste des comptes courant
+		$form->select_comptes(GETPOSTINT("accountid"), "accountid", 0, "courant=1", 2, '', 0, 'maxwidth500 widthcentpercentminusx'); // Affiche liste des comptes courant
 		print '</td></tr>';
 
 		// Number

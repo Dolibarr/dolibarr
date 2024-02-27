@@ -50,14 +50,14 @@ $hookmanager->initHooks(array('specialexpensesindex'));
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'hrm'));
 
-$year = GETPOST("year", 'int');
-$search_sc_type = GETPOST('search_sc_type', 'int');
+$year = GETPOSTINT("year");
+$search_sc_type = GETPOSTINT('search_sc_type');
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1

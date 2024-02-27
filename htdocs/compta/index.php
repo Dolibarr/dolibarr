@@ -56,7 +56,7 @@ if (isModEnabled('commande')) {
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');
-$bid = GETPOST('bid', 'int');
+$bid = GETPOSTINT('bid');
 
 // Security check
 $socid = '';

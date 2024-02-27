@@ -36,7 +36,7 @@ if (isModEnabled("banque")) {
 $langs->loadLangs(array("bills", "banks", "companies", "donations"));
 
 // Security check
-$id = GETPOST('rowid') ? GETPOST('rowid', 'int') : GETPOST('id', 'int');
+$id = GETPOST('rowid') ? GETPOSTINT('rowid') : GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 if ($user->socid) {

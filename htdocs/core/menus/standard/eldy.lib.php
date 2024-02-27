@@ -2241,7 +2241,7 @@ function get_left_menu_projects($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 		if (isModEnabled('projet')) {
 			$langs->load("projects");
 
-			$search_project_user = GETPOST('search_project_user', 'int');
+			$search_project_user = GETPOSTINT('search_project_user');
 
 			$tmpentry = array(
 				'enabled'=>isModEnabled('projet'),
@@ -2397,7 +2397,7 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 			if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 				$langs->load("projects");
 
-				$search_project_user = GETPOST('search_project_user', 'int');
+				$search_project_user = GETPOSTINT('search_project_user');
 
 				$newmenu->add("/projet/activity/perweek.php?leftmenu=tasks".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("TimeEntry"), 0, $user->hasRight('projet', 'lire'), '', $mainmenu, 'timespent', 0, '', '', '', img_picto('', 'timespent', 'class="paddingright pictofixedwidth"'));
 			}

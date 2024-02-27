@@ -44,10 +44,10 @@ $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -71,8 +71,8 @@ $search_total_ttc = GETPOST("search_total_ttc", 'alpha');
 $search_contract = GETPOST("search_contract", 'alpha');
 $search_service = GETPOST("search_service", 'alpha');
 $search_status = GETPOST("search_status", 'alpha');
-$search_product_category = GETPOST('search_product_category', 'int');
-$socid = GETPOST('socid', 'int');
+$search_product_category = GETPOSTINT('search_product_category');
+$socid = GETPOSTINT('socid');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'contractservicelist'.$mode;
 
 $opouvertureprevuemonth = GETPOST('opouvertureprevuemonth');
@@ -80,19 +80,19 @@ $opouvertureprevueday = GETPOST('opouvertureprevueday');
 $opouvertureprevueyear = GETPOST('opouvertureprevueyear');
 $filter_opouvertureprevue = GETPOST('filter_opouvertureprevue');
 
-$op1month = GETPOST('op1month', 'int');
-$op1day = GETPOST('op1day', 'int');
-$op1year = GETPOST('op1year', 'int');
+$op1month = GETPOSTINT('op1month');
+$op1day = GETPOSTINT('op1day');
+$op1year = GETPOSTINT('op1year');
 $filter_op1 = GETPOST('filter_op1', 'alpha');
 
-$op2month = GETPOST('op2month', 'int');
-$op2day = GETPOST('op2day', 'int');
-$op2year = GETPOST('op2year', 'int');
+$op2month = GETPOSTINT('op2month');
+$op2day = GETPOSTINT('op2day');
+$op2year = GETPOSTINT('op2year');
 $filter_op2 = GETPOST('filter_op2', 'alpha');
 
-$opcloturemonth = GETPOST('opcloturemonth', 'int');
-$opclotureday = GETPOST('opclotureday', 'int');
-$opclotureyear = GETPOST('opclotureyear', 'int');
+$opcloturemonth = GETPOSTINT('opcloturemonth');
+$opclotureday = GETPOSTINT('opclotureday');
+$opclotureyear = GETPOSTINT('opclotureyear');
 $filter_opcloture = GETPOST('filter_opcloture', 'alpha');
 
 
@@ -107,7 +107,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Security check
-$contratid = GETPOST('id', 'int');
+$contratid = GETPOSTINT('id');
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
