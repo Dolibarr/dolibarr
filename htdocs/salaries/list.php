@@ -527,7 +527,7 @@ print $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1,
 print '</td>';
 
 // Bank account
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	print '<td class="liste_titre">';
 	print $form->select_comptes($search_account, 'search_account', 0, '', 1, '', 0, 'maxwidth125', 1);
 	print '</td>';
@@ -581,7 +581,7 @@ print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $par
 $totalarray['nbfield']++;
 print_liste_field_titre("DefaultPaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
 $totalarray['nbfield']++;
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	print_liste_field_titre("DefaultBankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -731,7 +731,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Account
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			print '<td>';
 			if ($obj->fk_account > 0) {
 				//$accountstatic->fetch($obj->fk_bank);
@@ -820,7 +820,7 @@ if ($num == 0) {
 		}
 	}*/
 	$colspan = 9;
-	if (isModEnabled("banque")) {
+	if (isModEnabled("bank")) {
 		$colspan++;
 	}
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
