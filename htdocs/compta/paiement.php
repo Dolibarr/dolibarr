@@ -174,7 +174,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			// If bank module is on, account is required to enter a payment
 			if (GETPOST('accountid') <= 0) {
 				setEventMessages($langs->transnoentities('ErrorFieldRequired', $langs->transnoentities('AccountToCredit')), null, 'errors');
@@ -251,7 +251,7 @@ if (empty($reshook)) {
 			$multicurrency_tx[$key] = $tmpinvoice->multicurrency_tx;
 		}
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			// If the bank module is active, an account is required to input a payment
 			if (GETPOSTINT('accountid') <= 0) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('AccountToCredit')), null, 'errors');
@@ -501,7 +501,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 		// Bank account
 		print '<tr>';
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			if ($facture->type != 2) {
 				print '<td><span class="fieldrequired">'.$langs->trans('AccountToCredit').'</span></td>';
 			}
