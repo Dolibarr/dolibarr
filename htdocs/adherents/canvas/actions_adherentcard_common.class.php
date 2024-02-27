@@ -251,16 +251,16 @@ abstract class ActionsAdherentCardCommon
 		$this->object->old_name = GETPOST("old_name");
 		$this->object->old_firstname = GETPOST("old_firstname");
 
-		$this->object->fk_soc = GETPOST("fk_soc", 'int');
-		$this->object->socid = GETPOST("fk_soc", 'int');
+		$this->object->fk_soc = GETPOSTINT("fk_soc");
+		$this->object->socid = GETPOSTINT("fk_soc");
 		$this->object->lastname			= GETPOST("lastname");
 		$this->object->firstname		= GETPOST("firstname");
 		$this->object->civility_id = GETPOST("civility_id");
 		$this->object->address = GETPOST("address");
 		$this->object->zip = GETPOST("zipcode");
 		$this->object->town = GETPOST("town");
-		$this->object->country_id = GETPOST("country_id", 'int') ? GETPOST("country_id", 'int') : $mysoc->country_id;
-		$this->object->state_id = GETPOST("state_id", 'int');
+		$this->object->country_id = GETPOSTINT("country_id") ? GETPOSTINT("country_id") : $mysoc->country_id;
+		$this->object->state_id = GETPOSTINT("state_id");
 		$this->object->phone_perso = GETPOST("phone_perso");
 		$this->object->phone_mobile = GETPOST("phone_mobile");
 		$this->object->email = GETPOST("email", 'alphawithlgt');
