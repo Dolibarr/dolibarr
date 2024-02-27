@@ -50,19 +50,19 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'ac
 $optioncss 	= GETPOST('optioncss', 'alpha');
 
 
-$disabledefaultvalues = GETPOST('disabledefaultvalues', 'int');
+$disabledefaultvalues = GETPOSTINT('disabledefaultvalues');
 
 $mode = GETPOST('mode', 'aZ09');
 if (empty($mode) && preg_match('/show_/', $action)) {
 	$mode = $action;	// For backward compatibility
 }
-$resourceid = GETPOST("search_resourceid", "int") ? GETPOST("search_resourceid", "int") : GETPOST("resourceid", "int");
+$resourceid = GETPOSTINT("search_resourceid") ? GETPOSTINT("search_resourceid") : GETPOSTINT("resourceid");
 $pid = GETPOST("search_projectid", 'int', 3) ? GETPOST("search_projectid", 'int', 3) : GETPOST("projectid", 'int', 3);
 $search_status = (GETPOST("search_status", 'aZ09') != '') ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09');
 $type = GETPOST('search_type', 'alphanohtml') ? GETPOST('search_type', 'alphanohtml') : GETPOST('type', 'alphanohtml');
-$year = GETPOST("year", 'int');
-$month = GETPOST("month", 'int');
-$day = GETPOST("day", 'int');
+$year = GETPOSTINT("year");
+$month = GETPOSTINT("month");
+$day = GETPOSTINT("day");
 
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('search_actioncode', 'array')) {
@@ -80,11 +80,11 @@ $search_title = GETPOST('search_title', 'alpha');
 $search_note = GETPOST('search_note', 'alpha');
 
 // $dateselect is a day included inside the event range
-$dateselect = dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'), 'tzuserrel');
-$datestart_dtstart = dol_mktime(0, 0, 0, GETPOST('datestart_dtstartmonth', 'int'), GETPOST('datestart_dtstartday', 'int'), GETPOST('datestart_dtstartyear', 'int'), 'tzuserrel');
-$datestart_dtend = dol_mktime(23, 59, 59, GETPOST('datestart_dtendmonth', 'int'), GETPOST('datestart_dtendday', 'int'), GETPOST('datestart_dtendyear', 'int'), 'tzuserrel');
-$dateend_dtstart = dol_mktime(0, 0, 0, GETPOST('dateend_dtstartmonth', 'int'), GETPOST('dateend_dtstartday', 'int'), GETPOST('dateend_dtstartyear', 'int'), 'tzuserrel');
-$dateend_dtend = dol_mktime(23, 59, 59, GETPOST('dateend_dtendmonth', 'int'), GETPOST('dateend_dtendday', 'int'), GETPOST('dateend_dtendyear', 'int'), 'tzuserrel');
+$dateselect = dol_mktime(0, 0, 0, GETPOSTINT('dateselectmonth'), GETPOSTINT('dateselectday'), GETPOSTINT('dateselectyear'), 'tzuserrel');
+$datestart_dtstart = dol_mktime(0, 0, 0, GETPOSTINT('datestart_dtstartmonth'), GETPOSTINT('datestart_dtstartday'), GETPOSTINT('datestart_dtstartyear'), 'tzuserrel');
+$datestart_dtend = dol_mktime(23, 59, 59, GETPOSTINT('datestart_dtendmonth'), GETPOSTINT('datestart_dtendday'), GETPOSTINT('datestart_dtendyear'), 'tzuserrel');
+$dateend_dtstart = dol_mktime(0, 0, 0, GETPOSTINT('dateend_dtstartmonth'), GETPOSTINT('dateend_dtstartday'), GETPOSTINT('dateend_dtstartyear'), 'tzuserrel');
+$dateend_dtend = dol_mktime(23, 59, 59, GETPOSTINT('dateend_dtendmonth'), GETPOSTINT('dateend_dtendday'), GETPOSTINT('dateend_dtendyear'), 'tzuserrel');
 if ($search_status == '' && !GETPOSTISSET('search_status')) {
 	$search_status = ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
 }
@@ -95,7 +95,7 @@ if (empty($mode) && !GETPOSTISSET('mode')) {
 $filter = GETPOST("search_filter", 'alpha', 3) ? GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
 $filtert = GETPOST("search_filtert", "int", 3) ? GETPOST("search_filtert", "int", 3) : GETPOST("filtert", "int", 3);
 $usergroup = GETPOST("search_usergroup", "int", 3) ? GETPOST("search_usergroup", "int", 3) : GETPOST("usergroup", "int", 3);
-$showbirthday = empty($conf->use_javascript_ajax) ? (GETPOST("search_showbirthday", "int") ? GETPOST("search_showbirthday", "int") : GETPOST("showbirthday", "int")) : 1;
+$showbirthday = empty($conf->use_javascript_ajax) ? (GETPOSTINT("search_showbirthday") ? GETPOSTINT("search_showbirthday") : GETPOSTINT("showbirthday")) : 1;
 $search_categ_cus = GETPOST("search_categ_cus", "int", 3) ? GETPOST("search_categ_cus", "int", 3) : 0;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -114,10 +114,10 @@ if (empty($filtert) && !getDolGlobalString('AGENDA_ALL_CALENDARS')) {
 }
 
 // Pagination parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -137,7 +137,7 @@ if (!$sortfield) {
 }
 
 // Security check
-$socid = GETPOST("search_socid", 'int') ? GETPOST("search_socid", 'int') : GETPOST("socid", 'int');
+$socid = GETPOSTINT("search_socid") ? GETPOSTINT("search_socid") : GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -350,41 +350,41 @@ if ($search_title != '') {
 if ($search_note != '') {
 	$param .= '&search_note='.urlencode($search_note);
 }
-if (GETPOST('datestart_dtstartday', 'int')) {
-	$param .= '&datestart_dtstartday='.GETPOST('datestart_dtstartday', 'int');
+if (GETPOSTINT('datestart_dtstartday')) {
+	$param .= '&datestart_dtstartday='.GETPOSTINT('datestart_dtstartday');
 }
-if (GETPOST('datestart_dtstartmonth', 'int')) {
-	$param .= '&datestart_dtstartmonth='.GETPOST('datestart_dtstartmonth', 'int');
+if (GETPOSTINT('datestart_dtstartmonth')) {
+	$param .= '&datestart_dtstartmonth='.GETPOSTINT('datestart_dtstartmonth');
 }
-if (GETPOST('datestart_dtstartyear', 'int')) {
-	$param .= '&datestart_dtstartyear='.GETPOST('datestart_dtstartyear', 'int');
+if (GETPOSTINT('datestart_dtstartyear')) {
+	$param .= '&datestart_dtstartyear='.GETPOSTINT('datestart_dtstartyear');
 }
-if (GETPOST('datestart_dtendday', 'int')) {
-	$param .= '&datestart_dtendday='.GETPOST('datestart_dtendday', 'int');
+if (GETPOSTINT('datestart_dtendday')) {
+	$param .= '&datestart_dtendday='.GETPOSTINT('datestart_dtendday');
 }
-if (GETPOST('datestart_dtendmonth', 'int')) {
-	$param .= '&datestart_dtendmonth='.GETPOST('datestart_dtendmonth', 'int');
+if (GETPOSTINT('datestart_dtendmonth')) {
+	$param .= '&datestart_dtendmonth='.GETPOSTINT('datestart_dtendmonth');
 }
-if (GETPOST('datestart_dtendyear', 'int')) {
-	$param .= '&datestart_dtendyear='.GETPOST('datestart_dtendyear', 'int');
+if (GETPOSTINT('datestart_dtendyear')) {
+	$param .= '&datestart_dtendyear='.GETPOSTINT('datestart_dtendyear');
 }
-if (GETPOST('dateend_dtstartday', 'int')) {
-	$param .= '&dateend_dtstartday='.GETPOST('dateend_dtstartday', 'int');
+if (GETPOSTINT('dateend_dtstartday')) {
+	$param .= '&dateend_dtstartday='.GETPOSTINT('dateend_dtstartday');
 }
-if (GETPOST('dateend_dtstartmonth', 'int')) {
-	$param .= '&dateend_dtstartmonth='.GETPOST('dateend_dtstartmonth', 'int');
+if (GETPOSTINT('dateend_dtstartmonth')) {
+	$param .= '&dateend_dtstartmonth='.GETPOSTINT('dateend_dtstartmonth');
 }
-if (GETPOST('dateend_dtstartyear', 'int')) {
-	$param .= '&dateend_dtstartyear='.GETPOST('dateend_dtstartyear', 'int');
+if (GETPOSTINT('dateend_dtstartyear')) {
+	$param .= '&dateend_dtstartyear='.GETPOSTINT('dateend_dtstartyear');
 }
-if (GETPOST('dateend_dtendday', 'int')) {
-	$param .= '&dateend_dtendday='.GETPOST('dateend_dtendday', 'int');
+if (GETPOSTINT('dateend_dtendday')) {
+	$param .= '&dateend_dtendday='.GETPOSTINT('dateend_dtendday');
 }
-if (GETPOST('dateend_dtendmonth', 'int')) {
-	$param .= '&dateend_dtendmonth='.GETPOST('dateend_dtendmonth', 'int');
+if (GETPOSTINT('dateend_dtendmonth')) {
+	$param .= '&dateend_dtendmonth='.GETPOSTINT('dateend_dtendmonth');
 }
-if (GETPOST('dateend_dtendyear', 'int')) {
-	$param .= '&dateend_dtendyear='.GETPOST('dateend_dtendyear', 'int');
+if (GETPOSTINT('dateend_dtendyear')) {
+	$param .= '&dateend_dtendyear='.GETPOSTINT('dateend_dtendyear');
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -410,7 +410,7 @@ if ($user->hasRight('agenda', 'allactions', 'delete')) {
 if (isModEnabled('category') && $user->hasRight('agenda', 'myactions', 'create')) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
