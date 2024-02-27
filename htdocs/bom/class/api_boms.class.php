@@ -473,7 +473,7 @@ class Boms extends DolibarrApi
 
 		$updateRes = $this->bom->deleteLine(DolibarrApiAccess::$user, $lineid);
 		if ($updateRes > 0) {
-			return $this->get($id);
+			return 1;
 		} else {
 			throw new RestException(500, $this->bom->error);
 		}
