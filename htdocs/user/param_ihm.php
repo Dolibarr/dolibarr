@@ -209,16 +209,16 @@ if (isModEnabled('holiday') || isModEnabled('expensereport')) {
 if (isModEnabled("product") || isModEnabled("service")) {
 	$tmparray['product/index.php?mainmenu=products&leftmenu='] = array('label'=>'ProductsAndServicesArea', 'picto'=>'product');
 }
-if (isModEnabled("propal") || isModEnabled('commande') || isModEnabled('ficheinter') || isModEnabled('contrat')) {
+if (isModEnabled("propal") || isModEnabled('order') || isModEnabled('intervention') || isModEnabled('contract')) {
 	$tmparray['comm/index.php?mainmenu=commercial&leftmenu='] = array('label'=>'CommercialArea', 'picto'=>'commercial');
 }
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	$tmparray['compta/index.php?mainmenu=billing&leftmenu='] = array('label'=>'InvoicesArea', 'picto'=>'bill');
 }
 if (isModEnabled('comptabilite') || isModEnabled('accounting')) {
 	$tmparray['compta/index.php?mainmenu=accountancy&leftmenu='] = array('label'=>'AccountancyTreasuryArea', 'picto'=>'bill');
 }
-if (isModEnabled('adherent')) {
+if (isModEnabled('member')) {
 	$tmparray['adherents/index.php?mainmenu=members&leftmenu='] = array('label'=>'MembersArea', 'picto'=>'member');
 }
 if (isModEnabled('agenda')) {
