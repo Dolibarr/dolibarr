@@ -105,6 +105,10 @@ if (!$permissiontoread) {
 }
 
 
+
+
+
+
 /*
  * Actions
  */
@@ -132,9 +136,30 @@ if (empty($reshook)) {
 
 	$triggermodname = 'BOOKCAL_AVAILABILITIES_MODIFY'; // Name of trigger action code to execute when we modify record
 
-	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
-	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+	$dateStartTimestamp = dol_stringtotime(GETPOST('start'));
+	$dateEndTimestamp = dol_stringtotime(GETPOST('end'));
 
+	$startHour = intval(GETPOST('startHour'));
+	$endHour = intval(GETPOST('endHour'));
+
+	// check hours
+	if ($startHour > $endHour) {
+		if ($dateStartTimestamp === $dateEndTimestamp) {
+			$error++;
+			setEventMessages($langs->trans("ErrorEndTimeMustBeGreaterThanStartTime"), null, 'errors');
+		}
+	}
+
+	// check date
+	if ($dateStartTimestamp > $dateEndTimestamp) {
+		$error++;
+		setEventMessages($langs->trans("ErrorIncoherentDates"), null, 'errors');
+	}
+
+	if (!$error) {
+		// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
+		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+	}
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';
 
@@ -203,7 +228,7 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Availabilities")), '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].''.($error = 0 ? '' : '?action=create').'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
