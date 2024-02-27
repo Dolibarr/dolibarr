@@ -49,7 +49,7 @@ if (is_numeric($entity)) {
 require '../../main.inc.php';
 
 // Security check
-if (!isModEnabled('adherent')) {
+if (!isModEnabled('member')) {
 	httponly_accessforbidden('Module Membership not enabled');
 }
 
