@@ -222,7 +222,7 @@ define(
 		'fichinter' => 'intervention',
 		'product_fournisseur_price' => 'productsupplierprice',
 		'product_price' => 'productprice',
-		'projet'  => 'project',
+		'project'  => 'projet',
 		'propale' => 'propal',
 		'socpeople' => 'contact',
 	)

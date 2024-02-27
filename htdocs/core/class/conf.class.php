@@ -394,9 +394,6 @@ class Conf extends stdClass
 								if ($modulename == 'propale') {
 									$modulename = 'propal';
 								}
-								if ($modulename == 'projet') {
-									$modulename = 'project';
-								}
 								if ($modulename == 'supplierproposal') {
 									$modulename = 'supplier_proposal';
 								}
