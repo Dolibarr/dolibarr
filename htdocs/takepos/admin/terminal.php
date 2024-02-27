@@ -216,7 +216,7 @@ print ajax_constantonoff("TAKEPOS_FORBID_SALES_TO_DEFAULT_CUSTOMER", array(), $c
 print '</td></tr>';
 
 $atleastonefound = 0;
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
@@ -527,7 +527,7 @@ print '</td></tr>';
 print '</table>';
 print '</div>';
 
-if ($atleastonefound == 0 && isModEnabled("banque")) {
+if ($atleastonefound == 0 && isModEnabled("bank")) {
 	print info_admin($langs->trans("AtLeastOneDefaultBankAccountMandatory"), 0, 0, 'error');
 }
 
