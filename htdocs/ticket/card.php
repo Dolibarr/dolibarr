@@ -44,7 +44,7 @@ if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
-if (isModEnabled('contrat')) {
+if (isModEnabled('contract')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcontract.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
@@ -1010,7 +1010,7 @@ if ($action == 'create' || $action == 'presend') {
 		// Contract
 		if (getDolGlobalString('TICKET_LINK_TO_CONTRACT_WITH_HARDLINK')) {
 			// Deprecated. Duplicate feature. Ticket can already be linked to contract with the generic "Link to" feature.
-			if (isModEnabled('contrat')) {
+			if (isModEnabled('contract')) {
 				$langs->load('contracts');
 				$morehtmlref .= '<br>';
 				if ($permissiontoedit) {
@@ -1158,7 +1158,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '</tr>';
 
 		// Timing (Duration sum of linked fichinter)
-		if (isModEnabled('ficheinter')) {
+		if (isModEnabled('intervention')) {
 			$object->fetchObjectLinked();
 			$num = count($object->linkedObjects);
 			$timing = 0;
@@ -1197,7 +1197,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '<input type="hidden" name="trackid" value="'.$trackid.'">';
 
 		// Categories
-		if (isModEnabled('categorie')) {
+		if (isModEnabled('category')) {
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border centpercent tableforfield">';
 			print '<tr>';
