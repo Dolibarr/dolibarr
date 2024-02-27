@@ -65,7 +65,7 @@ if ($action == 'setvalue' && $user->admin) {
 	if (!($result > 0)) {
 		$error++;
 	}
-	$result = dolibarr_set_const($db, "PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS", GETPOST('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS', 'int'), 'chaine', 0, '', $conf->entity);
+	$result = dolibarr_set_const($db, "PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS", GETPOSTINT('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS'), 'chaine', 0, '', $conf->entity);
 	if (!($result > 0)) {
 		$error++;
 	}
@@ -119,7 +119,7 @@ if ($action == 'setvalue' && $user->admin) {
 }
 
 if ($action == "setlive") {
-	$liveenable = GETPOST('value', 'int') ? 0 : 1;
+	$liveenable = GETPOSTINT('value') ? 0 : 1;
 	$res = dolibarr_set_const($db, "PAYPAL_API_SANDBOX", $liveenable, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
