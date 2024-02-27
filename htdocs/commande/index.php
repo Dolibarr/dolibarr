@@ -50,7 +50,7 @@ $hookmanager->initHooks(array('ordersindex'));
 
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
