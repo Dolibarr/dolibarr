@@ -757,7 +757,7 @@ if (empty($reshook)) {
 
 				if (
 					!$error && GETPOSTINT('statut') == $object::STATUS_SIGNED && GETPOSTINT('generate_deposit') == 'on'
-					&& !empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && $user->hasRight('facture', 'creer')
+					&& !empty($deposit_percent_from_payment_terms) && isModEnabled('invoice') && $user->hasRight('facture', 'creer')
 				) {
 					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
@@ -1991,7 +1991,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Bank Account
-		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL') && isModEnabled("banque")) {
+		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL') && isModEnabled("bank")) {
 			print '<tr class="field_fk_account"><td class="titlefieldcreate">'.$langs->trans('BankAccount').'</td><td class="valuefieldcreate">';
 			print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 			print '</td></tr>';
@@ -2004,7 +2004,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Shipping Method
-		if (isModEnabled("expedition")) {
+		if (isModEnabled("delivery_note")) {
 			if (getDolGlobalString('SOCIETE_ASK_FOR_SHIPPING_METHOD') && !empty($soc->shipping_method_id)) {
 				$shipping_method_id = $soc->shipping_method_id;
 			}
@@ -2025,7 +2025,7 @@ if ($action == 'create') {
 
 		// Delivery delay
 		print '<tr class="field_availability_id"><td class="titlefieldcreate">'.$langs->trans('AvailabilityPeriod');
-		if (isModEnabled('commande')) {
+		if (isModEnabled('order')) {
 			print ' ('.$langs->trans('AfterOrder').')';
 		}
 		print '</td><td class="valuefieldcreate">';
@@ -2284,7 +2284,7 @@ if ($action == 'create') {
 			// It may also break step of creating an order when invoicing must be done from orders and not from proposal
 			$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
-			if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && $user->hasRight('facture', 'creer')) {
+			if (!empty($deposit_percent_from_payment_terms) && isModEnabled('invoice') && $user->hasRight('facture', 'creer')) {
 				require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
 				$object->fetchObjectLinked();
@@ -2674,7 +2674,7 @@ if ($action == 'create') {
 		// Delivery delay
 		print '<tr class="fielddeliverydelay"><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		if (isModEnabled('commande')) {
+		if (isModEnabled('order')) {
 			print $form->textwithpicto($langs->trans('AvailabilityPeriod'), $langs->trans('AvailabilityPeriod').' ('.$langs->trans('AfterOrder').')');
 		} else {
 			print $langs->trans('AvailabilityPeriod');
@@ -2695,7 +2695,7 @@ if ($action == 'create') {
 		print '</tr>';
 
 		// Shipping Method
-		if (isModEnabled("expedition")) {
+		if (isModEnabled("delivery_note")) {
 			print '<tr><td>';
 			print '<table class="nobordernopadding centpercent"><tr><td>';
 			print $langs->trans('SendingMethod');
@@ -2813,7 +2813,7 @@ if ($action == 'create') {
 			print '</tr>';
 		}
 
-		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL') && isModEnabled("banque")) {
+		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL') && isModEnabled("bank")) {
 			// Bank Account
 			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding"><tr><td>';
@@ -3057,7 +3057,7 @@ if ($action == 'create') {
 				}
 
 				// Create a sale order
-				if (isModEnabled('commande') && $object->statut == Propal::STATUS_SIGNED) {
+				if (isModEnabled('order') && $object->statut == Propal::STATUS_SIGNED) {
 					if ($usercancreateorder) {
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddOrder").'</a>';
 					}
@@ -3073,7 +3073,7 @@ if ($action == 'create') {
 				}
 
 				// Create an intervention
-				if (isModEnabled("service") && isModEnabled('ficheinter') && $object->statut == Propal::STATUS_SIGNED) {
+				if (isModEnabled("service") && isModEnabled('intervention') && $object->statut == Propal::STATUS_SIGNED) {
 					if ($usercancreateintervention) {
 						$langs->load("interventions");
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddIntervention").'</a>';
@@ -3081,7 +3081,7 @@ if ($action == 'create') {
 				}
 
 				// Create contract
-				if (isModEnabled('contrat') && $object->statut == Propal::STATUS_SIGNED) {
+				if (isModEnabled('contract') && $object->statut == Propal::STATUS_SIGNED) {
 					$langs->load("contracts");
 
 					if ($usercancreatecontract) {
@@ -3091,7 +3091,7 @@ if ($action == 'create') {
 
 				// Create an invoice and classify billed
 				if ($object->statut == Propal::STATUS_SIGNED && !getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE')) {
-					if (isModEnabled('facture') && $usercancreateinvoice) {
+					if (isModEnabled('invoice') && $usercancreateinvoice) {
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 					}
 
