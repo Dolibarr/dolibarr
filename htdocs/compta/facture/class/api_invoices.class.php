@@ -1496,7 +1496,7 @@ class Invoices extends DolibarrApi
 		$paymentobj->amounts      = $amounts; // Array with all payments dispatching with invoice id
 		$paymentobj->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 		$paymentobj->paiementid = $paymentid;
-		$paymentobj->paiementcode = dol_getIdFromCode($this->db, $paymentid, 'c_paiement', 'id', 'code', 1);
+		$paymentobj->paiementcode = (string) dol_getIdFromCode($this->db, $paymentid, 'c_paiement', 'id', 'code', 1);
 		$paymentobj->num_payment = $num_payment;
 		$paymentobj->note_private = $comment;
 
