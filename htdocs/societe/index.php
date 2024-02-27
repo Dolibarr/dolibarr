@@ -203,7 +203,7 @@ $thirdpartygraph .= '</table>';
 $thirdpartygraph .= '</div>';
 
 $thirdpartycateggraph = '';
-if (isModEnabled('categorie') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRDPARTIES')) {
+if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRDPARTIES')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$elementtype = 'societe';
 
