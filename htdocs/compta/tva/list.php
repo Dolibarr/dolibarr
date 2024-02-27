@@ -91,7 +91,7 @@ $arrayfields = array(
 	't.status'			=>array('checked'=>1, 'position'=>90, 'label'=>"Status"),
 );
 
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	$arrayfields['t.fk_account'] = array('checked'=>1, 'position'=>60, 'label'=>"DefaultBankAccount");
 }
 
