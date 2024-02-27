@@ -602,6 +602,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						$total = 0;
 						$total_ttc = 0;
 						$totalrecu = 0;
+						$totalrecucreditnote = 0;	// PHP Warning:  Undefined variable $totalrecucreditnote
+						$totalrecudeposits = 0;		// PHP Warning:  Undefined variable $totalrecudeposits
 						while ($i < $num) {
 							$objp = $db->fetch_object($resql);
 
