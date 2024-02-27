@@ -330,7 +330,7 @@ class Salaries extends DolibarrApi
 		if ($paymentsalary->create(DolibarrApiAccess::$user, 1) < 0) {
 			throw new RestException(500, 'Error creating paymentsalary', array_merge(array($paymentsalary->error), $paymentsalary->errors));
 		}
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			$paymentsalary->addPaymentToBank(
 				DolibarrApiAccess::$user,
 				'payment_salary',
@@ -444,7 +444,7 @@ class Salaries extends DolibarrApi
 	{
 		$paymentsalary = array();
 		$fields = Salaries::$FIELDSPAYMENT;
-		if (isModEnabled("banque")) array_push($fields, "accountid");
+		if (isModEnabled("bank")) array_push($fields, "accountid");
 		foreach ($fields as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
