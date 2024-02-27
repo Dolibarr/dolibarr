@@ -88,7 +88,7 @@ class Deplacement extends CommonObject
 	public $fk_user;
 
 	/**
-	 * @var string km value formatted
+	 * @var float km value formatted
 	 */
 	public $km;
 
