@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 }
@@ -1214,14 +1214,14 @@ if ($search_all) {
 // Filter on categories
 $moreforfilter = '';
 if (empty($type) || $type == 'c' || $type == 'p') {
-	if (isModEnabled('categorie') && $user->hasRight('categorie', 'read')) {
+	if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
 		$formcategory = new FormCategory($db);
 		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth300', $searchCategoryCustomerOperator ? $searchCategoryCustomerOperator : 0);
 	}
 }
 
 if (empty($type) || $type == 'f') {
-	if (isModEnabled("fournisseur") && isModEnabled('categorie') && $user->hasRight('categorie', 'read')) {
+	if (isModEnabled("fournisseur") && isModEnabled('category') && $user->hasRight('categorie', 'read')) {
 		$formcategory = new FormCategory($db);
 		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SUPPLIER, $searchCategorySupplierList, 'minwidth300', $searchCategorySupplierOperator ? $searchCategorySupplierOperator : 0);
 	}
