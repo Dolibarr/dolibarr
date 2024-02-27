@@ -38,7 +38,7 @@ $hookmanager->initHooks(array('suppliersproposalsindex'));
 $langs->loadLangs(array('supplier_proposal', 'companies'));
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
