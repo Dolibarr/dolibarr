@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('bills', 'banks', 'companies', 'salaries'));
 
 // Security check
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 if ($user->socid) {
@@ -77,7 +77,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('salarie
 }
 
 if ($action == 'setdatep' && GETPOST('datepday') && $user->hasRight('salaries', 'write')) {
-	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'), 'tzuserrel');
+	$datepaye = dol_mktime(GETPOSTINT('datephour'), GETPOSTINT('datepmin'), GETPOSTINT('datepsec'), GETPOSTINT('datepmonth'), GETPOSTINT('datepday'), GETPOSTINT('datepyear'), 'tzuserrel');
 	$res = $object->updatePaymentDate($datepaye);
 	if ($res === 0) {
 		setEventMessages($langs->trans('PaymentDateUpdateSucceeded'), null, 'mesgs');
