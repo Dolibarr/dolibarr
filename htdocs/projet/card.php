@@ -45,7 +45,7 @@ if (isModEnabled('eventorganization')) {
 
 $langs->loadLangs($langsLoad);
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -60,13 +60,13 @@ if (!empty($backtopagejsfields)) {
 	$dol_openinpopup = $tmpbacktopagejsfields[0];
 }
 
-$status = GETPOST('status', 'int');
-$opp_status = GETPOST('opp_status', 'int');
+$status = GETPOSTINT('status');
+$opp_status = GETPOSTINT('opp_status');
 $opp_percent = price2num(GETPOST('opp_percent', 'alphanohtml'));
 $objcanvas = GETPOST("objcanvas", "alphanohtml");
 $comefromclone = GETPOST("comefromclone", "alphanohtml");
-$date_start = dol_mktime(0, 0, 0, GETPOST('projectstartmonth', 'int'), GETPOST('projectstartday', 'int'), GETPOST('projectstartyear', 'int'));
-$date_end = dol_mktime(0, 0, 0, GETPOST('projectendmonth', 'int'), GETPOST('projectendday', 'int'), GETPOST('projectendyear', 'int'));
+$date_start = dol_mktime(0, 0, 0, GETPOSTINT('projectstartmonth'), GETPOSTINT('projectstartday'), GETPOSTINT('projectstartyear'));
+$date_end = dol_mktime(0, 0, 0, GETPOSTINT('projectendmonth'), GETPOSTINT('projectendday'), GETPOSTINT('projectendyear'));
 $date_start_event = dol_mktime(GETPOSTINT('date_start_eventhour'), GETPOSTINT('date_start_eventmin'), GETPOSTINT('date_start_eventsec'), GETPOSTINT('date_start_eventmonth'), GETPOSTINT('date_start_eventday'), GETPOSTINT('date_start_eventyear'), 'tzuserrel');
 $date_end_event = dol_mktime(GETPOSTINT('date_end_eventhour'), GETPOSTINT('date_end_eventmin'), GETPOSTINT('date_end_eventsec'), GETPOSTINT('date_end_eventmonth'), GETPOSTINT('date_end_eventday'), GETPOSTINT('date_end_eventyear'), 'tzuserrel');
 $location = GETPOST('location', 'alphanohtml');
@@ -99,7 +99,7 @@ if ($id > 0 || !empty($ref)) {
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 restrictedArea($user, 'projet', $object->id, 'projet&project');
 
@@ -210,7 +210,7 @@ if (empty($reshook)) {
 			$object->ref                  = GETPOST('ref', 'alphanohtml');
 			$object->fk_project           = GETPOSTINT('fk_project');
 			$object->title                = GETPOST('title', 'alphanohtml');
-			$object->socid                = GETPOST('socid', 'int');
+			$object->socid                = GETPOSTINT('socid');
 			$object->description          = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
 			$object->public               = GETPOST('public', 'alphanohtml');
 			$object->opp_amount           = GETPOSTFLOAT('opp_amount');
@@ -308,10 +308,10 @@ if (empty($reshook)) {
 			$old_start_date = $object->date_start;
 
 			$object->ref          = GETPOST('ref', 'alpha');
-			$object->fk_project   = GETPOST('fk_project', 'int');
+			$object->fk_project   = GETPOSTINT('fk_project');
 			$object->title        = GETPOST('title', 'alphanohtml'); // Do not use 'alpha' here, we want field as it is
-			$object->statut       = GETPOST('status', 'int');
-			$object->socid        = GETPOST('socid', 'int');
+			$object->statut       = GETPOSTINT('status');
+			$object->socid        = GETPOSTINT('socid');
 			$object->description  = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
 			$object->public       = GETPOST('public', 'alpha');
 			$object->date_start   = (!GETPOST('projectstart')) ? '' : $date_start;
@@ -396,8 +396,8 @@ if (empty($reshook)) {
 		} else {
 			$db->commit();
 
-			if (GETPOST('socid', 'int') > 0) {
-				$object->fetch_thirdparty(GETPOST('socid', 'int'));
+			if (GETPOSTINT('socid') > 0) {
+				$object->fetch_thirdparty(GETPOSTINT('socid'));
 			} else {
 				unset($object->thirdparty);
 			}
@@ -528,7 +528,7 @@ if (empty($reshook)) {
 		$clone_task_files = GETPOST('clone_task_files') ? 1 : 0;
 		$clone_notes = GETPOST('clone_notes') ? 1 : 0;
 		$move_date = GETPOST('move_date') ? 1 : 0;
-		$clone_thirdparty = GETPOST('socid', 'int') ? GETPOST('socid', 'int') : 0;
+		$clone_thirdparty = GETPOSTINT('socid') ? GETPOSTINT('socid') : 0;
 
 		$result = $object->createFromClone($user, $object->id, $clone_contacts, $clone_tasks, $clone_project_files, $clone_task_files, $clone_notes, $move_date, 0, $clone_thirdparty);
 		if ($result <= 0) {
@@ -769,7 +769,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		if (getDolGlobalString('PROJECT_FILTER_FOR_THIRDPARTY_LIST')) {
 			$filter = getDolGlobalString('PROJECT_FILTER_FOR_THIRDPARTY_LIST');
 		}
-		$text = img_picto('', 'company').$form->select_company(GETPOST('socid', 'int'), 'socid', $filter, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
+		$text = img_picto('', 'company').$form->select_company(GETPOSTINT('socid'), 'socid', $filter, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 		if (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') && empty($conf->dol_use_jmobile)) {
 			$texthelp = $langs->trans("IfNeedToUseOtherObjectKeepEmpty");
 			print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1);
@@ -977,7 +977,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	if ($action == 'clone') {
 		$formquestion = array(
 			'text' => $langs->trans("ConfirmClone"),
-			array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOST('socid', 'int') > 0 ? GETPOST('socid', 'int') : $object->socid, 'socid', '', "None", 0, 0, null, 0, 'minwidth200 maxwidth250')),
+			array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid') > 0 ? GETPOSTINT('socid') : $object->socid, 'socid', '', "None", 0, 0, null, 0, 'minwidth200 maxwidth250')),
 			array('type' => 'checkbox', 'name' => 'clone_contacts', 'label' => $langs->trans("CloneContacts"), 'value' => true),
 			array('type' => 'checkbox', 'name' => 'clone_tasks', 'label' => $langs->trans("CloneTasks"), 'value' => true),
 			array('type' => 'checkbox', 'name' => 'move_date', 'label' => $langs->trans("CloneMoveDate"), 'value' => true),
