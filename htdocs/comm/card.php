@@ -91,12 +91,12 @@ if (isModEnabled('notification')) {
 
 $action = GETPOST('action', 'aZ09');
 
-$id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
+$id = (GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id'));
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -173,7 +173,7 @@ if (empty($reshook)) {
 	// Payment terms of the settlement
 	if ($action == 'setconditions' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
-		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'), GETPOST('cond_reglement_id_deposit_percent', 'alpha'));
+		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'), GETPOSTINT('cond_reglement_id_deposit_percent'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -182,7 +182,7 @@ if (empty($reshook)) {
 	// Payment mode
 	if ($action == 'setmode' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
-		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
+		$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -200,7 +200,7 @@ if (empty($reshook)) {
 	// Bank account
 	if ($action == 'setbankaccount' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
-		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
+		$result = $object->setBankAccount(GETPOSTINT('fk_account'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -209,7 +209,7 @@ if (empty($reshook)) {
 	// customer preferred shipping method
 	if ($action == 'setshippingmethod' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
-		$result = $object->setShippingMethod(GETPOST('shipping_method_id', 'int'));
+		$result = $object->setShippingMethod(GETPOSTINT('shipping_method_id'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -297,7 +297,7 @@ if (empty($reshook)) {
 
 	// warehouse
 	if ($action == 'setwarehouse' && $user->hasRight('societe', 'creer')) {
-		$result = $object->setWarehouse(GETPOST('fk_warehouse', 'int'));
+		$result = $object->setWarehouse(GETPOSTINT('fk_warehouse'));
 	}
 }
 
