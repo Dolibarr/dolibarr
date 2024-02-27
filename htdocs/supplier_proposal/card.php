@@ -1321,14 +1321,14 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Bank Account
-		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL') && isModEnabled("banque")) {
+		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL') && isModEnabled("bank")) {
 			print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
 			$form->select_comptes(GETPOST('fk_account') > 0 ? GETPOSTINT('fk_account') : $fk_account, 'fk_account', 0, '', 1);
 			print '</td></tr>';
 		}
 
 		// Shipping Method
-		if (isModEnabled("expedition")) {
+		if (isModEnabled("delivery_note")) {
 			print '<tr><td>'.$langs->trans('SendingMethod').'</td><td colspan="2">';
 			print img_picto('', 'dolly', 'class="pictofixedwidth"');
 			$form->selectShippingMethod(GETPOST('shipping_method_id') > 0 ? GETPOSTINT('shipping_method_id') : "", 'shipping_method_id', '', 1);
@@ -1791,7 +1791,7 @@ if ($action == 'create') {
 			print '</tr>';
 		}*/
 
-		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL') && isModEnabled("banque")) {
+		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL') && isModEnabled("bank")) {
 			// Bank Account
 			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding"><tr><td>';
