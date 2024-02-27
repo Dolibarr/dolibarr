@@ -46,7 +46,7 @@ $langs->load('compta');
  */
 
 //init var
-$invoice_type = GETPOST('invoice_type', 'int');
+$invoice_type = GETPOSTINT('invoice_type');
 $amountPayment = GETPOST('amountPayment');
 $amounts = GETPOST('amounts'); // from text inputs : invoice amount payment (check required)
 $remains = GETPOST('remains'); // from dolibarr's object (no need to check)
