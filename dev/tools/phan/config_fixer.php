@@ -1,4 +1,7 @@
 <?php
+
+require_once __DIR__.'/plugins/DeprecatedModuleNameFixer.php';
+
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  */
 define('DOL_PROJECT_ROOT', __DIR__.'/../../..');
