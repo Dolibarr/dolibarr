@@ -1664,7 +1664,7 @@ class Societe extends CommonObject
 
 				if (!$error && $nbrowsaffected) {
 					// Update information on linked member if it is an update
-					if (!$nosyncmember && isModEnabled('adherent')) {
+					if (!$nosyncmember && isModEnabled('member')) {
 						require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 						dol_syslog(get_class($this)."::update update linked member");
@@ -2835,7 +2835,7 @@ class Societe extends CommonObject
 			$datas['accountancycustomercode'] = '<br><b>'.$langs->trans('CustomerAccountancyCode').':</b> '.($this->code_compta ? $this->code_compta : $this->code_compta_client);
 		}
 		// show categories for this record only in ajax to not overload lists
-		if (!$nofetch && isModEnabled('categorie') && $this->client) {
+		if (!$nofetch && isModEnabled('category') && $this->client) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$form = new Form($this->db);
 			$datas['categories_customer'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_CUSTOMER, 1, 1);
@@ -2848,7 +2848,7 @@ class Societe extends CommonObject
 			$datas['accountancysuppliercode'] = '<br><b>'.$langs->trans('SupplierAccountancyCode').':</b> '.$this->code_compta_fournisseur;
 		}
 		// show categories for this record only in ajax to not overload lists
-		if (!$nofetch && isModEnabled('categorie') && $this->fournisseur) {
+		if (!$nofetch && isModEnabled('category') && $this->fournisseur) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$form = new Form($this->db);
 			$datas['categories_supplier'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_SUPPLIER, 1, 1);
