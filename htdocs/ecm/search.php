@@ -43,7 +43,7 @@ $result = restrictedArea($user, 'ecm', '');
 $user->getrights('ecm');
 
 // Get parameters
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 $section = GETPOST('section');
 if (!$section) {
@@ -52,17 +52,17 @@ if (!$section) {
 
 $module  = GETPOST('module', 'alpha');
 $website = GETPOST('website', 'alpha');
-$pageid  = GETPOST('pageid', 'int');
+$pageid  = GETPOSTINT('pageid');
 if (empty($module)) {
 	$module = 'ecm';
 }
 
 $upload_dir = $conf->ecm->dir_output.'/'.$section;
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
