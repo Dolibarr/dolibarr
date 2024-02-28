@@ -35,7 +35,7 @@ if (isModEnabled('project')) {
 $langs->loadLangs(array('compta', 'bills'));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
@@ -47,15 +47,15 @@ if ($id > 0) {
 }
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'tax', $object->id, 'chargesociales', 'charges');
 
-$permissiontoread = $user->rights->tax->charges->lire;
-$permissiontoadd = $user->rights->tax->charges->creer;
-$permissionnote = $user->rights->tax->charges->creer; // Used by the include of actions_setnotes.inc.php
+$permissiontoread = $user->hasRight('tax', 'charges', 'lire');
+$permissiontoadd = $user->hasRight('tax', 'charges', 'creer');
+$permissionnote = $user->hasRight('tax', 'charges', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -91,8 +91,8 @@ if ($id > 0 || !empty($ref)) {
 
 	$morehtmlref = '<div class="refidno">';
 	// Label of social contribution
-	$morehtmlref .= $form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("Label", 'lib', $object->label, $object, $user->hasRight('tax', 'charges', 'creer'), 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("Label", 'lib', $object->label, $object, $user->hasRight('tax', 'charges', 'creer'), 'string', '', null, null, '', 1);
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");

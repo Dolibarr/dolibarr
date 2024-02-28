@@ -31,40 +31,29 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/member/modules_member.class.php';
  */
 class mod_member_advanced extends ModeleNumRefMembers
 {
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
+
+	// variables inherited from ModeleNumRefMembers class
+	public $name = 'Advanced';
 	public $version = 'dolibarr';
+	public $error = '';
+	public $code_auto = 1;
+
+
+	// variables not inherited
 
 	/**
-	 * prefix
-	 *
-	 * @var string
+	 *  @var string
 	 */
 	public $prefix = 'MEM';
 
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string model name
-	 */
-	public $name = 'Advanced';
-
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto = 1;
 
 	/**
 	 *  Return description of numbering module
 	 *
-	 *  @return     string      Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		return $langs->trans("AdvancedNumRefModelDesc", $this->prefix);
@@ -86,9 +75,10 @@ class mod_member_advanced extends ModeleNumRefMembers
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *   @return     boolean     false if conflict, true if ok
+	 *  @param  Object		$object		Object we need next value for
+	 *  @return boolean     			false if conflict, true if ok
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 
@@ -123,7 +113,7 @@ class mod_member_advanced extends ModeleNumRefMembers
 	 *
 	 *  @param  Societe		$objsoc		Object third party
 	 *  @param  Adherent	$object		Object we need next value for
-	 *  @return	string					Value if OK, 0 if KO
+	 *  @return	string|-1				Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{

@@ -35,17 +35,7 @@ class box_activity extends ModeleBoxes
 	public $boxlabel = 'BoxGlobalActivity';
 	public $depends = array("facture");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -60,12 +50,13 @@ class box_activity extends ModeleBoxes
 		$this->db = $db;
 
 		// FIXME: Pb into some status
-		$this->enabled = ($conf->global->MAIN_FEATURES_LEVEL); // Not enabled by default due to bugs (see previous comments)
+		$this->enabled = getDolGlobalInt('MAIN_FEATURES_LEVEL'); // Not enabled by default due to bugs (see previous comments)
 
-		$this->hidden = !((isModEnabled('facture') && $user->hasRight('facture', 'read'))
-			|| (isModEnabled('commande') && $user->hasRight('commande', 'read'))
+		$this->hidden = !(
+			(isModEnabled('invoice') && $user->hasRight('facture', 'read'))
+			|| (isModEnabled('order') && $user->hasRight('commande', 'read'))
 			|| (isModEnabled('propal') && $user->hasRight('propal', 'read'))
-			);
+		);
 	}
 
 	/**
@@ -90,8 +81,8 @@ class box_activity extends ModeleBoxes
 		$savMAIN_ACTIVATE_FILECACHE = getDolGlobalInt('MAIN_ACTIVATE_FILECACHE');
 		$conf->global->MAIN_ACTIVATE_FILECACHE = 1;
 
-		if (!empty($conf->global->MAIN_BOX_ACTIVITY_DURATION)) {
-			$nbofperiod = $conf->global->MAIN_BOX_ACTIVITY_DURATION;
+		if (getDolGlobalString('MAIN_BOX_ACTIVITY_DURATION')) {
+			$nbofperiod = getDolGlobalString('MAIN_BOX_ACTIVITY_DURATION');
 		}
 
 		$textHead = $langs->trans("Activity").' - '.$langs->trans("LastXMonthRolling", $nbofperiod);
@@ -113,13 +104,13 @@ class box_activity extends ModeleBoxes
 
 			$sql = "SELECT p.fk_statut, SUM(p.total_ttc) as Mnttot, COUNT(*) as nb";
 			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= ")";
 			$sql .= " WHERE p.entity IN (".getEntity('propal').")";
 			$sql .= " AND p.fk_soc = s.rowid";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -192,7 +183,7 @@ class box_activity extends ModeleBoxes
 		}
 
 		// list the summary of the orders
-		if (isModEnabled('commande') && $user->hasRight("commande", "lire")) {
+		if (isModEnabled('order') && $user->hasRight("commande", "lire")) {
 			include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 			$commandestatic = new Commande($this->db);
 
@@ -202,13 +193,13 @@ class box_activity extends ModeleBoxes
 
 			$sql = "SELECT c.fk_statut, sum(c.total_ttc) as Mnttot, count(*) as nb";
 			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= ")";
 			$sql .= " WHERE c.entity IN (".getEntity('commande').")";
 			$sql .= " AND c.fk_soc = s.rowid";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -279,7 +270,7 @@ class box_activity extends ModeleBoxes
 
 
 		// list the summary of the bills
-		if (isModEnabled('facture') && $user->hasRight("facture", "lire")) {
+		if (isModEnabled('invoice') && $user->hasRight("facture", "lire")) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$facturestatic = new Facture($this->db);
 
@@ -287,12 +278,12 @@ class box_activity extends ModeleBoxes
 			$data = array();
 			$sql = "SELECT f.fk_statut, SUM(f.total_ttc) as Mnttot, COUNT(*) as nb";
 			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= ")";
 			$sql .= " WHERE f.entity IN (".getEntity('invoice').')';
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {

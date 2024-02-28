@@ -17,151 +17,163 @@
 #
 # Generic
 #
-ModuleEventOrganizationName = Event Organization
-EventOrganizationDescription = Event Organization through Module Project
-EventOrganizationDescriptionLong= Manage the organization of an event (show, conferences, attendees or speakers, with public pages for suggestion, vote or registration)
+ModuleEventOrganizationName = Организация на събития
+EventOrganizationDescription = Организация на събития чрез модулен проект
+EventOrganizationDescriptionLong= Управлявайте организацията на събитие (шоу, конференции, присъстващи или лектори, с публични страници за предложения, гласуване или регистрация)
 #
 # Menu
 #
-EventOrganizationMenuLeft = Organized events
-EventOrganizationConferenceOrBoothMenuLeft = Conference Or Booth
+EventOrganizationMenuLeft = Организирани събития
+EventOrganizationConferenceOrBoothMenuLeft = Конференция или кабина
 
-PaymentEvent=Payment of event
+PaymentEvent=плащане на събитието
 
 #
 # Admin page
 #
-NewRegistration=Registration
-EventOrganizationSetup=Event Organization setup
-EventOrganization=Event organization
-Settings=Настройки
-EventOrganizationSetupPage = Event Organization setup page
-EVENTORGANIZATION_TASK_LABEL = Label of tasks to create automatically when project is validated
-EVENTORGANIZATION_TASK_LABELTooltip = When you validate an organized event, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conference<br>Send Call for Booth<br>Receive call for conferences<br>Receive call for Booth<br>Open subscriptions to events for attendees<br>Send remind of event to speakers<br>Send remind of event to Booth hoster<br>Send remind of event to attendees
-EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Category to add to third-parties automatically created when someone suggests a conference
-EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Category to add to third-parties automatically created when they suggests a booth
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Template of email to send after receiving a suggestion of a conference.
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Template of email to send after receiving a suggestion of a booth.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
-EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
+NewRegistration=Регистрация
+EventOrganizationSetup=Настройка на организацията на събитието
+EventOrganization=Организация на събития
+EventOrganizationSetupPage = Страница за настройка на организацията на събитието
+EVENTORGANIZATION_TASK_LABEL = Етикет на задачите за създаване автоматично, когато проектът е валидиран
+EVENTORGANIZATION_TASK_LABELTooltip = Когато Потвърждавам организирате събитие, някои задачи могат да бъдат автоматично създадени в проекта<br> <br>Например: <br>Изпращане на обаждане за конференции<br> Изпратете обаждане за кабини<br>Потвърдете предложения за конференции<br>Потвърдете заявление за кабини<br>Отворени абонаменти за събитието за присъстващите<br>Изпращане на напомняне за събитието до ораторите<br>Изпращане на напомняне за събитието на Booth hosters<br>Изпратете напомняне за събитието на присъстващите
+EVENTORGANIZATION_TASK_LABELTooltip2=Оставете празно, ако не е необходимо да създавате задачи автоматично.
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Категория за добавяне към трети страни автоматично, създадени, когато някой предложи конференция
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Категория за добавяне към трети страни автоматично, създадени, когато предложат щанд
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Шаблон за имейл за изпращане след получаване на предложение за конференция.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Шаблон за имейл за изпращане след получаване на предложение за щанд.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Шаблон за имейл за изпращане след заплащане на регистрация на щанд.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Шаблон за имейл за изпращане след плащане на регистрация за събитие.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Шаблон за имейл, който да използвате при изпращане на имейли от масовото действие „Изпращане на имейли“ до високоговорители
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Шаблон за имейл, който да се използва при изпращане на имейли от масовото действие „Изпращане на имейли“ в списъка на участниците
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Във формуляра за създаване/добавяне на участник ограничава списъка с трети страни до трети страни в Категория
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Във формуляра за създаване/добавяне на участник ограничава списъка с трети страни до трети страни с характер
 
 #
 # Object
 #
-EventOrganizationConfOrBooth= Conference Or Booth
-ManageOrganizeEvent = Manage the organization of an event
-ConferenceOrBooth = Conference Or Booth
-ConferenceOrBoothTab = Conference Or Booth
-AmountPaid = Amount paid
-DateOfRegistration = Date of registration
-ConferenceOrBoothAttendee = Conference Or Booth Attendee
+OrganizedEvent=Организирано събитие
+EventOrganizationConfOrBooth= Конференция или кабина
+EventOrganizationConfOrBoothes=Конференции или кабини
+ManageOrganizeEvent = Управлявайте организацията на събитие
+ConferenceOrBooth = Конференция или кабина
+ConferenceOrBoothTab = Конференция или кабина
+AmountPaid = Платено количество
+DateOfRegistration = Дата от регистрацията
+ConferenceOrBoothAttendee = Участник на конференция или щанд
+ApplicantOrVisitor=Кандидат или посетител
+Speaker=Говорител
 
 #
 # Template Mail
 #
-YourOrganizationEventConfRequestWasReceived = Your request for conference was received
-YourOrganizationEventBoothRequestWasReceived = Your request for booth was received
-EventOrganizationEmailAskConf = Request for conference
-EventOrganizationEmailAskBooth = Request for booth
-EventOrganizationEmailBoothPayment = Payment of your booth
-EventOrganizationEmailRegistrationPayment = Registration for an event
-EventOrganizationMassEmailAttendees = Communication to attendees
-EventOrganizationMassEmailSpeakers = Communication to speakers
-ToSpeakers=To speakers
+YourOrganizationEventConfRequestWasReceived = Вашият Искане за конференция беше получен
+YourOrganizationEventBoothRequestWasReceived = Вашият Искане за щанд беше получен
+EventOrganizationEmailAskConf = Искане за конференция
+EventOrganizationEmailAskBooth = Искане за щанда
+EventOrganizationEmailBoothPayment = плащане на вашия щанд
+EventOrganizationEmailRegistrationPayment = Регистрация за събитие
+EventOrganizationMassEmailAttendees = Комуникация с присъстващите
+EventOrganizationMassEmailSpeakers = Комуникация с високоговорители
+ToSpeakers=Към високоговорителите
 
 #
 # Event
 #
-AllowUnknownPeopleSuggestConf=Allow people to suggest conferences
-AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest a conference they want to do
-AllowUnknownPeopleSuggestBooth=Allow people to apply for a booth
-AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to apply for a booth
-PriceOfRegistration=Price of registration
-PriceOfRegistrationHelp=Price to pay to register or participate in the event
-PriceOfBooth=Subscription price to stand a booth
-PriceOfBoothHelp=Subscription price to stand a booth
-EventOrganizationICSLink=Link ICS for conferences
-ConferenceOrBoothInformation=Conference Or Booth informations
-Attendees=Attendees
-ListOfAttendeesOfEvent=List of attendees of the event project
-DownloadICSLink = Download ICS link
-EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
-SERVICE_BOOTH_LOCATION = Service used for the invoice row about a booth location
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
-NbVotes=Number of votes
+AllowUnknownPeopleSuggestConf=Позволете на хората да предлагат конференции
+AllowUnknownPeopleSuggestConfHelp=Позволете на непознати хора да предложат конференция, която искат да направят
+AllowUnknownPeopleSuggestBooth=Позволете на хората да кандидатстват за щанд
+AllowUnknownPeopleSuggestBoothHelp=Позволете на непознати хора да кандидатстват за щанд
+PriceOfRegistration=Цена на регистрация
+PriceOfRegistrationHelp=Цена, която трябва да платите за регистрация или участие в събитието
+PriceOfBooth=Абонаментна цена за щанд
+PriceOfBoothHelp=Абонаментна цена за щанд
+EventOrganizationICSLink=Свържете ICS за конференции
+ConferenceOrBoothInformation=Информация за конференция или кабина
+Attendees=Присъстващи
+ListOfAttendeesOfEvent=Списък на участниците в проекта за събитието
+DownloadICSLink = Изтеглете ICS връзка
+EVENTORGANIZATION_SECUREKEY = Seed за осигуряване на ключа за страницата за публична регистрация, за да предложи конференция
+SERVICE_BOOTH_LOCATION = Услуга, използвана за реда на фактурата относно местоположението на щанда
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Услуга, използвана за реда на фактурата за абонамент на присъстващ за събитие
+NbVotes=Брой гласове
+
 #
 # Status
 #
 EvntOrgDraft = Чернова
-EvntOrgSuggested = Suggested
-EvntOrgConfirmed = Confirmed
-EvntOrgNotQualified = Not Qualified
+EvntOrgSuggested = Предложено
+EvntOrgConfirmed = Потвърдено
+EvntOrgNotQualified = Не квалифициран
 EvntOrgDone = Завършено
-EvntOrgCancelled = Cancelled
+EvntOrgCancelled = Анулирана
+
 #
-# Public page
+# Other
 #
-SuggestForm = Suggestion page
-SuggestOrVoteForConfOrBooth = Page for suggestion or vote
-EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest a new one for the event. You can also apply to have a booth during the event.
-EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
-EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
-ListOfSuggestedConferences = List of suggested conferences
-ListOfSuggestedBooths = List of suggested booths
-ListOfConferencesOrBooths=List of conferences or booths of event project
-SuggestConference = Suggest a new conference
-SuggestBooth = Suggest a booth
-ViewAndVote = View and vote for suggested events
-PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
-PublicAttendeeSubscriptionPage = Public link for registration to this event only
-MissingOrBadSecureKey = The security key is invalid or missing
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event : <b>%s</b>
-EvntOrgDuration = This conference starts on %s and ends on %s.
-ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
-BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
+SuggestForm = Страница с предложения
+SuggestOrVoteForConfOrBooth = Страница за предложение или гласуване
+EvntOrgRegistrationHelpMessage = Тук можете да гласувате за конференция или да предложите нова за събитието. Можете също да кандидатствате за щанд по време на събитието.
+EvntOrgRegistrationConfHelpMessage = Тук можете да предложите нова конференция, която да анимирате по време на събитието.
+EvntOrgRegistrationBoothHelpMessage = Тук можете да кандидатствате за щанд по време на събитието.
+ListOfSuggestedConferences = Списък с предложени конференции
+ListOfSuggestedBooths=Предложени кабини
+ListOfConferencesOrBooths=Конференции или щандове на проект за събитие
+SuggestConference = Предложете нова конференция
+SuggestBooth = Предложете щанд
+ViewAndVote = Вижте и гласувайте за предложените събития
+PublicAttendeeSubscriptionGlobalPage = Публичен линк за регистрация на събитието
+PublicAttendeeSubscriptionPage = Обществена връзка само за регистрация за това събитие
+MissingOrBadSecureKey = Ключът за сигурност е невалиден или липсва
+EvntOrgWelcomeMessage = Тази форма ви позволява да се регистрирате като нов участник в събитието
+EvntOrgDuration = Тази конференция започва на %s и завършва на %s.
+ConferenceAttendeeFee = Такса за участие в конференцията за събитието: „%s“ от %s до %s.
+BoothLocationFee = Местоположение на щанда за събитието: „%s“ от %s до %s
 EventType = Тип събитие
-LabelOfBooth=Booth label
-LabelOfconference=Conference label
-ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
-DateMustBeBeforeThan=%s must be before %s
-DateMustBeAfterThan=%s must be after %s
-
-NewSubscription=Registration
-OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
-OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
-OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been recorded
-OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event registration has been recorded
-OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
-OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
-OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
-
-NewSuggestionOfBooth=Application for a booth
-NewSuggestionOfConference=Application for a conference
-
-#
-# Vote page
-#
-EvntOrgRegistrationWelcomeMessage = Welcome on the conference or booth suggestion page.
-EvntOrgRegistrationConfWelcomeMessage = Welcome on the conference suggestion page.
-EvntOrgRegistrationBoothWelcomeMessage = Welcome on the booth suggestion page.
-EvntOrgVoteHelpMessage = Here, you can view and vote for the suggested events for the project
-VoteOk = Your vote has been accepted.
-AlreadyVoted = You have already voted for this event.
-VoteError = An error has occurred during the vote, please try again.
-
-SubscriptionOk = Your registration has been validated
-ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
-Attendee = Attendee
-PaymentConferenceAttendee = Conference attendee payment
-PaymentBoothLocation = Booth location payment
-DeleteConferenceOrBoothAttendee=Remove attendee
-RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
-EmailAttendee=Attendee email
-EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
-ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
+LabelOfBooth=Етикет на кабината
+LabelOfconference=Етикет на конференцията
+ConferenceIsNotConfirmed=Регистрацията не е налична, конференцията все още не е потвърдена
+DateMustBeBeforeThan=%s трябва да е преди %s
+DateMustBeAfterThan=%s трябва да е след %s
+MaxNbOfAttendeesReached=Максималният брой участници е достигнат
+NewSubscription=Регистрация
+OrganizationEventConfRequestWasReceived=Вашето предложение за конференция е получено
+OrganizationEventBoothRequestWasReceived=Вашият Искане за щанд е получен
+OrganizationEventPaymentOfBoothWasReceived=Вашият плащане за вашия щанд е записан
+OrganizationEventPaymentOfRegistrationWasReceived=Вашият плащане за вашата регистрация за събитие е записан
+OrganizationEventBulkMailToAttendees=Това е напомняне за вашето участие в събитието като участник
+OrganizationEventBulkMailToSpeakers=Това е напомняне за вашето участие в събитието като лектор
+OrganizationEventLinkToThirdParty=Връзка към трета страна (Клиент, доставчик или партньор)
+OrganizationEvenLabelName=Публично име на конференцията или щанда
+NewSuggestionOfBooth=Заявление за щанд
+NewSuggestionOfConference=Приложение за провеждане на конференция
+EvntOrgRegistrationWelcomeMessage = Добре дошли на страницата с предложения за конференция или щанд.
+EvntOrgRegistrationConfWelcomeMessage = Добре дошли на страницата с предложения за конференция.
+EvntOrgRegistrationBoothWelcomeMessage = Добре дошли на страницата с предложения за щанд.
+EvntOrgVoteHelpMessage = Тук можете да видите и гласувате за предложените събития за проекта
+VoteOk = Вашият глас е приет.
+AlreadyVoted = Вие вече гласувахте за това събитие.
+VoteError = Възникна грешка по време на гласуването, моля опитайте отново.
+SubscriptionOk=Вашата регистрация е записана
+AmountOfRegistrationPaid=Платена сума за регистрация
+ConfAttendeeSubscriptionConfirmation = Потвърждение на вашия абонамент за събитие
+Attendee = Присъстващ
+PaymentConferenceAttendee = Участник в конференцията плащане
+PaymentBoothLocation = Местоположение на щанда плащане
+DeleteConferenceOrBoothAttendee=Премахване на участник
+RegistrationAndPaymentWereAlreadyRecorder=Вече бяха записани регистрация и плащане за имейл <b>%s</b>
+EmailAttendee=Имейл на присъстващия
+EmailCompany=Компания имейл
+EmailCompanyForInvoice=Компания имейл (за фактура, ако е различен от имейла на присъстващия)
+ErrorSeveralCompaniesWithEmailContactUs=Бяха намерени няколко компании с този имейл, така че не можем да Потвърждавам автоматично вашата регистрация. Моля, свържете се с нас на %s за ръчна проверка
+ErrorSeveralCompaniesWithNameContactUs=Бяха открити няколко компании с това име, така че не можем да Потвърждавам автоматично вашата регистрация. Моля, свържете се с нас на %s за ръчна проверка
+NoPublicActionsAllowedForThisEvent=За това събитие не са открити публични действия
+MaxNbOfAttendees=Максимален брой присъстващи
+DateStartEvent=Начало на събитието Дата
+DateEndEvent=Край на събитието Дата
+ModifyStatus=промени състояние
+ConfirmModifyStatus=Потвърдете промяната на състоянието
+ConfirmModifyStatusQuestion=Сигурни ли сте, че искате до промени %s избраните записи?
+RecordsUpdated = %s Записите са актуализирани
+RecordUpdated = Записът е актуализиран
+NoRecordUpdated = Няма актуализиран запис

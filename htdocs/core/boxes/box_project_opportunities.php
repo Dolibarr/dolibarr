@@ -22,29 +22,19 @@
 /**
  *  \file       htdocs/core/boxes/box_project_opportunities.php
  *  \ingroup    project
- *  \brief      Module to show Projet activity of the current Year
+ *  \brief      Module to show Project opportunities of the current Year
  */
 include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
- * Class to manage the box to show last projet
+ * Class to manage the box to show project opportunities
  */
 class box_project_opportunities extends ModeleBoxes
 {
 	public $boxcode = "project_opportunities";
-	public $boximg = "object_projectpub";
+	public $boximg  = "object_projectpub";
 	public $boxlabel;
-	//var $depends = array("projet");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
+	// var $depends = array("projet");
 
 	/**
 	 *  Constructor
@@ -74,13 +64,9 @@ class box_project_opportunities extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs;
+		global $user, $langs;
 
 		$this->max = $max;
-
-		$totalMnt = 0;
-		$totalnb = 0;
-		$totalnbTask = 0;
 
 		$textHead = $langs->trans("OpenedProjectsOpportunities");
 		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
@@ -94,11 +80,11 @@ class box_project_opportunities extends ModeleBoxes
 			$companystatic = new Societe($this->db);
 
 			$socid = 0;
-			//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+			//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 
 			// Get list of project id allowed to user (in a string list separated by coma)
 			$projectsListId = '';
-			if (empty($user->rights->projet->all->lire)) {
+			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 			}
 
@@ -113,7 +99,7 @@ class box_project_opportunities extends ModeleBoxes
 			$sql .= " AND p.fk_opp_status > 0";
 			$sql .= " AND p.fk_statut IN (".$this->db->sanitize($projectstatic::STATUS_DRAFT.",".$projectstatic::STATUS_VALIDATED).")"; // draft and open projects
 			//$sql .= " AND p.fk_statut = ".((int) $projectstatic::STATUS_VALIDATED); // Only open projects
-			if (empty($user->rights->projet->all->lire)) {
+			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 			}
 
@@ -158,9 +144,9 @@ class box_project_opportunities extends ModeleBoxes
 						'asis' => 1
 					);
 
-					$this->info_box_contents[$i][] = array('td' => 'class="amount right"', 'text' => ($projectstatic->opp_amount ? price($projectstatic->opp_amount) : ''));
+					$this->info_box_contents[$i][] = array('td' => 'class="amount right nowraponall"', 'text' => ($projectstatic->opp_amount ? price($projectstatic->opp_amount) : ''));
 
-					$this->info_box_contents[$i][] = array('td' => 'class=""', 'asis'=>1, 'text' => ($projectstatic->opp_status_code ? $langs->trans("OppStatus".$projectstatic->opp_status_code).' ' : '').'<span class="opacitymedium small">('.round($projectstatic->opp_percent).'%)</span>');
+					$this->info_box_contents[$i][] = array('td' => 'class="nowraponall"', 'asis'=>1, 'text' => ($projectstatic->opp_status_code ? $langs->trans("OppStatus".$projectstatic->opp_status_code).' ' : '').'<span class="opacitymedium small">('.round($projectstatic->opp_percent).'%)</span>');
 
 					$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => $projectstatic->getLibStatut(3));
 

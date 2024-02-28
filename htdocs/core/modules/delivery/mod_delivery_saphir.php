@@ -21,13 +21,13 @@
 /**
  *	\file       htdocs/core/modules/delivery/mod_delivery_saphir.php
  *	\ingroup    expedition
- *	\brief      Fichier contenant la classe du modele de numerotation de reference de livraison Saphir
+ *	\brief      Fichier contenant la class du modele de numerotation de reference de livraison Saphir
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
 
 /**
  *	\class      mod_delivery_saphir
- *	\brief      Classe du modele de numerotation de reference de livraison Saphir
+ *	\brief      Class du modele de numerotation de reference de livraison Saphir
  */
 class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 {
@@ -58,11 +58,12 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Descriptive text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $langs, $db;
 
 		$langs->load("bills");
 
@@ -83,9 +84,9 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskdelivery" value="'.$conf->global->DELIVERY_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskdelivery" value="'.getDolGlobalString('DELIVERY_SAPHIR_MASK').'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -121,7 +122,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	 *
 	 *  @param	Societe		$objsoc     	Object third party
 	 *  @param  Object		$object			Object delivery
-	 *  @return string      				Value if OK, 0 if KO
+	 *  @return string|0      				Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -130,7 +131,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// On defini critere recherche compteur
-		$mask = $conf->global->DELIVERY_SAPHIR_MASK;
+		$mask = getDolGlobalString('DELIVERY_SAPHIR_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';
@@ -148,7 +149,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	 *
 	 *  @param	Societe		$objsoc     Object third party
 	 * 	@param	string		$objforref	Object for number to search
-	 *  @return string      			Next free value
+	 *  @return string|0      			Next free value, 0 if KO
 	 */
 	public function getNumRef($objsoc, $objforref)
 	{
@@ -161,8 +162,8 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	 *  Return next free ref
 	 *
 	 *  @param	Societe		$objsoc      	Object thirdparty
-	 *  @param  Object		$object			Objet livraison
-	 *  @return string      				Descriptive text
+	 *  @param  Object		$object			Object livraison
+	 *  @return string|0      				Value if OK, 0 if KO
 	 */
 	public function delivery_get_num($objsoc = 0, $object = '')
 	{

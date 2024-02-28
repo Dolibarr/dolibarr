@@ -10,7 +10,7 @@ Receivings=Delivery Receipts
 SendingsArea=Saadetiste ala
 ListOfSendings=Saadetiste nimekiri
 SendingMethod=Saatmisviis
-LastSendings=Latest %s shipments
+LastSendings=Viimased %s saadetised
 StatisticsOfSendings=Saadetiste statistika
 NbOfSendings=Saadetiste arv
 NumberOfShipmentsByMonth=Saadetiste arv kuude järgi
@@ -48,7 +48,7 @@ DateDeliveryPlanned=Planned date of delivery
 RefDeliveryReceipt=Ref delivery receipt
 StatusReceipt=Status delivery receipt
 DateReceived=Saadetise kättesaamise kuupäev
-ClassifyReception=Classify reception
+ClassifyReception=Classify Received
 SendShippingByEMail=Send shipment by email
 SendShippingRef=Submission of shipment %s
 ActionsOnShipping=Saatmisel toimuvad tegevused
@@ -59,7 +59,7 @@ ProductQtyInCustomersOrdersRunning=Product quantity from open sales orders
 ProductQtyInSuppliersOrdersRunning=Product quantity from open purchase orders
 ProductQtyInShipmentAlreadySent=Product quantity from open sales order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open purchase orders already received
-NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+NoProductToShipFoundIntoStock=Laost ei leitud ühtegi tarnitavat toodet <b> %s </b> . Parandage laoseisu või minge tagasi, et valida mõni muu ladu.
 WeightVolShort=Weight/Vol.
 ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 
@@ -74,3 +74,8 @@ SumOfProductWeights=Toodete kaalude summa
 # warehouse details
 DetailWarehouseNumber= Warehouse details
 DetailWarehouseFormat= W:%s (Qty: %d)
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.

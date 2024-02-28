@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 /**
  *	Class to manage mailman and spip
@@ -105,7 +105,7 @@ class MailmanSpip
 	 */
 	public function connectSpip()
 	{
-		$resource = getDoliDBInstance('mysql', getDolGlobalString('ADHERENT_SPIP_SERVEUR'), getDolGlobalString('ADHERENT_SPIP_USER'), getDolGlobalString('ADHERENT_SPIP_PASS'), getDolGlobalString('ADHERENT_SPIP_DB'), getDolGlobalString('ADHERENT_SPIP_PORT'));
+		$resource = getDoliDBInstance('mysql', getDolGlobalString('ADHERENT_SPIP_SERVEUR'), getDolGlobalString('ADHERENT_SPIP_USER'), getDolGlobalString('ADHERENT_SPIP_PASS'), getDolGlobalString('ADHERENT_SPIP_DB'), getDolGlobalInt('ADHERENT_SPIP_PORT'));
 
 		if ($resource->ok) {
 			return $resource;
@@ -238,7 +238,7 @@ class MailmanSpip
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Fonction qui dit si cet utilisateur est un redacteur existant dans spip
+	 *  Indicate if the user is an existing editor in spip
 	 *
 	 *	@param	object	$object		Object with data (->login)
 	 *  @return int     			1=exists, 0=does not exists, -1=error
@@ -257,11 +257,11 @@ class MailmanSpip
 
 					if ($result) {
 						if ($mydb->num_rows($result)) {
-							// nous avons au moins une reponse
+							// At least one result for the login query
 							$mydb->close();
 							return 1;
 						} else {
-							// nous n'avons pas de reponse => n'existe pas
+							// No result for the login query
 							$mydb->close();
 							return 0;
 						}
@@ -287,8 +287,8 @@ class MailmanSpip
 	 *  Subscribe an email to all mailing-lists
 	 *
 	 *	@param	Adherent	$object		Object with data (->email, ->pass, ->element, ->type)
-	 *  @param	array		$listes    	To force mailing-list (string separated with ,)
-	 *  @return	int		  				<0 if KO, >=0 if OK
+	 *  @param	string		$listes    	To force mailing-list (string separated with ,)
+	 *  @return	int		  				Return integer <0 if KO, >=0 if OK
 	 */
 	public function add_to_mailman($object, $listes = '')
 	{
@@ -306,10 +306,10 @@ class MailmanSpip
 			return -1;
 		}
 
-		if (isModEnabled('adherent')) {	// Synchro for members
-			if (!empty($conf->global->ADHERENT_MAILMAN_URL)) {
-				if ($listes == '' && !empty($conf->global->ADHERENT_MAILMAN_LISTS)) {
-					$lists = explode(',', $conf->global->ADHERENT_MAILMAN_LISTS);
+		if (isModEnabled('member')) {	// Synchro for members
+			if (getDolGlobalString('ADHERENT_MAILMAN_URL')) {
+				if ($listes == '' && getDolGlobalString('ADHERENT_MAILMAN_LISTS')) {
+					$lists = explode(',', getDolGlobalString('ADHERENT_MAILMAN_LISTS'));
 				} else {
 					$lists = explode(',', $listes);
 				}
@@ -357,8 +357,8 @@ class MailmanSpip
 	 *  Used when a user is resiliated
 	 *
 	 *	@param	Adherent	$object		Object with data (->email, ->pass, ->element, ->type)
-	 *  @param	array	$listes     To force mailing-list (string separated with ,)
-	 *  @return int         		<0 if KO, >=0 if OK
+	 *  @param	string	    $listes     To force mailing-list (string separated with ,)
+	 *  @return int         		    Return integer <0 if KO, >=0 if OK
 	 */
 	public function del_to_mailman($object, $listes = '')
 	{
@@ -376,10 +376,10 @@ class MailmanSpip
 			return -1;
 		}
 
-		if (isModEnabled('adherent')) {	// Synchro for members
-			if (!empty($conf->global->ADHERENT_MAILMAN_UNSUB_URL)) {
-				if ($listes == '' && !empty($conf->global->ADHERENT_MAILMAN_LISTS)) {
-					$lists = explode(',', $conf->global->ADHERENT_MAILMAN_LISTS);
+		if (isModEnabled('member')) {	// Synchro for members
+			if (getDolGlobalString('ADHERENT_MAILMAN_UNSUB_URL')) {
+				if ($listes == '' && getDolGlobalString('ADHERENT_MAILMAN_LISTS')) {
+					$lists = explode(',', getDolGlobalString('ADHERENT_MAILMAN_LISTS'));
 				} else {
 					$lists = explode(',', $listes);
 				}

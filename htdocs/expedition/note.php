@@ -36,7 +36,7 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array('sendings', 'companies', 'bills', 'deliveries', 'orders', 'stocks', 'other', 'propal'));
 
-$id = (GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
@@ -52,7 +52,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 
 	// Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
+	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('order')) {
 		$objectsrc = new Commande($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}
@@ -64,7 +64,7 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->expedition->dir_output."/sending/".dol_sanitizeFileName($object->ref);
 }
 
-$permissionnote = $user->rights->expedition->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('expedition', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 // Security check
 if ($user->socid) {
@@ -106,8 +106,8 @@ if ($id > 0 || !empty($ref)) {
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer shipment
-	$morehtmlref .= $form->editfieldkey("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefCustomer", '', $object->ref_customer, $object, $user->hasRight('expedition', 'creer'), 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefCustomer", '', $object->ref_customer, $object, $user->hasRight('expedition', 'creer'), 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 	// Project

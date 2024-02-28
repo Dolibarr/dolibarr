@@ -37,7 +37,6 @@ include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
 
 use Webklex\PHPIMAP\ClientManager;
 use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
-use Webklex\PHPIMAP\Exceptions\InvalidWhereQueryCriteriaException;
 
 
 use OAuth\Common\Storage\DoliStorage;
@@ -54,15 +53,15 @@ if (!isModEnabled('emailcollector')) {
 $langs->loadLangs(array("admin", "mails", "other"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'emailcollectorcard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'emailcollectorcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$operationid = GETPOST('operationid', 'int');
+$operationid = GETPOSTINT('operationid');
 
 // Initialize technical objects
 $object = new EmailCollector($db);
@@ -75,7 +74,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -155,7 +154,7 @@ if (GETPOST('addfilter', 'alpha')) {
 
 if ($action == 'deletefilter') {
 	$emailcollectorfilter = new EmailCollectorFilter($db);
-	$emailcollectorfilter->fetch(GETPOST('filterid', 'int'));
+	$emailcollectorfilter->fetch(GETPOSTINT('filterid'));
 	if ($emailcollectorfilter->id > 0) {
 		$result = $emailcollectorfilter->delete($user);
 		if ($result > 0) {
@@ -181,8 +180,8 @@ if (GETPOST('addoperation', 'alpha')) {
 
 	if (in_array($emailcollectoroperation->type, array('loadthirdparty', 'loadandcreatethirdparty'))
 		&& empty($emailcollectoroperation->actionparam)) {
-			$error++;
-			setEventMessages($langs->trans("ErrorAParameterIsRequiredForThisOperation"), null, 'errors');
+		$error++;
+		setEventMessages($langs->trans("ErrorAParameterIsRequiredForThisOperation"), null, 'errors');
 	}
 
 	if (!$error) {
@@ -199,14 +198,14 @@ if (GETPOST('addoperation', 'alpha')) {
 
 if ($action == 'updateoperation') {
 	$emailcollectoroperation = new EmailCollectorAction($db);
-	$emailcollectoroperation->fetch(GETPOST('rowidoperation2', 'int'));
+	$emailcollectoroperation->fetch(GETPOSTINT('rowidoperation2'));
 
 	$emailcollectoroperation->actionparam = GETPOST('operationparam2', 'alphawithlgt');
 
 	if (in_array($emailcollectoroperation->type, array('loadthirdparty', 'loadandcreatethirdparty'))
 		&& empty($emailcollectoroperation->actionparam)) {
-			$error++;
-			setEventMessages($langs->trans("ErrorAParameterIsRequiredForThisOperation"), null, 'errors');
+		$error++;
+		setEventMessages($langs->trans("ErrorAParameterIsRequiredForThisOperation"), null, 'errors');
 	}
 
 	if (!$error) {
@@ -222,7 +221,7 @@ if ($action == 'updateoperation') {
 }
 if ($action == 'deleteoperation') {
 	$emailcollectoroperation = new EmailCollectorAction($db);
-	$emailcollectoroperation->fetch(GETPOST('operationid', 'int'));
+	$emailcollectoroperation->fetch(GETPOSTINT('operationid'));
 	if ($emailcollectoroperation->id > 0) {
 		$result = $emailcollectoroperation->delete($user);
 		if ($result > 0) {
@@ -395,17 +394,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$connectstringtarget = '';
 
 	// Note: $object->host has been loaded by the fetch
-	$usessl = 1;
-
-	$connectstringserver = $object->getConnectStringIMAP($usessl);
+	$connectstringserver = $object->getConnectStringIMAP();
 
 	if ($action == 'scan') {
-		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			require_once DOL_DOCUMENT_ROOT.'/includes/webklex/php-imap/vendor/autoload.php';
 
 			if ($object->acces_type == 1) {
 				// Mode OAUth2 with PHP-IMAP
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
+
+				$supportedoauth2array = getSupportedOauth2Array();
+
 				$keyforsupportedoauth2array = $object->oauth_service;
 				if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
 					$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
@@ -439,7 +439,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							getDolGlobalString('OAUTH_'.$object->oauth_service.'_ID'),
 							getDolGlobalString('OAUTH_'.$object->oauth_service.'_SECRET'),
 							getDolGlobalString('OAUTH_'.$object->oauth_service.'_URLAUTHORIZE')
-							);
+						);
 						$serviceFactory = new \OAuth\ServiceFactory();
 						$oauthname = explode('-', $OAUTH_SERVICENAME);
 
@@ -534,8 +534,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$connectstringtarget = $connectstringserver.$object->getEncodedUtf7($targetdir);
 					}
 
-					$timeoutconnect = empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT;
-					$timeoutread = empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 20 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT;
+					$timeoutconnect = !getDolGlobalString('MAIN_USE_CONNECT_TIMEOUT') ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT;
+					$timeoutread = !getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT') ? 20 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT;
 
 					dol_syslog("imap_open connectstring=".$connectstringsource." login=".$object->login." password=".$object->password." timeoutconnect=".$timeoutconnect." timeoutread=".$timeoutread);
 
@@ -575,7 +575,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 	}
 
-	$morehtml = $form->textwithpicto($langs->trans("NbOfEmailsInInbox"), 'Connect string = '.$connectstringserver.'<br>Option MAIN_IMAP_USE_PHPIMAP = '.getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')).': '.($morehtml ? $morehtml : '?');
+	$morehtml = $form->textwithpicto($langs->trans("NbOfEmailsInInbox"), 'Connect string = '.$connectstringserver.'<br>Option MAIN_IMAP_USE_PHPIMAP = '.getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')).': '.($morehtml !== '' ? $morehtml : '?');
 	$morehtml .= '<a class="flat paddingleft marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=scan&token='.newToken().'">'.img_picto('', 'refresh', 'class="paddingrightonly"').$langs->trans("Refresh").'</a>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref.'<div class="refidno">'.$morehtml.'</div>', '', 0, '', '', 0, '');
@@ -645,9 +645,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
         console.log("We change a filter");
         if (jQuery("#filtertype option:selected").attr("data-noparam")) {
             jQuery("#rulevalue").attr("placeholder", "");
-            jQuery("#rulevalue").text(""); jQuery("#rulevalue").prop("disabled", true);
-        }
-        else { jQuery("#rulevalue").prop("disabled", false); }
+            jQuery("#rulevalue").text("");
+			jQuery("#rulevalue").prop("disabled", true);
+			jQuery("#rulevaluehelp").addClass("unvisible");
+        } else {
+			jQuery("#rulevalue").prop("disabled", false);
+			jQuery("#rulevaluehelp").removeClass("unvisible");
+		}
         jQuery("#rulevalue").attr("placeholder", (jQuery("#filtertype option:selected").attr("data-placeholder")));
     ';
 	/*$noparam = array();
@@ -658,8 +662,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '})';
 	print '</script>'."\n";
 
-	print '</td><td>';
-	print '<input type="text" name="rulevalue" id="rulevalue">';
+	print '</td><td class="nowraponall">';
+	print '<div class="nowraponall">';
+	print '<input type="text" name="rulevalue" id="rulevalue" class="inline-block valignmiddle">';
+	print '<div class="inline-block valignmiddle unvisible" id="rulevaluehelp">';
+	print img_warning($langs->trans("FilterSearchImapHelp"), '', 'pictowarning classfortooltip');
+	print '</div>';
+	print '</div>';
 	print '</td>';
 	print '<td class="right"><input type="submit" name="addfilter" id="addfilter" class="flat button smallpaddingimp" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
@@ -747,7 +756,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$fk_element = 'position';
 	$i = 0;
 	foreach ($object->actions as $ruleaction) {
-		$ruleactionobj = new EmailcollectorAction($db);
+		$ruleactionobj = new EmailCollectorAction($db);
 		$ruleactionobj->fetch($ruleaction['id']);
 
 		print '<tr class="drag drop oddeven" id="row-'.$ruleaction['id'].'">';

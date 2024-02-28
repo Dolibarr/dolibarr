@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 $langs->loadLangs(array("knowledgemanagement", "ticket", "other"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -44,7 +44,7 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'knowledgerecordcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$lineid   = GETPOST('lineid', 'int');
+$lineid   = GETPOSTINT('lineid');
 
 // Initialize technical objects
 $object = new KnowledgeRecord($db);
@@ -57,7 +57,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -139,10 +139,10 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 
 	// Actions to send emails
@@ -191,7 +191,7 @@ if ($action == 'create') {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
 	$object->fields['answer']['enabled'] = 1;
 
-	if (isModEnabled('categorie')) {
+	if (isModEnabled('category')) {
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 1);
 
 		if (count($cate_arbo)) {
@@ -211,7 +211,7 @@ if ($action == 'create') {
 	print '<br>';
 	print $langs->trans($object->fields['answer']['label']).'<br>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, 0, true, ROWS_9, '100%');
+	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, true, true, ROWS_9, '100%');
 	$out = $doleditor->Create(1);
 	print $out;
 
@@ -248,7 +248,7 @@ if (($id || $ref) && $action == 'edit') {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_edit.tpl.php';
 	$object->fields['answer']['enabled'] = 1;
 
-	if (isModEnabled('categorie')) {
+	if (isModEnabled('category')) {
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 1);
 
 		if (count($cate_arbo)) {
@@ -276,7 +276,7 @@ if (($id || $ref) && $action == 'edit') {
 	print '<br>';
 	print $langs->trans($object->fields['answer']['label']).'<br>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, 0, true, ROWS_9, '100%');
+	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, true, true, ROWS_9, '100%');
 	$out = $doleditor->Create(1);
 	print $out;
 
@@ -433,7 +433,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$object->fields['answer']['enabled'] = 1;
 
 	// Categories
-	if (isModEnabled('categorie')) {
+	if (isModEnabled('category')) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($object->id, Categorie::TYPE_KNOWLEDGEMANAGEMENT, 1);
 		print "</td></tr>";
@@ -453,7 +453,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<br>';
 	print $langs->trans($object->fields['answer']['label']).'<br>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, 0, true, ROWS_9, '100%', 1);
+	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, true, true, ROWS_9, '100%', 1);
 	$out = $doleditor->Create(1);
 	print $out;
 

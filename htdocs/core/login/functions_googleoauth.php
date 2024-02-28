@@ -49,19 +49,19 @@ function check_user_password_googleoauth($usertotest, $passwordtotest, $entityto
 	if (GETPOST('actionlogin') == 'login') {
 		if (GETPOST('beforeoauthloginredirect')) {
 			// We post the form on the login page by clicking on the link to login using Google.
-			dol_syslog("We post the form on the login page by clicking on the link to login using Google");
+			dol_syslog("We post the form on the login page by clicking on the link to login using Google. We save _SESSION['datafromloginform']");
 
 			// We save data of form into a variable
 			$_SESSION['datafromloginform'] = array(
-				'entity'=>GETPOST('entity', 'int'),
+				'entity'=>GETPOSTINT('entity'),
 				'backtopage'=>GETPOST('backtopage'),
 				'tz'=>GETPOST('tz'),
-				'tzstring'=>GETPOST('tzstring'),
+				'tz_string'=>GETPOST('tz_string'),
 				'dst_observed'=>GETPOST('dst_observed'),
 				'dst_first'=>GETPOST('dst_first'),
 				'dst_second'=>GETPOST('dst_second'),
-				'screenwidth'=>GETPOST('screenwidth'),
-				'screenheight'=>GETPOST('screenheight'),
+				'dol_screenwidth'=>GETPOST('screenwidth'),
+				'dol_screenheight'=>GETPOST('screenheight'),
 				'dol_hide_topmenu'=>GETPOST('dol_hide_topmenu'),
 				'dol_hide_leftmenu'=>GETPOST('dol_hide_leftmenu'),
 				'dol_optimize_smallscreen'=>GETPOST('dol_optimize_smallscreen'),
@@ -100,12 +100,12 @@ function check_user_password_googleoauth($usertotest, $passwordtotest, $entityto
 				$_POST['entity'] = $tmparray['entity'];
 				$_POST['backtopage'] = $tmparray['backtopage'];
 				$_POST['tz'] = $tmparray['tz'];
-				$_POST['tzstring'] = $tmparray['tzstring'];
+				$_POST['tz_string'] = $tmparray['tz_string'];
 				$_POST['dst_observed'] = $tmparray['dst_observed'];
 				$_POST['dst_first'] = $tmparray['dst_first'];
 				$_POST['dst_second'] = $tmparray['dst_second'];
-				$_POST['screenwidth'] = $tmparray['screenwidth'];
-				$_POST['screenwidth'] = $tmparray['screenwidth'];
+				$_POST['screenwidth'] = $tmparray['dol_screenwidth'];
+				$_POST['screenheight'] = $tmparray['dol_screenheight'];
 				$_POST['dol_hide_topmenu'] = $tmparray['dol_hide_topmenu'];
 				$_POST['dol_hide_leftmenu'] = $tmparray['dol_hide_leftmenu'];
 				$_POST['dol_optimize_smallscreen'] = $tmparray['dol_optimize_smallscreen'];
@@ -113,8 +113,8 @@ function check_user_password_googleoauth($usertotest, $passwordtotest, $entityto
 				$_POST['dol_use_jmobile'] = $tmparray['dol_use_jmobile'];
 			}
 
-			// If googleoauth_login has been set (by google_oauthcallback after a successfull OAUTH2 request on openid scope
-			if (dol_verifyHash($conf->file->instance_unique_id.$usertotest, $_SESSION['googleoauth_receivedlogin'], '0')) {
+			// If googleoauth_login has been set (by google_oauthcallback after a successful OAUTH2 request on openid scope
+			if (!empty($_SESSION['googleoauth_receivedlogin']) && dol_verifyHash($conf->file->instance_unique_id.$usertotest, $_SESSION['googleoauth_receivedlogin'], '0')) {
 				unset($_SESSION['googleoauth_receivedlogin']);
 				$login = $usertotest;
 			}

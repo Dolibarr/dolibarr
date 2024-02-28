@@ -46,8 +46,7 @@ class InterfaceNotification extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "notification";
 		$this->description = "Triggers of this module send Email notifications according to Notification module setup.";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = self::VERSION_DOLIBARR;
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'email';
 
 		$this->listofmanagedevents = Notify::$arrayofnotifsupported;
@@ -62,12 +61,28 @@ class InterfaceNotification extends DolibarrTriggers
 	 * @param User		    $user       Object user
 	 * @param Translate 	$langs      Object langs
 	 * @param conf		    $conf       Object conf
-	 * @return int         				<0 if KO, 0 if no triggered ran, >0 if OK
+	 * @return int         				Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf)
 	{
+		global $hookmanager;
+
 		if (empty($conf->notification) || !isModEnabled('notification')) {
 			return 0; // Module not active, we do nothing
+		}
+
+		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('notification'));
+
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('notifsupported', $parameters, $object, $action);
+		if (empty($reshook)) {
+			if (!empty($hookmanager->resArray['arrayofnotifsupported'])) {
+				$this->listofmanagedevents = array_merge($this->listofmanagedevents, $hookmanager->resArray['arrayofnotifsupported']);
+			}
 		}
 
 		// If the trigger code is not managed by the Notification module
@@ -82,7 +97,6 @@ class InterfaceNotification extends DolibarrTriggers
 
 		return 1;
 	}
-
 
 	/**
 	 * Return list of events managed by notification module
@@ -141,11 +155,11 @@ class InterfaceNotification extends DolibarrTriggers
 						$qualified = 0;
 					} elseif ($element == 'withdraw' && !isModEnabled('prelevement')) {
 						$qualified = 0;
-					} elseif ($element == 'shipping' && !isModEnabled('expedition')) {
+					} elseif ($element == 'shipping' && !isModEnabled('delivery_note')) {
 						$qualified = 0;
-					} elseif ($element == 'member' && !isModEnabled('adherent')) {
+					} elseif ($element == 'member' && !isModEnabled('member')) {
 						$qualified = 0;
-					} elseif (($element == 'expense_report' || $element == 'expensereport') && empty($conf->expensereport->enabled)) {
+					} elseif (($element == 'expense_report' || $element == 'expensereport') && !isModEnabled('expensereport')) {
 						$qualified = 0;
 					} elseif (!in_array($element, array('order_supplier', 'invoice_supplier', 'withdraw', 'shipping', 'member', 'expense_report', 'expensereport')) && empty($conf->$element->enabled)) {
 						$qualified = 0;

@@ -30,7 +30,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modDynamicPrices extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -60,7 +59,7 @@ class modDynamicPrices extends DolibarrModules
 		//-------------
 		$this->config_page_url = array("dynamic_prices.php@product");
 
-		// Dependancies
+		// Dependencies
 		//-------------
 		$this->depends = array();
 		$this->requiredby = array();
@@ -83,5 +82,28 @@ class modDynamicPrices extends DolibarrModules
 		$this->rights = array();
 		$this->rights_class = 'dynamicprices';
 		$r = 0;
+	}
+
+	/**
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories.
+	 *
+	 *  @param      string  $options    Options
+	 *  @return     int                 1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+	{
+		$result = $this->_load_tables('/install/mysql/', 'dynamicprices');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
+
+		// Remove permissions and default values
+		$this->remove($options);
+
+		$sql = array();
+
+		return $this->_init($sql, $options);
 	}
 }

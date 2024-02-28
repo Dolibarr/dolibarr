@@ -28,13 +28,13 @@ require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 // Load translation files required by the page
 $langs->load("mails");
 
 // Security check
-if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
+if (!$user->hasRight('mailing', 'lire') || (!getDolGlobalString('EXTERNAL_USERS_ARE_AUTHORIZED') && $user->socid > 0)) {
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'mailing');
@@ -66,7 +66,7 @@ if ($object->fetch($id) >= 0) {
 
 	$morehtmlright = '';
 	$nbtry = $nbok = 0;
-	if ($object->statut == 2 || $object->statut == 3) {
+	if ($object->status == 2 || $object->status == 3) {
 		$nbtry = $object->countNbOfTargets('alreadysent');
 		$nbko  = $object->countNbOfTargets('alreadysentko');
 

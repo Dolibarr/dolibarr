@@ -9,7 +9,9 @@
  * Copyright (C) 2014       Teddy Andreotti         <125155@supinfo.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2023       Sylvain Legrand			<technique@infras.fr>
+ * Copyright (C) 2023  		  Lenin Rivas	            <lenin.rivas777@gmail.com>
+ * Copyright (C) 2023       Sylvain Legrand	        <technique@infras.fr>
+ * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,14 +46,14 @@ $langs->loadLangs(array('companies', 'bills', 'banks', 'multicurrency'));
 $action		= GETPOST('action', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
 
-$facid = GETPOST('facid', 'int');
-$accountid = GETPOST('accountid', 'int');
+$facid = GETPOSTINT('facid');
+$accountid = GETPOSTINT('accountid');
 $paymentnum	= GETPOST('num_paiement', 'alpha');
-$socid      = GETPOST('socid', 'int');
+$socid      = GETPOSTINT('socid');
 
 $sortfield	= GETPOST('sortfield', 'aZ09comma');
 $sortorder	= GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 
 $amounts = array();
 $amountsresttopay = array();
@@ -77,7 +79,7 @@ $hookmanager->initHooks(array('paiementcard', 'globalcard'));
 
 $formquestion = array();
 
-$usercanissuepayment = !empty($user->rights->facture->paiement);
+$usercanissuepayment = $user->hasRight('facture', 'paiement');
 
 $fieldid = 'rowid';
 $isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
@@ -98,7 +100,7 @@ if (empty($reshook)) {
 	if (($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm == 'yes')) && $usercanissuepayment) {
 		$error = 0;
 
-		$datepaye = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+		$datepaye = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 		$paiement_id = 0;
 		$totalpayment = 0;
 		$multicurrency_totalpayment = 0;
@@ -139,7 +141,7 @@ if (empty($reshook)) {
 			} elseif (substr($key, 0, 21) == 'multicurrency_amount_') {
 				$cursorfacid = substr($key, 21);
 				$multicurrency_amounts[$cursorfacid] = price2num(GETPOST($key));
-				$multicurrency_totalpayment += floatval($multicurrency_amounts[$cursorfacid]);
+				$multicurrency_totalpayment += (float) $multicurrency_amounts[$cursorfacid];
 				if (!empty($multicurrency_amounts[$cursorfacid])) {
 					$atleastonepaymentnotnull++;
 				}
@@ -162,7 +164,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOST($key, 'int'));
+				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOSTINT($key));
 			}
 		}
 
@@ -172,7 +174,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			// If bank module is on, account is required to enter a payment
 			if (GETPOST('accountid') <= 0) {
 				setEventMessages($langs->transnoentities('ErrorFieldRequired', $langs->transnoentities('AccountToCredit')), null, 'errors');
@@ -214,7 +216,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_paiement' && $confirm == 'yes' && $usercanissuepayment) {
 		$error = 0;
 
-		$datepaye = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'), 'tzuser');
+		$datepaye = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'), 'tzuser');
 
 		$db->begin();
 
@@ -249,9 +251,9 @@ if (empty($reshook)) {
 			$multicurrency_tx[$key] = $tmpinvoice->multicurrency_tx;
 		}
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			// If the bank module is active, an account is required to input a payment
-			if (GETPOST('accountid', 'int') <= 0) {
+			if (GETPOSTINT('accountid') <= 0) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('AccountToCredit')), null, 'errors');
 				$error++;
 			}
@@ -267,7 +269,7 @@ if (empty($reshook)) {
 		$paiement->paiementid   = dol_getIdFromCode($db, GETPOST('paiementcode'), 'c_paiement', 'code', 'id', 1);
 		$paiement->num_payment  = GETPOST('num_paiement', 'alpha');
 		$paiement->note_private = GETPOST('comment', 'alpha');
-		$paiement->fk_account   = GETPOST('accountid', 'int');
+		$paiement->fk_account   = GETPOSTINT('accountid');
 
 		if (!$error) {
 			// Create payment and update this->multicurrency_amounts if this->amounts filled or
@@ -285,7 +287,7 @@ if (empty($reshook)) {
 			if (GETPOST('type') == Facture::TYPE_CREDIT_NOTE) {
 				$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
 			}
-			$result = $paiement->addPaymentToBank($user, 'payment', $label, GETPOST('accountid', 'int'), GETPOST('chqemetteur'), GETPOST('chqbank'));
+			$result = $paiement->addPaymentToBank($user, 'payment', $label, GETPOSTINT('accountid'), GETPOST('chqemetteur'), GETPOST('chqbank'));
 			if ($result < 0) {
 				setEventMessages($paiement->error, $paiement->errors, 'errors');
 				$error++;
@@ -299,9 +301,9 @@ if (empty($reshook)) {
 			$invoiceid = 0;
 			foreach ($paiement->amounts as $key => $amount) {
 				$facid = $key;
-				if (is_numeric($amount) && $amount <> 0) {
+				if (is_numeric($amount) && $amount != 0) {
 					if ($invoiceid != 0) {
-						$invoiceid = -1; // There is more than one invoice payed by this payment
+						$invoiceid = -1; // There is more than one invoice paid by this payment
 					} else {
 						$invoiceid = $facid;
 					}
@@ -359,9 +361,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 		// Invoice with Paypal transaction
 		// TODO add hook here
-		if (!empty($conf->paypalplus->enabled) && $conf->global->PAYPAL_ENABLE_TRANSACTION_MANAGEMENT && !empty($facture->ref_ext)) {
-			if (!empty($conf->global->PAYPAL_BANK_ACCOUNT)) {
-				$accountid = $conf->global->PAYPAL_BANK_ACCOUNT;
+		if (isModEnabled('paypalplus') && $conf->global->PAYPAL_ENABLE_TRANSACTION_MANAGEMENT && !empty($facture->ref_ext)) {
+			if (getDolGlobalString('PAYPAL_BANK_ACCOUNT')) {
+				$accountid = getDolGlobalString('PAYPAL_BANK_ACCOUNT');
 			}
 			$paymentnum = $facture->ref_ext;
 		}
@@ -389,7 +391,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			                    }
             					if ($(\'#fieldchqemetteur\').val() == \'\')
             					{
-            						var emetteur = ('.$facture->type.' == '.Facture::TYPE_CREDIT_NOTE.') ? \''.dol_escape_js(dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_NOM)).'\' : jQuery(\'#thirdpartylabel\').val();
+            						var emetteur = ('.$facture->type.' == '.Facture::TYPE_CREDIT_NOTE.') ? \''.dol_escape_js(dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SOCIETE_NOM'))).'\' : jQuery(\'#thirdpartylabel\').val();
             						$(\'#fieldchqemetteur\').val(emetteur);
             					}
             				}
@@ -486,20 +488,20 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 		// Date payment
 		print '<tr><td><span class="fieldrequired">'.$langs->trans('Date').'</span></td><td>';
-		$datepayment = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-		$datepayment = ($datepayment == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datepayment);
+		$datepayment = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
+		$datepayment = ($datepayment == '' ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $datepayment);
 		print $form->selectDate($datepayment, '', '', '', 0, "add_paiement", 1, 1, 0, '', '', $facture->date);
 		print '</td></tr>';
 
 		// Payment mode
 		print '<tr><td><span class="fieldrequired">'.$langs->trans('PaymentMode').'</span></td><td>';
-		$form->select_types_paiements((GETPOST('paiementcode') ?GETPOST('paiementcode') : $facture->mode_reglement_code), 'paiementcode', '', 2);
+		$form->select_types_paiements((GETPOST('paiementcode') ? GETPOST('paiementcode') : $facture->mode_reglement_code), 'paiementcode', '', 2);
 		print "</td>\n";
 		print '</tr>';
 
 		// Bank account
 		print '<tr>';
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			if ($facture->type != 2) {
 				print '<td><span class="fieldrequired">'.$langs->trans('AccountToCredit').'</span></td>';
 			}
@@ -540,6 +542,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('comment', 'restricthtml').'</textarea>';
 		print '</td></tr>';
 
+		// Go Source Invoice (useful when there are many invoices)
+		if ($action != 'add_paiement' && getDolGlobalString('FACTURE_PAYMENTS_SHOW_LINK_TO_INPUT_ORIGIN_IS_MORE_THAN')) {
+			print '<tr><td></td>';
+			print '<td class="tdtop right">';
+			print '<a class="right" href="#amount_'.$facid.'">'.$langs->trans("GoSourceInvoice").'</a>';
+			print '</td></tr>';
+		}
+
 		print '</table>';
 
 		print dol_get_fiche_end();
@@ -549,17 +559,17 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		 * List of unpaid invoices
 		 */
 
-		$sql = 'SELECT f.rowid as facid, f.ref, f.total_ttc, f.multicurrency_code, f.multicurrency_total_ttc, f.type,';
+		$sql = 'SELECT f.rowid as facid, f.ref, f.total_ht, f.total_tva, f.total_ttc, f.multicurrency_code, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc, f.type,';
 		$sql .= ' f.datef as df, f.fk_soc as socid, f.date_lim_reglement as dlr';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql .= ' WHERE f.entity IN ('.getEntity('facture').')';
 		$sql .= ' AND (f.fk_soc = '.((int) $facture->socid);
 		// Can pay invoices of all child of parent company
-		if (!empty($conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS) && !empty($facture->thirdparty->parent)) {
+		if (getDolGlobalString('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS') && !empty($facture->thirdparty->parent)) {
 			$sql .= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.((int) $facture->thirdparty->parent).')';
 		}
 		// Can pay invoices of all child of myself
-		if (!empty($conf->global->FACTURE_PAYMENTS_ON_SUBSIDIARY_COMPANIES)) {
+		if (getDolGlobalString('FACTURE_PAYMENTS_ON_SUBSIDIARY_COMPANIES')) {
 			$sql .= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.((int) $facture->thirdparty->id).')';
 		}
 		$sql .= ') AND f.paye = 0';
@@ -597,7 +607,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				//print '<tr><td colspan="3">';
 				print '<br>';
 
-				print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+				print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 				print '<table class="noborder centpercent">';
 
 				print '<tr class="liste_titre">';
@@ -653,8 +663,16 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						$multicurrency_deposits = $invoice->getSumDepositsUsed(1);
 						$multicurrency_alreadypayed = price2num($multicurrency_payment + $multicurrency_creditnotes + $multicurrency_deposits, 'MT');
 						$multicurrency_remaintopay = price2num($invoice->multicurrency_total_ttc - $multicurrency_payment - $multicurrency_creditnotes - $multicurrency_deposits, 'MT');
+						// Multicurrency full amount tooltip
+						$tootltiponmulticurrencyfullamount = $langs->trans('AmountHT') . ": " . price($objp->multicurrency_total_ht, 0, $langs, 0, -1, -1, $objp->multicurrency_code) . "<br>";
+						$tootltiponmulticurrencyfullamount .= $langs->trans('AmountVAT') . ": " . price($objp->multicurrency_total_tva, 0, $langs, 0, -1, -1, $objp->multicurrency_code) . "<br>";
+						$tootltiponmulticurrencyfullamount .= $langs->trans('AmountTTC') . ": " . price($objp->multicurrency_total_ttc, 0, $langs, 0, -1, -1, $objp->multicurrency_code) . "<br>";
 					}
 
+					// Full amount tooltip
+					$tootltiponfullamount = $langs->trans('AmountHT') . ": " . price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency) . "<br>";
+					$tootltiponfullamount .= $langs->trans('AmountVAT') . ": " . price($objp->total_tva, 0, $langs, 0, -1, -1, $conf->currency) . "<br>";
+					$tootltiponfullamount .= $langs->trans('AmountTTC') . ": " . price($objp->total_ttc, 0, $langs, 0, -1, -1, $conf->currency) . "<br>";
 
 					print '<tr class="oddeven'.(($invoice->id == $facid) ? ' highlight' : '').'">';
 
@@ -687,13 +705,13 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						print '<td class="center">'.$objp->multicurrency_code."</td>\n";
 					}
 
-					// Multicurrency Price
+					// Multicurrency full amount
 					if (isModEnabled('multicurrency')) {
 						print '<td class="right">';
 						if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
-							print price($sign * $objp->multicurrency_total_ttc);
+							print '<span class="amount classfortooltip" title="'.$tootltiponmulticurrencyfullamount.'">' . price($sign * $objp->multicurrency_total_ttc);
 						}
-						print '</td>';
+						print '</span></td>';
 
 						// Multicurrency Price
 						print '<td class="right">';
@@ -736,8 +754,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						print "</td>";
 					}
 
-					// Price
-					print '<td class="right"><span class="amount">'.price($sign * $objp->total_ttc).'</span></td>';
+					// Full amount
+					print '<td class="right"><span class="amount classfortooltip" title="'.$tootltiponfullamount.'">'.price($sign * $objp->total_ttc).'</span></td>';
 
 					// Received + already paid
 					print '<td class="right"><span class="amount">'.price($sign * $paiement);
@@ -788,7 +806,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						if (!empty($conf->use_javascript_ajax)) {
 							print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $remaintopay)."'");
 						}
-						print '<input type="text" class="maxwidth75 amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';
+						print '<input type="text" class="maxwidth75 amount" id="'.$namef.'" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';
 						print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
 					} else {
 						print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" value="'.dol_escape_htmltag(GETPOST($namef)).'" disabled>';
@@ -915,7 +933,7 @@ if (!GETPOST('action', 'aZ09')) {
 	if (empty($page) || $page == -1) {
 		$page = 0;
 	}
-	$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 	$offset = $limit * $page;
 
 	if (!$sortorder) {

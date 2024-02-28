@@ -37,10 +37,12 @@ require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
+$now = dol_now();
+
 $refresh = GETPOSTISSET('submit') ? true : false;
-$year_current = GETPOSTISSET('year') ? GETPOST('year', 'int') : dol_print_date($now, '%Y', 'tzserver');
+$year_current = GETPOSTISSET('year') ? GETPOSTINT('year') : dol_print_date($now, '%Y', 'tzserver');
 $year_start = $year_current;
-$month_current = GETPOSTISSET('month') ? GETPOST('month', 'int') : dol_print_date($now, '%m', 'tzserver');
+$month_current = GETPOSTISSET('month') ? GETPOSTINT('month') : dol_print_date($now, '%m', 'tzserver');
 $month_start = $month_current;
 
 $refresh = true;
@@ -49,16 +51,16 @@ include DOL_DOCUMENT_ROOT.'/compta/tva/initdatesforvat.inc.php';
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
-$modetax = $conf->global->TAX_MODE;
+$modetax = getDolGlobalString('TAX_MODE');
 if (GETPOSTISSET("modetax")) {
-	$modetax = GETPOST("modetax", 'int');
+	$modetax = GETPOSTINT("modetax");
 }
 if (empty($modetax)) {
 	$modetax = 0;
 }
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -196,25 +198,25 @@ if ($modetax == 2) {
 $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')</span>';
 
 $description .= $langs->trans("VATSummary").'<br>';
-if ($conf->global->TAX_MODE_SELL_PRODUCT == 'invoice') {
+if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice') {
 	$description .= $langs->trans("RulesVATDueProducts");
 }
-if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') {
+if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'payment') {
 	$description .= $langs->trans("RulesVATInProducts");
 }
-if ($conf->global->TAX_MODE_SELL_SERVICE == 'invoice') {
+if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice') {
 	$description .= '<br>'.$langs->trans("RulesVATDueServices");
 }
-if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') {
+if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') {
 	$description .= '<br>'.$langs->trans("RulesVATInServices");
 }
-if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$description .= '<br>'.$langs->trans("DepositsAreNotIncluded");
 }
-if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$description .= $langs->trans("SupplierDepositsAreNotIncluded");
 }
-if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) {
+if (isModEnabled('accounting')) {
 	$description .= '<br>'.$langs->trans("ThisIsAnEstimatedValue");
 }
 
@@ -417,8 +419,8 @@ if ($refresh === true) {
 						$type = 1;
 					}
 
-					if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-						|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')) {
+					if (($type == 0 && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice')
+						|| ($type == 1 && getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice')) {
 						//print $langs->trans("NA");
 					} else {
 						if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
@@ -457,8 +459,8 @@ if ($refresh === true) {
 						$type = 1;
 					}
 
-					if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-						|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')) {
+					if (($type == 0 && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice')
+						|| ($type == 1 && getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice')) {
 						//print $langs->trans("NA");
 					} else {
 						if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {

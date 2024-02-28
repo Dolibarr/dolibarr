@@ -77,14 +77,14 @@ class Job extends CommonObject
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")')
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
 	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
@@ -116,9 +116,10 @@ class Job extends CommonObject
 	);
 	public $rowid;
 	public $ref;
+	public $label;
 	public $description;
 	public $date_creation;
-	public $tms;
+
 	public $deplacement;
 	public $note_public;
 	public $note_private;
@@ -166,7 +167,7 @@ class Job extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -174,7 +175,7 @@ class Job extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -210,10 +211,10 @@ class Job extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		$resultcreate = $this->createCommon($user, $notrigger);
 
@@ -326,7 +327,7 @@ class Job extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -340,7 +341,7 @@ class Job extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines()
 	{
@@ -384,7 +385,7 @@ class Job extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key.'='.$value;
-				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+				} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
@@ -425,7 +426,7 @@ class Job extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -435,10 +436,10 @@ class Job extends CommonObject
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		return $this->updateCommon($user, $notrigger);
 	}
@@ -446,11 +447,11 @@ class Job extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param User 	$user       User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
@@ -461,10 +462,10 @@ class Job extends CommonObject
 	 *
 	 *	@param  User	$user       User that delete
 	 *  @param	int		$idline		Id of line to delete
-	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
+	 *  @param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
 	 *  @return int         		>0 if OK, <0 if KO
 	 */
-	public function deleteLine(User $user, $idline, $notrigger = false)
+	public function deleteLine(User $user, $idline, $notrigger = 0)
 	{
 		if ($this->status < 0) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
@@ -480,7 +481,7 @@ class Job extends CommonObject
 	 *
 	 *	@param		User	$user     		User making status change
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -492,7 +493,7 @@ class Job extends CommonObject
 
 		// Protection
 		if ($this->status == self::STATUS_VALIDATED) {
-			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
+			dol_syslog(get_class($this)."::validate action abandoned: already validated", LOG_WARNING);
 			return 0;
 		}
 
@@ -539,7 +540,7 @@ class Job extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('JOB_VALIDATE', $user);
+				$result = $this->call_trigger('HRM_JOB_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -557,7 +558,15 @@ class Job extends CommonObject
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'job/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
+				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'job/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'job/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -609,7 +618,9 @@ class Job extends CommonObject
 	{
 		$Tab = $this->getForUser($fk_user);
 
-		if (empty($Tab)) return '';
+		if (empty($Tab)) {
+			return '';
+		}
 
 		$lastpos = array_shift($Tab);
 
@@ -640,7 +651,7 @@ class Job extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -664,7 +675,7 @@ class Job extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -688,7 +699,7 @@ class Job extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -708,7 +719,7 @@ class Job extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *  @param  string  $option                     On what the link point to ('nolink', ...)
@@ -727,7 +738,7 @@ class Job extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Job").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("JobProfile").'</u>';
 		if (isset($this->status)) {
 			$label .= ' '.$this->getLibStatut(5);
 		}
@@ -739,7 +750,7 @@ class Job extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -749,7 +760,7 @@ class Job extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowJob");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -789,7 +800,7 @@ class Job extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->label.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -844,6 +855,9 @@ class Job extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
+		return '';		// There is no status on job profile for the moment
+
+		/*
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("hrm");
@@ -862,6 +876,7 @@ class Job extends CommonObject
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+		*/
 	}
 
 	/**
@@ -880,6 +895,7 @@ class Job extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -941,15 +957,15 @@ class Job extends CommonObject
 		global $langs, $conf;
 		$langs->load("hrm");
 
-		if (empty($conf->global->hrm_JOB_ADDON)) {
+		if (!getDolGlobalString('hrm_JOB_ADDON')) {
 			$conf->global->hrm_JOB_ADDON = 'mod_job_standard';
 		}
 
-		if (!empty($conf->global->hrm_JOB_ADDON)) {
+		if (getDolGlobalString('hrm_JOB_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->hrm_JOB_ADDON.".php";
-			$classname = $conf->global->hrm_JOB_ADDON;
+			$file = getDolGlobalString('hrm_JOB_ADDON') . ".php";
+			$classname = getDolGlobalString('hrm_JOB_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -961,7 +977,7 @@ class Job extends CommonObject
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -990,7 +1006,7 @@ class Job extends CommonObject
 	 *  Create a document onto disk according to template module.
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
-	 *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
@@ -1011,8 +1027,8 @@ class Job extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->JOB_ADDON_PDF)) {
-				$modele = $conf->global->JOB_ADDON_PDF;
+			} elseif (getDolGlobalString('JOB_ADDON_PDF')) {
+				$modele = getDolGlobalString('JOB_ADDON_PDF');
 			}
 		}
 
@@ -1075,7 +1091,9 @@ class Job extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(0) : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		/*if (property_exists($this, 'deplacement')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Type").'</span>';
 			$return .= ' : <span class="info-box-label ">'.$this->fields['deplacement']['arrayofkeyval'][$this->deplacement].'</span>';
@@ -1088,6 +1106,36 @@ class Job extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		return $return;
+	}
+	/**
+	 * function for get required skills associate to job object
+	 * @param int  $id  Id of object
+	 * @return array|int     list of ids skillranks
+	 */
+	public function getSkillRankForJob($id)
+	{
+		if (empty($id)) {
+			return -1;
+		}
+		$skillranks = array();
+		$sql = "SELECT rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."hrm_skillrank";
+		$sql .= " WHERE fk_object = ".((int) $id);
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+				$skillranks[] = $obj;
+				$i++;
+			}
+			$this->db->free($resql);
+		} else {
+			dol_print_error($this->db);
+		}
+		return $skillranks;
 	}
 }
 
@@ -1110,7 +1158,7 @@ class JobLine extends CommonObjectLine
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{

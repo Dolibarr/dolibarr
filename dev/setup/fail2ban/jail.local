@@ -1,6 +1,35 @@
 #
-# Examle of rule you can add to fail2ban to restrict bruteforce attacks.
+# Example of rule you can add to fail2ban to restrict bruteforce attacks.
 #
+
+
+[web-accesslog-limit403]
+
+; rule against call of 403 forbidden access
+; note: you must change the path of log file to the one of the web server for the virtual host of the Dolibarr
+enabled = true
+port    = http,https
+filter  = web-accesslog-limit403
+logpath = /var/log/apache2/access.log
+;logpath = /var/log/apache2/other_vhosts_access.log
+action  = %(action_mw)s
+bantime  = 4320000   ; 50 days
+findtime = 86400     ; 1 day
+maxretry = 100
+
+
+[web-dol-bruteforce]
+
+; rule against bruteforce hacking (login + api)
+enabled = true
+port    = http,https
+filter  = web-dolibarr-rulesbruteforce
+logpath = /mypath/documents/documents/dolibarr.log
+action  = %(action_mw)s
+bantime  = 86400     ; 1 day
+findtime = 14400     ; 4 hours
+maxretry = 20
+
 
 [web-dol-passforgotten]
 
@@ -15,23 +44,10 @@ findtime = 86400     ; 1 day
 maxretry = 10
 
 
-[web-dol-bruteforce]
-
-; rule against bruteforce hacking (login + api)
-enabled = true
-port    = http,https
-filter  = web-dolibarr-rulesbruteforce
-logpath = /mypath/documents/documents/dolibarr.log
-action  = %(action_mw)s
-bantime  = 86400     ; 1 day
-findtime = 3600      ; 1 hour
-maxretry = 10
-
-
 [web-dol-limitpublic]
 
 ; rule to add rate limit on some public pages
-; note you must keep enough for public access like agenda export, emailing trackers, stripe ipn access, ...
+; note: you must keep enough for public access like agenda export, emailing trackers, stripe ipn access, ...
 enabled = true
 port    = http,https
 filter  = web-dolibarr-limitpublic

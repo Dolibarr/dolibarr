@@ -35,7 +35,7 @@
 function expedition_prepare_head(Expedition $object)
 {
 	global $langs, $conf, $user;
-	if (isModEnabled("expedition")) {
+	if (isModEnabled("delivery_note")) {
 		$langs->load("sendings");
 	}
 	$langs->load("orders");
@@ -67,7 +67,7 @@ function expedition_prepare_head(Expedition $object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array   	    		    head array with tabs
  */
@@ -88,7 +88,7 @@ function expedition_admin_prepare_head()
 	$h++;
 	*/
 
-	if (!empty($conf->global->MAIN_SUBMODULE_EXPEDITION)) {
+	if (getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')) {
 		$extrafields->fetch_name_optionals_label('expedition');
 		$extrafields->fetch_name_optionals_label('expeditiondet');
 

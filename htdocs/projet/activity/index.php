@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$search_project_user = GETPOST('search_project_user', 'int');
+$search_project_user = GETPOSTINT('search_project_user');
 $mine = GETPOST('mode', 'aZ09') == 'mine' ? 1 : 0;
 if ($search_project_user == $user->id) {
 	$mine = 1;
@@ -48,7 +48,7 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 //$result = restrictedArea($user, 'projet', $projectid);
-if (!$user->rights->projet->lire) {
+if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }
 
@@ -79,7 +79,7 @@ llxHeader("", $title);
 
 // Title for combo list see all projects
 $titleall = $langs->trans("AllAllowedProjects");
-if (!empty($user->rights->projet->all->lire) && !$socid) {
+if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 	$titleall = $langs->trans("AllProjects");
 } else {
 	$titleall = $langs->trans("AllAllowedProjects").'<br><br>';
@@ -97,7 +97,7 @@ $morehtml .= '<input type="submit" class="button" name="refresh" value="'.$langs
 if ($mine) {
 	$tooltiphelp = $langs->trans("MyTasksDesc");
 } else {
-	if ($user->rights->projet->all->lire && !$socid) {
+	if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 		$tooltiphelp = $langs->trans("TasksDesc");
 	} else {
 		$tooltiphelp = $langs->trans("TasksPublicDesc");
@@ -163,7 +163,7 @@ print '</div>';
 print '</div><div class="fichetwothirdright">';
 
 
-/* Affichage de la liste des projets d'hier */
+/* Show list of yesterday's projects */
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -220,7 +220,7 @@ if ($db->type != 'pgsql')
 {
 	print '<br>';
 
-	// Affichage de la liste des projets de la semaine
+	// Show list of projects active this week
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -275,8 +275,8 @@ if ($db->type != 'pgsql')
 }
 */
 
-/* Affichage de la liste des projets du mois */
-if (!empty($conf->global->PROJECT_TASK_TIME_MONTH)) {
+/* Show list of projects active this month */
+if (getDolGlobalString('PROJECT_TASK_TIME_MONTH')) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -322,12 +322,12 @@ if (!empty($conf->global->PROJECT_TASK_TIME_MONTH)) {
 	print '</div>';
 }
 
-/* Affichage de la liste des projets de l'annee */
-if (!empty($conf->global->PROJECT_TASK_TIME_YEAR)) {
+/* Show list of projects that were active this year */
+if (getDolGlobalString('PROJECT_TASK_TIME_YEAR')) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<br><table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("ActivityOnProjectThisYear").': '.strftime("%Y", $now).'</td>';
+	print '<td>'.$langs->trans("ActivityOnProjectThisYear").': '.dol_print_date($now, "%Y").'</td>';
 	print '<td class="right">'.$langs->trans("Time").'</td>';
 	print "</tr>\n";
 
@@ -340,7 +340,7 @@ if (!empty($conf->global->PROJECT_TASK_TIME_YEAR)) {
 	$sql .= " AND tt.fk_element = t.rowid";
 	$sql .= " AND tt.elementtype = 'task'";
 	$sql .= " AND tt.fk_user = ".((int) $user->id);
-	$sql .= " AND YEAR(element_date) = '".strftime("%Y", $now)."'";
+	$sql .= " AND YEAR(element_date) = '".dol_print_date($now, "%Y")."'";
 	$sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 	$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
@@ -370,7 +370,7 @@ if (!empty($conf->global->PROJECT_TASK_TIME_YEAR)) {
 	print '</div>';
 }
 
-if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SHOW_TASK_LIST_ON_PROJECT_AREA)) {
+if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_SHOW_TASK_LIST_ON_PROJECT_AREA')) {
 	// Get id of types of contacts for projects (This list never contains a lot of elements)
 	$listofprojectcontacttype = array();
 	$sql = "SELECT ctc.rowid, ctc.code FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
@@ -409,10 +409,10 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 	// This list can be very long, so we don't show it by default on task area. We prefer to use the list page.
 	// Add constant PROJECT_SHOW_TASK_LIST_ON_PROJECT_AREA to show this list
 
-	$max = (empty($conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA) ? 1000 : $conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA);
+	$max = getDolGlobalInt('PROJECT_LIMIT_TASK_PROJECT_AREA', 1000);
 
-	$sql = "SELECT p.ref, p.title, p.rowid as projectid, p.fk_statut as status, p.fk_opp_status as opp_status, p.public, p.dateo as projdateo, p.datee as projdatee,";
-	$sql .= " t.label, t.rowid as taskid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee, SUM(tasktime.element_duration) as timespent";
+	$sql = "SELECT p.ref, p.title, p.rowid as projectid, p.fk_statut as status, p.fk_opp_status as opp_status, p.public, p.dateo as projdate_start, p.datee as projdate_end,";
+	$sql .= " t.label, t.rowid as taskid, t.planned_workload, t.duration_effective, t.progress, t.dateo as date_start, t.datee as date_end, SUM(tasktime.element_duration) as timespent";
 	$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
@@ -422,18 +422,18 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 		$sql .= ", ".MAIN_DB_PREFIX."element_contact as ect";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity('project').")";
-	if ($mine || empty($user->rights->projet->all->lire)) {
+	if ($mine || !$user->hasRight('projet', 'all', 'lire')) {
 		$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // project i have permission on
 	}
 	if ($mine) {     // this may duplicate record if we are contact twice
-		$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".((int) $user->id);
+		$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(implode(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 	}
 	$sql .= " AND p.fk_statut=1";
-	$sql .= " GROUP BY p.ref, p.title, p.rowid, p.fk_statut, p.fk_opp_status, p.public, t.label, t.rowid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee";
-	$sql .= " ORDER BY t.dateo desc, t.rowid desc, t.datee";
+	$sql .= " GROUP BY p.ref, p.title, p.rowid, p.fk_statut, p.fk_opp_status, p.public, p.dateo, p.datee, t.label, t.rowid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee";
+	$sql .= " ORDER BY t.dateo DESC, t.rowid DESC, t.datee DESC";
 	$sql .= $db->plimit($max + 1); // We want more to know if we have more than limit
 
 	dol_syslog('projet:index.php: affectationpercent', LOG_DEBUG);
@@ -449,7 +449,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 		print '<tr class="liste_titre">';
 		//print '<th>'.$langs->trans('TaskRessourceLinks').'</th>';
 		print '<th>'.$langs->trans('OpenedProjects').'</th>';
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			print '<th>'.$langs->trans('OpportunityStatus').'</th>';
 		}
 		print '<th>'.$langs->trans('Task').'</th>';
@@ -469,14 +469,17 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 			$projectstatic->title = $obj->title;
 			$projectstatic->statut = $obj->status;
 			$projectstatic->public = $obj->public;
-			$projectstatic->dateo = $db->jdate($obj->projdateo);
-			$projectstatic->datee = $db->jdate($obj->projdatee);
+			$projectstatic->date_start = $db->jdate($obj->projdate_start);
+			$projectstatic->date_end = $db->jdate($obj->projdate_end);
 
 			$taskstatic->projectstatus = $obj->projectstatus;
 			$taskstatic->progress = $obj->progress;
 			$taskstatic->fk_statut = $obj->status;
-			$taskstatic->dateo = $db->jdate($obj->dateo);
-			$taskstatic->datee = $db->jdate($obj->datee);
+			$taskstatic->status = $obj->status;
+			$taskstatic->date_start = $db->jdate($obj->date_start);
+			$taskstatic->date_end = $db->jdate($obj->date_end);
+			$taskstatic->dateo = $db->jdate($obj->date_start);
+			$taskstatic->datee = $db->jdate($obj->date_end);
 
 			$username = '';
 			if ($obj->userid && $userstatic->id != $obj->userid) {	// We have a user and it is not last loaded user
@@ -494,7 +497,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 			print '<td>';
 			print $projectstatic->getNomUrl(1, '', 0, '', '<br>');
 			print '</td>';
-			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 				print '<td>';
 				$code = dol_getIdFromCode($db, $obj->opp_status, 'c_lead_status', 'rowid', 'code');
 				if ($code) {
@@ -512,8 +515,8 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 				print $langs->trans("NoTasks");
 			}
 			print '</td>';
-			print '<td class="center">'.dol_print_date($db->jdate($obj->dateo), 'day').'</td>';
-			print '<td class="center">'.dol_print_date($db->jdate($obj->datee), 'day');
+			print '<td class="center">'.dol_print_date($db->jdate($obj->date_start), 'day').'</td>';
+			print '<td class="center">'.dol_print_date($db->jdate($obj->date_end), 'day');
 			if ($taskstatic->hasDelay()) {
 				print img_warning($langs->trans("Late"));
 			}
@@ -544,7 +547,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 
 		if ($num > $max) {
 			$colspan = 6;
-			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 				$colspan++;
 			}
 			print '<tr><td colspan="'.$colspan.'">'.$langs->trans("WarningTooManyDataPleaseUseMoreFilters").'</td></tr>';

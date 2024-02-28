@@ -113,6 +113,9 @@ class WebsitePage extends CommonObject
 	 */
 	public $date_modification;
 
+	public $fk_user_creat;
+	public $fk_user_modif;
+
 	/**
 	 * @var string author_alias
 	 */
@@ -143,7 +146,7 @@ class WebsitePage extends CommonObject
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
 	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
@@ -194,7 +197,7 @@ class WebsitePage extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -205,10 +208,10 @@ class WebsitePage extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		$this->description = dol_trunc($this->description, 255, 'right', 'utf-8', 1);
 		$this->keywords = dol_trunc($this->keywords, 255, 'right', 'utf-8', 1);
@@ -233,10 +236,9 @@ class WebsitePage extends CommonObject
 	 *                                  - If this is 0, the value into $page will be used. If not found or $page not defined, the default page of website_id will be used or the first page found if not set.
 	 *                                  - If value is < 0, we must exclude this ID.
 	 * @param string    $website_id     Web site id (page name must also be filled if this parameter is used)
-	 * @param string    $page           Page name (website id must also be filled if this parameter is used). Exemple 'myaliaspage' or 'fr/myaliaspage'
+	 * @param string    $page           Page name (website id must also be filled if this parameter is used). Example 'myaliaspage' or 'fr/myaliaspage'
 	 * @param string    $aliasalt       Alternative alias to search page (slow)
-	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @return int 						Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $website_id = null, $page = null, $aliasalt = null)
 	{
@@ -344,7 +346,7 @@ class WebsitePage extends CommonObject
 			}
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -413,7 +415,7 @@ class WebsitePage extends CommonObject
 						}
 						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 					}
-					$stringtouse = $key." IN (".$this->db->sanitize(join(',', $listoflang), 1).")";
+					$stringtouse = $key." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
 					if ($foundnull) {
 						$stringtouse = "(".$stringtouse." OR ".$key." IS NULL)";
 					}
@@ -474,7 +476,7 @@ class WebsitePage extends CommonObject
 		} else {
 			$this->error = 'Error '.$this->db->lasterror();
 			$this->errors[] = $this->error;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -515,7 +517,7 @@ class WebsitePage extends CommonObject
 						}
 						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 					}
-					$stringtouse = $key." IN (".$this->db->sanitize(join(',', $listoflang), 1).")";
+					$stringtouse = $key." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
 					if ($foundnull) {
 						$stringtouse = "(".$stringtouse." OR ".$key." IS NULL)";
 					}
@@ -542,7 +544,7 @@ class WebsitePage extends CommonObject
 		} else {
 			$this->error = 'Error '.$this->db->lasterror();
 			$this->errors[] = $this->error;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -552,10 +554,10 @@ class WebsitePage extends CommonObject
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		$this->description = dol_trunc($this->description, 255, 'right', 'utf-8', 1);
 		$this->keywords = dol_trunc($this->keywords, 255, 'right', 'utf-8', 1);
@@ -589,11 +591,11 @@ class WebsitePage extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param User 	$user       User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		global $conf;
 
@@ -719,7 +721,7 @@ class WebsitePage extends CommonObject
 			$error++;
 			$this->error = $object->error;
 			$this->errors = $object->errors;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
 		unset($object->context['createfromclone']);
@@ -737,7 +739,7 @@ class WebsitePage extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the user card (with optionaly the picto)
+	 *  Return a link to the user card (with optionally the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -766,7 +768,7 @@ class WebsitePage extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -843,7 +845,7 @@ class WebsitePage extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	int[]|int 	$categories 	Category ID or array of Categories IDs
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -865,7 +867,7 @@ class WebsitePage extends CommonObject
 
 		$now = dol_now();
 
-		$this->fk_website = '';
+		$this->fk_website = 0;
 		$this->type_container = 'page';
 		$this->pageurl = 'specimen';
 		$this->aliasalt = 'specimenalt';
@@ -876,7 +878,7 @@ class WebsitePage extends CommonObject
 		$this->allowed_in_frames = 1;
 		$this->htmlheader = '';
 		$this->content = '<html><body>This is a html content</body></html>';
-		$this->status = '';
+		$this->status = self::STATUS_DRAFT;
 		$this->grabbed_from = '';
 		$this->date_creation = $now - (24 * 30 * 3600);
 		$this->date_modification = $now - (24 * 7 * 3600);

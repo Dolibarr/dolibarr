@@ -40,16 +40,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'holiday', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -67,7 +67,7 @@ if (!$sortfield) {
 $childids = $user->getAllChildIds(1);
 
 $morefilter = '';
-if (!empty($conf->global->HOLIDAY_HIDE_FOR_NON_SALARIES)) {
+if (getDolGlobalString('HOLIDAY_HIDE_FOR_NON_SALARIES')) {
 	$morefilter = 'AND employee = 1';
 }
 
@@ -83,10 +83,10 @@ if (($id > 0) || $ref) {
 
 	// Check current user can read this leave request
 	$canread = 0;
-	if (!empty($user->rights->holiday->readall)) {
+	if ($user->hasRight('holiday', 'readall')) {
 		$canread = 1;
 	}
-	if (!empty($user->rights->holiday->read) && in_array($object->fk_user, $childids)) {
+	if ($user->hasRight('holiday', 'read') && in_array($object->fk_user, $childids)) {
 		$canread = 1;
 	}
 	if (!$canread) {
@@ -104,7 +104,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'holiday', $object->id, 'holiday');
 
-$permissiontoadd = $user->rights->holiday->write; // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->hasRight('holiday', 'write'); // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -138,7 +138,7 @@ if ($object->id) {
 
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
@@ -286,8 +286,8 @@ if ($object->id) {
 
 	print dol_get_fiche_end();
 
-	$permissiontoadd = $user->rights->holiday->write;
-	$permtoedit = $user->rights->holiday->write;
+	$permissiontoadd = $user->hasRight('holiday', 'write');
+	$permtoedit = $user->hasRight('holiday', 'write');
 	$param = '&id='.$object->id;
 	$relativepathwithnofile = dol_sanitizeFileName($object->ref).'/';
 	$savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';

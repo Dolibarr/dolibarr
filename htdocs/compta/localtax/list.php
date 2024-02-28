@@ -28,16 +28,16 @@ require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 // Load translation files required by the page
 $langs->load("compta");
 
-$limit = GETPOST('limit', 'int');
+$limit = GETPOSTINT('limit');
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 
 $result = restrictedArea($user, 'tax', '', '', 'charges');
-$ltt = GETPOST("localTaxType", 'int');
+$ltt = GETPOSTINT("localTaxType");
 $mode = GETPOST('mode', 'alpha');
 
 
@@ -60,7 +60,8 @@ if (!empty($mode)) {
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?localTaxType='.$ltt.'&mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?localTaxType='.$ltt.'&mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewLocalTaxPayment', ($ltt + 1)), '', 'fa fa-plus-circle', $url, '', $user->rights->tax->charges->creer);
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewLocalTaxPayment', ($ltt + 1)), '', 'fa fa-plus-circle', $url, '', $user->hasRight('tax', 'charges', 'creer'));
 
 print load_fiche_titre($langs->transcountry($ltt == 2 ? "LT2Payments" : "LT1Payments", $mysoc->country_code), $newcardbutton, 'title_accountancy');
 
@@ -75,15 +76,17 @@ if ($result) {
 	$i = 0;
 	$total = 0;
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td class="nowrap" align="left">'.$langs->trans("Ref").'</td>';
 	print "<td>".$langs->trans("Label")."</td>";
 	print "<td>".$langs->trans("PeriodEndDate")."</td>";
 	print '<td class="nowrap" align="left">'.$langs->trans("DatePayment").'</td>';
-	print "<td align=\"right\">".$langs->trans("PayedByThisPayment")."</td>";
+	print '<td class="right">'.$langs->trans("PayedByThisPayment").'</td>';
 	print "</tr>\n";
+
+	$savnbfield = 5;
 
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
 	while ($i < $imaxinloop) {
@@ -100,7 +103,7 @@ if ($result) {
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {
-				print '<tr><td colspan="12">';
+				print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 				print '<div class="box-flex-container kanban">';
 			}
 			// Output Kanban

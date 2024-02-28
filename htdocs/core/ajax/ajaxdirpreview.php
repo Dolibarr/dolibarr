@@ -53,10 +53,10 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$urlsource = GETPOST("urlsource", 'alpha');
 	$search_doc_ref = GETPOST('search_doc_ref', 'alpha');
 
-	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 	$sortfield = GETPOST("sortfield", 'aZ09comma');
 	$sortorder = GETPOST("sortorder", 'aZ09comma');
-	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 	if (empty($page) || $page == -1) {
 		$page = 0;
 	}     // If $page is not defined, or '' or -1
@@ -192,7 +192,7 @@ if ($type == 'directory') {
 
 	$maxlengthname = 40;
 	$excludefiles = array('^SPECIMEN\.pdf$', '^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^payments$', '^CVS$', '^thumbs$');
-	$sorting = (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC);
+	$sorting = (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC);
 
 	// Right area. If module is defined here, we are in automatic ecm.
 	$automodules = array(
@@ -293,7 +293,7 @@ if ($type == 'directory') {
 		$filter = preg_quote($search_doc_ref, '/');
 		$filearray = dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting, 1);
 
-		$perm = $user->rights->ecm->upload;
+		$perm = $user->hasRight('ecm', 'upload');
 
 		$formfile->list_of_autoecmfiles($upload_dir, $filearray, $module, $param, 1, '', $perm, 1, $textifempty, $maxlengthname, $url, 1);
 	} else {
@@ -310,7 +310,7 @@ if ($type == 'directory') {
 			  'max_file_size' => string '2097152' (length=7)
 			  'sendit' => string 'Envoyer fichier' (length=15)
 			 */
-			$relativepath = GETPOST('file', 'alpha') ?GETPOST('file', 'alpha') : GETPOST('section_dir', 'alpha');
+			$relativepath = GETPOST('file', 'alpha') ? GETPOST('file', 'alpha') : GETPOST('section_dir', 'alpha');
 			if ($relativepath && $relativepath != '/') {
 				$relativepath .= '/';
 			}
@@ -321,7 +321,7 @@ if ($type == 'directory') {
 					$param .= '&website='.urlencode(GETPOST('website', 'alpha'));
 				}
 				if (!preg_match('/pageid=/', $param)) {
-					$param .= '&pageid='.urlencode(GETPOST('pageid', 'int'));
+					$param .= '&pageid='.urlencode(GETPOSTINT('pageid'));
 				}
 				//if (!preg_match('/backtopage=/',$param)) $param.='&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid);
 			}
@@ -402,7 +402,7 @@ if (!empty($conf->dol_use_jmobile)) {
 if (empty($conf->use_javascript_ajax)) {
 	$useajax = 0;
 }
-if (!empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+if (getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 	$useajax = 0;
 }
 

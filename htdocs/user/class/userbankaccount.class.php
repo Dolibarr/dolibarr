@@ -78,7 +78,7 @@ class UserBankAccount extends Account
 
 		$this->userid = 0;
 		$this->solde = 0;
-		$this->error_number = 0;
+		$this->balance = 0;
 	}
 
 
@@ -87,7 +87,7 @@ class UserBankAccount extends Account
 	 *
 	 * @param	User|null	$user		User
 	 * @param	int			$notrigger	1=Disable triggers
-	 * @return	int						<0 if KO, >= 0 if OK
+	 * @return	int						Return integer <0 if KO, >= 0 if OK
 	 */
 	public function create(User $user = null, $notrigger = 0)
 	{
@@ -101,10 +101,12 @@ class UserBankAccount extends Account
 				$this->id = $this->db->last_insert_id($this->db->prefix()."user_rib");
 
 				return $this->update($user);
+			} else {
+				return 0;
 			}
 		} else {
 			print $this->db->error();
-			return 0;
+			return -1;
 		}
 	}
 
@@ -113,10 +115,14 @@ class UserBankAccount extends Account
 	 *
 	 *	@param	User|null	$user		Object user
 	 *	@param	int			$notrigger	1=Disable triggers
-	 *	@return	int						<=0 if KO, >0 if OK
+	 *	@return	int						Return integer <=0 if KO, >0 if OK
 	 */
 	public function update(User $user = null, $notrigger = 0)
 	{
+		$error = 0;
+
+		$this->db->begin();
+
 		if (!$this->id) {
 			$this->create();
 		}
@@ -129,7 +135,7 @@ class UserBankAccount extends Account
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-		$sql .= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
+		$sql .= ",domiciliation='".$this->db->escape($this->address ? $this->address :$this->domiciliation)."'";
 		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",currency_code = '".$this->db->escape($this->currency_code)."'";
@@ -144,11 +150,28 @@ class UserBankAccount extends Account
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
-		if ($result) {
-			return 1;
+		if (!$result) {
+			$error++;
+			$this->errors[] = $this->db->lasterror();
+		}
+
+		// Triggers
+		if (!$error && !$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			} //Do also here what you must do to rollback action if trigger fail
+			// End call triggers
+		}
+
+		// Commit or rollback
+		if ($error) {
+			$this->db->rollback();
+			return -1;
 		} else {
-			dol_print_error($this->db);
-			return 0;
+			$this->db->commit();
+			return $this->id;
 		}
 	}
 
@@ -158,7 +181,7 @@ class UserBankAccount extends Account
 	 *	@param	int		$id			Id of record
 	 *	@param	string	$ref		Ref of record
 	 *  @param  int     $userid     User id
-	 * 	@return	int					<0 if KO, >0 if OK
+	 * 	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '', $userid = 0)
 	{
@@ -166,8 +189,8 @@ class UserBankAccount extends Account
 			return -1;
 		}
 
-		$sql = "SELECT ur.rowid, ur.fk_user, ur.entity, ur.bank, ur.number, ur.code_banque, ur.code_guichet, ur.cle_rib, ur.bic, ur.iban_prefix as iban, ur.domiciliation, ur.proprio";
-		$sql .= ", ur.owner_address, ur.label, ur.datec, ur.tms as datem";
+		$sql = "SELECT ur.rowid, ur.fk_user, ur.entity, ur.bank, ur.number, ur.code_banque, ur.code_guichet, ur.cle_rib, ur.bic, ur.iban_prefix as iban, ur.domiciliation as address";
+		$sql .= ", ur.proprio, ur.owner_address, ur.label, ur.datec, ur.tms as datem";
 		$sql .= ', ur.currency_code, ur.state_id, ur.fk_country as country_id';
 		$sql .= ', c.code as country_code, c.label as country';
 		$sql .= ', d.code_departement as state_code, d.nom as state';
@@ -199,7 +222,10 @@ class UserBankAccount extends Account
 				$this->cle_rib = $obj->cle_rib;
 				$this->bic = $obj->bic;
 				$this->iban = $obj->iban;
-				$this->domiciliation = $obj->domiciliation;
+
+				$this->domiciliation = $obj->address;
+				$this->address = $obj->address;
+
 				$this->proprio = $obj->proprio;
 				$this->owner_address = $obj->owner_address;
 				$this->label = $obj->label;
@@ -228,7 +254,7 @@ class UserBankAccount extends Account
 	 *  Delete user bank account from database
 	 *
 	 *  @param	User|null	$user	User deleting
-	 *  @return int             	<0 if KO, >0 if OK
+	 *  @return int             	Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user = null)
 	{
@@ -300,5 +326,20 @@ class UserBankAccount extends Account
 		}
 
 		return $rib;
+	}
+
+	/**
+	 * Return if a country of userBank is inside the EEC (European Economic Community)
+	 * @return     boolean    true = country inside EEC, false = country outside EEC
+	 */
+	public function checkCountryBankAccount()
+	{
+		if (!empty($this->country_code)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+			$country_code_in_EEC = getCountriesInEEC();
+			return in_array($this->country_code, $country_code_in_EEC);
+		} else {
+			return false;
+		}
 	}
 }

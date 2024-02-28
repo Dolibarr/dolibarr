@@ -51,8 +51,9 @@ abstract class CommonObjectLine extends CommonObject
 	public $picto = 'line';
 
 	/**
-	 * Product/service unit code ('km', 'm', 'p', ...)
-	 * @var string
+	 * @var int|null                ID of the unit of measurement (rowid in llx_c_units table)
+	 * @see measuringUnitString()
+	 * @see getLabelOfUnit()
 	 */
 	public $fk_unit;
 
@@ -105,7 +106,38 @@ abstract class CommonObjectLine extends CommonObject
 	public $remise_percent;
 	public $info_bits;
 	public $special_code;
+	public $subprice;
+	public $tva_tx;
 
+	/**
+	 * @var int multicurrency id
+	 */
+	public $fk_multicurrency;
+
+	/**
+	 * @var string Multicurrency code
+	 */
+	public $multicurrency_code;
+
+	/**
+	 * @var float Multicurrency subprice
+	 */
+	public $multicurrency_subprice;
+
+	/**
+	 * @var float Multicurrency total without tax
+	 */
+	public $multicurrency_total_ht;
+
+	/**
+	 * @var float Multicurrency total vat
+	 */
+	public $multicurrency_total_tva;
+
+	/**
+	 * @var float Multicurrency total with tax
+	 */
+	public $multicurrency_total_ttc;
 
 
 	/**
@@ -123,7 +155,7 @@ abstract class CommonObjectLine extends CommonObject
 	 *  A langs->trans() must be called on result to get translated value.
 	 *
 	 * 	@param	string $type 	Label type ('long', 'short' or 'code'). This can be a translation key.
-	 *	@return	string|int 		<0 if KO, label if OK (Example: 'long', 'short' or 'unitCODE')
+	 *	@return	string|int 		Return integer <0 if KO, label if OK (Example: 'long', 'short' or 'unitCODE')
 	 */
 	public function getLabelOfUnit($type = 'long')
 	{
@@ -164,7 +196,7 @@ abstract class CommonObjectLine extends CommonObject
 	}
 
 	/**
-	 * Empty function to prevent errors on call of this function must be overload if usefull
+	 * Empty function to prevent errors on call of this function must be overload if useful
 	 *
 	 * @param string $sortorder Sort Order
 	 * @param string $sortfield Sort field
@@ -172,7 +204,7 @@ abstract class CommonObjectLine extends CommonObject
 	 * @param int $offset offset limit
 	 * @param array $filter filter array
 	 * @param string $filtermode filter mode (AND or OR)
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{

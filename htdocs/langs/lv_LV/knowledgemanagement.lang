@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=Pārvaldiet zināšanu pārvaldības (KM) vai pal�
 # Admin page
 #
 KnowledgeManagementSetup = Zināšanu pārvaldības sistēmas iestatīšana
-Settings = Iestatījumi
 KnowledgeManagementSetupPage = Zināšanu pārvaldības sistēmas iestatīšanas lapa
 
 
 #
 # About page
 #
-About = Par
 KnowledgeManagementAbout = Par zināšanu pārvaldību
 KnowledgeManagementAboutPage = Zināšanu pārvaldība par lapu
 
 KnowledgeManagementArea = Zināšanu pārvaldība
 MenuKnowledgeRecord = Zināšanu bāze
+MenuKnowledgeRecordShort = Zināšanu bāze
 ListKnowledgeRecord = Rakstu saraksts
 NewKnowledgeRecord = Jauns raksts
 ValidateReply = Apstipriniet šķīdumu
@@ -52,3 +51,9 @@ SuggestedForTicketsInGroup=Ieteikts biļešu izveidē
 SetObsolete=Iestatīt kā novecojušu
 ConfirmCloseKM=Vai apstiprināt, ka šī raksta slēgšana ir novecojusi?
 ConfirmReopenKM=Vai vēlaties atjaunot šī raksta statusu "Apstiprināts"?
+BoxLastKnowledgerecordDescription=Pēdējie %s raksti
+BoxLastKnowledgerecord=Pēdējie raksti
+BoxLastKnowledgerecordContent=Pēdējie raksti
+BoxLastKnowledgerecordModifiedContent=Pēdējie labotie raksti
+BoxLastModifiedKnowledgerecordDescription=Pēdējie %s labotie raksti
+BoxLastModifiedKnowledgerecord=Pēdējie labotie raksti

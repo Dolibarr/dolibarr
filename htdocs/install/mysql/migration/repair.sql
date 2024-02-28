@@ -54,6 +54,10 @@
 -- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
 -- VMYSQL4.1 update llx_facture set date_pointoftax = NULL where DATE(STR_TO_DATE(date_pointoftax, '%Y-%m-%d')) IS NULL;
 
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_element_time set task_date = NULL where DATE(STR_TO_DATE(task_date, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_element_time set task_date = NULL where DATE(STR_TO_DATE(task_date, '%Y-%m-%d')) IS NULL;
 
 
 -- Requests to clean corrupted data
@@ -310,6 +314,15 @@ create table tmp_accounting_account_double as (select account_number, fk_pcg_ver
 --select * from tmp_accounting_account_double;
 delete from llx_accounting_account where (rowid) in (select max_rowid from tmp_accounting_account_double);	--update to avoid duplicate, delete to delete
 drop table tmp_accounting_account_double;
+
+
+-- Sequence to removed duplicated values of llx_commande_extrafields. Run several times if you still have duplicate.
+drop table tmp_commande_extrafields_double;
+--select fk_object, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by fk_object having count(rowid) >= 2;
+create table tmp_commande_extrafields_double as (select fk_object, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_commande_extrafields group by fk_object having count(rowid) >= 2);
+--select * from tmp_links_double;
+delete from llx_commande_extrafields where (rowid) in (select max_rowid from tmp_commande_extrafields_double);	--update to avoid duplicate, delete to delete
+drop table tmp_commande_extrafields_double;
 
 
 UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid;

@@ -1,11 +1,10 @@
 # Dolibarr language file - Source file is en_US - bookmarks
-AddThisPageToBookmarks=Adicione a página atual aos marcadores
-ListOfBookmarks=Lista de marcadores
-OpenANewWindow=Abra uma nova aba
-ReplaceWindow=Substituir guia atual
-BookmarkTargetReplaceWindowShort=Guia atual
-BehaviourOnClick=Comportamento quando a URL de marcador é selecionada
-SetHereATitleForLink=Definir um nome para o marcador
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Escolha se a página vinculada deve abrir na guia atual ou em uma nova guia
-BookmarksManagement=Gestor de marcadores
-BookmarksMenuShortCut=Ctrl + Shift + M
+AddThisPageToBookmarks =Adicione a página atual aos marcadores
+BookmarkTargetReplaceWindowShort =Guia atual
+BookmarksManagement =Gestor de marcadores
+BookmarksMenuShortCut =Ctrl + Shift + M
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark =Escolha se a página vinculada deve abrir na guia atual ou em uma nova guia
+ListOfBookmarks =Lista de marcadores
+OpenANewWindow =Abra uma nova aba
+ReplaceWindow =Substituir guia atual
+SetHereATitleForLink =Definir um nome para o marcador

@@ -43,14 +43,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-if (isModEnabled('adherent')) {
+if (isModEnabled('member')) {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
 
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	$langs->load("categories");
 }
 if (isModEnabled('incoterm')) {
@@ -68,7 +68,7 @@ $action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
 $cancel 	= GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm 	= GETPOST('confirm');
-$socid 		= GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('id', 'int');
+$socid 		= GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id');
 
 if ($user->socid) {
 	$socid = $user->socid;
@@ -105,7 +105,7 @@ if (!empty($canvas)) {
 
 // Security check
 $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
-if (empty($user->rights->societe->contact->lire)) {
+if (!$user->hasRight('societe', 'contact', 'lire')) {
 	accessforbidden();
 }
 
@@ -146,12 +146,12 @@ $formcompany = new FormCompany($db);
 if ($socid > 0 && empty($object->id)) {
 	$result = $object->fetch($socid);
 	if ($result <= 0) {
-		dol_print_error('', $object->error);
+		dol_print_error(null, $object->error);
 	}
 }
 
 $title = $langs->trans("ThirdParty");
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->name." - ".$langs->trans('ContactsAddresses');
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -180,7 +180,7 @@ print '<br>';
 
 if ($action != 'presend') {
 	// Contacts list
-	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+	if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 		$result = show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1);
 	}
 }

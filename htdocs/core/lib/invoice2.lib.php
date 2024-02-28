@@ -130,7 +130,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 		} else {
 			$sqlwhere .= " AND";
 		}
-		$sqlwhere .= ' f.fk_soc NOT IN ('.$db->sanitize(join(',', $thirdpartiesid)).')';
+		$sqlwhere .= ' f.fk_soc NOT IN ('.$db->sanitize(implode(',', $thirdpartiesid)).')';
 	}
 	if (in_array('onlythirdparties', $filter) && is_array($thirdpartiesid)) {
 		if (empty($sqlwhere)) {
@@ -138,7 +138,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 		} else {
 			$sqlwhere .= " AND";
 		}
-		$sqlwhere .= ' f.fk_soc IN ('.$db->sanitize(join(',', $thirdpartiesid)).')';
+		$sqlwhere .= ' f.fk_soc IN ('.$db->sanitize(implode(',', $thirdpartiesid)).')';
 	}
 	if ($sqlwhere) {
 		$sql .= $sqlwhere;
@@ -222,9 +222,9 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 			$format = array($page_largeur, $page_hauteur);
 
 			if ($usestdout) {
-				print "Using output PDF format ".join('x', $format)."\n";
+				print "Using output PDF format ".implode('x', $format)."\n";
 			} else {
-				dol_syslog("Using output PDF format ".join('x', $format), LOG_ERR);
+				dol_syslog("Using output PDF format ".implode('x', $format), LOG_ERR);
 			}
 
 
@@ -255,10 +255,10 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 				// Charge un document PDF depuis un fichier.
 				$pagecount = $pdf->setSourceFile($file);
 				for ($i = 1; $i <= $pagecount; $i++) {
-					 $tplidx = $pdf->importPage($i);
-					 $s = $pdf->getTemplatesize($tplidx);
-					 $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
-					 $pdf->useTemplate($tplidx);
+					$tplidx = $pdf->importPage($i);
+					$s = $pdf->getTemplatesize($tplidx);
+					$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+					$pdf->useTemplate($tplidx);
 				}
 			}
 

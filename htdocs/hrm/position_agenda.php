@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
 $langs->loadLangs(array('hrm', 'other'));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
@@ -58,10 +58,10 @@ if (GETPOST('actioncode', 'array')) {
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -91,16 +91,20 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Permissions
-$permissiontoread = $user->rights->hrm->all->read;
-$permissiontoadd = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoread = $user->hasRight('hrm', 'all', 'read');
+$permissiontoadd = $user->hasRight('hrm', 'all', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->hrm->enabled)) accessforbidden();
-if (!$permissiontoread) accessforbidden();
+if (empty($conf->hrm->enabled)) {
+	accessforbidden();
+}
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -137,7 +141,7 @@ $form = new Form($db);
 
 if ($object->id > 0) {
 	$title = $langs->trans("Agenda");
-	//if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
+	//if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
 	$help_url = 'EN:Module_Agenda_En|DE:Modul_Terminplanung';
 	llxHeader('', $title, $help_url);
 
@@ -185,7 +189,7 @@ if ($object->id > 0) {
 	$out = '&origin='.urlencode($object->element.'@'.$object->module).'&originid='.urlencode($object->id);
 	$urlbacktopage = $_SERVER['PHP_SELF'].'?id='.$object->id;
 	$out .= '&backtopage='.urlencode($urlbacktopage);
-	$permok = $user->rights->agenda->myactions->create;
+	$permok = $user->hasRight('agenda', 'myactions', 'create');
 	if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
 		//$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
 		if (get_class($objthirdparty) == 'Societe') {
@@ -201,7 +205,7 @@ if ($object->id > 0) {
 	print '<div class="tabsAction">';
 
 	if (isModEnabled('agenda')) {
-		if (!empty($user->rights->agenda->myactions->create) || $user->hasRight('agenda', 'allactions', 'create')) {
+		if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 			print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';
@@ -210,7 +214,7 @@ if ($object->id > 0) {
 
 	print '</div>';
 
-	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$param = '&id='.$object->id.'&socid='.(!empty($socid) ? '&socid='.$socid : '');
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 			$param .= '&contextpage='.urlencode($contextpage);
@@ -227,7 +231,7 @@ if ($object->id > 0) {
 		$filters['search_agenda_label'] = $search_agenda_label;
 		$filters['search_rowid'] = $search_rowid;
 
-		$object->fields['label']=array(); // Usefull to get only agenda events linked to position (this object doesn't need label of ref field, but show_actions_done() needs it to work correctly)
+		$object->fields['label']=array(); // Useful to get only agenda events linked to position (this object doesn't need label of ref field, but show_actions_done() needs it to work correctly)
 
 		// TODO Replace this with same code than into list.php
 		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, $object->module);

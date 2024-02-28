@@ -1,4 +1,5 @@
 <?php
+
  /*  Copyright (C) 2021		Thibault FOUCART	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,6 +19,11 @@
 /**
  *	\file       htdocs/stripe/ajax/ajax.php
  *	\brief      Ajax action for Stipe ie: Terminal
+ *
+ *  Calling with
+ *  action=getConnexionToken return a token of Stripe terminal
+ *  action=createPaymentIntent generates a payment intent
+ *  action=capturePaymentIntent generates a payment
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -45,11 +51,16 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 $action = GETPOST('action', 'aZ09');
 $location = GETPOST('location', 'alphanohtml');
 $stripeacc = GETPOST('stripeacc', 'alphanohtml');
-$servicestatus = GETPOST('servicestatus', 'int');
-$amount = GETPOST('amount', 'int');
+$servicestatus = GETPOSTINT('servicestatus');
+$amount = GETPOSTINT('amount');
 
-if (empty($user->rights->takepos->run)) {
-	accessforbidden();
+if (!$user->hasRight('takepos', 'run')) {
+	accessforbidden('Not allowed to use TakePOS');
+}
+
+$usestripeterminals = getDolGlobalString('STRIPE_LOCATION');
+if (! $usestripeterminals) {
+	accessforbidden('Feature to use Stripe terminals not enabled');
 }
 
 
@@ -68,7 +79,9 @@ if ($action == 'getConnexionToken') {
 		// The ConnectionToken's secret lets you connect to any Stripe Terminal reader
 		// and take payments with your Stripe account.
 		$array = array();
-		if (isset($location) && !empty($location))  $array['location'] = $location;
+		if (isset($location) && !empty($location)) {
+			$array['location'] = $location;
+		}
 		if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
 			$connectionToken = \Stripe\Terminal\ConnectionToken::create($array);
 		} else {
@@ -97,7 +110,7 @@ if ($action == 'getConnexionToken') {
 		$stripe = new Stripe($db);
 		$customer = $stripe->customerStripe($object->thirdparty, $stripeacc, $servicestatus, 1);
 
-		$intent = $stripe->getPaymentIntent($json_obj->amount, $object->multicurrency_code, null, 'Stripe payment: '.$fulltag.(is_object($object)?' ref='.$object->ref:''), $object, $customer, $stripeacc, $servicestatus, 1, 'terminal', false, null, 0, 1);
+		$intent = $stripe->getPaymentIntent($json_obj->amount, $object->multicurrency_code, null, 'Stripe payment: '.$fulltag.(is_object($object) ? ' ref='.$object->ref : ''), $object, $customer, $stripeacc, $servicestatus, 1, 'terminal', false, null, 0, 1);
 
 		echo json_encode(array('client_secret' => $intent->client_secret));
 	} catch (Error $e) {

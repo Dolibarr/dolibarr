@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-if (isModEnabled("categorie")) {
+if (isModEnabled("category")) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -47,10 +47,10 @@ $langs->loadLangs(array('contracts', 'products', 'companies', 'compta'));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'contractlist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'contractlist'; // To manage different context of search
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
@@ -59,41 +59,59 @@ $search_email = GETPOST('search_email', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state", 'alpha');
-$search_country = GETPOST("search_country", 'int');
-$search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
+$search_country = GETPOSTINT("search_country");
+$search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
 $search_contract = GETPOST('search_contract', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_ref_supplier = GETPOST('search_ref_supplier', 'alpha');
 $search_all = (GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search_status = GETPOST('search_status', 'alpha');
-$socid = GETPOST('socid', 'int');
-$search_user = GETPOST('search_user', 'int');
-$search_sale = GETPOST('search_sale', 'int');
-$search_product_category = GETPOST('search_product_category', 'int');
-$search_dfmonth = GETPOST('search_dfmonth', 'int');
-$search_dfyear = GETPOST('search_dfyear', 'int');
+$socid = GETPOSTINT('socid');
+$search_user = GETPOSTINT('search_user');
+$search_sale = GETPOSTINT('search_sale');
+$search_product_category = GETPOSTINT('search_product_category');
+$search_dfmonth = GETPOSTINT('search_dfmonth');
+$search_dfyear = GETPOSTINT('search_dfyear');
 $search_op2df = GETPOST('search_op2df', 'alpha');
-$search_date_startday = GETPOST('search_date_startday', 'int');
-$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
-$search_date_startyear = GETPOST('search_date_startyear', 'int');
-$search_date_endday = GETPOST('search_date_endday', 'int');
-$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
-$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_startday = GETPOSTINT('search_date_startday');
+$search_date_startmonth = GETPOSTINT('search_date_startmonth');
+$search_date_startyear = GETPOSTINT('search_date_startyear');
+$search_date_endday = GETPOSTINT('search_date_endday');
+$search_date_endmonth = GETPOSTINT('search_date_endmonth');
+$search_date_endyear = GETPOSTINT('search_date_endyear');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $searchCategoryCustomerOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
-	$searchCategoryCustomerOperator = GETPOST('search_category_customer_operator', 'int');
-} elseif (!empty($conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT)) {
-	$searchCategoryCustomerOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
+	$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategoryCustomerOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
 $searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
 
+$search_date_creation_startmonth = GETPOSTINT('search_date_creation_startmonth');
+$search_date_creation_startyear = GETPOSTINT('search_date_creation_startyear');
+$search_date_creation_startday = GETPOSTINT('search_date_creation_startday');
+$search_date_creation_start = dol_mktime(0, 0, 0, $search_date_creation_startmonth, $search_date_creation_startday, $search_date_creation_startyear);	// Use tzserver
+$search_date_creation_endmonth = GETPOSTINT('search_date_creation_endmonth');
+$search_date_creation_endyear = GETPOSTINT('search_date_creation_endyear');
+$search_date_creation_endday = GETPOSTINT('search_date_creation_endday');
+$search_date_creation_end = dol_mktime(23, 59, 59, $search_date_creation_endmonth, $search_date_creation_endday, $search_date_creation_endyear);	// Use tzserver
+
+$search_date_modif_startmonth = GETPOSTINT('search_date_modif_startmonth');
+$search_date_modif_startyear = GETPOSTINT('search_date_modif_startyear');
+$search_date_modif_startday = GETPOSTINT('search_date_modif_startday');
+$search_date_modif_start = dol_mktime(0, 0, 0, $search_date_modif_startmonth, $search_date_modif_startday, $search_date_modif_startyear);	// Use tzserver
+$search_date_modif_endmonth = GETPOSTINT('search_date_modif_endmonth');
+$search_date_modif_endyear = GETPOSTINT('search_date_modif_endyear');
+$search_date_modif_endday = GETPOSTINT('search_date_modif_endday');
+$search_date_modif_end = dol_mktime(23, 59, 59, $search_date_modif_endmonth, $search_date_modif_endday, $search_date_modif_endyear);	// Use tzserver
+
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -109,7 +127,7 @@ if (!$sortorder) {
 }
 
 // Security check
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -177,9 +195,16 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->contrat->lire;
-$permissiontoadd = $user->rights->contrat->creer;
-$permissiontodelete = $user->rights->contrat->supprimer;
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
+}
+
+$permissiontoread = $user->hasRight('contrat', 'lire');
+$permissiontoadd = $user->hasRight('contrat', 'creer');
+$permissiontodelete = $user->hasRight('contrat', 'supprimer');
+
+$result = restrictedArea($user, 'contrat', 0);
+
 
 
 /*
@@ -201,7 +226,6 @@ if ($reshook < 0) {
 }
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
-
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
 	$search_dfmonth = '';
@@ -229,6 +253,22 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_start = '';
 	$search_date_end = '';
 	$search_all = "";
+	$search_date_creation_startmonth = "";
+	$search_date_creation_startyear = "";
+	$search_date_creation_startday = "";
+	$search_date_creation_start = "";
+	$search_date_creation_endmonth = "";
+	$search_date_creation_endyear = "";
+	$search_date_creation_endday = "";
+	$search_date_creation_end = "";
+	$search_date_modif_startmonth = "";
+	$search_date_modif_startyear = "";
+	$search_date_modif_startday = "";
+	$search_date_modif_start = "";
+	$search_date_modif_endmonth = "";
+	$search_date_modif_endyear = "";
+	$search_date_modif_endday = "";
+	$search_date_modif_end = "";
 	$search_status = "";
 	$toselect = array();
 	$search_type_thirdparty = '';
@@ -260,7 +300,7 @@ $now = dol_now();
 $title = "";
 
 $sql = 'SELECT';
-$sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_update, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity,";
+$sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_modification, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity,";
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays as country_id, s.client, s.code_client, s.status as company_status, s.logo as company_logo,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -288,9 +328,6 @@ $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
 $sql .= ", ".MAIN_DB_PREFIX."contrat as c";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (c.rowid = ef.fk_object)";
@@ -305,11 +342,8 @@ $sql .= ' AND c.entity IN ('.getEntity('contract').')';
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
 }
-if ($socid) {
+if ($socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $socid);
-}
-if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_date_start) {
 	$sql .= " AND c.date_contrat >= '".$db->idate($search_date_start)."'";
@@ -341,14 +375,22 @@ if ($search_town) {
 if ($search_country && $search_country != '-1') {
 	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
-if ($search_sale > 0) {
+/*if ($search_sale > 0) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
-}
+}*/
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 if ($search_user > 0) {
 	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='contrat' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".((int) $search_user);
+}
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
 $searchCategoryProductOperator = -1;
@@ -424,6 +466,21 @@ if ($searchCategoryCustomerOperator == 1) {
 		$sql .= " AND (".implode(' AND ', $searchCategoryCustomerSqlList).")";
 	}
 }
+
+if ($search_date_creation_start) {
+	$sql .= " AND c.datec >= '".$db->idate($search_date_creation_start)."'";
+}
+if ($search_date_creation_end) {
+	$sql .= " AND c.datec <= '".$db->idate($search_date_creation_end)."'";
+}
+
+if ($search_date_modif_start) {
+	$sql .= " AND c.tms >= '".$db->idate($search_date_modif_start)."'";
+}
+if ($search_date_modif_end) {
+	$sql .= " AND c.tms <= '".$db->idate($search_date_modif_end)."'";
+}
+
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -512,7 +569,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/contrat/card.php?id='.$id);
@@ -567,6 +624,54 @@ if ($search_ref_supplier != '') {
 }
 if ($search_op2df != '') {
 	$param .= '&search_op2df='.urlencode($search_op2df);
+}
+if ($search_date_creation_startmonth) {
+	$param .= '&search_date_creation_startmonth='.urlencode($search_date_creation_startmonth);
+}
+if ($search_date_creation_startyear) {
+	$param .= '&search_date_creation_startyear='.urlencode($search_date_creation_startyear);
+}
+if ($search_date_creation_startday) {
+	$param .= '&search_date_creation_startday='.urlencode($search_date_creation_startday);
+}
+if ($search_date_creation_start) {
+	$param .= '&search_date_creation_start='.urlencode($search_date_creation_start);
+}
+if ($search_date_creation_endmonth) {
+	$param .= '&search_date_creation_endmonth='.urlencode($search_date_creation_endmonth);
+}
+if ($search_date_creation_endyear) {
+	$param .= '&search_date_creation_endyear='.urlencode($search_date_creation_endyear);
+}
+if ($search_date_creation_endday) {
+	$param .= '&search_date_creation_endday='.urlencode($search_date_creation_endday);
+}
+if ($search_date_creation_end) {
+	$param .= '&search_date_creation_end='.urlencode($search_date_creation_end);
+}
+if ($search_date_modif_startmonth) {
+	$param .= '&search_date_modif_startmonth='.urlencode($search_date_modif_startmonth);
+}
+if ($search_date_modif_startyear) {
+	$param .= '&search_date_modif_startyear='.urlencode($search_date_modif_startyear);
+}
+if ($search_date_modif_startday) {
+	$param .= '&search_date_modif_startday='.urlencode($search_date_modif_startday);
+}
+if ($search_date_modif_start) {
+	$param .= '&search_date_modif_start='.urlencode($search_date_modif_start);
+}
+if ($search_date_modif_endmonth) {
+	$param .= '&search_date_modif_endmonth='.urlencode($search_date_modif_endmonth);
+}
+if ($search_date_modif_endyear) {
+	$param .= '&search_date_modif_endyear='.urlencode($search_date_modif_endyear);
+}
+if ($search_date_modif_endday) {
+	$param .= '&search_date_modif_endday='.urlencode($search_date_modif_endday);
+}
+if ($search_date_modif_end) {
+	$param .= '&search_date_modif_end=' . urlencode($search_date_modif_end);
 }
 if ($search_date_startday > 0) {
 	$param .= '&search_date_startday='.urlencode($search_date_startday);
@@ -628,7 +733,7 @@ $arrayofmassactions = array(
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -640,7 +745,8 @@ if (!empty($socid)) {
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewContractSubscription'), '', 'fa fa-plus-circle', $url, '', $user->rights->contrat->creer);
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewContractSubscription'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('contrat', 'creer'));
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER['PHP_SELF'].'">'."\n";
 if ($optioncss != '') {
@@ -656,6 +762,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
+// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 print_barre_liste($langs->trans("Contracts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'contract', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "SendContractRef";
@@ -671,13 +778,13 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if CONTRACT_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>'."\n";
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>'."\n";
 }
 
 $moreforfilter = '';
 
 // If the user can view prospects other than his'
-if ($user->rights->user->user->lire) {
+if ($user->hasRight('user', 'user', 'lire')) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
@@ -685,14 +792,14 @@ if ($user->rights->user->user->lire) {
 	$moreforfilter .= '</div>';
 }
 // If the user can view other users
-if ($user->rights->user->user->lire) {
+if ($user->hasRight('user', 'user', 'lire')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('LinkedToSpecificUsers');
 	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 	$moreforfilter .= '</div>';
 }
 // If the user can view categories of products
-if (isModEnabled('categorie') && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire)) {
+if (isModEnabled('category') && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
@@ -701,7 +808,7 @@ if (isModEnabled('categorie') && $user->rights->categorie->lire && ($user->right
 	$moreforfilter .= '</div>';
 }
 // Filter on customer categories
-if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_CONTRACT_LIST) && isModEnabled("categorie") && $user->rights->categorie->lire) {
+if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_CONTRACT_LIST') && isModEnabled("category") && $user->hasRight('categorie', 'lire')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->transnoentities('CustomersProspectsCategoriesShort');
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
@@ -794,7 +901,7 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 // Company type
 if (!empty($arrayfields['typent.code']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT),  '', 1);
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 	print '</td>';
 }
 if (!empty($arrayfields['sale_representative']['checked'])) {
@@ -802,10 +909,10 @@ if (!empty($arrayfields['sale_representative']['checked'])) {
 }
 if (!empty($arrayfields['c.date_contrat']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -817,26 +924,38 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 $parameters = array('arrayfields'=>$arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-// Date creation
+// Creation date
 if (!empty($arrayfields['c.datec']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre center nowraponall">';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_date_creation_start ? $search_date_creation_start : -1, 'search_date_creation_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_date_creation_end ? $search_date_creation_end : -1, 'search_date_creation_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
-// Date modification
+// Modification date
 if (!empty($arrayfields['c.tms']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre center nowraponall">';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_date_modif_start ? $search_date_modif_start : -1, 'search_date_modif_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_date_modif_end ? $search_date_modif_end : -1, 'search_date_modif_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 // First end date
 if (!empty($arrayfields['lower_planned_end_date']['checked'])) {
-		print '<td class="liste_titre nowraponall center">';
-		$arrayofoperators = array('0'=>'', '='=>'=', '<='=>'<=', '>='=>'>=');
-		print $form->selectarray('search_op2df', $arrayofoperators, $search_op2df, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth50imp');
-		print '</br>';
-		print $formother->select_month($search_dfmonth, 'search_dfmonth', 1, 0);
-		print ' ';
-		print $formother->selectyear($search_dfyear, 'search_dfyear', 1, 20, 5, 0, 0, '');
-		print '</td>';
+	print '<td class="liste_titre nowraponall center">';
+	$arrayofoperators = array('0'=>'', '='=>'=', '<='=>'<=', '>='=>'>=');
+	print $form->selectarray('search_op2df', $arrayofoperators, $search_op2df, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth50imp');
+	print '</br>';
+	print $formother->select_month($search_dfmonth, 'search_dfmonth', 1, 0);
+	print ' ';
+	print $formother->selectyear($search_dfyear, 'search_dfyear', 1, 20, 5, 0, 0, '');
+	print '</td>';
 }
 // Status
 if (!empty($arrayfields['status']['checked'])) {
@@ -974,7 +1093,7 @@ while ($i < $imaxinloop) {
 	$socstatic->name_alias = $obj->name_alias;
 	$socstatic->email = $obj->email;
 	$socstatic->status = $obj->company_status;
-	$socstatic->logo = $obj->logo;
+	$socstatic->logo = $obj->company_logo;
 	$socstatic->country_id = $obj->country_id;
 	$socstatic->country_code = '';
 	$socstatic->country = '';
@@ -990,7 +1109,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
@@ -1065,7 +1184,7 @@ while ($i < $imaxinloop) {
 		}
 		// Email
 		if (!empty($arrayfields['s.email']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->email).'">'.dol_print_email($obj->email, 0, $obj->socid, 0, 0, 1, 1).'</td>';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->email).'">'.dol_print_email($obj->email, 0, $obj->socid, 1, 0, 1, 1).'</td>';
 		}
 		// Town
 		if (!empty($arrayfields['s.town']['checked'])) {
@@ -1178,7 +1297,7 @@ while ($i < $imaxinloop) {
 		// Date modification
 		if (!empty($arrayfields['c.tms']['checked'])) {
 			print '<td class="center nowrap">';
-			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

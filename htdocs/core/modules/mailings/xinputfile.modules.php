@@ -124,7 +124,7 @@ class mailing_xinputfile extends MailingTargets
 	 *  Ajoute destinataires dans table des cibles
 	 *
 	 *  @param	int		$mailing_id    	Id of emailing
-	 *  @return int           			< 0 si erreur, nb ajout si ok
+	 *  @return int           			Return integer < 0 si erreur, nb ajout si ok
 	 */
 	public function add_to_target($mailing_id)
 	{
@@ -164,8 +164,8 @@ class mailing_xinputfile extends MailingTargets
 
 						if (!empty($buffer)) {
 							//print 'xx'.dol_strlen($buffer).empty($buffer)."<br>\n";
-							if (isValidEMail($email)) {
-								if ($old <> $email) {
+							if (isValidEmail($email)) {
+								if ($old != $email) {
 									$cibles[$j] = array(
 													'email' => $email,
 													'lastname' => $name,
@@ -207,8 +207,7 @@ class mailing_xinputfile extends MailingTargets
 					$this->error = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
 				} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload)) {	// Files infected by a virus
 					$this->error = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
-				} else // Known error
-				{
+				} else { // Known error
 					$this->error = '<div class="error">'.$langs->trans($resupload).'</div>';
 				}
 			}

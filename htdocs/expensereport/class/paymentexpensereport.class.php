@@ -56,7 +56,6 @@ class PaymentExpenseReport extends CommonObject
 	public $fk_expensereport;
 
 	public $datec = '';
-	public $tms = '';
 	public $datep = '';
 	public $amount; // Total amount of payment
 	public $amounts = array(); // Array of amounts
@@ -66,6 +65,10 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public $fk_typepayment;
 
+	/**
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
+	 */
 	public $num_payment;
 
 	/**
@@ -86,6 +89,21 @@ class PaymentExpenseReport extends CommonObject
 	public $type_code;
 	public $type_label;
 
+	/**
+	 * @var int
+	 */
+	public $bank_account;
+
+	/**
+	 * @var int
+	 */
+	public $bank_line;
+
+	/**
+	 * @var string
+	 */
+	public $label;
+
 
 	/**
 	 *	Constructor
@@ -102,12 +120,10 @@ class PaymentExpenseReport extends CommonObject
 	 *  Use this->amounts to have list of lines for the payment
 	 *
 	 *  @param      User		$user   User making payment
-	 *  @return     int     			<0 if KO, id of payment if OK
+	 *  @return     int     			Return integer <0 if KO, id of payment if OK
 	 */
 	public function create($user)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		$now = dol_now();
@@ -119,13 +135,13 @@ class PaymentExpenseReport extends CommonObject
 
 		// Clean parameters
 		if (isset($this->fk_expensereport)) {
-			$this->fk_expensereport = trim($this->fk_expensereport);
+			$this->fk_expensereport = (int) $this->fk_expensereport;
 		}
 		if (isset($this->amount)) {
 			$this->amount = trim($this->amount);
 		}
 		if (isset($this->fk_typepayment)) {
-			$this->fk_typepayment = trim($this->fk_typepayment);
+			$this->fk_typepayment = (int) $this->fk_typepayment;
 		}
 		if (isset($this->num_payment)) {
 			$this->num_payment = trim($this->num_payment);
@@ -198,7 +214,7 @@ class PaymentExpenseReport extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param  int		$id         Id object
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -264,7 +280,7 @@ class PaymentExpenseReport extends CommonObject
 	 *
 	 *  @param	User	$user        	User that modify
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			<0 if KO, >0 if OK
+	 *  @return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -275,13 +291,13 @@ class PaymentExpenseReport extends CommonObject
 		// Clean parameters
 
 		if (isset($this->fk_expensereport)) {
-			$this->fk_expensereport = trim($this->fk_expensereport);
+			$this->fk_expensereport = (int) $this->fk_expensereport;
 		}
 		if (isset($this->amount)) {
 			$this->amount = trim($this->amount);
 		}
 		if (isset($this->fk_typepayment)) {
-			$this->fk_typepayment = trim($this->fk_typepayment);
+			$this->fk_typepayment = (int) $this->fk_typepayment;
 		}
 		if (isset($this->num_payment)) {
 			$this->num_payment = trim($this->num_payment);
@@ -290,13 +306,13 @@ class PaymentExpenseReport extends CommonObject
 			$this->note = trim($this->note);
 		}
 		if (isset($this->fk_bank)) {
-			$this->fk_bank = trim($this->fk_bank);
+			$this->fk_bank = (int) $this->fk_bank;
 		}
 		if (isset($this->fk_user_creat)) {
-			$this->fk_user_creat = trim($this->fk_user_creat);
+			$this->fk_user_creat = (int) $this->fk_user_creat;
 		}
 		if (isset($this->fk_user_modif)) {
-			$this->fk_user_modif = trim($this->fk_user_modif);
+			$this->fk_user_modif = (int) $this->fk_user_modif;
 		}
 
 
@@ -326,7 +342,8 @@ class PaymentExpenseReport extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -349,7 +366,7 @@ class PaymentExpenseReport extends CommonObject
 	 *
 	 *  @param  User	$user        	User that delete
 	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
-	 *  @return int						<0 if KO, >0 if OK
+	 *  @return int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -366,7 +383,8 @@ class PaymentExpenseReport extends CommonObject
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -483,17 +501,17 @@ class PaymentExpenseReport extends CommonObject
 	{
 		$this->id = 0;
 
-		$this->fk_expensereport = '';
+		$this->fk_expensereport = 0;
 		$this->datec = '';
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->datep = '';
 		$this->amount = '';
-		$this->fk_typepayment = '';
+		$this->fk_typepayment = 0;
 		$this->num_payment = '';
 		$this->note = '';
-		$this->fk_bank = '';
-		$this->fk_user_creat = '';
-		$this->fk_user_modif = '';
+		$this->fk_bank = 0;
+		$this->fk_user_creat = 0;
+		$this->fk_user_modif = 0;
 	}
 
 
@@ -507,7 +525,7 @@ class PaymentExpenseReport extends CommonObject
 	 *      @param  int		$accountid          Id of bank account to do link with
 	 *      @param  string	$emetteur_nom       Name of transmitter
 	 *      @param  string	$emetteur_banque    Name of bank
-	 *      @return int                 		<0 if KO, >0 if OK
+	 *      @return int                 		Return integer <0 if KO, >0 if OK
 	 */
 	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
 	{
@@ -515,7 +533,7 @@ class PaymentExpenseReport extends CommonObject
 
 		$error = 0;
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$acc = new Account($this->db);
@@ -542,7 +560,7 @@ class PaymentExpenseReport extends CommonObject
 			);
 
 			// Update fk_bank in llx_paiement.
-			// So we wil know the payment that have generated the bank transaction
+			// So we will know the payment that has generated the bank transaction
 			if ($bank_line_id > 0) {
 				$result = $this->update_fk_bank($bank_line_id);
 				if ($result <= 0) {
@@ -660,7 +678,7 @@ class PaymentExpenseReport extends CommonObject
 				$result .= ' ';
 			}
 			if ($withpicto != 2) {
-				$result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
+				$result .= $link.($maxlen ? dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
 			}
 		}
 		global $action;
@@ -693,17 +711,11 @@ class PaymentExpenseReport extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_creat) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_creat);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
+
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->tms);
 			}
@@ -713,7 +725,7 @@ class PaymentExpenseReport extends CommonObject
 		}
 	}
 
-		/**
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
@@ -733,7 +745,9 @@ class PaymentExpenseReport extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'datep')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->db->jdate($this->datep), 'dayhour').'</span>';
 		}
@@ -741,13 +755,13 @@ class PaymentExpenseReport extends CommonObject
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Type").'</span> : <span class="info-box-label">'.$this->fk_typepayment.'</span>';
 		}
 		if (property_exists($this, 'fk_bank') && !is_null($this->fk_bank)) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("Account").'</span> : <span class="info-box-label">'.$this->fk_bank.'</span>';
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("BankAccount").'</span> : <span class="info-box-label">'.$this->fk_bank.'</span>';
 		}
-		if (property_exists($this, 'amount') ) {
+		if (property_exists($this, 'amount')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

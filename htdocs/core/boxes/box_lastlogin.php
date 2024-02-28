@@ -10,8 +10,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
@@ -20,32 +20,22 @@
 /**
  *  \file       htdocs/core/boxes/box_lastlogin.php
  *  \ingroup    core
- *  \brief      Module to show box of bills, orders & propal of the current year
+ *  \brief      Module to show box of last user logins
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 /**
- * Class to manage the box of last login
+ *  Class to manage the box of last login
  */
 class box_lastlogin extends ModeleBoxes
 {
-	public $boxcode = "lastlogin";
-	public $boximg = "object_user";
+	public $boxcode  = "lastlogin";
+	public $boximg   = "object_user";
 	public $boxlabel = 'BoxLoginInformation';
-	public $depends = array("user");
+	public $depends  = array("user");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -61,7 +51,7 @@ class box_lastlogin extends ModeleBoxes
 	}
 
 	/**
-	 *  Charge les donnees en memoire pour affichage ulterieur
+	 *  Load data into memory for later display
 	 *
 	 *  @param  int     $max        Maximum number of records to load
 	 *  @return void

@@ -28,7 +28,7 @@
 
 // Force keyforprovider
 $forlogin = 0;
-if (preg_match('/^forlogin-/', $_GET['state'])) {
+if (!empty($_GET['state']) && preg_match('/^forlogin-/', $_GET['state'])) {
 	$forlogin = 1;
 	$_GET['keyforprovider'] = 'Login';
 }
@@ -42,7 +42,6 @@ require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
-use OAuth\OAuth2\Service\Google;
 
 // Define $urlwithroot
 global $dolibarr_main_url_root;
@@ -74,7 +73,7 @@ $currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/
  * Load the credential for the service
  */
 
-/** @var $serviceFactory \OAuth\ServiceFactory An OAuth service factory. */
+/** @var \OAuth\ServiceFactory $serviceFactory An OAuth service factory. */
 $serviceFactory = new \OAuth\ServiceFactory();
 $httpClient = new \OAuth\Common\Http\Client\CurlClient();
 // TODO Set options for proxy and timeout
@@ -103,8 +102,14 @@ if ($state) {
 	$statewithanticsrfonly = preg_replace('/^.*\-/', '', $state);
 }
 
-if ($action != 'delete' && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
+// Add a test to check that the state parameter is provided into URL when we make the first call to ask the redirect or when we receive the callback
+// but not when callback was ok and we recall the page
+if ($action != 'delete' && !GETPOSTINT('afteroauthloginreturn') && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
+	dol_syslog("state or statewithscopeonly and/or requestedpermissionsarray are empty");
 	setEventMessages($langs->trans('ScopeUndefined'), null, 'errors');
+	if (empty($backtourl)) {
+		$backtourl = DOL_URL_ROOT.'/';
+	}
 	header('Location: '.$backtourl);
 	exit();
 }
@@ -147,11 +152,31 @@ if ($action == 'delete') {
 }
 
 if (!GETPOST('code')) {
-	// If we enter this page without 'code' parameter, we arrive here. This is the case when we want to get the redirect
+	dol_syslog("Page is called without code parameter defined");
+
+	// If we enter this page without 'code' parameter, it means we click on the link from login page and we want to get the redirect
 	// to the OAuth provider login page.
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
 	$_SESSION["oauthkeyforproviderbeforeoauthjump"] = $keyforprovider;
 	$_SESSION['oauthstateanticsrf'] = $state;
+
+	// Save more data into session
+	// Not required. All data are saved into $_SESSION['datafromloginform'] when form is posted with a click on Login with
+	// Google with param actionlogin=login and beforeoauthloginredirect=google, by the functions_googleoauth.php.
+	/*
+	if (!empty($_POST["tz"])) {
+		$_SESSION["tz"] = $_POST["tz"];
+	}
+	if (!empty($_POST["tz_string"])) {
+		$_SESSION["tz_string"] = $_POST["tz_string"];
+	}
+	if (!empty($_POST["dst_first"])) {
+		$_SESSION["dst_first"] = $_POST["dst_first"];
+	}
+	if (!empty($_POST["dst_second"])) {
+		$_SESSION["dst_second"] = $_POST["dst_second"];
+	}
+	*/
 
 	if ($forlogin) {
 		$apiService->setApprouvalPrompt('force');
@@ -177,7 +202,7 @@ if (!GETPOST('code')) {
 			$url .= '&login_hint='.urlencode(GETPOST('username'));
 		}
 
-		// Check that the redirect_uri that wil be used is same than url of current domain
+		// Check that the redirect_uri that will be used is same than url of current domain
 
 		// Define $urlwithroot
 		global $dolibarr_main_url_root;
@@ -227,6 +252,7 @@ if (!GETPOST('code')) {
 			$extraparams = $token->getExtraParams();
 			$jwt = explode('.', $extraparams['id_token']);
 
+			$username = '';
 			$useremail = '';
 
 			// Extract the middle part, base64 decode, then json_decode it
@@ -236,6 +262,7 @@ if (!GETPOST('code')) {
 				dol_syslog("userinfo=".var_export($userinfo, true));
 
 				$useremail = $userinfo['email'];
+
 				/*
 				 $useremailverified = $userinfo['email_verified'];
 				 $useremailuniq = $userinfo['sub'];
@@ -252,6 +279,12 @@ if (!GETPOST('code')) {
 
 				// Verify that the ID token is properly signed by the issuer. Google-issued tokens are signed using one of the certificates found at the URI specified in the jwks_uri metadata value of the Discovery document.
 				// TODO
+
+				// Verify that email is a verified email
+				/*if (empty($userinfo['email_verified'])) {
+					setEventMessages($langs->trans('Bad value for email, email lwas not verified by Google'), null, 'errors');
+					$errorincheck++;
+				}*/
 
 				// Verify that the value of the iss claim in the ID token is equal to https://accounts.google.com or accounts.google.com.
 				if ($userinfo['iss'] != 'accounts.google.com' && $userinfo['iss'] != 'https://accounts.google.com') {
@@ -272,6 +305,7 @@ if (!GETPOST('code')) {
 				}
 
 				// If you specified a hd parameter value in the request, verify that the ID token has a hd claim that matches an accepted G Suite hosted domain.
+				// $userinfo['hd'] is the domain name of Gmail account.
 				// TODO
 			}
 
@@ -287,13 +321,13 @@ if (!GETPOST('code')) {
 					$storage->clearToken('Google');
 
 					$tmpuser = new User($db);
-					$res = $tmpuser->fetch(0, '', '', 0, $entitytosearchuser, $useremail);
+					$res = $tmpuser->fetch(0, '', '', 0, $entitytosearchuser, $useremail, 0, 1);	// Load user. Can load with email_oauth2.
 
 					if ($res > 0) {
 						$username = $tmpuser->login;
 
 						$_SESSION['googleoauth_receivedlogin'] = dol_hash($conf->file->instance_unique_id.$username, '0');
-						dol_syslog('$_SESSION[\'googleoauth_receivedlogin\']='.$_SESSION['googleoauth_receivedlogin']);
+						dol_syslog('We set $_SESSION[\'googleoauth_receivedlogin\']='.$_SESSION['googleoauth_receivedlogin']);
 					} else {
 						$errormessage = "Failed to login using Google. User with the Email '".$useremail."' was not found";
 						if ($entitytosearchuser > 0) {
@@ -301,12 +335,14 @@ if (!GETPOST('code')) {
 						}
 						$_SESSION["dol_loginmesg"] = $errormessage;
 						$errorincheck++;
+
+						dol_syslog($errormessage);
 					}
 				}
 			} else {
 				// If call back to url for a OAUTH2 login
 				if ($forlogin) {
-					$_SESSION["dol_loginmesg"] = "Failed to login using Google. OAuth callback URL retreives a token with non valid data";
+					$_SESSION["dol_loginmesg"] = "Failed to login using Google. OAuth callback URL retrieves a token with non valid data";
 					$errorincheck++;
 				}
 			}
@@ -321,12 +357,13 @@ if (!GETPOST('code')) {
 			unset($_SESSION["backtourlsavedbeforeoauthjump"]);
 
 			if (empty($backtourl)) {
-				$backtourl = DOL_URL_ROOT;
+				$backtourl = DOL_URL_ROOT.'/';
 			}
 
-			// If call back to url for a OAUTH2 login
+			// If call back to this url was for a OAUTH2 login
 			if ($forlogin) {
-				$backtourl .= '?actionlogin=login&afteroauthloginreturn=1&username='.urlencode($username).'&token='.newToken();
+				// _SESSION['googleoauth_receivedlogin'] has been set to the key to validate the next test by function_googleoauth(), so we can make the redirect
+				$backtourl .= '?actionlogin=login&afteroauthloginreturn=1'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
 				if (!empty($tmparray['entity'])) {
 					$backtourl .= '&entity='.$tmparray['entity'];
 				}

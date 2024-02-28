@@ -26,6 +26,7 @@
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
+
 /**
  * Class for Partnership
  */
@@ -62,6 +63,9 @@ class Partnership extends CommonObject
 	 */
 	public $picto = 'partnership';
 
+	public $type_code;
+	public $type_label;
+
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;		// Validate (no more draft)
@@ -82,7 +86,7 @@ class Partnership extends CommonObject
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
 	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'maxwidth200', 'wordbreak', 'tdoverflowmax200'
@@ -102,27 +106,27 @@ class Partnership extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
-		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>'1', 'position'=>15, 'notnull'=>1, 'visible'=>-2, 'default'=>'1', 'index'=>1,),
-		'fk_type' => array('type'=>'integer:PartnershipType:partnership/class/partnership_type.class.php:0:(active:=:1)', 'label'=>'Type', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'csslist'=>'tdoverflowmax100'),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object", 'csslist'=>'tdoverflowmax150'),
+		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>'isModEnabled("multicompany")', 'position'=>15, 'notnull'=>1, 'visible'=>-2, 'default'=>'1', 'index'=>1,),
+		'fk_type' => array('type'=>'integer:PartnershipType:partnership/class/partnership_type.class.php:0:(active:=:1)', 'label'=>'Type', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'csslist'=>'tdoverflowmax125'),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax125',),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
-		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
-		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
+		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2, 'csslist'=>'nowraponall'),
+		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2, 'csslist'=>'nowraponall'),
+		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid', 'csslist'=>'tdoverflowmax125'),
+		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2, 'csslist'=>'tdoverflowmax125'),
 		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>0,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
 		'date_partnership_start' => array('type'=>'date', 'label'=>'DatePartnershipStart', 'enabled'=>'1', 'position'=>52, 'notnull'=>1, 'visible'=>1,),
 		'date_partnership_end' => array('type'=>'date', 'label'=>'DatePartnershipEnd', 'enabled'=>'1', 'position'=>53, 'notnull'=>0, 'visible'=>1,),
-		'url_to_check' => array('type'=>'varchar(255)', 'label'=>'UrlToCheck', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>-1,),
-		'count_last_url_check_error' => array('type'=>'integer', 'label'=>'CountLastUrlCheckError', 'enabled'=>'1', 'position'=>71, 'notnull'=>0, 'visible'=>-2, 'default'=>'0',),
-		'last_check_backlink' => array('type'=>'datetime', 'label'=>'LastCheckBacklink', 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>-2,),
+		'url_to_check' => array('type'=>'url', 'label'=>'UrlToCheck', 'enabled'=>'getDolGlobalString("PARTNERSHIP_BACKLINKS_TO_CHECK")', 'position'=>70, 'notnull'=>0, 'visible'=>-1, 'csslist'=>'tdoverflowmax150'),
+		'count_last_url_check_error' => array('type'=>'integer', 'label'=>'CountLastUrlCheckError', 'enabled'=>'getDolGlobalString("PARTNERSHIP_BACKLINKS_TO_CHECK")', 'position'=>71, 'notnull'=>0, 'visible'=>-4, 'default'=>'0',),
+		'last_check_backlink' => array('type'=>'datetime', 'label'=>'LastCheckBacklink', 'enabled'=>'getDolGlobalString("PARTNERSHIP_BACKLINKS_TO_CHECK")', 'position'=>72, 'notnull'=>0, 'visible'=>-4, 'csslist'=>'nowraponall'),
 		'reason_decline_or_cancel' => array('type'=>'text', 'label'=>'ReasonDeclineOrCancel', 'enabled'=>'1', 'position'=>73, 'notnull'=>0, 'visible'=>-2,),
-		'ip' => array('type'=>'varchar(250)', 'label'=>'Ip', 'enabled'=>'1', 'position'=>74, 'notnull'=>0, 'visible'=>-2,),
-		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>2000, 'notnull'=>1, 'visible'=>2, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Accepted', '2'=>'Refused', '8'=>'Suspended', '9'=>'Terminated'),),
+		'ip' => array('type'=>'ip', 'label'=>'IPOfApplicant', 'enabled'=>'1', 'position'=>74, 'notnull'=>0, 'visible'=>-2,),
+		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>2000, 'notnull'=>1, 'visible'=>2, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '2'=>'Approved', '3'=>'Refused', '9'=>'Terminated'),),
 	);
 	public $rowid;
 	public $ref;
@@ -131,7 +135,6 @@ class Partnership extends CommonObject
 	public $note_public;
 	public $note_private;
 	public $date_creation;
-	public $tms;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $last_main_doc;
@@ -139,55 +142,21 @@ class Partnership extends CommonObject
 	public $model_pdf;
 	public $date_partnership_start;
 	public $date_partnership_end;
-	public $status;
 	public $url_to_check;
 	public $count_last_url_check_error;
 	public $last_check_backlink;
 	public $reason_decline_or_cancel;
 	public $fk_soc;
 	public $fk_member;
+	public $ip;
+	public $status;
 	// END MODULEBUILDER PROPERTIES
-
-
-	// If this object has a subtable with lines
-
-	// /**
-	//  * @var string    Name of subtable line
-	//  */
-	// public $table_element_line = 'partnershipline';
-
-	// /**
-	//  * @var string    Field with ID of parent key if this object has a parent
-	//  */
-	// public $fk_element = 'fk_partnership';
-
-	// /**
-	//  * @var string    Name of subtable class that manage subtable lines
-	//  */
-	// public $class_element_line = 'Partnershipline';
-
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
-	// protected $childtables = array();
-
-	// /**
-	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
-	//  */
-	// protected $childtablesoncascade = array('partnershipdet');
-
-	// /**
-	//  * @var PartnershipLine[]     Array of subtable lines
-	//  */
-	// public $lines = array();
 
 
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -201,18 +170,9 @@ class Partnership extends CommonObject
 			$this->fields['fk_soc'] = array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'company', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax150');
 		}
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		// if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
-		// 	$this->fields['entity']['enabled'] = 0;
-		// }
-
-		// Example to show how to set values of fields definition dynamically
-		/*if ($user->rights->partnership->read) {
-			$this->fields['myfield']['visible'] = 1;
-			$this->fields['myfield']['noteditable'] = 0;
-		}*/
 
 		// Unset fields that are disabled
 		foreach ($this->fields as $key => $val) {
@@ -237,10 +197,10 @@ class Partnership extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		if ($this->fk_soc <= 0 && $this->fk_member <= 0) {
 			$this->error[] = "ErrorThirpdartyOrMemberidIsMandatory";
@@ -363,8 +323,6 @@ class Partnership extends CommonObject
 	 */
 	public function fetch($id, $ref = null, $fk_member = null, $fk_soc = null)
 	{
-		global $conf;
-
 		// Check parameters
 		if (empty($id) && empty($ref) && empty($fk_member) && empty($fk_soc)) {
 			return -1;
@@ -383,7 +341,7 @@ class Partnership extends CommonObject
 		if ($id) {
 			$sql .= " WHERE p.rowid = ".((int) $id);
 		} else {
-			$sql .= " WHERE p.entity IN (0,".getEntity('partnership').")"; // Dont't use entity if you use rowid
+			$sql .= " WHERE p.entity IN (0,".getEntity('partnership').")"; // Don't use entity if you use rowid
 		}
 
 		if ($ref) {
@@ -451,7 +409,7 @@ class Partnership extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines()
 	{
@@ -475,8 +433,6 @@ class Partnership extends CommonObject
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$records = array();
@@ -495,7 +451,7 @@ class Partnership extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+				} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
@@ -516,7 +472,7 @@ class Partnership extends CommonObject
 		if (!empty($limit)) {
 			$sql .= $this->db->plimit($limit, $offset);
 		}
-		print $sql;
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -536,7 +492,7 @@ class Partnership extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -546,10 +502,10 @@ class Partnership extends CommonObject
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		if ($this->fk_soc <= 0 && $this->fk_member <= 0) {
 			$this->error[] = "ErrorThirpdartyOrMemberidIsMandatory";
@@ -565,11 +521,11 @@ class Partnership extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param User 	$user       User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
@@ -580,10 +536,10 @@ class Partnership extends CommonObject
 	 *
 	 *	@param  User	$user       User that delete
 	 *  @param	int		$idline		Id of line to delete
-	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
+	 *  @param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
 	 *  @return int         		>0 if OK, <0 if KO
 	 */
-	public function deleteLine(User $user, $idline, $notrigger = false)
+	public function deleteLine(User $user, $idline, $notrigger = 0)
 	{
 		if ($this->status < 0) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
@@ -599,11 +555,11 @@ class Partnership extends CommonObject
 	 *
 	 *	@param		User	$user     		User making status change
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -611,7 +567,7 @@ class Partnership extends CommonObject
 
 		// Protection
 		if ($this->status == self::STATUS_VALIDATED) {
-			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
+			dol_syslog(get_class($this)."::validate action abandoned: already validated", LOG_WARNING);
 			return 0;
 		}
 
@@ -676,7 +632,15 @@ class Partnership extends CommonObject
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'partnership/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
+				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'partnership/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'partnership/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -723,11 +687,11 @@ class Partnership extends CommonObject
 	 *
 	 *	@param		User	$user     		User making status change
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function approve($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -735,7 +699,7 @@ class Partnership extends CommonObject
 
 		// Protection
 		if ($this->status == self::STATUS_APPROVED) {
-			dol_syslog(get_class($this)."::accept action abandonned: already acceptd", LOG_WARNING);
+			dol_syslog(get_class($this)."::accept action abandoned: already acceptd", LOG_WARNING);
 			return 0;
 		}
 
@@ -800,7 +764,15 @@ class Partnership extends CommonObject
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'partnership/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
+				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'partnership/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'partnership/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -848,7 +820,7 @@ class Partnership extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -873,7 +845,7 @@ class Partnership extends CommonObject
 	 *	@param	User	$user			    Object user that modify
 	 *  @param  string  $reasondeclinenote  Reason decline
 	 *  @param	int		$notrigger		    1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						    <0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						    Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function refused($user, $reasondeclinenote = '', $notrigger = 0)
 	{
@@ -900,7 +872,7 @@ class Partnership extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -924,7 +896,7 @@ class Partnership extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -967,7 +939,7 @@ class Partnership extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *  @param  string  $option                     On what the link point to ('nolink', ...)
@@ -1005,7 +977,7 @@ class Partnership extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1015,11 +987,11 @@ class Partnership extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowPartnership");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1055,7 +1027,7 @@ class Partnership extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -1086,6 +1058,21 @@ class Partnership extends CommonObject
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB 	$db 			Database handler
+	 * @param int 		$origin_id 		Old thirdparty id
+	 * @param int 		$dest_id 		New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty($db, $origin_id, $dest_id)
+	{
+		$tables = array('partnership');
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -1155,6 +1142,7 @@ class Partnership extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -1212,15 +1200,15 @@ class Partnership extends CommonObject
 		global $langs, $conf;
 		$langs->load("partnership");
 
-		if (empty($conf->global->PARTNERSHIP_ADDON)) {
+		if (!getDolGlobalString('PARTNERSHIP_ADDON')) {
 			$conf->global->PARTNERSHIP_ADDON = 'mod_partnership_standard';
 		}
 
-		if (!empty($conf->global->PARTNERSHIP_ADDON)) {
+		if (getDolGlobalString('PARTNERSHIP_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->PARTNERSHIP_ADDON.".php";
-			$classname = $conf->global->PARTNERSHIP_ADDON;
+			$file = getDolGlobalString('PARTNERSHIP_ADDON') . ".php";
+			$classname = getDolGlobalString('PARTNERSHIP_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1232,7 +1220,7 @@ class Partnership extends CommonObject
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -1261,7 +1249,7 @@ class Partnership extends CommonObject
 	 *  Create a document onto disk according to template module.
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
-	 *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
@@ -1282,8 +1270,8 @@ class Partnership extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->PARTNERSHIP_ADDON_PDF)) {
-				$modele = $conf->global->PARTNERSHIP_ADDON_PDF;
+			} elseif (getDolGlobalString('PARTNERSHIP_ADDON_PDF')) {
+				$modele = getDolGlobalString('PARTNERSHIP_ADDON_PDF');
 			}
 		}
 
@@ -1305,8 +1293,6 @@ class Partnership extends CommonObject
 	 */
 	public function doScheduledJob()
 	{
-		global $conf, $langs;
-
 		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
 
 		$error = 0;
@@ -1315,7 +1301,7 @@ class Partnership extends CommonObject
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$now = dol_now();
+		//$now = dol_now();
 
 		$this->db->begin();
 
@@ -1344,12 +1330,17 @@ class Partnership extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'label')) {
 			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
 		}
+		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+			$return .= '<br><div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
+		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -1378,7 +1369,7 @@ class PartnershipLine extends CommonObjectLine
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{

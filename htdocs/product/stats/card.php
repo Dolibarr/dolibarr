@@ -41,19 +41,19 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', 160);
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'products', 'stocks', 'bills', 'other'));
 
-$id		= GETPOST('id', 'int'); // For this page, id can also be 'all'
+$id		= GETPOSTINT('id'); // For this page, id can also be 'all'
 $ref	= GETPOST('ref', 'alpha');
 $mode = (GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'byunit');
-$search_year   = GETPOST('search_year', 'int');
-$search_categ  = GETPOST('search_categ', 'int');
-$notab = GETPOST('notab', 'int');
+$search_year   = GETPOSTINT('search_year');
+$search_categ  = GETPOSTINT('search_categ');
+$notab = GETPOSTINT('notab');
 $type = GETPOST('type', 'alpha');
 
 $error = 0;
 $mesg = '';
 $graphfiles = array();
 
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
@@ -102,7 +102,7 @@ if (!($id > 0) && empty($ref) || $notab) {
 
 	llxHeader("", $langs->trans("ProductStatistics"));
 
-	$type = GETPOST('type', 'int');
+	$type = GETPOSTINT('type');
 
 	$helpurl = '';
 	if ($type == '0') {
@@ -167,15 +167,22 @@ if ((!($id > 0) && empty($ref)) || $notab) {
 	$h++;
 
 	$title = $langs->trans("ListProductServiceByPopularity");
-	if ((string) $type == '1') {
-		$title = $langs->trans("ListServiceByPopularity");
-	}
 	if ((string) $type == '0') {
 		$title = $langs->trans("ListProductByPopularity");
 	}
+	if ((string) $type == '1') {
+		$title = $langs->trans("ListServiceByPopularity");
+	}
+
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php'.($type != '' ? '?type='.((int) $type) : '');
-	$head[$h][1] = $langs->trans("ProductsPerPopularity");
+	$head[$h][1] = $langs->trans("ProductsServicesPerPopularity");
+	if ((string) $type == '0') {
+		$head[$h][1] = $langs->trans("ProductsPerPopularity");
+	}
+	if ((string) $type == '1') {
+		$head[$h][1] = $langs->trans("ServicesPerPopularity");
+	}
 	$head[$h][2] = 'popularity';
 	$h++;
 
@@ -207,7 +214,7 @@ if ($result || !($id > 0)) {
 		print '</td></tr>';
 
 		// Tag
-		if (isModEnabled('categorie')) {
+		if (isModEnabled('category')) {
 			print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
 			$moreforfilter .= img_picto($langs->trans("Categories"), 'category', 'class="pictofixedwidth"');
 			$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1, 1, 'widthcentpercentminusx maxwidth400');
@@ -248,7 +255,7 @@ if ($result || !($id > 0)) {
 
 
 	$param = '';
-	$param .= (GETPOSTISSET('id') ? '&id='.GETPOST('id', 'int') : '&id='.$object->id).(($type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&search_year='.((int) $search_year).($notab ? '&notab='.$notab : '');
+	$param .= (GETPOSTISSET('id') ? '&id='.GETPOSTINT('id') : '&id='.$object->id).(($type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&search_year='.((int) $search_year).($notab ? '&notab='.$notab : '');
 	if ($socid > 0) {
 		$param .= '&socid='.((int) $socid);
 	}
@@ -264,7 +271,13 @@ if ($result || !($id > 0)) {
 	} else {
 		print '<span class="a-mesure marginleftonly marginrightonly">';
 	}
-	print $langs->trans("StatsByNumberOfUnits");
+	if ($type == '0') {
+		print $langs->trans("StatsByNumberOfUnitsProducts");
+	} elseif ($type == '1') {
+		print $langs->trans("StatsByNumberOfUnitsServices");
+	} else {
+		print $langs->trans("StatsByNumberOfUnits");
+	}
 	if ($mode != 'byunit') {
 		print '</a>';
 	} else {
@@ -296,7 +309,13 @@ if ($result || !($id > 0)) {
 	} else {
 		print '<span class="a-mesure marginleftonly marginrightonly">';
 	}
-	print $langs->trans("StatsByAmount");
+	if ($type == '0') {
+		print $langs->trans("StatsByAmountProducts");
+	} elseif ($type == '1') {
+		print $langs->trans("StatsByAmountServices");
+	} else {
+		print $langs->trans("StatsByAmount");
+	}
 	if ($mode != 'byamount') {
 		print '</a>';
 	} else {
@@ -349,7 +368,7 @@ if ($result || !($id > 0)) {
 			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode], $langs->transnoentitiesnoconv("SuppliersOrders")));
 	}
 
-	if (isModEnabled('facture')) {
+	if (isModEnabled('invoice')) {
 		$graphfiles['invoices'] = array('modulepart'=>'productstats_invoices',
 			'file' => $object->id.'/invoices12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode], $langs->transnoentitiesnoconv("Invoices")));
@@ -361,7 +380,7 @@ if ($result || !($id > 0)) {
 			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode], $langs->transnoentitiesnoconv("SupplierInvoices")));
 	}
 
-	if (isModEnabled('contrat')) {
+	if (isModEnabled('contract')) {
 		$graphfiles['contracts'] = array('modulepart'=>'productstats_contracts',
 			'file' => $object->id.'/contracts12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode], $langs->transnoentitiesnoconv("Contracts")));
@@ -393,7 +412,7 @@ if ($result || !($id > 0)) {
 						$categ = new Categorie($db);
 						$categ->fetch($search_categ);
 						$listofprodids = $categ->getObjectsInCateg('product', 1);
-						$morefilters = ' AND d.fk_product IN ('.$db->sanitize((is_array($listofprodids) && count($listofprodids)) ? join(',', $listofprodids) : '0').')';
+						$morefilters = ' AND d.fk_product IN ('.$db->sanitize((is_array($listofprodids) && count($listofprodids)) ? implode(',', $listofprodids) : '0').')';
 					}
 					if ($search_categ == -2) {
 						$morefilters = ' AND NOT EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE d.fk_product = cp.fk_product)';
@@ -461,25 +480,25 @@ if ($result || !($id > 0)) {
 				continue;
 			}
 
-			if ($graphfiles == 'propal' && empty($user->rights->propal->lire)) {
+			if ($graphfiles == 'propal' && !$user->hasRight('propal', 'lire')) {
 				continue;
 			}
-			if ($graphfiles == 'order' && empty($user->rights->commande->lire)) {
+			if ($graphfiles == 'order' && !$user->hasRight('commande', 'lire')) {
 				continue;
 			}
-			if ($graphfiles == 'invoices' && empty($user->rights->facture->lire)) {
+			if ($graphfiles == 'invoices' && !$user->hasRight('facture', 'lire')) {
 				continue;
 			}
-			if ($graphfiles == 'proposals_suppliers' && empty($user->rights->supplier_proposal->lire)) {
+			if ($graphfiles == 'proposals_suppliers' && !$user->hasRight('supplier_proposal', 'lire')) {
 				continue;
 			}
-			if ($graphfiles == 'invoices_suppliers' && empty($user->rights->fournisseur->facture->lire)) {
+			if ($graphfiles == 'invoices_suppliers' && !$user->hasRight('fournisseur', 'facture', 'lire')) {
 				continue;
 			}
-			if ($graphfiles == 'orders_suppliers' && empty($user->rights->fournisseur->commande->lire)) {
+			if ($graphfiles == 'orders_suppliers' && !$user->hasRight('fournisseur', 'commande', 'lire')) {
 				continue;
 			}
-			if ($graphfiles == 'mrp' && empty($user->rights->mrp->read)) {
+			if ($graphfiles == 'mrp' && !$user->hasRight('mrp', 'read')) {
 				continue;
 			}
 
@@ -500,7 +519,7 @@ if ($result || !($id > 0)) {
 			} else {
 				$dategenerated = ($mesg ? '<span class="error">'.$mesg.'</span>' : $langs->trans("ChartNotGenerated"));
 			}
-			$linktoregenerate = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?'.(GETPOSTISSET('id') ? 'id='.GETPOST('id', 'int') : 'id='.$object->id).(((string) $type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&action=recalcul&mode='.urlencode($mode).'&search_year='.((int) $search_year).($search_categ > 0 ? '&search_categ='.((int) $search_categ) : '').'">';
+			$linktoregenerate = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?'.(GETPOSTISSET('id') ? 'id='.GETPOSTINT('id') : 'id='.$object->id).(((string) $type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&action=recalcul&mode='.urlencode($mode).'&search_year='.((int) $search_year).($search_categ > 0 ? '&search_categ='.((int) $search_categ) : '').'">';
 			$linktoregenerate .= img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')', 'refresh');
 			$linktoregenerate .= '</a>';
 

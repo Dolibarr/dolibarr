@@ -67,7 +67,7 @@ if (!is_object($weblangs)) {
 if (!is_object($pagelangs)) {
 	$pagelangs = new Translate('', $conf);
 }
-if ($pageid > 0) {
+if (!empty($pageid) && $pageid > 0) {
 	$websitepage->fetch($pageid);
 
 	$weblangs->setDefaultLang(GETPOSTISSET('lang') ? GETPOST('lang', 'aZ09') : (empty($_COOKIE['weblangs-shortcode']) ? 'auto' : preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['weblangs-shortcode'])));
@@ -82,7 +82,7 @@ if ($pageid > 0) {
 		header("X-Content-Type-Options: nosniff");
 
 		// X-Frame-Options
-		if (empty($websitepage->allowed_in_frames) && empty($conf->global->WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES)) {
+		if (empty($websitepage->allowed_in_frames) && !getDolGlobalString('WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES')) {
 			header("X-Frame-Options: SAMEORIGIN");
 		}
 
@@ -100,7 +100,7 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 	header("X-Content-Type-Options: nosniff");
 
 	// X-Frame-Options
-	if (empty($websitepage->allowed_in_frames) && empty($conf->global->WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES)) {
+	if (empty($websitepage->allowed_in_frames) && !getDolGlobalString('WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES')) {
 		header("X-Frame-Options: SAMEORIGIN");
 	}
 
@@ -252,7 +252,7 @@ if (!defined('USEDOLIBARREDITOR') && empty($website->status)) {
 	header("X-Content-Type-Options: nosniff");
 
 	// X-Frame-Options
-	if (empty($websitepage->allowed_in_frames) && empty($conf->global->WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES)) {
+	if (empty($websitepage->allowed_in_frames) && !getDolGlobalString('WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES')) {
 		header("X-Frame-Options: SAMEORIGIN");
 	}
 

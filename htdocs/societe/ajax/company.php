@@ -45,9 +45,9 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 $htmlname = GETPOST('htmlname', 'aZ09');
 $filter = GETPOST('filter', 'alpha');
-$outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
+$outjson = (GETPOSTINT('outjson') ? GETPOSTINT('outjson') : 0);
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $excludeids = GETPOST('excludeids', 'intcomma');
 $showtype = GETPOSTINT('showtype', 'alpha');
 $showcode = GETPOSTINT('showcode', 'alpha');
@@ -106,7 +106,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 	$id = (!empty($match[0]) ? $match[0] : '');		// Take first key found into GET array with matching $htmlname123
 
 	// When used from jQuery, the search term is added as GET param "term".
-	$searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ?GETPOST($htmlname, 'alpha') : ''));
+	$searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ? GETPOST($htmlname, 'alpha') : ''));
 	if (!$searchkey) {
 		return;
 	}

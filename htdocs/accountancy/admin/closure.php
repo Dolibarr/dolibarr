@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2019       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2019-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +61,24 @@ if ($action == 'update') {
 		$error++;
 	}
 
+	$accountinggroupsusedforbalancesheetaccount = GETPOST('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT', 'alphanohtml');
+	if (!empty($accountinggroupsusedforbalancesheetaccount)) {
+		if (!dolibarr_set_const($db, 'ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT', $accountinggroupsusedforbalancesheetaccount, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	} else {
+		$error++;
+	}
+
+	$accountinggroupsusedforincomestatement = GETPOST('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT', 'alpha');
+	if (!empty($accountinggroupsusedforincomestatement)) {
+		if (!dolibarr_set_const($db, 'ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT', $accountinggroupsusedforincomestatement, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	} else {
+		$error++;
+	}
+
 	foreach ($list_account_main as $constname) {
 		$constvalue = GETPOST($constname, 'alpha');
 		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -83,7 +101,11 @@ if ($action == 'update') {
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-llxHeader();
+$title = $langs->trans('Closure');
+
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
+
+llxHeader('', $title, $help_url);
 
 $linkback = '';
 print load_fiche_titre($langs->trans('MenuClosureAccounts'), $linkback, 'title_accountancy');
@@ -117,10 +139,24 @@ foreach ($list_account_main as $key) {
 
 // Journal
 print '<tr class="oddeven">';
-print '<td width="50%">'.$langs->trans("ACCOUNTING_CLOSURE_DEFAULT_JOURNAL").'</td>';
+print '<td class="fieldrequired">'.$langs->trans("ACCOUNTING_CLOSURE_DEFAULT_JOURNAL").'</td>';
 print '<td>';
-$defaultjournal = $conf->global->ACCOUNTING_CLOSURE_DEFAULT_JOURNAL;
+$defaultjournal = getDolGlobalString('ACCOUNTING_CLOSURE_DEFAULT_JOURNAL');
 print $formaccounting->select_journal($defaultjournal, "ACCOUNTING_CLOSURE_DEFAULT_JOURNAL", 9, 1, 0, 0);
+print '</td></tr>';
+
+// Accounting groups used for the balance sheet account
+print '<tr class="oddeven">';
+print '<td class="fieldrequired">'.$langs->trans("ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT").'</td>';
+print '<td>';
+print '<input type="text" size="100" id="ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT" name="ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT" value="' . dol_escape_htmltag(getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT')). '">';
+print '</td></tr>';
+
+// Accounting groups used for the income statement
+print '<tr class="oddeven">';
+print '<td class="fieldrequired">'.$langs->trans("ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT").'</td>';
+print '<td>';
+print '<input type="text" size="100" id="ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT" name="ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT" value="' . dol_escape_htmltag(getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT')). '">';
 print '</td></tr>';
 
 print "</table>\n";

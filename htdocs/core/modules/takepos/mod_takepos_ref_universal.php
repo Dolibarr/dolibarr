@@ -54,9 +54,10 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	/**
 	 *  return description of the numbering model
 	 *
-	 * @return     string      Descriptive text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $db, $langs;
 
@@ -82,7 +83,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.getDolGlobalString('TAKEPOS_REF_UNIVERSAL_MASK').'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2"><input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -118,7 +119,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	 * @param   Societe     $objsoc     Object thirdparty
 	 * @param   Facture		$invoice	Object invoice
 	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string      Value if KO, <0 if KO
+	 * @return  string|0                Next value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc = null, $invoice = null, $mode = 'next')
 	{

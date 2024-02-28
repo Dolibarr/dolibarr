@@ -46,7 +46,7 @@ $langs->load('compta');
  */
 
 //init var
-$invoice_type = GETPOST('invoice_type', 'int');
+$invoice_type = GETPOSTINT('invoice_type');
 $amountPayment = GETPOST('amountPayment');
 $amounts = GETPOST('amounts'); // from text inputs : invoice amount payment (check required)
 $remains = GETPOST('remains'); // from dolibarr's object (no need to check)
@@ -69,7 +69,7 @@ if (is_array($amounts)) {
 if (is_array($remains)) {
 	foreach ($remains as $key => $value) {
 		$value = price2num($value);
-		$remains[$key] = (($invoice_type) == 2 ?-1 : 1) * $value;
+		$remains[$key] = (($invoice_type) == 2 ? -1 : 1) * $value;
 		if (empty($value)) {
 			unset($remains[$key]);
 		}
@@ -103,7 +103,7 @@ if ($currentInvId) {																	// Here to breakdown
 			$result += $currentRemain;
 		}
 	} else {
-		// Reset the substraction for this amount
+		// Reset the subtraction for this amount
 		$result += price2num($currentAmount);
 		$currentAmount = 0;
 
@@ -112,7 +112,7 @@ if ($currentInvId) {																	// Here to breakdown
 										$currentRemain : // Remain can be fully paid
 										$currentRemain + ($result - $currentRemain)); // Remain can only partially be paid
 			$currentAmount = $amountToBreakdown; // In both cases, amount will take breakdown value
-			$result -= $amountToBreakdown; // And canceled substraction has been replaced by breakdown
+			$result -= $amountToBreakdown; // And canceled subtraction has been replaced by breakdown
 		}	// else there's no need to calc anything, just reset the field (result is still < 0)
 	}
 	$toJsonArray['amount_'.$currentInvId] = price2num($currentAmount); // Param will exist only if an img has been clicked

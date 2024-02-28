@@ -18,7 +18,7 @@
 
 /**
  *	\file       htdocs/product/class/html.formproduct.class.php
- *	\brief      Fichier de la classe des fonctions predefinie de composants html
+ *	\brief      File for class with methods for building product related HTML components
  */
 
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -68,7 +68,7 @@ class FormProduct
 	 *                      				    'warehouseinternal' = select products from warehouses for internal correct/transfer only
 	 * @param	boolean	    $sumStock		    sum total stock of a warehouse, default true
 	 * @param	array       $exclude            warehouses ids to exclude
-	 * @param   bool|int    $stockMin           [=false] Value of minimum stock to filter or false not not filter by minimum stock
+	 * @param   bool|int    $stockMin           [=false] Value of minimum stock to filter (only warehouse with stock > stockMin are loaded) or false not not filter by minimum stock
 	 * @param   string      $orderBy            [='e.ref'] Order by
 	 * @return  int                             Nb of loaded lines, 0 if already loaded, <0 if KO
 	 * @throws  Exception
@@ -276,7 +276,7 @@ class FormProduct
 	 *  @param  string      $morecss            Add more css classes to HTML select
 	 *  @param	array	    $exclude            Warehouses ids to exclude
 	 *  @param  int         $showfullpath       1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
-	 *  @param  bool|int    $stockMin           [=false] Value of minimum stock to filter or false not not filter by minimum stock
+	 *  @param  bool|int    $stockMin           [=false] Value of minimum stock to filter (only warehouse with stock > stockMin are loaded) or false not not filter by minimum stock
 	 *  @param  string      $orderBy            [='e.ref'] Order by
 	 *  @param	int			$multiselect		1=Allow multiselect
 	 * 	@return string					        HTML select
@@ -290,7 +290,7 @@ class FormProduct
 		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss", LOG_DEBUG);
 
 		$out = '';
-		if (empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
+		if (!getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
 			$filterstatus = '';
 		}
 		if (!empty($fk_product) && $fk_product > 0) {
@@ -308,18 +308,18 @@ class FormProduct
 
 		if (strpos($htmlname, 'search_') !== 0) {
 			if (empty($user->fk_warehouse) || $user->fk_warehouse == -1) {
-				if (is_scalar($selected) && ($selected == '-2' || $selected == 'ifone') && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) {
-					$selected = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+				if (is_scalar($selected) && ($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
+					$selected = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 				}
 			} else {
-				if (is_scalar($selected) && ($selected == '-2' || $selected == 'ifone') && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
+				if (is_scalar($selected) && ($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
 					$selected = $user->fk_warehouse;
 				}
 			}
 		}
 
 		$out .= '<select '.($multiselect ? 'multiple ' : '').'class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled' : '');
-		$out .= ' id="'.$htmlname.'" name="'.($htmlname.($multiselect?'[]':'').($disabled ? '_disabled' : '')).'"';
+		$out .= ' id="'.$htmlname.'" name="'.($htmlname.($multiselect ? '[]' : '').($disabled ? '_disabled' : '')).'"';
 		//$out .= ' placeholder="todo"'; 	// placeholder for select2 must be added by setting the id+placeholder js param when calling select2
 		$out .= '>';
 		if ($empty) {
@@ -346,7 +346,7 @@ class FormProduct
 					$out .= ' selected';
 				}
 			} else {
-				if ($selected == $id || (preg_match('/^ifone/', $selected) && $nbofwarehouses == 1)) {
+				if ($selected == $id || (!empty($selected) && preg_match('/^ifone/', $selected) && $nbofwarehouses == 1)) {
 					$out .= ' selected';
 				}
 			}
@@ -430,11 +430,11 @@ class FormProduct
 
 		if (strpos($htmlname, 'search_') !== 0) {
 			if (empty($user->fk_workstation) || $user->fk_workstation == -1) {
-				if (($selected == '-2' || $selected == 'ifone') && !empty($conf->global->MAIN_DEFAULT_WORKSTATION)) {
-					$selected = $conf->global->MAIN_DEFAULT_WORKSTATION;
+				if (($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WORKSTATION')) {
+					$selected = getDolGlobalString('MAIN_DEFAULT_WORKSTATION');
 				}
 			} else {
-				if (($selected == '-2' || $selected == 'ifone') && !empty($conf->global->MAIN_DEFAULT_WORKSTATION)) {
+				if (($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WORKSTATION')) {
 					$selected = $user->fk_workstation;
 				}
 			}
@@ -524,7 +524,7 @@ class FormProduct
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Output a combo box with list of units
-	 *  pour l'instant on ne definit pas les unites dans la base
+	 *  Currently the units are not define in the DB
 	 *
 	 *  @param	string		$name               Name of HTML field
 	 *  @param	string		$measuring_style    Unit to show: weight, size, surface, volume, time
@@ -627,7 +627,7 @@ class FormProduct
 	 *  @param  string		$selected             Preselected value
 	 *  @param  int         $mode                1=Use label as value, 0=Use code
 	 *  @param  int         $showempty           1=show empty value, 0= no
-	 *  @return string
+	 *  @return string|int
 	 */
 	public function selectProductNature($name = 'finished', $selected = '', $mode = 0, $showempty = 1)
 	{
@@ -791,7 +791,7 @@ class FormProduct
 	 */
 	public function selectLotDataList($htmlname = 'batch_id', $empty = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array())
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		dol_syslog(get_class($this)."::selectLotDataList $htmlname, $empty, $fk_product, $fk_entrepot", LOG_DEBUG);
 
@@ -811,8 +811,6 @@ class FormProduct
 
 		$nboflot = $this->loadLotStock($productIdArray);
 
-		$out .= '<datalist id="'.$htmlname.'" >';
-
 		if (!empty($fk_product) && $fk_product > 0) {
 			$productIdArray = array((int) $fk_product); // only show lot stock for product
 		} else {
@@ -821,6 +819,22 @@ class FormProduct
 			}
 		}
 
+		if (empty($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('productdao'));
+		$parameters = array('productIdArray' => $productIdArray, 'htmlname' => $htmlname);
+		$reshook = $hookmanager->executeHooks('selectLotDataList', $parameters, $this);
+		if ($reshook < 0) {
+			return $hookmanager->error;
+		} elseif ($reshook > 0) {
+			return $hookmanager->resPrint;
+		} else {
+			$out .= $hookmanager->resPrint;
+		}
+
+		$out .= '<datalist id="'.$htmlname.'" >';
 		foreach ($productIdArray as $productId) {
 			if (array_key_exists($productId, $this->cache_lot)) {
 				foreach ($this->cache_lot[$productId] as $id => $arraytypes) {

@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->loadLangs(array("main", "categories", "takepos", "printing"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
 $catname = GETPOST('catname', 'alpha');
 $action = GETPOST('action', 'aZ09');
@@ -47,7 +47,7 @@ if (is_numeric($type)) {
 	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 }
 
-if (!$user->rights->categorie->lire) {
+if (!$user->hasRight('categorie', 'lire')) {
 	accessforbidden();
 }
 

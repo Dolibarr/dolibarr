@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - help
 CommunitySupport=Foorumi / Wiki tukea
 EMailSupport=Sähköpostit tukea
-RemoteControlSupport=Online reaaliajassa / etätuki
+RemoteControlSupport=Online-reaaliaikainen / etätuki
 OtherSupport=Muut tuet
 ToSeeListOfAvailableRessources=Voit ottaa yhteyttä / nähdä käytettävissä olevat varat:
-HelpCenter=Ohjekeskukseen
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
+HelpCenter=Ohjekeskus
+DolibarrHelpCenter=Dolibarr-ohje ja Tukikeskus
+ToGoBackToDolibarr=Muussa tapauksessa <a href="%s">klikkaa tätä jatkaaksesi Dolibarrin</a> käyttöä.
+TypeOfSupport=Tuen tyyppi
 TypeSupportCommunauty=Yhteisössä (vapaa)
 TypeSupportCommercial=Kaupalliset
 TypeOfHelp=Tyyppi
-NeedHelpCenter=Tarvitsetko apua tai tukea?
+NeedHelpCenter=Tarvitsetko tukea?
 Efficiency=Tehokkuus
 TypeHelpOnly=Ohje vain
 TypeHelpDev=Ohje + kehittämisen
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+TypeHelpDevForm=Apua+Kehitys+koulutus
+BackToHelpCenter=Muussa tapauksessa <a href="%s">palaa ohjekeskuksen etusivulle</a>.
+LinkToGoldMember=Voit soittaa jollekin Dolibarrin valmiiksi valitsemista kouluttajista Kieli (%s) klikkaamalla heidän widgettiään (tila ja enimmäishinta päivitetään automaattisesti):
 PossibleLanguages=Tuetut kielet
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=Virallinen Dolibarr tuki omalla kielellä: <br><b><a href="%s" target="_blank">%s</a></b>
+SubscribeToFoundation=Auta Dolibarr-projektia, liity säätiöön
+SeeOfficalSupport=Virallinen Dolibarr-tuki Kieli: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a>b09a4b739f17

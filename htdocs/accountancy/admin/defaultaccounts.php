@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2014-2015  Ari Elbaz (elarifr)     <github@accedinfo.com>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
@@ -78,23 +78,30 @@ if ($mysoc->isInEEC()) {
 $list_account[] = 'ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT';
 
 $list_account[] = '---Others---';
-$list_account[] = 'ACCOUNTING_VAT_BUY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_SOLD_ACCOUNT';
+$list_account[] = 'ACCOUNTING_VAT_BUY_ACCOUNT';
+
+/*if ($mysoc->useRevenueStamp()) {
+	$list_account[] = 'ACCOUNTING_REVENUESTAMP_SOLD_ACCOUNT';
+	$list_account[] = 'ACCOUNTING_REVENUESTAMP_BUY_ACCOUNT';
+}*/
+
 $list_account[] = 'ACCOUNTING_VAT_PAY_ACCOUNT';
-if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+
+if (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE')) {
 	$list_account[] = 'ACCOUNTING_VAT_BUY_REVERSE_CHARGES_CREDIT';
 	$list_account[] = 'ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT';
 }
-if (isModEnabled('banque')) {
+if (isModEnabled('bank')) {
 	$list_account[] = 'ACCOUNTING_ACCOUNT_TRANSFER_CASH';
 }
-if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
+if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 	$list_account[] = 'ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY';
 }
 if (isModEnabled('don')) {
 	$list_account[] = 'DONATION_ACCOUNTINGACCOUNT';
 }
-if (isModEnabled('adherent')) {
+if (isModEnabled('member')) {
 	$list_account[] = 'ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT';
 }
 if (isModEnabled('loan')) {
@@ -110,6 +117,7 @@ if (isModEnabled('societe')) {
 /*
  * Actions
  */
+
 if ($action == 'update') {
 	$error = 0;
 	// Process $list_account_main
@@ -135,13 +143,13 @@ if ($action == 'update') {
 	}
 
 	$constname = 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT';
-	$constvalue = GETPOST($constname, 'int');
+	$constvalue = GETPOSTINT($constname);
 	if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
 		$error++;
 	}
 
 	$constname = 'ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT';
-	$constvalue = GETPOST($constname, 'int');
+	$constvalue = GETPOSTINT($constname);
 	if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
 		$error++;
 	}
@@ -155,7 +163,7 @@ if ($action == 'update') {
 }
 
 if ($action == 'setACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT') {
-	$setDisableAuxiliaryAccountOnCustomerDeposit = GETPOST('value', 'int');
+	$setDisableAuxiliaryAccountOnCustomerDeposit = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT", $setDisableAuxiliaryAccountOnCustomerDeposit, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -169,7 +177,7 @@ if ($action == 'setACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT') {
 }
 
 if ($action == 'setACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT') {
-	$setDisableAuxiliaryAccountOnSupplierDeposit = GETPOST('value', 'int');
+	$setDisableAuxiliaryAccountOnSupplierDeposit = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "ACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT", $setDisableAuxiliaryAccountOnSupplierDeposit, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -190,7 +198,9 @@ if ($action == 'setACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT') {
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-llxHeader();
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
+
+llxHeader('', $langs->trans('MenuDefaultAccounts'), $help_url);
 
 $linkback = '';
 print load_fiche_titre($langs->trans('MenuDefaultAccounts'), $linkback, 'title_accountancy');
@@ -270,6 +280,7 @@ foreach ($list_account as $key) {
 		} elseif (preg_match('/^ACCOUNTING_ACCOUNT_SUSPENSE/', $key)) {
 			print img_picto('', 'question', 'class="pictofixedwidth"');
 		}
+		// Note: account for revenue stamp are store into dictionary of revenue stamp. There is no default value.
 		print $label;
 		print '</td>';
 		// Value

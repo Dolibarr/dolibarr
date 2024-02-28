@@ -44,11 +44,11 @@ require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-$facid = GETPOST('facid', 'int');
+$facid = GETPOSTINT('facid');
 $action = GETPOST('action', 'aZ09');
 $email = GETPOST('email', 'alpha');
 
-if (empty($user->rights->takepos->run)) {
+if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 

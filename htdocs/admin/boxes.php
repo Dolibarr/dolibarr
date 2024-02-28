@@ -36,7 +36,7 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-$rowid = GETPOST('rowid', 'int');
+$rowid = GETPOSTINT('rowid');
 $action = GETPOST('action', 'aZ09');
 
 
@@ -50,7 +50,7 @@ $boxes = array();
  */
 
 if ($action == 'addconst') {
-	dolibarr_set_const($db, "MAIN_BOXES_MAXLINES", GETPOST("MAIN_BOXES_MAXLINES", 'int'), '', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_BOXES_MAXLINES", GETPOSTINT("MAIN_BOXES_MAXLINES"), '', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_ACTIVATE_FILECACHE", GETPOST("MAIN_ACTIVATE_FILECACHE", 'alpha'), 'chaine', 0, '', $conf->entity);
 }
 
@@ -165,10 +165,10 @@ if ($action == 'switch') {
 	$db->begin();
 
 	$objfrom = new ModeleBoxes($db);
-	$objfrom->fetch(GETPOST("switchfrom", 'int'));
+	$objfrom->fetch(GETPOSTINT("switchfrom"));
 
 	$objto = new ModeleBoxes($db);
-	$objto->fetch(GETPOST('switchto', 'int'));
+	$objto->fetch(GETPOSTINT('switchto'));
 
 	$resultupdatefrom = 0;
 	$resultupdateto = 0;
@@ -348,7 +348,7 @@ foreach ($boxtoadd as $box) {
 		$langs->load("errors");
 		print $langs->trans("WarningUsingThisBoxSlowDown");
 	} else {
-		print ($box->note ? $box->note : '&nbsp;');
+		print($box->note ? $box->note : '&nbsp;');
 	}
 	print '</td>'."\n";
 	print '<td>';
@@ -404,7 +404,7 @@ foreach ($boxactivated as $key => $box) {
 	if ($box->note == '(WarningUsingThisBoxSlowDown)') {
 		print img_warning('', 0).' '.$langs->trans("WarningUsingThisBoxSlowDown");
 	} else {
-		print ($box->note ? $box->note : '&nbsp;');
+		print($box->note ? $box->note : '&nbsp;');
 	}
 	print '</td>';
 	print '<td>';
@@ -415,8 +415,8 @@ foreach ($boxactivated as $key => $box) {
 	$hasprevious = ($key != 0);
 	print '<td class="center">'.($key + 1).'</td>';
 	print '<td class="center nowraponall">';
-	print ($hasnext ? '<a class="reposition" href="boxes.php?action=switch&token='.newToken().'&switchfrom='.$box->rowid.'&switchto='.$boxactivated[$key + 1]->rowid.'">'.img_down().'</a>&nbsp;' : '');
-	print ($hasprevious ? '<a class="reposition" href="boxes.php?action=switch&token='.newToken().'&switchfrom='.$box->rowid.'&switchto='.$boxactivated[$key - 1]->rowid.'">'.img_up().'</a>' : '');
+	print($hasnext ? '<a class="reposition" href="boxes.php?action=switch&token='.newToken().'&switchfrom='.$box->rowid.'&switchto='.$boxactivated[$key + 1]->rowid.'">'.img_down().'</a>&nbsp;' : '');
+	print($hasprevious ? '<a class="reposition" href="boxes.php?action=switch&token='.newToken().'&switchfrom='.$box->rowid.'&switchto='.$boxactivated[$key - 1]->rowid.'">'.img_up().'</a>' : '');
 	print '</td>';
 	print '<td class="center">';
 	print '<a class="reposition" href="boxes.php?rowid='.$box->rowid.'&action=delete&token='.newToken().'">'.img_delete().'</a>';

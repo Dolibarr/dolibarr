@@ -33,10 +33,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Noti
 
 $langs->loadLangs(array("companies", "mails", "admin", "other", "errors"));
 
-$socid     = GETPOST("socid", 'int');
+$socid     = GETPOSTINT("socid");
 $action    = GETPOST('action', 'aZ09');
 $contactid = GETPOST('contactid', 'alpha'); // May be an int or 'thirdparty'
-$actionid  = GETPOST('actionid', 'int');
+$actionid  = GETPOSTINT('actionid');
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 // Security check
@@ -45,10 +45,10 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'societe', '', '');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (!$sortorder) {
 	$sortorder = "DESC";
 }
@@ -122,7 +122,7 @@ if (empty($reshook)) {
 
 	// Remove a notification
 	if ($action == 'delete') {
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".GETPOST('actid', 'int');
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".GETPOSTINT('actid');
 		$db->query($sql);
 	}
 }
@@ -139,7 +139,7 @@ $object = new Societe($db);
 $result = $object->fetch($socid);
 
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Notification");
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->name.' - '.$langs->trans("Notification");
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -169,7 +169,7 @@ if ($result > 0) {
 	print '</td></tr>';
 
 	// Prefix
-	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+	if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
 		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 	}
 
@@ -184,7 +184,7 @@ if ($result > 0) {
 		print '</td></tr>';
 	}
 
-	if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
+	if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $object->fournisseur && $user->hasRight('fournisseur', 'lire')) {
 		print '<tr><td class="titlefield">';
 		print $langs->trans('SupplierCode').'</td><td colspan="3">';
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
@@ -516,7 +516,7 @@ if ($result > 0) {
 
 	print '</form>';
 } else {
-	dol_print_error('', 'RecordNotFound');
+	dol_print_error(null, 'RecordNotFound');
 }
 
 // End of page

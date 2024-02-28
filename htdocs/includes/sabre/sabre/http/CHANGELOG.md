@@ -1,6 +1,137 @@
 ChangeLog
 =========
 
+5.1.10 (2023-08-18)
+------------------
+
+* #225 Enhance tests/bootstrap.php to find autoloader in more environments (@phil-davis)
+
+5.1.9 (2023-08-17)
+------------------
+
+* #223 skip testParseMimeTypeOnInvalidMimeType (@phil-davis)
+
+5.1.8 (2023-08-17)
+------------------
+
+* #215 Improve CURLOPT_HTTPHEADER Setting Assignment (@amrita-shrestha)
+
+5.1.7 (2023-06-26)
+------------------
+
+* #98 and #176 Add more tests (@peter279k)
+* #207 fix: handle client disconnect properly with ignore_user_abort true (@kesselb)
+
+5.1.6 (2022-07-15)
+------------------
+
+* #187 Allow testSendToGetLargeContent peak memory usage to be specified externally (@phil-davis)
+* #188 Fix various small typos and grammar (@phil-davis)
+* #189 Fix typo in text of status code 203 'Non-Authoritative Information' (@phil-davis)
+
+5.1.5 (2022-07-09)
+------------------
+
+* #184 Remove 4GB file size workaround for 32bit OS / Stream Videos on IOS (@schoetju)
+
+5.1.4 (2022-06-24)
+------------------
+
+* #182 Fix encoding detection on PHP 8.1 (@come-nc)
+
+5.1.3 (2021-11-04)
+------------------
+
+* #179 version bump that was missed in 5.1.2 (@phil-davis)
+
+5.1.2 (2021-11-04)
+-------------------------
+
+* #169 Ensure $_SERVER keys are read as strings (@fredrik-eriksson)
+* #170 Fix deprecated usages on PHP 8.1 (@cedric-anne)
+* #175 Add resource size to CURL options in client (from #172 ) (@Dartui)
+
+5.1.1 (2020-10-03)
+-------------------------
+
+* #160: Added support for PHP 8.0 (@phil-davis)
+
+5.1.0 (2020-01-31)
+-------------------------
+
+* Added support for PHP 7.4, dropped support for PHP 7.0 (@phil-davis)
+* Updated testsuite for phpunit8, added phpstan coverage (@phil-davis)
+* Added autoload-dev for test classes (@C0pyR1ght)
+
+5.0.5 (2019-11-28)
+-------------------------
+
+* #138: Fixed possible infinite loop (@dpakach, @vfreex, @phil-davis)
+* #136: Improvement regex content-range (@ho4ho)
+
+5.0.4 (2019-10-08)
+-------------------------
+
+* #133: Fix short Content-Range download - Regression from 5.0.3 (@phil-davis)
+
+5.0.3 (2019-10-08)
+-------------------------
+
+* #119: Significantly improve file download speed by enabling mmap based stream_copy_to_stream (@vfreex) 
+
+5.0.2 (2019-09-12)
+-------------------------
+
+* #125: Fix Strict Error if Response Body Empty (@WorksDev, @phil-davis) 
+
+5.0.1 (2019-09-11)
+-------------------------
+
+* #121: fix "Trying to access array offset on value of type bool" in 7.4 (@remicollet) 
+* #115: Reduce memory footprint when parsing HTTP result (@Gasol)
+* #114: Misc code improvements (@mrcnpdlk)
+* #111, #118: Added phpstan analysis (@DeepDiver1975, @staabm)
+* #107: Tested with php 7.3 (@DeepDiver1975)
+ 
+
+5.0.0 (2018-06-04)
+-------------------------
+
+* #99: Previous CURL opts are not persisted anymore (@christiaan)
+* Final release
+
+5.0.0-alpha1 (2018-02-16)
+-------------------------
+
+* Now requires PHP 7.0+.
+* Supports sabre/event 4.x and 5.x
+* Depends on sabre/uri 2.
+* hhvm is no longer supported starting this release.
+* #65: It's now possible to supply request/response bodies using a callback
+  functions. This allows very high-speed/low-memory responses to be created.
+  (@petrkotek).
+* Strict typing is used everywhere this is applicable.
+* Removed `URLUtil` class. It was deprecated a long time ago, and most of
+  its functions moved to the `sabre/uri` package.
+* Removed `Util` class. Most of its functions moved to the `functions.php`
+  file.
+* #68: The `$method` and `$uri` arguments when constructing a Request object
+  are now required.
+* When `Sapi::getRequest()` is called, we default to setting the HTTP Method
+  to `CLI`.
+* The HTTP response is now initialized with HTTP code `500` instead of `null`,
+  so if it's not changed, it will be emitted as 500.
+* #69: Sending `charset="UTF-8"` on Basic authentication challenges per
+  [rfc7617][rfc7617].
+* #84: Added support for `SERVER_PROTOCOL HTTP/2.0` (@jens1o)
+
+
+4.2.3 (2017-06-12)
+------------------
+
+* #74, #77: Work around 4GB file size limit at 32-Bit systems
+
+
 4.2.2 (2017-01-02)
 ------------------
 
@@ -186,7 +317,7 @@ ChangeLog
 * Changed: Response::send() is now Sapi::sendResponse($response).
 * Changed: Request::createFromPHPRequest is now Sapi::getRequest().
 * Changed: Message::getBodyAsStream and Message::getBodyAsString were added. The
-  existing Message::getBody changed it's behavior, so be careful.
+  existing Message::getBody changed its behavior, so be careful.
 
 
 2.0.0alpha5 (2013-11-07)
@@ -253,4 +384,5 @@ Before 2.0.0, this package was built-into SabreDAV, where it first appeared in
 January 2009.
 
 [psr-http]: https://github.com/php-fig/fig-standards/blob/master/proposed/http-message.md
-[rfc-7240]: http://tools.ietf.org/html/rfc7240
+[rfc7240]: http://tools.ietf.org/html/rfc7240
+[rfc7617]: https://tools.ietf.org/html/rfc7617

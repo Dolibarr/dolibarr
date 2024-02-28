@@ -26,14 +26,16 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-dol_include_once('/webhook/class/target.class.php');
-dol_include_once('/webhook/lib/webhook_target.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
+require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook_target.lib.php';
+
+global $conf, $db, $hookmanager, $langs, $user;
 
 // Load translation files required by the page
 $langs->loadLangs(array('other'));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -41,7 +43,7 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'targetcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$lineid   = GETPOST('lineid', 'int');
+$lineid   = GETPOSTINT('lineid');
 
 // Initialize technical objects
 $object = new Target($db);
@@ -54,7 +56,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -75,11 +77,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = 0;
 if ($enablepermissioncheck) {
-	$permissiontoread = $user->rights->webhook->target->read;
-	$permissiontoadd = $user->rights->webhook->target->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-	$permissiontodelete = $user->rights->webhook->target->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-	$permissionnote = $user->rights->webhook->target->write; // Used by the include of actions_setnotes.inc.php
-	$permissiondellink = $user->rights->webhook->target->write; // Used by the include of actions_dellink.inc.php
+	$permissiontoread = $user->hasRight('webhook', 'target', 'read');
+	$permissiontoadd = $user->hasRight('webhook', 'target', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+	$permissiontodelete = $user->hasRight('webhook', 'target', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+	$permissionnote = $user->hasRight('webhook', 'target', 'write'); // Used by the include of actions_setnotes.inc.php
+	$permissiondellink = $user->hasRight('webhook', 'target', 'write'); // Used by the include of actions_dellink.inc.php
 } else {
 	$permissiontoread = 1;
 	$permissiontoadd = 1; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -95,8 +97,12 @@ $upload_dir = $conf->webhook->multidir_output[isset($object->entity) ? $object->
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (isset($object->status) && ($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->webhook->enabled)) accessforbidden();
-if (!$permissiontoread) accessforbidden();
+if (empty($conf->webhook->enabled)) {
+	accessforbidden();
+}
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -142,10 +148,10 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 
 	// Actions to send emails
@@ -402,7 +408,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Show object lines
 		$result = $object->getLinesArray();
 
-		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
+		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOSTINT('lineid')).'" method="POST">
 		<input type="hidden" name="token" value="' . newToken().'">
 		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 		<input type="hidden" name="mode" value="">
@@ -420,7 +426,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		if (!empty($object->lines)) {
-			$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1);
+			$object->printObjectLines($action, $mysoc, null, GETPOSTINT('lineid'), 1);
 		}
 
 		// Form to add new line
@@ -433,8 +439,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				if ($reshook < 0) {
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
-				if (empty($reshook))
+				if (empty($reshook)) {
 					$object->formAddObjectLine(1, $mysoc, $soc);
+				}
 			}
 		}
 

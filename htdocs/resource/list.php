@@ -31,21 +31,21 @@ require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 $langs->loadLangs(array("resource", "companies", "other"));
 
 // Get parameters
-$id             = GETPOST('id', 'int');
+$id             = GETPOSTINT('id');
 $action         = GETPOST('action', 'alpha');
 $massaction     = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 
-$lineid         = GETPOST('lineid', 'int');
+$lineid         = GETPOSTINT('lineid');
 $element        = GETPOST('element', 'alpha');
-$element_id     = GETPOST('element_id', 'int');
-$resource_id    = GETPOST('resource_id', 'int');
+$element_id     = GETPOSTINT('element_id');
+$resource_id    = GETPOSTINT('resource_id');
 
 $sortorder      = GETPOST('sortorder', 'aZ09comma');
 $sortfield      = GETPOST('sortfield', 'aZ09comma');
 $optioncss = GETPOST('optioncss', 'alpha');
 
 // Initialize context for list
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'resourcelist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'resourcelist';
 
 // Initialize technical objects
 $object = new Dolresource($db);
@@ -61,7 +61,7 @@ $search_ref = GETPOST("search_ref", 'alpha');
 $search_type = GETPOST("search_type", 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 
 $filter = array();
 
@@ -77,8 +77,8 @@ if (empty($arch)) {
 	$arch = 0;
 }
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -113,7 +113,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$filter = array();
 }
 
-if (empty($user->rights->resource->read)) {
+if (!$user->hasRight('resource', 'read')) {
 	accessforbidden();
 }
 
@@ -174,7 +174,9 @@ if ($search_type != '') {
 // extrafields filter key to make it works
 $filter['ef.resource'] = $sql;
 
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	$param .= '&contextpage='.urlencode($contextpage);
+}
 
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -217,7 +219,7 @@ if ($ret == -1) {
 	exit;
 } else {
 	$newcardbutton = '';
-	if ($user->rights->resource->write) {
+	if ($user->hasRight('resource', 'write')) {
 		$newcardbutton .= dolGetButtonTitle($langs->trans('MenuResourceAdd'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/resource/card.php?action=create');
 	}
 
@@ -278,6 +280,8 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print "</tr>\n";
 
 
+$totalarray = array();
+
 if ($ret) {
 	foreach ($object->lines as $resource) {
 		print '<tr class="oddeven">';
@@ -313,7 +317,7 @@ if ($ret) {
 			}
 		}
 		// Extra fields
-		$obj = (Object) $resource->array_options;
+		$obj = (object) $resource->array_options;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
 		// Action column

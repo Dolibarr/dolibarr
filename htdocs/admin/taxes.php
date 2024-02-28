@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015-2022  Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2023  		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,25 +48,30 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
-// 0=normal, 1=option vat for services is on debit
+// 0=normal, 1=option vat for services is on debit, 2=option vat for product and service on credit
 
-// TAX_MODE=0 (most cases):
+// TAX_MODE=0 (most cases in FR):
 //              Buy                     Sell
 // Product      On delivery             On delivery
 // Service      On payment              On payment
 
-// TAX_MODE=1 (option):
+// TAX_MODE=1 (option, VAT is due at invoice date):
 //              Buy                     Sell
-// Product      On delivery             On delivery
+// Product      On delivery/invoice     On delivery/invoice
 // Service      On invoice              On invoice
 
-$tax_mode = empty($conf->global->TAX_MODE) ? 0 : $conf->global->TAX_MODE;
+// TAX_MODE=2 (option, VAT is due on payment date):
+//              Buy                     Sell
+// Product      On payment              On payment
+// Service      On payment              On payment
+
+$tax_mode = getDolGlobalInt('TAX_MODE');
 
 if ($action == 'update') {
 	$error = 0;
 
 	// Tax mode
-	$tax_mode = GETPOST('tax_mode', 'alpha');
+	$tax_mode = GETPOSTINT('tax_mode');
 
 	$db->begin();
 
@@ -116,7 +122,7 @@ if ($action == 'update') {
 
 	dolibarr_set_const($db, "MAIN_INFO_VAT_RETURN", GETPOST("MAIN_INFO_VAT_RETURN", 'alpha'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION", GETPOST("deadline_day_vat", 'int'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION", GETPOSTINT("deadline_day_vat"), 'chaine', 0, '', $conf->entity);
 
 	if (!$error) {
 		$db->commit();
@@ -160,7 +166,7 @@ if (empty($mysoc->tva_assuj)) {
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	print '<tr class="oddeven"><td><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
-	print '<input name="tva" id="intra_vat" class="minwidth200" value="'.(!empty($conf->global->MAIN_INFO_TVAINTRA) ? $conf->global->MAIN_INFO_TVAINTRA : '').'">';
+	print '<input name="tva" id="intra_vat" class="minwidth200" value="'.(getDolGlobalString('MAIN_INFO_TVAINTRA') ? $conf->global->MAIN_INFO_TVAINTRA : '').'">';
 	print '</td></tr>';
 
 	print '<tr class="oddeven"><td><label for="activate_MAIN_INFO_VAT_RETURN">'.$langs->trans("VATReturn").'</label></td>';
@@ -182,7 +188,7 @@ if (empty($mysoc->tva_assuj)) {
 	print '</tr>';
 
 	print '<tr class="oddeven"><td><label for="deadline_day_vat">'.$langs->trans("DeadlineDayVATSubmission").'</label></td><td>';
-	print '<input placeholder="'.$langs->trans("Example").':21" name="deadline_day_vat" id="deadline_day_vat" class="minwidth200" value="'.(!empty($conf->global->MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION) ? $conf->global->MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION : '').'">';
+	print '<input placeholder="'.$langs->trans("Example").':21" name="deadline_day_vat" id="deadline_day_vat" class="minwidth200" value="'.(getDolGlobalString('MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION') ? $conf->global->MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION : '').'">';
 	print '</td></tr>';
 
 	print '</table>';
@@ -191,7 +197,7 @@ if (empty($mysoc->tva_assuj)) {
 
 	print '<table class="noborder centpercent">';
 
-	// Cas des parametres TAX_MODE_SELL/BUY_SERVICE/PRODUCT
+	// Case for the parameters TAX_MODE_SELL/BUY_SERVICE/PRODUCT
 	print '<tr class="liste_titre">';
 	print '<td class="titlefield">'.$langs->trans('OptionVatMode').'</td><td>'.$langs->trans('Description').'</td>';
 	print "</tr>\n";
@@ -203,7 +209,7 @@ if (empty($mysoc->tva_assuj)) {
 	print '<tr class="oddeven"><td><input type="radio" name="tax_mode" value="1"'.($tax_mode == 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDebitOption').'</td>';
 	print '<td>'.nl2br($langs->trans('OptionVatDebitOptionDesc'))."</td></tr>\n";
 	// On payment for both products and services
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 1) {
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
 		print '<tr class="oddeven"><td><input type="radio" name="tax_mode" value="2"'.($tax_mode == 2 ? ' checked' : '').'> '.$langs->trans('OptionPaymentForProductAndServices').'</td>';
 		print '<td>'.nl2br($langs->trans('OptionPaymentForProductAndServicesDesc'))."</td></tr>\n";
 	}
@@ -220,7 +226,7 @@ if (empty($mysoc->tva_assuj)) {
 	// Products
 	print '<tr class="oddeven"><td>'.$langs->trans("Product").'</td>';
 	print '<td>';
-	if ($conf->global->TAX_MODE_BUY_PRODUCT == 'payment') {
+	if (getDolGlobalString('TAX_MODE_BUY_PRODUCT') == 'payment') {
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
 	} else {
@@ -229,7 +235,7 @@ if (empty($mysoc->tva_assuj)) {
 	}
 	print '</td>';
 	print '<td>';
-	if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') {
+	if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'payment') {
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
 	} else {
@@ -241,7 +247,7 @@ if (empty($mysoc->tva_assuj)) {
 	// Services
 	print '<tr class="oddeven"><td>'.$langs->trans("Services").'</td>';
 	print '<td>';
-	if ($conf->global->TAX_MODE_BUY_SERVICE == 'payment') {
+	if (getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'payment') {
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
 	} else {
@@ -250,7 +256,7 @@ if (empty($mysoc->tva_assuj)) {
 	}
 	print '</td>';
 	print '<td>';
-	if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') {
+	if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') {
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
 	} else {
