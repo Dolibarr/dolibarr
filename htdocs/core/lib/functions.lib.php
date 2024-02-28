@@ -2800,7 +2800,7 @@ function dol_bc($var, $moreclass = '')
  */
 function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs = null, $mode = 0, $extralangcode = '')
 {
-	global $conf, $langs, $hookmanager;
+	global $langs, $hookmanager;
 
 	$ret = '';
 	$countriesusingstate = array('AU', 'CA', 'US', 'IN', 'GB', 'ES', 'UK', 'TR', 'CN'); // See also MAIN_FORCE_STATE_INTO_ADDRESS
@@ -2889,6 +2889,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
  *  @param	int		$ts			Timestamp (If is_gmt is true, timestamp is already includes timezone and daylight saving offset, if is_gmt is false, timestamp is a GMT timestamp and we must compensate with server PHP TZ)
  *  @param	bool	$is_gmt		See comment of timestamp parameter
  *	@return	string				A formatted string
+ *  @see dol_stringtotime()
  */
 function dol_strftime($fmt, $ts = false, $is_gmt = false)
 {
@@ -3552,7 +3553,7 @@ function getArrayOfSocialNetworks()
  */
 function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetworks = array())
 {
-	global $conf, $user, $langs;
+	global $user, $langs;
 
 	$htmllink = $value;
 
