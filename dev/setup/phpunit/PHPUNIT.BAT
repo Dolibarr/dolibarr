@@ -1,9 +1,4 @@
-@ECHO OFF
-REM SAMPLE WINDOWS SCRIPT TO START TESTS
-REM
-REM CURRENTLY THIS SCRIPT MUST BE LOCATED AT THE ROOT OF THE PROJECT.
-REM A copy of phpunit-9.5.phar is required
-
+REM @ECHO OFF
 
 SET OPEN_BASEDIR=%~dp0
 SET DD_TRACE_CLI_ENABLED=1
@@ -17,8 +12,10 @@ REM
 REM The DOMAIN/Port value should be the same as in htdocs/conf/conf.php
 REM (This is only needed if did not set up another server locally
 REM  for your test installation database).
-SET PHPSERVER_DOMAIN_PORT=127.0.0.1:80
+SET PHPSERVER_DOMAIN_PORT=127.0.0.1:8080
 SET PHPSERVER_LOG=%~dp0/php_serv.log
+
+echo if (class_exists('PHPUnit\Framework\TestSuite')) { $dolibarr_main_url_root='http://%PHPSERVER_DOMAIN_PORT%'; } >> %~dp0\htdocs\conf\conf.php
 GOTO :START
 
 REM The error handler
@@ -37,7 +34,7 @@ for /F "tokens=2 delims=," %%i in ('tasklist /FI "IMAGENAME eq php.exe" /FO CSV 
 
 :FOUND_PID
 echo "Server PID: %php_pid%"
-curl "http://%PHPSERVER_DOMAIN_PORT%"
+REM curl "http://%PHPSERVER_DOMAIN_PORT%"
 
 
 SET MEMOPT=-d memory-limit=-1
