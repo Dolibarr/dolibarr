@@ -127,12 +127,6 @@ class Menubase
 	public $langs;
 
 	/**
-	 * @var string Not used
-	 * @deprecated
-	 */
-	public $level;
-
-	/**
 	 * @var string Name family/module for left menu (setup, info, ...)
 	 */
 	public $leftmenu;
@@ -183,7 +177,7 @@ class Menubase
 	 */
 	public function create($user = null)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		// Clean parameters
 		if (!isset($this->enabled)) {
@@ -208,9 +202,6 @@ class Menubase
 		$this->user = (int) $this->user;
 		if (empty($this->position)) {
 			$this->position = 0;
-		}
-		if (!$this->level) {
-			$this->level = 0;
 		}
 
 		// Check parameters
