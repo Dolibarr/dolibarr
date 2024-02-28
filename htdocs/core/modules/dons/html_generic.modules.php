@@ -168,7 +168,7 @@ class html_generic extends ModeleDon
 	 *
 	 *  @param	string			$path	        Path for the file
 	 *  @param	string			$contents	Contents of the file
-	 *  @return	NULL
+	 *  @return	null
 	 */
 	private function saveFile($path, $contents)
 	{
@@ -178,7 +178,7 @@ class html_generic extends ModeleDon
 		fclose($handle);
 		dolChmod($path);
 
-		return;
+		return null;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
