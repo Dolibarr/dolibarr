@@ -2285,7 +2285,7 @@ class Ticket extends CommonObject
 		global $conf;
 
 		$defaultref = '';
-		$modele = getDolGlobalString('TICKET_ADDON','mod_ticket_simple');
+		$modele = getDolGlobalString('TICKET_ADDON', 'mod_ticket_simple');
 
 		// Search template files
 		$file = '';
@@ -2590,7 +2590,7 @@ class Ticket extends CommonObject
 						// Add global email address recipient
 						if (!empty(getDolGlobalString('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS')) &&
 							!empty(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')) && !array_key_exists(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO'), $sendto)
-						){
+						) {
 							$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
 						}
 
