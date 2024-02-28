@@ -210,7 +210,7 @@ class Menubase
 			$this->position = 0;
 		}
 		if (!$this->level) {
-			$this->level = 0;
+			$this->level = '0';
 		}
 
 		// Check parameters
