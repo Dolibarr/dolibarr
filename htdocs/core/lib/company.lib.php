@@ -7,7 +7,7 @@
  * Copyright (C) 2013-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <contact@altairis.fr>
  * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2021-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2015-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht             <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
