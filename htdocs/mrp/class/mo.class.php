@@ -645,7 +645,7 @@ class Mo extends CommonObject
 	 *	@param		Translate	$outputlangs		lang object to use for translation. At "null", the default langs will use.
 	 * 	@return		int								Return integer <0 if KO, >0 if OK
 	 */
-	public function setStatusAsProduced($generateDocument = -1, $outputLangs = null)
+	public function setStatusAsProduced($generateDocument = -1, $outputlangs = null)
 	{
 		$error = 0;
 
@@ -665,16 +665,16 @@ class Mo extends CommonObject
 		}
 
 		// generate document
-		if (!$error && $generateDocument == 1){
-			// select Language, if $outputLangs parameter is empty
+		if (!$error && $generateDocument == 1) {
+			// select Language, if $outputlangs parameter is empty
 			global $langs;
-			if (is_null($outputLangs)) {
-				$outputLangs = $langs;
+			if (is_null($outputlangs)) {
+				$outputlangs = $langs;
 			}
 
 			$ret = $this->fetch($this->id); // Reload to get new records
 			$model = $this->model_pdf;
-			$result = $this->generateDocument($model, $outputLangs, 0, 0, 0);
+			$result = $this->generateDocument($model, $outputlangs, 0, 0, 0);
 
 			if ($result <= 0) {
 				$error++;
