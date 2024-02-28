@@ -733,7 +733,7 @@ class Mo extends CommonObject
 		if ($consumptioncomplete && $productioncomplete) {
 			$retVal = 1;
 		} else {
-			$retVal = 2;
+			$retVal = 0;
 		}
 
 		return $retVal;
