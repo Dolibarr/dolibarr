@@ -1371,7 +1371,7 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 *	Return list of available collation that can be used for database
 	 *
-	 *	@return		array		Liste of Collation
+	 *	@return		array|null		Liste of Collation
 	 */
 	public function getListOfCollation()
 	{
