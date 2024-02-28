@@ -39,7 +39,6 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 use PHPUnit\Framework\TestCase;
 
-
 /**
  * Class for PHPUnit tests
  *
@@ -204,12 +203,22 @@ abstract class CommonClassTest extends TestCase
 		'entrepot' => 'stock',
 		'expedition' => 'delivery_note',
 		'facture' => 'invoice',
-		'ficheinter' => 'intervention',
+		'fichinter' => 'intervention',
 		'product_fournisseur_price' => 'productsupplierprice',
 		'product_price' => 'productprice',
 		'projet'  => 'project',
 		'propale' => 'propal',
 		'socpeople' => 'contact',
+	);
+
+	const EFFECTIVE_DEPRECATED_MODULE_MAPPING = array(
+		'adherent' => 'member',
+		'adherent_type' => 'member_type',
+		'banque' => 'bank',
+		'contrat' => 'contract',
+		'entrepot' => 'stock',
+		'ficheinter' => 'fichinter',
+		'projet'  => 'project',
 	);
 
 	/**
