@@ -639,6 +639,57 @@ class Mo extends CommonObject
 		return $result;
 	}
 
+	/**
+	 * 	Set to status produced,
+	 * 	@param 		int 		$generateDocument 	-1 generate dokument by value of global setting, 0 don't generate dokument, 1 generate dokument
+	 *	@param		Translate	$outputlangs		lang object to use for translation. At "null", the default langs will use.
+	 * 	@return		int								Return integer <0 if KO, >0 if OK
+	 */
+	public function setStatusAsProduced($generateDocument = -1, $outputLangs = null)
+	{
+		$error = 0;
+
+		$this->db->begin();
+
+		// Set status of the Mo to produced
+		$result = $this->setStatut($this::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
+
+		if ($result <= 0) {
+			$error++;
+			setEventMessages($this->error, $this->errors, 'errors');
+		}
+
+		// Check if document must generated
+		if ($generateDocument == -1 && !getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+			$generateDocument = 1;
+		}
+
+		// generate document
+		if (!$error && $generateDocument){
+			// select Language, if $outputLangs parameter is empty
+			global $langs;
+			if (is_null($outputLangs)) {
+				$outputLangs = $langs;
+			}
+
+			$ret = $this->fetch($this->id); // Reload to get new records
+			$model = $this->model_pdf;
+			$result = $this->generateDocument($model, $outputLangs, 0, 0, 0);
+
+			if ($result <= 0) {
+				$error++;
+				setEventMessages($this->error, $this->errors, 'errors');
+			}
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
+	}
 
 	/**
 	 *  Function to check if all MoLines consumed or produced
