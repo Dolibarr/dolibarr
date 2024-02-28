@@ -90,19 +90,19 @@ $catid = GETPOSTINT('catid');
 if (!empty($catid) && empty($searchCategoryProductList)) {
 	$searchCategoryProductList = array($catid);
 }
-$search_tosell = GETPOSTINT("search_tosell");
-$search_tobuy = GETPOSTINT("search_tobuy");
+$search_tosell = GETPOST("search_tosell", 'int');
+$search_tobuy = GETPOST("search_tobuy", 'int');
 $search_country = GETPOSTINT("search_country");
 $search_state = GETPOSTINT("state_id");
 $fourn_id = GETPOSTINT("fourn_id");
-$search_tobatch = GETPOSTINT("search_tobatch");
+$search_tobatch = GETPOST("search_tobatch", 'int');
 $search_accountancy_code_sell = GETPOST("search_accountancy_code_sell", 'alpha');
 $search_accountancy_code_sell_intra = GETPOST("search_accountancy_code_sell_intra", 'alpha');
 $search_accountancy_code_sell_export = GETPOST("search_accountancy_code_sell_export", 'alpha');
 $search_accountancy_code_buy = GETPOST("search_accountancy_code_buy", 'alpha');
 $search_accountancy_code_buy_intra = GETPOST("search_accountancy_code_buy_intra", 'alpha');
 $search_accountancy_code_buy_export = GETPOST("search_accountancy_code_buy_export", 'alpha');
-$search_finished = GETPOSTINT("search_finished");
+$search_finished = GETPOST("search_finished", 'int');
 $search_units = GETPOSTINT('search_units');
 $optioncss = GETPOST('optioncss', 'alpha');
 $type = GETPOSTINT("type");
