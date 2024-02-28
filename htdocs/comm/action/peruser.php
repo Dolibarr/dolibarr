@@ -7,6 +7,7 @@
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2023 Florian HENRY <florian.henry@scopen.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,8 +51,8 @@ $action = GETPOST('action', 'aZ09');
 $disabledefaultvalues = GETPOSTINT('disabledefaultvalues');
 
 $filter = GETPOST("search_filter", 'alpha', 3) ? GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
-$filtert = GETPOST("search_filtert", "int", 3) ? GETPOST("search_filtert", "int", 3) : GETPOST("filtert", "int", 3);
-$usergroup = GETPOST("search_usergroup", "int", 3) ? GETPOST("search_usergroup", "int", 3) : GETPOST("usergroup", "int", 3);
+$filtert = GETPOSTINT("search_filtert", 3) ? GETPOSTINT("search_filtert", 3) : GETPOSTINT("filtert", 3);
+$usergroup = GETPOSTINT("search_usergroup", 3) ? GETPOSTINT("search_usergroup", 3) : GETPOSTINT("usergroup", 3);
 //if (! ($usergroup > 0) && ! ($filtert > 0)) $filtert = $user->id;
 //$showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 $showbirthday = 0;
@@ -102,12 +103,12 @@ $year = GETPOSTINT("year") ? GETPOSTINT("year") : date("Y");
 $month = GETPOSTINT("month") ? GETPOSTINT("month") : date("m");
 $week = GETPOSTINT("week") ? GETPOSTINT("week") : date("W");
 $day = GETPOSTINT("day") ? GETPOSTINT("day") : date("d");
-$pid = GETPOSTISSET("search_projectid") ? GETPOST("search_projectid", "int", 3) : GETPOST("projectid", "int", 3);
+$pid = GETPOSTISSET("search_projectid") ? GETPOSTINT("search_projectid", 3) : GETPOSTINT("projectid", 3);
 $status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09'); // status may be 0, 50, 100, 'todo', 'na' or -1
 $type = GETPOSTISSET("search_type") ? GETPOST("search_type", 'alpha') : GETPOST("type", 'alpha');
 $maxprint = ((GETPOSTINT("maxprint") != '') ? GETPOSTINT("maxprint") : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
-$search_categ_cus = GETPOST("search_categ_cus", "int", 3) ? GETPOST("search_categ_cus", "int", 3) : 0;
+$search_categ_cus = GETPOSTINT("search_categ_cus", 3) ? GETPOSTINT("search_categ_cus", 3) : 0;
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('search_actioncode', 'array:aZ09')) {
 	$actioncode = GETPOST('search_actioncode', 'array:aZ09', 3);
@@ -466,7 +467,8 @@ $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsm
 $viewmode .= '<span class="marginrightonly"></span>';
 
 // Add more views from hooks
-$parameters = array(); $object = null;
+$parameters = array();
+$object = null;
 $reshook = $hookmanager->executeHooks('addCalendarView', $parameters, $object, $action);
 if (empty($reshook)) {
 	$viewmode .= $hookmanager->resPrint;
@@ -938,7 +940,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		if ($filtert > 0) {
 			$sql .= " AND u.rowid = ".((int) $filtert);
 		}
-		if ($usergroup > 0)	{
+		if ($usergroup > 0) {
 			$sql .= " AND ug.fk_usergroup = ".((int) $usergroup);
 		}
 		if ($user->socid > 0) {

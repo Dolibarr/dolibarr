@@ -46,7 +46,7 @@ call_user_func(static function (): void {
 				continue;
 			}
 			$arguments = $node->children;
-			if (count($arguments) != 3) {
+			if (!in_array(count($arguments), [3, 5])) {  // ',' included !
 				print "Arg Count is ".count($arguments)." - Skip $instance".PHP_EOL;
 				continue;
 			}

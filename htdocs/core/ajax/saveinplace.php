@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011-2012 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -169,7 +170,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 				$return['error'] = $langs->trans('ErrorBadValue');
 			}
 		} elseif ($type == 'datepicker') {
-			$timestamp = GETPOST('timestamp', 'int', 2);
+			$timestamp = GETPOSTINT('timestamp', 2);
 			$format = 'date';
 			$newvalue = ($timestamp / 1000);
 		} elseif ($type == 'select') {
