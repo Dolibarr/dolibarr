@@ -387,43 +387,8 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$consumptioncomplete = true;
-			$productioncomplete = true;
-
-			if (GETPOST('autoclose', 'int')) {
-				foreach ($object->lines as $line) {
-					if ($line->role == 'toconsume') {
-						$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
-						$alreadyconsumed = 0;
-						foreach ($arrayoflines as $line2) {
-							$alreadyconsumed += $line2['qty'];
-						}
-
-						if ($alreadyconsumed < $line->qty) {
-							$consumptioncomplete = false;
-						}
-					}
-					if ($line->role == 'toproduce') {
-						$arrayoflines = $object->fetchLinesLinked('produced', $line->id);
-						$alreadyproduced = 0;
-						foreach ($arrayoflines as $line2) {
-							$alreadyproduced += $line2['qty'];
-						}
-
-						if ($alreadyproduced < $line->qty) {
-							$productioncomplete = false;
-						}
-					}
-				}
-			} else {
-				$consumptioncomplete = false;
-				$productioncomplete = false;
-			}
-
-			// Update status of MO
-			dol_syslog("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
-			//var_dump("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
-			if ($consumptioncomplete && $productioncomplete) {
+			// Update status of MO if 'autoclose' is set
+			if ($object->hasAllConsumedAndProduced() && GETPOST('autoclose', 'int')) {
 				$result = $object->setStatut($object::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
 			} else {
 				$result = $object->setStatut($object::STATUS_INPROGRESS, 0, '', 'MRP_MO_PRODUCED');

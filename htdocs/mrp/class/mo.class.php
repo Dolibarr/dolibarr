@@ -641,6 +641,54 @@ class Mo extends CommonObject
 
 
 	/**
+	 *  Function to check if all MoLines consumed or produced
+	 *
+	 *  @return	int						Return integer <0 if KO, 0 if not MoLines are complete, 1 if MoLines are complete
+	 */
+	public function hasAllConsumedAndProduced()
+	{
+		$retVal = -1;
+		$consumptioncomplete = true;
+		$productioncomplete = true;
+
+		//Iterate all MoLines of the Mo
+		foreach ($this->lines as $line) {
+			if ($line->role == 'toconsume') {
+				$arrayoflines = $this->fetchLinesLinked('consumed', $line->id);
+				$alreadyconsumed = 0;
+				foreach ($arrayoflines as $line2) {
+					$alreadyconsumed += $line2['qty'];
+				}
+
+				if ($alreadyconsumed < $line->qty) {
+					$consumptioncomplete = false;
+				}
+			}
+			if ($line->role == 'toproduce') {
+				$arrayoflines = $this->fetchLinesLinked('produced', $line->id);
+				$alreadyproduced = 0;
+				foreach ($arrayoflines as $line2) {
+					$alreadyproduced += $line2['qty'];
+				}
+
+				if ($alreadyproduced < $line->qty) {
+					$productioncomplete = false;
+				}
+			}
+		}
+
+		dol_syslog(get_class($this).'::hasAllConsumedAndProduced consumptioncomplete = '.$consumptioncomplete.' productioncomplete = '.$productioncomplete);
+
+		if ($consumptioncomplete && $productioncomplete) {
+			$retVal = 1;
+		} else {
+			$retVal = 2;
+		}
+
+		return $retVal;
+	}
+
+	/**
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
