@@ -2674,7 +2674,7 @@ class EmailCollector extends CommonObject
 													$this->error = 'Error while changing the tcket status -> ref='.$objectemail->ref;
 													$this->errors[] = $this->error;
 												}
-											}											
+											}
 											if (!empty($attachments)) {
 												// There is an attachment for the ticket -> store attachment
 												$ticket = New Ticket($this->db);
