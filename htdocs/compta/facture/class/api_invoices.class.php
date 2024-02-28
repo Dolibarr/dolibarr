@@ -1478,27 +1478,23 @@ class Invoices extends DolibarrApi
 		// Clean parameters amount if payment is for a credit note
 		if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
 			$resteapayer = price2num($resteapayer, 'MT');
-			$amounts[$id] = price2num(-1 * $resteapayer, 'MT');
+			$amounts[$id] = (float) price2num(-1 * $resteapayer, 'MT');
 			// Multicurrency
 			$newvalue = price2num($this->invoice->multicurrency_total_ttc, 'MT');
-			$multicurrency_amounts[$id] = price2num(-1 * $newvalue, 'MT');
+			$multicurrency_amounts[$id] = (float) price2num(-1 * $newvalue, 'MT');
 		} else {
 			$resteapayer = price2num($resteapayer, 'MT');
-			$amounts[$id] = $resteapayer;
+			$amounts[$id] = (float) $resteapayer;
 			// Multicurrency
 			$newvalue = price2num($this->invoice->multicurrency_total_ttc, 'MT');
-			$multicurrency_amounts[$id] = $newvalue;
+			$multicurrency_amounts[$id] = (float) $newvalue;
 		}
 
 		// Creation of payment line
 		$paymentobj = new Paiement($this->db);
 		$paymentobj->datepaye     = $datepaye;
-		$paymentobj->amounts      = $amounts; // Array with all payments dispatching with invoice id
-		$multicurrencyAmountsConverted = [];
-		foreach ($multicurrency_amounts as $key => $value) {
-			$multicurrencyAmountsConverted[$key] = (float) $value;
-		}
-		$paymentobj->multicurrency_amounts = $multicurrencyAmountsConverted; // Array with all payments dispatching
+		$paymentobj->amounts      = $amounts;
+		$paymentobj->multicurrency_amounts = $multicurrency_amounts;
 		$paymentobj->paiementid = $paymentid;
 		$paymentobj->paiementcode = (string) dol_getIdFromCode($this->db, $paymentid, 'c_paiement', 'id', 'code', 1);
 		$paymentobj->num_payment = $num_payment;
