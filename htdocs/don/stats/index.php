@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/donstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
@@ -39,17 +39,17 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 // Load translation files required by the page
 $langs->loadLangs("donations");
 
-$userid = GETPOSTINT('userid', 'int');
-$socid = GETPOSTINT('socid', 'int');
+$userid = GETPOSTINT('userid');
+$socid = GETPOSTINT('socid');
 // Security check
 if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
 
-$status = GETPOST('status', 'intcomma');
+$status = GETPOSTINT('status');
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$typent_id = GETPOST('typent_id', 'int');
+$typent_id = GETPOSTINT('typent_id');
 $year = GETPOST('year') > 0 ? GETPOST('year') : $nowyear;
 $startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
@@ -73,7 +73,7 @@ print load_fiche_titre($langs->trans("DonationsStatistics"), '', 'donation');
 
 dol_mkdir($dir);
 
-$stats = new DonationStats($db, $socid, '',  ($userid > 0 ? $userid : 0), ($typent_id > 0 ? $typent_id : 0), ($status >= 0 ? $status : 4));
+$stats = new DonationStats($db, $socid, '',  ($userid > 0 ? $userid : 0), ($typent_id > 0 ? $typent_id : 0), ($status > 0 ? $status : 4));
 
 if (is_array($custcats) && !empty($custcats)) {
 	$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cat ON (d.fk_soc = cat.fk_soc)';
@@ -220,7 +220,7 @@ if ($user->admin) {
 print '</td></tr>';
 
 // Category
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	$cat_type = Categorie::TYPE_CUSTOMER;
 	$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
 	print '<tr><td>'.$cat_label.'</td><td>';
@@ -244,7 +244,7 @@ $liststatus = array(
 	'1' => $langs->trans("DonationStatusPromiseValidated"),
 	'3' => $langs->trans("Canceled")
 );
-print $form->selectarray('status', $liststatus, $status, 1);
+print $form->selectarray('status', $liststatus, 4, 1);
 
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';

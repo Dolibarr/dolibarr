@@ -71,7 +71,7 @@ class DonationStats extends Stats
 	 * @param   int		$typentid  	Id of type of third party for filter
 	 * @param   int		$status    	Status of donation for filter
 	 */
-	public function __construct($db, $socid, $mode, $userid = 0, $typentid = 0, $status = 0)
+	public function __construct($db, $socid, $mode, $userid = 0, $typentid = 0, $status = 4)
 	{
 		global $conf;
 
@@ -83,9 +83,9 @@ class DonationStats extends Stats
 		$this->cachefilesuffix = $mode;
 		$this->join = '';
 
-		if ($status == '0' || $status == '1' || $status == '2') {
+		if ($status == 0 || $status == 1 || $status == 2) {
 			$this->where = ' d.fk_statut IN ('.$db->sanitize($status).')';
-		} elseif ($status == '3') {
+		} elseif ($status == 3) {
 			$this->where = ' d.fk_statut IN (-1)';
 		} elseif ($status == 4) {
 			$this->where = ' d.fk_statut >= 0';
