@@ -111,6 +111,19 @@ $permissiontoadd = $user->rights->mrp->write; // Used by the include of actions_
 $permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->entity : 1];
 
+// Define output language
+$outputlangs = $langs;
+$newlang = '';
+if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+	$newlang = GETPOST('lang_id', 'aZ09');
+}
+if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+	$newlang = $object->thirdparty->default_lang;
+}
+if (!empty($newlang)) {
+	$outputlangs = new Translate("", $conf);
+	$outputlangs->setDefaultLang($newlang);
+}
 
 /*
  * Actions
