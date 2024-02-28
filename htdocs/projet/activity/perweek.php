@@ -40,8 +40,8 @@ $langs->loadLangs(array('projects', 'users', 'companies'));
 
 $action = GETPOST('action', 'aZ09');
 $mode = GETPOST("mode", 'alpha');
-$id = GETPOST('id', 'int');
-$taskid = GETPOST('taskid', 'int');
+$id = GETPOSTINT('id');
+$taskid = GETPOSTINT('taskid');
 
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'perweekcard';
 
@@ -50,7 +50,7 @@ if ($mode == 'mine') {
 	$mine = 1;
 }
 
-$projectid = GETPOSTISSET("id") ? GETPOST("id", "int", 1) : GETPOST("projectid", "int");
+$projectid = GETPOSTISSET("id") ? GETPOST("id", "int", 1) : GETPOSTINT("projectid");
 
 $hookmanager->initHooks(array('timesheetperweekcard'));
 
@@ -62,15 +62,15 @@ $result = restrictedArea($user, 'projet', $projectid);
 
 $now = dol_now();
 
-$year = GETPOST('reyear', 'int') ? GETPOST('reyear', 'int') : (GETPOST("year", 'int') ? GETPOST("year", "int") : date("Y"));
-$month = GETPOST('remonth', 'int') ? GETPOST('remonth', 'int') : (GETPOST("month", 'int') ? GETPOST("month", "int") : date("m"));
-$day = GETPOST('reday', 'int') ? GETPOST('reday', 'int') : (GETPOST("day", 'int') ? GETPOST("day", "int") : date("d"));
-$week = GETPOST("week", "int") ? GETPOST("week", "int") : date("W");
+$year = GETPOSTINT('reyear') ? GETPOSTINT('reyear') : (GETPOSTINT("year") ? GETPOSTINT("year") : date("Y"));
+$month = GETPOSTINT('remonth') ? GETPOSTINT('remonth') : (GETPOSTINT("month") ? GETPOSTINT("month") : date("m"));
+$day = GETPOSTINT('reday') ? GETPOSTINT('reday') : (GETPOSTINT("day") ? GETPOSTINT("day") : date("d"));
+$week = GETPOSTINT("week") ? GETPOSTINT("week") : date("W");
 
 $day = (int) $day;
 
 //$search_categ = GETPOST("search_categ", 'alpha');
-$search_usertoprocessid = GETPOST('search_usertoprocessid', 'int');
+$search_usertoprocessid = GETPOSTINT('search_usertoprocessid');
 $search_task_ref = GETPOST('search_task_ref', 'alpha');
 $search_task_label = GETPOST('search_task_label', 'alpha');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
@@ -186,8 +186,8 @@ if (GETPOST("button_search_x", 'alpha') || GETPOST("button_search.x", 'alpha') |
 }
 
 if (GETPOST('submitdateselect')) {
-	if (GETPOST('remonth', 'int') && GETPOST('reday', 'int') && GETPOST('reyear', 'int')) {
-		$daytoparse = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+	if (GETPOSTINT('remonth') && GETPOSTINT('reday') && GETPOSTINT('reyear')) {
+		$daytoparse = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 	}
 
 	$action = '';
@@ -285,7 +285,7 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 						$object->fetch($tmptaskid);
 
 						if (GETPOSTISSET($tmptaskid.'progress')) {
-							$object->progress = GETPOST($tmptaskid.'progress', 'int');
+							$object->progress = GETPOSTINT($tmptaskid.'progress');
 						} else {
 							unset($object->progress);
 						}
@@ -312,8 +312,8 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 				$object->fetch($tmptaskid);
 				//var_dump($object->progress);
 				//var_dump(GETPOST($tmptaskid . 'progress', 'int')); exit;
-				if ($object->progress != GETPOST($tmptaskid.'progress', 'int')) {
-					$object->progress = GETPOST($tmptaskid.'progress', 'int');
+				if ($object->progress != GETPOSTINT($tmptaskid.'progress')) {
+					$object->progress = GETPOSTINT($tmptaskid.'progress');
 					$result = $object->update($user);
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');

@@ -1688,7 +1688,7 @@ class CMailFile
 	 * @param	array	$mimetype_list		Tableau
 	 * @param 	array	$mimefilename_list	Tableau
 	 * @param	array	$cidlist			Array of CID if file must be completed with CID code
-	 * @return	string						String with files encoded
+	 * @return	string|int						String with files encoded
 	 */
 	private function write_files($filename_list, $mimetype_list, $mimefilename_list, $cidlist)
 	{

@@ -133,7 +133,7 @@ $original_file = GETPOST('file', 'alphanohtml'); 	// Do not use urldecode here (
 $hashp = GETPOST('hashp', 'aZ09', 1);				// Must be read only by GET
 $modulepart = GETPOST('modulepart', 'alpha', 1);	// Must be read only by GET
 $urlsource = GETPOST('urlsource', 'alpha');
-$entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : $conf->entity);
+$entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity);
 
 // Security check
 if (empty($modulepart) && empty($hashp)) {

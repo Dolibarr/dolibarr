@@ -41,7 +41,7 @@ $langs->loadLangs(array('errors', 'admin', 'modulebuilder', 'exports'));
 
 $mode = GETPOST('mode', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 if (empty($mode)) {
 	$mode = 'desc';
 }

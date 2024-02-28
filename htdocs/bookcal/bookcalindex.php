@@ -38,7 +38,7 @@ $action = GETPOST('action', 'aZ09');
 // if (! $user->hasRight('bookcal', 'myobject', 'read')) {
 // 	accessforbidden();
 // }
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;

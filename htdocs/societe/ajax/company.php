@@ -45,9 +45,9 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 $htmlname = GETPOST('htmlname', 'aZ09');
 $filter = GETPOST('filter', 'alpha');
-$outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
+$outjson = (GETPOSTINT('outjson') ? GETPOSTINT('outjson') : 0);
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $excludeids = GETPOST('excludeids', 'intcomma');
 $showtype = GETPOSTINT('showtype', 'alpha');
 $showcode = GETPOSTINT('showcode', 'alpha');

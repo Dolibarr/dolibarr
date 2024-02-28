@@ -193,7 +193,7 @@ abstract class ActionsContactCardCommon
 
 			$this->object->load_ref_elements();
 
-			if (isModEnabled('commande')) {
+			if (isModEnabled('order')) {
 				$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForOrders");
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_commande ? $this->object->ref_commande : $langs->trans("NoContactForAnyOrder");
 				$i++;
@@ -203,12 +203,12 @@ abstract class ActionsContactCardCommon
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_propal ? $this->object->ref_propal : $langs->trans("NoContactForAnyProposal");
 				$i++;
 			}
-			if (isModEnabled('contrat')) {
+			if (isModEnabled('contract')) {
 				$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForContracts");
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_contrat ? $this->object->ref_contrat : $langs->trans("NoContactForAnyContract");
 				$i++;
 			}
-			if (isModEnabled('facture')) {
+			if (isModEnabled('invoice')) {
 				$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForInvoices");
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_facturation ? $this->object->ref_facturation : $langs->trans("NoContactForAnyInvoice");
 				$i++;
@@ -285,7 +285,7 @@ abstract class ActionsContactCardCommon
 		// phpcs:enable
 		global $langs, $mysoc;
 
-		$this->object->socid = GETPOST("socid", 'int');
+		$this->object->socid = GETPOSTINT("socid");
 		$this->object->lastname			= GETPOST("name");
 		$this->object->firstname		= GETPOST("firstname");
 		$this->object->civility_id = GETPOST("civility_id");

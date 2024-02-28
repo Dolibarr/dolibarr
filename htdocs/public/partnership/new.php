@@ -185,7 +185,7 @@ if (empty($reshook) && $action == 'add') {
 
 	$db->begin();
 
-	if (GETPOST('partnershiptype', 'int') <= 0) {
+	if (GETPOSTINT('partnershiptype') <= 0) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"))."<br>\n";
 	}
@@ -228,7 +228,7 @@ if (empty($reshook) && $action == 'add') {
 		$partnership->date_creation 		 = dol_now();
 		$partnership->date_partnership_start = dol_now();
 		$partnership->fk_user_creat          = 0;
-		$partnership->fk_type                = GETPOST('partnershiptype', 'int');
+		$partnership->fk_type                = GETPOSTINT('partnershiptype');
 		$partnership->url                    = GETPOST('url');
 		//$partnership->typeid               = $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE ? $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE : GETPOST('typeid', 'int');
 		$partnership->ip = getUserRemoteIP();
@@ -608,7 +608,7 @@ if (getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE')) {
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 if (!getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE')) {
 	print '<tr class="morphy"><td class="classfortooltip" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans('PartnershipType').' <span class="star">*</span></td><td>'."\n";
-	print $form->selectarray("partnershiptype", $listofpartnership, GETPOSTISSET('partnershiptype') ? GETPOST('partnershiptype', 'int') : 'ifone', 1);
+	print $form->selectarray("partnershiptype", $listofpartnership, GETPOSTISSET('partnershiptype') ? GETPOSTINT('partnershiptype') : 'ifone', 1);
 	print '</td></tr>'."\n";
 }
 // Company
@@ -649,7 +649,7 @@ print '</td></tr>';
 // Country
 print '<tr><td>'.$langs->trans('Country').'</td><td>';
 print img_picto('', 'country', 'class="pictofixedwidth"');
-$country_id = GETPOST('country_id', 'int');
+$country_id = GETPOSTINT('country_id');
 if (!$country_id && getDolGlobalString('PARTNERSHIP_NEWFORM_FORCECOUNTRYCODE')) {
 	$country_id = getCountry($conf->global->PARTNERSHIP_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
 }

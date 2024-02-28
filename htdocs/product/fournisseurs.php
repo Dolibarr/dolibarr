@@ -207,12 +207,12 @@ if (empty($reshook)) {
 			$tva_tx = price2num($tva_tx);
 		}
 
-		$price_expression = GETPOST('eid', 'int') ? GETPOST('eid', 'int') : ''; // Discard expression if not in expression mode
-		$delivery_time_days = GETPOST('delivery_time_days', 'int') ? GETPOST('delivery_time_days', 'int') : '';
+		$price_expression = GETPOSTINT('eid') ? GETPOSTINT('eid') : ''; // Discard expression if not in expression mode
+		$delivery_time_days = GETPOSTINT('delivery_time_days') ? GETPOSTINT('delivery_time_days') : '';
 		$supplier_reputation = GETPOST('supplier_reputation');
 		$supplier_description = GETPOST('supplier_description', 'restricthtml');
 		$barcode = GETPOST('barcode', 'alpha');
-		$fk_barcode_type = GETPOST('fk_barcode_type', 'int');
+		$fk_barcode_type = GETPOSTINT('fk_barcode_type');
 		$packaging = price2num(GETPOST("packaging", 'alphanohtml'), 'MS');
 
 		if ($tva_tx == '') {
@@ -292,7 +292,7 @@ if (empty($reshook)) {
 				$supplier = new Fournisseur($db);
 				$result = $supplier->fetch($id_fourn);
 				if (GETPOSTISSET('ref_fourn_price_id')) {
-					$object->fetch_product_fournisseur_price(GETPOST('ref_fourn_price_id', 'int'));
+					$object->fetch_product_fournisseur_price(GETPOSTINT('ref_fourn_price_id'));
 				}
 				$extralabels = $extrafields->fetch_name_optionals_label("product_fournisseur_price");
 				$extrafield_values = $extrafields->getOptionalsFromPost("product_fournisseur_price");
@@ -807,7 +807,7 @@ if ($id > 0 || $ref) {
 					print '<td>'.$langs->trans('GencodBuyPrice').'</td>';
 					print '<td>';
 					print img_picto('', 'barcode', 'class="pictofixedwidth"');
-					print $formbarcode->selectBarcodeType((GETPOSTISSET('fk_barcode_type') ? GETPOST('fk_barcode_type', 'int') : ($rowid ? $object->supplier_fk_barcode_type : getDolGlobalInt("PRODUIT_DEFAULT_BARCODE_TYPE"))), 'fk_barcode_type', 1);
+					print $formbarcode->selectBarcodeType((GETPOSTISSET('fk_barcode_type') ? GETPOSTINT('fk_barcode_type') : ($rowid ? $object->supplier_fk_barcode_type : getDolGlobalInt("PRODUIT_DEFAULT_BARCODE_TYPE"))), 'fk_barcode_type', 1);
 					print ' <input class="flat" name="barcode"  value="'.(GETPOSTISSET('barcode') ? GETPOST('barcode') : ($rowid ? $object->supplier_barcode : '')).'"></td>';
 					print '</tr>';
 				}

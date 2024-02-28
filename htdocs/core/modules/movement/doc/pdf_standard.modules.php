@@ -155,15 +155,15 @@ class pdf_standard extends ModelePDFMovement
 		 * TODO: get from object
 		 */
 
-		$id = GETPOST('id', 'int');
+		$id = GETPOSTINT('id');
 		$ref = GETPOST('ref', 'alpha');
-		$msid = GETPOST('msid', 'int');
+		$msid = GETPOSTINT('msid');
 		$product_id = GETPOST("product_id");
 		$action = GETPOST('action', 'aZ09');
 		$cancel = GETPOST('cancel', 'alpha');
 		$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'movementlist';
 
-		$idproduct = GETPOST('idproduct', 'int');
+		$idproduct = GETPOSTINT('idproduct');
 		$year = GETPOST("year");
 		$month = GETPOST("month");
 		$search_ref = GETPOST('search_ref', 'alpha');
@@ -175,10 +175,10 @@ class pdf_standard extends ModelePDFMovement
 		$search_user = trim(GETPOST("search_user"));
 		$search_batch = trim(GETPOST("search_batch"));
 		$search_qty = trim(GETPOST("search_qty"));
-		$search_type_mouvement = GETPOST('search_type_mouvement', 'int');
+		$search_type_mouvement = GETPOSTINT('search_type_mouvement');
 
-		$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-		$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+		$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+		$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 		$sortfield = GETPOST('sortfield', 'aZ09comma');
 		$sortorder = GETPOST('sortorder', 'aZ09comma');
 		if (empty($page) || $page == -1) {
@@ -192,7 +192,7 @@ class pdf_standard extends ModelePDFMovement
 			$sortorder = "DESC";
 		}
 
-		$pdluoid = GETPOST('pdluoid', 'int');
+		$pdluoid = GETPOSTINT('pdluoid');
 
 		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 		$hookmanager->initHooks(array('movementlist'));

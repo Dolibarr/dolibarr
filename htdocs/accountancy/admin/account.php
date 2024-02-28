@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
  * Copyright (C) 2016-2018  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +36,8 @@ $langs->loadLangs(array('accountancy', 'admin', 'bills', 'compta', 'salaries'));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
-$id = GETPOST('id', 'int');
-$rowid = GETPOST('rowid', 'int');
+$id = GETPOSTINT('id');
+$rowid = GETPOSTINT('rowid');
 $massaction = GETPOST('massaction', 'aZ09');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'accountingaccountlist'; // To manage different context of search
@@ -49,10 +50,10 @@ $search_accountparent = GETPOST('search_accountparent', 'alpha');
 $search_pcgtype = GETPOST('search_pcgtype', 'alpha');
 $search_import_key = GETPOST('search_import_key', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $confirm = GETPOST('confirm', 'alpha');
 
-$chartofaccounts = GETPOST('chartofaccounts', 'int');
+$chartofaccounts = GETPOSTINT('chartofaccounts');
 
 $permissiontoadd = $user->hasRight('accounting', 'chartofaccount');
 $permissiontodelete = $user->hasRight('accounting', 'chartofaccount');
@@ -66,10 +67,10 @@ if (!$user->hasRight('accounting', 'chartofaccount')) {
 }
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -84,15 +85,15 @@ if (!$sortorder) {
 }
 
 $arrayfields = array(
-	'aa.account_number'=>array('label'=>"AccountNumber", 'checked'=>1),
-	'aa.label'=>array('label'=>"Label", 'checked'=>1),
-	'aa.labelshort'=>array('label'=>"LabelToShow", 'checked'=>1),
-	'aa.account_parent'=>array('label'=>"Accountparent", 'checked'=>1),
-	'aa.pcg_type'=>array('label'=>"Pcgtype", 'checked'=>1, 'help'=>'PcgtypeDesc'),
-	'categories'=>array('label'=>"AccountingCategories", 'checked'=>-1, 'help'=>'AccountingCategoriesDesc'),
-	'aa.reconcilable'=>array('label'=>"Reconcilable", 'checked'=>1),
-	'aa.import_key'=>array('label'=>"ImportId", 'checked'=>-1, 'help'=>''),
-	'aa.active'=>array('label'=>"Activated", 'checked'=>1)
+	'aa.account_number' => array('label' => "AccountNumber", 'checked' => 1),
+	'aa.label' => array('label' => "Label", 'checked' => 1),
+	'aa.labelshort' => array('label' => "LabelToShow", 'checked' => 1),
+	'aa.account_parent' => array('label' => "Accountparent", 'checked' => 1),
+	'aa.pcg_type' => array('label' => "Pcgtype", 'checked' => 1, 'help' => 'PcgtypeDesc'),
+	'categories' => array('label' => "AccountingCategories", 'checked' => -1, 'help' => 'AccountingCategoriesDesc'),
+	'aa.reconcilable' => array('label' => "Reconcilable", 'checked' => 1),
+	'aa.import_key' => array('label' => "ImportId", 'checked' => -1, 'help' => ''),
+	'aa.active' => array('label' => "Activated", 'checked' => 1)
 );
 
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -147,8 +148,8 @@ if (empty($reshook)) {
 		$search_import_key = "";
 		$search_array_options = array();
 	}
-	if ((GETPOST('valid_change_chart', 'alpha') && GETPOST('chartofaccounts', 'int') > 0)	// explicit click on button 'Change and load' with js on
-		|| (GETPOST('chartofaccounts', 'int') > 0 && GETPOST('chartofaccounts', 'int') != getDolGlobalInt('CHARTOFACCOUNTS'))) {	// a submit of form is done and chartofaccounts combo has been modified
+	if ((GETPOSTINT('valid_change_chart') && GETPOSTINT('chartofaccounts') > 0)	// explicit click on button 'Change and load' with js on
+		|| (GETPOSTINT('chartofaccounts') > 0 && GETPOSTINT('chartofaccounts') != getDolGlobalInt('CHARTOFACCOUNTS'))) {	// a submit of form is done and chartofaccounts combo has been modified
 		$error = 0;
 
 		if ($chartofaccounts > 0 && $permissiontoadd) {
@@ -200,7 +201,7 @@ if (empty($reshook)) {
 
 	if ($action == 'disable' && $permissiontoadd) {
 		if ($accounting->fetch($id)) {
-			$mode = GETPOST('mode', 'int');
+			$mode = GETPOSTINT('mode');
 			$result = $accounting->accountDeactivate($id, $mode);
 		}
 
@@ -210,7 +211,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'enable' && $permissiontoadd) {
 		if ($accounting->fetch($id)) {
-			$mode = GETPOST('mode', 'int');
+			$mode = GETPOSTINT('mode');
 			$result = $accounting->accountActivate($id, $mode);
 		}
 		$action = 'update';
@@ -410,6 +411,7 @@ if ($resql) {
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'accounting_account', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
@@ -506,7 +508,7 @@ if ($resql) {
 	}
 
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields);
+	$parameters = array('arrayfields' => $arrayfields);
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
@@ -568,7 +570,7 @@ if ($resql) {
 	}
 
 	// Hook fields
-	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
@@ -709,7 +711,7 @@ if ($resql) {
 		}
 
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
@@ -803,7 +805,7 @@ if ($resql) {
 
 	$db->free($resql);
 
-	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
