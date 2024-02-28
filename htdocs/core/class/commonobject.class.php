@@ -6292,6 +6292,7 @@ abstract class CommonObject
 				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || (!in_array($extrafields->attributes[$this->table_element]['type'][$name], ['separate', 'point', 'multipts', 'linestrg','polygon']))) {
 					$sql .= ", ".$name;
 				}
+				// use geo sql fonction to read as text
 				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'point') {
 					$sql .= ", ST_AsWKT(".$name.") as ".$name;
 				}
