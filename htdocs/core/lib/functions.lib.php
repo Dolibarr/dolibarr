@@ -236,8 +236,8 @@ define(
 		'order' => 'commande',    // Has old directory
 		'shipping' => 'expedition', // Has old directory
 		'invoice' => 'facture', // Has old directory
-		'intervention' => 'ficheinter', // Has old directory
-		//'ficheinter' => 'fichinter',  // Backup for 'fichinter'
+		'intervention' => 'fichinter', // Has old directory
+		'ficheinter' => 'fichinter',  // Backup for 'fichinter'
 		'propal' => 'propale', // Has old directory
 		'contact' => 'socpeople', // Has old directory
 	)
