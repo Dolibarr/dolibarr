@@ -834,7 +834,7 @@ class FormOther
 	 *  @deprecated Use instead selectColor
 	 *  @see selectColor()
 	 */
-	public function select_color($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '')
+	public function select_color($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = [])
 	{
 		// phpcs:enable
 		print $this->selectColor($set_color, $prefix, $form_name, $showcolorbox, $arrayofcolors);
@@ -854,7 +854,7 @@ class FormOther
 	 *  @return	string
 	 *  @see showColor()
 	 */
-	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = array(), $morecss = '', $setpropertyonselect = '', $default = '')
+	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = [], $morecss = '', $setpropertyonselect = '', $default = '')
 	{
 		// Deprecation warning
 		if ($form_name) {
