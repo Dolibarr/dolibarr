@@ -2,7 +2,7 @@
 /* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013      Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2021 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2019      Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024 Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -444,7 +444,7 @@ $selectedfields = '';
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
-print '<table class="noborder">';
+print '<table class="noborder liste">';
 
 print '<tr class="liste_titre_filter">';
 // Action column

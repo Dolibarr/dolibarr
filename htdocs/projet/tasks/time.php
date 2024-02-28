@@ -7,6 +7,7 @@
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2021  Christophe Battarel		<christophe@altairis.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -262,11 +263,7 @@ if ($action == 'addtimespent' && $user->hasRight('projet', 'time')) {
 			}
 		}
 	} else {
-		if (empty($id)) {
-			$action = 'createtime';
-		} else {
-			$action = 'createtime';
-		}
+		$action = 'createtime';
 	}
 }
 
@@ -1268,25 +1265,25 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 		// Definition of fields for list
 		$arrayfields = array();
-		$arrayfields['t.element_date'] = array('label'=>$langs->trans("Date"), 'checked'=>1);
-		$arrayfields['p.fk_soc'] = array('label'=>$langs->trans("ThirdParty"), 'type'=>'integer:Societe:/societe/class/societe.class.php:1','checked'=>1);
-		$arrayfields['s.name_alias'] = array('label'=>$langs->trans("AliasNameShort"), 'type'=>'integer:Societe:/societe/class/societe.class.php:1');
+		$arrayfields['t.element_date'] = array('label' => $langs->trans("Date"), 'checked' => 1);
+		$arrayfields['p.fk_soc'] = array('label' => $langs->trans("ThirdParty"), 'type' => 'integer:Societe:/societe/class/societe.class.php:1','checked' => 1);
+		$arrayfields['s.name_alias'] = array('label' => $langs->trans("AliasNameShort"), 'type' => 'integer:Societe:/societe/class/societe.class.php:1');
 		if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
 			if (! empty($allprojectforuser)) {
 				$arrayfields['p.project_ref'] = ['label' => $langs->trans('RefProject'), 'checked' => 1];
 				$arrayfields['p.project_label'] = ['label' => $langs->trans('ProjectLabel'), 'checked' => 1];
 			}
-			$arrayfields['t.element_ref'] = array('label'=>$langs->trans("RefTask"), 'checked'=>1);
-			$arrayfields['t.element_label'] = array('label'=>$langs->trans("LabelTask"), 'checked'=>1);
+			$arrayfields['t.element_ref'] = array('label' => $langs->trans("RefTask"), 'checked' => 1);
+			$arrayfields['t.element_label'] = array('label' => $langs->trans("LabelTask"), 'checked' => 1);
 		}
 		$arrayfields['author'] = array('label' => $langs->trans("By"), 'checked' => 1);
 		$arrayfields['t.note'] = array('label' => $langs->trans("Note"), 'checked' => 1);
 		if (isModEnabled('service') && !empty($projectstatic->thirdparty) && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
 			$arrayfields['t.fk_product'] = array('label' => $langs->trans("Product"), 'checked' => 1);
 		}
-		$arrayfields['t.element_duration'] = array('label'=>$langs->trans("Duration"), 'checked'=>1);
-		$arrayfields['value'] = array('label'=>$langs->trans("Value"), 'checked'=>1, 'enabled'=>isModEnabled("salaries"));
-		$arrayfields['valuebilled'] = array('label'=>$langs->trans("Billed"), 'checked'=>1, 'enabled'=>(((getDolGlobalInt('PROJECT_HIDE_TASKS') || !getDolGlobalInt('PROJECT_BILL_TIME_SPENT')) ? 0 : 1) && $projectstatic->usage_bill_time));
+		$arrayfields['t.element_duration'] = array('label' => $langs->trans("Duration"), 'checked' => 1);
+		$arrayfields['value'] = array('label' => $langs->trans("Value"), 'checked' => 1, 'enabled' => isModEnabled("salaries"));
+		$arrayfields['valuebilled'] = array('label' => $langs->trans("Billed"), 'checked' => 1, 'enabled' => (((getDolGlobalInt('PROJECT_HIDE_TASKS') || !getDolGlobalInt('PROJECT_BILL_TIME_SPENT')) ? 0 : 1) && $projectstatic->usage_bill_time));
 		// Extra fields
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -1835,7 +1832,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (isModEnabled("service") && !empty($projectstatic->thirdparty) && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
 					print '<td class="nowraponall">';
 					print img_picto('', 'service');
-					print $form->select_produits((GETPOSTISSET('fk_product')?GETPOSTINT("fk_product"):''), 'fk_product', '1', 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth150', 0, '', null, 1);
+					print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOSTINT("fk_product") : ''), 'fk_product', '1', 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth150', 0, '', null, 1);
 					print '</td>';
 				}
 			}
@@ -2397,8 +2394,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 						if ($task_time->invoice_id) {
 							$result = $tmpinvoice->fetch($task_time->invoice_id);
 							if ($result > 0) {
-								if ($action=='editline' && $_GET['lineid'] == $task_time->rowid) {
-									print $formproject->selectInvoiceAndLine($task_time->invoice_id, $task_time->invoice_line_id, 'invoiceid', 'invoicelineid', 'maxwidth500', array('p.rowid'=>$projectstatic->id));
+								if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid) {
+									print $formproject->selectInvoiceAndLine($task_time->invoice_id, $task_time->invoice_line_id, 'invoiceid', 'invoicelineid', 'maxwidth500', array('p.rowid' => $projectstatic->id));
 								} else {
 									print $tmpinvoice->getNomUrl(1);
 									if (!empty($task_time->invoice_line_id)) {
