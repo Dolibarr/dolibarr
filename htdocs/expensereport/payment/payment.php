@@ -67,9 +67,9 @@ if ($action == 'add_payment') {
 		setEventMessages($expensereport->error, $expensereport->errors, 'errors');
 	}
 
-	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
+	$datepaid = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 
-	if (!(GETPOST("fk_typepayment", 'int') > 0)) {
+	if (!(GETPOSTINT("fk_typepayment") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode")), null, 'errors');
 		$error++;
 	}
@@ -78,7 +78,7 @@ if ($action == 'add_payment') {
 		$error++;
 	}
 
-	if (isModEnabled("banque") && !($accountid > 0)) {
+	if (isModEnabled("bank") && !($accountid > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToDebit")), null, 'errors');
 		$error++;
 	}
@@ -236,7 +236,7 @@ if ($action == 'create' || empty($action)) {
 	print '<table class="border centpercent">'."\n";
 
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
-	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
+	$datepaid = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 	$datepayment = ($datepaid == '' ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $datepaid);
 	print $form->selectDate($datepayment, '', '', '', 0, "add_payment", 1, 1);
 	print "</td>";
@@ -247,12 +247,12 @@ if ($action == 'create' || empty($action)) {
 	print "</td>\n";
 	print '</tr>';
 
-	if (isModEnabled("banque")) {
+	if (isModEnabled("bank")) {
 		print '<tr>';
 		print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 		print '<td colspan="2">';
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-		$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", "int") : 0, "accountid", 0, '', 2); // Show open bank account list
+		$form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : 0, "accountid", 0, '', 2); // Show open bank account list
 		print '</td></tr>';
 	}
 

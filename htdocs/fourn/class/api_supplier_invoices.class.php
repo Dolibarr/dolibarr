@@ -435,7 +435,7 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(404, 'Invoice not found');
 		}
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			if (empty($accountid)) {
 				throw new RestException(400, 'Bank account ID is mandatory');
 			}
@@ -484,7 +484,7 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(400, 'Payment error : ' . $paiement->error);
 		}
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			$result = $paiement->addPaymentToBank(DolibarrApiAccess::$user, 'payment_supplier', '(SupplierInvoicePayment)', $accountid, $chqemetteur, $chqbank);
 			if ($result < 0) {
 				$this->db->rollback();

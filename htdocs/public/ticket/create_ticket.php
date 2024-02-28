@@ -67,9 +67,9 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 $langs->loadLangs(array('companies', 'other', 'mails', 'ticket'));
 
 // Get parameters
-$id = GETPOST('id', 'int');
-$msg_id = GETPOST('msg_id', 'int');
-$socid = GETPOST('socid', 'int');
+$id = GETPOSTINT('id');
+$msg_id = GETPOSTINT('msg_id');
+$socid = GETPOSTINT('socid');
 $suffix = "";
 
 $action = GETPOST('action', 'aZ09');

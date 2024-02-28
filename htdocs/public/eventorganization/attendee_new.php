@@ -79,9 +79,9 @@ $lastname = GETPOST('lastname');
 // Getting id from Post and decoding it
 $type = GETPOST('type', 'aZ09');
 if ($type == 'conf') {
-	$id = GETPOST('id', 'int');
+	$id = GETPOSTINT('id');
 } else {
-	$id = GETPOST('fk_project', 'int') ? GETPOST('fk_project', 'int') : GETPOST('id', 'int');
+	$id = GETPOSTINT('fk_project') ? GETPOSTINT('fk_project') : GETPOSTINT('id');
 }
 
 $conference = new ConferenceOrBooth($db);

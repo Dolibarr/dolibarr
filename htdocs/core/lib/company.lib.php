@@ -180,7 +180,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	// Related items
-	if ((isModEnabled('commande') || isModEnabled('propal') || isModEnabled('facture') || isModEnabled('ficheinter') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
+	if ((isModEnabled('order') || isModEnabled('propal') || isModEnabled('invoice') || isModEnabled('intervention') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
 		&& !getDolGlobalString('THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB')) {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Referers");
@@ -998,14 +998,14 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$optioncss = GETPOST('optioncss', 'alpha');
 	$sortfield = GETPOST('sortfield', 'aZ09comma');
 	$sortorder = GETPOST('sortorder', 'aZ09comma');
-	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 
-	$search_status = GETPOST("search_status", 'int');
+	$search_status = GETPOSTINT("search_status");
 	if ($search_status == '') {
 		$search_status = 1; // always display active customer first
 	}
 
-	$search_rowid   = GETPOST("search_rowid", 'int');
+	$search_rowid   = GETPOSTINT("search_rowid");
 	$search_name    = GETPOST("search_name", 'alpha');
 	$search_address = GETPOST("search_address", 'alpha');
 	$search_poste   = GETPOST("search_poste", 'alpha');
@@ -1015,8 +1015,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$search_birthday_dtend = GETPOST("search_birthday_dtend", 'alpha');
 
 	if ($search_birthday_dtstart != '' || $search_birthday_dtend != '') {
-		$search_birthday_dtstart = dol_mktime(0, 0, 0, GETPOST('search_birthday_dtstartmonth', 'int'), GETPOST('search_birthday_dtstartday', 'int'), GETPOST('search_birthday_dtstartyear', 'int'));
-		$search_birthday_dtend = dol_mktime(23, 59, 59, GETPOST('search_birthday_dtendmonth', 'int'), GETPOST('search_birthday_dtendday', 'int'), GETPOST('search_birthday_dtendyear', 'int'));
+		$search_birthday_dtstart = dol_mktime(0, 0, 0, GETPOSTINT('search_birthday_dtstartmonth'), GETPOSTINT('search_birthday_dtstartday'), GETPOSTINT('search_birthday_dtstartyear'));
+		$search_birthday_dtend = dol_mktime(23, 59, 59, GETPOSTINT('search_birthday_dtendmonth'), GETPOSTINT('search_birthday_dtendday'), GETPOSTINT('search_birthday_dtendyear'));
 	}
 	$socialnetworks = getArrayOfSocialNetworks();
 
@@ -1596,12 +1596,12 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 	global $form;
 	global $param, $massactionbutton;
 
-	$start_year = GETPOST('dateevent_startyear', 'int');
-	$start_month = GETPOST('dateevent_startmonth', 'int');
-	$start_day = GETPOST('dateevent_startday', 'int');
-	$end_year = GETPOST('dateevent_endyear', 'int');
-	$end_month = GETPOST('dateevent_endmonth', 'int');
-	$end_day = GETPOST('dateevent_endday', 'int');
+	$start_year = GETPOSTINT('dateevent_startyear');
+	$start_month = GETPOSTINT('dateevent_startmonth');
+	$start_day = GETPOSTINT('dateevent_startday');
+	$end_year = GETPOSTINT('dateevent_endyear');
+	$end_month = GETPOSTINT('dateevent_endmonth');
+	$end_day = GETPOSTINT('dateevent_endday');
 	$tms_start = '';
 	$tms_end = '';
 

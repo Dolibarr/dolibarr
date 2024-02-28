@@ -306,7 +306,7 @@ class MailmanSpip
 			return -1;
 		}
 
-		if (isModEnabled('adherent')) {	// Synchro for members
+		if (isModEnabled('member')) {	// Synchro for members
 			if (getDolGlobalString('ADHERENT_MAILMAN_URL')) {
 				if ($listes == '' && getDolGlobalString('ADHERENT_MAILMAN_LISTS')) {
 					$lists = explode(',', getDolGlobalString('ADHERENT_MAILMAN_LISTS'));
@@ -376,7 +376,7 @@ class MailmanSpip
 			return -1;
 		}
 
-		if (isModEnabled('adherent')) {	// Synchro for members
+		if (isModEnabled('member')) {	// Synchro for members
 			if (getDolGlobalString('ADHERENT_MAILMAN_UNSUB_URL')) {
 				if ($listes == '' && getDolGlobalString('ADHERENT_MAILMAN_LISTS')) {
 					$lists = explode(',', getDolGlobalString('ADHERENT_MAILMAN_LISTS'));

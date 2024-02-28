@@ -2258,7 +2258,7 @@ class Adherent extends CommonObject
 		}
 		$datas['address'] = '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs);
 		// show categories for this record only in ajax to not overload lists
-		if (isModEnabled('categorie') && !$nofetch) {
+		if (isModEnabled('category') && !$nofetch) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$form = new Form($this->db);
 			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_MEMBER, 1);
@@ -2997,7 +2997,7 @@ class Adherent extends CommonObject
 
 		$blockingerrormsg = '';
 
-		if (!isModEnabled('adherent')) { // Should not happen. If module disabled, cron job should not be visible.
+		if (!isModEnabled('member')) { // Should not happen. If module disabled, cron job should not be visible.
 			$langs->load("agenda");
 			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
 			return 0;

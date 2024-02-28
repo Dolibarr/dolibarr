@@ -1332,7 +1332,7 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 *	Return list of available charset that can be used to store data in database
 	 *
-	 *	@return		array		List of Charset
+	 *	@return		array|null		List of Charset
 	 */
 	public function getListOfCharacterSet()
 	{
@@ -1371,7 +1371,7 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 *	Return list of available collation that can be used for database
 	 *
-	 *	@return		array		Liste of Collation
+	 *	@return		array|null		Liste of Collation
 	 */
 	public function getListOfCollation()
 	{

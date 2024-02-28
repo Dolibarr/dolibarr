@@ -136,7 +136,7 @@ class FormCategory extends Form
 			return $num_rows;
 		} else {
 			dol_print_error($this->db);
-			return;
+			return null;
 		}
 	}
 }

@@ -215,14 +215,14 @@ class pdf_paiement extends CommonDocGenerator
 				$sql .= ", c.code as paiement_code, p.num_paiement as num_payment";
 				$sql .= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
 				$sql .= ", pf.amount as pf_amount";
-				if (isModEnabled("banque")) {
+				if (isModEnabled("bank")) {
 					$sql .= ", ba.ref as bankaccount";
 				}
 				$sql .= ", p.rowid as prowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
 				$sql .= ", ".MAIN_DB_PREFIX."facture as f,";
 				$sql .= " ".MAIN_DB_PREFIX."paiement_facture as pf,";
-				if (isModEnabled("banque")) {
+				if (isModEnabled("bank")) {
 					$sql .= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
 				}
 				$sql .= " ".MAIN_DB_PREFIX."societe as s";
@@ -230,7 +230,7 @@ class pdf_paiement extends CommonDocGenerator
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				}
 				$sql .= " WHERE f.fk_soc = s.rowid AND pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
-				if (isModEnabled("banque")) {
+				if (isModEnabled("bank")) {
 					$sql .= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
 				}
 				$sql .= " AND f.entity IN (".getEntity('invoice').")";
@@ -253,14 +253,14 @@ class pdf_paiement extends CommonDocGenerator
 				$sql .= ", c.code as paiement_code, p.num_paiement as num_payment";
 				$sql .= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
 				$sql .= ", pf.amount as pf_amount";
-				if (isModEnabled("banque")) {
+				if (isModEnabled("bank")) {
 					$sql .= ", ba.ref as bankaccount";
 				}
 				$sql .= ", p.rowid as prowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
 				$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as f,";
 				$sql .= " ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf,";
-				if (isModEnabled("banque")) {
+				if (isModEnabled("bank")) {
 					$sql .= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
 				}
 				$sql .= " ".MAIN_DB_PREFIX."societe as s";
@@ -268,7 +268,7 @@ class pdf_paiement extends CommonDocGenerator
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				}
 				$sql .= " WHERE f.fk_soc = s.rowid AND pf.fk_facturefourn = f.rowid AND pf.fk_paiementfourn = p.rowid";
-				if (isModEnabled("banque")) {
+				if (isModEnabled("bank")) {
 					$sql .= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
 				}
 				$sql .= " AND f.entity IN (".getEntity('invoice').")";

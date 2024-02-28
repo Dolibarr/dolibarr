@@ -43,7 +43,7 @@ $langs->loadLangs(array("members", "companies", "categories"));
 // Get parameters
 $action 	= GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm 	= GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
 $toselect 	= GETPOST('toselect', 'array');
@@ -71,19 +71,19 @@ $search_phone_perso = GETPOST("search_phone_perso", 'alpha');
 $search_phone_mobile = GETPOST("search_phone_mobile", 'alpha');
 $search_type 		= GETPOST("search_type", 'alpha');
 $search_email 		= GETPOST("search_email", 'alpha');
-$search_categ 		= GETPOST("search_categ", 'int');
+$search_categ 		= GETPOSTINT("search_categ");
 $search_morphy 		= GETPOST("search_morphy", 'alpha');
 $search_import_key  = trim(GETPOST("search_import_key", 'alpha'));
 
-$catid 		= GETPOST("catid", 'int');
-$socid 		= GETPOST('socid', 'int');
+$catid 		= GETPOSTINT("catid");
+$socid 		= GETPOSTINT('socid');
 
 $search_filter 		= GETPOST("search_filter", 'alpha');
 $search_status 		= GETPOST("search_status", 'intcomma');  // status
-$search_datec_start = dol_mktime(0, 0, 0, GETPOST('search_datec_start_month', 'int'), GETPOST('search_datec_start_day', 'int'), GETPOST('search_datec_start_year', 'int'));
-$search_datec_end = dol_mktime(23, 59, 59, GETPOST('search_datec_end_month', 'int'), GETPOST('search_datec_end_day', 'int'), GETPOST('search_datec_end_year', 'int'));
-$search_datem_start = dol_mktime(0, 0, 0, GETPOST('search_datem_start_month', 'int'), GETPOST('search_datem_start_day', 'int'), GETPOST('search_datem_start_year', 'int'));
-$search_datem_end = dol_mktime(23, 59, 59, GETPOST('search_datem_end_month', 'int'), GETPOST('search_datem_end_day', 'int'), GETPOST('search_datem_end_year', 'int'));
+$search_datec_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datec_start_month'), GETPOSTINT('search_datec_start_day'), GETPOSTINT('search_datec_start_year'));
+$search_datec_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datec_end_month'), GETPOSTINT('search_datec_end_day'), GETPOSTINT('search_datec_end_year'));
+$search_datem_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datem_start_month'), GETPOSTINT('search_datem_start_day'), GETPOSTINT('search_datem_start_year'));
+$search_datem_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datem_end_month'), GETPOSTINT('search_datem_end_day'), GETPOSTINT('search_datem_end_year'));
 
 $filter = GETPOST("filter", 'alpha');
 if ($filter) {
@@ -102,10 +102,10 @@ if ($search_status < -2) {
 }
 
 // Pagination parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -741,7 +741,7 @@ if ($user->hasRight('adherent', 'creer') && $user->hasRight('user', 'user', 'cre
 if ($user->hasRight('adherent', 'creer')) {
 	$arrayofmassactions['createsubscription'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("CreateSubscription");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -821,7 +821,7 @@ $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('che
 
 $moreforfilter = '';
 // Filter on categories
-if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"').$formother->select_categories(Categorie::TYPE_MEMBER, $search_categ, 'search_categ', 1, $langs->trans("MembersCategoriesShort"));

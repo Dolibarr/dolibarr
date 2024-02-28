@@ -74,7 +74,7 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 }
 
 $websitekey = GETPOST('websitekey', 'alpha');
-$pageid = GETPOST('pageid', 'int');
+$pageid = GETPOSTINT('pageid');
 
 // Load translation files required by the page
 $langs->load("ecm");

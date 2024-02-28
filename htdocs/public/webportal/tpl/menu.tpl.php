@@ -24,7 +24,7 @@ if ($context->userIsLog()) {
 	}
 
 	// menu orders
-	if (isModEnabled('commande') && getDolGlobalInt('WEBPORTAL_ORDER_LIST_ACCESS')) {
+	if (isModEnabled('order') && getDolGlobalInt('WEBPORTAL_ORDER_LIST_ACCESS')) {
 		$navMenu['order_list'] = array(
 			'id' => 'order_list',
 			'rank' => 20,
@@ -35,7 +35,7 @@ if ($context->userIsLog()) {
 	}
 
 	// menu invoices
-	if (isModEnabled('facture') && getDolGlobalInt('WEBPORTAL_INVOICE_LIST_ACCESS')) {
+	if (isModEnabled('invoice') && getDolGlobalInt('WEBPORTAL_INVOICE_LIST_ACCESS')) {
 		$navMenu['invoice_list'] = array(
 			'id' => 'invoice_list',
 			'rank' => 30,
@@ -47,7 +47,7 @@ if ($context->userIsLog()) {
 
 	// menu member
 	$cardAccess = getDolGlobalString('WEBPORTAL_MEMBER_CARD_ACCESS');
-	if (isModEnabled('adherent')
+	if (isModEnabled('member')
 		&& in_array($cardAccess, array('visible', 'edit'))
 		&& $context->logged_member
 		&& $context->logged_member->id > 0

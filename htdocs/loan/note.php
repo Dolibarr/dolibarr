@@ -41,7 +41,7 @@ $action = GETPOST('action', 'aZ09');
 $langs->loadLangs(array("loan"));
 
 // Security check
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 $hookmanager->initHooks(array('loannote'));
 $result = restrictedArea($user, 'loan', $id, '&loan');

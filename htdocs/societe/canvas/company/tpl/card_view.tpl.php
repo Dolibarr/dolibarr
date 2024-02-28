@@ -249,7 +249,7 @@ for ($i = 1; $i <= 4; $i++) {
 	<td colspan="3"><?php echo $this->control->tpl['sales_representatives']; ?></td>
 </tr>
 
-<?php if (isModEnabled('adherent')) { ?>
+<?php if (isModEnabled('member')) { ?>
 <tr>
 	<td width="25%" valign="top"><?php echo $langs->trans("LinkedToDolibarrMember"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['linked_member']; ?></td>

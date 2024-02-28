@@ -42,9 +42,9 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'withdrawals', 'companies'));
 
-$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 $type = GETPOST('type', 'aZ09');
 
@@ -130,7 +130,7 @@ if (empty($reshook)) {
 
 	if ($action == "delete" && $usercancreate) {
 		if ($object->id > 0) {
-			$result = $object->demande_prelevement_delete($user, GETPOST('did', 'int'));
+			$result = $object->demande_prelevement_delete($user, GETPOSTINT('did'));
 			if ($result == 0) {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id.'&type='.$type);
 				exit;
@@ -140,7 +140,7 @@ if (empty($reshook)) {
 
 	// Make payment with Direct Debit Stripe
 	if ($action == 'sepastripedirectdebit' && $usercancreate) {
-		$result = $object->makeStripeSepaRequest($user, GETPOST('did', 'int'), 'direct-debit', 'facture');
+		$result = $object->makeStripeSepaRequest($user, GETPOSTINT('did'), 'direct-debit', 'facture');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
@@ -155,7 +155,7 @@ if (empty($reshook)) {
 
 	// Make payment with Direct Debit Stripe
 	if ($action == 'sepastripecredittransfer' && $usercancreate) {
-		$result = $object->makeStripeSepaRequest($user, GETPOST('did', 'int'), 'bank-transfer', 'supplier_invoice');
+		$result = $object->makeStripeSepaRequest($user, GETPOSTINT('did'), 'bank-transfer', 'supplier_invoice');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
@@ -179,7 +179,7 @@ if (empty($reshook)) {
 		$db->begin();
 
 		if (!$error) {
-			$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
+			$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'));
 			if ($result < 0) {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -209,9 +209,9 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setmode' && $usercancreate) {
 		// payment mode
-		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
+		$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
 	} elseif ($action == 'setdatef' && $usercancreate) {
-		$newdate = dol_mktime(0, 0, 0, GETPOST('datefmonth', 'int'), GETPOST('datefday', 'int'), GETPOST('datefyear', 'int'), 'tzserver');
+		$newdate = dol_mktime(0, 0, 0, GETPOSTINT('datefmonth'), GETPOSTINT('datefday'), GETPOSTINT('datefyear'), 'tzserver');
 		if ($newdate > (dol_now('tzuserrel') + (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY') ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
 			if (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY')) {
 				setEventMessages($langs->trans("WarningInvoiceDateInFuture"), null, 'warnings');
@@ -234,7 +234,7 @@ if (empty($reshook)) {
 			dol_print_error($db, $object->error);
 		}
 	} elseif ($action == 'setdate_lim_reglement' && $usercancreate) {
-		$object->date_echeance = dol_mktime(12, 0, 0, GETPOST('date_lim_reglementmonth', 'int'), GETPOST('date_lim_reglementday', 'int'), GETPOST('date_lim_reglementyear', 'int'));
+		$object->date_echeance = dol_mktime(12, 0, 0, GETPOSTINT('date_lim_reglementmonth'), GETPOSTINT('date_lim_reglementday'), GETPOSTINT('date_lim_reglementyear'));
 		if (!empty($object->date_echeance) && $object->date_echeance < $object->date) {
 			$object->date_echeance = $object->date;
 			setEventMessages($langs->trans("DatePaymentTermCantBeLowerThanObjectDate"), null, 'warnings');

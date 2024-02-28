@@ -40,7 +40,7 @@ dol_include_once('/mrp/lib/mrp_mo.lib.php');
 $langs->loadLangs(array("mrp", "stocks", "other"));
 
 // Get parameters
-$id          = GETPOST('id', 'int');
+$id          = GETPOSTINT('id');
 $ref         = GETPOST('ref', 'alpha');
 $action      = GETPOST('action', 'aZ09');
 $confirm     = GETPOST('confirm', 'alpha');
@@ -49,11 +49,11 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'mo
 $backtopage  = GETPOST('backtopage', 'alpha');
 $optioncss   = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $massaction  = GETPOST('massaction', 'aZ09');
-$lineid      = GETPOST('lineid', 'int');
+$lineid      = GETPOSTINT('lineid');
 
-$msid  = GETPOST('msid', 'int');
-$year  = GETPOST("year", 'int');
-$month = GETPOST("month", 'int');
+$msid  = GETPOSTINT('msid');
+$year  = GETPOSTINT("year");
+$month = GETPOSTINT("month");
 
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_movement = GETPOST("search_movement", 'alpha');
@@ -64,10 +64,10 @@ $search_inventorycode = trim(GETPOST("search_inventorycode", 'alpha'));
 $search_user = trim(GETPOST("search_user", 'alpha'));
 $search_batch = trim(GETPOST("search_batch", 'alpha'));
 $search_qty = trim(GETPOST("search_qty", 'alpha'));
-$search_type_mouvement = GETPOST('search_type_mouvement', 'int');
+$search_type_mouvement = GETPOSTINT('search_type_mouvement');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$page  = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$page  = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 if (empty($page) || $page == -1) {
@@ -236,10 +236,10 @@ if (empty($reshook)) {
 	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 
 	if ($action == 'confirm_reopen') {
