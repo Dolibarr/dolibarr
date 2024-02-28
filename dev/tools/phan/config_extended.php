@@ -43,9 +43,10 @@ $sanitizeRegex
 	).')*$/';
 
 /**
- * Map deprecated module names to new module names
+ * These module names are deprecated but the new names do not fully work yet.
+ * This list is used to complement the 'valid' names.
  */
-$DEPRECATED_MODULE_MAPPING = array(
+$TARGET_DEPRECATED_MODULE_MAPPING = array(
 	'actioncomm' => 'agenda',
 	'adherent' => 'member',
 	'adherent_type' => 'member_type',
@@ -56,6 +57,7 @@ $DEPRECATED_MODULE_MAPPING = array(
 	'entrepot' => 'stock',
 	'expedition' => 'delivery_note',
 	'facture' => 'invoice',
+	'fichinter' => 'intervention',
 	'ficheinter' => 'intervention',
 	'product_fournisseur_price' => 'productsupplierprice',
 	'product_price' => 'productprice',
@@ -63,6 +65,47 @@ $DEPRECATED_MODULE_MAPPING = array(
 	'propale' => 'propal',
 	'socpeople' => 'contact',
 );
+
+/**
+ * These module names list the names that are definitively deprecated
+ * and should work - the generate their own error
+ */
+$DEPRECATED_MODULE_MAPPING = array(
+
+	'member_type' => 'adherent_type',   // No directory, but file called adherent_type
+	'entrepot' => 'stock',   // Has new directory
+
+	'actioncomm' => 'agenda',  // NO module directory (public dir agenda)
+	'product_price' => 'productprice', // NO directory
+	'product_fournisseur_price' => 'productsupplierprice', // NO directory
+	'socpeople' => 'contact',
+
+	// Special case - fichinter becomes intervention later
+	'fichinter' => 'ficheinter',  // Backup for 'fichinter'
+);
+
+/**
+ * These module names list the names that should still be used
+ * but that are in theory deprecated.
+ * The module names are defined by the modules themselves
+ * internally by setting their 'name' property.
+ */
+$USE_OLDNAME_MODULE_MAPPING = array(
+	// Prefer internal names over new names
+	'bank' => 'banque',
+	'category' => 'categorie',
+	'contract' => 'contrat',
+	'intervention' => 'ficherinter',
+	'invoice' => 'member',
+	'member' => 'adherent',
+	'order' => 'commande',
+	'order' => 'commande',
+	'project'  => 'projet',
+	'propal' => 'propale',
+	'shipping' => 'expedition',
+	'supplier_proposal' => 'supplierproposal',
+);
+
 
 /**
  * Map module names to the 'class' name (the class is: mod<CLASSNAME>)
@@ -95,7 +138,7 @@ $VALID_MODULE_MAPPING = array(
 	'debugbar' => 'DebugBar',
 	'delivery_note' => 'Expedition',
 	'deplacement' => 'Deplacement',
-	"documentgeneration" => 'DocumentGeneration',
+	'documentgeneration' => 'DocumentGeneration',
 	'don' => 'Don',
 	'dynamicprices' => 'DynamicPrices',
 	'ecm' => 'ECM',
@@ -166,7 +209,7 @@ $VALID_MODULE_MAPPING = array(
 	'stripe' => 'Stripe',
 	'supplier_invoice' => null,  // Special case, uses invoice
 	'supplier_order' => null,  // Special case, uses invoice
-	'supplier_proposal' => 'SupplierProposal',
+	'supplierproposal' => 'SupplierProposal',
 	'syslog' => 'Syslog',
 	'takepos' => 'TakePos',
 	'tax' => 'Tax',
@@ -183,9 +226,12 @@ $VALID_MODULE_MAPPING = array(
 	'zapier' => 'Zapier',
 );
 
-$moduleNameRegex = '/^(?:'.implode('|', array_merge(array_keys($DEPRECATED_MODULE_MAPPING), array_keys($VALID_MODULE_MAPPING))).')$/';
-
-$deprecatedModuleNameRegex = '/^(?!(?:'.implode('|', array_keys($DEPRECATED_MODULE_MAPPING)).')$).*/';
+// All names that are valid - deprecated or not
+$moduleNameRegex = '/^(?:'.implode('|', array_merge(array_keys($TARGET_DEPRECATED_MODULE_MAPPING), array_keys($VALID_MODULE_MAPPING), array('\$modulename'))).')$/';
+// Really deprecated module names
+$deprecatedModuleRegex = '/^(?!(?:'.implode('|', array_keys($DEPRECATED_MODULE_MAPPING)).')$).*$/';
+// Module names that should not be used yet (the old values are the ones we want)
+$useOldModuleNameRegex = '/^(?!(?:'.implode('|', array_keys($USE_OLDNAME_MODULE_MAPPING)).')$).*$/';
 
 /**
  * This configuration will be read and overlaid on top of the
@@ -266,11 +312,12 @@ return [
 	// Alternately, you can pass in the full path to a PHP file
 	// with the plugin's implementation (e.g. 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php')
 	'ParamMatchRegexPlugin' => [
-		'/^GETPOST$/' => [1, $sanitizeRegex],
-		'/^isModEnabled$/' => [0, $moduleNameRegex, 'UnknownModuleName'],
-		// Note: trick to have different key for same regex:
-		'/^isModEnable[d]$/' => [0, $deprecatedModuleNameRegex, "DeprecatedModuleName"],
-		'/^sanitizeVal$/' => [1, $sanitizeRegex],
+		'/^GETPOST$/' => [1, $sanitizeRegex, "GetPostInvalidCheck"],
+		'/^sanitizeVal$/' => [1, $sanitizeRegex, "SanitizeInvalidCheck"],
+		'/^isModEnabled$/' => [0, $moduleNameRegex, "UnknownModuleName"],
+		// Note: [d] trick to have different key for same regex:
+		'/^isModEnable[d]$/' => [0, $deprecatedModuleRegex, "DeprecatedModuleName"],
+		'/^isModEnabl[e]d$/' => [0, $useOldModuleNameRegex, "UseOldModuleNameForNow"],
 	],
 	'plugins' => [
 		__DIR__.'/plugins/NoVarDumpPlugin.php',
