@@ -2,6 +2,7 @@
 /* Copyright (c) 2013 Florian Henry  <florian.henry@open-concept.pro>
  * Copyright (C) 2015 Marcos García  <marcosgdf@gmail.com>
  * Copyright (C) 2018 Charlene Benke <charlie@patas-monkey.com>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,7 +144,7 @@ class FormProjets extends Form
 	 * @param string 	$filterkey 		Key to filter on title or ref
 	 * @param int 		$nooutput 		No print output. Return it only.
 	 * @param int 		$forceaddid 	Force to add project id in list, event if not qualified
-	 * @param int 		$htmlid 		Html id to use instead of htmlname
+	 * @param string	$htmlid 		Html id to use instead of htmlname
 	 * @param string 	$morecss 		More CSS
 	 * @param string 	$morefilter 	More filters (Must be a sql sanitized string)
 	 * @return int|string|array         HTML string or array of option or <0 if KO
