@@ -695,15 +695,16 @@ class CodingPhpTest extends CommonClassTest
 	 */
 	private function assertModuleIsOk($module_name, $message = '')
 	{
-		if (isset(self::DEPRECATED_MODULE_MAPPING[$module_name])) {
-			$new_name = self::DEPRECATED_MODULE_MAPPING[$module_name];
+		if (isset(self::EFFECTIVE_DEPRECATED_MODULE_MAPPING[$module_name])) {
+			$new_name = self::EFFECTIVE_DEPRECATED_MODULE_MAPPING[$module_name];
 			print("\033[31mDeprecated module name, use '$new_name':\033[0m$message".PHP_EOL);
 
 			//trigger_error("Deprecated module name, use '$new_name': $message", E_USER_NOTICE);
 			//trigger_error("Deprecated module name, use '$new_name': $message", E_USER_DEPRECATED);
 		} else {
 			$this->assertTrue(
-				array_key_exists($module_name, self::VALID_MODULE_MAPPING),
+				array_key_exists($module_name, self::VALID_MODULE_MAPPING)
+				|| array_key_exists($module_name, self::DEPRECATED_MODULE_MAPPIG),
 				"Unknown module: $message"
 			);
 		}
