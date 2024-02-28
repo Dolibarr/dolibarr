@@ -312,6 +312,7 @@ class Translate
 			return -1;
 		}
 
+		$usecachekey = '';
 		foreach ($this->dir as $searchdir) {
 			// Directory of translation files
 			$file_lang = $searchdir . ($modulename ? '/' . $modulename : '') . "/langs/" . $langofdir . "/" . $newdomain . ".lang";
