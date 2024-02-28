@@ -665,7 +665,7 @@ class Mo extends CommonObject
 		}
 
 		// generate document
-		if (!$error && $generateDocument){
+		if (!$error && $generateDocument == 1){
 			// select Language, if $outputLangs parameter is empty
 			global $langs;
 			if (is_null($outputLangs)) {
