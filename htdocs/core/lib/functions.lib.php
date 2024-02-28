@@ -219,7 +219,7 @@ define(
 		'entrepot' => 'stock',
 		'expedition' => 'delivery_note',
 		'facture' => 'invoice',
-		'fichinter' => 'intervention',
+		'ficheinter' => 'intervention',
 		'product_fournisseur_price' => 'productsupplierprice',
 		'product_price' => 'productprice',
 		'projet'  => 'project',
@@ -240,6 +240,7 @@ function isModEnabled($module)
 
 	// Fix old names (map to new names)
 	$arrayconv = DEPRECATED_MODULE_MAPPING;
+	$arrayconvbis = array_flip(DEPRECATED_MODULE_MAPPING);
 
 	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 		// Special cases: both use the same module.
@@ -251,8 +252,12 @@ function isModEnabled($module)
 	if (!empty($arrayconv[$module])) {
 		$module_alt = $arrayconv[$module];
 	}
+	$module_bis = $module;
+	if (!empty($arrayconvbis[$module])) {
+		$module_bis = $arrayconvbis[$module];
+	}
 
-	return !empty($conf->modules[$module]) || !empty($conf->modules[$module_alt]);
+	return !empty($conf->modules[$module]) || !empty($conf->modules[$module_alt]) || !empty($conf->modules[$module_bis]);
 	//return !empty($conf->$module->enabled);
 }
 
@@ -2800,7 +2805,7 @@ function dol_bc($var, $moreclass = '')
  */
 function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs = null, $mode = 0, $extralangcode = '')
 {
-	global $conf, $langs, $hookmanager;
+	global $langs, $hookmanager;
 
 	$ret = '';
 	$countriesusingstate = array('AU', 'CA', 'US', 'IN', 'GB', 'ES', 'UK', 'TR', 'CN'); // See also MAIN_FORCE_STATE_INTO_ADDRESS
@@ -2889,6 +2894,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
  *  @param	int		$ts			Timestamp (If is_gmt is true, timestamp is already includes timezone and daylight saving offset, if is_gmt is false, timestamp is a GMT timestamp and we must compensate with server PHP TZ)
  *  @param	bool	$is_gmt		See comment of timestamp parameter
  *	@return	string				A formatted string
+ *  @see dol_stringtotime()
  */
 function dol_strftime($fmt, $ts = false, $is_gmt = false)
 {
@@ -3552,7 +3558,7 @@ function getArrayOfSocialNetworks()
  */
 function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetworks = array())
 {
-	global $conf, $user, $langs;
+	global $user, $langs;
 
 	$htmllink = $value;
 

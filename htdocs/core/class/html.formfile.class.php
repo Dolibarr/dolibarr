@@ -332,7 +332,7 @@ class FormFile
 	 *      @param		int					$hideifempty		Hide section of generated files if there is no file
 	 *      @param      string              $removeaction       (optional) The action to remove a file
 	 *      @param		string				$tooltipontemplatecombo		Text to show on a tooltip after the combo list of templates
-	 * 		@return		string              					Output string with HTML array of documents (might be empty string)
+	 * 		@return		string|int             					Output string with HTML array of documents (might be empty string)
 	 */
 	public function showdocuments($modulepart, $modulesubdir, $filedir, $urlsource, $genallowed, $delallowed = 0, $modelselected = '', $allowgenifempty = 1, $forcenomultilang = 0, $iconPDF = 0, $notused = 0, $noform = 0, $param = '', $title = '', $buttonlabel = '', $codelang = '', $morepicto = '', $object = null, $hideifempty = 0, $removeaction = 'remove_file', $tooltipontemplatecombo = '')
 	{

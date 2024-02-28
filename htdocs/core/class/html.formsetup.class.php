@@ -683,7 +683,7 @@ class FormSetupItem
 			$this->fieldValue = getDolGlobalString($this->confKey);
 			return true;
 		} else {
-			$this->fieldValue = null;
+			$this->fieldValue = '';
 			return false;
 		}
 	}
@@ -1103,7 +1103,7 @@ class FormSetupItem
 		} elseif (!empty($errors)) {
 			$this->errors[] = $errors;
 		}
-		return;
+		return null;
 	}
 
 	/**
