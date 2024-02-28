@@ -4904,7 +4904,7 @@ class Form
 	 * @param int 		$showcurrency 	Show currency in label
 	 * @param string 	$morecss 		More CSS
 	 * @param int 		$nooutput 		1=Return string, do not send to output
-	 * @return int                   	Return integer <0 if error, Num of bank account found if OK (0, 1, 2, ...)
+	 * @return int|string                  	Return integer <0 if error, Num of bank account found if OK (0, 1, 2, ...)
 	 */
 	public function select_comptes($selected = '', $htmlname = 'accountid', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '', $nooutput = 0)
 	{
