@@ -330,7 +330,7 @@ if (empty($reshook)) {
 
 		if ($object->id > 0) {
 			$object->id = 0;
-			$object->ref = null;
+			$object->ref = '';
 			$object->paye = 0;
 
 			if (GETPOST('amount', 'alphanohtml')) {
