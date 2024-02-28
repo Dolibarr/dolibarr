@@ -2659,11 +2659,9 @@ class EmailCollector extends CommonObject
 										$errorforactions++;
 										$this->errors = $actioncomm->errors;
 									} else {
-										
-										
 										if ($fk_element_type == "ticket") {
 											if ($objectemail->status == Ticket::STATUS_CLOSED || $objectemail->status == Ticket::STATUS_CANCELED) {
-												if(($objectemail->fk_user_assign != null)) {
+												if ($objectemail->fk_user_assign != null) {
 													$res = $objectemail->setStatut(Ticket::STATUS_ASSIGNED);
 												} else {
 													$res = $objectemail->setStatut(Ticket::STATUS_NOT_READ);
