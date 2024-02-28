@@ -595,7 +595,11 @@ if (empty($reshook)) {
 		if ($object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id')) >= 0) {
 			// prevent browser refresh from reopening ticket several times
 			if ($object->status == Ticket::STATUS_CLOSED || $object->status == Ticket::STATUS_CANCELED) {
-				$res = $object->setStatut(Ticket::STATUS_ASSIGNED);
+				if ($object->fk_user_assign != null) {
+					$res = $object->setStatut(Ticket::STATUS_ASSIGNED);
+				} else {
+					$res = $object->setStatut(Ticket::STATUS_NOT_READ);
+				}
 				if ($res) {
 					$url = 'card.php?track_id='.$object->track_id;
 					header("Location: ".$url);
