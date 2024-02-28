@@ -316,7 +316,7 @@ class ActionComm extends CommonObject
 	public $icalcolor;
 
 	/**
-	 * @var string Extraparam
+	 * @var string|array Extraparam
 	 */
 	public $extraparams;
 
