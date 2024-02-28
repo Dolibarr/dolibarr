@@ -53,10 +53,10 @@ $langs->loadLangs(array("main", "bills", "cashdesk", "companies"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 
-$facid = GETPOST('facid', 'int');
+$facid = GETPOSTINT('facid');
 
 $action = GETPOST('action', 'aZ09');
-$gift = GETPOST('gift', 'int');
+$gift = GETPOSTINT('gift');
 
 if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
@@ -175,7 +175,7 @@ if (getDolGlobalString('TAKEPOS_SHOW_DATE_OF_PRINING')) {
 	<tbody>
 	<?php
 	if ($action == 'without_details') {
-		$qty = GETPOST('qty', 'int') > 0 ? GETPOST('qty', 'int') : 1;
+		$qty = GETPOSTINT('qty') > 0 ? GETPOSTINT('qty') : 1;
 		print '<tr>';
 		print '<td>' . GETPOST('label', 'alphanohtml') . '</td>';
 		print '<td class="right">' . $qty . '</td>';

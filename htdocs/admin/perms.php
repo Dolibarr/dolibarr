@@ -47,14 +47,14 @@ $entity = $conf->entity;
 
 if ($action == 'add') {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=1";
-	$sql .= " WHERE id = ".GETPOST("pid", 'int');
+	$sql .= " WHERE id = ".GETPOSTINT("pid");
 	$sql .= " AND entity = ".$conf->entity;
 	$db->query($sql);
 }
 
 if ($action == 'remove') {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=0";
-	$sql .= " WHERE id = ".GETPOST('pid', 'int');
+	$sql .= " WHERE id = ".GETPOSTINT('pid');
 	$sql .= " AND entity = ".$conf->entity;
 	$db->query($sql);
 }

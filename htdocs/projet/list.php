@@ -37,8 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
@@ -51,7 +50,7 @@ if (isModEnabled('eventorganization') && $conf->eventorganization->enabled) {
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -62,7 +61,7 @@ $mode = GETPOST('mode', 'alpha');
 $title = $langs->trans("Projects");
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 if ($socid > 0) {
 	$soc = new Societe($db);
@@ -75,10 +74,10 @@ if (!$user->hasRight('projet', 'lire')) {
 
 $diroutputmassaction = $conf->project->dir_output.'/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -102,23 +101,23 @@ $search_opp_status = GETPOST("search_opp_status", 'alpha');
 $search_opp_percent = GETPOST("search_opp_percent", 'alpha');
 $search_opp_amount = GETPOST("search_opp_amount", 'alpha');
 $search_budget_amount = GETPOST("search_budget_amount", 'alpha');
-$search_public = GETPOST("search_public", 'int');
-$search_project_user = GETPOST('search_project_user', 'int');
-$search_project_contact = GETPOST('search_project_contact', 'int');
-$search_sale = GETPOST('search_sale', 'int');
-$search_usage_opportunity = GETPOST('search_usage_opportunity', 'int');
-$search_usage_task = GETPOST('search_usage_task', 'int');
-$search_usage_bill_time = GETPOST('search_usage_bill_time', 'int');
-$search_usage_event_organization = GETPOST('search_usage_event_organization', 'int');
-$search_accept_conference_suggestions = GETPOST('search_accept_conference_suggestions', 'int');
-$search_accept_booth_suggestions = GETPOST('search_accept_booth_suggestions', 'int');
+$search_public = GETPOSTINT("search_public");
+$search_project_user = GETPOSTINT('search_project_user');
+$search_project_contact = GETPOSTINT('search_project_contact');
+$search_sale = GETPOSTINT('search_sale');
+$search_usage_opportunity = GETPOSTINT('search_usage_opportunity');
+$search_usage_task = GETPOSTINT('search_usage_task');
+$search_usage_bill_time = GETPOSTINT('search_usage_bill_time');
+$search_usage_event_organization = GETPOSTINT('search_usage_event_organization');
+$search_accept_conference_suggestions = GETPOSTINT('search_accept_conference_suggestions');
+$search_accept_booth_suggestions = GETPOSTINT('search_accept_booth_suggestions');
 $search_price_registration = GETPOST("search_price_registration", 'alpha');
 $search_price_booth = GETPOST("search_price_booth", 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
 $search_import_key = GETPOST('search_import_key', 'alpha');
 $searchCategoryCustomerOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
-	$searchCategoryCustomerOperator = GETPOST('search_category_customer_operator', 'int');
+	$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
 	$searchCategoryCustomerOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
@@ -134,52 +133,52 @@ if ($mine) {
 	$mine = 0;
 }
 
-$search_sday	= GETPOST('search_sday', 'int');
-$search_smonth	= GETPOST('search_smonth', 'int');
-$search_syear	= GETPOST('search_syear', 'int');
-$search_eday	= GETPOST('search_eday', 'int');
-$search_emonth	= GETPOST('search_emonth', 'int');
-$search_eyear	= GETPOST('search_eyear', 'int');
+$search_sday	= GETPOSTINT('search_sday');
+$search_smonth	= GETPOSTINT('search_smonth');
+$search_syear	= GETPOSTINT('search_syear');
+$search_eday	= GETPOSTINT('search_eday');
+$search_emonth	= GETPOSTINT('search_emonth');
+$search_eyear	= GETPOSTINT('search_eyear');
 
-$search_date_start_startmonth = GETPOST('search_date_start_startmonth', 'int');
-$search_date_start_startyear = GETPOST('search_date_start_startyear', 'int');
-$search_date_start_startday = GETPOST('search_date_start_startday', 'int');
+$search_date_start_startmonth = GETPOSTINT('search_date_start_startmonth');
+$search_date_start_startyear = GETPOSTINT('search_date_start_startyear');
+$search_date_start_startday = GETPOSTINT('search_date_start_startday');
 $search_date_start_start = dol_mktime(0, 0, 0, $search_date_start_startmonth, $search_date_start_startday, $search_date_start_startyear);	// Use tzserver
-$search_date_start_endmonth = GETPOST('search_date_start_endmonth', 'int');
-$search_date_start_endyear = GETPOST('search_date_start_endyear', 'int');
-$search_date_start_endday = GETPOST('search_date_start_endday', 'int');
+$search_date_start_endmonth = GETPOSTINT('search_date_start_endmonth');
+$search_date_start_endyear = GETPOSTINT('search_date_start_endyear');
+$search_date_start_endday = GETPOSTINT('search_date_start_endday');
 $search_date_start_end = dol_mktime(23, 59, 59, $search_date_start_endmonth, $search_date_start_endday, $search_date_start_endyear);	// Use tzserver
 
-$search_date_end_startmonth = GETPOST('search_date_end_startmonth', 'int');
-$search_date_end_startyear = GETPOST('search_date_end_startyear', 'int');
-$search_date_end_startday = GETPOST('search_date_end_startday', 'int');
+$search_date_end_startmonth = GETPOSTINT('search_date_end_startmonth');
+$search_date_end_startyear = GETPOSTINT('search_date_end_startyear');
+$search_date_end_startday = GETPOSTINT('search_date_end_startday');
 $search_date_end_start = dol_mktime(0, 0, 0, $search_date_end_startmonth, $search_date_end_startday, $search_date_end_startyear);	// Use tzserver
-$search_date_end_endmonth = GETPOST('search_date_end_endmonth', 'int');
-$search_date_end_endyear = GETPOST('search_date_end_endyear', 'int');
-$search_date_end_endday = GETPOST('search_date_end_endday', 'int');
+$search_date_end_endmonth = GETPOSTINT('search_date_end_endmonth');
+$search_date_end_endyear = GETPOSTINT('search_date_end_endyear');
+$search_date_end_endday = GETPOSTINT('search_date_end_endday');
 $search_date_end_end = dol_mktime(23, 59, 59, $search_date_end_endmonth, $search_date_end_endday, $search_date_end_endyear);	// Use tzserver
 
-$search_date_creation_startmonth = GETPOST('search_date_creation_startmonth', 'int');
-$search_date_creation_startyear = GETPOST('search_date_creation_startyear', 'int');
-$search_date_creation_startday = GETPOST('search_date_creation_startday', 'int');
+$search_date_creation_startmonth = GETPOSTINT('search_date_creation_startmonth');
+$search_date_creation_startyear = GETPOSTINT('search_date_creation_startyear');
+$search_date_creation_startday = GETPOSTINT('search_date_creation_startday');
 $search_date_creation_start = dol_mktime(0, 0, 0, $search_date_creation_startmonth, $search_date_creation_startday, $search_date_creation_startyear);	// Use tzserver
-$search_date_creation_endmonth = GETPOST('search_date_creation_endmonth', 'int');
-$search_date_creation_endyear = GETPOST('search_date_creation_endyear', 'int');
-$search_date_creation_endday = GETPOST('search_date_creation_endday', 'int');
+$search_date_creation_endmonth = GETPOSTINT('search_date_creation_endmonth');
+$search_date_creation_endyear = GETPOSTINT('search_date_creation_endyear');
+$search_date_creation_endday = GETPOSTINT('search_date_creation_endday');
 $search_date_creation_end = dol_mktime(23, 59, 59, $search_date_creation_endmonth, $search_date_creation_endday, $search_date_creation_endyear);	// Use tzserver
 
-$search_date_modif_startmonth = GETPOST('search_date_modif_startmonth', 'int');
-$search_date_modif_startyear = GETPOST('search_date_modif_startyear', 'int');
-$search_date_modif_startday = GETPOST('search_date_modif_startday', 'int');
+$search_date_modif_startmonth = GETPOSTINT('search_date_modif_startmonth');
+$search_date_modif_startyear = GETPOSTINT('search_date_modif_startyear');
+$search_date_modif_startday = GETPOSTINT('search_date_modif_startday');
 $search_date_modif_start = dol_mktime(0, 0, 0, $search_date_modif_startmonth, $search_date_modif_startday, $search_date_modif_startyear);	// Use tzserver
-$search_date_modif_endmonth = GETPOST('search_date_modif_endmonth', 'int');
-$search_date_modif_endyear = GETPOST('search_date_modif_endyear', 'int');
-$search_date_modif_endday = GETPOST('search_date_modif_endday', 'int');
+$search_date_modif_endmonth = GETPOSTINT('search_date_modif_endmonth');
+$search_date_modif_endyear = GETPOSTINT('search_date_modif_endyear');
+$search_date_modif_endday = GETPOSTINT('search_date_modif_endday');
 $search_date_modif_end = dol_mktime(23, 59, 59, $search_date_modif_endmonth, $search_date_modif_endday, $search_date_modif_endyear);	// Use tzserver
 
 $search_category_array = array();
 
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
 }
 
@@ -519,7 +518,7 @@ if ($search_project_contact > 0) {
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= " WHERE p.entity IN (".getEntity('project', (GETPOST('search_current_entity', 'int') ? 0 : 1)).')';
+$sql .= " WHERE p.entity IN (".getEntity('project', (GETPOSTINT('search_current_entity') ? 0 : 1)).')';
 if (!$user->hasRight('projet', 'all', 'lire')) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 }
@@ -1124,13 +1123,13 @@ if ($user->hasRight('user', 'user', 'lire')) {
 }
 
 // Filter on categories
-if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	$formcategory = new FormCategory($db);
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $search_category_array, 'minwidth300imp minwidth300 widthcentpercentminusx');
 }
 
 // Filter on customer categories
-if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST') && isModEnabled("categorie") && $user->hasRight('categorie', 'lire')) {
+if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST') && isModEnabled("category") && $user->hasRight('categorie', 'lire')) {
 	$formcategory = new FormCategory($db);
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth300', $searchCategoryCustomerList ? $searchCategoryCustomerList : 0);
 	/*$moreforfilter .= '<div class="divsearchfield">';
@@ -1664,7 +1663,7 @@ while ($i < $imaxinloop) {
 		// Project url
 		if (!empty($arrayfields['p.ref']['checked'])) {
 			print '<td class="nowraponall tdoverflowmax200">';
-			print $object->getNomUrl(1, (!empty(GETPOST('search_usage_event_organization', 'int')) ? 'eventorganization' : ''));
+			print $object->getNomUrl(1, (!empty(GETPOSTINT('search_usage_event_organization')) ? 'eventorganization' : ''));
 			if ($object->hasDelay()) {
 				print img_warning($langs->trans('Late'));
 			}

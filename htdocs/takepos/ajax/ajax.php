@@ -46,9 +46,9 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 $category = GETPOST('category', 'alphanohtml');	// Can be id of category or 'supplements'
 $action = GETPOST('action', 'aZ09');
 $term = GETPOST('term', 'alpha');
-$id = GETPOST('id', 'int');
-$search_start = GETPOST('search_start', 'int');
-$search_limit = GETPOST('search_limit', 'int');
+$id = GETPOSTINT('id');
+$search_start = GETPOSTINT('search_start');
+$search_limit = GETPOSTINT('search_limit');
 
 if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
@@ -68,9 +68,9 @@ $pricelevel = 1;	// default price level if PRODUIT_MULTIPRICES. TODO Get price l
 $thirdparty = new Societe($db);
 
 if ($action == 'getProducts') {
-	$tosell = GETPOSTISSET('tosell') ? GETPOST('tosell', 'int') : '';
-	$limit = GETPOSTISSET('limit') ? GETPOST('limit', 'int') : 0;
-	$offset = GETPOSTISSET('offset') ? GETPOST('offset', 'int') : 0;
+	$tosell = GETPOSTISSET('tosell') ? GETPOSTINT('tosell') : '';
+	$limit = GETPOSTISSET('limit') ? GETPOSTINT('limit') : 0;
+	$offset = GETPOSTISSET('offset') ? GETPOSTINT('offset') : 0;
 
 	top_httphead('application/json');
 

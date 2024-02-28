@@ -142,10 +142,10 @@ class FormListWebPortal
 		// set form list
 		$this->action = GETPOST('action', 'aZ09');
 		$this->object = $object;
-		$this->limit = GETPOSTISSET('limit') ? (int) GETPOST('limit', 'int') : -1;
+		$this->limit = GETPOSTISSET('limit') ? GETPOSTINT('limit') : -1;
 		$this->sortfield = GETPOST('sortfield', 'aZ09comma');
 		$this->sortorder = GETPOST('sortorder', 'aZ09comma');
-		$this->page = GETPOSTISSET('page') ? (int) GETPOST('page', 'int') : 1;
+		$this->page = GETPOSTISSET('page') ? GETPOSTINT('page') : 1;
 		$this->titleKey = $objectclass . 'ListTitle';
 
 		// Initialize array of search criteria
@@ -303,7 +303,7 @@ class FormListWebPortal
 		$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		if ($object->ismultientitymanaged == 1) {
-			$sql .= " WHERE t.entity IN (" . getEntity($object->element, (GETPOST('search_current_entity', 'int') ? 0 : 1)) . ")";
+			$sql .= " WHERE t.entity IN (" . getEntity($object->element, (GETPOSTINT('search_current_entity') ? 0 : 1)) . ")";
 		} else {
 			$sql .= " WHERE 1 = 1";
 		}
@@ -413,9 +413,9 @@ class FormListWebPortal
 					}
 				}
 			} elseif (preg_match('/(_dtstart|_dtend)$/', $key) && !empty($val)) {
-				$param .= '&search_' . $key . 'month=' . ((int) GETPOST('search_' . $key . 'month', 'int'));
-				$param .= '&search_' . $key . 'day=' . ((int) GETPOST('search_' . $key . 'day', 'int'));
-				$param .= '&search_' . $key . 'year=' . ((int) GETPOST('search_' . $key . 'year', 'int'));
+				$param .= '&search_' . $key . 'month=' . (GETPOSTINT('search_' . $key . 'month'));
+				$param .= '&search_' . $key . 'day=' . (GETPOSTINT('search_' . $key . 'day'));
+				$param .= '&search_' . $key . 'year=' . (GETPOSTINT('search_' . $key . 'year'));
 			} elseif ($search[$key] != '') {
 				$param .= '&search_' . $key . '=' . urlencode($search[$key]);
 			}

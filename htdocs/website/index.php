@@ -62,10 +62,10 @@ if (!$user->hasRight('website', 'read')) {
 $conf->dol_hide_leftmenu = 1; // Force hide of left menu.
 
 $error = 0;
-$websiteid = GETPOST('websiteid', 'int');
+$websiteid = GETPOSTINT('websiteid');
 $websitekey = GETPOST('website', 'alpha');
 $page = GETPOST('page', 'alpha');
-$pageid = GETPOST('pageid', 'int');
+$pageid = GETPOSTINT('pageid');
 $pageref = GETPOST('pageref', 'alphanohtml');
 
 $action = GETPOST('action', 'aZ09');
@@ -76,8 +76,8 @@ $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'websitelist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
-$dol_hide_topmenu = GETPOST('dol_hide_topmenu', 'int');
-$dol_hide_leftmenu = GETPOST('dol_hide_leftmenu', 'int');
+$dol_hide_topmenu = GETPOSTINT('dol_hide_topmenu');
+$dol_hide_leftmenu = GETPOSTINT('dol_hide_leftmenu');
 $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
 $type_container = GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha');
@@ -142,10 +142,10 @@ if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x
 }
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -342,8 +342,8 @@ if ($action == 'replacesite' || $mode == 'replacesite') {
 	$containertype = GETPOST('optioncontainertype', 'aZ09') != '-1' ? GETPOST('optioncontainertype', 'aZ09') : '';
 	$langcode = GETPOST('optionlanguage', 'aZ09');
 	$otherfilters = array();
-	if (GETPOST('optioncategory', 'int') > 0) {
-		$otherfilters['category'] = GETPOST('optioncategory', 'int');
+	if (GETPOSTINT('optioncategory') > 0) {
+		$otherfilters['category'] = GETPOSTINT('optioncategory');
 	}
 
 	$listofpages = getPagesFromSearchCriterias($containertype, $algo, $searchkey, 1000, $sortfield, $sortorder, $langcode, $otherfilters, -1);
@@ -430,36 +430,36 @@ if ($action == 'renamefile') {	// Must be after include DOL_DOCUMENT_ROOT.'/core
 if ($action == 'setwebsiteonline' && $usercanedit) {
 	$website->setStatut($website::STATUS_VALIDATED, null, '', 'WEBSITE_MODIFY', 'status');
 
-	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website', 'alphanohtml').'&pageid='.GETPOST('websitepage', 'int'));
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOSTINT('website').'&pageid='.GETPOSTINT('websitepage'));
 	exit;
 }
 if ($action == 'setwebsiteoffline' && $usercanedit) {
 	$result = $website->setStatut($website::STATUS_DRAFT, null, '', 'WEBSITE_MODIFY', 'status');
 
-	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website', 'alphanohtml').'&pageid='.GETPOST('websitepage', 'int'));
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOSTINT('website').'&pageid='.GETPOSTINT('websitepage'));
 	exit;
 }
 if ($action == 'seteditinline') {	// No need of write permission
 	dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 1);
 	setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'warnings');
 	//dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 0); // Force disable of 'Include dynamic content'
-	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website', 'alphanohtml').'&pageid='.GETPOST('pageid', 'int'));
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOSTINT('website').'&pageid='.GETPOSTINT('pageid'));
 	exit;
 }
 if ($action == 'unseteditinline') {	// No need of write permission
 	dolibarr_del_const($db, 'WEBSITE_EDITINLINE');
-	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website', 'alphanohtml').'&pageid='.GETPOST('pageid', 'int'));
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOSTINT('website').'&pageid='.GETPOSTINT('pageid'));
 	exit;
 }
 if ($action == 'setshowsubcontainers') {	// No need of write permission
 	dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 1);
 	//dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 0); // Force disable of edit inline
-	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website', 'alphanohtml').'&pageid='.GETPOST('pageid', 'int'));
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOSTINT('website').'&pageid='.GETPOSTINT('pageid'));
 	exit;
 }
 if ($action == 'unsetshowsubcontainers') {	// No need of write permission
 	dolibarr_del_const($db, 'WEBSITE_SUBCONTAINERSINLINE');
-	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website', 'alphanohtml').'&pageid='.GETPOST('pageid', 'int'));
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOSTINT('website').'&pageid='.GETPOSTINT('pageid'));
 	exit;
 }
 
@@ -505,7 +505,7 @@ if ($massaction == 'setcategory' && GETPOST('confirmmassaction', 'alpha') && $us
 
 	$db->begin();
 
-	$categoryid = GETPOST('setcategory', 'int');
+	$categoryid = GETPOSTINT('setcategory');
 	if ($categoryid > 0) {
 		$tmpwebsitepage = new WebsitePage($db);
 		$category = new Categorie($db);
@@ -544,7 +544,7 @@ if ($massaction == 'delcategory' && GETPOST('confirmmassaction', 'alpha') && $us
 
 	$db->begin();
 
-	$categoryid = GETPOST('setcategory', 'int');
+	$categoryid = GETPOSTINT('setcategory');
 	if ($categoryid > 0) {
 		$tmpwebsitepage = new WebsitePage($db);
 		$category = new Categorie($db);
@@ -648,8 +648,8 @@ if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && $userca
 		$containertype = GETPOST('optioncontainertype', 'aZ09') != '-1' ? GETPOST('optioncontainertype', 'aZ09') : '';
 		$langcode = GETPOST('optionlanguage', 'aZ09');
 		$otherfilters = array();
-		if (GETPOST('optioncategory', 'int') > 0) {
-			$otherfilters['category'] = GETPOST('optioncategory', 'int');
+		if (GETPOSTINT('optioncategory') > 0) {
+			$otherfilters['category'] = GETPOSTINT('optioncategory');
 		}
 
 		// Now we reload list
@@ -1152,7 +1152,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 		$substitutionarray['__WEBSITE_CREATE_BY__'] = $user->getFullName($langs);
 
 		// Define id of page the new page is translation of
-		$pageidfortranslation = (GETPOST('pageidfortranslation', 'int') > 0 ? GETPOST('pageidfortranslation', 'int') : 0);
+		$pageidfortranslation = (GETPOSTINT('pageidfortranslation') > 0 ? GETPOSTINT('pageidfortranslation') : 0);
 		if ($pageidfortranslation > 0) {
 			// Check if the page we are translation of is already a translation of a source page. if yes, we will use source id instead
 			$objectpagetmp = new WebsitePage($db);
@@ -1353,7 +1353,7 @@ if ($action == 'confirm_deletesite' && $confirm == 'yes' && $permissiontodelete)
 
 	$db->begin();
 
-	$res = $object->fetch(GETPOST('id', 'int'));
+	$res = $object->fetch(GETPOSTINT('id'));
 	$website = $object;
 
 	if ($res > 0) {
@@ -1468,8 +1468,8 @@ if (!GETPOSTISSET('pageid')) {
 		$containertype = GETPOST('optioncontainertype', 'aZ09') != '-1' ? GETPOST('optioncontainertype', 'aZ09') : '';
 		$langcode = GETPOST('optionlanguage', 'aZ09');
 		$otherfilters = array();
-		if (GETPOST('optioncategory', 'int') > 0) {
-			$otherfilters['category'] = GETPOST('optioncategory', 'int');
+		if (GETPOSTINT('optioncategory') > 0) {
+			$otherfilters['category'] = GETPOSTINT('optioncategory');
 		}
 
 		$listofpages = getPagesFromSearchCriterias($containertype, $algo, $searchkey, 1000, $sortfield, $sortorder, $langcode, $otherfilters);
@@ -2009,12 +2009,12 @@ if ($action == 'updatemeta' && $usercanedit) {
 		$objectpage->keywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
 		$objectpage->allowed_in_frames = GETPOST('WEBSITE_ALLOWED_IN_FRAMES', 'aZ09');
 		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'none'));
-		$objectpage->fk_page = (GETPOST('pageidfortranslation', 'int') > 0 ? GETPOST('pageidfortranslation', 'int') : 0);
+		$objectpage->fk_page = (GETPOSTINT('pageidfortranslation') > 0 ? GETPOSTINT('pageidfortranslation') : 0);
 		$objectpage->author_alias = trim(GETPOST('WEBSITE_AUTHORALIAS', 'alphanohtml'));
 		$objectpage->object_type = GETPOST('WEBSITE_OBJECTCLASS', 'alpha');
 		$objectpage->fk_object = GETPOST('WEBSITE_OBJECTID', 'aZ09');
 
-		$newdatecreation = dol_mktime(GETPOST('datecreationhour', 'int'), GETPOST('datecreationmin', 'int'), GETPOST('datecreationsec', 'int'), GETPOST('datecreationmonth', 'int'), GETPOST('datecreationday', 'int'), GETPOST('datecreationyear', 'int'));
+		$newdatecreation = dol_mktime(GETPOSTINT('datecreationhour'), GETPOSTINT('datecreationmin'), GETPOSTINT('datecreationsec'), GETPOSTINT('datecreationmonth'), GETPOSTINT('datecreationday'), GETPOSTINT('datecreationyear'));
 		if ($newdatecreation) {
 			$objectpage->date_creation = $newdatecreation;
 		}
@@ -2168,7 +2168,7 @@ if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' ||
 		$db->begin();
 
 		$objectnew = new Website($db);
-		$result = $objectnew->createFromClone($user, GETPOST('id', 'int'), GETPOST('siteref', 'aZ09'), (GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : ''));
+		$result = $objectnew->createFromClone($user, GETPOSTINT('id'), GETPOSTINT('siteref'), (GETPOSTINT('newlang') ? GETPOSTINT('newlang') : ''));
 
 		if ($result < 0) {
 			$error++;
@@ -2195,7 +2195,7 @@ if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' ||
 				setEventMessages($langs->trans("LanguageMustNotBeSameThanClonedPage"), null, 'errors');
 				$action = 'preview';
 			}
-			if (GETPOST('newwebsite', 'int') != $object->id) {
+			if (GETPOSTINT('newwebsite') != $object->id) {
 				$error++;
 				setEventMessages($langs->trans("WebsiteMustBeSameThanClonedPageIfTranslation"), null, 'errors');
 				$action = 'preview';
@@ -2205,7 +2205,7 @@ if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' ||
 		if (!$error) {
 			$db->begin();
 
-			$newwebsiteid = GETPOST('newwebsite', 'int');
+			$newwebsiteid = GETPOSTINT('newwebsite');
 			$pathofwebsitenew = $pathofwebsite;
 
 			$tmpwebsite = new Website($db);
@@ -3074,7 +3074,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 			print dolButtonToOpenUrlInDialogPopup('file_manager', $langs->transnoentitiesnoconv("MediaFiles"), '<span class="fa fa-image"></span>', '/website/index.php?action=file_manager&website='.urlencode($website->ref).'&section_dir='.urlencode('image/'.$website->ref.'/'), $disabled);
 
-			if (isModEnabled('categorie')) {
+			if (isModEnabled('category')) {
 				//print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=website&dol_hide_leftmenu=1&nosearch=1&type=website_page&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("Categories")).'"><span class="fa fa-tags"></span></a>';
 				print dolButtonToOpenUrlInDialogPopup('categories', $langs->transnoentitiesnoconv("Categories"), '<span class="fa fa-tags"></span>', '/categories/index.php?leftmenu=website&nosearch=1&type=website_page&website='.urlencode($website->ref), $disabled);
 			}
@@ -4376,7 +4376,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print '</td></tr>';
 
 	// Categories
-	if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+	if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 		$langs->load('categories');
 
 		if (!GETPOSTISSET('categories')) {
@@ -4704,7 +4704,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 	print '</div>';
 
 	// Categories
-	if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+	if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 		print '<div class="tagtr">';
 		print '<div class="tagtd paddingrightonly marginrightonly opacitymedium tdoverflowmax100onsmartphone" style="padding-right: 10px !important">';
 		print $langs->trans("Category");
@@ -4751,7 +4751,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 			if ($permissiontodelete) {
 				$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 			}
-			if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
+			if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
 				$arrayofmassactions = array();
 			}
 
@@ -4841,7 +4841,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 
 					// Categories - Tags
 					print '<td class="center">';
-					if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+					if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 						// Get current categories
 						$existing = $c->containing($answerrecord->id, Categorie::TYPE_WEBSITE_PAGE, 'object');
 						if (is_array($existing)) {

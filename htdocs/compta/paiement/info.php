@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');

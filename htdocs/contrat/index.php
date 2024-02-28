@@ -39,13 +39,13 @@ $langs->loadLangs(array('products', 'companies', 'contracts'));
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 
 $statut = GETPOST('statut') ? GETPOST('statut') : 1;
 
 // Security check
 $socid = 0;
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
@@ -239,7 +239,7 @@ print "</table></div><br>";
 
 // Draft contracts
 
-if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
+if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 	$sql = "SELECT c.rowid, c.ref,";
 	$sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
 	$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";

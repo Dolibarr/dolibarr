@@ -634,7 +634,7 @@ class ExpenseReports extends DolibarrApi
 		if ($paymentExpenseReport->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error creating paymentExpenseReport', array_merge(array($paymentExpenseReport->error), $paymentExpenseReport->errors));
 		}
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			$paymentExpenseReport->addPaymentToBank(
 				DolibarrApiAccess::$user,
 				'payment_expensereport',

@@ -737,7 +737,7 @@ class Entrepot extends CommonObject
 			$datas['locationsummary'] = '<br><b>'.$langs->trans('LocationSummary').':</b> '.$this->lieu;
 		}
 		// show categories for this record only in ajax to not overload lists
-		if (!$nofetch && isModEnabled('categorie')) {
+		if (!$nofetch && isModEnabled('category')) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$form = new Form($this->db);
 			$datas['categories_warehouse'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_WAREHOUSE, 1, 1);
