@@ -25,22 +25,10 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
-if (empty($user->id)) {
-	print "Load permissions for admin user nb 1\n";
-	$user->fetch(1);
-	$user->getrights();
-}
-$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
-$conf->global->MAIN_UMASK = '0666';
-
+require_once __DIR__."/AbstractRestAPITest.php";
 
 /**
  * Class for PHPUnit tests
