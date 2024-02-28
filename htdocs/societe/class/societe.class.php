@@ -20,6 +20,7 @@
  * Copyright (C) 2022		ButterflyOfFire         <butterflyoffire+dolibarr@protonmail.com>
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -328,21 +329,21 @@ class Societe extends CommonObject
 
 	/**
 	 * @var string State code
-	 * @deprecated Use state_code instead
+	 * @deprecated Use $state_code instead
 	 * @see $state_code
 	 */
 	public $departement_code;
 
 	/**
 	 * @var string
-	 * @deprecated Use state instead
+	 * @deprecated Use $state instead
 	 * @see $state
 	 */
 	public $departement;
 
 	/**
 	 * @var string
-	 * @deprecated Use country instead
+	 * @deprecated Use $country instead
 	 * @see $country
 	 */
 	public $pays;
@@ -425,7 +426,7 @@ class Societe extends CommonObject
 
 	/**
 	 * @var string Professional ID 1
-	 * @deprecated
+	 * @deprecated Use $idprof1 instead
 	 * @see $idprof1
 	 */
 	public $siren;
@@ -439,7 +440,7 @@ class Societe extends CommonObject
 
 	/**
 	 * @var string Professional ID 2
-	 * @deprecated
+	 * @deprecated Use $idprof2 instead
 	 * @see $idprof2
 	 */
 	public $siret;
@@ -452,7 +453,7 @@ class Societe extends CommonObject
 
 	/**
 	 * @var string Professional ID 3
-	 * @deprecated
+	 * @deprecated Use $idprof3 instead
 	 * @see $idprof3
 	 */
 	public $ape;
@@ -638,7 +639,7 @@ class Societe extends CommonObject
 	/**
 	 * Duplicate of code_compta_client (for backward compatibility)
 	 * @var string
-	 * @deprecated
+	 * @deprecated  Use $code_compta_client
 	 * @see $code_compta_client
 	 */
 	public $code_compta;
@@ -662,14 +663,14 @@ class Societe extends CommonObject
 	public $accountancy_code_supplier;
 
 	/**
-	 * Accounting code for product (for level 3 of suggestion of prouct accounting account)
+	 * Accounting code for product (for level 3 of suggestion of product accounting account)
 	 * @var string
 	 */
 	public $code_compta_product;
 
 	/**
 	 * @var string
-	 * @deprecated Note is split in public and private notes
+	 * @deprecated Use $note_public, $note_private - Note is split in public and private notes
 	 * @see $note_public, $note_private
 	 */
 	public $note;
@@ -2247,7 +2248,7 @@ class Societe extends CommonObject
 	 *  Define third party as a customer
 	 *
 	 *	@return		int		Return integer <0 if KO, >0 if OK
-	 *  @deprecated
+	 *  @deprecated Use setAsCustomer() instead
 	 *  @see setAsCustomer()
 	 */
 	public function set_as_client()
