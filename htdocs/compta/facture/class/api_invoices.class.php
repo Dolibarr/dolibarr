@@ -1630,9 +1630,9 @@ class Invoices extends DolibarrApi
 			if ($is_multicurrency) {
 				$amounts[$id] = null;
 				// Multicurrency
-				$multicurrency_amounts[$id] = $amount;
+				$multicurrency_amounts[$id] = (float) $amount;
 			} else {
-				$amounts[$id] = $amount;
+				$amounts[$id] = (float) $amount;
 				// Multicurrency
 				$multicurrency_amounts[$id] = null;
 			}
@@ -1644,7 +1644,7 @@ class Invoices extends DolibarrApi
 		$paymentobj->amounts      = $amounts; // Array with all payments dispatching with invoice id
 		$paymentobj->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 		$paymentobj->paiementid   = $paymentid;
-		$paymentobj->paiementcode = dol_getIdFromCode($this->db, $paymentid, 'c_paiement', 'id', 'code', 1);
+		$paymentobj->paiementcode = (string) dol_getIdFromCode($this->db, $paymentid, 'c_paiement', 'id', 'code', 1);
 		$paymentobj->num_payment  = $num_payment;
 		$paymentobj->note_private = $comment;
 		$paymentobj->ref_ext      = $ref_ext;
