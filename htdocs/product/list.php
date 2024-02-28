@@ -90,8 +90,8 @@ $catid = GETPOSTINT('catid');
 if (!empty($catid) && empty($searchCategoryProductList)) {
 	$searchCategoryProductList = array($catid);
 }
-$search_tosell = GETPOST("search_tosell", 'int');
-$search_tobuy = GETPOST("search_tobuy", 'int');
+$search_tosell = GETPOST("search_tosell");
+$search_tobuy = GETPOST("search_tobuy");
 $search_country = GETPOSTINT("search_country");
 $search_state = GETPOSTINT("state_id");
 $fourn_id = GETPOSTINT("fourn_id");
