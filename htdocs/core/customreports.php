@@ -285,6 +285,7 @@ $search_component_params_hidden = implode(' AND ', array_merge($arrayofandtagshi
 
 $MAXUNIQUEVALFORGROUP = 20;
 $MAXMEASURESINBARGRAPH = 20;
+$SHOWLEGEND = (isset($SHOWLEGEND) ? $SHOWLEGEND : 1);
 
 $YYYY = substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1);
 $MM = substr($langs->trans("Month"), 0, 1).substr($langs->trans("Month"), 0, 1);
@@ -1095,6 +1096,7 @@ if ($mode == 'graph') {
 		}
 
 		$px1->SetLegend($legend);
+		$px1->setShowLegend($SHOWLEGEND);
 		$px1->SetMinValue($px1->GetFloorMinValue());
 		$px1->SetMaxValue($px1->GetCeilMaxValue());
 		$px1->SetWidth($WIDTH);
