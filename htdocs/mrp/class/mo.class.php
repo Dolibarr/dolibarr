@@ -2209,6 +2209,115 @@ class MoLine extends CommonObjectLine
 		return $this->createCommon($user, $notrigger);
 	}
 
+	public function consumeOrProduce(User $user, bool $autocloseMo, float $qty, int $idwarehouse, string $labelmovement = null, string $codemovement = null, float $pricetoprocess = 0, string $batch = null, int $idproductbatch = 0, Translate $outputlangs = null) {
+		global $langs, $db;
+
+		$retval = -1;
+		$error = 0;
+		$db->begin();
+
+		// Load product for MoLine
+	 	$tmpproduct = new Product($db);
+		$tmpproduct->fetch($this->fk_product);
+
+		// Validate parameters
+		// Check warehouse is set if we should have to
+		if ($tmpproduct->type == $tmpproduct::TYPE_PRODUCT) {
+			if (empty($idwarehouse) || $idwarehouse <= 0) {	// If there is no warehouse set.
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref), null, 'errors');
+				$error++;
+			}
+			if (isModEnabled('productbatch') && $tmpproduct->status_batch && empty($batch)) { // If batch is required, but there is no batch set.
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
+				$error++;
+			}
+			// Check qty is set.
+			if (empty($qty) || $qty == 0) {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Qty"), $tmpproduct->ref), null, 'errors');
+				$error++;
+			}
+		}
+
+		$consumptionRole;
+
+		// Create Mo Object
+		$tmpmo = new Mo($db);
+
+		// Create stock movement
+		$stockmove = new MouvementStock($db);
+		$idstockmove = 0;
+		if (!$error && $idwarehouse > 0) {
+			// Record stock movement
+			$stockmove->setOrigin($tmpmo->element, $this->fk_mo);
+
+			if ($this->role == 'toconsume') {
+				$consumptionRole = 'consumed';
+				$stockmove->context['mrp_role'] = 'toconsume';
+				if ($qty >= 0) {
+					$idstockmove = $stockmove->livraison($user, $this->fk_product, $idwarehouse, $qty, 0, $labelmovement, dol_now(), '', '', $batch, $idproductbatch, $codemovement);
+				} else {
+					$idstockmove = $stockmove->reception($user, $this->fk_product, $idwarehouse, $qty * -1, 0, $labelmovement, dol_now(), '', '', $batch, $idproductbatch, $codemovement);
+				}
+			}
+			if ($this->role == 'toproduce') {
+				$consumptionRole = 'produced';
+				$stockmove->context['mrp_role'] = 'toproduce';
+				$idstockmove = $stockmove->reception($user, $this->fk_product, $idwarehouse, $qty, $pricetoprocess, $labelmovement, dol_now(), '', '', $batch, $idproductbatch, $codemovement);
+			}
+
+			if ($idstockmove < 0) {
+				$error++;
+				setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+			}
+		}
+
+		if (!$error) {
+			// Record consumption
+			$moline = new MoLine($db);
+			$moline->fk_mo = $this->fk_mo;
+			$moline->position = 0;
+			$moline->fk_product = $this->fk_product;
+			$moline->fk_warehouse = $idwarehouse;
+			$moline->qty = $qty;
+			$moline->batch = $batch;
+			$moline->role = $consumptionRole;
+			$moline->fk_mrp_production = $this->id;
+			$moline->fk_stock_movement = $idstockmove == 0 ? null : $idstockmove;
+			$moline->fk_user_creat = $user->id;
+
+			$retval = $moline->create($user);
+			if ($retval <= 0) {
+				$error++;
+				setEventMessages($moline->error, $moline->errors, 'errors');
+			}
+		}
+
+		// Autoclose Mo
+		if (!$error && $autocloseMo) {
+			$tmpmo-$this->fetch($this->fk_mo);
+			if ($tmpmo->hasAllConsumedAndProduced()){
+				$result = $tmpmo->setStatusAsProduced(-1, $outputlangs);
+				if ($result <= 0) {
+					$error++;
+					setEventMessages($this->error, $this->errors, 'errors');
+				}
+			}
+		}
+
+		if ($error) {
+			$db->rollback();
+			$retval = -1;
+		} else {
+			$db->commit();
+		}
+
+		return $retval;
+
+	}
+
 	/**
 	 * Load object in memory from the database
 	 *
