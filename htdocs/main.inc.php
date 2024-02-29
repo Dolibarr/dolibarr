@@ -746,16 +746,16 @@ if (!defined('NOLOGIN')) {
 		// It is not already authenticated and it requests the login / password
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
-		$dol_dst_observed = GETPOST("dst_observed", 'int', 3);
-		$dol_dst_first = GETPOST("dst_first", 'int', 3);
-		$dol_dst_second = GETPOST("dst_second", 'int', 3);
-		$dol_screenwidth = GETPOST("screenwidth", 'int', 3);
-		$dol_screenheight = GETPOST("screenheight", 'int', 3);
-		$dol_hide_topmenu = GETPOST('dol_hide_topmenu', 'int', 3);
-		$dol_hide_leftmenu = GETPOST('dol_hide_leftmenu', 'int', 3);
-		$dol_optimize_smallscreen = GETPOST('dol_optimize_smallscreen', 'int', 3);
-		$dol_no_mouse_hover = GETPOST('dol_no_mouse_hover', 'int', 3);
-		$dol_use_jmobile = GETPOST('dol_use_jmobile', 'int', 3); // 0=default, 1=to say we use app from a webview app, 2=to say we use app from a webview app and keep ajax
+		$dol_dst_observed = GETPOSTINT("dst_observed", 3);
+		$dol_dst_first = GETPOSTINT("dst_first", 3);
+		$dol_dst_second = GETPOSTINT("dst_second", 3);
+		$dol_screenwidth = GETPOSTINT("screenwidth", 3);
+		$dol_screenheight = GETPOSTINT("screenheight", 3);
+		$dol_hide_topmenu = GETPOSTINT('dol_hide_topmenu', 3);
+		$dol_hide_leftmenu = GETPOSTINT('dol_hide_leftmenu', 3);
+		$dol_optimize_smallscreen = GETPOSTINT('dol_optimize_smallscreen', 3);
+		$dol_no_mouse_hover = GETPOSTINT('dol_no_mouse_hover', 3);
+		$dol_use_jmobile = GETPOSTINT('dol_use_jmobile', 3); // 0=default, 1=to say we use app from a webview app, 2=to say we use app from a webview app and keep ajax
 		//dol_syslog("POST key=".join(array_keys($_POST),',').' value='.join($_POST,','));
 
 		// If in demo mode, we check we go to home page through the public/demo/index.php page
@@ -1330,7 +1330,12 @@ if (GETPOSTINT('nojs')) {  // If javascript was not disabled on URL
 // Set MAIN_OPTIMIZEFORTEXTBROWSER for user (must be after login part)
 if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && !empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = $user->conf->MAIN_OPTIMIZEFORTEXTBROWSER;
+	if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') == 1) {
+		$conf->global->THEME_TOPMENU_DISABLE_IMAGE = 1;
+	}
 }
+//var_dump($conf->global->THEME_TOPMENU_DISABLE_IMAGE);
+//var_dump($user->conf->THEME_TOPMENU_DISABLE_IMAGE);
 
 // set MAIN_OPTIMIZEFORCOLORBLIND for user
 $conf->global->MAIN_OPTIMIZEFORCOLORBLIND = empty($user->conf->MAIN_OPTIMIZEFORCOLORBLIND) ? '' : $user->conf->MAIN_OPTIMIZEFORCOLORBLIND;
@@ -2427,8 +2432,8 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 			$nophoto = '/public/theme/common/user_woman.png';
 		}
 
-		$userImage = '<img class="photo photouserphoto userphoto" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
-		$userDropDownImage = '<img class="photo dropdown-user-image" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
+		$userImage = '<img class="photo photouserphoto userphoto" alt="" src="'.DOL_URL_ROOT.$nophoto.'">';
+		$userDropDownImage = '<img class="photo dropdown-user-image" alt="" src="'.DOL_URL_ROOT.$nophoto.'">';
 	}
 
 	$dropdownBody = '';
@@ -2613,7 +2618,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	} else {
 		$btnUser = '<!-- div for user link -->
 	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
-	    	<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'">
+	    	<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" alt="'.$langs->trans("MyUserCard").'">
 	    	'.$userImage.'
 	    		<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
 	    		</a>
@@ -3273,7 +3278,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		// Left column
 		print '<!-- Begin left menu -->'."\n";
 
-		print '<div class="vmenu"'.(!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '' : ' title="Left menu"').'>'."\n\n";
+		print '<div class="vmenu"'.(getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? ' alt="Left menu"' : '').'>'."\n\n";
 
 		// Show left menu with other forms
 		$menumanager->menu_array = $menu_array_before;

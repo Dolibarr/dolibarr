@@ -206,25 +206,40 @@ function getDolUserInt($key, $default = 0, $tmpuser = null)
 	return (int) (empty($tmpuser->conf->$key) ? $default : $tmpuser->conf->$key);
 }
 
+
+/**
+ * This mapping defines the conversion to the current internal
+ * names from the alternative allowed names (including effectively deprecated
+ * and future new names (not yet used as internal names).
+ *
+ * This allows to map any temporary or future name to the effective internal name.
+ *
+ * The value is typically the name of module's root directory.
+ */
 define(
-	'DEPRECATED_MODULE_MAPPING',
+	'MODULE_MAPPING',
 	array(
-		'actioncomm' => 'agenda',
-		'adherent' => 'member',
-		'adherent_type' => 'member_type',
-		'banque' => 'bank',
-		'categorie' => 'category',
-		'commande' => 'order',
-		'contrat' => 'contract',
-		'entrepot' => 'stock',
-		'expedition' => 'delivery_note',
-		'facture' => 'invoice',
-		'ficheinter' => 'intervention',
-		'product_fournisseur_price' => 'productsupplierprice',
-		'product_price' => 'productprice',
-		'projet'  => 'project',
-		'propale' => 'propal',
-		'socpeople' => 'contact',
+		// Map deprecated names to internal names
+		'adherent' => 'member',  // Has new directory
+		'member_type' => 'adherent_type',   // No directory, but file called adherent_type
+		'banque' => 'bank',   // Has new directory
+		'contrat' => 'contract', // Has new directory
+		'entrepot' => 'stock',   // Has new directory
+		'projet'  => 'project', // Has new directory
+
+		'actioncomm' => 'agenda',  // NO module directory (public dir agenda)
+		'product_price' => 'productprice', // NO directory
+		'product_fournisseur_price' => 'productsupplierprice', // NO directory
+
+		// Map future names to current internal names
+		'category' => 'categorie', // Has old directory
+		'order' => 'commande',    // Has old directory
+		'shipping' => 'expedition', // Has old directory
+		'invoice' => 'facture', // Has old directory
+		'intervention' => 'fichinter', // Has old directory
+		'ficheinter' => 'fichinter',  // Backup for 'fichinter'
+		'propal' => 'propale', // Has old directory
+		'contact' => 'socpeople', // Has old directory
 	)
 );
 
@@ -239,8 +254,8 @@ function isModEnabled($module)
 	global $conf;
 
 	// Fix old names (map to new names)
-	$arrayconv = DEPRECATED_MODULE_MAPPING;
-	$arrayconvbis = array_flip(DEPRECATED_MODULE_MAPPING);
+	$arrayconv = MODULE_MAPPING;
+	$arrayconvbis = array_flip(MODULE_MAPPING);
 
 	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 		// Special cases: both use the same module.
@@ -984,6 +999,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
  */
 function GETPOSTINT($paramname, $method = 0)
 {
+	// @phan-suppress-next-line GetPostShouldBeGetPostInt
 	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
 }
 
@@ -2319,7 +2335,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		if (empty($tabsname)) {
 			$tabsname = str_replace("@", "", $picto);
 		}
-		$out .= '<div id="moretabs'.$tabsname.'" class="inline-block tabsElem valignmiddle">';
+		$out .= '<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
 		$out .= '<div class="tab"><a href="#" class="tab moretab inline-block tabunactive"><span class="hideonsmartphone">'.$langs->trans("More").'</span>... ('.$nbintab.')</a></div>'; // Do not use "reposition" class in the "More".
 		$out .= '<div id="moretabsList'.$tabsname.'" style="width: '.$widthofpopup.'px; position: absolute; '.$left.': -999em; text-align: '.$left.'; margin:0px; padding:2px; z-index:10;">';
 		$out .= $outmore;
