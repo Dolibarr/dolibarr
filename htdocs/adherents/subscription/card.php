@@ -371,7 +371,7 @@ if ($rowid && $action != 'edit') {
 
 	// Delete
 	if ($user->hasRight('adherent', 'cotisation', 'creer')) {
-		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"]."?rowid=".$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>\n";
+		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"]."?rowid=".((int) $object->id).'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>\n";
 	}
 
 	print '</div>';
