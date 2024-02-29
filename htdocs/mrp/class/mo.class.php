@@ -915,7 +915,7 @@ class Mo extends CommonObject
 		// undo stockmovements and remove linked lines
 		if (!empty($affectedLinkedMoLines)) {
 			foreach ($affectedLinkedMoLines as $linkedLine) {
-				if(!$error) {
+				if (!$error) {
 					$linkedMoline = new MoLine($db);
 					$linkedMoline->fetch($linkedLine['rowid']);
 					$result = $linkedMoline->delete($user, $notrigger);
@@ -2210,8 +2210,7 @@ class MoLine extends CommonObjectLine
 		$result = -1;
 
 		// the stockmovements it was created for this line revise
-		if (!empty($this->fk_warehouse))
-		{
+		if (!empty($this->fk_warehouse)) {
 			$langs->loadLangs(array('stocks', 'mrp'));
 
 			// load the mo for this line
