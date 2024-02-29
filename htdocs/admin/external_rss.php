@@ -68,8 +68,8 @@ if ($result) {
 }
 
 if ($action == 'add' || GETPOST("modify")) {
-	$external_rss_title = "external_rss_title_".GETPOST("norss", 'int');
-	$external_rss_urlrss = "external_rss_urlrss_".GETPOST("norss", 'int');
+	$external_rss_title = "external_rss_title_".GETPOSTINT("norss");
+	$external_rss_urlrss = "external_rss_urlrss_".GETPOSTINT("norss");
 
 	if (GETPOST($external_rss_urlrss, 'alpha')) {
 		$boxlabel = '(ExternalRSSInformations)';
@@ -93,7 +93,7 @@ if ($action == 'add' || GETPOST("modify")) {
 		} else {
 			// Ajoute boite box_external_rss dans definition des boites
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, note)";
-			$sql .= " VALUES ('box_external_rss.php','".$db->escape(GETPOST("norss", 'int').' ('.GETPOST($external_rss_title, 'alpha')).")')";
+			$sql .= " VALUES ('box_external_rss.php','".$db->escape(GETPOSTINT("norss").' ('.GETPOSTINT($external_rss_title)).")')";
 			if (!$db->query($sql)) {
 				dol_print_error($db);
 				$error++;
@@ -101,9 +101,9 @@ if ($action == 'add' || GETPOST("modify")) {
 			//print $sql;exit;
 		}
 
-		$result1 = dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_".GETPOST("norss", 'int'), GETPOST($external_rss_title, 'alpha'), 'chaine', 0, '', $conf->entity);
+		$result1 = dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_".GETPOSTINT("norss"), GETPOSTINT($external_rss_title), 'chaine', 0, '', $conf->entity);
 		if ($result1) {
-			$consttosave = "EXTERNAL_RSS_URLRSS_".GETPOST("norss", 'int');
+			$consttosave = "EXTERNAL_RSS_URLRSS_".GETPOSTINT("norss");
 			$urltosave = GETPOST($external_rss_urlrss, 'alpha');
 			$result2 = dolibarr_set_const($db, $consttosave, $urltosave, 'chaine', 0, '', $conf->entity);
 			//var_dump($result2);exit;
@@ -121,12 +121,12 @@ if ($action == 'add' || GETPOST("modify")) {
 }
 
 if (GETPOST("delete")) {
-	if (GETPOST("norss", 'int')) {
+	if (GETPOSTINT("norss")) {
 		$db->begin();
 
 		// Supprime boite box_external_rss de definition des boites
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def";
-		$sql .= " WHERE file = 'box_external_rss.php' AND note LIKE '".$db->escape(GETPOST("norss", 'int'))." %'";
+		$sql .= " WHERE file = 'box_external_rss.php' AND note LIKE '".$db->escape(GETPOSTINT("norss"))." %'";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -161,9 +161,9 @@ if (GETPOST("delete")) {
 		}
 
 
-		$result1 = dolibarr_del_const($db, "EXTERNAL_RSS_TITLE_".GETPOST("norss", 'int'), $conf->entity);
+		$result1 = dolibarr_del_const($db, "EXTERNAL_RSS_TITLE_".GETPOSTINT("norss"), $conf->entity);
 		if ($result1) {
-			$result2 = dolibarr_del_const($db, "EXTERNAL_RSS_URLRSS_".GETPOST("norss", 'int'), $conf->entity);
+			$result2 = dolibarr_del_const($db, "EXTERNAL_RSS_URLRSS_".GETPOSTINT("norss"), $conf->entity);
 		}
 
 		if ($result1 && $result2) {
@@ -193,7 +193,7 @@ print '<br>';
 print '<form name="externalrssconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';

@@ -62,7 +62,7 @@ class Projects extends DolibarrApi
 	/**
 	 * Get properties of a project object
 	 *
-	 * Return an array with project informations
+	 * Return an array with project information
 	 *
 	 * @param   int         $id         ID of project
 	 * @return  Object					Object with cleaned properties
@@ -71,8 +71,8 @@ class Projects extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->projet->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->project->fetch($id);
@@ -102,13 +102,13 @@ class Projects extends DolibarrApi
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter projects of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param  int    $category   Use this param to filter list by category
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of project objects
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $properties = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->projet->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -118,7 +118,7 @@ class Projects extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -193,7 +193,7 @@ class Projects extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->projet->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
 			throw new RestException(401, "Insuffisant rights");
 		}
 		// Check mandatory fields
@@ -201,7 +201,7 @@ class Projects extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->project->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -234,8 +234,8 @@ class Projects extends DolibarrApi
 	 */
 	public function getLines($id, $includetimespent = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->projet->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->project->fetch($id);
@@ -274,8 +274,8 @@ class Projects extends DolibarrApi
 	{
 		global $db;
 
-		if (!DolibarrApiAccess::$user->rights->projet->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->project->fetch($id);
@@ -317,8 +317,8 @@ class Projects extends DolibarrApi
 	/*
 	public function postLine($id, $request_data = null)
 	{
-		if(! DolibarrApiAccess::$user->rights->projet->creer) {
-			throw new RestException(401);
+		if(! DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->project->fetch($id);
@@ -384,8 +384,8 @@ class Projects extends DolibarrApi
 	/*
 	public function putLine($id, $lineid, $request_data = null)
 	{
-		if(! DolibarrApiAccess::$user->rights->projet->creer) {
-			throw new RestException(401);
+		if(! DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->project->fetch($id);
@@ -438,15 +438,14 @@ class Projects extends DolibarrApi
 	/**
 	 * Update project general fields (won't touch lines of project)
 	 *
-	 * @param int   $id             Id of project to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   	$id             	Id of project to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->projet->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->project->fetch($id);
@@ -462,7 +461,7 @@ class Projects extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->project->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -486,8 +485,8 @@ class Projects extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->projet->supprimer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'supprimer')) {
+			throw new RestException(403);
 		}
 		$result = $this->project->fetch($id);
 		if (!$result) {
@@ -530,8 +529,8 @@ class Projects extends DolibarrApi
 	 */
 	public function validate($id, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->projet->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
+			throw new RestException(403);
 		}
 		$result = $this->project->fetch($id);
 		if (!$result) {

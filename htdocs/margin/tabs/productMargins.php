@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 $langs->loadLangs(array("companies", "bills", "products", "margins"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -43,10 +43,10 @@ if (!empty($user->socid)) {
 
 $object = new Product($db);
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -168,7 +168,7 @@ if ($id > 0 || !empty($ref)) {
 			}
 			$sql .= " AND d.buy_price_ht IS NOT NULL";
 			// We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
-			// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredicable.
+			// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredictable.
 			if (getDolGlobalInt('ForceBuyingPriceIfNull') == 2) {
 				$sql .= " AND d.buy_price_ht <> 0";
 			}

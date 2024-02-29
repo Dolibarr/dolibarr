@@ -73,7 +73,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'update') {
-	$max_rank = GETPOST('HRM_MAXRANK', 'int');
+	$max_rank = GETPOSTINT('HRM_MAXRANK');
 
 	// We complete skill possible level notation if necessary
 	if (!empty($max_rank)) {
@@ -602,7 +602,7 @@ if ($action == 'edit') {
 					if ($result < 0) {
 						setEventMessages(null, $c->errors, 'errors');
 					}
-					$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
+					$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
 					$toprint = array();
 					foreach ($ways as $way) {
 						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';

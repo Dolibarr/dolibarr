@@ -70,7 +70,7 @@ class mailing_thirdparties extends MailingTargets
 		$addDescription = "";
 		$addFilter = "";
 		if (GETPOSTISSET("filter_client_thirdparties") && GETPOST("filter_client_thirdparties") != '-1') {
-			$addFilter .= " AND s.client=".((int) GETPOST("filter_client_thirdparties", 'int'));
+			$addFilter .= " AND s.client=".(GETPOSTINT("filter_client_thirdparties"));
 			$addDescription = $langs->trans('ProspectCustomer')."=";
 			if (GETPOST("filter_client_thirdparties") == 0) {
 				$addDescription .= $langs->trans('NorProspectNorCustomer');
@@ -85,7 +85,7 @@ class mailing_thirdparties extends MailingTargets
 			}
 		}
 		if (GETPOSTISSET("filter_supplier_thirdparties") && GETPOST("filter_supplier_thirdparties") != '-1') {
-			$addFilter .= " AND s.fournisseur = ".((int) GETPOST("filter_supplier_thirdparties", 'int'));
+			$addFilter .= " AND s.fournisseur = ".(GETPOSTINT("filter_supplier_thirdparties"));
 			$addDescription = $langs->trans('Supplier')."=";
 			if (GETPOST("filter_supplier_thirdparties") == 0) {
 				$addDescription .= $langs->trans('No');
@@ -149,8 +149,8 @@ class mailing_thirdparties extends MailingTargets
 			$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 			$sql .= " AND cs.fk_soc = s.rowid";
 			$sql .= " AND c.rowid = cs.fk_categorie";
-			if (GETPOST('filter_thirdparties', 'int') > 0) {
-				$sql .= " AND c.rowid=".((int) GETPOST('filter_thirdparties', 'int'));
+			if (GETPOSTINT('filter_thirdparties') > 0) {
+				$sql .= " AND c.rowid=".(GETPOSTINT('filter_thirdparties'));
 			}
 			if (empty($this->evenunsubscribe)) {
 				$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = s.email) = 0";
@@ -164,8 +164,8 @@ class mailing_thirdparties extends MailingTargets
 			$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 			$sql .= " AND cs.fk_soc = s.rowid";
 			$sql .= " AND c.rowid = cs.fk_categorie";
-			if (GETPOST('filter_thirdparties', 'int') > 0) {
-				$sql .= " AND c.rowid=".((int) GETPOST('filter_thirdparties', 'int'));
+			if (GETPOSTINT('filter_thirdparties') > 0) {
+				$sql .= " AND c.rowid=".(GETPOSTINT('filter_thirdparties'));
 			}
 			if (empty($this->evenunsubscribe)) {
 				$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = s.email) = 0";
@@ -230,7 +230,7 @@ class mailing_thirdparties extends MailingTargets
 	 */
 	public function getSqlArrayForStats()
 	{
-		// CHANGE THIS: Optionnal
+		// CHANGE THIS: Optional
 
 		//var $statssql=array();
 		//$this->statssql[0]="SELECT field1 as label, count(distinct(email)) as nb FROM mytable WHERE email IS NOT NULL";
@@ -290,7 +290,7 @@ class mailing_thirdparties extends MailingTargets
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			if (!isModEnabled("categorie")) {
+			if (!isModEnabled("category")) {
 				$num = 0; // Force empty list if category module is not enabled
 			}
 

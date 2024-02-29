@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class
 
 $langs->loadLangs(array("receptions", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal'));
 
-$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
@@ -69,19 +69,19 @@ if ($user->socid > 0) {
 }
 
 if (isModEnabled("reception")) {
-	$permissiontoread = $user->rights->reception->lire;
-	$permissiontoadd = $user->rights->reception->creer;
-	$permissiondellink = $user->rights->reception->creer; // Used by the include of actions_dellink.inc.php
-	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->creer)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->reception_advance->validate)));
-	$permissiontodelete = $user->rights->reception->supprimer;
+	$permissiontoread = $user->hasRight('reception', 'lire');
+	$permissiontoadd = $user->hasRight('reception', 'creer');
+	$permissiondellink = $user->hasRight('reception', 'creer'); // Used by the include of actions_dellink.inc.php
+	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'reception_advance', 'validate')));
+	$permissiontodelete = $user->hasRight('reception', 'supprimer');
 } else {
-	$permissiontoread = $user->rights->fournisseur->commande->receptionner;
-	$permissiontoadd = $user->rights->fournisseur->commande->receptionner;
-	$permissiondellink = $user->rights->fournisseur->commande->receptionner; // Used by the include of actions_dellink.inc.php
-	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->fournisseur->commande->receptionner)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->fournisseur->commande_advance->check)));
-	$permissiontodelete = $user->rights->fournisseur->commande->receptionner;
+	$permissiontoread = $user->hasRight('fournisseur', 'commande', 'receptionner');
+	$permissiontoadd = $user->hasRight('fournisseur', 'commande', 'receptionner');
+	$permissiondellink = $user->hasRight('fournisseur', 'commande', 'receptionner'); // Used by the include of actions_dellink.inc.php
+	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('fournisseur', 'commande', 'receptionner')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('fournisseur', 'commande_advance', 'check')));
+	$permissiontodelete = $user->hasRight('fournisseur', 'commande', 'receptionner');
 }
-$permissionnote = $user->rights->reception->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('reception', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 // TODO Test on reception module on only
 if ($origin == 'reception') {

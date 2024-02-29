@@ -37,8 +37,8 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
-$validatemonth = GETPOST('validatemonth', 'int');
-$validateyear = GETPOST('validateyear', 'int');
+$validatemonth = GETPOSTINT('validatemonth');
+$validateyear = GETPOSTINT('validateyear');
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -54,8 +54,8 @@ if (!$user->hasRight('accounting', 'bind', 'write')) {
 $accountingAccount = new AccountingAccount($db);
 
 $month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-if (GETPOST("year", 'int')) {
-	$year_start = GETPOST("year", 'int');
+if (GETPOSTINT("year")) {
+	$year_start = GETPOSTINT("year");
 } else {
 	$year_start = dol_print_date(dol_now(), '%Y');
 	if (dol_print_date(dol_now(), '%m') < $month_start) {
@@ -299,8 +299,9 @@ if ($action == 'validatehistory') {
 /*
  * View
  */
+$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
-llxHeader('', $langs->trans("CustomersVentilation"));
+llxHeader('', $langs->trans("CustomersVentilation"), $help_url);
 
 $textprevyear = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current - 1).'">'.img_previous().'</a>';
 $textnextyear = '&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current + 1).'">'.img_next().'</a>';

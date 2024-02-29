@@ -290,7 +290,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		$pdf->SetFont('', '', $default_font_size);
 		$pdf->SetXY(10, 32);
-		$pdf->MultiCell(0, 2, $outputlangs->transnoentities("Account"), 0, 'L');
+		$pdf->MultiCell(0, 2, $outputlangs->transnoentities("BankAccount"), 0, 'L');
 		pdf_bank($pdf, $outputlangs, 32, 32, $this->account, 1);
 
 		$pdf->SetFont('', '', $default_font_size);
@@ -375,7 +375,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$lineinpage = 0;
 		$num = count($this->lines);
 		for ($j = 0; $j < $num; $j++) {
-			// Dynamic max line heigh calculation
+			// Dynamic max line height calculation
 			$dynamic_line_height = array();
 			$dynamic_line_height[] = $pdf->getStringHeight(60, $outputlangs->convToOutputCharset($this->lines[$j]->bank_chq));
 			$dynamic_line_height[] = $pdf->getStringHeight(80, $outputlangs->convToOutputCharset($this->lines[$j]->emetteur_chq));

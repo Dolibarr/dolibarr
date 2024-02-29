@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2013-2016 Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
- * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2016-2020 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2015       Ari Elbaz (elarifr)     <github@accedinfo.com>
+ * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2016-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ class FormAccounting extends Form
 	 * @param	string	$morecss	More css non HTML object
 	 * @param	string	$usecache	Key to use to store result into a cache. Next call with same key will reuse the cache.
 	 * @param   int     $disabledajaxcombo Disable ajax combo box.
-	 * @return	string				String with HTML select
+	 * @return	string|int				String with HTML select, or -1 if error
 	 */
 	public function select_journal($selectid, $htmlname = 'journal', $nature = 0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss = 'maxwidth300 maxwidthonsmartphone', $usecache = '', $disabledajaxcombo = 0)
 	{
@@ -157,7 +157,7 @@ class FormAccounting extends Form
 	 * @param	string	$morecss			More css non HTML object
 	 * @param	string	$usecache			Key to use to store result into a cache. Next call with same key will reuse the cache.
 	 * @param   int     $disabledajaxcombo 	Disable ajax combo box.
-	 * @return	string						String with HTML select
+	 * @return	string|int						String with HTML select, or -1 if error
 	 */
 	public function multi_select_journal($selectedIds = array(), $htmlname = 'journal', $nature = 0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss = '', $usecache = '', $disabledajaxcombo = 0)
 	{
@@ -228,7 +228,7 @@ class FormAccounting extends Form
 	 *	Return list of accounting category.
 	 * 	Use mysoc->country_id or mysoc->country_code so they must be defined.
 	 *
-	 *	@param	string	$selected       Preselected type
+	 *	@param	int		$selected       Preselected type
 	 *	@param  string	$htmlname       Name of field in form
 	 * 	@param	int		$useempty		Set to 1 if we want an empty value
 	 * 	@param	int		$maxlen			Max length of text in combo box
@@ -236,13 +236,13 @@ class FormAccounting extends Form
 	 *  @param  int     $allcountries   All countries
 	 * 	@return	string					HTML component with the select
 	 */
-	public function select_accounting_category($selected = '', $htmlname = 'account_category', $useempty = 0, $maxlen = 0, $help = 1, $allcountries = 0)
+	public function select_accounting_category($selected = 0, $htmlname = 'account_category', $useempty = 0, $maxlen = 0, $help = 1, $allcountries = 0)
 	{
 		// phpcs:enable
 		global $langs, $mysoc;
 
 		if (empty($mysoc->country_id) && empty($mysoc->country_code) && empty($allcountries)) {
-			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
+			dol_print_error(null, 'Call to select_accounting_account with mysoc country not yet defined');
 			exit;
 		}
 
@@ -319,7 +319,7 @@ class FormAccounting extends Form
 	 *
 	 * @param string $htmlname         Name of select field
 	 * @param string $selectedkey      Value
-	 * @return string                  HTML edit field
+	 * @return string|int              HTML edit field, or -1 if error
 	 */
 	public function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey = '')
 	{
@@ -359,7 +359,7 @@ class FormAccounting extends Form
 	 * @param string   		$morecss           	More css non HTML object
 	 * @param string   		$usecache          	Key to use to store result into a cache. Next call with same key will reuse the cache.
 	 * @param string		$active				Filter on status active or not: '0', '1' or '' for no filter
-	 * @return string       	               	String with HTML select
+	 * @return string|int      	               	String with HTML select, or -1 if error
 	 */
 	public function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss = 'minwidth100 maxwidth300 maxwidthonsmartphone', $usecache = '', $active = '1')
 	{
@@ -459,7 +459,7 @@ class FormAccounting extends Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return list of auxilary accounts. Cumulate list from customers, suppliers and users.
+	 * Return list of auxiliary accounts. Cumulate list from customers, suppliers and users.
 	 *
 	 * @param string   		$selectid       Preselected pcg_type
 	 * @param string   		$htmlname       Name of field in html form
@@ -467,7 +467,7 @@ class FormAccounting extends Form
 	 * @param string   		$morecss        More css
 	 * @param string   		$usecache       Key to use to store result into a cache. Next call with same key will reuse the cache.
 	 * @param string		$labelhtmlname	HTML name of label for autofill of account from name.
-	 * @return string       	   			String with HTML select
+	 * @return string|int      	   			String with HTML select, or -1 if error
 	 */
 	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'minwidth100 maxwidth300 maxwidthonsmartphone', $usecache = '', $labelhtmlname = '')
 	{
@@ -559,8 +559,8 @@ class FormAccounting extends Form
 	 * @param string 	$selected 		Preselected value
 	 * @param string 	$htmlname 		Name of HTML select object
 	 * @param int 		$useempty 		Affiche valeur vide dans liste
-	 * @param string 	$output_format 	(html/opton (for option html only)/array (to return options arrays
-	 * @return string|array				HTML select component or array of select options
+	 * @param string 	$output_format 	(html/option (for option html only)/array (to return options arrays
+	 * @return string|array|int			HTML select component || array of select options || - 1 if error
 	 */
 	public function selectyear_accountancy_bookkepping($selected = '', $htmlname = 'yearid', $useempty = 0, $output_format = 'html')
 	{
@@ -590,6 +590,46 @@ class FormAccounting extends Form
 			return Form::selectarray($htmlname, $out_array, $selected, $useempty, 0, 0, 'placeholder="aa"');
 		} else {
 			return $out_array;
+		}
+	}
+
+	/**
+	 *  Output html select to select accounting account
+	 *
+	 *  @param	string	$page       			Page
+	 *  @param  string	$selected   			Id preselected
+	 * 	@param	string	$htmlname				Name of HTML select object
+	 *  @param  int		$option					option (0: aggregate by general account or 1: aggregate by subaccount)
+	 *  @param  int		$useempty				Show empty value in list
+	 *  @param  string	$filter         		optional filters criteria
+	 *  @param  int		$nooutput       		No print output. Return it only.
+	 *  @return	void|string
+	 */
+	public function formAccountingAccount($page, $selected = '', $htmlname = 'none', $option = 0, $useempty = 1, $filter = '', $nooutput = 0)
+	{
+		global $langs;
+
+		$out = '';
+		if ($htmlname != "none") {
+			$out .= '<form method="post" action="' . $page . '">';
+			$out .= '<input type="hidden" name="action" value="set'.$htmlname.'">';
+			$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
+			if ($option == 0) {
+				$out .= $this->select_account($selected, $htmlname, $useempty, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts', $filter);
+			} else {
+				$out .= $this->select_auxaccount($selected, $htmlname, $useempty, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'subaccounts');
+			}
+			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" name="modify" value="' . $langs->trans("Modify") . '">';
+			//$out .= '<input type="submit" class="button smallpaddingimp valignmiddle button-cancel" name="cancel" value="' . $langs->trans("Cancel") . '">';
+			$out .= '</form>';
+		} else {
+			$out .= "&nbsp;";
+		}
+
+		if ($nooutput) {
+			return $out;
+		} else {
+			print $out;
 		}
 	}
 }

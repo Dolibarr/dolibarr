@@ -260,6 +260,7 @@ class RssParser
 				if (LIBXML_VERSION < 20900) {
 					// Avoid load of external entities (security problem).
 					// Required only if LIBXML_VERSION < 20900
+					// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 					libxml_disable_entity_loader(true);
 				}
 
@@ -593,13 +594,13 @@ class RssParser
 		} elseif ($this->_format == 'atom' && $this->incontent) {
 			// if inside an Atom content construct (e.g. content or summary) field treat tags as text
 			// if tags are inlined, then flatten
-			$attrs_str = join(' ', array_map('map_attrs', array_keys($attrs), array_values($attrs)));
+			$attrs_str = implode(' ', array_map('map_attrs', array_keys($attrs), array_values($attrs)));
 
 			$this->append_content("<$element $attrs_str>");
 
 			array_unshift($this->stack, $el);
 		} elseif ($this->_format == 'atom' && $el == 'link') {
-			// Atom support many links per containging element.
+			// Atom support many links per containing element.
 			// Magpie treats link elements of type rel='alternate'
 			// as being equivalent to RSS's simple link element.
 			if (isset($attrs['rel']) && $attrs['rel'] == 'alternate') {
@@ -632,7 +633,7 @@ class RssParser
 		if ($this->_format == 'atom' and $this->incontent) {
 			$this->append_content($text);
 		} else {
-			$current_el = join('_', array_reverse($this->stack));
+			$current_el = implode('_', array_reverse($this->stack));
 			$this->append($current_el, $text);
 		}
 	}
@@ -664,7 +665,7 @@ class RssParser
 			$this->inchannel = false;
 		} elseif ($this->_format == 'atom' and $this->incontent) {
 			// balance tags properly
-			// note:  i don't think this is actually neccessary
+			// note:  i don't think this is actually necessary
 			if ($this->stack[0] == $el) {
 				$this->append_content("</$el>");
 			} else {
@@ -819,7 +820,7 @@ class RssParser
  * @param string $ent
  * @param string|false $base
  * @param string $sysID
- * @param string[false $pubID
+ * @param string|false $pubID
  * @return bool
 function extEntHandler($parser, $ent, $base, $sysID, $pubID)  {
 	print 'extEntHandler ran';
@@ -836,7 +837,7 @@ function extEntHandler($parser, $ent, $base, $sysID, $pubID)  {
  */
 function xml2php($xml)
 {
-	$fils = 0;
+	$threads = 0;
 	$tab = false;
 	$array = array();
 	foreach ($xml->children() as $key => $value) {
@@ -863,11 +864,11 @@ function xml2php($xml)
 			$array[$key] = $child;
 		}
 
-		$fils++;
+		$threads++;
 	}
 
 
-	if ($fils == 0) {
+	if ($threads == 0) {
 		return (string) $xml;
 	}
 

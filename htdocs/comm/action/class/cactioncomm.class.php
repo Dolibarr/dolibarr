@@ -162,9 +162,9 @@ class CActionComm
 		global $langs, $conf, $user;
 		$langs->load("commercial");
 
-		$repid = array();
-		$repcode = array();
-		$repall = array();
+		$rep_id = array();
+		$rep_code = array();
+		$rep_all = array();
 
 		$sql = "SELECT id, code, libelle as label, module, type, color, picto";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
@@ -213,10 +213,10 @@ class CActionComm
 						//var_dump($obj->type.' '.$obj->module.' '); var_dump($user->hasRight('facture', 'lire'));
 						$qualified = 0;
 						// Special cases
-						if ($obj->module == 'invoice' && isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
+						if ($obj->module == 'invoice' && isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'order' && isModEnabled('commande') && !$user->hasRight('commande', 'lire')) {
+						if ($obj->module == 'order' && isModEnabled('order') && !$user->hasRight('commande', 'lire')) {
 							$qualified = 1;
 						}
 						if ($obj->module == 'propal' && isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
@@ -228,7 +228,7 @@ class CActionComm
 						if ($obj->module == 'order_supplier' && ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'commande', 'lire')) || (!isModEnabled('supplier_order') && $user->hasRight('supplier_order', 'lire')))) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'shipping' && isModEnabled("expedition") && $user->hasRight('expedition', 'lire')) {
+						if ($obj->module == 'shipping' && isModEnabled("delivery_note") && $user->hasRight('expedition', 'lire')) {
 							$qualified = 1;
 						}
 						// For case module = 'myobject@eventorganization'
@@ -301,7 +301,7 @@ class CActionComm
 									$module = $obj->module;
 								}
 								$label = '&nbsp;&nbsp; '.$label;
-								if (!isset($repcode['AC_ALL_'.strtoupper($module)])) {	// If first time for this module
+								if (!isset($rep_code['AC_ALL_'.strtoupper($module)])) {	// If first time for this module
 									$idforallfornewmodule--;
 								}
 								$TModule['id'][$idforallfornewmodule] = $langs->trans("ActionAC_ALL_".strtoupper($module));
@@ -346,7 +346,7 @@ class CActionComm
 	 *  Return name of action type as a label translated
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Picto only
-	 *  @return string			      	Label of action type
+	 *  @return string|-1		      	Label of action type, or -1 if error
 	 */
 	public function getNomUrl($withpicto = 0)
 	{

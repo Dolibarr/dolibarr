@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2017-2024  Alexandre Spangaro   <aspangaro@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,12 +56,12 @@ $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"')
 $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
 $listoffset = GETPOST('listoffset', 'alpha');
-$listlimit = GETPOST('listlimit', 'int') > 0 ? GETPOST('listlimit', 'int') : 1000;
+$listlimit = GETPOSTINT('listlimit') > 0 ? GETPOSTINT('listlimit') : 1000;
 $active = 1;
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -77,7 +77,7 @@ if (empty($sortorder)) {
 
 $error = 0;
 
-$search_country_id = GETPOST('search_country_id', 'int');
+$search_country_id = GETPOSTINT('search_country_id');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admin'));
@@ -184,9 +184,9 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 	// Si verif ok et action add, on ajoute la ligne
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		if ($tabrowid[$id]) {
-			// Recupere id libre pour insertion
+			// Get free id for insert
 			$newid = 0;
-			$sql = "SELECT max(".$tabrowid[$id].") newid from ".$tabname[$id];
+			$sql = "SELECT MAX(".$tabrowid[$id].") newid from ".$tabname[$id];
 			$result = $db->query($sql);
 			if ($result) {
 				$obj = $db->fetch_object($result);
@@ -351,7 +351,9 @@ if ($action == $acts[1]) {
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-llxHeader();
+$title = $langs->trans('AccountingJournals');
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
+llxHeader('', $title, $help_url);
 
 $titre = $langs->trans("DictionarySetup");
 $linkback = '';
@@ -367,7 +369,6 @@ print load_fiche_titre($titre, $linkback, $titlepicto);
 if ($action == 'delete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
-//var_dump($elementList);
 
 /*
  * Show a dictionary
@@ -402,7 +403,7 @@ if ($id) {
 		foreach ($fieldlist as $field => $value) {
 			// Determine le nom du champ par rapport aux noms possibles
 			// dans les dictionnaires de donnees
-			$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
+			$valuetoshow = ucfirst($fieldlist[$field]); // By default
 			$valuetoshow = $langs->trans($valuetoshow); // try to translate
 			$class = "left";
 			if ($fieldlist[$field] == 'code') {
@@ -518,7 +519,7 @@ if ($id) {
 		foreach ($fieldlist as $field => $value) {
 			// Determine le nom du champ par rapport aux noms possibles
 			// dans les dictionnaires de donnees
-			$showfield = 1; // By defaut
+			$showfield = 1; // By default
 			$class = "left";
 			$sortable = 1;
 			$valuetoshow = '';
@@ -529,7 +530,7 @@ if ($id) {
 			$align=$tmp['align'];
 			$sortable=$tmp['sortable'];
 			*/
-			$valuetoshow = ucfirst($fieldlist[$field]); // By defaut
+			$valuetoshow = ucfirst($fieldlist[$field]); // By default
 			$valuetoshow = $langs->trans($valuetoshow); // try to translate
 			if ($fieldlist[$field] == 'code') {
 				$valuetoshow = $langs->trans("Code");
@@ -688,7 +689,7 @@ $db->close();
  *  @param      array   $fieldlist      Array of fields
  *  @param      Object  $obj            If we show a particular record, obj is filled with record fields
  *  @param      string  $tabname        Name of SQL table
- *  @param      string  $context        'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
+ *  @param      string  $context        'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *  @return     void
  */
 function fieldListJournal($fieldlist, $obj = null, $tabname = '', $context = '')

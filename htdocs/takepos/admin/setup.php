@@ -144,7 +144,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 print load_fiche_titre($langs->trans('CashDeskRefNumberingModules'), '', '');
 
-print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name")."</td>\n";
@@ -281,7 +281,7 @@ if (isModEnabled("service")) {
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("RootCategoryForProductsToSell"), $langs->trans("RootCategoryForProductsToSellDesc"));
 print '<td>';
-print img_object('', 'category', 'class="paddingright"').$form->select_all_categories(Categorie::TYPE_PRODUCT, getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID'), 'TAKEPOS_ROOT_CATEGORY_ID', 64, 0, 0, 0, 'widthcentpercentminusx');
+print img_object('', 'category', 'class="paddingright"').$form->select_all_categories(Categorie::TYPE_PRODUCT, getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID'), 'TAKEPOS_ROOT_CATEGORY_ID', 64, 0, 0, 0, 'maxwidth500 widthcentpercentminusx');
 print ajax_combobox('TAKEPOS_ROOT_CATEGORY_ID');
 print "</td></tr>\n";
 
@@ -361,7 +361,7 @@ if (is_array($formmail->lines_model)) {
 }
 //var_dump($arraydefaultmessage);
 //var_dump($arrayofmessagename);
-print $form->selectarray('TAKEPOS_EMAIL_TEMPLATE_INVOICE', $arrayofmessagename, $conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE, 'None', 1, 0, '', 0, 0, 0, '', '', 1);
+print $form->selectarray('TAKEPOS_EMAIL_TEMPLATE_INVOICE', $arrayofmessagename, getDolGlobalString('TAKEPOS_EMAIL_TEMPLATE_INVOICE'), 'None', 1, 0, '', 0, 0, 0, '', 'maxwidth500 widthcentpercentminusx', 1);
 print "</td></tr>\n";
 
 // Control cash box at opening pos

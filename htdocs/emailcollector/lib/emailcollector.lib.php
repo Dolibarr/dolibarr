@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +91,7 @@ function emailcollectorPrepareHead($object)
  * Get parts of a message
  *
  * @param 	object 			$structure 		Structure of message
- * @return 	object|boolean 					Parties du message|false en cas d'erreur
+ * @return 	array|false						Array of parts of the message|false if error
  */
 function getParts($structure)
 {
@@ -101,7 +102,7 @@ function getParts($structure)
  * Array with joined files
  *
  * @param 	object 			$part 		Part of message
- * @return 	object|boolean 				Definition of message|false en cas d'erreur
+ * @return 	object|boolean 				Definition of message|false in case of error
  */
 function getDParameters($part)
 {
@@ -112,13 +113,14 @@ function getDParameters($part)
  * Get attachments of a given mail
  *
  * @param 	integer $jk 	Number of email
- * @param 	object 	$mbox 	object connection imaap
+ * @param 	object 	$mbox 	object connection imap
  * @return 	array 			type, filename, pos
  */
 function getAttachments($jk, $mbox)
 {
 	$structure = imap_fetchstructure($mbox, $jk, FT_UID);
 	$parts = getParts($structure);
+
 	$fpos = 2;
 	$attachments = array();
 	$nb = count($parts);
@@ -153,23 +155,22 @@ function getAttachments($jk, $mbox)
  */
 function getFileData($jk, $fpos, $type, $mbox)
 {
-	$mege = imap_fetchbody($mbox, $jk, $fpos, FT_UID);
-	$data = getDecodeValue($mege, $type);
+	$merge = imap_fetchbody($mbox, $jk, $fpos, FT_UID);
+	$data = getDecodeValue($merge, $type);
 
 	return $data;
 }
 
 /**
- * Save joined file into a directory with a given name
+ * Save the attached file into a directory with a given name
  *
  * @param 	string 		$path 		Path to file
  * @param 	string 		$filename 	Name of file
- * @param 	mixed 		$data 		contenu à sauvegarder
- * @return 	string 					emplacement du fichier
+ * @param 	mixed 		$data 		Content to save
+ * @return 	string|-1 				Return the path to the saved file, or -1 if error
  **/
 function saveAttachment($path, $filename, $data)
 {
-	global $lang;
 	$tmp = explode('.', $filename);
 	$ext = array_pop($tmp);
 	$filename = implode('.', $tmp);

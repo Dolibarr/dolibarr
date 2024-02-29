@@ -20,7 +20,7 @@
  */
 
 /*
- * Code to ouput content when action is presend
+ * Code to output content when action is presend
  *
  * $trackid must be defined
  * $modelmail
@@ -138,32 +138,32 @@ if ($action == 'presend') {
 	}
 	if ($object->element == 'salary' && getDolGlobalString('INVOICE_EMAIL_SENDER')) {
 		$formmail->frommail = getDolGlobalString('SINVOICE_EMAIL_SENDER');
-		$formmail->fromname = (getDolGlobalString('INVOICE_EMAIL_SENDER_NAME') ? $conf->global->INVOICE_EMAIL_SENDER_NAME : '');
+		$formmail->fromname = getDolGlobalString('INVOICE_EMAIL_SENDER_NAME', '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'facture' && getDolGlobalString('INVOICE_EMAIL_SENDER')) {
 		$formmail->frommail = getDolGlobalString('INVOICE_EMAIL_SENDER');
-		$formmail->fromname = (getDolGlobalString('INVOICE_EMAIL_SENDER_NAME') ? $conf->global->INVOICE_EMAIL_SENDER_NAME : '');
+		$formmail->fromname = getDolGlobalString('INVOICE_EMAIL_SENDER_NAME', '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'shipping' && getDolGlobalString('SHIPPING_EMAIL_SENDER')) {
 		$formmail->frommail = getDolGlobalString('SHIPPING_EMAIL_SENDER');
-		$formmail->fromname = (getDolGlobalString('SHIPPING_EMAIL_SENDER_NAME') ? $conf->global->SHIPPING_EMAIL_SENDER_NAME : '');
+		$formmail->fromname = getDolGlobalString('SHIPPING_EMAIL_SENDER_NAME', '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'commande' && getDolGlobalString('COMMANDE_EMAIL_SENDER')) {
 		$formmail->frommail = getDolGlobalString('COMMANDE_EMAIL_SENDER');
-		$formmail->fromname = (getDolGlobalString('COMMANDE_EMAIL_SENDER_NAME') ? $conf->global->COMMANDE_EMAIL_SENDER_NAME : '');
+		$formmail->fromname = getDolGlobalString('COMMANDE_EMAIL_SENDER_NAME', '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'order_supplier' && getDolGlobalString('ORDER_SUPPLIER_EMAIL_SENDER')) {
 		$formmail->frommail = getDolGlobalString('ORDER_SUPPLIER_EMAIL_SENDER');
-		$formmail->fromname = (getDolGlobalString('ORDER_SUPPLIER_EMAIL_SENDER_NAME') ? $conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME : '');
+		$formmail->fromname = getDolGlobalString('ORDER_SUPPLIER_EMAIL_SENDER_NAME', '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'recruitmentcandidature') {
-		$formmail->frommail = (getDolGlobalString('RECRUITMENT_EMAIL_SENDER') ? $conf->global->RECRUITMENT_EMAIL_SENDER : $recruitermail);
-		$formmail->fromname = (getDolGlobalString('RECRUITMENT_EMAIL_SENDER_NAME') ? $conf->global->RECRUITMENT_EMAIL_SENDER_NAME : (!empty($recruitername) ? $recruitername : ''));
+		$formmail->frommail = getDolGlobalString('RECRUITMENT_EMAIL_SENDER', (!empty($recruitermail) ? $recruitermail : ''));
+		$formmail->fromname = getDolGlobalString('RECRUITMENT_EMAIL_SENDER_NAME', (!empty($recruitername) ? $recruitername : ''));
 		$formmail->fromtype = 'special';
 	}
 
@@ -210,7 +210,7 @@ if ($action == 'presend') {
 		$fuser->fetch($object->fk_user);
 		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
 	} else {
-		// For exemple if element is project
+		// For example if element is project
 		if (!empty($object->socid) && $object->socid > 0 && !is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
 			$object->fetch_thirdparty();
 		}
@@ -383,11 +383,10 @@ if ($action == 'presend') {
 	// Array of other parameters
 	$formmail->param['action'] = 'send';
 	$formmail->param['models'] = $modelmail;
-	$formmail->param['models_id'] = GETPOST('modelmailselected', 'int');
+	$formmail->param['models_id'] = GETPOSTINT('modelmailselected');
 	$formmail->param['id'] = $object->id;
 	$formmail->param['returnurl'] = $_SERVER["PHP_SELF"].'?id='.$object->id;
 	$formmail->param['fileinit'] = array($file);
-
 	// Show form
 	print $formmail->get_form();
 

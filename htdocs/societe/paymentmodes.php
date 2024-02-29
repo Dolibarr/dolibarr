@@ -52,12 +52,12 @@ $action = GETPOST("action", 'alpha', 3);
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage');
 
-$id = GETPOST("id", "int");
+$id = GETPOSTINT("id");
 $source = GETPOST("source", "alpha"); // source can be a source or a paymentmode
-$ribid = GETPOST("ribid", "int");
+$ribid = GETPOSTINT("ribid");
 
 // Security check
-$socid = GETPOST("socid", "int");
+$socid = GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -82,7 +82,7 @@ $hookmanager->initHooks(array('thirdpartybancard', 'globalcard'));
 $permissiontoread = $user->hasRight('societe', 'lire');
 $permissiontoadd = $user->hasRight('societe', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_builddoc.inc.php
 
-$permissiontoaddupdatepaymentinformation = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $permissiontoadd) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->societe->thirdparty_paymentinformation_advance->write)));
+$permissiontoaddupdatepaymentinformation = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $permissiontoadd) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('societe', 'thirdparty_paymentinformation_advance', 'write')));
 
 
 // Check permission on company
@@ -167,15 +167,18 @@ if (empty($reshook)) {
 
 			$companybankaccount->bank            = GETPOST('bank', 'alpha');
 			$companybankaccount->label           = GETPOST('label', 'alpha');
-			$companybankaccount->courant         = GETPOST('courant', 'alpha');
-			$companybankaccount->clos            = GETPOST('clos', 'alpha');
+			$companybankaccount->courant         = GETPOSTINT('courant');
+			$companybankaccount->clos            = GETPOSTINT('clos');
 			$companybankaccount->code_banque     = GETPOST('code_banque', 'alpha');
 			$companybankaccount->code_guichet    = GETPOST('code_guichet', 'alpha');
 			$companybankaccount->number          = GETPOST('number', 'alpha');
 			$companybankaccount->cle_rib         = GETPOST('cle_rib', 'alpha');
 			$companybankaccount->bic             = GETPOST('bic', 'alpha');
 			$companybankaccount->iban            = GETPOST('iban', 'alpha');
-			$companybankaccount->domiciliation   = GETPOST('domiciliation', 'alpha');
+
+			$companybankaccount->domiciliation   = GETPOST('address', 'alpha');
+			$companybankaccount->address         = GETPOST('address', 'alpha');
+
 			$companybankaccount->proprio         = GETPOST('proprio', 'alpha');
 			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
 			$companybankaccount->frstrecur       = GETPOST('frstrecur', 'alpha');
@@ -244,8 +247,8 @@ if (empty($reshook)) {
 			$companypaymentmode->number          = GETPOST('cardnumber', 'alpha');
 			$companypaymentmode->last_four       = substr(GETPOST('cardnumber', 'alpha'), -4);
 			$companypaymentmode->proprio         = GETPOST('proprio', 'alpha');
-			$companypaymentmode->exp_date_month  = GETPOST('exp_date_month', 'int');
-			$companypaymentmode->exp_date_year   = GETPOST('exp_date_year', 'int');
+			$companypaymentmode->exp_date_month  = GETPOSTINT('exp_date_month');
+			$companypaymentmode->exp_date_year   = GETPOSTINT('exp_date_year');
 			$companypaymentmode->cvn             = GETPOST('cvn', 'alpha');
 			$companypaymentmode->country_code    = $object->country_code;
 
@@ -297,22 +300,25 @@ if (empty($reshook)) {
 
 			$companybankaccount->bank            = GETPOST('bank', 'alpha');
 			$companybankaccount->label           = GETPOST('label', 'alpha');
-			$companybankaccount->courant         = GETPOST('courant', 'alpha');
-			$companybankaccount->clos            = GETPOST('clos', 'alpha');
+			$companybankaccount->courant         = GETPOSTINT('courant');
+			$companybankaccount->clos            = GETPOSTINT('clos');
 			$companybankaccount->code_banque     = GETPOST('code_banque', 'alpha');
 			$companybankaccount->code_guichet    = GETPOST('code_guichet', 'alpha');
 			$companybankaccount->number          = GETPOST('number', 'alpha');
 			$companybankaccount->cle_rib         = GETPOST('cle_rib', 'alpha');
 			$companybankaccount->bic             = GETPOST('bic', 'alpha');
 			$companybankaccount->iban            = GETPOST('iban', 'alpha');
-			$companybankaccount->domiciliation   = GETPOST('domiciliation', 'alpha');
+
+			$companybankaccount->domiciliation   = GETPOST('address', 'alpha');
+			$companybankaccount->address         = GETPOST('address', 'alpha');
+
 			$companybankaccount->proprio         = GETPOST('proprio', 'alpha');
 			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
 			$companybankaccount->frstrecur       = GETPOST('frstrecur', 'alpha');
 			$companybankaccount->rum             = GETPOST('rum', 'alpha');
-			$companybankaccount->date_rum        = dol_mktime(0, 0, 0, GETPOST('date_rummonth', 'int'), GETPOST('date_rumday', 'int'), GETPOST('date_rumyear', 'int'));
-			$companybankaccount->datec = dol_now();
-			$companybankaccount->status = 1;
+			$companybankaccount->date_rum        = dol_mktime(0, 0, 0, GETPOSTINT('date_rummonth'), GETPOSTINT('date_rumday'), GETPOSTINT('date_rumyear'));
+			$companybankaccount->datec           = dol_now();
+			$companybankaccount->status          = 1;
 
 			$companybankaccount->bank = trim($companybankaccount->bank);
 			if (empty($companybankaccount->bank) && !empty($companybankaccount->thirdparty)) {
@@ -400,8 +406,8 @@ if (empty($reshook)) {
 			$companypaymentmode->number          = GETPOST('cardnumber', 'alpha');
 			$companypaymentmode->last_four       = substr(GETPOST('cardnumber', 'alpha'), -4);
 			$companypaymentmode->proprio         = GETPOST('proprio', 'alpha');
-			$companypaymentmode->exp_date_month  = GETPOST('exp_date_month', 'int');
-			$companypaymentmode->exp_date_year   = GETPOST('exp_date_year', 'int');
+			$companypaymentmode->exp_date_month  = GETPOSTINT('exp_date_month');
+			$companypaymentmode->exp_date_year   = GETPOSTINT('exp_date_year');
 			$companypaymentmode->cvn             = GETPOST('cvn', 'alpha');
 			$companypaymentmode->datec           = dol_now();
 			$companypaymentmode->default_rib     = 0;
@@ -438,9 +444,9 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setasbankdefault' && GETPOST('ribid', 'int') > 0) {
+	if ($action == 'setasbankdefault' && GETPOSTINT('ribid') > 0) {
 		$companybankaccount = new CompanyBankAccount($db);
-		$res = $companybankaccount->setAsDefault(GETPOST('ribid', 'int'));
+		$res = $companybankaccount->setAsDefault(GETPOSTINT('ribid'));
 		if ($res) {
 			$url = DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
 			header('Location: '.$url);
@@ -515,8 +521,8 @@ if (empty($reshook)) {
 			'use_companybankid'=>GETPOST('companybankid'),
 			'force_dir_output'=>$conf->societe->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->id)
 		);
-		$_POST['lang_id'] = GETPOST('lang_idrib'.GETPOST('companybankid', 'int'), 'alpha');
-		$_POST['model'] = GETPOST('modelrib'.GETPOST('companybankid', 'int'), 'alpha');
+		$_POST['lang_id'] = GETPOSTINT('lang_idrib'.GETPOSTINT('companybankid'));
+		$_POST['model'] = GETPOSTINT('modelrib'.GETPOSTINT('companybankid'));
 	}
 
 	$id = $socid;
@@ -838,8 +844,8 @@ if (empty($reshook)) {
 				}
 
 				$url = DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
-				if (GETPOST('page_y', 'int')) {
-					$url .= '&page_y='.GETPOST('page_y', 'int');
+				if (GETPOSTINT('page_y')) {
+					$url .= '&page_y='.GETPOSTINT('page_y');
 				}
 
 				header('Location: '.$url);
@@ -901,7 +907,7 @@ if ($socid && ($action == 'edit' || $action == 'editcard') && $permissiontoaddup
 		$actionforadd = 'updatecard';
 	}
 	print '<input type="hidden" name="action" value="'.$actionforadd.'">';
-	print '<input type="hidden" name="id" value="'.GETPOST("id", "int").'">';
+	print '<input type="hidden" name="id" value="'.GETPOSTINT("id").'">';
 }
 if ($socid && ($action == 'create' || $action == 'createcard') && $permissiontoaddupdatepaymentinformation) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post">';
@@ -966,13 +972,13 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 			$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
 		}
-		if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
+		if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
 			$elementTypeArray['order'] = $langs->transnoentitiesnoconv('Orders');
 		}
-		if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
+		if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 			$elementTypeArray['invoice'] = $langs->transnoentitiesnoconv('Invoices');
 		}
-		if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
+		if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 			$elementTypeArray['contract'] = $langs->transnoentitiesnoconv('Contracts');
 		}
 
@@ -1062,13 +1068,13 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		if (isModEnabled('propal') && $user->hasRight('propal', 'lire')) {
 			$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
 		}
-		if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
+		if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
 			$elementTypeArray['order'] = $langs->transnoentitiesnoconv('Orders');
 		}
-		if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
+		if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 			$elementTypeArray['invoice'] = $langs->transnoentitiesnoconv('Invoices');
 		}
-		if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
+		if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 			$elementTypeArray['contract'] = $langs->transnoentitiesnoconv('Contracts');
 		}
 	}
@@ -1176,7 +1182,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		//($stripeacc ? ' (Stripe connection with StripeConnect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)')
 
 		print '<!-- List of card payments -->'."\n";
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="liste centpercent">'."\n";
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Label').'</td>';
@@ -1719,7 +1725,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				$useonlinesignature = 1;
 				if ($useonlinesignature) {
 					require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
-					print showOnlineSignatureUrl($companybankaccount->element, $rib->id);
+					print showOnlineSignatureUrl($companybankaccount->element, $rib->id, $rib);
 				}
 				print '</td>';
 			}
@@ -2010,8 +2016,8 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	}
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td>';
-	print '<textarea name="domiciliation" rows="4" cols="40" maxlength="255">';
-	print $companybankaccount->domiciliation;
+	print '<textarea name="address" rows="4" cols="40" maxlength="255">';
+	print $companybankaccount->address;
 	print "</textarea></td></tr>";
 
 	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
@@ -2181,8 +2187,8 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	}
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td>';
-	print '<textarea name="domiciliation" rows="'.ROWS_4.'" class="quatrevingtpercent" maxlength="255">';
-	print GETPOST('domiciliation');
+	print '<textarea name="address" rows="'.ROWS_4.'" class="quatrevingtpercent" maxlength="255">';
+	print GETPOST('address');
 	print "</textarea></td></tr>";
 
 	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
@@ -2257,8 +2263,8 @@ if ($socid && $action == 'createcard' && $permissiontoaddupdatepaymentinformatio
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("ExpiryDate").'</td>';
 	print '<td>';
-	print $formother->select_month(GETPOST('exp_date_month', 'int'), 'exp_date_month', 1);
-	print $formother->selectyear(GETPOST('exp_date_year', 'int'), 'exp_date_year', 1, 5, 10, 0, 0, '', 'marginleftonly');
+	print $formother->select_month(GETPOSTINT('exp_date_month'), 'exp_date_month', 1);
+	print $formother->selectyear(GETPOSTINT('exp_date_year'), 'exp_date_year', 1, 5, 10, 0, 0, '', 'marginleftonly');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("CVN").'</td>';

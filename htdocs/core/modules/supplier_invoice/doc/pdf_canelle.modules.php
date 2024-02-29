@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2011  Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2010-2014  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2021  Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 class pdf_canelle extends ModelePDFSuppliersInvoices
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -156,7 +156,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *  @param		int					$hideref			Do not show ref
 	 *  @return		int										1=OK, 0=KO
 	 */
-	public function write_file($object, $outputlangs = '', $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs = null, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager, $nblines;
@@ -444,7 +444,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 					// Unit
 					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
+						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails);
 						$pdf->SetXY($this->posxunit, $curY);
 						$pdf->MultiCell($this->posxdiscount - $this->posxunit - 0.8, 4, $unit, 0, 'L');
 					}
@@ -610,13 +610,13 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *	@param  FactureFournisseur	$object         Object invoice
 	 *	@param  int					$deja_regle     Amount already paid (in the currency of invoice)
 	 *	@param	int					$posy			Position depart
-	 *	@param	Translate			$outputlangs	Objet langs
+	 *	@param	Translate			$outputlangs	Object langs
 	 *	@return int									Position of cursor after output
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf, $mysoc;
+		global $conf, $mysoc, $hookmanager;
 
 		$sign = 1;
 		if ($object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
@@ -813,6 +813,14 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer, 0, $outputlangs), $useborder, 'R', 1);
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetTextColor(0, 0, 0);
+		}
+
+		$parameters = array('pdf' => &$pdf, 'object' => &$object, 'outputlangs' => $outputlangs, 'index' => &$index);
+
+		$reshook = $hookmanager->executeHooks('afterPDFTotalTable', $parameters, $this); // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0) {
+			$this->error = $hookmanager->error;
+			$this->errors = $hookmanager->errors;
 		}
 
 		$index++;
@@ -1025,7 +1033,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *  @param  FactureFournisseur  $object         Object to show
 	 *  @param  int                 $showaddress    0=no, 1=yes
 	 *  @param  Translate           $outputlangs    Object lang for output
-	 *  @return int
+	 *  @return	float|int                   		Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{

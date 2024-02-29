@@ -37,8 +37,6 @@ class modWebsite extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
-
 		$this->db = $db;
 		$this->numero = 10000;
 
@@ -63,7 +61,7 @@ class modWebsite extends DolibarrModules
 		$this->config_page_url = array('website.php');
 
 		// Dependencies
-		$this->hidden = getDolGlobalString('MODULE_WEBSITE_DISABLED'); // A condition to disable module
+		$this->hidden = getDolGlobalInt('MODULE_WEBSITE_DISABLED'); // A condition to disable module
 		$this->depends = array('modFckeditor'); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
@@ -217,9 +215,8 @@ class modWebsite extends DolibarrModules
 			}
 		}
 
-		// Copy templates in dir format (recommended)
+		// Copy templates in dir format (recommended) into zip file
 		$docs = dol_dir_list($srcroot, 'directories', 0, 'website_.*$');
-
 		foreach ($docs as $cursorfile) {
 			$src = $srcroot.'/'.$cursorfile['name'];
 			$dest = $destroot.'/'.$cursorfile['name'];

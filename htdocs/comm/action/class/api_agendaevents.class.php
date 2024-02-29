@@ -54,7 +54,7 @@ class AgendaEvents extends DolibarrApi
 	/**
 	 * Get properties of a Agenda Events object
 	 *
-	 * Return an array with Agenda Events informations
+	 * Return an array with Agenda Events information
 	 *
 	 * @param   int         $id         ID of Agenda Events
 	 * @return  Object					Object with cleaned properties
@@ -63,7 +63,7 @@ class AgendaEvents extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->agenda->myactions->read) {
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'read')) {
 			throw new RestException(401, "Insufficient rights to read an event");
 		}
 		if ($id === 0) {
@@ -79,7 +79,7 @@ class AgendaEvents extends DolibarrApi
 			throw new RestException(404, 'Agenda Events not found');
 		}
 
-		if (!DolibarrApiAccess::$user->rights->agenda->allactions->read && $this->actioncomm->userownerid != DolibarrApiAccess::$user->id) {
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read') && $this->actioncomm->userownerid != DolibarrApiAccess::$user->id) {
 			throw new RestException(401, 'Insufficient rights to read event of this owner id. Your id is '.DolibarrApiAccess::$user->id);
 		}
 
@@ -100,7 +100,7 @@ class AgendaEvents extends DolibarrApi
 	 * @param int		$page		Page number
 	 * @param string	$user_ids   User ids filter field (owners of event). Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'%dol%') and (t.datec:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of Agenda Events objects
 	 */
 	public function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '')
@@ -109,7 +109,7 @@ class AgendaEvents extends DolibarrApi
 
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->agenda->myactions->read) {
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'read')) {
 			throw new RestException(401, "Insufficient rights to read events");
 		}
 
@@ -191,7 +191,7 @@ class AgendaEvents extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->agenda->myactions->create) {
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'create')) {
 			throw new RestException(401, "Insufficient rights to create your Agenda Event");
 		}
 		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'create') && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
@@ -203,7 +203,7 @@ class AgendaEvents extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->actioncomm->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -229,14 +229,13 @@ class AgendaEvents extends DolibarrApi
 	/**
 	 * Update Agenda Event general fields
 	 *
-	 * @param int   $id             Id of Agenda Event to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   		$id             Id of Agenda Event to update
+	 * @param 	array 		$request_data   Datas
+	 * @return 	Object|false				Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->agenda->myactions->create) {
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'create')) {
 			throw new RestException(401, "Insufficient rights to create your Agenda Event");
 		}
 		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'create') && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
@@ -261,7 +260,7 @@ class AgendaEvents extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->actioncomm->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -296,7 +295,7 @@ class AgendaEvents extends DolibarrApi
 			$this->actioncomm->oldcopy = clone $this->actioncomm;
 		}
 
-		if (!DolibarrApiAccess::$user->rights->agenda->allactions->delete && DolibarrApiAccess::$user->id != $this->actioncomm->userownerid) {
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'delete') && DolibarrApiAccess::$user->id != $this->actioncomm->userownerid) {
 			throw new RestException(401, "Insufficient rights to delete an Agenda Event of owner id ".$this->actioncomm->userownerid.' Your id is '.DolibarrApiAccess::$user->id);
 		}
 

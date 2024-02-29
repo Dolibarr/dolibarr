@@ -36,7 +36,7 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array('supplier_proposal', 'compta', 'bills'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
@@ -61,7 +61,7 @@ $usercancreate = $user->hasRight("supplier_propal", "write");
  * Actions
  */
 
-$permissionnote = $user->rights->supplier_proposal->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('supplier_proposal', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks

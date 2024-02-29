@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/core/boxes/box_actions.php
  *	\ingroup    actions
- *	\brief      Module to build boxe for events
+ *	\brief      Module to build box for events
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
@@ -37,16 +37,7 @@ class box_actions extends ModeleBoxes
 	public $boxlabel = "BoxOldestActions";
 	public $depends = array("agenda");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor

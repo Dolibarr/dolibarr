@@ -90,13 +90,13 @@ AccountancyAreaDescProd=BƯỚC %s: Xác định tài khoản kế toán trên S
 
 AccountancyAreaDescBind=BƯỚC %s: Kiểm tra ràng buộc giữa các dòng %s hiện tại và tài khoản kế toán được thực hiện, do đó, ứng dụng sẽ có thể ghi nhật ký giao dịch trong Sổ cái chỉ bằng một cú nhấp chuột. Hoàn thành các ràng buộc còn thiếu. Đối với điều này, sử dụng mục menu %s.
 AccountancyAreaDescWriteRecords=BƯỚC %s: Viết giao dịch vào Sổ Cái. Để làm điều này, hãy vào menu <strong>%s</strong> và nhấp vào nút <strong>%s</strong> .
-AccountancyAreaDescAnalyze=BƯỚC %s: Thêm hoặc chỉnh sửa các giao dịch hiện có và tạo báo cáo và xuất dữ liệu.
-
-AccountancyAreaDescClosePeriod=BƯỚC %s: Đóng khoảng thời gian để chúng ta không thể sửa đổi trong tương lai.
+AccountancyAreaDescAnalyze=BƯỚC %s: Đọc báo cáo hoặc tạo tệp xuất cho những người kế toán khác.
+AccountancyAreaDescClosePeriod=BƯỚC %s: Đóng khoảng thời gian để chúng tôi không thể chuyển tiếp dữ liệu trong cùng khoảng thời gian trong tương lai.
 
 TheFiscalPeriodIsNotDefined=Một bước bắt buộc trong quá trình thiết lập chưa được hoàn thành (Giai đoạn tài chính chưa được xác định)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Một bước bắt buộc trong quá trình thiết lập chưa được hoàn thành (nhật ký mã kế toán chưa được xác định cho tất cả các tài khoản ngân hàng)
 Selectchartofaccounts=Chọn biểu đồ tài khoản đang hoạt động
+CurrentChartOfAccount=Biểu đồ tài khoản đang hoạt động hiện tại
 ChangeAndLoad=Thay đổi và tải
 Addanaccount=Thêm một tài khoản kế toán
 AccountAccounting=Tài khoản kế toán
@@ -335,7 +335,6 @@ CategoryDeleted=Danh mục cho tài khoản kế toán đã bị xóa
 AccountingJournals=Nhật ký kế toán
 AccountingJournal=Nhật ký kế toán
 NewAccountingJournal=Nhật ký kế toán mới
-ShowAccountingJournal=Hiển thị nhật ký kế toán
 NatureOfJournal=Bản chất của nhật ký
 AccountingJournalType1=Hoạt động khác
 AccountingJournalType2=Bán
@@ -343,7 +342,7 @@ AccountingJournalType3=Mua
 AccountingJournalType4=Ngân hàng
 AccountingJournalType5=Báo cáo chi phí
 AccountingJournalType8=Hàng tồn kho
-AccountingJournalType9=Có-mới
+AccountingJournalType9=Thu nhập giữ lại
 GenerationOfAccountingEntries=Tạo các mục kế toán
 ErrorAccountingJournalIsAlreadyUse=Nhật ký này đã được sử dụng
 AccountingAccountForSalesTaxAreDefinedInto=Lưu ý: Tài khoản kế toán thuế VAT được xác định trong menu <b>%s</b> - <b>%s</b>
@@ -450,12 +449,12 @@ AccountancyClosureStep1=Bước 1: Xác thực và khóa chuyển động
 AccountancyClosureStep2=Bước 2: Đóng kỳ tài chính
 AccountancyClosureStep3=Bước 3: Trích xuất các mục (Tùy chọn)
 AccountancyClosureClose=Đóng kỳ tài chính
-AccountancyClosureAccountingReversal=Trích xuất các mục
+AccountancyClosureAccountingReversal=Trích xuất và ghi lại các mục "Thu nhập giữ lại"
 AccountancyClosureStep3NewFiscalPeriod=Kỳ tài chính tiếp theo
-AccountancyClosureGenerateClosureBookkeepingRecords=Tạo mục nhập "có mới" vào kỳ tài chính tiếp theo
-AccountancyClosureSeparateAuxiliaryAccounts=Khi tạo mục nhập "có mới", hãy nêu chi tiết các tài khoản sổ cái phụ
+AccountancyClosureGenerateClosureBookkeepingRecords=Tạo các mục nhập "Thu nhập giữ lại" vào kỳ tài chính tiếp theo
+AccountancyClosureSeparateAuxiliaryAccounts=Khi tạo các mục nhập "Thu nhập giữ lại", hãy nêu chi tiết các tài khoản sổ cái phụ
 AccountancyClosureCloseSuccessfully=Kỳ tài chính đã được đóng thành công
-AccountancyClosureInsertAccountingReversalSuccessfully=Hồ sơ sổ sách kế toán đã được chèn thành công
+AccountancyClosureInsertAccountingReversalSuccessfully=Mục ghi sổ kế toán cho "Thu nhập giữ lại" đã được chèn thành công
 
 ## Confirm box
 ConfirmMassUnletteringAuto=Xác nhận không đối chiếu tự động hàng loạt
@@ -464,7 +463,7 @@ ConfirmMassUnletteringQuestion=Bạn có chắc chắn muốn hủy đối chi�
 ConfirmMassDeleteBookkeepingWriting=Xác nhận xóa hàng loạt
 ConfirmMassDeleteBookkeepingWritingQuestion=Thao tác này sẽ xóa giao dịch khỏi kế toán (tất cả các mục nhập dòng liên quan đến cùng một giao dịch sẽ bị xóa). Bạn có chắc chắn muốn xóa các mục nhập %s đã chọn không?
 AccountancyClosureConfirmClose=Bạn có chắc chắn muốn đóng kỳ tài chính hiện tại không? <span class="warning">Bạn hiểu rằng việc đóng kỳ tài chính là một hành động không thể thay đổi được và sẽ chặn vĩnh viễn mọi sửa đổi hoặc xóa các mục nhập trong khoảng thời gian này</span> .
-AccountancyClosureConfirmAccountingReversal=Bạn có chắc chắn muốn đảo ngược kế toán không?
+AccountancyClosureConfirmAccountingReversal=Bạn có chắc chắn muốn ghi lại các mục nhập cho "Thu nhập giữ lại" không?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Một số bước bắt buộc thiết lập không được thực hiện, vui lòng hoàn thành chúng

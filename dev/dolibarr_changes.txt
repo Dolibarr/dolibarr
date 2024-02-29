@@ -73,6 +73,20 @@ NUSOAP:
 
 TCPDF:
 ------
+* Modify in tcpdf.php: make TCPDF::_out public.
+  (htdocs/core/lib/pdf.lib.php uses it as a public method)
+
+  Change:
+      protected function _out($s)
+  to
+      public function _out($s)
+
+  Change in method's _out phpdoc:
+
+      * @protected
+  to
+      * @public
+
 * Replace in tcpdf.php:
             if (isset($this->imagekeys)) {
                 foreach($this->imagekeys as $file) {
@@ -163,14 +177,14 @@ into
 	
 * Removed useless directories ("examples", "tools")
 
-* Optionnaly, removed all fonts except
-    dejavusans* (used by greek, arab, persan, romanian, turkish),
+* Optionally, removed all fonts except
+    dejavusans* (used by greek, arab, person, romanian, turkish),
     freemono* (russian),
     cid*+msungstdlight+stsongstdlight+uni2cid* (chinese),
     helvetica* (all other languages),
     zapfdingbats.php (for special chars like form checkboxes)
 
-* Optionnaly, made freemono the default monotype font if we removed courier
+* Optionally, made freemono the default monotype font if we removed courier
 In htdocs/includes/tecnickcom/tcpdf/tcpdf.php
 -       protected $default_monospaced_font = 'courier';
 +       protected $default_monospaced_font = 'freemono';

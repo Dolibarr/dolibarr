@@ -19,7 +19,7 @@
 
 /**
  * \file       htdocs/core/lib/ecm.lib.php
- * \brief      Ensemble de fonctions de base pour le module ecm
+ * \brief      Ensemble de functions de base pour le module ecm
  * \ingroup    ecm
  */
 
@@ -171,7 +171,7 @@ function ecm_prepare_head_fm($object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array               head array with tabs
  */

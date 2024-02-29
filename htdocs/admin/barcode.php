@@ -70,7 +70,7 @@ if ($action == 'setbarcodethirdpartyon') {
 
 if ($action == 'setcoder') {
 	$coder = GETPOST('coder', 'alpha');
-	$code_id = GETPOST('code_id', 'int');
+	$code_id = GETPOSTINT('code_id');
 	$sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
 	$sqlp .= " SET coder = '".$db->escape($coder)."'";
 	$sqlp .= " WHERE rowid = ".((int) $code_id);
@@ -356,8 +356,8 @@ if ($resql) {
 		print dol_escape_htmltag($obj->label);
 		print "</td><td>\n";
 		print $langs->trans('BarcodeDesc'.$obj->encoding);
-		//print "L'EAN se compose de 8 caracteres, 7 chiffres plus une cle de controle.<br>";
-		//print "L'utilisation des symbologies EAN8 impose la souscription et l'abonnement aupres d'organisme tel que GENCOD.<br>";
+		//print "L'EAN se compose de 8 characters, 7 chiffres plus une cle de verification.<br>";
+		//print "L'utilisation des symbologies EAN8 impose la souscription et l'abonnement aupres d'organismes comme GENCOD.<br>";
 		//print "Codes numeriques utilises exclusivement a l'identification des produits susceptibles d'etre vendus au grand public.";
 		print '</td>';
 

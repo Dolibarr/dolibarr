@@ -67,9 +67,9 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 $langs->loadLangs(array('companies', 'other', 'mails', 'ticket'));
 
 // Get parameters
-$id = GETPOST('id', 'int');
-$msg_id = GETPOST('msg_id', 'int');
-$socid = GETPOST('socid', 'int');
+$id = GETPOSTINT('id');
+$msg_id = GETPOSTINT('msg_id');
+$socid = GETPOSTINT('socid');
 $suffix = "";
 
 $action = GETPOST('action', 'aZ09');
@@ -157,7 +157,7 @@ if (empty($reshook)) {
 			// Search company saved with email
 			$searched_companies = $object->searchSocidByEmail($origin_email, '0');
 
-			// Chercher un contact existant avec cette adresse email
+			// Chercher un contact existent avec cette address email
 			// Le premier contact trouvé est utilisé pour déterminer le contact suivi
 			$contacts = $object->searchContactByEmail($origin_email);
 
@@ -335,6 +335,9 @@ if (empty($reshook)) {
 			$object->ref = $object->getDefaultRef();
 
 			$object->context['disableticketemail'] = 1; // Disable emails sent by ticket trigger when creation is done from this page, emails are already sent later
+			$object->context['contactid'] = GETPOSTINT('contactid'); // Disable emails sent by ticket trigger when creation is done from this page, emails are already sent later
+
+			$object->context['createdfrompublicinterface'] = 1; // To make a difference between a ticket created from the public interface and a ticket directly created from dolibarr
 
 			if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
 				$error++;

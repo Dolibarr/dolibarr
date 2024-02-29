@@ -79,9 +79,9 @@ $lastname = GETPOST('lastname');
 // Getting id from Post and decoding it
 $type = GETPOST('type', 'aZ09');
 if ($type == 'conf') {
-	$id = GETPOST('id', 'int');
+	$id = GETPOSTINT('id');
 } else {
-	$id = GETPOST('fk_project', 'int') ? GETPOST('fk_project', 'int') : GETPOST('id', 'int');
+	$id = GETPOSTINT('fk_project') ? GETPOSTINT('fk_project') : GETPOSTINT('id');
 }
 
 $conference = new ConferenceOrBooth($db);
@@ -344,13 +344,13 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 			$db->commit();
 
-			Header("Location: ".$redirection);
+			header("Location: ".$redirection);
 			exit;
 		}
 
 		$resultfetchthirdparty = 0;
 
-		$genericcompanyname = $langs->trans('EventParticipant').' '.($emailcompany ? $emailcompany : $email);	// Keep this label simple so we can retreive same thirdparty for another event
+		$genericcompanyname = $langs->trans('EventParticipant').' '.($emailcompany ? $emailcompany : $email);	// Keep this label simple so we can retrieve same thirdparty for another event
 
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
@@ -465,12 +465,12 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$thirdparty->town         = GETPOST("town");
 			$thirdparty->client       = $thirdparty::PROSPECT;
 			$thirdparty->fournisseur  = 0;
-			$thirdparty->country_id   = GETPOST("country_id", 'int');
-			$thirdparty->state_id     = GETPOST("state_id", 'int');
+			$thirdparty->country_id   = GETPOSTINT("country_id");
+			$thirdparty->state_id     = GETPOSTINT("state_id");
 			$thirdparty->email        = ($emailcompany ? $emailcompany : $email);
 
 			// Load object modCodeTiers
-			$module = (getDolGlobalString('SOCIETE_CODECLIENT_ADDON') ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
+			$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON', 'mod_codeclient_leopard');
 			if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
 				$module = substr($module, 0, dol_strlen($module) - 4);
 			}
@@ -609,7 +609,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 					}
 				}
 
-				Header("Location: ".$redirection);
+				header("Location: ".$redirection);
 				exit;
 			} else {
 				$db->rollback();
@@ -667,7 +667,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 2);
 			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
 
-			Header("Location: ".$redirection);
+			header("Location: ".$redirection);
 			exit;
 		}
 		//Header("Location: ".$urlback);

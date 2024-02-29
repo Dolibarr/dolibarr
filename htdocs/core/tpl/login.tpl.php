@@ -81,7 +81,6 @@ $php_self = preg_replace('/(\?|&amp;|&)token=[^&]+/', '\1', $php_self);
 
 // Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
 $arrayofjs = array(
-	'/includes/jstz/jstz.min.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(DOL_VERSION)),
 	'/core/js/dst.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(DOL_VERSION))
 );
 
@@ -109,7 +108,7 @@ if (!isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) {
 	$conf->global->THEME_ELDY_TOPMENU_BACK1 = $colorbackhmenu1;
 }
 $colorbackhmenu1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TOPMENU_BACK1') ? $colorbackhmenu1 : $conf->global->THEME_ELDY_TOPMENU_BACK1) : (empty($user->conf->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $user->conf->THEME_ELDY_TOPMENU_BACK1);
-$colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
+$colorbackhmenu1 = implode(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
 
 print "<!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->\n";
 
@@ -375,7 +374,7 @@ if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->fil
 	 */
 
 	print '<input type="hidden" name="beforeoauthloginredirect" id="beforeoauthloginredirect" value="">';
-	print '<a class="alogin" href="#" onclick="jQuery(\'#beforeoauthloginredirect\').val(1); $(this).closest(\'form\').submit();">';
+	print '<a class="alogin" href="#" onclick="jQuery(\'#beforeoauthloginredirect\').val(\'google\'); $(this).closest(\'form\').submit();">';
 	print '<div class="loginbuttonexternal">';
 	print img_picto('', 'google', 'class="pictofixedwidth"');
 	print $langs->trans("LoginWith", "Google");
@@ -425,6 +424,7 @@ if (getDolGlobalString('MAIN_EASTER_EGG_COMMITSTRIP')) {
 		if (LIBXML_VERSION < 20900) {
 			// Avoid load of external entities (security problem).
 			// Required only if LIBXML_VERSION < 20900
+			// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 			libxml_disable_entity_loader(true);
 		}
 

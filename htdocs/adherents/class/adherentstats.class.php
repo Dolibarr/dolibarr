@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/adherents/class/adherentstats.class.php
  *	\ingroup    member
- *	\brief      Fichier de la classe de gestion des stats des adhérents
+ *	\brief      File for class managing statistics of members
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
@@ -69,7 +69,6 @@ class AdherentStats extends Stats
 
 		$this->where .= " m.statut != -1";
 		$this->where .= " AND p.fk_adherent = m.rowid AND m.entity IN (".getEntity('adherent').")";
-		//if (empty($user->rights->societe->client->voir) && !$user->socid) $this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .((int) $user->id);
 		if ($this->memberid) {
 			$this->where .= " AND m.rowid = ".((int) $this->memberid);
 		}

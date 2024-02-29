@@ -88,10 +88,10 @@ if ($action == 'update' && !$cancel) {
 		dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW_EMAILING", GETPOST("MAIN_MAIL_SMTPS_PW_EMAILING", 'none'), 'chaine', 0, '', $conf->entity);
 	}
 	if (GETPOSTISSET("MAIN_MAIL_SMTPS_AUTH_TYPE_EMAILING")) {
-		dolibarr_set_const($db, "MAIN_MAIL_SMTPS_AUTH_TYPE_EMAILING", GETPOST("MAIN_MAIL_SMTPS_AUTH_TYPE_EMAILING", 'chaine'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_MAIL_SMTPS_AUTH_TYPE_EMAILING", GETPOST("MAIN_MAIL_SMTPS_AUTH_TYPE_EMAILING", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	}
 	if (GETPOSTISSET("MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING")) {
-		dolibarr_set_const($db, "MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING", GETPOST("MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING", 'chaine'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING", GETPOST("MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	}
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS_EMAILING", GETPOST("MAIN_MAIL_EMAIL_TLS_EMAILING"), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_STARTTLS_EMAILING", GETPOST("MAIN_MAIL_EMAIL_STARTTLS_EMAILING"), 'chaine', 0, '', $conf->entity);
@@ -450,6 +450,7 @@ if ($action == 'edit') {
 
 		// SuperAdministrator access only
 		if (!isModEnabled('multicompany')  || ($user->admin && !$user->entity)) {
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print $form->selectarray('MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING', $oauthservices, $conf->global->MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING);
 		} else {
 			$text = $oauthservices[getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING')];
@@ -516,7 +517,7 @@ if ($action == 'edit') {
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
 	print "<br><br>\n";
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td></td></tr>';
 
@@ -733,7 +734,7 @@ if ($action == 'edit') {
 		$formmail->ckeditortoolbar = 'dolibarr_mailings';
 		// Tableau des substitutions
 		$formmail->substit = $substitutionarrayfortest;
-		// Tableau des parametres complementaires du post
+		// Tableau des parameters complementaires du post
 		$formmail->param["action"] = "send";
 		$formmail->param["models"] = "body";
 		$formmail->param["mailid"] = 0;

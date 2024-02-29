@@ -8,7 +8,7 @@
  * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
- * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -59,12 +59,12 @@ $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"')
 $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
 $listoffset = GETPOST('listoffset', 'alpha');
-$listlimit = GETPOST('listlimit', 'int') > 0 ? GETPOST('listlimit', 'int') : 1000;
+$listlimit = GETPOSTINT('listlimit') > 0 ? GETPOSTINT('listlimit') : 1000;
 $active = 1;
 
 $sortfield = GETPOST("sortfield", 'aZ09comma');
 $sortorder = GETPOST("sortorder", 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -72,7 +72,7 @@ $offset = $listlimit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$search_country_id = GETPOST('search_country_id', 'int');
+$search_country_id = GETPOSTINT('search_country_id');
 
 
 // Security check
@@ -190,9 +190,9 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 	// Si verif ok et action add, on ajoute la ligne
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		if ($tabrowid[$id]) {
-			// Recupere id libre pour insertion
+			// Get free id for insert
 			$newid = 0;
-			$sql = "SELECT max(".$tabrowid[$id].") newid from ".$tabname[$id];
+			$sql = "SELECT MAX(".$tabrowid[$id].") newid from ".$tabname[$id];
 			$result = $db->query($sql);
 			if ($result) {
 				$obj = $db->fetch_object($result);
@@ -401,7 +401,9 @@ if ($action == 'disable_favorite') {
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-llxHeader();
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
+
+llxHeader('', $langs->trans("Pcg_version"), $help_url);
 
 $titre = $langs->trans($tablib[$id]);
 $linkback = '';
@@ -457,7 +459,7 @@ if ($id) {
 		foreach ($fieldlist as $field => $value) {
 			// Determine le nom du champ par rapport aux noms possibles
 			// dans les dictionnaires de donnees
-			$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
+			$valuetoshow = ucfirst($fieldlist[$field]); // By default
 			$valuetoshow = $langs->trans($valuetoshow); // try to translate
 			$class = "left";
 			if ($fieldlist[$field] == 'code') {
@@ -566,7 +568,7 @@ if ($id) {
 		// Title line with search boxes
 		print '<tr class="liste_titre liste_titre_add">';
 		foreach ($fieldlist as $field => $value) {
-			$showfield = 1; // By defaut
+			$showfield = 1; // By default
 
 			if ($fieldlist[$field] == 'region_id' || $fieldlist[$field] == 'country_id') {
 				$showfield = 0;
@@ -737,7 +739,7 @@ $db->close();
  * 	@param		array	$fieldlist		Array of fields
  * 	@param		Object	$obj			If we show a particular record, obj is filled with record fields
  *  @param		string	$tabname		Name of SQL table
- *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
+ *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		void
  */
 function fieldListAccountModel($fieldlist, $obj = null, $tabname = '', $context = '')

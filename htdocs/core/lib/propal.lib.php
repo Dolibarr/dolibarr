@@ -19,7 +19,7 @@
 
 /**
  * \file       htdocs/core/lib/propal.lib.php
- * \brief      Ensemble de fonctions de base pour le module propal
+ * \brief      Ensemble de functions de base pour le module propal
  * \ingroup    propal
  */
 
@@ -42,8 +42,8 @@ function propal_prepare_head($object)
 	$head[$h][2] = 'comm';
 	$h++;
 
-	if ((empty($conf->commande->enabled) && ((isModEnabled("expedition") && getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->hasRight('expedition', 'lire'))
-		|| (isModEnabled("expedition") && getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->hasRight('expedition', 'delivery', 'lire'))))) {
+	if ((empty($conf->commande->enabled) && ((isModEnabled("delivery_note") && getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->hasRight('expedition', 'lire'))
+		|| (isModEnabled("delivery_note") && getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->hasRight('expedition', 'delivery', 'lire'))))) {
 		$langs->load("sendings");
 		$text = '';
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?id='.$object->id;
@@ -151,7 +151,7 @@ function propal_prepare_head($object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array   	        head array with tabs
  */

@@ -56,20 +56,20 @@ class Partnerships extends DolibarrApi
 	/**
 	 * Get properties of a partnership object
 	 *
-	 * Return an array with partnership informations
+	 * Return an array with partnership information
 	 *
 	 * @param	int		$id				ID of partnership
 	 * @return  Object					Object with cleaned properties
 	 *
 	 * @url	GET partnerships/{id}
 	 *
-	 * @throws RestException 401 Not allowed
+	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->partnership->read) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('partnership', 'read')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->partnership->fetch($id);
@@ -95,7 +95,7 @@ class Partnerships extends DolibarrApi
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException
@@ -104,13 +104,11 @@ class Partnerships extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
 		$obj_ret = array();
 		$tmpobject = new Partnership($this->db);
 
-		if (!DolibarrApiAccess::$user->rights->partnership->read) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('partnership', 'read')) {
+			throw new RestException(403);
 		}
 
 		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : 0;
@@ -119,7 +117,7 @@ class Partnerships extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if ($restrictonsocid && !DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) {
+		if ($restrictonsocid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -190,8 +188,8 @@ class Partnerships extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->partnership->write) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('partnership', 'write')) {
+			throw new RestException(403);
 		}
 
 		// Check mandatory fields
@@ -199,7 +197,7 @@ class Partnerships extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->partnership->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -219,9 +217,9 @@ class Partnerships extends DolibarrApi
 	/**
 	 * Update partnership
 	 *
-	 * @param int   $id             Id of partnership to update
-	 * @param array $request_data   Datas
-	 * @return int
+	 * @param 	int   	$id             	Id of partnership to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 *
 	 * @throws RestException
 	 *
@@ -229,8 +227,8 @@ class Partnerships extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->partnership->write) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('partnership', 'write')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->partnership->fetch($id);
@@ -247,7 +245,7 @@ class Partnerships extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->partnership->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -277,8 +275,8 @@ class Partnerships extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->partnership->delete) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('partnership', 'delete')) {
+			throw new RestException(403);
 		}
 		$result = $this->partnership->fetch($id);
 		if (!$result) {
@@ -286,7 +284,7 @@ class Partnerships extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('partnership', $this->partnership->id, 'partnership')) {
-			throw new RestException(401, 'Access to instance id='.$this->partnership->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access to instance id='.$this->partnership->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->partnership->delete(DolibarrApiAccess::$user)) {

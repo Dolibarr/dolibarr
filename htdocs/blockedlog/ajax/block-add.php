@@ -38,7 +38,7 @@ if (!defined('NOREQUIREHTML')) {
 
 $res = require '../../main.inc.php';
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $element = GETPOST('element', 'alpha');
 $action = GETPOST('action', 'aZ09');
 

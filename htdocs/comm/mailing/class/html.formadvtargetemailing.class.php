@@ -19,7 +19,7 @@
 /**
  * \file    comm/mailing/class/html.formadvtargetemailing.class.php
  * \ingroup mailing
- * \brief   Fichier de la classe des fonctions predefinies de composant html advtargetemailing
+ * \brief   File for the class with functions for the building of HTML components for advtargetemailing
  */
 
 /**
@@ -168,6 +168,12 @@ class FormAdvTargetEmailing extends Form
 		$sql_usr .= " AND u2.rowid = sc.fk_user";
 		if (getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX')) {
 			$sql_usr .= " AND u2.statut <> 0";
+		}
+		if (getDolGlobalString('USER_HIDE_NONEMPLOYEE_IN_COMBOBOX')) {
+			$sql_usr .= " AND u2.employee<>0 ";
+		}
+		if (getDolGlobalString('USER_HIDE_EXTERNAL_IN_COMBOBOX')) {
+			$sql_usr .= " AND u2.fk_soc IS NULL ";
 		}
 		$sql_usr .= " ORDER BY name ASC";
 		// print $sql_usr;exit;
@@ -339,7 +345,7 @@ class FormAdvTargetEmailing extends Form
 	 * Return a combo list to select emailing target selector
 	 *
 	 * @param	string 		$htmlname 		control name
-	 * @param	integer 	$selected  		defaut selected
+	 * @param	integer 	$selected  		default selected
 	 * @param	integer 	$showempty 		empty lines
 	 * @param	string		$type_element	Type element. Example: 'mailing'
 	 * @param	string		$morecss		More CSS

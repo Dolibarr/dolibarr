@@ -94,7 +94,7 @@ AttachANewFile=Bashkangjit një skedar/dokument të ri
 LinkedObject=Objekti i lidhur
 NbOfActiveNotifications=Numri i njoftimeve (nr. i email-eve të marrësve)
 PredefinedMailTest=__(Përshëndetje)__\nKjo është një postë provë e dërguar në __EMAIL__.\nLinjat ndahen nga një karrocë kthimi.\n\n__SIGNATURE_USER__
-PredefinedMailTestHtml=__(Përshëndetje)__<br>Ky është një <b>testb09a4b739f17f dërguar</span8> në __EMAIL__ (fjala test duhet të jetë me shkronja të zeza).<span class='notranslate'><br>Rreshtat janë të ndara nga një karrocë kthimi.<br><br>__USER_SIGNATURE__
+PredefinedMailTestHtml=__(Hello)__<br>This is a <b>test</b> mail sent to __EMAIL__ (the word test must be in bold).<br>The lines are separated by a carriage return.<br><br>__USER_SIGNATURE__
 PredefinedMailContentContract=__(Përshëndetje)__\n\n\n__(Sinqerisht)__\n\n__USER_SIGNATURE__
 PredefinedMailContentSendInvoice=__(Përshëndetje)__\n\nJu lutemi gjeni të bashkangjitur faturën __REF__\n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__(Sinqerisht)__\n\n__USER_SIGNATURE__
 PredefinedMailContentSendInvoiceReminder=__(Përshëndetje)__\n\nJu rikujtojmë se fatura __REF__ duket se nuk është paguar. Një kopje e faturës është bashkangjitur si kujtesë.\n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__(Sinqerisht)__\n\n__USER_SIGNATURE__
@@ -187,9 +187,9 @@ BugTracker=Gjurmuesi i gabimeve
 SendNewPasswordDesc=Ky formular ju lejon të kërkoni një fjalëkalim të ri. Ai do të dërgohet në adresën tuaj të emailit.<br>Ndryshimi do të hyjë në fuqi sapo të klikoni në lidhjen e konfirmimit në email.<br> Kontrolloni kutinë tuaj.
 EnterNewPasswordHere=Shkruani fjalëkalimin tuaj të ri këtu
 BackToLoginPage=Kthehu në faqen e identifikimit
-AuthenticationDoesNotAllowSendNewPassword=Modaliteti i vërtetimit është <b>%s</b></span'notranslate'>. ><br>Në këtë modalitet, Dolibarr nuk mund ta dijë dhe as të ndryshojë fjalëkalimin tuaj.<br>Kontakto administratorin e sistemit nëse dëshiron të ndryshosh fjalëkalimin.
+AuthenticationDoesNotAllowSendNewPassword=Authentication mode is <b>%s</b>.<br>In this mode, Dolibarr can't know nor change your password.<br>Contact your system administrator if you want to change your password.
 EnableGDLibraryDesc=Instaloni ose aktivizoni bibliotekën GD në instalimin tuaj të PHP për të përdorur këtë opsion.
-ProfIdShortDesc=<b>ID-ja e profilit %s</b> është një informacion i palës së tretë. <br>Për shembull, për shtetin <b>%s</spannotranslate class=' '></b>, është kodi <b>%s<span class='nofaspan7</span><span.
+ProfIdShortDesc=<b>Prof Id %s</b> is an information depending on third party country.<br>For example, for country <b>%s</b>, it's code <b>%s</b>.
 DolibarrDemo=Demo Dolibarr ERP/CRM
 StatsByAmount=Statistikat për sasinë e produkteve/shërbimeve
 StatsByAmountProducts=Statistikat për sasinë e produkteve
@@ -336,3 +336,5 @@ FTPFailedToUploadFile=Ngarkimi i skedarit dështoi <b>%s</b>.
 AddFolder=Krijo nje dosje
 FileWasCreateFolder=Dosja <b>%s</b> është krijuar
 FTPFailedToCreateFolder=Dështoi në krijimin e dosjes <b>%s</b>.
+SelectADay=Zgjidhni një ditë në kalendar
+SelectANewDate=Zgjidhni një datë të re

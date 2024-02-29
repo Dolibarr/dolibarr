@@ -64,7 +64,7 @@ class SupplierOrders extends DolibarrApi
 	public function get($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "lire")) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->order->fetch($id);
@@ -94,7 +94,7 @@ class SupplierOrders extends DolibarrApi
 	 * @param string	$status			  Filter by order status : draft | validated | approved | running | received_start | received_end | cancelled | refused
 	 * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
 	 * @param string    $sqlfilterlines   Other criteria to filter answers separated by a comma. Syntax example "(tl.fk_product:=:'17') and (tl.price:<:'250')"
-	 * @param string    $properties		  Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties		  Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                      Array of order objects
 	 *
 	 * @throws RestException
@@ -102,7 +102,7 @@ class SupplierOrders extends DolibarrApi
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $product_ids = '', $status = '', $sqlfilters = '', $sqlfilterlines = '', $properties = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "lire")) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -229,7 +229,7 @@ class SupplierOrders extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->order->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -257,14 +257,14 @@ class SupplierOrders extends DolibarrApi
 	/**
 	 * Update supplier order
 	 *
-	 * @param int   $id             Id of supplier order to update
-	 * @param array $request_data   Datas
-	 * @return int
+	 * @param 	int   	$id             	Id of supplier order to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object|false				Updated object
 	 */
 	public function put($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "creer") && !DolibarrApiAccess::$user->hasRight("supplier_order", "creer")) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->order->fetch($id);
@@ -281,7 +281,7 @@ class SupplierOrders extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->order->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -299,7 +299,7 @@ class SupplierOrders extends DolibarrApi
 	/**
 	 * Get contacts of given supplier order
 	 *
-	 * Return an array with contact informations
+	 * Return an array with contact information
 	 *
 	 * @param	int		$id			ID of supplier order
 	 * @param	string	$source		Source of the contact (internal, external, all).
@@ -313,7 +313,7 @@ class SupplierOrders extends DolibarrApi
 	public function getContacts($id, $source, $type = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "lire")) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->order->fetch($id);
@@ -356,7 +356,7 @@ class SupplierOrders extends DolibarrApi
 	public function postContact($id, $contactid, $type, $source)
 	{
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "creer")) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->order->fetch($id);
@@ -405,7 +405,7 @@ class SupplierOrders extends DolibarrApi
 	public function deleteContact($id, $contactid, $type, $source)
 	{
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "creer")) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->order->fetch($id);
@@ -454,7 +454,7 @@ class SupplierOrders extends DolibarrApi
 	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "supprimer")) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$result = $this->order->fetch($id);
 		if (!$result) {
@@ -499,7 +499,7 @@ class SupplierOrders extends DolibarrApi
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "creer") && !DolibarrApiAccess::$user->hasRight("supplier_order", "creer")) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$result = $this->order->fetch($id);
 		if (!$result) {
@@ -547,7 +547,7 @@ class SupplierOrders extends DolibarrApi
 	public function approve($id, $idwarehouse = 0, $secondlevel = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "creer") && !DolibarrApiAccess::$user->hasRight("supplier_order", "creer")) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$result = $this->order->fetch($id);
 		if (!$result) {
@@ -598,7 +598,7 @@ class SupplierOrders extends DolibarrApi
 	public function makeOrder($id, $date, $method, $comment = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "creer") && !DolibarrApiAccess::$user->hasRight("supplier_order", "creer")) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$result = $this->order->fetch($id);
 		if (!$result) {
@@ -661,7 +661,7 @@ class SupplierOrders extends DolibarrApi
 	public function receiveOrder($id, $closeopenorder, $comment, $lines)
 	{
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "creer") && !DolibarrApiAccess::$user->hasRight("supplier_order", "creer")) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$result = $this->order->fetch($id);
 		if (!$result) {

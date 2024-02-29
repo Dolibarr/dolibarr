@@ -39,7 +39,7 @@ if (isModEnabled('project')) {
 
 $langs->loadLangs(array("bills", "other", "companies"));
 
-$id		= (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int'));
+$id		= (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid'));
 $ref	= GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
@@ -93,14 +93,14 @@ if (empty($reshook)) {
 	} elseif ($action == 'swapstatut' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
 		// bascule du statut d'un contact
 		if ($object->fetch($id)) {
-			$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
+			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 		} else {
 			dol_print_error($db);
 		}
 	} elseif ($action == 'deletecontact' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
 		// Efface un contact
 		$object->fetch($id);
-		$result = $object->delete_contact(GETPOST("lineid", 'int'));
+		$result = $object->delete_contact(GETPOSTINT("lineid"));
 
 		if ($result >= 0) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -123,7 +123,7 @@ $userstatic = new User($db);
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Mode vue et edition                                                         */
+/* Card view and edit mode                                                       */
 /*                                                                             */
 /* *************************************************************************** */
 

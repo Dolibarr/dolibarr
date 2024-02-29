@@ -25,7 +25,7 @@ if (!defined('NOTOKENRENEWAL')) {
 /**
  *      \file       htdocs/admin/dolistore/ajax/image.php
  *      \ingroup    admin
- *      \brief      Page des informations dolistore
+ *      \brief      Page des information dolistore
  */
 
 require "../../../main.inc.php";
@@ -40,8 +40,8 @@ top_httphead('image');
 
 $dolistore = new Dolistore();
 
-$id_product = GETPOST('id_product', 'int');
-$id_image   = GETPOST('id_image', 'int');
+$id_product = GETPOSTINT('id_product');
+$id_image   = GETPOSTINT('id_image');
 // quality : image resize with this in the URL : "cart_default", "home_default", "large_default", "medium_default", "small_default", "thickbox_default"
 $quality    = GETPOST('quality', 'alpha');
 

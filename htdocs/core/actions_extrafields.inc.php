@@ -200,7 +200,7 @@ if ($action == 'add') {
 					GETPOST('attrname', 'aZ09'),
 					GETPOST('label', 'alpha'),
 					$type,
-					GETPOST('pos', 'int'),
+					GETPOSTINT('pos'),
 					$extrasize,
 					$elementtype,
 					(GETPOST('unique', 'alpha') ? 1 : 0),
@@ -337,7 +337,7 @@ if ($action == 'update') {
 
 		if (!$error) {
 			if (GETPOSTISSET("attrname") && preg_match("/^\w[a-zA-Z0-9-_]*$/", GETPOST('attrname', 'aZ09')) && !is_numeric(GETPOST('attrname', 'aZ09'))) {
-				$pos = GETPOST('pos', 'int');
+				$pos = GETPOSTINT('pos');
 				// Construct array for parameter (value of select list)
 				$parameters = $param;
 				$parameters_array = explode("\r\n", $parameters);
@@ -348,7 +348,7 @@ if ($action == 'update') {
 						$params['options'] = array($parameters=>null);
 					}
 				} else {
-					//Esle it's separated key/value and coma list
+					//Else it's separated key/value and coma list
 					foreach ($parameters_array as $param_ligne) {
 						list($key, $value) = explode(',', $param_ligne);
 						if (!array_key_exists('options', $params)) {

@@ -4,6 +4,7 @@
  * Copyright (C) 2011-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018      Charlene Benke       <charlie@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
 *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@
 /**
  *  Return an array with timezone values
  *
- *  @return     array   Array with timezone values
+ *  @return     array<int,string>   Array with timezone values
  */
 function get_tz_array()
 {
@@ -102,7 +103,7 @@ function getServerTimeZoneInt($refgmtdate = 'now')
 		//print $refgmtdate.'='.$tmp;
 	} else {
 		$tmp = 0;
-		dol_print_error('', 'PHP version must be 5.3+');
+		dol_print_error(null, 'PHP version must be 5.3+');
 	}
 	$tz = round(($tmp < 0 ? 1 : -1) * abs($tmp / 3600));
 	return $tz;
@@ -114,7 +115,7 @@ function getServerTimeZoneInt($refgmtdate = 'now')
  *
  *  @param      int			$time               Date timestamp (or string with format YYYY-MM-DD)
  *  @param      int			$duration_value     Value of delay to add
- *  @param      int			$duration_unit      Unit of added delay (d, m, y, w, h, i)
+ *  @param      string		$duration_unit      Unit of added delay (d, m, y, w, h, i)
  *  @param      int         $ruleforendofmonth  Change the behavior of PHP over data-interval, 0 or 1
  *  @return     int      			        	New timestamp
  *  @see convertSecondToTime(), convertTimeToSeconds()
@@ -233,7 +234,7 @@ function convertTime2Seconds($iHours = 0, $iMinutes = 0, $iSeconds = 0)
  *                                          - 'year': only year part);
  *      @param      int		$lengthOfDay    Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
  *      @param      int		$lengthOfWeek   Length of week (default 7)
- *    	@return     string		 		 	Formated text of duration
+ *    	@return     string		 		 	Formatted text of duration
  * 	                                		Example: 0 return 00:00, 3600 return 1:00, 86400 return 1d, 90000 return 1 Day 01:00
  *      @see convertTime2Seconds()
  */
@@ -326,8 +327,8 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 /**	  	Convert duration to hour
  *
  *    	@param      int		$duration_value		Duration value
- *    	@param      int		$duration_unit		Duration unit
- *      @return     int $result
+ *    	@param      string	$duration_unit		Duration unit
+ *      @return     int		$result
  */
 function convertDurationtoHour($duration_value, $duration_unit)
 {
@@ -368,8 +369,10 @@ function convertDurationtoHour($duration_value, $duration_unit)
  * @param      int|string	$year_date			Year date
  * @param	   int      	$excludefirstand	Exclude first and
  * @param	   mixed		$gm					False or 0 or 'tzserver' = Input date fields are date info in the server TZ. True or 1 or 'gmt' = Input are date info in GMT TZ.
- * 												Note: In database, dates are always fot the server TZ.
+ * 												Note: In database, dates are always for the server TZ.
  * @return     string		$sqldate			String with SQL filter
+ * @see forgeSQLFromUniversalSearchCriteria()
+ * @see natural_search()
  */
 function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $excludefirstand = 0, $gm = false)
 {
@@ -582,11 +585,11 @@ function dol_get_next_week($day, $week, $month, $year)
  *
  *	@param		int			$year		Year
  * 	@param		int			$month		Month
- * 	@param		mixed		$gm			False or 0 or 'tzserver' = Return date to compare with server TZ,
+ * 	@param		bool|int|string	$gm		False or 0 or 'tzserver' = Return date to compare with server TZ,
  * 										True or 1 or 'gmt' to compare with GMT date.
  *                          			Example: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, a dol_print_date on it will return 1970-01-01 00:00:00
  *                          			Example: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, a dol_print_date on it will return 1970-01-01 00:00:00
- *  @return		int						Date for first day, '' if error
+ *  @return		int|string				Date as a timestamp, '' if error
  */
 function dol_get_first_day($year, $month = 1, $gm = false)
 {
@@ -603,9 +606,9 @@ function dol_get_first_day($year, $month = 1, $gm = false)
  *
  *	@param		int			$year		Year
  * 	@param		int			$month		Month
- * 	@param		mixed		$gm			False or 0 or 'tzserver' = Return date to compare with server TZ,
+ * 	@param		bool|int|string	$gm		False or 0 or 'tzserver' = Return date to compare with server TZ,
  * 										True or 1 or 'gmt' to compare with GMT date.
- *	@return		int						Date for first day, '' if error
+ *	@return		int|string				Date as a timestamp, '' if error
  */
 function dol_get_last_day($year, $month = 12, $gm = false)
 {
@@ -630,7 +633,7 @@ function dol_get_last_day($year, $month = 12, $gm = false)
  *  Return GMT time for last hour of a given GMT date (it replaces hours, min and second part to 23:59:59)
  *
  *	@param		int			$date		Date GMT
- * 	@param		mixed		$gm			False or 0 or 'tzserver' = Return date to compare with server TZ,
+ * 	@param		bool|int|string	$gm		False or 0 or 'tzserver' = Return date to compare with server TZ,
  * 										'gmt' to compare with GMT date.
  *  @return		int						Date for last hour of a given date
  */
@@ -644,9 +647,9 @@ function dol_get_last_hour($date, $gm = 'tzserver')
  *  Return GMT time for first hour of a given GMT date (it removes hours, min and second part)
  *
  *	@param		int			$date		Date GMT
- * 	@param		mixed		$gm			False or 0 or 'tzserver' = Return date to compare with server TZ,
+ * 	@param		bool|int|string	$gm		False or 0 or 'tzserver' = Return date to compare with server TZ,
  * 										'gmt' to compare with GMT date.
- *  @return		int						Date for last hour of a given date
+ *  @return		int						Date for first hour of a given date
  */
 function dol_get_first_hour($date, $gm = 'tzserver')
 {
@@ -659,7 +662,7 @@ function dol_get_first_hour($date, $gm = 'tzserver')
  *	@param		int		$day		Day
  * 	@param		int		$month		Month
  *  @param		int		$year		Year
- * 	@param		mixed	$gm			False or 0 or 'tzserver' = Return date to compare with server TZ,
+ * 	@param		bool|int|string	$gm	False or 0 or 'tzserver' = Return date to compare with server TZ,
  * 									True or 1 or 'gmt' to compare with GMT date.
  *	@return		array				year,month,week,first_day,first_month,first_year,prev_day,prev_month,prev_year
  */
@@ -1186,5 +1189,5 @@ function getWeekNumber($day, $month, $year)
 {
 	$date = new DateTime($year.'-'.$month.'-'.$day);
 	$week = $date->format("W");
-	return $week;
+	return (int) $week;
 }

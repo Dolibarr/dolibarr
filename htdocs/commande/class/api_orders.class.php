@@ -54,7 +54,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Get properties of an order object by id
 	 *
-	 * Return an array with order informations
+	 * Return an array with order information
 	 *
 	 * @param       int         $id            ID of order
 	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
@@ -70,7 +70,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Get properties of an order object by ref
 	 *
-	 * Return an array with order informations
+	 * Return an array with order information
 	 *
 	 * @param       string		$ref			Ref of object
 	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
@@ -88,7 +88,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Get properties of an order object by ref_ext
 	 *
-	 * Return an array with order informations
+	 * Return an array with order information
 	 *
 	 * @param       string		$ref_ext			External reference of object
 	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
@@ -106,7 +106,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Get properties of an order object
 	 *
-	 * Return an array with order informations
+	 * Return an array with order information
 	 *
 	 * @param       int         $id				ID of order
 	 * @param		string		$ref			Ref of object
@@ -119,7 +119,7 @@ class Orders extends DolibarrApi
 	private function _fetch($id, $ref = '', $ref_ext = '', $contact_list = 1)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->commande->fetch($id, $ref, $ref_ext);
@@ -157,7 +157,7 @@ class Orders extends DolibarrApi
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string           $sqlfilterlines      Other criteria to filter answers separated by a comma. Syntax example "(tl.fk_product:=:'17') and (tl.price:<:'250')"
-	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException 404 Not found
@@ -166,7 +166,7 @@ class Orders extends DolibarrApi
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $sqlfilterlines = '', $properties = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -176,7 +176,7 @@ class Orders extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -257,14 +257,14 @@ class Orders extends DolibarrApi
 	/**
 	 * Create a sale order
 	 *
-	 * Exemple: { "socid": 2, "date": 1595196000, "type": 0, "lines": [{ "fk_product": 2, "qty": 1 }] }
+	 * Example: { "socid": 2, "date": 1595196000, "type": 0, "lines": [{ "fk_product": 2, "qty": 1 }] }
 	 *
 	 * @param   array   $request_data   Request data
 	 * @return  int     ID of order
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
 			throw new RestException(401, "Insuffisant rights");
 		}
 		// Check mandatory fields
@@ -272,7 +272,7 @@ class Orders extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->commande->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -306,7 +306,7 @@ class Orders extends DolibarrApi
 	public function getLines($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->commande->fetch($id);
@@ -337,8 +337,8 @@ class Orders extends DolibarrApi
 	 */
 	public function postLine($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->commande->fetch($id);
@@ -404,8 +404,8 @@ class Orders extends DolibarrApi
 	 */
 	public function putLine($id, $lineid, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->commande->fetch($id);
@@ -472,8 +472,8 @@ class Orders extends DolibarrApi
 	 */
 	public function deleteLine($id, $lineid)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->commande->fetch($id);
@@ -485,7 +485,7 @@ class Orders extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$updateRes = $this->commande->deleteline(DolibarrApiAccess::$user, $lineid, $id);
+		$updateRes = $this->commande->deleteLine(DolibarrApiAccess::$user, $lineid, $id);
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {
@@ -496,7 +496,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Get contacts of given order
 	 *
-	 * Return an array with contact informations
+	 * Return an array with contact information
 	 *
 	 * @param	int		$id			ID of order
 	 * @param	string	$type		Type of the contact (BILLING, SHIPPING, CUSTOMER)
@@ -509,7 +509,7 @@ class Orders extends DolibarrApi
 	public function getContacts($id, $type = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->commande->fetch($id);
@@ -541,8 +541,8 @@ class Orders extends DolibarrApi
 	 */
 	public function postContact($id, $contactid, $type)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->commande->fetch($id);
@@ -589,8 +589,8 @@ class Orders extends DolibarrApi
 	 */
 	public function deleteContact($id, $contactid, $type)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->commande->fetch($id);
@@ -631,8 +631,8 @@ class Orders extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->commande->fetch($id);
@@ -648,7 +648,7 @@ class Orders extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->commande->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -678,8 +678,8 @@ class Orders extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->supprimer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'supprimer')) {
+			throw new RestException(403);
 		}
 		$result = $this->commande->fetch($id);
 		if (!$result) {
@@ -726,8 +726,8 @@ class Orders extends DolibarrApi
 	 */
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
+			throw new RestException(403);
 		}
 		$result = $this->commande->fetch($id);
 		if (!$result) {
@@ -777,8 +777,8 @@ class Orders extends DolibarrApi
 	 */
 	public function reopen($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
+			throw new RestException(403);
 		}
 		if (empty($id)) {
 			throw new RestException(400, 'Order ID is mandatory');
@@ -813,8 +813,8 @@ class Orders extends DolibarrApi
 	 */
 	public function setinvoiced($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
+			throw new RestException(403);
 		}
 		if (empty($id)) {
 			throw new RestException(400, 'Order ID is mandatory');
@@ -854,8 +854,8 @@ class Orders extends DolibarrApi
 	 */
 	public function close($id, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
+			throw new RestException(403);
 		}
 		$result = $this->commande->fetch($id);
 		if (!$result) {
@@ -899,8 +899,8 @@ class Orders extends DolibarrApi
 	 */
 	public function settodraft($id, $idwarehouse = -1)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
+			throw new RestException(403);
 		}
 		$result = $this->commande->fetch($id);
 		if (!$result) {
@@ -952,10 +952,10 @@ class Orders extends DolibarrApi
 		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
+			throw new RestException(403);
 		}
 		if (empty($proposalid)) {
 			throw new RestException(400, 'Proposal ID is mandatory');
@@ -992,8 +992,8 @@ class Orders extends DolibarrApi
 	public function getOrderShipments($id)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-		if (!DolibarrApiAccess::$user->rights->expedition->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
+			throw new RestException(403);
 		}
 		$obj_ret = array();
 		$sql = "SELECT e.rowid";
@@ -1048,8 +1048,8 @@ class Orders extends DolibarrApi
 	public function createOrderShipment($id, $warehouse_id)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-		if (!DolibarrApiAccess::$user->rights->expedition->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
+			throw new RestException(403);
 		}
 		if ($warehouse_id <= 0) {
 			throw new RestException(404, 'Warehouse not found');

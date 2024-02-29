@@ -48,6 +48,9 @@ $version = DOL_VERSION;
 $error = 0;
 $confirmed = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */
@@ -118,7 +121,7 @@ if ($resql) {
 	$i = 0;
 
 	$ldap = new Ldap();
-	$ldap->connect_bind();
+	$ldap->connectBind();
 
 	while ($i < $num) {
 		$ldap->error = "";
@@ -139,7 +142,7 @@ if ($resql) {
 		$info = $contact->_load_ldap_info();
 		$dn = $contact->_load_ldap_dn($info);
 
-		$result = $ldap->add($dn, $info, $user); // Wil fail if already exists
+		$result = $ldap->add($dn, $info, $user); // Will fail if already exists
 		$result = $ldap->update($dn, $info, $user, $olddn);
 		if ($result > 0) {
 			print " - ".$langs->trans("OK");

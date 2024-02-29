@@ -163,7 +163,7 @@ class CMailFile
 	 *	@param 	string	$errors_to      	 Email for errors-to
 	 *	@param	string	$css                 Css option
 	 *	@param	string	$trackid             Tracking string (contains type and id of related element)
-	 *  @param  string  $moreinheader        More in header. $moreinheader must contains the "\r\n" (TODO not supported for other MAIL_SEND_MODE different than 'mail' and 'smtps' for the moment)
+	 *  @param  string  $moreinheader        More in header. $moreinheader must contains the "\r\n" at end of each line
 	 *  @param  string  $sendcontext      	 'standard', 'emailing', 'ticket', 'password', ... (used to define which sending mode and parameters to use)
 	 *  @param	string	$replyto			 Reply-to email (will be set to same value than From by default if not provided)
 	 *  @param	string	$upload_dir_tmp		 Temporary directory (used to convert images embedded as img src=data:image)
@@ -198,6 +198,15 @@ class CMailFile
 		}
 		if (empty($this->sendmode)) {
 			$this->sendmode = (getDolGlobalString('MAIN_MAIL_SENDMODE') ? $conf->global->MAIN_MAIL_SENDMODE : 'mail');
+		}
+
+		// Add a Feedback-ID. Must be used for stats on spam report only.
+		if ($trackid) {
+			//Examples:
+			// LinkedIn – Feedback-ID: accept_invite_04:linkedin
+			// Twitter – Feedback-ID: 0040162518f58f41d1f0:15491f3b2ee48656f8e7fb2fac:none:twitterESP
+			// Amazon.com : Feedback-ID: 1.eu-west-1.kjoQSiqb8G+7lWWiDVsxjM2m0ynYd4I6yEFlfoox6aY=:AmazonSES
+			$moreinheader .= "Feedback-ID: ".$trackid.':'.dol_getprefix('email').":dolib\r\n";
 		}
 
 		// We define end of line (RFC 821).
@@ -252,6 +261,7 @@ class CMailFile
 		if (getDolGlobalString('MAIN_MAIL_FORCE_CONTENT_TYPE_TO_HTML')) {
 			$this->msgishtml = 1; // To force to send everything with content type html.
 		}
+		dol_syslog("CMailFile::CMailfile: msgishtml=".$this->msgishtml);
 
 		// Detect images
 		if ($this->msgishtml) {
@@ -261,7 +271,7 @@ class CMailFile
 			if (getDolGlobalString('MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS')) {	// Off by default
 				// Search into the body for <img tags of links in medias files to replace them with an embedded file
 				// Note because media links are public, this should be useless, except avoid blocking images with email browser.
-				// This convert an embedd file with src="/viewimage.php?modulepart... into a cid link
+				// This converts an embed file with src="/viewimage.php?modulepart... into a cid link
 				// TODO Exclude viewimage used for the read tracker ?
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root.'/medias');
 				if ($findimg<0) {
@@ -342,8 +352,63 @@ class CMailFile
 				}
 			}
 			if (!empty($listofemailstoadd)) {
-				$addr_bcc .= ($addr_bcc ? ', ' : '').join(', ', $listofemailstoadd);
+				$addr_bcc .= ($addr_bcc ? ', ' : '').implode(', ', $listofemailstoadd);
 			}
+		}
+
+		// Verify if $to, $addr_cc and addr_bcc have unwanted addresses
+		if (getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO')) {
+			//Verify for $to
+			$replaceto = false;
+			$tabto = explode(",", $to);
+			$listofemailstonotsendto = explode(',', getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO'));
+			foreach ($tabto as $key => $addrto) {
+				if (in_array($addrto, $listofemailstonotsendto)) {
+					unset($tabto[$key]);
+					$replaceto = true;
+				}
+			}
+			if ($replaceto && getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE')) {
+				$tabto[] = getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE');
+			}
+			$to = implode(',', $tabto);
+
+			//Verify for $addr_cc
+			$replacecc = false;
+			$tabcc = explode(',', $addr_cc);
+			foreach ($tabcc as $key => $cc) {
+				if (in_array($cc, $tabcc)) {
+					unset($tabcc[$key]);
+					$replacecc = true;
+				}
+			}
+			if ($replacecc && getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE')) {
+				$tabcc[] = getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE');
+			}
+			$addr_cc = implode(',', $tabcc);
+
+			//Verify for $addr_bcc
+			$replacebcc= false;
+			$tabbcc = explode(',', $addr_bcc);
+			foreach ($tabbcc as $key => $bcc) {
+				if (in_array($bcc, $tabbcc)) {
+					unset($tabbcc[$key]);
+					$replacebcc = true;
+				}
+			}
+			if ($replacebcc && getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE')) {
+				$tabbcc[] = getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE');
+			}
+			$addr_bcc = implode(',', $tabbcc);
+		}
+
+		// We always use a replyto
+		if (empty($replyto)) {
+			$replyto = dol_sanitizeEmail($from);
+		}
+		// We can force the from
+		if (getDolGlobalString('MAIN_MAIL_FORCE_FROM')) {
+			$from = getDolGlobalString('MAIN_MAIL_FORCE_FROM');
 		}
 
 		$this->subject = $subject;
@@ -353,9 +418,6 @@ class CMailFile
 		$this->addr_cc = dol_sanitizeEmail($addr_cc);
 		$this->addr_bcc = dol_sanitizeEmail($addr_bcc);
 		$this->deliveryreceipt = $deliveryreceipt;
-		if (empty($replyto)) {
-			$replyto = dol_sanitizeEmail($from);
-		}
 		$this->reply_to = dol_sanitizeEmail($replyto);
 		$this->errors_to = dol_sanitizeEmail($errors_to);
 		$this->trackid = $trackid;
@@ -366,7 +428,7 @@ class CMailFile
 		$this->cid_list = $cid_list;
 
 		if (getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')) {
-			$this->addr_to = dol_sanitizeEmail($conf->global->MAIN_MAIL_FORCE_SENDTO);
+			$this->addr_to = dol_sanitizeEmail(getDolGlobalString('MAIN_MAIL_FORCE_SENDTO'));
 			$this->addr_cc = '';
 			$this->addr_bcc = '';
 		}
@@ -382,7 +444,7 @@ class CMailFile
 
 		dol_syslog("CMailFile::CMailfile: sendmode=".$this->sendmode." addr_bcc=$addr_bcc, replyto=$replyto", LOG_DEBUG);
 
-		// We set all data according to choosed sending method.
+		// We set all data according to chose sending method.
 		// We also set a value for ->msgid
 		if ($this->sendmode == 'mail') {
 			// Use mail php function (default PHP method)
@@ -421,7 +483,7 @@ class CMailFile
 
 			// We now define $this->headers and $this->message
 			$this->headers = $smtp_headers.$mime_headers;
-			// On nettoie le header pour qu'il ne se termine pas par un retour chariot.
+			// Clean the header to avoid that it terminates with a CR character.
 			// This avoid also empty lines at end that can be interpreted as mail injection by email servers.
 			$this->headers = preg_replace("/([\r\n]+)$/i", "", $this->headers);
 
@@ -432,6 +494,7 @@ class CMailFile
 		} elseif ($this->sendmode == 'smtps') {
 			// Use SMTPS library
 			// ------------------------------------------
+			$host = dol_getprefix('email');
 
 			require_once DOL_DOCUMENT_ROOT.'/core/class/smtps.class.php';
 			$smtps = new SMTPs();
@@ -448,6 +511,8 @@ class CMailFile
 			$smtps->setFrom($this->getValidAddress($this->addr_from, 0, 1));
 			$smtps->setTrackId($this->trackid);
 			$smtps->setReplyTo($this->getValidAddress($this->reply_to, 0, 1));
+
+			//X-Dolibarr-TRACKID is generated inside the smtps->getHeader
 
 			if (!empty($moreinheader)) {
 				$smtps->setMoreInHeader($moreinheader);
@@ -492,12 +557,12 @@ class CMailFile
 				$smtps->setOptions(array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true)));
 			}
 
-			$host = dol_getprefix('email');
 			$this->msgid = time().'.SMTPs-dolibarr-'.$this->trackid.'@'.$host;
 
 			$this->smtps = $smtps;
 		} elseif ($this->sendmode == 'swiftmailer') {
 			// Use Swift Mailer library
+			// ------------------------------------------
 			$host = dol_getprefix('email');
 
 			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lexer/lib/Doctrine/Common/Lexer/AbstractLexer.php';
@@ -519,7 +584,16 @@ class CMailFile
 			$msgid = $headers->get('Message-ID');
 			$msgid->setId($headerID);
 			$headers->addIdHeader('References', $headerID);
-			// TODO if (!empty($moreinheader)) ...
+
+			if (!empty($moreinheader)) {
+				$moreinheaderarray = preg_split('/[\r\n]+/', $moreinheader);
+				foreach ($moreinheaderarray as $moreinheaderval) {
+					$moreinheadervaltmp = explode(':', $moreinheaderval, 2);
+					if (!empty($moreinheadervaltmp[0]) && !empty($moreinheadervaltmp[1])) {
+						$headers->addTextHeader($moreinheadervaltmp[0], $moreinheadervaltmp[1]);
+					}
+				}
+			}
 
 			// Give the message a subject
 			try {
@@ -774,7 +848,7 @@ class CMailFile
 				}
 			}
 
-			// Action according to choosed sending method
+			// Action according to chose sending method
 			if ($this->sendmode == 'mail') {
 				// Use mail php function (default PHP method)
 				// ------------------------------------------
@@ -815,8 +889,9 @@ class CMailFile
 				if ($res) {
 					$additionnalparam = ''; // By default
 					if (getDolGlobalString('MAIN_MAIL_ALLOW_SENDMAIL_F')) {
-						// le "Return-Path" (retour des messages bounced) dans les header ne fonctionne pas avec tous les MTA
-						// Le forcage de la valeur grace à l'option -f de sendmail est donc possible si la constante MAIN_MAIL_ALLOW_SENDMAIL_F est definie.
+						// When using the phpmail function, the mail command may force the from to the user of the login, for example: linuxuser@myserver.mydomain.com
+						// You can try to set this option to have the command use the From. if it does not work, you can also try the MAIN_MAIL_SENDMAIL_FORCE_BA.
+						// So forcing using the option -f of sendmail is possible if constant MAIN_MAIL_ALLOW_SENDMAIL_F is defined.
 						// Having this variable defined may create problems with some sendmail (option -f refused)
 						// Having this variable not defined may create problems with some other sendmail (option -f required)
 						$additionnalparam .= ($additionnalparam ? ' ' : '').(getDolGlobalString('MAIN_MAIL_ERRORS_TO') ? '-f'.$this->getValidAddress($conf->global->MAIN_MAIL_ERRORS_TO, 2) : ($this->addr_from != '' ? '-f'.$this->getValidAddress($this->addr_from, 2) : ''));
@@ -826,7 +901,7 @@ class CMailFile
 					}
 
 					if (getDolGlobalString('MAIN_MAIL_SENDMAIL_FORCE_ADDPARAM')) {
-						$additionnalparam .= ($additionnalparam ? ' ' : '').'-U '.$additionnalparam; // Use -U to add additionnal params
+						$additionnalparam .= ($additionnalparam ? ' ' : '').'-U '.$additionnalparam; // Use -U to add additional params
 					}
 
 					$linuxlike = 1;
@@ -1193,7 +1268,7 @@ class CMailFile
 				$res = true;
 				if (!empty($this->error) || !empty($this->errors) || !$result) {
 					if (!empty($failedRecipients)) {
-						$this->errors[] = 'Transport failed for the following addresses: "' . join('", "', $failedRecipients) . '".';
+						$this->errors[] = 'Transport failed for the following addresses: "' . implode('", "', $failedRecipients) . '".';
 					}
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res = false;
@@ -1283,20 +1358,21 @@ class CMailFile
 	public function dump_mail()
 	{
 		// phpcs:enable
-		global $conf, $dolibarr_main_data_root;
+		global $dolibarr_main_data_root;
 
-		if (@is_writeable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
+		if (@is_writable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
 			$outputfile = $dolibarr_main_data_root."/dolibarr_mail.log";
 			$fp = fopen($outputfile, "w");	// overwrite
 
 			if ($this->sendmode == 'mail') {
-				fputs($fp, $this->headers);
-				fputs($fp, $this->eol); // This eol is added by the mail function, so we add it in log
-				fputs($fp, $this->message);
+				fwrite($fp, $this->headers);
+				fwrite($fp, $this->eol); // This eol is added by the mail function, so we add it in log
+				fwrite($fp, $this->message);
 			} elseif ($this->sendmode == 'smtps') {
-				fputs($fp, $this->smtps->log); // this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on
+				fwrite($fp, $this->smtps->log); // this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on
 			} elseif ($this->sendmode == 'swiftmailer') {
-				fputs($fp, $this->logger->dump()); // this->logger is filled only if MAIN_MAIL_DEBUG was set to on
+				fwrite($fp, "smtpheader=\n".$this->message->getHeaders()->toString()."\n");
+				fwrite($fp, $this->logger->dump()); // this->logger is filled only if MAIN_MAIL_DEBUG was set to on
 			}
 
 			fclose($fp);
@@ -1324,7 +1400,7 @@ class CMailFile
 	{
 		global $dolibarr_main_data_root;
 
-		if (@is_writeable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
+		if (@is_writable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
 			$srcfile = $dolibarr_main_data_root."/dolibarr_mail.log";
 
 			// Add message to dolibarr_mail.log. We do not use dol_syslog() on purpose,
@@ -1357,7 +1433,7 @@ class CMailFile
 
 
 	/**
-	 * Correct an uncomplete html string
+	 * Correct an incomplete html string
 	 *
 	 * @param	string	$msg	String
 	 * @return	string			Completed string
@@ -1418,9 +1494,7 @@ class CMailFile
 	public function write_smtpheaders()
 	{
 		// phpcs:enable
-		global $conf;
 		$out = "";
-
 		$host = dol_getprefix('email');
 
 		// Sender
@@ -1614,7 +1688,7 @@ class CMailFile
 	 * @param	array	$mimetype_list		Tableau
 	 * @param 	array	$mimefilename_list	Tableau
 	 * @param	array	$cidlist			Array of CID if file must be completed with CID code
-	 * @return	string						String with files encoded
+	 * @return	string|int						String with files encoded
 	 */
 	private function write_files($filename_list, $mimetype_list, $mimefilename_list, $cidlist)
 	{
@@ -1624,9 +1698,9 @@ class CMailFile
 		$filename_list_size = count($filename_list);
 		for ($i = 0; $i < $filename_list_size; $i++) {
 			if ($filename_list[$i]) {
-				dol_syslog("CMailFile::write_files: i=$i");
+				dol_syslog("CMailFile::write_files: i=$i ".$filename_list[$i]);
 				$encoded = $this->_encode_file($filename_list[$i]);
-				if ($encoded >= 0) {
+				if ($encoded !== -1) {
 					if ($mimefilename_list[$i]) {
 						$filename_list[$i] = $mimefilename_list[$i];
 					}
@@ -1800,7 +1874,7 @@ class CMailFile
 	/**
 	 * Search images into html message and init array this->images_encoded if found
 	 *
-	 * @param	string	$images_dir		Location of physical images files. For example $dolibarr_main_data_root.'/medias'
+	 * @param	string	$images_dir		Path to store physical images files. For example $dolibarr_main_data_root.'/medias'
 	 * @return	int 		        	>0 if OK, <0 if KO
 	 */
 	private function findHtmlImages($images_dir)
@@ -1814,7 +1888,7 @@ class CMailFile
 		$matches = array();
 		preg_match_all('/(?:"|\')([^"\']+\.('.implode('|', $extensions).'))(?:"|\')/Ui', $this->html, $matches); // If "xxx.ext" or 'xxx.ext' found
 
-		if (!empty($matches)) {
+		if (!empty($matches) && !empty($matches[1])) {
 			$i = 0;
 			// We are interested in $matches[1] only (the second set of parenthesis into regex)
 			foreach ($matches[1] as $full) {
@@ -1888,7 +1962,7 @@ class CMailFile
 	 * Seearch images with data:image format into html message.
 	 * If we find some, we create it on disk.
 	 *
-	 * @param	string	$images_dir		Location of where to store physicaly images files. For example $dolibarr_main_data_root.'/medias'
+	 * @param	string	$images_dir		Location of where to store physically images files. For example $dolibarr_main_data_root.'/medias'
 	 * @return	int 		        	>0 if OK, <0 if KO
 	 */
 	private function findHtmlImagesIsSrcData($images_dir)
@@ -1919,7 +1993,7 @@ class CMailFile
 
 		if (!empty($matches) && !empty($matches[1])) {
 			if (empty($images_dir)) {
-				// No temp directory provided, so we are not able to support convertion of data:image into physical images.
+				// No temp directory provided, so we are not able to support conversion of data:image into physical images.
 				$this->error = 'NoTempDirProvidedInCMailConstructorSoCantConvertDataImgOnDisk';
 				return -1;
 			}
@@ -1990,9 +2064,9 @@ class CMailFile
 
 		$ret = '';
 
-		$arrayaddress = explode(',', $address);
+		$arrayaddress = (!empty($address) ? explode(',', $address) : array());
 
-		// Boucle sur chaque composant de l'adresse
+		// Boucle sur chaque composant de l'address
 		$i = 0;
 		foreach ($arrayaddress as $val) {
 			$regs = array();
@@ -2061,7 +2135,7 @@ class CMailFile
 
 		$arrayaddress = explode(',', $address);
 
-		// Boucle sur chaque composant de l'adresse
+		// Boucle sur chaque composant de l'address
 		foreach ($arrayaddress as $val) {
 			if (preg_match('/^(.*)<(.*)>$/i', trim($val), $regs)) {
 				$name  = trim($regs[1]);

@@ -48,15 +48,15 @@ $langs->loadLangs(array("companies", "other", "opensurveys"));
 $action   = GETPOST('action', 'aZ09');
 $cancel   = GETPOST('cancel', 'alpha');
 $SECUREKEY = GETPOST("securekey");
-$entity = GETPOST('entity', 'int') ? GETPOST('entity', 'int') : $conf->entity;
+$entity = GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity;
 $backtopage = '';
 $suffix = "";
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1 or if we click on clear filters
@@ -79,8 +79,8 @@ $object = new Opensurveysondage($db);
 $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
 
 // Security check
-if (empty($conf->recruitment->enabled)) {
-	httponly_accessforbidden('Module Recruitment not enabled');
+if (!isModEnabled('opensurvey')) {
+	httponly_accessforbidden('Module Opensurvey not enabled');
 }
 
 
@@ -210,7 +210,7 @@ if (is_array($results)) {
 			print '</b><br>';
 
 			// Description
-			//print  $langs->trans("Desription").' : ';
+			//print  $langs->trans("Description").' : ';
 			print '<br>';
 			print '<div class="opensurveydescription centpercent">';
 			print dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->commentaires), 1, 1, 1));

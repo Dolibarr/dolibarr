@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->load("categories");
 
 // Security check
-$socid = (int) GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if (!$user->hasRight('categorie', 'lire')) {
 	accessforbidden();
 }
@@ -45,7 +45,7 @@ if (!$user->hasRight('categorie', 'lire')) {
 $action = GETPOST('action', 'alpha');
 $cancel		= GETPOST('cancel', 'alpha');
 $origin		= GETPOST('origin', 'alpha');
-$catorigin  = (int) GETPOST('catorigin', 'int');
+$catorigin  = GETPOSTINT('catorigin');
 $type = GETPOST('type', 'aZ09');
 $urlfrom = GETPOST('urlfrom', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -53,8 +53,9 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $label = (string) GETPOST('label', 'alphanohtml');
 $description = (string) GETPOST('description', 'restricthtml');
 $color = preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('color', 'alphanohtml'));
-$visible = (int) GETPOST('visible', 'int');
-$parent = (int) GETPOST('parent', 'int');
+$position = GETPOSTINT('position');
+$visible = GETPOSTINT('visible');
+$parent = GETPOSTINT('parent');
 
 if ($origin) {
 	if ($type == Categorie::TYPE_PRODUCT) {
@@ -95,7 +96,7 @@ $error = 0;
 /*
  *	Actions
  */
-$parameters = array('socid' => $socid, 'origin' => $origin, 'catorigin' => $catorigin, 'type' => $type, 'urlfrom' => $urlfrom, 'backtopage' => $backtopage, 'label' => $label, 'description' => $description, 'color' => $color, 'visible' => $visible, 'parent' => $parent);
+$parameters = array('socid' => $socid, 'origin' => $origin, 'catorigin' => $catorigin, 'type' => $type, 'urlfrom' => $urlfrom, 'backtopage' => $backtopage, 'label' => $label, 'description' => $description, 'color' => $color, 'position' => $position, 'visible' => $visible, 'parent' => $parent);
 // Note that $action and $object may be modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {
@@ -138,6 +139,7 @@ if (empty($reshook)) {
 		}
 		$object->label			= $label;
 		$object->color			= $color;
+		$object->position		= $position;
 		$object->description = dol_htmlcleanlastbr($description);
 		$object->socid			= ($socid > 0 ? $socid : 0);
 		$object->visible = $visible;
@@ -258,6 +260,11 @@ if ($user->hasRight('categorie', 'creer')) {
 		print '<tr><td>'.$langs->trans("Color").'</td><td>';
 		print $formother->selectColor($color, 'color');
 		print '</td></tr>';
+
+		// Position
+		print '<tr>';
+		print '<td class="titlefieldcreate">'.$langs->trans("Position").'</td><td><input id="position" class="minwidth100" name="position" value="'.$position.'">';
+		print'</td></tr>';
 
 		// Parent category
 		print '<tr><td>'.$langs->trans("AddIn").'</td><td>';

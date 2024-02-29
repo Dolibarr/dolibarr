@@ -21,7 +21,7 @@
 /**
  * \file scripts/user/sync_groups_dolibarr2ldap.php
  * \ingroup ldap core
- * \brief Script de mise a jour des groupes dans LDAP depuis base Dolibarr
+ * \brief Script to update the groups in LDAP from the Dolibarr DB
  */
 
 if (!defined('NOSESSION')) {
@@ -52,6 +52,9 @@ require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 $version = DOL_VERSION;
 $error = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */
@@ -76,7 +79,7 @@ if ($resql) {
 	$i = 0;
 
 	$ldap = new Ldap();
-	$ldap->connect_bind();
+	$ldap->connectBind();
 
 	while ($i < $num) {
 		$ldap->error = "";
@@ -97,7 +100,7 @@ if ($resql) {
 		$info = $fgroup->_load_ldap_info();
 		$dn = $fgroup->_load_ldap_dn($info);
 
-		$result = $ldap->add($dn, $info, $user); // Wil fail if already exists
+		$result = $ldap->add($dn, $info, $user); // Will fail if already exists
 		$result = $ldap->update($dn, $info, $user, $olddn);
 		if ($result > 0) {
 			print " - ".$langs->trans("OK");

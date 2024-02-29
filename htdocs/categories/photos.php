@@ -37,13 +37,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 $langs->loadlangs(array('categories', 'bills'));
 
 
-$id      = GETPOST('id', 'int');
+$id      = GETPOSTINT('id');
 $label   = GETPOST('label', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 
 if ($id == '' && $label == '') {
-	dol_print_error('', 'Missing parameter id');
+	dol_print_error(null, 'Missing parameter id');
 	exit();
 }
 

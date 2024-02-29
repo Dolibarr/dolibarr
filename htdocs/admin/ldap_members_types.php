@@ -101,7 +101,7 @@ print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 
 $head = ldap_prepare_head();
 
-// Test si fonction LDAP actives
+// Test if the LDAP functions are enabled
 if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
@@ -187,7 +187,7 @@ print '</form>';
 
 
 /*
- * Test de la connexion
+ * Test de la connection
  */
 if (getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 	$butlabel = $langs->trans("LDAPTestSynchroMemberType");
@@ -201,13 +201,13 @@ if (getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDA
 
 if (function_exists("ldap_connect")) {
 	if ($_GET["action"] == 'testmembertype') {
-		// Creation objet
+		// Create object
 		$object = new AdherentType($db);
 		$object->initAsSpecimen();
 
 		// Test synchro
 		$ldap = new Ldap();
-		$result = $ldap->connect_bind();
+		$result = $ldap->connectBind();
 
 		if ($result > 0) {
 			$info = $object->_load_ldap_info();
@@ -235,7 +235,7 @@ if (function_exists("ldap_connect")) {
 
 			print "<br>\n";
 			print "LDAP input file used for test:<br><br>\n";
-			print nl2br($ldap->dump_content($dn, $info));
+			print nl2br($ldap->dumpContent($dn, $info));
 			print "\n<br>";
 		} else {
 			print img_picto('', 'error').' ';

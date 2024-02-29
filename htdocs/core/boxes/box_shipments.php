@@ -38,17 +38,6 @@ class box_shipments extends ModeleBoxes
 	public $depends = array("expedition");
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler
@@ -60,7 +49,7 @@ class box_shipments extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->expedition->lire);
+		$this->hidden = !$user->hasRight('expedition', 'lire');
 	}
 
 	/**

@@ -90,13 +90,13 @@ AccountancyAreaDescProd=PASUL %s: Defineşte conturile contabile pentru produsel
 
 AccountancyAreaDescBind=PASUL %s: Verifică dacă asocierea între liniile %s existente și contul contabil este făcută, astfel încât aplicația să poate scrie tranzacțiile în Cartea Mare cu un singur clic. Completați asocierile lipsă. Pentru aceasta, utilizați intrarea în meniu %s.
 AccountancyAreaDescWriteRecords=PASUL %s: Scriere tranzacţii în Registrul jurnal. Pentru aceasta, accesează meniul <strong>%s</strong>, apoi fă clic pe butonul <strong>%s</strong>.
-AccountancyAreaDescAnalyze=PASUL %s: Adaugă sau modifică tranzacțiile existente și generează rapoarte și exporturi.
-
-AccountancyAreaDescClosePeriod=PASUL %s: Închide perioada, astfel încât să nu se poată modifica în viitor.
+AccountancyAreaDescAnalyze=PAS %s: Citește raportări sau generează fișiere de export pentru alți contabili.
+AccountancyAreaDescClosePeriod=PAS %s: Închide perioada, astfel încât să nu mai putem transfera date în aceeași perioadă în viitor.
 
 TheFiscalPeriodIsNotDefined=Un pas obligatoriu în configurare nu a fost finalizat (perioada fiscală nu este definită)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Un pas obligatoriu în configurare nu a fost finalizat (contul contabil jurnal nu este definit pentru toate conturile bancare)
 Selectchartofaccounts=Selectați planul activ de conturi
+CurrentChartOfAccount=Planul de conturi activ curent
 ChangeAndLoad=Schimbați și încărcați
 Addanaccount=Adaugă un cont contabil
 AccountAccounting=Cont contabil
@@ -343,7 +343,7 @@ AccountingJournalType3=Achiziţii
 AccountingJournalType4=Banca
 AccountingJournalType5=Rapoarte de cheltuieli
 AccountingJournalType8=Inventar
-AccountingJournalType9=Retained earnings
+AccountingJournalType9=Venituri reținute
 GenerationOfAccountingEntries=Generare înregistrări contabile
 ErrorAccountingJournalIsAlreadyUse=Acest jurnal este deja folosit
 AccountingAccountForSalesTaxAreDefinedInto=Notă: contul contabil pentru taxe de vânzări este definit în meniul <b>%s</b> - <b>%s</b>
@@ -446,16 +446,16 @@ AccountancyOneUnletteringModifiedSuccessfully=O dereconciliere a fost modificat�
 AccountancyUnletteringModifiedSuccessfully=Dereconcilierea %s a fost modificată cu succes
 
 ## Closure
-AccountancyClosureStep1=Pas 1 : Validare și blocare mișcări
-AccountancyClosureStep2=Pas 2 : Închidere perioadă fiscală
+AccountancyClosureStep1=Pas 1: Validare și blocare mișcări
+AccountancyClosureStep2=Pas 2 : Închide perioada fiscală
 AccountancyClosureStep3=Pas 3 : Extragere înregistrări (Opțional)
 AccountancyClosureClose=Închidere perioadă fiscală
-AccountancyClosureAccountingReversal=Extract and record "Retained earnings" entries
+AccountancyClosureAccountingReversal=Extragere și înregistrare "Venituri reținute"
 AccountancyClosureStep3NewFiscalPeriod=Următoarea perioadă fiscală
-AccountancyClosureGenerateClosureBookkeepingRecords=Generate "Retained earnings" entries on the next fiscal period
-AccountancyClosureSeparateAuxiliaryAccounts=When generating the "Retained earnings" entries, detail the sub-ledger accounts
+AccountancyClosureGenerateClosureBookkeepingRecords=Generare înregistrări "Venituri reținute" pentru periada fiscală viitoare
+AccountancyClosureSeparateAuxiliaryAccounts=La generarea înregistrărilor "Venituri reținute", detaliază conturile contabile secundare
 AccountancyClosureCloseSuccessfully=Perioada fiscală a fost închisă cu succes
-AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping entries for "Retained earnings" has been inserted successfully
+AccountancyClosureInsertAccountingReversalSuccessfully=Înregistrările contabile pentru "Venituri reținute" au fost introduse cu succes
 
 ## Confirm box
 ConfirmMassUnletteringAuto=Confirmare de de-reconciliere automată în masă
@@ -464,7 +464,7 @@ ConfirmMassUnletteringQuestion=Sigur vrei să anulezi reconcilierea înregistră
 ConfirmMassDeleteBookkeepingWriting=Confirmare ştergere în bloc
 ConfirmMassDeleteBookkeepingWritingQuestion=Aceasta va șterge tranzacția din contabilitate (toate intrările legate de aceeași tranzacție vor fi șterse). Sigur vrei să ștergi intrările selectate%s?
 AccountancyClosureConfirmClose=Sigur vrei să închizi perioada fiscală curentă? <span class="warning">Înțelegi că închiderea perioadei fiscale este o acțiune ireversibilă și va bloca definitiv orice modificare sau ștergere a înregistrărilor în această perioadă</span>.
-AccountancyClosureConfirmAccountingReversal=Are you sure you want to record entries for the "Retained earnings" ?
+AccountancyClosureConfirmAccountingReversal=Sigur vrei să înregistrezi intrări pentru "Venituri reținute"?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Câțiva pași obligatorii de configurare nu au fost făcuți, efectuează-i

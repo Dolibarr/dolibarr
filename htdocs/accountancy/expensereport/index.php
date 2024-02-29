@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014	Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024	Alexandre Spangaro	<aspangaro@easya.solutions>
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,12 +33,12 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
-$validatemonth = GETPOST('validatemonth', 'int');
-$validateyear = GETPOST('validateyear', 'int');
+$validatemonth = GETPOSTINT('validatemonth');
+$validateyear = GETPOSTINT('validateyear');
 
 $month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-if (GETPOST("year", 'int')) {
-	$year_start = GETPOST("year", 'int');
+if (GETPOSTINT("year")) {
+	$year_start = GETPOSTINT("year");
 } else {
 	$year_start = dol_print_date(dol_now(), '%Y');
 	if (dol_print_date(dol_now(), '%m') < $month_start) {
@@ -177,8 +177,9 @@ if ($action == 'validatehistory') {
 /*
  * View
  */
+$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
-llxHeader('', $langs->trans("ExpenseReportsVentilation"));
+llxHeader('', $langs->trans("ExpenseReportsVentilation"), $help_url);
 
 $textprevyear = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current - 1).'">'.img_previous().'</a>';
 $textnextyear = '&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current + 1).'">'.img_next().'</a>';

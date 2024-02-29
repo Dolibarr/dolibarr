@@ -65,17 +65,17 @@ $datetime = dol_now();
 $year = dol_print_date($datetime, "%Y");
 $month = dol_print_date($datetime, "%m");
 $day = dol_print_date($datetime, "%d");
-if (GETPOST("year", 'int')) {
-	$year = sprintf("%04d", GETPOST("year", 'int'));
+if (GETPOSTINT("year")) {
+	$year = sprintf("%04d", GETPOSTINT("year"));
 }
-if (GETPOST("month", 'int')) {
-	$month = sprintf("%02d", GETPOST("month", 'int'));
+if (GETPOSTINT("month")) {
+	$month = sprintf("%02d", GETPOSTINT("month"));
 }
 
 
 $object = new Account($db);
 if (GETPOST('account') && !preg_match('/,/', GETPOST('account'))) {	// if for a particular account and not a list
-	$result = $object->fetch(GETPOST('account', 'int'));
+	$result = $object->fetch(GETPOSTINT('account'));
 }
 if (GETPOST("ref")) {
 	$result = $object->fetch(0, GETPOST("ref"));
@@ -600,7 +600,7 @@ if ($result < 0) {
 		}
 
 
-		// Chargement de labels et data_xxx pour tableau 4 Mouvements
+		// Chargement de labels et data_xxx pour tableau 4 Movements
 		$labels = array();
 		$data_credit = array();
 		$data_debit = array();
@@ -701,7 +701,7 @@ if ($result < 0) {
 		}
 
 
-		// Chargement de labels et data_xxx pour tableau 4 Mouvements
+		// Chargement de labels et data_xxx pour tableau 4 Movements
 		$labels = array();
 		$data_credit = array();
 		$data_debit = array();

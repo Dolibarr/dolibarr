@@ -34,7 +34,6 @@ PaymentEvent=活动的付款
 NewRegistration=注册
 EventOrganizationSetup=活动组织设置
 EventOrganization=活动组织
-Settings=设置
 EventOrganizationSetupPage = 活动组织设置页面
 EVENTORGANIZATION_TASK_LABEL = 在项目通过验证时自动创建的任务标签
 EVENTORGANIZATION_TASK_LABELTooltip = 当您验证要组织的活动时，可以在项目中自动创建一些任务 <br> <br> 例如：<br> 发送会议电话 <br> 发送展位电话 <br> 验证会议推荐 <br> 验证展位申请 <br> 为与会者开放活动订阅 <br> 向演讲者发送活动提醒 <br> 向展位主办方发送活动提醒 <br> 向与会者发送活动提醒
@@ -90,7 +89,7 @@ PriceOfRegistrationHelp=注册或参加活动所需支付的价格
 PriceOfBooth=展位认购价
 PriceOfBoothHelp=展位认购价
 EventOrganizationICSLink=链接会议的 ICS
-ConferenceOrBoothInformation=会议或展位信息
+ConferenceOrBoothInformation=Conference Or Booth information
 Attendees=与会者
 ListOfAttendeesOfEvent=活动项目的与会者清单
 DownloadICSLink = 下载 ICS 的链接
@@ -98,6 +97,7 @@ EVENTORGANIZATION_SECUREKEY = 用于确保推荐会议的公共注册页面的�
 SERVICE_BOOTH_LOCATION = 用于有关展位位置的发票行的服务
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = 用于有关与会者订阅活动的发票行的服务
 NbVotes=票数
+
 #
 # Status
 #
@@ -107,8 +107,9 @@ EvntOrgConfirmed = 已确认
 EvntOrgNotQualified = 不合格
 EvntOrgDone = 完成
 EvntOrgCancelled = 已取消
+
 #
-# Public page
+# Other
 #
 SuggestForm = 推荐页面
 SuggestOrVoteForConfOrBooth = 推荐或投票页面
@@ -144,13 +145,8 @@ OrganizationEventBulkMailToAttendees=这是关于您作为与会者参加活动�
 OrganizationEventBulkMailToSpeakers=这是对您作为演讲者参加活动的提醒
 OrganizationEventLinkToThirdParty=链接到合作方（客户、供应商或合作伙伴）
 OrganizationEvenLabelName=会议或展位的公开名称
-
 NewSuggestionOfBooth=展位申请
 NewSuggestionOfConference=申请召开会议
-
-#
-# Vote page
-#
 EvntOrgRegistrationWelcomeMessage = 欢迎来到会议或展位推荐页面。
 EvntOrgRegistrationConfWelcomeMessage = 欢迎来到会议推荐页面。
 EvntOrgRegistrationBoothWelcomeMessage = 欢迎来到展位推荐页面。
@@ -158,8 +154,8 @@ EvntOrgVoteHelpMessage = 在这里，您可以查看项目的推荐活动并为�
 VoteOk = 您的投票已被接受。
 AlreadyVoted = 您已经为本次活动投过票了。
 VoteError = 投票时出现错误，请重试。
-
 SubscriptionOk=您的注册已被记录
+AmountOfRegistrationPaid=Amount of registration paid
 ConfAttendeeSubscriptionConfirmation = 确认您的活动订阅
 Attendee = 与会者
 PaymentConferenceAttendee = 会议与会者付款
@@ -169,8 +165,8 @@ RegistrationAndPaymentWereAlreadyRecorder=已记录邮箱 <b> %s </b> 的注册�
 EmailAttendee=与会者邮箱
 EmailCompany=公司邮箱
 EmailCompanyForInvoice=公司邮箱（用于发票，如果与会者邮箱不同）
-ErrorSeveralCompaniesWithEmailContactUs=已发现多家公司拥有此电子邮件地址，因此我们无法自动验证您的注册。请通过 %s 联系我们进行手动验证
-ErrorSeveralCompaniesWithNameContactUs=已找到多家使用该名称的公司，因此我们无法自动验证您的注册。请通过 %s 联系我们进行手动验证
+ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
 NoPublicActionsAllowedForThisEvent=本次活动不对外开放任何公开操作
 MaxNbOfAttendees=最大与会者人数
 DateStartEvent=活动开始日期

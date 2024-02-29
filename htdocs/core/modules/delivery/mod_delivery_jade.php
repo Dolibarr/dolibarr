@@ -21,7 +21,7 @@
 /**
  *   \file       htdocs/core/modules/delivery/mod_delivery_jade.php
  *   \ingroup    delivery
- *   \brief      Fichier contenant la classe du modele de numerotation de reference de bon de livraison Jade
+ *   \brief      Fichier contenant la class du modele de numerotation de reference de bon de livraison Jade
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
 
 /**
  *  \class      mod_delivery_jade
- *  \brief      Classe du modele de numerotation de reference de bon de livraison Jade
+ *  \brief      Class du modele de numerotation de reference de bon de livraison Jade
  */
 
 class mod_delivery_jade extends ModeleNumRefDeliveryOrder
@@ -127,7 +127,7 @@ class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 	 *
 	 *  @param	Societe		$objsoc     Object thirdparty
 	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @return string|-1      			Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -176,7 +176,7 @@ class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 	 *
 	 *  @param  Societe     $objsoc         Object thirdparty
 	 *  @param  Object      $object         Object livraison
-	 *  @return string                      Descriptive text
+	 *  @return string|-1                   Value if OK, -1 if KO
 	 */
 	public function delivery_get_num($objsoc = 0, $object = '')
 	{

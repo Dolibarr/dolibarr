@@ -48,7 +48,7 @@ $langs->loadLangs(array("main", "bills", "cashdesk", "banks"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'); // $place is id of table for Bar or Restaurant
 
-$invoiceid = GETPOST('invoiceid', 'int');
+$invoiceid = GETPOSTINT('invoiceid');
 
 $hookmanager->initHooks(array('takepospay'));
 
@@ -246,7 +246,7 @@ if ($resql) {
 			$arrayOfValidBankAccount[getDolGlobalInt($accountname)] = getDolGlobalInt($accountname);
 			$arrayOfValidPaymentModes[] = $obj;
 		}
-		if (!isModEnabled('banque')) {
+		if (!isModEnabled('bank')) {
 			if ($paycode == 'CASH' || $paycode == 'CB') {
 				$arrayOfValidPaymentModes[] = $obj;
 			}
@@ -447,7 +447,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 				console.log("error when capturing paymentIntent", result.error);
 			  } else {
 				document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentValidated'); ?></div>';
-				console.log("Capture paymentIntent successfull "+paymentIntentId);
+				console.log("Capture paymentIntent successful "+paymentIntentId);
 				  parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&token=<?php echo newToken(); ?>&pay=CB&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
 			if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) {
 				console.log("Close popup");

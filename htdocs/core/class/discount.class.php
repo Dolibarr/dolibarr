@@ -294,7 +294,7 @@ class DiscountAbsolute extends CommonObject
 
 
 	/**
-	 *  Delete object in database. If fk_facture_source is defined, we delete all familiy with same fk_facture_source. If not, only with id is removed
+	 *  Delete object in database. If fk_facture_source is defined, we delete all family with same fk_facture_source. If not, only with id is removed
 	 *
 	 *  @param      User    $user       Object of user asking to delete
 	 *  @return     int                 Return integer <0 if KO, >0 if OK
@@ -354,9 +354,9 @@ class DiscountAbsolute extends CommonObject
 		// Delete but only if not used
 		$sql = "DELETE FROM ".$this->db->prefix()."societe_remise_except ";
 		if ($this->fk_facture_source) {
-			$sql .= " WHERE fk_facture_source = ".((int) $this->fk_facture_source); // Delete all lines of same serie
+			$sql .= " WHERE fk_facture_source = ".((int) $this->fk_facture_source); // Delete all lines of same series
 		} elseif ($this->fk_invoice_supplier_source) {
-			$sql .= " WHERE fk_invoice_supplier_source = ".((int) $this->fk_invoice_supplier_source); // Delete all lines of same serie
+			$sql .= " WHERE fk_invoice_supplier_source = ".((int) $this->fk_invoice_supplier_source); // Delete all lines of same series
 		} else {
 			$sql .= " WHERE rowid = ".((int) $this->id); // Delete only line
 		}
@@ -582,7 +582,7 @@ class DiscountAbsolute extends CommonObject
 			$sql .= " AND f.type = ". (int) $invoice::TYPE_DEPOSIT;
 		} else {
 			$this->error = get_class($this)."::getSumDepositsUsed was called with a bad object as a first parameter";
-			dol_print_error($this->error);
+			dol_print_error($this->db, $this->error);
 			return -1;
 		}
 
@@ -623,7 +623,7 @@ class DiscountAbsolute extends CommonObject
 			$sql .= " AND f.type IN (".$this->db->sanitize($invoice::TYPE_STANDARD.", ".$invoice::TYPE_CREDIT_NOTE).")"; // Find discount coming from credit note or excess paid
 		} else {
 			$this->error = get_class($this)."::getSumCreditNotesUsed was called with a bad object as a first parameter";
-			dol_print_error($this->error);
+			dol_print_error($this->db, $this->error);
 			return -1;
 		}
 
@@ -661,7 +661,7 @@ class DiscountAbsolute extends CommonObject
 			$sql .= " WHERE rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_source = ".((int) $invoice->id);
 		} else {
 			$this->error = get_class($this)."::getSumCreditNotesUsed was called with a bad object as a first parameter";
-			dol_print_error($this->error);
+			dol_print_error($this->db, $this->error);
 			return -1;
 		}
 

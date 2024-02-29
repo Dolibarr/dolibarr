@@ -278,7 +278,7 @@ class ExpenseReport extends CommonObject
 	/**
 	 *  Constructor
 	 *
-	 *  @param  DoliDB  $db     Handler acces base de donnees
+	 *  @param  DoliDB  $db     Handler access base de donnees
 	 */
 	public function __construct($db)
 	{
@@ -499,7 +499,7 @@ class ExpenseReport extends CommonObject
 		// Clear fields
 		$this->fk_user_creat = $user->id;
 		$this->fk_user_author = $fk_user_author; // Note fk_user_author is not the 'author' but the guy the expense report is for.
-		$this->fk_user_valid = '';
+		$this->fk_user_valid = 0;
 		$this->date_create = '';
 		$this->date_creation = '';
 		$this->date_validation = '';
@@ -884,7 +884,7 @@ class ExpenseReport extends CommonObject
 
 		$now = dol_now();
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
@@ -1135,10 +1135,10 @@ class ExpenseReport extends CommonObject
 	 * Delete object in database
 	 *
 	 * @param   User|null   $user       User that delete
-	 * @param 	bool 		$notrigger  false=launch triggers after, true=disable triggers
+	 * @param 	int 		$notrigger  0=launch triggers after, 1=disable triggers
 	 * @return  int         	        Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user = null, $notrigger = false)
+	public function delete(User $user = null, $notrigger = 0)
 	{
 		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1269,7 +1269,7 @@ class ExpenseReport extends CommonObject
 
 		// Protection
 		if ($this->status == self::STATUS_VALIDATED) {
-			dol_syslog(get_class($this)."::valid action abandonned: already validated", LOG_WARNING);
+			dol_syslog(get_class($this)."::valid action abandoned: already validated", LOG_WARNING);
 			return 0;
 		}
 
@@ -1653,7 +1653,7 @@ class ExpenseReport extends CommonObject
 	/**
 	 * Return next reference of expense report not already used
 	 *
-	 * @return    string            free ref
+	 * @return    string|int<-2,-1>            free ref, or <0 if error
 	 */
 	public function getNextNumRef()
 	{
@@ -1676,7 +1676,7 @@ class ExpenseReport extends CommonObject
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -2033,7 +2033,7 @@ class ExpenseReport extends CommonObject
 					$rule_warning_message_tab[] = $langs->trans('ExpenseReportConstraintViolationWarning', $rule->id, price($amount_to_test, 0, $langs, 1, -1, -1, $conf->currency), price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency));
 				}
 
-				// No break, we sould test if another rule is violated
+				// No break, we should test if another rule is violated
 			}
 		}
 
@@ -2240,7 +2240,7 @@ class ExpenseReport extends CommonObject
 				$this->db->free($resql);
 			}
 
-			// Select des informations du projet
+			// Select des information du projet
 			$sql = "SELECT p.ref as ref_projet, p.title as title_projet";
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 			$sql .= " WHERE p.rowid = ".((int) $projet_id);
@@ -2291,7 +2291,7 @@ class ExpenseReport extends CommonObject
 	 * @param   int     $notrigger      1=No trigger
 	 * @return  int                 	Return integer <0 if KO, >0 if OK
 	 */
-	public function deleteline($rowid, $fuser = '', $notrigger = 0)
+	public function deleteLine($rowid, $fuser = '', $notrigger = 0)
 	{
 		$error=0;
 
@@ -2337,10 +2337,13 @@ class ExpenseReport extends CommonObject
 	 */
 	public function periode_existe($fuser, $date_debut, $date_fin)
 	{
+		global $conf;
+
 		// phpcs:enable
 		$sql = "SELECT rowid, date_debut, date_fin";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " WHERE fk_user_author = ".((int) $fuser->id);
+		$sql .= " WHERE entity = ".((int) $conf->entity); // not shared, only for the current entity
+		$sql .= " AND fk_user_author = ".((int) $fuser->id);
 
 		dol_syslog(get_class($this)."::periode_existe sql=".$sql);
 		$result = $this->db->query($sql);
@@ -2417,10 +2420,10 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 *  Create a document onto disk accordign to template module.
+	 *  Create a document onto disk according to template module.
 	 *
 	 *  @param      string      $modele         Force le mnodele a utiliser ('' to not force)
-	 *  @param      Translate   $outputlangs    objet lang a utiliser pour traduction
+	 *  @param      Translate   $outputlangs    object lang a utiliser pour traduction
 	 *  @param      int         $hidedetails    Hide details of lines
 	 *  @param      int         $hidedesc       Hide description
 	 *  @param      int         $hideref        Hide ref
@@ -2479,15 +2482,13 @@ class ExpenseReport extends CommonObject
 		return $ret;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Charge indicateurs this->nb pour le tableau de bord
+	 *      Load the indicators this->nb for the state board
 	 *
 	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $conf, $user;
 
 		$this->nb = array();
@@ -2498,8 +2499,8 @@ class ExpenseReport extends CommonObject
 		$sql .= " AND ex.entity IN (".getEntity('expensereport').")";
 		if (!$user->hasRight('expensereport', 'readall')) {
 			$userchildids = $user->getAllChildIds(1);
-			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(join(',', $userchildids)).")";
-			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
+			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(implode(',', $userchildids)).")";
+			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(implode(',', $userchildids))."))";
 		}
 
 		$resql = $this->db->query($sql);
@@ -2520,7 +2521,7 @@ class ExpenseReport extends CommonObject
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 *      @param	User	$user   		Objet user
+	 *      @param	User	$user   		Object user
 	 *      @param  string  $option         'topay' or 'toapprove'
 	 *      @return WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */
@@ -2545,8 +2546,8 @@ class ExpenseReport extends CommonObject
 		$sql .= " AND ex.entity IN (".getEntity('expensereport').")";
 		if (!$user->hasRight('expensereport', 'readall')) {
 			$userchildids = $user->getAllChildIds(1);
-			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(join(',', $userchildids)).")";
-			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
+			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(implode(',', $userchildids)).")";
+			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(implode(',', $userchildids))."))";
 		}
 
 		$resql = $this->db->query($sql);
@@ -2671,9 +2672,9 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 *  \brief Compute the cost of the kilometers expense based on the number of kilometers and the vehicule category
+	 *  \brief Compute the cost of the kilometers expense based on the number of kilometers and the vehicle category
 	 *
-	 *  @param     int		$fk_cat           Category of the vehicule used
+	 *  @param     int		$fk_cat           Category of the vehicle used
 	 *  @param     float	$qty              Number of kilometers
 	 *  @param     float	$tva              VAT rate
 	 *  @return    int              		  Return integer <0 if KO, total ttc if OK

@@ -21,7 +21,7 @@
 
 /**
  *  \file       htdocs/core/lib/order.lib.php
- *  \brief      Ensemble de fonctions de base pour le module commande
+ *  \brief      Ensemble de functions de base pour le module commande
  *  \ingroup    commande
  */
 
@@ -34,7 +34,7 @@
 function commande_prepare_head(Commande $object)
 {
 	global $db, $langs, $conf, $user;
-	if (isModEnabled("expedition")) {
+	if (isModEnabled("delivery_note")) {
 		$langs->load("sendings");
 	}
 	$langs->load("orders");
@@ -42,7 +42,7 @@ function commande_prepare_head(Commande $object)
 	$h = 0;
 	$head = array();
 
-	if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
+	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
 		$head[$h][0] = DOL_URL_ROOT.'/commande/card.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("CustomerOrder");
 		$head[$h][2] = 'order';
@@ -171,7 +171,7 @@ function commande_prepare_head(Commande $object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array   	    		    head array with tabs
  */
@@ -230,7 +230,7 @@ function getCustomerOrderPieChart($socid = 0)
 
 	$result = '';
 
-	if (!isModEnabled('commande') || !$user->hasRight('commande', 'lire')) {
+	if (!isModEnabled('order') || !$user->hasRight('commande', 'lire')) {
 		return '';
 	}
 

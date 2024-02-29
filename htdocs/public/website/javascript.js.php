@@ -69,7 +69,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $error = 0;
 $website = GETPOST('website', 'alpha');
-$websiteid = GETPOST('websiteid', 'int');
+$websiteid = GETPOSTINT('websiteid');
 $pageid = GETPOST('page', 'alpha') ? GETPOST('page', 'alpha') : GETPOST('pageid', 'alpha');
 
 $accessallowed = 1;
@@ -128,7 +128,7 @@ $original_file = $dolibarr_main_data_root.($conf->entity > 1 ? '/'.$conf->entity
 $refname = basename(dirname($original_file)."/");
 
 // Security:
-// Limite acces si droits non corrects
+// Limit access if permissions are insufficient
 if (!$accessallowed) {
 	accessforbidden();
 }

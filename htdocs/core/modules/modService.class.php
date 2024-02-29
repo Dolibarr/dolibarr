@@ -89,30 +89,30 @@ class modService extends DolibarrModules
 
 		$this->rights[$r][0] = 531; // id de la permission
 		$this->rights[$r][1] = 'Read services'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'lire';
 		$r++;
 
 		$this->rights[$r][0] = 532; // id de la permission
 		$this->rights[$r][1] = 'Create/modify services'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'creer';
 		$r++;
 
 		$this->rights[$r][0] = 533; // id de la permission
 		$this->rights[$r][1] = 'Read prices services'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'service_advance';
 		$this->rights[$r][5] = 'read_prices';
 		$r++;
 
 		$this->rights[$r][0] = 534; // id de la permission
 		$this->rights[$r][1] = 'Delete les services'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'supprimer';
 		$r++;
 
@@ -793,7 +793,7 @@ class modService extends DolibarrModules
 				}
 				if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 					$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
-						'sp.packagning'=>'10',
+						'sp.packaging'=>'10',
 					));
 				}
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014  Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2022  Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024  Alexandre Spangaro	<aspangaro@easya.solutions>
  * Copyright (C) 2014	    Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014	    Juanjo Menent		<jmenent@2byte.es>
@@ -84,7 +84,7 @@ $model_option = array(
 if ($action == 'update') {
 	$error = 0;
 
-	$modelcsv = GETPOST('ACCOUNTING_EXPORT_MODELCSV', 'int');
+	$modelcsv = GETPOSTINT('ACCOUNTING_EXPORT_MODELCSV');
 
 	if (!empty($modelcsv)) {
 		if (!dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
@@ -134,9 +134,9 @@ if ($action == 'update') {
 
 $form = new Form($db);
 
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 $title = $langs->trans('ExportOptions');
-llxHeader('', $title);
-
+llxHeader('', $title, $help_url);
 
 $linkback = '';
 // $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';

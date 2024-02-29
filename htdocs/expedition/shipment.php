@@ -51,7 +51,7 @@ if (isModEnabled("product") || isModEnabled("service")) {
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'deliveries', 'stocks', 'productbatch', 'incoterm', 'other'));
 
-$id     = GETPOST('id', 'int'); // id of order
+$id     = GETPOSTINT('id'); // id of order
 $ref    = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
@@ -98,7 +98,7 @@ if (empty($reshook)) {
 	// Categorisation dans projet
 	if ($action == 'classin') {
 		$object->fetch($id);
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 
 	if ($action == 'confirm_cloture' && GETPOST('confirm', 'alpha') == 'yes') {
@@ -113,7 +113,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setdatedelivery' && $user->hasRight('commande', 'creer')) {
-		$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
+		$datedelivery = dol_mktime(GETPOSTINT('liv_hour'), GETPOSTINT('liv_min'), 0, GETPOSTINT('liv_month'), GETPOSTINT('liv_day'), GETPOSTINT('liv_year'));
 
 		$object->fetch($id);
 		$result = $object->setDeliveryDate($user, $datedelivery);
@@ -133,7 +133,7 @@ if (empty($reshook)) {
 	*/
 	if ($action == 'setmode' && $user->hasRight('commande', 'creer')) {
 		$object->fetch($id);
-		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
+		$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -157,13 +157,13 @@ if (empty($reshook)) {
 
 	if ($action == 'setconditions' && $user->hasRight('commande', 'creer')) {
 		$object->fetch($id);
-		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
+		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
 		// Set incoterm
-		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTINT('location_incoterms'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -172,7 +172,7 @@ if (empty($reshook)) {
 	// shipping method
 	if ($action == 'setshippingmethod' && $user->hasRight('commande', 'creer')) {
 		$object->fetch($id);
-		$result = $object->setShippingMethod(GETPOST('shipping_method_id', 'int'));
+		$result = $object->setShippingMethod(GETPOSTINT('shipping_method_id'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -181,7 +181,7 @@ if (empty($reshook)) {
 	// warehouse
 	if ($action == 'setwarehouse' && $user->hasRight('commande', 'creer')) {
 		$object->fetch($id);
-		$result = $object->setWarehouse(GETPOST('warehouse_id', 'int'));
+		$result = $object->setWarehouse(GETPOSTINT('warehouse_id'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -322,8 +322,8 @@ if ($id > 0 || !empty($ref)) {
 
 		// Discounts for third party
 		if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
-			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
-			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
+			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
 		} else {
 			$filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
 			$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";

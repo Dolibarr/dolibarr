@@ -52,6 +52,9 @@ $forcecommit = 0;
 $excludeuser = array();
 $confirmed = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */
@@ -170,14 +173,14 @@ if ($resql) {
 }
 
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result >= 0) {
 	$justthese = array();
 
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_SYNCHRO_ACTIVE = 0;
 
-	$ldaprecords = $ldap->getRecords('*', getDolGlobalString('LDAP_USER_DN'), getDolGlobalString('LDAP_KEY_USERS'), $required_fields, 'user'); // Fiter on 'user' filter param
+	$ldaprecords = $ldap->getRecords('*', getDolGlobalString('LDAP_USER_DN'), getDolGlobalString('LDAP_KEY_USERS'), $required_fields, 'user'); // Filter on 'user' filter param
 	if (is_array($ldaprecords)) {
 		$db->begin();
 
@@ -264,8 +267,8 @@ if ($result >= 0) {
 			print "\n";
 			// print_r($fuser);
 
-			// Gestion des groupes
-			// TODO : revoir la gestion des groupes (ou script de sync groupes)
+			// Management of the groups
+			// TODO : Review the group management (or script for syncing groups)
 			/*
 			 * if(!$error) {
 			 * foreach ($ldapuser[getDolGlobalString('LDAP_FIELD_USERGROUPS') as $groupdn) {
@@ -288,11 +291,11 @@ if ($result >= 0) {
 		}
 		print "\n";
 	} else {
-		dol_print_error('', $ldap->error);
+		dol_print_error(null, $ldap->error);
 		$error++;
 	}
 } else {
-	dol_print_error('', $ldap->error);
+	dol_print_error(null, $ldap->error);
 	$error++;
 }
 

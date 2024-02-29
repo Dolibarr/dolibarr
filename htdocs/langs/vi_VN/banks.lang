@@ -67,7 +67,6 @@ AccountsArea=Khu vực tài khoản
 AccountCard=Thẻ tài khoản
 DeleteAccount=Xóa tài khoản
 ConfirmDeleteAccount=Bạn có chắc muốn xóa tài khoản này ?
-Account=Tài khoản
 BankTransactionByCategories=Mục ngân hàng theo nhóm
 BankTransactionForCategory=Mục ngân hàng cho mục <b>%s</b>
 RemoveFromRubrique=Hủy bỏ liên kết với danh mục

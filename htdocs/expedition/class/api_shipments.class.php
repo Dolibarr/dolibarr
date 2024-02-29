@@ -55,7 +55,7 @@ class Shipments extends DolibarrApi
 	/**
 	 * Get properties of a shipment object
 	 *
-	 * Return an array with shipment informations
+	 * Return an array with shipment information
 	 *
 	 * @param   int         $id         ID of shipment
 	 * @return  Object					Object with cleaned properties
@@ -64,8 +64,8 @@ class Shipments extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->expedition->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->shipment->fetch($id);
@@ -94,7 +94,7 @@ class Shipments extends DolibarrApi
 	 * @param int			   $page				Page number
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter shipments of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of shipment objects
 	 *
 	 * @throws RestException
@@ -103,8 +103,8 @@ class Shipments extends DolibarrApi
 	{
 		global $db, $conf;
 
-		if (!DolibarrApiAccess::$user->rights->expedition->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -114,7 +114,7 @@ class Shipments extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -182,7 +182,7 @@ class Shipments extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->expedition->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
 			throw new RestException(401, "Insuffisant rights");
 		}
 		// Check mandatory fields
@@ -190,7 +190,7 @@ class Shipments extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->shipment->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -224,8 +224,8 @@ class Shipments extends DolibarrApi
 	/*
 	public function getLines($id)
 	{
-		if(! DolibarrApiAccess::$user->rights->expedition->lire) {
-			throw new RestException(401);
+		if(! DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->shipment->fetch($id);
@@ -258,8 +258,8 @@ class Shipments extends DolibarrApi
 	/*
 	public function postLine($id, $request_data = null)
 	{
-		if(! DolibarrApiAccess::$user->rights->expedition->creer) {
-			throw new RestException(401);
+		if(! DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->shipment->fetch($id);
@@ -326,8 +326,8 @@ class Shipments extends DolibarrApi
 	/*
 	public function putLine($id, $lineid, $request_data = null)
 	{
-		if (! DolibarrApiAccess::$user->rights->expedition->creer) {
-			throw new RestException(401);
+		if (! DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->shipment->fetch($id);
@@ -393,8 +393,8 @@ class Shipments extends DolibarrApi
 	 */
 	public function deleteLine($id, $lineid)
 	{
-		if (!DolibarrApiAccess::$user->rights->expedition->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->shipment->fetch($id);
@@ -406,9 +406,9 @@ class Shipments extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// TODO Check the lineid $lineid is a line of ojbect
+		// TODO Check the lineid $lineid is a line of object
 
-		$updateRes = $this->shipment->deleteline(DolibarrApiAccess::$user, $lineid);
+		$updateRes = $this->shipment->deleteLine(DolibarrApiAccess::$user, $lineid);
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {
@@ -419,15 +419,14 @@ class Shipments extends DolibarrApi
 	/**
 	 * Update shipment general fields (won't touch lines of shipment)
 	 *
-	 * @param int   $id             Id of shipment to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   	$id             	Id of shipment to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->expedition->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->shipment->fetch($id);
@@ -443,7 +442,7 @@ class Shipments extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->shipment->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -467,8 +466,8 @@ class Shipments extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->expedition->supprimer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'supprimer')) {
+			throw new RestException(403);
 		}
 		$result = $this->shipment->fetch($id);
 		if (!$result) {
@@ -512,8 +511,8 @@ class Shipments extends DolibarrApi
 	 */
 	public function validate($id, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->expedition->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
+			throw new RestException(403);
 		}
 		$result = $this->shipment->fetch($id);
 		if (!$result) {
@@ -558,8 +557,8 @@ class Shipments extends DolibarrApi
 	public function setinvoiced($id)
 	{
 
-		if(! DolibarrApiAccess::$user->rights->expedition->creer) {
-				throw new RestException(401);
+		if(! DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
+				throw new RestException(403);
 		}
 		if(empty($id)) {
 				throw new RestException(400, 'Shipment ID is mandatory');
@@ -597,11 +596,11 @@ class Shipments extends DolibarrApi
 
 		require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 
-		if(! DolibarrApiAccess::$user->rights->expedition->lire) {
-				throw new RestException(401);
+		if(! DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
+				throw new RestException(403);
 		}
-		if(! DolibarrApiAccess::$user->rights->expedition->creer) {
-				throw new RestException(401);
+		if(! DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
+				throw new RestException(403);
 		}
 		if(empty($proposalid)) {
 				throw new RestException(400, 'Order ID is mandatory');
@@ -634,8 +633,8 @@ class Shipments extends DolibarrApi
 	*/
 	public function close($id, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->expedition->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->shipment->fetch($id);

@@ -42,8 +42,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "system";
 		$this->description = "Triggers of this module add action for BlockedLog module (Module of unalterable logs).";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = self::VERSION_DOLIBARR;
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'technic';
 	}
 
@@ -57,7 +56,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 	 * @param conf		    $conf       Object conf
 	 * @return int         				Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		if (empty($conf->blockedlog) || empty($conf->blockedlog->enabled)) {
 			return 0; // Module not active, we do nothing
@@ -67,7 +66,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		if (!getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED') || !in_array($action, explode(',', getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED')))) {
 			// If custom actions are not set or if action not into custom actions, we can exclude action if object->elementis not valid
 			$listofqualifiedelement = array('facture', 'don', 'payment', 'payment_donation', 'subscription', 'payment_various', 'cashcontrol');
-			if (!in_array($object->element, $listofqualifiedelement)) {
+			if (!is_object($object) || !property_exists($object, 'element') || !in_array($object->element, $listofqualifiedelement)) {
 				return 1;
 			}
 		}

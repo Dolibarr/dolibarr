@@ -185,8 +185,37 @@ function user_prepare_head(User $object)
 		$head[$h][2] = 'document';
 		$h++;
 
-		$head[$h][0] = DOL_URL_ROOT.'/user/info.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Info");
+		$head[$h][0] = DOL_URL_ROOT.'/user/agenda.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("Events");
+		if (isModEnabled('agenda')&& ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+			$nbEvent = 0;
+			// Enable caching of thirdparty count actioncomm
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+			$cachekey = 'count_events_user_'.$object->id;
+			$dataretrieved = dol_getcache($cachekey);
+			if (!is_null($dataretrieved)) {
+				$nbEvent = $dataretrieved;
+			} else {
+				$sql = "SELECT COUNT(id) as nb";
+				$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
+				$sql .= " WHERE fk_user_done = ".((int) $object->id);
+				$sql .= " AND entity IN (".getEntity('agenda').")";
+				$resql = $db->query($sql);
+				if ($resql) {
+					$obj = $db->fetch_object($resql);
+					$nbEvent = $obj->nb;
+				} else {
+					dol_syslog('Failed to count actioncomm '.$db->lasterror(), LOG_ERR);
+				}
+				dol_setcache($cachekey, $nbEvent, 120);		// If setting cache fails, this is not a problem, so we do not test result.
+			}
+
+			$head[$h][1] .= '/';
+			$head[$h][1] .= $langs->trans("Agenda");
+			if ($nbEvent > 0) {
+				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbEvent.'</span>';
+			}
+		}
 		$head[$h][2] = 'info';
 		$h++;
 	}
@@ -497,14 +526,14 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		/*
 		 print '<tr class="oddeven">';
 		 print '<td>'.$langs->trans("TopMenuDisableImages").'</td>';
-		 print '<td>'.($conf->global->THEME_TOPMENU_DISABLE_IMAGE?$conf->global->THEME_TOPMENU_DISABLE_IMAGE:$langs->trans("Default")).'</td>';
+		 print '<td>'.(getDolGlobalString('THEME_TOPMENU_DISABLE_IMAGE',$langs->trans("Default")).'</td>';
 		 print '<td class="left" class="nowrap" width="20%"><input name="check_THEME_TOPMENU_DISABLE_IMAGE" id="check_THEME_TOPMENU_DISABLE_IMAGE" type="checkbox" '.(!empty($object->conf->THEME_ELDY_TEXTLINK)?" checked":"");
 		 print (empty($dolibarr_main_demo) && $edit)?'':' disabled="disabled"';	// Disabled for demo
 		 print '> '.$langs->trans("UsePersonalValue").'</td>';
 		 print '<td>';
 		 if ($edit)
 		 {
-		 print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_TOPMENU_DISABLE_IMAGE,array()),''),'THEME_TOPMENU_DISABLE_IMAGE','',1).' ';
+		 print $formother->selectColor(colorArrayToHex(colorStringToArray(getDolGlobalString('THEME_TOPMENU_DISABLE_IMAGE'),array()),''),'THEME_TOPMENU_DISABLE_IMAGE','',1).' ';
 		 }
 		 else
 		 {

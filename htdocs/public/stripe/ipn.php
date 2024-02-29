@@ -237,7 +237,7 @@ if ($event->type == 'payout.created') {
 			$bank_line_id_to = 0;
 			$result = 0;
 
-			// By default, electronic transfert from bank to bank
+			// By default, electronic transfer from bank to bank
 			$typefrom = 'PRE';
 			$typeto = 'VIR';
 
@@ -454,7 +454,7 @@ if ($event->type == 'payout.created') {
 				// This include closing invoices to 'paid' (and trigger including unsuspending) and regenerating document
 				$paiement_id = $paiement->create($user, 1);
 				if ($paiement_id < 0) {
-					$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->errors);
+					$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . implode("<br>\n", $paiement->errors);
 					$ispostactionok = -1;
 					$error++;
 
@@ -466,8 +466,8 @@ if ($event->type == 'payout.created') {
 				}
 			}
 
-			if (!$error && isModEnabled('banque')) {
-				// Search again the payment to see if it is already linked to a bank payment record (We should always find the payement now we have created before).
+			if (!$error && isModEnabled('bank')) {
+				// Search again the payment to see if it is already linked to a bank payment record (We should always find the payment that was created before).
 				$ispaymentdone = 0;
 				$sql = "SELECT p.rowid, p.fk_bank FROM llx_paiement as p";
 				$sql .= " WHERE p.ext_payment_id = '".$db->escape($paiement->ext_payment_id)."'";
@@ -492,7 +492,7 @@ if ($event->type == 'payout.created') {
 						$label = '(CustomerInvoicePayment)';
 						$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, $customer_id, '');
 						if ($result < 0) {
-							$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->errors);
+							$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . implode("<br>\n", $paiement->errors);
 							$ispostactionok = -1;
 							$error++;
 						} else {

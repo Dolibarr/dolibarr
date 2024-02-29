@@ -54,11 +54,11 @@ $langs->loadLangs(array('products', 'bills', 'companies', 'other'));
 $error = 0;
 $errors = array();
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
-$eid = GETPOST('eid', 'int');
+$eid = GETPOSTINT('eid');
 
 $search_soc = GETPOST('search_soc');
 
@@ -138,17 +138,18 @@ if (empty($reshook)) {
 		$localtax2 = 0;
 		$localtax1_type = '0';
 		$localtax2_type = '0';
-		// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+		// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes
 
 		if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
 			// We look into database using code (we can't use get_localtax() because it depends on buyer that is not known). Same in create product.
 			$vatratecode = $reg[1];
 			// Get record from code
-			$sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
+			$sql = "SELECT t.rowid, t.type_vat, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
 			$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
 			$sql .= " AND t.code = '".$db->escape($vatratecode)."'";
+			$sql .= " AND t.type_vat IN (0, 1)";	// Use only VAT rates type all or i.e. the sales type VAT rates.
 			$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 			$resql = $db->query($sql);
 			if ($resql) {
@@ -396,7 +397,7 @@ if (empty($reshook)) {
 			$localtax2 = 0;
 			$localtax1_type = '0';
 			$localtax2_type = '0';
-			// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+			// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes
 			if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
 				// We look into database using code
 				$vatratecode = $reg[1];
@@ -507,7 +508,7 @@ if (empty($reshook)) {
 
 
 	if ($action == 'delete' && $user->hasRight('produit', 'supprimer')) {
-		$result = $object->log_price_delete($user, GETPOST('lineid', 'int'));
+		$result = $object->log_price_delete($user, GETPOSTINT('lineid'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -516,7 +517,7 @@ if (empty($reshook)) {
 	// Set Price by quantity
 	if ($action == 'activate_price_by_qty') {
 		// Activating product price by quantity add a new price line with price_by_qty set to 1
-		$level = GETPOST('level', 'int');
+		$level = GETPOSTINT('level');
 		$ret = $object->updatePrice(0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 1);
 
 		if ($ret < 0) {
@@ -526,7 +527,7 @@ if (empty($reshook)) {
 	// Unset Price by quantity
 	if ($action == 'disable_price_by_qty') {
 		// Disabling product price by quantity add a new price line with price_by_qty set to 0
-		$level = GETPOST('level', 'int');
+		$level = GETPOSTINT('level');
 		$ret = $object->updatePrice(0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 0);
 
 		if ($ret < 0) {
@@ -535,14 +536,14 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'edit_price_by_qty') { // Edition d'un prix par quantité
-		$rowid = GETPOST('rowid', 'int');
+		$rowid = GETPOSTINT('rowid');
 	}
 
 	// Add or update price by quantity
 	if ($action == 'update_price_by_qty') {
 		// Récupération des variables
-		$rowid = GETPOST('rowid', 'int');
-		$priceid = GETPOST('priceid', 'int');
+		$rowid = GETPOSTINT('rowid');
+		$priceid = GETPOSTINT('priceid');
 		$newprice = price2num(GETPOST("price"), 'MU', 2);
 		// $newminprice=price2num(GETPOST("price_min"),'MU'); // TODO : Add min price management
 		$quantity = price2num(GETPOST('quantity'), 'MS', 2);
@@ -597,7 +598,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'delete_price_by_qty') {
-		$rowid = GETPOST('rowid', 'int');
+		$rowid = GETPOSTINT('rowid');
 		if (!empty($rowid)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 			$sql .= " WHERE rowid = ".((int) $rowid);
@@ -609,7 +610,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'delete_all_price_by_qty') {
-		$priceid = GETPOST('priceid', 'int');
+		$priceid = GETPOSTINT('priceid');
 		if (!empty($rowid)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 			$sql .= " WHERE fk_product_price = ".((int) $priceid);
@@ -628,10 +629,10 @@ if (empty($reshook)) {
 	if ($action == 'add_customer_price_confirm' && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		$maxpricesupplier = $object->min_recommended_price();
 
-		$update_child_soc = GETPOST('updatechildprice', 'int');
+		$update_child_soc = GETPOSTINT('updatechildprice');
 
 		// add price by customer
-		$prodcustprice->fk_soc = GETPOST('socid', 'int');
+		$prodcustprice->fk_soc = GETPOSTINT('socid');
 		$prodcustprice->ref_customer = GETPOST('ref_customer', 'alpha');
 		$prodcustprice->fk_product = $object->id;
 		$prodcustprice->price = price2num(GETPOST("price"), 'MU');
@@ -653,7 +654,7 @@ if (empty($reshook)) {
 		$localtax2 = 0;
 		$localtax1_type = '0';
 		$localtax2_type = '0';
-		// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+		// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes
 		if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
 			// We look into database using code
 			$vatratecode = $reg[1];
@@ -737,7 +738,7 @@ if (empty($reshook)) {
 
 	if ($action == 'delete_customer_price' && ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer'))) {
 		// Delete price by customer
-		$prodcustprice->id = GETPOST('lineid', 'int');
+		$prodcustprice->id = GETPOSTINT('lineid');
 		$result = $prodcustprice->delete($user);
 
 		if ($result < 0) {
@@ -751,9 +752,9 @@ if (empty($reshook)) {
 	if ($action == 'update_customer_price_confirm' && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		$maxpricesupplier = $object->min_recommended_price();
 
-		$update_child_soc = GETPOST('updatechildprice', 'int');
+		$update_child_soc = GETPOSTINT('updatechildprice');
 
-		$prodcustprice->fetch(GETPOST('lineid', 'int'));
+		$prodcustprice->fetch(GETPOSTINT('lineid'));
 
 		// update price by customer
 		$prodcustprice->ref_customer = GETPOST('ref_customer', 'alpha');
@@ -776,7 +777,7 @@ if (empty($reshook)) {
 		$localtax2 = 0;
 		$localtax1_type = '0';
 		$localtax2_type = '0';
-		// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+		// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes
 		if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
 			// We look into database using code
 			$vatratecode = $reg[1];
@@ -1021,7 +1022,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 			print '<!-- Default VAT Rate -->';
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("DefaultTaxRate").'</td><td>';
 
-			// TODO We show localtax from $object, but this properties may not be correct. Only value $object->default_vat_code is guaranted.
+			// TODO We show localtax from $object, but this properties may not be correct. Only value $object->default_vat_code is guaranteed.
 			$positiverates = '';
 			if (price2num($object->tva_tx)) {
 				$positiverates .= ($positiverates ? '<span class="opacitymedium">/</span>' : '').price2num($object->tva_tx);
@@ -1920,10 +1921,10 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 	$prodcustprice = new ProductCustomerPrice($db);
 
-	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 	$sortfield = GETPOST('sortfield', 'aZ09comma');
 	$sortorder = GETPOST('sortorder', 'aZ09comma');
-	$page = (GETPOST("page", 'int') ? GETPOST("page", 'int') : 0);
+	$page = (GETPOSTINT("page") ? GETPOSTINT("page") : 0);
 	if (empty($page) || $page == -1) {
 		$page = 0;
 	}     // If $page is not defined, or '' or -1
@@ -1937,7 +1938,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		$sortfield = "soc.nom";
 	}
 
-	// Build filter to diplay only concerned lines
+	// Build filter to display only concerned lines
 	$filter = array('t.fk_product' => $object->id);
 
 	if (!empty($search_soc)) {
@@ -2034,7 +2035,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		print '<!-- edit_customer_price -->';
 		print load_fiche_titre($langs->trans('PriceByCustomer'));
 
-		$result = $prodcustprice->fetch(GETPOST('lineid', 'int'));
+		$result = $prodcustprice->fetch(GETPOSTINT('lineid'));
 		if ($result < 0) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		}
@@ -2114,7 +2115,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		// List of all log of prices by customers
 		print '<!-- list of all log of prices per customer -->'."\n";
 
-		$filter = array('t.fk_product' => $object->id, 't.fk_soc' => GETPOST('socid', 'int'));
+		$filter = array('t.fk_product' => $object->id, 't.fk_soc' => GETPOSTINT('socid'));
 
 		// Count total nb of records
 		$nbtotalofrecords = '';
@@ -2127,10 +2128,10 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		}
 
-		$option = '&socid='.GETPOST('socid', 'int').'&id='.$object->id;
+		$option = '&socid='.GETPOSTINT('socid').'&id='.$object->id;
 
 		$staticsoc = new Societe($db);
-		$staticsoc->fetch(GETPOST('socid', 'int'));
+		$staticsoc->fetch(GETPOSTINT('socid'));
 
 		$title = $langs->trans('PriceByCustomerLog');
 		$title .= ' - '.$staticsoc->getNomUrl(1);
@@ -2191,7 +2192,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 
 				print '<tr class="oddeven">';
 
-				print "<td>".$staticsoc->getNomUrl(1)."</td>";
+				print '<td class="tdoverflowmax125">'.$staticsoc->getNomUrl(1)."</td>";
 				print '<td>'.$line->ref_customer.'</td>';
 				print "<td>".dol_print_date($line->datec, "dayhour", 'tzuserrel')."</td>";
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
@@ -2307,10 +2308,10 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 			$pu = $object->price_ttc;
 		}
 
-		// Local tax was not saved into table llx_product on old version. So we will use value linked to VAT code.
+		// Local tax was not saved into table llx_product on old versions. So we will use the value linked to the VAT code.
 		$localtaxarray = getLocalTaxesFromRate($object->tva_tx.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), 0, $mysoc, $mysoc);
 		// Define part of HT, VAT, TTC
-		$resultarray = calcul_price_total(1, $pu, 0, $object->tva_tx, 1, 1, 0, $object->price_base_type, $object->recuperableonly, $object->type, $mysoc, $localtaxarray);
+		$resultarray = calcul_price_total(1, $pu, 0, $object->tva_tx, 1, 1, 0, $object->price_base_type, 0, $object->type, $mysoc, $localtaxarray);
 		// Calcul du total ht sans remise
 		$total_ht = $resultarray[0];
 		$total_vat = $resultarray[1];
@@ -2398,7 +2399,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 
 				print '<tr class="oddeven">';
 
-				print "<td>".$staticsoc->getNomUrl(1)."</td>";
+				print '<td class="tdoverflowmax125">'.$staticsoc->getNomUrl(1)."</td>";
 				print '<td>'.dol_escape_htmltag($line->ref_customer).'</td>';
 				print "<td>".dol_print_date($line->datec, "dayhour", 'tzuserrel')."</td>";
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
@@ -2419,7 +2420,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 					$positiverates = '0';
 				}
 
-				echo vatrate($positiverates.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), '%', ($line->tva_npr ? $line->tva_npr : $line->recuperableonly));
+				echo vatrate($positiverates.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), '%', (!empty($line->tva_npr) ? $line->tva_npr : $line->recuperableonly));
 
 				print "</td>";
 

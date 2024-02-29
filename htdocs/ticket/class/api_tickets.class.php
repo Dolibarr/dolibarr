@@ -63,7 +63,7 @@ class Tickets extends DolibarrApi
 	/**
 	 * Get properties of a Ticket object.
 	 *
-	 * Return an array with ticket informations
+	 * Return an array with ticket information
 	 *
 	 * @param	int				$id			ID of ticket
 	 * @return  Object						Object with cleaned properties
@@ -80,7 +80,7 @@ class Tickets extends DolibarrApi
 	/**
 	 * Get properties of a Ticket object from track id
 	 *
-	 * Return an array with ticket informations
+	 * Return an array with ticket information
 	 *
 	 * @param	string			$track_id	Tracking ID of ticket
 	 * @return	array|mixed					Data without useless information
@@ -99,7 +99,7 @@ class Tickets extends DolibarrApi
 	/**
 	 * Get properties of a Ticket object from ref
 	 *
-	 * Return an array with ticket informations
+	 * Return an array with ticket information
 	 *
 	 * @param	string			$ref		Reference for ticket
 	 * @return	array|mixed					Data without useless information
@@ -117,7 +117,7 @@ class Tickets extends DolibarrApi
 
 	/**
 	 * Get properties of a Ticket object
-	 * Return an array with ticket informations
+	 * Return an array with ticket information
 	 *
 	 * @param	int				$id			ID of ticket
 	 * @param	string			$track_id	Tracking ID of ticket
@@ -126,7 +126,7 @@ class Tickets extends DolibarrApi
 	 */
 	private function getCommon($id = 0, $track_id = '', $ref = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->ticket->read) {
+		if (!DolibarrApiAccess::$user->hasRight('ticket', 'read')) {
 			throw new RestException(403);
 		}
 
@@ -194,14 +194,14 @@ class Tickets extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @param string	$sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101') and (t.fk_statut:=:1)"
-	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 *
 	 * @return array Array of ticket objects
 	 *
 	 */
 	public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->ticket->read) {
+		if (!DolibarrApiAccess::$user->hasRight('ticket', 'read')) {
 			throw new RestException(403);
 		}
 
@@ -212,7 +212,7 @@ class Tickets extends DolibarrApi
 		$search_sale = null;
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -284,15 +284,15 @@ class Tickets extends DolibarrApi
 	public function post($request_data = null)
 	{
 		$ticketstatic = new Ticket($this->db);
-		if (!DolibarrApiAccess::$user->rights->ticket->write) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('ticket', 'write')) {
+			throw new RestException(403);
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->ticket->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -323,15 +323,15 @@ class Tickets extends DolibarrApi
 	public function postNewMessage($request_data = null)
 	{
 		$ticketstatic = new Ticket($this->db);
-		if (!DolibarrApiAccess::$user->rights->ticket->write) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('ticket', 'write')) {
+			throw new RestException(403);
 		}
 		// Check mandatory fields
 		$result = $this->_validateMessage($request_data);
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->ticket->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -353,15 +353,14 @@ class Tickets extends DolibarrApi
 	/**
 	 * Update ticket
 	 *
-	 * @param int   $id             Id of ticket to update
-	 * @param array $request_data   Datas
-	 * @return int
-	 *
+	 * @param 	int   	$id             	Id of ticket to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->ticket->write) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('ticket', 'write')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->ticket->fetch($id);
@@ -375,7 +374,7 @@ class Tickets extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->ticket->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -399,8 +398,8 @@ class Tickets extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->ticket->delete) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('ticket', 'delete')) {
+			throw new RestException(403);
 		}
 		$result = $this->ticket->fetch($id);
 		if (!$result) {
