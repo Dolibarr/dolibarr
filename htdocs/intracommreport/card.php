@@ -43,19 +43,22 @@ require_once DOL_DOCUMENT_ROOT.'/intracommreport/class/intracommreport.class.php
 $langs->loadLangs(array("intracommreport"));
 
 // Get Parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action');
-$exporttype = GETPOSTISSET('exporttype') ? GETPOST('exporttype', 'alphanohtml') : 'deb'; // DEB or DES
 $year = GETPOSTINT('year');
 $month = GETPOSTINT('month');
 $label = (string) GETPOST('label', 'alphanohtml');
-$type_declaration = (string) GETPOST('type_declaration', 'alphanohtml');
+
+$exporttype = GETPOSTISSET('exporttype') ? GETPOST('exporttype', 'alphanohtml') : 'deb'; // DEB or DES
+$type_declaration = (string) GETPOST('type_declaration', 'alphanohtml');	// 'introduction' or 'expedition'
+
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $declaration = array(
 	"deb" => $langs->trans("DEB"),
 	"des" => $langs->trans("DES"),
 );
+
 $typeOfDeclaration = array(
 	"introduction" => $langs->trans("Introduction"),
 	"expedition" => $langs->trans("Expedition"),
@@ -75,9 +78,9 @@ $hookmanager->initHooks(array('intracommcard', 'globalcard'));
 $error = 0;
 
 // Permissions
-$permissiontoread = $user->rights->intracommreport->read;
-$permissiontoadd = $user->rights->intracommreport->write;
-$permissiontodelete = $user->rights->intracommreport->delete;
+$permissiontoread = $user->hasRight('intracommreport', 'read');
+$permissiontoadd = $user->hasRight('intracommreport', 'write');
+$permissiontodelete = $user->hasRight('intracommreport', 'delete');
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
@@ -121,8 +124,8 @@ if ($permissiontodelete && $action == 'confirm_delete' && $confirm == 'yes') {
 
 if ($action == 'add' && $permissiontoadd) {
 	$object->label = trim($label);
-	$object->type = trim($exporttype);
-	$object->type_declaration =  $type_declaration;
+	$object->exporttype = trim($exporttype);		// 'des' or 'deb'
+	$object->type_declaration =  $type_declaration;	// 'introduction' or 'expedition'
 	//$object->subscription = (int) $subscription;
 
 	// Fill array 'array_options' with data from add form
@@ -272,7 +275,7 @@ if ($id > 0 && $action != 'edit') {
 	print '</tr>';
 
 	// Type of Declaration
-	print '<tr><td>'.$langs->trans("TypeOfDeclaration").'</td><td class="valeur">'.$object->type_declaration.'</td>';
+	print '<tr><td>'.$langs->trans("TypeOfDeclaration").'</td><td class="valeur">'.$object->exporttype.'</td>';
 	print '</tr>';
 
 	print "</table>\n";

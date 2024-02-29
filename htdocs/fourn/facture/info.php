@@ -22,7 +22,7 @@
 /**
  *      \file       htdocs/fourn/facture/info.php
  *      \ingroup    facture, fournisseur
- *		\brief      Page des informations d'une facture fournisseur
+ *		\brief      Page des information d'une facture fournisseur
  */
 
 // Load Dolibarr environment
@@ -37,7 +37,7 @@ if (isModEnabled('project')) {
 
 $langs->loadLangs(array("companies", "bills"));
 
-$id = GETPOST("facid", 'int') ? GETPOST("facid", 'int') : GETPOST("id", 'int');
+$id = GETPOSTINT("facid") ? GETPOSTINT("facid") : GETPOSTINT("id");
 $ref = GETPOST("ref", 'alpha');
 
 // Security check

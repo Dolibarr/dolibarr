@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       calendar_document.php
+ *  \file       htdocs/bookcal/calendar_document.php
  *  \ingroup    bookcal
  *  \brief      Tab for documents linked to Calendar
  */
@@ -86,14 +86,14 @@ $langs->loadLangs(array("bookcal@bookcal", "companies", "other", "mails"));
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
-$id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
+$id = (GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id'));
 $ref = GETPOST('ref', 'alpha');
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -127,8 +127,8 @@ if ($id > 0 || !empty($ref)) {
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = 0;
 if ($enablepermissioncheck) {
-	$permissiontoread = $user->rights->bookcal->calendar->read;
-	$permissiontoadd = $user->rights->bookcal->calendar->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+	$permissiontoread = $user->hasRight('bookcal', 'calendar', 'read');
+	$permissiontoadd = $user->hasRight('bookcal', 'calendar', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 } else {
 	$permissiontoread = 1;
 	$permissiontoadd = 1;
@@ -245,10 +245,6 @@ print '</div>';
 print dol_get_fiche_end();
 
 $modulepart = 'bookcal';
-//$permissiontoadd = $user->rights->bookcal->calendar->write;
-$permissiontoadd = 1;
-//$permtoedit = $user->rights->bookcal->calendar->write;
-$permtoedit = 1;
 $param = '&id='.$object->id;
 
 //$relativepathwithnofile='calendar/' . dol_sanitizeFileName($object->id).'/';

@@ -41,10 +41,10 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'au
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1 or if we click on clear filters
@@ -122,7 +122,7 @@ foreach ($eventstolog as $key => $arr) {
 		print '<td>'.$arr['id'].'</td>';
 		print '<td class="center">';
 		$key = 'MAIN_LOGEVENTS_'.$arr['id'];
-		$value = empty($conf->global->$key) ? '' : $conf->global->$key;
+		$value = getDolGlobalString($key);
 		print '<input class="oddeven checkforselect" type="checkbox" name="'.$key.'" value="1"'.($value ? ' checked' : '').'>';
 		print '</td></tr>'."\n";
 	}

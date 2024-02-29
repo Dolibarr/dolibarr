@@ -39,16 +39,7 @@ class box_external_rss extends ModeleBoxes
 	public $boxlabel = "BoxLastRssInfos";
 	public $depends = array("externalrss");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	public $paramdef; // Params of box definition (not user params)
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -89,7 +80,7 @@ class box_external_rss extends ModeleBoxes
 		$keyforparamtitle = "EXTERNAL_RSS_TITLE_".$site;
 
 		// Get RSS feed
-		$url = $conf->global->$keyforparamurl;
+		$url = getDolGlobalString($keyforparamurl);
 
 		$rssparser = new RssParser($this->db);
 		$result = $rssparser->parser($url, $this->max, $cachedelay, $conf->externalrss->dir_temp);
@@ -98,7 +89,7 @@ class box_external_rss extends ModeleBoxes
 		$description = $rssparser->getDescription();
 		$link = $rssparser->getLink();
 
-		$title = $langs->trans("BoxTitleLastRssInfos", $max, $conf->global->$keyforparamtitle);
+		$title = $langs->trans("BoxTitleLastRssInfos", $max, getDolGlobalString($keyforparamtitle));
 		if ($result < 0 || !empty($rssparser->error)) {
 			// Show warning
 			$errormessage = $langs->trans("FailedToRefreshDataInfoNotUpToDate", ($rssparser->getLastFetchDate() ? dol_print_date($rssparser->getLastFetchDate(), "dayhourtext") : $langs->trans("Unknown")));
@@ -165,8 +156,8 @@ class box_external_rss extends ModeleBoxes
 				$title = mb_convert_encoding($title, 'ISO-8859-1');
 			}
 
-			$title = preg_replace("/([[:alnum:]])\?([[:alnum:]])/", "\\1'\\2", $title); // Gere probleme des apostrophes mal codee/decodee par utf8
-			$title = preg_replace("/^\s+/", "", $title); // Supprime espaces de debut
+			$title = preg_replace("/([[:alnum:]])\?([[:alnum:]])/", "\\1'\\2", $title); // Manage issue of quotes improperly (de)coded in utf-8
+			$title = preg_replace("/^\s+/", "", $title); // Remove leading whitespace
 			$this->info_box_contents["$href"] = "$title";
 
 			$tooltip = $title;

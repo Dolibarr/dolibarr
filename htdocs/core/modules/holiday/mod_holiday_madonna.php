@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2018      Charlene Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2018-2023 Charlene Benke		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,45 +19,30 @@
 
 /**
  *  \file       htdocs/core/modules/holiday/mod_holiday_madonna.php
- *  \ingroup    contract
- *  \brief      File of class to manage contract numbering rules Serpis
+ *  \ingroup    holiday
+ *  \brief      File of class to manage holiday numbering rules Madonna
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/holiday/modules_holiday.php';
 
 /**
- * 	Class to manage contract numbering rules madonna
+ * 	Class to manage holiday numbering rules Madonna
  */
 class mod_holiday_madonna extends ModelNumRefHolidays
 {
+
+	// variables inherited from ModelNumRefHolidays class
+	public $name = 'Madonna';
+	public $version = 'dolibarr';
+	public $error = '';
+	public $code_auto = 1;
+
+
+	// variables not inherited
+
 	/**
-	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
-	public $version = 'dolibarr';
-
 	public $prefix = 'HL';
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Madonna';
-
-	/**
-	 * @var string model name
-	 */
-	public $name = 'Madonna';
-
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto = 1;
 
 
 	/**
@@ -125,7 +110,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 *
 	 *	@param	Societe		$objsoc     third party object
 	 *	@param	Object		$holiday	Holiday object
-	 *	@return string      			Value if OK, 0 if KO
+	 *	@return string|-1      			Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $holiday)
 	{
@@ -151,7 +136,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 		}
 
 		$date = $holiday->date_debut;
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
@@ -170,7 +155,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 *
 	 *	@param	User		$fuser     	User object
 	 *	@param	Object		$objforref	Holiday object
-	 *	@return string      			Value if OK, 0 if KO
+	 *	@return string|-1      			Value if OK, -1 if KO
 	 */
 	public function holiday_get_num($fuser, $objforref)
 	{

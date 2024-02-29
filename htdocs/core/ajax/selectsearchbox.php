@@ -44,7 +44,7 @@ if (!isset($usedbyinclude) || empty($usedbyinclude)) {
 	$res = @include '../../main.inc.php';
 
 	// Security check
-	// None. Beeing connected is enough.
+	// None. Being connected is enough.
 
 	top_httphead('application/json');
 
@@ -69,7 +69,7 @@ $arrayresult = array();
 
 // Define $searchform
 
-if (isModEnabled('adherent') && !getDolGlobalString('MAIN_SEARCHFORM_ADHERENT_DISABLED') && $user->hasRight('adherent', 'lire')) {
+if (isModEnabled('member') && !getDolGlobalString('MAIN_SEARCHFORM_ADHERENT_DISABLED') && $user->hasRight('adherent', 'lire')) {
 	$arrayresult['searchintomember'] = array('position'=>8, 'shortcut'=>'M', 'img'=>'object_member', 'label'=>$langs->trans("SearchIntoMembers", $search_boxvalue), 'text'=>img_picto('', 'object_member', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoMembers", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/adherents/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 
@@ -102,13 +102,13 @@ if (isModEnabled('project') && !getDolGlobalString('MAIN_SEARCHFORM_TASK_DISABLE
 if (isModEnabled('propal') && !getDolGlobalString('MAIN_SEARCHFORM_CUSTOMER_PROPAL_DISABLED') && $user->hasRight('propal', 'lire')) {
 	$arrayresult['searchintopropal'] = array('position'=>60, 'img'=>'object_propal', 'label'=>$langs->trans("SearchIntoCustomerProposals", $search_boxvalue), 'text'=>img_picto('', 'object_propal', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerProposals", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/comm/propal/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
-if (isModEnabled('commande') && !getDolGlobalString('MAIN_SEARCHFORM_CUSTOMER_ORDER_DISABLED') && $user->hasRight('commande', 'lire')) {
+if (isModEnabled('order') && !getDolGlobalString('MAIN_SEARCHFORM_CUSTOMER_ORDER_DISABLED') && $user->hasRight('commande', 'lire')) {
 	$arrayresult['searchintoorder'] = array('position'=>70, 'img'=>'object_order', 'label'=>$langs->trans("SearchIntoCustomerOrders", $search_boxvalue), 'text'=>img_picto('', 'object_order', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerOrders", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/commande/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
-if (isModEnabled('expedition') && !getDolGlobalString('MAIN_SEARCHFORM_CUSTOMER_SHIPMENT_DISABLED') && $user->hasRight('expedition', 'lire')) {
+if (isModEnabled('delivery_note') && !getDolGlobalString('MAIN_SEARCHFORM_CUSTOMER_SHIPMENT_DISABLED') && $user->hasRight('expedition', 'lire')) {
 	$arrayresult['searchintoshipment'] = array('position'=>80, 'img'=>'object_shipment', 'label'=>$langs->trans("SearchIntoCustomerShipments", $search_boxvalue), 'text'=>img_picto('', 'object_shipment', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerShipments", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/expedition/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
-if (isModEnabled('facture') && !getDolGlobalString('MAIN_SEARCHFORM_CUSTOMER_INVOICE_DISABLED') && $user->hasRight('facture', 'lire')) {
+if (isModEnabled('invoice') && !getDolGlobalString('MAIN_SEARCHFORM_CUSTOMER_INVOICE_DISABLED') && $user->hasRight('facture', 'lire')) {
 	$arrayresult['searchintoinvoice'] = array('position'=>90, 'img'=>'object_bill', 'label'=>$langs->trans("SearchIntoCustomerInvoices", $search_boxvalue), 'text'=>img_picto('', 'object_bill', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerInvoices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/compta/facture/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 
@@ -123,7 +123,7 @@ if (((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERM
 }
 
 // Customer payments
-if (isModEnabled('facture') && !getDolGlobalString('MAIN_SEARCHFORM_CUSTOMER_INVOICE_DISABLED') && $user->hasRight('facture', 'lire')) {
+if (isModEnabled('invoice') && !getDolGlobalString('MAIN_SEARCHFORM_CUSTOMER_INVOICE_DISABLED') && $user->hasRight('facture', 'lire')) {
 	$arrayresult['searchintocustomerpayments'] = array(
 		'position'=>170,
 		'img'=>'object_payment',
@@ -143,7 +143,7 @@ if (((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERM
 }
 
 // Miscellaneous payments
-if (isModEnabled('banque') && !getDolGlobalString('MAIN_SEARCHFORM_MISC_PAYMENTS_DISABLED') && $user->hasRight('banque', 'lire')) {
+if (isModEnabled('bank') && !getDolGlobalString('MAIN_SEARCHFORM_MISC_PAYMENTS_DISABLED') && $user->hasRight('banque', 'lire')) {
 	$arrayresult['searchintomiscpayments'] = array(
 		'position'=>180,
 		'img'=>'object_payment',
@@ -152,10 +152,10 @@ if (isModEnabled('banque') && !getDolGlobalString('MAIN_SEARCHFORM_MISC_PAYMENTS
 		'url'=>DOL_URL_ROOT.'/compta/bank/various_payment/list.php?leftmenu=tax_various'.($search_boxvalue ? '&search_all='.urlencode($search_boxvalue) : ''));
 }
 
-if (isModEnabled('contrat') && !getDolGlobalString('MAIN_SEARCHFORM_CONTRACT_DISABLED') && $user->hasRight('contrat', 'lire')) {
+if (isModEnabled('contract') && !getDolGlobalString('MAIN_SEARCHFORM_CONTRACT_DISABLED') && $user->hasRight('contrat', 'lire')) {
 	$arrayresult['searchintocontract'] = array('position'=>130, 'img'=>'object_contract', 'label'=>$langs->trans("SearchIntoContracts", $search_boxvalue), 'text'=>img_picto('', 'object_contract', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoContracts", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/contrat/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
-if (isModEnabled('ficheinter') && !getDolGlobalString('MAIN_SEARCHFORM_FICHINTER_DISABLED') && $user->hasRight('ficheinter', 'lire')) {
+if (isModEnabled('intervention') && !getDolGlobalString('MAIN_SEARCHFORM_FICHINTER_DISABLED') && $user->hasRight('ficheinter', 'lire')) {
 	$arrayresult['searchintointervention'] = array('position'=>140, 'img'=>'object_intervention', 'label'=>$langs->trans("SearchIntoInterventions", $search_boxvalue), 'text'=>img_picto('', 'object_intervention', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoInterventions", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fichinter/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 if (isModEnabled('knowledgemanagement') && !getDolGlobalString('MAIN_SEARCHFORM_KNOWLEDGEMANAGEMENT_DISABLED') && $user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {

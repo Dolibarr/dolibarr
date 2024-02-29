@@ -32,35 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
  */
 class mod_contract_olive extends ModelNumRefContracts
 {
-	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Olive';
 
-	/**
-	 * @var string model name
-	 */
+	// variables inherited from ModelNumRefContracts class
 	public $name = 'Olive';
-
-	public $code_modifiable = 1; // Code modifiable
-
-	public $code_modifiable_invalide = 1; // Code modifiable si il est invalide
-
-	public $code_modifiable_null = 1; // Code modifiables si il est null
-
-	public $code_null = 1; // Code facultatif
-
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
-
-	/**
-	 * @var int Automatic numbering
-	 */
+	public $version = 'dolibarr';
+	public $code_null = 1;
+	public $code_modifiable = 1;
+	public $code_modifiable_invalide = 1;
+	public $code_modifiable_null = 1;
 	public $code_auto = 0;
 
 

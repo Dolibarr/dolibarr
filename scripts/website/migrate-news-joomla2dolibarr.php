@@ -19,7 +19,7 @@
 /**
  * \file scripts/website/migrate_news_joomla2dolibarr.php
  * \ingroup scripts
- * \brief Migrate news from a Joomla databse into a Dolibarr website
+ * \brief Migrate news from a Joomla database into a Dolibarr website
  */
 
 if (!defined('NOSESSION')) {
@@ -54,7 +54,7 @@ if (empty($argv[3]) || !in_array($argv[1], array('test', 'confirm')) || empty($w
 	print '***** '.$script_file.' *****'."\n";
 	print "Usage: $script_file (test|confirm) website login:pass@serverjoomla/tableprefix/databasejoomla [nbmaxrecord]\n";
 	print "\n";
-	print "Load joomla news and create them into Dolibarr database (if they don't alreay exist).\n";
+	print "Load joomla news and create them into Dolibarr database (if they don't already exist).\n";
 	exit(-1);
 }
 
@@ -62,6 +62,8 @@ require $path."../../htdocs/master.inc.php";
 include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
+
+$hookmanager->initHooks(array('cli'));
 
 
 /*

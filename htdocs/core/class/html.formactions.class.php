@@ -253,7 +253,7 @@ class FormActions
 					// Ref
 					print '<td class="nowraponall">'.$actioncomm->getNomUrl(1, -1).'</td>';
 
-					// Onwer
+					// Owner
 					print '<td class="nowraponall tdoverflowmax125">';
 					if (!empty($actioncomm->userownerid)) {
 						if (isset($cacheusers[$actioncomm->userownerid]) && is_object($cacheusers[$actioncomm->userownerid])) {
@@ -296,7 +296,9 @@ class FormActions
 					print '</td>';
 
 					// Label
-					print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($actioncomm->label).'">'.$actioncomm->getNomUrl(0).'</td>';
+					print '<td class="tdoverflowmax200">';
+					print $actioncomm->getNomUrl(0);
+					print '</td>';
 
 					// Date
 					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhour', 'tzuserrel');

@@ -39,7 +39,7 @@ class html_generic extends ModeleDon
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDb      $db      Database handler
+	 *  @param      DoliDB      $db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -166,9 +166,9 @@ class html_generic extends ModeleDon
 	/**
 	 *  Write the object to document file to disk
 	 *
-	 *  @param	string			$path	        Path for the file
+	 *  @param	string			$path	    Path for the file
 	 *  @param	string			$contents	Contents of the file
-	 *  @return	NULL
+	 *  @return	int							Return code
 	 */
 	private function saveFile($path, $contents)
 	{
@@ -177,6 +177,8 @@ class html_generic extends ModeleDon
 		fwrite($handle, $contents);
 		fclose($handle);
 		dolChmod($path);
+
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

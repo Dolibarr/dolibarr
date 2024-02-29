@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - agenda
 IdAgenda=ID de Evento
 ActionsOwnedBy=Propietario del evento
-Event=Evento
 ListOfActions=Lista de eventos
 EventReports=Informes de evento
 ToUserOfGroup=Evento Asignado a cualquier usuario del grupo
@@ -44,6 +43,7 @@ OrderRefusedInDolibarr=Orden%s rechazada
 OrderBackToDraftInDolibarr=Orden%s volver al estado de borrador
 ShippingSentByEMail=Detalle de entrega %s enviado por correo
 ShippingValidated=Envío %s validado
+ProjectDeletedInDolibarr=Proyecto%s eliminado
 ProposalDeleted=Propuesta eliminada
 PRODUCT_CREATEInDolibarr=Producto%s creado
 PRODUCT_MODIFYInDolibarr=Producto%s modificado
@@ -59,6 +59,8 @@ MRP_MO_UNVALIDATEInDolibarr=Orden de Fabricación establecida  en estado de borr
 MRP_MO_PRODUCEDInDolibarr=Orden de Fabricación producida
 MRP_MO_DELETEInDolibarr=Orden de Fabricación borrada
 MRP_MO_CANCELInDolibarr=Orden de Fabricación cancelada
+ENABLEDISABLEInDolibarr=El usuario activa o desactivva
+CANCELInDolibarr=Cancelado
 AgendaModelModule=Plantillas de documento para el evento
 DateActionEnd=Fecha de fin
 AgendaUrlOptions1=También puede agregar los siguientes parámetros para filtrar la salida:

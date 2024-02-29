@@ -53,7 +53,7 @@ class PaymentVAT extends CommonObject
 	public $fk_tva;
 
 	public $datec = '';
-	public $tms = '';
+
 	public $datep = '';
 
 	/**
@@ -73,11 +73,13 @@ class PaymentVAT extends CommonObject
 	/**
 	 * @var string
 	 * @deprecated
+	 * @see $num_payment
 	 */
 	public $num_paiement;
 
 	/**
-	 * @var string
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
@@ -166,7 +168,7 @@ class PaymentVAT extends CommonObject
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
-		// Validate parametres
+		// Validate parameters
 		if (!$this->datepaye) {
 			$this->error = 'ErrorBadValueForParameterCreatePaymentVAT';
 			return -1;
@@ -233,7 +235,7 @@ class PaymentVAT extends CommonObject
 				// Insert table of amounts / invoices
 				foreach ($this->amounts as $key => $amount) {
 					$contribid = $key;
-					if (is_numeric($amount) && $amount <> 0) {
+					if (is_numeric($amount) && $amount != 0) {
 						$amount = price2num($amount);
 
 						// If we want to closed paid invoices
@@ -533,13 +535,12 @@ class PaymentVAT extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-
 		$this->fk_tva = 0;
-		$this->datec = '';
-		$this->tms = '';
+		$this->datec = dol_now();
+		$this->tms = dol_now();
 		$this->datep = '';
 		$this->amount = '';
-		$this->fk_typepaiement = '';
+		$this->fk_typepaiement = 0;
 		$this->num_payment = '';
 		$this->note_private = '';
 		$this->note_public = '';
@@ -568,7 +569,7 @@ class PaymentVAT extends CommonObject
 
 		$error = 0;
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$acc = new Account($this->db);

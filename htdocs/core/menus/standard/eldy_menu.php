@@ -76,7 +76,7 @@ class MenuManager
 			$_SESSION["mainmenu"] = GETPOST("mainmenu", 'aZ09');
 		}
 		if (GETPOSTISSET("idmenu")) {
-			$_SESSION["idmenu"] = GETPOST("idmenu", 'int');
+			$_SESSION["idmenu"] = GETPOSTINT("idmenu");
 		}
 
 		// Read now mainmenu and leftmenu that define which menu to show
@@ -197,7 +197,7 @@ class MenuManager
 					print $val['titre'];
 					print '</a>'."\n";
 
-					// Search submenu fot this mainmenu entry
+					// Search submenu for this mainmenu entry
 					$tmpmainmenu = $val['mainmenu'];
 					$tmpleftmenu = 'all';
 					$submenu = new Menu();
@@ -319,8 +319,6 @@ class MenuManager
 							// Add font-awesome (if $val2['level'] == 0, we are on level2
 							if ($val2['level'] == 0 && !empty($val2['prefix'])) {
 								print $val2['prefix'];	// the picto must have class="pictofixedwidth paddingright"
-							} else {
-								print '<span class="paddingright"></span>';	// we also add class="paddingright". width similar to pictofixedwidth is managed by class=lilevel2
 							}
 
 							print $val2['titre'];

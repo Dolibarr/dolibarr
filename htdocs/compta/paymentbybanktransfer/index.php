@@ -39,13 +39,13 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 $langs->loadLangs(array('banks', 'categories', 'withdrawals'));
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'paymentbybanktransfer', '', '');
 
-$usercancreate = $user->rights->paymentbybanktransfer->create;
+$usercancreate = $user->hasRight('paymentbybanktransfer', 'create');
 
 
 /*
@@ -157,7 +157,7 @@ if (isModEnabled('supplier_invoice')) {
 				$invoicestatic->id = $obj->rowid;
 				$invoicestatic->ref = $obj->ref;
 				$invoicestatic->status = $obj->fk_statut;
-				$invoicestatic->statut = $obj->fk_statut;	// For backward comaptibility
+				$invoicestatic->statut = $obj->fk_statut;	// For backward compatibility
 				$invoicestatic->paye = $obj->paye;
 				$invoicestatic->type = $obj->type;
 				$invoicestatic->date = $db->jdate($obj->datef);

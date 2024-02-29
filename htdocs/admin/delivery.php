@@ -58,7 +58,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 
 // Shipment note
-if (isModEnabled('expedition') && !getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')) {
+if (isModEnabled('delivery_note') && !getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')) {
 	// This option should always be set to on when module is on.
 	dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1", 'chaine', 0, '', $conf->entity);
 }
@@ -188,8 +188,8 @@ if ($action == 'setdoc') {
 }
 
 if ($action == 'setmod') {
-	// TODO Verifier si module numerotation choisi peut etre active
-	// par appel methode canBeActivated
+	// TODO Verify if the chosen numbering module can be activated
+	// by calling method canBeActivated
 
 	dolibarr_set_const($db, "DELIVERY_ADDON_NUMBER", $value, 'chaine', 0, '', $conf->entity);
 }

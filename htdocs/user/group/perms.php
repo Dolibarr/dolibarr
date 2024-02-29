@@ -39,11 +39,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $module = GETPOST('module', 'alpha');
-$rights = GETPOST('rights', 'int');
+$rights = GETPOSTINT('rights');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'groupperms'; // To manage different context of search
 
 if (!isset($id) || empty($id)) {
@@ -317,7 +317,7 @@ if ($object->id > 0) {
 			$objMod = $modules[$obj->module];
 
 			if (GETPOSTISSET('forbreakperms_'.$obj->module)) {
-				$ishidden = GETPOST('forbreakperms_'.$obj->module, 'int');
+				$ishidden = GETPOSTINT('forbreakperms_'.$obj->module);
 			} elseif (in_array($j, $cookietohidegrouparray)) {	// If j is among list of hidden group
 				$ishidden = 1;
 			} else {
@@ -326,12 +326,12 @@ if ($object->id > 0) {
 			$isexpanded = ! $ishidden;
 
 			// Break found, it's a new module to catch
-			if (isset($obj->module) && ($oldmod <> $obj->module)) {
+			if (isset($obj->module) && ($oldmod != $obj->module)) {
 				$oldmod = $obj->module;
 
 				$j++;
 				if (GETPOSTISSET('forbreakperms_'.$obj->module)) {
-					$ishidden = GETPOST('forbreakperms_'.$obj->module, 'int');
+					$ishidden = GETPOSTINT('forbreakperms_'.$obj->module);
 				} elseif (in_array($j, $cookietohidegrouparray)) {	// If j is among list of hidden group
 					$ishidden = 1;
 				} else {
@@ -424,7 +424,7 @@ if ($object->id > 0) {
 			}
 
 			// Description of permission (2 columns)
-			$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
+			$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != "PermissionAdvanced".$obj->id) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != "Permission".$obj->id) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
 			print '<td>';
 			print $permlabel;
 			if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {

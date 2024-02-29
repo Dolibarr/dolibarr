@@ -28,16 +28,16 @@ require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 // Load translation files required by the page
 $langs->load("compta");
 
-$limit = GETPOST('limit', 'int');
+$limit = GETPOSTINT('limit');
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 
 $result = restrictedArea($user, 'tax', '', '', 'charges');
-$ltt = GETPOST("localTaxType", 'int');
+$ltt = GETPOSTINT("localTaxType");
 $mode = GETPOST('mode', 'alpha');
 
 
@@ -76,7 +76,7 @@ if ($result) {
 	$i = 0;
 	$total = 0;
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td class="nowrap" align="left">'.$langs->trans("Ref").'</td>';

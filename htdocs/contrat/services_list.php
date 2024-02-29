@@ -6,7 +6,7 @@
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019      Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,10 +44,10 @@ $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -62,7 +62,6 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-$filter = GETPOST("filter", 'alpha');
 $search_name = GETPOST("search_name", 'alpha');
 $search_subprice = GETPOST("search_subprice", 'alpha');
 $search_qty = GETPOST("search_qty", 'alpha');
@@ -72,8 +71,8 @@ $search_total_ttc = GETPOST("search_total_ttc", 'alpha');
 $search_contract = GETPOST("search_contract", 'alpha');
 $search_service = GETPOST("search_service", 'alpha');
 $search_status = GETPOST("search_status", 'alpha');
-$search_product_category = GETPOST('search_product_category', 'int');
-$socid = GETPOST('socid', 'int');
+$search_product_category = GETPOSTINT('search_product_category');
+$socid = GETPOSTINT('socid');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'contractservicelist'.$mode;
 
 $opouvertureprevuemonth = GETPOST('opouvertureprevuemonth');
@@ -81,19 +80,19 @@ $opouvertureprevueday = GETPOST('opouvertureprevueday');
 $opouvertureprevueyear = GETPOST('opouvertureprevueyear');
 $filter_opouvertureprevue = GETPOST('filter_opouvertureprevue');
 
-$op1month = GETPOST('op1month', 'int');
-$op1day = GETPOST('op1day', 'int');
-$op1year = GETPOST('op1year', 'int');
+$op1month = GETPOSTINT('op1month');
+$op1day = GETPOSTINT('op1day');
+$op1year = GETPOSTINT('op1year');
 $filter_op1 = GETPOST('filter_op1', 'alpha');
 
-$op2month = GETPOST('op2month', 'int');
-$op2day = GETPOST('op2day', 'int');
-$op2year = GETPOST('op2year', 'int');
+$op2month = GETPOSTINT('op2month');
+$op2day = GETPOSTINT('op2day');
+$op2year = GETPOSTINT('op2year');
 $filter_op2 = GETPOST('filter_op2', 'alpha');
 
-$opcloturemonth = GETPOST('opcloturemonth', 'int');
-$opclotureday = GETPOST('opclotureday', 'int');
-$opclotureyear = GETPOST('opclotureyear', 'int');
+$opcloturemonth = GETPOSTINT('opcloturemonth');
+$opclotureday = GETPOSTINT('opclotureday');
+$opclotureyear = GETPOSTINT('opclotureyear');
 $filter_opcloture = GETPOST('filter_opcloture', 'alpha');
 
 
@@ -108,25 +107,11 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Security check
-$contratid = GETPOST('id', 'int');
+$contratid = GETPOSTINT('id');
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'contrat', $contratid);
-
-if ($search_status != '') {
-	$tmp = explode('&', $search_status);
-	if (!empty($tmp[1])) {
-		if ($tmp[1] == 'filter=notexpired') {
-			$search_status = $tmp[0];
-			$filter = 'notexpired';
-		}
-		if ($tmp[1] == 'filter=expired') {
-			$search_status = $tmp[0];
-			$filter = 'expired';
-		}
-	}
-}
 
 $staticcontrat = new Contrat($db);
 $staticcontratligne = new ContratLigne($db);
@@ -194,7 +179,7 @@ if (empty($reshook)) {
 		$search_total_ttc = "";
 		$search_contract = "";
 		$search_service = "";
-		$search_status = -1;
+		$search_status = "";
 		$opouvertureprevuemonth = "";
 		$opouvertureprevueday = "";
 		$opouvertureprevueyear = "";
@@ -211,7 +196,6 @@ if (empty($reshook)) {
 		$opclotureday = "";
 		$opclotureyear = "";
 		$filter_opcloture = "";
-		$filter = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -247,7 +231,7 @@ $sql = "SELECT c.rowid as cid, c.ref, c.statut as cstatut, c.ref_customer, c.ref
 $sql .= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur,";
 $sql .= " cd.rowid, cd.description, cd.statut, cd.product_type as type,";
 $sql .= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype, p.tobuy, p.tosell, p.barcode, p.entity as pentity,";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " sc.fk_soc, sc.fk_user,";
 }
 $sql .= " cd.date_ouverture_prevue,";
@@ -260,7 +244,7 @@ $sql .= " cd.total_tva,";
 $sql .= " cd.tva_tx,";
 $sql .= " cd.subprice,";
 //$sql.= " cd.date_c as date_creation,";
-$sql .= " cd.tms as date_update";
+$sql .= " cd.tms as date_modification";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -273,7 +257,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $obje
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."contrat as c,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s,";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 }
 $sql .= " ".MAIN_DB_PREFIX."contratdet as cd";
@@ -290,7 +274,7 @@ if ($search_product_category > 0) {
 	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
 }
 $sql .= " AND c.fk_soc = s.rowid";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_status == "0") {
@@ -299,14 +283,14 @@ if ($search_status == "0") {
 if ($search_status == "4") {
 	$sql .= " AND cd.statut = 4";
 }
+if ($search_status == "4&filter=expired") {
+	$sql .= " AND cd.statut = 4 AND cd.date_fin_validite < '".$db->idate($now)."'";
+}
+if ($search_status == "4&filter=notexpired") {
+	$sql .= " AND cd.statut = 4 AND cd.date_fin_validite >= '".$db->idate($now)."'";
+}
 if ($search_status == "5") {
 	$sql .= " AND cd.statut = 5";
-}
-if ($filter == "expired") {
-	$sql .= " AND cd.date_fin_validite < '".$db->idate($now)."'";
-}
-if ($filter == "notexpired") {
-	$sql .= " AND cd.date_fin_validite >= '".$db->idate($now)."'";
 }
 if ($search_subprice) {
 	$sql .= natural_search("cd.subprice", $search_subprice, 1);
@@ -478,9 +462,6 @@ if ($search_service) {
 if ($search_status) {
 	$param .= '&amp;search_status='.urlencode($search_status);
 }
-if ($filter) {
-	$param .= '&amp;filter='.urlencode($filter);
-}
 if (!empty($filter_opouvertureprevue) && $filter_opouvertureprevue != -1) {
 	$param .= '&amp;filter_opouvertureprevue='.urlencode($filter_opouvertureprevue);
 }
@@ -540,14 +521,14 @@ if (!empty($sall)) {
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $morefilter = '';
 $moreforfilter = '';
 
 // If the user can view categories of products
-if (isModEnabled('categorie') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
+if (isModEnabled('category') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
@@ -594,7 +575,6 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 if (!empty($arrayfields['c.ref']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input type="hidden" name="filter" value="'.$filter.'">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
 	print '<input type="text" class="flat maxwidth75" name="search_contract" value="'.dol_escape_htmltag($search_contract).'">';
 	print '</td>';
@@ -996,7 +976,7 @@ while ($i < $imaxinloop) {
 	// Date modification
 	if (!empty($arrayfields['cd.tms']['checked'])) {
 		print '<td class="center nowraponall">';
-		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+		print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

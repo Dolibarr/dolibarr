@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       calendar_note.php
+ *  \file       htdocs/bookcal/calendar_note.php
  *  \ingroup    bookcal
  *  \brief      Tab for notes on Calendar
  */
@@ -80,7 +80,7 @@ dol_include_once('/bookcal/lib/bookcal_calendar.lib.php');
 $langs->loadLangs(array("bookcal@bookcal", "companies"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
@@ -105,9 +105,9 @@ if ($id > 0 || !empty($ref)) {
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = 0;
 if ($enablepermissioncheck) {
-	$permissiontoread = $user->rights->bookcal->calendar->read;
-	$permissiontoadd = $user->rights->bookcal->calendar->write;
-	$permissionnote = $user->rights->bookcal->calendar->write; // Used by the include of actions_setnotes.inc.php
+	$permissiontoread = $user->hasRight('bookcal', 'calendar', 'read');
+	$permissiontoadd = $user->hasRight('bookcal', 'calendar', 'write');
+	$permissionnote = $user->hasRight('bookcal', 'calendar', 'write'); // Used by the include of actions_setnotes.inc.php
 } else {
 	$permissiontoread = 1;
 	$permissiontoadd = 1;

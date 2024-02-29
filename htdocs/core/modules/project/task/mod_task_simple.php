@@ -124,7 +124,7 @@ class mod_task_simple extends ModeleNumRefTask
 	 *
 	 *  @param   Societe	$objsoc		Object third party
 	 *  @param   Task	$object		Object Task
-	 *  @return	string				Value if OK, 0 if KO
+	 *  @return	string|-1			Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -150,9 +150,7 @@ class mod_task_simple extends ModeleNumRefTask
 		}
 
 		$date = empty($object->date_c) ? dol_now() : $object->date_c;
-
-		//$yymm = strftime("%y%m",time());
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
@@ -171,7 +169,7 @@ class mod_task_simple extends ModeleNumRefTask
 	 *
 	 *  @param  Societe	$objsoc     Object third party
 	 *  @param  Task	$object     Object task
-	 *  @return string              Next not used reference
+	 *  @return string|-1           Next not used reference, -1 if KO
 	 */
 	public function task_get_num($objsoc = 0, $object = '')
 	{

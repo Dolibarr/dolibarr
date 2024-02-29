@@ -1,8 +1,9 @@
 <?php
+'@phan-var-force DolibarrModules $this';
 
 if (empty($keyforclass) || empty($keyforclassfile) || empty($keyforelement)) {
 	//print $keyforclass.' - '.$keyforclassfile.' - '.$keyforelement;
-	dol_print_error('', 'include of file commonfieldsinexport.inc.php was done but var $keyforclass or $keyforclassfile or $keyforelement was not set');
+	dol_print_error(null, 'include of file commonfieldsinexport.inc.php was done but var $keyforclass or $keyforclassfile or $keyforelement was not set');
 	exit;
 }
 if (empty($keyforalias)) {

@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -97,7 +97,7 @@ if (empty($conf->project->enabled)) {
  * @param 	array  		$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
 	global $user, $conf, $langs, $mysoc;
 
@@ -228,8 +228,8 @@ if (empty($reshook) && $action == 'add') {
 			$thirdparty->address = GETPOST('address');
 			$thirdparty->zip = GETPOST('zip');
 			$thirdparty->town = GETPOST('town');
-			$thirdparty->country_id = GETPOST('country_id', 'int');
-			$thirdparty->state_id = GETPOST('state_id');
+			$thirdparty->country_id = GETPOSTINT('country_id');
+			$thirdparty->state_id = GETPOSTINT('state_id');
 			$thirdparty->client = $thirdparty::PROSPECT;
 			$thirdparty->code_client = 'auto';
 			$thirdparty->code_fournisseur = 'auto';
@@ -240,14 +240,14 @@ if (empty($reshook) && $action == 'add') {
 			//var_dump($thirdparty->array_options);exit;
 			if ($ret < 0) {
 				$error++;
-				$errmsg = ($extrafields->error ? $extrafields->error.'<br>' : '').join('<br>', $extrafields->errors);
+				$errmsg = ($extrafields->error ? $extrafields->error.'<br>' : '').implode('<br>', $extrafields->errors);
 			}
 
 			if (!$error) {
 				$result = $thirdparty->create($user);
 				if ($result <= 0) {
 					$error++;
-					$errmsg = ($thirdparty->error ? $thirdparty->error.'<br>' : '').join('<br>', $thirdparty->errors);
+					$errmsg = ($thirdparty->error ? $thirdparty->error.'<br>' : '').implode('<br>', $thirdparty->errors);
 				} else {
 					$proj->socid = $thirdparty->id;
 				}
@@ -361,7 +361,7 @@ if (empty($reshook) && $action == 'add') {
 					$outputlangs->loadLangs(array("main", "members", "projects"));
 					// Get email content from template
 					$arraydefaultmessage = null;
-					$labeltouse = $conf->global->PROJECT_EMAIL_TEMPLATE_AUTOLEAD;
+					$labeltouse = getDolGlobalString('PROJECT_EMAIL_TEMPLATE_AUTOLEAD');
 
 					if (!empty($labeltouse)) {
 						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'project', $user, $outputlangs, 0, 1, $labeltouse);
@@ -396,7 +396,7 @@ if (empty($reshook) && $action == 'add') {
 				if (!empty($backtopage)) {
 					$urlback = $backtopage;
 				} elseif (getDolGlobalString('PROJECT_URL_REDIRECT_LEAD')) {
-					$urlback = $conf->global->PROJECT_URL_REDIRECT_LEAD;
+					$urlback = getDolGlobalString('PROJECT_URL_REDIRECT_LEAD');
 					// TODO Make replacement of __AMOUNT__, etc...
 				} else {
 					$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
@@ -409,7 +409,7 @@ if (empty($reshook) && $action == 'add') {
 				dol_syslog("project lead ".$proj->ref." has been created, we redirect to ".$urlback);
 			} else {
 				$error++;
-				$errmsg .= $proj->error.'<br>'.join('<br>', $proj->errors);
+				$errmsg .= $proj->error.'<br>'.implode('<br>', $proj->errors);
 			}
 		} else {
 			setEventMessage($errmsg, 'errors');
@@ -419,7 +419,7 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		$db->commit();
 
-		Header("Location: ".$urlback);
+		header("Location: ".$urlback);
 		exit;
 	} else {
 		$db->rollback();
@@ -463,7 +463,7 @@ print '<div id="divsubscribe">';
 
 print '<div class="center subscriptionformhelptext opacitymedium justify">';
 if (getDolGlobalString('PROJECT_NEWFORM_TEXT')) {
-	print $langs->trans($conf->global->PROJECT_NEWFORM_TEXT)."<br>\n";
+	print $langs->trans(getDolGlobalString('PROJECT_NEWFORM_TEXT'))."<br>\n";
 } else {
 	print $langs->trans("FormForNewLeadDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
 }
@@ -539,7 +539,7 @@ print '</td></tr>';
 if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
 	if ($country_code) {
-		print $formcompany->select_state(GETPOST("state_id", 'int'), $country_code);
+		print $formcompany->select_state(GETPOSTINT("state_id"), $country_code);
 	} else {
 		print '';
 	}

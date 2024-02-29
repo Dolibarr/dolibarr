@@ -65,10 +65,10 @@ $conditions = array(
 	'NOTE_PRIVATE' => 1,
 	'SOCIETE' => 1,
 	'PRODUCTDESC' => (isModEnabled("product") || isModEnabled("service")),
-	'DETAILS' => (isModEnabled('facture') || isModEnabled("propal") || isModEnabled('commande') || isModEnabled('supplier_proposal') || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")),
+	'DETAILS' => (isModEnabled('invoice') || isModEnabled("propal") || isModEnabled('order') || isModEnabled('supplier_proposal') || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")),
 	'USERSIGN' => 1,
 	'MAILING' => isModEnabled('mailing'),
-	'MAIL' => (isModEnabled('facture') || isModEnabled("propal") || isModEnabled('commande')),
+	'MAIL' => (isModEnabled('invoice') || isModEnabled("propal") || isModEnabled('order')),
 	'TICKET' => isModEnabled('ticket'),
 	'SPECIALCHAR' => 1,
 );
@@ -126,15 +126,18 @@ if (GETPOST('save', 'alpha')) {
 			$error++;
 		}
 	} else {
-		$error++;
+		$error = -1;	// -1 means a warning message
 	}
 
-	if (!$error) {
+	if ($error == 0) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} elseif ($error == -1) {
+		setEventMessages($langs->trans("EmptyMessageNotAllowedError"), null, 'warnings');
 	} else {
 		setEventMessages($langs->trans("Error").' '.$db->lasterror(), null, 'errors');
 	}
 }
+
 
 /*
  * View
@@ -173,7 +176,7 @@ if (empty($conf->use_javascript_ajax)) {
 		}
 		print '</td>';
 		print '<td class="center centpercent width100">';
-		$value = (isset($conf->global->$constante) ? $conf->global->$constante : 0);
+		$value = getDolGlobalInt($constante, 0);
 		if ($value == 0) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=enable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 		} elseif ($value == 1) {

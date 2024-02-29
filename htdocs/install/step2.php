@@ -27,6 +27,7 @@
 include 'inc.php';
 require_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
+require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
 
 global $langs;
 
@@ -68,7 +69,7 @@ if ($dolibarr_main_db_type == "sqlite") {
 if ($dolibarr_main_db_type == "sqlite3") {
 	$choix = 5;
 }
-//if (empty($choix)) dol_print_error('','Database type '.$dolibarr_main_db_type.' not supported into step2.php page');
+//if (empty($choix)) dol_print_error(null,'Database type '.$dolibarr_main_db_type.' not supported into step2.php page');
 
 
 // Now we load forced values from install.forced.php file.
@@ -192,7 +193,7 @@ if ($action == "set") {
 			if ($fp) {
 				while (!feof($fp)) {
 					$buf = fgets($fp, 4096);
-					if (substr($buf, 0, 2) <> '--') {
+					if (substr($buf, 0, 2) != '--') {
 						$buf = preg_replace('/--(.+)*/', '', $buf);
 						$buffer .= $buf;
 					}
@@ -404,7 +405,7 @@ if ($action == "set") {
 				$buffer = '';
 				while (!feof($fp)) {
 					$buf = fgets($fp, 4096);
-					if (substr($buf, 0, 2) <> '--') {
+					if (substr($buf, 0, 2) != '--') {
 						$buffer .= $buf."§";
 					}
 				}

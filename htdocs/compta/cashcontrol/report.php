@@ -49,7 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->loadLangs(array("bills", "banks"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 $object = new CashControl($db);
 $object->fetch($id);
@@ -114,7 +114,7 @@ $sql.= " AND f.entity IN (".getEntity('facture').")";
 if ($syear && ! $smonth)              $sql.= " AND dateo BETWEEN '".$db->idate(dol_get_first_day($syear, 1))."' AND '".$db->idate(dol_get_last_day($syear, 12))."'";
 elseif ($syear && $smonth && ! $sday) $sql.= " AND dateo BETWEEN '".$db->idate(dol_get_first_day($syear, $smonth))."' AND '".$db->idate(dol_get_last_day($syear, $smonth))."'";
 elseif ($syear && $smonth && $sday)   $sql.= " AND dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
-else dol_print_error('', 'Year not defined');
+else dol_print_error(null, 'Year not defined');
 // Define filter on bank account
 $sql.=" AND (b.fk_account = ".((int) $conf->global->CASHDESK_ID_BANKACCOUNT_CASH);
 $sql.=" OR b.fk_account = ".((int) $conf->global->CASHDESK_ID_BANKACCOUNT_CB);
@@ -133,7 +133,7 @@ elseif ($key == 'cheque') $sql.=" AND cp.code = 'CHQ'";
 elseif ($key == 'card')   $sql.=" AND cp.code = 'CB'";
 else
 {
-	dol_print_error('Value for key = '.$key.' not supported');
+	dol_print_error(null, 'Value for key = '.$key.' not supported');
 	exit;
 }*/
 if ($syear && !$smonth) {
@@ -143,7 +143,7 @@ if ($syear && !$smonth) {
 } elseif ($syear && $smonth && $sday) {
 	$sql .= " AND datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
 } else {
-	dol_print_error('', 'Year not defined');
+	dol_print_error(null, 'Year not defined');
 }
 
 $resql = $db->query($sql);
@@ -281,10 +281,10 @@ if ($resql) {
 			}
 			$transactionspertype[$objp->code] += 1;
 		} else {
-			if ($conf->global->$var1 == $bankaccount->id) {
+			if (getDolGlobalString($var1) == $bankaccount->id) {
 				$cash += $objp->amount;
-				// } elseif ($conf->global->$var2 == $bankaccount->id) $bank+=$objp->amount;
-				//elseif ($conf->global->$var3 == $bankaccount->id) $cheque+=$objp->amount;
+				// } elseif (getDolGlobalString($var2) == $bankaccount->id) $bank+=$objp->amount;
+				//elseif (getDolGlobalString($var3) == $bankaccount->id) $cheque+=$objp->amount;
 				if (empty($transactionspertype['CASH'])) {
 					$transactionspertype['CASH'] = 0;
 				}

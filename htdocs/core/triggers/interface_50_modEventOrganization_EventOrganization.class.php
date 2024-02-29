@@ -42,8 +42,7 @@ class InterfaceEventOrganization extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "eventorganization";
 		$this->description = "Triggers of this module to manage event organization triggers action";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = self::VERSION_DOLIBARR;
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'action';
 	}
 
@@ -69,7 +68,7 @@ class InterfaceEventOrganization extends DolibarrTriggers
 	 * @param conf		    $conf       Object conf
 	 * @return int         				Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		if (empty($conf->eventorganization) || empty($conf->eventorganization->enabled)) {
 			return 0; // Module not active, we do nothing
@@ -80,7 +79,7 @@ class InterfaceEventOrganization extends DolibarrTriggers
 		// Actions
 		if ($action == 'PROJECT_VALIDATE') {
 			if (getDolGlobalString('EVENTORGANIZATION_TASK_LABEL') && !empty($object->usage_organize_event)) {
-				$taskToDo = explode("\n", $conf->global->EVENTORGANIZATION_TASK_LABEL);
+				$taskToDo = explode("\n", getDolGlobalString('EVENTORGANIZATION_TASK_LABEL'));
 				if (is_array($taskToDo) && count($taskToDo)>0) {
 					// Load translation files required by the page
 					$langs->loadLangs(array("eventorganization"));

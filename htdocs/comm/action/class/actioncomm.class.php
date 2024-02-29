@@ -194,7 +194,7 @@ class ActionComm extends CommonObject
 	public $datep2;
 
 	/**
-	 * @var int -1=Unkown duration
+	 * @var int -1=Unknown duration
 	 * @deprecated
 	 */
 	public $durationp = -1;
@@ -382,7 +382,7 @@ class ActionComm extends CommonObject
 	/**
 	 * Properties to manage the recurring events
 	 */
-	public $recurid;		/* A string YYYYMMDDHHMMSS shared by allevent of same serie */
+	public $recurid;		/* A string YYYYMMDDHHMMSS shared by allevent of same series */
 	public $recurrule;		/* Rule of recurring */
 	public $recurdateend;	/* Repeat until this date */
 
@@ -442,7 +442,7 @@ class ActionComm extends CommonObject
 
 		// Clean parameters
 		$this->label = dol_trunc(trim($this->label), 128);
-		$this->location = dol_trunc(trim($this->location), 128);
+		$this->location = (!empty($this->location) ? dol_trunc(trim($this->location), 128) : "");
 		$this->note_private = dol_htmlcleanlastbr(trim(empty($this->note_private) ? $this->note : $this->note_private));
 		if (empty($this->percentage)) {
 			$this->percentage = 0;
@@ -784,7 +784,7 @@ class ActionComm extends CommonObject
 	 *  @param  string	$ref    			Ref of action to get
 	 *  @param  string	$ref_ext			Ref ext to get
 	 *  @param	string	$email_msgid		Email msgid
-	 *  @param	string	$loadresources		1=Load also resources
+	 *  @param	int		$loadresources		1=Load also resources
 	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '', $ref_ext = '', $email_msgid = '', $loadresources = 1)
@@ -1308,7 +1308,7 @@ class ActionComm extends CommonObject
 				return 1;
 			} else {
 				$this->db->rollback();
-				dol_syslog(get_class($this)."::update ".join(',', $this->errors), LOG_ERR);
+				dol_syslog(get_class($this)."::update ".implode(',', $this->errors), LOG_ERR);
 				return -2;
 			}
 		} else {
@@ -1328,7 +1328,7 @@ class ActionComm extends CommonObject
 	 *  @param		string	$filter			Other filter
 	 *  @param		string	$sortfield		Sort on this field
 	 *  @param		string	$sortorder		ASC or DESC
-	 *  @param		string	$limit			Limit number of answers
+	 *  @param		int		$limit			Limit number of answers
 	 *  @return		ActionComm[]|string		Error string if KO, array with actions if OK
 	 */
 	public function getActions($socid = 0, $fk_element = 0, $elementtype = '', $filter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
@@ -1406,7 +1406,7 @@ class ActionComm extends CommonObject
 	/**
 	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 * @param	User	$user   			Objet user
+	 * @param	User	$user   			Object user
 	 * @param	int		$load_state_board	Load indicator array this->nb
 	 * @return WorkboardResponse|int 		Return integer <0 if KO, WorkboardResponse if OK
 	 */
@@ -1422,9 +1422,6 @@ class ActionComm extends CommonObject
 			$sql = "SELECT count(a.id) as nb";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
-		}
 		if (!$user->hasRight('agenda', 'allactions', 'read')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources AS ar ON a.id = ar.fk_actioncomm AND ar.element_type ='user' AND ar.fk_element = ".((int) $user->id);
 		}
@@ -1433,16 +1430,23 @@ class ActionComm extends CommonObject
 			$sql .= " AND a.percent >= 0 AND a.percent < 100";
 		}
 		$sql .= " AND a.entity IN (".getEntity('agenda').")";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
-			$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
-		}
-		if ($user->socid) {
-			$sql .= " AND a.fk_soc = ".((int) $user->socid);
-		}
 		if (!$user->hasRight('agenda', 'allactions', 'read')) {
 			$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id)." OR a.fk_user_done = ".((int) $user->id);
 			$sql .= " OR ar.fk_element = ".((int) $user->id);
 			$sql .= ")";
+		}
+		// If the internal user must only see his customers, force searching by him
+		$search_sale = 0;
+		if (!$user->hasRight('societe', 'client', 'voir')) {
+			$search_sale = $user->id;
+		}
+		// Search on sale representative
+		if ($search_sale && $search_sale != '-1') {
+			if ($search_sale == -2) {
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc)";
+			} elseif ($search_sale > 0) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			}
 		}
 
 		$resql = $this->db->query($sql);
@@ -1487,7 +1491,7 @@ class ActionComm extends CommonObject
 
 
 	/**
-	 *  Charge les informations d'ordre info dans l'objet facture
+	 *  Charge les information d'ordre info dans l'objet facture
 	 *
 	 *  @param	int		$id       	Id de la facture a charger
 	 *  @return	void
@@ -1542,7 +1546,7 @@ class ActionComm extends CommonObject
 	 *  @param  int     $percent        Percent
 	 *  @param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
 	 *  @param  int		$hidenastatus   1=Show nothing if status is "Not applicable"
-	 *  @param  int     $datestart      Date start of event
+	 *  @param  int|string     $datestart      Date start of event
 	 *  @return string		    		Label
 	 */
 	public function LibStatut($percent, $mode, $hidenastatus = 0, $datestart = '')
@@ -1641,7 +1645,7 @@ class ActionComm extends CommonObject
 			if (!empty($this->email_tocc)) {
 				$datas['mailcc'] = '<br><b>'.$langs->trans('MailCC').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_tocc);
 			}
-			/* Disabled because bcc must remain by defintion not visible
+			/* Disabled because bcc must remain by definition not visible
 			if (!empty($this->email_tobcc)) {
 				$datas['mailccc'] = '<br><b>'.$langs->trans('MailCCC').':</b> '.$this->email_tobcc;
 			} */
@@ -1656,7 +1660,7 @@ class ActionComm extends CommonObject
 			$datas['note'] .= '</div>';
 		}
 		// show categories for this record only in ajax to not overload lists
-		if (isModEnabled('categorie') && !$nofetch) {
+		if (isModEnabled('category') && !$nofetch) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$form = new Form($this->db);
 			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_ACTIONCOMM, 1);
@@ -1670,7 +1674,7 @@ class ActionComm extends CommonObject
 	 *  Use $this->id, $this->type_code, $this->label and $this->type_label
 	 *
 	 *  @param	int		$withpicto				0 = No picto, 1 = Include picto into link, 2 = Only picto
-	 *  @param	int		$maxlength				Max number of charaters into label. If negative, use the ref as label.
+	 *  @param	int		$maxlength				Max number of characters into label. If negative, use the ref as label.
 	 *  @param	string	$classname				Force style class on a link
 	 *  @param	string	$option					'' = Link to action, 'birthday'= Link to contact, 'holiday' = Link to leave
 	 *  @param	int		$overwritepicto			1 = Overwrite picto with this one
@@ -1745,7 +1749,7 @@ class ActionComm extends CommonObject
 			if (!empty($this->email_tocc)) {
 				$tooltip .= '<br><b>'.$langs->trans('MailCC').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_tocc);
 			}
-			/* Disabled because bcc must remain by defintion not visible
+			/* Disabled because bcc must remain by definition not visible
 			if (!empty($this->email_tobcc)) {
 				$tooltip .= '<br><b>'.$langs->trans('MailCCC').':</b> '.$this->email_tobcc;
 			} */
@@ -1771,8 +1775,6 @@ class ActionComm extends CommonObject
 			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
 			$tooltip = '';
 		}
-		//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color)
-		//	$linkclose = ' style="background-color:#'.$this->type_color.'"';
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowAction");
@@ -2003,6 +2005,7 @@ class ActionComm extends CommonObject
 		$logina = '';
 		$logind = '';
 		$logint = '';
+		$eventorganization = '';
 
 		$now = dol_now();
 
@@ -2019,113 +2022,169 @@ class ActionComm extends CommonObject
 			// Build event array
 			$eventarray = array();
 
-			$sql = "SELECT a.id,";
-			$sql .= " a.datep,"; // Start
-			$sql .= " a.datep2,"; // End
-			$sql .= " a.durationp,"; // deprecated
-			$sql .= " a.datec, a.tms as datem,";
-			$sql .= " a.label, a.code, a.note as note_private, a.fk_action as type_id,";
-			$sql .= " a.fk_soc,";
-			$sql .= " a.fk_user_author, a.fk_user_mod,";
-			$sql .= " a.fk_user_action,";
-			$sql .= " a.fk_contact, a.percent as percentage,";
-			$sql .= " a.fk_element, a.elementtype,";
-			$sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
-			$sql .= " u.firstname, u.lastname, u.email,";
-			$sql .= " s.nom as socname,";
-			$sql .= " c.id as type_id, c.code as type_code, c.libelle as type_label,";
-			$sql .= " num_vote, event_paid, a.status";
-			$sql .= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author"; // Link to get author of event for export
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
+			if ($filters['module'] == 'project@eventorganization') {
+				$sql = "SELECT p.rowid as id,";
+				$sql .= " p.date_start_event as datep,"; // Start
+				$sql .= " p.date_end_event as datep2,"; // End
+				$sql .= " p.datec, p.tms as datem,";
+				$sql .= " p.title as label, '' as code, p.note_private, p.note_public, 0 as type_id,";
+				$sql .= " p.fk_soc,";
+				$sql .= " p.fk_user_creat as fk_user_author, p.fk_user_modif as fk_user_mod,";
+				$sql .= " 0 as fk_user_action,";
+				$sql .= " 0 as fk_contact, 100 as percentage,";
+				$sql .= " 0 as fk_element, '' as elementtype,";
+				$sql .= " 1 as priority, 0 as fulldayevent, p.location, 0 as transparency,";
+				$sql .= " u.firstname, u.lastname, u.email,";
+				$sql .= " s.nom as socname,";
+				$sql .= " 0 as type_id, '' as type_code, '' as type_label";
+				$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = p.fk_user_creat"; // Link to get author of event for export
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = p.fk_soc";
 
-			$parameters = array('filters' => $filters);
-			$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
-			$sql .= $hookmanager->resPrint;
+				$parameters = array('filters' => $filters);
+				$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
+				$sql .= $hookmanager->resPrint;
 
-			// We must filter on assignement table
-			if ($filters['logint']) {
-				$sql .= ", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
+				$sql .= " WHERE p.entity IN (".getEntity('project').")";
+
+				foreach ($filters as $key => $value) {
+					if ($key == 'notolderthan' && $value != '') {
+						$sql .= " AND p.date_start_event >= '".$this->db->idate($now - ($value * 24 * 60 * 60))."'";
+					}
+					if ($key == 'year') {
+						$sql .= " AND p.date_start_event BETWEEN '".$this->db->idate(dol_get_first_day($value, 1))."' AND '".$this->db->idate(dol_get_last_day($value, 12))."'";
+					}
+					if ($key == 'id') {
+						$sql .= " AND p.id = ".(is_numeric($value) ? $value : 0);
+					}
+					if ($key == 'idfrom') {
+						$sql .= " AND p.id >= ".(is_numeric($value) ? $value : 0);
+					}
+					if ($key == 'idto') {
+						$sql .= " AND p.id <= ".(is_numeric($value) ? $value : 0);
+					}
+					if ($key == 'project') {
+						$sql .= " AND p.rowid = ".(is_numeric($value) ? $value : 0);
+					}
+					if ($key == 'status') {
+						$sql .= " AND p.fk_statut = ".((int) $value);
+					}
+				}
+
+				$eventorganization = 'project';
+			} else {
+				$sql = "SELECT a.id,";
+				$sql .= " a.datep,"; // Start
+				$sql .= " a.datep2,"; // End
+				$sql .= " a.datec, a.tms as datem,";
+				$sql .= " a.label, a.code, a.note as note_private, '' as note_public, a.fk_action as type_id,";
+				$sql .= " a.fk_soc,";
+				$sql .= " a.fk_user_author, a.fk_user_mod,";
+				$sql .= " a.fk_user_action,";
+				$sql .= " a.fk_contact, a.percent as percentage,";
+				$sql .= " a.fk_element, a.elementtype,";
+				$sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
+				$sql .= " u.firstname, u.lastname, u.email,";
+				$sql .= " s.nom as socname,";
+				$sql .= " c.id as type_id, c.code as type_code, c.libelle as type_label,";
+				$sql .= " num_vote, event_paid, a.status";
+				$sql .= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author"; // Link to get author of event for export
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
+
+				$parameters = array('filters' => $filters);
+				$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
+				$sql .= $hookmanager->resPrint;
+
+				// We must filter on assignment table
+				if ($filters['logint']) {
+					$sql .= ", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
+				}
+				$sql .= " WHERE a.fk_action = c.id";
+				$sql .= " AND a.entity IN (".getEntity('agenda').")";
+
+				foreach ($filters as $key => $value) {
+					if ($key == 'notolderthan' && $value != '') {
+						$sql .= " AND a.datep >= '".$this->db->idate($now - ($value * 24 * 60 * 60))."'";
+					}
+					if ($key == 'year') {
+						$sql .= " AND a.datep BETWEEN '".$this->db->idate(dol_get_first_day($value, 1))."' AND '".$this->db->idate(dol_get_last_day($value, 12))."'";
+					}
+					if ($key == 'id') {
+						$sql .= " AND a.id = ".(is_numeric($value) ? $value : 0);
+					}
+					if ($key == 'idfrom') {
+						$sql .= " AND a.id >= ".(is_numeric($value) ? $value : 0);
+					}
+					if ($key == 'idto') {
+						$sql .= " AND a.id <= ".(is_numeric($value) ? $value : 0);
+					}
+					if ($key == 'project') {
+						$sql .= " AND a.fk_project = ".(is_numeric($value) ? $value : 0);
+					}
+					if ($key == 'actiontype') {
+						$sql .= " AND c.type = '".$this->db->escape($value)."'";
+					}
+					if ($key == 'notactiontype') {
+						$sql .= " AND c.type <> '".$this->db->escape($value)."'";
+					}
+					// We must filter on assignment table
+					if ($key == 'logint') {
+						$sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
+					}
+					if ($key == 'logina') {
+						$logina = $value;
+						$condition = '=';
+						if (preg_match('/^!/', $logina)) {
+							$logina = preg_replace('/^!/', '', $logina);
+							$condition = '<>';
+						}
+						$userforfilter = new User($this->db);
+						$result = $userforfilter->fetch('', $logina);
+						if ($result > 0) {
+							$sql .= " AND a.fk_user_author ".$condition." ".$userforfilter->id;
+						} elseif ($result < 0 || $condition == '=') {
+							$sql .= " AND a.fk_user_author = 0";
+						}
+					}
+					if ($key == 'logint') {
+						$logint = $value;
+						$condition = '=';
+						if (preg_match('/^!/', $logint)) {
+							$logint = preg_replace('/^!/', '', $logint);
+							$condition = '<>';
+						}
+						$userforfilter = new User($this->db);
+						$result = $userforfilter->fetch('', $logint);
+						if ($result > 0) {
+							$sql .= " AND ar.fk_element = ".((int) $userforfilter->id);
+						} elseif ($result < 0 || $condition == '=') {
+							$sql .= " AND ar.fk_element = 0";
+						}
+					}
+					if ($key == 'module') {
+						if ($value == 'conforbooth@eventorganization') {
+							$value = '@eventorganization';
+						}
+						$sql .= " AND c.module LIKE '%".$this->db->escape($value)."'";
+					}
+					if ($key == 'status') {
+						$sql .= " AND a.status = ".((int) $value);
+					}
+				}
+
+				$sql .= " AND a.datep IS NOT NULL"; // To exclude corrupted events and avoid errors in lightning/sunbird import
+
+				$parameters = array('filters' => $filters);
+				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+				$sql .= $hookmanager->resPrint;
+
+				$sql .= " ORDER by datep";
 			}
-			$sql .= " WHERE a.fk_action=c.id";
-			$sql .= " AND a.entity IN (".getEntity('agenda').")";
-			foreach ($filters as $key => $value) {
-				if ($key == 'notolderthan' && $value != '') {
-					$sql .= " AND a.datep >= '".$this->db->idate($now - ($value * 24 * 60 * 60))."'";
-				}
-				if ($key == 'year') {
-					$sql .= " AND a.datep BETWEEN '".$this->db->idate(dol_get_first_day($value, 1))."' AND '".$this->db->idate(dol_get_last_day($value, 12))."'";
-				}
-				if ($key == 'id') {
-					$sql .= " AND a.id=".(is_numeric($value) ? $value : 0);
-				}
-				if ($key == 'idfrom') {
-					$sql .= " AND a.id >= ".(is_numeric($value) ? $value : 0);
-				}
-				if ($key == 'idto') {
-					$sql .= " AND a.id <= ".(is_numeric($value) ? $value : 0);
-				}
-				if ($key == 'project') {
-					$sql .= " AND a.fk_project=".(is_numeric($value) ? $value : 0);
-				}
-				if ($key == 'actiontype') {
-					$sql .= " AND c.type = '".$this->db->escape($value)."'";
-				}
-				if ($key == 'notactiontype') {
-					$sql .= " AND c.type <> '".$this->db->escape($value)."'";
-				}
-				// We must filter on assignement table
-				if ($key == 'logint') {
-					$sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
-				}
-				if ($key == 'logina') {
-					$logina = $value;
-					$condition = '=';
-					if (preg_match('/^!/', $logina)) {
-						$logina = preg_replace('/^!/', '', $logina);
-						$condition = '<>';
-					}
-					$userforfilter = new User($this->db);
-					$result = $userforfilter->fetch('', $logina);
-					if ($result > 0) {
-						$sql .= " AND a.fk_user_author ".$condition." ".$userforfilter->id;
-					} elseif ($result < 0 || $condition == '=') {
-						$sql .= " AND a.fk_user_author = 0";
-					}
-				}
-				if ($key == 'logint') {
-					$logint = $value;
-					$condition = '=';
-					if (preg_match('/^!/', $logint)) {
-						$logint = preg_replace('/^!/', '', $logint);
-						$condition = '<>';
-					}
-					$userforfilter = new User($this->db);
-					$result = $userforfilter->fetch('', $logint);
-					if ($result > 0) {
-						$sql .= " AND ar.fk_element = ".((int) $userforfilter->id);
-					} elseif ($result < 0 || $condition == '=') {
-						$sql .= " AND ar.fk_element = 0";
-					}
-				}
-				if ($key == 'module') {
-					$sql .= " AND c.module LIKE '%".$this->db->escape($value)."'";
-				}
-				if ($key == 'status') {
-					$sql .= " AND a.status =".((int) $value);
-				}
-			}
-
-			$sql .= " AND a.datep IS NOT NULL"; // To exclude corrupted events and avoid errors in lightning/sunbird import
-
-			$parameters = array('filters' => $filters);
-			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
-			$sql .= $hookmanager->resPrint;
-
-			$sql .= " ORDER by datep";
 			//print $sql;exit;
 
-			dol_syslog(get_class($this)."::build_exportfile select events", LOG_DEBUG);
+			dol_syslog(get_class($this)."::build_exportfile select event(s)", LOG_DEBUG);
+
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$diff = 0;
@@ -2161,12 +2220,16 @@ class ActionComm extends CommonObject
 					$event['transparency'] = (($obj->transparency > 0) ? 'OPAQUE' : 'TRANSPARENT'); // OPAQUE (busy) or TRANSPARENT (not busy)
 					$event['category'] = $obj->type_label;
 					$event['email'] = $obj->email;
-					// Define $urlwithroot
-					$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-					$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-					//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
-					$url = $urlwithroot.'/comm/action/card.php?id='.$obj->id;
-					$event['url'] = $url;
+
+					if ($eventorganization != '') {
+						// Define $urlwithroot
+						$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+						$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+						//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
+						$url = $urlwithroot.'/comm/action/card.php?id='.$obj->id;
+						$event['url'] = $url;
+					}
+
 					$event['created'] = $this->db->jdate($obj->datec) - (!getDolGlobalString('AGENDA_EXPORT_FIX_TZ') ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
 					$event['modified'] = $this->db->jdate($obj->datem) - (!getDolGlobalString('AGENDA_EXPORT_FIX_TZ') ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
 					$event['num_vote'] = $this->num_vote;
@@ -2280,6 +2343,7 @@ class ActionComm extends CommonObject
 			$langs->load("agenda");
 
 			// Define title and desc
+			$title = '';
 			$more = '';
 			if ($login) {
 				$more = $langs->transnoentities("User").' '.$login;
@@ -2293,12 +2357,21 @@ class ActionComm extends CommonObject
 			if ($logind) {
 				$more = $langs->transnoentities("ActionsDoneBy").' '.$logind;
 			}
+			if ($eventorganization) {
+				$langs->load("eventorganization");
+				$title = $langs->transnoentities("OrganizedEvent").(empty($eventarray[0]['label']) ? '' : ' '.$eventarray[0]['label']);
+				$more = 'ICS file - '.$langs->transnoentities("OrganizedEvent").(empty($eventarray[0]['label']) ? '' : ' '.$eventarray[0]['label']);
+			}
 			if ($more) {
-				$title = 'Dolibarr actions '.$mysoc->name.' - '.$more;
+				if (empty($title)) {
+					$title = 'Dolibarr actions '.$mysoc->name.' - '.$more;
+				}
 				$desc = $more;
 				$desc .= ' ('.$mysoc->name.' - built by Dolibarr)';
 			} else {
-				$title = 'Dolibarr actions '.$mysoc->name;
+				if (empty($title)) {
+					$title = 'Dolibarr actions '.$mysoc->name;
+				}
 				$desc = $langs->transnoentities('ListOfActions');
 				$desc .= ' ('.$mysoc->name.' - built by Dolibarr)';
 			}
@@ -2349,7 +2422,7 @@ class ActionComm extends CommonObject
 
 		$now = dol_now();
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->specimen = 1;
 
@@ -2443,23 +2516,23 @@ class ActionComm extends CommonObject
 		$this->reminders = array();
 
 		//Select all action comm reminders for event
-		$sql = "SELECT rowid as id, typeremind, dateremind, status, offsetvalue, offsetunit, fk_user";
+		$sql = "SELECT rowid as id, typeremind, dateremind, status, offsetvalue, offsetunit, fk_user, fk_email_template, lasterror";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
 		$sql .= " WHERE fk_actioncomm = ".((int) $this->id);
 		if ($onlypast) {
 			$sql .= " AND dateremind <= '".$this->db->idate(dol_now())."'";
 		}
 		if ($type) {
-			$sql .= " AND typeremind ='".$this->db->escape($type)."'";
+			$sql .= " AND typeremind = '".$this->db->escape($type)."'";
 		}
 		if ($fk_user > 0) {
 			$sql .= " AND fk_user = ".((int) $fk_user);
 		}
 		if (!getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
-			$sql .= " AND typeremind != 'email'";
+			$sql .= " AND typeremind <> 'email'";
 		}
 		if (!getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
-			$sql .= " AND typeremind != 'browser'";
+			$sql .= " AND typeremind <> 'browser'";
 		}
 
 		$sql .= $this->db->order("dateremind", "ASC");
@@ -2475,6 +2548,8 @@ class ActionComm extends CommonObject
 				$tmpactioncommreminder->offsetunit = $obj->offsetunit;
 				$tmpactioncommreminder->status = $obj->status;
 				$tmpactioncommreminder->fk_user = $obj->fk_user;
+				$tmpactioncommreminder->fk_email_template = $obj->fk_email_template;
+				$tmpactioncommreminder->lasterror = $obj->lasterror;
 
 				$this->reminders[$obj->id] = $tmpactioncommreminder;
 			}
@@ -2523,7 +2598,8 @@ class ActionComm extends CommonObject
 
 		//Select all action comm reminders
 		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
-		$sql .= " WHERE typeremind = 'email' AND status = 0";
+		$sql .= " WHERE typeremind = 'email'";
+		$sql .= " AND status = 0";	// 0=No yet sent, -1=Error. TODO Include reminder in error once we can count number of error, so we can try 5 times and not more on errors.
 		$sql .= " AND dateremind <= '".$this->db->idate($now)."'";
 		$sql .= " AND entity IN (".getEntity('actioncomm').")";
 		$sql .= $this->db->order("dateremind", "ASC");
@@ -2594,7 +2670,7 @@ class ActionComm extends CommonObject
 							if ($cMailFile->sendfile()) {
 								$nbMailSend++;
 							} else {
-								$errormesg = $cMailFile->error.' : '.$to;
+								$errormesg = 'Failed to send email to: '.$to.' '.$cMailFile->error.implode(',', $cMailFile->errors);
 								$error++;
 							}
 						}
@@ -2653,7 +2729,7 @@ class ActionComm extends CommonObject
 			return 0;
 		} else {
 			$this->db->commit(); // We commit also on error, to have the error message recorded.
-			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
+			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? implode(', ', $errorsMsg) : $error;
 
 			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
 
@@ -2662,7 +2738,7 @@ class ActionComm extends CommonObject
 	}
 
 	/**
-	 * Udpate the percent value of a event with the given id
+	 * Update the percent value of a event with the given id
 	 *
 	 * @param int		$id			The id of the event
 	 * @param int		$percent	The new percent value for the event

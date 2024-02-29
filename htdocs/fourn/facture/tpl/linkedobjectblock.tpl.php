@@ -56,7 +56,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 				$sign = -1;
 			}
 			if ($objectlink->statut != 3) {
-				// If not abandonned
+				// If not abandoned
 				$total = $total + $sign * $objectlink->total_ht;
 				echo price($objectlink->total_ht);
 			} else {

@@ -215,11 +215,11 @@ if (empty($reshook) && $action == 'add') {
 
 		$societe->name = GETPOST('name', 'alphanohtml');
 
-		$societe->client = GETPOST('client', 'int') ? GETPOST('client', 'int') : $societe->client;
+		$societe->client = GETPOSTINT('client') ? GETPOSTINT('client') : $societe->client;
 
 		$societe->address	= GETPOST('address', 'alphanohtml');
 
-		$societe->country_id				= GETPOST('country_id', 'int');
+		$societe->country_id				= GETPOSTINT('country_id');
 
 		$societe->phone					= GETPOST('phone', 'alpha');
 
@@ -229,7 +229,7 @@ if (empty($reshook) && $action == 'add') {
 
 		$societe->client = 2 ; // our client is a prospect
 
-		$societe->code_client		= -1;
+		$societe->code_client		= '-1';
 
 		$societe->name_alias = GETPOST('name_alias', 'alphanohtml');
 
@@ -243,14 +243,14 @@ if (empty($reshook) && $action == 'add') {
 				if (!empty($backtopage)) {
 					$urlback = $backtopage;
 				} elseif (getDolGlobalString('MEMBER_URL_REDIRECT_SUBSCRIPTION')) {
-					$urlback = $conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
+					$urlback = getDolGlobalString('MEMBER_URL_REDIRECT_SUBSCRIPTION');
 					// TODO Make replacement of __AMOUNT__, etc...
 				} else {
 					$urlback = $_SERVER["PHP_SELF"] . "?action=added&token=" . newToken();
 				}
 			} else {
 				$error++;
-				$errmsg .= join('<br>', $societe->errors);
+				$errmsg .= implode('<br>', $societe->errors);
 			}
 		}
 	}
@@ -258,7 +258,7 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		$db->commit();
 
-		Header("Location: " . $urlback);
+		header("Location: " . $urlback);
 		exit;
 	} else {
 		$db->rollback();
@@ -307,7 +307,7 @@ print '<div id="divsubscribe">';
 
 print '<div class="center subscriptionformhelptext opacitymedium justify">';
 if (getDolGlobalString('COMPANY_NEWFORM_TEXT')) {
-	print $langs->trans($conf->global->COMPANY_NEWFORM_TEXT) . "<br>\n";
+	print $langs->trans(getDolGlobalString('COMPANY_NEWFORM_TEXT')) . "<br>\n";
 } else {
 	print $langs->trans("ContactUsDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL")) . "<br>\n";
 }

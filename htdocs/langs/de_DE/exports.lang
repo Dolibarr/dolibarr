@@ -62,7 +62,6 @@ ChooseFileToImport=Datei hochladen und dann auf das Symbol %s klicken, um die Da
 SourceFileFormat=Quelldateiformat
 FieldsInSourceFile=Felder in der Quelldatei
 FieldsInTargetDatabase=Zielfelder in der Systemdatenbank (fett=erforderlich)
-Field=Feld
 NoFields=Keine Felder
 MoveField=Bewege Feld Spaltennummer %s
 ExampleOfImportFile=Beispiel_Import_Datei
@@ -145,3 +144,4 @@ SelectImportFieldsSource = Ordnen Sie die Felder aus der zu importierenden Datei
 MandatoryTargetFieldsNotMapped=Einige Pflicht-Zielfelder sind nicht zugeordnet
 AllTargetMandatoryFieldsAreMapped=Alle Pflicht-Zielfelder sind zugeordnet
 ResultOfSimulationNoError=Simulationsergebnis: Kein Fehler
+NumberOfLinesLimited=Zeilenanzahl begrenzt

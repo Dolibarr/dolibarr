@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2017  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2017  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -43,9 +43,9 @@ $cancel = GETPOST('cancel', 'aZ09');
 
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
-$id = GETPOST('id', 'int'); // id of record
+$id = GETPOSTINT('id'); // id of record
 $mode = GETPOST('mode', 'aZ09'); // '' or '_tmp'
-$piece_num = GETPOST("piece_num", 'int'); // id of transaction (several lines share the same transaction id)
+$piece_num = GETPOSTINT("piece_num"); // id of transaction (several lines share the same transaction id)
 
 $accountingaccount = new AccountingAccount($db);
 $accountingjournal = new AccountingJournal($db);
@@ -65,8 +65,8 @@ if ($subledger_account == -1) {
 $subledger_label = GETPOST('subledger_label', 'alphanohtml');
 
 $label_operation = GETPOST('label_operation', 'alphanohtml');
-$debit = price2num(GETPOST('debit', 'alpha'));
-$credit = price2num(GETPOST('credit', 'alpha'));
+$debit = (float) price2num(GETPOST('debit', 'alpha'));
+$credit = (float) price2num(GETPOST('credit', 'alpha'));
 
 $save = GETPOST('save', 'alpha');
 if (!empty($save)) {
@@ -103,7 +103,7 @@ if ($cancel) {
 if ($action == "confirm_update") {
 	$error = 0;
 
-	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0)) {
+	if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
 		$error++;
 		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
 		$action = 'update';
@@ -130,12 +130,12 @@ if ($action == "confirm_update") {
 			$object->debit = $debit;
 			$object->credit = $credit;
 
-			if (floatval($debit) != 0.0) {
+			if ((float) $debit != 0.0) {
 				$object->montant = $debit; // deprecated
 				$object->amount = $debit;
 				$object->sens = 'D';
 			}
-			if (floatval($credit) != 0.0) {
+			if ((float) $credit != 0.0) {
 				$object->montant = $credit; // deprecated
 				$object->amount = $credit;
 				$object->sens = 'C';
@@ -159,7 +159,7 @@ if ($action == "confirm_update") {
 } elseif ($action == "add") {
 	$error = 0;
 
-	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0)) {
+	if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
 		$error++;
 		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
 		$action = '';
@@ -189,13 +189,13 @@ if ($action == "confirm_update") {
 		$object->fk_doc = GETPOSTINT('fk_doc');
 		$object->fk_docdet = GETPOSTINT('fk_docdet');
 
-		if (floatval($debit) != 0.0) {
+		if ((float) $debit != 0.0) {
 			$object->montant = $debit; // deprecated
 			$object->amount = $debit;
 			$object->sens = 'D';
 		}
 
-		if (floatval($credit) != 0.0) {
+		if ((float) $credit != 0.0) {
 			$object->montant = $credit; // deprecated
 			$object->amount = $credit;
 			$object->sens = 'C';
@@ -250,9 +250,9 @@ if ($action == "confirm_update") {
 		$object->label_compte = '';
 		$object->debit = 0;
 		$object->credit = 0;
-		$object->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
+		$object->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
 		$object->doc_type = GETPOST('doc_type', 'alpha');
-		$object->piece_num = GETPOST('next_num_mvt', 'alpha');
+		$object->piece_num = GETPOSTINT('next_num_mvt');
 		$object->doc_ref = GETPOST('doc_ref', 'alpha');
 		$object->code_journal = $journal_code;
 		$object->journal_label = $journal_label;
@@ -276,7 +276,7 @@ if ($action == "confirm_update") {
 }
 
 if ($action == 'setdate') {
-	$datedoc = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
+	$datedoc = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
 	$result = $object->updateByMvt($piece_num, 'doc_date', $db->idate($datedoc), $mode);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -330,16 +330,16 @@ if ($action == 'valid') {
  * View
  */
 
-$html = new Form($db);
+$form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
 $title = $langs->trans("CreateMvts");
-
-llxHeader('', $title);
+$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double';
+llxHeader('', $title, $help_url);
 
 // Confirmation to delete the command
 if ($action == 'delete') {
-	$formconfirm = $html->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&mode='.$mode, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt', $langs->transnoentitiesnoconv("RegistrationInAccounting")), 'confirm_delete', '', 0, 1);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&mode='.$mode, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt', $langs->transnoentitiesnoconv("RegistrationInAccounting")), 'confirm_delete', '', 0, 1);
 	print $formconfirm;
 }
 
@@ -350,7 +350,7 @@ if ($action == 'create') {
 	$next_num_mvt = $object->getNextNumMvt('_tmp');
 
 	if (empty($next_num_mvt)) {
-		dol_print_error('', 'Failed to get next piece number');
+		dol_print_error(null, 'Failed to get next piece number');
 	}
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" name="create_mvt" method="POST">';
@@ -374,7 +374,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Docdate").'</td>';
 	print '<td>';
-	print $html->selectDate('', 'doc_date', '', '', '', "create_mvt", 1, 1);
+	print $form->selectDate('', 'doc_date', '', '', '', "create_mvt", 1, 1);
 	print '</td>';
 	print '</tr>';
 
@@ -663,7 +663,7 @@ if ($action == 'create') {
 				if (!empty($object->linesmvt[0])) {
 					$tmpline = $object->linesmvt[0];
 					if (!empty($tmpline->numero_compte)) {
-						$line = new BookKeepingLine();
+						$line = new BookKeepingLine($db);
 						$object->linesmvt[] = $line;
 					}
 				}
