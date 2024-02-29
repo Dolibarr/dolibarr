@@ -1453,7 +1453,9 @@ if ($action == 'create' || $action == 'presend') {
 				}
 
 				// Show link to add a message (if read and not closed)
-				if (isset($object->status) && $object->status < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage") {
+				/**DEBUT SPECIFIQUE ATM **/
+				if (isset($object->status) && $object->status <= Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage") {
+				/**FIN SPECIFIQUE ATM **/
 					print dolGetButtonAction('', $langs->trans('TicketAddPrivateMessage'), 'default', $_SERVER["PHP_SELF"].'?action=presend_addmessage&mode=init&token='.newToken().'&track_id='.$object->track_id.'#formmailbeforetitle', '');
 				}
 

@@ -2081,6 +2081,15 @@ class Form
 		if (getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX') || $notdisabled) {
 			$sql .= " AND u.statut <> 0";
 		}
+		/**DEBUT SPECIFIQUE ATM **/
+		if (!empty(getDolGlobalString('USER_HIDE_NONEMPLOYEE_IN_COMBOBOX')) || $notdisabled) {
+			$sql .= " AND u.employee <> 0";
+		}
+		if (!empty(getDolGlobalString('USER_HIDE_EXTERNAL_IN_COMBOBOX')) || $notdisabled) {
+			$sql .= " AND u.fk_soc IS NULL";
+		}
+		/**FIN SPECIFIQUE ATM **/
+
 		if (!empty($morefilter)) {
 			$sql .= " " . $morefilter;
 		}
