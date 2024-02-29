@@ -8850,7 +8850,7 @@ abstract class CommonObject
 
 
 	/**
-	 * Function to prepare a part of the query for insert.
+	 * Function to return the array of data key-value from the ->fields and all the ->properties of an object.
 	 * Note $this->${field} are set by the page that make the createCommon or the updateCommon.
 	 * $this->${field} should be a clean value. The page can run
 	 *
