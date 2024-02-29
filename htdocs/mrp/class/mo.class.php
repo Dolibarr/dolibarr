@@ -1631,8 +1631,8 @@ class Mo extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (getDolGlobalString('MO_ADDON_PDF')) {
-				$modele = $conf->global->MO_ADDON_PDF;
+			} elseif (getDolGlobalString('MRP_MO_ADDON_PDF')) {
+				$modele = getDolGlobalString('MRP_MO_ADDON_PDF');
 			}
 		}
 
