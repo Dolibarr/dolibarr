@@ -343,7 +343,7 @@ return [
 		'PhanPluginConstantVariableScalar',	// Not essential - 5180+ occurrences
 		'PhanPluginDuplicateConditionalTernaryDuplication',		// 2750+ occurrences
 		'PhanPluginDuplicateConditionalNullCoalescing',	// Not essential - 990+ occurrences
-
+		'PhanPluginRedundantAssignmentInGlobalScope',	// Not essential, a lot of false warning
 	],
 	// You can put relative paths to internal stubs in this config option.
 	// Phan will continue using its detailed type annotations,

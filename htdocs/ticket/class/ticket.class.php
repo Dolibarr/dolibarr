@@ -1469,8 +1469,8 @@ class Ticket extends CommonObject
 		// phpcs:enable
 		global $langs, $hookmanager;
 
-		$labelStatus = !empty($status) ? $this->labelStatus[$status] : '';
-		$labelStatusShort = !empty($status) ? $this->labelStatusShort[$status] : '';
+		$labelStatus = (isset($status) && !empty($this->labelStatus[$status])) ? $this->labelStatus[$status] : '';
+		$labelStatusShort = (isset($status) && !empty($this->labelStatusShort[$status]))? $this->labelStatusShort[$status] : '';
 
 		switch ($status) {
 			case self::STATUS_NOT_READ:						// Not read
@@ -2270,7 +2270,7 @@ class Ticket extends CommonObject
 	 *    @param    int     $list           0:Return array contains all properties, 1:Return array contains just id
 	 *    @param    string  $code           Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @param    int     $status         Status of user or company
-	 *    @return   array|int               Array of contacts
+	 *    @return   array|int               Array of array('email'=>..., 'lastname'=>...)
 	 */
 	public function listeContact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1)
 	{
@@ -2344,7 +2344,7 @@ class Ticket extends CommonObject
 
 				if (!$list) {
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
-					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_contact_label);
+					$labelType = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_contact_label);
 					$tab[$i] = array(
 							'source' => $obj->source,
 							'socid' => $obj->socid,
@@ -2356,7 +2356,8 @@ class Ticket extends CommonObject
 							'email' => $obj->email,
 							'rowid' => $obj->rowid,
 							'code' => $obj->code,
-							'libelle' => $libelle_type,
+							'libelle' => $labelType,		// deprecated, replaced with labeltype
+							'labeltype' => $labelType,
 							'status' => $obj->statuslink,
 							'statuscontact'=>$obj->statuscontact,
 							'fk_c_type_contact' => $obj->fk_c_type_contact,

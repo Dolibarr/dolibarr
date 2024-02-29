@@ -302,7 +302,7 @@ class FormAccounting extends Form
 				$out .= '</select>';
 				//if ($user->admin && $help) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 			} else {
-				$out = $langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code, $langs->trans("Accounting"), $langs->trans("Setup"), $langs->trans("AccountingCategories"));
+				$out = $langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code, $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("AccountingCategories"));
 			}
 		} else {
 			dol_print_error($this->db);

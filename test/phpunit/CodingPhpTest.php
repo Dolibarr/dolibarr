@@ -704,7 +704,7 @@ class CodingPhpTest extends CommonClassTest
 		} else {
 			$this->assertTrue(
 				array_key_exists($module_name, self::VALID_MODULE_MAPPING)
-				|| array_key_exists($module_name, self::DEPRECATED_MODULE_MAPPIG),
+				|| array_key_exists($module_name, self::DEPRECATED_MODULE_MAPPING),
 				"Unknown module: $message"
 			);
 		}

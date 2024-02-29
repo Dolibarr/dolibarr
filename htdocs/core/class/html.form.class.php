@@ -6882,6 +6882,10 @@ class Form
 		if (!empty($conf->use_javascript_ajax) && (!getDolGlobalString('MAIN_POPUP_CALENDAR') || getDolGlobalString('MAIN_POPUP_CALENDAR') != "none")) {
 			$usecalendar = ((!getDolGlobalString('MAIN_POPUP_CALENDAR') || getDolGlobalString('MAIN_POPUP_CALENDAR') == 'eldy') ? 'jquery' : $conf->global->MAIN_POPUP_CALENDAR);
 		}
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+			// If we use a text browser or screen reader, we use the 'combo' date selector
+			$usecalendar = 'html';
+		}
 
 		if ($d) {
 			// Show date with popup
@@ -6916,8 +6920,8 @@ class Form
 					$retstring .= '<input type="hidden" id="' . $prefix . 'day"   name="' . $prefix . 'day"   value="' . $sday . '">' . "\n";
 					$retstring .= '<input type="hidden" id="' . $prefix . 'month" name="' . $prefix . 'month" value="' . $smonth . '">' . "\n";
 					$retstring .= '<input type="hidden" id="' . $prefix . 'year"  name="' . $prefix . 'year"  value="' . $syear . '">' . "\n";
-				} elseif ($usecalendar == 'jquery') {
-					if (!$disabled) {
+				} elseif ($usecalendar == 'jquery' || $usecalendar == 'html') {
+					if (!$disabled && $usecalendar != 'html') {
 						// Output javascript for datepicker
 						$minYear = getDolGlobalInt('MIN_YEAR_SELECT_DATE', (date('Y') - 100));
 						$maxYear = getDolGlobalInt('MAX_YEAR_SELECT_DATE', (date('Y') + 100));
@@ -6959,19 +6963,9 @@ class Form
 					$retstring .= '>';
 
 					// Icone calendrier
-					if (!$disabled) {
-						/* Not required. Managed by option buttonImage of jquery
-						$retstring.=img_object($langs->trans("SelectDate"),'calendarday','id="'.$prefix.'id" class="datecallink"');
-						$retstring.='<script nonce="'.getNonce().'" type="text/javascript">';
-						$retstring.="jQuery(document).ready(function() {";
-						$retstring.='	jQuery("#'.$prefix.'id").click(function() {';
-						$retstring.="    	jQuery('#".$prefix."').focus();";
-						$retstring.='    });';
-						$retstring.='});';
-						$retstring.="</script>";*/
-					} else {
+					if ($disabled) {
 						$retstringbutton = '<button id="' . $prefix . 'Button" type="button" class="dpInvisibleButtons">' . img_object($langs->trans("Disabled"), 'calendarday', 'class="datecallink"') . '</button>';
-						$retsring = $retstringbutton . $retstring;
+						$retstring = $retstringbutton . $retstring;
 					}
 
 					$retstring .= '</div>';
@@ -8930,18 +8924,18 @@ class Form
 
 
 	/**
-	 *    Show a multiselect dropbox from an array. If a saved selection of fields exists for user (into $user->conf->MAIN_SELECTEDFIELDS_contextofpage), we use this one instead of default.
+	 * Show a multiselect dropbox from an array. If a saved selection of fields exists for user (into $user->conf->MAIN_SELECTEDFIELDS_contextofpage), we use this one instead of default.
 	 *
-	 * @param string $htmlname Name of HTML field
-	 * @param array $array Array with array of fields we could show. This array may be modified according to setup of user.
-	 * @param string $varpage Id of context for page. Can be set by caller with $varpage=(empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage);
-	 * @param string $pos Position colon on liste value 'left' or '' (meaning 'right').
-	 * @return    string                    HTML multiselect string
+	 * @param string 	$htmlname 	Name of HTML field
+	 * @param array 	$array 		Array with array of fields we could show. This array may be modified according to setup of user.
+	 * @param string 	$varpage 	Id of context for page. Can be set by caller with $varpage=(empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage);
+	 * @param string 	$pos 		Position colon on liste value 'left' or '' (meaning 'right').
+	 * @return string            	HTML multiselect string
 	 * @see selectarray()
 	 */
 	public static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage, $pos = '')
 	{
-		global $conf, $langs, $user, $extrafields;
+		global $langs, $user;
 
 		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return '';

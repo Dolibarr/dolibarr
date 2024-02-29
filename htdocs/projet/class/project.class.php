@@ -494,7 +494,7 @@ class Project extends CommonObject
 		$sql .= ", ".($this->email_msgid ? "'".$this->db->escape($this->email_msgid)."'" : 'null');
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : 'null');
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null');
-		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".setEntity($this);
 		$sql .= ", ".(!isset($this->ip) ? 'NULL' : "'".$this->db->escape($this->ip)."'");
 		$sql .= ")";
 
