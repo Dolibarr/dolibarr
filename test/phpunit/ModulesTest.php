@@ -58,24 +58,27 @@ class ModulesTest extends CommonClassTest // TestCase //CommonClassTest
 	public function moduleInitListProvider()
 	{
 		$full_list = self::VALID_MODULE_MAPPING;
-		$filtered_list = array_map(function ($value) {
-			return array($value);
-		}, array_filter($full_list, function ($value) {
+		$mappedModules = array_filter($full_list, function ($value) {
 			return $value !== null;
-		}));
-		return $filtered_list;
+		});
+		$test_data = [];
+		foreach ($mappedModules as $name => $modlabel) {
+			$test_data[$name] = [$name, $modlabel];
+		}
+		return $test_data;
 	}
 
 	/**
 	 * testModulesInit
 	 *
-	 * @param string	$modlabel	Module label (class is mod<modlabel>)
+	 * @param string	$module_name	Expected name for the module
+	 * @param string	$modlabel		Module label (class is mod<modlabel>)
 	 *
 	 * @return int
 	 *
 	 * @dataProvider moduleInitListProvider
 	 */
-	public function testModulesInit(string $modlabel)
+	public function testModulesInit(string $module_name, string $modlabel)
 	{
 		global $conf,$user,$langs,$db;
 
@@ -93,6 +96,7 @@ class ModulesTest extends CommonClassTest // TestCase //CommonClassTest
 		$result = $mod->remove();
 		$result = $mod->init();
 
+		$this->assertEquals($module_name, strtolower($mod->name), "The module name does not match the expected module name");
 		$this->assertLessThan($result, 0, $modlabel." ".$mod->error);
 		print __METHOD__." test remove/init for module ".$modlabel.", result=".$result."\n";
 
