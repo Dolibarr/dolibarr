@@ -2654,7 +2654,7 @@ if ($action == 'create') {
 				}
 
 				// Create a remote order using WebService only if module is activated
-				if (!empty($conf->syncsupplierwebservices->enabled) && $object->statut >= 2) { // 2 means accepted
+				if (isModEnabled('webservicesclient') && $object->statut >= 2) { // 2 means accepted
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=webservice&token='.newToken().'&mode=init">'.$langs->trans('CreateRemoteOrder').'</a>';
 				}
 
