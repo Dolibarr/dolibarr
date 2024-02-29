@@ -6876,7 +6876,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
  */
 function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournprice = 0)
 {
-	global $db, $conf, $mysoc;
+	global $db, $mysoc;
 
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
@@ -6888,8 +6888,10 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 		$product = new Product($db);
 		$product->fetch($idprod);
 
-		if ($mysoc->country_code == $thirdpartytouse->country_code) {
-			// If country to consider is ours
+		if (($mysoc->country_code == $thirdpartytouse->country_code)
+			|| (in_array($mysoc->country_code, array('FR', 'MC')) && in_array($thirdpartytouse->country_code, array('FR', 'MC')))
+			|| (in_array($mysoc->country_code, array('MQ', 'GP')) && in_array($thirdpartytouse->country_code, array('MQ', 'GP'))) {
+			// If country of thirdparty to consider is ours
 			if ($idprodfournprice > 0) {     // We want vat for product for a "supplier" object
 				$result = $product->get_buyprice($idprodfournprice, 0, 0, 0);
 				if ($result > 0) {
