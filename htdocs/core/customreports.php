@@ -1135,9 +1135,10 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 
 	llxFooter();
 	// End of page
+
+	$db->close();
 }
 
-$db->close();
 
 
 
