@@ -258,13 +258,11 @@ if (empty($reshook)) {
 		// Process line to consume
 		foreach ($object->lines as $line) {
 			if ($line->role == 'toconsume') {
-
 				$i = 1;
 				while (GETPOSTISSET('qty-'.$line->id.'-'.$i)) {
 					$qtytoprocess = price2num(GETPOST('qty-'.$line->id.'-'.$i));
 
 					if ($qtytoprocess != 0) {
-
 						$idwarehouse = GETPOSTISSET('idwarehouse-' . $line->id . '-' . $i) ? GETPOST('idwarehouse-' . $line->id . '-' . $i) : null;
 						$batch = GETPOST('batch-' . $line->id . '-' . $i);
 						$id_product_batch = 0;
@@ -281,14 +279,12 @@ if (empty($reshook)) {
 
 		foreach ($object->lines as $line) {
 			if ($line->role == 'toproduce') {
-
 				$i = 1;
 				while (GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) {
 					$qtytoprocess = price2num(GETPOST('qtytoproduce-'.$line->id.'-'.$i));
 					$pricetoprocess = GETPOST('pricetoproduce-'.$line->id.'-'.$i) ? price2num(GETPOST('pricetoproduce-'.$line->id.'-'.$i)) : 0;
 
 					if ($qtytoprocess != 0) {
-
 						$idwarehouse = GETPOSTISSET('idwarehousetoproduce-' . $line->id . '-' . $i) ? GETPOST('idwarehousetoproduce-' . $line->id . '-' . $i) : null;
 						$pricetoprocess = GETPOST('pricetoproduce-' . $line->id . '-' . $i) ? price2num(GETPOST('pricetoproduce-' . $line->id . '-' . $i)) : 0;
 						$batch = GETPOST('batch-' . $line->id . '-' . $i);

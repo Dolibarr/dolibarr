@@ -694,7 +694,7 @@ class Mo extends CommonObject
 	/**
 	 *  Function to check if all MoLines consumed or produced
 	 *
-	 *  @return	int						Return integer <0 if KO, 0 if not MoLines are complete, 1 if MoLines are complete
+	 *  @return		int		Return integer <0 if KO, 0 if not MoLines are complete, 1 if MoLines are complete
 	 */
 	public function hasAllConsumedAndProduced()
 	{
@@ -2209,7 +2209,24 @@ class MoLine extends CommonObjectLine
 		return $this->createCommon($user, $notrigger);
 	}
 
-	public function consumeOrProduce(User $user, bool $autocloseMo, float $qty, int $idwarehouse, string $labelmovement = null, string $codemovement = null, float $pricetoprocess = 0, string $batch = null, int $idproductbatch = 0, Translate $outputlangs = null) {
+
+	/**
+	 * Create consume or produce line
+	 *
+	 * @param 	User 			$user				User that creates
+	 * @param 	bool 			$autocloseMo		Set the Mo as produced if all lines are complete consumed or produced
+	 * @param 	float 			$qty				Quantity to consume or produce
+	 * @param 	int 			$idwarehouse		Warehouse to consume or produce
+	 * @param 	string|null 	$labelmovement		Label for the stock movement
+ 	 * @param 	string|null 	$codemovement		Inventory code for the stock movement
+	 * @param 	float 			$pricetoprocess		Price per product to bring in stock
+	 * @param 	string|null 	$batch				Batch number for the stock movement
+	 * @param 	int 			$idproductbatch		Id product_batch for the stock movement
+	 * @param 	Translate|null 	$outputlangs		Langs object to use for translation. At "null", the default langs will use.
+	 * @return	int
+	 */
+	public function consumeOrProduce(User $user, bool $autocloseMo, float $qty, int $idwarehouse, string $labelmovement = null, string $codemovement = null, float $pricetoprocess = 0, string $batch = null, int $idproductbatch = 0, Translate $outputlangs = null)
+	{
 		global $langs, $db;
 
 		$retval = -1;
@@ -2217,7 +2234,7 @@ class MoLine extends CommonObjectLine
 		$db->begin();
 
 		// Load product for MoLine
-	 	$tmpproduct = new Product($db);
+		$tmpproduct = new Product($db);
 		$tmpproduct->fetch($this->fk_product);
 
 		// Validate parameters
@@ -2298,7 +2315,7 @@ class MoLine extends CommonObjectLine
 		// Autoclose Mo
 		if (!$error && $autocloseMo) {
 			$tmpmo-$this->fetch($this->fk_mo);
-			if ($tmpmo->hasAllConsumedAndProduced()){
+			if ($tmpmo->hasAllConsumedAndProduced()) {
 				$result = $tmpmo->setStatusAsProduced(-1, $outputlangs);
 				if ($result <= 0) {
 					$error++;
@@ -2313,9 +2330,7 @@ class MoLine extends CommonObjectLine
 		} else {
 			$db->commit();
 		}
-
 		return $retval;
-
 	}
 
 	/**
