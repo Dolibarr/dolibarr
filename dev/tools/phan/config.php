@@ -391,6 +391,7 @@ return [
 		'PhanPluginUnknownFunctionParamType',
 		'PhanTypeSuspiciousStringExpression',
 		'PhanPluginRedundantAssignment',
+
 		'PhanTypeExpectedObjectPropAccess',
 		'PhanTypeInvalidRightOperandOfNumericOp',
 		'PhanPluginInlineHTML',

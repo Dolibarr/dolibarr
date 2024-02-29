@@ -679,7 +679,7 @@ function getState($id, $withcode = '', $dbtouse = 0, $withregion = 0, $outputlan
  *    @param      Translate $outputlangs    Output language
  *    @return     string     			    Label translated of currency
  */
-function currency_name($code_iso, $withcode = '', $outputlangs = null)
+function currency_name($code_iso, $withcode = 0, $outputlangs = null)
 {
 	global $langs, $db;
 
@@ -1151,7 +1151,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$mode = 'view';
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+	$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -1550,14 +1550,14 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 /**
  *    	Show html area with actions to do
  *
- * 		@param	Conf		$conf		        Object conf
- * 		@param	Translate	$langs		        Object langs
- * 		@param	DoliDB		$db			        Object db
- * 		@param	Adherent|Societe    $filterobj  Object thirdparty or member
- * 		@param	Contact		$objcon	            Object contact
- *      @param  int			$noprint	        Return string but does not output it
- *      @param  int			$actioncode 	    Filter on actioncode
- *      @return	string|void					    Return html part or void if noprint is 1
+ * 		@param	Conf				$conf		    Object conf
+ * 		@param	Translate			$langs		    Object langs
+ * 		@param	DoliDB				$db			    Object db
+ * 		@param	Adherent|Societe    $filterobj  	Object thirdparty or member
+ * 		@param	Contact				$objcon	        Object contact
+ *      @param  int					$noprint	    Return string but does not output it
+ *      @param  string|string[]		$actioncode 	Filter on actioncode
+ *      @return	string|void					    	Return html part or void if noprint is 1
  */
 function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = '', $noprint = 0, $actioncode = '')
 {
