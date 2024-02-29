@@ -2010,11 +2010,12 @@ if ($search_date_signature_endyear) {
 			}
 			// Source - input reason
 			if (!empty($arrayfields['p.fk_input_reason']['checked'])) {
-				$labelInputReason ="";
-				if ($obj->fk_input_reason > 0)
+				$labelInputReason = '';
+				if ($obj->fk_input_reason > 0) {
 					$labelInputReason = $form->cache_demand_reason[$obj->fk_input_reason]['label'];
+				}
 				print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($labelInputReason).'">';
-				print $labelInputReason;
+				print dol_escape_htmltag($labelInputReason);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
