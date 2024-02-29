@@ -9737,7 +9737,7 @@ abstract class CommonObject
 		}
 		if (array_key_exists('user_creation_id', $fieldvalues) && !($fieldvalues['user_creation_id'] > 0)) {
 			$fieldvalues['user_creation_id'] = $user->id;
-			$this->user_modification_id = $user->id;
+			$this->user_creation_id = $user->id;
 		}
 		if (array_key_exists('pass_crypted', $fieldvalues) && property_exists($this, 'pass')) {
 			$fieldvalues['pass_crypted'] = dol_hash($this->pass);
