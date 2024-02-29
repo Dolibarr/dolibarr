@@ -1801,7 +1801,7 @@ class Societe extends CommonObject
 	 *    @param	bool	$is_supplier	Is the thirdparty a supplier ?
 	 *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
-	public function fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = true, $is_supplier = true)
+	public function fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = false, $is_supplier = false)
 	{
 		global $langs;
 		global $conf;
@@ -1873,11 +1873,13 @@ class Societe extends CommonObject
 		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
 
 		// Filter on client or supplier, for Client::fetch() and Fournisseur::fetch()
-		if ($is_client && !$is_supplier) {
+		if ($is_client && $is_supplier) {
+			$sql .= ' AND s.client > 0 AND s.fournisseur > 0';
+		} elseif ($is_client && !$is_supplier) {
 			$sql .= ' AND s.client > 0 AND s.fournisseur <= 0';
 		} elseif ($is_supplier && !$is_client) {
 			$sql .= ' AND s.fournisseur > 0 AND s.client <= 0';
-		} // else, nothing special (the thirdparty can be client and/or supplier)
+		} // if both false, no test (the thirdparty can be client and/or supplier)
 
 		if ($rowid) {
 			$sql .= ' AND s.rowid = '.((int) $rowid);
