@@ -203,21 +203,21 @@ if (empty($reshook)) {
 		if ($accounting->fetch($id)) {
 			$mode = GETPOSTINT('mode');
 			$result = $accounting->accountDeactivate($id, $mode);
+			if ($result < 0) {
+				setEventMessages($accounting->error, $accounting->errors, 'errors');
+			}
 		}
 
 		$action = 'update';
-		if ($result < 0) {
-			setEventMessages($accounting->error, $accounting->errors, 'errors');
-		}
 	} elseif ($action == 'enable' && $permissiontoadd) {
 		if ($accounting->fetch($id)) {
 			$mode = GETPOSTINT('mode');
 			$result = $accounting->accountActivate($id, $mode);
+			if ($result < 0) {
+				setEventMessages($accounting->error, $accounting->errors, 'errors');
+			}
 		}
 		$action = 'update';
-		if ($result < 0) {
-			setEventMessages($accounting->error, $accounting->errors, 'errors');
-		}
 	}
 }
 
@@ -387,6 +387,7 @@ if ($resql) {
 	}
 
 	// List of mass actions available
+	$arrayofmassactions = array();
 	if ($user->hasRight('accounting', 'chartofaccount')) {
 		$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	}
