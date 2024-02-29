@@ -219,27 +219,25 @@ function getDolUserInt($key, $default = 0, $tmpuser = null)
 define(
 	'MODULE_MAPPING',
 	array(
-		// Map deprecated names to internal names
+		// Map deprecated names to new names
 		'adherent' => 'member',  // Has new directory
 		'member_type' => 'adherent_type',   // No directory, but file called adherent_type
 		'banque' => 'bank',   // Has new directory
 		'contrat' => 'contract', // Has new directory
 		'entrepot' => 'stock',   // Has new directory
 		'projet'  => 'project', // Has new directory
+		'categorie' => 'category', // Has old directory
+		'commande' => 'order',    // Has old directory
+		'expedition' => 'shipping', // Has old directory
+		'facture' => 'invoice', // Has old directory
+		'fichinter' => 'intervention', // Has old directory
+		'ficheinter' => 'intervention',  // Backup for 'fichinter'
+		'propale' => 'propal', // Has old directory
+		'socpeople' => 'contact', // Has old directory
 
 		'actioncomm' => 'agenda',  // NO module directory (public dir agenda)
 		'product_price' => 'productprice', // NO directory
 		'product_fournisseur_price' => 'productsupplierprice', // NO directory
-
-		// Map future names to current internal names
-		'category' => 'categorie', // Has old directory
-		'order' => 'commande',    // Has old directory
-		'shipping' => 'expedition', // Has old directory
-		'invoice' => 'facture', // Has old directory
-		'intervention' => 'fichinter', // Has old directory
-		'ficheinter' => 'fichinter',  // Backup for 'fichinter'
-		'propal' => 'propale', // Has old directory
-		'contact' => 'socpeople', // Has old directory
 	)
 );
 
