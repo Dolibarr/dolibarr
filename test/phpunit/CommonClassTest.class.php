@@ -339,4 +339,24 @@ abstract class CommonClassTest extends TestCase
 		'workstation' => 'Workstation',
 		'zapier' => 'Zapier',
 	);
+
+	/**
+	 * Assert that a directory does not exist without triggering deprecation
+	 *
+	 * @param string $directory The directory to test
+	 * @param string $message   The message to show if the directory exists
+	 *
+	 * @return void
+	 */
+	protected function assertDirectoryNotExistsCompat($directory, $message = '')
+	{
+		$phpunitVersion = \PHPUnit\Runner\Version::id();
+
+		// Check if PHPUnit version is less than 9.0.0
+		if (version_compare($phpunitVersion, '9.0.0', '<')) {
+			$this->assertDirectoryNotExists($directory, $message);
+		} else {
+			$this->assertDirectoryDoesNotExist($directory, $message);
+		}
+	}
 }
