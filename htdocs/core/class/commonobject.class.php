@@ -8859,9 +8859,13 @@ abstract class CommonObject
 	protected function setSaveQuery()
 	{
 		global $conf;
+		$fieldsToIgnore = array(
+			'fk_user_creat'
+		);
 
 		$queryarray = array();
 		foreach ($this->fields as $field => $info) {	// Loop on definition of fields
+			if (in_array($field, $fieldsToIgnore)) continue;
 			// Depending on field type ('datetime', ...)
 			if ($this->isDate($info)) {
 				if (empty($this->{$field})) {
@@ -9048,6 +9052,7 @@ abstract class CommonObject
 		}
 		if (array_key_exists('fk_user_creat', $fieldvalues) && !($fieldvalues['fk_user_creat'] > 0)) {
 			$fieldvalues['fk_user_creat'] = $user->id;
+			$this->user_creation_id = $user->id;
 		}
 		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 		if (array_key_exists('ref', $fieldvalues)) {
