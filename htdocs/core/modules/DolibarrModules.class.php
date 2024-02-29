@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2023  Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -1459,6 +1459,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$frequency = isset($this->cronjobs[$key]['frequency']) ? $this->cronjobs[$key]['frequency'] : '';
 				$unitfrequency = isset($this->cronjobs[$key]['unitfrequency']) ? $this->cronjobs[$key]['unitfrequency'] : '';
 				$priority = isset($this->cronjobs[$key]['priority']) ? $this->cronjobs[$key]['priority'] : '';
+				$datenextrun = isset($this->cronjobs[$key]['datenextrun']) ? $this->cronjobs[$key]['datenextrun'] : '';
 				$datestart = isset($this->cronjobs[$key]['datestart']) ? $this->cronjobs[$key]['datestart'] : '';
 				$dateend = isset($this->cronjobs[$key]['dateend']) ? $this->cronjobs[$key]['dateend'] : '';
 				$status = isset($this->cronjobs[$key]['status']) ? $this->cronjobs[$key]['status'] : '';
@@ -1494,7 +1495,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						$this->db->begin();
 
 						if (!$err) {
-							$sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, dateend, label, jobtype, classesname, objectname, methodename, command, params, note,";
+							$sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datenextrun, datestart, dateend, label, jobtype, classesname, objectname, methodename, command, params, note,";
 							if (is_int($frequency)) {
 								$sql .= ' frequency,';
 							}
@@ -1511,6 +1512,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$sql .= " VALUES (";
 							$sql .= "'".$this->db->escape(empty($this->rights_class) ?strtolower($this->name) : $this->rights_class)."', ";
 							$sql .= "'".$this->db->idate($now)."', ";
+							$sql .= ($datenextrun ? "'".$this->db->idate($datenextrun)."'" : "'".$this->db->idate($now)."'").", ";
 							$sql .= ($datestart ? "'".$this->db->idate($datestart)."'" : "'".$this->db->idate($now)."'").", ";
 							$sql .= ($dateend ? "'".$this->db->idate($dateend)."'" : "NULL").", ";
 							$sql .= "'".$this->db->escape($label)."', ";
