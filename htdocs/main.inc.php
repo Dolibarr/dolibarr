@@ -1330,7 +1330,12 @@ if (GETPOSTINT('nojs')) {  // If javascript was not disabled on URL
 // Set MAIN_OPTIMIZEFORTEXTBROWSER for user (must be after login part)
 if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && !empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = $user->conf->MAIN_OPTIMIZEFORTEXTBROWSER;
+	if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') == 1) {
+		$conf->global->THEME_TOPMENU_DISABLE_IMAGE = 1;
+	}
 }
+//var_dump($conf->global->THEME_TOPMENU_DISABLE_IMAGE);
+//var_dump($user->conf->THEME_TOPMENU_DISABLE_IMAGE);
 
 // set MAIN_OPTIMIZEFORCOLORBLIND for user
 $conf->global->MAIN_OPTIMIZEFORCOLORBLIND = empty($user->conf->MAIN_OPTIMIZEFORCOLORBLIND) ? '' : $user->conf->MAIN_OPTIMIZEFORCOLORBLIND;
