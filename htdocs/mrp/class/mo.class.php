@@ -2216,7 +2216,7 @@ class MoLine extends CommonObjectLine
 	 * @param 	User 			$user				User that creates
 	 * @param 	bool 			$autocloseMo		Set the Mo as produced if all lines are complete consumed or produced
 	 * @param 	float 			$qty				Quantity to consume or produce
-	 * @param 	int 			$idwarehouse		Warehouse to consume or produce
+	 * @param 	int|null		$idwarehouse		Warehouse to consume or produce
 	 * @param 	string|null 	$labelmovement		Label for the stock movement
  	 * @param 	string|null 	$codemovement		Inventory code for the stock movement
 	 * @param 	float 			$pricetoprocess		Price per product to bring in stock
@@ -2225,7 +2225,7 @@ class MoLine extends CommonObjectLine
 	 * @param 	Translate|null 	$outputlangs		Langs object to use for translation. At "null", the default langs will use.
 	 * @return	int									Return integer <0 if KO, Id of created line if OK
 	 */
-	public function consumeOrProduce(User $user, bool $autocloseMo, float $qty, int $idwarehouse, string $labelmovement = null, string $codemovement = null, float $pricetoprocess = 0, string $batch = null, int $idproductbatch = 0, Translate $outputlangs = null)
+	public function consumeOrProduce(User $user, bool $autocloseMo, float $qty, ?int $idwarehouse, string $labelmovement = null, string $codemovement = null, float $pricetoprocess = 0, string $batch = null, int $idproductbatch = 0, Translate $outputlangs = null)
 	{
 		global $langs, $db;
 
@@ -2253,12 +2253,12 @@ class MoLine extends CommonObjectLine
 				setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
 				$error++;
 			}
-			// Check qty is set.
-			if (empty($qty) || $qty == 0) {
-				$langs->load("errors");
-				setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Qty"), $tmpproduct->ref), null, 'errors');
-				$error++;
-			}
+		}
+		// Check qty is set.
+		if (empty($qty) || $qty == 0) {
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Qty"), $tmpproduct->ref), null, 'errors');
+			$error++;
 		}
 
 		// Set $labeltomove and $codemovement to default value if parameter is null
@@ -2266,6 +2266,13 @@ class MoLine extends CommonObjectLine
 			$tmpmo->fetch($this->fk_mo);
 			$labelmovement = empty($labelmovement) ? $langs->trans("ProductionForRef", $tmpmo->ref) : $labelmovement;
 			$codemovement = empty($codemovement) ? dol_print_date(dol_now(), 'dayhourlog') : $codemovement;
+		}
+		// Set the consumption role
+		if ($this->role == 'toconsume') {
+			$consumptionRole = 'consumed';
+		}
+		if ($this->role == 'toproduce') {
+			$consumptionRole = 'produced';
 		}
 
 		$consumptionRole;
@@ -2278,7 +2285,6 @@ class MoLine extends CommonObjectLine
 			$stockmove->setOrigin($tmpmo->element, $this->fk_mo);
 
 			if ($this->role == 'toconsume') {
-				$consumptionRole = 'consumed';
 				$stockmove->context['mrp_role'] = 'toconsume';
 				if ($qty >= 0) {
 					$idstockmove = $stockmove->livraison($user, $this->fk_product, $idwarehouse, $qty, 0, $labelmovement, dol_now(), '', '', $batch, $idproductbatch, $codemovement);
@@ -2287,7 +2293,6 @@ class MoLine extends CommonObjectLine
 				}
 			}
 			if ($this->role == 'toproduce') {
-				$consumptionRole = 'produced';
 				$stockmove->context['mrp_role'] = 'toproduce';
 				$idstockmove = $stockmove->reception($user, $this->fk_product, $idwarehouse, $qty, $pricetoprocess, $labelmovement, dol_now(), '', '', $batch, $idproductbatch, $codemovement);
 			}

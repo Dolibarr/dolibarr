@@ -282,7 +282,6 @@ if (empty($reshook)) {
 				$i = 1;
 				while (GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) {
 					$qtytoprocess = price2num(GETPOST('qtytoproduce-'.$line->id.'-'.$i));
-					$pricetoprocess = GETPOST('pricetoproduce-'.$line->id.'-'.$i) ? price2num(GETPOST('pricetoproduce-'.$line->id.'-'.$i)) : 0;
 
 					if ($qtytoprocess != 0) {
 						$idwarehouse = GETPOSTISSET('idwarehousetoproduce-' . $line->id . '-' . $i) ? GETPOST('idwarehousetoproduce-' . $line->id . '-' . $i) : null;
