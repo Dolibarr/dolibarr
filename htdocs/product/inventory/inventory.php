@@ -1047,7 +1047,7 @@ if ($resql) {
 		$valuetoshow = $obj->qty_stock;
 
 		// For inventory not yet close, we overwrite with the real value in stock now
-		if (($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) && empty($conf->global->DISABLE_QTY_OVERWRITTEN)) {
+		if (($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) && empty($conf->global->DISABLE_QTY_OVERWRITE)) {
 			if (isModEnabled('productbatch') && $product_static->hasbatch()) {
 				$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->detail_batch[$obj->batch]->qty;
 			} else {
