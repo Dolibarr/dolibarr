@@ -246,7 +246,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					$linked_contacts = array_merge($linked_contacts, $object->listeContact(-1, 'internal'));
 					if (empty($linked_contacts) && !empty($conf->global->TICKET_NOTIFY_AT_CLOSING) && !empty($object->fk_soc)) {
 						$object->fetch_thirdparty();
-						$linked_contacts[] = $object->thirdparty->email;
+						$linked_contacts[]['email'] = $object->thirdparty->email;
 					}
 
 					$contactid = GETPOST('contactid', 'int');
