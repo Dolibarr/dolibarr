@@ -1448,8 +1448,8 @@ if (empty($reshook)) {
 		);
 
 		// Is sync supplier web services module activated? and everything filled?
-		if (isModEnabled('syncsupplierwebservices')) {
-			setEventMessages($langs->trans("WarningModuleNotActive", $langs->transnoentities("Module2650Name")), null, 'mesgs');
+		if (isModEnabled('webservicesclient')) {
+			setEventMessages($langs->trans("WarningModuleNotActive", $langs->transnoentities("Module2660Name")), null, 'mesgs');
 		} elseif (empty($ws_url) || empty($ws_key)) {
 			setEventMessages($langs->trans("ErrorWebServicesFieldsRequired"), null, 'errors');
 		} elseif (empty($ws_user) || empty($ws_password) || empty($ws_thirdparty)) {
