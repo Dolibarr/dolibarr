@@ -2330,7 +2330,7 @@ class MoLine extends CommonObjectLine
 				$tmpmo-$this->fetch($this->fk_mo);
 			}
 
-			if ($tmpmo->hasAllConsumedAndProduced()) { // Only if the all lines are complet consumed or produced
+			if ($tmpmo->hasAllConsumedAndProduced()) { // Only if the all lines are complete consumed or produced
 				$result = $tmpmo->setStatusAsProduced(-1, $outputlangs);
 				if ($result <= 0) {
 					$error++;
