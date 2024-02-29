@@ -2223,7 +2223,7 @@ class MoLine extends CommonObjectLine
 	 * @param 	string|null 	$batch				Batch number for the stock movement
 	 * @param 	int 			$idproductbatch		Id product_batch for the stock movement
 	 * @param 	Translate|null 	$outputlangs		Langs object to use for translation. At "null", the default langs will use.
-	 * @return	int
+	 * @return	int									Return integer <0 if KO, Id of created line if OK
 	 */
 	public function consumeOrProduce(User $user, bool $autocloseMo, float $qty, int $idwarehouse, string $labelmovement = null, string $codemovement = null, float $pricetoprocess = 0, string $batch = null, int $idproductbatch = 0, Translate $outputlangs = null)
 	{
@@ -2236,6 +2236,9 @@ class MoLine extends CommonObjectLine
 		// Load product for MoLine
 		$tmpproduct = new Product($db);
 		$tmpproduct->fetch($this->fk_product);
+
+		// Create Mo Object
+		$tmpmo = new Mo($db);
 
 		// Validate parameters
 		// Check warehouse is set if we should have to
@@ -2258,10 +2261,14 @@ class MoLine extends CommonObjectLine
 			}
 		}
 
-		$consumptionRole;
+		// Set $labeltomove and $codemovement to default value if parameter is null
+		if (empty($labelmovement) || empty($codemovement)) {
+			$tmpmo->fetch($this->fk_mo);
+			$labelmovement = empty($labelmovement) ? $langs->trans("ProductionForRef", $tmpmo->ref) : $labelmovement;
+			$codemovement = empty($codemovement) ? dol_print_date(dol_now(), 'dayhourlog') : $codemovement;
+		}
 
-		// Create Mo Object
-		$tmpmo = new Mo($db);
+		$consumptionRole;
 
 		// Create stock movement
 		$stockmove = new MouvementStock($db);
@@ -2314,8 +2321,11 @@ class MoLine extends CommonObjectLine
 
 		// Autoclose Mo
 		if (!$error && $autocloseMo) {
-			$tmpmo-$this->fetch($this->fk_mo);
-			if ($tmpmo->hasAllConsumedAndProduced()) {
+			if ($tmpmo->id <= 0) { // Check if mo is already fetched
+				$tmpmo-$this->fetch($this->fk_mo);
+			}
+
+			if ($tmpmo->hasAllConsumedAndProduced()) { // Only if the all lines are complet consumed or produced
 				$result = $tmpmo->setStatusAsProduced(-1, $outputlangs);
 				if ($result <= 0) {
 					$error++;
