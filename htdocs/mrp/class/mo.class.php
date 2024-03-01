@@ -891,58 +891,78 @@ class Mo extends CommonObject
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = false)
 	{
-		$error = 0;
+		global $langs;
+		$langs->loadLangs(array('stocks', 'mrp'));
 
 		if ($this->status < 0) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
+		$productstatic = new Product($this->db);
+		$fk_movement = GETPOST('fk_movement', 'int');
+		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);
 
-		$moline = new MoLine($this->db);
-		$moline->fetch($idline);
+		if (!empty($arrayoflines)) {
+			$this->db->begin();
 
-		$affectedLinkedMoLines;
-		// Check if it's linked or a main line
-		if (empty($moline->fk_mrp_production)) {
-			// Check if the main line has linked lines
-			$affectedLinkedMoLines = $this->fetchLinesLinked('consumed', $moline->id);
-		}
+			$stockmove = new MouvementStock($this->db);
+			$stockmove->setOrigin($this->element, $this->id);
 
-		$this->db->begin();
+			if (!empty($fk_movement)) {
+				$moline = new MoLine($this->db);
+				$TArrayMoLine = $moline->fetchAll('', '', 1, 0, array('customsql' => 'fk_stock_movement ='.$fk_movement));
+				$moline = array_shift($TArrayMoLine);
 
-		// undo stockmovements and remove linked lines
-		if (!empty($affectedLinkedMoLines)) {
-			foreach ($affectedLinkedMoLines as $linkedLine) {
-				if (!$error) {
-					$linkedMoline = new MoLine($this->db);
-					$linkedMoline->fetch($linkedLine['rowid']);
-					$result = $linkedMoline->delete($user, $notrigger);
+				$movement = new MouvementStock($this->db);
+				$movement->fetch($fk_movement);
+				$productstatic->fetch($movement->product_id);
+				$qtytoprocess = $movement->qty;
 
-					if ($result < 0) {
-						$error++;
-						setEventMessages($linkedMoline->error, $linkedMoline->errors, 'errors');
+				// Reverse stock movement
+				$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
+				$codemovementCancel = $langs->trans("StockIncrease");
+
+				if (($qtytoprocess >= 0)) {
+					$idstockmove = $stockmove->reception($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, '', '', $movement->batch, dol_now(), 0, $codemovementCancel);
+				} else {
+					$idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $movement->batch, 0, $codemovementCancel);
+				}
+				if ($idstockmove < 0) {
+					$this->error++;
+					$this->db->rollback();
+					setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+				} else {
+					$this->db->commit();
+				}
+				return $moline->delete($user, $notrigger);
+			} else {
+				foreach ($arrayoflines as $key => $arrayofline) {
+					$lineDetails = $arrayoflines[$key];
+					$productstatic->fetch($lineDetails['fk_product']);
+					$qtytoprocess = $lineDetails['qty'];
+
+					// Reverse stock movement
+					$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
+					$codemovementCancel = $langs->trans("StockIncrease");
+
+					if ($qtytoprocess >= 0) {
+						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
+					} else {
+						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
+					}
+					if ($idstockmove < 0) {
+						$this->error++;
+						$this->db->rollback();
+						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+					} else {
+						$this->db->commit();
 					}
 				}
+				return $this->deleteLineCommon($user, $idline, $notrigger);
 			}
-		}
-
-		if (!$error) {
-			$result = $moline->delete($user, $notrigger);
-
-			if ($result < 0) {
-				$error++;
-				setEventMessages($moline->error, $moline->errors, 'errors');
-			}
-		}
-
-		if (!$error) {
-			$this->db->commit();
-			$result = 1;
 		} else {
-			$this->db->rollback();
-			$result = -1;
+			return $this->deleteLineCommon($user, $idline, $notrigger);
 		}
-		return $result;
 	}
 
 
@@ -2202,63 +2222,7 @@ class MoLine extends CommonObjectLine
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
-		global $langs;
-
-		$error = 0;
-		$result = -1;
-
-		// the stockmovements it was created for this line revise
-		if (!empty($this->fk_warehouse)) {
-			$langs->loadLangs(array('stocks', 'mrp'));
-
-			// load the mo for this line
-			$tmpmo = new Mo($this->db);
-			$tmpmo->fetch($this->fk_mo);
-
-			// load the (old) linked stockmovement and the associated product
-			$linkedMovement = new MouvementStock($this->db);
-			$linkedMovement->fetch($this->fk_stock_movement);
-			$productForLinkedMovement = new Product($this->db);
-			$productForLinkedMovement->fetch($linkedMovement->product_id);
-
-			// create new stockmovement to revise the linked stockmovement
-			$stockmove = new MouvementStock($this->db);
-			$stockmove->setOrigin($tmpmo->element, $tmpmo->id);
-
-			// Reverse stock movement
-			$labelmovementCancel = $langs->trans("CancelProductionForRef", $productForLinkedMovement->ref);
-			$codemovementCancel = dol_print_date(dol_now(), 'dayhourlog');
-
-			$idstockmove = -1;
-			if (($linkedMovement->qty < 0)) {
-				$qtytoprocess = $linkedMovement->qty * -1;
-				$idstockmove = $stockmove->reception($user, $linkedMovement->product_id, $linkedMovement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, '', '', $linkedMovement->batch, dol_now(), 0, $codemovementCancel);
-			} else {
-				$idstockmove = $stockmove->livraison($user, $linkedMovement->product_id, $linkedMovement->warehouse_id, $linkedMovement->qty, 0, $labelmovementCancel, dol_now(), '', '', $linkedMovement->batch, 0, $codemovementCancel);
-			}
-
-			if ($idstockmove < 0) {
-				$this->error++;
-				setEventMessages($stockmove->error, $stockmove->errors, 'errors');
-			}
-		}
-
-		if (!$error) {
-			$result = $this->deleteCommon($user, $notrigger);
-			if ($result < 0) {
-				$this->error++;
-				setEventMessages($stockmove->error, $stockmove->errors, 'errors');
-			}
-		}
-
-		if (!$error) {
-			$this->db->commit();
-			$result = 1;
-		} else {
-			$this->db->rollback();
-			$result = -1;
-		}
-
-		return $result;
+		return $this->deleteCommon($user, $notrigger);
+		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 }
