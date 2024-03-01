@@ -1064,57 +1064,99 @@ class Mo extends CommonObject
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = false)
 	{
-		$error = 0;
+		global $langs;
+		$langs->loadLangs(array('stocks', 'mrp'));
 
 		if ($this->status < 0) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
+		$productstatic = new Product($this->db);
+		$fk_movement = GETPOST('fk_movement', 'int');
+		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);	// Get lines consummed under the one to delete
 
-		$moline = new MoLine($this->db);
-		$moline->fetch($idline);
-
-		$affectedLinkedMoLines;
-		// Check if it's linked or a main line
-		if (empty($moline->fk_mrp_production)) {
-			// Check if the main line has linked lines
-			$affectedLinkedMoLines = $this->fetchLinesLinked('consumed', $moline->id);
-		}
+		$result = 0;
 
 		$this->db->begin();
 
-		// undo stockmovements and remove linked lines
-		if (!empty($affectedLinkedMoLines)) {
-			foreach ($affectedLinkedMoLines as $linkedLine) {
-				if (!$error) {
-					$linkedMoline = new MoLine($this->db);
-					$linkedMoline->fetch($linkedLine['rowid']);
-					$result = $linkedMoline->delete($user, $notrigger);
+		if (!empty($arrayoflines)) {
+			// If there is child lines
+			$stockmove = new MouvementStock($this->db);
+			$stockmove->setOrigin($this->element, $this->id);
 
-					if ($result < 0) {
-						$error++;
-						setEventMessages($linkedMoline->error, $linkedMoline->errors, 'errors');
+			if (!empty($fk_movement)) {
+				// The fk_movement was not recorded so we try to guess the product and quantity to restore.
+				$moline = new MoLine($this->db);
+				$TArrayMoLine = $moline->fetchAll('', '', 1, 0, array('customsql' => 'fk_stock_movement = '.(int) $fk_movement));
+				$moline = array_shift($TArrayMoLine);
+
+				$movement = new MouvementStock($this->db);
+				$movement->fetch($fk_movement);
+				$productstatic->fetch($movement->product_id);
+				$qtytoprocess = $movement->qty;
+
+				// Reverse stock movement
+				$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
+				$codemovementCancel = $langs->trans("StockIncrease");
+
+				if (($qtytoprocess >= 0)) {
+					$idstockmove = $stockmove->reception($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, '', '', $movement->batch, dol_now(), 0, $codemovementCancel);
+				} else {
+					$idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $movement->batch, 0, $codemovementCancel);
+				}
+				if ($idstockmove < 0) {
+					$this->error++;
+					setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+				} else {
+					$result = $moline->delete($user, $notrigger);
+				}
+			} else {
+				// Loop on each child lines
+				foreach ($arrayoflines as $key => $arrayofline) {
+					$lineDetails = $arrayoflines[$key];
+					$productstatic->fetch($lineDetails['fk_product']);
+					$qtytoprocess = $lineDetails['qty'];
+
+					// Reverse stock movement
+					$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
+					$codemovementCancel = $langs->trans("StockIncrease");
+
+
+					if ($qtytoprocess >= 0) {
+						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
+					} else {
+						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
+					}
+					if ($idstockmove < 0) {
+						$this->error++;
+						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+					} else {
+						$moline = new MoLine($this->db);
+						$moline->fetch($lineDetails['rowid']);
+
+						$resdel = $moline->delete($user, $notrigger);
+						if ($resdel < 0) {
+							$this->error++;
+							setEventMessages($moline->error, $moline->errors, 'errors');
+						}
 					}
 				}
+
+				if (empty($this->error)) {
+					$result = $this->deleteLineCommon($user, $idline, $notrigger);
+				}
 			}
-		}
-
-		if (!$error) {
-			$result = $moline->delete($user, $notrigger);
-
-			if ($result < 0) {
-				$error++;
-				setEventMessages($moline->error, $moline->errors, 'errors');
-			}
-		}
-
-		if (!$error) {
-			$this->db->commit();
-			$result = 1;
 		} else {
-			$this->db->rollback();
-			$result = -1;
+			// No child lines
+			$result = $this->deleteLineCommon($user, $idline, $notrigger);
 		}
+
+		if (!empty($this->error) || $result <= 0) {
+			$this->db->rollback();
+		} else {
+			$this->db->commit();
+		}
+
 		return $result;
 	}
 
