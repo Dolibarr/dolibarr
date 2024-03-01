@@ -1934,7 +1934,8 @@ if ($num > 0) {
 
 		$facturestatic->id = $obj->id;
 		$facturestatic->ref = $obj->ref;
-		$facturestatic->ref_client = $obj->ref_client;
+		$facturestatic->ref_client = $obj->ref_client;		// deprecated
+		$facturestatic->ref_customer = $obj->ref_client;
 		$facturestatic->type = $obj->type;
 		$facturestatic->subtype = $obj->subtype;
 		$facturestatic->total_ht = $obj->total_ht;
