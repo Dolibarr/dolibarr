@@ -570,6 +570,8 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 
 UPDATE llx_menu SET url = '/fourn/paiement/list.php?mainmenu=billing&leftmenu=suppliers_bills_payment' WHERE leftmenu = 'suppliers_bills_payment';
 
+UPDATE llx_paiement SET ref = rowid WHERE ref IS NULL OR ref = '';
+
 -- Easya 2024
 
 -- Backport VAT by entity #24965 - Also available on Easya 2022
