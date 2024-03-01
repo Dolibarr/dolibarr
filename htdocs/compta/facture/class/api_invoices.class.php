@@ -2,6 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2020   Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2023	Joachim Kueter			<git-jk@bloxera.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -930,14 +931,15 @@ class Invoices extends DolibarrApi
 	 *   "notrigger": 0
 	 * }
 	 *
-	 * @param   int $id             Invoice ID
-	 * @param   int $idwarehouse    Warehouse ID
-	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
-	 * @return	Object|false		Object with cleaned properties
+	 * @param   int $id             	Invoice ID
+	 * @param   string $force_number   	force ref invoice
+	 * @param   int $idwarehouse    	Warehouse ID
+	 * @param   int $notrigger      	1=Does not execute triggers, 0= execute triggers
+	 * @return	Object|false			Object with cleaned properties
 	 *
 	 * @url POST    {id}/validate
 	 */
-	public function validate($id, $idwarehouse = 0, $notrigger = 0)
+	public function validate($id, $force_number = '', $idwarehouse = 0, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
@@ -951,7 +953,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->invoice->validate(DolibarrApiAccess::$user, '', $idwarehouse, $notrigger);
+		$result = $this->invoice->validate(DolibarrApiAccess::$user, $force_number, $idwarehouse, $notrigger);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
