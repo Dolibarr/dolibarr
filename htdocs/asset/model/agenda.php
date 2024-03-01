@@ -54,7 +54,7 @@ if (GETPOST('actioncode', 'array')) {
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1

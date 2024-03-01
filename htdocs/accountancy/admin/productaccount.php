@@ -87,7 +87,7 @@ if (empty($accounting_product_mode)) {
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : getDolGlobalInt('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
