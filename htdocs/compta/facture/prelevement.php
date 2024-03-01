@@ -629,6 +629,7 @@ if ($object->id > 0) {
 	} else {
 		$sql .= " WHERE fk_facture = ".$object->id;
 	}
+	$sql .= " AND pfd.traite = 0";
 	$sql .= " AND pfd.ext_payment_id IS NULL";
 
 	$result_sql = $db->query($sql);

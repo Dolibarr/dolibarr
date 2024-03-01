@@ -1617,9 +1617,7 @@ if ($action == 'create') {
 									print '<td class="left">';
 									if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 										if ($product->stockable_product == Product::ENABLED_STOCK){
-											print $tmpwarehouseObject->getNomUrl(0).' ';
-											print '<!-- Show details of stock -->';
-											print '('.$stock.')';
+											print '';
 										} else {
 											print img_warning().' '.$langs->trans('StockDisabled') ;
 										}

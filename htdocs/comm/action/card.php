@@ -756,7 +756,7 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate') {
 
 	$newdate = GETPOST('newdate', 'alpha');
 	if (empty($newdate) || strpos($newdate, 'dayevent_') != 0) {
-		header("Location: ".$backtopage);
+		header("Location: ".$backtopage, true, 307);
 		exit;
 	}
 
@@ -841,7 +841,7 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate') {
 		}
 	}
 	if (!empty($backtopage)) {
-		header("Location: ".$backtopage);
+		header("Location: ".$backtopage, true, 307);
 		exit;
 	} else {
 		$action = '';
