@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,14 +60,6 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
  */
 abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 {
-
-	// variables inherited from CommonNumRefGenerator class
-	public $code_null;
-	public $code_modifiable;
-	public $code_modifiable_invalide;
-	public $code_auto;
-
-
 	/**
 	 * Constructor
 	 *

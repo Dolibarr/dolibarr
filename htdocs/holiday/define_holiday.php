@@ -50,7 +50,7 @@ $sortorder = GETPOST('sortorder', 'aZ09comma');
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $confirm = GETPOST('confirm', 'alpha');
 
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -330,7 +330,7 @@ if (count($typeleaves) == 0) {
 	$selectedfields = '';
 	if ($massactionbutton) {
 		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-		$selectedfields .= ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+		$selectedfields .= ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
 		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 	}
 

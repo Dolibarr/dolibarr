@@ -219,27 +219,25 @@ function getDolUserInt($key, $default = 0, $tmpuser = null)
 define(
 	'MODULE_MAPPING',
 	array(
-		// Map deprecated names to internal names
+		// Map deprecated names to new names
 		'adherent' => 'member',  // Has new directory
 		'member_type' => 'adherent_type',   // No directory, but file called adherent_type
 		'banque' => 'bank',   // Has new directory
 		'contrat' => 'contract', // Has new directory
 		'entrepot' => 'stock',   // Has new directory
 		'projet'  => 'project', // Has new directory
+		'categorie' => 'category', // Has old directory
+		'commande' => 'order',    // Has old directory
+		'expedition' => 'shipping', // Has old directory
+		'facture' => 'invoice', // Has old directory
+		'fichinter' => 'intervention', // Has old directory
+		'ficheinter' => 'intervention',  // Backup for 'fichinter'
+		'propale' => 'propal', // Has old directory
+		'socpeople' => 'contact', // Has old directory
 
 		'actioncomm' => 'agenda',  // NO module directory (public dir agenda)
 		'product_price' => 'productprice', // NO directory
 		'product_fournisseur_price' => 'productsupplierprice', // NO directory
-
-		// Map future names to current internal names
-		'category' => 'categorie', // Has old directory
-		'order' => 'commande',    // Has old directory
-		'shipping' => 'expedition', // Has old directory
-		'invoice' => 'facture', // Has old directory
-		'intervention' => 'fichinter', // Has old directory
-		'ficheinter' => 'fichinter',  // Backup for 'fichinter'
-		'propal' => 'propale', // Has old directory
-		'contact' => 'socpeople', // Has old directory
 	)
 );
 
@@ -6878,7 +6876,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
  */
 function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournprice = 0)
 {
-	global $db, $conf, $mysoc;
+	global $db, $mysoc;
 
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
@@ -6890,8 +6888,11 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 		$product = new Product($db);
 		$product->fetch($idprod);
 
-		if ($mysoc->country_code == $thirdpartytouse->country_code) {
-			// If country to consider is ours
+		if (($mysoc->country_code == $thirdpartytouse->country_code)
+			|| (in_array($mysoc->country_code, array('FR', 'MC')) && in_array($thirdpartytouse->country_code, array('FR', 'MC')))
+			|| (in_array($mysoc->country_code, array('MQ', 'GP')) && in_array($thirdpartytouse->country_code, array('MQ', 'GP')))
+			) {
+			// If country of thirdparty to consider is ours
 			if ($idprodfournprice > 0) {     // We want vat for product for a "supplier" object
 				$result = $product->get_buyprice($idprodfournprice, 0, 0, 0);
 				if ($result > 0) {

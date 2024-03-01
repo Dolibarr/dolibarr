@@ -12,7 +12,7 @@
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2017      Rui Strecht          <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018-2024 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024 Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
@@ -583,10 +583,16 @@ abstract class CommonObject
 	 */
 	public $total_ttc;
 
+
 	/**
 	 * @var CommonObjectLine[]
 	 */
 	public $lines;
+
+	/**
+	 * @var string	Action code to use to record auto event in agenda. For example 'AC_OTH_AUTO'
+	 */
+	public $actiontypecode;
 
 	/**
 	 * @var mixed		Comments
@@ -691,6 +697,18 @@ abstract class CommonObject
 	 * @var int			User ID who last modified the object
 	 */
 	public $user_modification_id;
+
+	/**
+	 * @var int ID
+	 * @deprecated	Use $user_creation_id
+	 */
+	public $fk_user_creat;
+
+	/**
+	 * @var int ID
+	 * @deprecated 	Use $user_modification_id
+	 */
+	public $fk_user_modif;
 
 
 	public $next_prev_filter;
@@ -9714,19 +9732,27 @@ abstract class CommonObject
 
 		$fieldvalues = $this->setSaveQuery();
 
+		// Note: Here, $fieldvalues contains same keys (or less) that are inside ->fields
+
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) {
 			$fieldvalues['date_creation'] = $this->db->idate($now);
 		}
 		if (array_key_exists('fk_user_creat', $fieldvalues) && !($fieldvalues['fk_user_creat'] > 0)) {
 			$fieldvalues['fk_user_creat'] = $user->id;
+			$this->fk_user_creat = $user->id;
+		}
+		if (array_key_exists('user_creation_id', $fieldvalues) && !($fieldvalues['user_creation_id'] > 0)) {
+			$fieldvalues['user_creation_id'] = $user->id;
+			$this->user_creation_id = $user->id;
 		}
 		if (array_key_exists('pass_crypted', $fieldvalues) && property_exists($this, 'pass')) {
 			$fieldvalues['pass_crypted'] = dol_hash($this->pass);
 		}
-		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 		if (array_key_exists('ref', $fieldvalues)) {
 			$fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref, we sanitize data
 		}
+
+		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 
 		$keys = array();
 		$values = array(); // Array to store string forged for SQL syntax
@@ -10011,16 +10037,22 @@ abstract class CommonObject
 
 		$fieldvalues = $this->setSaveQuery();
 
+		// Note: Here, $fieldvalues contains same keys (or less) that are inside ->fields
+
 		if (array_key_exists('date_modification', $fieldvalues) && empty($fieldvalues['date_modification'])) {
 			$fieldvalues['date_modification'] = $this->db->idate($now);
 		}
 		if (array_key_exists('fk_user_modif', $fieldvalues) && !($fieldvalues['fk_user_modif'] > 0)) {
 			$fieldvalues['fk_user_modif'] = $user->id;
 		}
-		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into update.
+		if (array_key_exists('user_modification_id', $fieldvalues) && !($fieldvalues['user_modification_id'] > 0)) {
+			$fieldvalues['user_modification_id'] = $user->id;
+		}
 		if (array_key_exists('ref', $fieldvalues)) {
 			$fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref, we sanitize data
 		}
+
+		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into update.
 
 		// Add quotes and escape on fields with type string
 		$keys = array();
