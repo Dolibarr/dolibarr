@@ -314,7 +314,7 @@ if (empty($reshook)) {
 
 			$correctedAmounts = [];
 			foreach ($amounts as $key => $value) {
-				$correctedAmounts[(int) $key] = (float) $value;
+				$correctedAmounts[$key] = (float) $value;
 			}
 
 			$paiement->amounts      = $correctedAmounts; // Array of amounts
