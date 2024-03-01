@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +33,6 @@ class mod_contract_serpis extends ModelNumRefContracts
 	// variables inherited from ModelNumRefContracts class
 	public $name = 'Serpis';
 	public $version = 'dolibarr';
-	public $error = '';
-	public $code_auto = 1;
-
 
 	// variables not inherited
 
@@ -43,6 +41,13 @@ class mod_contract_serpis extends ModelNumRefContracts
 	 */
 	public $prefix = 'CT';
 
+	/**
+	 *	Constructor
+	 */
+	public function __construct()
+	{
+		$this->code_auto = 1;
+	}
 
 	/**
 	 *	Return default description of numbering model
