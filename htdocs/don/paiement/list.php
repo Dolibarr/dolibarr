@@ -61,7 +61,7 @@ $search_sale = GETPOSTINT('search_sale');
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 $type = GETPOST('type', 'aZ');
 $mode = GETPOST('mode', 'alpha');
 if (empty($page) || $page == -1) {

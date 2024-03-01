@@ -590,7 +590,7 @@ abstract class CommonObject
 	public $lines;
 
 	/**
-	 * @var string	Action code to use to record auto event in agenda. For exemple 'AC_OTH_AUTO'
+	 * @var string	Action code to use to record auto event in agenda. For example 'AC_OTH_AUTO'
 	 */
 	public $actiontypecode;
 

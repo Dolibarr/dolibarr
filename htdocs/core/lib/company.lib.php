@@ -998,7 +998,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$optioncss = GETPOST('optioncss', 'alpha');
 	$sortfield = GETPOST('sortfield', 'aZ09comma');
 	$sortorder = GETPOST('sortorder', 'aZ09comma');
-	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+	$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 
 	$search_status = GETPOSTINT("search_status");
 	if ($search_status == '') {

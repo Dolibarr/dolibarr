@@ -50,7 +50,7 @@ $sortorder = GETPOST('sortorder', 'aZ09comma');
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $confirm = GETPOST('confirm', 'alpha');
 
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
