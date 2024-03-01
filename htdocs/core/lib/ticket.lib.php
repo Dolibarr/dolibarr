@@ -82,7 +82,7 @@ function ticketAdminPrepareHead()
  */
 function ticket_prepare_head($object)
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
 
 	$h = 0;
 	$head = array();
