@@ -93,7 +93,7 @@ class Tickets extends DolibarrApi
 	 */
 	public function getByTrackId($track_id)
 	{
-		return $this->getCommon(0, $track_id, '');
+		return $this->getCommon(0, $track_id, '');hrow new RestException(304,
 	}
 
 	/**
@@ -382,10 +382,10 @@ class Tickets extends DolibarrApi
 			$this->ticket->$field = $value;
 		}
 
-		if ($this->ticket->update(DolibarrApiAccess::$user)) {
+		if ($this->ticket->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(304, $this->ticket->error);
+			throw new RestException(500, $this->ticket->error);
 		}
 	}
 
