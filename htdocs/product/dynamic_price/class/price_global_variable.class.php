@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Ion Agorria          <ion@agorria.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -169,11 +170,11 @@ class PriceGlobalVariable
 	/**
 	 *  Update object into database
 	 *
-	 *  @param	User	$user        User that modifies
-	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
+	 *  @param	User|null	$user       User that modifies
+	 *  @param  int			$notrigger	0=launch triggers after, 1=disable triggers
+	 *  @return int     		   	 	Return integer <0 if KO, >0 if OK
 	 */
-	public function update($user = 0, $notrigger = 0)
+	public function update($user = null, $notrigger = 0)
 	{
 		$error = 0;
 
