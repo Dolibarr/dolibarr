@@ -7329,6 +7329,7 @@ abstract class CommonObject
 				}
 				$out .= '<option value="'.$keyb.'"';
 				$out .= (((string) $value == (string) $keyb) ? ' selected' : '');
+				if(!empty($parent)) $isDependList =1;
 				$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
 				$out .= '>'.$valb.'</option>';
 			}
