@@ -891,8 +891,6 @@ class Mo extends CommonObject
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = false)
 	{
-		global $db;
-
 		$error = 0;
 
 		if ($this->status < 0) {
@@ -900,7 +898,7 @@ class Mo extends CommonObject
 			return -2;
 		}
 
-		$moline = new MoLine($db);
+		$moline = new MoLine($this->db);
 		$moline->fetch($idline);
 
 		$affectedLinkedMoLines;
@@ -910,13 +908,13 @@ class Mo extends CommonObject
 			$affectedLinkedMoLines = $this->fetchLinesLinked('consumed', $moline->id);
 		}
 
-		$db->begin();
+		$this->db->begin();
 
 		// undo stockmovements and remove linked lines
 		if (!empty($affectedLinkedMoLines)) {
 			foreach ($affectedLinkedMoLines as $linkedLine) {
 				if (!$error) {
-					$linkedMoline = new MoLine($db);
+					$linkedMoline = new MoLine($this->db);
 					$linkedMoline->fetch($linkedLine['rowid']);
 					$result = $linkedMoline->delete($user, $notrigger);
 
@@ -2204,7 +2202,7 @@ class MoLine extends CommonObjectLine
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
-		global $db, $langs;
+		global $langs;
 
 		$error = 0;
 		$result = -1;
@@ -2214,13 +2212,13 @@ class MoLine extends CommonObjectLine
 			$langs->loadLangs(array('stocks', 'mrp'));
 
 			// load the mo for this line
-			$tmpmo = new Mo($db);
+			$tmpmo = new Mo($this->db);
 			$tmpmo->fetch($this->fk_mo);
 
 			// load the (old) linked stockmovement and the associated product
-			$linkedMovement = new MouvementStock($db);
+			$linkedMovement = new MouvementStock($this->db);
 			$linkedMovement->fetch($this->fk_stock_movement);
-			$productForLinkedMovement = new Product($db);
+			$productForLinkedMovement = new Product($this->db);
 			$productForLinkedMovement->fetch($linkedMovement->product_id);
 
 			// create new stockmovement to revise the linked stockmovement
