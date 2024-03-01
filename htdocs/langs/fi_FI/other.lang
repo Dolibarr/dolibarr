@@ -331,8 +331,10 @@ FTPPassiveMode=Passiivisena
 ChooseAFTPEntryIntoMenu=Valitse FTP/SFTP-sivusto hakemistosta valikko...
 FailedToGetFile=Tiedostojen %s lataus epäonnistui
 ErrorFTPNodisconnect=Virhe katkaistaessa FTP/SFTP-palvelinta
-FileWasUpload=tiedosto <b>%s<span class='notranslate'>b09f17f830 span> ladattiin
-FTPFailedToUploadFile=tiedosto <b>%s<span class='notranslate' lataaminen epäonnistui. ></b></span>.
+FileWasUpload=File <b>%s</b> was uploaded
+FTPFailedToUploadFile=Failed to upload the file <b>%s</b>.
 AddFolder=luo kansio
 FileWasCreateFolder=Kansio <b>%s</b> on luotu
 FTPFailedToCreateFolder=luo-kansioon <b>%s epäonnistui. </b>.
+SelectADay=Select a day in calendar
+SelectANewDate=Select a new date

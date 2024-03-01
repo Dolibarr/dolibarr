@@ -146,7 +146,7 @@ if (isModEnabled('modulebuilder')) {
 }
 
 // Logout link
-if (GETPOST('withlogout', 'int')) {
+if (GETPOSTINT('withlogout')) {
 	$toprightmenu .= $form->textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem', 2);
 }
 

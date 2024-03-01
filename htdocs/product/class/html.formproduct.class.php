@@ -346,7 +346,7 @@ class FormProduct
 					$out .= ' selected';
 				}
 			} else {
-				if ($selected == $id || (preg_match('/^ifone/', $selected) && $nbofwarehouses == 1)) {
+				if ($selected == $id || (!empty($selected) && preg_match('/^ifone/', $selected) && $nbofwarehouses == 1)) {
 					$out .= ' selected';
 				}
 			}
@@ -627,7 +627,7 @@ class FormProduct
 	 *  @param  string		$selected             Preselected value
 	 *  @param  int         $mode                1=Use label as value, 0=Use code
 	 *  @param  int         $showempty           1=show empty value, 0= no
-	 *  @return string
+	 *  @return string|int
 	 */
 	public function selectProductNature($name = 'finished', $selected = '', $mode = 0, $showempty = 1)
 	{

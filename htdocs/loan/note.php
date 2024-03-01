@@ -41,7 +41,7 @@ $action = GETPOST('action', 'aZ09');
 $langs->loadLangs(array("loan"));
 
 // Security check
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 $hookmanager->initHooks(array('loannote'));
 $result = restrictedArea($user, 'loan', $id, '&loan');
@@ -51,7 +51,7 @@ if ($id > 0) {
 	$object->fetch($id);
 }
 
-$permissionnote = $user->rights->loan->write; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('loan', 'write'); // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -135,7 +135,7 @@ if ($id > 0) {
 	print '<div class="underbanner clearboth"></div>';
 
 	$cssclass = 'titlefield';
-	$permission = $user->rights->loan->write; // Used by the include of notes.tpl.php
+	$permission = $user->hasRight('loan', 'write'); // Used by the include of notes.tpl.php
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	print dol_get_fiche_end();

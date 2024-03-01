@@ -35,8 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
 $langs->loadLangs(array('mrp', 'other'));
 
 // Get parameters
-$id     = GETPOST('id', 'int');
-$socid  = GETPOST('socid', 'int');
+$id     = GETPOSTINT('id');
+$socid  = GETPOSTINT('socid');
 $ref    = GETPOST('ref', 'alpha');
 
 $action     = GETPOST('action', 'aZ09');
@@ -56,10 +56,10 @@ $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
 // Load variables for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -159,8 +159,7 @@ if ($object->id > 0) {
 	 {
 	 $langs->load("projects");
 	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-	 if ($user->rights->bom->creer)
-	 {
+	 if ($user->hasRight('bom', 'creer')) {
 	 if ($action != 'classify')
 		 //$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 		 $morehtmlref.=' : ';

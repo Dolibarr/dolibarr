@@ -138,7 +138,7 @@ class ImportCsv extends ModeleImports
 	public function write_title_example($outputlangs, $headerlinefields)
 	{
 		// phpcs:enable
-		$s = join($this->separator, array_map('cleansep', $headerlinefields));
+		$s = implode($this->separator, array_map('cleansep', $headerlinefields));
 		return $s."\n";
 	}
 
@@ -153,7 +153,7 @@ class ImportCsv extends ModeleImports
 	public function write_record_example($outputlangs, $contentlinevalues)
 	{
 		// phpcs:enable
-		$s = join($this->separator, array_map('cleansep', $contentlinevalues));
+		$s = implode($this->separator, array_map('cleansep', $contentlinevalues));
 		return $s."\n";
 	}
 
@@ -450,7 +450,9 @@ class ImportCsv extends ModeleImports
 												 }*/
 												$param_array = array('', $newval, 0, $arrayrecord[0]['val']); // Param to fetch parent from account, in chart.
 											}
-
+											if ($class == 'CActionComm') {
+												$param_array = array($newval); // CActionComm fetch method have same parameter for id and code
+											}
 											$result = call_user_func_array(array($classinstance, $method), $param_array);
 
 											// If duplicate record found

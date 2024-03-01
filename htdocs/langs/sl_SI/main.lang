@@ -9,7 +9,7 @@ DIRECTION=ltr
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil
+# freeserif is for Tamil or Ethiopian
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=8
 SeparatorDecimal=,
@@ -420,6 +420,8 @@ TotalTTCShort=Skupaj (z DDV)
 TotalHT=Skupaj (brez davka)
 TotalHTforthispage=Skupaj (brez davka) za to stran
 Totalforthispage=Skupaj za to stran
+GrandTotal=Grand total
+TotalforAllPages=Total for all pages
 TotalTTC=Skupaj (z DDV)
 TotalTTCToYourCredit=Skupaj (z DDV) na vaš dobropis
 TotalVAT=Skupaj DDV
@@ -647,6 +649,7 @@ ReportName=Ime poročila
 ReportPeriod=Obdobje poročila
 ReportDescription=Opis
 Report=Poročilo
+Reports=Poročila
 Keyword=Ključna beseda
 Origin=Izvor
 Legend=Legenda
@@ -963,6 +966,7 @@ AutomaticallyCalculated=Samodejno izračunano
 TitleSetToDraft=Nazaj na osnutek
 ConfirmSetToDraft=Ali ste prepričani, da se želite vrniti na stanje osnutka?
 ImportId=ID uvoza
+Event=Aktivnost
 Events=Dogodki
 EMailTemplates=E-poštne predloge
 FileNotShared=Datoteka ni v skupni rabi zunanji javnosti
@@ -1180,7 +1184,6 @@ ConfirmAffectUserQuestion=Ali ste prepričani, da želite dodeliti uporabnike %s
 ConfirmSetSupervisorQuestion=Ali ste prepričani, da želite nastaviti nadzornika za izbrane zapise %s?
 ConfirmUpdatePriceQuestion=Ali ste prepričani, da želite posodobiti ceno %s izbranih zapisov?
 CategTypeNotFound=Za vrsto zapisov ni bilo mogoče najti nobene vrste oznake
-Rate=Stopnja
 SupervisorNotFound=Nadzornik ne obstaja
 CopiedToClipboard=Kopirano v odložišče
 InformationOnLinkToContract=Ta znesek je samo skupek vseh vrstic pogodbe. Noben pojem časa se ne upošteva.
@@ -1213,6 +1216,7 @@ CanceledHidden=Preklicano skrito
 CanceledShown=Prikazano preklicano
 Terminate=Prekiniti
 Terminated=Prekinjeno
+Position=Položaj
 AddLineOnPosition=Dodaj vrstico na položaj (na koncu, če je prazen)
 ConfirmAllocateCommercial=Dodelitev potrditve prodajnega predstavnika
 ConfirmAllocateCommercialQuestion=Ali ste prepričani, da želite dodeliti izbrane zapise %s?
@@ -1230,6 +1234,7 @@ ExternalUser=Zunanji uporabnik
 NoSpecificContactAddress=Brez posebnega kontakta ali naslova
 NoSpecificContactAddressBis=Ta zavihek je namenjen vsiljevanju določenih stikov ali naslovov za trenutni predmet. Uporabite ga le, če želite določiti enega ali več določenih kontaktov ali naslovov za objekt, ko podatki o tretji osebi niso dovolj ali niso točni.
 HideOnVCard=Skrij %s
+ShowOnVCard=Show %s
 AddToContacts=Dodaj naslov v moje stike
 LastAccess=Zadnji dostop
 UploadAnImageToSeeAPhotoHere=Naložite sliko z zavihka %s, če si želite ogledati fotografijo tukaj
@@ -1259,4 +1264,7 @@ AmountSalary=Znesek plače
 InvoiceSubtype=Podvrsta računa
 ConfirmMassReverse=Množična povratna potrditev
 ConfirmMassReverseQuestion=Ali ste prepričani, da želite razveljaviti %s izbrane zapise?
-
+ElementType=Element type
+ElementId=Element Id
+Encrypted=Encrypted
+Settings=nastavitve

@@ -72,7 +72,7 @@ ExportDataset_user_1=משתמשים והמאפיינים שלהם
 DomainUser=משתמש דומיין %s
 Reactivate=הפעל מחדש
 CreateInternalUserDesc=טופס זה מאפשר לך ליצור משתמש פנימי בחברה/ארגון שלך. כדי ליצור משתמש חיצוני (לקוח, ספק וכו'...), השתמש בלחצן 'צור משתמש Dolibarr' מכרטיס הקשר של אותו צד שלישי.
-InternalExternalDesc=משתמש <b>פנימי</b> הוא משתמש שהוא חלק מהחברה/ארגון שלך, או שהוא משתמש שותף מחוץ לארגון שלך שאולי יצטרך לראות יותר נתונים מאשר נתונים הקשורים לחברה שלו (מערכת ההרשאות תגדיר מה הוא יכול או לא יכול לראות או לעשות).<br>An <span class=' משתמש notranslate'><b></span>external</b> הוא לקוח, ספק או אחר שחייב להציג רק נתונים הקשורים לעצמו (יצירת משתמש חיצוני עבור צד שלישי יכולה להיות נעשה מתוך רשומת אנשי הקשר של הצד השלישי).<br><br>בשני המקרים, עליך להעניק הרשאות לתכונות הצורך של המשתמש.
+InternalExternalDesc=An <b>internal</b> user is a user that is part of your company/organization, or is a partner user outside of your organization that may need to see more data  than data related to his company (the permission system will define what he can or can't see or do).<br>An <b>external</b> user is a customer, vendor or other that must view ONLY data related to himself (Creating an external user for a third-party can be done from the contact record of the third-party).<br><br>In both cases, you must grant permissions on the features that the user need.
 PermissionInheritedFromAGroup=הרשאה ניתנה בגלל בירושה מאחד מקבוצת המשתמש.
 Inherited=ירש
 UserWillBe=המשתמש שנוצר יהיה

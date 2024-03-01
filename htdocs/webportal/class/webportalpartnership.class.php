@@ -131,7 +131,6 @@ class WebPortalPartnership extends Partnership
 	//public $note_public;
 	//public $note_private;
 	//public $date_creation;
-	//public $tms;
 	//public $fk_user_creat;
 	//public $fk_user_modif;
 	//public $last_main_doc;
@@ -202,7 +201,7 @@ class WebPortalPartnership extends Partnership
 		$datas = [];
 
 		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-			return ['optimize' => $langs->trans("ShowWebPortalPartnership")];
+			return ['optimize' => $langs->trans("WebPortalPartnership")];
 		}
 		$datas['picto'] = img_picto('', $this->picto) . ' <u>' . $langs->trans("WebPortalPartnership") . '</u>';
 		if (isset($this->status)) {
@@ -265,7 +264,7 @@ class WebPortalPartnership extends Partnership
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowPartnership");
 				$linkclose .= ' alt="' . dol_escape_htmltag($label, 1) . '"';
 			}

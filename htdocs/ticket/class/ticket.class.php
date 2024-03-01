@@ -5,6 +5,7 @@
  * Copyright (C) 2020      Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2023      Charlene Benke 	   <charlene@patas-monkey.com>
  * Copyright (C) 2023	   Benjamin Falière	   <benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -187,14 +188,14 @@ class Ticket extends CommonObject
 	public $email_from;
 
 	/**
+	 * Email to reply to
+	 */
+	public $origin_replyto;
+
+	/**
 	 * @var int Creation date
 	 */
 	public $datec;
-
-	/**
-	 * @var int Last modification date
-	 */
-	public $tms;
 
 	/**
 	 * @var int Read date
@@ -280,12 +281,12 @@ class Ticket extends CommonObject
 	/**
 	 * Status
 	 */
-	const STATUS_NOT_READ = 0;
-	const STATUS_READ = 1;
-	const STATUS_ASSIGNED = 2;
-	const STATUS_IN_PROGRESS = 3;
-	const STATUS_NEED_MORE_INFO = 5;	// waiting requester feedback
-	const STATUS_WAITING = 7;			// on hold
+	const STATUS_NOT_READ = 0;			// Draft. Not take into account yet.
+	const STATUS_READ = 1;				// Ticket was read.
+	const STATUS_ASSIGNED = 2;			// Ticket was just assigned to someone. Not in progress yet.
+	const STATUS_IN_PROGRESS = 3;		// In progress
+	const STATUS_NEED_MORE_INFO = 5;	// Waiting requester feedback
+	const STATUS_WAITING = 7;			// On hold
 	const STATUS_CLOSED = 8;			// Closed - Solved
 	const STATUS_CANCELED = 9;			// Closed - Not solved
 
@@ -324,6 +325,7 @@ class Ticket extends CommonObject
 		'track_id' => array('type'=>'varchar(255)', 'label'=>'TicketTrackId', 'visible'=>-2, 'enabled'=>1, 'position'=>11, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text"),
 		'fk_user_create' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Author', 'visible'=>1, 'enabled'=>1, 'position'=>15, 'notnull'=>1, 'csslist'=>'tdoverflowmax100 maxwidth150onsmartphone'),
 		'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>-2, 'enabled'=>1, 'position'=>16, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'csslist'=>'tdoverflowmax150'),
+		'origin_replyto' => array('type'=>'mail', 'label'=>'EmailReplyto', 'visible'=>-2, 'enabled'=>1, 'position'=>17, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Email to reply to", 'csslist'=>'tdoverflowmax150'),
 		'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>18, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth200 tdoverflowmax200', 'autofocusoncreate'=>1),
 		'type_code' => array('type'=>'varchar(32)', 'label'=>'Type', 'visible'=>1, 'enabled'=>1, 'position'=>20, 'notnull'=>-1, 'help'=>"", 'csslist'=>'maxwidth125 tdoverflowmax50'),
 		'category_code' => array('type'=>'varchar(32)', 'label'=>'TicketCategory', 'visible'=>-1, 'enabled'=>1, 'position'=>21, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100 tdoverflowmax200'),
@@ -514,6 +516,7 @@ class Ticket extends CommonObject
 			$sql .= "fk_project,";
 			$sql .= "fk_contract,";
 			$sql .= "origin_email,";
+			$sql .= "origin_replyto,";
 			$sql .= "fk_user_create,";
 			$sql .= "fk_user_assign,";
 			$sql .= "email_msgid,";
@@ -541,6 +544,7 @@ class Ticket extends CommonObject
 			$sql .= " ".($this->fk_project > 0 ? $this->db->escape($this->fk_project) : "null").",";
 			$sql .= " ".($this->fk_contract > 0 ? $this->db->escape($this->fk_contract) : "null").",";
 			$sql .= " ".(!isset($this->origin_email) ? 'NULL' : "'".$this->db->escape($this->origin_email)."'").",";
+			$sql .= " ".(!isset($this->origin_replyto) ? 'NULL' : "'".$this->db->escape($this->origin_replyto)."'").",";
 			$sql .= " ".(!isset($this->fk_user_create) ? ($user->id > 0 ? $user->id : 'NULL') : ($this->fk_user_create > 0 ? $this->fk_user_create : 'NULL')).",";
 			$sql .= " ".($this->fk_user_assign > 0 ? $this->fk_user_assign : 'NULL').",";
 			$sql .= " ".(empty($this->email_msgid) ? 'NULL' : "'".$this->db->escape($this->email_msgid)."'").",";
@@ -576,9 +580,20 @@ class Ticket extends CommonObject
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."ticket");
 			}
 
-			if (!$error && getDolGlobalString('TICKET_ADD_AUTHOR_AS_CONTACT')) {
+			if (!$error && getDolGlobalString('TICKET_ADD_AUTHOR_AS_CONTACT') && empty($this->context["createdfrompublicinterface"])) {
 				// add creator as contributor
-				if ($this->add_contact($user->id, 'CONTRIBUTOR', 'internal') < 0) {
+
+				// We first check the type of contact (internal or external)
+				if (!empty($user->socid) && !empty($user->contact_id) && getDolGlobalInt('TICKET_ADD_AUTHOR_AS_CONTACT') == 2) {
+					$contact_type = 'external';
+					$contributor_id = $user->contact_id;
+				} else {
+					$contact_type = 'internal';
+					$contributor_id = $user->id;
+				}
+
+				// We add the creator as contributor
+				if ($this->add_contact($contributor_id, 'CONTRIBUTOR', $contact_type) < 0) {
 					$error++;
 				}
 			}
@@ -621,7 +636,7 @@ class Ticket extends CommonObject
 			}
 		} else {
 			$this->db->rollback();
-			dol_syslog(get_class($this)."::Create fails verify ".join(',', $this->errors), LOG_WARNING);
+			dol_syslog(get_class($this)."::Create fails verify ".implode(',', $this->errors), LOG_WARNING);
 			return -3;
 		}
 	}
@@ -655,6 +670,7 @@ class Ticket extends CommonObject
 		$sql .= " t.fk_project,";
 		$sql .= " t.fk_contract,";
 		$sql .= " t.origin_email,";
+		$sql .= " t.origin_replyto,";
 		$sql .= " t.fk_user_create,";
 		$sql .= " t.fk_user_assign,";
 		$sql .= " t.email_msgid,";
@@ -710,6 +726,7 @@ class Ticket extends CommonObject
 				$this->fk_project = $obj->fk_project;
 				$this->fk_contract = $obj->fk_contract;
 				$this->origin_email = $obj->origin_email;
+				$this->origin_replyto = $obj->origin_replyto;
 				$this->fk_user_create = $obj->fk_user_create;
 				$this->fk_user_assign = $obj->fk_user_assign;
 				$this->email_msgid = $obj->email_msgid;
@@ -789,6 +806,7 @@ class Ticket extends CommonObject
 		$sql .= " t.fk_project,";
 		$sql .= " t.fk_contract,";
 		$sql .= " t.origin_email,";
+		$sql .= " t.origin_replyto,";
 		$sql .= " t.fk_user_create, uc.lastname as user_create_lastname, uc.firstname as user_create_firstname,";
 		$sql .= " t.fk_user_assign, ua.lastname as user_assign_lastname, ua.firstname as user_assign_firstname,";
 		$sql .= " t.subject,";
@@ -895,6 +913,7 @@ class Ticket extends CommonObject
 					$line->fk_project = $obj->fk_project;
 					$line->fk_contract = $obj->fk_contract;
 					$line->origin_email = $obj->origin_email;
+					$line->origin_replyto = $obj->origin_replyto;
 
 					$line->fk_user_create = $obj->fk_user_create;
 					$line->fk_user_assign = $obj->fk_user_assign;
@@ -1047,6 +1066,7 @@ class Ticket extends CommonObject
 		$sql .= " fk_project=".(isset($this->fk_project) ? "'".$this->db->escape($this->fk_project)."'" : "null").",";
 		$sql .= " fk_contract=".(isset($this->fk_contract) ? "'".$this->db->escape($this->fk_contract)."'" : "null").",";
 		$sql .= " origin_email=".(isset($this->origin_email) ? "'".$this->db->escape($this->origin_email)."'" : "null").",";
+		$sql .= " origin_email=".(isset($this->origin_replyto) ? "'".$this->db->escape($this->origin_replyto)."'" : "null").",";
 		$sql .= " fk_user_create=".(isset($this->fk_user_create) ? $this->fk_user_create : "null").",";
 		$sql .= " fk_user_assign=".(isset($this->fk_user_assign) ? $this->fk_user_assign : "null").",";
 		$sql .= " subject=".(isset($this->subject) ? "'".$this->db->escape($this->subject)."'" : "null").",";
@@ -1430,49 +1450,58 @@ class Ticket extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->fk_statut, $mode, 0, $this->progress);
+		return $this->LibStatut($this->status, $mode, 0, $this->progress);
 	}
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Return status label of object
+	 * Return status label of object
 	 *
-	 *    @param      string 	$status      Id status
-	 *    @param      int		$mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *    @param	  int		$notooltip	 1=No tooltip
-	 *    @param	  int		$progress	 Progression (0 to 100)
-	 *    @return     string     			 Label
+	 * @param	string		$status			Id status
+	 * @param	int			$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @param	int			$notooltip		1=No tooltip
+	 * @param	int			$progress		Progression (0 to 100)
+	 * @return	string						Label
 	 */
 	public function LibStatut($status, $mode = 0, $notooltip = 0, $progress = 0)
 	{
 		// phpcs:enable
 		global $langs, $hookmanager;
 
-		$labelStatus = $this->labelStatus[$status];
-		$labelStatusShort = $this->labelStatusShort[$status];
+		$labelStatus = (isset($status) && !empty($this->labelStatus[$status])) ? $this->labelStatus[$status] : '';
+		$labelStatusShort = (isset($status) && !empty($this->labelStatusShort[$status]))? $this->labelStatusShort[$status] : '';
 
-		if ($status == self::STATUS_NOT_READ) {				// Not read
-			$statusType = 'status0';
-		} elseif ($status == self::STATUS_READ) {			// Read
-			$statusType = 'status1';
-		} elseif ($status == self::STATUS_ASSIGNED) {		// Assigned
-			$statusType = 'status2';
-		} elseif ($status == self::STATUS_IN_PROGRESS) {	// In progress
-			$statusType = 'status4';
-		} elseif ($status == self::STATUS_WAITING) {		// Waiting
-			$statusType = 'status7';
-		} elseif ($status == self::STATUS_NEED_MORE_INFO) {	// Waiting more info from requester
-			$statusType = 'status3';
-		} elseif ($status == self::STATUS_CANCELED) {		// Cancel
-			$statusType = 'status9';
-		} elseif ($status == self::STATUS_CLOSED) {			// Closed
-			$statusType = 'status6';
-		} else {
-			$labelStatus = 'Unknown';
-			$labelStatusShort = 'Unknown';
-			$statusType = 'status0';
-			$mode = 0;
+		switch ($status) {
+			case self::STATUS_NOT_READ:						// Not read
+				$statusType = 'status0';
+				break;
+			case self::STATUS_READ:							// Read
+				$statusType = 'status1';
+				break;
+			case self::STATUS_ASSIGNED:						// Assigned
+				$statusType = 'status2';
+				break;
+			case self::STATUS_IN_PROGRESS:					// In progress
+				$statusType = 'status4';
+				break;
+			case self::STATUS_WAITING:						// Waiting/pending/suspended
+				$statusType = 'status7';
+				break;
+			case self::STATUS_NEED_MORE_INFO:				// Waiting more information from the requester
+				$statusType = 'status3';
+				break;
+			case self::STATUS_CANCELED:						// Canceled
+				$statusType = 'status9';
+				break;
+			case self::STATUS_CLOSED:						// Closed
+				$statusType = 'status6';
+				break;
+			default:
+				$labelStatus = 'Unknown';
+				$labelStatusShort = 'Unknown';
+				$statusType = 'status0';
+				$mode = 0;
 		}
 
 		$parameters = array(
@@ -1530,7 +1559,7 @@ class Ticket extends CommonObject
 			$datas['date_modification'] = '<br><b>'.$langs->trans('DateModification').':</b> '.dol_print_date($this->date_modification, 'dayhour');
 		}
 		// show categories for this record only in ajax to not overload lists
-		if (isModEnabled('categorie') && !$nofetch) {
+		if (isModEnabled('category') && !$nofetch) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$form = new Form($this->db);
 			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_TICKET, 1);
@@ -1660,7 +1689,7 @@ class Ticket extends CommonObject
 					return 1;
 				} else {
 					$this->db->rollback();
-					$this->error = join(',', $this->errors);
+					$this->error = implode(',', $this->errors);
 					dol_syslog(get_class($this)."::markAsRead ".$this->error, LOG_ERR);
 					return -1;
 				}
@@ -1718,7 +1747,7 @@ class Ticket extends CommonObject
 				return 1;
 			} else {
 				$this->db->rollback();
-				$this->error = join(',', $this->errors);
+				$this->error = implode(',', $this->errors);
 				dol_syslog(get_class($this)."::assignUser ".$this->error, LOG_ERR);
 				return -1;
 			}
@@ -1808,7 +1837,7 @@ class Ticket extends CommonObject
 		}
 
 		if (!empty($mimefilename_list) && is_array($mimefilename_list)) {
-			$actioncomm->note_private = dol_concatdesc($actioncomm->note_private, "\n".$langs->transnoentities("AttachedFiles").': '.join(';', $mimefilename_list));
+			$actioncomm->note_private = dol_concatdesc($actioncomm->note_private, "\n".$langs->transnoentities("AttachedFiles").': '.implode(';', $mimefilename_list));
 		}
 
 		$actionid = $actioncomm->create($user);
@@ -1898,7 +1927,7 @@ class Ticket extends CommonObject
 				$error = 0;
 
 				// Valid and close fichinter linked
-				if (isModEnabled('ficheinter') && getDolGlobalString('WORKFLOW_TICKET_CLOSE_INTERVENTION')) {
+				if (isModEnabled('intervention') && getDolGlobalString('WORKFLOW_TICKET_CLOSE_INTERVENTION')) {
 					dol_syslog("We have closed the ticket, so we close all linked interventions");
 					$this->fetchObjectLinked($this->id, $this->element, null, 'fichinter');
 					if ($this->linkedObjectsIds) {
@@ -1935,7 +1964,7 @@ class Ticket extends CommonObject
 					return 1;
 				} else {
 					$this->db->rollback();
-					$this->error = join(',', $this->errors);
+					$this->error = implode(',', $this->errors);
 					dol_syslog(get_class($this)."::close ".$this->error, LOG_ERR);
 					return -1;
 				}
@@ -2241,7 +2270,7 @@ class Ticket extends CommonObject
 	 *    @param    int     $list           0:Return array contains all properties, 1:Return array contains just id
 	 *    @param    string  $code           Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @param    int     $status         Status of user or company
-	 *    @return   array|int               Array of contacts
+	 *    @return   array|int               Array of array('email'=>..., 'lastname'=>...)
 	 */
 	public function listeContact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1)
 	{
@@ -2315,7 +2344,7 @@ class Ticket extends CommonObject
 
 				if (!$list) {
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
-					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_contact_label);
+					$labelType = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_contact_label);
 					$tab[$i] = array(
 							'source' => $obj->source,
 							'socid' => $obj->socid,
@@ -2327,7 +2356,8 @@ class Ticket extends CommonObject
 							'email' => $obj->email,
 							'rowid' => $obj->rowid,
 							'code' => $obj->code,
-							'libelle' => $libelle_type,
+							'libelle' => $labelType,		// deprecated, replaced with labeltype
+							'labeltype' => $labelType,
 							'status' => $obj->statuslink,
 							'statuscontact'=>$obj->statuscontact,
 							'fk_c_type_contact' => $obj->fk_c_type_contact,
@@ -2591,7 +2621,7 @@ class Ticket extends CommonObject
 			$object->message = GETPOST("message", "restricthtml");
 			$object->private = GETPOST("private_message", "alpha");
 
-			$send_email = GETPOST('send_email', 'int');
+			$send_email = GETPOSTINT('send_email');
 
 			// Copy attached files (saved into $_SESSION) as linked files to ticket. Return array with final name used.
 			$resarray = $object->copyFilesForTicket();
@@ -2791,6 +2821,9 @@ class Ticket extends CommonObject
 									$object->fetch_thirdparty($object->fk_soc);
 									$array_company = array(array('firstname' => '', 'lastname' => $object->thirdparty->name, 'email' => $object->thirdparty->email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => $object->thirdparty->id));
 									$external_contacts = array_merge($external_contacts, $array_company);
+								} elseif (empty($object->fk_soc) && !empty($object->origin_replyto)) {
+									$array_external = array(array('firstname' => '', 'lastname' => $object->origin_replyto, 'email' => $object->origin_replyto, 'libelle' => $langs->transnoentities('Customer'), 'socid' => 0));
+									$external_contacts = array_merge($external_contacts, $array_external);
 								} elseif (empty($object->fk_soc) && !empty($object->origin_email)) {
 									$array_external = array(array('firstname' => '', 'lastname' => $object->origin_email, 'email' => $object->thirdparty->email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => $object->thirdparty->id));
 									$external_contacts = array_merge($external_contacts, $array_external);

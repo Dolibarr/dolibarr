@@ -162,7 +162,6 @@ class StockTransfer extends CommonObject
 	public $note_public;
 	public $note_private;
 	public $date_creation;
-	public $tms;
 	public $lead_time_for_warning;
 	public $fk_user_creat;
 	public $fk_user_modif;
@@ -477,7 +476,7 @@ class StockTransfer extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -492,7 +491,7 @@ class StockTransfer extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		$this->tms = ''; // Will be done automatically because tms field is on update cascade
+		$this->tms = 0; // Will be done automatically because tms field is on update cascade
 		$res = $this->updateCommon($user, $notrigger);
 		if (($this->socid > 0 || $this->fk_soc > 0) && empty($this->thirdparty)) {
 			$this->fetch_thirdparty();

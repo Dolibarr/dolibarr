@@ -66,11 +66,6 @@ class PaymentSalary extends CommonObject
 	public $datec = '';
 
 	/**
-	 * @var int				Timestamp
-	 */
-	public $tms = '';
-
-	/**
 	 * @var int|string		Date of payment
 	 * @deprecated
 	 * @see $datep
@@ -110,7 +105,8 @@ class PaymentSalary extends CommonObject
 	public $num_paiement;
 
 	/**
-	 * @var string			Payment reference
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
@@ -206,7 +202,7 @@ class PaymentSalary extends CommonObject
 			$this->fk_salary = (int) $this->fk_salary;
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) $this->amount;
 		}
 		if (isset($this->fk_typepayment)) {
 			$this->fk_typepayment = (int) $this->fk_typepayment;
@@ -232,13 +228,13 @@ class PaymentSalary extends CommonObject
 
 		$totalamount = 0;
 		foreach ($this->amounts as $key => $value) {  // How payment is dispatch
-			$newvalue = price2num($value, 'MT');
+			$newvalue = (float) price2num($value, 'MT');
 			$this->amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
 		}
-		$totalamount = price2num($totalamount);
 
 		// Check parameters
+		$totalamount = (float) price2num($totalamount, 'MT'); // this is to ensure the following test is no biaised by a potential float equal to 0.0000000000001
 		if ($totalamount == 0) {
 			return -1;
 		} // On accepte les montants negatifs pour les rejets de prelevement mais pas null
@@ -250,14 +246,13 @@ class PaymentSalary extends CommonObject
 			// Insert array of amounts
 			foreach ($this->amounts as $key => $amount) {
 				$salary_id = $key;
-				$amount = price2num($amount);
 				if (is_numeric($amount) && !empty($amount)) {
 					// We can have n payments for 1 salary but we can't have 1 payments for n salaries (for invoices link is n-n, not for salaries).
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_salary (entity, fk_salary, datec, datep, amount,";
 					$sql .= " fk_typepayment, num_payment, note, fk_user_author, fk_bank)";
 					$sql .= " VALUES (".((int) $conf->entity).", ".((int) $salary_id).", '".$this->db->idate($now)."',";
 					$sql .= " '".$this->db->idate($this->datep)."',";
-					$sql .= " ".price2num($amount).",";
+					$sql .= " ".((float) $amount).",";
 					$sql .= " ".((int) $this->fk_typepayment).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".((int) $user->id).",";
 					$sql .= " 0)";
 
@@ -390,7 +385,7 @@ class PaymentSalary extends CommonObject
 			$this->fk_salary = (int) $this->fk_salary;
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) $this->amount;
 		}
 		if (isset($this->fk_typepayment)) {
 			$this->fk_typepayment = (int) $this->fk_typepayment;
@@ -567,8 +562,8 @@ class PaymentSalary extends CommonObject
 		$this->id = 0;
 		$this->fk_salary = 0;
 		$this->datec = '';
-		$this->tms = '';
-		$this->datepaye = '';
+		$this->tms = dol_now();
+		$this->datepaye = dol_now();
 		$this->amount = 0.0;
 		$this->fk_typepayment = 0;
 		$this->num_payment = '';
@@ -601,7 +596,7 @@ class PaymentSalary extends CommonObject
 
 		$error = 0;
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$acc = new Account($this->db);

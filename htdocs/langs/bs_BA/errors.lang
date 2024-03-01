@@ -8,7 +8,7 @@ ErrorBadEMail=Adresa e-pošte %s je netačna
 ErrorBadMXDomain=Čini se da e-pošta %s nije tačna (domena nema važeći MX zapis)
 ErrorBadUrl=Url %s je netačan
 ErrorBadValueForParamNotAString=Bad value for your parameter. It appends generally when translation is missing.
-ErrorRefAlreadyExists=Referenca <b>%s</b> već postoji.
+ErrorRefAlreadyExists=Reference <b>%s</b> used for creation already exists.
 ErrorTitleAlreadyExists=Naslov <b>%s</b> već postoji.
 ErrorLoginAlreadyExists=Prijava %s već postoji.
 ErrorGroupAlreadyExists=Grupa %s već postoji.
@@ -87,18 +87,17 @@ ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP matching is not complete.
 ErrorLDAPMakeManualTest=A .ldif file has been generated in directory %s. Try to load it manually from command line to have more information on errors.
 ErrorCantSaveADoneUserWithZeroPercentage=Ne može se sačuvati radnja sa "statusom nije pokrenut" ako je polje "done by" također popunjeno.
-ErrorRefAlreadyExists=Referenca <b>%s</b> već postoji.
 ErrorPleaseTypeBankTransactionReportName=Molimo unesite naziv bankovnog izvoda gdje unos treba prijaviti (format GGGGMM ili GGGGMMDD)
 ErrorRecordHasChildren=Brisanje zapisa nije uspjelo jer ima neke podređene zapise.
 ErrorRecordHasAtLeastOneChildOfType=Objekt %s ima najmanje jedno dijete tipa %s
 ErrorRecordIsUsedCantDelete=Nije moguće izbrisati zapis. Već je korišten ili uključen u drugi objekt.
 ErrorModuleRequireJavascript=JavaScript ne smije biti onemogućen da bi ova funkcija radila. Da omogućite/onemogućite JavaScript, idite na meni Početna->Podešavanje->Prikaz.
 ErrorPasswordsMustMatch=Both typed passwords must match each other
-ErrorContactEMail=Došlo je do tehničke greške. Molimo kontaktirajte administratora na sljedeći e-mail <b>%s</b> i navedite šifru greške <b>%s<span class='notranslate'>f09f77b09 span> u svoju poruku ili dodajte ekransku kopiju ove stranice.
-ErrorWrongValueForField=Polje <b>%s</b>: '<span>notranslate' <b></span>%s</b>' se ne podudara s pravilom redovnog izraza 36aee83b0aee8 <span class='notranslate'>%s</b>
+ErrorContactEMail=A technical error occurred. Please, contact administrator to following email <b>%s</b> and provide the error code <b>%s</b> in your message, or add a screen copy of this page.
+ErrorWrongValueForField=Field <b>%s</b>: '<b>%s</b>' does not match regex rule <b>%s</b>
 ErrorHtmlInjectionForField=Polje <b>%s</b>: vrijednost '<span class='no '><b></span>%s</b>' sadrži zlonamjerne podatke koji nisu dozvoljeni
-ErrorFieldValueNotIn=Polje <b>%s</b>: '<span>notranslate' <b></span>%s</b>' nije vrijednost pronađena u polju b0z0837 span><span class='notranslate'>%s</b> od <b> %s</b>
-ErrorFieldRefNotIn=Polje <b>%s</b>: '<span>notranslate' <b></span>%s</b>' nije b0ae83f7365<span> class='notranslate'>%s</span></b> postojeća ref.
+ErrorFieldValueNotIn=Field <b>%s</b>: '<b>%s</b>' is not a value found in field <b>%s</b> of <b>%s</b>
+ErrorFieldRefNotIn=Field <b>%s</b>: '<b>%s</b>' is not a <b>%s</b> existing ref
 ErrorMultipleRecordFoundFromRef=Nekoliko zapisa pronađeno je pretraživanjem iz ref <b>%s</b>. Nema načina da znate koji ID koristiti.
 ErrorsOnXLines=%s pronađene greške
 ErrorFileIsInfectedWithAVirus=The antivirus program was not able to validate the file (file might be infected by a virus)
@@ -220,7 +219,7 @@ ErrorPhpMailDelivery=Check that you don't use a too high number of recipients an
 ErrorUserNotAssignedToTask=User must be assigned to task to be able to enter time consumed.
 ErrorTaskAlreadyAssigned=Task already assigned to user
 ErrorModuleFileSeemsToHaveAWrongFormat=The module package seems to have a wrong format.
-ErrorModuleFileSeemsToHaveAWrongFormat2=Najmanje jedan obavezni direktorij mora postojati u zip modulu: <strong>%s</strong> > ili <span class='notranslate'><strong>%s</strong>
+ErrorModuleFileSeemsToHaveAWrongFormat2=At least one mandatory directory must exists into zip of module: <strong>%s</strong> or <strong>%s</strong>
 ErrorFilenameDosNotMatchDolibarrPackageRules=The name of the module package (<strong>%s</strong>) does not match expected name syntax: <strong>%s</strong>
 ErrorDuplicateTrigger=Error, duplicate trigger name %s. Already loaded from %s.
 ErrorNoWarehouseDefined=Error, no warehouses defined.
@@ -264,9 +263,9 @@ ErrorReplaceStringEmpty=Greška, niz za zamjenu je prazan
 ErrorProductNeedBatchNumber=Greška, proizvodu '<b>%s</b>' potreban je broj/serijski broj
 ErrorProductDoesNotNeedBatchNumber=Greška, proizvod '<b>%s</b>' ne prihvata lot/ serijski broj
 ErrorFailedToReadObject=Greška, nije uspjelo čitanje objekta tipa <b>%s</b>
-ErrorParameterMustBeEnabledToAllwoThisFeature=Greška, parametar <b>%s</b> mora biti omogućen u <span> class 'notranslate'><b></span>conf/conf.php<> za omogućavanje upotrebe sučelja komandne linije od strane internog planera poslova
+ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php<> to allow use of Command Line Interface by the internal job scheduler
 ErrorLoginDateValidity=Greška, ova prijava je izvan raspona datuma valjanosti
-ErrorValueLength=Dužina polja '<b>%s</b>< mora biti veća od' span class='notranslate'><b></span>%s</b>'
+ErrorValueLength=Length of field '<b>%s</b>' must be higher than '<b>%s</b>'
 ErrorReservedKeyword=Riječ '<b>%s</b>' je rezervirana ključna riječ
 ErrorFilenameReserved=Ime datoteke <b>%s</b> se ne može koristiti jer je rezervirana i zaštićena naredba.
 ErrorNotAvailableWithThisDistribution=Nije dostupno sa ovom distribucijom
@@ -326,6 +325,7 @@ ErrorSVGFilesNotAllowedAsLinksWithout=SVG datoteke nisu dozvoljene kao vanjske v
 ErrorTypeMenu=Nemoguće je dodati još jedan meni za isti modul na navigacijsku traku, još nije rukovati
 ErrorObjectNotFound = Objekt <b>%s</b> nije pronađen, provjerite svoj url
 ErrorCountryCodeMustBe2Char=Kôd zemlje mora biti niz od 2 karaktera
+ErrorABatchShouldNotContainsSpaces=A lot or serial number should not contains spaces
 
 ErrorTableExist=Tabela <b>%s</b> već postoji
 ErrorDictionaryNotFound=Rječnik <b>%s</b> nije pronađen
@@ -373,7 +373,7 @@ WarningModuleNeedRefresh = Modul <b>%s</b> je onemogućen. Ne zaboravite to omog
 WarningPermissionAlreadyExist=Postojeće dozvole za ovaj objekt
 WarningGoOnAccountancySetupToAddAccounts=Ako je ova lista prazna, idite u meni %s - %s - %s da učitate ili kreirate račune za vaš kontni plan.
 WarningCorrectedInvoiceNotFound=Ispravljena faktura nije pronađena
-WarningCommentNotFound=Molimo provjerite položaj početnih i krajnjih komentara za <b>%s<span klasu ='notranslate'></b></span> odjeljak u datoteci <b>%s<span class='notranslate'>b09f4b>b09f17 span> prije podnošenja radnje
+WarningCommentNotFound=Please check placement of start and end comments for <b>%s</b> section in file <b>%s</b> before submitting your action
 WarningAlreadyReverse=Kretanje dionica je već obrnuto
 
 SwissQrOnlyVIR = SwissQR faktura se može dodati samo na fakture postavljene da se plaćaju plaćanjem kreditnim transferom.
@@ -404,3 +404,10 @@ BadSetupOfFieldClassNotFoundForValidation = Greška loše postavke polja: klasa 
 BadSetupOfFieldFileNotFound = Greška loše postavke polja: Datoteka nije pronađena za uključivanje
 BadSetupOfFieldFetchNotCallable = Greška loše postavke polja: Dohvaćanje nije moguće pozvati na klasi
 ErrorTooManyAttempts= Previše pokušaja, pokušajte ponovo kasnije
+
+TotalAmountEmpty=Total Amount Empty
+FailedToFoundTheConversionRateForInvoice=Failed to found the conversion rate for invoice
+ThisIdNotDefined=Id not defined
+OperNotDefined=Payment method not defined
+ErrorThisContactXIsAlreadyDefinedAsThisType=%s is already defined as contact for this type.
+ErrorThisGroupIsAlreadyDefinedAsThisType=The contacts with this group are already defined as contact for this type.

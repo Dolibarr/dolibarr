@@ -147,7 +147,7 @@ LinkedToAnotherCompany=ከሌላ ሶስተኛ ወገን ጋር ተገናኝቷ�
 TaskIsNotAssignedToUser=ተግባር ለተጠቃሚ አልተሰጠም። አሁን ተግባር ለመመደብ '<strong>%s</strong> የሚለውን ቁልፍ ተጠቀም።
 ErrorTimeSpentIsEmpty=ያጠፋው ጊዜ ባዶ ነው።
 TimeRecordingRestrictedToNMonthsBack=የጊዜ ቀረጻ በ%s ወራት የተገደበ ነው
-ThisWillAlsoRemoveTasks=ይህ እርምጃ ሁሉንም የፕሮጀክት ተግባራት ይሰርዛል (<b>%s</b>s<span class='notranslate'></b>s በአሁኑ ጊዜ) እና ሁሉም ጊዜ ያለፈባቸው ግብዓቶች።
+ThisWillAlsoRemoveTasks=This action will also delete all tasks of project (<b>%s</b> tasks at the moment) and all inputs of time spent.
 IfNeedToUseOtherObjectKeepEmpty=የሌላ ሶስተኛ ወገን ንብረት የሆኑ አንዳንድ ነገሮች (ደረሰኝ፣ ትዕዛዝ፣...) ከፕሮጀክቱ ጋር መያያዝ ካለባቸው ፕሮጀክቱ ብዙ ሶስተኛ ወገኖች እንዲሆን ባዶ ያድርጉት።
 CloneTasks=Clone ተግባራት
 CloneContacts=ክሎን እውቂያዎች
@@ -249,7 +249,7 @@ LatestProjects=የቅርብ ጊዜ %s ፕሮጀክቶች
 LatestModifiedProjects=የቅርብ ጊዜ %s የተሻሻሉ ፕሮጀክቶች
 OtherFilteredTasks=ሌሎች የተጣሩ ተግባራት
 NoAssignedTasks=ምንም የተመደቡ ተግባራት አልተገኙም (ጊዜ ለማስገባት ከላይ ከተመረጠው ሳጥን ውስጥ ፕሮጀክት/ተግባራትን ለአሁኑ ተጠቃሚ መድቡ)
-ThirdPartyRequiredToGenerateInvoice=ደረሰኝ ለመጠየቅ ሶስተኛ ወገን በፕሮጀክቱ ላይ መገለጽ አለበት።
+ThirdPartyRequiredToGenerateIntervention=A third party must be defined on project to be able to create intervention.
 ThirdPartyRequiredToGenerateInvoice=ደረሰኝ ለመጠየቅ ሶስተኛ ወገን በፕሮጀክቱ ላይ መገለጽ አለበት።
 ChooseANotYetAssignedTask=እስካሁን ያልተመደበልህን ተግባር ምረጥ
 # Comments trans

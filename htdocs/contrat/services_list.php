@@ -44,10 +44,10 @@ $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -71,8 +71,8 @@ $search_total_ttc = GETPOST("search_total_ttc", 'alpha');
 $search_contract = GETPOST("search_contract", 'alpha');
 $search_service = GETPOST("search_service", 'alpha');
 $search_status = GETPOST("search_status", 'alpha');
-$search_product_category = GETPOST('search_product_category', 'int');
-$socid = GETPOST('socid', 'int');
+$search_product_category = GETPOSTINT('search_product_category');
+$socid = GETPOSTINT('socid');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'contractservicelist'.$mode;
 
 $opouvertureprevuemonth = GETPOST('opouvertureprevuemonth');
@@ -80,19 +80,19 @@ $opouvertureprevueday = GETPOST('opouvertureprevueday');
 $opouvertureprevueyear = GETPOST('opouvertureprevueyear');
 $filter_opouvertureprevue = GETPOST('filter_opouvertureprevue');
 
-$op1month = GETPOST('op1month', 'int');
-$op1day = GETPOST('op1day', 'int');
-$op1year = GETPOST('op1year', 'int');
+$op1month = GETPOSTINT('op1month');
+$op1day = GETPOSTINT('op1day');
+$op1year = GETPOSTINT('op1year');
 $filter_op1 = GETPOST('filter_op1', 'alpha');
 
-$op2month = GETPOST('op2month', 'int');
-$op2day = GETPOST('op2day', 'int');
-$op2year = GETPOST('op2year', 'int');
+$op2month = GETPOSTINT('op2month');
+$op2day = GETPOSTINT('op2day');
+$op2year = GETPOSTINT('op2year');
 $filter_op2 = GETPOST('filter_op2', 'alpha');
 
-$opcloturemonth = GETPOST('opcloturemonth', 'int');
-$opclotureday = GETPOST('opclotureday', 'int');
-$opclotureyear = GETPOST('opclotureyear', 'int');
+$opcloturemonth = GETPOSTINT('opcloturemonth');
+$opclotureday = GETPOSTINT('opclotureday');
+$opclotureyear = GETPOSTINT('opclotureyear');
 $filter_opcloture = GETPOST('filter_opcloture', 'alpha');
 
 
@@ -107,7 +107,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Security check
-$contratid = GETPOST('id', 'int');
+$contratid = GETPOSTINT('id');
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
@@ -244,7 +244,7 @@ $sql .= " cd.total_tva,";
 $sql .= " cd.tva_tx,";
 $sql .= " cd.subprice,";
 //$sql.= " cd.date_c as date_creation,";
-$sql .= " cd.tms as date_update";
+$sql .= " cd.tms as date_modification";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -521,14 +521,14 @@ if (!empty($sall)) {
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $morefilter = '';
 $moreforfilter = '';
 
 // If the user can view categories of products
-if (isModEnabled('categorie') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
+if (isModEnabled('category') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
@@ -556,7 +556,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 
@@ -976,7 +976,7 @@ while ($i < $imaxinloop) {
 	// Date modification
 	if (!empty($arrayfields['cd.tms']['checked'])) {
 		print '<td class="center nowraponall">';
-		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+		print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

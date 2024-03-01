@@ -134,7 +134,6 @@ class TimeSpent extends CommonObject
 		'note' => array('type'=>'text', 'label'=>'note', 'enabled'=>'1', 'position'=>18, 'notnull'=>0, 'visible'=>-1,),
 	);
 	public $rowid;
-	public $tms;
 	public $import_key;
 	public $fk_element;
 	public $elementtype;
@@ -352,7 +351,7 @@ class TimeSpent extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+				} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
@@ -393,7 +392,7 @@ class TimeSpent extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}

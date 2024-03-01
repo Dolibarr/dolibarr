@@ -335,8 +335,8 @@ class FormCardWebPortal
 					}
 					$value = dol_mktime($timeHours, $timeMinutes, $timeSeconds, $dateMonth, $dateDay, $dateYear);
 				} elseif ($object->fields[$key]['type'] == 'duration') {
-					if (GETPOST($key . 'hour', 'int') != '' || GETPOST($key . 'min', 'int') != '') {
-						$value = 60 * 60 * GETPOST($key . 'hour', 'int') + 60 * GETPOST($key . 'min', 'int');
+					if (GETPOSTINT($key . 'hour') != '' || GETPOSTINT($key . 'min') != '') {
+						$value = 60 * 60 * GETPOSTINT($key . 'hour') + 60 * GETPOSTINT($key . 'min');
 					} else {
 						$value = '';
 					}
@@ -382,7 +382,7 @@ class FormCardWebPortal
 					}
 				}
 
-				if (isModEnabled('categorie')) {
+				if (isModEnabled('category')) {
 					$categories = GETPOST('categories', 'array');
 					if (method_exists($object, 'setCategories')) {
 						$object->setCategories($categories);
@@ -562,7 +562,7 @@ class FormCardWebPortal
 		$html .= '<div class="grid">';
 		$html .= '<div class="card-left">';
 		foreach ($object->fields as $key => $val) {
-			if (!key_exists($key, $fieldShowList)) {
+			if (!array_key_exists($key, $fieldShowList)) {
 				continue; // not to show
 			}
 
@@ -655,7 +655,7 @@ class FormCardWebPortal
 
 			$html .= '<div class="valuefieldcreate">';
 			if (in_array($val['type'], array('int', 'integer'))) {
-				$value = GETPOSTISSET($key) ? GETPOST($key, 'int') : $object->$key;
+				$value = GETPOSTISSET($key) ? GETPOSTINT($key) : $object->$key;
 			} elseif ($val['type'] == 'double') {
 				$value = GETPOSTISSET($key) ? price2num(GETPOST($key, 'alphanohtml')) : $object->$key;
 			} elseif (preg_match('/^text/', $val['type'])) {

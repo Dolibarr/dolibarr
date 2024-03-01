@@ -155,11 +155,6 @@ class Mo extends CommonObject
 	 */
 	public $date_valid;
 
-	/**
-	 * @var integer|string date_validation
-	 */
-	public $tms;
-
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
@@ -381,6 +376,13 @@ class Mo extends CommonObject
 		unset($object->fk_user_creat);
 		unset($object->import_key);
 
+		// Remove produced and consumed lines
+		foreach ($object->lines as $key => $line) {
+			if (in_array($line->role, array('consumed', 'produced'))) {
+				unset($object->lines[$key]);
+			}
+		}
+
 		// Clear fields
 		$object->ref = empty($this->fields['ref']['default']) ? "copy_of_".$object->ref : $this->fields['ref']['default'];
 		$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
@@ -541,7 +543,7 @@ class Mo extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -894,17 +896,21 @@ class Mo extends CommonObject
 			return -2;
 		}
 		$productstatic = new Product($this->db);
-		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);
+		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);	// Get lines consumed under the one to delete
+
+		$result = 0;
+
+		$this->db->begin();
 
 		if (!empty($arrayoflines)) {
-			$this->db->begin();
-
+			// If there is child lines
 			$stockmove = new MouvementStock($this->db);
 			$stockmove->setOrigin($this->element, $this->id);
 
 			if (!empty($fk_movement)) {
+				// The fk_movement was not recorded so we try to guess the product and quantity to restore.
 				$moline = new MoLine($this->db);
-				$TArrayMoLine = $moline->fetchAll('', '', 1, 0, array('customsql' => 'fk_stock_movement ='.$fk_movement));
+				$TArrayMoLine = $moline->fetchAll('', '', 1, 0, array('customsql' => 'fk_stock_movement = '.(int) $fk_movement));
 				$moline = array_shift($TArrayMoLine);
 
 				$movement = new MouvementStock($this->db);
@@ -923,13 +929,12 @@ class Mo extends CommonObject
 				}
 				if ($idstockmove < 0) {
 					$this->error++;
-					$this->db->rollback();
 					setEventMessages($stockmove->error, $stockmove->errors, 'errors');
 				} else {
-					$this->db->commit();
+					$result = $moline->delete($user, $notrigger);
 				}
-				return $moline->delete($user, $notrigger);
 			} else {
+				// Loop on each child lines
 				foreach ($arrayoflines as $key => $arrayofline) {
 					$lineDetails = $arrayoflines[$key];
 					$productstatic->fetch($lineDetails['fk_product']);
@@ -939,6 +944,7 @@ class Mo extends CommonObject
 					$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
 					$codemovementCancel = $langs->trans("StockIncrease");
 
+
 					if ($qtytoprocess >= 0) {
 						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
 					} else {
@@ -946,17 +952,35 @@ class Mo extends CommonObject
 					}
 					if ($idstockmove < 0) {
 						$this->error++;
-						$this->db->rollback();
 						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
 					} else {
-						$this->db->commit();
+						$moline = new MoLine($this->db);
+						$moline->fetch($lineDetails['rowid']);
+
+						$resdel = $moline->delete($user, $notrigger);
+						if ($resdel < 0) {
+							$this->error++;
+							setEventMessages($moline->error, $moline->errors, 'errors');
+						}
 					}
 				}
-				return $this->deleteLineCommon($user, $idline, $notrigger);
+
+				if (empty($this->error)) {
+					$result = $this->deleteLineCommon($user, $idline, $notrigger);
+				}
 			}
 		} else {
-			return $this->deleteLineCommon($user, $idline, $notrigger);
+			// No child lines
+			$result = $this->deleteLineCommon($user, $idline, $notrigger);
 		}
+
+		if (!empty($this->error) || $result <= 0) {
+			$this->db->rollback();
+		} else {
+			$this->db->commit();
+		}
+
+		return $result;
 	}
 
 
@@ -1625,8 +1649,8 @@ class Mo extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (getDolGlobalString('MO_ADDON_PDF')) {
-				$modele = getDolGlobalString('MO_ADDON_PDF');
+			} elseif (getDolGlobalString('MRP_MO_ADDON_PDF')) {
+				$modele = getDolGlobalString('MRP_MO_ADDON_PDF');
 			}
 		}
 
@@ -2038,7 +2062,6 @@ class MoLine extends CommonObjectLine
 	public $fk_mrp_production;
 	public $fk_stock_movement;
 	public $date_creation;
-	public $tms;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
@@ -2189,7 +2212,7 @@ class MoLine extends CommonObjectLine
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}

@@ -165,10 +165,10 @@ CalcModeEngagement=ניתוח תשלומים רשומים ידועים
 CalcModePayment=ניתוח תשלומים רשומים ידועים
 CalcModeBookkeeping=ניתוח נתונים מתועדים בטבלת הנהלת חשבונות.
 CalcModeNoBookKeeping=גם אם הם עדיין לא מטופלים בלדג'ר
-CalcModeLT1= מצב <b>%sRE בחשבוניות לקוחות - חשבוניות ספקים%s</span ='notranslate'></b>
+CalcModeLT1= Mode <b>%sRE on customer invoices - suppliers invoices%s</b>
 CalcModeLT1Debt=מצב <b>%sRE בחשבוניות לקוחות%s</b>
 CalcModeLT1Rec= מצב <b>%sRE בחשבוניות ספקים%s</b>
-CalcModeLT2= מצב <b>%sIRPF בחשבוניות לקוחות - חשבוניות ספקים%s</span ='notranslate'></b>
+CalcModeLT2= Mode <b>%sIRPF on customer invoices - suppliers invoices%s</b>
 CalcModeLT2Debt=מצב <b>%sIRPF בחשבוניות לקוחות%s</b>
 CalcModeLT2Rec= מצב <b>%sIRPF על חשבוניות ספקים%s</spanlate><span class='no '></b>
 AnnualSummaryDueDebtMode=מאזן הכנסות והוצאות, סיכום שנתי

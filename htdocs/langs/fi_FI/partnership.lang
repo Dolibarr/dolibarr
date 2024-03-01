@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Tälle jäsenelle omistettu kumppanuus
 DatePartnershipStart=Aloituspäivämäärä
 DatePartnershipEnd=Lopetuspäivä
 ReasonDecline=Hylkäämisen syy
-ReasonDeclineOrCancel=Hylkäämisen syy
+ReasonDeclineOrCancel=Reason for refusal or cancellation
 PartnershipAlreadyExist=Kumppanuus on jo olemassa
 ManagePartnership=Hallitse kumppanuutta
 BacklinkNotFoundOnPartnerWebsite=Käänteistä linkkiä ei löydy kumppanin verkkosivuilta
@@ -89,11 +89,9 @@ YourPartnershipCanceledContent=Haluamme ilmoittaa, että yhteistyömme on perutt
 
 CountLastUrlCheckError=Viimeisimmän URL-osoitteen tarkistuksen virheiden määrä
 LastCheckBacklink=päiväys viimeisestä URL-osoitteen tarkistuksesta
-ReasonDeclineOrCancel=Hylkäämisen syy
 
 NewPartnershipRequest=Uusi kumppanuuspyyntö
-NewPartnershipRequestDesc=Tällä lomakkeella voit pyytää liittymistä johonkin kumppanuusohjelmaamme. Jos tarvitset apua tämän lomakkeen täyttämisessä, ota yhteyttä sähköpostitse <b>%s</b><span class='notranslate'> span>.
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Tällä sivulla on oltava vähintään yksi linkki johonkin seuraavista verkkotunnuksista: %s
 
 IPOfApplicant=Hakijan IP
-

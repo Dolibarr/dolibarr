@@ -161,7 +161,6 @@ class Inventory extends CommonObject
 	 * @var integer|string date_validation
 	 */
 	public $date_validation;
-	public $tms;
 
 	/**
 	 * @var int ID
@@ -297,7 +296,7 @@ class Inventory extends CommonObject
 				if (!empty($include_sub_warehouse) && getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE')) {
 					$TChildWarehouses = array();
 					$this->getChildWarehouse($this->fk_warehouse, $TChildWarehouses);
-					$sql .= " OR ps.fk_entrepot IN (".$this->db->sanitize(join(',', $TChildWarehouses)).")";
+					$sql .= " OR ps.fk_entrepot IN (".$this->db->sanitize(implode(',', $TChildWarehouses)).")";
 				}
 				$sql .= ')';
 			}
@@ -849,7 +848,6 @@ class InventoryLine extends CommonObjectLine
 	public $fk_product;
 	public $batch;
 	public $datec;
-	public $tms;
 	public $qty_stock;
 	public $qty_view;
 	public $qty_regulated;

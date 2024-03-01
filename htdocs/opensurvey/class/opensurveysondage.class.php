@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García	    <marcosgdf@gmail.com>
- * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024  Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,6 @@ class Opensurveysondage extends CommonObject
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'poll';
-
 
 	/**
 	 * @var string Description
@@ -105,12 +104,12 @@ class Opensurveysondage extends CommonObject
 	 */
 	public $fields=array(
 		'id_sondage' => array('type'=>'varchar(16)', 'label'=>'Idsondage', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>-1,),
-		'commentaires' => array('type'=>'mediumtext', 'label'=>'Commentaires', 'enabled'=>'1', 'position'=>15, 'notnull'=>0, 'visible'=>-1,),
+		'commentaires' => array('type'=>'mediumtext', 'label'=>'Comments', 'enabled'=>'1', 'position'=>15, 'notnull'=>0, 'visible'=>-1,),
 		'mail_admin' => array('type'=>'varchar(128)', 'label'=>'Mailadmin', 'enabled'=>'1', 'position'=>20, 'notnull'=>0, 'visible'=>-1,),
 		'nom_admin' => array('type'=>'varchar(64)', 'label'=>'Nomadmin', 'enabled'=>'1', 'position'=>25, 'notnull'=>0, 'visible'=>-1,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>-2, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150',),
-		'title' => array('type'=>'mediumtext', 'label'=>'Titre', 'enabled'=>'1', 'position'=>35, 'notnull'=>1, 'visible'=>-1,),
-		'date_fin' => array('type'=>'datetime', 'label'=>'Datefin', 'enabled'=>'1', 'position'=>40, 'notnull'=>1, 'visible'=>-1,),
+		'titre' => array('type'=>'mediumtext', 'label'=>'Title', 'enabled'=>'1', 'position'=>35, 'notnull'=>1, 'visible'=>-1,),
+		'date_fin' => array('type'=>'datetime', 'label'=>'DateEnd', 'enabled'=>'1', 'position'=>40, 'notnull'=>1, 'visible'=>-1,),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>500, 'notnull'=>0, 'visible'=>-1,),
 		'format' => array('type'=>'varchar(2)', 'label'=>'Format', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>-1,),
 		'mailsonde' => array('type'=>'integer', 'label'=>'Mailsonde', 'enabled'=>'1', 'position'=>55, 'notnull'=>1, 'visible'=>-1,),
@@ -121,6 +120,10 @@ class Opensurveysondage extends CommonObject
 		'sujet' => array('type'=>'mediumtext', 'label'=>'Sujet', 'enabled'=>'1', 'position'=>80, 'notnull'=>0, 'visible'=>-1,),
 		'id_sondage_admin' => array('type'=>'char(24)', 'label'=>'Idsondageadmin', 'enabled'=>'1', 'position'=>85, 'notnull'=>0, 'visible'=>-1,),
 	);
+
+	/**
+	 * @var string Id sondage not an int
+	 */
 	public $id_sondage;
 	/**
 	 * @var string		Description
@@ -135,7 +138,6 @@ class Opensurveysondage extends CommonObject
 	public $status;
 	public $format;
 	public $mailsonde;
-	public $tms;
 	public $entity;
 	/**
 	 * @var int		Allow comments on this poll
@@ -146,10 +148,17 @@ class Opensurveysondage extends CommonObject
 	 * @var int		Allow users see others vote
 	 */
 	public $allow_spy;
+
+	/**
+	 * @var string Subject
+	 */
 	public $sujet;
+
+	/**
+	 * @var string Id sondage admin not an int
+	 */
 	public $id_sondage_admin;
 	// END MODULEBUILDER PROPERTIES
-
 
 	/**
 	 * Draft status (not used)
@@ -469,8 +478,20 @@ class Opensurveysondage extends CommonObject
 
 		$datas = [];
 		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("ShowSurvey").'</u>';
+		if (isset($this->status)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (!empty($this->date_fin)) {
+			$datas['expire_date'] = '<br><b>'.$langs->trans('ExpireDate').':</b> '.dol_print_date($this->date_fin, 'day');
+			if ($this->date_fin && $this->date_fin < dol_now() && $this->status == Opensurveysondage::STATUS_VALIDATED) {
+				$datas['expire_date'] .= img_warning($langs->trans("Expired"));
+			}
+		}
 		$datas['title'] = '<br><b>'.$langs->trans('Title').':</b> '.$this->title;
+		if (!empty($this->description)) {
+			$datas['description'] = '<br><b>'.$langs->trans('Description').':</b> '.$this->description;
+		}
 
 		return $datas;
 	}
@@ -486,7 +507,7 @@ class Opensurveysondage extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $conf, $langs;
+		global $conf, $hookmanager, $langs;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -542,6 +563,16 @@ class Opensurveysondage extends CommonObject
 			$result .= $this->ref;
 		}
 		$result .= $linkend;
+
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 
 		return $result;
 	}
@@ -798,7 +829,7 @@ class Opensurveysondage extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+				} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
@@ -839,7 +870,7 @@ class Opensurveysondage extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}

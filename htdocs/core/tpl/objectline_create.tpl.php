@@ -41,6 +41,9 @@ if (empty($object) || !is_object($object)) {
 	exit;
 }
 
+'@phan-var-force CommonObject $this
+ @phan-var-force CommonObject $object';
+
 $usemargins = 0;
 if (isModEnabled('margin') && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) {
 	$usemargins = 1;
@@ -319,7 +322,7 @@ if ($nolinesbefore) {
 				}
 			}
 
-			$parentId = GETPOST('parentId', 'int');
+			$parentId = GETPOSTINT('parentId');
 
 			$addproducton = (isModEnabled('product') && $user->hasRight('produit', 'creer'));
 			$addserviceon = (isModEnabled('service') && $user->hasRight('service', 'creer'));
@@ -379,7 +382,7 @@ if ($nolinesbefore) {
 		}
 
 		if (is_object($hookmanager) && empty($senderissupplier)) {
-			$parameters = array('fk_parent_line'=>GETPOST('fk_parent_line', 'int'));
+			$parameters = array('fk_parent_line'=>GETPOSTINT('fk_parent_line'));
 			$reshook = $hookmanager->executeHooks('formCreateProductOptions', $parameters, $object, $action);
 			if (!empty($hookmanager->resPrint)) {
 				print $hookmanager->resPrint;
@@ -833,6 +836,17 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 							jQuery("#price_ht").val(data.price_ht);
 						}
 
+						// Set values for any fields in the form options_SOMETHING
+						for (var key in data.array_options) {
+							if (data.array_options.hasOwnProperty(key)) {
+								var field = jQuery("#" + key);
+								if(field.length > 0){
+									console.log("objectline_create.tpl set content of options_" + key);
+									field.val(data.array_options[key]);
+								}
+							}
+						}
+
 						var tva_tx = data.tva_tx;
 						var default_vat_code = data.default_vat_code;
 
@@ -1093,12 +1107,36 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			var supplier_ref = $('option:selected', this).attr('data-supplier-ref');											// When select is done from HTML select
 			if (typeof supplier_ref === 'undefined') { supplier_ref = jQuery('#idprodfournprice').attr('data-supplier-ref');}	// When select is done from HTML input with ajax autocomplete
 
-			console.log("objectline_create.tpl We find supplier price : up = "+up+", up_locale = "+up_locale+", supplier_ref = "+supplier_ref+" qty = "+qty+", tva_tx = "+tva_tx+", default_vat_code = "+default_vat_code+", stringforvatrateselection="+stringforvatrateselection+", discount = "+discount+" for product supplier ref id = "+jQuery('#idprodfournprice').val());
+			var has_multicurrency_up = false;
+			<?php
+			if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {
+				?>
+				var object_multicurrency_code = '<?php print dol_escape_js($object->multicurrency_code); ?>';
 
-			if (typeof up_locale === 'undefined') {
-				jQuery("#price_ht").val(up);
-			} else {
-				jQuery("#price_ht").val(up_locale);
+				var multicurrency_code = $('option:selected', this).attr('data-multicurrency-code');                                			// When select is done from HTML select
+				if (multicurrency_code == undefined) { multicurrency_code = jQuery('#idprodfournprice').attr('data-multicurrency-code'); }  	// When select is done from HTML input with ajax autocomplete
+
+				var multicurrency_up = parseFloat($('option:selected', this).attr('data-multicurrency-unitprice'));                                	// When select is done from HTML select
+				if (isNaN(multicurrency_up)) { multicurrency_up = parseFloat(jQuery('#idprodfournprice').attr('data-multicurrency-unitprice')); }   // When select is done from HTML input with ajax autocomplete
+
+				if (multicurrency_code == object_multicurrency_code) {
+					has_multicurrency_up = true;
+					jQuery("#multicurrency_price_ht").val(multicurrency_up);
+				}
+
+				console.log("objectline_create.tpl Multicurrency values : object_multicurrency_code = "+object_multicurrency_code+", multicurrency_code = "+multicurrency_code+", multicurrency_up = "+multicurrency_up);
+				<?php
+			}
+			?>
+
+			console.log("objectline_create.tpl We find supplier price : up = "+up+", up_locale = "+up_locale+", has_multicurrency_up = "+has_multicurrency_up+", supplier_ref = "+supplier_ref+" qty = "+qty+", tva_tx = "+tva_tx+", default_vat_code = "+default_vat_code+", stringforvatrateselection="+stringforvatrateselection+", discount = "+discount+" for product supplier ref id = "+jQuery('#idprodfournprice').val());
+
+			if (has_multicurrency_up === false) {
+				if (typeof up_locale === 'undefined') {
+					jQuery("#price_ht").val(up);
+				} else {
+					jQuery("#price_ht").val(up_locale);
+				}
 			}
 
 			// Set supplier_ref

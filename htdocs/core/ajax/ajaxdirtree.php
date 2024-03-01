@@ -74,7 +74,7 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 }
 
 $websitekey = GETPOST('websitekey', 'alpha');
-$pageid = GETPOST('pageid', 'int');
+$pageid = GETPOSTINT('pageid');
 
 // Load translation files required by the page
 $langs->load("ecm");
@@ -212,7 +212,7 @@ if (empty($conf->use_javascript_ajax) || getDolGlobalString('MAIN_ECM_DISABLE_JS
 				$expandedsectionarray[] = $idcursor;
 			}
 		}
-		$_SESSION['dol_ecmexpandedsectionarray'] = join(',', $expandedsectionarray);
+		$_SESSION['dol_ecmexpandedsectionarray'] = implode(',', $expandedsectionarray);
 	}
 	if ($section && GETPOST('sectionexpand') == 'false') {
 		// We removed all expanded sections that are child of the closed section
@@ -222,7 +222,7 @@ if (empty($conf->use_javascript_ajax) || getDolGlobalString('MAIN_ECM_DISABLE_JS
 			// TODO is_in_subtree(fulltree,sectionparent,sectionchild) does nox exists. Enable or remove this...
 			//if ($sectioncursor && ! is_in_subtree($sqltree,$section,$sectioncursor)) $expandedsectionarray[]=$sectioncursor;
 		}
-		$_SESSION['dol_ecmexpandedsectionarray'] = join(',', $expandedsectionarray);
+		$_SESSION['dol_ecmexpandedsectionarray'] = implode(',', $expandedsectionarray);
 	}
 	//print $_SESSION['dol_ecmexpandedsectionarray'].'<br>';
 

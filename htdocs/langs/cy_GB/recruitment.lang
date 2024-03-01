@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Rheoli a dilyn ymgyrchoedd recriwtio ar gyfer swyddi new
 # Admin page
 #
 RecruitmentSetup = Gosodiad recriwtio
-Settings = Gosodiadau
 RecruitmentSetupPage = Nodwch yma setiad y prif opsiynau ar gyfer y modiwl recriwtio
 RecruitmentArea=Ardal recriwtio
 PublicInterfaceRecruitmentDesc=Mae tudalennau cyhoeddus swyddi yn URLau cyhoeddus i'w dangos ac i'w hateb i swyddi agored. Mae un cyswllt gwahanol ar gyfer pob swydd agored, a geir ar bob cofnod swydd.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Galluogi tudalennau cyhoeddus o swyddi agored
 #
 # About page
 #
-About = Ynghylch
 RecruitmentAbout = Am Recriwtio
 RecruitmentAboutPage = Recriwtio am dudalen
 NbOfEmployeesExpected=Ds disgwyliedig o weithwyr
@@ -77,3 +75,6 @@ ExtrafieldsApplication=Nodweddion cyflenwol (ceisiadau swydd)
 MakeOffer=Gwnewch gynnig
 WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
 NoPositionOpen=No positions open at the moment
+ConfirmClose=Confirm cancellation
+ConfirmCloseAsk=Are you sure you want to cancel this recruitment candidature
+recruitment=Recruitment

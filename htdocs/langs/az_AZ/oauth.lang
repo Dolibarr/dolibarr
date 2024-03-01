@@ -12,8 +12,8 @@ TokenDeleted=Token silindi
 GetAccess=Token əldə etmək üçün bura klikləyin
 RequestAccess=Giriş tələb etmək/yeniləmək və yeni nişan almaq üçün bura klikləyin
 DeleteAccess=Tokeni silmək üçün bura klikləyin
-RedirectURL=Redirect URL
-UseTheFollowingUrlAsRedirectURI=Use the following URL as the Redirect URL when creating your credentials with your OAuth provider
+RedirectURL=Yönləndirmə URL
+UseTheFollowingUrlAsRedirectURI=OAuth provayderinizlə etimadnamənizi yaratarkən Yönləndirmə URL-i kimi aşağıdakı URL-dən istifadə edin
 ListOfSupportedOauthProviders=OAuth2 token provayderlərinizi əlavə edin. Sonra OAuth ID və Sirri yaratmaq/almaq və onları burada saxlamaq üçün OAuth provayderinizin admin səhifəsinə keçin. Bitirdikdən sonra nişanınızı yaratmaq üçün digər nişanı açın.
 OAuthSetupForLogin=OAuth tokenlərini idarə etmək (yaratmaq/silmək) üçün səhifə
 SeePreviousTab=Əvvəlki nişana baxın
@@ -29,7 +29,7 @@ OAUTH_GOOGLE_SECRET=OAuth Google Gizli
 OAUTH_GITHUB_NAME=OAuth GitHub xidməti
 OAUTH_GITHUB_ID=OAuth GitHub İD
 OAUTH_GITHUB_SECRET=OAuth GitHub sirri
-OAUTH_URL_FOR_CREDENTIAL=<a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">bu səhifəyə keçin<span class="fas fa-external-link-alt paddingleft"></span><spante class='notranslate OAuth ID və Sirri yaratmaq və ya əldə etmək üçün ></a></span>
+OAUTH_URL_FOR_CREDENTIAL=Go to <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">this page<span class="fas fa-external-link-alt paddingleft"></span></a> to create or get your OAuth ID and Secret
 OAUTH_STRIPE_TEST_NAME=OAuth Stripe Testi
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Canlı
 OAUTH_ID=OAuth Müştəri ID-si

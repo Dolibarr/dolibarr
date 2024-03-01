@@ -9,7 +9,7 @@ DIRECTION=ltr
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil
+# freeserif is for Tamil or Ethiopian
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -420,6 +420,8 @@ TotalTTCShort=Yhteensä (sis. alv)
 TotalHT=Yhteensä (alv. 0)
 TotalHTforthispage=Yhteensä (ilman veroja) tällä sivulla
 Totalforthispage=Yhteensä tällä sivulla
+GrandTotal=Grand total
+TotalforAllPages=Total for all pages
 TotalTTC=Yhteensä (sis. alv)
 TotalTTCToYourCredit=Yhteensä (sis. alv) on luotollesi
 TotalVAT=Verot yhteensä
@@ -647,6 +649,7 @@ ReportName=Raportin nimi
 ReportPeriod=Raportointikausi
 ReportDescription=Kuvaus
 Report=Raportti
+Reports=Reports
 Keyword=Avainsana
 Origin=Alkuperä
 Legend=Legend
@@ -963,6 +966,7 @@ AutomaticallyCalculated=Automaattisesti laskettu
 TitleSetToDraft=Mene takaisin luonnokseen
 ConfirmSetToDraft=Haluatko varmasti palata Luonnos-tilaan?
 ImportId=Vie ID
+Event=Tapahtuma
 Events=Tapahtumat
 EMailTemplates=Sähköposti viestipohjat
 FileNotShared=tiedosto ei jaettu ulkoiselle yleisölle
@@ -1048,7 +1052,7 @@ Select2NotFound=Tuloksia ei löytynyt
 Select2Enter=Syötä
 Select2MoreCharacter=tai useampi merkki
 Select2MoreCharacters=tai lisää merkkejä
-Select2MoreCharactersMore=<strong>Hakusyntaksi:</strong><br> <kbd><strong> |</strong>b0860de534da6f class=' notranslate'><kbd> TAI</kbd> (a|b)<br>za03aec07. /span><span class='notranslate'><strong>*</strong></kbd><kbd> Mikä tahansa merkki</kbd> (a*b)<br>b03aec07z0</01d2z0 span><span class='notranslate'><strong>^</strong></kbd> <kbd> Aloita </kbd> (^ab)<br>b03aec07a601d27a601 <span class='notranslate'><strong>$</strong></kbd>za601d27<b03 /span> Loppuun <span class='notranslate'></kbd> (ab$)<br>
+Select2MoreCharactersMore=<strong>Search syntax:</strong><br><kbd><strong> |</strong></kbd><kbd> OR</kbd> (a|b)<br><kbd><strong>*</strong></kbd><kbd> Any character</kbd> (a*b)<br><kbd><strong>^</strong></kbd><kbd> Start with</kbd> (^ab)<br><kbd><strong>$</strong></kbd><kbd> End with</kbd> (ab$)<br>
 Select2LoadingMoreResults=Lataa lisää tuloksia...
 Select2SearchInProgress=Haku käynnissä...
 SearchIntoThirdparties=Sidosryhmät
@@ -1180,7 +1184,6 @@ ConfirmAffectUserQuestion=Haluatko varmasti määrittää käyttäjiä %s valitu
 ConfirmSetSupervisorQuestion=Haluatko varmasti asettaa valvojan %s valitulle tietueelle?
 ConfirmUpdatePriceQuestion=Haluatko varmasti päivittää %s valitun tietueen hinnan?
 CategTypeNotFound=Tietuetyypille ei löytynyt tunnistetyyppiä
-Rate=Kurssi
 SupervisorNotFound=Valvojaa ei löydy
 CopiedToClipboard=Kopioitu leikepöydälle
 InformationOnLinkToContract=Tämä summa on vain sopimuksen kaikkien rivien summa. Ajan käsitettä ei oteta huomioon.
@@ -1213,6 +1216,7 @@ CanceledHidden=Peruutettu piilotettu
 CanceledShown=Peruutettu näytetään
 Terminate=Lopeta
 Terminated=Lopetettu
+Position=Sijainti
 AddLineOnPosition=Lisää rivi kohtaan (jos tyhjä on lopussa)
 ConfirmAllocateCommercial=Anna myyntiedustajalle vahvistus
 ConfirmAllocateCommercialQuestion=Haluatko varmasti määrittää %s valitun tietueen?
@@ -1230,6 +1234,7 @@ ExternalUser=Ulkoinen käyttäjä
 NoSpecificContactAddress=Ei tarkennettua yhteystietoa tai osoitetta
 NoSpecificContactAddressBis=Tämä välilehti on omistettu pakottamaan tiettyjä yhteystietoja tai osoitteita nykyiselle objektille. Käytä sitä vain, jos haluat määrittää objektille yhden tai useamman nimenomaisen yhteystiedon tai osoitteen, kun kolmannen osapuolen tiedot eivät ole riittäviä tai epätarkkoja.
 HideOnVCard=Piilota %s
+ShowOnVCard=Show %s
 AddToContacts=Lisää osoite yhteystietoihini
 LastAccess=Viimeinen pääsy
 UploadAnImageToSeeAPhotoHere=Lataa kuva välilehdeltä %s, niin näet kuvan täällä
@@ -1259,4 +1264,7 @@ AmountSalary=Palkan määrä
 InvoiceSubtype=Laskun alatyyppi
 ConfirmMassReverse=Joukkokäänteinen vahvistus
 ConfirmMassReverseQuestion=Haluatko varmasti peruuttaa %s valitun tietueen?
-
+ElementType=Element type
+ElementId=Element Id
+Encrypted=Encrypted
+Settings=Asetukset

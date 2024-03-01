@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - languages
 Language_am_ET=ইথিওপিয়ান
 Language_af_ZA=আফ্রিকান (দক্ষিণ আফ্রিকা)
-Language_en_AE=আরবি (সংযুক্ত আরব আমিরাত)
 Language_ar_AR=আরবি
 Language_ar_DZ=আরবি (আলজেরিয়া)
 Language_ar_EG=আরবি (মিশর)
@@ -28,7 +27,7 @@ Language_de_CH=জার্মান (সুইজারল্যান্ড)
 Language_de_LU=জার্মান (লাক্সেমবার্গ)
 Language_el_GR=গ্রীক
 Language_el_CY=গ্রীক (সাইপ্রাস)
-Language_en_AE=আরবি (সংযুক্ত আরব আমিরাত)
+Language_en_AE=English (United Arab Emirates)
 Language_en_AU=ইংরেজি (অস্ট্রেলিয়া)
 Language_en_CA=ইংরেজি (কানাডা)
 Language_en_GB=ইংরেজি যুক্তরাজ্য)
@@ -57,7 +56,6 @@ Language_es_PE=স্প্যানিশ (পেরু)
 Language_es_PR=স্প্যানিশ (পুয়ের্তো রিকো)
 Language_es_US=স্প্যানিশ (মার্কিন যুক্তরাষ্ট্র)
 Language_es_UY=স্প্যানিশ (উরুগুয়ে)
-Language_es_GT=স্প্যানিশ (গুয়াতেমালা)
 Language_es_VE=স্প্যানিশ (ভেনিজুয়েলা)
 Language_et_EE=এস্তোনিয়ান
 Language_eu_ES=বাস্ক

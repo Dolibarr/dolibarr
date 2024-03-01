@@ -54,11 +54,13 @@ class Controller
 	 * Action method is called before html output
 	 * can be used to manage security and change context
 	 *
-	 * @return  int     Return integer < 0 on error, 0 on success, 1 to replace standard code
+	 * @return  int     Return integer < 0 on error, > 0 on success
 	 */
 	public function action()
 	{
-		return $this->hookDoAction();
+		$resHook = $this->hookDoAction();
+
+		return ($resHook < 0 ? -1 : 1);
 	}
 
 	/**
@@ -119,7 +121,7 @@ class Controller
 	 * Execute hook doActions
 	 *
 	 * @param	array		$parameters		Parameters
-	 * @return  int			Return integer < 0 on error, 0 on success, 1 to replace standard code
+	 * @return  int							Return integer < 0 on error, 0 on success, 1 to replace standard code
 	 */
 	public function hookDoAction($parameters = array())
 	{
@@ -142,7 +144,7 @@ class Controller
 	 * Execute hook PrintPageView
 	 *
 	 * @param	array		$parameters		Parameters
-	 * @return	int			Return integer < 0 on error, 0 on success, 1 to replace standard code
+	 * @return	int							Return integer < 0 on error, 0 on success, 1 to replace standard code
 	 */
 	public function hookPrintPageView($parameters = array())
 	{
@@ -162,15 +164,15 @@ class Controller
 	}
 
 	/**
-	 * Load a template
+	 * Load a template .tpl file
 	 *
-	 * @param	string	$templateName	Template name
+	 * @param	string	$templateName	Template file name (without the .tpl.php)
 	 * @param	mixed	$vars			Data to transmit to template
-	 * @return	bool	True if template found, else false
+	 * @return	bool					True if template found, else false
 	 */
 	public function loadTemplate($templateName, $vars = false)
 	{
-		global $conf, $langs, $hookmanager, $db; // load for tpl
+		global $conf, $langs, $hookmanager, $db; // may be used into the tpl
 
 		$context = Context::getInstance(); // load for tpl
 

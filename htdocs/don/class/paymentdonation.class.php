@@ -56,8 +56,6 @@ class PaymentDonation extends CommonObject
 
 	public $datec = '';
 
-	public $tms = '';
-
 	public $datep = '';
 
 	public $amount; // Total amount of payment
@@ -67,6 +65,10 @@ class PaymentDonation extends CommonObject
 	public $fk_typepayment;	// Payment mode ID
 	public $paymenttype;	// Payment mode ID or Code. TODO Use only the code in this field.
 
+	/**
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
+	 */
 	public $num_payment;
 
 	/**
@@ -546,7 +548,7 @@ class PaymentDonation extends CommonObject
 
 		$this->fk_donation = 0;
 		$this->datec = '';
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->datep = '';
 		$this->amount = '';
 		$this->fk_typepayment = '';
@@ -577,7 +579,7 @@ class PaymentDonation extends CommonObject
 
 		$error = 0;
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$acc = new Account($this->db);

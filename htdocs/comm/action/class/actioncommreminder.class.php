@@ -41,7 +41,7 @@ class ActionCommReminder extends CommonObject
 	public $table_element = 'actioncomm_reminder';
 
 	/**
-	 * @var array  Does actioncommreminder support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int  Does actioncommreminder support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
 

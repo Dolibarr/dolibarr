@@ -280,7 +280,7 @@ class CUnits extends CommonDict
 			return $this->records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -406,12 +406,9 @@ class CUnits extends CommonDict
 	 */
 	public function getUnitFromCode($code, $mode = 'code', $unit_type = '')
 	{
-		if ($mode == 'short_label') {
-			return dol_getIdFromCode($this->db, $code, 'c_units', 'short_label', 'rowid', 0, " AND unit_type = '".$this->db->escape($unit_type)."'");
-		} elseif ($mode == 'code') {
-			return dol_getIdFromCode($this->db, $code, 'c_units', 'code', 'rowid', 0, " AND unit_type = '". $this->db->escape($unit_type) ."'");
+		if ($mode == 'short_label' || $mode == 'code') {
+			return dol_getIdFromCode($this->db, $code, 'c_units', $mode, 'rowid', 0, " AND unit_type = '".$this->db->escape($unit_type)."'");
 		}
-
 		return $code;
 	}
 

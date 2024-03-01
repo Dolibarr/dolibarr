@@ -26,14 +26,12 @@ ModuleKnowledgeManagementDesc=إدارة إدارة المعرفة (KM) أو ق�
 # Admin page
 #
 KnowledgeManagementSetup = إعداد نظام إدارة المعرفة
-Settings = إعدادات
 KnowledgeManagementSetupPage = صفحة إعداد نظام إدارة المعرفة
 
 
 #
 # About page
 #
-About = حول
 KnowledgeManagementAbout = حول إدارة المعرفة
 KnowledgeManagementAboutPage = إدارة المعرفة حول الصفحة
 

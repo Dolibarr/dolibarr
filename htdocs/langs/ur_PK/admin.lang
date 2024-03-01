@@ -149,7 +149,6 @@ MaxNbOfLinesForBoxes=زیادہ سے زیادہ ویجٹ کے لیے لائنو�
 AllWidgetsWereEnabled=تمام دستیاب وجیٹس فعال ہیں۔
 WidgetAvailable=ویجیٹ دستیاب ہے۔
 PositionByDefault=پہلے سے طے شدہ آرڈر
-Position=پوزیشن
 MenusDesc=مینو مینیجر دو مینو بارز (افقی اور عمودی) کا مواد سیٹ کرتے ہیں۔
 MenusEditorDesc=مینو ایڈیٹر آپ کو اپنی مرضی کے مینو اندراجات کی وضاحت کرنے کی اجازت دیتا ہے۔ عدم استحکام اور مستقل طور پر ناقابل رسائی مینو اندراجات سے بچنے کے لیے اسے احتیاط سے استعمال کریں۔ <br> کچھ ماڈیولز مینو اندراجات شامل کرتے ہیں (مینو میں <b> All </b> زیادہ تر)۔ اگر آپ غلطی سے ان میں سے کچھ اندراجات کو ہٹا دیتے ہیں، تو آپ ماڈیول کو غیر فعال اور دوبارہ فعال کر کے انہیں بحال کر سکتے ہیں۔
 MenuForUsers=صارفین کے لیے مینو
@@ -220,7 +219,6 @@ ModulesMarketPlaces=بیرونی ایپ/ماڈیولز تلاش کریں۔
 ModulesDevelopYourModule=اپنی خود کی ایپ/ماڈیول تیار کریں۔
 ModulesDevelopDesc=آپ اپنا ماڈیول بھی تیار کر سکتے ہیں یا آپ کے لیے تیار کرنے کے لیے کوئی پارٹنر تلاش کر سکتے ہیں۔
 DOLISTOREdescriptionLong=بیرونی ماڈیول تلاش کرنے کے لیے <a href="https://www.dolistore.com"> www.dolistore.com </a> ویب سائٹ پر سوئچ کرنے کے بجائے، آپ اس ایمبیڈڈ ٹول کا استعمال کر سکتے ہیں جو آپ کے لیے بیرونی بازار کی جگہ پر تلاش کرے گا (سست ہو سکتا ہے، انٹرنیٹ تک رسائی کی ضرورت ہے)...
-NewModule=نیا ماڈیول
 FreeModule=مفت
 CompatibleUpTo=ورژن %s کے ساتھ ہم آہنگ
 NotCompatible=یہ ماڈیول آپ کے Dolibarr %s (Min %s - Max %s) کے ساتھ مطابقت نہیں رکھتا۔
@@ -304,7 +302,7 @@ MAIN_DISABLE_ALL_MAILS=تمام ای میل بھیجنے کو غیر فعال ک
 MAIN_MAIL_FORCE_SENDTO=تمام ای میلز کو بھیجیں (حقیقی وصول کنندگان کے بجائے، آزمائشی مقاصد کے لیے)
 MAIN_MAIL_ENABLED_USER_DEST_SELECT=نیا ای میل لکھتے وقت پہلے سے طے شدہ وصول کنندہ کی فہرست میں ملازمین کی ای میلز (اگر وضاحت کی گئی ہو) تجویز کریں۔
 MAIN_MAIL_NO_WITH_TO_SELECTED=پہلے سے طے شدہ وصول کنندہ کا انتخاب نہ کریں چاہے صرف 1 ممکنہ انتخاب ہو۔
-MAIN_MAIL_SENDMODE=ای میل بھیجنے کا طریقہ
+MAIN_MAIL_SENDMODE=Sending method
 MAIN_MAIL_SMTPS_ID=SMTP ID (اگر سرور بھیجنے کے لیے تصدیق کی ضرورت ہو)
 MAIN_MAIL_SMTPS_PW=SMTP پاس ورڈ (اگر سرور بھیجنے کے لیے تصدیق کی ضرورت ہے)
 MAIN_MAIL_EMAIL_TLS=TLS (SSL) انکرپشن استعمال کریں۔
@@ -348,7 +346,7 @@ StepNb=مرحلہ %s
 FindPackageFromWebSite=ایک ایسا پیکیج تلاش کریں جو آپ کو مطلوبہ خصوصیات فراہم کرتا ہو (مثال کے طور پر سرکاری ویب سائٹ %s پر)۔
 DownloadPackageFromWebSite=پیکیج ڈاؤن لوڈ کریں (مثال کے طور پر سرکاری ویب سائٹ %s سے)۔
 UnpackPackageInDolibarrRoot=پیک شدہ فائلوں کو اپنی ڈولیبر سرور ڈائرکٹری میں کھولیں/ان زپ کریں: <b> %s </b>
-UnpackPackageInModulesRoot=کسی بیرونی ماڈیول کو تعینات/انسٹال کرنے کے لیے، آپ کو بیرونی ماڈیولز کے لیے مختص سرور ڈائرکٹری میں آرکائیو فائل کو کھولنا/ان زپ کرنا ہوگا:<br>b0aee8365837fz0 ><span class='notranslate'>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=ماڈیول کی تعیناتی ختم ہو گئی ہے۔ تاہم آپ کو صفحہ سیٹ اپ ماڈیولز: <a href="%s"> %s </a> پر جا کر اپنی درخواست میں ماڈیول کو فعال اور سیٹ اپ کرنا ہوگا۔
 NotExistsDirect=متبادل روٹ ڈائرکٹری موجودہ ڈائرکٹری سے متعین نہیں ہے۔ <br>
 InfDirAlt=ورژن 3 کے بعد سے، متبادل روٹ ڈائریکٹری کی وضاحت ممکن ہے۔ یہ آپ کو ایک وقف شدہ ڈائرکٹری، پلگ ان اور حسب ضرورت ٹیمپلیٹس میں ذخیرہ کرنے کی اجازت دیتا ہے۔ <br> بس Dolibarr کے روٹ پر ایک ڈائرکٹری بنائیں (جیسے: کسٹم)۔ <br>
@@ -370,7 +368,7 @@ GenericMaskCodes3EAN=ماسک میں باقی تمام حروف برقرار ر�
 GenericMaskCodes4a=<u>تیسرے فریق TheCompany کی 99ویں %s پر مثال، تاریخ 2023-01-31 کے ساتھ:</u><br>
 GenericMaskCodes4b=<u>31-01-2023 کو بنائے گئے فریق ثالث کی مثال:</u><br> >
 GenericMaskCodes4c=<u>31-01-2023 کو تیار کردہ پروڈکٹ کی مثال:</u><br>
-GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> دے گا b0aee83365830 span>ABC2301-000099</b><br>b0aee8365837fz0{0@0@0@span }-ZZZ/{dd}/XXX<span class='notranslate'></b> دے گا <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}<span> class='notranslate'></b></span> دے گا <b>IN2301-0099-A<span class='notranslate'></b> اگر کمپنی کی قسم ہے 'ذمہ دار انسکرپٹو' اس قسم کے کوڈ کے ساتھ جو 'A_RI' ہے
+GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC2301-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN2301-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
 GenericNumRefModelDesc=ایک متعین ماسک کے مطابق حسب ضرورت نمبر لوٹاتا ہے۔
 ServerAvailableOnIPOrPort=سرور <b> <b> %s </b> پورٹ <b> %s a09a4b739f17f80 پر دستیاب ہے۔
 ServerNotAvailableOnIPOrPort=پورٹ <b> <b> %s </b> پر سرور دستیاب نہیں ہے <b> %s a09a4b739f178
@@ -435,6 +433,7 @@ MassConvert=بلک تبادلوں کا آغاز کریں۔
 PriceFormatInCurrentLanguage=موجودہ زبان میں قیمت کی شکل
 String=تار
 String1Line=سٹرنگ (1 لائن)
+Text=Text
 TextLong=لمبا متن
 TextLongNLines=لمبا متن (n لائنز)
 HtmlText=ایچ ٹی ایم ایل متن
@@ -465,7 +464,7 @@ ExtrafieldParamHelpPassword=اس فیلڈ کو خالی چھوڑنے کا مطل
 ExtrafieldParamHelpselect=اقدار کی فہرست شکل کلید کے ساتھ لائنوں کا ہونا لازمی ہے، قدر (جہاں چابی نہیں ہو سکتا '0') مثال کے <br> <br>: <br> 1، VALUE1 <br> 2، VALUE2 <br> code3، value3 <br> ... <br> <br> ہے کرنے کے لئے فہرست ایک اور اعزازی وصف فہرست پر منحصر: <br> 1، VALUE1 | options_ <i> parent_list_code </i>: parent_key <br> 2، VALUE2 | options_ <i> parent_list_code </i>: parent_key <br> <br> واسطے ایک اور فہرست کے لحاظ فہرست ہے کرنا: <br> 1، VALUE1 | <i> parent_list_code </i> :parent_key <br> 2,value2| <i> parent_list_code </i> :parent_key
 ExtrafieldParamHelpcheckbox=اقدار کی فہرست فارمیٹ کلید کے ساتھ لائنوں میں ہونی چاہیے، ویلیو (جہاں کلید '0' نہیں ہو سکتی) <br> <br> مثال کے طور پر: <br> 1,value1 <br> <br> a0342fda19bz0 2,342fdavalue...
 ExtrafieldParamHelpradio=اقدار کی فہرست فارمیٹ کلید کے ساتھ لائنوں میں ہونی چاہیے، ویلیو (جہاں کلید '0' نہیں ہو سکتی) <br> <br> مثال کے طور پر: <br> 1,value1 <br> <br> a0342fda19bz0 2,342fdavalue...
-ExtrafieldParamHelpsellist=اقدار کی فہرست ایک ٹیبل سے آتی ہے<br>نحو: table_name:label_field:id_field::filtersql<br>مثال: ccfda19bz0 ::filtersql<br><br>- id_field لازمی طور پر ایک بنیادی int کلید ہے<br> - filtersql ایک SQL شرط ہے۔ صرف فعال قدر ظاہر کرنے کے لیے یہ ایک سادہ ٹیسٹ (مثلاً فعال=1) ہو سکتا ہے<br>آپ $ID$ کو فلٹر میں بھی استعمال کر سکتے ہیں جو موجودہ آبجیکٹ کی موجودہ id ہے<br>فلٹر میں SELECT استعمال کرنے کے لیے اینٹی انجیکشن تحفظ کو نظرانداز کرنے کے لیے مطلوبہ لفظ $SEL$ استعمال کریں۔<br>اگر آپ ایکسٹرا فیلڈز پر فلٹر کرنا چاہتے ہیں نحو کا استعمال کریں extra.fieldcode=... (جہاں فیلڈ کوڈ extrafield کا کوڈ ہے)<br><br> فہرست ایک اور تکمیلی انتساب کی فہرست پر منحصر ہے:<br>c_typent:libelle:id:options_<i>parent_list_code<span>'notranslate'>'notranslate' </i></span>|parent_column:filter <br><br>دوسری فہرست پر منحصر فہرست رکھنے کے لیے:<br>c_typent:libelle:id:<i>parent_list_code<span class='notranslate'>b0ae64758bac33parent_col>
+ExtrafieldParamHelpsellist=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>- id_field is necessarily a primary int key<br>- filtersql is a SQL condition. It can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter which is the current id of current object<br>To use a SELECT into the filter use the keyword $SEL$ to bypass anti-injection protection.<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelpchkbxlst=اقدار کی فہرست ایک ٹیبل سے آتی ہے فلٹر ڈائن میں $ID$ بھی استعمال کر سکتے ہیں موجودہ آبجیکٹ <br> کی موجودہ آئی ڈی ہے extrafield کا کوڈ) <br> <br> ایک اور اعزازی وصف فہرست پر منحصر فہرست حاصل کرنے کے لیے: <br> c_typent: libelle: ID: options_ <i> parent_list_code </i> | parent_column: فلٹر <br> <br> ایک اور فہرست کے لحاظ فہرست حاصل کرنے کے لیے: <br> c_typent: libelle:id: <i> parent_list_code </i> |parent_column:filter
 ExtrafieldParamHelplink=پیرامیٹرز کا ہونا ضروری ہے ObjectName:Classpath <br> نحو: ObjectName:Classpath
 ExtrafieldParamHelpSeparator=ایک سادہ سیپریٹر کے لیے خالی رکھیں اسٹیٹس کو ہر صارف کے سیشن کے لیے رکھا جاتا ہے)
@@ -685,7 +684,7 @@ Module5000Desc=آپ کو متعدد کمپنیوں کا انتظام کرنے ک
 Module6000Name=انٹر ماڈیول ورک فلو
 Module6000Desc=مختلف ماڈیولز کے درمیان ورک فلو کا انتظام (آبجیکٹ کی خودکار تخلیق اور/یا خودکار حیثیت کی تبدیلی)
 Module10000Name=ویب سائٹس
-Module10000Desc=WYSIWYG ایڈیٹر کے ساتھ ویب سائٹس (عوامی) بنائیں۔ یہ ویب ماسٹر یا ڈویلپر پر مبنی CMS ہے (HTML اور CSS کی زبان جاننا بہتر ہے)۔ بس اپنے ویب سرور (Apache, Nginx, ...) کو اپنے ڈومین نام کے ساتھ انٹرنیٹ پر آن لائن رکھنے کے لیے وقف شدہ Dolibarr ڈائریکٹری کی طرف اشارہ کرنے کے لیے سیٹ اپ کریں۔
+Module10000Desc=CMS to create websites with a WYSIWYG editor. This is a webmaster or developer oriented Content Management System (it is better to know HTML and CSS language). Just setup your web server (Apache, Nginx, ...) to point to the dedicated Dolibarr directory to have it online on the internet with your own domain name.
 Module20000Name=درخواست کا انتظام چھوڑ دیں۔
 Module20000Desc=ملازم کی چھٹی کی درخواستوں کی وضاحت اور ٹریک کریں۔
 Module39000Name=پروڈکٹ لاٹ
@@ -1131,14 +1130,10 @@ LocalTax1IsNotUsed=دوسرا ٹیکس استعمال نہ کریں۔
 LocalTax1IsUsedDesc=دوسری قسم کا ٹیکس استعمال کریں (پہلے ٹیکس کے علاوہ)
 LocalTax1IsNotUsedDesc=دوسری قسم کا ٹیکس استعمال نہ کریں (پہلے ٹیکس کے علاوہ)
 LocalTax1Management=ٹیکس کی دوسری قسم
-LocalTax1IsUsedExample=
-LocalTax1IsNotUsedExample=
 LocalTax2IsNotUsed=تیسرا ٹیکس استعمال نہ کریں۔
 LocalTax2IsUsedDesc=تیسری قسم کا ٹیکس استعمال کریں (پہلے ٹیکس کے علاوہ)
 LocalTax2IsNotUsedDesc=دوسری قسم کا ٹیکس استعمال نہ کریں (پہلے ٹیکس کے علاوہ)
 LocalTax2Management=ٹیکس کی تیسری قسم
-LocalTax2IsUsedExample=
-LocalTax2IsNotUsedExample=
 LocalTax1ManagementES=RE مینجمنٹ
 LocalTax1IsUsedDescES=امکانات، انوائسز، آرڈرز وغیرہ بناتے وقت ڈیفالٹ RE کی شرح فعال معیاری اصول پر عمل کریں: <br> اگر خریدار پر RE، RE بذریعہ ڈیفالٹ = 0 نہیں ہے۔ حکمرانی کا خاتمہ۔ <br> اگر خریدار کو RE کا نشانہ بنایا جاتا ہے تو RE بطور ڈیفالٹ۔ حکمرانی کا خاتمہ۔ <br>
 LocalTax1IsNotUsedDescES=پہلے سے طے شدہ طور پر مجوزہ RE 0 ہے۔ اصول کا اختتام۔
@@ -1202,6 +1197,7 @@ Skin=جلد کی تھیم
 DefaultSkin=پہلے سے طے شدہ جلد کی تھیم
 MaxSizeList=فہرست کے لیے زیادہ سے زیادہ لمبائی
 DefaultMaxSizeList=فہرستوں کے لیے پہلے سے طے شدہ زیادہ سے زیادہ لمبائی
+DisplayGrandTotalInList=Display grand total (for all pages) in lists footer
 DefaultMaxSizeShortList=مختصر فہرستوں کے لیے پہلے سے طے شدہ زیادہ سے زیادہ لمبائی (یعنی کسٹمر کارڈ میں)
 MessageOfDay=دن کا پیغام
 MessageLogin=لاگ ان پیج پیغام
@@ -1213,7 +1209,6 @@ EnableMultilangInterface=گاہک یا وینڈر تعلقات کے لیے کث�
 EnableShowLogo=مینو میں کمپنی کا لوگو دکھائیں۔
 CompanyInfo=کمپنی/تنظیم
 CompanyIds=کمپنی/تنظیم کی شناخت
-CompanyName=نام
 CompanyAddress=پتہ
 CompanyZip=زپ
 CompanyTown=شہر
@@ -1752,8 +1747,6 @@ BarcodeDescQRCODE=بار کوڈ قسم کیو آر کوڈ
 GenbarcodeLocation=بار کوڈ جنریشن کمانڈ لائن ٹول (کچھ بار کوڈ کی اقسام کے لیے اندرونی انجن کے ذریعے استعمال کیا جاتا ہے)۔ "genbarcode" کے ساتھ ہم آہنگ ہونا ضروری ہے۔ <br> مثال کے طور پر: /usr/local/bin/genbarcode
 BarcodeInternalEngine=اندرونی انجن
 BarCodeNumberManager=بار کوڈ نمبروں کی خود بخود وضاحت کرنے کا مینیجر
-##### Prelevements #####
-WithdrawalsSetup=ماڈیول ڈائریکٹ ڈیبٹ ادائیگیوں کا سیٹ اپ
 ##### ExternalRSS #####
 ExternalRSSSetup=بیرونی آر ایس ایس درآمدات کا سیٹ اپ
 NewRSS=نئی آر ایس ایس فیڈ
@@ -1868,7 +1861,7 @@ PastDelayVCalExport=سے پرانا واقعہ برآمد نہ کریں۔
 SecurityKey = سیکیورٹی کلید
 ##### ClickToDial #####
 ClickToDialSetup=ماڈیول سیٹ اپ ڈائل کرنے کے لیے کلک کریں۔
-ClickToDialUrlDesc=یو آر ایل اس وقت کال کیا جاتا ہے جب فون پکٹو پر کلک کیا جاتا ہے۔ URL میں، آپ ٹیگز استعمال کر سکتے ہیں<br><b>__PHONETO__</b>یہ ہوگا کال کرنے والے شخص کے فون نمبر سے بدل دیا گیا<br><b>__PHONEFROM__</b> کال کرنے والے شخص (آپ کا) کے فون نمبر سے بدل دیا جائے گا<br><b>__LOGIN__b09a4b739f17f span> جسے کلک ٹوڈیل لاگ ان سے تبدیل کیا جائے گا (یوزر کارڈ پر بیان کیا گیا ہے)<span class='notranslate'><br><b>__PASS__ </b> جسے کلک ٹوڈیل پاس ورڈ (یوزر کارڈ پر بیان کیا گیا) سے بدل دیا جائے گا۔
+ClickToDialUrlDesc=URL called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with clicktodial login (defined on user card)<br><b>__PASS__</b> that will be replaced with clicktodial password (defined on user card).
 ClickToDialDesc=یہ ماڈیول ڈیسک ٹاپ کمپیوٹر کا استعمال کرتے وقت فون نمبروں کو کلک کے قابل لنکس میں تبدیل کرتا ہے۔ ایک کلک نمبر پر کال کرے گا۔ یہ آپ کے ڈیسک ٹاپ پر سافٹ فون استعمال کرتے وقت یا مثال کے طور پر SIP پروٹوکول پر مبنی CTI سسٹم استعمال کرتے وقت فون کال شروع کرنے کے لیے استعمال کیا جا سکتا ہے۔ نوٹ: اسمارٹ فون استعمال کرتے وقت، فون نمبرز ہمیشہ کلک کے قابل ہوتے ہیں۔
 ClickToDialUseTelLink=فون نمبرز پر صرف ایک لنک "tel:" استعمال کریں۔
 ClickToDialUseTelLinkDesc=یہ طریقہ استعمال کریں اگر آپ کے صارفین کے پاس سافٹ فون یا سافٹ ویئر انٹرفیس ہے، جو براؤزر والے کمپیوٹر پر انسٹال ہے، اور جب آپ اپنے براؤزر میں "tel:" سے شروع ہونے والے لنک پر کلک کرتے ہیں تو اسے کال کیا جاتا ہے۔ اگر آپ کو کسی ایسے لنک کی ضرورت ہے جو "sip:" سے شروع ہو یا ایک مکمل سرور حل (مقامی سافٹ ویئر انسٹالیشن کی ضرورت نہیں)، آپ کو اسے "نہیں" پر سیٹ کرنا ہوگا اور اگلا فیلڈ بھرنا ہوگا۔
@@ -2184,7 +2177,7 @@ CreateCandidature=ملازمت کی درخواست بنائیں
 FormatZip=زپ
 MainMenuCode=مینو انٹری کوڈ (مین مینو)
 ECMAutoTree=خودکار ECM درخت دکھائیں۔
-OperationParamDesc=کچھ ڈیٹا نکالنے کے لیے استعمال کرنے کے لیے قواعد کی وضاحت کریں یا آپریشن کے لیے استعمال کرنے کے لیے قدریں سیٹ کریں۔<br><br>سے کمپنی کا نام نکالنے کی مثال ای میل کا موضوع ایک عارضی متغیر میں:<br>tmp_var=EXTRACT:SUBJECT:کمپنی کی طرف سے پیغام ([^\n]*)<br><br>تخلیق کے لیے کسی آبجیکٹ کی خصوصیات سیٹ کرنے کی مثالیں:<br>objproperty1=SET:ایک ہارڈ کوڈ شدہ قدر<br>objproperty2=SET:__tmp_var__<br>objproperty (MPvalue3=SETIFEa value: صرف اس صورت میں سیٹ کیا جاتا ہے جب پراپرٹی کی پہلے سے وضاحت نہ کی گئی ہو)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<span class='notranslate' '><br></span>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY is:My s([^\\s]*)<br><br>متعدد خصوصیات کو نکالنے یا سیٹ کرنے کے لیے ایک نئی لائن استعمال کریں۔
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a company name from email subject into a temporary variable:<br>tmp_var=EXTRACT:SUBJECT:Message from company ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=ابتدائی گھنٹے
 OpeningHoursDesc=اپنی کمپنی کے باقاعدہ کھلنے کے اوقات یہاں درج کریں۔
 ResourceSetup=وسائل کے ماڈیول کی ترتیب
@@ -2299,7 +2292,7 @@ APIsAreNotEnabled=APIs ماڈیولز فعال نہیں ہیں۔
 YouShouldSetThisToOff=آپ کو اسے 0 یا آف پر سیٹ کرنا چاہیے۔
 InstallAndUpgradeLockedBy=انسٹال اور اپ گریڈ فائل <b> %s </b> کے ذریعہ مقفل ہیں۔
 InstallLockedBy=انسٹال/دوبارہ انسٹال فائل <b>%s</b> کے ذریعہ مقفل ہے۔
-InstallOfAddonIsNotBlocked=ایڈونز کی تنصیبات مقفل نہیں ہیں۔ ایک فائل <b>installmodules.lock</b> ڈائرکٹری <b> میں بنائیں ='notranslate'>%s</span></b> بیرونی ایڈونز/ماڈیولز کی تنصیبات کو بلاک کرنے کے لیے۔
+InstallOfAddonIsNotBlocked=Installations of addons are not locked. Create a file <b>installmodules.lock</b> into directory <b>%s</b> to block installations of external addons/modules.
 OldImplementation=پرانا عمل درآمد
 PDF_SHOW_LINK_TO_ONLINE_PAYMENT=اگر آن لائن ادائیگی کے کچھ ماڈیولز فعال ہیں (پے پال، پٹی، ...)، آن لائن ادائیگی کرنے کے لیے پی ڈی ایف پر ایک لنک شامل کریں۔
 DashboardDisableGlobal=کھلی اشیاء کے تمام انگوٹھوں کو عالمی سطح پر غیر فعال کریں۔
@@ -2320,8 +2313,6 @@ IfYouUseASecondTaxYouMustSetYouUseTheMainTax=اگر آپ دوسرا ٹیکس ا�
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=اگر آپ تیسرا ٹیکس استعمال کرنا چاہتے ہیں تو آپ کو پہلے سیلز ٹیکس کو بھی فعال کرنا ہوگا۔
 LanguageAndPresentation=زبان اور پیشکش
 SkinAndColors=جلد اور رنگ
-IfYouUseASecondTaxYouMustSetYouUseTheMainTax=اگر آپ دوسرا ٹیکس استعمال کرنا چاہتے ہیں تو آپ کو پہلے سیلز ٹیکس کو بھی فعال کرنا ہوگا۔
-IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=اگر آپ تیسرا ٹیکس استعمال کرنا چاہتے ہیں تو آپ کو پہلے سیلز ٹیکس کو بھی فعال کرنا ہوگا۔
 PDF_USE_1A=PDF/A-1b فارمیٹ کے ساتھ پی ڈی ایف بنائیں
 MissingTranslationForConfKey = %s کا ترجمہ غائب ہے۔
 NativeModules=مقامی ماڈیولز
@@ -2339,7 +2330,6 @@ ExportUseLowMemoryModeHelp=ڈمپ فائل بنانے کے لیے لو میمو�
 ModuleWebhookName = ویب ہُک
 ModuleWebhookDesc = ڈولیبر ٹرگرز کو پکڑنے اور ایونٹ کا ڈیٹا یو آر ایل پر بھیجنے کا انٹرفیس
 WebhookSetup = ویب ہک سیٹ اپ
-Settings = ترتیبات
 WebhookSetupPage = ویب ہک سیٹ اپ صفحہ
 ShowQuickAddLink=اوپری دائیں مینو میں ایک عنصر کو تیزی سے شامل کرنے کے لیے ایک بٹن دکھائیں۔
 ShowSearchAreaInTopMenu=ٹاپ مینو میں سرچ ایریا دکھائیں۔
@@ -2371,7 +2361,6 @@ DoesNotWorkWithAllThemes=تمام تھیمز کے ساتھ کام نہیں کر�
 NoName=گمنام
 ShowAdvancedOptions= اعلی درجے کے اختیارات دکھائیں۔
 HideAdvancedoptions= اعلی درجے کے اختیارات چھپائیں۔
-CIDLookupURL=ماڈیول ایک URL لاتا ہے جسے کسی بیرونی ٹول کے ذریعے کسی تیسرے فریق کا نام یا اس کے فون نمبر سے رابطہ حاصل کرنے کے لیے استعمال کیا جا سکتا ہے۔ استعمال کرنے کے لیے URL ہے:
 OauthNotAvailableForAllAndHadToBeCreatedBefore=OAUTH2 کی توثیق تمام میزبانوں کے لیے دستیاب نہیں ہے، اور OAUTH ماڈیول کے ساتھ صحیح اجازتوں کے ساتھ ایک ٹوکن ضرور بنایا گیا ہو گا۔
 MAIN_MAIL_SMTPS_OAUTH_SERVICE=OAUTH2 تصدیق کی خدمت
 DontForgetCreateTokenOauthMod=صحیح اجازتوں کے ساتھ ایک ٹوکن OAUTH ماڈیول کے ساتھ اوپر کی طرف بنایا گیا ہوگا۔
@@ -2417,8 +2406,8 @@ NotAvailableByDefaultEnabledOnModuleActivation=ڈیفالٹ کے ذریعہ نہ
 CSSPage=سی ایس ایس اسٹائل
 Defaultfortype=طے شدہ
 DefaultForTypeDesc=ٹیمپلیٹ کی قسم کے لیے نیا ای میل بناتے وقت بطور ڈیفالٹ استعمال کیا جاتا ہے۔
-OptionXShouldBeEnabledInModuleY=آپشن "<b>%s</b>" ماڈیول <span کلاس میں فعال ہونا چاہئے ='notranslate'><b></span>%s</b>
-OptionXIsCorrectlyEnabledInModuleY=آپشن "<b>%s</b>" ماڈیول میں فعال ہے <span= class 'notranslate'><b></span>%s</b>
+OptionXShouldBeEnabledInModuleY=Option "<b>%s</b>" should be enabled into module <b>%s</b>
+OptionXIsCorrectlyEnabledInModuleY=Option "<b>%s</b>" is enabled into module <b>%s</b>
 AllowOnLineSign=آن لائن دستخط کی اجازت دیں۔
 AtBottomOfPage=صفحہ کے نیچے
 FailedAuth=ناکام تصدیق
@@ -2440,3 +2429,17 @@ ParametersForTestEnvironment=ٹیسٹ کے ماحول کے لیے پیرامیٹ
 TryToKeepOnly=صرف %s رکھنے کی کوشش کریں
 RecommendedForProduction=پیداوار کے لیے تجویز کردہ
 RecommendedForDebug=ڈیبگ کے لیے تجویز کردہ
+UrlPublicInterfaceLabelAdmin=Alternative URL for public interface
+UrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface with another URL (the virtual host server must act as a proxy on the standard URL)
+ExportUseForce=Use the parameter -f
+ExportUseForceHelp=Force to continue the export even when an error is found (Backup may not be reliable)
+CustomPrompt=Custom prompts
+AiDescription=AI (Artificial Intelligence) features
+AiDescriptionLong=Provides AI (Artificial Intelligence) features in different part of the application. Need external AI API.
+AI_KEY_API_CHATGPT= Key for ChatGPT IA api
+AiSetup=AI module setup
+AiCustomPrompt=AI customs prompt
+AI_CONFIGURATIONS_PROMPT=Custom prompt
+ImageGeneration=Image generation
+AIPromptForFeatures=AI custom prompts for features
+EnterAnIP=Enter an IP address

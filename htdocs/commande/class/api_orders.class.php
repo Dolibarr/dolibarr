@@ -176,7 +176,7 @@ class Orders extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -264,7 +264,7 @@ class Orders extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
 			throw new RestException(401, "Insuffisant rights");
 		}
 		// Check mandatory fields
@@ -337,7 +337,7 @@ class Orders extends DolibarrApi
 	 */
 	public function postLine($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -404,7 +404,7 @@ class Orders extends DolibarrApi
 	 */
 	public function putLine($id, $lineid, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -472,7 +472,7 @@ class Orders extends DolibarrApi
 	 */
 	public function deleteLine($id, $lineid)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -541,7 +541,7 @@ class Orders extends DolibarrApi
 	 */
 	public function postContact($id, $contactid, $type)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -589,7 +589,7 @@ class Orders extends DolibarrApi
 	 */
 	public function deleteContact($id, $contactid, $type)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -631,7 +631,7 @@ class Orders extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -678,7 +678,7 @@ class Orders extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->supprimer) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'supprimer')) {
 			throw new RestException(403);
 		}
 		$result = $this->commande->fetch($id);
@@ -726,7 +726,7 @@ class Orders extends DolibarrApi
 	 */
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
 			throw new RestException(403);
 		}
 		$result = $this->commande->fetch($id);
@@ -777,7 +777,7 @@ class Orders extends DolibarrApi
 	 */
 	public function reopen($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
 			throw new RestException(403);
 		}
 		if (empty($id)) {
@@ -813,7 +813,7 @@ class Orders extends DolibarrApi
 	 */
 	public function setinvoiced($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
 			throw new RestException(403);
 		}
 		if (empty($id)) {
@@ -854,7 +854,7 @@ class Orders extends DolibarrApi
 	 */
 	public function close($id, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
 			throw new RestException(403);
 		}
 		$result = $this->commande->fetch($id);
@@ -899,7 +899,7 @@ class Orders extends DolibarrApi
 	 */
 	public function settodraft($id, $idwarehouse = -1)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
 			throw new RestException(403);
 		}
 		$result = $this->commande->fetch($id);
@@ -954,7 +954,7 @@ class Orders extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
 			throw new RestException(403);
 		}
-		if (!DolibarrApiAccess::$user->rights->commande->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
 			throw new RestException(403);
 		}
 		if (empty($proposalid)) {
@@ -992,7 +992,7 @@ class Orders extends DolibarrApi
 	public function getOrderShipments($id)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-		if (!DolibarrApiAccess::$user->rights->expedition->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
 			throw new RestException(403);
 		}
 		$obj_ret = array();
@@ -1048,7 +1048,7 @@ class Orders extends DolibarrApi
 	public function createOrderShipment($id, $warehouse_id)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-		if (!DolibarrApiAccess::$user->rights->expedition->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
 			throw new RestException(403);
 		}
 		if ($warehouse_id <= 0) {

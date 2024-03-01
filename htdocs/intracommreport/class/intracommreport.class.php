@@ -141,7 +141,7 @@ class IntracommReport extends CommonObject
 	 * @param string		$mode 				'O' for create, R for regenerate (Look always 0 meant toujours 0 within the framework of XML exchanges according to documentation)
 	 * @param string		$type 				Declaration type by default - introduction or expedition (always 'expedition' for Des)
 	 * @param string		$period_reference	Period of reference
-	 * @return SimpleXMLElement|int
+	 * @return string|false|0					Return a well-formed XML string based on SimpleXML element, false or 0 if error
 	 */
 	public function getXML($mode = 'O', $type = 'introduction', $period_reference = '')
 	{
@@ -202,7 +202,7 @@ class IntracommReport extends CommonObject
 	 * @param int		$period_year		Year of declaration
 	 * @param int		$period_month		Month of declaration
 	 * @param string	$type_declaration	Declaration type by default - 'introduction' or 'expedition' (always 'expedition' for Des)
-	 * @return SimpleXMLElement|int
+	 * @return string|false|0				Return a well-formed XML string based on SimpleXML element, false or 0 if error
 	 */
 	public function getXMLDes($period_year, $period_month, $type_declaration = 'expedition')
 	{
@@ -463,7 +463,7 @@ class IntracommReport extends CommonObject
 			$res = $this->db->fetch_object($resql);
 		}
 
-		return ($res->max_declaration_number + 1);
+		return (string) ($res->max_declaration_number + 1);
 	}
 
 	/**

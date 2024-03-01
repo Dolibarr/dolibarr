@@ -3,6 +3,7 @@
  * Copyright (C) 2015-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2020  Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -446,13 +447,13 @@ class BookKeeping extends CommonObject
 						$result = -2;
 						$error++;
 						$this->errors[] = 'Error Create Error '.$result.' lecture ID';
-						dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+						dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 					}
 				} else {
 					$result = -1;
 					$error++;
 					$this->errors[] = 'Error '.$this->db->lasterror();
-					dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+					dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 				}
 			} else {	// Already exists
 				$result = -3;
@@ -464,7 +465,7 @@ class BookKeeping extends CommonObject
 			$result = -5;
 			$error++;
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
 		// Uncomment this and change MYOBJECT to your own tag if you
@@ -555,7 +556,7 @@ class BookKeeping extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -715,7 +716,7 @@ class BookKeeping extends CommonObject
 		if (!$resql) {
 			$error++;
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error) {
@@ -840,7 +841,7 @@ class BookKeeping extends CommonObject
 			}
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -929,7 +930,7 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = 't.lettering_code IS NULL';
 				} elseif ($key == 't.code_journal' && !empty($value)) {
 					if (is_array($value)) {
-						$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+						$sqlwhere[] = natural_search("t.code_journal", implode(',', $value), 3, 1);
 					} else {
 						$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
 					}
@@ -1019,7 +1020,7 @@ class BookKeeping extends CommonObject
 			return $num;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -1099,7 +1100,7 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = natural_search($key, $value, 1, 1);
 				} elseif ($key == 't.code_journal' && !empty($value)) {
 					if (is_array($value)) {
-						$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+						$sqlwhere[] = natural_search("t.code_journal", implode(',', $value), 3, 1);
 					} else {
 						$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
 					}
@@ -1171,7 +1172,7 @@ class BookKeeping extends CommonObject
 			return $num;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 			return -1;
 		}
 	}
@@ -1223,7 +1224,7 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = $key." LIKE '".$this->db->escape($value)."%'";
 				} elseif ($key == 't.code_journal' && !empty($value)) {
 					if (is_array($value)) {
-						$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+						$sqlwhere[] = natural_search("t.code_journal", implode(',', $value), 3, 1);
 					} else {
 						$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
 					}
@@ -1284,7 +1285,7 @@ class BookKeeping extends CommonObject
 			return $num;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -1401,7 +1402,7 @@ class BookKeeping extends CommonObject
 		if (!$resql) {
 			$error++;
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
 		// Uncomment this and change MYOBJECT to your own tag if you
@@ -1456,7 +1457,7 @@ class BookKeeping extends CommonObject
 		if (!$resql) {
 			$error++;
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 		if ($error) {
 			$this->db->rollback();
@@ -1516,7 +1517,7 @@ class BookKeeping extends CommonObject
 			if (!$resql) {
 				$error++;
 				$this->errors[] = 'Error '.$this->db->lasterror();
-				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+				dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 			}
 		}
 
@@ -1701,7 +1702,7 @@ class BookKeeping extends CommonObject
 		if ($result < 0) {
 			$error++;
 			$this->errors = $object->errors;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
 		unset($object->context['createfromclone']);
@@ -1971,7 +1972,7 @@ class BookKeeping extends CommonObject
 	/**
 	 * Transform transaction
 	 *
-	 * @param  number   $direction      If 0: tmp => real, if 1: real => tmp
+	 * @param  int      $direction      If 0: tmp => real, if 1: real => tmp
 	 * @param  string   $piece_num      Piece num = Transaction ref
 	 * @return int                      int Return integer <0 if KO, >0 if OK
 	 */
@@ -2003,7 +2004,7 @@ class BookKeeping extends CommonObject
 				if (!$resql) {
 					$error++;
 					$this->errors[] = 'Error '.$this->db->lasterror();
-					dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+					dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 				}
 			}
 
@@ -2022,7 +2023,7 @@ class BookKeeping extends CommonObject
 				if (!$resql) {
 					$error++;
 					$this->errors[] = 'Error '.$this->db->lasterror();
-					dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+					dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 				}
 			}
 
@@ -2032,7 +2033,7 @@ class BookKeeping extends CommonObject
 				if (!$resql) {
 					$error++;
 					$this->errors[] = 'Error '.$this->db->lasterror();
-					dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+					dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 				}
 			}
 		} elseif ($direction == 1) {
@@ -2042,7 +2043,7 @@ class BookKeeping extends CommonObject
 				if (!$resql) {
 					$error++;
 					$this->errors[] = 'Error '.$this->db->lasterror();
-					dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+					dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 				}
 			}
 
@@ -2061,7 +2062,7 @@ class BookKeeping extends CommonObject
 				if (!$resql) {
 					$error++;
 					$this->errors[] = 'Error '.$this->db->lasterror();
-					dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+					dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 				}
 			}
 
@@ -2072,7 +2073,7 @@ class BookKeeping extends CommonObject
 				if (!$resql) {
 					$error++;
 					$this->errors[] = 'Error '.$this->db->lasterror();
-					dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+					dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 				}
 			}
 		}
@@ -2197,7 +2198,7 @@ class BookKeeping extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 			}
 
-			$result = array('id'=>$obj->rowid, 'account_number'=>$obj->account_number, 'label'=>$obj->label);
+			$result = array('id' => $obj->rowid, 'account_number' => $obj->account_number, 'label' => $obj->label);
 			return $result;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
@@ -2613,7 +2614,7 @@ class BookKeeping extends CommonObject
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->errors[] = 'Error ' . $this->db->lasterror();
-				dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+				dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 			} else {
 				while ($obj = $this->db->fetch_object($resql)) {
 					$income_statement_amount += $obj->accounting_result;
@@ -2746,7 +2747,7 @@ class BookKeeping extends CommonObject
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$this->errors[] = 'Error ' . $this->db->lasterror();
-					dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+					dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 
 					$error++;
 				} else {
@@ -2946,7 +2947,7 @@ class BookKeeping extends CommonObject
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 
 			$error++;
 		} else {

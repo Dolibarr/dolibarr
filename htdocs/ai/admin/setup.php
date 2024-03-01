@@ -24,17 +24,19 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-
-global $langs, $user;
-
-// Libraries
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once '../lib/ai.lib.php';
+
+$langs->loadLangs(array("admin"));
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
+if (empty($action)) {
+	$action = 'edit';
+}
 
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
@@ -179,6 +181,8 @@ if ($action == 'updateMask') {
 	}
 }
 
+$action = 'edit';
+
 
 /*
  * View
@@ -187,18 +191,18 @@ if ($action == 'updateMask') {
  $form = new Form($db);
 
  $help_url = '';
- $page_name = "AiSetup";
+ $title = "AiSetup";
 
- llxHeader('', $langs->trans($page_name), $help_url);
+ llxHeader('', $langs->trans($title), $help_url);
 
  // Subheader
  $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
- print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
+ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 
  // Configuration header
  $head = aiAdminPrepareHead();
- print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "fa-microchip");
+ print dol_get_fiche_head($head, 'settings', $langs->trans($title), -1, "fa-microchip");
 
  // Setup page goes here
  //echo '<span class="opacitymedium">'.$langs->trans("AiSetupPage").'</span><br><br>';

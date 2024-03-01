@@ -43,7 +43,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "ticket";
 		$this->description = "Triggers of the module ticket to send notifications to internal users and to third-parties";
-		$this->version = self::VERSION_DOLIBARR; // 'development', 'experimental', 'dolibarr' or version
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'ticket';
 	}
 
@@ -58,7 +58,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 *      @param  conf      $conf   Object conf
 	 *      @return int                     Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		global $mysoc;
 
@@ -250,13 +250,15 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					$linked_contacts = array_merge($linked_contacts, $object->listeContact(-1, 'internal'));
 					if (empty($linked_contacts) && getDolGlobalString('TICKET_NOTIFY_AT_CLOSING') && !empty($object->fk_soc)) {
 						$object->fetch_thirdparty();
-						$linked_contacts[] = $object->thirdparty->email;
+						$linked_contacts[]['email'] = $object->thirdparty->email;
 					}
 
 					$contactid = empty($object->context['contactid']) ? 0 : $object->context['contactid'];
 					$res = 0;
 
 					if ($contactid > 0) {
+						// TODO This security test has no sens. We must check that $contactid is inside $linked_contacts[]['id'] when $linked_contacts[]['source'] = 'external' or 'thirdparty'
+						// Refuse email if not
 						$contact = new Contact($this->db);
 						$res = $contact->fetch($contactid);
 						if (! in_array($contact, $linked_contacts)) {

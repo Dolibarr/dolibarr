@@ -58,7 +58,6 @@ class PaymentSocialContribution extends CommonObject
 	public $fk_charge;
 
 	public $datec = '';
-	public $tms = '';
 	public $datep = '';
 
 	/**
@@ -98,11 +97,13 @@ class PaymentSocialContribution extends CommonObject
 	/**
 	 * @var string
 	 * @deprecated
+	 * @see $num_payment
 	 */
 	public $num_paiement;
 
 	/**
-	 * @var string
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
@@ -536,7 +537,7 @@ class PaymentSocialContribution extends CommonObject
 		$this->tms = dol_now();
 		$this->datep = dol_now();
 		$this->amount = 100;
-		$this->fk_typepaiement = '';
+		$this->fk_typepaiement = 0;
 		$this->num_payment = 'ABC123';
 		$this->note_private = '';
 		$this->note_public = '';
@@ -567,7 +568,7 @@ class PaymentSocialContribution extends CommonObject
 
 		$error = 0;
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$acc = new Account($this->db);

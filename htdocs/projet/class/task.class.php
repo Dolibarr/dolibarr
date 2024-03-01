@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022       Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
@@ -101,8 +101,14 @@ class Task extends CommonObjectLine
 
 	/**
 	 * @var int ID
+	 * @deprecated use status instead
 	 */
 	public $fk_statut;
+
+	/**
+	 * @var int ID
+	 */
+	public $status;
 
 	public $priority;
 
@@ -189,6 +195,30 @@ class Task extends CommonObjectLine
 	 */
 	public $project_budget_amount;
 
+	/**
+	 * Draft status
+	 */
+	const STATUS_DRAFT = 0;
+
+	/**
+	 * Validated status (To do). Note: We also have the field progress to know the progression from 0 to 100%.
+	 */
+	const STATUS_VALIDATED = 1;
+
+	/**
+	 * Finished status
+	 */
+	const STATUS_CLOSED = 3;
+
+	/**
+	 * Transferred status
+	 */
+	const STATUS_TRANSFERRED = 4;
+
+	/**
+	 * status canceled
+	 */
+	const STATUS_CANCELED = 9;
 
 
 	/**
@@ -226,9 +256,6 @@ class Task extends CommonObjectLine
 			$this->errors[] = $langs->trans('StartDateCannotBeAfterEndDate');
 			return -1;
 		}
-
-		// Check parameters
-		// Put here code to add control on parameters values
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task (";
@@ -318,8 +345,6 @@ class Task extends CommonObjectLine
 	 */
 	public function fetch($id, $ref = '', $loadparentdata = 0)
 	{
-		global $langs, $conf;
-
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.ref,";
@@ -335,7 +360,7 @@ class Task extends CommonObjectLine
 		$sql .= " t.datee as date_end,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_valid,";
-		$sql .= " t.fk_statut,";
+		$sql .= " t.fk_statut as status,";
 		$sql .= " t.progress,";
 		$sql .= " t.budget_amount,";
 		$sql .= " t.priority,";
@@ -380,7 +405,8 @@ class Task extends CommonObjectLine
 				$this->date_end				= $this->db->jdate($obj->date_end);
 				$this->fk_user_creat		= $obj->fk_user_creat;
 				$this->fk_user_valid		= $obj->fk_user_valid;
-				$this->fk_statut			= $obj->fk_statut;
+				$this->fk_statut		    = $obj->status;
+				$this->status			    = $obj->status;
 				$this->progress				= $obj->progress;
 				$this->budget_amount		= $obj->budget_amount;
 				$this->priority				= $obj->priority;
@@ -572,7 +598,7 @@ class Task extends CommonObjectLine
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error = 0;
@@ -877,14 +903,14 @@ class Task extends CommonObjectLine
 	{
 		$this->id = 0;
 
-		$this->fk_project = '';
+		$this->fk_project = 0;
 		$this->ref = 'TK01';
-		$this->fk_task_parent = null;
+		$this->fk_task_parent = 0;
 		$this->label = 'Specimen task TK01';
 		$this->duration_effective = '';
-		$this->fk_user_creat = null;
+		$this->fk_user_creat = 1;
 		$this->progress = '25';
-		$this->fk_statut = null;
+		$this->status = 0;
 		$this->note = 'This is a specimen task not';
 	}
 
@@ -1038,7 +1064,7 @@ class Task extends CommonObjectLine
 		if ($includebilltime) {
 			$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public, p.fk_statut, p.usage_bill_time,";
 			$sql .= " t.datec, t.dateo, t.datee, t.tms,";
-			$sql .= " t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
+			$sql .= " t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut,";
 			$sql .= " t.dateo, t.datee, t.planned_workload, t.rang,";
 			$sql .= " t.description, ";
 			$sql .= " t.budget_amount, ";
@@ -1119,7 +1145,8 @@ class Task extends CommonObjectLine
 					}
 
 					$tasks[$i]->progress		= $obj->progress;
-					$tasks[$i]->fk_statut = $obj->status;
+					$tasks[$i]->fk_statut		= $obj->status;
+					$tasks[$i]->status 		    = $obj->status;
 					$tasks[$i]->public = $obj->public;
 					$tasks[$i]->date_start = $this->db->jdate($obj->date_start);
 					$tasks[$i]->date_end		= $this->db->jdate($obj->date_end);
@@ -1144,8 +1171,6 @@ class Task extends CommonObjectLine
 					if ($loadextras) {
 						$tasks[$i]->fetch_optionals();
 					}
-
-					$tasks[$i]->obj = $obj; // Needed for tpl/extrafields_list_print
 				}
 
 				$i++;
@@ -1185,9 +1210,15 @@ class Task extends CommonObjectLine
 		}
 
 		/* Liste des taches et role sur les projects ou taches */
-		$sql = "SELECT pt.rowid as pid, ec.element_id, ctc.code, ctc.source";
+		$sql = "SELECT ";
 		if ($userp) {
-			$sql .= " FROM ".MAIN_DB_PREFIX."projet as pt";
+			$sql .= " p.rowid as pid,";
+		} else {
+			$sql .= " pt.rowid as pid,";
+		}
+		$sql .= " ec.element_id, ctc.code, ctc.source";
+		if ($userp) {
+			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		}
 		if ($usert && $filteronprojstatus > -1) {
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p, ".MAIN_DB_PREFIX."projet_task as pt";
@@ -1197,7 +1228,11 @@ class Task extends CommonObjectLine
 		}
 		$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 		$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
-		$sql .= " WHERE pt.rowid = ec.element_id";
+		if ($userp) {
+			$sql .= " WHERE p.rowid = ec.element_id";
+		} else {
+			$sql .= " WHERE pt.rowid = ec.element_id";
+		}
 		if ($userp && $filteronprojstatus > -1) {
 			$sql .= " AND p.fk_statut = ".((int) $filteronprojstatus);
 		}
@@ -1221,7 +1256,7 @@ class Task extends CommonObjectLine
 		$sql .= " AND ctc.source = 'internal'";
 		if ($projectid) {
 			if ($userp) {
-				$sql .= " AND pt.rowid IN (".$this->db->sanitize($projectid).")";
+				$sql .= " AND p.rowid IN (".$this->db->sanitize($projectid).")";
 			}
 			if ($usert) {
 				$sql .= " AND pt.fk_projet IN (".$this->db->sanitize($projectid).")";
@@ -1406,8 +1441,6 @@ class Task extends CommonObjectLine
 	 */
 	public function fetchTimeSpentOnTask($morewherefilter = '')
 	{
-		global $langs;
-
 		$arrayres = array();
 
 		$sql = "SELECT";
@@ -1614,8 +1647,6 @@ class Task extends CommonObjectLine
 	 */
 	public function fetchTimeSpent($id)
 	{
-		global $langs;
-
 		$timespent = new TimeSpent($this->db);
 		$timespent->fetch($id);
 
@@ -2130,7 +2161,7 @@ class Task extends CommonObjectLine
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->fk_statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2321,6 +2352,7 @@ class Task extends CommonObjectLine
 				$task_static->projectstatus = $obj->projectstatus;
 				$task_static->progress = $obj->progress;
 				$task_static->fk_statut = $obj->status;
+				$task_static->status = $obj->status;
 				$task_static->date_start = $this->db->jdate($obj->date_start);
 				$task_static->date_end = $this->db->jdate($obj->date_end);
 

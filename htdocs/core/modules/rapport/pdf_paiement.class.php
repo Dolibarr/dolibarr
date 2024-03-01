@@ -215,14 +215,14 @@ class pdf_paiement extends CommonDocGenerator
 				$sql .= ", c.code as paiement_code, p.num_paiement as num_payment";
 				$sql .= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
 				$sql .= ", pf.amount as pf_amount";
-				if (isModEnabled("banque")) {
+				if (isModEnabled("bank")) {
 					$sql .= ", ba.ref as bankaccount";
 				}
 				$sql .= ", p.rowid as prowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
 				$sql .= ", ".MAIN_DB_PREFIX."facture as f,";
 				$sql .= " ".MAIN_DB_PREFIX."paiement_facture as pf,";
-				if (isModEnabled("banque")) {
+				if (isModEnabled("bank")) {
 					$sql .= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
 				}
 				$sql .= " ".MAIN_DB_PREFIX."societe as s";
@@ -230,7 +230,7 @@ class pdf_paiement extends CommonDocGenerator
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				}
 				$sql .= " WHERE f.fk_soc = s.rowid AND pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
-				if (isModEnabled("banque")) {
+				if (isModEnabled("bank")) {
 					$sql .= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
 				}
 				$sql .= " AND f.entity IN (".getEntity('invoice').")";
@@ -253,14 +253,14 @@ class pdf_paiement extends CommonDocGenerator
 				$sql .= ", c.code as paiement_code, p.num_paiement as num_payment";
 				$sql .= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
 				$sql .= ", pf.amount as pf_amount";
-				if (isModEnabled("banque")) {
+				if (isModEnabled("bank")) {
 					$sql .= ", ba.ref as bankaccount";
 				}
 				$sql .= ", p.rowid as prowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
 				$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as f,";
 				$sql .= " ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf,";
-				if (isModEnabled("banque")) {
+				if (isModEnabled("bank")) {
 					$sql .= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
 				}
 				$sql .= " ".MAIN_DB_PREFIX."societe as s";
@@ -268,7 +268,7 @@ class pdf_paiement extends CommonDocGenerator
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				}
 				$sql .= " WHERE f.fk_soc = s.rowid AND pf.fk_facturefourn = f.rowid AND pf.fk_paiementfourn = p.rowid";
-				if (isModEnabled("banque")) {
+				if (isModEnabled("bank")) {
 					$sql .= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
 				}
 				$sql .= " AND f.entity IN (".getEntity('invoice').")";
@@ -384,16 +384,15 @@ class pdf_paiement extends CommonDocGenerator
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	TCPDF			$pdf     		Object PDF
+	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  int			$page	     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $page, $showaddress, $outputlangs)
 	{
 		// phpcs:enable
-		global $langs, $conf;
 
 		// Do not add the BACKGROUND as this is a report
 		//pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
@@ -437,7 +436,7 @@ class pdf_paiement extends CommonDocGenerator
 
 		$pdf->line($this->posxbankaccount - 1, $this->tab_top, $this->posxbankaccount - 1, $this->tab_top + $this->tab_height + 10);
 		$pdf->SetXY($this->posxbankaccount, $this->tab_top + 2);
-		$pdf->MultiCell($this->posxinvoiceamount - $this->posxbankaccount, 2, $outputlangs->transnoentities("Account"), 0, 'L');
+		$pdf->MultiCell($this->posxinvoiceamount - $this->posxbankaccount, 2, $outputlangs->transnoentities("BankAccount"), 0, 'L');
 
 
 		$pdf->line($this->posxinvoiceamount - 1, $this->tab_top, $this->posxinvoiceamount - 1, $this->tab_top + $this->tab_height + 10);
@@ -451,6 +450,8 @@ class pdf_paiement extends CommonDocGenerator
 		$pdf->line($this->marge_gauche, $this->tab_top + 10, $this->page_largeur - $this->marge_droite, $this->tab_top + 10);
 
 		$pdf->Rect($this->marge_gauche, $this->tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $this->tab_height + 10);
+
+		return 0;
 	}
 
 

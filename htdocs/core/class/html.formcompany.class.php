@@ -143,7 +143,7 @@ class FormCompany extends Form
 	 *	@param	int		$empty			Add empty value in list
 	 *	@return	void
 	 */
-	public function form_prospect_level($page, $selected = '', $htmlname = 'prospect_level_id', $empty = 0)
+	public function form_prospect_level($page, $selected = 0, $htmlname = 'prospect_level_id', $empty = 0)
 	{
 		// phpcs:enable
 		global $user, $langs;
@@ -195,7 +195,7 @@ class FormCompany extends Form
 	 *	@param	int		$empty			Add empty value in list
 	 *	@return	void
 	 */
-	public function formProspectContactLevel($page, $selected = '', $htmlname = 'prospect_contact_level_id', $empty = 0)
+	public function formProspectContactLevel($page, $selected = 0, $htmlname = 'prospect_contact_level_id', $empty = 0)
 	{
 		global $user, $langs;
 
@@ -643,7 +643,7 @@ class FormCompany extends Form
 	 *  @param	string		$morecss		More CSS on select component
 	 * 	@return int 						The selected third party ID
 	 */
-	public function selectCompaniesForNewContact($object, $var_id, $selected = '', $htmlname = 'newcompany', $limitto = '', $forceid = 0, $moreparam = '', $morecss = '')
+	public function selectCompaniesForNewContact($object, $var_id, $selected = 0, $htmlname = 'newcompany', $limitto = '', $forceid = 0, $moreparam = '', $morecss = '')
 	{
 		global $conf, $hookmanager;
 
@@ -743,7 +743,7 @@ class FormCompany extends Form
 			$sql .= " WHERE s.entity IN (" . getEntity('societe') . ")";
 			// For ajax search we limit here. For combo list, we limit later
 			if (is_array($limitto) && count($limitto)) {
-				$sql .= " AND s.rowid IN (" . $this->db->sanitize(join(',', $limitto)) . ")";
+				$sql .= " AND s.rowid IN (" . $this->db->sanitize(implode(',', $limitto)) . ")";
 			}
 			// Add where from hooks
 			$parameters = array();
@@ -1157,7 +1157,7 @@ class FormCompany extends Form
 	 */
 	public function selectProspectStatus($htmlname, $prospectstatic, $statusprospect, $idprospect, $mode = "html")
 	{
-		global $langs;
+		global $user, $langs;
 
 		if ($mode === "html") {
 			$actioncode = empty($prospectstatic->cacheprospectstatus[$statusprospect]) ? '' : $prospectstatic->cacheprospectstatus[$statusprospect]['code'];
@@ -1165,12 +1165,16 @@ class FormCompany extends Form
 
 			//print $prospectstatic->LibProspCommStatut($statusprospect, 2, $prospectstatic->cacheprospectstatus[$statusprospect]['label'], $prospectstatic->cacheprospectstatus[$statusprospect]['picto']);
 			print img_action('', $actioncode, $actionpicto, 'class="inline-block valignmiddle paddingright pictoprospectstatus"');
-			print '<select class="flat selectprospectstatus maxwidth150" id="'. $htmlname.$idprospect .'" data-socid="'.$idprospect.'" name="' . $htmlname .'">';
+			print '<select class="flat selectprospectstatus maxwidth150" id="'. $htmlname.$idprospect .'" data-socid="'.$idprospect.'" name="' . $htmlname .'"';
+			if (!$user->hasRight('societe', 'creer')) {
+				print ' disabled';
+			}
+			print '>';
 			foreach ($prospectstatic->cacheprospectstatus as $key => $val) {
-				$titlealt = (empty($val['label']) ? 'default' : $val['label']);
+				//$titlealt = (empty($val['label']) ? 'default' : $val['label']);
 				$label = $val['label'];
 				if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) {
-					$titlealt = $val['label'];
+					//$titlealt = $val['label'];
 					$label = (($langs->trans("StatusProspect".$val['code']) != "StatusProspect".$val['code']) ? $langs->trans("StatusProspect".$val['code']) : $label);
 				} else {
 					$label = (($langs->trans("StatusProspect".$val['id']) != "StatusProspect".$val['id']) ? $langs->trans("StatusProspect".$val['id']) : $label);

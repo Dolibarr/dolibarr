@@ -29,3 +29,5 @@ UseSpecificReadme=Use un archivo Léame específico
 IncludeDocGenerationHelp=Si marca esto, se generará algún código para agregar un cuadro "Generar documento" en el registro.
 ForeignKey=Clave extranjera
 CRUDRead=Leer
+DictionariesCreated=Diccionario <b>%s</b> creado exitosamente
+DictionaryDeleted=Diccionario <b>%s</b>removido exitosamente

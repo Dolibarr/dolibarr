@@ -115,7 +115,7 @@ function dolKeepOnlyPhpCode($str)
  * @param	int			$removephppart		0=Replace PHP sections with a PHP badge. 1=Remove completely PHP sections.
  * @param	string		$contenttype		Content type
  * @param	int			$containerid 		Contenair id
- * @return	boolean							True if OK
+ * @return	string							html content
  * @see dolWebsiteOutput() for function used to replace content in a web server context
  */
 function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $contenttype = 'html', $containerid = 0)
@@ -457,8 +457,10 @@ function dolWebsiteIncrementCounter($websiteid, $websitepagetype, $websitepageid
 			$sql .= " pageviews_month = pageviews_month + 1,";
 			// if last access was done during previous month, we save pageview_month into pageviews_previous_month
 			$sql .= " pageviews_previous_month = ".$db->ifsql("lastaccess < '".$db->idate(dol_mktime(0, 0, 0, $tmpnow['mon'], 1, $tmpnow['year'], 'gmt', 0), 'gmt')."'", 'pageviews_month', 'pageviews_previous_month').",";
-			$sql .= " lastaccess = '".$db->idate(dol_now('gmt'), 'gmt')."'";
+			$sql .= " lastaccess = '".$db->idate(dol_now('gmt'), 'gmt')."',";
+			$sql .= " lastpageid = ".((int) $websitepageid);
 			$sql .= " WHERE rowid = ".((int) $websiteid);
+
 			$resql = $db->query($sql);
 			if (! $resql) {
 				return -1;
@@ -544,7 +546,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 			unset($tmpwebsitepage);
 		}
 		if ($result > 0) {
-			$currenturi = $_SERVER["REQUEST_URI"];
+			$currenturi = $_SERVER["REQUEST_URI"];	// Example: /public/website/index.php?website=mywebsite.com&pageref=mywebsite-home&nocache=1708177483
 			$regtmp = array();
 			if (preg_match('/&pageref=([^&]+)/', $currenturi, $regtmp)) {
 				if ($regtmp[0] == $containerref) {
@@ -559,13 +561,14 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		}
 	} else { // When page called from virtual host server
 		$newurl = '/'.$containerref.'.php';
+		$newurl = $newurl.(empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]);
 	}
 
 	if ($newurl) {
 		if ($permanent) {
 			header("Status: 301 Moved Permanently", false, 301);
 		}
-		header("Location: ".$newurl.(empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]));
+		header("Location: ".$newurl);
 		exit;
 	} else {
 		print "Error, page contains a redirect to the alias page '".$containerref."' that does not exists in web site (".$website->id." / ".$website->ref.")";
@@ -675,13 +678,13 @@ function getStructuredData($type, $data = array())
 		$ret .= '{
 			"@context": "https://schema.org",
 			"@type": "Organization",
-			"name": "'.dol_escape_json($data['name'] ? $data['name'] : $companyname).'",
-			"url": "'.dol_escape_json($data['url'] ? $data['url'] : $url).'",
+			"name": "'.dol_escape_json(!empty($data['name']) ? $data['name'] : $companyname).'",
+			"url": "'.dol_escape_json(!empty($data['url']) ? $data['url'] : $url).'",
 			"logo": "'.($data['logo'] ? dol_escape_json($data['logo']) : '/wrapper.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo)).'",
 			"contactPoint": {
 				"@type": "ContactPoint",
 				"contactType": "Contact",
-				"email": "'.dol_escape_json($data['email'] ? $data['email'] : $mysoc->email).'"
+				"email": "'.dol_escape_json(!empty($data['email']) ? $data['email'] : $mysoc->email).'"
 			}'."\n";
 		if (is_array($mysoc->socialnetworks) && count($mysoc->socialnetworks) > 0) {
 			$ret .= ",\n";
@@ -869,7 +872,7 @@ function getSocialNetworkHeaderCards($params = null)
 
 		$fullurl = $website->virtualhost.'/'.$websitepage->pageurl.'.php';
 		$canonicalurl = $website->virtualhost.(($websitepage->id == $website->fk_default_home) ? '/' : (($shortlangcode != substr($website->lang, 0, 2) ? '/'.$shortlangcode : '').'/'.$websitepage->pageurl.'.php'));
-		$hashtags = trim(join(' #', array_map('trim', explode(',', $websitepage->keywords))));
+		$hashtags = trim(implode(' #', array_map('trim', explode(',', $websitepage->keywords))));
 
 		// Open Graph
 		$out .= '<meta name="og:type" content="website">'."\n";	// TODO If blogpost, use type article
@@ -922,7 +925,7 @@ function getSocialNetworkSharingLinks()
 
 	if ($website->virtualhost) {
 		$fullurl = $website->virtualhost.'/'.$websitepage->pageurl.'.php';
-		$hashtags = trim(join(' #', array_map('trim', explode(',', $websitepage->keywords))));
+		$hashtags = trim(implode(' #', array_map('trim', explode(',', $websitepage->keywords))));
 
 		$out .= '<div class="dol-social-share">'."\n";
 
@@ -1332,7 +1335,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					dol_mkdir(dirname($filetosave));
 
 					$fp = fopen($filetosave, "w");
-					fputs($fp, $tmpgeturl['content']);
+					fwrite($fp, $tmpgeturl['content']);
 					fclose($fp);
 					dolChmod($filetosave);
 				}
@@ -1401,7 +1404,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					dol_mkdir(dirname($filetosave));
 
 					$fp = fopen($filetosave, "w");
-					fputs($fp, $tmpgeturl['content']);
+					fwrite($fp, $tmpgeturl['content']);
 					fclose($fp);
 					dolChmod($filetosave);
 				}

@@ -179,9 +179,9 @@ class MembersTypes extends DolibarrApi
 	/**
 	 * Update member type
 	 *
-	 * @param int   $id             ID of member type to update
-	 * @param array $request_data   Datas
-	 * @return int
+	 * @param 	int   		$id             ID of member type to update
+	 * @param 	array 		$request_data   Datas
+	 * @return 	Object						Updated object
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		No Member Type found

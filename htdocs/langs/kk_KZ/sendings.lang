@@ -48,12 +48,12 @@ DateDeliveryPlanned=Жеткізудің жоспарланған күні
 RefDeliveryReceipt=Жеткізу туралы түбіртек
 StatusReceipt=Мәртебені жеткізу туралы түбіртек
 DateReceived=Жеткізу күні қабылданды
-ClassifyReception=Classify Received
+ClassifyReception=Алынғандарды жіктеу
 SendShippingByEMail=Жеткізуді электрондық пошта арқылы жіберіңіз
 SendShippingRef=%s жөнелтілімін беру
 ActionsOnShipping=Жеткізу кезіндегі оқиғалар
 LinkToTrackYourPackage=Пакетті бақылау үшін сілтеме
-ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
+ShipmentCreationIsDoneFromOrder=Қазіргі уақытта жаңа жөнелтілім сатуға тапсырыс жазбасынан жасалады.
 ShipmentLine=Жеткізу желісі
 ProductQtyInCustomersOrdersRunning=Ашық сату тапсырыстарынан өнім саны
 ProductQtyInSuppliersOrdersRunning=Ашық сатып алу тапсырыстарынан өнім саны
@@ -62,7 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Ашық сатып алу тапс
 NoProductToShipFoundIntoStock=<b> %s </b> қоймасынан жіберілетін өнім табылмады. Дұрыс қойманы таңдаңыз немесе басқа қойманы таңдаңыз.
 WeightVolShort=Салмағы/том.
 ValidateOrderFirstBeforeShipment=Жеткізуді жасамас бұрын алдымен тапсырысты растауыңыз керек.
-NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
+NoLineGoOnTabToAddSome=Жол жоқ, қосу үшін "%s" қойындысына өтіңіз
 
 # Sending methods
 # ModelDocument
@@ -75,12 +75,12 @@ SumOfProductWeights=Өнімнің массасы
 # warehouse details
 DetailWarehouseNumber= Қойма туралы мәліметтер
 DetailWarehouseFormat= W: %s (Саны: %d)
-SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
-CreationOptions=Available options during shipment creation
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Сериялық нөмір немесе партия үшін жөнелтілім жасау кезінде қоймаға соңғы енгізу күнін көрсетіңіз
+CreationOptions=Жіберуді жасау кезінде қолжетімді опциялар
 
-ShipmentDistribution=Shipment distribution
+ShipmentDistribution=Жүкті бөлу
 
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+ErrorTooManyCombinationBatchcode=%s жолына жөнелтілген жоқ, өйткені қойма, өнім, пакеттік кодтың тым көп тіркесімі табылды (%s).
+ErrorNoCombinationBatchcode=%s жолын қойма-өнім-топ/сериялық тіркесімі ретінде сақтау мүмкін болмады (%s, %s, %s) қоймада табылмады.
 
-ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s
+ErrorTooMuchShipped=Жеткізу саны %s жолында тапсырыс берілген саннан көп болмауы керек.

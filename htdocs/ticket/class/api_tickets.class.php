@@ -126,7 +126,7 @@ class Tickets extends DolibarrApi
 	 */
 	private function getCommon($id = 0, $track_id = '', $ref = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->ticket->read) {
+		if (!DolibarrApiAccess::$user->hasRight('ticket', 'read')) {
 			throw new RestException(403);
 		}
 
@@ -201,7 +201,7 @@ class Tickets extends DolibarrApi
 	 */
 	public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->ticket->read) {
+		if (!DolibarrApiAccess::$user->hasRight('ticket', 'read')) {
 			throw new RestException(403);
 		}
 
@@ -212,7 +212,7 @@ class Tickets extends DolibarrApi
 		$search_sale = null;
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -284,7 +284,7 @@ class Tickets extends DolibarrApi
 	public function post($request_data = null)
 	{
 		$ticketstatic = new Ticket($this->db);
-		if (!DolibarrApiAccess::$user->rights->ticket->write) {
+		if (!DolibarrApiAccess::$user->hasRight('ticket', 'write')) {
 			throw new RestException(403);
 		}
 		// Check mandatory fields
@@ -323,7 +323,7 @@ class Tickets extends DolibarrApi
 	public function postNewMessage($request_data = null)
 	{
 		$ticketstatic = new Ticket($this->db);
-		if (!DolibarrApiAccess::$user->rights->ticket->write) {
+		if (!DolibarrApiAccess::$user->hasRight('ticket', 'write')) {
 			throw new RestException(403);
 		}
 		// Check mandatory fields
@@ -353,14 +353,13 @@ class Tickets extends DolibarrApi
 	/**
 	 * Update ticket
 	 *
-	 * @param int   $id             Id of ticket to update
-	 * @param array $request_data   Datas
-	 * @return int
-	 *
+	 * @param 	int   	$id             	Id of ticket to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->ticket->write) {
+		if (!DolibarrApiAccess::$user->hasRight('ticket', 'write')) {
 			throw new RestException(403);
 		}
 
@@ -383,11 +382,11 @@ class Tickets extends DolibarrApi
 			$this->ticket->$field = $value;
 		}
 
-		if ($this->ticket->update(DolibarrApiAccess::$user)) {
+		if ($this->ticket->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->ticket->error);
 		}
-
-		return false;
 	}
 
 	/**
@@ -399,7 +398,7 @@ class Tickets extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->ticket->delete) {
+		if (!DolibarrApiAccess::$user->hasRight('ticket', 'delete')) {
 			throw new RestException(403);
 		}
 		$result = $this->ticket->fetch($id);

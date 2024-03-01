@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Upravljajte in spremljajte zaposlovalne kampanje za nova
 # Admin page
 #
 RecruitmentSetup = Nastavitev zaposlovanja
-Settings = nastavitve
 RecruitmentSetupPage = Tukaj vnesite nastavitev glavnih možnosti za modul zaposlovanja
 RecruitmentArea=Območje zaposlovanja
 PublicInterfaceRecruitmentDesc=Javne strani delovnih mest so javni URL-ji za prikaz in odgovore na odprta delovna mesta. Za vsako odprto delovno mesto obstaja ena druga povezava, ki jo najdete v zapisu vsakega delovnega mesta.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Omogoči javne strani odprtih delovnih mest
 #
 # About page
 #
-About = O programu
 RecruitmentAbout = O zaposlovanju
 RecruitmentAboutPage = Stran o zaposlovanju
 NbOfEmployeesExpected=Pričakovano št. zaposlenih
@@ -77,3 +75,6 @@ ExtrafieldsApplication=Dopolnilni atributi (prošnje za delo)
 MakeOffer=Daj ponudbo
 WeAreRecruiting=Zaposlujemo. To je seznam odprtih delovnih mest, ki jih je treba zapolniti...
 NoPositionOpen=Trenutno ni odprtih pozicij
+ConfirmClose=Potrdite preklic
+ConfirmCloseAsk=Ali ste prepričani, da želite preklicati to kandidaturo za zaposlitev
+recruitment=Zaposlovanje

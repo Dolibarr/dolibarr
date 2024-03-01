@@ -43,7 +43,7 @@ class MemberCardController extends Controller
 	{
 		$context = Context::getInstance();
 		$cardAccess = getDolGlobalString('WEBPORTAL_MEMBER_CARD_ACCESS');
-		$this->accessRight = isModEnabled('adherent') && in_array($cardAccess, array('visible', 'edit')) && $context->logged_member && $context->logged_member->id > 0;
+		$this->accessRight = isModEnabled('member') && in_array($cardAccess, array('visible', 'edit')) && $context->logged_member && $context->logged_member->id > 0;
 
 		return parent::checkAccess();
 	}
@@ -52,7 +52,7 @@ class MemberCardController extends Controller
 	 * Action method is called before html output
 	 * can be used to manage security and change context
 	 *
-	 * @return  void
+	 * @return  int     Return integer < 0 on error, > 0 on success
 	 */
 	public function action()
 	{
@@ -60,7 +60,7 @@ class MemberCardController extends Controller
 
 		$context = Context::getInstance();
 		if (!$context->controllerInstance->checkAccess()) {
-			return;
+			return -1;
 		}
 
 		// Load translation files required by the page
@@ -72,8 +72,8 @@ class MemberCardController extends Controller
 
 		// set form card
 		$cardAccess = getDolGlobalString('WEBPORTAL_MEMBER_CARD_ACCESS');
-		$permissiontoread = (int) isModEnabled('adherent') && in_array($cardAccess, array('visible', 'edit'));
-		$permissiontoadd = (int) isModEnabled('adherent') && in_array($cardAccess, array('edit'));
+		$permissiontoread = (int) isModEnabled('member') && in_array($cardAccess, array('visible', 'edit'));
+		$permissiontoadd = (int) isModEnabled('member') && in_array($cardAccess, array('edit'));
 		$permissiontodelete = 0;
 		$permissionnote = 0;
 		$permissiondellink = 0;
@@ -87,6 +87,8 @@ class MemberCardController extends Controller
 		}
 
 		$this->formCard = $formCardWebPortal;
+
+		return 1;
 	}
 
 	/**

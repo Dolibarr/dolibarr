@@ -12,6 +12,7 @@
  * Copyright (C) 2018		Ferran Marcet	        <fmarcet@2byte.es>
  * Copyright (C) 2018		Eric Seigne	            <eric.seigne@cap-rel.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,14 +67,14 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 $langs->loadLangs(array("companies", "other", "compta", "banks", "bills", "donations", "loan", "accountancy", "trips", "salaries", "hrm", "members"));
 
 // Multi journal
-$id_journal = GETPOST('id_journal', 'int');
+$id_journal = GETPOSTINT('id_journal');
 
-$date_startmonth = GETPOST('date_startmonth', 'int');
-$date_startday = GETPOST('date_startday', 'int');
-$date_startyear = GETPOST('date_startyear', 'int');
-$date_endmonth = GETPOST('date_endmonth', 'int');
-$date_endday = GETPOST('date_endday', 'int');
-$date_endyear = GETPOST('date_endyear', 'int');
+$date_startmonth = GETPOSTINT('date_startmonth');
+$date_startday = GETPOSTINT('date_startday');
+$date_startyear = GETPOSTINT('date_startyear');
+$date_endmonth = GETPOSTINT('date_endmonth');
+$date_endday = GETPOSTINT('date_endday');
+$date_endyear = GETPOSTINT('date_endyear');
 $in_bookkeeping = GETPOST('in_bookkeeping', 'aZ09');
 if ($in_bookkeeping == '') {
 	$in_bookkeeping = 'notyet';
@@ -194,6 +195,21 @@ $accountingjournalstatic->fetch($id_journal);
 $journal = $accountingjournalstatic->code;
 $journal_label = $accountingjournalstatic->label;
 
+$tabcompany = array();
+$tabuser = array();
+$tabpay = array();
+$tabbq = array();
+$tabtp = array();
+$tabtype = array();
+$tabmoreinfo = array();
+
+'
+@phan-var-force array<array{id:mixed,name:mixed,code_compta:string,email:string}> $tabcompany
+@phan-var-force array<array{id:int,name:string,lastname:string,firstname:string,email:string,accountancy_code:string,status:int> $tabuser
+@phan-var-force array<int,array{date:string,type_payment:string,ref:string,fk_bank:int,ban_account_ref:string,fk_bank_account:int,lib:string,type:string}> $tabpay
+@phan-var-force array<array{lib:string,date?:int|string,type_payment?:string,ref?:string,fk_bank?:int,ban_account_ref?:string,fk_bank_account?:int,type?:string,bank_account_ref?:string,paymentid?:int,paymentsupplierid?:int,soclib?:string,paymentscid?:int,paymentdonationid?:int,paymentsubscriptionid?:int,paymentvatid?:int,paymentsalid?:int,paymentexpensereport?:int,paymentvariousid?:int,account_various?:string,paymentloanid?:int}> $tabtp
+';
+
 //print $sql;
 dol_syslog("accountancy/journal/bankjournal.php", LOG_DEBUG);
 $result = $db->query($sql);
@@ -209,14 +225,6 @@ if ($result) {
 	$account_pay_donation = getDolGlobalString('DONATION_ACCOUNTINGACCOUNT', 'NotDefined'); // NotDefined is a reserved word
 	$account_pay_subscription = getDolGlobalString('ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT', 'NotDefined'); // NotDefined is a reserved word
 	$account_transfer = getDolGlobalString('ACCOUNTING_ACCOUNT_TRANSFER_CASH', 'NotDefined'); // NotDefined is a reserved word
-
-	$tabcompany = array();
-	$tabuser = array();
-	$tabpay = array();
-	$tabbq = array();
-	$tabtp = array();
-	$tabtype = array();
-	$tabmoreinfo = array();
 
 	// Loop on each line into llx_bank table. For each line, we should get:
 	// one line tabpay = line into bank
@@ -246,7 +254,7 @@ if ($result) {
 				$lineisasale = 1;
 			}
 		}
-		//var_dump($obj->type_payment); var_dump($obj->type_payment_supplier);
+		//var_dump($obj->type_payment); //var_dump($obj->type_payment_supplier);
 		//var_dump($lineisapurchase); //var_dump($lineisasale);
 
 		// Set accountancy code for bank
@@ -342,11 +350,13 @@ if ($result) {
 					// We save tabtype for a future use, to remember what kind of payment it is
 					$tabpay[$obj->rowid]['type'] = $links[$key]['type'];
 					$tabtype[$obj->rowid] = $links[$key]['type'];
-				} elseif (in_array($links[$key]['type'], array('company', 'user'))) {
-					if ($tabpay[$obj->rowid]['type'] == 'unknown') {
-						// We can guess here it is a bank record for a thirdparty company or a user.
-						// But we won't be able to record somewhere else than into a waiting account, because there is no other journal to record the contreparty.
-					}
+					/* phpcs:disable -- Code does nothing at this moment -> commented
+					} elseif (in_array($links[$key]['type'], array('company', 'user'))) {
+						if ($tabpay[$obj->rowid]['type'] == 'unknown') {
+							// We can guess here it is a bank record for a thirdparty company or a user.
+							// But we won't be able to record somewhere else than into a waiting account, because there is no other journal to record the contreparty.
+						}
+					*/ // phpcs::enable
 				}
 
 				// Special case to ask later to add more request to get information for old links without company link.
@@ -467,7 +477,7 @@ if ($result) {
 						$userstatic->email = $tmpsalary->user->email;
 						$userstatic->firstname = $tmpsalary->user->firstname;
 						$userstatic->lastname = $tmpsalary->user->lastname;
-						$userstatic->statut = $tmpsalary->user->statut;
+						$userstatic->statut = $tmpsalary->user->status;
 						$userstatic->accountancy_code = $tmpsalary->user->accountancy_code;
 
 						if ($userstatic->id > 0) {
@@ -487,7 +497,7 @@ if ($result) {
 								'firstname' => $userstatic->firstname,
 								'email' => $userstatic->email,
 								'accountancy_code' => $compta_user,
-								'status' => $userstatic->statut
+								'status' => $userstatic->status
 								);
 							}
 						}
@@ -554,8 +564,8 @@ if ($result) {
 						foreach ($arrayofamounts as $invoiceid => $amount) {
 							$tmpinvoice->fetch($invoiceid);
 							$tmpinvoice->fetch_thirdparty();
-							if ($tmpinvoice->thirdparty->code_compta) {
-								$tabtp[$obj->rowid][$tmpinvoice->thirdparty->code_compta] += $amount;
+							if ($tmpinvoice->thirdparty->code_compta_client) {
+								$tabtp[$obj->rowid][$tmpinvoice->thirdparty->code_compta_client] += $amount;
 							}
 						}
 					}
@@ -1072,8 +1082,8 @@ if (empty($action) || $action == 'view') {
 	$description = $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 
 	$listofchoices = array(
-		'notyet'=>$langs->trans("NotYetInGeneralLedger"),
-		'already'=>$langs->trans("AlreadyInGeneralLedger")
+		'notyet' => $langs->trans("NotYetInGeneralLedger"),
+		'already' => $langs->trans("AlreadyInGeneralLedger")
 	);
 	$period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end ? $date_end : -1, 'date_end', 0, 0, 0, '', 1, 0);
 	$period .= ' -  '.$langs->trans("JournalizationInLedgerStatus").' '.$form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
@@ -1432,7 +1442,7 @@ $db->close();
 /**
  * Return source for doc_ref of a bank transaction
  *
- * @param 	string 	$val			Array of val
+ * @param 	array 	$val			Array of val
  * @param 	string	$typerecord		Type of record ('payment', 'payment_supplier', 'payment_expensereport', 'payment_vat', ...)
  * @return 	string					A string label to describe a record into llx_bank_url
  */

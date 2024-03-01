@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,42 +34,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
  */
 class mod_codeproduct_elephant extends ModeleProductCode
 {
-	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Elephant';
 
-	/**
-	 * @var string model name
-	 */
+	// variables inherited from ModelProductCode class
 	public $name = 'Elephant';
+	public $version = 'dolibarr';
 
-	public $code_modifiable; // Code modifiable
-
-	public $code_modifiable_invalide; // Code modifiable si il est invalid
-
-	public $code_modifiable_null; // Code modifiables si il est null
-
-	public $code_null; // Code facultatif
+	// variables not inherited
 
 	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
+	 *  @var string			String de recherche
 	 */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
+	public $searchcode;
 
 	/**
-	 * @var int Automatic numbering
+	 *  @var int			Nombre de chiffres du compteur
 	 */
-	public $code_auto;
-
-	public $searchcode; // String de recherche
-
-	public $numbitcounter; // Nombre de chiffres du compteur
-
-	public $prefixIsRequired; // Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
+	public $numbitcounter;
 
 
 	/**
@@ -181,7 +162,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 *
 	 * @param	Product		$objproduct     Object product
 	 * @param  	int		    $type       Produit ou service (0:product, 1:service)
-	 * @return 	string      			Value if OK, '' if module not configured, <0 if KO
+	 * @return 	string|-1      			Value if OK, '' if module not configured, -1 if KO
 	 */
 	public function getNextValue($objproduct = null, $type = -1)
 	{

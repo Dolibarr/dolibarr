@@ -32,8 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'accountancy')); //"Back" translation is on this accountancy file
 
-$id = GETPOST('id', 'int');
-$eid = GETPOST('eid', 'int');
+$id = GETPOSTINT('id');
+$eid = GETPOSTINT('eid');
 $action = GETPOST('action', 'aZ09');
 $title = GETPOST('expression_title', 'alpha');
 $expression = GETPOST('expression');

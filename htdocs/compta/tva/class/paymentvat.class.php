@@ -53,7 +53,7 @@ class PaymentVAT extends CommonObject
 	public $fk_tva;
 
 	public $datec = '';
-	public $tms = '';
+
 	public $datep = '';
 
 	/**
@@ -73,11 +73,13 @@ class PaymentVAT extends CommonObject
 	/**
 	 * @var string
 	 * @deprecated
+	 * @see $num_payment
 	 */
 	public $num_paiement;
 
 	/**
-	 * @var string
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
@@ -534,8 +536,8 @@ class PaymentVAT extends CommonObject
 	{
 		$this->id = 0;
 		$this->fk_tva = 0;
-		$this->datec = '';
-		$this->tms = '';
+		$this->datec = dol_now();
+		$this->tms = dol_now();
 		$this->datep = '';
 		$this->amount = '';
 		$this->fk_typepaiement = 0;
@@ -567,7 +569,7 @@ class PaymentVAT extends CommonObject
 
 		$error = 0;
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$acc = new Account($this->db);

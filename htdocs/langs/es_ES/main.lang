@@ -9,7 +9,7 @@ DIRECTION=ltr
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil
+# freeserif is for Tamil or Ethiopian
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -420,6 +420,8 @@ TotalTTCShort=Total
 TotalHT=Total (Base imp).
 TotalHTforthispage=Total (base imponible) de esta página
 Totalforthispage=Total en esta página
+GrandTotal=Grand total
+TotalforAllPages=Total for all pages
 TotalTTC=Total
 TotalTTCToYourCredit=Total a crédito
 TotalVAT=Total IVA
@@ -647,6 +649,7 @@ ReportName=Nombre del informe
 ReportPeriod=Periodo de análisis
 ReportDescription=Descripción
 Report=Informe
+Reports=Informes
 Keyword=Clave
 Origin=Origen
 Legend=Leyenda
@@ -963,6 +966,7 @@ AutomaticallyCalculated=Calculado automáticamente
 TitleSetToDraft=Devolver a borrador
 ConfirmSetToDraft=¿Está seguro de querer devolver al estado Borrador?
 ImportId=ID de importación
+Event=Acontecimiento
 Events=Eventos
 EMailTemplates=Plantillas Email
 FileNotShared=Archivo no compartido a público externo
@@ -1180,7 +1184,6 @@ ConfirmAffectUserQuestion=¿Está seguro de que desea asignar usuarios a los reg
 ConfirmSetSupervisorQuestion=¿Está seguro de que desea configurar el supervisor para los %sregistros seleccionados?
 ConfirmUpdatePriceQuestion=¿Está seguro de que desea actualizar el precio de los %sregistros seleccionados?
 CategTypeNotFound=No se encontró ningún tipo de etiqueta para el tipo de registros
-Rate=Tipo
 SupervisorNotFound=Supervisor no encontrado
 CopiedToClipboard=Copiado al portapapeles
 InformationOnLinkToContract=Este importe es solo el total de todas las líneas del contrato. No se toma en consideración ninguna noción de tiempo.
@@ -1213,6 +1216,7 @@ CanceledHidden=Ocultar cancelado
 CanceledShown=Mostrar cancelado
 Terminate=Cancelar
 Terminated=De baja
+Position=Posición
 AddLineOnPosition=Agregar línea en la posición (al final si está vacío)
 ConfirmAllocateCommercial=Asignar confirmación de representante de ventas
 ConfirmAllocateCommercialQuestion=¿Está seguro de que desea asignar los %sregistros seleccionados?
@@ -1230,6 +1234,7 @@ ExternalUser=Usuario externo
 NoSpecificContactAddress=Sin contacto o dirección específica
 NoSpecificContactAddressBis=Esta pestaña está dedicada a forzar contactos o direcciones específicas para el objeto actual. Úselo sólo si desea definir uno o varios contactos o direcciones específicas para el objeto cuando la información del tercero no sea suficiente o no sea precisa.
 HideOnVCard=Ocultar %s
+ShowOnVCard=Mostrar %s
 AddToContacts=Agregar dirección a mis contactos
 LastAccess=Ultimo acceso
 UploadAnImageToSeeAPhotoHere=Sube una imagen de la pestaña %s para ver una foto aquí
@@ -1259,4 +1264,7 @@ AmountSalary=Monto del salario
 InvoiceSubtype=Subtipo de factura
 ConfirmMassReverse=Confirmación inversa masiva
 ConfirmMassReverseQuestion=¿Está seguro de que desea revertir los %s registros seleccionados?
-
+ElementType=Element type
+ElementId=Element Id
+Encrypted=Encriptado
+Settings=Configuraciones

@@ -45,7 +45,7 @@ Eval=Evaluación
 Evals=Evaluaciones
 NewEval=Nueva evaluación
 ValidateEvaluation=Validar evaluación
-ConfirmValidateEvaluation=¿Está seguro de que desea validar esta evaluación con la referencia <b>%s<span class='notranslate'></b></span? >?
+ConfirmValidateEvaluation=Are you sure you want to validate this evaluation with the reference <b>%s</b>?
 EvaluationCard=Tarjeta de evaluación
 RequiredRank=Rango requerido para el perfil de trabajo
 RequiredRankShort=rango requerido
