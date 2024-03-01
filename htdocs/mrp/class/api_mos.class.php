@@ -309,6 +309,72 @@ class Mos extends DolibarrApi
 	}
 
 	/**
+	 * consume or produce for given MoLine
+	 *
+	 * Example:
+	 * {
+	 *   "autoclose_mo": 1,
+	 *   "qty": 3,
+	 *   "fk_warehouse": 15,
+	 *   "labelmovement": "what you want or empty for autofill",
+	 *   "codemovement": "what you want or empty for autofill",
+	 *   "pricetoprocess": 12.5,
+	 *   "batch": "batchnumber",
+	 *   "fk_product_batch": 0
+	 * }
+	 *
+	 * @param int   $id             Id of MO to update
+	 * @param int   $lineid         Id of MoLine to consume or produce
+	 * @param array $request_data   consume or produce data {}
+	 *
+	 * @url	POST {id}/lines/{lineid}/consumeorproduce
+	 *
+	 * @return int
+	 */
+	public function consumeOrProduce($id, $lineid, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->rights->mrp->write) {
+			throw new RestException(401);
+		}
+
+		$tmpmo = $this->mo->fetch($id);
+		if (!$tmpmo) {
+			throw new RestException(404, 'MO not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('mrp', $this->mo->id, 'mrp_mo')) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		//Check the rowid is a line of current bom object
+		$tmpmoline = new MoLine($this->db);
+		$tmpmoline->fetch($lineid);
+
+		if ($tmpmoline->fk_mo != $this->mo->id) {
+			throw new RestException(500, 'Line to consume or produce (rowid: '.$lineid.') is not a line of MO (id: '.$this->mo->id.')');
+		}
+
+		$request_data = (object)$request_data;
+		$result = $tmpmoline->consumeOrProduce(
+			DolibarrApiAccess::$user,
+			$request_data->autoclose_mo,
+			$request_data->qty,
+			$request_data->fk_warehouse,
+			$request_data->labelmovement,
+			$request_data->codemovement,
+			$request_data->pricetoprocess,
+			$request_data->batch,
+			$request_data->fk_product_batch
+		);
+
+		if ($result > 0) {
+			return $result;
+		} else {
+			throw new RestException(400, $tmpmoline->errors);
+		}
+	}
+
+	/**
 	 * Update MO
 	 *
 	 * @param int   $id             Id of MO to update
