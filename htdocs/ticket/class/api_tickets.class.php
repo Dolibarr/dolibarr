@@ -93,7 +93,7 @@ class Tickets extends DolibarrApi
 	 */
 	public function getByTrackId($track_id)
 	{
-		return $this->getCommon(0, $track_id, '');hrow new RestException(304,
+		return $this->getCommon(0, $track_id, '');
 	}
 
 	/**
