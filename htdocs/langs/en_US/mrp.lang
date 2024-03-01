@@ -130,6 +130,7 @@ Manufacturing=Manufacturing
 Disassemble=Disassemble
 ProducedBy=Produced by
 QtyTot=Qty Total
+RestrictStateForAddLine=It's not allowed to add a manufacturing line in the current state of the MO
 
 QtyCantBeSplit= Quantity cannot be split
 NoRemainQtyToDispatch=No quantity remaining to divide

@@ -195,30 +195,27 @@ if (empty($reshook)) {
 
 	if (($action == 'confirm_addconsumeline' && GETPOST('addconsumelinebutton') && $permissiontoadd)
 	|| ($action == 'confirm_addproduceline' && GETPOST('addproducelinebutton') && $permissiontoadd)) {
-		$moline = new MoLine($db);
-
 		// Line to produce
-		$moline->fk_mo = $object->id;
-		$moline->qty = GETPOST('qtytoadd', 'int');
-		$moline->fk_product = GETPOST('productidtoadd', 'int');
+		$molineData['qty'] = GETPOST('qtytoadd', 'int');
+		$molineData['fk_product'] = GETPOST('productidtoadd', 'int');
 		if (GETPOST('addconsumelinebutton')) {
-			$moline->role = 'toconsume';
+			$molineData['role'] = 'toconsume';
 		} else {
-			$moline->role = 'toproduce';
+			$molineData['role'] = 'toproduce';
 		}
-		$moline->origin_type = 'free'; // free consume line
-		$moline->position = 0;
+		$molineData['origin_type'] = 'free'; // free consume line
+		$molineData['pos'] = 0;
 
 		// Is it a product or a service ?
-		if (!empty($moline->fk_product)) {
+		if (!empty($molineData['fk_product'])) {
 			$tmpproduct = new Product($db);
-			$tmpproduct->fetch($moline->fk_product);
+			$tmpproduct->fetch($molineData['fk_product']);
 			if ($tmpproduct->type == Product::TYPE_SERVICE) {
-				$moline->fk_default_workstation = $tmpproduct->fk_default_workstation;
+				$molineData['fk_default_workstation'] = $tmpproduct->fk_default_workstation;
 			}
-			$moline->disable_stock_change = ($tmpproduct->type == Product::TYPE_SERVICE ? 1 : 0);
+			$molineData['disable_stock_change'] = ($tmpproduct->type == Product::TYPE_SERVICE ? 1 : 0);
 			if ($conf->global->PRODUCT_USE_UNITS) {
-				$moline->fk_unit = $tmpproduct->fk_unit;
+				$molineData['fk_unit'] = $tmpproduct->fk_unit;
 			}
 		}
 		// Extrafields
@@ -232,13 +229,13 @@ if (empty($reshook)) {
 			}
 		}
 		if (is_array($array_options) && count($array_options) > 0) {
-			$moline->array_options = $array_options;
+			$molineData['array_options'] = $array_options;
 		}
+		$result = $object->addLine($user, $molineData['origin_type'], $molineData['role'], $molineData['fk_product'], $molineData['fk_unit'], $molineData['qty'], $molineData['pos'], $molineData['disable_stock_change'], $molineData['fk_default_workstation'], $molineData['array_options'], false); // Never use triggers here
 
-		$resultline = $moline->create($user, false); // Never use triggers here
-		if ($resultline <= 0) {
+		if ($result <= 0) {
 			$error++;
-			setEventMessages($moline->error, $moline->errors, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
 		$action = '';
@@ -267,7 +264,11 @@ if (empty($reshook)) {
 						$batch = GETPOST('batch-' . $line->id . '-' . $i);
 						$id_product_batch = 0;
 
-						$line->consumeOrProduce($user, false, $qtytoprocess, $idwarehouse, $labelmovement, $codemovement, 0, $batch, $id_product_batch, $outputlangs);
+					 	$result = $line->consumeOrProduce($user, false, $qtytoprocess, $idwarehouse, $labelmovement, $codemovement, 0, $batch, $id_product_batch, $outputlangs);
+						if ($result <= 0) {
+							setEventMessages($line->error, $line->errors, 'errors');
+							$error++;
+						}
 					}
 					$i++;
 				}
@@ -289,7 +290,11 @@ if (empty($reshook)) {
 						$batch = GETPOST('batch-' . $line->id . '-' . $i);
 						$id_product_batch = 0;
 
-						$line->consumeOrProduce($user, false, $qtytoprocess, $idwarehouse, $labelmovement, $codemovement, $pricetoprocess, $batch, $id_product_batch, $outputlangs);
+						$result = $line->consumeOrProduce($user, false, $qtytoprocess, $idwarehouse, $labelmovement, $codemovement, $pricetoprocess, $batch, $id_product_batch, $outputlangs);
+						if ($result <= 0) {
+							setEventMessages($line->error, $line->errors, 'errors');
+							$error++;
+						}
 					}
 					$i++;
 				}
@@ -675,7 +680,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="clearboth"></div>';
 
 		$url = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addconsumeline&token='.newToken();
-		$permissiontoaddaconsumeline = $object->status != $object::STATUS_PRODUCED && $object->status != $object::STATUS_CANCELED;
+		$permissiontoaddaconsumeline = $object->getAddLineIsAllowedByStatus();
 		$parameters = array('morecss'=>'reposition');
 
 		$newcardbutton = '';

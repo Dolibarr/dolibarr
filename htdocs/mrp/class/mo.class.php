@@ -658,7 +658,6 @@ class Mo extends CommonObject
 
 		if ($result <= 0) {
 			$error++;
-			setEventMessages($this->error, $this->errors, 'errors');
 		}
 
 		// Check if document must generated
@@ -680,7 +679,6 @@ class Mo extends CommonObject
 
 			if ($result <= 0) {
 				$error++;
-				setEventMessages($this->error, $this->errors, 'errors');
 			}
 		}
 
@@ -980,6 +978,80 @@ class Mo extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
+	}
+
+	/**
+	 * Add an MO line into database (linked to MO)
+	 *
+	 * @param 	User 		$user 					User that add line
+	 * @param 	string 		$origin_type 			origin of the line e.g. 'free' for a free consume line
+	 * @param 	string 		$role 					role of the line: 'toconsume' or 'toproduce'
+	 * @param	int			$fk_product				Id of product
+	 * @param	string		$fk_unit				Unit
+	 * @param	float		$qty					Quantity
+	 * @param	int			$pos					Position for line
+	 * @param 	int			$disable_stock_change	Disable stock change on using in MO
+	 * @param 	int|null	$fk_default_workstation	Disable stock change on using in MO
+	 * @param	array		$array_options			extrafields array
+	 * @param 	bool 		$notrigger				false=launch triggers after, true=disable triggers
+	 * @return	int									Return integer <0 if KO, Id of created object if OK
+	 */
+	public function addLine($user, $origin_type, $role, $fk_product, $fk_unit, $qty, $pos, $disable_stock_change = 0, $fk_default_workstation = null, $array_options = array(), $notrigger = false)
+	{
+		global $mysoc, $conf, $langs;
+
+		$logtext = "::addLine moid=$this->id, qty=$qty, fk_product=$fk_product, disable_stock_change=$disable_stock_change";
+		dol_syslog(get_class($this).$logtext, LOG_DEBUG);
+
+		$error = 0;
+		if (!$this->getAddLineIsAllowedByStatus()) {
+			$this->error = $langs->transnoentitiesnoconv('RestrictStateForAddLine',$this->getLibStatut());
+			$this->errors[] = $this->error;
+			dol_syslog(get_class($this)."::addLine error=".$this->error, LOG_ERR);
+			$error++;
+		}
+
+		if (!$error) {
+
+			$qty = price2num($qty);
+			$pos = price2num($pos);
+
+			$this->db->begin();
+
+			// Insert line
+			$line = new MoLine($this->db);
+
+			$line->fk_mo = $this->id;
+			$line->origin_type = $origin_type;
+			$line->role = $role;
+			$line->fk_product = $fk_product;
+			$line->fk_unit = $fk_unit;
+			$line->qty = $qty;
+			$line->pos = $pos;
+			$line->disable_stock_change = $disable_stock_change;
+			$line->fk_default_workstation = $fk_default_workstation;
+
+			if (is_array($array_options) && count($array_options) > 0) {
+				$line->array_options = $array_options;
+			}
+
+			$result = $line->create($user, $notrigger);
+
+			if ($result < 0) {
+				$this->setErrorsFromObject($line);
+				dol_syslog(get_class($this)."::addLine error=".$this->error, LOG_ERR);
+				$error++;
+			}
+
+			if (!$error) {
+				$this->db->commit();
+			} else {
+				$this->db->rollback();
+				$result = -1;
+			}
+			return $result;
+		}
+
 	}
 
 	/**
@@ -1363,8 +1435,7 @@ class Mo extends CommonObject
 						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
 					}
 					if ($idstockmove < 0) {
-						$this->error = $stockmove->error;
-						$this->errors = $stockmove->errors;
+						$this->setErrorsFromObject($stockmove);
 						$error++;
 						break;
 					}
@@ -1401,8 +1472,7 @@ class Mo extends CommonObject
 						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
 					}
 					if ($idstockmove < 0) {
-						$this->error = $stockmove->error;
-						$this->errors = $stockmove->errors;
+						$this->setErrorsFromObject($stockmove);
 						$error++;
 						break;
 					}
@@ -2058,6 +2128,17 @@ class Mo extends CommonObject
 		$return .= '</div>';
 		return $return;
 	}
+
+	/**
+	 * Function to check if it's allowed to add a new MoLine
+	 *
+	 * @return	bool		false if not Allowed, true if Allowed
+	 */
+	public function getAddLineIsAllowedByStatus()
+	{
+		$result = $this->status != $this::STATUS_PRODUCED && $this->status != $this::STATUS_CANCELED;
+		return $result;
+	}
 }
 
 /**
@@ -2224,32 +2305,24 @@ class MoLine extends CommonObjectLine
 
 		// Validate parameters
 		// Check warehouse is set if we should have to
-		if ($tmpproduct->type == $tmpproduct::TYPE_PRODUCT) {
+		if ($tmpproduct->type == $tmpproduct::TYPE_PRODUCT && !$this->disable_stock_change) {
 			if (empty($idwarehouse) || $idwarehouse <= 0) {	// If there is no warehouse set.
-				$langs->load("errors");
-				setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref), null, 'errors');
+				$this->errors[] = $langs->transnoentitiesnoconv('BadValueForWarehouse');
 				$error++;
 			}
 			if (isModEnabled('productbatch') && $tmpproduct->status_batch && empty($batch)) { // If batch is required, but there is no batch set.
-				$langs->load("errors");
-				setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
+				$this->errors[] = $langs->transnoentitiesnoconv('BadValueForProductBatch');
 				$error++;
 			}
 		}
 		// Check qty is set.
 		if (empty($qty) || $qty == 0) {
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Qty"), $tmpproduct->ref), null, 'errors');
+			$this->errors[] = $langs->transnoentitiesnoconv('BadValueForQty');
 			$error++;
 		}
 
-		// Set $labeltomove and $codemovement to default value if parameter is null
-		if (empty($labelmovement) || empty($codemovement)) {
-			$tmpmo->fetch($this->fk_mo);
-			$labelmovement = empty($labelmovement) ? $langs->trans("ProductionForRef", $tmpmo->ref) : $labelmovement;
-			$codemovement = empty($codemovement) ? dol_print_date(dol_now(), 'dayhourlog') : $codemovement;
-		}
 		// Set the consumption role
+		$consumptionRole;
 		if ($this->role == 'toconsume') {
 			$consumptionRole = 'consumed';
 		}
@@ -2257,33 +2330,41 @@ class MoLine extends CommonObjectLine
 			$consumptionRole = 'produced';
 		}
 
-		$consumptionRole;
-
-		// Create stock movement
-		$stockmove = new MouvementStock($db);
 		$idstockmove = 0;
-		if (!$error && $idwarehouse > 0) {
-			// Record stock movement
-			$stockmove->setOrigin($tmpmo->element, $this->fk_mo);
+		if (!$this->disable_stock_change) {
+			// Set $labeltomove and $codemovement to default value if parameter is null
+			if (empty($labelmovement) || empty($codemovement)) {
+				$tmpmo->fetch($this->fk_mo);
+				$labelmovement = empty($labelmovement) ? $langs->trans("ProductionForRef", $tmpmo->ref) : $labelmovement;
+				$codemovement = empty($codemovement) ? dol_print_date(dol_now(), 'dayhourlog') : $codemovement;
+			}
 
-			if ($this->role == 'toconsume') {
-				$stockmove->context['mrp_role'] = 'toconsume';
-				if ($qty >= 0) {
-					$idstockmove = $stockmove->livraison($user, $this->fk_product, $idwarehouse, $qty, 0, $labelmovement, dol_now(), '', '', $batch, $idproductbatch, $codemovement);
-				} else {
-					$idstockmove = $stockmove->reception($user, $this->fk_product, $idwarehouse, $qty * -1, 0, $labelmovement, dol_now(), '', '', $batch, $idproductbatch, $codemovement);
+			// Create stock movement
+			$stockmove = new MouvementStock($db);
+			if (!$error && $idwarehouse > 0) {
+				// Record stock movement
+				$stockmove->setOrigin($tmpmo->element, $this->fk_mo);
+
+				if ($this->role == 'toconsume') {
+					$stockmove->context['mrp_role'] = 'toconsume';
+					if ($qty >= 0) {
+						$idstockmove = $stockmove->livraison($user, $this->fk_product, $idwarehouse, $qty, 0, $labelmovement, dol_now(), '', '', $batch, $idproductbatch, $codemovement);
+					} else {
+						$idstockmove = $stockmove->reception($user, $this->fk_product, $idwarehouse, $qty * -1, 0, $labelmovement, dol_now(), '', '', $batch, $idproductbatch, $codemovement);
+					}
+				}
+				if ($this->role == 'toproduce') {
+					$stockmove->context['mrp_role'] = 'toproduce';
+					$idstockmove = $stockmove->reception($user, $this->fk_product, $idwarehouse, $qty, $pricetoprocess, $labelmovement, dol_now(), '', '', $batch, $idproductbatch, $codemovement);
+				}
+
+				if ($idstockmove < 0) {
+					$this->setErrorsFromObject($stockmove);
+					$error++;
 				}
 			}
-			if ($this->role == 'toproduce') {
-				$stockmove->context['mrp_role'] = 'toproduce';
-				$idstockmove = $stockmove->reception($user, $this->fk_product, $idwarehouse, $qty, $pricetoprocess, $labelmovement, dol_now(), '', '', $batch, $idproductbatch, $codemovement);
-			}
-
-			if ($idstockmove < 0) {
-				$error++;
-				setEventMessages($stockmove->error, $stockmove->errors, 'errors');
-			}
 		}
+
 
 		if (!$error) {
 			// Record consumption
@@ -2301,8 +2382,8 @@ class MoLine extends CommonObjectLine
 
 			$retval = $moline->create($user);
 			if ($retval <= 0) {
+				$this->errors += $moline->errors;
 				$error++;
-				setEventMessages($moline->error, $moline->errors, 'errors');
 			}
 		}
 
@@ -2316,7 +2397,6 @@ class MoLine extends CommonObjectLine
 				$result = $tmpmo->setStatusAsProduced(-1, $outputlangs);
 				if ($result <= 0) {
 					$error++;
-					setEventMessages($this->error, $this->errors, 'errors');
 				}
 			}
 		}
@@ -2478,8 +2558,8 @@ class MoLine extends CommonObjectLine
 			}
 
 			if ($idstockmove < 0) {
+				$this->setErrorsFromObject($stockmove);
 				$this->error++;
-				setEventMessages($stockmove->error, $stockmove->errors, 'errors');
 			}
 		}
 
@@ -2487,7 +2567,6 @@ class MoLine extends CommonObjectLine
 			$result = $this->deleteCommon($user, $notrigger);
 			if ($result < 0) {
 				$this->error++;
-				setEventMessages($stockmove->error, $stockmove->errors, 'errors');
 			}
 		}
 

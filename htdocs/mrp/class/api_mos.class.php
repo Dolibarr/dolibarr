@@ -249,8 +249,21 @@ class Mos extends DolibarrApi
 	/**
 	 * Add a line to given MO
 	 *
+	 * Example:
+	 * {
+	 *   "role": "toconsume" ('toconsume' or 'toproduce'),
+	 *   "fk_product": 123456,
+	 *   "qty": 15,
+	 *   "pos": 0,
+	 *   "disable_stock_change": 0,
+	 *   "fk_default_workstation": 0,
+	 *   "array_options": {
+	 *       "options_YourExtrafield": "MoLine from the API!"
+	 *   }
+	 * }
+	 *
 	 * @param int   $id             Id of MO to update
-	 * @param array $request_data   MoLine data
+	 * @param array $request_data   MoLine data {}
 	 *
 	 * @url	POST {id}/lines
 	 *
@@ -262,8 +275,8 @@ class Mos extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$result = $this->mo->fetch($id);
-		if (!$result) {
+		$tmpmo = $this->mo->fetch($id);
+		if (!$tmpmo) {
 			throw new RestException(404, 'MO not found');
 		}
 
@@ -272,24 +285,26 @@ class Mos extends DolibarrApi
 		}
 
 		$request_data = (object) $request_data;
+		$tmpproduct = new Product($this->db);
+		$tmpproduct->fetch($request_data->fk_product);
 
-		// TODO
 		$updateRes = $this->mo->addLine(
+			DolibarrApiAccess::$user,
+			'free',
+			$request_data->role,
 			$request_data->fk_product,
+			$tmpproduct->fk_unit,
 			$request_data->qty,
-			$request_data->qty_frozen,
+			$request_data->pos,
 			$request_data->disable_stock_change,
-			$request_data->efficiency,
-			$request_data->position,
-			$request_data->fk_bom_child,
-			$request_data->import_key,
-			$request_data->fk_unit
+			$request_data->fk_default_workstation,
+			$request_data->array_options
 		);
 
 		if ($updateRes > 0) {
 			return $updateRes;
 		} else {
-			throw new RestException(400, $this->bom->error);
+			throw new RestException(400, $this->mo->errors);
 		}
 	}
 
