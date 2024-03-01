@@ -293,6 +293,56 @@ class Mos extends DolibarrApi
 		);
 	}
 
+	/**
+	 * Delete a line to given MO
+	 *
+	 *
+	 * @param int   $id             Id of MO to update
+	 * @param int   $lineid         Id of line to delete
+	 *
+	 * @url	DELETE {id}/lines/{lineid}
+	 *
+	 * @return int
+	 *
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500
+	 */
+	public function deleteLine($id, $lineid)
+	{
+		if (!DolibarrApiAccess::$user->rights->mrp->write) {
+			throw new RestException(401);
+		}
+
+		$result = $this->mo->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'MO not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('mrp', $this->mo->id, 'mrp_mo')) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		//Check the rowid is a line of current bom object
+		$lineIdIsFromObject = false;
+		foreach ($this->mo->lines as $bl) {
+			if ($bl->id == $lineid) {
+				$lineIdIsFromObject = true;
+				break;
+			}
+		}
+		if (!$lineIdIsFromObject) {
+			throw new RestException(500, 'Line to delete (rowid: '.$lineid.') is not a line of MO (id: '.$this->mo->id.')');
+		}
+
+		$updateRes = $this->mo->deleteline(DolibarrApiAccess::$user, $lineid);
+		if ($updateRes > 0) {
+			return $this->get($id);
+		} else {
+			throw new RestException(405, $this->mo->error);
+		}
+	}
+
 
 	/**
 	 * Produce and consume
