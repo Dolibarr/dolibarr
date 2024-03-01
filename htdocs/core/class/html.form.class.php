@@ -7172,7 +7172,7 @@ class Form
 			}
 			foreach ($arrayofdateof as $valuedateof) {
 				$tmpadddateof = $valuedateof['adddateof'] != '' ? $valuedateof['adddateof'] : 0;
-				if(empty($valuedateof['labeladddateof'])){$valuedateof['labeladddateof'] = '';} // PHP Warning:  Undefined array key "labeladddateof"
+				if (empty($valuedateof['labeladddateof'])) { $valuedateof['labeladddateof'] = ''; } // PHP Warning:  Undefined array key "labeladddateof"
 				$tmplabeladddateof = $valuedateof['labeladddateof'];
 				$tmparray = dol_getdate($tmpadddateof);
 				if (empty($tmplabeladddateof)) {
