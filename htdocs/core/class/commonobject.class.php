@@ -7326,7 +7326,9 @@ abstract class CommonObject
 				}
 				$out .= '<option value="'.$keyb.'"';
 				$out .= (((string) $value == (string) $keyb) ? ' selected' : '');
-				if (!empty($parent)) $isDependList =1;
+				if (!empty($parent)) {
+					$isDependList = 1;
+				}
 				$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
 				$out .= '>'.$valb.'</option>';
 			}
@@ -7776,7 +7778,7 @@ abstract class CommonObject
 			$out = '<input type="hidden" value="'.$value.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"/>';
 		}
 
-		if ($isDependList==1) {
+		if ($isDependList == 1) {
 			$out .= $this->getJSListDependancies('_common');
 		}
 		/* Add comments
