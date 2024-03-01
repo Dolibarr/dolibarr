@@ -213,10 +213,10 @@ class CActionComm
 						//var_dump($obj->type.' '.$obj->module.' '); var_dump($user->hasRight('facture', 'lire'));
 						$qualified = 0;
 						// Special cases
-						if ($obj->module == 'invoice' && isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
+						if ($obj->module == 'invoice' && isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'order' && isModEnabled('commande') && !$user->hasRight('commande', 'lire')) {
+						if ($obj->module == 'order' && isModEnabled('order') && !$user->hasRight('commande', 'lire')) {
 							$qualified = 1;
 						}
 						if ($obj->module == 'propal' && isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
@@ -228,7 +228,7 @@ class CActionComm
 						if ($obj->module == 'order_supplier' && ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'commande', 'lire')) || (!isModEnabled('supplier_order') && $user->hasRight('supplier_order', 'lire')))) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'shipping' && isModEnabled("expedition") && $user->hasRight('expedition', 'lire')) {
+						if ($obj->module == 'shipping' && isModEnabled("delivery_note") && $user->hasRight('expedition', 'lire')) {
 							$qualified = 1;
 						}
 						// For case module = 'myobject@eventorganization'

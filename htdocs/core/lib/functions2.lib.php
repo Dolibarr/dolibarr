@@ -1006,6 +1006,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$regKey = array();
 	while (preg_match('/\{([A-Z]+)\-([1-9])\}/', $tmpmask, $regKey)) {
 		$maskperso[$regKey[1]] = '{'.$regKey[1].'-'.$regKey[2].'}';
+		// @phan-suppress-next-line PhanParamSuspiciousOrder
 		$maskpersonew[$regKey[1]] = str_pad('', $regKey[2], '_', STR_PAD_RIGHT);
 		$tmpmask = preg_replace('/\{'.$regKey[1].'\-'.$regKey[2].'\}/i', $maskpersonew[$regKey[1]], $tmpmask);
 	}
@@ -1194,8 +1195,10 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$maskLike = preg_replace('/\{y\}/i', '_', $maskLike);
 	$maskLike = preg_replace('/\{mm\}/i', '__', $maskLike);
 	$maskLike = preg_replace('/\{dd\}/i', '__', $maskLike);
+	// @phan-suppress-next-line PhanParamSuspiciousOrder
 	$maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'), str_pad("", dol_strlen($maskcounter), "_"), $maskLike);
 	if ($maskrefclient) {
+		// @phan-suppress-next-line PhanParamSuspiciousOrder
 		$maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), str_pad("", dol_strlen($maskrefclient), "_"), $maskLike);
 	}
 	if ($masktype) {
@@ -1268,6 +1271,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$maskLike = preg_replace('/\{dd\}/i', '__', $maskLike);
 		$maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'), $counterpadded, $maskLike);
 		if ($maskrefclient) {
+			// @phan-suppress-next-line PhanParamSuspiciousOrder
 			$maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), str_pad("", dol_strlen($maskrefclient), "_"), $maskLike);
 		}
 		if ($masktype) {
@@ -1335,7 +1339,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{y}'), '_', $maskrefclient_maskLike);
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{mm}'), '__', $maskrefclient_maskLike);
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{dd}'), '__', $maskrefclient_maskLike);
+			// @phan-suppress-next-line PhanParamSuspiciousOrder
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'), str_pad("", dol_strlen($maskcounter), "_"), $maskrefclient_maskLike);
+			// @phan-suppress-next-line PhanParamSuspiciousOrder
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), $maskrefclient_clientcode.str_pad("", dol_strlen($maskrefclient_maskcounter), "_"), $maskrefclient_maskLike);
 
 			// Get counter in database
@@ -1657,7 +1663,7 @@ function numero_semaine($time)
 	// Definition du numero de semaine: nb de jours entre "premier Jeudi de l'annee" et "Jeudi de la semaine";
 	$numeroSemaine = (
 		(
-		date("z", mktime(12, 0, 0, date("m", $jeudiSemaine), date("d", $jeudiSemaine), date("Y", $jeudiSemaine)))
+			date("z", mktime(12, 0, 0, date("m", $jeudiSemaine), date("d", $jeudiSemaine), date("Y", $jeudiSemaine)))
 		-
 		date("z", mktime(12, 0, 0, date("m", $premierJeudiAnnee), date("d", $premierJeudiAnnee), date("Y", $premierJeudiAnnee)))
 		) / 7
@@ -2840,6 +2846,7 @@ function phpSyntaxError($code)
 	ob_start();
 	$code = substr($code, strlen('<?php '));
 	$braces || $code = "if(0){{$code}\n}";
+	// @phan-suppress-next-line PhanPluginUnsafeEval
 	if (eval($code) === false) {
 		if ($braces) {
 			$braces = PHP_INT_MAX;

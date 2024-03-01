@@ -48,7 +48,7 @@ $langs->loadLangs(array("main", "bills", "cashdesk", "banks"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'); // $place is id of table for Bar or Restaurant
 
-$invoiceid = GETPOST('invoiceid', 'int');
+$invoiceid = GETPOSTINT('invoiceid');
 
 $hookmanager->initHooks(array('takepospay'));
 
@@ -246,7 +246,7 @@ if ($resql) {
 			$arrayOfValidBankAccount[getDolGlobalInt($accountname)] = getDolGlobalInt($accountname);
 			$arrayOfValidPaymentModes[] = $obj;
 		}
-		if (!isModEnabled('banque')) {
+		if (!isModEnabled('bank')) {
 			if ($paycode == 'CASH' || $paycode == 'CB') {
 				$arrayOfValidPaymentModes[] = $obj;
 			}

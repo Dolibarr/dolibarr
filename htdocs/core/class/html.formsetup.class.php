@@ -683,7 +683,7 @@ class FormSetupItem
 			$this->fieldValue = getDolGlobalString($this->confKey);
 			return true;
 		} else {
-			$this->fieldValue = null;
+			$this->fieldValue = '';
 			return false;
 		}
 	}
@@ -774,10 +774,10 @@ class FormSetupItem
 		// Modify constant only if key was posted (avoid resetting key to the null value)
 		if ($this->type != 'title') {
 			if (preg_match('/category:/', $this->type)) {
-				if (GETPOST($this->confKey, 'int') == '-1') {
+				if (GETPOSTINT($this->confKey) == '-1') {
 					$val_const = '';
 				} else {
-					$val_const = GETPOST($this->confKey, 'int');
+					$val_const = GETPOSTINT($this->confKey);
 				}
 			} elseif ($this->type == 'multiselect') {
 				$val = GETPOST($this->confKey, 'array');
@@ -1103,7 +1103,7 @@ class FormSetupItem
 		} elseif (!empty($errors)) {
 			$this->errors[] = $errors;
 		}
-		return;
+		return null;
 	}
 
 	/**

@@ -204,8 +204,8 @@ if ($action == "view_ticketlist") {
 		$search_type = GETPOST("search_type", 'alpha');
 		$search_category = GETPOST("search_category", 'alpha');
 		$search_severity = GETPOST("search_severity", 'alpha');
-		$search_fk_user_create = GETPOST("search_fk_user_create", 'int');
-		$search_fk_user_assign = GETPOST("search_fk_user_assign", 'int');
+		$search_fk_user_create = GETPOSTINT("search_fk_user_create");
+		$search_fk_user_assign = GETPOSTINT("search_fk_user_assign");
 
 		// Store current page url
 		$url_page_current = dol_buildpath('/public/ticket/list.php', 1);
@@ -326,7 +326,7 @@ if ($action == "view_ticketlist") {
 
 		$limit = $conf->liste_limit;
 
-		$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+		$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 		if (empty($page) || $page == -1) {
 			$page = 0;
 		}     // If $page is not defined, or '' or -1

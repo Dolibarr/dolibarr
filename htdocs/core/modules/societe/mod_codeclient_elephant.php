@@ -4,7 +4,7 @@
  * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2013-2018 Philippe Grand      	<philippe.grand@atoo-net.com>
- * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024	Frédéric France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,12 +39,6 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	// variables inherited from ModeleThirdPartyCode class
 	public $name = 'Elephant';
 	public $version = 'dolibarr';
-	public $code_null;
-	public $code_modifiable;
-	public $code_modifiable_invalide;
-	public $code_modifiable_null;
-	public $code_auto;
-	public $prefixIsRequired;
 
 	// variables not inherited
 

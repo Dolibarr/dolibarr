@@ -38,10 +38,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 $langs->loadLangs(array("mails", "admin"));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -55,14 +55,14 @@ if (!$sortorder) {
 	$sortorder = "DESC,ASC";
 }
 
-$id = GETPOST('id', 'int');
-$rowid = GETPOST('rowid', 'int');
+$id = GETPOSTINT('id');
+$rowid = GETPOSTINT('rowid');
 $action = GETPOST('action', 'aZ09');
 $search_lastname = GETPOST("search_lastname", 'alphanohtml');
 $search_firstname = GETPOST("search_firstname", 'alphanohtml');
 $search_email = GETPOST("search_email", 'alphanohtml');
 $search_other = GETPOST("search_other", 'alphanohtml');
-$search_dest_status = GETPOST('search_dest_status', 'int');
+$search_dest_status = GETPOSTINT('search_dest_status');
 
 // Search modules dirs
 $modulesdir = dolGetModulesDirs('/mailings');
@@ -145,7 +145,7 @@ if ($action == 'add' && $user->hasRight('mailing', 'creer')) {		// Add recipient
 	}
 }
 
-if (GETPOST('clearlist', 'int') && $user->hasRight('mailing', 'creer')) {
+if (GETPOSTINT('clearlist') && $user->hasRight('mailing', 'creer')) {
 	// Loading Class
 	$obj = new MailingTargets($db);
 	$obj->clear_target($id);
@@ -155,7 +155,7 @@ if (GETPOST('clearlist', 'int') && $user->hasRight('mailing', 'creer')) {
 	*/
 }
 
-if (GETPOST('exportcsv', 'int') && $user->hasRight('mailing', 'lire')) {
+if (GETPOSTINT('exportcsv') && $user->hasRight('mailing', 'lire')) {
 	$completefilename = 'targets_emailing'.$object->id.'_'.dol_print_date(dol_now(), 'dayhourlog').'.csv';
 	header('Content-Type: text/csv');
 	header('Content-Disposition: attachment;filename='.$completefilename);

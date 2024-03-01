@@ -923,7 +923,7 @@ class Website extends CommonObject
 		$this->lang = 'en';
 		$this->otherlang = 'fr,es';
 		$this->status = 1;
-		$this->fk_default_home = null;
+		$this->fk_default_home = 0;
 		$this->virtualhost = 'http://myvirtualhost';
 		$this->fk_user_creat = $user->id;
 		$this->fk_user_modif = $user->id;
@@ -2059,7 +2059,7 @@ class Website extends CommonObject
 			$linefound[$i]['output'] = '/dolWebsiteOutput\(\$tmp, "html", ' . preg_quote($exceptNumPge[$i], '/') . '\);/';
 		}
 
-		if ($countNumPage >= 2) {
+		if (isset($linefound[1])) {
 			$maxLines = max(count($lines1), count($lines2));
 			for ($lineNum = 0; $lineNum < $maxLines; $lineNum++) {
 				$lineContent1 = $lines1[$lineNum] ?? '';

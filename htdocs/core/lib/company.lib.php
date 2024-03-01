@@ -7,7 +7,7 @@
  * Copyright (C) 2013-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <contact@altairis.fr>
  * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht             <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
@@ -180,7 +180,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	// Related items
-	if ((isModEnabled('commande') || isModEnabled('propal') || isModEnabled('facture') || isModEnabled('ficheinter') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
+	if ((isModEnabled('order') || isModEnabled('propal') || isModEnabled('invoice') || isModEnabled('intervention') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
 		&& !getDolGlobalString('THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB')) {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Referers");
@@ -596,7 +596,7 @@ function getCountry($searchkey, $withcode = '', $dbtouse = 0, $outputlangs = '',
  *    Return state translated from an id. Return value is always utf8 encoded and without entities.
  *
  *    @param    int			$id         	id of state (province/departement)
- *    @param    int			$withcode   	'0'=Return label,
+ *    @param    string		$withcode   	'0'=Return label,
  *    										'1'=Return string code + label,
  *    						  				'2'=Return code,
  *    						  				'all'=return array('id'=>,'code'=>,'label'=>)
@@ -679,7 +679,7 @@ function getState($id, $withcode = '', $dbtouse = 0, $withregion = 0, $outputlan
  *    @param      Translate $outputlangs    Output language
  *    @return     string     			    Label translated of currency
  */
-function currency_name($code_iso, $withcode = '', $outputlangs = null)
+function currency_name($code_iso, $withcode = 0, $outputlangs = null)
 {
 	global $langs, $db;
 
@@ -998,14 +998,14 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$optioncss = GETPOST('optioncss', 'alpha');
 	$sortfield = GETPOST('sortfield', 'aZ09comma');
 	$sortorder = GETPOST('sortorder', 'aZ09comma');
-	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+	$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 
-	$search_status = GETPOST("search_status", 'int');
+	$search_status = GETPOSTINT("search_status");
 	if ($search_status == '') {
 		$search_status = 1; // always display active customer first
 	}
 
-	$search_rowid   = GETPOST("search_rowid", 'int');
+	$search_rowid   = GETPOSTINT("search_rowid");
 	$search_name    = GETPOST("search_name", 'alpha');
 	$search_address = GETPOST("search_address", 'alpha');
 	$search_poste   = GETPOST("search_poste", 'alpha');
@@ -1015,8 +1015,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$search_birthday_dtend = GETPOST("search_birthday_dtend", 'alpha');
 
 	if ($search_birthday_dtstart != '' || $search_birthday_dtend != '') {
-		$search_birthday_dtstart = dol_mktime(0, 0, 0, GETPOST('search_birthday_dtstartmonth', 'int'), GETPOST('search_birthday_dtstartday', 'int'), GETPOST('search_birthday_dtstartyear', 'int'));
-		$search_birthday_dtend = dol_mktime(23, 59, 59, GETPOST('search_birthday_dtendmonth', 'int'), GETPOST('search_birthday_dtendday', 'int'), GETPOST('search_birthday_dtendyear', 'int'));
+		$search_birthday_dtstart = dol_mktime(0, 0, 0, GETPOSTINT('search_birthday_dtstartmonth'), GETPOSTINT('search_birthday_dtstartday'), GETPOSTINT('search_birthday_dtstartyear'));
+		$search_birthday_dtend = dol_mktime(23, 59, 59, GETPOSTINT('search_birthday_dtendmonth'), GETPOSTINT('search_birthday_dtendday'), GETPOSTINT('search_birthday_dtendyear'));
 	}
 	$socialnetworks = getArrayOfSocialNetworks();
 
@@ -1151,7 +1151,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$mode = 'view';
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+	$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -1550,14 +1550,14 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 /**
  *    	Show html area with actions to do
  *
- * 		@param	Conf		$conf		        Object conf
- * 		@param	Translate	$langs		        Object langs
- * 		@param	DoliDB		$db			        Object db
- * 		@param	Adherent|Societe    $filterobj  Object thirdparty or member
- * 		@param	Contact		$objcon	            Object contact
- *      @param  int			$noprint	        Return string but does not output it
- *      @param  int			$actioncode 	    Filter on actioncode
- *      @return	string|void					    Return html part or void if noprint is 1
+ * 		@param	Conf				$conf		    Object conf
+ * 		@param	Translate			$langs		    Object langs
+ * 		@param	DoliDB				$db			    Object db
+ * 		@param	Adherent|Societe    $filterobj  	Object thirdparty or member
+ * 		@param	Contact				$objcon	        Object contact
+ *      @param  int					$noprint	    Return string but does not output it
+ *      @param  string|string[]		$actioncode 	Filter on actioncode
+ *      @return	string|void					    	Return html part or void if noprint is 1
  */
 function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = '', $noprint = 0, $actioncode = '')
 {
@@ -1596,12 +1596,12 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 	global $form;
 	global $param, $massactionbutton;
 
-	$start_year = GETPOST('dateevent_startyear', 'int');
-	$start_month = GETPOST('dateevent_startmonth', 'int');
-	$start_day = GETPOST('dateevent_startday', 'int');
-	$end_year = GETPOST('dateevent_endyear', 'int');
-	$end_month = GETPOST('dateevent_endmonth', 'int');
-	$end_day = GETPOST('dateevent_endday', 'int');
+	$start_year = GETPOSTINT('dateevent_startyear');
+	$start_month = GETPOSTINT('dateevent_startmonth');
+	$start_day = GETPOSTINT('dateevent_startday');
+	$end_year = GETPOSTINT('dateevent_endyear');
+	$end_month = GETPOSTINT('dateevent_endmonth');
+	$end_day = GETPOSTINT('dateevent_endday');
 	$tms_start = '';
 	$tms_end = '';
 

@@ -70,6 +70,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 if (empty($user->id) && !empty($_SESSION['dol_login'])) {
 	$user->fetch('', $_SESSION['dol_login'], '', 1);
 	$user->getrights();
+	//$user->loadPersonalConf();
 
 	// Reload menu now we have the good user (and we need the good menu to have ->showmenu('topnb') correct.
 	$menumanager = new MenuManager($db, empty($user->socid) ? 0 : 1);
@@ -94,7 +95,7 @@ if (GETPOST('lang', 'aZ09')) {
 }
 
 if (GETPOSTISSET('THEME_DARKMODEENABLED')) {
-	$conf->global->THEME_DARKMODEENABLED = GETPOST('THEME_DARKMODEENABLED', 'int'); // If darkmode was forced on URL
+	$conf->global->THEME_DARKMODEENABLED = GETPOSTINT('THEME_DARKMODEENABLED'); // If darkmode was forced on URL
 }
 
 $langs->load("main", 0, 1);
@@ -2775,7 +2776,7 @@ $heightmenu = 48; /* height of top menu, part with image */
 $heightmenu2 = 48; /* height of top menu, ârt with login  */
 $disableimages = 0;
 $maxwidthloginblock = 110;
-if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1) {
+if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 || !empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	$heightmenu = 30;
 	$disableimages = 1;
 	$maxwidthloginblock = 180;

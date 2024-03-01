@@ -92,7 +92,7 @@ if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL
 }
 if (GETPOSTISSET('THEME_DARKMODEENABLED')) {
-	$conf->global->THEME_DARKMODEENABLED = GETPOST('THEME_DARKMODEENABLED', 'int'); // If darkmode was forced on URL
+	$conf->global->THEME_DARKMODEENABLED = GETPOSTINT('THEME_DARKMODEENABLED'); // If darkmode was forced on URL
 }
 
 $langs->load("main", 0, 1);
@@ -278,7 +278,7 @@ $heightmenu = 50; /* height of top menu, part with image */
 $heightmenu2 = 49; /* height of top menu, part with login  */
 $disableimages = 0;
 $maxwidthloginblock = 180;
-if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1) {
+if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 || !empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	$disableimages = 1;
 	$maxwidthloginblock = $maxwidthloginblock + 50;
 	$minwidthtmenu = 0;

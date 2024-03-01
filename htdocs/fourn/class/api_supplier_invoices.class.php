@@ -435,7 +435,7 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(404, 'Invoice not found');
 		}
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			if (empty($accountid)) {
 				throw new RestException(400, 'Bank account ID is mandatory');
 			}
@@ -474,7 +474,7 @@ class SupplierInvoices extends DolibarrApi
 		$paiement->amounts      = $amounts; // Array with all payments dispatching with invoice id
 		$paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 		$paiement->paiementid = $payment_mode_id;
-		$paiement->paiementcode = dol_getIdFromCode($this->db, $payment_mode_id, 'c_paiement', 'id', 'code', 1);
+		$paiement->paiementcode = (string) dol_getIdFromCode($this->db, $payment_mode_id, 'c_paiement', 'id', 'code', 1);
 		$paiement->num_payment = $num_payment;
 		$paiement->note_public = $comment;
 
@@ -484,7 +484,7 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(400, 'Payment error : ' . $paiement->error);
 		}
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			$result = $paiement->addPaymentToBank(DolibarrApiAccess::$user, 'payment_supplier', '(SupplierInvoicePayment)', $accountid, $chqemetteur, $chqbank);
 			if ($result < 0) {
 				$this->db->rollback();
@@ -704,7 +704,12 @@ class SupplierInvoices extends DolibarrApi
 
 		$updateRes = $this->invoice->deleteLine($lineid);
 		if ($updateRes > 0) {
-			return $this->get($id);
+			return array(
+				'success' => array(
+					'code' => 200,
+					'message' => 'line '.$lineid.' deleted'
+				)
+			);
 		} else {
 			throw new RestException(405, $this->invoice->error);
 		}

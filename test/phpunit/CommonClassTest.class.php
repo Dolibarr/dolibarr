@@ -39,7 +39,6 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 use PHPUnit\Framework\TestCase;
 
-
 /**
  * Class for PHPUnit tests
  *
@@ -117,11 +116,7 @@ abstract class CommonClassTest extends TestCase
 		if ($t instanceof PHPUnit\Framework\Error\Notice) {
 			$nbLinesToShow = 3;
 		}
-		$totalLines = count($lines);
-		$first_line = max(0, $totalLines - $nbLinesToShow);
 
-		// Get the last line of the log
-		$last_lines = array_slice($lines, $first_line, $nbLinesToShow);
 
 		$failedTestMethod = $this->getName(false);
 		$className = get_called_class();
@@ -132,14 +127,25 @@ abstract class CommonClassTest extends TestCase
 		// Get the test method's data set
 		$argsText = $this->getDataSetAsString(true);
 
-		// Show log file
+		$totalLines = count($lines);
+		$first_line = max(0, $totalLines - $nbLinesToShow);
+		// Get the last line of the log
+		$last_lines = array_slice($lines, $first_line, $nbLinesToShow);
+
 		print PHP_EOL;
-		print "----- $className::$failedTestMethod failed - $argsText.".PHP_EOL;
-		print "Show last ".$nbLinesToShow." lines of dolibarr.log file -----".PHP_EOL;
-		foreach ($last_lines as $line) {
-			print $line.PHP_EOL;
+		// Use GitHub Action compatible group output (:warning: arguments not encoded)
+		print "##[group]$className::$failedTestMethod failed - $argsText.".PHP_EOL;
+		print "## Exception: {$t->getMessage()}".PHP_EOL;
+
+		if ($nbLinesToShow) {
+			// Show partial log file contents when requested.
+			print "## Show last ".$nbLinesToShow." lines of dolibarr.log file -----".PHP_EOL;
+			foreach ($last_lines as $line) {
+				print $line.PHP_EOL;
+			}
+			print "## end of dolibarr.log for $className::$failedTestMethod".PHP_EOL;
 		}
-		print "----- end of dolibarr.log for $className::$failedTestMethod".PHP_EOL;
+		print "##[endgroup]".PHP_EOL;
 
 		parent::onNotSuccessfulTest($t);
 	}
@@ -204,12 +210,22 @@ abstract class CommonClassTest extends TestCase
 		'entrepot' => 'stock',
 		'expedition' => 'delivery_note',
 		'facture' => 'invoice',
-		'ficheinter' => 'intervention',
+		'fichinter' => 'intervention',
 		'product_fournisseur_price' => 'productsupplierprice',
 		'product_price' => 'productprice',
 		'projet'  => 'project',
 		'propale' => 'propal',
 		'socpeople' => 'contact',
+	);
+
+	const EFFECTIVE_DEPRECATED_MODULE_MAPPING = array(
+		'adherent' => 'member',
+		'adherent_type' => 'member_type',
+		'banque' => 'bank',
+		'contrat' => 'contract',
+		'entrepot' => 'stock',
+		'ficheinter' => 'fichinter',
+		'projet'  => 'project',
 	);
 
 	/**
@@ -330,4 +346,44 @@ abstract class CommonClassTest extends TestCase
 		'workstation' => 'Workstation',
 		'zapier' => 'Zapier',
 	);
+
+	/**
+	 * Assert that a directory does not exist without triggering deprecation
+	 *
+	 * @param string $directory The directory to test
+	 * @param string $message   The message to show if the directory exists
+	 *
+	 * @return void
+	 */
+	protected function assertDirectoryNotExistsCompat($directory, $message = '')
+	{
+		$phpunitVersion = \PHPUnit\Runner\Version::id();
+
+		// Check if PHPUnit version is less than 9.0.0
+		if (version_compare($phpunitVersion, '9.0.0', '<')) {
+			$this->assertDirectoryNotExists($directory, $message);
+		} else {
+			$this->assertDirectoryDoesNotExist($directory, $message);
+		}
+	}
+
+	/**
+	 * Assert that a file does not exist without triggering deprecation
+	 *
+	 * @param string $file      The file to test
+	 * @param string $message   The message to show if the directory exists
+	 *
+	 * @return void
+	 */
+	protected function assertFileNotExistsCompat($file, $message = '')
+	{
+		$phpunitVersion = \PHPUnit\Runner\Version::id();
+
+		// Check if PHPUnit version is less than 9.0.0
+		if (version_compare($phpunitVersion, '9.0.0', '<')) {
+			$this->assertFileNotExists($file, $message);
+		} else {
+			$this->assertFileDoesNotExist($file, $message);
+		}
+	}
 }

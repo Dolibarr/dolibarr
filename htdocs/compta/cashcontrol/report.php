@@ -49,7 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->loadLangs(array("bills", "banks"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 $object = new CashControl($db);
 $object->fetch($id);

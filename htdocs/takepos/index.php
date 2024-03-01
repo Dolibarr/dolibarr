@@ -51,7 +51,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant or multiple sales
 $action = GETPOST('action', 'aZ09');
-$setterminal = GETPOST('setterminal', 'int');
+$setterminal = GETPOSTINT('setterminal');
 $setcurrency = GETPOST('setcurrency', 'aZ09');
 
 $hookmanager->initHooks(array('takeposfrontend'));
@@ -1310,7 +1310,7 @@ if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
 		}
 	}
 
-	if (empty($paiementsModes) && isModEnabled("banque")) {
+	if (empty($paiementsModes) && isModEnabled("bank")) {
 		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("TakePOS")), null, 'errors');
 		setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", $_SESSION["takeposterminal"]), null, 'errors');

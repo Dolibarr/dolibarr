@@ -1469,8 +1469,8 @@ class Ticket extends CommonObject
 		// phpcs:enable
 		global $langs, $hookmanager;
 
-		$labelStatus = !empty($status) ? $this->labelStatus[$status] : '';
-		$labelStatusShort = !empty($status) ? $this->labelStatusShort[$status] : '';
+		$labelStatus = (isset($status) && !empty($this->labelStatus[$status])) ? $this->labelStatus[$status] : '';
+		$labelStatusShort = (isset($status) && !empty($this->labelStatusShort[$status]))? $this->labelStatusShort[$status] : '';
 
 		switch ($status) {
 			case self::STATUS_NOT_READ:						// Not read
@@ -1559,7 +1559,7 @@ class Ticket extends CommonObject
 			$datas['date_modification'] = '<br><b>'.$langs->trans('DateModification').':</b> '.dol_print_date($this->date_modification, 'dayhour');
 		}
 		// show categories for this record only in ajax to not overload lists
-		if (isModEnabled('categorie') && !$nofetch) {
+		if (isModEnabled('category') && !$nofetch) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$form = new Form($this->db);
 			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_TICKET, 1);
@@ -1927,7 +1927,7 @@ class Ticket extends CommonObject
 				$error = 0;
 
 				// Valid and close fichinter linked
-				if (isModEnabled('ficheinter') && getDolGlobalString('WORKFLOW_TICKET_CLOSE_INTERVENTION')) {
+				if (isModEnabled('intervention') && getDolGlobalString('WORKFLOW_TICKET_CLOSE_INTERVENTION')) {
 					dol_syslog("We have closed the ticket, so we close all linked interventions");
 					$this->fetchObjectLinked($this->id, $this->element, null, 'fichinter');
 					if ($this->linkedObjectsIds) {
@@ -2270,7 +2270,7 @@ class Ticket extends CommonObject
 	 *    @param    int     $list           0:Return array contains all properties, 1:Return array contains just id
 	 *    @param    string  $code           Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @param    int     $status         Status of user or company
-	 *    @return   array|int               Array of contacts
+	 *    @return   array|int               Array of array('email'=>..., 'lastname'=>...)
 	 */
 	public function listeContact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1)
 	{
@@ -2344,7 +2344,7 @@ class Ticket extends CommonObject
 
 				if (!$list) {
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
-					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_contact_label);
+					$labelType = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_contact_label);
 					$tab[$i] = array(
 							'source' => $obj->source,
 							'socid' => $obj->socid,
@@ -2356,7 +2356,8 @@ class Ticket extends CommonObject
 							'email' => $obj->email,
 							'rowid' => $obj->rowid,
 							'code' => $obj->code,
-							'libelle' => $libelle_type,
+							'libelle' => $labelType,		// deprecated, replaced with labeltype
+							'labeltype' => $labelType,
 							'status' => $obj->statuslink,
 							'statuscontact'=>$obj->statuscontact,
 							'fk_c_type_contact' => $obj->fk_c_type_contact,
@@ -2620,7 +2621,7 @@ class Ticket extends CommonObject
 			$object->message = GETPOST("message", "restricthtml");
 			$object->private = GETPOST("private_message", "alpha");
 
-			$send_email = GETPOST('send_email', 'int');
+			$send_email = GETPOSTINT('send_email');
 
 			// Copy attached files (saved into $_SESSION) as linked files to ticket. Return array with final name used.
 			$resarray = $object->copyFilesForTicket();

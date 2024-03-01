@@ -185,6 +185,8 @@ $VALID_MODULE_MAPPING = array(
 
 $moduleNameRegex = '/^(?:'.implode('|', array_merge(array_keys($DEPRECATED_MODULE_MAPPING), array_keys($VALID_MODULE_MAPPING))).')$/';
 
+$deprecatedModuleNameRegex = '/^(?!(?:'.implode('|', array_keys($DEPRECATED_MODULE_MAPPING)).')$).*/';
+
 /**
  * This configuration will be read and overlaid on top of the
  * default configuration. Command line arguments will be applied
@@ -265,12 +267,15 @@ return [
 	// with the plugin's implementation (e.g. 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php')
 	'ParamMatchRegexPlugin' => [
 		'/^GETPOST$/' => [1, $sanitizeRegex],
-		'/^isModEnabled$/' => [0, $moduleNameRegex],
+		'/^isModEnabled$/' => [0, $moduleNameRegex, 'UnknownModuleName'],
+		// Note: trick to have different key for same regex:
+		'/^isModEnable[d]$/' => [0, $deprecatedModuleNameRegex, "DeprecatedModuleName"],
 		'/^sanitizeVal$/' => [1, $sanitizeRegex],
 	],
 	'plugins' => [
 		__DIR__.'/plugins/NoVarDumpPlugin.php',
 		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
+		__DIR__.'/plugins/GetPostFixerPlugin.php',   // Only detects without --automatic-fix
 		'DeprecateAliasPlugin',
 		//'EmptyMethodAndFunctionPlugin',
 		'InvalidVariableIssetPlugin',
@@ -336,9 +341,10 @@ return [
 		'PhanTypeMismatchArgument',			// Not essential - 12300+ occurrences
 		'PhanPluginNonBoolInLogicalArith',	// Not essential - 11040+ occurrences
 		'PhanPluginConstantVariableScalar',	// Not essential - 5180+ occurrences
+		'PhanPluginDuplicateAdjacentStatement',
 		'PhanPluginDuplicateConditionalTernaryDuplication',		// 2750+ occurrences
 		'PhanPluginDuplicateConditionalNullCoalescing',	// Not essential - 990+ occurrences
-
+		'PhanPluginRedundantAssignmentInGlobalScope',	// Not essential, a lot of false warning
 	],
 	// You can put relative paths to internal stubs in this config option.
 	// Phan will continue using its detailed type annotations,

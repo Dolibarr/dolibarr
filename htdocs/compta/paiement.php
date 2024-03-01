@@ -53,7 +53,7 @@ $socid      = GETPOSTINT('socid');
 
 $sortfield	= GETPOST('sortfield', 'aZ09comma');
 $sortorder	= GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 
 $amounts = array();
 $amountsresttopay = array();
@@ -164,7 +164,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOST($key, 'int'));
+				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOSTINT($key));
 			}
 		}
 
@@ -174,7 +174,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			// If bank module is on, account is required to enter a payment
 			if (GETPOST('accountid') <= 0) {
 				setEventMessages($langs->transnoentities('ErrorFieldRequired', $langs->transnoentities('AccountToCredit')), null, 'errors');
@@ -251,9 +251,9 @@ if (empty($reshook)) {
 			$multicurrency_tx[$key] = $tmpinvoice->multicurrency_tx;
 		}
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			// If the bank module is active, an account is required to input a payment
-			if (GETPOST('accountid', 'int') <= 0) {
+			if (GETPOSTINT('accountid') <= 0) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('AccountToCredit')), null, 'errors');
 				$error++;
 			}
@@ -501,7 +501,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 		// Bank account
 		print '<tr>';
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			if ($facture->type != 2) {
 				print '<td><span class="fieldrequired">'.$langs->trans('AccountToCredit').'</span></td>';
 			}
@@ -933,7 +933,7 @@ if (!GETPOST('action', 'aZ09')) {
 	if (empty($page) || $page == -1) {
 		$page = 0;
 	}
-	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 	$offset = $limit * $page;
 
 	if (!$sortorder) {

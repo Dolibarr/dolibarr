@@ -119,7 +119,7 @@ class ModeleImports
 	/**
 	 * @var	array	Element mapping from table name
 	 */
-	public static $mapTableToElement = DEPRECATED_MODULE_MAPPING;
+	public static $mapTableToElement = MODULE_MAPPING;
 
 	/**
 	 *  Constructor

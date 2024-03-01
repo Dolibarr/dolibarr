@@ -10,6 +10,7 @@
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -662,7 +663,7 @@ class FormOther
 	 *  @param	string	$morecss				More css
 	 *  @return	void
 	 */
-	public function selectProjectTasks($selectedtask = '', $projectid = 0, $htmlname = 'task_parent', $modeproject = 0, $modetask = 0, $mode = 0, $useempty = 0, $disablechildoftaskid = 0, $filteronprojstatus = '', $morecss = '')
+	public function selectProjectTasks($selectedtask = 0, $projectid = 0, $htmlname = 'task_parent', $modeproject = 0, $modetask = 0, $mode = 0, $useempty = 0, $disablechildoftaskid = 0, $filteronprojstatus = '', $morecss = '')
 	{
 		global $user, $langs;
 
@@ -834,7 +835,7 @@ class FormOther
 	 *  @deprecated Use instead selectColor
 	 *  @see selectColor()
 	 */
-	public function select_color($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '')
+	public function select_color($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = [])
 	{
 		// phpcs:enable
 		print $this->selectColor($set_color, $prefix, $form_name, $showcolorbox, $arrayofcolors);
@@ -854,7 +855,7 @@ class FormOther
 	 *  @return	string
 	 *  @see showColor()
 	 */
-	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = array(), $morecss = '', $setpropertyonselect = '', $default = '')
+	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = [], $morecss = '', $setpropertyonselect = '', $default = '')
 	{
 		// Deprecation warning
 		if ($form_name) {
@@ -998,7 +999,7 @@ class FormOther
 	 *	@param	int		$y      	Hauteur de l'image en pixels
 	 *	@return	void
 	 */
-	public function CreateColorIcon($color, $module, $name, $x = '12', $y = '12')
+	public function CreateColorIcon($color, $module, $name, $x = 12, $y = 12)
 	{
 		// phpcs:enable
 		global $conf;

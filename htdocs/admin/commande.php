@@ -533,7 +533,7 @@ print '<td>';
 print '<input type="hidden" name="action" value="setribchq">';
 print $langs->trans("PaymentMode").'</td>';
 print '<td align="right">';
-if (!isModEnabled('facture')) {
+if (!isModEnabled('invoice')) {
 	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 }
 print '</td>';
@@ -542,8 +542,8 @@ print "</tr>\n";
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("SuggestPaymentByRIBOnAccount")."</td>";
 print "<td>";
-if (!isModEnabled('facture')) {
-	if (isModEnabled("banque")) {
+if (!isModEnabled('invoice')) {
+	if (isModEnabled("bank")) {
 		$sql = "SELECT rowid, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql .= " WHERE clos = 0";
@@ -581,7 +581,7 @@ print "</td></tr>";
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("SuggestPaymentByChequeToAddress")."</td>";
 print "<td>";
-if (!isModEnabled('facture')) {
+if (!isModEnabled('invoice')) {
 	print '<select class="flat" name="chq" id="chq">';
 	print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
 	print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER ? ' selected' : '').'>'.$langs->trans("MenuCompanySetup").' ('.($mysoc->name ? $mysoc->name : $langs->trans("NotDefined")).')</option>';

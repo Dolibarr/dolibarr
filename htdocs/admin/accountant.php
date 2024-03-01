@@ -58,9 +58,9 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_ADDRESS", GETPOST("address", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_TOWN", GETPOST("town", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_ZIP", GETPOST("zipcode", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_STATE", GETPOST("state_id", 'int'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_STATE", GETPOSTINT("state_id"), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_REGION", GETPOST("region_code", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_COUNTRY", GETPOST('country_id', 'int'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_COUNTRY", GETPOSTINT('country_id'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_PHONE", GETPOST("phone", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_FAX", GETPOST("fax", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_MAIL", GETPOST("mail", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
@@ -138,7 +138,7 @@ print '<input name="town" class="minwidth100" id="town" value="'.dol_escape_html
 // Country
 print '<tr class="oddeven"><td><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td class="maxwidthonsmartphone">';
 print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
-print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : (getDolGlobalString('MAIN_INFO_ACCOUNTANT_COUNTRY') ? $conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY : '')), 'country_id');
+print $form->select_country((GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : (getDolGlobalString('MAIN_INFO_ACCOUNTANT_COUNTRY') ? $conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY : '')), 'country_id');
 if ($user->admin) {
 	print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 }
@@ -147,7 +147,7 @@ print '</td></tr>'."\n";
 // State
 print '<tr class="oddeven"><td><label for="state_id">'.$langs->trans("State").'</label></td><td class="maxwidthonsmartphone">';
 print img_picto('', 'state', 'class="pictofixedwidth"');
-print $formcompany->select_state((GETPOSTISSET('state_id') ? GETPOST('state_id', 'int') : (getDolGlobalString('MAIN_INFO_ACCOUNTANT_STATE') ? $conf->global->MAIN_INFO_ACCOUNTANT_STATE : '')), (GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : (getDolGlobalString('MAIN_INFO_ACCOUNTANT_COUNTRY') ? $conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY : '')), 'state_id');
+print $formcompany->select_state((GETPOSTISSET('state_id') ? GETPOSTINT('state_id') : (getDolGlobalString('MAIN_INFO_ACCOUNTANT_STATE') ? $conf->global->MAIN_INFO_ACCOUNTANT_STATE : '')), (GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : (getDolGlobalString('MAIN_INFO_ACCOUNTANT_COUNTRY') ? $conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY : '')), 'state_id');
 print '</td></tr>'."\n";
 
 // Telephone

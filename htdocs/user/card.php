@@ -53,10 +53,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 if (isModEnabled('ldap')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 }
-if (isModEnabled('adherent')) {
+if (isModEnabled('member')) {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 }
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 if (isModEnabled('stock')) {
@@ -66,7 +66,7 @@ if (isModEnabled('stock')) {
 // Load translation files required by page
 $langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm', 'stocks', 'other'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action		= GETPOST('action', 'aZ09');
 $mode = GETPOST('mode', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
@@ -78,11 +78,11 @@ if (empty($id) && $action != 'create') {
 	$id = $user->id;
 }
 
-$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth', 'int'), GETPOST('dateemploymentday', 'int'), GETPOST('dateemploymentyear', 'int'));
-$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
-$datestartvalidity = dol_mktime(0, 0, 0, GETPOST('datestartvaliditymonth', 'int'), GETPOST('datestartvalidityday', 'int'), GETPOST('datestartvalidityyear', 'int'));
-$dateendvalidity = dol_mktime(0, 0, 0, GETPOST('dateendvaliditymonth', 'int'), GETPOST('dateendvalidityday', 'int'), GETPOST('dateendvalidityyear', 'int'));
-$dateofbirth = dol_mktime(0, 0, 0, GETPOST('dateofbirthmonth', 'int'), GETPOST('dateofbirthday', 'int'), GETPOST('dateofbirthyear', 'int'));
+$dateemployment = dol_mktime(0, 0, 0, GETPOSTINT('dateemploymentmonth'), GETPOSTINT('dateemploymentday'), GETPOSTINT('dateemploymentyear'));
+$dateemploymentend = dol_mktime(0, 0, 0, GETPOSTINT('dateemploymentendmonth'), GETPOSTINT('dateemploymentendday'), GETPOSTINT('dateemploymentendyear'));
+$datestartvalidity = dol_mktime(0, 0, 0, GETPOSTINT('datestartvaliditymonth'), GETPOSTINT('datestartvalidityday'), GETPOSTINT('datestartvalidityyear'));
+$dateendvalidity = dol_mktime(0, 0, 0, GETPOSTINT('dateendvaliditymonth'), GETPOSTINT('dateendvalidityday'), GETPOSTINT('dateendvalidityyear'));
+$dateofbirth = dol_mktime(0, 0, 0, GETPOSTINT('dateofbirthmonth'), GETPOSTINT('dateofbirthday'), GETPOSTINT('dateofbirthyear'));
 
 $childids = $user->getAllChildIds(1);	// For later, test on salary visibility
 
@@ -292,9 +292,9 @@ if (empty($reshook)) {
 			$object->note_public = GETPOST("note_public", 'restricthtml');
 			$object->note_private = GETPOST("note_private", 'restricthtml');
 			$object->ldap_sid = GETPOST("ldap_sid", 'alphanohtml');
-			$object->fk_user = GETPOST("fk_user", 'int') > 0 ? GETPOST("fk_user", 'int') : 0;
-			$object->fk_user_expense_validator = GETPOST("fk_user_expense_validator", 'int') > 0 ? GETPOST("fk_user_expense_validator", 'int') : 0;
-			$object->fk_user_holiday_validator = GETPOST("fk_user_holiday_validator", 'int') > 0 ? GETPOST("fk_user_holiday_validator", 'int') : 0;
+			$object->fk_user = GETPOSTINT("fk_user") > 0 ? GETPOSTINT("fk_user") : 0;
+			$object->fk_user_expense_validator = GETPOSTINT("fk_user_expense_validator") > 0 ? GETPOSTINT("fk_user_expense_validator") : 0;
+			$object->fk_user_holiday_validator = GETPOSTINT("fk_user_holiday_validator") > 0 ? GETPOSTINT("fk_user_holiday_validator") : 0;
 			$object->employee = GETPOST('employee', 'alphanohtml');
 
 			$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
@@ -325,9 +325,9 @@ if (empty($reshook)) {
 			}
 
 			// Set entity property
-			$entity = GETPOST('entity', 'int');
+			$entity = GETPOSTINT('entity');
 			if (isModEnabled('multicompany')) {
-				if (GETPOST('superadmin', 'int')) {
+				if (GETPOSTINT('superadmin')) {
 					$object->entity = 0;
 				} else {
 					if (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
@@ -357,7 +357,7 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$action = "create"; // Go back to create page
 				} else {
-					if (isModEnabled("categorie")) {
+					if (isModEnabled("category")) {
 						// Categories association
 						$usercats = GETPOST('usercats', 'array');
 						$object->setCategories($usercats);
@@ -445,7 +445,7 @@ if (empty($reshook)) {
 				if (!empty($user->admin) && $user->id != $id) {
 					// admin flag can only be set/unset by an admin user and not four ourself
 					// A test is also done later when forging sql request
-					$object->admin = GETPOST("admin", "int");
+					$object->admin = GETPOSTINT("admin");
 				}
 				if ($user->admin && !$object->ldap_sid) {	// same test than on edit page
 					$object->login = GETPOST("login", 'alphanohtml');
@@ -453,8 +453,8 @@ if (empty($reshook)) {
 				$object->address = GETPOST('address', 'alphanohtml');
 				$object->zip = GETPOST('zipcode', 'alphanohtml');
 				$object->town = GETPOST('town', 'alphanohtml');
-				$object->country_id = GETPOST('country_id', 'int');
-				$object->state_id = GETPOST('state_id', 'int');
+				$object->country_id = GETPOSTINT('country_id');
+				$object->state_id = GETPOSTINT('state_id');
 				$object->office_phone = GETPOST("office_phone", 'alphanohtml');
 				$object->office_fax = GETPOST("office_fax", 'alphanohtml');
 				$object->user_mobile = GETPOST("user_mobile", 'alphanohtml');
@@ -473,10 +473,10 @@ if (empty($reshook)) {
 				$object->signature = GETPOST("signature", 'restricthtml');
 				$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
 				$object->openid = GETPOST("openid", 'alphanohtml');
-				$object->fk_user = GETPOST("fk_user", 'int') > 0 ? GETPOST("fk_user", 'int') : 0;
-				$object->fk_user_expense_validator = GETPOST("fk_user_expense_validator", 'int') > 0 ? GETPOST("fk_user_expense_validator", 'int') : 0;
-				$object->fk_user_holiday_validator = GETPOST("fk_user_holiday_validator", 'int') > 0 ? GETPOST("fk_user_holiday_validator", 'int') : 0;
-				$object->employee = GETPOST('employee', 'int');
+				$object->fk_user = GETPOSTINT("fk_user") > 0 ? GETPOSTINT("fk_user") : 0;
+				$object->fk_user_expense_validator = GETPOSTINT("fk_user_expense_validator") > 0 ? GETPOSTINT("fk_user_expense_validator") : 0;
+				$object->fk_user_holiday_validator = GETPOSTINT("fk_user_holiday_validator") > 0 ? GETPOSTINT("fk_user_holiday_validator") : 0;
+				$object->employee = GETPOSTINT('employee');
 
 				$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
 				$object->thm = price2num($object->thm);
@@ -497,14 +497,14 @@ if (empty($reshook)) {
 				$object->birth = $dateofbirth;
 
 				if (isModEnabled('stock')) {
-					$object->fk_warehouse = GETPOST('fk_warehouse', 'int');
+					$object->fk_warehouse = GETPOSTINT('fk_warehouse');
 				}
 
 				$object->lang = GETPOST('default_lang', 'aZ09');
 
 				// Do we update also ->entity ?
 				if (isModEnabled('multicompany') && empty($user->entity) && !empty($user->admin)) {	// If multicompany is not enabled, we never update the entity of a user.
-					if (GETPOST('superadmin', 'int')) {
+					if (GETPOSTINT('superadmin')) {
 						$object->entity = 0;
 					} else {
 						if (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
@@ -559,8 +559,8 @@ if (empty($reshook)) {
 				}
 
 				if (!$error && GETPOSTISSET('contactid')) {
-					$contactid = GETPOST('contactid', 'int');
-					$socid = GETPOST('socid', 'int');
+					$contactid = GETPOSTINT('contactid');
+					$socid = GETPOSTINT('socid');
 
 					if ($contactid > 0) {	// The 'contactid' is used inpriority over the 'socid'
 						$contact = new Contact($db);
@@ -1011,8 +1011,8 @@ if ($action == 'create' || $action == 'adduserldap') {
                             });
                     </script>';
 			}
-			$checked = (GETPOST('superadmin', 'int') ? ' checked' : '');
-			$disabled = (GETPOST('superadmin', 'int') ? '' : ' disabled');
+			$checked = (GETPOSTINT('superadmin') ? ' checked' : '');
+			$disabled = (GETPOSTINT('superadmin') ? '' : ' disabled');
 			print '<input type="checkbox" name="superadmin" id="superadmin" value="1"'.$checked.$disabled.' /> <label for="superadmin">'.$langs->trans("SuperAdministrator").'</span>';
 		}
 		print "</td></tr>\n";
@@ -1265,7 +1265,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 
 	// Categories
-	if (isModEnabled('categorie') && $user->hasRight("categorie", "read")) {
+	if (isModEnabled('category') && $user->hasRight("categorie", "read")) {
 		print '<tr><td>'.$form->editfieldkey('Categories', 'usercats', '', $object, 0).'</td><td>';
 		$cate_arbo = $form->select_all_categories('user', null, 'parent', null, null, 1);
 		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), 0, 0, 'maxwdith300 widthcentpercentminusx', 0, '90%');
@@ -1734,7 +1734,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Categories
-			if (isModEnabled('categorie') && $user->hasRight("categorie", "read")) {
+			if (isModEnabled('category') && $user->hasRight("categorie", "read")) {
 				print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td>';
 				print '<td colspan="3">';
 				print $form->showCategories($object->id, Categorie::TYPE_USER, 1);
@@ -1814,7 +1814,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Module Adherent
-			if (isModEnabled('adherent')) {
+			if (isModEnabled('member')) {
 				$langs->load("members");
 				print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
 				print '<td>';
@@ -2570,7 +2570,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<tr><td class="tdoverflow">'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td>';
 				if ($caneditfield) {
 					print img_picto('', 'state', 'class="pictofixedwidth"');
-					print $formcompany->select_state($object->state_id, $object->country_code, 'state_id');
+					print $formcompany->select_state_ajax('country_id', $object->state_id, $object->country_id, 'state_id');
 				} else {
 					print $object->state;
 				}
@@ -2693,7 +2693,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</tr>';
 
 			// Categories
-			if (isModEnabled('categorie') && $user->hasRight("categorie", "read")) {
+			if (isModEnabled('category') && $user->hasRight("categorie", "read")) {
 				print '<tr><td>'.$form->editfieldkey('Categories', 'usercats', '', $object, 0).'</td>';
 				print '<td>';
 				print img_picto('', 'category', 'class="pictofixedwidth"');
@@ -2748,7 +2748,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Module Adherent
-			if (isModEnabled('adherent')) {
+			if (isModEnabled('member')) {
 				$langs->load("members");
 				print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
 				print '<td>';
