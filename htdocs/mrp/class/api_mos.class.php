@@ -247,6 +247,53 @@ class Mos extends DolibarrApi
 	}
 
 	/**
+	 * Add a line to given MO
+	 *
+	 * @param int   $id             Id of MO to update
+	 * @param array $request_data   MoLine data
+	 *
+	 * @url	POST {id}/lines
+	 *
+	 * @return int
+	 */
+	public function postLine($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->rights->mrp->write) {
+			throw new RestException(401);
+		}
+
+		$result = $this->mo->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'MO not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('mrp', $this->mo->id, 'mrp_mo')) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$request_data = (object) $request_data;
+
+		// TODO
+		$updateRes = $this->mo->addLine(
+			$request_data->fk_product,
+			$request_data->qty,
+			$request_data->qty_frozen,
+			$request_data->disable_stock_change,
+			$request_data->efficiency,
+			$request_data->position,
+			$request_data->fk_bom_child,
+			$request_data->import_key,
+			$request_data->fk_unit
+		);
+
+		if ($updateRes > 0) {
+			return $updateRes;
+		} else {
+			throw new RestException(400, $this->bom->error);
+		}
+	}
+
+	/**
 	 * Update MO
 	 *
 	 * @param int   $id             Id of MO to update
