@@ -2334,7 +2334,7 @@ class MoLine extends CommonObjectLine
 
 		$retval = -1;
 		$error = 0;
-		$db->begin();
+		$this->db->begin();
 
 		// Load product for MoLine
 		$tmpproduct = new Product($db);
@@ -2442,10 +2442,10 @@ class MoLine extends CommonObjectLine
 		}
 
 		if ($error) {
-			$db->rollback();
+			$this->db->rollback();
 			$retval = -1;
 		} else {
-			$db->commit();
+			$this->db->commit();
 		}
 		return $retval;
 	}
