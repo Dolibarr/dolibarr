@@ -436,3 +436,4 @@ StockableProduct=Stock management
 StockableProductDescription=If this option is enabled, the stock modification for this element is retained. If disabled, the stock modification for this element is not retained.
 StockDisabled=Stock disabled
 StockEnabled=Stock enabled
+WarningLineProductNotToSell=Product or service "%s" is not to sell and was cloned
