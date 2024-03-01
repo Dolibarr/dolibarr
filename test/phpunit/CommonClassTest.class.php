@@ -116,11 +116,7 @@ abstract class CommonClassTest extends TestCase
 		if ($t instanceof PHPUnit\Framework\Error\Notice) {
 			$nbLinesToShow = 3;
 		}
-		$totalLines = count($lines);
-		$first_line = max(0, $totalLines - $nbLinesToShow);
 
-		// Get the last line of the log
-		$last_lines = array_slice($lines, $first_line, $nbLinesToShow);
 
 		$failedTestMethod = $this->getName(false);
 		$className = get_called_class();
@@ -131,14 +127,25 @@ abstract class CommonClassTest extends TestCase
 		// Get the test method's data set
 		$argsText = $this->getDataSetAsString(true);
 
-		// Show log file
+		$totalLines = count($lines);
+		$first_line = max(0, $totalLines - $nbLinesToShow);
+		// Get the last line of the log
+		$last_lines = array_slice($lines, $first_line, $nbLinesToShow);
+
 		print PHP_EOL;
-		print "----- $className::$failedTestMethod failed - $argsText.".PHP_EOL;
-		print "Show last ".$nbLinesToShow." lines of dolibarr.log file -----".PHP_EOL;
-		foreach ($last_lines as $line) {
-			print $line.PHP_EOL;
+		// Use GitHub Action compatible group output (:warning: arguments not encoded)
+		print "##[group]$className::$failedTestMethod failed - $argsText.".PHP_EOL;
+		print "## Exception: {$t->getMessage()}".PHP_EOL;
+
+		if ($nbLinesToShow) {
+			// Show partial log file contents when requested.
+			print "## Show last ".$nbLinesToShow." lines of dolibarr.log file -----".PHP_EOL;
+			foreach ($last_lines as $line) {
+				print $line.PHP_EOL;
+			}
+			print "## end of dolibarr.log for $className::$failedTestMethod".PHP_EOL;
 		}
-		print "----- end of dolibarr.log for $className::$failedTestMethod".PHP_EOL;
+		print "##[endgroup]".PHP_EOL;
 
 		parent::onNotSuccessfulTest($t);
 	}
@@ -357,6 +364,26 @@ abstract class CommonClassTest extends TestCase
 			$this->assertDirectoryNotExists($directory, $message);
 		} else {
 			$this->assertDirectoryDoesNotExist($directory, $message);
+		}
+	}
+
+	/**
+	 * Assert that a file does not exist without triggering deprecation
+	 *
+	 * @param string $file      The file to test
+	 * @param string $message   The message to show if the directory exists
+	 *
+	 * @return void
+	 */
+	protected function assertFileNotExistsCompat($file, $message = '')
+	{
+		$phpunitVersion = \PHPUnit\Runner\Version::id();
+
+		// Check if PHPUnit version is less than 9.0.0
+		if (version_compare($phpunitVersion, '9.0.0', '<')) {
+			$this->assertFileNotExists($file, $message);
+		} else {
+			$this->assertFileDoesNotExist($file, $message);
 		}
 	}
 }

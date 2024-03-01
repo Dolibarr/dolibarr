@@ -382,11 +382,11 @@ class Tickets extends DolibarrApi
 			$this->ticket->$field = $value;
 		}
 
-		if ($this->ticket->update(DolibarrApiAccess::$user)) {
+		if ($this->ticket->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->ticket->error);
 		}
-
-		return false;
 	}
 
 	/**
