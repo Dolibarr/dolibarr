@@ -79,6 +79,36 @@ class Mos extends DolibarrApi
 		return $this->_cleanObjectDatas($this->mo);
 	}
 
+	/**
+	 * Get lines of an MO
+	 *
+	 * @param int   $id             Id of MO
+	 *
+	 * @url	GET {id}/lines
+	 *
+	 * @return array
+	 */
+	public function getLines($id)
+	{
+		if (!DolibarrApiAccess::$user->rights->mrp->read) {
+			throw new RestException(401);
+		}
+
+		$result = $this->mo->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'MO not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('mrp', $this->mo->id, 'mrp_mo')) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		$this->mo->getLinesArray();
+		$result = array();
+		foreach ($this->mo->lines as $line) {
+			array_push($result, $this->_cleanObjectDatas($line));
+		}
+		return $result;
+	}
 
 	/**
 	 * List Mos
