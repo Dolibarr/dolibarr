@@ -1073,7 +1073,7 @@ class Mo extends CommonObject
 		}
 		$productstatic = new Product($this->db);
 		$fk_movement = GETPOST('fk_movement', 'int');
-		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);	// Get lines consummed under the one to delete
+		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);	// Get lines consumed under the one to delete
 
 		$result = 0;
 
