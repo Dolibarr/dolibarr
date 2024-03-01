@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2018-2023 Charlene Benke		<charlene@patas-monkey.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,9 +34,6 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	// variables inherited from ModelNumRefHolidays class
 	public $name = 'Madonna';
 	public $version = 'dolibarr';
-	public $error = '';
-	public $code_auto = 1;
-
 
 	// variables not inherited
 
@@ -44,6 +42,13 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 */
 	public $prefix = 'HL';
 
+	/**
+	 *	Constructor
+	 */
+	public function __construct()
+	{
+		$this->code_auto = 1;
+	}
 
 	/**
 	 *	Return default description of numbering model
