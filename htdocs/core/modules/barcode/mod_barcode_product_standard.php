@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,31 +36,15 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 {
 	public $name = 'Standard'; // Model Name
 
-	public $code_modifiable; // Editable code
-
-	public $code_modifiable_invalide; // Modified code if it is invalid
-
-	public $code_modifiable_null; // Modified code if it is null
-
-	public $code_null; // Optional code
-
 	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto;
-
 	public $searchcode; // Search string
 
 	public $numbitcounter; // Number of digits the counter
-
-	public $prefixIsRequired; // The prefix field of third party must be filled when using {pre}
-
 
 	/**
 	 *	Constructor

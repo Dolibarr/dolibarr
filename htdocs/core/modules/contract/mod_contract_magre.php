@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011       Juanjo Menent	        <jmenent@2byte.es>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +35,14 @@ class mod_contract_magre extends ModelNumRefContracts
 	public $name = 'Magre';
 	public $version = 'dolibarr';
 	public $error = '';
-	public $code_auto = 1;
 
+	/**
+	 *	Constructor
+	 */
+	public function __construct()
+	{
+		$this->code_auto = 1;
+	}
 
 	/**
 	 *	Return default description of numbering model

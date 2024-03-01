@@ -55,32 +55,32 @@ abstract class CommonNumRefGenerator
 	protected $db;
 
 	/**
-	 * @var int                 Is Code optional 0 or 1
+	 * @var int<0,1>            Is Code optional 0 or 1
 	 */
 	public $code_null;
 
 	/**
-	 * @var int                 Is Code editable 0 or 1
+	 * @var int<0,1>            Is Code editable 0 or 1
 	 */
 	public $code_modifiable;
 
 	/**
-	 * @var int                 Is Code editable if invalid 0 or 1
+	 * @var int<0,1>            Is Code editable if invalid 0 or 1
 	 */
 	public $code_modifiable_invalide;
 
 	/**
-	 * @var int                 Is Code editable if null
+	 * @var int<0,1>            Is Code editable if null
 	 */
 	public $code_modifiable_null;
 
 	/**
-	 * @var int                 Automatic numbering 0 or 1
+	 * @var int<0,1>            Automatic numbering 0 or 1
 	 */
 	public $code_auto;
 
 	/**
-	 * @var int                 The third party prefix field must be filled in when using {pre}
+	 * @var int<0,1>             The third party prefix field must be filled in when using {pre}
 	 */
 	public $prefixIsRequired;
 
