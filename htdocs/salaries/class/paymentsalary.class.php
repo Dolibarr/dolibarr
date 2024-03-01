@@ -987,12 +987,12 @@ class PaymentSalary extends CommonObject
 		if (property_exists($this, 'fk_bank') && is_numeric($this->fk_bank)) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$account = new AccountLine($this->db);
-			$account->fetch($this->fk_bank); // TODO remove fetch if tooltip ajax available
+			$account->fetch($this->fk_bank);
 			$return .= ' |  <span class="info-box-label">'.$account->getNomUrl(1).'</span>';
 		}
 		if (property_exists($this, 'fk_user_author') && is_numeric($this->fk_user_author)) {
 			$userstatic = new User($this->db);
-			$userstatic->id = $this->fk_user_author;
+			$userstatic->fetch($this->fk_user_author);
 			$return .= '<br><span class="info-box-status">'.$userstatic->getNomUrl(1).'</span>';
 		}
 
