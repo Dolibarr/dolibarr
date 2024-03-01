@@ -311,7 +311,13 @@ if (empty($reshook)) {
 			// Creation of payment line
 			$paiement = new PaiementFourn($db);
 			$paiement->datepaye     = $datepaye;
-			$paiement->amounts      = $amounts; // Array of amounts
+
+			$correctedAmounts = [];
+			foreach ($amounts as $key => $value) {
+				$correctedAmounts[(int) $key] = (float) $value;
+			}
+
+			$paiement->amounts      = $correctedAmounts; // Array of amounts
 			$paiement->multicurrency_amounts = $multicurrency_amounts;
 			$paiement->multicurrency_code = $multicurrency_code; // Array with all currency of payments dispatching
 			$paiement->multicurrency_tx = $multicurrency_tx; // Array with all currency tx of payments dispatching
