@@ -354,7 +354,7 @@ class Mos extends DolibarrApi
 			throw new RestException(500, 'Line to consume or produce (rowid: '.$lineid.') is not a line of MO (id: '.$this->mo->id.')');
 		}
 
-		$request_data = (object)$request_data;
+		$request_data = (object) $request_data;
 		$result = $tmpmoline->consumeOrProduce(
 			DolibarrApiAccess::$user,
 			$request_data->autoclose_mo,
