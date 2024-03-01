@@ -178,7 +178,7 @@ class pdf_standard extends ModelePDFMovement
 		$search_type_mouvement = GETPOSTINT('search_type_mouvement');
 
 		$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
-		$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+		$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 		$sortfield = GETPOST('sortfield', 'aZ09comma');
 		$sortorder = GETPOST('sortorder', 'aZ09comma');
 		if (empty($page) || $page == -1) {
