@@ -1005,14 +1005,13 @@ class Mo extends CommonObject
 
 		$error = 0;
 		if (!$this->getAddLineIsAllowedByStatus()) {
-			$this->error = $langs->transnoentitiesnoconv('RestrictStateForAddLine',$this->getLibStatut());
+			$this->error = $langs->transnoentitiesnoconv('RestrictStateForAddLine', $this->getLibStatut());
 			$this->errors[] = $this->error;
 			dol_syslog(get_class($this)."::addLine error=".$this->error, LOG_ERR);
 			$error++;
 		}
 
 		if (!$error) {
-
 			$qty = price2num($qty);
 			$pos = price2num($pos);
 
@@ -1051,7 +1050,6 @@ class Mo extends CommonObject
 			}
 			return $result;
 		}
-
 	}
 
 	/**
@@ -2318,16 +2316,16 @@ class MoLine extends CommonObjectLine
 	/**
 	 * Create consume or produce line
 	 *
-	 * @param 	User 			$user				User that creates
-	 * @param 	bool 			$autocloseMo		Set the Mo as produced if all lines are complete consumed or produced
-	 * @param 	float 			$qty				Quantity to consume or produce
-	 * @param 	int|null		$idwarehouse		Warehouse to consume or produce
-	 * @param 	string|null 	$labelmovement		Label for the stock movement
- 	 * @param 	string|null 	$codemovement		Inventory code for the stock movement
-	 * @param 	float 			$pricetoprocess		Price per product to bring in stock
-	 * @param 	string|null 	$batch				Batch number for the stock movement
-	 * @param 	int 			$idproductbatch		Id product_batch for the stock movement
-	 * @param 	Translate|null 	$outputlangs		Langs object to use for translation. At "null", the default langs will use.
+	 * @param	User 			$user				User that creates
+	 * @param	bool 			$autocloseMo		Set the Mo as produced if all lines are complete consumed or produced
+	 * @param	float 			$qty				Quantity to consume or produce
+	 * @param	int|null		$idwarehouse		Warehouse to consume or produce
+	 * @param	string|null		$labelmovement		Label for the stock movement
+	 * @param	string|null		$codemovement		Inventory code for the stock movement
+	 * @param	float			$pricetoprocess		Price per product to bring in stock
+	 * @param	string|null		$batch				Batch number for the stock movement
+	 * @param	int				$idproductbatch		Id product_batch for the stock movement
+	 * @param	Translate|null 	$outputlangs		Langs object to use for translation. At "null", the default langs will use.
 	 * @return	int									Return integer <0 if KO, Id of created line if OK
 	 */
 	public function consumeOrProduce(User $user, bool $autocloseMo, float $qty, ?int $idwarehouse, string $labelmovement = null, string $codemovement = null, float $pricetoprocess = 0, string $batch = null, int $idproductbatch = 0, Translate $outputlangs = null)

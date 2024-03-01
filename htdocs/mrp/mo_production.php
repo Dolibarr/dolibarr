@@ -264,7 +264,7 @@ if (empty($reshook)) {
 						$batch = GETPOST('batch-' . $line->id . '-' . $i);
 						$id_product_batch = 0;
 
-					 	$result = $line->consumeOrProduce($user, false, $qtytoprocess, $idwarehouse, $labelmovement, $codemovement, 0, $batch, $id_product_batch, $outputlangs);
+						$result = $line->consumeOrProduce($user, false, $qtytoprocess, $idwarehouse, $labelmovement, $codemovement, 0, $batch, $id_product_batch, $outputlangs);
 						if ($result <= 0) {
 							setEventMessages($line->error, $line->errors, 'errors');
 							$error++;
