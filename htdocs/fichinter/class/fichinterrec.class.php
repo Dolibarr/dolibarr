@@ -675,7 +675,7 @@ class FichinterRec extends Fichinter
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @returnint
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
