@@ -3,6 +3,7 @@
  * Copyright (C) 2015-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -613,8 +614,8 @@ while ($i < $imaxinloop) {
 
 	$accountlinestatic->id = $obj->fk_bank;
 	$accountlinestatic->ref = $obj->fk_bank;
-	$paymentsalstatic->fk_bank = $accountlinestatic->getNomUrl(1);
-	$paymentsalstatic->fk_user_author = $userstatic->getNomUrl(1);
+	$paymentsalstatic->fk_bank = $accountlinestatic->id;
+	$paymentsalstatic->fk_user_author = $userstatic->id;
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
