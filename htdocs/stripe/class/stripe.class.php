@@ -49,6 +49,9 @@ class Stripe extends CommonObject
 	 */
 	public $id;
 
+	/**
+	 * @var string
+	 */
 	public $mode;
 
 	/**
@@ -63,7 +66,14 @@ class Stripe extends CommonObject
 
 	public $type;
 
+	/**
+	 * @var string
+	 */
 	public $code;
+
+	/**
+	 * @var string
+	 */
 	public $declinecode;
 
 	/**
