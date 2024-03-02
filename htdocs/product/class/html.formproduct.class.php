@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2017 Francis Appels       <francis.appels@yahoo.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -235,8 +236,8 @@ class FormProduct
 	 * Return full path to current warehouse in $tab (recursive function)
 	 *
 	 * @param	array	$tab			warehouse data in $this->cache_warehouses line
-	 * @param	String	$final_label	full label with all parents, separated by ' >> ' (completed on each call)
-	 * @return	String					full label with all parents, separated by ' >> '
+	 * @param	string	$final_label	full label with all parents, separated by ' >> ' (completed on each call)
+	 * @return	string					full label with all parents, separated by ' >> '
 	 */
 	private function get_parent_path($tab, $final_label = '')
 	{
@@ -550,7 +551,7 @@ class FormProduct
 	 *  @param  int|string	$adddefault			 1=Add empty unit called "Default", ''=Add empty value
 	 *  @param  int         $mode                1=Use short label as value, 0=Use rowid, 2=Use scale (power)
 	 *  @param	string		$morecss			 More CSS
-	 *  @return string
+	 *  @return string|-1
 	 */
 	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0, $morecss = 'maxwidth125')
 	{
