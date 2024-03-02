@@ -84,7 +84,7 @@ class DonationStats extends Stats
 		$this->join = '';
 
 		if ($status == 0 || $status == 1 || $status == 2) {
-			$this->where = ' d.fk_statut IN ('.$db->sanitize($status).')';
+			$this->where = ' d.fk_statut IN ('.$this->db->sanitize($status).')';
 		} elseif ($status == 3) {
 			$this->where = ' d.fk_statut IN (-1)';
 		} elseif ($status == 4) {
