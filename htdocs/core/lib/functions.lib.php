@@ -234,6 +234,7 @@ define(
 		'ficheinter' => 'intervention',  // Backup for 'fichinter'
 		'propale' => 'propal', // Has old directory
 		'socpeople' => 'contact', // Has old directory
+		'fournisseur' => 'supplier',  // Has old directory
 
 		'actioncomm' => 'agenda',  // NO module directory (public dir agenda)
 		'product_price' => 'productprice', // NO directory
