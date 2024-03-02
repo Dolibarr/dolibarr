@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011-2014	Juanjo Menent	<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -320,7 +321,7 @@ class Localtax extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return	int
 	 */
 	public function initAsSpecimen()
 	{
@@ -338,6 +339,8 @@ class Localtax extends CommonObject
 		$this->fk_bank = 0;
 		$this->fk_user_creat = $user->id;
 		$this->fk_user_modif = $user->id;
+
+		return 1;
 	}
 
 

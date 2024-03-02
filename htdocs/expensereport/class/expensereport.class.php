@@ -3,7 +3,7 @@
  * Copyright (C) 2015 		Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 		Alexandre Spangaro  	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (c) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (c) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2016-2020 	Ferran Marcet       	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -876,7 +876,7 @@ class ExpenseReport extends CommonObject
 	 *  Used to build previews or test instances.
 	 *  id must be 0 if object instance is a specimen.
 	 *
-	 *  @return void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -898,7 +898,6 @@ class ExpenseReport extends CommonObject
 		$type_fees_id = 2; // TF_TRIP
 
 		$this->status = 5;
-		$this->fk_statut = 5;
 
 		$this->fk_user_author = $user->id;
 		$this->fk_user_validator = $user->id;
@@ -932,6 +931,8 @@ class ExpenseReport extends CommonObject
 			$this->total_tva += $line->total_tva;
 			$this->total_ttc += $line->total_ttc;
 		}
+
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

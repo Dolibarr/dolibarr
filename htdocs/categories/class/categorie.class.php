@@ -2078,7 +2078,7 @@ class Categorie extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return	int
 	 */
 	public function initAsSpecimen()
 	{
@@ -2092,6 +2092,8 @@ class Categorie extends CommonObject
 		$this->description = 'This is a description';
 		$this->socid = 1;
 		$this->type = self::TYPE_PRODUCT;
+
+		return 1;
 	}
 
 	/**
