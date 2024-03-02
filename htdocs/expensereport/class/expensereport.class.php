@@ -3,9 +3,8 @@
  * Copyright (C) 2015 		Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 		Alexandre Spangaro  	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (c) 2018-2023  Frédéric France         <frederic.france@free.fr>
+ * Copyright (c) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2016-2020 	Ferran Marcet       	<fmarcet@2byte.es>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

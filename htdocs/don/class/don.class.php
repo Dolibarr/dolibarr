@@ -6,7 +6,7 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
- * Copyright (C) 2020-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021      Maxime DEMAREST      <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
