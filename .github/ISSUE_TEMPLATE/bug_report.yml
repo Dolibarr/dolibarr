@@ -35,22 +35,10 @@ body:
       label: Environment Database
       description: Database type and version
 
-  - type: input
-    id: environment-urls
-    attributes:
-      label: Environment URL(s)
-      description: Affected URL(s)
-
-  - type: textarea
-    id: expected-behaviour
-    attributes:
-      label: Expected and actual behavior
-      description: Verbose description
-
   - type: textarea
     id: reproduce
     attributes:
-      label: Steps to reproduce the behavior
+      label: Steps to reproduce the behavior and expected behavior
       description: Verbose description
 
   - type: textarea
