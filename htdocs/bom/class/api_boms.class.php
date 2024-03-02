@@ -438,7 +438,7 @@ class Boms extends DolibarrApi
 	 *
 	 * @url	DELETE {id}/lines/{lineid}
 	 *
-	 * @return int
+	 * @return array
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		BOM not found
@@ -473,7 +473,12 @@ class Boms extends DolibarrApi
 
 		$updateRes = $this->bom->deleteLine(DolibarrApiAccess::$user, $lineid);
 		if ($updateRes > 0) {
-			return $this->get($id);
+			return array(
+				'success' => array(
+					'code' => 200,
+					'message' => 'line ' .$lineid. ' deleted'
+				)
+			);
 		} else {
 			throw new RestException(500, $this->bom->error);
 		}

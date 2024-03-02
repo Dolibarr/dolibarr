@@ -451,7 +451,7 @@ class Task extends CommonObjectLine
 
 		// Clean parameters
 		if (isset($this->fk_project)) {
-			$this->fk_project = trim($this->fk_project);
+			$this->fk_project = (int) $this->fk_project;
 		}
 		if (isset($this->ref)) {
 			$this->ref = trim($this->ref);
@@ -472,7 +472,7 @@ class Task extends CommonObjectLine
 			$this->planned_workload = trim($this->planned_workload);
 		}
 		if (isset($this->budget_amount)) {
-			$this->budget_amount = trim($this->budget_amount);
+			$this->budget_amount = (float) $this->budget_amount;
 		}
 
 		if (!empty($this->date_start) && !empty($this->date_end) && $this->date_start > $this->date_end) {
@@ -897,7 +897,7 @@ class Task extends CommonObjectLine
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -912,6 +912,8 @@ class Task extends CommonObjectLine
 		$this->progress = '25';
 		$this->status = 0;
 		$this->note = 'This is a specimen task not';
+
+		return 1;
 	}
 
 	/**

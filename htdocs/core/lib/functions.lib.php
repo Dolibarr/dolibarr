@@ -1685,7 +1685,7 @@ function dol_escape_json($stringtoescape)
  *  Returns text escaped for inclusion into a php string, build with double quotes " or '
  *
  *  @param      string		$stringtoescape		String to escape
- *  @param		string		$stringforquotes	2=String for doublequotes, 1=String for simple quotes
+ *  @param		int<1,2>	$stringforquotes	2=String for doublequotes, 1=String for simple quotes
  *  @return     string     		 				Escaped string for json content.
  */
 function dol_escape_php($stringtoescape, $stringforquotes = 2)
@@ -1696,8 +1696,7 @@ function dol_escape_php($stringtoescape, $stringforquotes = 2)
 
 	if ($stringforquotes == 2) {
 		return str_replace('"', "'", $stringtoescape);
-	}
-	if ($stringforquotes == 1) {
+	} elseif ($stringforquotes == 1) {
 		// We remove the \ char.
 		// If we allow the \ char, we can have $stringtoescape =
 		// abc\';phpcodedanger;  so the escapement will become
@@ -2905,10 +2904,10 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 /**
  *	Format a string.
  *
- *	@param	string	$fmt		Format of strftime function (http://php.net/manual/fr/function.strftime.php)
- *  @param	int		$ts			Timestamp (If is_gmt is true, timestamp is already includes timezone and daylight saving offset, if is_gmt is false, timestamp is a GMT timestamp and we must compensate with server PHP TZ)
- *  @param	bool	$is_gmt		See comment of timestamp parameter
- *	@return	string				A formatted string
+ *	@param	string		$fmt		Format of strftime function (http://php.net/manual/fr/function.strftime.php)
+ *  @param	int|false	$ts			Timestamp (If is_gmt is true, timestamp is already includes timezone and daylight saving offset, if is_gmt is false, timestamp is a GMT timestamp and we must compensate with server PHP TZ)
+ *  @param	bool		$is_gmt		See comment of timestamp parameter
+ *	@return	string					A formatted string
  *  @see dol_stringtotime()
  */
 function dol_strftime($fmt, $ts = false, $is_gmt = false)

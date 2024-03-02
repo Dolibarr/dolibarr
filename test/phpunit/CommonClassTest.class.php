@@ -2,6 +2,7 @@
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +62,16 @@ abstract class CommonClassTest extends TestCase
 	public $nbLinesToShow = 100;
 
 	/**
+	 * Log file from which to extract lines in case of failing test
+	 */
+	public $logfile = DOL_DATA_ROOT.'/dolibarr.log';
+
+	/**
+	 * Log file size before a test started (=in setUp() call)
+	 */
+	public $logSizeAtSetup = 0;
+
+	/**
 	 * Constructor
 	 * We save global variables into local variables
 	 *
@@ -108,15 +119,25 @@ abstract class CommonClassTest extends TestCase
 	 */
 	protected function onNotSuccessfulTest(Throwable $t): void
 	{
-		$logfile = DOL_DATA_ROOT.'/dolibarr.log';
 
-		$lines = file($logfile);
+		// Get the lines that were added since the start of the test
+
+		$filecontent = (string) @file_get_contents($this->logfile);
+		$currentSize = strlen($filecontent);
+		if ($currentSize >= $this->logSizeAtSetup) {
+			$filecontent = substr($filecontent, $this->logSizeAtSetup);
+		}
+		$lines = preg_split("/\r?\n/", $filecontent, -1, PREG_SPLIT_NO_EMPTY);
+
+
+		// Determine the number of lines to show
 
 		$nbLinesToShow = $this->nbLinesToShow;
 		if ($t instanceof PHPUnit\Framework\Error\Notice) {
 			$nbLinesToShow = 3;
 		}
 
+		// Determine test information to show
 
 		$failedTestMethod = $this->getName(false);
 		$className = get_called_class();
@@ -132,18 +153,26 @@ abstract class CommonClassTest extends TestCase
 		// Get the last line of the log
 		$last_lines = array_slice($lines, $first_line, $nbLinesToShow);
 
+
+		// Show log information
+
 		print PHP_EOL;
 		// Use GitHub Action compatible group output (:warning: arguments not encoded)
 		print "##[group]$className::$failedTestMethod failed - $argsText.".PHP_EOL;
-		print "## Exception: {$t->getMessage()}".PHP_EOL;
+		print "## ".get_class($t).": {$t->getMessage()}".PHP_EOL;
 
 		if ($nbLinesToShow) {
-			// Show partial log file contents when requested.
-			print "## Show last ".$nbLinesToShow." lines of dolibarr.log file -----".PHP_EOL;
-			foreach ($last_lines as $line) {
-				print $line.PHP_EOL;
+			$newLines = count($last_lines);
+			if ($newLines > 0) {
+				// Show partial log file contents when requested.
+				print "## Show last ".count($last_lines)." lines of dolibarr.log file -----".PHP_EOL;
+				foreach ($last_lines as $line) {
+					print $line.PHP_EOL;
+				}
+				print "## end of dolibarr.log for $className::$failedTestMethod".PHP_EOL;
+			} else {
+				print "## No new lines in 'dolibarr.log' since start of this test.".PHP_EOL;
 			}
-			print "## end of dolibarr.log for $className::$failedTestMethod".PHP_EOL;
 		}
 		print "##[endgroup]".PHP_EOL;
 
@@ -163,6 +192,9 @@ abstract class CommonClassTest extends TestCase
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+
+		// Record the filesize to determine which part of the log to show on error
+		$this->logSizeAtSetup = (int) filesize($this->logfile);
 
 		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
 			print get_called_class().'::'.$this->getName(false)."::".__FUNCTION__.PHP_EOL;
