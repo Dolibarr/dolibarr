@@ -1684,7 +1684,7 @@ function dol_escape_json($stringtoescape)
  *  Returns text escaped for inclusion into a php string, build with double quotes " or '
  *
  *  @param      string		$stringtoescape		String to escape
- *  @param		string		$stringforquotes	2=String for doublequotes, 1=String for simple quotes
+ *  @param		int<1,2>	$stringforquotes	2=String for doublequotes, 1=String for simple quotes
  *  @return     string     		 				Escaped string for json content.
  */
 function dol_escape_php($stringtoescape, $stringforquotes = 2)
@@ -1695,8 +1695,7 @@ function dol_escape_php($stringtoescape, $stringforquotes = 2)
 
 	if ($stringforquotes == 2) {
 		return str_replace('"', "'", $stringtoescape);
-	}
-	if ($stringforquotes == 1) {
+	} elseif ($stringforquotes == 1) {
 		// We remove the \ char.
 		// If we allow the \ char, we can have $stringtoescape =
 		// abc\';phpcodedanger;  so the escapement will become
