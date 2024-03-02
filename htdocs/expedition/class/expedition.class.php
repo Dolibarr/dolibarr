@@ -11,7 +11,7 @@
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
  * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2133,7 +2133,7 @@ class Expedition extends CommonObject
 	 *  @param  int      $id     only this carrier, all if none
 	 *  @return void
 	 */
-	public function list_delivery_methods($id = '')
+	public function list_delivery_methods($id = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -2143,7 +2143,7 @@ class Expedition extends CommonObject
 
 		$sql = "SELECT em.rowid, em.code, em.libelle as label, em.description, em.tracking, em.active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
-		if ($id != '') {
+		if (!empty($id)) {
 			$sql .= " WHERE em.rowid=".((int) $id);
 		}
 
