@@ -314,6 +314,7 @@ function societe_prepare_head(Societe $object)
 	if ($user->socid == 0) {
 		// Notifications
 		if (isModEnabled('notification')) {
+			$langs->load('mails');
 			$nbNotif = 0;
 			// Enable caching of thirdparty count notifications
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
