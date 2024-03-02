@@ -1477,7 +1477,7 @@ class Project extends CommonObject
 	 *  Used to build previews or test instances.
 	 * 	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -1520,6 +1520,8 @@ class Project extends CommonObject
 		 $xnbp++;
 		 }
 		 */
+
+		return 1;
 	}
 
 	/**
