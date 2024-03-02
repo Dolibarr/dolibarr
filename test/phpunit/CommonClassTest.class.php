@@ -158,7 +158,7 @@ abstract class CommonClassTest extends TestCase
 		print PHP_EOL;
 		// Use GitHub Action compatible group output (:warning: arguments not encoded)
 		print "##[group]$className::$failedTestMethod failed - $argsText.".PHP_EOL;
-		print "## Exception: {$t->getMessage()}".PHP_EOL;
+		print "## ".get_class($t).": {$t->getMessage()}".PHP_EOL;
 
 		if ($nbLinesToShow) {
 			$newLines = count($last_lines);
