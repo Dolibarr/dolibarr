@@ -19,20 +19,9 @@ body:
   - type: input
     id: environment-version
     attributes:
-      label: Environment Version
+      label: Dolibarr Version
       description: Affected Dolibarr version(s)
-
-  - type: input
-    id: environment-os
-    attributes:
-      label: Environment OS
-      description: Server OS type and version
-
-  - type: input
-    id: environment-webserver
-    attributes:
-      label: Environment Web server
-      description: Webserver type and version
+      placeholder: 19.0, develop, ...
 
   - type: input
     id: environment-php
