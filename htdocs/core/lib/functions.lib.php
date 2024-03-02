@@ -5104,7 +5104,7 @@ function img_delete($titlealt = 'default', $other = 'class="pictodelete"', $more
 		$titlealt = $langs->trans('Delete');
 	}
 
-	return img_picto($titlealt, 'delete.png', $other, false, 0, 0, '', $morecss);
+	return img_picto($titlealt, 'delete.png', $other, 0, 0, 0, '', $morecss);
 }
 
 /**
@@ -5425,7 +5425,7 @@ function img_search($titlealt = 'default', $other = '')
 		$titlealt = $langs->trans('Search');
 	}
 
-	$img = img_picto($titlealt, 'search.png', $other, false, 1);
+	$img = img_picto($titlealt, 'search.png', $other, 0, 1);
 
 	$input = '<input type="image" class="liste_titre" name="button_search" src="'.$img.'" ';
 	$input .= 'value="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'" >';
@@ -5448,7 +5448,7 @@ function img_searchclear($titlealt = 'default', $other = '')
 		$titlealt = $langs->trans('Search');
 	}
 
-	$img = img_picto($titlealt, 'searchclear.png', $other, false, 1);
+	$img = img_picto($titlealt, 'searchclear.png', $other, 0, 1);
 
 	$input = '<input type="image" class="liste_titre" name="button_removefilter" src="'.$img.'" ';
 	$input .= 'value="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'" >';
