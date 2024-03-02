@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -934,7 +935,7 @@ class Cronjob extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return	void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -972,6 +973,8 @@ class Cronjob extends CommonObject
 		$this->nbrun = 0;
 		$this->maxrun = 100;
 		$this->libname = '';
+
+		return 1;
 	}
 
 

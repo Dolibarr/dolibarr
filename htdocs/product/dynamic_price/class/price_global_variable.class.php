@@ -281,7 +281,7 @@ class PriceGlobalVariable
 	 *	Initialise object with example values
 	 *	Id must be 0 if object instance is a specimen
 	 *
-	 *	@return	void
+	 *	@return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -289,6 +289,8 @@ class PriceGlobalVariable
 		$this->code = '';
 		$this->description = '';
 		$this->value = '';
+
+		return 1;
 	}
 
 	/**
