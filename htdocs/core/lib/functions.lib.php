@@ -4516,7 +4516,7 @@ function getPictoForType($key)
  *  @param		int			$notitle				1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
  *  @param		string		$alt					Force alt for bind people
  *  @param		string		$morecss				Add more class css on img tag (For example 'myclascss').
- *  @param		string		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No margin left. Works for fontawesome picto only.
+ *  @param		int 		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No margin left. Works for fontawesome picto only.
  *  @return     string       				    	Return img tag
  *  @see        img_object(), img_picto_common()
  */
