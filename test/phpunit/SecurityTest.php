@@ -1084,7 +1084,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals('0', $result3b);
 
 		$s = '(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"';
-		$result=dol_eval($s, 1, 1, '2');
+		$result = (string) dol_eval($s, 1, 1, '2');
 		print "result3 = ".$result."\n";
 		$this->assertEquals('Parent project not found', $result);
 
@@ -1092,6 +1092,17 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result = (string) dol_eval($s, 1, 1, '2');
 		print "result4 = ".$result."\n";
 		$this->assertEquals('Parent project not found', $result);
+
+		$s = 'new abc->invoke(\'whoami\')';
+		$result = (string) dol_eval($s, 1, 1, '2');
+		print "result = ".$result."\n";
+		$this->assertEquals('Bad string syntax to evaluate: new abc__forbiddenstring__(\'whoami\')', $result);
+
+		$s = 'new ReflectionFunction(\'abc\')';
+		$result = (string) dol_eval($s, 1, 1, '2');
+		print "result = ".$result."\n";
+		$this->assertEquals('Bad string syntax to evaluate: new __forbiddenstring__(\'abc\')', $result);
+
 
 		$result = (string) dol_eval('$a=function() { }; $a;', 1, 1, '0');
 		print "result5 = ".$result."\n";
