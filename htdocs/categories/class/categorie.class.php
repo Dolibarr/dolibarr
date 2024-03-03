@@ -1853,9 +1853,9 @@ class Categorie extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Return tableau de toutes les photos de la categorie
+	 *    Return an array with all photos inside the directory
 	 *
-	 *    @param      string	$dir        Repertoire a scanner
+	 *    @param      string	$dir        Dir to scan
 	 *    @param      int		$nbmax      Nombre maximum de photos (0=pas de max)
 	 *    @return     array       			Tableau de photos
 	 */
