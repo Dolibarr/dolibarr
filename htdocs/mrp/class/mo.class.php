@@ -896,6 +896,7 @@ class Mo extends CommonObject
 			return -2;
 		}
 		$productstatic = new Product($this->db);
+
 		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);	// Get lines consumed under the one to delete
 
 		$result = 0;
