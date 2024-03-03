@@ -7,7 +7,7 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2020 Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2013      Alexandre Spangaro          <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2021 Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2020      Open-Dsi         		   <support@open-dsi.fr>
  * Copyright (C) 2022      Anthony Berton     			<anthony.berton@bb2a.fr>

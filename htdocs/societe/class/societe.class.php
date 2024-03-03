@@ -1347,7 +1347,7 @@ class Societe extends CommonObject
 	 *		@param	int		$nosyncmember				Do not synchronize info of linked member
 	 *      @return int  			           			Return integer <0 if KO, >=0 if OK
 	 */
-	public function update($id, $user = '', $call_trigger = 1, $allowmodcodeclient = 0, $allowmodcodefournisseur = 0, $action = 'update', $nosyncmember = 1)
+	public function update($id, User $user, $call_trigger = 1, $allowmodcodeclient = 0, $allowmodcodefournisseur = 0, $action = 'update', $nosyncmember = 1)
 	{
 		global $langs, $conf, $hookmanager;
 
@@ -2490,9 +2490,9 @@ class Societe extends CommonObject
 	 * 	@param	string	$filter			Other filter
 	 * 	@param	integer	$maxvalue		Filter on max value for discount
 	 * 	@param	int		$discount_type	0 => customer discount, 1 => supplier discount
-	 *	@return	int					Return integer <0 if KO, Credit note amount otherwise
+	 *	@return	int						Return integer <0 if KO, Credit note amount otherwise
 	 */
-	public function getAvailableDiscounts($user = '', $filter = '', $maxvalue = 0, $discount_type = 0)
+	public function getAvailableDiscounts($user = null, $filter = '', $maxvalue = 0, $discount_type = 0)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
@@ -3391,7 +3391,7 @@ class Societe extends CommonObject
 	 *	@param	int			$type		Should be 0 to say customer
 	 *  @return void
 	 */
-	public function get_codeclient($objsoc = 0, $type = 0)
+	public function get_codeclient($objsoc = null, $type = 0)
 	{
 		// phpcs:enable
 		global $conf;
@@ -3405,6 +3405,7 @@ class Societe extends CommonObject
 					break;
 				}
 			}
+			/** @var ModeleThirdPartyCode $mod */
 			$mod = new $module($this->db);
 
 			$this->code_client = $mod->getNextValue($objsoc, $type);
@@ -3423,7 +3424,7 @@ class Societe extends CommonObject
 	 *	@param	int			$type		Should be 1 to say supplier
 	 *  @return void
 	 */
-	public function get_codefournisseur($objsoc = 0, $type = 1)
+	public function get_codefournisseur($objsoc = null, $type = 1)
 	{
 		// phpcs:enable
 		global $conf;
@@ -3437,6 +3438,7 @@ class Societe extends CommonObject
 					break;
 				}
 			}
+			/** @var ModeleThirdPartyCode $mod */
 			$mod = new $module($this->db);
 
 			$this->code_fournisseur = $mod->getNextValue($objsoc, $type);

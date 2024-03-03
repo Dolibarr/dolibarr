@@ -5720,7 +5720,7 @@ function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $m
  *	@param  string	$sortfield   		Current field used to sort (Ex: 'd.datep,d.id')
  *	@param  string	$sortorder   		Current sort order (Ex: 'asc,desc')
  *  @param	string	$prefix		 		Prefix for css. Use space after prefix to add your own CSS tag, for example 'mycss '.
- *  @param	string	$disablesortlink	1=Disable sort link
+ *  @param	int 	$disablesortlink	1=Disable sort link
  *  @param	string	$tooltip	 		Tooltip
  *  @param	int 	$forcenowrapcolumntitle		No need for use 'wrapcolumntitle' css style
  *	@return	string
@@ -6546,7 +6546,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
  * 	@return	mixed			   					0 if not found, localtax rate if found
  *  @see get_default_tva()
  */
-function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_seller = "", $vatnpr = 0)
+function get_localtax($vatrate, $local, $thirdparty_buyer = null, $thirdparty_seller = null, $vatnpr = 0)
 {
 	global $db, $conf, $mysoc;
 
