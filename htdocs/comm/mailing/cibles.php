@@ -823,7 +823,7 @@ if ($object->fetch($id) >= 0) {
 
 				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->firstname).'">'.dol_escape_htmltag($obj->firstname).'</td>';
 
-				print '<td><span class="small">'.dol_escape_htmltag($obj->other).'</small></td>';
+				print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($obj->other).'"><span class="small">'.dol_escape_htmltag($obj->other).'</small></td>';
 
 				print '<td class="center tdoverflowmax150">';
 				if (empty($obj->source_id) || empty($obj->source_type)) {
