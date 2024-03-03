@@ -62,7 +62,7 @@ $search_lastname = GETPOST("search_lastname", 'alphanohtml');
 $search_firstname = GETPOST("search_firstname", 'alphanohtml');
 $search_email = GETPOST("search_email", 'alphanohtml');
 $search_other = GETPOST("search_other", 'alphanohtml');
-$search_dest_status = GETPOSTINT('search_dest_status');
+$search_dest_status = GETPOST('search_dest_status');	// Must be '' if not set, so do not use GETPOSTINT here.
 
 // Search modules dirs
 $modulesdir = dolGetModulesDirs('/mailings');
@@ -605,7 +605,7 @@ if ($object->fetch($id) >= 0) {
 		$sql .= natural_search("mc.other", $search_other);
 		$asearchcriteriahasbeenset++;
 	}
-	if ($search_dest_status != '' && $search_dest_status >= -1) {
+	if ($search_dest_status != '' && (int) $search_dest_status >= -1) {
 		$sql .= " AND mc.statut = ".((int) $search_dest_status);
 		$asearchcriteriahasbeenset++;
 	}
