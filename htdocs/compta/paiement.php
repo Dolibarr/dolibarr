@@ -8,8 +8,8 @@
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014       Teddy Andreotti         <125155@supinfo.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2023  		  Lenin Rivas	            <lenin.rivas777@gmail.com>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023  		Lenin Rivas	            <lenin.rivas777@gmail.com>
  * Copyright (C) 2023       Sylvain Legrand	        <technique@infras.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
@@ -261,8 +261,8 @@ if (empty($reshook)) {
 
 		// Creation of payment line
 		$paiement = new Paiement($db);
-		$paiement->datepaye     = $datepaye;
-		$paiement->amounts      = $amounts; // Array with all payments dispatching with invoice id
+		$paiement->datepaye = $datepaye;
+		$paiement->amounts = $amounts; // Array with all payments dispatching with invoice id
 		$paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 		$paiement->multicurrency_code = $multicurrency_code; // Array with all currency of payments dispatching
 		$paiement->multicurrency_tx = $multicurrency_tx; // Array with all currency tx of payments dispatching

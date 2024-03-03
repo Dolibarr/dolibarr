@@ -418,4 +418,22 @@ abstract class CommonClassTest extends TestCase
 			$this->assertFileDoesNotExist($file, $message);
 		}
 	}
+
+
+	/**
+	 * Skip test if test is not running on "Unix"
+	 *
+	 * @param string $message Message to indicate which test requires "Unix"
+	 *
+	 * @return bool True if this is not *nix, and fake assert generated
+	 */
+	protected function fakeAssertIfNotUnix($message)
+	{
+		if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+			$this->assertTrue(true, "Dummy test to not mark the test as risky");
+			// $this->markTestSkipped("PHPUNIT is running on windows.  $message");
+			return true;
+		}
+		return false;
+	}
 }

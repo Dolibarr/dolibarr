@@ -55,6 +55,11 @@ class UtilsTest extends CommonClassTest
 	 */
 	public function testExecuteCLI()
 	{
+		// Needs ls. Skip test if not running on *nix system.
+		if ($this->fakeAssertIfNotUnix(__METHOD__." only works on *nix")) {
+			return;
+		}
+
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;
 		$user = $this->savuser;
