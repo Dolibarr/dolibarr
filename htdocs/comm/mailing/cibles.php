@@ -582,7 +582,7 @@ if ($object->fetch($id) >= 0) {
 	}
 
 	// List of selected targets
-	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut, mc.date_envoi, mc.tms,";
+	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut as status, mc.date_envoi, mc.tms,";
 	$sql .= " mc.source_url, mc.source_id, mc.source_type, mc.error_text,";
 	$sql .= " COUNT(mu.rowid) as nb";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
@@ -783,6 +783,7 @@ if ($object->fetch($id) >= 0) {
 			include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+
 			$objectstaticmember = new Adherent($db);
 			$objectstaticuser = new User($db);
 			$objectstaticcompany = new Societe($db);
