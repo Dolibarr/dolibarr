@@ -93,9 +93,6 @@ if ($object->id > 0) {
 	/*
 	 * Affichage onglets
 	 */
-	if (isModEnabled('notification')) {
-		$langs->load("mails");
-	}
 
 	$head = societe_prepare_head($object);
 
