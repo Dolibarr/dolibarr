@@ -4167,8 +4167,8 @@ class Facture extends CommonInvoice
 			$price = $pu;
 			$remise = 0;
 			if ($remise_percent > 0) {
-				$remise = round(($pu * $remise_percent / 100), 2);
-				$price = ($pu - $remise);
+				$remise = round(((float) $pu * (float) $remise_percent / 100), 2);
+				$price = ((float) $pu - $remise);
 			}
 			$price = price2num($price);
 
