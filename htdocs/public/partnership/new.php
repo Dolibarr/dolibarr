@@ -317,7 +317,7 @@ if (empty($reshook) && $action == 'add') {
 
 			$res = $company->update(0, $user);
 			if ($res < 0) {
-				setEventMessages($$company->error, $company->errors, 'errors');
+				setEventMessages($company->error, $company->errors, 'errors');
 			}
 		}
 
