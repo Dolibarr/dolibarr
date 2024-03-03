@@ -3438,6 +3438,7 @@ class Societe extends CommonObject
 					break;
 				}
 			}
+			/** @var ModeleThirdPartyCode $mod */
 			$mod = new $module($this->db);
 
 			$this->code_fournisseur = $mod->getNextValue($objsoc, $type);
