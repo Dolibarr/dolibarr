@@ -62,7 +62,7 @@ class PaymentSalary extends CommonObject
 	public $fk_salary;
 
 	/**
-	 * @var int				Payment creation date
+	 * @var int|string				Payment creation date
 	 */
 	public $datec = '';
 
