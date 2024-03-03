@@ -1273,7 +1273,7 @@ if (!empty($arrayfields['f.tms']['checked'])) {
 }
 // Status
 if (!empty($arrayfields['f.fk_statut']['checked'])) {
-	print '<td class="liste_titre right parentonrightofpage">';
+	print '<td class="liste_titre center parentonrightofpage">';
 	$liststatus = array('0'=>$langs->trans("Draft"), '1'=>$langs->trans("Unpaid"), '2'=>$langs->trans("Paid"));
 	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'center search_status width100 onrightofpage', 1);
 	print '</td>';
@@ -1492,6 +1492,7 @@ while ($i < $imaxinloop) {
 	$userstatic->firstname = $obj->firstname;
 	$userstatic->email = $obj->user_email;
 	$userstatic->statut = $obj->user_statut;
+	$userstatic->status = $obj->user_statut;
 	$userstatic->entity = $obj->entity;
 	$userstatic->photo = $obj->photo;
 	$userstatic->office_phone = $obj->office_phone;
