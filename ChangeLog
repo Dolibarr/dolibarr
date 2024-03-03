@@ -34,7 +34,7 @@ FIX: Error When cloning fourn price no default value for tva_tx (#28368)
 FIX: migration missing 2 columns in llx_resource and 1 in llx_user
 FIX: missing trans
 FIX: notification module: for supplier orders (any of the 3 triggers), user can choose an e-mail template in conf, but the conf is not used when sending the notification (#28216)
-FIX: Not trancate the multicurrency rate shown on cards (even if the global MAIN_MAX_DECIMALS_SHOWN is set to 0) (#28211)
+FIX: Not truncate the multicurrency rate shown on cards (even if the global MAIN_MAX_DECIMALS_SHOWN is set to 0) (#28211)
 FIX: Payment on customer invoice - Remove accountid in url if empty for apply default value (#28156)
 FIX: Pb in redirect of a website page in USEDOLIBARRSERVER mode
 FIX: PHP Warning: Undefined variable $lib (#28342)
