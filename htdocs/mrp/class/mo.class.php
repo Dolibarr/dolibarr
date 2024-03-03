@@ -1241,7 +1241,7 @@ class Mo extends CommonObject
 				if (!$error) {
 					$tmpline = new MoLine($this->db);
 					$tmpline->fetch($line['rowid']);
-					$result = $tmpline->cancelConsumedOrProduced($user,$notrigger);
+					$result = $tmpline->cancelConsumedOrProduced($user, $notrigger);
 					if ($result < 0) {
 						$error++;
 						$this->setErrorsFromObject($tmpline);
@@ -1257,7 +1257,7 @@ class Mo extends CommonObject
 				if (!$error) {
 					$tmpline = new MoLine($this->db);
 					$tmpline->fetch($line['rowid']);
-					$result = $tmpline->cancelConsumedOrProduced($user,$notrigger);
+					$result = $tmpline->cancelConsumedOrProduced($user, $notrigger);
 					if ($result < 0) {
 						$error++;
 						$this->setErrorsFromObject($tmpline);
@@ -2181,7 +2181,7 @@ class MoLine extends CommonObjectLine
 			$lines = $this->fetchLinesLinked();
 			foreach ($lines as $line) {
 				if (!$error) {
-					$result = $line->delete($user,$notrigger);
+					$result = $line->delete($user, $notrigger);
 					if ($result < 0) {
 						$error++;
 					}
@@ -2212,7 +2212,7 @@ class MoLine extends CommonObjectLine
 	 *
 	 * @return 	array             	Array of lines
 	 */
-	function fetchLinesLinked()
+	private function fetchLinesLinked()
 	{
 		$mostatic = new MoLine($this->db);
 		$resarray = $mostatic->fetchAll(filter:array('fk_mrp_production' => $this->id));
@@ -2241,7 +2241,7 @@ class MoLine extends CommonObjectLine
 			$lines = $this->fetchLinesLinked();
 			foreach ($lines as $line) {
 				if (!$error) {
-					$result = $line->cancelConsumedOrProduced($user,$notrigger);
+					$result = $line->cancelConsumedOrProduced($user, $notrigger);
 					if ($result < 0) {
 						$this->error++;
 					}
