@@ -1764,25 +1764,25 @@ if (empty($reshook)) {
 
 										// Date start
 										$date_start = false;
-										if ($lines[$i]->date_debut_prevue) {
+										if (isset($lines[$i]->date_debut_prevue)) {
 											$date_start = $lines[$i]->date_debut_prevue;
 										}
-										if ($lines[$i]->date_debut_reel) {
+										if (isset($lines[$i]->date_debut_reel)) {
 											$date_start = $lines[$i]->date_debut_reel;
 										}
-										if ($lines[$i]->date_start) {
+										if (isset($lines[$i]->date_start)) {
 											$date_start = $lines[$i]->date_start;
 										}
 
 										// Date end
 										$date_end = false;
-										if ($lines[$i]->date_fin_prevue) {
+										if (isset($lines[$i]->date_fin_prevue)) {
 											$date_end = $lines[$i]->date_fin_prevue;
 										}
-										if ($lines[$i]->date_fin_reel) {
+										if (isset($lines[$i]->date_fin_reel)) {
 											$date_end = $lines[$i]->date_fin_reel;
 										}
-										if ($lines[$i]->date_end) {
+										if (isset($lines[$i]->date_end)) {
 											$date_end = $lines[$i]->date_end;
 										}
 
