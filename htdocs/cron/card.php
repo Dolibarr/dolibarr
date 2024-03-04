@@ -140,7 +140,7 @@ if ($action == 'add' && $permissiontoadd) {
 	$object->dateend = dol_mktime(GETPOSTINT('dateendhour'), GETPOSTINT('dateendmin'), 0, GETPOSTINT('dateendmonth'), GETPOSTINT('dateendday'), GETPOSTINT('dateendyear'));
 	$object->priority = GETPOSTINT('priority');
 	$object->datenextrun = dol_mktime(GETPOSTINT('datenextrunhour'), GETPOSTINT('datenextrunmin'), 0, GETPOSTINT('datenextrunmonth'), GETPOSTINT('datenextrunday'), GETPOSTINT('datenextrunyear'));
-	$object->unitfrequency = GETPOSTINT('unitfrequency');
+	$object->unitfrequency = GETPOST('unitfrequency', 'alpha');
 	$object->frequency = GETPOSTINT('nbfrequency');
 	$object->maxrun = GETPOSTINT('maxrun');
 	$object->email_alert = GETPOST('email_alert');
@@ -177,7 +177,7 @@ if ($action == 'update' && $permissiontoadd) {
 	$object->dateend = dol_mktime(GETPOSTINT('dateendhour'), GETPOSTINT('dateendmin'), 0, GETPOSTINT('dateendmonth'), GETPOSTINT('dateendday'), GETPOSTINT('dateendyear'));
 	$object->priority = GETPOSTINT('priority');
 	$object->datenextrun = dol_mktime(GETPOSTINT('datenextrunhour'), GETPOSTINT('datenextrunmin'), 0, GETPOSTINT('datenextrunmonth'), GETPOSTINT('datenextrunday'), GETPOSTINT('datenextrunyear'));
-	$object->unitfrequency = GETPOSTINT('unitfrequency');
+	$object->unitfrequency = GETPOST('unitfrequency', 'alpha');
 	$object->frequency = GETPOSTINT('nbfrequency');
 	$object->maxrun = GETPOSTINT('maxrun');
 	$object->email_alert = GETPOST('email_alert');
@@ -679,7 +679,7 @@ if (($action == "create") || ($action == "edit")) {
 		print $langs->trans('CronEach')." ".($object->frequency)." ".$langs->trans('Weeks');
 	}
 	if ($object->unitfrequency == "2678400") {
-		print $langs->trans('CronEach')." ".($object->frequency)." ".$langs->trans('Month');
+		print $langs->trans('CronEach')." ".($object->frequency)." ".$langs->trans('Months');
 	}
 	print "</td></tr>";
 
