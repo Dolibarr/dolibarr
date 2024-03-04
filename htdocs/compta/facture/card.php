@@ -1764,25 +1764,25 @@ if (empty($reshook)) {
 
 										// Date start
 										$date_start = false;
-										if ($lines[$i]->date_debut_prevue) {
+										if (isset($lines[$i]->date_debut_prevue)) {
 											$date_start = $lines[$i]->date_debut_prevue;
 										}
-										if ($lines[$i]->date_debut_reel) {
+										if (isset($lines[$i]->date_debut_reel)) {
 											$date_start = $lines[$i]->date_debut_reel;
 										}
-										if ($lines[$i]->date_start) {
+										if (isset($lines[$i]->date_start)) {
 											$date_start = $lines[$i]->date_start;
 										}
 
 										// Date end
 										$date_end = false;
-										if ($lines[$i]->date_fin_prevue) {
+										if (isset($lines[$i]->date_fin_prevue)) {
 											$date_end = $lines[$i]->date_fin_prevue;
 										}
-										if ($lines[$i]->date_fin_reel) {
+										if (isset($lines[$i]->date_fin_reel)) {
 											$date_end = $lines[$i]->date_fin_reel;
 										}
-										if ($lines[$i]->date_end) {
+										if (isset($lines[$i]->date_end)) {
 											$date_end = $lines[$i]->date_end;
 										}
 
@@ -1820,7 +1820,7 @@ if (empty($reshook)) {
 											$date_end,
 											0,
 											$lines[$i]->info_bits,
-											$lines[$i]->fk_remise_except,
+											isset($lines[$i]->fk_remise_except) ? $lines[$i]->fk_remise_except : null,
 											'HT',
 											0,
 											$product_type,
@@ -1829,7 +1829,7 @@ if (empty($reshook)) {
 											$object->origin,
 											$lines[$i]->rowid,
 											$fk_parent_line,
-											$lines[$i]->fk_fournprice,
+											isiset($lines[$i]->fk_fournprice) ? $lines[$i]->fk_fournprice : null,
 											$lines[$i]->pa_ht,
 											$label,
 											$array_options,
