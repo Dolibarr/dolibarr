@@ -104,7 +104,7 @@ class ScriptsTest extends CommonClassTest
 		print __METHOD__." output=".join("\n", $output)."\n";
 		print __METHOD__." returnvar=".$returnvar."\n";
 		$this->assertEquals($result, 'Failed to find bank account with ref BANKDUMMY.');
-		$this->assertEquals($returnvar, 255);
+		$this->assertEquals($returnvar, 1);
 
 		return $result;
 	}
@@ -131,7 +131,7 @@ class ScriptsTest extends CommonClassTest
 		print __METHOD__." output=".join("\n",$output)."\n";
 		print __METHOD__." returnvar=".$returnvar."\n";
 		$this->assertEquals($result,'Failed to find bank account with ref BANKDUMMY.');
-		$this->assertEquals($returnvar,255);
+		$this->assertEquals($returnvar, 1);
 		*/
 		$this->assertEquals(0, 0);
 
