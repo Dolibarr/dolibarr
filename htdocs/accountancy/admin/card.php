@@ -85,7 +85,7 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 			// Clean code
 
 			// To manage zero or not at the end of the accounting account
-			if !getDolGlobalString('ACCOUNTING_MANAGE_ZERO') {
+			if (!getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
 				$account_number = clean_account($account_number);
 			}
 
@@ -142,7 +142,7 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 			// Clean code
 
 			// To manage zero or not at the end of the accounting account
-			if !getDolGlobalString('ACCOUNTING_MANAGE_ZERO') {
+			if (!getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
 				$account_number = clean_account($account_number);
 			}
 
