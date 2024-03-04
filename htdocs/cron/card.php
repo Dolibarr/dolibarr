@@ -3,6 +3,7 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concpt.pro>
  * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@ require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-// librairie jobs
+// Cron job libraries
 require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/html.formcron.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
@@ -73,11 +74,10 @@ if (!empty($cancel)) {
 	} else {
 		if ($backtopage) {
 			header("Location: ".$backtopage);
-			exit;
 		} else {
 			header("Location: ".DOL_URL_ROOT.'/cron/list.php');
-			exit;
 		}
+		exit;
 	}
 }
 
@@ -98,7 +98,6 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodelete) {
 if ($action == 'confirm_execute' && $confirm == "yes" && $permissiontoexecute) {
 	if (getDolGlobalString('CRON_KEY') && $conf->global->CRON_KEY != $securitykey) {
 		setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
-		$action = '';
 	} else {
 		$now = dol_now(); // Date we start
 
@@ -106,7 +105,6 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $permissiontoexecute) {
 
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
-			$action = '';
 		} else {
 			$res = $object->reprogram_jobs($user->login, $now);
 			if ($res > 0) {
@@ -115,13 +113,12 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $permissiontoexecute) {
 				} else {
 					setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
 				}
-				$action = '';
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
-				$action = '';
 			}
 		}
 	}
+	$action = '';
 }
 
 
@@ -150,7 +147,7 @@ if ($action == 'add' && $permissiontoadd) {
 	// Add cron task
 	$result = $object->create($user);
 
-	// test du Resultat de la requete
+	// Test request result
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'create';
@@ -185,7 +182,7 @@ if ($action == 'update' && $permissiontoadd) {
 	// Add cron task
 	$result = $object->update($user);
 
-	// test du Resultat de la requete
+	// Test request result
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'edit';
@@ -201,7 +198,7 @@ if ($action == 'activate' && $permissiontoadd) {
 	// Add cron task
 	$result = $object->update($user);
 
-	// test du Resultat de la requete
+	// Test request result
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'edit';
@@ -218,7 +215,7 @@ if ($action == 'inactive' && $permissiontoadd) {
 	// Add cron task
 	$result = $object->update($user);
 
-	// test du Resultat de la requete
+	// Test request result
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'edit';
