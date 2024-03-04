@@ -85,8 +85,8 @@ if (!$sortorder) {
 	$sortorder = "DESC,DESC";
 }
 
-$search_ref = GETPOSTINT('search_ref');
-$search_ref_salary = GETPOSTINT('search_ref_salary');
+$search_ref = GETPOST('search_ref', 'alpha');
+$search_ref_salary = GETPOST('search_ref_salary', 'alpha');
 $search_user = GETPOST('search_user', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_date_start = dol_mktime(0, 0, 0, GETPOSTINT('search_date_startmonth'), GETPOSTINT('search_date_startday'), GETPOSTINT('search_date_startyear'));

@@ -60,8 +60,7 @@ $search_datepayment_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datepayment_
 $search_type = GETPOSTINT('search_type');
 $search_account				= GETPOSTINT('search_account');
 $search_amount 				= GETPOST('search_amount', 'alpha');
-$search_status = GETPOSTINT('search_status');
-$ltt = GETPOSTINT("ltt");
+$search_status = GETPOST('search_status', 'intcomma');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield					= GETPOST('sortfield', 'aZ09comma');
