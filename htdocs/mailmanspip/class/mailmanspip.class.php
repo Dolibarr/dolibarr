@@ -6,7 +6,7 @@
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2009       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,9 +54,24 @@ class MailmanSpip
 	 */
 	public $errors = array();
 
+	/**
+	 * @var array
+	 */
 	public $mladded_ok;
+
+	/**
+	 * @var array
+	 */
 	public $mladded_ko;
+
+	/**
+	 * @var array
+	 */
 	public $mlremoved_ok;
+
+	/**
+	 * @var array
+	 */
 	public $mlremoved_ko;
 
 
