@@ -83,7 +83,7 @@ $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
 $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
-$search_status = GETPOSTINT('search_status');
+$search_status = GETPOST('search_status', 'intcomma');	// Can be '' or a numeric
 $search_paymentmode = GETPOSTINT('search_paymentmode');
 $search_paymentcond = GETPOSTINT('search_paymentcond');
 $search_town = GETPOST('search_town', 'alpha');
@@ -103,8 +103,6 @@ $search_datelimit_endmonth = GETPOSTINT('search_datelimit_endmonth');
 $search_datelimit_endyear = GETPOSTINT('search_datelimit_endyear');
 $search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $search_datelimit_startday, $search_datelimit_startyear);
 $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
-$search_btn = GETPOST('button_search', 'alpha');
-$search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $search_categ_sup = trim(GETPOSTINT("search_categ_sup"));
 $search_product_category = GETPOSTINT('search_product_category');
 

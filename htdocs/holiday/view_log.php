@@ -246,7 +246,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
 if (!empty($search_id)) {
-	$param .= '&search_statut='.urlencode($search_statut);
+	$param .= '&search_status='.urlencode($search_status);
 }
 if (!empty($search_month) && $search_month > 0) {
 	$param .= '&search_month='.urlencode($search_month);

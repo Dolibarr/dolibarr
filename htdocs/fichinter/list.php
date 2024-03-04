@@ -655,7 +655,7 @@ if (!empty($arrayfields['fd.description']['checked'])) {
 	print '<td class="liste_titre">&nbsp;</td>';
 }
 if (!empty($arrayfields['fd.date']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre center">';
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start ?: -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';

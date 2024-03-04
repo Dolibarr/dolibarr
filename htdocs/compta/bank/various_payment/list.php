@@ -43,7 +43,7 @@ $massaction = GETPOST('massaction', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlist'; // To manage different context of search
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
-$search_ref = GETPOSTINT('search_ref');
+$search_ref = GETPOST('search_ref', 'alpha');
 $search_user = GETPOST('search_user', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_datep_start = dol_mktime(0, 0, 0, GETPOSTINT('search_date_startmonth'), GETPOSTINT('search_date_startday'), GETPOSTINT('search_date_startyear'));
@@ -53,7 +53,7 @@ $search_datev_end = dol_mktime(23, 59, 59, GETPOSTINT('search_date_value_endmont
 $search_amount_deb = GETPOST('search_amount_deb', 'alpha');
 $search_amount_cred = GETPOST('search_amount_cred', 'alpha');
 $search_bank_account = GETPOSTINT('search_account');
-$search_bank_entry = GETPOSTINT('search_bank_entry');
+$search_bank_entry = GETPOST('search_bank_entry', 'alpha');
 $search_accountancy_account = GETPOST("search_accountancy_account");
 if ($search_accountancy_account == - 1) {
 	$search_accountancy_account = '';

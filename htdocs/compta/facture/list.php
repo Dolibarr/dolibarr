@@ -63,8 +63,7 @@ if (isModEnabled('order')) {
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies', 'products', 'categories'));
 
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$projectid = (GETPOST('projectid') ? GETPOSTINT('projectid') : 0);
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
 $id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
@@ -83,12 +82,11 @@ if ($contextpage == 'poslist') {
 	$optioncss = 'print';
 }
 
-$lineid = GETPOSTINT('lineid');
 $userid = GETPOSTINT('userid');
 $search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refcustomer = GETPOST('search_refcustomer', 'alpha');
-$search_type = GETPOSTINT('search_type');
-$search_subtype = GETPOSTINT('search_subtype');
+$search_type = GETPOST('search_type', 'intcomma');
+$search_subtype = GETPOST('search_subtype', 'intcomma');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
@@ -152,7 +150,6 @@ $search_late = GETPOST('search_late');
 if ($search_late == 'late') {
 	$search_status = '1';
 }
-$filtre = GETPOST('filtre', 'alpha');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -628,7 +625,7 @@ $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfi
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT';
-if ($sall || $search_user > 0) {
+if ($search_all || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
 $sql .= ' f.rowid as id, f.ref, f.ref_client, f.fk_soc, f.type, f.subtype, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
@@ -650,9 +647,9 @@ $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0).
 // A Better solution to be able to sort on already paid or remain to pay is to store amount_payed in a denormalized field.
-// We disable this. It create a bug when searching with sall and sorting on status. Also it create performance troubles.
+// We disable this. It create a bug when searching with search_all and sorting on status. Also it create performance troubles.
 /*
-if (!$sall) {
+if (!$search_all) {
 	$sql .= ', SUM(pf.amount) as dynamount_payed, SUM(pf.multicurrency_amount) as multicurrency_dynamount_payed';
 }
 */
@@ -682,7 +679,7 @@ if ($sortfield == "f.datef") {
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (f.rowid = ef.fk_object)";
 }
-if ($sall) {
+if ($search_all) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as pd ON f.rowid = pd.fk_facture';
 }
 if (!empty($search_fac_rec_source_title)) {
@@ -947,8 +944,8 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-if ($sall) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
+if ($search_all) {
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 
 // Add HAVING from hooks
@@ -994,7 +991,7 @@ $num = $db->num_rows($resql);
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
-if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sall) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->id;
 
@@ -1017,8 +1014,8 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
-if ($sall) {
-	$param .= '&sall='.urlencode($sall);
+if ($search_all) {
+	$param .= '&search_all='.urlencode($search_all);
 }
 if ($search_date_startday) {
 	$param .= '&search_date_startday='.urlencode($search_date_startday);
@@ -1276,11 +1273,11 @@ if ($massaction == 'makepayment') {
 	print $formconfirm;
 }
 
-if ($sall) {
+if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).implode(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 // If the user can view prospects other than his'
