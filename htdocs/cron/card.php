@@ -136,15 +136,17 @@ if ($action == 'add' && $permissiontoadd) {
 	$object->md5params = GETPOST('md5params');
 	$object->module_name = GETPOST('module_name');
 	$object->note_private = GETPOST('note', 'restricthtml');
-	$object->datestart = dol_mktime(GETPOST('datestarthour', 'int'), GETPOST('datestartmin', 'int'), 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'));
-	$object->dateend = dol_mktime(GETPOST('dateendhour', 'int'), GETPOST('dateendmin', 'int'), 0, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'));
-	$object->priority = GETPOST('priority', 'int');
-	$object->datenextrun = dol_mktime(GETPOST('datenextrunhour', 'int'), GETPOST('datenextrunmin', 'int'), 0, GETPOST('datenextrunmonth', 'int'), GETPOST('datenextrunday', 'int'), GETPOST('datenextrunyear', 'int'));
-	$object->unitfrequency = GETPOST('unitfrequency', 'int');
+	$object->datestart = dol_mktime(GETPOSTINT('datestarthour'), GETPOSTINT('datestartmin'), 0, GETPOSTINT('datestartmonth'), GETPOSTINT('datestartday'), GETPOSTINT('datestartyear'));
+	$object->dateend = dol_mktime(GETPOSTINT('dateendhour'), GETPOSTINT('dateendmin'), 0, GETPOSTINT('dateendmonth'), GETPOSTINT('dateendday'), GETPOSTINT('dateendyear'));
+	$object->priority = GETPOSTINT('priority');
+	$object->datenextrun = dol_mktime(GETPOSTINT('datenextrunhour'), GETPOSTINT('datenextrunmin'), 0, GETPOSTINT('datenextrunmonth'), GETPOSTINT('datenextrunday'), GETPOSTINT('datenextrunyear'));
+	$object->unitfrequency = GETPOSTINT('unitfrequency');
 	$object->frequency = GETPOSTINT('nbfrequency');
 	$object->maxrun = GETPOSTINT('maxrun');
 	$object->email_alert = GETPOST('email_alert');
-
+	$object->status = 0;
+	$object->processing = 0;
+	$object->lastresult = '';
 	// Add cron task
 	$result = $object->create($user);
 
@@ -171,11 +173,11 @@ if ($action == 'update' && $permissiontoadd) {
 	$object->md5params = GETPOST('md5params');
 	$object->module_name = GETPOST('module_name');
 	$object->note_private = GETPOST('note', 'restricthtml');
-	$object->datestart = dol_mktime(GETPOST('datestarthour', 'int'), GETPOST('datestartmin', 'int'), 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'));
-	$object->dateend = dol_mktime(GETPOST('dateendhour', 'int'), GETPOST('dateendmin', 'int'), 0, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'));
-	$object->priority = GETPOST('priority', 'int');
-	$object->datenextrun = dol_mktime(GETPOST('datenextrunhour', 'int'), GETPOST('datenextrunmin', 'int'), 0, GETPOST('datenextrunmonth', 'int'), GETPOST('datenextrunday', 'int'), GETPOST('datenextrunyear', 'int'));
-	$object->unitfrequency = GETPOST('unitfrequency', 'int');
+	$object->datestart = dol_mktime(GETPOSTINT('datestarthour'), GETPOSTINT('datestartmin'), 0, GETPOSTINT('datestartmonth'), GETPOSTINT('datestartday'), GETPOSTINT('datestartyear'));
+	$object->dateend = dol_mktime(GETPOSTINT('dateendhour'), GETPOSTINT('dateendmin'), 0, GETPOSTINT('dateendmonth'), GETPOSTINT('dateendday'), GETPOSTINT('dateendyear'));
+	$object->priority = GETPOSTINT('priority');
+	$object->datenextrun = dol_mktime(GETPOSTINT('datenextrunhour'), GETPOSTINT('datenextrunmin'), 0, GETPOSTINT('datenextrunmonth'), GETPOSTINT('datenextrunday'), GETPOSTINT('datenextrunyear'));
+	$object->unitfrequency = GETPOSTINT('unitfrequency');
 	$object->frequency = GETPOSTINT('nbfrequency');
 	$object->maxrun = GETPOSTINT('maxrun');
 	$object->email_alert = GETPOST('email_alert');
@@ -482,7 +484,7 @@ if (($action == "create") || ($action == "edit")) {
 	} else {
 		$input .= ' />';
 	}
-	$input .= "<label for=\"frequency_month\">".$langs->trans('Monthly')."</label>";
+	$input .= "<label for=\"frequency_month\">".$langs->trans('Months')."</label>";
 	print $input;
 
 	print "</td>";
@@ -777,7 +779,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr><td>';
 	print $langs->trans('CronLastOutput')."</td><td>";
-	print '<span class="small">'.nl2br($object->lastoutput).'</span>';
+	print '<span class="small">'.(!empty($object->lastoutput) ? nl2br($object->lastoutput) : '').'</span>';
 	print "</td></tr>";
 
 	print '</table>';

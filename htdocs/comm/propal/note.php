@@ -37,7 +37,7 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array('propal', 'compta', 'bills', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
@@ -66,7 +66,7 @@ $usercancreate = $user->hasRight("propal", "creer");
  * Actions
  */
 
-$permissionnote = $user->rights->propal->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('propal', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks

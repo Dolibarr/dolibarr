@@ -47,6 +47,9 @@ require_once DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php";
 $version = constant('DOL_VERSION');
 $error = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */

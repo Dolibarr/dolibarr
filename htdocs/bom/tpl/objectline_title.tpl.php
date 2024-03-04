@@ -24,8 +24,8 @@
  * $object (invoice, order, ...)
  * $conf
  * $langs
- * $element     (used to test $user->rights->$element->creer)
- * $permtoedit  (used to replace test $user->rights->$element->creer)
+ * $element     (used to test $user->hasRight($element, 'creer'))
+ * $permtoedit  (used to replace test $user->hasRight($element, 'creer'))
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  * $outputalsopricetotalwithtax
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
@@ -38,6 +38,9 @@ if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
+
+'@phan-var-force CommonObject $this
+ @phan-var-force CommonObject $object';
 
 global $filtertype;
 if (empty($filtertype)) {

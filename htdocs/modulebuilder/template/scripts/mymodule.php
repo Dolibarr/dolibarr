@@ -107,6 +107,12 @@ if (!($result > 0)) {
 }
 $user->getrights();
 
+$hookmanager->initHooks(array('cli'));
+
+
+/*
+ * Main
+ */
 
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 if (!isset($argv[1])) {	// Check parameters

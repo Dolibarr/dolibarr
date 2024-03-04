@@ -19,6 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  * or see https://www.gnu.org/
  */
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 
 /**
  * Class for AI
@@ -43,33 +44,58 @@ class Ai
 	/**
 	 * Constructor
 	 *
-	 * @param   string  $apiEndpoint       Endpoint of api
-	 * @param   string  $apiKey   key of api
+	 * @param	DoliDB	$db		 Database handler
+	 *
 	 */
-	public function __construct($apiEndpoint, $apiKey)
+	public function __construct($db)
 	{
-		$this->apiEndpoint = $apiEndpoint;
-		$this->apiKey = $apiKey;
+		$this->db = $db;
+		$this->apiEndpoint = dolibarr_get_const($this->db, 'AI_API_ENDPOINT');
+		$this->apiKey = dolibarr_get_const($this->db, 'AI_KEY_API_CHATGPT');
 	}
 
 	/**
 	 * Generate response of instructions
 	 * @param   string  $instructions   instruction for generate content
+	 * @param   string  $model          model name (chat,text,image...)
+	 * @param   string  $moduleName     Name of module
 	 * @return   mixed   $response
 	 */
-	public function generateContent($instructions)
+	public function generateContent($instructions, $model = 'gpt-3.5-turbo', $moduleName = 'MAILING')
 	{
+		global $conf;
 		try {
+			$configurationsJson = dolibarr_get_const($this->db, 'AI_CONFIGURATIONS_PROMPT', $conf->entity);
+			$configurations = json_decode($configurationsJson, true);
+
+			$prePrompt = '';
+			$postPrompt = '';
+
+			if (isset($configurations[$moduleName])) {
+				if (isset($configurations[$moduleName]['prePrompt'])) {
+					$prePrompt = $configurations[$moduleName]['prePrompt'];
+				}
+
+				if (isset($configurations[$moduleName]['postPrompt'])) {
+					$postPrompt = $configurations[$moduleName]['postPrompt'];
+				}
+			}
+			$fullInstructions = $prePrompt.' '.$instructions.' .'.$postPrompt;
+
 			$ch = curl_init($this->apiEndpoint);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['prompt' => $instructions]));
+			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+				'messages' => [
+					['role' => 'user', 'content' => $fullInstructions]
+				],
+				'model' => $model
+			]));
 			curl_setopt($ch, CURLOPT_HTTPHEADER, [
 				'Authorization: Bearer ' . $this->apiKey,
 				'Content-Type: application/json'
 			]);
 
 			$response = curl_exec($ch);
-
 			if (curl_errno($ch)) {
 				throw new Exception('cURL error: ' . curl_error($ch));
 			}
@@ -78,11 +104,15 @@ class Ai
 			if ($statusCode != 200) {
 				throw new Exception('API request failed with status code ' . $statusCode);
 			}
+			// Decode JSON response
+			$decodedResponse = json_decode($response, true);
 
-			return $response;
+			// Extraction content
+			$generatedEmailContent = $decodedResponse['choices'][0]['message']['content'];
+
+			return $generatedEmailContent;
 		} catch (Exception $e) {
-			error_log($e->getMessage());
-			return null;
+			return array('error' => true, 'message' => $e->getMessage());
 		} finally {
 			curl_close($ch);
 		}

@@ -37,7 +37,7 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->load("commercial");
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('actioncard', 'globalcard'));
@@ -73,7 +73,7 @@ $head = actions_prepare_head($object);
 print dol_get_fiche_head($head, 'info', $langs->trans("Action"), -1, 'action');
 
 // Link to other agenda views
-$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1">';
+$linkback = '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1">';
 $linkback .= img_picto($langs->trans("BackToList"), 'object_calendarlist', 'class="pictoactionview pictofixedwidth"');
 $linkback .= '<span class="hideonsmartphone">'.$langs->trans("BackToList").'</span>';
 $linkback .= '</a>';

@@ -250,7 +250,7 @@ if ($action == "confirm_update") {
 		$object->label_compte = '';
 		$object->debit = 0;
 		$object->credit = 0;
-		$object->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
+		$object->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
 		$object->doc_type = GETPOST('doc_type', 'alpha');
 		$object->piece_num = GETPOSTINT('next_num_mvt');
 		$object->doc_ref = GETPOST('doc_ref', 'alpha');
@@ -276,7 +276,7 @@ if ($action == "confirm_update") {
 }
 
 if ($action == 'setdate') {
-	$datedoc = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
+	$datedoc = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
 	$result = $object->updateByMvt($piece_num, 'doc_date', $db->idate($datedoc), $mode);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');

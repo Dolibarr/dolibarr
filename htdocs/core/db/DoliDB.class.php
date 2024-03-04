@@ -30,8 +30,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/db/Database.interface.php';
  */
 abstract class DoliDB implements Database
 {
-	/** Force subclass to implement VERSIONMIN*/
+	/** Force subclass to implement VERSIONMIN - required DB version */
 	const VERSIONMIN = self::VERSIONMIN;
+	/** Force subclass to implement LABEL - description of DB type */
+	const LABEL = self::LABEL;
 
 	/** @var bool|resource|mysqli|SQLite3|PgSql\Connection Database handler */
 	public $db;
@@ -294,7 +296,7 @@ abstract class DoliDB implements Database
 			$oldsortorder = '';
 			$return = '';
 			$fields = explode(',', $sortfield);
-			$orders = explode(',', $sortorder);
+			$orders = (!empty($sortorder) ? explode(',', $sortorder) : array());
 			$i = 0;
 			foreach ($fields as $val) {
 				if (!$return) {

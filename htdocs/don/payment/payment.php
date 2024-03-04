@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("bills");
 
-$chid = GETPOST("rowid", 'int');
+$chid = GETPOSTINT("rowid");
 $action = GETPOST('action', 'aZ09');
 $amounts = array();
 $cancel = GETPOST('cancel');
@@ -67,7 +67,7 @@ if ($action == 'add_payment') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$error++;
 	}
-	if (isModEnabled("banque") && !(GETPOST("accountid", 'int') > 0)) {
+	if (isModEnabled("bank") && !(GETPOSTINT("accountid") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
 		$error++;
 	}
@@ -97,7 +97,7 @@ if ($action == 'add_payment') {
 			$payment->chid         = $chid;
 			$payment->datep     = $datepaid;
 			$payment->amounts      = $amounts; // Tableau de montant
-			$payment->paymenttype  = GETPOST("paymenttype", 'int');
+			$payment->paymenttype  = GETPOSTINT("paymenttype");
 			$payment->num_payment  = GETPOST("num_payment", 'alphanohtml');
 			$payment->note_public  = GETPOST("note_public", 'restricthtml');
 
@@ -111,7 +111,7 @@ if ($action == 'add_payment') {
 			}
 
 			if (!$error) {
-				$result = $payment->addPaymentToBank($user, 'payment_donation', '(DonationPayment)', GETPOST('accountid', 'int'), '', '');
+				$result = $payment->addPaymentToBank($user, 'payment_donation', '(DonationPayment)', GETPOSTINT('accountid'), '', '');
 				if (!($result > 0)) {
 					$errmsg = $payment->error;
 					setEventMessages($errmsg, null, 'errors');

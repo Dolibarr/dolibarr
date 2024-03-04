@@ -46,14 +46,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 
 
 $action = GETPOST('action', 'aZ09');
-$idproduct = GETPOST('idproduct', 'int');
+$idproduct = GETPOSTINT('idproduct');
 
 
 /*
  * View
  */
 
-top_httphead();
+top_httphead('application/json');
 
 if ($action == 'getDurationUnitByProduct' && $user->hasRight('product', 'lire')) {
 	$product = new Product($db);
@@ -63,5 +63,26 @@ if ($action == 'getDurationUnitByProduct' && $user->hasRight('product', 'lire'))
 	$fk_unit = $cUnit->getUnitFromCode($product->duration_unit, 'short_label', 'time');
 
 	echo json_encode($fk_unit);
+	exit();
+}
+
+if ($action == 'getWorkstationByProduct' && $user->hasRight('product', 'lire')) {
+	$product = new Product($db);
+	$res = $product->fetch($idproduct);
+
+	$result = array();
+
+	if ($res < 0) {
+		$error = 'SQL ERROR';
+	} elseif ($res == 0) {
+		$error = 'NOT FOUND';
+	} else {
+		$error = null;
+		$result['defaultWk']=$product->fk_default_workstation;
+	}
+
+	$result['error']=$error;
+
+	echo json_encode($result);
 	exit();
 }

@@ -8,7 +8,6 @@ NewSupplierInvoice = חשבונית ספק חדשה
 History=הִיסטוֹרִיָה
 ListOfSuppliers=רשימת ספקים
 ShowSupplier=הצג את הספק
-OrderDate=תאריך הזמנה
 BuyingPriceMin=מחיר הקנייה הטוב ביותר
 BuyingPriceMinShort=מחיר הקנייה הטוב ביותר
 TotalBuyingPriceMinShort=סך כל מחירי הקנייה של מוצרי המשנה

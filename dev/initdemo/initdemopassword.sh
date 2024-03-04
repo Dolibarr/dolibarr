@@ -145,12 +145,16 @@ fi
 
 
 # ---------------------------- run sql file
+if [ "x$port" != "x0" ]
+then
+	export Pport="-P$port"
+fi
 if [ "x$passwd" != "x" ]
 then
 	export passwd="-p$passwd"
 fi
-#echo "mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile"
-#mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
+#echo "mysql $Pport -u$admin $passwd $base < $mydir/$dumpfile"
+#mysql $Pport -u$admin $passwd $base < $mydir/$dumpfile
 
 if [ "x${demopasshash}" != "xpassword_hash" ]
 then
@@ -162,19 +166,19 @@ else
 fi
 #rm /tmp/tmp.php
 
-echo "echo \"UPDATE llx_user SET pass_crypted = '$newpass' WHERE login = '$demologin';\" | mysql -P$port $base"
-echo "UPDATE llx_user SET pass_crypted = '$newpass' WHERE login = '$demologin';" | mysql -P$port $base
+echo "echo \"UPDATE llx_user SET pass_crypted = '$newpass' WHERE login = '$demologin';\" | mysql $Pport $base"
+echo "UPDATE llx_user SET pass_crypted = '$newpass' WHERE login = '$demologin';" | mysql $Pport $base
 export res=$?
 
 if [ $res -ne 0 ]; then
-	echo "Error to execute sql with mysql -P$port -u$admin -p***** $base"
+	echo "Error to execute sql with mysql $Pport -u$admin -p***** $base"
 	exit
 fi
 
 if [ -s "$mydir/initdemopostsql.sql" ]; then
 	echo A file initdemopostsql.sql was found, we execute it.
-	echo "mysql -P$port $base < \"$mydir/initdemopostsql.sql\""
-	mysql -P$port $base < "$mydir/initdemopostsql.sql"
+	echo "mysql $Pport $base < \"$mydir/initdemopostsql.sql\""
+	mysql $Pport $base < "$mydir/initdemopostsql.sql"
 else
 	echo No file initdemopostsql.sql found, so no extra sql action done.
 fi

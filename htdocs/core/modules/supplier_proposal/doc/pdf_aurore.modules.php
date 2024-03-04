@@ -5,6 +5,7 @@
  * Copyright (C) 2010-2014 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -711,7 +712,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		Object		$object			Object to show
-	 *   @param		int			$posy			Y
+	 *   @param		int|float	$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	int
 	 */
@@ -1201,7 +1202,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	float|int
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{

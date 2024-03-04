@@ -61,7 +61,7 @@ $hookmanager->initHooks('hrmindex');
 $langs->loadLangs(array('users', 'holiday', 'trips', 'boxes'));
 
 // Get Parameters
-$socid = GETPOST("socid", "int");
+$socid = GETPOSTINT("socid");
 
 // Protection if external user
 if ($user->socid > 0) {
@@ -197,7 +197,7 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 	$sql .= " WHERE u.rowid = x.fk_user";
 	$sql .= " AND x.entity = ".$conf->entity;
 	if (!$user->hasRight('holiday', 'readall')) {
-		$sql .= ' AND x.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
+		$sql .= ' AND x.fk_user IN ('.$db->sanitize(implode(',', $childids)).')';
 	}
 	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".((int) $socid);
@@ -282,7 +282,7 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 	$sql .= " WHERE u.rowid = x.fk_user_author";
 	$sql .= " AND x.entity = ".$conf->entity;
 	if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')) {
-		$sql .= ' AND x.fk_user_author IN ('.$db->sanitize(join(',', $childids)).')';
+		$sql .= ' AND x.fk_user_author IN ('.$db->sanitize(implode(',', $childids)).')';
 	}
 	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".((int) $socid);

@@ -38,7 +38,7 @@ if (!$user->hasRight('accounting', 'fiscalyear', 'write')) {
 	accessforbidden();
 }
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 
 // View

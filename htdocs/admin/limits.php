@@ -45,8 +45,8 @@ $mainmaxdecimalstot = 'MAIN_MAX_DECIMALS_TOT'.(!empty($currencycode) ? '_'.$curr
 $mainmaxdecimalsshown = 'MAIN_MAX_DECIMALS_SHOWN'.(!empty($currencycode) ? '_'.$currencycode : '');
 $mainroundingruletot = 'MAIN_ROUNDING_RULE_TOT'.(!empty($currencycode) ? '_'.$currencycode : '');
 
-$valmainmaxdecimalsunit = GETPOST($mainmaxdecimalsunit, 'int');
-$valmainmaxdecimalstot = GETPOST($mainmaxdecimalstot, 'int');
+$valmainmaxdecimalsunit = GETPOSTINT($mainmaxdecimalsunit);
+$valmainmaxdecimalstot = GETPOSTINT($mainmaxdecimalstot);
 $valmainmaxdecimalsshown = GETPOST($mainmaxdecimalsshown, 'alpha');	// Can be 'x.y' but also 'x...'
 $valmainroundingruletot = price2num(GETPOST($mainroundingruletot, 'alphanohtml'), '', 2);
 

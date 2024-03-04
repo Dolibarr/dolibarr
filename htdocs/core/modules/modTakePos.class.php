@@ -40,7 +40,7 @@ class modTakePos extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
+		global $conf;
 
 		$this->db = $db;
 
@@ -54,7 +54,7 @@ class modTakePos extends DolibarrModules
 		// It is used to group modules by family in module setup page
 		$this->family = "portal";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '60';
+		$this->module_position = '45';
 		// Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
@@ -120,8 +120,8 @@ class modTakePos extends DolibarrModules
 			//1=>array('TAKEPOS_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
 		);
 
-
-		if (!isset($conf->takepos) || !isset($conf->takepos->enabled)) {
+		// To avoid warning
+		if (!isModEnabled('takepos')) {
 			$conf->takepos = new stdClass();
 			$conf->takepos->enabled = 0;
 		}
@@ -281,8 +281,8 @@ class modTakePos extends DolibarrModules
 			if ($searchcompanyid == 0) {
 				$societe->name = $nametouse;
 				$societe->client = 1;
-				$societe->code_client = -1;
-				$societe->code_fournisseur = -1;
+				$societe->code_client = '-1';
+				$societe->code_fournisseur = '-1';
 				$societe->note_private = "Default customer automatically created by Point Of Sale module activation. Can be used as the default generic customer in the Point Of Sale setup. Can also be edited or removed if you don't need a generic customer.";
 
 				$searchcompanyid = $societe->create($user);

@@ -8,7 +8,6 @@ NewSupplierInvoice = Ny leverandørfaktura
 History=Historikk
 ListOfSuppliers=Liste over leverandører
 ShowSupplier=Vis leverandør
-OrderDate=Bestillingsdato
 BuyingPriceMin=Beste innkjøpspris
 BuyingPriceMinShort=Beste innkjøpspris
 TotalBuyingPriceMinShort=Total over sub-varers innkjøpspriser

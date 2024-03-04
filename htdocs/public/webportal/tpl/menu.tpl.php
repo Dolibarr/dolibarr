@@ -24,7 +24,7 @@ if ($context->userIsLog()) {
 	}
 
 	// menu orders
-	if (isModEnabled('commande') && getDolGlobalInt('WEBPORTAL_ORDER_LIST_ACCESS')) {
+	if (isModEnabled('order') && getDolGlobalInt('WEBPORTAL_ORDER_LIST_ACCESS')) {
 		$navMenu['order_list'] = array(
 			'id' => 'order_list',
 			'rank' => 20,
@@ -35,7 +35,7 @@ if ($context->userIsLog()) {
 	}
 
 	// menu invoices
-	if (isModEnabled('facture') && getDolGlobalInt('WEBPORTAL_INVOICE_LIST_ACCESS')) {
+	if (isModEnabled('invoice') && getDolGlobalInt('WEBPORTAL_INVOICE_LIST_ACCESS')) {
 		$navMenu['invoice_list'] = array(
 			'id' => 'invoice_list',
 			'rank' => 30,
@@ -47,7 +47,7 @@ if ($context->userIsLog()) {
 
 	// menu member
 	$cardAccess = getDolGlobalString('WEBPORTAL_MEMBER_CARD_ACCESS');
-	if (isModEnabled('adherent')
+	if (isModEnabled('member')
 		&& in_array($cardAccess, array('visible', 'edit'))
 		&& $context->logged_member
 		&& $context->logged_member->id > 0
@@ -92,14 +92,14 @@ $navGroupMenu = array(
 		'id' => 'administrative',
 		'rank' => -1, // negative value for undefined, it will be set by the min item rank for this group
 		'url' => '',
-		'name' => $langs->trans('GroupMenuAdministrative'),
+		'name' => $langs->trans('WebPortalGroupMenuAdmin'),
 		'children' => array()
 	),
 	'technical' => array(
 		'id' => 'technical',
 		'rank' => -1, // negative value for undefined, it will be set by the min item rank for this group
 		'url' => '',
-		'name' => $langs->trans('GroupMenuTechnical'),
+		'name' => $langs->trans('WebPortalGroupMenuTechnical'),
 		'children' => array()
 	),
 );
@@ -167,7 +167,7 @@ if (empty($reshook)) {
 	<ul>
 		<li class="brand">
 		<?php
-		$brandTitle = !empty($conf->global->WEBPORTAL_TITLE) ? getDolGlobalString('WEBPORTAL_TITLE') : getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
+		$brandTitle = getDolGlobalString('WEBPORTAL_TITLE') ? getDolGlobalString('WEBPORTAL_TITLE') : getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 		print '<a class="brand__logo-link"  href="'.$context->getControllerUrl().'" >';
 		if (!empty($context->theme->menuLogoUrl)) {
 			print '<img class="brand__logo-img" src="' . dol_escape_htmltag($context->theme->menuLogoUrl) . '" alt="' . dol_escape_htmltag($brandTitle) . '" >';

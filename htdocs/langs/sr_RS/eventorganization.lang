@@ -34,7 +34,6 @@ PaymentEvent=Payment of event
 NewRegistration=Registration
 EventOrganizationSetup=Event Organization setup
 EventOrganization=Event organization
-Settings=Settings
 EventOrganizationSetupPage = Event Organization setup page
 EVENTORGANIZATION_TASK_LABEL = Label of tasks to create automatically when project is validated
 EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
@@ -102,12 +101,12 @@ NbVotes=Number of votes
 #
 # Status
 #
-EvntOrgDraft = Draft
+EvntOrgDraft = Nacrt
 EvntOrgSuggested = Suggested
 EvntOrgConfirmed = Confirmed
 EvntOrgNotQualified = Not Qualified
-EvntOrgDone = Done
-EvntOrgCancelled = Canceled
+EvntOrgDone = Završeno
+EvntOrgCancelled = Poništeno
 
 #
 # Other
@@ -130,7 +129,7 @@ EvntOrgWelcomeMessage = This form allows you to register as a new participant to
 EvntOrgDuration = This conference starts on %s and ends on %s.
 ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
 BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
-EventType = Event type
+EventType = Tip događaja
 LabelOfBooth=Booth label
 LabelOfconference=Conference label
 ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet

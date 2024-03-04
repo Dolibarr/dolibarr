@@ -37,6 +37,8 @@ if (empty($object) || !is_object($object)) {
 	exit;
 }
 
+'@phan-var-force CommonObject $this
+ @phan-var-force CommonObject $object';
 
 global $forceall, $forcetoshowtitlelines, $filtertype;
 
@@ -118,9 +120,9 @@ if (isModEnabled("product") || isModEnabled("service")) {
 	$statustoshow = -1;
 	if (getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
 		// hide products in closed warehouse, but show products for internal transfer
-		print $form->select_produits(GETPOST('idprod', 'int'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'), 1);
+		print $form->select_produits(GETPOSTINT('idprod'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, 'warehouseopen,warehouseinternal', GETPOSTINT('combinations'), 1);
 	} else {
-		print $form->select_produits(GETPOST('idprod', 'int'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, '', GETPOST('combinations', 'array'), 1);
+		print $form->select_produits(GETPOSTINT('idprod'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, '', GETPOSTINT('combinations'), 1);
 	}
 	$urltocreateproduct = DOL_URL_ROOT.'/product/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
 	print '<a href="'.$urltocreateproduct.'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProduct").'"></span></a>';
@@ -185,7 +187,7 @@ if ($filtertype != 1) {
 
 	$coldisplay++;
 	print '<td class="bordertop nobottom nowrap linecolworkstation right">';
-	print '&nbsp;';
+	print $formproduct->selectWorkstations('', 'idworkstations', 1);
 	print '</td>';
 
 	$coldisplay++;
@@ -235,13 +237,25 @@ jQuery(document).ready(function() {
 				,type: 'POST'
 				,data: {
 					'action': 'getDurationUnitByProduct'
+					,'token' : "<?php echo newToken() ?>"
 					,'idproduct' : idproduct
 				}
 			}).done(function(data) {
 
 				console.log(data);
-				var data = JSON.parse(data);
 				$("#fk_unit").val(data).change();
+			});
+
+			$.ajax({
+				url : "<?php echo dol_buildpath('/bom/ajax/ajax.php', 1); ?>"
+				,type: 'POST'
+				,data: {
+					'action': 'getWorkstationByProduct'
+					,'token' :  "<?php echo newToken() ?>"
+					,'idproduct' : idproduct
+				}
+			}).done(function(data) {
+				$('#idworkstations').val(data.defaultWk).select2();
 			});
 	});
 	<?php } ?>

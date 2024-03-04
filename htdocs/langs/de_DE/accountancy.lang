@@ -168,7 +168,7 @@ ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Länge für die Anzeige der Kontenbezeichn
 ACCOUNTING_LENGTH_GACCOUNT=Länge der Kontonummern der Buchhaltung (Wenn dieser Wert auf 6 gesetzt ist, wird Konto '706' als '706000' am Bildschirm angezeigt)
 ACCOUNTING_LENGTH_AACCOUNT=Länge der Geschäftspartner Nebenkonten in der Buchhaltung \n(Wenn Sie hier den Wert 6 einstellen, wird das Konto "401" auf dem Bildschirm als "401000" angezeigt.)
 ACCOUNTING_MANAGE_ZERO=Beibehalten der Nullen am Ende eines Buchungskontos ("1200"). \nIn manchen Ländern notwendig (z.B. Deutschland, Schweiz). \nStandardmäßig deaktiviert. \nWenn ausgeschaltet, können die folgenden zwei Parameter konfigurieren werden, um virtuelle Nullen anzuhängen.
-BANK_DISABLE_DIRECT_INPUT=Deaktivieren der direkte Aufzeichnung von Transaktion auf dem Bankkonto
+BANK_DISABLE_DIRECT_INPUT=Deaktivieren der direkten Aufzeichnung von Transaktionen auf dem Bankkonto
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Entwurfexport für Journal aktivieren
 ACCOUNTANCY_COMBO_FOR_AUX=Combo-Liste für Nebenkonto aktivieren (kann langsam sein, wenn Sie viele Geschäftspartner haben; verhindert die Suche nach Teilwerten)
 ACCOUNTING_DATE_START_BINDING=Deaktivieren Sie die Kontierung & das Übertragen in der Buchhaltung, wenn das Datum vor diesen Datum liegt  (Transaktionen vor diesem Datum werden standardmäßig ausgeschlossen)
@@ -281,7 +281,7 @@ Pcgtype=Kontenklasse
 PcgtypeDesc=Kontengruppen werden für einige Buchhaltungsberichte als vordefinierte Filter- und Gruppierungskriterien verwendet. Beispielsweise werden "Aufwand" oder "Ertrag" als Gruppen für die Buchungskonten von Produkten genutzt, um die Ausgaben-/Einnahmenrechnung zu erstellen.
 AccountingCategoriesDesc=Benutzerdefinierte Kontengruppen können verwendet werden, um mehrere Buchhaltungskonten unter einem Namen zu gruppieren, um die Verwendung von Filtern oder das Erstellen von benutzerdefinierten Berichten zu vereinfachen.
 
-Reconcilable=ausgleichsfähig
+Reconcilable=Abstimmkonto
 
 TotalVente=Gesamtumsatz vor Steuern
 TotalMarge=Gesamtumsatzrendite
@@ -328,14 +328,13 @@ WarningRecordWithoutSubledgerAreExcluded=Achtung: diese Ansicht zeigt nur Buchun
 AccountRemovedFromCurrentChartOfAccount=Im aktuellen Kontenplan nicht vorhandenes Buchungskonto
 
 ## Admin
-BindingOptions=Verbindungsoptionen
+BindingOptions=Kontierungsoptionen
 ApplyMassCategories=Massenaktualisierung der Kategorien
 AddAccountFromBookKeepingWithNoCategories=Verfügbares Konto noch nicht in der personalisierten Gruppe
 CategoryDeleted=Die Gruppe für das Buchungskonto wurde entfernt
 AccountingJournals=Buchhaltungsjournale
 AccountingJournal=Buchhaltungsjournal
 NewAccountingJournal=Neues Buchhaltungsjournal
-ShowAccountingJournal=Buchhaltungsjournal anzeigen
 NatureOfJournal=Art des Journals
 AccountingJournalType1=Sonstige Buchungen
 AccountingJournalType2=Verkäufe
@@ -349,9 +348,9 @@ ErrorAccountingJournalIsAlreadyUse=Dieses Journal wird bereits verwendet
 AccountingAccountForSalesTaxAreDefinedInto=Hinweis: Buchaltungskonten für Steuern werden im Menü <b>%s</b> - <b>%s</b> definiert
 NumberOfAccountancyEntries=Anzahl der Einträge
 NumberOfAccountancyMovements=Anzahl der Buchungen
-ACCOUNTING_DISABLE_BINDING_ON_SALES=Deaktivieren Sie die Bindung und Übertragung in der Buchhaltung bei Verkäufen (Kundenrechnungen werden in der Buchhaltung nicht berücksichtigt).
-ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Deaktivieren Sie die Bindung und Übertragung in der Buchhaltung bei Einkäufen (Lieferantenrechnungen werden in der Buchhaltung nicht berücksichtigt).
-ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Deaktivieren Sie die Bindung und Übertragung in der Buchhaltung für Spesenabrechnungen (Spesenabrechnungen werden bei der Buchhaltung nicht berücksichtigt).
+ACCOUNTING_DISABLE_BINDING_ON_SALES=Deaktivieren Sie die Kontierung und Übertragung in der Buchhaltung bei Verkäufen (Kundenrechnungen werden in der Buchhaltung nicht berücksichtigt).
+ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Deaktivieren Sie die Kontierung und Übertragung in der Buchhaltung bei Einkäufen (Lieferantenrechnungen werden in der Buchhaltung nicht berücksichtigt).
+ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Deaktivieren Sie die Kontierung und Übertragung in der Buchhaltung für Spesenabrechnungen (Spesenabrechnungen werden bei der Buchhaltung nicht berücksichtigt).
 ACCOUNTING_ENABLE_LETTERING=Aktivieren Sie die Abstimmungsfunktion in der Buchhaltung
 ACCOUNTING_ENABLE_LETTERING_DESC=Wenn diese Option aktiviert ist, können Sie für jeden Buchungseintrag einen Tracking-Code definieren, sodass Sie verschiedene Buchungen gruppieren können. In der Vergangenheit, als verschiedene Journale unabhängig voneinander verwaltet wurden, war diese Funktion erforderlich, um Buchungszeilen verschiedener Journale zusammenzufassen. Bei der Dolibarr-Buchhaltung wird jedoch ein solcher Tracking-Code namens "<b>%s</b>" bereits automatisch gespeichert, sodass ein automatisches Tracking bereits erfolgt ist, ohne dass ein Fehlerrisiko besteht. Damit ist diese Funktion für eine allgemeine Verwendung unnötig geworden. Die manuelle Funktion ist für Endbenutzer vorgesehen, die der Computer-Engine, die die Datenübertragung in der Buchhaltung durchführt, wirklich nicht vertrauen.
 EnablingThisFeatureIsNotNecessary=Die Aktivierung dieser Funktion ist für strenge Anforderungen an die Buchhaltung nicht mehr erforderlich.
@@ -468,7 +467,7 @@ AccountancyClosureConfirmAccountingReversal=Sind Sie sicher, dass Sie Einträge 
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Einige obligatorische Einstellungen wurden noch nicht vorgenommen, bitte vervollständigen Sie die Einrichtung.
-ErrorNoAccountingCategoryForThisCountry=Für das Land %s ist keine Buchhaltungskontogruppe verfügbar (siehe %s - %s - %s)
+ErrorNoAccountingCategoryForThisCountry=Es sind dem Land %s keine benutzerdefinierten Kontogruppen zugeordnet. Daher ist keine Buchhaltungskontogruppe auswählbar (siehe %s - %s - %s)
 ErrorInvoiceContainsLinesNotYetBounded=Sie versuchen einige Rechnungspositionen der Rechnung <strong>%s</strong> zu journalisieren, aber einige Postionen sind keinem Buchungskonto zugewiesen. Alle Rechnungspositionen dieser Rechnung werden ignoriert.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Einige Rechnungspositionen sind unkontiert.
 ExportNotSupported=Das eingestellte Exportformat wird von deiser Seite nicht unterstützt

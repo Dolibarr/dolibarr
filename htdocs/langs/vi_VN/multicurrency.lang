@@ -16,7 +16,6 @@ CurrenciesUsed_help_to_add=Thêm các loại tiền tệ và tỷ lệ khác nha
 rate=tỷ lệ
 MulticurrencyReceived=Đã nhận, nguyên tệ
 MulticurrencyRemainderToTake=Số tiền còn lại, nguyên tệ
-MulticurrencyPaymentAmount=Số tiền thanh toán, nguyên tệ
 AmountToOthercurrency=Số tiền chuyển (bằng tiền tệ tài khoản nhận)
 CurrencyRateSyncSucceed=Đồng bộ hóa tỷ giá tiền tệ được thực hiện thành công
 MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Sử dụng tiền tệ cho hồ sơ thanh toán trực tuyến

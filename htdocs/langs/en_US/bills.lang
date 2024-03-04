@@ -93,6 +93,9 @@ CodePaymentMode=Payment method (code)
 LabelPaymentMode=Payment method (label)
 PaymentModeShort=Payment method
 PaymentTerm=Payment Term
+IdPaymentTerm=Payment term (id)
+CodePaymentTerm=Payment term (code)
+LabelPaymentTerm=Payment term (label)
 PaymentConditions=Payment Terms
 PaymentConditionsShort=Payment Terms
 PaymentAmount=Payment amount
@@ -650,3 +653,7 @@ InvoiceSubtype=Invoice Subtype
 SalaryInvoice=Salary 
 BillsAndSalaries=Bills & Salaries
 CreateCreditNoteWhenClientInvoiceExists=This option is enabled only when validated invoice(s) exist for a customer or when constant INVOICE_CREDIT_NOTE_STANDALONE is used(useful for some countries)
+SearchUnpaidSupplierInvoicesWithDueDate=Search unpaid supplier invoices with a due date = %s
+SearchValidatedSupplierInvoicesWithDate=Search unpaid supplier invoices with a validation date = %s
+SendEmailsRemindersOnSupplierInvoiceDueDate=Send reminder by email for validated and unpaid supplier invoices
+PaymentMadeForSeveralInvoices=Payment made for several invoices

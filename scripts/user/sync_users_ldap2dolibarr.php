@@ -52,6 +52,9 @@ $forcecommit = 0;
 $excludeuser = array();
 $confirmed = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */
@@ -170,7 +173,7 @@ if ($resql) {
 }
 
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result >= 0) {
 	$justthese = array();
 

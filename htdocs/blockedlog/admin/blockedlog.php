@@ -40,7 +40,7 @@ if (!$user->admin || empty($conf->blockedlog->enabled)) {
 // Get Parameters
 $action     = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
-$withtab    = GETPOST('withtab', 'int');
+$withtab    = GETPOSTINT('withtab');
 
 
 /*

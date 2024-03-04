@@ -54,13 +54,13 @@ class Subscriptions extends DolibarrApi
 	 * @param   int     $id				ID of subscription
 	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		No Subscription found
 	 */
 	public function get($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'lire')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$subscription = new Subscription($this->db);
@@ -85,7 +85,7 @@ class Subscriptions extends DolibarrApi
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array Array of subscription objects
 	 *
-	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		No Subscription found
 	 * @throws	RestException	503		Error when retrieving Subscription list
 	 */
@@ -96,7 +96,7 @@ class Subscriptions extends DolibarrApi
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'lire')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$sql = "SELECT rowid";
@@ -146,13 +146,13 @@ class Subscriptions extends DolibarrApi
 	 * @param array $request_data   Request data
 	 * @return int  ID of subscription
 	 *
-	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	500		Error when creating Subscription
 	 */
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'creer')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -176,18 +176,18 @@ class Subscriptions extends DolibarrApi
 	/**
 	 * Update subscription
 	 *
-	 * @param int   $id             ID of subscription to update
-	 * @param array $request_data   Datas
-	 * @return Object
+	 * @param 	int   		$id             ID of subscription to update
+	 * @param 	array 		$request_data   Datas
+	 * @return 	Object						Updated object
 	 *
-	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		No Subscription found
 	 * @throws	RestException	500		Error when updating Subscription
 	 */
 	public function put($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$subscription = new Subscription($this->db);
@@ -222,7 +222,7 @@ class Subscriptions extends DolibarrApi
 	 * @param int $id   ID of subscription to delete
 	 * @return array
 	 *
-	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		No Subscription found
 	 * @throws	RestException	409		No Subscription deleted
 	 * @throws	RestException	500		Error when deleting Subscription
@@ -231,7 +231,7 @@ class Subscriptions extends DolibarrApi
 	{
 		// The right to delete a subscription comes with the right to create one.
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'creer')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$subscription = new Subscription($this->db);
 		$result = $subscription->fetch($id);

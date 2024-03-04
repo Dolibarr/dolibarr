@@ -9,7 +9,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018   	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2015-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -1886,10 +1886,8 @@ class Contrat extends CommonObject
 	 *	@param  User	$user       User that delete
 	 *  @return int         		>0 if OK, <0 if KO
 	 */
-	public function deleteline($idline, User $user)
+	public function deleteLine($idline, User $user)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		if ($this->statut >= 0) {
@@ -2444,7 +2442,7 @@ class Contrat extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -2509,6 +2507,8 @@ class Contrat extends CommonObject
 			$this->lines[$xnbp] = $line;
 			$xnbp++;
 		}
+
+		return 1;
 	}
 
 	/**
@@ -2895,7 +2895,7 @@ class Contrat extends CommonObject
 			$this->error = $this->db->lasterror();
 		}
 
-		$this->output .= count($contractlineprocessed).' contract line(s) with end date before '.dol_print_date($enddatetoscan, 'day').' were renewed'.(count($contractlineprocessed)>0 ? ' : '.join(',', $contractlineprocessed) : '');
+		$this->output .= count($contractlineprocessed).' contract line(s) with end date before '.dol_print_date($enddatetoscan, 'day').' were renewed'.(count($contractlineprocessed)>0 ? ' : '.implode(',', $contractlineprocessed) : '');
 
 		return ($error ? 1 : 0);
 	}
@@ -2986,8 +2986,6 @@ class ContratLigne extends CommonObjectLine
 	 * @var string Ref
 	 */
 	public $ref;
-
-	public $tms;
 
 	/**
 	 * @var int ID

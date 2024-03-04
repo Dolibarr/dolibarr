@@ -409,6 +409,8 @@ function conf($dolibarr_main_document_root)
 	global $dolibarr_main_db_name;
 	global $dolibarr_main_db_user;
 	global $dolibarr_main_db_pass;
+	global $dolibarr_main_db_collation;
+	global $dolibarr_main_db_character_set;
 	global $character_set_client;
 	global $dolibarr_main_instance_unique_id;
 	global $dolibarr_main_cookie_cryptkey;

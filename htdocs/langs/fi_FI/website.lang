@@ -32,7 +32,7 @@ AddWebsite=Lisää sivusto
 Webpage=Verkkosivu/säilö
 AddPage=Lisää sivu/säilö
 PageContainer=Sivu
-PreviewOfSiteNotYetAvailable=Verkkosivustosi <strong>%s</strong> esikatselu ei ole vielä saatavilla. Sinun täytyy ensin <strong>tuoda täydellinen verkkosivustomalli</strong> tai vain b0e7843947c. span>Lisää sivu/säilö<span class='notranslate'></strong>'.
+PreviewOfSiteNotYetAvailable=The preview of your website <strong>%s</strong> is not yet available. You must first '<strong>Import a full website template</strong>' or just '<strong>Add a page/container</strong>'.
 RequestedPageHasNoContentYet=Pyydetyllä sivulla, jonka tunnus on %s, ei ole vielä sisältöä, tai välimuisti tiedosto .tpl.php on poistettu. Muokkaa sivun sisältöä ratkaistaksesi tämän.
 SiteDeleted=Verkkosivusto '%s' poistettu
 PageContent=Sivu/sisältö
@@ -53,18 +53,18 @@ CheckVirtualHostPerms=Tarkista myös, että virtuaalipalvelimen käyttäjällä 
 ReadPerm=Luettu
 WritePerm=Kirjoittaa
 TestDeployOnWeb=Testaa / ota käyttöön verkossa
-PreviewSiteServedByWebServer=<u>Esikatsele %s uudessa välilehdessä.</u><br><br>%s palvelee ulkoinen verkkopalvelin (kuten Apache, Nginx, IIS ). Sinun on asennettava ja tämän palvelimen asennus ennen kuin voit osoittaa hakemistoon:<br><strong> >%s</strong><br>Ulkoisen palvelimen tarjoama URL-osoite:<br><strong>%s<span class='notranslate'>b0a65fc071f65fc071f
-PreviewSiteServedByDolibarr=<u>Esikatsele %s uudessa välilehdessä.</u><br><br>%s palvelee Dolibarr-palvelinta, joten se ei tarvitse ylimääräistä verkkopalvelinta (kuten Apache, Nginx, IIS) asennettava.<br>Epämukavaa on, että sivujen URL-osoitteet eivät ole käyttäjäystävällisiä ja aloita Dolibarrin polulla.<br>Dolibarrin tarjoama URL-osoite:<br><strong> span><span class='notranslate'>%s</strong><br>b0349bcc0fda192fz Jos haluat käyttää omaa ulkoista verkkopalvelintasi tämän verkkosivuston palvelemiseen, luo verkkopalvelimellasi on virtuaalinen isäntä, joka osoittaa hakemistoon<br> <strong>%s</strong><br> ja kirjoita tämän virtuaalipalvelimen nimi tämän verkkosivuston ominaisuuksiin ja napsauta linkkiä "Testaa/käyttöönotto verkossa".
+PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before to point to directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
+PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that the URLs of pages are not user friendly and start with the path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To use your own external web server to serve this web site, create a virtual host on your web server that points on directory<br><strong>%s</strong><br>then enter the name of this virtual server in the properties of this website and click on the link "Test/Deploy on the web".
 VirtualHostUrlNotDefined=Ulkoisen verkkopalvelimen palveleman virtuaalisen isännän URL-osoitetta ei ole määritetty
 NoPageYet=Ei vielä sivuja
 YouCanCreatePageOrImportTemplate=Voit luo uuden sivun tai tuoda täyden verkkosivustomallin
 SyntaxHelp=Ohje tiettyihin syntaksivinkkeihin
 YouCanEditHtmlSourceckeditor=Voit muokata HTML-lähdekoodia käyttämällä "Lähde"-painiketta editorissa.
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> Voit sisällyttää PHP-koodia tähän lähteeseen käyttämällä tunnisteita <strong>&lt;?php ?&gt;<span class='notranslate6fd7b10af6fd90 </span>. Seuraavat globaalit muuttujat ovat käytettävissä: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> Voit myös sisällyttää toisen sivun/säilön sisällön seuraavalla syntaksilla:<br><strong>&lt;?php includeContainer('alias_of_includeer'); ?&gt;</strong><br>ccfda1492fz0 /span><span class='notranslate'><span class="fa fa-bug"></span> Voit tehdä uudelleenohjauksen toiselle sivulle/säilöön seuraavalla syntaksilla (Huomaa: älä tulosta mitään sisältö ennen uudelleenohjausta):<br><strong>&lt;?php redirectToContainer alias_container_to_redirect_to'); ?&gt;</strong><br>ccfda1492fz0 /span><span class='notranslate'><span class="fa fa-link"></span> Jos haluat lisätä linkin toiselle sivulle, käytä syntaksia:<br> <strong>&lt;a href="alias_of_page_to_link_to.php"b0012c7d0be</012c7d >omalinkki<span class='notranslate'>&lt;a&gt;</strong> <br><br><span class="fa fa-download"></span> sisältää <</span class> ='notranslate'><strong>latauslinkki</strong> a tiedosto, joka on tallennettu <span class='notranslateen' ><strong></span>asiakirjat</strong>, käytä hakemistoa <strong>document.php670f6<span class='notranslate'fc>z'19notranslate' class='z /span> kääre:<br>Esimerkki: tiedosto asiakirjoihin/ecm:iin (täytyy kirjata), syntaksi on:<br><strong>&lt;a href="/document.phm&modulepart=ec tiedosto=[relative_dir/]filename.ext"&gt;</strong> class='notranslate'><br>tiedosto asiakirjoihin/mediaan (avoin hakemisto julkista käyttöä varten), syntaksi on:<br> <strong>&lt;a href="/document.php?modulepart=medias& tiedosto=[relative_dir/]filename.ext"&gt;</strong><span class='notranslate2bccf0<3da4'fz0 /span>Jakolinkillä jaetun tiedosto (avoin käyttöoikeus tiedosto jakamishajaavaimella) syntaksi on: <br><strong>&lt;a href="/document.php?hashp= publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image"></span>  <strong>kuva</strong> tallennettu <strong>asiakirjoihin<span class='notranslate'b0701f6fcz0901af6fcz09 , käytä <strong>viewimage.php</strong>-käärettä.<br>,Example kuvan asiakirjoihin/mediaan (avoin hakemisto yleisölle), syntaksi on:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"<span class='notranslate87b012cz0 </span></strong><br>
-YouCanEditHtmlSource2=Jaa-linkillä jaetun kuvan (avoin pääsy tiedosto jakamishajaavaimella) syntaksi on:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."<span class='notranslate<<span class='notranslate8b012'>d0c012'>d0c012'> /span></strong><br>
-YouCanEditHtmlSource3=Saat PHP-objektin kuvan URL-osoitteen käyttämällä <br><strong>&lt; span>img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt; class='notranslate'>&gt;</strong><br>
-YouCanEditHtmlSourceMore=<br>Lisää esimerkkejä HTML-koodista tai dynaamisesta koodista löytyy <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">wikin dokumentaatiosta</a> >.<span class='notranslate'><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper.<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentation</a>.<br>
 ClonePage=Kloonaa sivu/säilö
 CloneSite=Kloonaa sivusto
 SiteAdded=Verkkosivusto lisätty
@@ -121,7 +121,6 @@ ReplaceString=Uusi merkkijono
 CSSContentTooltipHelp=Kirjoita tähän CSS-sisältö. Välttääksesi ristiriidat sovelluksen CSS:n kanssa, muista liittää kaikki ilmoitukset .bodywebsite-luokan kanssa. Esimerkki:<br><br>#mycssselector, input.myclass:hover { ... } <br>on oltava<br>.bodywebsite #mycssselector, .bodywebsite input.myclass:hover { ... }<br> <br>Huomaa: jos sinulla on suuri tiedosto ilman tätä etuliitettä, voit muuntaa sen käyttämällä 'lessc' ja liittää sen . bodyweb-sivuston etuliite kaikkialla.
 LinkAndScriptsHereAreNotLoadedInEditor=Varoitus: Tämä sisältö tulostetaan vain, kun sivustoa käytetään palvelimelta. Sitä ei käytetä muokkaustilassa, joten jos haluat ladata JavaScript-tiedostoja myös muokkaustilassa, lisää vain tunniste "script src=..." sivulle.
 Dynamiccontent=Esimerkki sivusta, jolla on dynaaminen sisältö
-ImportSite=Tuo verkkosivustomalli
 EditInLineOnOff=Tila "Muokkaa upotettuna" on %s
 ShowSubContainersOnOff=Dynaamisen sisällön suoritustapa on %s
 GlobalCSSorJS=Verkkosivuston yleinen CSS/JS/otsikko tiedosto
@@ -144,7 +143,7 @@ DefineListOfAltLanguagesInWebsiteProperties=Määritä luettelo kaikista saatavi
 GenerateSitemaps=Luo verkkosivusto sitemap.xml tiedosto
 ConfirmGenerateSitemaps=Jos vahvistat, poistat nykyisen sivustokartan tiedosto...
 ConfirmSitemapsCreation=Vahvista sivustokartan luominen
-SitemapGenerated=Sivustokartta tiedosto <b>%s<span class='notranslate'>b09a4f8<z09a /span> luotu
+SitemapGenerated=Sitemap file <b>%s</b> generated
 ImportFavicon=Favicon
 ErrorFaviconType=Faviconin on oltava png
 ErrorFaviconSize=Faviconin koon tulee olla 16x16, 32x32 tai 64x64
@@ -158,9 +157,81 @@ Booking=Varaus
 Reservation=Varaus
 PagesViewedPreviousMonth=Katsotut sivut (edellinen kuukausi)
 PagesViewedTotal=Katsotut sivut (yhteensä)
-Visibility=Näkyvyys
 Everyone=Kaikki
 AssignedContacts=Määritetyt yhteystiedot
 WebsiteTypeLabel=Web-sivuston tyyppi
-WebsiteTypeDolibarrWebsite=Verkkosivusto (CMS Dolibarr)
-WebsiteTypeDolibarrPortal=Alkuperäinen Dolibarr-portaali
+WebsiteTypeDolibarrWebsite=Web site (Module WebSites CMS)
+WebsiteTypeDolibarrPortal=Native and ready to use web portal (Module Web Portal)
+WebPortalURL=Web portal URL
+NewWebsiteAccount=New accounts for websites
+ModuleWebPortalName=Web portal
+ModuleWebPortalDesc=A ready to use native web portal for customers, suppliers, partners or members
+WebPortalDescription=Public web portal module for membership and partnership
+WebPortalSetup=WebPortal setup
+WebPortalCSS=Web portal CSS
+WebPortalSetupPage=WebPortal setup page
+WEBPORTAL_TITLE=Brand name on header of public page
+UserAccountForWebPortalAreInThirdPartyTabHelp=Users accounts for WebPortal can be set on each third party card in Website accounts tab
+WebPortalAccessHidden=Kätketty
+WebPortalAccessVisible=Visible
+WebPortalAccessEdit=Editable
+WEBPORTAL_MEMBER_CARD_ACCESS=Enable access to the membership record
+WebPortalMemberCardAccessHelp=Enable access to the membership record (Hidden / Visible or Editable)
+WEBPORTAL_PARTNERSHIP_CARD_ACCESS=Enable access to the partnership record
+WebPortalPartnerShipCardAccessHelp=Enable access to the partnership record (Hidden / Visible or Editable)
+WEBPORTAL_PROPAL_LIST_ACCESS=Enable access to the proposals
+WEBPORTAL_ORDER_LIST_ACCESS=Enable access to the orders
+WEBPORTAL_INVOICE_LIST_ACCESS=Enable access to the invoices
+WEBPORTAL_USER_LOGGED=Select an anonymous user
+WebPortalUserLoggedHelp=This user is used to update cards
+WebPortalHomeTitle=Welcome
+WebPortalHomeDesc=Welcome to the public interface
+WebPortalPropalListMenu=Ehdotukset
+WebPortalPropalListTitle=List of proposals
+WebPortalPropalListDesc=List of proposals
+WebPortalPropalListNothing=Proposals not found
+WebPortalOrderListMenu=Tilaukset
+WebPortalOrderListTitle=Tilausluettelo
+WebPortalOrderListDesc=Tilausluettelo
+WebPortalOrderListNothing=Orders not found
+WebPortalInvoiceListMenu=Laskut
+WebPortalInvoiceListTitle=List of invoices
+WebPortalInvoiceListDesc=List of invoices
+WebPortalInvoiceListNothing=Invoices not found
+WebPortalMemberCardMenu=Jäsen
+WebPortalMemberCardTitle=Jäsen-kortti
+WebPortalMemberCardDesc=Jäsen-kortti
+WebPortalPartnershipCardMenu=Partnership
+WebPortalPartnershipCardTitle=Partnership card
+WebPortalPartnershipCardDesc=Partnership card
+loginWebportalUserName=User name / email
+loginWebportalPassword=Salasana
+LoginNow=Login now
+RemoveSearchFilters=Remove search filters
+WEBPORTAL_PRIMARY_COLOR=Primary color
+WEBPORTAL_SECONDARY_COLOR=Secondary color
+WEBPORTAL_LOGIN_LOGO_URL=Login logo image URL
+WEBPORTAL_MENU_LOGO_URL=Menu logo image URL
+WEBPORTAL_MENU_LOGO_URLTooltip=Leave empty to use login logo
+WEBPORTAL_LOGIN_BACKGROUND=Background login image URL
+WEBPORTAL_BANNER_BACKGROUND=Background for banner
+WEBPORTAL_BANNER_BACKGROUND_IS_DARK=Use dark theme for banner
+AriaPrevPage=Previous page
+AriaNextPage=Next page
+AriaPageX=Page %s
+WebPortalError404=Page not found
+WebPortalErrorPageNotExist=Page not exist
+WebPortalErrorFetchThirdPartyAccountFromLogin=Error when loading third-party account (login : %s)
+WebPortalErrorAuthentication=Authentication error
+WebPortalErrorFetchLoggedThirdPartyAccount=Error when loading third-party account (login : %s)
+WebPortalErrorFetchLoggedUser=Error when loading user (Id : %s)
+WebPortalErrorFetchLoggedThirdParty=Error when loading third-party (Id : %s)
+WebPortalErrorFetchLoggedMember=Error when loading member (Id : %s)
+WebPortalErrorFetchLoggedPartnership=Error when loading partnership (Third-party Id : %s, Member Id : %s)
+ExportIntoGIT=Export into sources
+WebPortalMember=Membership
+WebPortalOrder=Sale Order
+WebPortalPartnership=Partnership
+WebPortalPropal=Tarjous
+WebPortalGroupMenuAdmin=Administration
+WebPortalGroupMenuTechnical=Järjestelmä

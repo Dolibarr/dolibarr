@@ -54,20 +54,20 @@ $hookmanager->initHooks(array('element_resource'));
 $object->available_resources = array('dolresource');
 
 // Get parameters
-$id                     = GETPOST('id', 'int'); // resource id
-$element_id             = GETPOST('element_id', 'int'); // element_id
+$id                     = GETPOSTINT('id'); // resource id
+$element_id             = GETPOSTINT('element_id'); // element_id
 $element_ref            = GETPOST('ref', 'alpha'); // element ref
 $element                = GETPOST('element', 'alpha'); // element_type
 $action                 = GETPOST('action', 'alpha');
 $mode                   = GETPOST('mode', 'alpha');
-$lineid                 = GETPOST('lineid', 'int');
-$resource_id            = GETPOST('fk_resource', 'int');
+$lineid                 = GETPOSTINT('lineid');
+$resource_id            = GETPOSTINT('fk_resource');
 $resource_type          = GETPOST('resource_type', 'alpha');
-$busy                   = GETPOST('busy', 'int');
-$mandatory              = GETPOST('mandatory', 'int');
+$busy                   = GETPOSTINT('busy');
+$mandatory              = GETPOSTINT('mandatory');
 $cancel                 = GETPOST('cancel', 'alpha');
 $confirm                = GETPOST('confirm', 'alpha');
-$socid                  = GETPOST('socid', 'int');
+$socid                  = GETPOSTINT('socid');
 
 if (empty($mandatory)) {
 	$mandatory = 0;
@@ -334,7 +334,7 @@ if (!$ret) {
 
 			print dol_get_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
 
-			$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1">';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1">';
 			$linkback .= img_picto($langs->trans("BackToList"), 'object_calendarlist', 'class="pictoactionview pictofixedwidth"');
 			$linkback .= '<span class="hideonsmartphone">'.$langs->trans("BackToList").'</span>';
 			$linkback .= '</a>';

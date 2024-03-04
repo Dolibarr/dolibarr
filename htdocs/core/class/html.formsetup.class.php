@@ -249,7 +249,7 @@ class FormSetup
 	 * saveConfFromPost
 	 *
 	 * @param 	bool 		$noMessageInUpdate display event message on errors and success
-	 * @return	 int        -1 if KO, 1 if OK
+	 * @return	int|null    Return -1 if KO, 1 if OK, null if no items
 	 */
 	public function saveConfFromPost($noMessageInUpdate = false)
 	{
@@ -265,7 +265,6 @@ class FormSetup
 		if ($reshook > 0) {
 			return $reshook;
 		}
-
 
 		if (empty($this->items)) {
 			return null;
@@ -684,7 +683,7 @@ class FormSetupItem
 			$this->fieldValue = getDolGlobalString($this->confKey);
 			return true;
 		} else {
-			$this->fieldValue = null;
+			$this->fieldValue = '';
 			return false;
 		}
 	}
@@ -775,10 +774,10 @@ class FormSetupItem
 		// Modify constant only if key was posted (avoid resetting key to the null value)
 		if ($this->type != 'title') {
 			if (preg_match('/category:/', $this->type)) {
-				if (GETPOST($this->confKey, 'int') == '-1') {
+				if (GETPOSTINT($this->confKey) == '-1') {
 					$val_const = '';
 				} else {
-					$val_const = GETPOST($this->confKey, 'int');
+					$val_const = GETPOSTINT($this->confKey);
 				}
 			} elseif ($this->type == 'multiselect') {
 				$val = GETPOST($this->confKey, 'array');
@@ -825,7 +824,12 @@ class FormSetupItem
 		if (!empty($this->nameText)) {
 			return $this->nameText;
 		}
-		return (($this->langs->trans($this->confKey) != $this->confKey) ? $this->langs->trans($this->confKey) : $this->langs->trans('MissingTranslationForConfKey', $this->confKey));
+		$out = (($this->langs->trans($this->confKey) != $this->confKey) ? $this->langs->trans($this->confKey) : $this->langs->trans('MissingTranslationForConfKey', $this->confKey));
+
+		// if conf defined on entity 0, prepend a picto to indicate it will apply across all entities
+		if (isModEnabled('multicompany') && $this->entity == 0) $out = img_picto($this->langs->trans('AllEntities'), 'fa-globe-americas em088 opacityhigh') . '&nbsp;' . $out;
+
+		return $out;
 	}
 
 	/**
@@ -1099,7 +1103,7 @@ class FormSetupItem
 		} elseif (!empty($errors)) {
 			$this->errors[] = $errors;
 		}
-		return;
+		return null;
 	}
 
 	/**
@@ -1239,8 +1243,13 @@ class FormSetupItem
 	 */
 	public function generateOutputFieldColor()
 	{
+		global $langs;
 		$this->fieldAttr['disabled']=null;
-		return $this->generateInputField();
+		$color = colorArrayToHex(colorStringToArray($this->fieldValue, array()), '');
+		if ($color) {
+			return '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
+		}
+		return $langs->trans("Default");
 	}
 	/**
 	 * generateInputFieldColor
@@ -1250,7 +1259,10 @@ class FormSetupItem
 	public function generateInputFieldColor()
 	{
 		$this->fieldAttr['type']= 'color';
-		return $this->generateInputFieldText();
+		$default = $this->defaultFieldValue;
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+		$formother = new FormOther($this->db);
+		return $formother->selectColor(colorArrayToHex(colorStringToArray($this->fieldAttr['value'], array()), ''), $this->fieldAttr['name'], '', 1, array(), '', '', $default).' ';
 	}
 
 	/**

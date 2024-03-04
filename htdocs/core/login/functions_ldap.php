@@ -93,9 +93,9 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 		$ldap->searchPassword = $ldapadminpass;
 
 		if ($ldapdebug) {
-			dol_syslog("functions_ldap::check_user_password_ldap Server:".join(',', $ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType);
+			dol_syslog("functions_ldap::check_user_password_ldap Server:".implode(',', $ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType);
 			dol_syslog("functions_ldap::check_user_password_ldap uid/samaccountname=".$ldapuserattr.", dn=".$ldapdn.", Admin:".$ldap->searchUser.", Pass:".dol_trunc($ldap->searchPassword, 3));
-			print "DEBUG: Server:".join(',', $ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType."<br>\n";
+			print "DEBUG: Server:".implode(',', $ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType."<br>\n";
 			print "DEBUG: uid/samaccountname=".$ldapuserattr.", dn=".$ldapdn.", Admin:".$ldap->searchUser.", Pass:".dol_trunc($ldap->searchPassword, 3)."<br>\n";
 		}
 
@@ -112,7 +112,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 		// If admin login or ldap auth filter provided
 		// Code to get user in LDAP from an admin connection (may differ from user connection, done later)
 		if ($ldapadminlogin || $dolibarr_main_auth_ldap_filter) {
-			$result = $ldap->connect_bind();
+			$result = $ldap->connectBind();
 			if ($result > 0) {
 				$resultFetchLdapUser = $ldap->fetch($usertotest, $userSearchFilter);
 				//dol_syslog('functions_ldap::check_user_password_ldap resultFetchLdapUser='.$resultFetchLdapUser);
@@ -148,7 +148,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 		// Test with this->seachUser and this->searchPassword
 		//print $resultFetchLdapUser."-".$ldap->ldapUserDN."-".$ldap->searchUser.'-'.$ldap->searchPassword;exit;
-		$result = $ldap->connect_bind();
+		$result = $ldap->connectBind();
 		if ($result > 0) {
 			if ($result == 2) {	// Connection is ok for user/pass into LDAP
 				$login = $usertotest;
@@ -175,7 +175,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					$resultFetchLdapUser = $ldap->fetch($login, $userSearchFilter);
 
 					if ($ldapdebug) {
-						print "DEBUG: UACF = ".join(',', $ldap->uacf)."<br>\n";
+						print "DEBUG: UACF = ".implode(',', $ldap->uacf)."<br>\n";
 					}
 					if ($ldapdebug) {
 						print "DEBUG: pwdLastSet = ".dol_print_date($ldap->pwdlastset, 'day')."<br>\n";

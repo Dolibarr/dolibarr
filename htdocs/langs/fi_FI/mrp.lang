@@ -14,7 +14,7 @@ BOMsSetup=Moduulin tuoteluettelon asennus
 ListOfBOMs=Materiaaliluettelot - BOM
 ListOfManufacturingOrders=Valmistustilaukset
 NewBOM=Uusi lasku Materiaalit
-ProductBOMHelp=Tuote luo (tai pura) tämän tuoteluettelon avulla.<br>Huomaa: <span class='notranslate'>b07827aafe</8a05z0 > ominaisuudella 'Tuotteen luonne' = 'Raaka-aine' eivät näy tässä luettelossa.
+ProductBOMHelp=Product to create (or disassemble) with this BOM.<br>Note: Products with the property 'Nature of product' = 'Raw material' are not visible into this list.
 BOMsNumberingModules=Tuoteluettelon numerointimallit
 BOMsModelModule=BOM-asiakirjamallit
 MOsNumberingModules=MO numerointimallit
@@ -136,4 +136,3 @@ NoRemainQtyToDispatch=Jaettavaa määrää ei ole jäljellä
 
 THMOperatorEstimatedHelp=Operaattorin arvioitu tuntihinta. Käytetään tätä työasemaa käyttävän tuoteluettelon kustannusten arvioimiseen.
 THMMachineEstimatedHelp=Arvioitu koneen hinta per tunti. Käytetään tätä työasemaa käyttävän tuoteluettelon kustannusten arvioimiseen.
-

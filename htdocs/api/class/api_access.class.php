@@ -62,7 +62,7 @@ class DolibarrApiAccess implements iAuthenticate
 	/**
 	 * @var User		$user	Loggued user
 	 */
-	public static $user = '';
+	public static $user = null;
 
 
 	/**
@@ -111,6 +111,9 @@ class DolibarrApiAccess implements iAuthenticate
 		if (isset($_SERVER['HTTP_DOLAPIKEY'])) {         // Param DOLAPIKEY in header can be read with HTTP_DOLAPIKEY
 			$api_key = $_SERVER['HTTP_DOLAPIKEY']; // With header method (recommended)
 		}
+
+		$api_key = dol_string_nounprintableascii($api_key);
+
 		if (preg_match('/^dolcrypt:/i', $api_key)) {
 			throw new RestException(503, 'Bad value for the API key. An API key should not start with dolcrypt:');
 		}

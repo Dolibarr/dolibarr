@@ -40,9 +40,9 @@ $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "produ
 $now = dol_now();
 
 $refresh = GETPOSTISSET('submit') ? true : false;
-$year_current = GETPOSTISSET('year') ? GETPOST('year', 'int') : dol_print_date($now, '%Y', 'tzserver');
+$year_current = GETPOSTISSET('year') ? GETPOSTINT('year') : dol_print_date($now, '%Y', 'tzserver');
 $year_start = $year_current;
-$month_current = GETPOSTISSET('month') ? GETPOST('month', 'int') : dol_print_date($now, '%m', 'tzserver');
+$month_current = GETPOSTISSET('month') ? GETPOSTINT('month') : dol_print_date($now, '%m', 'tzserver');
 $month_start = $month_current;
 
 $refresh = true;
@@ -53,14 +53,14 @@ include DOL_DOCUMENT_ROOT.'/compta/tva/initdatesforvat.inc.php';
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
 $modetax = getDolGlobalString('TAX_MODE');
 if (GETPOSTISSET("modetax")) {
-	$modetax = GETPOST("modetax", 'int');
+	$modetax = GETPOSTINT("modetax");
 }
 if (empty($modetax)) {
 	$modetax = 0;
 }
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }

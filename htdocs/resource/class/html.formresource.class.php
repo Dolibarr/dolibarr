@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) - 2013-2015 Jean-François FERRY	<jfefe@aternatik.fr>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
@@ -75,12 +75,12 @@ class FormResource
 	 *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 *  @param	array	$filterkey		Filter on key value
 	 *  @param	int		$outputmode		0=HTML select string, 1=Array, 2=without form tag
-	 *  @param	int		$limit			Limit number of answers
+	 *  @param	int		$limit			Limit number of answers, 0 for no limit
 	 *  @param	string	$morecss		More css
 	 * 	@param	bool	$multiple		add [] in the name of element and add 'multiple' attribute
 	 * 	@return	string|array			HTML string with
 	 */
-	public function select_resource_list($selected = 0, $htmlname = 'fk_resource', $filter = [], $showempty = 0, $showtype = 0, $forcecombo = 0, $event = array(), $filterkey = '', $outputmode = 0, $limit = 20, $morecss = '', $multiple = false)
+	public function select_resource_list($selected = 0, $htmlname = 'fk_resource', array $filter = [], $showempty = 0, $showtype = 0, $forcecombo = 0, $event = [], $filterkey = [], $outputmode = 0, $limit = 20, $morecss = '', $multiple = false)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -347,7 +347,7 @@ class FormResource
 
 						// If translation exists use it, otherwise use default name
 						if (
-							!empty($conf->global->MAIN_SHOW_STATE_CODE) &&
+							getDolGlobalString('MAIN_SHOW_STATE_CODE') &&
 							(getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 1 || getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 2 || $conf->global->MAIN_SHOW_STATE_CODE === 'all')
 						) {
 							if (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1) {

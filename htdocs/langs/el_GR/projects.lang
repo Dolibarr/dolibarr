@@ -249,7 +249,7 @@ LatestProjects=Τελευταία %s έργα
 LatestModifiedProjects=Τελευταία %s τροποποιημένα έργα 
 OtherFilteredTasks=Άλλες φιλτραρισμένες εργασίες
 NoAssignedTasks=Δεν βρέθηκαν ανατεθειμένες εργασίες (αναθέστε έργο/εργασίες στον τρέχοντα χρήστη από το επάνω πλαίσιο επιλογής για να εισαγάγετε χρόνο σε αυτό)
-ThirdPartyRequiredToGenerateInvoice=Ένα τρίτο μέρος πρέπει να έχει οριστεί στο έργο για να μπορεί να τιμολογηθεί.
+ThirdPartyRequiredToGenerateIntervention=Ένα τρίτο μέρος πρέπει να έχει οριστεί στο έργο για να μπορέσει να δημιουργήσει παρέμβαση.
 ThirdPartyRequiredToGenerateInvoice=Ένα τρίτο μέρος πρέπει να έχει οριστεί στο έργο για να μπορεί να τιμολογηθεί.
 ChooseANotYetAssignedTask=Επιλέξτε μια εργασία που δεν σας έχει ανατεθεί ακόμη
 # Comments trans

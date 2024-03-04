@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2016	Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2021	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2022	Anthony Berton		<anthony.berton@bb2a.fr>
- * Copyright (C) 2023	William Mead		<william.mead@manchenumerique.fr>
+/* Copyright (C) 2016		Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2021		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2022		Anthony Berton		<anthony.berton@bb2a.fr>
+ * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,15 +31,30 @@
 class Utils
 {
 	/**
-	 * @var DoliDB Database handler.
+	 * @var DoliDB      Database handler
 	 */
 	public $db;
 
+	/**
+	 * @var string      Error message
+	 * @see             $errors
+	 */
 	public $error;
+
+	/**
+	 * @var string[]    Array of error messages
+	 */
 	public $errors;
 
-	public $output; // Used by Cron method to return message
-	public $result; // Used by Cron method to return data
+	/**
+	 * @var string      Used by Cron method to return message
+	 */
+	public $output;
+
+	/**
+	 * @var array{commandbackuplastdone:string,commandbackuptorun:string}	Used by Cron method to return data
+	 */
+	public $result;
 
 	/**
 	 *	Constructor
@@ -155,8 +170,14 @@ class Utils
 						$tmpcountdeleted = 0;
 
 						$result = dol_delete_dir_recursive($filesarray[$key]['fullname'], $startcount, 1, 0, $tmpcountdeleted);
-
-						if (!in_array($filesarray[$key]['fullname'], array($conf->api->dir_temp, $conf->user->dir_temp))) {		// The 2 directories $conf->api->dir_temp and $conf->user->dir_temp are recreated at end, so we do not count them
+						$excluded = [
+							$conf->user->dir_temp,
+						];
+						if (isModEnabled('api')) {
+							$excluded[] = $conf->api->dir_temp;
+						}
+						// The 2 directories $conf->api->dir_temp and $conf->user->dir_temp are recreated at end, so we do not count them
+						if (!in_array($filesarray[$key]['fullname'], $excluded)) {
 							$count += $result;
 							$countdeleted += $tmpcountdeleted;
 						}
@@ -322,6 +343,9 @@ class Utils
 			}
 			if (GETPOST("use_mysql_quick_param", "alpha")) {
 				$param .= " --quick";
+			}
+			if (GETPOST("use_force", "alpha")) {
+				$param .= " -f";
 			}
 			if (GETPOST("sql_structure", "alpha") || $usedefault) {
 				if (GETPOST("drop", "alpha") || $usedefault) {
@@ -498,7 +522,7 @@ class Utils
 					} elseif ($compression == 'gz') {
 						gzclose($handle);
 					} elseif ($compression == 'bz') {
-						bzclose($handle);
+						fclose($handle);
 					} elseif ($compression == 'zstd') {
 						fclose($handle);
 					}
@@ -532,7 +556,7 @@ class Utils
 				} elseif ($compression == 'gz') {
 					gzclose($handle);
 				} elseif ($compression == 'bz') {
-					bzclose($handle);
+					fclose($handle);
 				} elseif ($compression == 'zstd') {
 					fclose($handle);
 				}
@@ -1354,9 +1378,10 @@ class Utils
 			}
 		}
 
+		$result = false;
 		if (!$error) {
 			$result = $mailfile->sendfile();
-			if ($result <= 0) {
+			if (!$result) {
 				$error++;
 				$output = $mailfile->error;
 			}
@@ -1364,13 +1389,13 @@ class Utils
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$this->error = $error;
+		$this->error = "Error sending backp file ".((string) $error);
 		$this->output = $output;
 
-		if ($result == true) {
+		if ($result) {
 			return 0;
 		} else {
-			return $result;
+			return -1;
 		}
 	}
 
