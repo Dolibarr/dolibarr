@@ -3,7 +3,7 @@
  * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013-2014 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012	   Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,13 +38,39 @@ class ICal
 	 */
 	public $file;
 
-	// Text in file
+	/**
+	 * @var string  Text in file
+	 */
 	public $file_text;
-	public $cal; // Array to save iCalendar parse data
-	public $event_count; // Number of Events
-	public $todo_count; // Number of Todos
-	public $freebusy_count; // Number of Freebusy
-	public $last_key; //Help variable save last key (multiline string)
+
+	/**
+	 * @var array Array to save iCalendar parse data
+	 */
+	public $cal;
+
+	/**
+	 * @var int Number of Events
+	 */
+	public $event_count;
+
+	/**
+	 * @var int Number of Todos
+	 */
+	public $todo_count;
+
+	/**
+	 * @var int Number of Freebusy
+	 */
+	public $freebusy_count;
+
+	/**
+	 * @var string Help variable save last key (multiline string)
+	 */
+	public $last_key;
+
+	/**
+	 * @var string error message
+	 */
 	public $error;
 
 
