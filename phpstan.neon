@@ -1,9 +1,9 @@
 parameters:
 	tmpDir: ./.github/tmp
 	parallel:
-		jobSize: 20
+		jobSize: 8
 		processTimeout: 600.0
-		maximumNumberOfProcesses: 8
+		maximumNumberOfProcesses: 20
 		minimumNumberOfJobsPerProcess: 2
 		buffer: 134217728 # 128 MB
 	customRulesetUsed: true
@@ -11,8 +11,8 @@ parameters:
 	fileExtensions:
 		- php
 	paths:
-	    - htdocs
-	    - scripts
+		- htdocs
+		- scripts
 	excludePaths:
 		analyseAndScan:
 		- htdocs/custom/*
@@ -55,8 +55,8 @@ parameters:
 		- '#Default value of the parameter#'
 	internalErrorsCountLimit: 50
 	cache:
-	    nodesByFileCountMax: 512
-	    nodesByStringCountMax: 512
+		nodesByFileCountMax: 512
+		nodesByStringCountMax: 512
 	reportUnmatchedIgnoredErrors: false
 	universalObjectCratesClasses:
 		- stdClass

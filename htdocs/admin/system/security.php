@@ -95,7 +95,7 @@ if (function_exists('exec')) {
 	$varout = 0;
 	exec('id', $arrayout, $varout);
 	if (empty($varout)) {	// Test command is ok. Work only on Linux OS.
-		print '<strong>'.$langs->trans("WebUserGroup")." (real, 'id' command)</strong> : ".join(',', $arrayout)."<br>\n";
+		print '<strong>'.$langs->trans("WebUserGroup")." (real, 'id' command)</strong> : ".implode(',', $arrayout)."<br>\n";
 	}
 }
 print '<br>';
@@ -342,15 +342,15 @@ if (!getDolGlobalString('SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF')) {
 
 print '<strong>$dolibarr_main_stream_to_disable</strong>: ';
 if (empty($dolibarr_main_stream_to_disable)) {
-	print '<span class="opacitymedium">'.$langs->trans("Undefined").' = '.join(', ', $arrayofstreamtodisable).'</span>';
+	print '<span class="opacitymedium">'.$langs->trans("Undefined").' = '.implode(', ', $arrayofstreamtodisable).'</span>';
 } else {
-	print join(', ', $dolibarr_main_stream_to_disable);
+	print implode(', ', $dolibarr_main_stream_to_disable);
 }
 print '<span class="bold"> -> PHP streams allowed = </span>';
 $arrayofstreams = stream_get_wrappers();
 if (!empty($arrayofstreams)) {
 	sort($arrayofstreams);
-	print(join(',', $arrayofstreams)).' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("TryToKeepOnly", 'file,http,https,php').')</span>'."\n";
+	print(implode(',', $arrayofstreams)).' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("TryToKeepOnly", 'file,http,https,php').')</span>'."\n";
 }
 
 print '<br>';

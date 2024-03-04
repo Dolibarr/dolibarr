@@ -401,8 +401,8 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 				$startdate	  = $event["startdate"];
 				$summary  	  = $event["summary"];
 				$url		  = $event["url"];
-				$author = $event["author"];
-				$category = $event["category"];
+				$author       = $event["author"];
+				$category     = empty($event["category"]) ? null : $event["category"];
 				if (!empty($event["image"])) {
 					$image = $event["image"];
 				}
@@ -419,9 +419,10 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 				fwrite($fichier, "<title><![CDATA[".$summary."]]></title>\n");
 				fwrite($fichier, "<link><![CDATA[".$url."]]></link>\n");
 				fwrite($fichier, "<author><![CDATA[".$author."]]></author>\n");
-				fwrite($fichier, "<category><![CDATA[".$category."]]></category>\n");
+				if (!empty($category)) {
+					fwrite($fichier, "<category><![CDATA[".$category."]]></category>\n");
+				}
 				fwrite($fichier, "<description><![CDATA[");
-
 				if (!empty($image)) {
 					fwrite($fichier, '<p><img class="center" src="'.$image.'"/></p>');
 				}

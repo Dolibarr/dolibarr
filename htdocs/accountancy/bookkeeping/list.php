@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
 $langs->loadLangs(array("accountancy", "compta"));
 
 // Get Parameters
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 
 // action+display Parameters
 $action = GETPOST('action', 'aZ09');
@@ -53,53 +53,53 @@ $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bookkeepinglist';
 
 // Search Parameters
-$search_mvt_num = GETPOST('search_mvt_num', 'int');
+$search_mvt_num = GETPOSTINT('search_mvt_num');
 $search_doc_type = GETPOST("search_doc_type", 'alpha');
 $search_doc_ref = GETPOST("search_doc_ref", 'alpha');
-$search_date_startyear =  GETPOST('search_date_startyear', 'int');
-$search_date_startmonth =  GETPOST('search_date_startmonth', 'int');
-$search_date_startday =  GETPOST('search_date_startday', 'int');
-$search_date_endyear =  GETPOST('search_date_endyear', 'int');
-$search_date_endmonth =  GETPOST('search_date_endmonth', 'int');
-$search_date_endday =  GETPOST('search_date_endday', 'int');
+$search_date_startyear =  GETPOSTINT('search_date_startyear');
+$search_date_startmonth =  GETPOSTINT('search_date_startmonth');
+$search_date_startday =  GETPOSTINT('search_date_startday');
+$search_date_endyear =  GETPOSTINT('search_date_endyear');
+$search_date_endmonth =  GETPOSTINT('search_date_endmonth');
+$search_date_endday =  GETPOSTINT('search_date_endday');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
-$search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
-$search_date_creation_startyear =  GETPOST('search_date_creation_startyear', 'int');
-$search_date_creation_startmonth =  GETPOST('search_date_creation_startmonth', 'int');
-$search_date_creation_startday =  GETPOST('search_date_creation_startday', 'int');
-$search_date_creation_endyear =  GETPOST('search_date_creation_endyear', 'int');
-$search_date_creation_endmonth =  GETPOST('search_date_creation_endmonth', 'int');
-$search_date_creation_endday =  GETPOST('search_date_creation_endday', 'int');
+$search_doc_date = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
+$search_date_creation_startyear =  GETPOSTINT('search_date_creation_startyear');
+$search_date_creation_startmonth =  GETPOSTINT('search_date_creation_startmonth');
+$search_date_creation_startday =  GETPOSTINT('search_date_creation_startday');
+$search_date_creation_endyear =  GETPOSTINT('search_date_creation_endyear');
+$search_date_creation_endmonth =  GETPOSTINT('search_date_creation_endmonth');
+$search_date_creation_endday =  GETPOSTINT('search_date_creation_endday');
 $search_date_creation_start = dol_mktime(0, 0, 0, $search_date_creation_startmonth, $search_date_creation_startday, $search_date_creation_startyear);
 $search_date_creation_end = dol_mktime(23, 59, 59, $search_date_creation_endmonth, $search_date_creation_endday, $search_date_creation_endyear);
-$search_date_modification_startyear =  GETPOST('search_date_modification_startyear', 'int');
-$search_date_modification_startmonth =  GETPOST('search_date_modification_startmonth', 'int');
-$search_date_modification_startday =  GETPOST('search_date_modification_startday', 'int');
-$search_date_modification_endyear =  GETPOST('search_date_modification_endyear', 'int');
-$search_date_modification_endmonth =  GETPOST('search_date_modification_endmonth', 'int');
-$search_date_modification_endday =  GETPOST('search_date_modification_endday', 'int');
+$search_date_modification_startyear =  GETPOSTINT('search_date_modification_startyear');
+$search_date_modification_startmonth =  GETPOSTINT('search_date_modification_startmonth');
+$search_date_modification_startday =  GETPOSTINT('search_date_modification_startday');
+$search_date_modification_endyear =  GETPOSTINT('search_date_modification_endyear');
+$search_date_modification_endmonth =  GETPOSTINT('search_date_modification_endmonth');
+$search_date_modification_endday =  GETPOSTINT('search_date_modification_endday');
 $search_date_modification_start = dol_mktime(0, 0, 0, $search_date_modification_startmonth, $search_date_modification_startday, $search_date_modification_startyear);
 $search_date_modification_end = dol_mktime(23, 59, 59, $search_date_modification_endmonth, $search_date_modification_endday, $search_date_modification_endyear);
-$search_date_export_startyear =  GETPOST('search_date_export_startyear', 'int');
-$search_date_export_startmonth =  GETPOST('search_date_export_startmonth', 'int');
-$search_date_export_startday =  GETPOST('search_date_export_startday', 'int');
-$search_date_export_endyear =  GETPOST('search_date_export_endyear', 'int');
-$search_date_export_endmonth =  GETPOST('search_date_export_endmonth', 'int');
-$search_date_export_endday =  GETPOST('search_date_export_endday', 'int');
+$search_date_export_startyear =  GETPOSTINT('search_date_export_startyear');
+$search_date_export_startmonth =  GETPOSTINT('search_date_export_startmonth');
+$search_date_export_startday =  GETPOSTINT('search_date_export_startday');
+$search_date_export_endyear =  GETPOSTINT('search_date_export_endyear');
+$search_date_export_endmonth =  GETPOSTINT('search_date_export_endmonth');
+$search_date_export_endday =  GETPOSTINT('search_date_export_endday');
 $search_date_export_start = dol_mktime(0, 0, 0, $search_date_export_startmonth, $search_date_export_startday, $search_date_export_startyear);
 $search_date_export_end = dol_mktime(23, 59, 59, $search_date_export_endmonth, $search_date_export_endday, $search_date_export_endyear);
-$search_date_validation_startyear =  GETPOST('search_date_validation_startyear', 'int');
-$search_date_validation_startmonth =  GETPOST('search_date_validation_startmonth', 'int');
-$search_date_validation_startday =  GETPOST('search_date_validation_startday', 'int');
-$search_date_validation_endyear =  GETPOST('search_date_validation_endyear', 'int');
-$search_date_validation_endmonth =  GETPOST('search_date_validation_endmonth', 'int');
-$search_date_validation_endday =  GETPOST('search_date_validation_endday', 'int');
+$search_date_validation_startyear =  GETPOSTINT('search_date_validation_startyear');
+$search_date_validation_startmonth =  GETPOSTINT('search_date_validation_startmonth');
+$search_date_validation_startday =  GETPOSTINT('search_date_validation_startday');
+$search_date_validation_endyear =  GETPOSTINT('search_date_validation_endyear');
+$search_date_validation_endmonth =  GETPOSTINT('search_date_validation_endmonth');
+$search_date_validation_endday =  GETPOSTINT('search_date_validation_endday');
 $search_date_validation_start = dol_mktime(0, 0, 0, $search_date_validation_startmonth, $search_date_validation_startday, $search_date_validation_startyear);
 $search_date_validation_end = dol_mktime(23, 59, 59, $search_date_validation_endmonth, $search_date_validation_endday, $search_date_validation_endyear);
 $search_import_key = GETPOST("search_import_key", 'alpha');
 
-$search_account_category = GETPOST('search_account_category', 'int');
+$search_account_category = GETPOSTINT('search_account_category');
 
 $search_accountancy_code = GETPOST("search_accountancy_code", 'alpha');
 $search_accountancy_code_start = GETPOST('search_accountancy_code_start', 'alpha');
@@ -129,11 +129,11 @@ $search_lettering_code = GETPOST('search_lettering_code', 'alpha');
 $search_not_reconciled = GETPOST('search_not_reconciled', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : getDolGlobalString('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : getDolGlobalString('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $optioncss = GETPOST('optioncss', 'alpha');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0) {
 	$page = 0;
 }
@@ -154,7 +154,7 @@ $hookmanager->initHooks(array('bookkeepinglist'));
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);
 
-if (!in_array($action, array('delmouv', 'delmouvconfirm')) && !GETPOSTISSET('begin') && !GETPOSTISSET('formfilteraction') && GETPOST('page', 'int') == '' && !GETPOST('noreset', 'int') && $user->hasRight('accounting', 'mouvements', 'export')) {
+if (!in_array($action, array('delmouv', 'delmouvconfirm')) && !GETPOSTISSET('begin') && !GETPOSTISSET('formfilteraction') && GETPOSTINT('page') == '' && !GETPOSTINT('noreset') && $user->hasRight('accounting', 'mouvements', 'export')) {
 	if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('restore_lastsearch_values') && !GETPOST('search_accountancy_code_start')) {
 		$query = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
 		$query .= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."' limit 1";
@@ -340,7 +340,7 @@ if (empty($reshook)) {
 				$listofaccountsforgroup2[] = "'".$db->escape($tmpval['id'])."'";
 			}
 		}
-		$filter['t.search_accounting_code_in'] = join(',', $listofaccountsforgroup2);
+		$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);
 		$param .= '&search_account_category='.urlencode($search_account_category);
 	}
 	if (!empty($search_accountancy_code)) {
@@ -645,7 +645,7 @@ if (count($filter) > 0) {
 			$sqlwhere[] = 't.lettering_code IS NULL';
 		} elseif ($key == 't.code_journal' && !empty($value)) {
 			if (is_array($value)) {
-				$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+				$sqlwhere[] = natural_search("t.code_journal", implode(',', $value), 3, 1);
 			} else {
 				$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
 			}
@@ -738,7 +738,7 @@ if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->hasRight('accountin
 if ($user->hasRight('accounting', 'mouvements', 'supprimer')) {
 	$arrayofmassactions['predeletebookkeepingwriting'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('preunletteringauto', 'preunletteringmanual', 'predeletebookkeepingwriting'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('preunletteringauto', 'preunletteringmanual', 'predeletebookkeepingwriting'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction($massaction, $arrayofmassactions);
@@ -798,7 +798,7 @@ if ($massaction == 'preunletteringauto') {
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 if ($massactionbutton && $contextpage != 'poslist') {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -1037,7 +1037,7 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print "</tr>\n";
 
 
-$line = new BookKeepingLine();
+$line = new BookKeepingLine($db);
 
 // Loop on record
 // --------------------------------------------------------------------

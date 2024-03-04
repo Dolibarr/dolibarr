@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,6 @@ class Productbatch extends CommonObject
 
 	private static $_table_element = 'product_batch'; //!< Name of table without prefix where object is stored
 
-	public $tms = '';
 	public $fk_product_stock;
 
 	public $batch = '';
@@ -336,18 +336,20 @@ class Productbatch extends CommonObject
 	 *	Initialise object with example values
 	 *	Id must be 0 if object instance is a specimen
 	 *
-	 *	@return	void
+	 *	@return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
 
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->fk_product_stock = '';
 		$this->sellby = '';
 		$this->eatby = '';
 		$this->batch = '';
 		$this->import_key = '';
+
+		return 1;
 	}
 
 	/**
@@ -372,7 +374,7 @@ class Productbatch extends CommonObject
 	}
 
 	/**
-	 *  Find first detail record that match eather eat-by or sell-by or batch within given warehouse
+	 *  Find first detailed record that match either eat-by, sell-by or batch within the warehouse
 	 *
 	 *  @param	int			$fk_product_stock   id product_stock for object
 	 *  @param	integer		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
@@ -477,14 +479,13 @@ class Productbatch extends CommonObject
 		}
 		if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock AS ps ON (ps.rowid = fk_product_stock)';
-			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'stock_mouvement AS sm ON (sm.batch = t.batch AND ps.fk_entrepot=sm.fk_entrepot)';
+			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'stock_mouvement AS sm ON (sm.batch = t.batch AND ps.fk_entrepot=sm.fk_entrepot AND sm.type_mouvement IN (0,3))';
 		}
 		$sql .= " WHERE fk_product_stock=".((int) $fk_product_stock);
 		if ($with_qty) {
 			$sql .= " AND t.qty <> 0";
 		}
 		if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
-			$sql .= ' AND sm.type_mouvement IN (0,3)';
 			$sql .= ' GROUP BY t.rowid, t.tms, t.fk_product_stock,t.sellby,t.eatby , t.batch,t.qty,t.import_key';
 			if ($fk_product > 0) {
 				$sql .= ', pl.rowid, pl.eatby, pl.sellby';

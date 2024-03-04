@@ -51,14 +51,14 @@ if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 // Load translation files required by page
 $langs->loadLangs(array('users', 'other'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'groupcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$userid = GETPOST('user', 'int');
+$userid = GETPOSTINT('user');
 
 $object = new UserGroup($db);
 $extrafields = new ExtraFields($db);
@@ -222,7 +222,7 @@ if (empty($reshook)) {
 			if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 				$object->entity = 0;
 			} elseif (GETPOSTISSET("entity")) {
-				$object->entity = GETPOST("entity", "int");
+				$object->entity = GETPOSTINT("entity");
 			}
 
 			$ret = $object->update();
@@ -324,7 +324,7 @@ if ($action == 'create') {
 		}
 
 		/*
-		 * Fiche en mode visu
+		 * Card in view mode
 		 */
 
 		if ($action != 'edit') {
@@ -513,7 +513,7 @@ if ($action == 'create') {
 		}
 
 		/*
-		 * Fiche en mode edition
+		 * Card in edit mode
 		 */
 
 		if ($action == 'edit' && $caneditperms) {

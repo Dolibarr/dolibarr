@@ -423,7 +423,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 			print $langs->trans("ErrorFailedToConnect")."<br>";
 		}
 	} else {
-		dol_print_error('', 'step5.php: unknown choice of action');
+		dol_print_error(null, 'step5.php: unknown choice of action');
 	}
 
 	$db->close();
@@ -533,7 +533,7 @@ if ($action == "set") {
 		$morehtml .= '</a></div>';
 	}
 } else {
-	dol_print_error('', 'step5.php: unknown choice of action='.$action.' in create lock file seaction');
+	dol_print_error(null, 'step5.php: unknown choice of action='.$action.' in create lock file seaction');
 }
 
 // Clear cache files

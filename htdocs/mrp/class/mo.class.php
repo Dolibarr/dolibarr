@@ -18,7 +18,7 @@
  */
 
 /**
- * \file        class/mo.class.php
+ * \file        mrp/class/mo.class.php
  * \ingroup     mrp
  * \brief       This file is a CRUD class file for Mo (Create/Read/Update/Delete)
  */
@@ -26,6 +26,7 @@
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
+
 
 /**
  * Class for Mo
@@ -113,8 +114,8 @@ class Mo extends CommonObject
 		'date_valid' => array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>502,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'user.rowid', 'csslist'=>'tdoverflowmax100'),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'position'=>511, 'notnull'=>-1, 'csslist'=>'tdoverflowmax100'),
-		'date_start_planned' => array('type'=>'datetime', 'label'=>'DateStartPlannedMo', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'notnull'=>-1, 'index'=>1, 'help'=>'KeepEmptyForAsap', 'alwayseditable'=>1),
-		'date_end_planned' => array('type'=>'datetime', 'label'=>'DateEndPlannedMo', 'enabled'=>1, 'visible'=>1, 'position'=>56, 'notnull'=>-1, 'index'=>1, 'alwayseditable'=>1),
+		'date_start_planned' => array('type'=>'datetime', 'label'=>'DateStartPlannedMo', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'notnull'=>-1, 'index'=>1, 'help'=>'KeepEmptyForAsap', 'alwayseditable'=>1, 'csslist'=>'nowraponall'),
+		'date_end_planned' => array('type'=>'datetime', 'label'=>'DateEndPlannedMo', 'enabled'=>1, 'visible'=>1, 'position'=>56, 'notnull'=>-1, 'index'=>1, 'alwayseditable'=>1, 'csslist'=>'nowraponall'),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'default'=>0, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '2'=>'InProgress', '3'=>'StatusMOProduced', '9'=>'Canceled')),
@@ -153,11 +154,6 @@ class Mo extends CommonObject
 	 * @var integer|string date_validation
 	 */
 	public $date_valid;
-
-	/**
-	 * @var integer|string date_validation
-	 */
-	public $tms;
 
 	public $fk_user_creat;
 	public $fk_user_modif;
@@ -380,6 +376,13 @@ class Mo extends CommonObject
 		unset($object->fk_user_creat);
 		unset($object->import_key);
 
+		// Remove produced and consumed lines
+		foreach ($object->lines as $key => $line) {
+			if (in_array($line->role, array('consumed', 'produced'))) {
+				unset($object->lines[$key]);
+			}
+		}
+
 		// Clear fields
 		$object->ref = empty($this->fields['ref']['default']) ? "copy_of_".$object->ref : $this->fields['ref']['default'];
 		$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
@@ -540,7 +543,7 @@ class Mo extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -877,12 +880,13 @@ class Mo extends CommonObject
 	/**
 	 *  Delete a line of object in database
 	 *
-	 *	@param  User	$user       User that delete
-	 *  @param	int		$idline		Id of line to delete
-	 *  @param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
-	 *  @return int         		>0 if OK, <0 if KO
+	 *	@param  User	$user       	User that delete
+	 *  @param	int		$idline			Id of line to delete
+	 *  @param 	int 	$notrigger  	0=launch triggers after, 1=disable triggers
+	 *  @param	int		$fk_movement	Movement
+	 *  @return int         			Return >0 if OK, <0 if KO
 	 */
-	public function deleteLine(User $user, $idline, $notrigger = 0)
+	public function deleteLine(User $user, $idline, $notrigger = 0, $fk_movement = 0)
 	{
 		global $langs;
 		$langs->loadLangs(array('stocks', 'mrp'));
@@ -892,18 +896,22 @@ class Mo extends CommonObject
 			return -2;
 		}
 		$productstatic = new Product($this->db);
-		$fk_movement = GETPOST('fk_movement', 'int');
-		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);
+
+		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);	// Get lines consumed under the one to delete
+
+		$result = 0;
+
+		$this->db->begin();
 
 		if (!empty($arrayoflines)) {
-			$this->db->begin();
-
+			// If there is child lines
 			$stockmove = new MouvementStock($this->db);
 			$stockmove->setOrigin($this->element, $this->id);
 
 			if (!empty($fk_movement)) {
+				// The fk_movement was not recorded so we try to guess the product and quantity to restore.
 				$moline = new MoLine($this->db);
-				$TArrayMoLine = $moline->fetchAll('', '', 1, 0, array('customsql' => 'fk_stock_movement ='.$fk_movement));
+				$TArrayMoLine = $moline->fetchAll('', '', 1, 0, array('customsql' => 'fk_stock_movement = '.(int) $fk_movement));
 				$moline = array_shift($TArrayMoLine);
 
 				$movement = new MouvementStock($this->db);
@@ -922,13 +930,12 @@ class Mo extends CommonObject
 				}
 				if ($idstockmove < 0) {
 					$this->error++;
-					$this->db->rollback();
 					setEventMessages($stockmove->error, $stockmove->errors, 'errors');
 				} else {
-					$this->db->commit();
+					$result = $moline->delete($user, $notrigger);
 				}
-				return $moline->delete($user, $notrigger);
 			} else {
+				// Loop on each child lines
 				foreach ($arrayoflines as $key => $arrayofline) {
 					$lineDetails = $arrayoflines[$key];
 					$productstatic->fetch($lineDetails['fk_product']);
@@ -938,6 +945,7 @@ class Mo extends CommonObject
 					$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
 					$codemovementCancel = $langs->trans("StockIncrease");
 
+
 					if ($qtytoprocess >= 0) {
 						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
 					} else {
@@ -945,17 +953,35 @@ class Mo extends CommonObject
 					}
 					if ($idstockmove < 0) {
 						$this->error++;
-						$this->db->rollback();
 						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
 					} else {
-						$this->db->commit();
+						$moline = new MoLine($this->db);
+						$moline->fetch($lineDetails['rowid']);
+
+						$resdel = $moline->delete($user, $notrigger);
+						if ($resdel < 0) {
+							$this->error++;
+							setEventMessages($moline->error, $moline->errors, 'errors');
+						}
 					}
 				}
-				return $this->deleteLineCommon($user, $idline, $notrigger);
+
+				if (empty($this->error)) {
+					$result = $this->deleteLineCommon($user, $idline, $notrigger);
+				}
 			}
 		} else {
-			return $this->deleteLineCommon($user, $idline, $notrigger);
+			// No child lines
+			$result = $this->deleteLineCommon($user, $idline, $notrigger);
 		}
+
+		if (!empty($this->error) || $result <= 0) {
+			$this->db->rollback();
+		} else {
+			$this->db->commit();
+		}
+
+		return $result;
 	}
 
 
@@ -987,7 +1013,7 @@ class Mo extends CommonObject
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -1564,13 +1590,15 @@ class Mo extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
-		$this->initAsSpecimenCommon();
+		$ret = $this->initAsSpecimenCommon();
 
 		$this->lines = array();
+
+		return $ret;
 	}
 
 	/**
@@ -1624,8 +1652,8 @@ class Mo extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (getDolGlobalString('MO_ADDON_PDF')) {
-				$modele = getDolGlobalString('MO_ADDON_PDF');
+			} elseif (getDolGlobalString('MRP_MO_ADDON_PDF')) {
+				$modele = getDolGlobalString('MRP_MO_ADDON_PDF');
 			}
 		}
 
@@ -2037,7 +2065,6 @@ class MoLine extends CommonObjectLine
 	public $fk_mrp_production;
 	public $fk_stock_movement;
 	public $date_creation;
-	public $tms;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
@@ -2188,7 +2215,7 @@ class MoLine extends CommonObjectLine
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}

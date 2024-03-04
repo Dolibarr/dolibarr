@@ -7,7 +7,7 @@
  * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2018	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015-2023	Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024	Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2019	Thibault FOUCART		<support@ptibogxiv.net>
@@ -103,10 +103,17 @@ class Adherent extends CommonObject
 	public $fullname;
 
 	/**
-	 * @var string The civility code, not an integer
+	 * @var string
+	 * @deprecated
+	 * @see $civility_code
 	 */
 	public $civility_id;
+
+	/**
+	 * @var string The civility code, not an integer (ex: 'MR', 'MME', 'MLE', etc.)
+	 */
 	public $civility_code;
+
 	public $civility;
 
 	/**
@@ -270,7 +277,7 @@ class Adherent extends CommonObject
 	public $partnerships = array();
 
 	/**
-	 * @var Facture		To store the created invoice into subscriptionComplementaryActions()
+	 * @var Facture|null		To store the created invoice into subscriptionComplementaryActions()
 	 */
 	public $invoice;
 
@@ -1121,7 +1128,7 @@ class Adherent extends CommonObject
 	 *    @param    int		$isencrypted    0 ou 1 if the password needs to be encrypted in the DB (default: 0)
 	 *	  @param	int		$notrigger		1=Does not raise the triggers
 	 *    @param	int		$nosyncuser		Do not synchronize linked user
-	 *    @return   string           		If OK return clear password, 0 if no change, < 0 if error
+	 *    @return   string|int				Clear password if change ok, 0 if no change, <0 if error
 	 */
 	public function setPassword($user, $password = '', $isencrypted = 0, $notrigger = 0, $nosyncuser = 0)
 	{
@@ -1825,6 +1832,7 @@ class Adherent extends CommonObject
 					$vattouse = get_default_tva($mysoc, $mysoc, $idprodsubscription);
 				}
 				//print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				$result = $invoice->addline($label, 0, 1, $vattouse, 0, 0, $idprodsubscription, 0, $datesubscription, '', 0, 0, '', 'TTC', $amount, 1);
 				if ($result <= 0) {
 					$this->error = $invoice->error;
@@ -1854,7 +1862,7 @@ class Adherent extends CommonObject
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 				$amounts = array();
-				$amounts[$invoice->id] = price2num($amount);
+				$amounts[$invoice->id] = (float) price2num($amount);
 
 				$paiement = new Paiement($this->db);
 				$paiement->datepaye = $paymentdate;
@@ -2210,7 +2218,7 @@ class Adherent extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$langs->loadLangs(['members', 'companies']);
 		$nofetch = !empty($params['nofetch']);
@@ -2250,7 +2258,7 @@ class Adherent extends CommonObject
 		}
 		$datas['address'] = '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs);
 		// show categories for this record only in ajax to not overload lists
-		if (isModEnabled('categorie') && !$nofetch) {
+		if (isModEnabled('category') && !$nofetch) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$form = new Form($this->db);
 			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_MEMBER, 1);
@@ -2461,15 +2469,13 @@ class Adherent extends CommonObject
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load indicators this->nb in state board
 	 *
 	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $conf;
 
 		$this->nb = array();
@@ -2625,7 +2631,7 @@ class Adherent extends CommonObject
 		$this->ref = 'ABC001';
 		$this->entity = 1;
 		$this->specimen = 1;
-		$this->civility_id = 0;
+		$this->civility_id = 'MR';
 		$this->lastname = 'DOLIBARR';
 		$this->firstname = 'SPECIMEN';
 		$this->gender = 'man';
@@ -2991,7 +2997,7 @@ class Adherent extends CommonObject
 
 		$blockingerrormsg = '';
 
-		if (!isModEnabled('adherent')) { // Should not happen. If module disabled, cron job should not be visible.
+		if (!isModEnabled('member')) { // Should not happen. If module disabled, cron job should not be visible.
 			$langs->load("agenda");
 			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
 			return 0;
@@ -3024,6 +3030,7 @@ class Adherent extends CommonObject
 
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'adherent';
 			$sql .= " WHERE entity = ".((int) $conf->entity); // Do not use getEntity('adherent').")" here, we want the batch to be on its entity only;
+			$sql .= " AND statut = 1";
 			$sql .= " AND datefin = '".$this->db->idate($datetosearchfor)."'";
 			//$sql .= " LIMIT 10000";
 

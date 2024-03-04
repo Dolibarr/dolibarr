@@ -135,10 +135,10 @@ $array_filtervalue = isset($_SESSION["export_filtered_fields"]) ? $_SESSION["exp
 $datatoexport = GETPOST("datatoexport", "aZ09");
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$step = GETPOST("step", "int") ? GETPOST("step", "int") : 1;
+$step = GETPOSTINT("step") ? GETPOSTINT("step") : 1;
 $export_name = GETPOST("export_name", "alphanohtml");
 $hexa = GETPOST("hexa", "alpha");
-$exportmodelid = GETPOST("exportmodelid", "int");
+$exportmodelid = GETPOSTINT("exportmodelid");
 $field = GETPOST("field", "alpha");
 
 $objexport = new Export($db);
@@ -303,8 +303,8 @@ if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes') {
 }
 
 if ($action == 'deleteprof') {
-	if (GETPOST("id", 'int')) {
-		$objexport->fetch(GETPOST('id', 'int'));
+	if (GETPOSTINT("id")) {
+		$objexport->fetch(GETPOSTINT('id'));
 		$result = $objexport->delete($user);
 	}
 }
@@ -1124,7 +1124,7 @@ if ($step == 5 && $datatoexport) {
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table width="100%" class="border tableforfield">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';

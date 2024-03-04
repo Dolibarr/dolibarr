@@ -4,7 +4,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Francis Appels      <francis.appels@yahoo.com>
- * Copyright (C) 2019-2024  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -662,7 +662,7 @@ class EcmFiles extends CommonObject
 			$this->share = trim($this->share);
 		}
 		if (isset($this->entity)) {
-			$this->entity = trim($this->entity);
+			$this->entity = (int) $this->entity;
 		}
 		if (isset($this->filename)) {
 			$this->filename = preg_replace('/\.noexe$/', '', trim($this->filename));
@@ -690,7 +690,7 @@ class EcmFiles extends CommonObject
 			$this->extraparams = trim($this->extraparams);
 		}
 		if (isset($this->fk_user_m)) {
-			$this->fk_user_m = trim($this->fk_user_m);
+			$this->fk_user_m = (int) $this->fk_user_m;
 		}
 		if (isset($this->acl)) {
 			$this->acl = trim($this->acl);
@@ -957,7 +957,7 @@ class EcmFiles extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -979,10 +979,12 @@ class EcmFiles extends CommonObject
 		$this->date_c = (dol_now() - 3600 * 24 * 10);
 		$this->date_m = '';
 		$this->fk_user_c = $user->id;
-		$this->fk_user_m = '';
+		$this->fk_user_m = $user->id;
 		$this->acl = '';
 		$this->src_object_type = 'product';
 		$this->src_object_id = 1;
+
+		return 1;
 	}
 }
 

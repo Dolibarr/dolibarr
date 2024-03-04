@@ -73,7 +73,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'update') {
-	$max_rank = GETPOST('HRM_MAXRANK', 'int');
+	$max_rank = GETPOSTINT('HRM_MAXRANK');
 
 	// We complete skill possible level notation if necessary
 	if (!empty($max_rank)) {

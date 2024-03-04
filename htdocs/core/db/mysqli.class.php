@@ -249,7 +249,7 @@ class DoliDBMysqli extends DoliDB
 		$tmp = false;
 		try {
 			if (!class_exists('mysqli')) {
-				dol_print_error('', 'Driver mysqli for PHP not available');
+				dol_print_error(null, 'Driver mysqli for PHP not available');
 			}
 			if (strpos($host, 'ssl://') === 0) {
 				$tmp = new mysqliDoli($host, $login, $passwd, $name, $port);
@@ -358,7 +358,7 @@ class DoliDBMysqli extends DoliDB
 				if (getDolGlobalInt('SYSLOG_LEVEL') < LOG_DEBUG) {
 					dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR); // Log of request was not yet done previously
 				}
-				dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterrno." ".$this->lasterror, LOG_ERR);
+				dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterrno." ".$this->lasterror.self::getCallerInfoString(), LOG_ERR);
 				//var_dump(debug_print_backtrace());
 			}
 			$this->lastquery = $query;
@@ -366,6 +366,24 @@ class DoliDBMysqli extends DoliDB
 		}
 
 		return $ret;
+	}
+
+	/**
+	 * Get caller info
+	 *
+	 * @return string
+	 */
+	final protected static function getCallerInfoString()
+	{
+		$backtrace = debug_backtrace();
+		$msg = "";
+		if (count($backtrace) >= 1) {
+			$trace = $backtrace[1];
+			if (isset($trace['file'], $trace['line'])) {
+				$msg = " From {$trace['file']}:{$trace['line']}.";
+			}
+		}
+		return $msg;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1270,7 +1288,12 @@ class mysqliDoli extends mysqli
 	public function __construct($host, $user, $pass, $name, $port = 0, $socket = "")
 	{
 		$flags = 0;
-		parent::init();
+		if (PHP_VERSION_ID >= 80100) {
+			parent::__construct();
+		} else {
+			// @phan-suppress-next-line PhanDeprecatedFunctionInternal
+			parent::init();
+		}
 		if (strpos($host, 'ssl://') === 0) {
 			$host = substr($host, 6);
 			parent::options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);

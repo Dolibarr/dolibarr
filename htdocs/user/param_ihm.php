@@ -35,7 +35,7 @@ $langs->loadLangs(array('companies', 'products', 'admin', 'users', 'languages', 
 // Defini si peux lire/modifier permissions
 $canreaduser = ($user->admin || $user->hasRight("user", "user", "read"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userihm'; // To manage different context of search
 
@@ -111,7 +111,7 @@ if (empty($reshook)) {
 			}
 
 			if (GETPOST("check_SIZE_LISTE_LIMIT") == "on") {
-				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = GETPOST("MAIN_SIZE_LISTE_LIMIT", 'int');
+				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = GETPOSTINT("MAIN_SIZE_LISTE_LIMIT");
 			} else {
 				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = '';
 			}
@@ -132,7 +132,7 @@ if (empty($reshook)) {
 			if ($val == '') {
 				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = '';
 			} else {
-				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = join(
+				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = implode(
 					',',
 					colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1', 'alphanohtml'), array())
 				);
@@ -142,7 +142,7 @@ if (empty($reshook)) {
 			if ($val == '') {
 				$tabparam['THEME_ELDY_BACKTITLE1'] = '';
 			} else {
-				$tabparam['THEME_ELDY_BACKTITLE1'] = join(
+				$tabparam['THEME_ELDY_BACKTITLE1'] = implode(
 					',',
 					colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1', 'alphanohtml'), array())
 				);
@@ -209,16 +209,16 @@ if (isModEnabled('holiday') || isModEnabled('expensereport')) {
 if (isModEnabled("product") || isModEnabled("service")) {
 	$tmparray['product/index.php?mainmenu=products&leftmenu='] = array('label'=>'ProductsAndServicesArea', 'picto'=>'product');
 }
-if (isModEnabled("propal") || isModEnabled('commande') || isModEnabled('ficheinter') || isModEnabled('contrat')) {
+if (isModEnabled("propal") || isModEnabled('order') || isModEnabled('intervention') || isModEnabled('contract')) {
 	$tmparray['comm/index.php?mainmenu=commercial&leftmenu='] = array('label'=>'CommercialArea', 'picto'=>'commercial');
 }
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	$tmparray['compta/index.php?mainmenu=billing&leftmenu='] = array('label'=>'InvoicesArea', 'picto'=>'bill');
 }
 if (isModEnabled('comptabilite') || isModEnabled('accounting')) {
 	$tmparray['compta/index.php?mainmenu=accountancy&leftmenu='] = array('label'=>'AccountancyTreasuryArea', 'picto'=>'bill');
 }
-if (isModEnabled('adherent')) {
+if (isModEnabled('member')) {
 	$tmparray['adherents/index.php?mainmenu=members&leftmenu='] = array('label'=>'MembersArea', 'picto'=>'member');
 }
 if (isModEnabled('agenda')) {

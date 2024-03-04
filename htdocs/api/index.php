@@ -150,11 +150,13 @@ preg_match('/index\.php\/([^\/]+)(.*)$/', $url, $reg);
 // .../index.php/categories?sortfield=t.rowid&sortorder=ASC
 
 
+$hookmanager->initHooks(array('api'));
+
 // When in production mode, a file api/temp/routes.php is created with the API available of current call.
 // But, if we set $refreshcache to false, so it may have only one API in the routes.php file if we make a call for one API without
 // using the explorer. And when we make another call for another API, the API is not into the api/temp/routes.php and a 404 is returned.
 // So we force refresh to each call.
-$refreshcache = (!getDolGlobalString('API_PRODUCTION_DO_NOT_ALWAYS_REFRESH_CACHE') ? true : false);
+$refreshcache = (getDolGlobalString('API_PRODUCTION_DO_NOT_ALWAYS_REFRESH_CACHE') ? false : true);
 if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $reg[2] == '/swagger.json/root' || $reg[2] == '/resources.json' || $reg[2] == '/resources.json/root')) {
 	$refreshcache = true;
 	if (!is_writable($conf->api->dir_temp)) {
@@ -231,12 +233,10 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 					$modulenameforenabled = $module;
 					if ($module == 'propale') {
 						$modulenameforenabled = 'propal';
-					}
-					if ($module == 'supplierproposal') {
+					} elseif ($module == 'supplierproposal') {
 						$modulenameforenabled = 'supplier_proposal';
-					}
-					if ($module == 'ficheinter') {
-						$modulenameforenabled = 'ficheinter';
+					} elseif ($module == 'ficheinter') {
+						$modulenameforenabled = 'intervention';
 					}
 
 					dol_syslog("Found module file ".$file." - module=".$module." - modulenameforenabled=".$modulenameforenabled." - moduledirforclass=".$moduledirforclass);
@@ -411,19 +411,19 @@ Luracast\Restler\Defaults::$returnResponse = $usecompression;
 
 // Call API (we suppose we found it).
 // The handle will use the file api/temp/routes.php to get data to run the API. If the file exists and the entry for API is not found, it will return 404.
-$result = $api->r->handle();
+$responsedata = $api->r->handle();
 
 if (Luracast\Restler\Defaults::$returnResponse) {
 	// We try to compress the data received data
 	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'br') !== false && function_exists('brotli_compress') && defined('BROTLI_TEXT')) {
 		header('Content-Encoding: br');
-		$result = brotli_compress($result, 11, constant('BROTLI_TEXT'));
+		$result = brotli_compress($responsedata, 11, constant('BROTLI_TEXT'));
 	} elseif (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'bz') !== false && function_exists('bzcompress')) {
 		header('Content-Encoding: bz');
-		$result = bzcompress($result, 9);
+		$result = bzcompress($responsedata, 9);
 	} elseif (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false && function_exists('gzencode')) {
 		header('Content-Encoding: gzip');
-		$result = gzencode($result, 9);
+		$result = gzencode($responsedata, 9);
 	} else {
 		header('Content-Encoding: text/html');
 		print "No compression method found. Try to disable compression by adding API_DISABLE_COMPRESSION=1";
@@ -432,6 +432,22 @@ if (Luracast\Restler\Defaults::$returnResponse) {
 
 	// Restler did not output data yet, we return it now
 	echo $result;
+}
+
+// Call API termination method
+$apiMethodInfo = &$api->r->apiMethodInfo;
+$terminateCall = '_terminate_' . $apiMethodInfo->methodName . '_' . $api->r->responseFormat->getExtension();
+if (method_exists($apiMethodInfo->className, $terminateCall)) {
+	// Now flush output buffers so that response data is sent to the client even if we still have action to do in a termination method.
+	ob_end_flush();
+
+	// If you're using PHP-FPM, this function will allow you to send the response and then continue processing
+	if (function_exists('fastcgi_finish_request')) {
+		fastcgi_finish_request();
+	}
+
+	// Call a termination method. Warning: This method can do I/O, sync but must not make output.
+	call_user_func(array(Luracast\Restler\Scope::get($apiMethodInfo->className), $terminateCall), $responsedata);
 }
 
 //session_destroy();

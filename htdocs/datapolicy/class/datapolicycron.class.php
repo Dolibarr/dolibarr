@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018       Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,9 +41,9 @@ class DataPolicyCron
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$db      Database handler
+	 *  @param		DoliDB		$db		Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 	}
@@ -52,7 +53,7 @@ class DataPolicyCron
 	 * Function exec
 	 * CAN BE A CRON TASK
 	 *
-	 * @return	int									0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 * @return		int					if OK: 0 (this function is used also by cron so only 0 is OK)
 	 */
 	public function cleanDataForDataPolicy()
 	{
@@ -95,9 +96,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_TIERS_PROSPECT' => array(
@@ -129,9 +130,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_TIERS_PROSPECT_CLIENT' => array(
@@ -163,9 +164,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_TIERS_NIPROSPECT_NICLIENT' => array(
@@ -197,9 +198,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_TIERS_FOURNISSEUR' => array(
@@ -230,9 +231,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_CONTACT_CLIENT' => array(
@@ -268,9 +269,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_CONTACT_PROSPECT' => array(
@@ -306,9 +307,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_CONTACT_PROSPECT_CLIENT' => array(
@@ -344,9 +345,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT' => array(
@@ -382,9 +383,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_CONTACT_FOURNISSEUR' => array(
@@ -419,9 +420,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_ADHERENT' => array(
@@ -451,9 +452,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 		);
@@ -483,11 +484,11 @@ class DataPolicyCron
 
 						if ($action == 'anonymize') {
 							if ($object->isObjectUsed($obj->rowid) == 0) {			// If object to clean is used
-								foreach ($params['fields_anonym'] as $fields => $val) {
+								foreach ($params['fields_anonym'] as $field => $val) {
 									if ($val == 'MAKEANONYMOUS') {
-										$object->$fields = $fields.'-anonymous-'.$obj->rowid;
+										$object->$field = $field.'-anonymous-'.$obj->rowid; // @phpstan-ignore-line
 									} else {
-										$object->$fields = $val;
+										$object->$field = $val;
 									}
 								}
 								$result = $object->update($obj->rowid, $user);

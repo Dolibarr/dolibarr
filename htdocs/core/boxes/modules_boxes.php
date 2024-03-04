@@ -64,7 +64,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	public $max = 5;
 
 	/**
-	 * @var int Condition to have widget enabled
+	 * @var bool|int Condition to have widget enabled
 	 */
 	public $enabled = 1;
 

@@ -38,7 +38,7 @@ global $conf, $db, $hookmanager, $langs, $user;
 $langs->loadLangs(array('mrp', 'other'));
 
 // Get parameters
-$id          = GETPOST('id', 'int');
+$id          = GETPOSTINT('id');
 $ref         = GETPOST('ref', 'alpha');
 $action      = GETPOST('action', 'aZ09');
 $confirm     = GETPOST('confirm', 'alpha');
@@ -240,7 +240,7 @@ if ($action == 'create') {
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'resource');
-	print $formresource->select_resource_list($resources, 'resources', '', '', 0, '', '', $object->entity, true, 0, 'quatrevingtpercent widthcentpercentminusx', true);
+	print $formresource->select_resource_list($resources, 'resources', [], '', 0, '', '', $object->entity, true, 0, 'quatrevingtpercent widthcentpercentminusx', true);
 	print '</td></tr>';
 
 	// Other attributes
@@ -293,7 +293,7 @@ if (($id || $ref) && $action == 'edit') {
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'resource');
-	print $formresource->select_resource_list(empty($resources) ? $object->resources : $resources, 'resources', '', '', 0, '', '', $object->entity, true, 0, 'quatrevingtpercent widthcentpercentminusx', true);
+	print $formresource->select_resource_list(empty($resources) ? $object->resources : $resources, 'resources', [], '', 0, '', '', $object->entity, true, 0, 'quatrevingtpercent widthcentpercentminusx', true);
 	print '</td></tr>';
 
 	// Other attributes

@@ -21,12 +21,12 @@ DeleteAUser=Fshi një përdorues
 EnableAUser=Aktivizo një përdorues
 DeleteGroup=Fshi
 DeleteAGroup=Fshi një grup
-ConfirmDisableUser=Jeni të sigurt që dëshironi të çaktivizoni përdoruesin <b>%s<span class='notranslate'></b></s>?
-ConfirmDeleteUser=Jeni të sigurt që dëshironi të fshini përdoruesin <b>%s<span class='notranslate'></b></s>?
-ConfirmDeleteGroup=Jeni të sigurt që dëshironi të fshini grupin <b>%s<span class='notranslate'></b></s>?
-ConfirmEnableUser=Jeni i sigurt që dëshironi të aktivizoni përdoruesin <b>%s<span class='notranslate'></b></s>?
-ConfirmReinitPassword=Jeni i sigurt që dëshironi të krijoni një fjalëkalim të ri për përdoruesin <b>%s<span class='notranslate'>b09a4b739f17f80 >?
-ConfirmSendNewPassword=Jeni i sigurt që dëshironi të gjeneroni dhe dërgoni fjalëkalim të ri për përdoruesin <b>%s<span class='notranslate'>b09a4b739f17f8z shtrirje>?
+ConfirmDisableUser=Are you sure you want to disable user <b>%s</b>?
+ConfirmDeleteUser=Are you sure you want to delete user <b>%s</b>?
+ConfirmDeleteGroup=Are you sure you want to delete group <b>%s</b>?
+ConfirmEnableUser=Are you sure you want to enable user <b>%s</b>?
+ConfirmReinitPassword=Are you sure you want to generate a new password for user <b>%s</b>?
+ConfirmSendNewPassword=Are you sure you want to generate and send new password for user <b>%s</b>?
 NewUser=Përdorues i ri
 CreateUser=Krijo përdorues
 LoginNotDefined=Hyrja nuk është e përcaktuar.
@@ -35,7 +35,7 @@ ListOfUsers=Lista e përdoruesve
 SuperAdministrator=Administrator i shumë kompanive
 SuperAdministratorDesc=Administratori i sistemit për shumë kompani (mund të ndryshojë konfigurimin dhe përdoruesit)
 DefaultRights=Lejet e parazgjedhura
-DefaultRightsDesc=Përcaktoni këtu lejet <u>default</u> që i jepen automatikisht një b0b5ba1a823> përdorues i ri<span class='notranslate'></u> (për të modifikuar lejet për përdoruesit ekzistues, shkoni te karta e përdoruesit).
+DefaultRightsDesc=Define here the <u>default</u> permissions that are automatically granted to a <u>new</u> user (to modify permissions for existing users, go to the user card).
 DolibarrUsers=Përdoruesit e Dolibarr
 LastName=Mbiemri
 FirstName=Emri

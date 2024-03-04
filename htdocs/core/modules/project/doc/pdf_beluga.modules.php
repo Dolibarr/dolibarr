@@ -330,7 +330,7 @@ class pdf_beluga extends ModelePDFProjects
 						'class'=>'Commande',
 						'table'=>'commande',
 						'datefieldname'=>'date_commande',
-						'test'=> isModEnabled('commande') && $user->hasRight('commande', 'lire'),
+						'test'=> isModEnabled('order') && $user->hasRight('commande', 'lire'),
 						'lang'=>'orders'),
 					'invoice'=>array(
 						'name'=>"CustomersInvoices",
@@ -339,7 +339,7 @@ class pdf_beluga extends ModelePDFProjects
 						'margin'=>'add',
 						'table'=>'facture',
 						'datefieldname'=>'datef',
-						'test'=> isModEnabled('facture') && $user->hasRight('facture', 'lire'),
+						'test'=> isModEnabled('invoice') && $user->hasRight('facture', 'lire'),
 						'lang'=>'bills'),
 					'invoice_predefined'=>array(
 						'name'=>"PredefinedInvoices",
@@ -347,7 +347,7 @@ class pdf_beluga extends ModelePDFProjects
 						'class'=>'FactureRec',
 						'table'=>'facture_rec',
 						'datefieldname'=>'datec',
-						'test'=> isModEnabled('facture') && $user->hasRight('facture', 'lire'),
+						'test'=> isModEnabled('invoice') && $user->hasRight('facture', 'lire'),
 						'lang'=>'bills'),
 					'order_supplier'=>array(
 						'name'=>"SuppliersOrders",
@@ -355,7 +355,7 @@ class pdf_beluga extends ModelePDFProjects
 						'class'=>'CommandeFournisseur',
 						'table'=>'commande_fournisseur',
 						'datefieldname'=>'date_commande',
-						'test'=>(isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->rights->fournisseur->commande->lire) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire),
+						'test'=>(isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'commande', 'lire')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')),
 						'lang'=>'orders'),
 					'invoice_supplier'=>array(
 						'name'=>"BillsSuppliers",
@@ -364,7 +364,7 @@ class pdf_beluga extends ModelePDFProjects
 						'margin'=>'minus',
 						'table'=>'facture_fourn',
 						'datefieldname'=>'datef',
-						'test'=>(isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->rights->fournisseur->facture->lire) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire),
+						'test'=>(isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'facture', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire')),
 						'lang'=>'bills'),
 					'contract'=>array(
 						'name'=>"Contracts",
@@ -372,7 +372,7 @@ class pdf_beluga extends ModelePDFProjects
 						'class'=>'Contrat',
 						'table'=>'contrat',
 						'datefieldname'=>'date_contrat',
-						'test'=> isModEnabled('contrat') && $user->hasRight('contrat', 'lire'),
+						'test'=> isModEnabled('contract') && $user->hasRight('contrat', 'lire'),
 						'lang'=>'contract'),
 					'intervention'=>array(
 						'name'=>"Interventions",
@@ -381,7 +381,7 @@ class pdf_beluga extends ModelePDFProjects
 						'table'=>'fichinter',
 						'datefieldname'=>'date_valid',
 						'disableamount'=>1,
-						'test'=>isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire'),
+						'test'=>isModEnabled('intervention') && $user->hasRight('ficheinter', 'lire'),
 						'lang'=>'interventions'),
 					'trip'=>array(
 						'name'=>"TripsAndExpenses",
@@ -391,7 +391,7 @@ class pdf_beluga extends ModelePDFProjects
 						'datefieldname'=>'dated',
 						'margin'=>'minus',
 						'disableamount'=>1,
-						'test'=>isModEnabled('deplacement') && $user->rights->deplacement->lire,
+						'test'=>isModEnabled('deplacement') && $user->hasRight('deplacement', 'lire'),
 						'lang'=>'trip'),
 					'expensereport'=>array(
 						'name'=>"ExpensesReports",
@@ -401,7 +401,7 @@ class pdf_beluga extends ModelePDFProjects
 						'datefieldname'=>'dated',
 						'margin'=>'minus',
 						'disableamount'=>1,
-						'test'=>isModEnabled('expensereport') && $user->rights->expensereport->lire,
+						'test'=>isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire'),
 						'lang'=>'trip'),
 					'agenda'=>array(
 						'name'=>"Agenda",
@@ -410,7 +410,7 @@ class pdf_beluga extends ModelePDFProjects
 						'table'=>'actioncomm',
 						'datefieldname'=>'datep',
 						'disableamount'=>1,
-						'test'=> isModEnabled('agenda') && $user->rights->agenda->allactions->read,
+						'test'=> isModEnabled('agenda') && $user->hasRight('agenda', 'allactions', 'read'),
 						'lang'=>'agenda')
 				);
 
@@ -612,7 +612,7 @@ class pdf_beluga extends ModelePDFProjects
 										$date = $element->date_contrat;
 									}
 									if (empty($date)) {
-										$date = $element->datev; // Fiche inter
+										$date = $element->datev; // Intervention card
 									}
 								}
 
@@ -770,7 +770,7 @@ class pdf_beluga extends ModelePDFProjects
 	 *  @param  Project		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -826,6 +826,8 @@ class pdf_beluga extends ModelePDFProjects
 		}
 
 		$pdf->SetTextColor(0, 0, 60);
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

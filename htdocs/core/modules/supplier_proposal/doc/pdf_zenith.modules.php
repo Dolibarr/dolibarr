@@ -5,7 +5,7 @@
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet         <fmarcet@2byte.es>
- * Copyright (C) 2018-2022 Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France       <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -472,7 +472,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 					$height_note = 0;
 				}
 
-				// Use new auto collum system
+				// Use new auto column system
 				$this->prepareArrayColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
 				$nexY = $tab_top + $this->tabTitleHeight;
@@ -840,10 +840,10 @@ class pdf_zenith extends ModelePDFSupplierProposal
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
-	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		SupplierProposal		$object			Object to show
-	 *   @param		int			$posy			Y
-	 *   @param		Translate	$outputlangs	Langs object
+	 *   @param		TCPDF				$pdf     		Object PDF
+	 *   @param		SupplierProposal	$object			Object to show
+	 *   @param		int|float			$posy			Y
+	 *   @param		Translate			$outputlangs	Langs object
 	 *   @return	integer
 	 */
 	protected function _tableau_info(&$pdf, $object, $posy, $outputlangs)
@@ -1168,7 +1168,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 	 *  @param  CommandeFournisseur		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	float|int
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{

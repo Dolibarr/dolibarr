@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2021  Open-Dsi  			<support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,7 +113,7 @@ class AssetModel extends CommonObject
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
-		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'default'=>'0', 'visible'=>2, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Enabled', '9'=>'Disabled'), 'validate'=>'1',),
+		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'default'=>'1', 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Enabled', '9'=>'Disabled'), 'validate'=>'1',),
 	);
 	public $rowid;
 	public $ref;
@@ -121,7 +122,6 @@ class AssetModel extends CommonObject
 	public $note_public;
 	public $note_private;
 	public $date_creation;
-	public $tms;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $last_main_doc;
@@ -129,6 +129,7 @@ class AssetModel extends CommonObject
 	public $model_pdf;
 	public $status;
 	public $asset_depreciation_options;
+	public $asset_accountancy_codes;
 
 	// /**
 	//  * @var string    Field with ID of parent key if this object has a parent
@@ -193,6 +194,16 @@ class AssetModel extends CommonObject
 	public function create(User $user, $notrigger = 0)
 	{
 		$resultcreate = $this->createCommon($user, $notrigger);
+
+		if ($resultcreate > 0 && !empty($this->asset_depreciation_options)) {
+			$this->asset_depreciation_options->setDeprecationOptionsFromPost(1);
+			$this->asset_depreciation_options->updateDeprecationOptions($user, 0, $resultcreate);
+		}
+
+		if ($resultcreate > 0 && !empty($this->asset_accountancy_codes)) {
+			$this->asset_accountancy_codes->setAccountancyCodesFromPost();
+			$this->asset_accountancy_codes->updateAccountancyCodes($user, 0, $resultcreate);
+		}
 
 		return $resultcreate;
 	}
@@ -358,7 +369,7 @@ class AssetModel extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+				} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
@@ -399,7 +410,7 @@ class AssetModel extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -414,7 +425,19 @@ class AssetModel extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		return $this->updateCommon($user, $notrigger);
+		$resultupdate = $this->updateCommon($user, $notrigger);
+
+		if ($resultupdate > 0 && !empty($this->asset_depreciation_options)) {
+			$this->asset_depreciation_options->setDeprecationOptionsFromPost(1);
+			$this->asset_depreciation_options->updateDeprecationOptions($user, 0, $resultupdate);
+		}
+
+		if ($resultupdate > 0 && !empty($this->asset_accountancy_codes)) {
+			$this->asset_accountancy_codes->setAccountancyCodesFromPost();
+			$this->asset_accountancy_codes->updateAccountancyCodes($user, 0, $resultupdate);
+		}
+
+		return $resultupdate;
 	}
 
 	/**
@@ -752,7 +775,7 @@ class AssetModel extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -760,7 +783,7 @@ class AssetModel extends CommonObject
 		// $this->property1 = ...
 		// $this->property2 = ...
 
-		$this->initAsSpecimenCommon();
+		return $this->initAsSpecimenCommon();
 	}
 
 	/**

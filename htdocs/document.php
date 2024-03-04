@@ -102,7 +102,7 @@ $original_file = GETPOST('file', 'alphanohtml'); // Do not use urldecode here ($
 $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'alpha');
 $urlsource = GETPOST('urlsource', 'alpha');
-$entity = GETPOST('entity', 'int') ?GETPOST('entity', 'int') : $conf->entity;
+$entity = GETPOSTINT('entity') ?GETPOSTINT('entity') : $conf->entity;
 
 // Security check
 if (empty($modulepart) && empty($hashp)) {
@@ -209,20 +209,17 @@ $original_file = str_replace('../', '/', $original_file);
 $original_file = str_replace('..\\', '/', $original_file);
 
 
-// Find the subdirectory name as the reference
-$refname = basename(dirname($original_file)."/");
-
 // Security check
 if (empty($modulepart)) {
 	accessforbidden('Bad value for parameter modulepart');
 }
 
 // Check security and set return info with full path of file
-$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname);
+$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, '');
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
-//var_dump($fullpath_original_file.' '.$original_file.' '.$refname.' '.$accessallowed);exit;
+//var_dump($fullpath_original_file.' '.$original_file.' '.$accessallowed);exit;
 
 if (!empty($hashp)) {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
@@ -275,31 +272,34 @@ $fullpath_original_file_osencoded = dol_osencode($fullpath_original_file); // Ne
 // This test if file exists should be useless. We keep it to find bug more easily
 if (!file_exists($fullpath_original_file_osencoded)) {
 	dol_syslog("ErrorFileDoesNotExists: ".$fullpath_original_file);
-	print "ErrorFileDoesNotExists: ".$original_file;
+	print "ErrorFileDoesNotExists: ".dol_escape_htmltag($original_file);
 	exit;
 }
 
 // Hooks
 $hookmanager->initHooks(array('document'));
 $parameters = array('ecmfile' => $ecmfile, 'modulepart' => $modulepart, 'original_file' => $original_file,
-	'entity' => $entity, 'refname' => $refname, 'fullpath_original_file' => $fullpath_original_file,
+	'entity' => $entity, 'fullpath_original_file' => $fullpath_original_file,
 	'filename' => $filename, 'fullpath_original_file_osencoded' => $fullpath_original_file_osencoded);
 $object = new stdClass();
 $reshook = $hookmanager->executeHooks('downloadDocument', $parameters, $object, $action); // Note that $action and $object may have been
 if ($reshook < 0) {
-	$errors = $hookmanager->error.(is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '').join(', ', $hookmanager->errors) : '');
+	$errors = $hookmanager->error.(is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '').implode(', ', $hookmanager->errors) : '');
 	dol_syslog("document.php - Errors when executing the hook 'downloadDocument' : ".$errors);
 	print "ErrorDownloadDocumentHooks: ".$errors;
 	exit;
 }
 
+
 // Permissions are ok and file found, so we return it
 top_httphead($type);
+
 header('Content-Description: File Transfer');
 if ($encoding) {
 	header('Content-Encoding: '.$encoding);
 }
 // Add MIME Content-Disposition from RFC 2183 (inline=automatically displayed, attachment=need user action to open)
+
 if ($attachment) {
 	header('Content-Disposition: attachment; filename="'.$filename.'"');
 } else {

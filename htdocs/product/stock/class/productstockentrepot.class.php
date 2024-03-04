@@ -3,7 +3,7 @@
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,8 +49,6 @@ class ProductStockEntrepot extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'product_warehouse_properties';
-
-	public $tms = '';
 
 	/**
 	 * @var int ID
@@ -598,17 +596,19 @@ class ProductStockEntrepot extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
 
-		$this->tms = '';
-		$this->fk_product = null;
-		$this->fk_entrepot = null;
+		$this->tms = dol_now();
+		$this->fk_product = 0;
+		$this->fk_entrepot = 0;
 		$this->seuil_stock_alerte = '';
 		$this->desiredstock = '';
 		$this->import_key = '';
+
+		return 1;
 	}
 }

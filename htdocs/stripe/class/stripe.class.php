@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018-2021 	Thibault FOUCART       <support@ptibogxiv.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +49,9 @@ class Stripe extends CommonObject
 	 */
 	public $id;
 
+	/**
+	 * @var string
+	 */
 	public $mode;
 
 	/**
@@ -55,11 +59,21 @@ class Stripe extends CommonObject
 	 */
 	public $entity;
 
+	/**
+	 * @var string
+	 */
 	public $statut;
 
 	public $type;
 
+	/**
+	 * @var string
+	 */
 	public $code;
+
+	/**
+	 * @var string
+	 */
 	public $declinecode;
 
 	/**
@@ -339,11 +353,11 @@ class Stripe extends CommonObject
 	 * @param	string	$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int		$status							    Status (0=test, 1=live)
 	 * @param	int		$usethirdpartyemailforreceiptemail	1=use thirdparty email for receipt
-	 * @param	int		$mode		                        automatic=automatic confirmation/payment when conditions are ok, manual=need to call confirm() on intent
+	 * @param	string	$mode		                        automatic=automatic confirmation/payment when conditions are ok, manual=need to call confirm() on intent
 	 * @param   boolean $confirmnow                         false=default, true=try to confirm immediately after create (if conditions are ok)
 	 * @param   string  $payment_method                     'pm_....' (if known)
-	 * @param   string  $off_session                        If we use an already known payment method to pay when customer is not available during the checkout flow.
-	 * @param	string	$noidempotency_key					Do not use the idempotency_key when creating the PaymentIntent
+	 * @param   int     $off_session                        If we use an already known payment method to pay when customer is not available during the checkout flow.
+	 * @param	int     $noidempotency_key					Do not use the idempotency_key when creating the PaymentIntent
 	 * @param	int		$did								ID of an existing line into llx_prelevement_demande (Dolibarr intent). If provided, no new line will be created.
 	 * @return 	\Stripe\PaymentIntent|null 			        Stripe PaymentIntent or null if not found and failed to create
 	 */
@@ -603,7 +617,7 @@ class Stripe extends CommonObject
 				} else {
 					$_SESSION["stripe_payment_intent"] = $paymentintent;
 				}
-			} catch (Stripe\Error\Card $e) {
+			} catch (Stripe\Exception\CardException $e) {
 				$error++;
 				$this->error = $e->getMessage();
 				$this->code = $e->getStripeCode();
@@ -1354,9 +1368,9 @@ class Stripe extends CommonObject
 					$return->message = $charge->id;
 				}
 			}
-		} catch (\Stripe\Error\Card $e) {
+		} catch (\Stripe\Exception\CardException $e) {
 			include DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			// Since it's a decline, \Stripe\Error\Card will be caught
+			// Since it's a decline, \Stripe\Exception\Card will be caught
 			$body = $e->getJsonBody();
 			$err = $body['error'];
 
@@ -1372,24 +1386,24 @@ class Stripe extends CommonObject
 
 			$error++;
 			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (\Stripe\Error\RateLimit $e) {
+		} catch (\Stripe\Exception\RateLimitException $e) {
 			// Too many requests made to the API too quickly
 			$error++;
 			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (\Stripe\Error\InvalidRequest $e) {
+		} catch (\Stripe\Exception\InvalidRequestException $e) {
 			// Invalid parameters were supplied to Stripe's API
 			$error++;
 			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (\Stripe\Error\Authentication $e) {
+		} catch (\Stripe\Exception\AuthenticationException $e) {
 			// Authentication with Stripe's API failed
 			// (maybe you changed API keys recently)
 			$error++;
 			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (\Stripe\Error\ApiConnection $e) {
+		} catch (\Stripe\Exception\ApiConnectionException $e) {
 			// Network communication with Stripe failed
 			$error++;
 			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (\Stripe\Error\Base $e) {
+		} catch (\Stripe\Exception\ExceptionInterface $e) {
 			// Display a very generic error to the user, and maybe send
 			// yourself an email
 			$error++;

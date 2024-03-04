@@ -194,8 +194,7 @@ var select2arrayoflanguage = {
 	noResults: function () { return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2NotFound")); ?>"; },
 	inputTooShort: function (input) {
 		var n = input.minimum;
-		/*console.log(input);
-		console.log(input.minimum);*/
+		/*console.log(input); console.log(input.minimum);*/
 		if (n > 1) return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacters")); ?>";
 			else return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacter")); ?>"
 		},
@@ -274,7 +273,7 @@ function formatDate(date,format)
 
 	var result="";
 
-	var year=date.getYear()+""; if (year.length < 4) { year=""+(year-0+1900); }
+	var year=date.getYear()+""; if (year.length < 4) { year=""+(year-0+2000); } /* #28334 */
 	var month=date.getMonth()+1;
 	var day=date.getDate();
 	var hour=date.getHours();
@@ -344,7 +343,7 @@ function getDateFromFormat(val,format)
 	if (val == '') return 0;
 
 	var now=new Date();
-	var year=now.getYear(); if (year.length < 4) { year=""+(year-0+1900); }
+	var year=now.getYear(); if (year.length < 4) { year=""+(year-0+2000); } /*  #28334 */
 	var month=now.getMonth()+1;
 	var day=now.getDate();
 	var hour=now.getHours();
@@ -369,7 +368,7 @@ function getDateFromFormat(val,format)
 
 		// alert('substr='+substr);
 		if (substr == "yyyy") year=getIntegerInString(val,d,4,4);
-		if (substr == "yy")   year=""+(getIntegerInString(val,d,2,2)-0+1900);
+		if (substr == "yy")   year=""+(getIntegerInString(val,d,2,2)-0+2000); /*  #28334 */
 		if (substr == "MM" ||substr == "M")
 		{
 			month=getIntegerInString(val,d,1,2);
@@ -1339,17 +1338,17 @@ jQuery(document).ready(function() {
 });
 
 
+<?php
+if (!getDolGlobalString('MAIN_DISABLE_SELECT2_FOCUS_PROTECTION') && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
+	?>
 /*
- * Hacky fix for a bug in select2 with jQuery 3.6.0's new nested-focus "protection"
+ * Hacky fix for a bug in select2 with jQuery 3.6.4's new nested-focus "protection"
+ * This fix needs to click a second time when clicking into a combo with ajax (see Test4d and Test5a in test_forms.php
  * see: https://github.com/select2/select2/issues/5993
  * see: https://github.com/jquery/jquery/issues/4382
  *
  * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
  */
-
-<?php
-if (!getDolGlobalString('MAIN_DISABLE_SELECT2_FOCUS_PROTECTION') && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
-	?>
 $(document).on('select2:open', (e) => {
 	console.log("Execute the focus (click on combo or use space when on component");
 	const target = $(e.target);

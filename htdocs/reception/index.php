@@ -79,8 +79,6 @@ if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This may be u
  * Draft receptions
  */
 
-$clause = " WHERE ";
-
 $sql = "SELECT e.rowid, e.ref, e.ref_supplier,";
 $sql .= " s.nom as name, s.rowid as socid,";
 $sql .= " c.ref as commande_fournisseur_ref, c.rowid as commande_fournisseur_id";
@@ -89,11 +87,9 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_t
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur as c ON el.fk_source = c.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 if (!$user->hasRight('societe', 'client', 'voir')) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
-	$sql .= $clause." sc.fk_user = ".((int) $user->id);
-	$clause = " AND ";
+	$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = e.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 }
-$sql .= $clause." e.fk_statut = 0";
+$sql .= " WHERE e.fk_statut = 0";
 $sql .= " AND e.entity IN (".getEntity('reception').")";
 if ($socid) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
@@ -213,9 +209,6 @@ if ($resql) {
 $sql = "SELECT c.rowid, c.ref, c.ref_supplier as ref_supplier, c.fk_statut as status, c.billed as billed, s.nom as name, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-if (!$user->hasRight('societe', 'client', 'voir')) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
 $sql .= " WHERE c.fk_soc = s.rowid";
 $sql .= " AND c.entity IN (".getEntity('supplier_order').")";
 $sql .= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.")";
@@ -223,7 +216,7 @@ if ($socid > 0) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
 if (!$user->hasRight('societe', 'client', 'voir')) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 }
 $sql .= " ORDER BY c.rowid ASC";
 $resql = $db->query($sql);
@@ -236,7 +229,8 @@ if ($resql) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("SuppliersOrdersToProcess").' <span class="badge">'.$num.'</span></th></tr>';
+		print '<th colspan="3">'.$langs->trans("SuppliersOrdersToProcess");
+		print ' <a href="'.DOL_URL_ROOT.'/reception/list.php?search_status=1" alt="'.$langs->trans("GoOnList").'"><span class="badge">'.$num.'</span></a>';
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 

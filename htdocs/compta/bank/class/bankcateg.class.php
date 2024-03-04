@@ -2,6 +2,7 @@
 /* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -354,11 +355,13 @@ class BankCateg // extends CommonObject
 	 * Used to build previews or test instances.
 	 * id must be 0 if object instance is a specimen.
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
 		$this->label = '';
+
+		return 1;
 	}
 }

@@ -133,7 +133,20 @@ class modProjet extends DolibarrModules
 			3=>array('file'=>'box_validated_projects.php', 'enabledbydefaulton'=>'Home'),	// task without timespent
 			4=>array('file'=>'box_funnel_of_prospection.php', 'enabledbydefaulton'=>'Home'),
 		);
-
+		// Cronjobs
+		$this->cronjobs[] = array(
+			'label' => 'WeeklyWorkingHoursReport',
+			'jobtype' => 'method',
+			'class' => 'projet/class/project.class.php',
+			'objectname' => 'Project',
+			'method' => 'createWeeklyReport',
+			'parameters' => '',
+			'comment' => 'Generates and sends a weekly report on time worked',
+			'frequency' => 1,
+			'unitfrequency' => 86400 * 7,
+			'status' => 0,
+			'test' => '$conf->projet->enabled',
+		);
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'projet';
@@ -261,7 +274,7 @@ class modProjet extends DolibarrModules
 		$keyforaliasextra = 'extra2';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add extra fields
-		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('ptt.rowid'=>'IdTaskTime', 'ptt.element_date'=>'TaskTimeDate', 'ptt.element_duration'=>"TimesSpent", 'ptt.fk_user'=>"TaskTimeUser", 'ptt.note'=>"TaskTimeNote"));
+		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('ptt.rowid'=>'IdTaskTime', 'ptt.element_date'=>'TaskTimeDate', 'ptt.element_duration'=>"TimeSpent", 'ptt.fk_user'=>"TaskTimeUser", 'ptt.note'=>"TaskTimeNote"));
 		$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('ptt.rowid'=>'task_time', 'ptt.element_date'=>'task_time', 'ptt.element_duration'=>"task_time", 'ptt.fk_user'=>"task_time", 'ptt.note'=>"task_time"));
 		if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('f.ref'=>"Billed"));

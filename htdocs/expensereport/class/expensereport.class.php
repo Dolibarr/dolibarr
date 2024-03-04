@@ -3,7 +3,7 @@
  * Copyright (C) 2015 		Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 		Alexandre Spangaro  	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (c) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (c) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2016-2020 	Ferran Marcet       	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -499,7 +499,7 @@ class ExpenseReport extends CommonObject
 		// Clear fields
 		$this->fk_user_creat = $user->id;
 		$this->fk_user_author = $fk_user_author; // Note fk_user_author is not the 'author' but the guy the expense report is for.
-		$this->fk_user_valid = '';
+		$this->fk_user_valid = 0;
 		$this->date_create = '';
 		$this->date_creation = '';
 		$this->date_validation = '';
@@ -876,7 +876,7 @@ class ExpenseReport extends CommonObject
 	 *  Used to build previews or test instances.
 	 *  id must be 0 if object instance is a specimen.
 	 *
-	 *  @return void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -898,7 +898,6 @@ class ExpenseReport extends CommonObject
 		$type_fees_id = 2; // TF_TRIP
 
 		$this->status = 5;
-		$this->fk_statut = 5;
 
 		$this->fk_user_author = $user->id;
 		$this->fk_user_validator = $user->id;
@@ -932,6 +931,8 @@ class ExpenseReport extends CommonObject
 			$this->total_tva += $line->total_tva;
 			$this->total_ttc += $line->total_ttc;
 		}
+
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1653,7 +1654,7 @@ class ExpenseReport extends CommonObject
 	/**
 	 * Return next reference of expense report not already used
 	 *
-	 * @return    string            free ref
+	 * @return    string|int<-2,-1>            free ref, or <0 if error
 	 */
 	public function getNextNumRef()
 	{
@@ -1676,7 +1677,7 @@ class ExpenseReport extends CommonObject
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -2291,7 +2292,7 @@ class ExpenseReport extends CommonObject
 	 * @param   int     $notrigger      1=No trigger
 	 * @return  int                 	Return integer <0 if KO, >0 if OK
 	 */
-	public function deleteline($rowid, $fuser = '', $notrigger = 0)
+	public function deleteLine($rowid, $fuser = '', $notrigger = 0)
 	{
 		$error=0;
 
@@ -2337,10 +2338,13 @@ class ExpenseReport extends CommonObject
 	 */
 	public function periode_existe($fuser, $date_debut, $date_fin)
 	{
+		global $conf;
+
 		// phpcs:enable
 		$sql = "SELECT rowid, date_debut, date_fin";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " WHERE fk_user_author = ".((int) $fuser->id);
+		$sql .= " WHERE entity = ".((int) $conf->entity); // not shared, only for the current entity
+		$sql .= " AND fk_user_author = ".((int) $fuser->id);
 
 		dol_syslog(get_class($this)."::periode_existe sql=".$sql);
 		$result = $this->db->query($sql);
@@ -2479,15 +2483,13 @@ class ExpenseReport extends CommonObject
 		return $ret;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load the indicators this->nb for the state board
 	 *
 	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $conf, $user;
 
 		$this->nb = array();
@@ -2498,8 +2500,8 @@ class ExpenseReport extends CommonObject
 		$sql .= " AND ex.entity IN (".getEntity('expensereport').")";
 		if (!$user->hasRight('expensereport', 'readall')) {
 			$userchildids = $user->getAllChildIds(1);
-			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(join(',', $userchildids)).")";
-			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
+			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(implode(',', $userchildids)).")";
+			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(implode(',', $userchildids))."))";
 		}
 
 		$resql = $this->db->query($sql);
@@ -2545,8 +2547,8 @@ class ExpenseReport extends CommonObject
 		$sql .= " AND ex.entity IN (".getEntity('expensereport').")";
 		if (!$user->hasRight('expensereport', 'readall')) {
 			$userchildids = $user->getAllChildIds(1);
-			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(join(',', $userchildids)).")";
-			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
+			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(implode(',', $userchildids)).")";
+			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(implode(',', $userchildids))."))";
 		}
 
 		$resql = $this->db->query($sql);

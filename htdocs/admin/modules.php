@@ -56,7 +56,7 @@ if (GETPOSTISSET('mode')) {
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
-$page_y = GETPOST('page_y', 'int');
+$page_y = GETPOSTINT('page_y');
 $search_keyword = GETPOST('search_keyword', 'alpha');
 $search_status = GETPOST('search_status', 'alpha');
 $search_nature = GETPOST('search_nature', 'alpha');
@@ -66,9 +66,9 @@ $search_version = GETPOST('search_version', 'alpha');
 // For dolistore search
 $options              = array();
 $options['per_page']  = 20;
-$options['categorie'] = ((int) (GETPOST('categorie', 'int') ? GETPOST('categorie', 'int') : 0));
-$options['start']     = ((int) (GETPOST('start', 'int') ? GETPOST('start', 'int') : 0));
-$options['end']       = ((int) (GETPOST('end', 'int') ? GETPOST('end', 'int') : 0));
+$options['categorie'] = ((int) (GETPOSTINT('categorie') ? GETPOSTINT('categorie') : 0));
+$options['start']     = ((int) (GETPOSTINT('start') ? GETPOSTINT('start') : 0));
+$options['end']       = ((int) (GETPOSTINT('end') ? GETPOSTINT('end') : 0));
 $options['search']    = GETPOST('search_keyword', 'alpha');
 $dolistore            = new Dolistore(false);
 
@@ -485,7 +485,7 @@ foreach ($modulesdir as $dir) {
 								dol_syslog("Module ".get_class($objMod)." not qualified");
 							}
 						} else {
-							print "admin/modules.php Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
+							print info_admin("admin/modules.php Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)", 0, 0, '1', 'warning');
 						}
 					} catch (Exception $e) {
 						dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);

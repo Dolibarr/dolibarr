@@ -4,6 +4,7 @@
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,13 +132,23 @@ class CompanyBankAccount extends Account
 		'stripe_account' => array('type'=>'varchar(128)', 'label'=>'Stripeaccount', 'enabled'=>'1', 'position'=>215, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
 		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>0, 'position'=>230),
 	);
+
+	/**
+	 * @var int ID
+	 */
 	public $id;
+
+	/**
+	 * @var string type
+	 */
 	public $type;
+
 	/**
 	 * @var int		Thirdparty ID
 	 * @deprecated	Use socid
 	 */
 	public $fk_soc;
+
 	/**
 	 * @var int		Thirdparty ID
 	 */
@@ -149,26 +160,67 @@ class CompanyBankAccount extends Account
 	 * @var integer
 	 */
 	public $datec;
+
+	/**
+	 * @var string label
+	 */
 	public $label;
-	public $bank;
 	public $code_banque;
 	public $code_guichet;
 	public $number;
 	public $cle_rib;
 	public $bic;
 	public $iban_prefix;
+
+	public $bank;
+	/**
+	 * @var string	Bank address
+	 * @deprecated Replaced with address
+	 */
 	public $domiciliation;
+	public $address;
+
+	/**
+	 * @var int state id
+	 */
+	public $state_id;
+
+	/**
+	 * @var int country id
+	 */
+	public $fk_country;
+
+	public $country_code;
+
+
+	/**
+	 * @var string owner
+	 */
 	public $proprio;
+
+	/**
+	 * @var string owner address
+	 */
 	public $owner_address;
 
 	/**
-	 * @var bool $default_rib  1 = this object is the third party's default bank information
+	 * @var int $default_rib  1 = this object is the third party's default bank information, 0 if not
 	 */
 	public $default_rib;
-	public $state_id;
-	public $fk_country;
+
+	/**
+	 * @var string currency code
+	 */
 	public $currency_code;
+
+	/**
+	 * @var string rum
+	 */
 	public $rum;
+
+	/**
+	 * @var int date rum
+	 */
 	public $date_rum;
 
 	/**
@@ -183,8 +235,11 @@ class CompanyBankAccount extends Account
 	public $cvn;
 	public $exp_date_month;
 	public $exp_date_year;
-	public $country_code;
 	public $approved;
+
+	/**
+	 * @var string email
+	 */
 	public $email;
 	public $ending_date;
 	public $max_total_amount_of_all_payments;
@@ -193,8 +248,19 @@ class CompanyBankAccount extends Account
 	public $total_amount_of_all_payments;
 
 
+	/**
+	 * @var string external payment site
+	 */
 	public $ext_payment_site;	// Name of the external payment system ('StripeLive', 'StripeTest', 'StancerLive', 'StancerTest', ...)
+
+	/**
+	 * @var string comment
+	 */
 	public $comment;
+
+	/**
+	 * @var string ip address
+	 */
 	public $ipaddress;
 
 
@@ -340,8 +406,11 @@ class CompanyBankAccount extends Account
 			return -1;
 		}
 
-		if (dol_strlen($this->domiciliation) > 255) {
+		if (!empty($this->domiciliation) && dol_strlen($this->domiciliation) > 255) {
 			$this->domiciliation = dol_trunc($this->domiciliation, 254, 'right', 'UTF-8', 1);
+		}
+		if (!empty($this->address) && dol_strlen($this->address) > 255) {
+			$this->address = dol_trunc($this->address, 254, 'right', 'UTF-8', 1);
 		}
 		if (dol_strlen($this->owner_address) > 255) {
 			$this->owner_address = dol_trunc($this->owner_address, 254, 'right', 'UTF-8', 1);
@@ -361,7 +430,7 @@ class CompanyBankAccount extends Account
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-		$sql .= ",domiciliation = '".$this->db->escape($this->domiciliation)."'";
+		$sql .= ",domiciliation = '".$this->db->escape($this->address ? $this->address : $this->domiciliation)."'";
 		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",default_rib = ".((int) $this->default_rib);
@@ -424,13 +493,13 @@ class CompanyBankAccount extends Account
 			return -1;
 		}
 
-		$sql = "SELECT rowid, type, fk_soc as socid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
-		$sql .= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur, date_rum,";
-		$sql .= " stripe_card_ref, stripe_account, ext_payment_site";
-		$sql .= " ,last_main_doc";
-		$sql .= " ,model_pdf";
-
+		$sql = "SELECT rowid, label, type, fk_soc as socid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban,";
+		$sql .= " domiciliation as address,";
+		$sql .= " proprio, owner_address, default_rib, datec, tms as datem, rum, frstrecur, date_rum,";
+		$sql .= " stripe_card_ref, stripe_account, ext_payment_site,";
+		$sql .= " last_main_doc, model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
+
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
 		} elseif ($socid > 0) {
@@ -460,7 +529,10 @@ class CompanyBankAccount extends Account
 				$this->cle_rib         = $obj->cle_rib;
 				$this->bic             = $obj->bic;
 				$this->iban = $obj->iban;
-				$this->domiciliation   = $obj->domiciliation;
+
+				$this->domiciliation   = $obj->address;
+				$this->address         = $obj->address;
+
 				$this->proprio         = $obj->proprio;
 				$this->owner_address   = $obj->owner_address;
 				$this->label           = $obj->label;
@@ -602,7 +674,7 @@ class CompanyBankAccount extends Account
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -615,18 +687,23 @@ class CompanyBankAccount extends Account
 		$this->code_banque     = '123';
 		$this->code_guichet    = '456';
 		$this->number          = 'CUST12345';
-		$this->cle_rib         = 50;
+		$this->cle_rib         = '50';
 		$this->bic             = 'CC12';
 		$this->iban            = 'FR999999999';
-		$this->domiciliation   = 'Bank address of customer corp';
+
+		$this->address         = 'Rue de Paris';
+		$this->country_id      = 1;
+
 		$this->proprio         = 'Owner';
 		$this->owner_address   = 'Owner address';
-		$this->country_id      = 1;
+		$this->owner_country_id = 1;
 
 		$this->rum             = 'UMR-CU1212-0007-5-1475405262';
 		$this->date_rum        = dol_now() - 10000;
 		$this->frstrecur       = 'FRST';
 
 		$this->socid           = 1;
+
+		return 1;
 	}
 }

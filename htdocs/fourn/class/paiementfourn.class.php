@@ -9,6 +9,7 @@
  * Copyright (C) 2018       Frédéric France         <frederic.francenetlogic.fr>
  * Copyright (C) 2023      Joachim Kueter		  <git-jk@bloxera.com>
  * Copyright (C) 2023      Sylvain Legrand		  <technique@infras.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,7 +198,7 @@ class PaiementFourn extends Paiement
 			// Add controls of input validity
 			if ($value_converted === false) {
 				// We failed to find the conversion for one invoice
-				$this->error = 'FailedToFoundTheConversionRateForInvoice';
+				$this->error = $langs->trans('FailedToFoundTheConversionRateForInvoice');
 				return -1;
 			}
 			if (empty($currencyofpayment)) {
@@ -236,8 +237,8 @@ class PaiementFourn extends Paiement
 		}
 
 
-		$totalamount = price2num($totalamount);
-		$totalamount_converted = price2num($totalamount_converted);
+		$totalamount = (float) price2num($totalamount);
+		$totalamount_converted = (float) price2num($totalamount_converted);
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
@@ -725,7 +726,7 @@ class PaiementFourn extends Paiement
 	 *	id must be 0 if object instance is a specimen.
 	 *
 	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen($option = '')
 	{
@@ -740,6 +741,8 @@ class PaiementFourn extends Paiement
 		$this->facid = 1;
 		$this->socid = 1;
 		$this->datepaye = $nownotime;
+
+		return 1;
 	}
 
 	/**
@@ -799,7 +802,7 @@ class PaiementFourn extends Paiement
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 

@@ -64,7 +64,7 @@ class pdf_azur extends ModelePDFPropales
 	public $description;
 
 	/**
-	 * @var string	Save the name of generated file as the main doc when generating a doc with this template
+	 * @var int	Save the name of generated file as the main doc when generating a doc with this template
 	 */
 	public $update_main_doc_field;
 
@@ -760,7 +760,7 @@ class pdf_azur extends ModelePDFPropales
 					$already_merged = array();
 					foreach ($object->lines as $line) {
 						if (!empty($line->fk_product) && !(in_array($line->fk_product, $already_merged))) {
-							// Find the desire PDF
+							// Find the desired PDF
 							$filetomerge = new Propalmergepdfproduct($this->db);
 
 							if (getDolGlobalInt('MAIN_MULTILANGS')) {
@@ -1445,7 +1445,7 @@ class pdf_azur extends ModelePDFPropales
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
-	 *  @return	int|float
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
@@ -1705,6 +1705,7 @@ class pdf_azur extends ModelePDFPropales
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
 		return $top_shift;
 	}
 

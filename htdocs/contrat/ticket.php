@@ -37,13 +37,13 @@ require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
 
 $langs->loadLangs(array('companies', 'contracts', 'tickets'));
 
-$socid=GETPOST('socid', 'int');
-$id=GETPOST('id', 'int');
+$socid=GETPOSTINT('socid');
+$id=GETPOSTINT('id');
 $ref=GETPOST('ref', 'alpha');
 $action=GETPOST('action', 'alpha');
 
 if ($id == '' && $ref == '') {
-	dol_print_error('', 'Bad parameter');
+	dol_print_error(null, 'Bad parameter');
 	exit;
 }
 

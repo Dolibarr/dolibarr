@@ -2,6 +2,7 @@
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2007	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,35 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
  */
 class mod_codeclient_monkey extends ModeleThirdPartyCode
 {
-	/**
-	 * @var string model name
-	 */
+
+	// variables inherited from ModeleThirdPartyCode class
 	public $name = 'Monkey';
+	public $version = 'dolibarr';
 
-	public $code_modifiable; // Code modifiable
-
-	public $code_modifiable_invalide; // Code modifiable si il est invalid
-
-	public $code_modifiable_null; // Code modifiables si il est null
-
-	public $code_null; // Code facultatif
-
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
-
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto;
-
+	// variables not inherited
 	public $prefixcustomer = 'CU';
-
 	public $prefixsupplier = 'SU';
-
-	public $prefixIsRequired; // Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
 
 
 	/**
@@ -112,7 +92,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 *
 	 *  @param	Societe		$objsoc     Object third party
 	 *  @param  int			$type       Client ou fournisseur (1:client, 2:fournisseur)
-	 *  @return string      			Value if OK, '' if module not configured, <0 if KO
+	 *  @return string|-1      			Value if OK, '' if module not configured, -1 if KO
 	 */
 	public function getNextValue($objsoc = 0, $type = -1)
 	{

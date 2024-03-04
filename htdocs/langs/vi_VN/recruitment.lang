@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Quản lý và theo dõi các chiến dịch tuyển d�
 # Admin page
 #
 RecruitmentSetup = Cài đặt tuyển dụng
-Settings = Cài đặt
 RecruitmentSetupPage = Nhấn vào đây để thiết lập các tùy chọn chính cho module tuyển dụng
 RecruitmentArea=Khu vực tuyển dụng
 PublicInterfaceRecruitmentDesc=Các trang công khai về việc làm là các URL công khai để hiển thị và trả lời các công việc đang mở. Có một liên kết khác nhau cho mỗi công việc đang mở, được tìm thấy trên mỗi bản ghi công việc.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Kích hoạt các trang công khai của việc là
 #
 # About page
 #
-About = Về
 RecruitmentAbout = Giới thiệu tuyển dụng
 RecruitmentAboutPage = Tuyển dụng về trang
 NbOfEmployeesExpected=Số lượng nhân viên dự kiến
@@ -79,3 +77,4 @@ WeAreRecruiting=Chúng tôi đang tuyển dụng. Đây là danh sách các vị
 NoPositionOpen=Không có vị trí nào mở vào lúc này
 ConfirmClose=Xác nhận hủy
 ConfirmCloseAsk=Bạn có chắc chắn muốn hủy ứng tuyển tuyển dụng này không
+recruitment=Tuyển dụng

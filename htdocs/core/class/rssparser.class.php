@@ -260,6 +260,7 @@ class RssParser
 				if (LIBXML_VERSION < 20900) {
 					// Avoid load of external entities (security problem).
 					// Required only if LIBXML_VERSION < 20900
+					// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 					libxml_disable_entity_loader(true);
 				}
 
@@ -593,7 +594,7 @@ class RssParser
 		} elseif ($this->_format == 'atom' && $this->incontent) {
 			// if inside an Atom content construct (e.g. content or summary) field treat tags as text
 			// if tags are inlined, then flatten
-			$attrs_str = join(' ', array_map('map_attrs', array_keys($attrs), array_values($attrs)));
+			$attrs_str = implode(' ', array_map('map_attrs', array_keys($attrs), array_values($attrs)));
 
 			$this->append_content("<$element $attrs_str>");
 
@@ -632,7 +633,7 @@ class RssParser
 		if ($this->_format == 'atom' and $this->incontent) {
 			$this->append_content($text);
 		} else {
-			$current_el = join('_', array_reverse($this->stack));
+			$current_el = implode('_', array_reverse($this->stack));
 			$this->append($current_el, $text);
 		}
 	}

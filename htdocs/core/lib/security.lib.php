@@ -363,7 +363,6 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  */
 function restrictedArea(User $user, $features, $object = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0, $mode = 0)
 {
-	global $conf;
 	global $hookmanager;
 
 	// Define $objectid
@@ -466,7 +465,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		}
 	}
 
-	// Features/modules to check
+	// Features/modules to check (to support the & and | operator)
 	$featuresarray = array($features);
 	if (preg_match('/&/', $features)) {
 		$featuresarray = explode("&", $features);
@@ -815,7 +814,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	// for this given object (link to company, is contact for project, ...)
 	if (!empty($objectid) && $objectid > 0) {
 		$ok = checkUserAccessToObject($user, $featuresarray, $object, $tableandshare, $feature2, $dbt_keyfield, $dbt_select, $parentfortableentity);
-		$params = array('objectid' => $objectid, 'features' => join(',', $featuresarray), 'features2' => $feature2);
+		$params = array('objectid' => $objectid, 'features' => implode(',', $featuresarray), 'features2' => $feature2);
 		//print 'checkUserAccessToObject ok='.$ok;
 		if ($mode) {
 			return $ok ? 1 : 0;
@@ -1050,7 +1049,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			// If external user: Check permission for external users
 			if ($user->socid > 0) {
 				if (empty($dbt_keyfield)) {
-					dol_print_error('', 'Param dbt_keyfield is required but not defined');
+					dol_print_error(null, 'Param dbt_keyfield is required but not defined');
 				}
 				$sql = "SELECT COUNT(dbt.".$dbt_keyfield.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -1060,7 +1059,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				// If internal user without permission to see all thirdparties: Check permission for internal users that are restricted on their objects
 				if ($feature != 'ticket') {
 					if (empty($dbt_keyfield)) {
-						dol_print_error('', 'Param dbt_keyfield is required but not defined');
+						dol_print_error(null, 'Param dbt_keyfield is required but not defined');
 					}
 					$sql = "SELECT COUNT(sc.fk_soc) as nb";
 					$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -1199,7 +1198,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 
 	$langs->loadLangs(array("main", "errors"));
 
-	if ($printheader) {
+	if ($printheader && !defined('NOHEADERNOFOOTER')) {
 		if (function_exists("llxHeader")) {
 			llxHeader('');
 		} elseif (function_exists("llxHeaderVierge")) {
@@ -1237,7 +1236,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 			}
 		}
 	}
-	if ($printfooter && function_exists("llxFooter")) {
+	if ($printfooter && !defined('NOHEADERNOFOOTER') && function_exists("llxFooter")) {
 		print '</div>';
 		llxFooter();
 	}

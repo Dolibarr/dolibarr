@@ -11,7 +11,7 @@
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
  * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionlinebatch.class.php';
@@ -309,7 +309,7 @@ class Expedition extends CommonObject
 			}
 
 			if (!$mybool) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -1764,7 +1764,7 @@ class Expedition extends CommonObject
 		$sql .= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc, cd.rang";
 		$sql .= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
 		$sql .= ", p.ref as product_ref, p.label as product_label, p.fk_product_type, p.barcode as product_barcode";
-		$sql .= ", p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch";
+		$sql .= ", p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
 		$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
@@ -1798,6 +1798,7 @@ class Expedition extends CommonObject
 
 
 				if ($originline > 0 && $originline == $obj->fk_origin_line) {
+					'@phan-var-force ExpeditionLigne $line';  // $line from previous loop
 					$line->entrepot_id = 0; // entrepod_id in details_entrepot
 					$line->qty_shipped += $obj->qty_shipped;
 				} else {
@@ -1841,6 +1842,10 @@ class Expedition extends CommonObject
 				$line->weight_units   	= $obj->weight_units;
 				$line->length         	= $obj->length;
 				$line->length_units   	= $obj->length_units;
+				$line->width           = $obj->width;
+				$line->width_units     = $obj->width_units;
+				$line->height           = $obj->height;
+				$line->height_units     = $obj->height_units;
 				$line->surface        	= $obj->surface;
 				$line->surface_units = $obj->surface_units;
 				$line->volume         	= $obj->volume;
@@ -1967,7 +1972,7 @@ class Expedition extends CommonObject
 	 *  @param		int		$lineid			Id of line to delete
 	 *  @return     int         			>0 if OK, <0 if KO
 	 */
-	public function deleteline($user, $lineid)
+	public function deleteLine($user, $lineid)
 	{
 		global $user;
 
@@ -2196,7 +2201,7 @@ class Expedition extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -2248,6 +2253,8 @@ class Expedition extends CommonObject
 			$this->lines[] = $line;
 			$xnbp++;
 		}
+
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2326,7 +2333,7 @@ class Expedition extends CommonObject
 	 *  @param  int      $id     only this carrier, all if none
 	 *  @return void
 	 */
-	public function list_delivery_methods($id = '')
+	public function list_delivery_methods($id = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -2336,7 +2343,7 @@ class Expedition extends CommonObject
 
 		$sql = "SELECT em.rowid, em.code, em.libelle as label, em.description, em.tracking, em.active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
-		if ($id != '') {
+		if (!empty($id)) {
 			$sql .= " WHERE em.rowid=".((int) $id);
 		}
 
@@ -2922,31 +2929,43 @@ class ExpeditionLigne extends CommonObjectLine
 	public $product_type = 0;
 
 	/**
-	 * @var int rang of line
-	 */
+	* @var int rang of line
+	*/
 	public $rang;
 
 	/**
-	 * @var float weight
-	 */
+	* @var float weight
+	*/
 	public $weight;
 	public $weight_units;
 
 	/**
-	 * @var float weight
-	 */
+	* @var float length
+	*/
 	public $length;
 	public $length_units;
 
 	/**
-	 * @var float weight
-	 */
+	* @var float width
+	*/
+	public $width;
+	public $width_units;
+
+	/**
+	* @var float height
+	*/
+	public $height;
+	public $height_units;
+
+	/**
+	* @var float surface
+	*/
 	public $surface;
 	public $surface_units;
 
 	/**
-	 * @var float weight
-	 */
+	* @var float volume
+	*/
 	public $volume;
 	public $volume_units;
 

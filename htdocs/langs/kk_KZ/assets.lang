@@ -1,4 +1,4 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,52 +16,170 @@
 #
 # Generic
 #
-Assets = Активтер
-NewAsset = Жаңа актив
-AccountancyCodeAsset = Есеп коды (актив)
-AccountancyCodeDepreciationAsset = Есеп коды (амортизациялық активтер шоты)
-AccountancyCodeDepreciationExpense = Бухгалтерлік есеп коды (амортизациялық шығындар шоты)
-NewAssetType=Жаңа актив түрі
-AssetsTypeSetup=Актив типін реттеу
-AssetTypeModified=Актив түрі өзгертілді
-AssetType=Актив түрі
+NewAsset=Жаңа актив
+AccountancyCodeAsset=Есеп коды (актив)
+AccountancyCodeDepreciationAsset=Есеп коды (амортизациялық активтер шоты)
+AccountancyCodeDepreciationExpense=Бухгалтерлік есеп коды (амортизациялық шығындар шоты)
 AssetsLines=Активтер
 DeleteType=Жою
-DeleteAnAssetType=Активтің түрін жою
-ConfirmDeleteAssetType=Бұл актив түрін шынымен жойғыңыз келе ме?
-ShowTypeCard='%s' түрін көрсету
+DeleteAnAssetType=Актив үлгісін жою
+ConfirmDeleteAssetType=Осы актив үлгісін шынымен жойғыңыз келе ме?
+ShowTypeCard='%s' үлгісін көрсету
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Активтер
+ModuleAssetsName=Активтер
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Активтердің сипаттамасы
+ModuleAssetsDesc=Активтердің сипаттамасы
 
 #
 # Admin page
 #
-AssetsSetup = Активтерді баптау
-Settings = Параметрлер
-AssetsSetupPage = Активтерді орнату беті
-ExtraFieldsAssetsType = Қосымша атрибуттар (актив түрі)
-AssetsType=Актив түрі
-AssetsTypeId=Актив түрінің идентификаторы
-AssetsTypeLabel=Активтер түрінің белгісі
-AssetsTypes=Активтердің түрлері
+AssetSetup=Активтерді орнату
+AssetSetupPage=Активтерді орнату беті
+ExtraFieldsAssetModel=Қосымша атрибуттар (актив үлгісі)
+
+AssetsType=Актив үлгісі
+AssetsTypeId=Актив үлгісі идентификаторы
+AssetsTypeLabel=Актив үлгісінің белгісі
+AssetsTypes=Активтердің үлгілері
+ASSET_ACCOUNTANCY_CATEGORY=Негізгі құралдарды есепке алу тобы
 
 #
 # Menu
 #
-MenuAssets = Активтер
-MenuNewAsset = Жаңа актив
-MenuTypeAssets = Активтерді теріңіз
-MenuListAssets = Тізім
-MenuNewTypeAssets = Жаңа
-MenuListTypeAssets = Тізім
+MenuAssets=Активтер
+MenuNewAsset=Жаңа актив
+MenuAssetModels=Модельдік активтер
+MenuListAssets=Тізім
+MenuNewAssetModel=Жаңа актив үлгісі
+MenuListAssetModels=Тізім
 
 #
 # Module
 #
-Asset=Актив
-NewAssetType=Жаңа актив түрі
-NewAsset=Жаңа актив
 ConfirmDeleteAsset=Бұл активті шынымен жойғыңыз келе ме?
+
+#
+# Tab
+#
+AssetDepreciationOptions=Амортизация опциялары
+AssetAccountancyCodes=Бухгалтерлік есеп шоттары
+AssetDepreciation=Амортизация
+
+#
+# Asset
+#
+Asset=Актив
+Assets=Активтер
+AssetReversalAmountHT=Қайтару сомасы (салықсыз)
+AssetAcquisitionValueHT=Сатып алу сомасы (салықсыз)
+AssetRecoveredVAT=ҚҚС қалпына келтірілді
+AssetReversalDate=Қайтару күні
+AssetDateAcquisition=Сатып алу күні
+AssetDateStart=Іске қосу күні
+AssetAcquisitionType=Сатып алу түрі
+AssetAcquisitionTypeNew=Жаңа
+AssetAcquisitionTypeOccasion=Қолданылған
+AssetType=Актив түрі
+AssetTypeIntangible=Материалдық емес
+AssetTypeTangible=Материалдық
+AssetTypeInProgress=Орындалуда
+AssetTypeFinancial=Қаржылық
+AssetNotDepreciated=Амортизацияланбаған
+AssetDisposal=Жою
+AssetConfirmDisposalAsk=<b> %s</b> активін тастағыңыз келетініне сенімдісіз бе?
+AssetConfirmReOpenAsk=<b> %s</b> активін шынымен қайта ашқыңыз келе ме?
+
+#
+# Asset status
+#
+AssetInProgress=Орындалуда
+AssetDisposed=Жойылған
+AssetRecorded=Есепке алынған
+
+#
+# Asset disposal
+#
+AssetDisposalDate=Жою күні
+AssetDisposalAmount=Жою құны
+AssetDisposalType=Жою түрі
+AssetDisposalDepreciated=Аудару жылын амортизациялау
+AssetDisposalSubjectToVat=ҚҚС есебімен кәдеге жарату
+
+#
+# Asset model
+#
+AssetModel=Актив үлгісі
+AssetModels=Актив үлгілері
+
+#
+# Asset depreciation options
+#
+AssetDepreciationOptionEconomic=Экономикалық құнсыздану
+AssetDepreciationOptionAcceleratedDepreciation=Жеделдетілген амортизация (салық)
+AssetDepreciationOptionDepreciationType=Амортизация түрі
+AssetDepreciationOptionDepreciationTypeLinear=Сызықтық
+AssetDepreciationOptionDepreciationTypeDegressive=Дегрессивті
+AssetDepreciationOptionDepreciationTypeExceptional=Ерекше
+AssetDepreciationOptionDegressiveRate=Дегрессивті көрсеткіш
+AssetDepreciationOptionDuration=Ұзақтығы
+AssetDepreciationOptionDurationType=Түр ұзақтығы
+AssetDepreciationOptionDurationTypeAnnual=Жылдық
+AssetDepreciationOptionDurationTypeMonthly=Ай сайын
+AssetDepreciationOptionDurationTypeDaily=Күнделікті
+AssetDepreciationOptionRate=Баға (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Амортизация базасы (ҚҚС-сыз)
+AssetDepreciationOptionAmountBaseDeductibleHT=Шегерімге жататын база (ҚҚС қоспағанда)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Соңғы амортизацияның жалпы сомасы (ҚҚС-сыз)
+
+#
+# Asset accountancy codes
+#
+AssetAccountancyCodeDepreciationEconomic=Экономикалық құнсыздану
+AssetAccountancyCodeAsset=Актив
+AssetAccountancyCodeDepreciationAsset=Амортизация
+AssetAccountancyCodeDepreciationExpense=Амортизациялық шығындар
+AssetAccountancyCodeValueAssetSold=Жойылған активтің құны
+AssetAccountancyCodeReceivableOnAssignment=Жою кезінде дебиторлық берешек
+AssetAccountancyCodeProceedsFromSales=Жоюдан түсетін түсімдер
+AssetAccountancyCodeVatCollected=Алынған ҚҚС
+AssetAccountancyCodeVatDeductible=Активтерге ҚҚС қайтарылды
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Жеделдетілген амортизация (салық)
+AssetAccountancyCodeAcceleratedDepreciation=Есептік жазба
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Амортизациялық шығындар
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Қайта иелену/Қамтамасыз ету
+
+#
+# Asset depreciation
+#
+AssetBaseDepreciationHT=Амортизация негізі (ҚҚС-сыз)
+AssetDepreciationBeginDate=Амортизацияның басталуы
+AssetDepreciationDuration=Ұзақтығы
+AssetDepreciationRate=Баға (%%)
+AssetDepreciationDate=Амортизация күні
+AssetDepreciationHT=Амортизация (ҚҚС-сыз)
+AssetCumulativeDepreciationHT=Жиынтық амортизация (ҚҚС-сыз)
+AssetResidualHT=Қалдық құн (ҚҚС-сыз)
+AssetDispatchedInBookkeeping=Амортизация жазылады
+AssetFutureDepreciationLine=Болашақ амортизация
+AssetDepreciationReversal=Кері
+
+#
+# Errors
+#
+AssetErrorAssetOrAssetModelIDNotProvide=Активтің идентификаторы немесе табылған үлгі берілмеді
+AssetErrorFetchAccountancyCodesForMode="%s" амортизация режимі үшін бухгалтерлік есеп шоттарын шығарып алу қатесі
+AssetErrorDeleteAccountancyCodesForMode=Бухгалтерлік есеп шоттарын '%s' амортизация режимінен жою кезіндегі қате
+AssetErrorInsertAccountancyCodesForMode='%s' амортизациялық есеп шоттарын енгізу кезіндегі қате
+AssetErrorFetchDepreciationOptionsForMode='%s' амортизация режиміне арналған опцияларды шығарып алу кезіндегі қате
+AssetErrorDeleteDepreciationOptionsForMode='%s' амортизация режимінің опцияларын жою кезіндегі қате
+AssetErrorInsertDepreciationOptionsForMode='%s' амортизация режимінің опцияларын енгізу кезіндегі қате
+AssetErrorFetchDepreciationLines=Жазылған амортизациялық сызықтарды алу кезіндегі қате
+AssetErrorClearDepreciationLines=Жазылған амортизациялық сызықтарды тазалау кезіндегі қате (қайтару және болашақ)
+AssetErrorAddDepreciationLine=Амортизация сызығын қосу кезіндегі қате
+AssetErrorCalculationDepreciationLines=Амортизациялық сызықтарды есептеу кезіндегі қате (қайтару және болашақ)
+AssetErrorReversalDateNotProvidedForMode="%s" амортизация әдісі үшін қайтару күні көрсетілмеген
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode="%s" амортизация әдісі үшін қалпына келтіру күні ағымдағы қаржы жылының басынан үлкен немесе оған тең болуы керек
+AssetErrorReversalAmountNotProvidedForMode=Қайтару сомасы '%s' амортизациясы режимі үшін қарастырылмаған.
+AssetErrorFetchCumulativeDepreciation=Амортизациялық аударым жолынан жинақталған амортизация сомасын алу кезіндегі қате
+AssetErrorSetLastCumulativeDepreciation=Соңғы жинақталған амортизация сомасын есепке алу кезіндегі қате

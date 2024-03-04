@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "accountancy", "compta", "other", "errors"));
 
-$id_journal = GETPOST('id_journal', 'int');
+$id_journal = GETPOSTINT('id_journal');
 $action = GETPOST('action', 'aZ09');
 
 $date_startmonth = GETPOST('date_startmonth');
@@ -50,7 +50,7 @@ $result = $object->fetch($id_journal);
 if ($result > 0) {
 	$id_journal = $object->id;
 } elseif ($result < 0) {
-	dol_print_error('', $object->error, $object->errors);
+	dol_print_error(null, $object->error, $object->errors);
 } elseif ($result == 0) {
 	accessforbidden('ErrorRecordNotFound');
 }

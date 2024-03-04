@@ -84,7 +84,7 @@ $model_option = array(
 if ($action == 'update') {
 	$error = 0;
 
-	$modelcsv = GETPOST('ACCOUNTING_EXPORT_MODELCSV', 'int');
+	$modelcsv = GETPOSTINT('ACCOUNTING_EXPORT_MODELCSV');
 
 	if (!empty($modelcsv)) {
 		if (!dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {

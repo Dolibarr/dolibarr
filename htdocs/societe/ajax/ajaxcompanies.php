@@ -43,7 +43,7 @@ if (!defined('NOREQUIRESOC')) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-$id = GETPOST('socid', 'int') || GETPOST('id_fourn', 'int');
+$id = GETPOSTINT('socid') || GETPOSTINT('id_fourn');
 
 $object = new Societe($db);
 if ($id > 0) {
@@ -75,10 +75,10 @@ $return_arr = array();
 // Define filter on text typed
 $socid = GETPOST('newcompany');
 if (!$socid) {
-	$socid = GETPOST('socid', 'int');
+	$socid = GETPOSTINT('socid');
 }
 if (!$socid) {
-	$socid = GETPOST('id_fourn', 'int');
+	$socid = GETPOSTINT('id_fourn');
 }
 
 // Generate list of companies

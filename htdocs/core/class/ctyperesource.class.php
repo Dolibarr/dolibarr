@@ -3,6 +3,7 @@
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2016       Florian Henry       <florian.henry@atm-consulting.fr>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +81,7 @@ class Ctyperesource extends CommonDict
 			$this->label = trim($this->label);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
 		// Insert request
@@ -277,7 +278,7 @@ class Ctyperesource extends CommonDict
 			$this->label = trim($this->label);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
 		// Check parameters
@@ -425,7 +426,7 @@ class Ctyperesource extends CommonDict
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -433,7 +434,9 @@ class Ctyperesource extends CommonDict
 
 		$this->code = '';
 		$this->label = '';
-		$this->active = '';
+		$this->active = 0;
+
+		return 1;
 	}
 }
 

@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=この構成員専用のパートナーシッ�
 DatePartnershipStart=開始日
 DatePartnershipEnd=終了日
 ReasonDecline=拒絶理由
-ReasonDeclineOrCancel=断りの理由
+ReasonDeclineOrCancel=Reason for refusal or cancellation
 PartnershipAlreadyExist=パートナーシップは既に存在する
 ManagePartnership=パートナーシップを管理する
 BacklinkNotFoundOnPartnerWebsite=パートナーのウェブサイトにバックリンクが見つからない
@@ -89,7 +89,6 @@ YourPartnershipCanceledContent=弊社との提携が解除されたことをお�
 
 CountLastUrlCheckError=最後のURLチェックのエラー数
 LastCheckBacklink=最後のURLチェックの日付
-ReasonDeclineOrCancel=断りの理由
 
 NewPartnershipRequest=新しいパートナーシップリクエスト
 NewPartnershipRequestDesc=このフォームでは、パートナーシッププログラムへの参加をリクエストできる。このフォームへの記入についてサポートが必要な場合は、メール<b>%s</b>までご連絡ください。

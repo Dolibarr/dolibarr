@@ -3,6 +3,7 @@
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023		Nick Fragoulis
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +70,9 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public $date;
 
+	/**
+	 * @var int Deadline for payment
+	 */
 	public $date_lim_reglement;
 
 	public $cond_reglement_id; // Id in llx_c_paiement
@@ -144,8 +148,8 @@ abstract class CommonInvoice extends CommonObject
 
 
 	/**
-	 * ! Populate by Payment module like stripe
-	 * @var string message return by Online Payment module
+	 * ! Populated by payment modules like Stripe
+	 * @var string[] 	Messages returned by an online payment module
 	 */
 	public $postactionmessages;
 
@@ -861,8 +865,8 @@ abstract class CommonInvoice extends CommonObject
 	 *  Returns an invoice payment deadline based on the invoice settlement
 	 *  conditions and billing date.
 	 *
-	 *	@param      integer	$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
-	 *  @return     integer    			       	Date limit of payment if OK, <0 if KO
+	 *	@param      int			$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
+	 *  @return     int|string    			       	Date limit of payment if OK, <0 or string if KO
 	 */
 	public function calculate_date_lim_reglement($cond_reglement = 0)
 	{
@@ -1146,7 +1150,7 @@ abstract class CommonInvoice extends CommonObject
 				$sql .= " AND fk_facture = ".((int) $this->id);				// Add a protection to not pay another invoice than current one
 			}
 			if ($type != 'direct-debit') {
-				if ($$sourcetype == 'salary') {
+				if ($sourcetype == 'salary') {
 					$sql .= " AND fk_salary = ".((int) $this->id);			// Add a protection to not pay another salary than current one
 				} else {
 					$sql .= " AND fk_facture_fourn = ".((int) $this->id);	// Add a protection to not pay another invoice than current one
@@ -1182,7 +1186,7 @@ abstract class CommonInvoice extends CommonObject
 
 					$this->fetch_thirdparty();
 
-					dol_syslog("--- Process payment request amount=".$amount." thirdparty_id=" . $this->thirdparty->id . ", thirdparty_name=" . $this->thirdparty->name . " ban id=" . $bac->id, LOG_DEBUG);
+					dol_syslog("makeStripeSepaRequest Process payment request amount=".$amount." thirdparty_id=" . $this->thirdparty->id . ", thirdparty_name=" . $this->thirdparty->name . " ban id=" . $bac->id, LOG_DEBUG);
 
 					//$alreadypayed = $this->getSommePaiement();
 					//$amount_credit_notes_included = $this->getSumCreditNotesUsed();
@@ -1201,7 +1205,7 @@ abstract class CommonInvoice extends CommonObject
 					if (!($fk_bank_account > 0)) {
 						$error++;
 						$errorforinvoice++;
-						dol_syslog("Error no bank account defined for Stripe payments", LOG_ERR);
+						dol_syslog("makeStripeSepaRequest Error no bank account defined for Stripe payments", LOG_ERR);
 						$this->errors[] = "Error bank account for Stripe payments not defined into Stripe module";
 					}
 
@@ -1217,7 +1221,7 @@ abstract class CommonInvoice extends CommonObject
 							if ($nbinvoices <= 0) {
 								$error++;
 								$errorforinvoice++;
-								dol_syslog("Error on BonPrelevement creation", LOG_ERR);
+								dol_syslog("makeStripeSepaRequest Error on BonPrelevement creation", LOG_ERR);
 								$this->errors[] = "Error on BonPrelevement creation";
 							}
 							/*
@@ -1237,7 +1241,7 @@ abstract class CommonInvoice extends CommonObject
 						} else {
 							$error++;
 							$errorforinvoice++;
-							dol_syslog("Error Line already part of a bank payment order", LOG_ERR);
+							dol_syslog("makeStripeSepaRequest Error Line already part of a bank payment order", LOG_ERR);
 							$this->errors[] = "The line is already included into a bank payment order. Delete the bank payment order first.";
 						}
 					}
@@ -1253,7 +1257,7 @@ abstract class CommonInvoice extends CommonObject
 								}
 
 								//var_dump($companypaymentmode);
-								dol_syslog("We will try to pay with companypaymentmodeid=" . $companypaymentmode->id . " stripe_card_ref=" . $companypaymentmode->stripe_card_ref . " mode=" . $companypaymentmode->status, LOG_DEBUG);
+								dol_syslog("makeStripeSepaRequest We will try to pay with companypaymentmodeid=" . $companypaymentmode->id . " stripe_card_ref=" . $companypaymentmode->stripe_card_ref . " mode=" . $companypaymentmode->status, LOG_DEBUG);
 
 								$thirdparty = new Societe($this->db);
 								$resultthirdparty = $thirdparty->fetch($this->socid);
@@ -1515,7 +1519,7 @@ abstract class CommonInvoice extends CommonObject
 									$actioncomm->type_code = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 									$actioncomm->code = 'AC_' . $actioncode;
 									$actioncomm->label = $description;
-									$actioncomm->note_private = join(",\n", $postactionmessages);
+									$actioncomm->note_private = implode(",\n", $postactionmessages);
 									$actioncomm->fk_project = $this->fk_project;
 									$actioncomm->datep = $now;
 									$actioncomm->datef = $now;
@@ -1614,7 +1618,7 @@ abstract class CommonInvoice extends CommonObject
 			}
 		} else {
 			$this->error = "Status of invoice does not allow this";
-			dol_syslog(get_class($this)."::makeStripeSepaRequest ".$this->error." $this->statut, $this->paye, $this->mode_reglement_id");
+			dol_syslog(get_class($this)."::makeStripeSepaRequest ".$this->error." ".$this->status." ,".$this->paye.", ".$this->mode_reglement_id, LOG_WARNING);
 			return -3;
 		}
 	}
@@ -1919,13 +1923,15 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 
 	/**
 	 * Local tax 1 type
-	 * @var string
+	 * @var int<0,6>		From 1 to 6, or 0 if not found
+	 * @see getLocalTaxesFromRate()
 	 */
 	public $localtax1_type;
 
 	/**
 	 * Local tax 2 type
-	 * @var string
+	 * @var int<0,6>		From 1 to 6, or 0 if not found
+	 * @see getLocalTaxesFromRate()
 	 */
 	public $localtax2_type;
 
@@ -1992,7 +1998,13 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 
 	public $special_code = 0;
 
+	/**
+	 * @deprecated	Use user_creation_id
+	 */
 	public $fk_user_author;
+	/**
+	 * @deprecated	Use user_modification_id
+	 */
 	public $fk_user_modif;
 
 	public $fk_accounting_account;

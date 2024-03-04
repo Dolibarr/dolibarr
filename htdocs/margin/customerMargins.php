@@ -33,10 +33,10 @@ require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -52,10 +52,10 @@ if (!$sortorder) {
 
 $startdate = $enddate = '';
 if (GETPOST('startdatemonth')) {
-	$startdate = dol_mktime(0, 0, 0, GETPOST('startdatemonth', 'int'), GETPOST('startdateday', 'int'), GETPOST('startdateyear', 'int'));
+	$startdate = dol_mktime(0, 0, 0, GETPOSTINT('startdatemonth'), GETPOSTINT('startdateday'), GETPOSTINT('startdateyear'));
 }
 if (GETPOST('enddatemonth')) {
-	$enddate = dol_mktime(23, 59, 59, GETPOST('enddatemonth', 'int'), GETPOST('enddateday', 'int'), GETPOST('enddateyear'));
+	$enddate = dol_mktime(23, 59, 59, GETPOSTINT('enddatemonth'), GETPOSTINT('enddateday'), GETPOST('enddateyear'));
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -63,7 +63,7 @@ $object = new Societe($db);
 $hookmanager->initHooks(array('margincustomerlist'));
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $TSelectedProducts = GETPOST('products', 'array');
 $TSelectedCats = GETPOST('categories', 'array');
 
@@ -274,15 +274,15 @@ $sql .= $db->order($sortfield, $sortorder);
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
 $param = '&socid='.((int) $socid);
-if (GETPOST('startdatemonth', 'int')) {
-	$param .= '&startdateyear='.GETPOST('startdateyear', 'int');
-	$param .= '&startdatemonth='.GETPOST('startdatemonth', 'int');
-	$param .= '&startdateday='.GETPOST('startdateday', 'int');
+if (GETPOSTINT('startdatemonth')) {
+	$param .= '&startdateyear='.GETPOSTINT('startdateyear');
+	$param .= '&startdatemonth='.GETPOSTINT('startdatemonth');
+	$param .= '&startdateday='.GETPOSTINT('startdateday');
 }
-if (GETPOST('enddatemonth', 'int')) {
-	$param .= '&enddateyear='.GETPOST('enddateyear', 'int');
-	$param .= '&enddatemonth='.GETPOST('enddatemonth', 'int');
-	$param .= '&enddateday='.GETPOST('enddateday', 'int');
+if (GETPOSTINT('enddatemonth')) {
+	$param .= '&enddateyear='.GETPOSTINT('enddateyear');
+	$param .= '&enddatemonth='.GETPOSTINT('enddatemonth');
+	$param .= '&enddateday='.GETPOSTINT('enddateday');
 }
 $listofproducts = GETPOST('products', 'array:int');
 if (is_array($listofproducts)) {

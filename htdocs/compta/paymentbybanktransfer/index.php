@@ -39,13 +39,13 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 $langs->loadLangs(array('banks', 'categories', 'withdrawals'));
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'paymentbybanktransfer', '', '');
 
-$usercancreate = $user->rights->paymentbybanktransfer->create;
+$usercancreate = $user->hasRight('paymentbybanktransfer', 'create');
 
 
 /*
