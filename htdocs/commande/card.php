@@ -867,7 +867,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
+				$tmpvat = floatval(price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx))); // Use floatval() because we don't know which rounding to use
 				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
 
 				// Set unit price to use
