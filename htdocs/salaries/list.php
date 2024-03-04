@@ -93,8 +93,8 @@ $search_date_end_from = dol_mktime(0, 0, 0, GETPOSTINT('search_date_end_frommont
 $search_date_end_to = dol_mktime(23, 59, 59, GETPOSTINT('search_date_end_tomonth'), GETPOSTINT('search_date_end_today'), GETPOSTINT('search_date_end_toyear'));
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOSTINT('search_account');
-$search_status = GETPOSTINT('search_status');
-$search_type_id = GETPOSTINT('search_type_id');
+$search_status = GETPOST('search_status', 'intcomma');
+$search_type_id = GETPOST('search_type_id', 'intcomma');
 
 $filtre = GETPOST("filtre", 'restricthtml');
 

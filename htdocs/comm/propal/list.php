@@ -141,7 +141,6 @@ $search_date_signature_end = dol_mktime(23, 59, 59, $search_date_signature_endmo
 $search_status = GETPOST('search_status', 'alpha');
 
 $optioncss = GETPOST('optioncss', 'alpha');
-$object_statut = GETPOST('search_statut', 'alpha');
 
 // Pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -373,7 +372,6 @@ if (empty($reshook)) {
 		$search_date_delivery_end = '';
 		$search_availability = '';
 		$search_status = '';
-		$object_statut = '';
 		$search_categ_cus = 0;
 		$search_fk_cond_reglement = '';
 		$search_fk_shipping_method = '';
@@ -389,9 +387,6 @@ if (empty($reshook)) {
 		$search_date_signature_end = '';
 		$toselect = array();
 		$search_array_options = array();
-	}
-	if ($object_statut != '') {
-		$search_status = $object_statut;
 	}
 
 	// Mass actions
@@ -1467,7 +1462,7 @@ if ($search_date_signature_endyear) {
 	// Status
 	if (!empty($arrayfields['p.fk_statut']['checked'])) {
 		print '<td class="liste_titre center parentonrightofpage">';
-		$formpropal->selectProposalStatus($search_status, 1, 0, 1, 'customer', 'search_statut', 'search_status width100 onrightofpage');
+		$formpropal->selectProposalStatus($search_status, 1, 0, 1, 'customer', 'search_status', 'search_status width100 onrightofpage');
 		print '</td>';
 	}
 	// Action column
@@ -1623,7 +1618,7 @@ if ($search_date_signature_endyear) {
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['u.login']['checked'])) {
-		print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, '', $sortfield, $sortorder);
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['sale_representative']['checked'])) {
