@@ -85,7 +85,6 @@ class UsePositiveExit extends AbstractRector
 			$tmpfunctionname = $this->getName($node);
 			// If function is ok. We must avoid a lot of cases like isset(), empty()
 			if (in_array($tmpfunctionname, array('exit'))) {
-				var_dump($tmpfunctionname);
 				//print "tmpfunctionname=".$tmpfunctionname."\n";
 				$args = $node->getArgs();
 				$nbofparam = count($args);
