@@ -2,7 +2,7 @@
 /* Copyright (C) 2011       Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020		Ahmad Jamaly Rabib	<rabib@metroworks.co.jp>
- * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,28 +49,99 @@ class Import
 	 */
 	public $errno;
 
+	/**
+	 * @var array
+	 */
 	public $array_import_module;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_perms;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_icon;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_code;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_label;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_tables;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_tables_creator;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_fields;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_fieldshidden;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_entities;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_regex;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_updatekeys;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_preselected_updatekeys;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_examplevalues;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_convertvalue;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_run_sql_after;
 
 	// To store import templates
 	public $id;
 	public $hexa; // List of fields in the export profile
 	public $datatoimport;
-	public $model_name; // Name of export profile
+
+	/**
+	 * @var string Name of export profile
+	 */
+	public $model_name;
+
+	/**
+	 * @var int ID
+	 */
 	public $fk_user;
 
 
