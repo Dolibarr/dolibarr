@@ -433,6 +433,8 @@ class WebsitePage extends CommonObject
 			if (count($sqlwhere) > 0) {
 				$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
 			}
+
+			$filter = '';
 		}
 
 		$errormessage = '';
