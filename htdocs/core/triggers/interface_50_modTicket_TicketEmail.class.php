@@ -253,6 +253,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					$res = 0;
 
 					if ($contactid > 0) {
+						// TODO This security test has no sens. We must check that $contactid is inside $linked_contacts[]['id'] when $linked_contacts[]['source'] = 'external' or 'thirdparty'
+						// Refuse email if not
 						$contact = new Contact($this->db);
 						$res = $contact->fetch($contactid);
 						if (! in_array($contact, $linked_contacts)) {
