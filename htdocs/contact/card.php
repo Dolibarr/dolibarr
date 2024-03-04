@@ -1385,15 +1385,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		$object->fetch_thirdparty();
 
+
+		print '<div class="fichehalfright">';
+
+		print '<div class="underbanner clearboth"></div>';
+		print '<table class="border tableforfield centpercent">';
+
+
 		if (!empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {
 			if ($object->thirdparty->client == 2 || $object->thirdparty->client == 3) {
-				print '<br>';
-
-				print '<div class="underbanner clearboth"></div>';
-				print '<table class="border" width="100%">';
-
 				// Level of prospect
-				print '<tr><td class="titlefield nowrap">';
+				print '<tr><td class="titlefield">';
 				print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 				print $langs->trans('ProspectLevel');
 				print '<td>';
@@ -1425,16 +1427,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					}
 				}
 				print '</div></td></tr>';
-
-				print "</table>";
-				print '</div>';
 			}
 		}
-
-		print '<div class="fichehalfright">';
-
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield centpercent">';
 
 		// Categories
 		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {

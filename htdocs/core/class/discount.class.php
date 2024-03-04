@@ -373,7 +373,7 @@ class DiscountAbsolute
 			if ($this->fk_facture_source) {
 				$sql = "UPDATE ".$this->db->prefix()."facture";
 				$sql .= " set paye=0, fk_statut=1";
-				$sql .= " WHERE (type IN (".$this->db->sanitize(CommonInvoice::TYPE_CREDIT_NOTE.", ".CommonInvoice::TYPE_DEPOSIT).") AND rowid = ".((int) $this->fk_facture_source);
+				$sql .= " WHERE type IN (".$this->db->sanitize(CommonInvoice::TYPE_CREDIT_NOTE.", ".CommonInvoice::TYPE_DEPOSIT).") AND rowid = ".((int) $this->fk_facture_source);
 
 				dol_syslog(get_class($this)."::delete Update credit note or deposit invoice statut", LOG_DEBUG);
 				$result = $this->db->query($sql);
@@ -388,7 +388,7 @@ class DiscountAbsolute
 			} elseif ($this->fk_invoice_supplier_source) {
 				$sql = "UPDATE ".$this->db->prefix()."facture_fourn";
 				$sql .= " set paye=0, fk_statut=1";
-				$sql .= " WHERE (type IN (".$this->db->sanitize(CommonInvoice::TYPE_CREDIT_NOTE.", ".CommonInvoice::TYPE_DEPOSIT).") AND rowid = ".((int) $this->fk_invoice_supplier_source);
+				$sql .= " WHERE type IN (".$this->db->sanitize(CommonInvoice::TYPE_CREDIT_NOTE.", ".CommonInvoice::TYPE_DEPOSIT).") AND rowid = ".((int) $this->fk_invoice_supplier_source);
 
 				dol_syslog(get_class($this)."::delete Update credit note or deposit invoice statut", LOG_DEBUG);
 				$result = $this->db->query($sql);
@@ -582,7 +582,7 @@ class DiscountAbsolute
 			$sql .= " AND f.type = ". (int) $invoice::TYPE_DEPOSIT;
 		} else {
 			$this->error = get_class($this)."::getSumDepositsUsed was called with a bad object as a first parameter";
-			dol_print_error($this->error);
+			dol_print_error($this->db, $this->error);
 			return -1;
 		}
 
@@ -623,7 +623,7 @@ class DiscountAbsolute
 			$sql .= " AND f.type IN (".$this->db->sanitize($invoice::TYPE_STANDARD.", ".$invoice::TYPE_CREDIT_NOTE).")"; // Find discount coming from credit note or excess paid
 		} else {
 			$this->error = get_class($this)."::getSumCreditNotesUsed was called with a bad object as a first parameter";
-			dol_print_error($this->error);
+			dol_print_error($this->db, $this->error);
 			return -1;
 		}
 
@@ -661,7 +661,7 @@ class DiscountAbsolute
 			$sql .= " WHERE rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_source = ".((int) $invoice->id);
 		} else {
 			$this->error = get_class($this)."::getSumCreditNotesUsed was called with a bad object as a first parameter";
-			dol_print_error($this->error);
+			dol_print_error($this->db, $this->error);
 			return -1;
 		}
 

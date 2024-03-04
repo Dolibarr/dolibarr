@@ -348,9 +348,13 @@ if ($source == 'proposal') {
 	print '</td></tr>'."\n";
 
 	// Amount
+
 	$amount = '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
 	$amount .= '</td><td class="CTableRow2">';
 	$amount .= '<b>'.price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</b>';
+	if ($object->multicurrency_code != $conf->currency) {
+		$amount .= ' ('.price($object->multicurrency_total_ttc, 0, $langs, 1, -1, -1, $object->multicurrency_code).')';
+	}
 	$amount .= '</td></tr>'."\n";
 
 	// Call Hook amountPropalSign

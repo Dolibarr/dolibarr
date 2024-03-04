@@ -241,7 +241,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 				'fichinter'=>'fichinter', 'fichinterdet'=>'fichinterdet',
 				'inventory'=>'inventory',
 				'actioncomm'=>'actioncomm', 'bom_bom'=>'bom_bom', 'mrp_mo'=>'mrp_mo',
-				'adherent_type'=>'adherent_type', 'user'=>'user', 'partnershiap'=>'partnershiap', 'projet'=>'projet', 'projet_task'=>'projet_task', 'ticket'=>'ticket');
+				'adherent_type'=>'adherent_type', 'user'=>'user', 'partnership'=>'partnership', 'projet'=>'projet', 'projet_task'=>'projet_task', 'ticket'=>'ticket');
 	//$listofmodulesextra = array('fichinter'=>'fichinter');
 
 	print '<tr><td colspan="2"><br>*** Check fields into extra table structure match table of definition. If not add column into table</td></tr>';
@@ -1133,13 +1133,13 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha')) {
 							}
 							if ($key == 'js') {
 								$value = $obj->value;
-								$valuearray = json_decode($value);
+								$valuearray = (array) json_decode($value);	// Force cast into array because sometimes it is a stdClass
 								$reloffile = $valuearray[0];
 								$reloffile = preg_replace('/^\//', '', $valuearray[0]);
 							}
 							if ($key == 'css') {
 								$value = $obj->value;
-								$valuearray = json_decode($value);
+								$valuearray = (array) json_decode($value);	// Force cast into array because sometimes it is a stdClass
 								if ($value && (!is_array($valuearray) || count($valuearray) == 0)) {
 									$valuearray = array();
 									$valuearray[0] = $value; // If value was not a json array but a string
