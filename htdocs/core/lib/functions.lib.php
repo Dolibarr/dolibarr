@@ -9641,18 +9641,23 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 					return '';
 				}
 			}
-			$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $s);	// accept parenthesis in '...->method(...'
-			$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-			$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-			$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
-			$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
-			$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);	// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
+			$savescheck = '';
+			$scheck = $s;
+			while ($scheck && $savescheck != $scheck) {
+				$savescheck = $scheck;
+				$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $scheck);	// accept parenthesis in '...->method(...'
+				$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
+				$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
+				$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
+				$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
+				$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);	// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
+			}
 			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
 			if (strpos($scheck, '(') !== false) {
 				if ($returnvalue) {
-					return 'Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s;
+					return 'Bad string syntax to evaluate (mode 1, found call of a function or method without using the direct name of the function): '.$s;
 				} else {
-					dol_syslog('Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s);
+					dol_syslog('Bad string syntax to evaluate (mode 1, found call of a function or method without using the direct name of the function): '.$s);
 					return '';
 				}
 			}
@@ -9672,18 +9677,23 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 					return '';
 				}
 			}
-			$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $s);	// accept parenthesis in '...->method(...'
-			$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-			$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-			$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
-			$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
-			$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);		// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
+			$savescheck = '';
+			$scheck = $s;
+			while ($scheck && $savescheck != $scheck) {
+				$savescheck = $scheck;
+				$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $scheck);	// accept parenthesis in '...->method(...'
+				$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
+				$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
+				$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
+				$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
+				$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);		// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
+			}
 			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
 			if (strpos($scheck, '(') !== false) {
 				if ($returnvalue) {
-					return 'Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s;
+					return 'Bad string syntax to evaluate (mode 2, found call of a function or method without using the direct name of the function): '.$s;
 				} else {
-					dol_syslog('Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s);
+					dol_syslog('Bad string syntax to evaluate (mode 2, found call of a function or method without using the direct name of the function): '.$s);
 					return '';
 				}
 			}
@@ -9720,22 +9730,27 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 
 		// We block use of php exec or php file functions
 		$forbiddenphpstrings = array('$$');
-		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST'));
+		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST', 'ReflectionFunction'));
 
 		$forbiddenphpfunctions = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen");
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "executeCLI", "verifCond"));	// native dolibarr functions
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64_decode", "rawurldecode", "urldecode")); // decode string functions
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64_decode", "rawurldecode", "urldecode", "str_rot13", "hex2bin")); // decode string functions used to obfuscated function name
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "require", "include", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("get_defined_functions", "get_defined_vars", "get_defined_constants", "get_declared_classes"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
 
+		$forbiddenphpmethods = array('invoke', 'invokeArgs');	// Method of ReflectionFunction to execute a function
+
 		$forbiddenphpregex = 'global\s+\$|\b('.implode('|', $forbiddenphpfunctions).')\b';
+
+		$forbiddenphpmethodsregex = '->('.implode('|', $forbiddenphpmethods).')';
 
 		do {
 			$oldstringtoclean = $s;
 			$s = str_ireplace($forbiddenphpstrings, '__forbiddenstring__', $s);
 			$s = preg_replace('/'.$forbiddenphpregex.'/i', '__forbiddenstring__', $s);
+			$s = preg_replace('/'.$forbiddenphpmethodsregex.'/i', '__forbiddenstring__', $s);
 			//$s = preg_replace('/\$[a-zA-Z0-9_\->\$]+\(/i', '', $s);	// Remove $function( call and $mycall->mymethod(
 		} while ($oldstringtoclean != $s);
 

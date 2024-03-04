@@ -3,6 +3,53 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 19.0.1 compared to 19.0.0 *****
+
+FIX: 16.0 - parent company gets emptied when updating a third party from the card in edit mode (#28269)
+FIX: #22948
+FIX: #28205
+FIX: 28251 Fixing subpermission name on api_multicurrencies.class.php (#28252)
+FIX: #28369
+FIX: #28429
+FIX: #28491 (#28522)
+FIX: #28518 (#28520)
+FIX: #28533 Mo::deleteLine removes the "main" MoLine if consumed line is delete (#28535)
+FIX: #28564
+FIX: Adding the dependencies list feature for extrafields "select" (#28549)
+FIX: Add new hidden conf "DISABLE_QTY_OVERWRITTEN" (#28523)
+FIX: avoid error "Column 'entity' in where clause is ambiguous" (#28270)
+FIX: avoid Unknown column 'pfp.ref_fourn' (#28145)
+FIX: avoid warning "error parsing attribute name in Entity" (#28543)
+FIX: Bad column for total in bom list
+FIX: Bad condition on button back to draft on recruitment job.
+FIX: Bad CRLF when sending text only content. Fix dol_htmlwithnojs()
+FIX: Bad picto on list of permission of a user when user not admin
+FIX: bad timzeone for the start/end date of an event
+FIX: Better test on validity of compute field syntax with parenthesis
+FIX: close #28279
+FIX: disabled pito of menu must be greyed.
+FIX: Don't display column when it's out of date (#28271)
+FIX: duplicate with lines: 414-416 (#28358)
+FIX: Error When cloning fourn price no default value for tva_tx (#28368)
+FIX: migration missing 2 columns in llx_resource and 1 in llx_user
+FIX: missing trans
+FIX: notification module: for supplier orders (any of the 3 triggers), user can choose an e-mail template in conf, but the conf is not used when sending the notification (#28216)
+FIX: Not truncate the multicurrency rate shown on cards (even if the global MAIN_MAX_DECIMALS_SHOWN is set to 0) (#28211)
+FIX: Payment on customer invoice - Remove accountid in url if empty for apply default value (#28156)
+FIX: Pb in redirect of a website page in USEDOLIBARRSERVER mode
+FIX: PHP Warning: Undefined variable $lib (#28342)
+FIX: Picto for mime
+FIX: position of field in list of field in shipment list
+FIX: postgresql error (#28542)
+FIX: quote in sql request
+FIX: Responsive on admin project
+FIX: Shipment closing action has wrong value (#28174)
+FIX: some tooltips has disappeared on invoice action button
+FIX: Special code is now transmitted by args only in order supplier (#28546)
+FIX: subscription must be editable when accounting isn't reconciled (#28469)
+FIX: Value of field int = 0 from modulebuilder must nto be set to null
+
+
 ***** ChangeLog for 19.0.0 compared to 18.0.0 *****
 
 For users:

@@ -2691,7 +2691,7 @@ class FactureFournisseur extends CommonInvoice
 			$sql .= " JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ff.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= ' WHERE ff.paye = 0';
-		$sql .= ' AND ff.fk_statut > 0';
+		$sql .= " AND ff.fk_statut IN (".self::STATUS_VALIDATED.")";
 		$sql .= " AND ff.entity = ".$conf->entity;
 		if ($user->socid) {
 			$sql .= ' AND ff.fk_soc = '.((int) $user->socid);

@@ -1146,7 +1146,7 @@ abstract class CommonInvoice extends CommonObject
 				$sql .= " AND fk_facture = ".((int) $this->id);				// Add a protection to not pay another invoice than current one
 			}
 			if ($type != 'direct-debit') {
-				if ($$sourcetype == 'salary') {
+				if ($sourcetype == 'salary') {
 					$sql .= " AND fk_salary = ".((int) $this->id);			// Add a protection to not pay another salary than current one
 				} else {
 					$sql .= " AND fk_facture_fourn = ".((int) $this->id);	// Add a protection to not pay another invoice than current one
