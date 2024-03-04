@@ -361,7 +361,7 @@ class WebsitePage extends CommonObject
 	 * @param  string      	$sortfield    	Sort field
 	 * @param  int         	$limit        	limit
 	 * @param  int         	$offset       	Offset
-	 * @param  string		$filter       	Filter as an Universal Search string.
+	 * @param  string|array	$filter       	Filter as an Universal Search string.
 	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string      	$filtermode   	No more used
 	 * @return array|int                 	int <0 if KO, array of pages if OK
@@ -399,6 +399,41 @@ class WebsitePage extends CommonObject
 		$sql .= " t.fk_object";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE t.fk_website = '.((int) $websiteid);
+
+		// Deprecated. If we receive an array, we use it. Prefer using the USF syntax.
+		if (is_array($filter)) {
+			$sqlwhere = array();
+
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 't.rowid' || $key == 'rowid' || $key == 't.fk_website' || $key == 'fk_website' || $key == 'status' || $key == 't.status') {
+						$sqlwhere[] = $key." = ".((int) $value);
+					} elseif ($key == 'type_container' || $key == 't.type_container') {
+						$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
+					} elseif ($key == 'lang' || $key == 't.lang') {
+						$listoflang = array();
+						$foundnull = 0;
+						foreach (explode(',', $value) as $tmpvalue) {
+							if ($tmpvalue == 'null') {
+								$foundnull++;
+								continue;
+							}
+							$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
+						}
+						$stringtouse = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
+						if ($foundnull) {
+							$stringtouse = "(".$stringtouse." OR ".$this->db->sanitize($key)." IS NULL)";
+						}
+						$sqlwhere[] = $stringtouse;
+					} else {
+						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
+					}
+				}
+			}
+			if (count($sqlwhere) > 0) {
+				$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+			}
+		}
 
 		$errormessage = '';
 		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
