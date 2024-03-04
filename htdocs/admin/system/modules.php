@@ -67,7 +67,7 @@ $arrayfields = array(
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
 $param = '';
-
+$info_admin = '';
 
 /*
  * Actions
@@ -120,7 +120,7 @@ foreach ($modulesdir as $dir) {
 								dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 							}
 						} else {
-							print "Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
+							$info_admin .= info_admin("Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)", 0, 0, '1', 'warning');
 						}
 					}
 				}
@@ -202,7 +202,7 @@ foreach ($modules as $key => $module) {
  */
 
 llxHeader();
-
+print $info_admin;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -224,7 +224,7 @@ $mode = '';
 $arrayofmassactions = array();
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 $moreforfilter = '';

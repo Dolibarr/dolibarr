@@ -257,9 +257,9 @@ class KnowledgeManagement extends DolibarrApi
 	/**
 	 * Update knowledgerecord
 	 *
-	 * @param int   $id             Id of knowledgerecord to update
-	 * @param array $request_data   Datas
-	 * @return int
+	 * @param 	int   	$id             	Id of knowledgerecord to update
+	 * @param 	array 	$request_data  		Datas
+	 * @return 	Object						Updated object
 	 *
 	 * @throws RestException
 	 *

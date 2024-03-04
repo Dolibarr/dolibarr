@@ -115,7 +115,7 @@ if ($source == 'organizedeventregistration') {
 	// Finding the Attendee
 	$attendee = new ConferenceOrBoothAttendee($db);
 
-	$invoiceid = GETPOST('ref', 'int');
+	$invoiceid = GETPOSTINT('ref');
 	$invoice = new Facture($db);
 
 	$resultinvoice = $invoice->fetch($invoiceid);
@@ -372,7 +372,7 @@ if ($action == 'dopayment') {
 		$phoneNum = GETPOST("phoneNum", 'alpha');
 		$email = GETPOST("email", 'alpha');
 		$desc = GETPOST("desc", 'alpha');
-		$thirdparty_id = GETPOST('thirdparty_id', 'int');
+		$thirdparty_id = GETPOSTINT('thirdparty_id');
 
 		// Special case for Paypal-Indonesia
 		if ($shipToCountryCode == 'ID' && !preg_match('/\-/', $shipToState)) {
@@ -434,7 +434,7 @@ if ($action == 'dopayment') {
 	if ($paymentmethod == 'paybox') {
 		$PRICE = price2num(GETPOST("newamount"), 'MT');
 		$email = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL');
-		$thirdparty_id = GETPOST('thirdparty_id', 'int');
+		$thirdparty_id = GETPOSTINT('thirdparty_id');
 
 		$origfulltag = GETPOST("fulltag", 'alpha');
 
@@ -497,11 +497,11 @@ if ($action == 'charge' && isModEnabled('stripe')) {
 
 	$stripeToken = GETPOST("stripeToken", 'alpha');
 	$email = GETPOST("email", 'alpha');
-	$thirdparty_id = GETPOST('thirdparty_id', 'int'); // Note that for payment following online registration for members, this is empty because thirdparty is created once payment is confirmed by paymentok.php
+	$thirdparty_id = GETPOSTINT('thirdparty_id'); // Note that for payment following online registration for members, this is empty because thirdparty is created once payment is confirmed by paymentok.php
 	$dol_type = (GETPOST('s', 'alpha') ? GETPOST('s', 'alpha') : GETPOST('source', 'alpha'));
-	$dol_id = GETPOST('dol_id', 'int');
+	$dol_id = GETPOSTINT('dol_id');
 	$vatnumber = GETPOST('vatnumber', 'alpha');
-	$savesource = GETPOSTISSET('savesource') ? GETPOST('savesource', 'int') : 1;
+	$savesource = GETPOSTISSET('savesource') ? GETPOSTINT('savesource') : 1;
 
 	dol_syslog("POST stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_payment');
 	dol_syslog("POST email = ".$email, LOG_DEBUG, 0, '_payment');
@@ -531,7 +531,7 @@ if ($action == 'charge' && isModEnabled('stripe')) {
 
 				$service = 'StripeTest';
 				$servicestatus = 0;
-				if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'int')) {
+				if (getDolGlobalString('STRIPE_LIVE') && !GETPOSTINT('forcesandbox')) {
 					$service = 'StripeLive';
 					$servicestatus = 1;
 				}
@@ -730,7 +730,7 @@ if ($action == 'charge' && isModEnabled('stripe')) {
 	if (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
 		$service = 'StripeTest';
 		$servicestatus = 0;
-		if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'int')) {
+		if (getDolGlobalString('STRIPE_LIVE') && !GETPOSTINT('forcesandbox')) {
 			$service = 'StripeLive';
 			$servicestatus = 1;
 		}
@@ -864,10 +864,10 @@ if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_r
 
 
 // Show sandbox warning
-if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypal') && (getDolGlobalString('PAYPAL_API_SANDBOX') || GETPOST('forcesandbox', 'int'))) {		// We can force sand box with param 'forcesandbox'
+if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypal') && (getDolGlobalString('PAYPAL_API_SANDBOX') || GETPOSTINT('forcesandbox'))) {		// We can force sand box with param 'forcesandbox'
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Paypal'), '', 'warning');
 }
-if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'int'))) {
+if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOSTINT('forcesandbox'))) {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
 }
 
@@ -881,7 +881,7 @@ print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n
 print '<input type="hidden" name="suffix" value="'.dol_escape_htmltag($suffix).'">'."\n";
 print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($SECUREKEY).'">'."\n";
 print '<input type="hidden" name="e" value="'.$entity.'" />';
-print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox', 'int').'" />';
+print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
 print '<input type="hidden" name="lang" value="'.$getpostlang.'">';
 print "\n";
 
@@ -1604,7 +1604,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 
 	if ($member->type) {
 		$oldtypeid = $member->typeid;
-		$newtypeid = (int) (GETPOSTISSET("typeid") ? GETPOST("typeid", 'int') : $member->typeid);
+		$newtypeid = (int) (GETPOSTISSET("typeid") ? GETPOSTINT("typeid") : $member->typeid);
 
 		if (getDolGlobalString('MEMBER_ALLOW_CHANGE_OF_TYPE')) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
@@ -2123,7 +2123,7 @@ if ($action != 'dopayment') {
 
 			if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {
 				print '<div class="button buttonpayment" id="div_dopayment_stripe"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_stripe" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
-				print '<input type="hidden" name="noidempotency" value="'.GETPOST('noidempotency', 'int').'">';
+				print '<input type="hidden" name="noidempotency" value="'.GETPOSTINT('noidempotency').'">';
 				print '<br>';
 				print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
 				print '</div>';
@@ -2252,9 +2252,9 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 		print '<input type="hidden" name="e" value="'.$entity.'" />';
 		print '<input type="hidden" name="amount" value="'.$amount.'">'."\n";
 		print '<input type="hidden" name="currency" value="'.$currency.'">'."\n";
-		print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox', 'int').'" />';
+		print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
 		print '<input type="hidden" name="email" value="'.GETPOST('email', 'alpha').'" />';
-		print '<input type="hidden" name="thirdparty_id" value="'.GETPOST('thirdparty_id', 'int').'" />';
+		print '<input type="hidden" name="thirdparty_id" value="'.GETPOSTINT('thirdparty_id').'" />';
 		print '<input type="hidden" name="lang" value="'.$getpostlang.'">';
 
 		if (getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') || getDolGlobalString('STRIPE_USE_NEW_CHECKOUT')) {	// Use a SCA ready method
@@ -2275,7 +2275,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 			}
 
 			if (getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
-				$noidempotency_key = (GETPOSTISSET('noidempotency') ? GETPOST('noidempotency', 'int') : 0); // By default noidempotency is unset, so we must use a different tag/ref for each payment. If set, we can pay several times the same tag/ref.
+				$noidempotency_key = (GETPOSTISSET('noidempotency') ? GETPOSTINT('noidempotency') : 0); // By default noidempotency is unset, so we must use a different tag/ref for each payment. If set, we can pay several times the same tag/ref.
 				$paymentintent = $stripe->getPaymentIntent($amount, $currency, ($tag ? $tag : $fulltag), 'Stripe payment: '.$fulltag.(is_object($object) ? ' ref='.$object->ref : ''), $object, $stripecu, $stripeacc, $servicestatus, 0, 'automatic', false, null, 0, $noidempotency_key);
 				// The paymentintnent has status 'requires_payment_method' (even if paymentintent was already paid)
 				//var_dump($paymentintent);

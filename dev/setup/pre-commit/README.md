@@ -38,8 +38,8 @@ the project: `pre-commit-config.yaml`.
 ### Tips
 
 After installing `pre-commit` onto your local git clone, pre-commit will run
-on every commit. The first time, all tools required by pre-commit will be installed 
-into ~/.cache/pre-commit 
+on every commit. The first time, all tools required by pre-commit will be installed
+into ~/.cache/pre-commit
 
 When it finds some issue, the git commit will be aborted, so you can fix it,
 or verify it.
@@ -87,3 +87,7 @@ There is much more you can do with pre-commit, check out its
 Now your commit is less likely to fail in the Continuous Intagration (CI) run
 on github.\
 CI also runs pre-commit to help maintain code quality.
+
+Note:
+Code for precommits are saved into:
+.cache/pre-commit/repoyXXXXX/py_env-python3/lib/pythonX.Y/site-packages/pre_commit_hooks/no_commit_to_branch.py

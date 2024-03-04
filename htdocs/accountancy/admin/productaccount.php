@@ -26,17 +26,16 @@
  * \brief		To define accounting account on product / service
  */
 require '../../main.inc.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-if (isModEnabled('categorie')) {
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-}
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "compta", "accountancy", "products"));
@@ -58,13 +57,13 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $codeventil_buy = GETPOST('codeventil_buy', 'array');
 $codeventil_sell = GETPOST('codeventil_sell', 'array');
 $chk_prod = GETPOST('chk_prod', 'array');
-$default_account = GETPOST('default_account', 'int');
+$default_account = GETPOSTINT('default_account');
 $account_number_buy = GETPOST('account_number_buy');
 $account_number_sell = GETPOST('account_number_sell');
 $changeaccount = GETPOST('changeaccount', 'array');
 $changeaccount_buy = GETPOST('changeaccount_buy', 'array');
 $changeaccount_sell = GETPOST('changeaccount_sell', 'array');
-$searchCategoryProductOperator = (GETPOST('search_category_product_operator', 'int') ? GETPOST('search_category_product_operator', 'int') : 0);
+$searchCategoryProductOperator = (GETPOSTINT('search_category_product_operator') ? GETPOSTINT('search_category_product_operator') : 0);
 $searchCategoryProductList = GETPOST('search_category_product_list', 'array');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
@@ -85,10 +84,10 @@ if (empty($accounting_product_mode)) {
 	$accounting_product_mode = 'ACCOUNTANCY_SELL';
 }
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : getDolGlobalInt('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : getDolGlobalInt('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -526,7 +525,10 @@ if ($resql) {
 
 	// Filter on categories
 	$moreforfilter = '';
-	if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+	if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
+		$formcategory = new FormCategory($db);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $searchCategoryProductList, 'minwidth300', $searchCategoryProductList ? $searchCategoryProductList : 0);
+		/*
 		$moreforfilter .= '<div class="divsearchfield">';
 		$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
 		$categoriesProductArr = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', '', 64, 0, 1);
@@ -534,6 +536,7 @@ if ($resql) {
 		$moreforfilter .= Form::multiselectarray('search_category_product_list', $categoriesProductArr, $searchCategoryProductList, 0, 0, 'minwidth300');
 		$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_product_operator" name="search_category_product_operator" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').'/> <label for="search_category_product_operator"><span class="none">'.$langs->trans('UseOrOperatorForCategories').'</span></label>';
 		$moreforfilter .= '</div>';
+		*/
 	}
 
 	// Show/hide child products. Hidden by default

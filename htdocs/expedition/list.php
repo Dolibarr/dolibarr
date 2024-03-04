@@ -42,11 +42,11 @@ $langs->loadLangs(array("sendings", "deliveries", 'companies', 'bills', 'product
 
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'shipmentlist'; // To manage different context of search
 
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 
 $action     = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $toselect   = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
@@ -55,28 +55,28 @@ $search_ref_exp = GETPOST("search_ref_exp", 'alpha');
 $search_ref_liv = GETPOST('search_ref_liv', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_company = GETPOST("search_company", 'alpha');
-$search_shipping_method_id = GETPOST('search_shipping_method_id');
+$search_shipping_method_ids = GETPOST('search_shipping_method_ids', 'array:int');
 $search_tracking = GETPOST("search_tracking", 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
-$search_country = GETPOST("search_country", 'int');
-$search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
-$search_billed = GETPOST("search_billed", 'int');
-$search_datedelivery_start = dol_mktime(0, 0, 0, GETPOST('search_datedelivery_startmonth', 'int'), GETPOST('search_datedelivery_startday', 'int'), GETPOST('search_datedelivery_startyear', 'int'));
-$search_datedelivery_end = dol_mktime(23, 59, 59, GETPOST('search_datedelivery_endmonth', 'int'), GETPOST('search_datedelivery_endday', 'int'), GETPOST('search_datedelivery_endyear', 'int'));
-$search_datereceipt_start = dol_mktime(0, 0, 0, GETPOST('search_datereceipt_startmonth', 'int'), GETPOST('search_datereceipt_startday', 'int'), GETPOST('search_datereceipt_startyear', 'int'));
-$search_datereceipt_end = dol_mktime(23, 59, 59, GETPOST('search_datereceipt_endmonth', 'int'), GETPOST('search_datereceipt_endday', 'int'), GETPOST('search_datereceipt_endyear', 'int'));
+$search_country = GETPOSTINT("search_country");
+$search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
+$search_billed = GETPOSTINT("search_billed");
+$search_datedelivery_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datedelivery_startmonth'), GETPOSTINT('search_datedelivery_startday'), GETPOSTINT('search_datedelivery_startyear'));
+$search_datedelivery_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datedelivery_endmonth'), GETPOSTINT('search_datedelivery_endday'), GETPOSTINT('search_datedelivery_endyear'));
+$search_datereceipt_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datereceipt_startmonth'), GETPOSTINT('search_datereceipt_startday'), GETPOSTINT('search_datereceipt_startyear'));
+$search_datereceipt_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datereceipt_endmonth'), GETPOSTINT('search_datereceipt_endday'), GETPOSTINT('search_datereceipt_endyear'));
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$search_user = GETPOST('search_user', 'int');
-$search_sale = GETPOST('search_sale', 'int');
-$search_categ_cus = GETPOST("search_categ_cus", 'int');
-$search_product_category = GETPOST('search_product_category', 'int');
+$search_user = GETPOSTINT('search_user');
+$search_sale = GETPOSTINT('search_sale');
+$search_categ_cus = GETPOSTINT("search_categ_cus");
+$search_product_category = GETPOSTINT('search_product_category');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (!$sortfield) {
 	$sortfield = "e.ref";
 }
@@ -135,9 +135,9 @@ $arrayfields = array(
 	'e.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'e.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'e.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
-	'l.ref'=>array('label'=>$langs->trans("DeliveryRef"), 'checked'=>1, 'enabled'=>(getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
-	'l.date_delivery'=>array('label'=>$langs->trans("DateReceived"), 'checked'=>1, 'enabled'=>(getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
-	'e.billed'=>array('label'=>$langs->trans("Billed"), 'checked'=>1, 'position'=>1000, 'enabled'=>'getDolGlobalString("WORKFLOW_BILL_ON_SHIPMENT") !== "0"')
+	'l.ref'=>array('label'=>$langs->trans("DeliveryRef"), 'checked'=>1, 'position'=>1010, 'enabled'=>(getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
+	'l.date_delivery'=>array('label'=>$langs->trans("DateReceived"), 'position'=>1020, 'checked'=>1, 'enabled'=>(getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
+	'e.billed'=>array('label'=>$langs->trans("Billed"), 'checked'=>1, 'position'=>1100, 'enabled'=>'getDolGlobalString("WORKFLOW_BILL_ON_SHIPMENT") !== "0"')
 );
 
 // Extra fields
@@ -147,7 +147,7 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Security check
-$expeditionid = GETPOST('id', 'int');
+$expeditionid = GETPOSTINT('id');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -191,7 +191,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_type = '';
 	$search_country = '';
 	$search_tracking = '';
-	$search_shipping_method_id = '';
+	$search_shipping_method_ids = [];
 	$search_type_thirdparty = '';
 	$search_billed = '';
 	$search_datedelivery_start = '';
@@ -346,8 +346,8 @@ if ($search_state) {
 if ($search_country) {
 	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
-if ($search_shipping_method_id > 0) {
-	$sql .= " AND e.fk_shipping_method = ".((int) $search_shipping_method_id);
+if (!empty($search_shipping_method_ids)) {
+	$sql .= " AND e.fk_shipping_method IN (".$db->sanitize(implode(',', $search_shipping_method_ids)).')';
 }
 if ($search_tracking) {
 	$sql .= natural_search("e.tracking_number", $search_tracking);
@@ -536,8 +536,10 @@ if ($search_sale > 0) {
 if ($search_company) {
 	$param .= "&search_company=".urlencode($search_company);
 }
-if ($search_shipping_method_id) {
-	$param .= "&search_shipping_method_id=".urlencode($search_shipping_method_id);
+if ($search_shipping_method_ids) {
+	foreach ($search_shipping_method_ids as $value) {
+		$param .= "&amp;search_shipping_method_ids[]=".urlencode($value);
+	}
 }
 if ($search_tracking) {
 	$param .= "&search_tracking=".urlencode($search_tracking);
@@ -650,7 +652,7 @@ if ($user->hasRight('user', 'user', 'lire')) {
 	$moreforfilter .= '</div>';
 }
 // If the user can view prospects other than his'
-if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
+if (isModEnabled('category') && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
@@ -661,7 +663,7 @@ if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire') && ($user-
 
 	$moreforfilter .= '</div>';
 }
-if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('CustomersProspectsCategoriesShort');
@@ -684,7 +686,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', ''));
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));
 if ($massactionbutton) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1); // This also change content of $arrayfields
 }
@@ -767,7 +769,7 @@ if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
 	// Delivery method
 	print '<td class="liste_titre center">';
 	$shipment->fetch_delivery_methods();
-	print $form->selectarray("search_shipping_method_id", $shipment->meths, $search_shipping_method_id, 1, 0, 0, "", 1, 0, 0, '', 'maxwidth150');
+	print $form->selectarray("search_shipping_method_ids[]", $shipment->meths, $search_shipping_method_ids, 1, 0, 0, 'multiple', 1, 0, 0, '', 'maxwidth150');
 	print "</td>\n";
 }
 // Tracking number

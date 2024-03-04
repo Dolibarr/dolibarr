@@ -281,8 +281,8 @@ class modTakePos extends DolibarrModules
 			if ($searchcompanyid == 0) {
 				$societe->name = $nametouse;
 				$societe->client = 1;
-				$societe->code_client = -1;
-				$societe->code_fournisseur = -1;
+				$societe->code_client = '-1';
+				$societe->code_fournisseur = '-1';
 				$societe->note_private = "Default customer automatically created by Point Of Sale module activation. Can be used as the default generic customer in the Point Of Sale setup. Can also be edited or removed if you don't need a generic customer.";
 
 				$searchcompanyid = $societe->create($user);

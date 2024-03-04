@@ -36,10 +36,10 @@ $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 $mesg = '';
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -50,7 +50,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 if ($user->hasRight('margins', 'read', 'all')) {
-	$agentid = GETPOST('agentid', 'int');
+	$agentid = GETPOSTINT('agentid');
 } else {
 	$agentid = $user->id;
 }
@@ -64,12 +64,12 @@ if (!$sortfield) {
 
 $startdate = $enddate = '';
 
-$startdateday   = GETPOST('startdateday', 'int');
-$startdatemonth = GETPOST('startdatemonth', 'int');
-$startdateyear  = GETPOST('startdateyear', 'int');
-$enddateday     = GETPOST('enddateday', 'int');
-$enddatemonth   = GETPOST('enddatemonth', 'int');
-$enddateyear    = GETPOST('enddateyear', 'int');
+$startdateday   = GETPOSTINT('startdateday');
+$startdatemonth = GETPOSTINT('startdatemonth');
+$startdateyear  = GETPOSTINT('startdateyear');
+$enddateday     = GETPOSTINT('enddateday');
+$enddatemonth   = GETPOSTINT('enddatemonth');
+$enddateyear    = GETPOSTINT('enddateyear');
 
 if (!empty($startdatemonth)) {
 	$startdate = dol_mktime(0, 0, 0, $startdatemonth, $startdateday, $startdateyear);

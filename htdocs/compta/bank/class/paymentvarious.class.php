@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -402,7 +402,7 @@ class PaymentVarious extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return	int
 	 */
 	public function initAsSpecimen()
 	{
@@ -419,6 +419,8 @@ class PaymentVarious extends CommonObject
 		$this->fk_bank = 0;
 		$this->fk_user_author = 0;
 		$this->fk_user_modif = 0;
+
+		return 1;
 	}
 
 	/**
@@ -472,11 +474,11 @@ class PaymentVarious extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -5;
 		}
-		if (isModEnabled("banque") && (empty($this->fk_account) || $this->fk_account <= 0)) {
+		if (isModEnabled("bank") && (empty($this->fk_account) || $this->fk_account <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("BankAccount"));
 			return -6;
 		}
-		if (isModEnabled("banque") && (empty($this->type_payment) || $this->type_payment <= 0)) {
+		if (isModEnabled("bank") && (empty($this->type_payment) || $this->type_payment <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 			return -7;
 		}
@@ -530,7 +532,7 @@ class PaymentVarious extends CommonObject
 			$this->ref = (string) $this->id;
 
 			if ($this->id > 0) {
-				if (isModEnabled("banque") && !empty($this->amount)) {
+				if (isModEnabled("bank") && !empty($this->amount)) {
 					// Insert into llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 

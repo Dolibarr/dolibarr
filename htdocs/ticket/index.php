@@ -43,8 +43,8 @@ $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 // Get parameters
-$id = GETPOST('id', 'int');
-$msg_id = GETPOST('msg_id', 'int');
+$id = GETPOSTINT('id');
+$msg_id = GETPOSTINT('msg_id');
 
 $action = GETPOST('action', 'aZ09');
 
@@ -56,7 +56,7 @@ $userid = $user->id;
 
 $nowarray = dol_getdate(dol_now(), true);
 $nowyear = $nowarray['year'];
-$year = GETPOST('year', 'int') > 0 ? GETPOST('year', 'int') : $nowyear;
+$year = GETPOSTINT('year') > 0 ? GETPOSTINT('year') : $nowyear;
 $startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
@@ -103,7 +103,7 @@ $param_shownb = 'DOLUSERCOOKIE_ticket_by_status_shownb';
 $param_showtot = 'DOLUSERCOOKIE_ticket_by_status_showtot';
 $autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
 if (in_array('DOLUSERCOOKIE_ticket_by_status', $autosetarray)) {
-	$endyear = GETPOST($param_year, 'int');
+	$endyear = GETPOSTINT($param_year);
 	$shownb = GETPOST($param_shownb, 'alpha');
 	$showtot = GETPOST($param_showtot, 'alpha');
 } elseif (!empty($_COOKIE['DOLUSERCOOKIE_ticket_by_status'])) {
@@ -207,7 +207,7 @@ if ($result) {
 		}
 	}
 
-	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';	// This define $badgeStatusX
 
 	$dataseries = array();
 	$colorseries = array();

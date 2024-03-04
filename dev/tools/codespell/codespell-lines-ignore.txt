@@ -28,7 +28,7 @@
 					$tmpprojtime = $element->getSumOfAmount($idofelementuser ? $elementuser : '', $dates, $datee); // $element is a task. $elementuser may be empty
 					$typea = ($data[$j]->typea == 'birth') ? $picb : $pice;
 					//var_dump("$key, $tablename, $datefieldname, $dates, $datee");
-					GETPOST("mouvement", 'int'),
+					GETPOSTINT("mouvement"),
 					dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." from=".$overview[0]->from." to=".$overview[0]->to." subject=".$overview[0]->subject);
 					if ((empty($dates) && empty($datee)) || (intval($dates) <= $element->datestart && intval($datee) >= $element->dateend)) {
 					jQuery("#mouvement option").removeAttr("selected").change();
@@ -59,20 +59,19 @@
 				$tmp = array('id_users'=>$obj->id_users, 'nom'=>$obj->name, 'reponses'=>$obj->reponses);
 				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0, true); // Disable hook for the moment
 				//si les reponses ne concerne pas la colonne effacée, on concatenate
-				GETPOST("mouvement", "int"),
 				GETPOST("mouvement", 'alpha'),
-				GETPOST("mouvement", 'int'),
+				GETPOSTINT("mouvement"),
 				foreach ($TWeek as $weekIndex => $weekNb) {
 				if (count($arrayfields) > 0 && !empty($arrayfields['t.datee']['checked'])) {
 				if (jQuery("#mouvement").val() == \'0\') jQuery("#unitprice").removeAttr("disabled");
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
 				print '<td class="center">'.dol_print_date($link->datea, "dayhour", "tzuser").'</td>';
 			$action = 'transfert';
-			$date_com = dol_mktime(GETPOST('rehour', 'int'), GETPOST('remin', 'int'), GETPOST('resec', 'int'), GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+			$date_com = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 			$date_next_execution = (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
 			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
-			$datee = dol_get_last_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int') ? GETPOST('monthtoexport', 'int') : 12);
-			$datesubscription = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", "int"), GETPOST("reyear", "int"));
+			$datee = dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 12);
+			$datesubscription = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 			$ensemblereponses = $obj->reponses;
 			$object->datee = $datee;
 			$object->periode = $dateperiod;
@@ -114,20 +113,17 @@
 		$cle_rib = strtolower(checkES($rib, $CCC));
 		$date_com = dol_mktime(GETPOST('rehour'), GETPOST('remin'), GETPOST('resec'), GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
 		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
-		$datefrom = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-		$datesubscription = dol_mktime(0, 0, 0, GETPOST("remonth", "int"), GETPOST("reday", "int"), GETPOST("reyear", "int"));
+		$datefrom = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
+		$datesubscription = dol_mktime(0, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 		$datetouse = ($this->date_end > 0) ? $this->date_end : ((isset($this->datee) && $this->datee > 0) ? $this->datee : 0);
 		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field) ? $project_field : 'fk_projet');
 		$ensemblereponses = $obj->reponses;
 		$head[$h][1] = $langs->trans("Referers");
 		$head[$tab][1] = $langs->trans("Referers");
 		$out .= "<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"]) ? dol_htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT) : '')."<br>\n";
-		$reday = GETPOST('reday', 'int');
 		$reday = GETPOSTINT('reday');
 		$sql  = "SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_modification, p.budget_amount";
-		$sql  = "SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount";
 		$sql  = 'SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_modification, p.budget_amount';
-		$sql  = 'SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount';
 		$sql .= "   (cs.periode IS NOT NULL AND cs.periode between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 		$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datea)."'";
@@ -187,11 +183,10 @@
 	$datee = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
 	$datee = dol_stringtotime($dateerfc);
 	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
-	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
-	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", "int"), GETPOST("reday", "int"), GETPOST("reyear", "int"));
-	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
-	$datepaye = dol_mktime(GETPOST("rehour", 'int'), GETPOST("remin", 'int'), GETPOST("resec", 'int'), GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
-	$datepaye = dol_mktime(GETPOST("rehour", 'int'), GETPOST("remin", 'int'), GETPOST("resec", 'int'), GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'), 'tzuserrel');
+	$datepaid = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
+	$datepaye = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
+	$datepaye = dol_mktime(GETPOSTINT("rehour"), GETPOSTINT("remin"), GETPOSTINT("resec"), GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
+	$datepaye = dol_mktime(GETPOSTINT("rehour"), GETPOSTINT("remin"), GETPOSTINT("resec"), GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"), 'tzuserrel');
 	$ensemblereponses = $obj->reponses;
 	$head[$h][1] = $langs->trans('Referers');
 	$morewherefilterarray[] = " t.datee <= '".$db->idate($search_date_end_end)."'";
@@ -238,8 +233,8 @@
 	foreach ($TWeek as $week_number) {
 	if (!empty($arrayfields['t.datee']['checked'])) {
 	if ($action == "transfert") {
-	if (GETPOST("reyear", "int") && GETPOST("remonth", "int") && GETPOST("reday", "int")) {
 	if (GETPOST('reday')) {
+	if (GETPOSTINT("reyear") && GETPOSTINT("remonth") && GETPOSTINT("reday")) {
 	print $form->selectDate($datee, 'datee', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
 	print '<select name="mouvement" id="mouvement" class="minwidth100 valignmiddle">';
@@ -265,6 +260,9 @@
 	public function getSumOfAmount($fuser = '', $dates = '', $datee = '')
 	return $TWeek;
 	unset($_SESSION["adresse"]);
+          - creat,unitl,alltime,datas,referers
+          - informations,medias,uptodate,reenable,crypted,developpers
+          - ned
  *	@param	array 		$TWeek			array of week numbers
  * @param	array		$TWeek					Array of week numbers
  * Copyright (C) 2019		Tim Otte    			<otte@meuser.it>
@@ -296,9 +294,7 @@ $sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.
 $sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode, cs.fk_account,";
 $sql .= " cs.rowid, cs.libelle as label_sc, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total, cs.paye,";
 $sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_modification, p.budget_amount,";
-$sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_update, p.budget_amount,";
 $sql .= " t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_modification,";
-$sql .= " t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_update,";
 $sql .= dolSqlDateFilter('p.datee', $search_eday, $search_emonth, $search_eyear);
 $sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.datee as projectdatee, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate, p.usage_bill_time,";
 $sql = "SELECT id_users, nom as name, id_sondage, reponses";

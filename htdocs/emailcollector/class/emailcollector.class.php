@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,7 +136,7 @@ class EmailCollector extends CommonObject
 		'login'         => array('type'=>'varchar(128)', 'label'=>'Login', 'visible'=>-1, 'enabled'=>1, 'position'=>102, 'notnull'=>-1, 'index'=>1, 'comment'=>"IMAP login", 'help'=>'Example: myaccount@gmail.com'),
 		'password'      => array('type'=>'password', 'label'=>'Password', 'visible'=>-1, 'enabled'=>"1", 'position'=>103, 'notnull'=>-1, 'comment'=>"IMAP password", 'help'=>'WithGMailYouCanCreateADedicatedPassword'),
 		'oauth_service' => array('type'=>'varchar(128)', 'label'=>'oauthService', 'visible'=>-1, 'enabled'=>"getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position'=>104, 'notnull'=>0, 'index'=>1, 'comment'=>"IMAP login oauthService", 'arrayofkeyval'=>array(), 'help'=>'TokenMustHaveBeenCreated'),
-		'source_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxSourceDirectory', 'visible'=>-1, 'enabled'=>1, 'position'=>104, 'notnull'=>1, 'default' => 'Inbox', 'help'=>'Example: INBOX, [Gmail]/Spam, [Gmail]/Draft, [Gmail]/Brouillons, [Gmail]/Sent Mail, [Gmail]/Messages envoyés, ...'),
+		'source_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxSourceDirectory', 'visible'=>-1, 'enabled'=>1, 'position'=>109, 'notnull'=>1, 'default' => 'Inbox', 'help'=>'Example: INBOX, [Gmail]/Spam, [Gmail]/Draft, [Gmail]/Brouillons, [Gmail]/Sent Mail, [Gmail]/Messages envoyés, ...'),
 		'target_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxTargetDirectory', 'visible'=>1, 'enabled'=>1, 'position'=>110, 'notnull'=>0, 'help'=>"EmailCollectorTargetDir"),
 		'maxemailpercollect' => array('type'=>'integer', 'label'=>'MaxEmailCollectPerCollect', 'visible'=>-1, 'enabled'=>1, 'position'=>111, 'default'=>50),
 		'datelastresult' => array('type'=>'datetime', 'label'=>'DateLastCollectResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>121, 'notnull'=>-1, 'csslist'=>'nowraponall'),
@@ -151,7 +152,7 @@ class EmailCollector extends CommonObject
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'visible'=>-2, 'enabled'=>1, 'position'=>511, 'notnull'=>-1,),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'visible'=>-2, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1,),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Inactive', '1'=>'Active'))
+		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Inactive', '1'=>'Active'))
 	);
 
 
@@ -698,14 +699,14 @@ class EmailCollector extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->host = 'localhost';
 		$this->login = 'alogin';
 
-		$this->initAsSpecimenCommon();
+		return $this->initAsSpecimenCommon();
 	}
 
 	/**
@@ -2648,6 +2649,7 @@ class EmailCollector extends CommonObject
 								//var_dump($alreadycreated);
 								//var_dump($operation['type']);
 								//var_dump($actioncomm);
+								//var_dump($objectemail);
 								//exit;
 
 								if ($errorforthisaction) {
@@ -2658,22 +2660,40 @@ class EmailCollector extends CommonObject
 										$errorforactions++;
 										$this->errors = $actioncomm->errors;
 									} else {
-										if (($fk_element_type == 'ticket') && (!empty($attachments))) {
-											// There is an attachment for the ticket -> store attachment
-											$ticket = New Ticket($this->db);
-											$ticket->fetch($fk_element_id);
-											$destdir = $conf->ticket->dir_output.'/'.$ticket->ref;
-											if (!dol_is_dir($destdir)) {
-												dol_mkdir($destdir);
-											}
-											if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
-												foreach ($attachments as $attachment) {
-													$attachment->save($destdir.'/');
+										if ($fk_element_type == "ticket") {
+											if ($objectemail->status == Ticket::STATUS_CLOSED || $objectemail->status == Ticket::STATUS_CANCELED) {
+												if ($objectemail->fk_user_assign != null) {
+													$res = $objectemail->setStatut(Ticket::STATUS_ASSIGNED);
+												} else {
+													$res = $objectemail->setStatut(Ticket::STATUS_NOT_READ);
 												}
-											} else {
-												$this->getmsg($connection, $imapemail, $destdir);
+
+												if ($res) {
+													$operationslog .= '<br>Ticket Re-Opened successfully -> ref='.$objectemail->ref;
+												} else {
+													$errorforactions++;
+													$this->error = 'Error while changing the tcket status -> ref='.$objectemail->ref;
+													$this->errors[] = $this->error;
+												}
+											}
+											if (!empty($attachments)) {
+												// There is an attachment for the ticket -> store attachment
+												$ticket = New Ticket($this->db);
+												$ticket->fetch($fk_element_id);
+												$destdir = $conf->ticket->dir_output.'/'.$ticket->ref;
+												if (!dol_is_dir($destdir)) {
+													dol_mkdir($destdir);
+												}
+												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+													foreach ($attachments as $attachment) {
+														$attachment->save($destdir.'/');
+													}
+												} else {
+													$this->getmsg($connection, $imapemail, $destdir);
+												}
 											}
 										}
+
 										$operationslog .= '<br>Event created -> id='.dol_escape_htmltag($actioncomm->id);
 									}
 								}

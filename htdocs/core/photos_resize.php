@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("products", "other"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $modulepart = GETPOST('modulepart', 'alpha') ? GETPOST('modulepart', 'alpha') : 'produit|service';
 $original_file = GETPOST("file");
@@ -351,7 +351,7 @@ if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex")
 
 	$fullpath = $dir."/".$original_file;
 
-	$result = dol_imageResizeOrCrop($fullpath, 0, GETPOST('sizex', 'int'), GETPOST('sizey', 'int'));
+	$result = dol_imageResizeOrCrop($fullpath, 0, GETPOSTINT('sizex'), GETPOSTINT('sizey'));
 
 	if ($result == $fullpath) {
 		// If image is related to a given object, we create also thumbs.
@@ -416,7 +416,7 @@ if ($action == 'confirm_crop') {
 
 	$fullpath = $dir."/".$original_file;
 
-	$result = dol_imageResizeOrCrop($fullpath, 1, GETPOST('w', 'int'), GETPOST('h', 'int'), GETPOST('x', 'int'), GETPOST('y', 'int'));
+	$result = dol_imageResizeOrCrop($fullpath, 1, GETPOSTINT('w'), GETPOSTINT('h'), GETPOSTINT('x'), GETPOSTINT('y'));
 
 	if ($result == $fullpath) {
 		if (is_object($object)) {

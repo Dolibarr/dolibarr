@@ -127,9 +127,9 @@ function project_prepare_head(Project $project, $moreparam = '')
 	}
 
 	if (isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")
-		|| isModEnabled("propal") || isModEnabled('commande')
-		|| isModEnabled('facture') || isModEnabled('contrat')
-		|| isModEnabled('ficheinter') || isModEnabled('agenda') || isModEnabled('deplacement') || isModEnabled('stock')) {
+		|| isModEnabled("propal") || isModEnabled('order')
+		|| isModEnabled('invoice') || isModEnabled('contract')
+		|| isModEnabled('intervention') || isModEnabled('agenda') || isModEnabled('deplacement') || isModEnabled('stock')) {
 		$nbElements = 0;
 		// Enable caching of thirdrparty count Contacts
 		$cachekey = 'count_elements_project_'.$project->id;
@@ -143,13 +143,13 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled("propal")) {
 				$nbElements += $project->getElementCount('propal', 'propal');
 			}
-			if (isModEnabled('commande')) {
+			if (isModEnabled('order')) {
 				$nbElements += $project->getElementCount('order', 'commande');
 			}
-			if (isModEnabled('facture')) {
+			if (isModEnabled('invoice')) {
 				$nbElements += $project->getElementCount('invoice', 'facture');
 			}
-			if (isModEnabled('facture')) {
+			if (isModEnabled('invoice')) {
 				$nbElements += $project->getElementCount('invoice_predefined', 'facture_rec');
 			}
 			if (isModEnabled('supplier_proposal')) {
@@ -161,13 +161,13 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled("supplier_invoice")) {
 				$nbElements += $project->getElementCount('invoice_supplier', 'facture_fourn');
 			}
-			if (isModEnabled('contrat')) {
+			if (isModEnabled('contract')) {
 				$nbElements += $project->getElementCount('contract', 'contrat');
 			}
-			if (isModEnabled('ficheinter')) {
+			if (isModEnabled('intervention')) {
 				$nbElements += $project->getElementCount('intervention', 'fichinter');
 			}
-			if (isModEnabled("expedition")) {
+			if (isModEnabled("delivery_note")) {
 				$nbElements += $project->getElementCount('shipping', 'expedition');
 			}
 			if (isModEnabled('mrp')) {
@@ -197,7 +197,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled('salaries')) {
 				$nbElements += $project->getElementCount('salaries', 'payment_salary');
 			}
-			if (isModEnabled("banque")) {
+			if (isModEnabled("bank")) {
 				$nbElements += $project->getElementCount('variouspayment', 'payment_various');
 			}
 			dol_setcache($cachekey, $nbElements, 120);	// If setting cache fails, this is not a problem, so we do not test result.

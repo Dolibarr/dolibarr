@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -45,7 +45,7 @@ $langs->loadLangs($langsLoad);
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 
@@ -54,10 +54,10 @@ $ref = GETPOST('ref', 'alpha');
 $taskref = GETPOST('taskref', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1 or if we click on clear filters
@@ -68,7 +68,7 @@ $pagenext = $page + 1;
 $backtopage = GETPOST('backtopage', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
-$search_user_id = GETPOST('search_user_id', 'int');
+$search_user_id = GETPOSTINT('search_user_id');
 $search_taskref = GETPOST('search_taskref');
 $search_tasklabel = GETPOST('search_tasklabel');
 $search_taskdescription = GETPOST('search_taskdescription');
@@ -84,22 +84,22 @@ $search_progresscalc = GETPOST('search_progresscalc');
 $search_progressdeclare = GETPOST('search_progressdeclare');
 $search_task_budget_amount = GETPOST('search_task_budget_amount');
 
-$search_date_start_startmonth = GETPOST('search_date_start_startmonth', 'int');
-$search_date_start_startyear = GETPOST('search_date_start_startyear', 'int');
-$search_date_start_startday = GETPOST('search_date_start_startday', 'int');
+$search_date_start_startmonth = GETPOSTINT('search_date_start_startmonth');
+$search_date_start_startyear = GETPOSTINT('search_date_start_startyear');
+$search_date_start_startday = GETPOSTINT('search_date_start_startday');
 $search_date_start_start = dol_mktime(0, 0, 0, $search_date_start_startmonth, $search_date_start_startday, $search_date_start_startyear);	// Use tzserver
-$search_date_start_endmonth = GETPOST('search_date_start_endmonth', 'int');
-$search_date_start_endyear = GETPOST('search_date_start_endyear', 'int');
-$search_date_start_endday = GETPOST('search_date_start_endday', 'int');
+$search_date_start_endmonth = GETPOSTINT('search_date_start_endmonth');
+$search_date_start_endyear = GETPOSTINT('search_date_start_endyear');
+$search_date_start_endday = GETPOSTINT('search_date_start_endday');
 $search_date_start_end = dol_mktime(23, 59, 59, $search_date_start_endmonth, $search_date_start_endday, $search_date_start_endyear);	// Use tzserver
 
-$search_date_end_startmonth = GETPOST('search_date_end_startmonth', 'int');
-$search_date_end_startyear = GETPOST('search_date_end_startyear', 'int');
-$search_date_end_startday = GETPOST('search_date_end_startday', 'int');
+$search_date_end_startmonth = GETPOSTINT('search_date_end_startmonth');
+$search_date_end_startyear = GETPOSTINT('search_date_end_startyear');
+$search_date_end_startday = GETPOSTINT('search_date_end_startday');
 $search_date_end_start = dol_mktime(0, 0, 0, $search_date_end_startmonth, $search_date_end_startday, $search_date_end_startyear);	// Use tzserver
-$search_date_end_endmonth = GETPOST('search_date_end_endmonth', 'int');
-$search_date_end_endyear = GETPOST('search_date_end_endyear', 'int');
-$search_date_end_endday = GETPOST('search_date_end_endday', 'int');
+$search_date_end_endmonth = GETPOSTINT('search_date_end_endmonth');
+$search_date_end_endyear = GETPOSTINT('search_date_end_endyear');
+$search_date_end_endday = GETPOSTINT('search_date_end_endday');
 $search_date_end_end = dol_mktime(23, 59, 59, $search_date_end_endmonth, $search_date_end_endday, $search_date_end_endyear);	// Use tzserver
 
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'projecttasklist';
@@ -142,12 +142,12 @@ $diroutputmassaction = $conf->project->dir_output.'/tasks/temp/massgeneration/'.
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
 
-$progress = GETPOST('progress', 'int');
+$progress = GETPOSTINT('progress');
 $budget_amount = GETPOSTFLOAT('budget_amount');
 $label = GETPOST('label', 'alpha');
 $description = GETPOST('description', 'restricthtml');
-$planned_workloadhour = (GETPOST('planned_workloadhour', 'int') ? GETPOST('planned_workloadhour', 'int') : 0);
-$planned_workloadmin = (GETPOST('planned_workloadmin', 'int') ? GETPOST('planned_workloadmin', 'int') : 0);
+$planned_workloadhour = (GETPOSTINT('planned_workloadhour') ? GETPOSTINT('planned_workloadhour') : 0);
+$planned_workloadmin = (GETPOSTINT('planned_workloadmin') ? GETPOSTINT('planned_workloadmin') : 0);
 $planned_workload = $planned_workloadhour * 3600 + $planned_workloadmin * 60;
 
 // Definition of fields for list
@@ -310,8 +310,8 @@ if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
 	$error = 0;
 
 	// If we use user timezone, we must change also view/list to use user timezone everywhere
-	$date_start = dol_mktime(GETPOST('date_starthour', 'int'), GETPOST('date_startmin', 'int'), 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
-	$date_end = dol_mktime(GETPOST('date_endhour', 'int'), GETPOST('date_endmin', 'int'), 0, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
+	$date_start = dol_mktime(GETPOSTINT('date_starthour'), GETPOSTINT('date_startmin'), 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
+	$date_end = dol_mktime(GETPOSTINT('date_endhour'), GETPOSTINT('date_endmin'), 0, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
 
 	if (!$cancel) {
 		if (empty($taskref)) {
@@ -355,7 +355,7 @@ if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
 			$taskid = $task->create($user);
 
 			if ($taskid > 0) {
-				$result = $task->add_contact(GETPOST("userid", 'int'), 'TASKEXECUTIVE', 'internal');
+				$result = $task->add_contact(GETPOSTINT("userid"), 'TASKEXECUTIVE', 'internal');
 			} else {
 				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 					$langs->load("projects");
@@ -672,7 +672,7 @@ if ($id > 0 || !empty($ref)) {
 	print '</td></tr>';
 
 	// Categories
-	if (isModEnabled('categorie')) {
+	if (isModEnabled('category')) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
@@ -1154,7 +1154,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 				cleanCorruptedTree($db, 'projet_task', 'fk_task_parent');
 			}
 		} else {
-			if ($nboftaskshown < count($tasksarray) && !GETPOST('search_user_id', 'int')) {
+			if ($nboftaskshown < count($tasksarray) && !GETPOSTINT('search_user_id')) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 				cleanCorruptedTree($db, 'projet_task', 'fk_task_parent');
 			}

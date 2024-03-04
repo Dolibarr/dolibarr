@@ -11,7 +11,7 @@
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
  * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionlinebatch.class.php';
@@ -1629,6 +1629,7 @@ class Expedition extends CommonObject
 
 
 				if ($originline > 0 && $originline == $obj->fk_origin_line) {
+					'@phan-var-force ExpeditionLigne $line';  // $line from previous loop
 					$line->entrepot_id = 0; // entrepod_id in details_entrepot
 					$line->qty_shipped += $obj->qty_shipped;
 				} else {
@@ -2002,7 +2003,7 @@ class Expedition extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -2054,6 +2055,8 @@ class Expedition extends CommonObject
 			$this->lines[] = $line;
 			$xnbp++;
 		}
+
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2132,7 +2135,7 @@ class Expedition extends CommonObject
 	 *  @param  int      $id     only this carrier, all if none
 	 *  @return void
 	 */
-	public function list_delivery_methods($id = '')
+	public function list_delivery_methods($id = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -2142,7 +2145,7 @@ class Expedition extends CommonObject
 
 		$sql = "SELECT em.rowid, em.code, em.libelle as label, em.description, em.tracking, em.active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
-		if ($id != '') {
+		if (!empty($id)) {
 			$sql .= " WHERE em.rowid=".((int) $id);
 		}
 

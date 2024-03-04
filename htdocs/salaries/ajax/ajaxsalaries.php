@@ -52,10 +52,10 @@ restrictedArea($user, 'salaries');
 
 top_httphead('application/json');
 
-$fk_user = GETPOST('fk_user', 'int');
+$fk_user = GETPOSTINT('fk_user');
 $return_arr = array();
 
-if (!empty(GETPOST('fk_user', 'int'))) {
+if (!empty(GETPOSTINT('fk_user'))) {
 	$sql = "SELECT s.amount, s.rowid FROM ".MAIN_DB_PREFIX."salary as s";
 	$sql .= " WHERE s.fk_user = ".((int) $fk_user);
 	$sql .= " AND s.paye = 1";

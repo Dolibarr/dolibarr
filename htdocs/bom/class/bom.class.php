@@ -2,6 +2,7 @@
 /* Copyright (C) 2019	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2023	Benjamin Falière	<benjamin.faliere@altairis.fr>
  * Copyright (C) 2023	Charlene Benke		<charlene@patas-monkey.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -600,7 +601,7 @@ class BOM extends CommonObject
 	 * @param	int		$fk_default_workstation	Default workstation
 	 * @return	int								Return integer <0 if KO, Id of created object if OK
 	 */
-	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = '', $array_options = array(), $fk_default_workstation = null)
+	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = 0, $array_options = array(), $fk_default_workstation = null)
 	{
 		global $mysoc, $conf, $langs, $user;
 
@@ -1368,13 +1369,15 @@ class BOM extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->initAsSpecimenCommon();
 		$this->ref = 'BOM-123';
 		$this->date_creation = dol_now() - 20000;
+
+		return 1;
 	}
 
 
@@ -1811,7 +1814,9 @@ class BOMLine extends CommonObjectLine
 	public $childBom = array();
 
 	/**
-	 * @var int Service unit
+	 * @var int|null                ID of the unit of measurement (rowid in llx_c_units table)
+	 * @see measuringUnitString()
+	 * @see getLabelOfUnit()
 	 */
 	public $fk_unit;
 
@@ -1947,6 +1952,7 @@ class BOMLine extends CommonObjectLine
 			while ($obj = $this->db->fetch_object($resql)) {
 				$record = new self($this->db);
 				$record->setVarsFromFetchObj($obj);
+								$record->fetch_optionals();
 
 				$records[$record->id] = $record;
 			}
@@ -2125,10 +2131,10 @@ class BOMLine extends CommonObjectLine
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
-		$this->initAsSpecimenCommon();
+		return $this->initAsSpecimenCommon();
 	}
 }

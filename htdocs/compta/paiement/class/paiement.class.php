@@ -7,9 +7,9 @@
  * Copyright (C) 2014       Marcos García 		 <marcosgdf@gmail.com>
  * Copyright (C) 2015       Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2018       Ferran Marcet		 <fmarcet@2byte.es>
- * Copyright (C) 2018       Thibault FOUCART		 <support@ptibogxiv.net>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2020       Andreu Bisquerra Gaya <jove@bisquerra.com>
+ * Copyright (C) 2018       Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2020       Andreu Bisquerra Gaya 	<jove@bisquerra.com>
  * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
  * Copyright (C) 2023       Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2023       Sylvain Legrand			<technique@infras.fr>
@@ -100,22 +100,22 @@ class Paiement extends CommonObject
 	public $multicurrency_amount;
 
 	/**
-	 * @var array<int,float>				array: invoice ID => amount for that invoice (in the main currency)
+	 * @var float[] array: invoice ID => amount for that invoice (in the main currency)
 	 */
 	public $amounts = array();
 
 	/**
-	 * @var array<int,float>				array: invoice ID => amount for that invoice (in the invoice's currency)
+	 * @var float[] array: invoice ID => amount for that invoice (in the invoice's currency)
 	 */
 	public $multicurrency_amounts = array();
 
 	/**
-	 * @var array<int,float>				Multicurrency rate (array: invoice ID => currency rate ("taux" in French) for that invoice)
+	 * @var float[] Multicurrency rate (array: invoice ID => currency rate ("taux" in French) for that invoice)
 	 */
 	public $multicurrency_tx = array();
 
 	/**
-	 * @var array<int,string>				Multicurrency code (array: invoice ID => currency code for that invoice)
+	 * @var string[] Multicurrency code (array: invoice ID => currency code for that invoice)
 	 */
 	public $multicurrency_code = array();
 
@@ -707,7 +707,7 @@ class Paiement extends CommonObject
 		$error = 0;
 		$bank_line_id = 0;
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			if ($accountid <= 0) {
 				$this->error = 'Bad value for parameter accountid='.$accountid;
 				dol_syslog(get_class($this).'::addPaymentToBank '.$this->error, LOG_ERR);
@@ -1258,7 +1258,7 @@ class Paiement extends CommonObject
 	 *	id must be 0 if object instance is a specimen.
 	 *
 	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
-	 *  @return	void
+	 *  @return	int
 	 */
 	public function initAsSpecimen($option = '')
 	{
@@ -1274,6 +1274,8 @@ class Paiement extends CommonObject
 		$this->specimen = 1;
 		$this->facid = 1;
 		$this->datepaye = $nownotime;
+
+		return 1;
 	}
 
 

@@ -320,7 +320,7 @@ class FormTicket
 			dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 			$classname = ucfirst($subelement);
 			$objectsrc = new $classname($this->db);
-			$objectsrc->fetch(GETPOST('originid', 'int'));
+			$objectsrc->fetch(GETPOSTINT('originid'));
 
 			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
 				$objectsrc->fetch_lines();
@@ -460,7 +460,7 @@ class FormTicket
 		}
 
 		// Categories
-		if (isModEnabled('categorie')) {
+		if (isModEnabled('category')) {
 			include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_TICKET, '', 'parent', 64, 0, 1);
 
@@ -616,6 +616,7 @@ class FormTicket
 				// If no socid, set to -1 to avoid full contacts list
 				$selectedCompany = ($this->withfromsocid > 0) ? $this->withfromsocid : -1;
 				print img_picto('', 'contact', 'class="paddingright"');
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				print $form->selectcontacts($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 0, 'minwidth200');
 				print ' ';
 				$formcompany->selectTypeContact($ticketstatic, '', 'type', 'external', '', 0, 'maginleftonly');
@@ -638,7 +639,7 @@ class FormTicket
 			print $langs->trans("AssignedTo");
 			print '</td><td>';
 			print img_picto('', 'user', 'class="pictofixedwidth"');
-			print $form->select_dolusers(GETPOST('fk_user_assign', 'int'), 'fk_user_assign', 1);
+			print $form->select_dolusers(GETPOSTINT('fk_user_assign'), 'fk_user_assign', 1);
 			print '</td>';
 			print '</tr>';
 		}
@@ -647,7 +648,7 @@ class FormTicket
 			if (isModEnabled('project') && !$this->ispublic) {
 				$formproject = new FormProjets($this->db);
 				print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
-				print img_picto('', 'project').$formproject->select_projects(-1, GETPOST('projectid', 'int'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+				print img_picto('', 'project').$formproject->select_projects(-1, GETPOSTINT('projectid'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 				print '</td></tr>';
 			}
 		}
@@ -657,7 +658,7 @@ class FormTicket
 				$formcontract = new FormContract($this->db);
 				print '<tr><td><label for="contract"><span class="">'.$langs->trans("Contract").'</span></label></td><td>';
 				print img_picto('', 'contract');
-				print $formcontract->select_contract(-1, GETPOST('contactid', 'int'), 'contractid', 0, 1, 1);
+				print $formcontract->select_contract(-1, GETPOSTINT('contactid'), 'contractid', 0, 1, 1);
 				print '</td></tr>';
 			}
 		}
@@ -1370,7 +1371,7 @@ class FormTicket
 
 		print "\n<!-- Begin message_form TICKET -->\n";
 
-		$send_email = GETPOST('send_email', 'int') ? GETPOST('send_email', 'int') : 0;
+		$send_email = GETPOSTINT('send_email') ? GETPOSTINT('send_email') : 0;
 
 		// Example 1 : Adding jquery code
 		print '<script nonce="'.getNonce().'" type="text/javascript">

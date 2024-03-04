@@ -38,13 +38,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'bills', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Security check
-$socid = GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('socid', 'int');
+$socid = GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
@@ -75,7 +75,7 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 	$amount_ttc_2 = price2num($amount_ttc_2);
 
 	$error = 0;
-	$remid = (GETPOST("remid", 'int') ? GETPOST("remid", 'int') : 0);
+	$remid = (GETPOSTINT("remid") ? GETPOSTINT("remid") : 0);
 	$discount = new DiscountAbsolute($db);
 	$res = $discount->fetch($remid);
 	if (!($res > 0)) {

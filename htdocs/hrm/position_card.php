@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_position.lib.php';
 $action 	= GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$id 	= GETPOST('id', 'int');
+$id 	= GETPOSTINT('id');
 
 // Initialize technical objects
 $form = new Form($db);
@@ -75,8 +75,8 @@ $langs->loadLangs(array("hrm", "other"));
 
 
 // Get parameters
-$id 	= GETPOST('id', 'int');
-$fk_job = GETPOST('fk_job', 'int');
+$id 	= GETPOSTINT('id');
+$fk_job = GETPOSTINT('fk_job');
 
 $ref 	= GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
@@ -164,10 +164,10 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 
 	// Actions to send emails

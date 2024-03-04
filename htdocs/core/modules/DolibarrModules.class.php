@@ -397,7 +397,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $enabled_bydefault;
 
 	/**
-	 * @var bool Whether to hide the module.
+	 * @var bool|int Whether to hide the module.
 	 */
 	public $hidden = false;
 
@@ -2264,7 +2264,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Adds generic parts
+	 * Save configuration for generic features.
+	 * This also generate website templates if the module provide some.
 	 *
 	 * @return int Error count (0 if OK)
 	 */
@@ -2294,6 +2295,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					foreach ($docs as $cursorfile) {
 						$src = $srcroot.'/'.$cursorfile['name'];
 						$dest = DOL_DATA_ROOT.'/doctemplates/websites/'.$cursorfile['name'];
+
+						dol_delete_file($dest.'.zip');
 
 						// Compress it
 						global $errormsg;

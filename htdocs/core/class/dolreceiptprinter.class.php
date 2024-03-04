@@ -695,6 +695,7 @@ class dolReceiptPrinter extends Printer
 		if (LIBXML_VERSION < 20900) {
 			// Avoid load of external entities (security problem).
 			// Required only if LIBXML_VERSION < 20900
+			// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 			libxml_disable_entity_loader(true);
 		}
 
@@ -1027,6 +1028,9 @@ class dolReceiptPrinter extends Printer
 			}
 			if (!$error) {
 				$parameter = (isset($obj['parameter']) ? $obj['parameter'] : '');
+
+				dol_syslog("initPrinter printerid=".$printerid." parameter=".$parameter);
+
 				try {
 					$type = $obj['fk_type'];
 					switch ($type) {

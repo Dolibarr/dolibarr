@@ -13,7 +13,7 @@
  * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2024  Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2019-2023  Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
@@ -22,7 +22,7 @@
  * Copyright (C) 2022       Charlene Benke           	<charlene@patas-monkey.com>
  * Copyright (C) 2023       Joachim Kueter              <git-jk@bloxera.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Lenin Rivas					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Lenin Rivas					<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -206,6 +206,42 @@ function getDolUserInt($key, $default = 0, $tmpuser = null)
 	return (int) (empty($tmpuser->conf->$key) ? $default : $tmpuser->conf->$key);
 }
 
+
+/**
+ * This mapping defines the conversion to the current internal
+ * names from the alternative allowed names (including effectively deprecated
+ * and future new names (not yet used as internal names).
+ *
+ * This allows to map any temporary or future name to the effective internal name.
+ *
+ * The value is typically the name of module's root directory.
+ */
+define(
+	'MODULE_MAPPING',
+	array(
+		// Map deprecated names to new names
+		'adherent' => 'member',  // Has new directory
+		'member_type' => 'adherent_type',   // No directory, but file called adherent_type
+		'banque' => 'bank',   // Has new directory
+		'contrat' => 'contract', // Has new directory
+		'entrepot' => 'stock',   // Has new directory
+		'projet'  => 'project', // Has new directory
+		'categorie' => 'category', // Has old directory
+		'commande' => 'order',    // Has old directory
+		'expedition' => 'shipping', // Has old directory
+		'facture' => 'invoice', // Has old directory
+		'fichinter' => 'intervention', // Has old directory
+		'ficheinter' => 'intervention',  // Backup for 'fichinter'
+		'propale' => 'propal', // Has old directory
+		'socpeople' => 'contact', // Has old directory
+		'fournisseur' => 'supplier',  // Has old directory
+
+		'actioncomm' => 'agenda',  // NO module directory (public dir agenda)
+		'product_price' => 'productprice', // NO directory
+		'product_fournisseur_price' => 'productsupplierprice', // NO directory
+	)
+);
+
 /**
  * Is Dolibarr module enabled
  *
@@ -216,23 +252,26 @@ function isModEnabled($module)
 {
 	global $conf;
 
-	// Fix special cases
-	$arrayconv = array(
-		'bank' => 'banque',
-		'category' => 'categorie',
-		'contract' => 'contrat',
-		'project' => 'projet',
-		'delivery_note' => 'expedition'
-	);
+	// Fix old names (map to new names)
+	$arrayconv = MODULE_MAPPING;
+	$arrayconvbis = array_flip(MODULE_MAPPING);
+
 	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+		// Special cases: both use the same module.
 		$arrayconv['supplier_order'] = 'fournisseur';
 		$arrayconv['supplier_invoice'] = 'fournisseur';
 	}
+
+	$module_alt = $module;
 	if (!empty($arrayconv[$module])) {
-		$module = $arrayconv[$module];
+		$module_alt = $arrayconv[$module];
+	}
+	$module_bis = $module;
+	if (!empty($arrayconvbis[$module])) {
+		$module_bis = $arrayconvbis[$module];
 	}
 
-	return !empty($conf->modules[$module]);
+	return !empty($conf->modules[$module]) || !empty($conf->modules[$module_alt]) || !empty($conf->modules[$module_bis]);
 	//return !empty($conf->$module->enabled);
 }
 
@@ -636,7 +675,7 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
  *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'
- *  @param	string	$noreplace	 Force disable of replacement of __xxx__ strings.
+ *  @param	int 	$noreplace	 Force disable of replacement of __xxx__ strings.
  *  @return string|array         Value found (string or array), or '' if check fails
  */
 function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null, $options = null, $noreplace = 0)
@@ -912,6 +951,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			$out = preg_replace('/([<>])([-+]?\d)/', '\1 \2', $out);
 		}
 
+		// @phan-suppress-next-line ParamMatchRegexError
 		$out = sanitizeVal($out, $check, $filter, $options);
 	}
 
@@ -1567,6 +1607,7 @@ function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '', $bad
 		$forbidden_chars_to_remove = $badcharstoremove;
 	}
 
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrderInternal
 	return str_replace($forbidden_chars_to_replace, $newstr, str_replace($forbidden_chars_to_remove, "", $str));
 }
 
@@ -1643,7 +1684,7 @@ function dol_escape_json($stringtoescape)
  *  Returns text escaped for inclusion into a php string, build with double quotes " or '
  *
  *  @param      string		$stringtoescape		String to escape
- *  @param		string		$stringforquotes	2=String for doublequotes, 1=String for simple quotes
+ *  @param		int<1,2>	$stringforquotes	2=String for doublequotes, 1=String for simple quotes
  *  @return     string     		 				Escaped string for json content.
  */
 function dol_escape_php($stringtoescape, $stringforquotes = 2)
@@ -1654,8 +1695,7 @@ function dol_escape_php($stringtoescape, $stringforquotes = 2)
 
 	if ($stringforquotes == 2) {
 		return str_replace('"', "'", $stringtoescape);
-	}
-	if ($stringforquotes == 1) {
+	} elseif ($stringforquotes == 1) {
 		// We remove the \ char.
 		// If we allow the \ char, we can have $stringtoescape =
 		// abc\';phpcodedanger;  so the escapement will become
@@ -1945,6 +1985,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 
 	if (!empty($message)) {
 		// Test log level
+		// @phan-suppress-next-line PhanPluginDuplicateArrayKey
 		$logLevels = array(LOG_EMERG => 'EMERG', LOG_ALERT => 'ALERT', LOG_CRIT => 'CRITICAL', LOG_ERR => 'ERR', LOG_WARNING => 'WARN', LOG_NOTICE => 'NOTICE', LOG_INFO => 'INFO', LOG_DEBUG => 'DEBUG');
 		if (!array_key_exists($level, $logLevels)) {
 			throw new Exception('Incorrect log level');
@@ -2142,7 +2183,7 @@ function dol_fiche_head($links = array(), $active = '0', $title = '', $notab = 0
  *	@param	array	$links				Array of tabs (0=>url, 1=>label, 2=>code, 3=>not used, 4=>text after link, 5=>morecssonlink). Currently initialized by calling a function xxx_admin_prepare_head. Note that label into $links[$i][1] must be already HTML escaped.
  *	@param	string	$active     		Active tab name
  *	@param  string	$title      		Title
- *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header (if you set this to 1, using print dol_get_fiche_end() to close tab is not required), -2=Add tab header with no seaparation under tab (to start a tab just after), -3=-2+'noborderbottom'
+ *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header (if you set this to 1, using print dol_get_fiche_end() to close tab is not required), -2=Add tab header with no separation under tab (to start a tab just after), -3=-2+'noborderbottom'
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  *  @param	string	$morehtmlright		Add more html content on right of tabs title
@@ -2291,7 +2332,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		if (empty($tabsname)) {
 			$tabsname = str_replace("@", "", $picto);
 		}
-		$out .= '<div id="moretabs'.$tabsname.'" class="inline-block tabsElem valignmiddle">';
+		$out .= '<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
 		$out .= '<div class="tab"><a href="#" class="tab moretab inline-block tabunactive"><span class="hideonsmartphone">'.$langs->trans("More").'</span>... ('.$nbintab.')</a></div>'; // Do not use "reposition" class in the "More".
 		$out .= '<div id="moretabsList'.$tabsname.'" style="width: '.$widthofpopup.'px; position: absolute; '.$left.': -999em; text-align: '.$left.'; margin:0px; padding:2px; z-index:10;">';
 		$out .= $outmore;
@@ -2318,7 +2359,8 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	}
 
 	if (!$notab || $notab == -1 || $notab == -2 || $notab == -3) {
-		$out .= "\n".'<div id="dragDropAreaTabBar" class="tabBar'.($notab == -1 ? '' : ($notab == -2 ? ' tabBarNoTop' : (($notab == -3 ? ' noborderbottom' : '').' tabBarWithBottom'))).'">'."\n";
+		$out .= "\n".'<div id="dragDropAreaTabBar" class="tabBar'.($notab == -1 ? '' : ($notab == -2 ? ' tabBarNoTop' : (($notab == -3 ? ' noborderbottom' : '').' tabBarWithBottom')));
+		$out .= '">'."\n";
 	}
 	if (!empty($dragdropfile)) {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -2776,7 +2818,7 @@ function dol_bc($var, $moreclass = '')
  */
 function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs = null, $mode = 0, $extralangcode = '')
 {
-	global $conf, $langs, $hookmanager;
+	global $langs, $hookmanager;
 
 	$ret = '';
 	$countriesusingstate = array('AU', 'CA', 'US', 'IN', 'GB', 'ES', 'UK', 'TR', 'CN'); // See also MAIN_FORCE_STATE_INTO_ADDRESS
@@ -2861,10 +2903,11 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 /**
  *	Format a string.
  *
- *	@param	string	$fmt		Format of strftime function (http://php.net/manual/fr/function.strftime.php)
- *  @param	int		$ts			Timestamp (If is_gmt is true, timestamp is already includes timezone and daylight saving offset, if is_gmt is false, timestamp is a GMT timestamp and we must compensate with server PHP TZ)
- *  @param	bool	$is_gmt		See comment of timestamp parameter
- *	@return	string				A formatted string
+ *	@param	string		$fmt		Format of strftime function (http://php.net/manual/fr/function.strftime.php)
+ *  @param	int|false	$ts			Timestamp (If is_gmt is true, timestamp is already includes timezone and daylight saving offset, if is_gmt is false, timestamp is a GMT timestamp and we must compensate with server PHP TZ)
+ *  @param	bool		$is_gmt		See comment of timestamp parameter
+ *	@return	string					A formatted string
+ *  @see dol_stringtotime()
  */
 function dol_strftime($fmt, $ts = false, $is_gmt = false)
 {
@@ -3528,7 +3571,7 @@ function getArrayOfSocialNetworks()
  */
 function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetworks = array())
 {
-	global $conf, $user, $langs;
+	global $user, $langs;
 
 	$htmllink = $value;
 
@@ -4467,16 +4510,16 @@ function getPictoForType($key)
  *                                  				Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
  *                                                  Example: fontawesome_envelope-open-text_fas_red_1em if you want to use fontaweseome icons: fontawesome_<icon-name>_<style>_<color>_<size> (only icon-name is mandatory)
  *	@param		string		$moreatt				Add more attribute on img tag (For example 'class="pictofixedwidth"')
- *	@param		boolean|int	$pictoisfullpath		If true or 1, image path is a full path
+ *	@param		int<0,1>    $pictoisfullpath		If true or 1, image path is a full path, 0 if not
  *	@param		int			$srconly				Return only content of the src attribute of img.
  *  @param		int			$notitle				1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
  *  @param		string		$alt					Force alt for bind people
  *  @param		string		$morecss				Add more class css on img tag (For example 'myclascss').
- *  @param		string		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No margin left. Works for fontawesome picto only.
+ *  @param		int 		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No margin left. Works for fontawesome picto only.
  *  @return     string       				    	Return img tag
  *  @see        img_object(), img_picto_common()
  */
-function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2)
+function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2)
 {
 	global $conf;
 
@@ -4833,7 +4876,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
  *	@return	string						Return img tag
  *	@see	img_picto(), img_picto_common()
  */
-function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly = 0, $notitle = 0)
+function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0)
 {
 	if (strpos($picto, '^') === 0) {
 		return img_picto($titlealt, str_replace('^', '', $picto), $moreatt, $pictoisfullpath, $srconly, $notitle);
@@ -5060,7 +5103,7 @@ function img_delete($titlealt = 'default', $other = 'class="pictodelete"', $more
 		$titlealt = $langs->trans('Delete');
 	}
 
-	return img_picto($titlealt, 'delete.png', $other, false, 0, 0, '', $morecss);
+	return img_picto($titlealt, 'delete.png', $other, 0, 0, 0, '', $morecss);
 }
 
 /**
@@ -5381,7 +5424,7 @@ function img_search($titlealt = 'default', $other = '')
 		$titlealt = $langs->trans('Search');
 	}
 
-	$img = img_picto($titlealt, 'search.png', $other, false, 1);
+	$img = img_picto($titlealt, 'search.png', $other, 0, 1);
 
 	$input = '<input type="image" class="liste_titre" name="button_search" src="'.$img.'" ';
 	$input .= 'value="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'" >';
@@ -5404,7 +5447,7 @@ function img_searchclear($titlealt = 'default', $other = '')
 		$titlealt = $langs->trans('Search');
 	}
 
-	$img = img_picto($titlealt, 'searchclear.png', $other, false, 1);
+	$img = img_picto($titlealt, 'searchclear.png', $other, 0, 1);
 
 	$input = '<input type="image" class="liste_titre" name="button_removefilter" src="'.$img.'" ';
 	$input .= 'value="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'" >';
@@ -5655,7 +5698,7 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
  *	@param  string	$sortorder   Current sort order
  *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag, for example 'mycss '.
  *  @param	string	$tooltip	 Tooltip
- *  @param	string	$forcenowrapcolumntitle		No need for use 'wrapcolumntitle' css style
+ *  @param	int		$forcenowrapcolumntitle		No need for use 'wrapcolumntitle' css style
  *	@return	void
  */
 function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $moreparam = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $tooltip = "", $forcenowrapcolumntitle = 0)
@@ -5676,9 +5719,9 @@ function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $m
  *	@param  string	$sortfield   		Current field used to sort (Ex: 'd.datep,d.id')
  *	@param  string	$sortorder   		Current sort order (Ex: 'asc,desc')
  *  @param	string	$prefix		 		Prefix for css. Use space after prefix to add your own CSS tag, for example 'mycss '.
- *  @param	string	$disablesortlink	1=Disable sort link
+ *  @param	int 	$disablesortlink	1=Disable sort link
  *  @param	string	$tooltip	 		Tooltip
- *  @param	string	$forcenowrapcolumntitle		No need for use 'wrapcolumntitle' css style
+ *  @param	int 	$forcenowrapcolumntitle		No need for use 'wrapcolumntitle' css style
  *	@return	string
  */
 function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin = "", $moreparam = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $disablesortlink = 0, $tooltip = '', $forcenowrapcolumntitle = 0)
@@ -5818,7 +5861,7 @@ function print_titre($title)
  *	@param	string	$mesg				Added message to show on right
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
- * 	@param	int		$id					To force an id on html objects
+ * 	@param	string	$id					To force an id on html objects by example id="name" where name is id
  * 	@return	void
  *  @deprecated Use print load_fiche_titre instead
  */
@@ -6483,6 +6526,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
 	}*/
 
 	$ret = price($dimension, 0, $outputlangs, 0, 0, $round);
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	$ret .= ' '.measuringUnitString(0, $type, $unit, $use_short_label, $outputlangs);
 
 	return $ret;
@@ -6501,7 +6545,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
  * 	@return	mixed			   					0 if not found, localtax rate if found
  *  @see get_default_tva()
  */
-function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_seller = "", $vatnpr = 0)
+function get_localtax($vatrate, $local, $thirdparty_buyer = null, $thirdparty_seller = null, $vatnpr = 0)
 {
 	global $db, $conf, $mysoc;
 
@@ -6831,7 +6875,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
  */
 function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournprice = 0)
 {
-	global $db, $conf, $mysoc;
+	global $db, $mysoc;
 
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
@@ -6843,8 +6887,11 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 		$product = new Product($db);
 		$product->fetch($idprod);
 
-		if ($mysoc->country_code == $thirdpartytouse->country_code) {
-			// If country to consider is ours
+		if (($mysoc->country_code == $thirdpartytouse->country_code)
+			|| (in_array($mysoc->country_code, array('FR', 'MC')) && in_array($thirdpartytouse->country_code, array('FR', 'MC')))
+			|| (in_array($mysoc->country_code, array('MQ', 'GP')) && in_array($thirdpartytouse->country_code, array('MQ', 'GP')))
+			) {
+			// If country of thirdparty to consider is ours
 			if ($idprodfournprice > 0) {     // We want vat for product for a "supplier" object
 				$result = $product->get_buyprice($idprodfournprice, 0, 0, 0);
 				if ($result > 0) {
@@ -7037,7 +7084,9 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 
 	// If the (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
 	if (($seller_country_code == $buyer_country_code)
-	|| (in_array($seller_country_code, array('FR', 'MC')) && in_array($buyer_country_code, array('FR', 'MC')))) { // Warning ->country_code not always defined
+	|| (in_array($seller_country_code, array('FR', 'MC')) && in_array($buyer_country_code, array('FR', 'MC')))
+	|| (in_array($seller_country_code, array('MQ', 'GP')) && in_array($buyer_country_code, array('MQ', 'GP')))
+	) { // Warning ->country_code not always defined
 		//print 'VATRULE 2';
 		$tmpvat = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
 
@@ -7210,6 +7259,9 @@ function yn($yesno, $case = 1, $color = 0)
 		if ($case == 3) {
 			$result = '<input type="checkbox" value="1" checked disabled> '.$result;
 		}
+		if ($case == 4) {
+			$result = img_picto('check', 'check');
+		}
 
 		$classname = 'ok';
 	} elseif ($yesno == 0 || strtolower($yesno) == 'no' || strtolower($yesno) == 'false') {
@@ -7222,6 +7274,9 @@ function yn($yesno, $case = 1, $color = 0)
 		}
 		if ($case == 3) {
 			$result = '<input type="checkbox" value="0" disabled> '.$result;
+		}
+		if ($case == 4) {
+			$result = img_picto('uncheck', 'uncheck');
 		}
 
 		if ($color == 2) {
@@ -7629,7 +7684,7 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
  *
  *	@param	string	$stringtoclean			String to clean
  *  @param	array	$disallowed_tags		Array of tags not allowed
- *  @param	string	$cleanalsosomestyles	Clean also some tags
+ *  @param	int 	$cleanalsosomestyles	Clean also some tags
  *	@return string	    					String cleaned
  *
  * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_onlythesehtmltags() dol_string_onlythesehtmlattributes()
@@ -7777,6 +7832,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					if (LIBXML_VERSION < 20900) {
 						// Avoid load of external entities (security problem).
 						// Required only if LIBXML_VERSION < 20900
+						// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 						libxml_disable_entity_loader(true);
 					}
 
@@ -7790,7 +7846,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					} else {
 						$out = '<?xml encoding="UTF-8"><div class="tricktoremove">'.dol_nl2br($out).'</div>';
 					}
-					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD | LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOXMLDECL);
+					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD | LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NOXMLDECL);
 					$out = trim($dom->saveHTML());
 
 					// Remove the trick added to solve pb with text without parent tag
@@ -7992,7 +8048,7 @@ function dol_htmlcleanlastbr($stringtodecode)
  * @param   string	$a					Operand a
  * @param   string	$b					Operand b (ENT_QUOTES|ENT_HTML5=convert simple, double quotes, colon, e accent, ...)
  * @param   string	$c					Operand c
- * @param	string	$keepsomeentities	Entities but &, <, >, " are not converted.
+ * @param	int 	$keepsomeentities	Entities but &, <, >, " are not converted.
  * @return  string						String decoded
  */
 function dol_html_entity_decode($a, $b, $c = 'UTF-8', $keepsomeentities = 0)
@@ -8030,7 +8086,7 @@ function dol_htmlentities($string, $flags = ENT_QUOTES | ENT_SUBSTITUTE, $encodi
  *	Example, if string contains euro symbol that has ascii code 128
  *
  *	@param	string		$s      	String to check
- *  @param	string		$clean		Clean if it is not an ISO. Warning, if file is utf8, you will get a bad formatted file.
+ *  @param	int 		$clean		Clean if it is not an ISO. Warning, if file is utf8, you will get a bad formatted file.
  *	@return	int|string  	   		0 if bad iso, 1 if good iso, Or the clean string if $clean is 1
  *  @deprecated Duplicate of ascii_check()
  *  @see ascii_check()
@@ -8328,7 +8384,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = '__THIRDPARTY_NOTE_PUBLIC__';
 				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = '__THIRDPARTY_NOTE_PRIVATE__';
 			}
-			if (isModEnabled('adherent') && (!is_object($object) || $object->element == 'adherent') && (empty($exclude) || !in_array('member', $exclude)) && (empty($include) || in_array('member', $include))) {
+			if (isModEnabled('member') && (!is_object($object) || $object->element == 'adherent') && (empty($exclude) || !in_array('member', $exclude)) && (empty($include) || in_array('member', $include))) {
 				$substitutionarray['__MEMBER_ID__'] = '__MEMBER_ID__';
 				$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
 				$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
@@ -8362,7 +8418,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				/*$substitutionarray['__PROJECT_NOTE_PUBLIC__'] = '__PROJECT_NOTE_PUBLIC__';
 				$substitutionarray['__PROJECT_NOTE_PRIVATE__'] = '__PROJECT_NOTE_PRIVATE__';*/
 			}
-			if (isModEnabled('contrat') && (!is_object($object) || $object->element == 'contract') && (empty($exclude) || !in_array('contract', $exclude)) && (empty($include) || in_array('contract', $include))) {
+			if (isModEnabled('contract') && (!is_object($object) || $object->element == 'contract') && (empty($exclude) || !in_array('contract', $exclude)) && (empty($include) || in_array('contract', $include))) {
 				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = 'Highest date planned for a service start';
 				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = 'Highest date and hour planned for service start';
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = 'Lowest data for planned expiration of service';
@@ -8371,7 +8427,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			if (isModEnabled("propal") && (!is_object($object) || $object->element == 'propal') && (empty($exclude) || !in_array('propal', $exclude)) && (empty($include) || in_array('propal', $include))) {
 				$substitutionarray['__ONLINE_SIGN_URL__'] = 'ToOfferALinkForOnlineSignature';
 			}
-			if (isModEnabled("ficheinter") && (!is_object($object) || $object->element == 'fichinter') && (empty($exclude) || !in_array('intervention', $exclude)) && (empty($include) || in_array('intervention', $include))) {
+			if (isModEnabled("intervention") && (!is_object($object) || $object->element == 'fichinter') && (empty($exclude) || !in_array('intervention', $exclude)) && (empty($include) || in_array('intervention', $include))) {
 				$substitutionarray['__ONLINE_SIGN_FICHINTER_URL__'] = 'ToOfferALinkForOnlineSignature';
 			}
 			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
@@ -8388,7 +8444,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = 'Direct download url of a contract';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__'] = 'Direct download url of a supplier proposal';
 
-			if (isModEnabled("expedition") && (!is_object($object) || $object->element == 'shipping')) {
+			if (isModEnabled("delivery_note") && (!is_object($object) || $object->element == 'shipping')) {
 				$substitutionarray['__SHIPPINGTRACKNUM__'] = 'Shipping tracking number';
 				$substitutionarray['__SHIPPINGTRACKNUMURL__'] = 'Shipping tracking url';
 				$substitutionarray['__SHIPPINGMETHOD__'] = 'Shipping method';
@@ -8728,6 +8784,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				if (is_object($object) && $object->element == 'supplier_proposal') {
 					$substitutionarray['__URL_SUPPLIER_PROPOSAL__'] = DOL_MAIN_URL_ROOT."/supplier_proposal/card.php?id=".$object->id;
+				}
+				if (is_object($object) && $object->element == 'invoice_supplier') {
+					$substitutionarray['__URL_SUPPLIER_INVOICE__'] = DOL_MAIN_URL_ROOT."/fourn/facture/card.php?id=".$object->id;
 				}
 				if (is_object($object) && $object->element == 'shipping') {
 					$substitutionarray['__URL_SHIPMENT__'] = DOL_MAIN_URL_ROOT."/expedition/card.php?id=".$object->id;
@@ -9312,7 +9371,7 @@ function dol_htmloutput_events($disabledoutputofmessages = 0)
  *  @see    dol_htmloutput_errors()
  *  @see    setEventMessages()
  */
-function get_htmloutput_mesg($mesgstring = '', $mesgarray = '', $style = 'ok', $keepembedded = 0)
+function get_htmloutput_mesg($mesgstring = '', $mesgarray = [], $style = 'ok', $keepembedded = 0)
 {
 	global $conf, $langs;
 
@@ -9479,7 +9538,7 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  *
  *  @param      array		$array      		Array to sort (array of array('key1'=>val1,'key2'=>val2,'key3'...) or array of objects)
  *  @param      string		$index				Key in array to use for sorting criteria
- *  @param      int			$order				Sort order ('asc' or 'desc')
+ *  @param      string		$order				Sort order ('asc' or 'desc')
  *  @param      int			$natsort			If values are strings (I said value not type): 0=Use alphabetical order, 1=use "natural" sort (natsort)
  *   											If values are numeric (I said value not type): 0=Use numeric order (even if type is string) so use a "natural" sort, 1=use "natural" sort too (same than 0), -1=Force alphabetical order
  *  @param      int			$case_sensitive		1=sort is case sensitive, 0=not case sensitive
@@ -9781,7 +9840,11 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 		if ($onlysimplestring == '1') {
 			// We must accept: '1 && getDolGlobalInt("doesnotexist1") && getDolGlobalString("MAIN_FEATURES_LEVEL")'
 			// We must accept: '$user->hasRight("cabinetmed", "read") && !$object->canvas=="patient@cabinetmed"'
-			if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/@', '/').']/i', $s)) {
+			$specialcharsallowed = '^$_+-.*>&|=!?():"\',/@';
+			if (getDolGlobalString('MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL')) {
+				$specialcharsallowed .= getDolGlobalString('MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL');
+			}
+			if (preg_match('/[^a-z0-9\s'.preg_quote($specialcharsallowed, '/').']/i', $s)) {
 				if ($returnvalue) {
 					return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
 				} else {
@@ -9789,18 +9852,23 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 					return '';
 				}
 			}
-			$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $s);	// accept parenthesis in '...->method(...'
-			$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-			$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-			$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
-			$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
-			$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);	// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
+			$savescheck = '';
+			$scheck = $s;
+			while ($scheck && $savescheck != $scheck) {
+				$savescheck = $scheck;
+				$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $scheck);	// accept parenthesis in '...->method(...'
+				$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
+				$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
+				$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
+				$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
+				$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);	// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
+			}
 			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
 			if (strpos($scheck, '(') !== false) {
 				if ($returnvalue) {
-					return 'Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s;
+					return 'Bad string syntax to evaluate (mode 1, found call of a function or method without using the direct name of the function): '.$s;
 				} else {
-					dol_syslog('Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s);
+					dol_syslog('Bad string syntax to evaluate (mode 1, found call of a function or method without using the direct name of the function): '.$s);
 					return '';
 				}
 			}
@@ -9808,7 +9876,11 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 			// We can exclude $ char that are not: $db, $langs, $leftmenu, $topmenu, $user, $langs, $objectoffield, $object...,
 		} elseif ($onlysimplestring == '2') {
 			// We must accept: (($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"
-			if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/@[]', '/').']/i', $s)) {
+			$specialcharsallowed = '^$_+-.*>&|=!?():"\',/@[]';
+			if (getDolGlobalString('MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL')) {
+				$specialcharsallowed .= getDolGlobalString('MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL');
+			}
+			if (preg_match('/[^a-z0-9\s'.preg_quote($specialcharsallowed, '/').']/i', $s)) {
 				if ($returnvalue) {
 					return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
 				} else {
@@ -9816,18 +9888,23 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 					return '';
 				}
 			}
-			$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $s);	// accept parenthesis in '...->method(...'
-			$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-			$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-			$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
-			$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
-			$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);		// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
+			$savescheck = '';
+			$scheck = $s;
+			while ($scheck && $savescheck != $scheck) {
+				$savescheck = $scheck;
+				$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $scheck);	// accept parenthesis in '...->method(...'
+				$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
+				$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
+				$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
+				$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
+				$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);		// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
+			}
 			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
 			if (strpos($scheck, '(') !== false) {
 				if ($returnvalue) {
-					return 'Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s;
+					return 'Bad string syntax to evaluate (mode 2, found call of a function or method without using the direct name of the function): '.$s;
 				} else {
-					dol_syslog('Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s);
+					dol_syslog('Bad string syntax to evaluate (mode 2, found call of a function or method without using the direct name of the function): '.$s);
 					return '';
 				}
 			}
@@ -9864,22 +9941,27 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 
 		// We block use of php exec or php file functions
 		$forbiddenphpstrings = array('$$');
-		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST'));
+		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST', 'ReflectionFunction'));
 
 		$forbiddenphpfunctions = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen");
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "executeCLI", "verifCond"));	// native dolibarr functions
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64_decode", "rawurldecode", "urldecode")); // decode string functions
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64_decode", "rawurldecode", "urldecode", "str_rot13", "hex2bin")); // decode string functions used to obfuscated function name
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "require", "include", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("get_defined_functions", "get_defined_vars", "get_defined_constants", "get_declared_classes"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
 
+		$forbiddenphpmethods = array('invoke', 'invokeArgs');	// Method of ReflectionFunction to execute a function
+
 		$forbiddenphpregex = 'global\s+\$|\b('.implode('|', $forbiddenphpfunctions).')\b';
+
+		$forbiddenphpmethodsregex = '->('.implode('|', $forbiddenphpmethods).')';
 
 		do {
 			$oldstringtoclean = $s;
 			$s = str_ireplace($forbiddenphpstrings, '__forbiddenstring__', $s);
 			$s = preg_replace('/'.$forbiddenphpregex.'/i', '__forbiddenstring__', $s);
+			$s = preg_replace('/'.$forbiddenphpmethodsregex.'/i', '__forbiddenstring__', $s);
 			//$s = preg_replace('/\$[a-zA-Z0-9_\->\$]+\(/i', '', $s);	// Remove $function( call and $mycall->mymethod(
 		} while ($oldstringtoclean != $s);
 
@@ -10620,6 +10702,7 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 		$newdelimiter = $delimiter;
 	} else {
 		// This is a simple string
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPositionInternal
 		$newdelimiter = preg_quote($delimiter, '/');
 	}
 

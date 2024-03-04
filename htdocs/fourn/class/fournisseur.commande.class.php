@@ -9,7 +9,7 @@
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018-2022  Ferran Marcet         	<fmarcet@2byte.es>
  * Copyright (C) 2021       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
@@ -355,51 +355,51 @@ class CommandeFournisseur extends CommonOrder
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
 	public $fields = array(
-		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>10),
-		'ref' =>array('type'=>'varchar(255)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'showoncombobox'=>1, 'position'=>25, 'searchall'=>1),
-		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>35),
-		'ref_supplier' =>array('type'=>'varchar(255)', 'label'=>'RefOrderSupplierShort', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'searchall'=>1),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Project', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>45),
-		'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>710),
-		'date_approve' =>array('type'=>'datetime', 'label'=>'DateApprove', 'enabled'=>1, 'visible'=>-1, 'position'=>720),
-		'date_approve2' =>array('type'=>'datetime', 'label'=>'DateApprove2', 'enabled'=>1, 'visible'=>3, 'position'=>725),
-		'date_commande' =>array('type'=>'date', 'label'=>'OrderDateShort', 'enabled'=>1, 'visible'=>1, 'position'=>70),
-		'date_livraison' =>array('type'=>'datetime', 'label'=>'DeliveryDate', 'enabled'=>'empty($conf->global->ORDER_DISABLE_DELIVERY_DATE)', 'visible'=>1, 'position'=>74),
-		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>3, 'position'=>41),
-		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>3, 'notnull'=>-1, 'position'=>80),
-		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>3, 'position'=>711),
-		'fk_user_approve' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserApproval', 'enabled'=>1, 'visible'=>3, 'position'=>721),
-		'fk_user_approve2' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserApproval2', 'enabled'=>1, 'visible'=>3, 'position'=>726),
-		'source' =>array('type'=>'smallint(6)', 'label'=>'Source', 'enabled'=>1, 'visible'=>3, 'notnull'=>1, 'position'=>100),
-		'billed' =>array('type'=>'smallint(6)', 'label'=>'Billed', 'enabled'=>1, 'visible'=>1, 'position'=>710),
-		'total_ht' =>array('type'=>'double(24,8)', 'label'=>'AmountHT', 'enabled'=>1, 'visible'=>1, 'position'=>130, 'isameasure'=>1),
-		'total_tva' =>array('type'=>'double(24,8)', 'label'=>'AmountVAT', 'enabled'=>1, 'visible'=>1, 'position'=>135, 'isameasure'=>1),
-		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'LT1', 'enabled'=>1, 'visible'=>3, 'position'=>140, 'isameasure'=>1),
-		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'LT2', 'enabled'=>1, 'visible'=>3, 'position'=>145, 'isameasure'=>1),
-		'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'AmountTTC', 'enabled'=>1, 'visible'=>-1, 'position'=>150, 'isameasure'=>1),
-		'note_public' =>array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>750, 'searchall'=>1),
-		'note_private' =>array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>760, 'searchall'=>1),
-		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'ModelPDF', 'enabled'=>1, 'visible'=>0, 'position'=>165),
-		'fk_input_method' =>array('type'=>'integer', 'label'=>'OrderMode', 'enabled'=>1, 'visible'=>3, 'position'=>170),
-		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'PaymentTerm', 'enabled'=>1, 'visible'=>3, 'position'=>175),
-		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'PaymentMode', 'enabled'=>1, 'visible'=>3, 'position'=>180),
-		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>0, 'position'=>190),
-		'fk_account' =>array('type'=>'integer', 'label'=>'BankAccount', 'enabled'=>'isModEnabled("banque")', 'visible'=>3, 'position'=>200),
-		'fk_incoterms' =>array('type'=>'integer', 'label'=>'IncotermCode', 'enabled'=>1, 'visible'=>3, 'position'=>205),
-		'location_incoterms' =>array('type'=>'varchar(255)', 'label'=>'IncotermLocation', 'enabled'=>1, 'visible'=>3, 'position'=>210),
-		'fk_multicurrency' =>array('type'=>'integer', 'label'=>'Fk multicurrency', 'enabled'=>1, 'visible'=>0, 'position'=>215),
-		'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'Currency', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>220),
-		'multicurrency_tx' =>array('type'=>'double(24,8)', 'label'=>'CurrencyRate', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>225),
-		'multicurrency_total_ht' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountHT', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>230),
-		'multicurrency_total_tva' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountVAT', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>235),
-		'multicurrency_total_ttc' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountTTC', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>240),
-		'date_creation' =>array('type'=>'datetime', 'label'=>'Date creation', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
-		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'isModEnabled("societe")', 'visible'=>1, 'notnull'=>1, 'position'=>50),
-		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>1000, 'index'=>1),
-		'tms'=>array('type'=>'datetime', 'label'=>"DateModificationShort", 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>501),
-		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>0, 'position'=>700),
-		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>701),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>0, 'position'=>900),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 10),
+		'ref' => array('type' => 'varchar(255)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'showoncombobox' => 1, 'position' => 25, 'searchall' => 1),
+		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 0, 'position' => 35),
+		'ref_supplier' => array('type' => 'varchar(255)', 'label' => 'RefOrderSupplierShort', 'enabled' => 1, 'visible' => 1, 'position' => 40, 'searchall' => 1),
+		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 45),
+		'date_valid' => array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'position' => 710),
+		'date_approve' => array('type' => 'datetime', 'label' => 'DateApprove', 'enabled' => 1, 'visible' => -1, 'position' => 720),
+		'date_approve2' => array('type' => 'datetime', 'label' => 'DateApprove2', 'enabled' => 1, 'visible' => 3, 'position' => 725),
+		'date_commande' => array('type' => 'date', 'label' => 'OrderDateShort', 'enabled' => 1, 'visible' => 1, 'position' => 70),
+		'date_livraison' => array('type' => 'datetime', 'label' => 'DeliveryDate', 'enabled' => 'empty($conf->global->ORDER_DISABLE_DELIVERY_DATE)', 'visible' => 1, 'position' => 74),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => 3, 'position' => 41),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => 3, 'notnull' => -1, 'position' => 80),
+		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => 3, 'position' => 711),
+		'fk_user_approve' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserApproval', 'enabled' => 1, 'visible' => 3, 'position' => 721),
+		'fk_user_approve2' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserApproval2', 'enabled' => 1, 'visible' => 3, 'position' => 726),
+		'source' => array('type' => 'smallint(6)', 'label' => 'Source', 'enabled' => 1, 'visible' => 3, 'notnull' => 1, 'position' => 100),
+		'billed' => array('type' => 'smallint(6)', 'label' => 'Billed', 'enabled' => 1, 'visible' => 1, 'position' => 710),
+		'total_ht' => array('type' => 'double(24,8)', 'label' => 'AmountHT', 'enabled' => 1, 'visible' => 1, 'position' => 130, 'isameasure' => 1),
+		'total_tva' => array('type' => 'double(24,8)', 'label' => 'AmountVAT', 'enabled' => 1, 'visible' => 1, 'position' => 135, 'isameasure' => 1),
+		'localtax1' => array('type' => 'double(24,8)', 'label' => 'LT1', 'enabled' => 1, 'visible' => 3, 'position' => 140, 'isameasure' => 1),
+		'localtax2' => array('type' => 'double(24,8)', 'label' => 'LT2', 'enabled' => 1, 'visible' => 3, 'position' => 145, 'isameasure' => 1),
+		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'AmountTTC', 'enabled' => 1, 'visible' => -1, 'position' => 150, 'isameasure' => 1),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 750, 'searchall' => 1),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 760, 'searchall' => 1),
+		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'ModelPDF', 'enabled' => 1, 'visible' => 0, 'position' => 165),
+		'fk_input_method' => array('type' => 'integer', 'label' => 'OrderMode', 'enabled' => 1, 'visible' => 3, 'position' => 170),
+		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'PaymentTerm', 'enabled' => 1, 'visible' => 3, 'position' => 175),
+		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'PaymentMode', 'enabled' => 1, 'visible' => 3, 'position' => 180),
+		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => 0, 'position' => 190),
+		'fk_account' => array('type' => 'integer', 'label' => 'BankAccount', 'enabled' => 'isModEnabled("bank")', 'visible' => 3, 'position' => 200),
+		'fk_incoterms' => array('type' => 'integer', 'label' => 'IncotermCode', 'enabled' => 1, 'visible' => 3, 'position' => 205),
+		'location_incoterms' => array('type' => 'varchar(255)', 'label' => 'IncotermLocation', 'enabled' => 1, 'visible' => 3, 'position' => 210),
+		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Fk multicurrency', 'enabled' => 1, 'visible' => 0, 'position' => 215),
+		'multicurrency_code' => array('type' => 'varchar(255)', 'label' => 'Currency', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 220),
+		'multicurrency_tx' => array('type' => 'double(24,8)', 'label' => 'CurrencyRate', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 225),
+		'multicurrency_total_ht' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyAmountHT', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 230),
+		'multicurrency_total_tva' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyAmountVAT', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 235),
+		'multicurrency_total_ttc' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyAmountTTC', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 240),
+		'date_creation' => array('type' => 'datetime', 'label' => 'Date creation', 'enabled' => 1, 'visible' => -1, 'position' => 500),
+		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => 1, 'notnull' => 1, 'position' => 50),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 1000, 'index' => 1),
+		'tms' => array('type' => 'datetime', 'label' => "DateModificationShort", 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 501),
+		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'visible' => 0, 'position' => 700),
+		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'position' => 701),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => 0, 'position' => 900),
 	);
 
 
@@ -1091,7 +1091,7 @@ class CommandeFournisseur extends CommonOrder
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1881,7 +1881,7 @@ class CommandeFournisseur extends CommonOrder
 		if (!$error) {
 			// Hook of thirdparty module
 			if (is_object($hookmanager)) {
-				$parameters = array('objFrom'=>$objFrom);
+				$parameters = array('objFrom' => $objFrom);
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -1906,31 +1906,31 @@ class CommandeFournisseur extends CommonOrder
 	/**
 	 *	Add order line
 	 *
-	 *	@param      string	$desc            		Description
-	 *	@param      float	$pu_ht              	Unit price (used if $price_base_type is 'HT')
-	 *	@param      float	$qty             		Quantity
-	 *	@param      float	$txtva           		VAT Rate
-	 *	@param      float	$txlocaltax1        	Localtax1 tax
-	 *  @param      float	$txlocaltax2        	Localtax2 tax
-	 *	@param      int		$fk_product      		Id product
-	 *  @param      int		$fk_prod_fourn_price	Id supplier price
-	 *  @param      string	$ref_supplier			Supplier reference price
-	 *	@param      float	$remise_percent  		Remise
-	 *	@param      string	$price_base_type		HT or TTC
-	 *	@param		float	$pu_ttc					Unit price TTC (used if $price_base_type is 'TTC')
-	 *	@param		int		$type					Type of line (0=product, 1=service)
-	 *	@param		int		$info_bits				More information
-	 *  @param		int		$notrigger				Disable triggers
-	 *  @param		int		$date_start				Date start of service
-	 *  @param		int		$date_end				Date end of service
-	 *  @param		array	$array_options			extrafields array
-	 *  @param 		string	$fk_unit 				Code of the unit to use. Null to use the default one
-	 *  @param 		string	$pu_ht_devise			Amount in currency
-	 *  @param		string	$origin					'order', ...
-	 *  @param		int		$origin_id				Id of origin object
-	 *  @param		int		$rang					Rank
-	 * 	@param		int		$special_code			Special code
-	 *	@return     int             				Return integer <=0 if KO, >0 if OK
+	 *	@param      string		$desc            		Description
+	 *	@param      float		$pu_ht              	Unit price (used if $price_base_type is 'HT')
+	 *	@param      float		$qty             		Quantity
+	 *	@param      float		$txtva           		VAT Rate
+	 *	@param      float		$txlocaltax1        	Localtax1 tax
+	 *	@param      float		$txlocaltax2        	Localtax2 tax
+	 *	@param      int			$fk_product      		Id product
+	 *	@param      int			$fk_prod_fourn_price	Id supplier price
+	 *	@param      string		$ref_supplier			Supplier reference price
+	 *	@param      float		$remise_percent  		Remise
+	 *	@param      string		$price_base_type		HT or TTC
+	 *	@param		float		$pu_ttc					Unit price TTC (used if $price_base_type is 'TTC')
+	 *	@param		int			$type					Type of line (0=product, 1=service)
+	 *	@param		int			$info_bits				More information
+	 *	@param		int			$notrigger				Disable triggers
+	 *	@param		int			$date_start				Date start of service
+	 *	@param		int			$date_end				Date end of service
+	 *	@param		array		$array_options			extrafields array
+	 *	@param 		int|null	$fk_unit 				Code of the unit to use. Null to use the default one
+	 *	@param 		string		$pu_ht_devise			Amount in currency
+	 *	@param		string		$origin					'order', ...
+	 *	@param		int			$origin_id				Id of origin object
+	 *	@param		int			$rang					Rank
+	 *	@param		int			$special_code			Special code
+	 *	@return     int     	        				Return integer <=0 if KO, >0 if OK
 	 */
 	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $fk_prod_fourn_price = 0, $ref_supplier = '', $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $type = 0, $info_bits = 0, $notrigger = 0, $date_start = null, $date_end = null, $array_options = [], $fk_unit = null, $pu_ht_devise = 0, $origin = '', $origin_id = 0, $rang = -1, $special_code = 0)
 	{
@@ -2280,7 +2280,7 @@ class CommandeFournisseur extends CommonOrder
 
 					// Method change if qty < 0
 					if (getDolGlobalString('SUPPLIER_ORDER_ALLOW_NEGATIVE_QTY_FOR_SUPPLIER_ORDER_RETURN') && $qty < 0) {
-						$result = $mouv->livraison($user, $product, $entrepot, $qty*(-1), $price, $comment, $now, $eatby, $sellby, $batch, 0, $inventorycode);
+						$result = $mouv->livraison($user, $product, $entrepot, $qty * (-1), $price, $comment, $now, $eatby, $sellby, $batch, 0, $inventorycode);
 					} else {
 						$result = $mouv->reception($user, $product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch, '', 0, $inventorycode);
 					}
@@ -2888,7 +2888,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param      integer     $date_start     	Date start of service
 	 *  @param      integer     $date_end       	Date end of service
 	 *  @param		array		$array_options		Extrafields array
-	 * 	@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
+	 * 	@param 		int|null	$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param		float		$pu_ht_devise		Unit price in currency
 	 *  @param		string		$ref_supplier		Supplier ref
 	 *	@return    	int         	    			Return integer < 0 if error, > 0 if ok
@@ -3079,7 +3079,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -3156,6 +3156,8 @@ class CommandeFournisseur extends CommonOrder
 
 			$xnbp++;
 		}
+
+		return 1;
 	}
 
 	/**
@@ -3526,7 +3528,7 @@ class CommandeFournisseur extends CommonOrder
 			$qtywished = array();
 
 			$supplierorderdispatch = new CommandeFournisseurDispatch($this->db);
-			$filter = array('t.fk_commande'=>$this->id);
+			$filter = array('t.fk_commande' => $this->id);
 			if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS')) {
 				$filter['t.status'] = 1; // Restrict to lines with status validated
 			}
@@ -3714,7 +3716,7 @@ class CommandeFournisseur extends CommonOrder
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		if (property_exists($this, 'socid') || property_exists($this, 'total_tva')) {
-			$return .='<br><span class="info-box-label amount">'.$this->socid.'</span>';
+			$return .= '<br><span class="info-box-label amount">'.$this->socid.'</span>';
 		}
 		if (property_exists($this, 'billed')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Billed").' : </span><span class="info-box-label">'.yn($this->billed).'</span>';

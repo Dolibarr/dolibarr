@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022       Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
@@ -451,7 +451,7 @@ class Task extends CommonObjectLine
 
 		// Clean parameters
 		if (isset($this->fk_project)) {
-			$this->fk_project = trim($this->fk_project);
+			$this->fk_project = (int) $this->fk_project;
 		}
 		if (isset($this->ref)) {
 			$this->ref = trim($this->ref);
@@ -472,7 +472,7 @@ class Task extends CommonObjectLine
 			$this->planned_workload = trim($this->planned_workload);
 		}
 		if (isset($this->budget_amount)) {
-			$this->budget_amount = trim($this->budget_amount);
+			$this->budget_amount = (float) $this->budget_amount;
 		}
 
 		if (!empty($this->date_start) && !empty($this->date_end) && $this->date_start > $this->date_end) {
@@ -897,21 +897,23 @@ class Task extends CommonObjectLine
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
 
-		$this->fk_project = '';
+		$this->fk_project = 0;
 		$this->ref = 'TK01';
-		$this->fk_task_parent = null;
+		$this->fk_task_parent = 0;
 		$this->label = 'Specimen task TK01';
 		$this->duration_effective = '';
-		$this->fk_user_creat = null;
+		$this->fk_user_creat = 1;
 		$this->progress = '25';
-		$this->status = null;
+		$this->status = 0;
 		$this->note = 'This is a specimen task not';
+
+		return 1;
 	}
 
 	/**
@@ -1171,8 +1173,6 @@ class Task extends CommonObjectLine
 					if ($loadextras) {
 						$tasks[$i]->fetch_optionals();
 					}
-
-					$tasks[$i]->obj = $obj; // Needed for tpl/extrafields_list_print
 				}
 
 				$i++;

@@ -9,7 +9,7 @@
  * Copyright (C) 2015-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2016		Ferran Marcet   		<fmarcet@2byte.es>
  * Copyright (C) 2019		JC Prieto				<jcprieto@virtual20.com><prietojc@gmail.com>
- * Copyright (C) 2022-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1462,7 +1462,7 @@ class Account extends CommonObject
 			$datas['accountancyjournal'] = '<br><b>'.$langs->trans('AccountancyJournal').':</b> '.$this->accountancy_journal;
 		}
 		// show categories for this record only in ajax to not overload lists
-		if (isModEnabled('categorie') && !$nofetch) {
+		if (isModEnabled('category') && !$nofetch) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$form = new Form($this->db);
 			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_ACCOUNT, 1);
@@ -1851,7 +1851,7 @@ class Account extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return	int
 	 */
 	public function initAsSpecimen()
 	{
@@ -1876,6 +1876,8 @@ class Account extends CommonObject
 		$this->owner_town      = 'Owner town';
 		$this->owner_country_id = 'Owner country_id';
 		$this->country_id      = 1;
+
+		return 1;
 	}
 
 	/**
@@ -2660,12 +2662,15 @@ class AccountLine extends CommonObjectLine
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $option = '', $notooltip = 0)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$result = '';
 
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("BankTransactionLine").'</u>:<br>';
 		$label .= '<b>'.$langs->trans("Ref").':</b> '.$this->ref;
+		if ($this->amount) {
+			$label .= '<br><strong>'.$langs->trans("Amount").':</strong> '.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency);
+		}
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.((int) $this->id).'&save_lastsearch_values=1" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
@@ -2677,6 +2682,7 @@ class AccountLine extends CommonObjectLine
 		if ($withpicto != 2) {
 			$result .= ($this->ref ? $this->ref : $this->id);
 		}
+
 		$result .= $linkend;
 
 		if ($option == 'showall' || $option == 'showconciliated' || $option == 'showconciliatedandaccounted') {

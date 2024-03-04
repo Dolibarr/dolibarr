@@ -259,37 +259,6 @@ class modAi extends DolibarrModules
 		$r = 0;
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
-		$this->rights[$r][0] = $this->numero . sprintf('%02d', (0 * 10) + 1);
-		$this->rights[$r][1] = 'Read objects of Ai';
-		$this->rights[$r][4] = 'availabilities';
-		$this->rights[$r][5] = 'read';
-		$r++;
-		$this->rights[$r][0] = $this->numero . sprintf('%02d', (0 * 10) + 2);
-		$this->rights[$r][1] = 'Create/Update objects of Ai';
-		$this->rights[$r][4] = 'availabilities';
-		$this->rights[$r][5] = 'write';
-		$r++;
-		$this->rights[$r][0] = $this->numero . sprintf('%02d', (0 * 10) + 3);
-		$this->rights[$r][1] = 'Delete objects of Ai';
-		$this->rights[$r][4] = 'availabilities';
-		$this->rights[$r][5] = 'delete';
-		$r++;
-		$this->rights[$r][0] = $this->numero . sprintf('%02d', (1 * 10) + 1);
-		$this->rights[$r][1] = 'Read Calendar object of Ai';
-		$this->rights[$r][4] = 'calendar';
-		$this->rights[$r][5] = 'read';
-		$r++;
-		$this->rights[$r][0] = $this->numero . sprintf('%02d', (1 * 10) + 2);
-		$this->rights[$r][1] = 'Create/Update Calendar object of Ai';
-		$this->rights[$r][4] = 'calendar';
-		$this->rights[$r][5] = 'write';
-		$r++;
-		$this->rights[$r][0] = $this->numero . sprintf('%02d', (1 * 10) + 3);
-		$this->rights[$r][1] = 'Delete Calendar object of Ai';
-		$this->rights[$r][4] = 'calendar';
-		$this->rights[$r][5] = 'delete';
-		$r++;
-
 		/* END MODULEBUILDER PERMISSIONS */
 
 		// Main menu entries to add
@@ -297,128 +266,14 @@ class modAi extends DolibarrModules
 		$r = 0;
 		// Add here entries to declare new menus
 		/* BEGIN MODULEBUILDER TOPMENU */
-		/*$this->menu[$r++] = array(
-			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'top', // This is a Top menu entry
-			'titre'=>'ModuleAiName',
-			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth valignmiddle"'),
-			'mainmenu'=>'ai',
-			'leftmenu'=>'',
-			'url'=>'/ai/aiindex.php',
-			'langs'=>'ai', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000 + $r,
-			'enabled'=>'$conf->ai->enabled', // Define condition to show or hide menu entry. Use '$conf->ai->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->ai->availabilities->read', // Use 'perms'=>'$user->rights->ai->availabilities->read' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
-		);*/
 		/* END MODULEBUILDER TOPMENU */
 
-		/* BEGIN MODULEBUILDER LEFTMENU CALENDAR */
-		$this->menu[$r++] = array(
-			'fk_menu'=>'fk_mainmenu=agenda',
-			'type'=>'left',
-			'titre'=> 'MenuBookcalIndex',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em92"'),
-			'mainmenu'=>'agenda',
-			'leftmenu'=> 'ai',
-			'url'=> '/ai/aiindex.php',
-			'langs'=> 'ai',
-			'position'=> 1100+$r,
-			'enabled'=> '1',
-			'perms'=> '$user->rights->ai->read',
-			'user'=> 0
-		);
-
-		$this->menu[$r++]=array(
-			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=ai',
-			// This is a Left menu entry
-			'type'=>'left',
-			'titre'=>'Calendar',
-			'mainmenu'=>'agenda',
-			'leftmenu'=>'ai_list',
-			'url'=>'/ai/list.php',
-			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'langs'=>'ai',
-			'position'=>1100+$r,
-			// Define condition to show or hide menu entry. Use '$conf->ai->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled'=>'$conf->ai->enabled',
-			// Use 'perms'=>'$user->rights->ai->level1->level2' if you want your menu with a permission rules
-			'perms'=>'$user->rights->ai->read',
-			'target'=>'',
-			// 0=Menu for internal users, 1=external users, 2=both
-			'user'=>2,
-		);
-		$this->menu[$r++]=array(
-			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=ai_list',
-			// This is a Left menu entry
-			'type'=>'left',
-			'titre'=>'NewKey',
-			'mainmenu'=>'agenda',
-			'leftmenu'=>'ai_new_key',
-			'url'=>'/ai/ai_card.php?action=create',
-			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'langs'=>'ai',
-			'position'=>1100+$r,
-			// Define condition to show or hide menu entry. Use '$conf->ai->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled'=>'$conf->ai->enabled',
-			// Use 'perms'=>'$user->rights->ai->level1->level2' if you want your menu with a permission rules
-			'perms'=>'$user->rights->ai->read',
-			'target'=>'',
-			// 0=Menu for internal users, 1=external users, 2=both
-			'user'=>2
-		);
-		/* END MODULEBUILDER LEFTMENU CALENDAR */
+		/* BEGIN MODULEBUILDER LEFTMENU AI */
+		/* END MODULEBUILDER LEFTMENU AI */
 
 		/* BEGIN MODULEBUILDER LEFTMENU AVAILABILITIES
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=ai',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',                          // This is a Left menu entry
-			'titre'=>'Availabilities',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
-			'mainmenu'=>'ai',
-			'leftmenu'=>'availabilities',
-			'url'=>'/ai/aiindex.php',
-			'langs'=>'ai@ai',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->ai->enabled',  // Define condition to show or hide menu entry. Use '$conf->ai->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->ai->availabilities->read',			                // Use 'perms'=>'$user->rights->ai->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=ai,fk_leftmenu=availabilities',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'List_Availabilities',
-			'mainmenu'=>'ai',
-			'leftmenu'=>'ai_availabilities_list',
-			'url'=>'/ai/availabilities_list.php',
-			'langs'=>'ai@ai',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->ai->enabled',  // Define condition to show or hide menu entry. Use '$conf->ai->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->ai->availabilities->read',			                // Use 'perms'=>'$user->rights->ai->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=ai,fk_leftmenu=availabilities',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'New_Availabilities',
-			'mainmenu'=>'ai',
-			'leftmenu'=>'ai_availabilities_new',
-			'url'=>'/ai/availabilities_card.php?action=create',
-			'langs'=>'ai@ai',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->ai->enabled',  // Define condition to show or hide menu entry. Use '$conf->ai->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->ai->availabilities->write',			                // Use 'perms'=>'$user->rights->ai->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		*/
-
 		/* END MODULEBUILDER LEFTMENU AVAILABILITIES */
+
 		// Exports profiles provided by this module
 		$r = 1;
 		/* BEGIN MODULEBUILDER EXPORT AVAILABILITIES */

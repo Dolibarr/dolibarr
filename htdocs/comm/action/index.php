@@ -8,6 +8,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
  * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,14 +52,14 @@ if (!getDolGlobalString('AGENDA_EXT_NB')) {
 $MAXAGENDA = getDolGlobalString('AGENDA_EXT_NB');
 $DELAYFORCACHE = 300;	// 300 seconds
 
-$disabledefaultvalues = GETPOST('disabledefaultvalues', 'int');
+$disabledefaultvalues = GETPOSTINT('disabledefaultvalues');
 
-$check_holiday = GETPOST('check_holiday', 'int');
+$check_holiday = GETPOSTINT('check_holiday');
 $filter = GETPOST("search_filter", 'alpha', 3) ? GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
-$filtert = GETPOST("search_filtert", "int", 3) ? GETPOST("search_filtert", "int", 3) : GETPOST("filtert", "int", 3);
-$usergroup = GETPOST("search_usergroup", "int", 3) ? GETPOST("search_usergroup", "int", 3) : GETPOST("usergroup", "int", 3);
-$showbirthday = empty($conf->use_javascript_ajax) ? GETPOST("showbirthday", "int") : 1;
-$search_categ_cus = GETPOST("search_categ_cus", "int", 3) ? GETPOST("search_categ_cus", "int", 3) : 0;
+$filtert = GETPOSTINT("search_filtert", 3) ? GETPOSTINT("search_filtert", 3) : GETPOSTINT("filtert", 3);
+$usergroup = GETPOSTINT("search_usergroup", 3) ? GETPOSTINT("search_usergroup", 3) : GETPOSTINT("usergroup", 3);
+$showbirthday = empty($conf->use_javascript_ajax) ? GETPOSTINT("showbirthday") : 1;
+$search_categ_cus = GETPOSTINT("search_categ_cus", 3) ? GETPOSTINT("search_categ_cus", 3) : 0;
 
 // If not choice done on calendar owner (like on left menu link "Agenda"), we filter on user.
 if (empty($filtert) && !getDolGlobalString('AGENDA_ALL_CALENDARS')) {
@@ -69,11 +70,11 @@ $newparam = '';
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $offset = $limit * $page;
 if (!$sortorder) {
 	$sortorder = "ASC";
@@ -83,7 +84,7 @@ if (!$sortfield) {
 }
 
 // Security check
-$socid = GETPOST("search_socid", "int") ? GETPOST("search_socid", "int") : GETPOST("socid", "int");
+$socid = GETPOSTINT("search_socid") ? GETPOSTINT("search_socid") : GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -108,22 +109,22 @@ $mode = GETPOST('mode', 'aZ09');
 if (empty($mode) && preg_match('/show_/', $action)) {
 	$mode = $action;	// For backward compatibility
 }
-$resourceid = GETPOST("search_resourceid", "int");
-$year = GETPOST("year", "int") ? GETPOST("year", "int") : date("Y");
-$month = GETPOST("month", "int") ? GETPOST("month", "int") : date("m");
-$week = GETPOST("week", "int") ? GETPOST("week", "int") : date("W");
-$day = GETPOST("day", "int") ? GETPOST("day", "int") : date("d");
-$pid = GETPOST("search_projectid", "int", 3) ? GETPOST("search_projectid", "int", 3) : GETPOST("projectid", "int", 3);
+$resourceid = GETPOSTINT("search_resourceid");
+$year = GETPOSTINT("year") ? GETPOSTINT("year") : date("Y");
+$month = GETPOSTINT("month") ? GETPOSTINT("month") : date("m");
+$week = GETPOSTINT("week") ? GETPOSTINT("week") : date("W");
+$day = GETPOSTINT("day") ? GETPOSTINT("day") : date("d");
+$pid = GETPOSTINT("search_projectid", 3) ? GETPOSTINT("search_projectid", 3) : GETPOSTINT("projectid", 3);
 $status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09'); // status may be 0, 50, 100, 'todo', 'na' or -1
 $type = GETPOSTISSET("search_type") ? GETPOST("search_type", 'aZ09') : GETPOST("type", 'aZ09');
-$maxprint = GETPOSTISSET("maxprint") ? GETPOST("maxprint", 'int') : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW;
+$maxprint = GETPOSTISSET("maxprint") ? GETPOSTINT("maxprint") : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW;
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
-$dateselect = dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'));
+$dateselect = dol_mktime(0, 0, 0, GETPOSTINT('dateselectmonth'), GETPOSTINT('dateselectday'), GETPOSTINT('dateselectyear'));
 if ($dateselect > 0) {
-	$day = GETPOST('dateselectday', 'int');
-	$month = GETPOST('dateselectmonth', 'int');
-	$year = GETPOST('dateselectyear', 'int');
+	$day = GETPOSTINT('dateselectday');
+	$month = GETPOSTINT('dateselectmonth');
+	$year = GETPOSTINT('dateselectyear');
 }
 
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
@@ -148,16 +149,16 @@ if (empty($mode) && !GETPOSTISSET('mode')) {
 if ($mode == 'default') {	// When action is default, we want a calendar view and not the list
 	$mode = (($defaultview != 'show_list') ? $defaultview : 'show_month');
 }
-if (GETPOST('viewcal', 'int') && GETPOST('mode', 'alpha') != 'show_day' && GETPOST('mode', 'alpha') != 'show_week') {
+if (GETPOSTINT('viewcal') && GETPOSTINT('mode') != 'show_day' && GETPOSTINT('mode') != 'show_week') {
 	$mode = 'show_month';
 	$day = '';
 } // View by month
-if (GETPOST('viewweek', 'int') || GETPOST('mode', 'alpha') == 'show_week') {
+if (GETPOSTINT('viewweek') || GETPOSTINT('mode') == 'show_week') {
 	$mode = 'show_week';
 	$week = ($week ? $week : date("W"));
 	$day = ($day ? $day : date("d"));
 } // View by week
-if (GETPOST('viewday', 'int') || GETPOST('mode', 'alpha') == 'show_day') {
+if (GETPOSTINT('viewday') || GETPOSTINT('mode') == 'show_day') {
 	$mode = 'show_day';
 	$day = ($day ? $day : date("d"));
 } // View by day
@@ -523,7 +524,8 @@ $viewmode .= img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', '
 $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewPerUser").'</span></a>';
 
 // Add more views from hooks
-$parameters = array(); $object = null;
+$parameters = array();
+$object = null;
 $reshook = $hookmanager->executeHooks('addCalendarView', $parameters, $object, $action);
 if (empty($reshook)) {
 	$viewmode .= $hookmanager->resPrint;
@@ -550,7 +552,8 @@ if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda'
 }
 
 // Define the legend/list of calendard to show
-$s = ''; $link = '';
+$s = '';
+$link = '';
 
 $showextcals = $listofextcals;
 $bookcalcalendars = array();
@@ -647,7 +650,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 		foreach ($showextcals as $val) {
 			$htmlname = md5($val['name']);	// not used for security purpose, only to get a string with no special char
 
-			if (!empty($val['default']) || GETPOST('check_ext'.$htmlname, 'int')) {
+			if (!empty($val['default']) || GETPOSTINT('check_ext'.$htmlname)) {
 				$default = "checked";
 			} else {
 				$default = '';
@@ -1455,7 +1458,8 @@ if (count($listofextcals)) {
 
 
 // Complete $eventarray with events coming from external module
-$parameters = array(); $object = null;
+$parameters = array();
+$object = null;
 $reshook = $hookmanager->executeHooks('getCalendarEvents', $parameters, $object, $action);
 if (!empty($hookmanager->resArray['eventarray'])) {
 	foreach ($hookmanager->resArray['eventarray'] as $keyDate => $events) {
@@ -1486,7 +1490,7 @@ if (!is_array($theme_datacolor)) {
 	$theme_datacolor = array(array(120, 130, 150), array(200, 160, 180), array(190, 190, 220));
 }
 
-$massactionbutton ='';
+$massactionbutton = '';
 
 print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
 
@@ -1520,7 +1524,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 		print '  <td class="center bold uppercase tdfordaytitle'.($i == 0 ? ' borderleft' : '').'">';
 		$numdayinweek = (($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7);
 		if (!empty($conf->dol_optimize_smallscreen)) {
-			$labelshort = array(0=>'SundayMin', 1=>'MondayMin', 2=>'TuesdayMin', 3=>'WednesdayMin', 4=>'ThursdayMin', 5=>'FridayMin', 6=>'SaturdayMin');
+			$labelshort = array(0 => 'SundayMin', 1 => 'MondayMin', 2 => 'TuesdayMin', 3 => 'WednesdayMin', 4 => 'ThursdayMin', 5 => 'FridayMin', 6 => 'SaturdayMin');
 			print $langs->trans($labelshort[$numdayinweek]);
 		} else {
 			print $langs->trans("Day".$numdayinweek);

@@ -51,7 +51,7 @@ $langs->loadLangs(array("bills", "cashdesk"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'); // $place is id of table for Bar or Restaurant
 
-$idline = GETPOST('idline', 'int');
+$idline = GETPOSTINT('idline');
 $action = GETPOST('action', 'aZ09');
 
 if (!$user->hasRight('takepos', 'run')) {

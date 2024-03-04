@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur      <eldy@users.sourceforge.net>
- * Copyright (C) 2023  Frédéric France          <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024  Frédéric France          <frederic.france@free.fr>
  * Copyright (C) 2023 Alice Adminson <aadminson@example.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -62,7 +62,7 @@ class Calendar extends CommonObject
 	/**
 	 * @var string String with name of icon for calendar. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'calendar@bookcal' if picto is file 'img/object_calendar.png'.
 	 */
-	public $picto = 'fa-file';
+	public $picto = 'fa-calendar-check';
 
 
 	const STATUS_DRAFT = 0;
@@ -369,7 +369,7 @@ class Calendar extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+				} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
@@ -915,7 +915,7 @@ class Calendar extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -923,7 +923,7 @@ class Calendar extends CommonObject
 		// $this->property1 = ...
 		// $this->property2 = ...
 
-		$this->initAsSpecimenCommon();
+		return $this->initAsSpecimenCommon();
 	}
 
 	/**

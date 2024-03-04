@@ -155,8 +155,8 @@ class CMailFileTest extends CommonClassTest
 		$msg .= ' <p>From wikipedia</p> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==" alt="Red dot" />';
 		$msg .= '</body></html>';
 
-
-		$localobject = new CMailFile('Test', 'test@test.com', 'from@from.com', $msg, array(), array(), array(), '', '', 0, -1, '', '', '', '', 'standard', '', '/tmp');
+		$tmp_dir = $conf->admin->dir_temp.'/'.__FUNCTION__.getmypid().'_tmp';
+		$localobject = new CMailFile('Test', 'test@test.com', 'from@from.com', $msg, array(), array(), array(), '', '', 0, -1, '', '', '', '', 'standard', '', $tmp_dir);
 
 		$result = count($localobject->html_images);
 		print __METHOD__ . " result count image detected in the mail=" . $result . "\n";

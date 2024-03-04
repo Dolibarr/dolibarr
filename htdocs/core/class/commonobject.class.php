@@ -12,7 +12,7 @@
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2017      Rui Strecht          <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018-2024 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024 Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
@@ -207,7 +207,7 @@ abstract class CommonObject
 	public $actionmsg2;
 
 	/**
-	 * @var string		Contains canvas name if record is an alternative canvas record
+	 * @var string			Contains canvas name if record is an alternative canvas record
 	 */
 	public $canvas;
 
@@ -218,13 +218,13 @@ abstract class CommonObject
 	public $project;
 
 	/**
-	 * @var int 		The related project ID
+	 * @var int 			The related project ID
 	 * @see setProject(), project
 	 */
 	public $fk_project;
 
 	/**
-	 * @var Project 	The related project object
+	 * @var Project 		The related project object
 	 * @deprecated
 	 * @see project
 	 */
@@ -237,13 +237,13 @@ abstract class CommonObject
 	public $fk_projet;
 
 	/**
-	 * @var Contact 	A related contact object
+	 * @var Contact|null 	A related contact object
 	 * @see fetch_contact()
 	 */
 	public $contact;
 
 	/**
-	 * @var int 		The related contact ID
+	 * @var int 			The related contact ID
 	 * @see fetch_contact()
 	 */
 	public $contact_id;
@@ -255,19 +255,19 @@ abstract class CommonObject
 	public $thirdparty;
 
 	/**
-	 * @var User 		A related user
+	 * @var User 			A related user
 	 * @see fetch_user()
 	 */
 	public $user;
 
 	/**
-	 * @var string 		The type of originating object ('commande', 'facture', ...). Note: on some object this field is called $origin_type
+	 * @var string 		The type of originating object. Combined with $origin_id, it allows to reload $origin_object
 	 * @see fetch_origin()
 	 */
-	public $origin;
+	public $origin_type;
 
 	/**
-	 * @var int 		The id of originating object
+	 * @var int 		The id of originating object. Combined with $origin_type, it allows to reload $origin_object
 	 * @see fetch_origin()
 	 */
 	public $origin_id;
@@ -276,6 +276,13 @@ abstract class CommonObject
 	 * @var	Object		Origin object. This is set by fetch_origin() from this->origin and this->origin_id.
 	 */
 	public $origin_object;
+
+	/**
+	 * @var string|CommonObject		Sometime the type of the originating object ('commande', 'facture', ...), sometime the object (like onh MouvementStock)
+	 * @deprecated					Use now $origin_type and $origin_id;
+	 * @see fetch_origin()
+	 */
+	public $origin;
 
 	// TODO Remove this. Has been replaced with ->origin_object.
 	// This is set by fetch_origin() from this->origin and this->origin_id
@@ -358,6 +365,12 @@ abstract class CommonObject
 	 * @see getFullAddress(), state
 	 */
 	public $state_id;
+
+	/**
+	 * var	int			State ID
+	 * @deprecated	Use state_id. We can remove this property when the field 'fk_departement' have been renamed into 'state_id' in all tables
+	 */
+	public $fk_departement;
 
 	/**
 	 * @var string		State code
@@ -464,12 +477,14 @@ abstract class CommonObject
 	public $fk_multicurrency;
 
 	/**
-	 * @var string		Multicurrency code
+	 * @var string|array<int,string>    Multicurrency code
+	 *                                  Or, just for the Paiement object, an array: invoice ID => currency code for that invoice.
 	 */
 	public $multicurrency_code;
 
 	/**
-	 * @var float		Multicurrency rate
+	 * @var float|array<int,float>      Multicurrency rate ("tx" = "taux" in French)
+	 *                                  Or, just for the Paiement object, an array: invoice ID => currency rate for that invoice.
 	 */
 	public $multicurrency_tx;
 
@@ -568,10 +583,16 @@ abstract class CommonObject
 	 */
 	public $total_ttc;
 
+
 	/**
 	 * @var CommonObjectLine[]
 	 */
 	public $lines;
+
+	/**
+	 * @var string	Action code to use to record auto event in agenda. For example 'AC_OTH_AUTO'
+	 */
+	public $actiontypecode;
 
 	/**
 	 * @var mixed		Comments
@@ -677,6 +698,18 @@ abstract class CommonObject
 	 */
 	public $user_modification_id;
 
+	/**
+	 * @var int ID
+	 * @deprecated	Use $user_creation_id
+	 */
+	public $fk_user_creat;
+
+	/**
+	 * @var int ID
+	 * @deprecated 	Use $user_modification_id
+	 */
+	public $fk_user_modif;
+
 
 	public $next_prev_filter;
 
@@ -737,7 +770,7 @@ abstract class CommonObject
 	public $output;
 
 	/**
-	 * @var array 		extra parameters
+	 * @var array|string	extra parameters. Try to store here the array of parameters. Old code is sometimes storing a string.
 	 */
 	public $extraparams = array();
 
@@ -1479,7 +1512,7 @@ abstract class CommonObject
 		$sql .= " tc.code, tc.libelle as type_label";
 		$sql .= " FROM (".$this->db->prefix()."element_contact as ec, ".$this->db->prefix()."c_type_contact as tc)";
 		$sql .= " WHERE ec.rowid =".((int) $rowid);
-		$sql .= " AND ec.fk_c_type_contact=tc.rowid";
+		$sql .= " AND ec.fk_c_type_contact = tc.rowid";
 		$sql .= " AND tc.element = '".$this->db->escape($this->element)."'";
 
 		dol_syslog(get_class($this)."::swapContactStatus", LOG_DEBUG);
@@ -6167,11 +6200,11 @@ abstract class CommonObject
 			if (in_array($key_type, array('date'))) {
 				// Clean parameters
 				// TODO GMT date in memory must be GMT so we should add gm=true in parameters
-				$value_key = dol_mktime(0, 0, 0, GETPOST($postfieldkey."month", 'int'), GETPOST($postfieldkey."day", 'int'), GETPOST($postfieldkey."year", 'int'));
+				$value_key = dol_mktime(0, 0, 0, GETPOSTINT($postfieldkey."month"), GETPOSTINT($postfieldkey."day"), GETPOSTINT($postfieldkey."year"));
 			} elseif (in_array($key_type, array('datetime'))) {
 				// Clean parameters
 				// TODO GMT date in memory must be GMT so we should add gm=true in parameters
-				$value_key = dol_mktime(GETPOST($postfieldkey."hour", 'int'), GETPOST($postfieldkey."min", 'int'), 0, GETPOST($postfieldkey."month", 'int'), GETPOST($postfieldkey."day", 'int'), GETPOST($postfieldkey."year", 'int'));
+				$value_key = dol_mktime(GETPOSTINT($postfieldkey."hour"), GETPOSTINT($postfieldkey."min"), 0, GETPOSTINT($postfieldkey."month"), GETPOSTINT($postfieldkey."day"), GETPOSTINT($postfieldkey."year"));
 			} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 				$value_arr = GETPOST($postfieldkey, 'array'); // check if an array
 				if (!empty($value_arr)) {
@@ -7346,6 +7379,9 @@ abstract class CommonObject
 				$nbchoice++;
 				$tmpselect .= '<option value="'.$keyb.'"';
 				$tmpselect .= (((string) $value == (string) $keyb) ? ' selected' : '');
+				if (!empty($parent)) {
+					$isDependList = 1;
+				}
 				$tmpselect .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
 				$tmpselect .= '>'.$valb.'</option>';
 			}
@@ -7750,9 +7786,9 @@ abstract class CommonObject
 					}
 					$paramforthenewlink = '';
 					$paramforthenewlink .= (GETPOSTISSET('action') ? '&action='.GETPOST('action', 'aZ09') : '');
-					$paramforthenewlink .= (GETPOSTISSET('id') ? '&id='.GETPOST('id', 'int') : '');
+					$paramforthenewlink .= (GETPOSTISSET('id') ? '&id='.GETPOSTINT('id') : '');
 					$paramforthenewlink .= (GETPOSTISSET('origin') ? '&origin='.GETPOST('origin', 'aZ09') : '');
-					$paramforthenewlink .= (GETPOSTISSET('originid') ? '&originid='.GETPOST('originid', 'int') : '');
+					$paramforthenewlink .= (GETPOSTISSET('originid') ? '&originid='.GETPOSTINT('originid') : '');
 					$paramforthenewlink .= '&fk_'.strtolower($class).'=--IDFORBACKTOPAGE--';
 					// TODO Add JavaScript code to add input fields already filled into $paramforthenewlink so we won't loose them when going back to main page
 					$out .= '<a class="butActionNew" title="'.$langs->trans("New").'" href="'.$url_path.'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].($paramforthenewlink ? '?'.$paramforthenewlink : '')).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
@@ -7976,6 +8012,9 @@ abstract class CommonObject
 			}
 		} elseif ($type == 'select') {
 			$value = isset($param['options'][$value]) ? $param['options'][$value] : '';
+			if (strpos($value, "|") !== false) {
+				$value = explode('|', $value)[0];
+			}
 		} elseif ($type == 'sellist') {
 			$param_list = array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
@@ -8702,7 +8741,7 @@ abstract class CommonObject
 								}
 							}
 							$datekey = $keyprefix.'options_'.$key.$keysuffix;
-							$value = (GETPOSTISSET($datekey)) ? dol_mktime(12, 0, 0, GETPOST($datekey.'month', 'int', 3), GETPOST($datekey.'day', 'int', 3), GETPOST($datekey.'year', 'int', 3)) : $datenotinstring;
+							$value = (GETPOSTISSET($datekey)) ? dol_mktime(12, 0, 0, GETPOSTINT($datekey.'month', 3), GETPOSTINT($datekey.'day', 3), GETPOSTINT($datekey.'year', 3)) : $datenotinstring;
 						}
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('datetime'))) {
 							$datenotinstring = null;
@@ -8713,7 +8752,7 @@ abstract class CommonObject
 								}
 							}
 							$timekey = $keyprefix.'options_'.$key.$keysuffix;
-							$value = (GETPOSTISSET($timekey)) ? dol_mktime(GETPOST($timekey.'hour', 'int', 3), GETPOST($timekey.'min', 'int', 3), GETPOST($timekey.'sec', 'int', 3), GETPOST($timekey.'month', 'int', 3), GETPOST($timekey.'day', 'int', 3), GETPOST($timekey.'year', 'int', 3), 'tzuserrel') : $datenotinstring;
+							$value = (GETPOSTISSET($timekey)) ? dol_mktime(GETPOSTINT($timekey.'hour', 3), GETPOSTINT($timekey.'min', 3), GETPOSTINT($timekey.'sec', 3), GETPOSTINT($timekey.'month', 3), GETPOSTINT($timekey.'day', 3), GETPOSTINT($timekey.'year', 3), 'tzuserrel') : $datenotinstring;
 						}
 						// Convert float submitted string into real php numeric (value in memory must be a php numeric)
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('price', 'double'))) {
@@ -9492,9 +9531,9 @@ abstract class CommonObject
 
 
 	/**
-	 * Function to prepare a part of the query for insert by returning an array with all properties of object.
+	 * Function to return the array of data key-value from the ->fields and all the ->properties of an object.
 	 *
-	 * Note $this->${field} are set by the page that make the createCommon() or the updateCommon().
+	 * Note: $this->${field} are set by the page that make the createCommon() or the updateCommon().
 	 * $this->${field} should be a clean and string value (so date are formatted for SQL insert).
 	 *
 	 * @return array		Array with all values of each properties to update
@@ -9704,19 +9743,27 @@ abstract class CommonObject
 
 		$fieldvalues = $this->setSaveQuery();
 
+		// Note: Here, $fieldvalues contains same keys (or less) that are inside ->fields
+
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) {
 			$fieldvalues['date_creation'] = $this->db->idate($now);
 		}
 		if (array_key_exists('fk_user_creat', $fieldvalues) && !($fieldvalues['fk_user_creat'] > 0)) {
 			$fieldvalues['fk_user_creat'] = $user->id;
+			$this->fk_user_creat = $user->id;
+		}
+		if (array_key_exists('user_creation_id', $fieldvalues) && !($fieldvalues['user_creation_id'] > 0)) {
+			$fieldvalues['user_creation_id'] = $user->id;
+			$this->user_creation_id = $user->id;
 		}
 		if (array_key_exists('pass_crypted', $fieldvalues) && property_exists($this, 'pass')) {
 			$fieldvalues['pass_crypted'] = dol_hash($this->pass);
 		}
-		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 		if (array_key_exists('ref', $fieldvalues)) {
 			$fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref, we sanitize data
 		}
+
+		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 
 		$keys = array();
 		$values = array(); // Array to store string forged for SQL syntax
@@ -10001,16 +10048,22 @@ abstract class CommonObject
 
 		$fieldvalues = $this->setSaveQuery();
 
+		// Note: Here, $fieldvalues contains same keys (or less) that are inside ->fields
+
 		if (array_key_exists('date_modification', $fieldvalues) && empty($fieldvalues['date_modification'])) {
 			$fieldvalues['date_modification'] = $this->db->idate($now);
 		}
 		if (array_key_exists('fk_user_modif', $fieldvalues) && !($fieldvalues['fk_user_modif'] > 0)) {
 			$fieldvalues['fk_user_modif'] = $user->id;
 		}
-		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into update.
+		if (array_key_exists('user_modification_id', $fieldvalues) && !($fieldvalues['user_modification_id'] > 0)) {
+			$fieldvalues['user_modification_id'] = $user->id;
+		}
 		if (array_key_exists('ref', $fieldvalues)) {
 			$fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref, we sanitize data
 		}
+
+		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into update.
 
 		// Add quotes and escape on fields with type string
 		$keys = array();

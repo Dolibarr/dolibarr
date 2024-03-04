@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,12 +127,6 @@ class Menubase
 	public $langs;
 
 	/**
-	 * @var string Not used
-	 * @deprecated
-	 */
-	public $level;
-
-	/**
 	 * @var string Name family/module for left menu (setup, info, ...)
 	 */
 	public $leftmenu;
@@ -183,7 +177,7 @@ class Menubase
 	 */
 	public function create($user = null)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		// Clean parameters
 		if (!isset($this->enabled)) {
@@ -208,9 +202,6 @@ class Menubase
 		$this->user = (int) $this->user;
 		if (empty($this->position)) {
 			$this->position = 0;
-		}
-		if (!$this->level) {
-			$this->level = 0;
 		}
 
 		// Check parameters
@@ -487,7 +478,7 @@ class Menubase
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -508,6 +499,8 @@ class Menubase
 		$this->enabled = '';
 		$this->user = 0;
 		$this->tms = dol_now();
+
+		return 1;
 	}
 
 

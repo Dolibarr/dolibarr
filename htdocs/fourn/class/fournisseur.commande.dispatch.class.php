@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014 Juanjo Menent	      <jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -619,7 +620,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	 *	Initialise object with example values
 	 *	Id must be 0 if object instance is a specimen
 	 *
-	 *	@return	void
+	 *	@return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -638,6 +639,8 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		$this->batch = '';
 		$this->eatby = '';
 		$this->sellby = '';
+
+		return 1;
 	}
 
 	/**

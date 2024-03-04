@@ -54,7 +54,7 @@ $langs->loadLangs(array('products', 'bills', 'companies', 'projects'));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -67,8 +67,8 @@ $search_amount_no_tax = GETPOST("search_amount_no_tax", "alpha");
 $search_amount_all_tax = GETPOST("search_amount_all_tax", "alpha");
 $search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refsupplier = GETPOST('search_refsupplier', 'alpha');
-$search_type = GETPOST('search_type', 'int');
-$search_subtype = GETPOST('search_subtype', 'int');
+$search_type = GETPOSTINT('search_type');
+$search_subtype = GETPOSTINT('search_subtype');
 $search_project = GETPOST('search_project', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_company_alias = GETPOST('search_company_alias', 'alpha');
@@ -83,30 +83,28 @@ $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
 $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
-$search_status = GETPOST('search_status', 'int');
-$search_paymentmode = GETPOST('search_paymentmode', 'int');
-$search_paymentcond = GETPOST('search_paymentcond', 'int');
+$search_status = GETPOST('search_status', 'intcomma');	// Can be '' or a numeric
+$search_paymentmode = GETPOSTINT('search_paymentmode');
+$search_paymentcond = GETPOSTINT('search_paymentcond');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
 $search_country = GETPOST("search_country", 'alpha');
-$search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
-$search_user = GETPOST('search_user', 'int');
-$search_sale = GETPOST('search_sale', 'int');
+$search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
+$search_user = GETPOSTINT('search_user');
+$search_sale = GETPOSTINT('search_sale');
 $search_date_start = GETPOSTDATE('search_date_start', '', 'tzserver');
 $search_date_end = GETPOSTDATE('search_date_end', '23:59:59', 'tzserver');
-$search_datelimit_startday = GETPOST('search_datelimit_startday', 'int');
-$search_datelimit_startmonth = GETPOST('search_datelimit_startmonth', 'int');
-$search_datelimit_startyear = GETPOST('search_datelimit_startyear', 'int');
-$search_datelimit_endday = GETPOST('search_datelimit_endday', 'int');
-$search_datelimit_endmonth = GETPOST('search_datelimit_endmonth', 'int');
-$search_datelimit_endyear = GETPOST('search_datelimit_endyear', 'int');
+$search_datelimit_startday = GETPOSTINT('search_datelimit_startday');
+$search_datelimit_startmonth = GETPOSTINT('search_datelimit_startmonth');
+$search_datelimit_startyear = GETPOSTINT('search_datelimit_startyear');
+$search_datelimit_endday = GETPOSTINT('search_datelimit_endday');
+$search_datelimit_endmonth = GETPOSTINT('search_datelimit_endmonth');
+$search_datelimit_endyear = GETPOSTINT('search_datelimit_endyear');
 $search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $search_datelimit_startday, $search_datelimit_startyear);
 $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
-$search_btn = GETPOST('button_search', 'alpha');
-$search_remove_btn = GETPOST('button_removefilter', 'alpha');
-$search_categ_sup = trim(GETPOST("search_categ_sup", 'int'));
-$search_product_category = GETPOST('search_product_category', 'int');
+$search_categ_sup = trim(GETPOSTINT("search_categ_sup"));
+$search_product_category = GETPOSTINT('search_product_category');
 
 $option = GETPOST('search_option');
 if ($option == 'late') {
@@ -115,10 +113,10 @@ if ($option == 'late') {
 $filter = GETPOST('filtre', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -133,7 +131,7 @@ if (!$sortfield) {
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 
 // Security check
 if ($user->socid > 0) {
@@ -962,7 +960,7 @@ if (isModEnabled('paymentbybanktransfer') && $user->hasRight("paymentbybanktrans
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -1030,7 +1028,7 @@ if ($user->hasRight("user", "user", "lire")) {
 	$moreforfilter .= '</div>';
 }
 // If the user can view prospects other than his'
-if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
+if (isModEnabled('category') && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
@@ -1039,7 +1037,7 @@ if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire') && ($user-
 	$moreforfilter .= '</div>';
 }
 
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('SuppliersCategoriesShort');
@@ -1064,7 +1062,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
@@ -1306,7 +1304,7 @@ if (!empty($arrayfields['f.tms']['checked'])) {
 }
 // Status
 if (!empty($arrayfields['f.fk_statut']['checked'])) {
-	print '<td class="liste_titre right parentonrightofpage">';
+	print '<td class="liste_titre center parentonrightofpage">';
 	$liststatus = array('0'=>$langs->trans("Draft"), '1'=>$langs->trans("Unpaid"), '2'=>$langs->trans("Paid"));
 	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'center search_status width100 onrightofpage', 1);
 	print '</td>';
@@ -1525,6 +1523,7 @@ while ($i < $imaxinloop) {
 	$userstatic->firstname = $obj->firstname;
 	$userstatic->email = $obj->user_email;
 	$userstatic->statut = $obj->user_statut;
+	$userstatic->status = $obj->user_statut;
 	$userstatic->entity = $obj->entity;
 	$userstatic->photo = $obj->photo;
 	$userstatic->office_phone = $obj->office_phone;

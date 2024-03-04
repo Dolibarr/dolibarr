@@ -49,9 +49,9 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $mode = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$withproject = GETPOST('withproject', 'int');
+$withproject = GETPOSTINT('withproject');
 
 // Initialize technical objects
 $object = new ConferenceOrBooth($db);
@@ -73,8 +73,8 @@ foreach ($object->fields as $key => $val) {
 		$search[$key] = GETPOST('search_'.$key, 'alpha');
 	}
 	if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
-		$search[$key.'_dtstart'] = dol_mktime(0, 0, 0, GETPOST('search_'.$key.'_dtstartmonth', 'int'), GETPOST('search_'.$key.'_dtstartday', 'int'), GETPOST('search_'.$key.'_dtstartyear', 'int'));
-		$search[$key.'_dtend'] = dol_mktime(23, 59, 59, GETPOST('search_'.$key.'_dtendmonth', 'int'), GETPOST('search_'.$key.'_dtendday', 'int'), GETPOST('search_'.$key.'_dtendyear', 'int'));
+		$search[$key.'_dtstart'] = dol_mktime(0, 0, 0, GETPOSTINT('search_'.$key.'_dtstartmonth'), GETPOSTINT('search_'.$key.'_dtstartday'), GETPOSTINT('search_'.$key.'_dtstartyear'));
+		$search[$key.'_dtend'] = dol_mktime(23, 59, 59, GETPOSTINT('search_'.$key.'_dtendmonth'), GETPOSTINT('search_'.$key.'_dtendday'), GETPOSTINT('search_'.$key.'_dtendyear'));
 	}
 }
 
@@ -148,10 +148,10 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 
 	// Actions to send emails
@@ -328,7 +328,7 @@ if (!empty($withproject)) {
 	print '</td></tr>';
 
 	// Categories
-	if (isModEnabled('categorie')) {
+	if (isModEnabled('category')) {
 		print '<tr><td class="titlefield valignmiddle">'.$langs->trans("Categories").'</td><td class="valuefield">';
 		print $form->showCategories($projectstatic->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
@@ -435,7 +435,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	if ($withproject) {
 		print '<input type="hidden" name="withproject" value="'.$withproject.'">';
-		print '<input type="hidden" name="fk_project" value="'.GETPOST('fk_project', 'int').'">';
+		print '<input type="hidden" name="fk_project" value="'.GETPOSTINT('fk_project').'">';
 	}
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';

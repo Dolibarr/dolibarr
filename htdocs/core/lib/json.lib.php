@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@ if (!function_exists('json_encode')) {
 	 *
 	 * @param	mixed	$elements		PHP Object to json encode
 	 * @return 	string					Json encoded string
+	 * @phan-suppress PhanRedefineFunctionInternal
 	 */
 	function json_encode($elements)
 	{
@@ -226,6 +228,7 @@ if (!function_exists('json_decode')) {
 	 * @param	string	$json		Json encoded to PHP Object or Array
 	 * @param	bool	$assoc		False return an object, true return an array
 	 * @return 	mixed				Object or Array
+	 * @phan-suppress PhanRedefineFunctionInternal
 	 */
 	function json_decode($json, $assoc = false)
 	{
@@ -264,7 +267,7 @@ function dol_json_decode($json, $assoc = false)
 		} else {
 			$out .= $json[$i];
 		}
-		if ($json[$i] == '"' && $json[($i - 1)] != "\\") {
+		if ($i > 0 && $json[$i] == '"' && $json[($i - 1)] != "\\") {
 			$comment = !$comment;
 		}
 	}
@@ -276,6 +279,7 @@ function dol_json_decode($json, $assoc = false)
 	// Return an array
 	if ($out != '') {
 		try {
+			// @phan-suppress-next-line PhanPluginUnsafeEval
 			eval('$array = '.$out.';');
 		} catch (Exception $e) {
 			$array = array();

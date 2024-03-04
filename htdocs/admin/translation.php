@@ -35,7 +35,7 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-$id = GETPOST('rowid', 'int');
+$id = GETPOSTINT('rowid');
 $action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optionscss', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ09');
@@ -51,10 +51,10 @@ if ($mode == 'searchkey') {
 }
 
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -120,7 +120,7 @@ if ($action == 'update') {
 	if (!$error) {
 		$db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."overwrite_trans set transkey = '".$db->escape($transkey)."', transvalue = '".$db->escape($transvalue)."' WHERE rowid = ".((int) GETPOST('rowid', 'int'));
+		$sql = "UPDATE ".MAIN_DB_PREFIX."overwrite_trans set transkey = '".$db->escape($transkey)."', transvalue = '".$db->escape($transvalue)."' WHERE rowid = ".(GETPOSTINT('rowid'));
 		$result = $db->query($sql);
 		if ($result) {
 			$db->commit();
@@ -290,6 +290,7 @@ foreach ($modulesdir as $keydir => $tmpsearchdir) {
 	$dir_lang_osencoded = dol_osencode($dir_lang);
 
 	$filearray = dol_dir_list($dir_lang_osencoded, 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
+
 	foreach ($filearray as $file) {
 		$tmpfile = preg_replace('/.lang/i', '', basename($file['name']));
 		$moduledirname = (basename(dirname(dirname($dir_lang))));
@@ -397,7 +398,7 @@ if ($mode == 'overwrite') {
 
 			print '<td>'.$obj->lang.'</td>'."\n";
 			print '<td>';
-			if ($action == 'edit' && $obj->rowid == GETPOST('rowid', 'int')) {
+			if ($action == 'edit' && $obj->rowid == GETPOSTINT('rowid')) {
 				print '<input type="text" class="quatrevingtpercent" name="transkey" value="'.dol_escape_htmltag($obj->transkey).'">';
 			} else {
 				print $obj->transkey;
@@ -411,7 +412,7 @@ if ($mode == 'overwrite') {
 			print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->transkey.'">';
 			print '<input type="text" id="value_'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.dol_escape_htmltag($obj->transvalue).'">';
 			*/
-			if ($action == 'edit' && $obj->rowid == GETPOST('rowid', 'int')) {
+			if ($action == 'edit' && $obj->rowid == GETPOSTINT('rowid')) {
 				print '<input type="text" class="quatrevingtpercent" name="transvalue" value="'.dol_escape_htmltag($obj->transvalue).'">';
 			} else {
 				//print $obj->transkey.' '.$langsenfileonly->tab_translate[$obj->transkey];
@@ -426,7 +427,7 @@ if ($mode == 'overwrite') {
 			print '</td>';
 
 			print '<td class="center">';
-			if ($action == 'edit' && $obj->rowid == GETPOST('rowid', 'int')) {
+			if ($action == 'edit' && $obj->rowid == GETPOSTINT('rowid')) {
 				print '<input type="hidden" class="button" name="rowid" value="'.$obj->rowid.'">';
 				print '<input type="submit" class="button buttongen button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print ' &nbsp; ';

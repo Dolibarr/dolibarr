@@ -14,7 +14,7 @@
  * Copyright (C) 2014		Ion agorria			    <ion@agorria.com>
  * Copyright (C) 2016-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017		Gustavo Novaro
- * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -501,9 +501,9 @@ class Product extends CommonObject
 	public $ref_supplier;
 
 	/**
-	 * Unit code ('km', 'm', 'l', 'p', ...)
-	 *
-	 * @var string
+	 * @var int|null                ID of the unit of measurement (rowid in llx_c_units table)
+	 * @see measuringUnitString()
+	 * @see getLabelOfUnit()
 	 */
 	public $fk_unit;
 
@@ -4918,8 +4918,8 @@ class Product extends CommonObject
 
 		// les prix de fournisseurs.
 		$sql = "INSERT ".$this->db->prefix()."product_fournisseur_price (";
-		$sql .= " datec, fk_product, fk_soc, price, quantity, fk_user)";
-		$sql .= " SELECT '".$this->db->idate($now)."', ".((int) $toId).", fk_soc, price, quantity, fk_user";
+		$sql .= " datec, fk_product, fk_soc, price, quantity, fk_user, tva_tx)";
+		$sql .= " SELECT '".$this->db->idate($now)."', ".((int) $toId).", fk_soc, price, quantity, fk_user, tva_tx";
 		$sql .= " FROM ".$this->db->prefix()."product_fournisseur_price";
 		$sql .= " WHERE fk_product = ".((int) $fromId);
 
@@ -5365,7 +5365,7 @@ class Product extends CommonObject
 			}
 		}
 		// show categories for this record only in ajax to not overload lists
-		if (isModEnabled('categorie') && !$nofetch) {
+		if (isModEnabled('category') && !$nofetch) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$form = new Form($this->db);
 			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_PRODUCT, 1);
@@ -5865,14 +5865,14 @@ class Product extends CommonObject
 
 		//dol_syslog("load_virtual_stock");
 
-		if (isModEnabled('commande')) {
+		if (isModEnabled('order')) {
 			$result = $this->load_stats_commande(0, '1,2', 1);
 			if ($result < 0) {
 				dol_print_error($this->db, $this->error);
 			}
 			$stock_commande_client = $this->stats_commande['qty'];
 		}
-		if (isModEnabled("expedition")) {
+		if (isModEnabled("delivery_note")) {
 			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 			$filterShipmentStatus = '';
 			if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {
@@ -6341,7 +6341,7 @@ class Product extends CommonObject
 	 *  Used to build previews or test instances.
 	 *    id must be 0 if object instance is a specimen.
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -6380,6 +6380,8 @@ class Product extends CommonObject
 		$this->volume_units = 0;
 
 		$this->barcode = -1; // Create barcode automatically
+
+		return 1;
 	}
 
 	/**

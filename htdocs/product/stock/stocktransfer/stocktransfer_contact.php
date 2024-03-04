@@ -37,9 +37,9 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/lib/stocktransfer_s
 // Load translation files required by the page
 $langs->loadLangs(array('facture', 'orders', 'sendings', 'companies', 'stocks'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$lineid = GETPOST('lineid', 'int');
+$lineid = GETPOSTINT('lineid');
 $action = GETPOST('action', 'alpha');
 
 $object = new StockTransfer($db);
@@ -77,7 +77,7 @@ $result = restrictedArea($user, 'stocktransfer', $id, '', 'stocktransfer');
 
 if ($action == 'addcontact' && $user->hasRight('stocktransfer', 'stocktransfer', 'write')) {
 	if ($object->id > 0) {
-		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+		$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 		$result = $object->add_contact($contactid, !empty($_POST["typecontact"]) ? $_POST["typecontact"] : $_POST["type"], $_POST["source"]);
 	}
 

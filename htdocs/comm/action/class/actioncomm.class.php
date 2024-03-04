@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2017  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015	    Marcos García		    <marcosgdf@gmail.com>
  * Copyright (C) 2018	    Nicolas ZABOURI	        <info@inovea-conseil.com>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ class ActionComm extends CommonObject
 	public $id;
 
 	/**
-	 * @var int Id of the event. Use $id as possible
+	 * @var string Id of the event. Use $id as possible
 	 */
 	public $ref;
 
@@ -614,7 +614,8 @@ class ActionComm extends CommonObject
 		dol_syslog(get_class($this)."::add", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$this->ref = $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm", "id");
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm", "id");
+			$this->ref = (string) $this->id;
 			$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm SET ref='".$this->db->escape($this->ref)."' WHERE id=".$this->id;
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1660,7 +1661,7 @@ class ActionComm extends CommonObject
 			$datas['note'] .= '</div>';
 		}
 		// show categories for this record only in ajax to not overload lists
-		if (isModEnabled('categorie') && !$nofetch) {
+		if (isModEnabled('category') && !$nofetch) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$form = new Form($this->db);
 			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_ACTIONCOMM, 1);

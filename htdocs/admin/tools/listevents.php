@@ -47,10 +47,10 @@ if ($user->socid > 0) {
 $langs->loadLangs(array("companies", "admin", "users", "other","withdrawals"));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -64,7 +64,7 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-$search_rowid = GETPOST("search_rowid", "int");
+$search_rowid = GETPOSTINT("search_rowid");
 $search_code = GETPOST("search_code", "alpha");
 $search_ip   = GETPOST("search_ip", "alpha");
 $search_user = GETPOST("search_user", "alpha");
@@ -76,13 +76,13 @@ $optioncss = GETPOST("optioncss", "aZ"); // Option for the css output (always ''
 $now = dol_now();
 $nowarray = dol_getdate($now);
 
-if (GETPOST("date_startmonth", 'int') > 0) {
-	$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth", 'int'), GETPOST("date_startday", 'int'), GETPOST("date_startyear", 'int'), 'tzuserrel');
+if (GETPOSTINT("date_startmonth") > 0) {
+	$date_start = dol_mktime(0, 0, 0, GETPOSTINT("date_startmonth"), GETPOSTINT("date_startday"), GETPOSTINT("date_startyear"), 'tzuserrel');
 } else {
 	$date_start = '';
 }
-if (GETPOST("date_endmonth", 'int') > 0) {
-	$date_end = dol_get_last_hour(dol_mktime(23, 59, 59, GETPOST("date_endmonth", 'int'), GETPOST("date_endday", 'int'), GETPOST("date_endyear", 'int'), 'tzuserrel'), 'tzuserrel');
+if (GETPOSTINT("date_endmonth") > 0) {
+	$date_end = dol_get_last_hour(dol_mktime(23, 59, 59, GETPOSTINT("date_endmonth"), GETPOSTINT("date_endday"), GETPOSTINT("date_endyear"), 'tzuserrel'), 'tzuserrel');
 } else {
 	$date_end = '';
 }

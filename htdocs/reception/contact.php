@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class
 
 $langs->loadLangs(array("orders", "receptions", "companies"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
@@ -100,7 +100,7 @@ if (isModEnabled("reception")) {
 
 if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
 	if ($result > 0 && $id > 0) {
-		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+		$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 		$result = $objectsrc->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 	}
@@ -120,10 +120,10 @@ if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
 	}
 } elseif ($action == 'swapstatut' && $user->hasRight('reception', 'creer')) {
 	// bascule du statut d'un contact
-	$result = $objectsrc->swapContactStatus(GETPOST('ligne', 'int'));
+	$result = $objectsrc->swapContactStatus(GETPOSTINT('ligne'));
 } elseif ($action == 'deletecontact' && $user->hasRight('reception', 'creer')) {
 	// Efface un contact
-	$result = $objectsrc->delete_contact(GETPOST("lineid", 'int'));
+	$result = $objectsrc->delete_contact(GETPOSTINT("lineid"));
 
 	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);

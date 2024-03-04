@@ -2,7 +2,8 @@
 /* Copyright (C) 2014-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2015-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2020  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -555,7 +556,7 @@ class BookKeeping extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1722,7 +1723,7 @@ class BookKeeping extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -1752,6 +1753,8 @@ class BookKeeping extends CommonObject
 		$this->journal_label = 'Journal de vente';
 		$this->piece_num = 1234;
 		$this->date_creation = $now;
+
+		return 1;
 	}
 
 	/**
@@ -1971,7 +1974,7 @@ class BookKeeping extends CommonObject
 	/**
 	 * Transform transaction
 	 *
-	 * @param  number   $direction      If 0: tmp => real, if 1: real => tmp
+	 * @param  int      $direction      If 0: tmp => real, if 1: real => tmp
 	 * @param  string   $piece_num      Piece num = Transaction ref
 	 * @return int                      int Return integer <0 if KO, >0 if OK
 	 */
@@ -2197,7 +2200,7 @@ class BookKeeping extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 			}
 
-			$result = array('id'=>$obj->rowid, 'account_number'=>$obj->account_number, 'label'=>$obj->label);
+			$result = array('id' => $obj->rowid, 'account_number' => $obj->account_number, 'label' => $obj->label);
 			return $result;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
