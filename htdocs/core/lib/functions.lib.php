@@ -9288,7 +9288,7 @@ function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0)
  *	Set event messages in dol_events session object. Will be output by calling dol_htmloutput_events.
  *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
  *
- *	@param	string		$mesg			Message string
+ *	@param	string|null	$mesg			Message string
  *	@param	array|null	$mesgs			Message array
  *  @param  string		$style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
  *  @param	string		$messagekey		A key to be used to allow the feature "Never show this message again"
