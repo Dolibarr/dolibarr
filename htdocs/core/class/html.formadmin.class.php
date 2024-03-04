@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -184,7 +185,7 @@ class FormAdmin
 	 *    @param    string		$htmlname        Name of html select
 	 *    @param    array		$dirmenuarray    Array of directories to scan
 	 *    @param    string		$moreattrib      More attributes on html select tag
-	 *    @return	integer|null
+	 *    @return	integer|void
 	 */
 	public function select_menu($selected, $htmlname, $dirmenuarray, $moreattrib = '')
 	{
