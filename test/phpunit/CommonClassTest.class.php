@@ -379,6 +379,30 @@ abstract class CommonClassTest extends TestCase
 		'zapier' => 'Zapier',
 	);
 
+
+	/**
+	 * Run php script (file) using the php binary used for running phpunit.
+	 *
+	 * The PHP executable may not be in the path, or refer to an uncontrolled
+	 * version.
+	 * This ensures that the php script is properly run on multiple platforms.
+	 *
+	 * @param string $phpScriptCommand The command and arguments are run by the php binary.
+	 * @param array  $output           The output returned by the command
+	 * @param int   $exitCode The exit code returned for the execution.
+	 * @return false|string  False on failure, else last line if the output from the command
+	 */
+	protected function runPhpScript($phpScriptCommand, &$output, &$exitCode)
+	{
+		$phpExecutable = PHP_BINARY;
+
+		// Build the command to execute the PHP script
+		$command = "$phpExecutable $phpScriptCommand";
+
+		// Execute the command
+		return exec($command, $output, $exitCode);
+	}
+
 	/**
 	 * Assert that a directory does not exist without triggering deprecation
 	 *
