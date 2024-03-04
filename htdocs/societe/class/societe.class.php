@@ -1873,12 +1873,11 @@ class Societe extends CommonObject
 		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
 
 		// Filter on client or supplier, for Client::fetch() and Fournisseur::fetch()
-		if ($is_client && $is_supplier) {
-			$sql .= ' AND s.client > 0 AND s.fournisseur > 0';
-		} elseif ($is_client && !$is_supplier) {
-			$sql .= ' AND s.client > 0 AND s.fournisseur <= 0';
-		} elseif ($is_supplier && !$is_client) {
-			$sql .= ' AND s.fournisseur > 0 AND s.client <= 0';
+		if ($is_client) {
+			$sql .= ' AND s.client > 0';
+		}
+		if ($is_supplier) {
+			$sql .= ' AND s.fournisseur > 0';
 		} // if both false, no test (the thirdparty can be client and/or supplier)
 
 		if ($rowid) {
