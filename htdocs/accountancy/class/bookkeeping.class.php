@@ -853,7 +853,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param 	string 	$sortorder 		Sort Order
 	 * @param 	string 	$sortfield 		Sort field
-	 * @param 	int 	$limit 			offset limit
+	 * @param 	int 	$limit 			limit
 	 * @param 	int 	$offset 		offset limit
 	 * @param 	array 	$filter 		filter array
 	 * @param 	string 	$filtermode 	filter mode (AND or OR)
@@ -944,7 +944,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
 		if (count($sqlwhere) > 0) {
-			$sql .= " AND ".implode(" ".$filtermode." ", $sqlwhere);
+			$sql .= " AND ".$this->db->sanitize(implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere), 1, 1, 1);
 		}
 		// Filter by ledger account or subledger account
 		if (!empty($option)) {
@@ -1114,7 +1114,7 @@ class BookKeeping extends CommonObject
 			$sql .= " AND t.date_export IS NULL";
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND '.implode(" ".$filtermode." ", $sqlwhere);
+			$sql .= ' AND '.$this->db->sanitize(implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere), 1, 1, 1);
 		}
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
@@ -1237,7 +1237,7 @@ class BookKeeping extends CommonObject
 		}
 		$sql .= ' WHERE entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
 		if (count($sqlwhere) > 0) {
-			$sql .= " AND ".implode(" ".$filtermode." ", $sqlwhere);
+			$sql .= " AND ".$this->db->sanitize(implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere), 1, 1, 1);
 		}
 
 		if (!empty($option)) {
@@ -1448,7 +1448,7 @@ class BookKeeping extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element.$mode;
-		$sql .= " SET ".$field." = ".(is_numeric($value) ? ((float) $value) : "'".$this->db->escape($value)."'");
+		$sql .= " SET ".$this->db->sanitize($field)." = ".(is_numeric($value) ? ((float) $value) : "'".$this->db->escape($value)."'");
 		$sql .= " WHERE piece_num = ".((int) $piece_num);
 		$sql .= $sql_filter;
 
@@ -2277,7 +2277,7 @@ class BookKeeping extends CommonObject
 					$sql_list[] = "('" . $this->db->idate($fiscal_period['date_start']) . "' <= {$alias}doc_date AND {$alias}doc_date <= '" . $this->db->idate($fiscal_period['date_end']) . "')";
 				}
 			}
-			self::$can_modify_bookkeeping_sql_cached[$alias] = !empty($sql_list) ? ' AND (' . implode(' OR ', $sql_list) . ')' : '';
+			self::$can_modify_bookkeeping_sql_cached[$alias] = !empty($sql_list) ? ' AND (' . $this->db->sanitize(implode(' OR ', $sql_list), 1, 1, 1) . ')' : '';
 		}
 
 		return self::$can_modify_bookkeeping_sql_cached[$alias];
@@ -2459,7 +2459,7 @@ class BookKeeping extends CommonObject
 		$sql .= " FROM " . $this->db->prefix() . "accounting_fiscalyear";
 		$sql .= " WHERE entity = " . ((int) $conf->entity);
 		if (!empty($filter)) {
-			$sql .= " AND (" . $filter . ')';
+			$sql .= " AND (" . $this->db->sanitize($filter, 1, 1, 1) . ')';
 		}
 		$sql .= $this->db->order('date_start', 'ASC');
 
@@ -2496,7 +2496,7 @@ class BookKeeping extends CommonObject
 
 		$sql = "SELECT YEAR(b.doc_date) as year";
 		for ($i = 1; $i <= 12; $i++) {
-			$sql .= ", SUM(" . $this->db->ifsql("MONTH(b.doc_date)=" . $i, "1", "0") . ") AS month" . $i;
+			$sql .= ", SUM(".$this->db->ifsql("MONTH(b.doc_date) = ".((int) $i), "1", "0") . ") AS month".((int) $i);
 		}
 		$sql .= ", COUNT(b.rowid) as total";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as b";

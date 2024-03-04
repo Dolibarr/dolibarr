@@ -211,7 +211,7 @@ class AccountancyCategory // extends CommonObject
 		if ($this->rowid > 0) {
 			$sql .= " ".((int) $this->rowid).",";
 		}
-		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
+		$sql .= " ".(!isset($this->code) ? "NULL" : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
 		$sql .= " ".(!isset($this->range_account) ? 'NULL' : "'".$this->db->escape($this->range_account)."'").",";
 		$sql .= " ".(!isset($this->sens) ? 'NULL' : "'".$this->db->escape($this->sens)."'").",";
@@ -357,12 +357,12 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " code=".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " range_account=".(isset($this->range_account) ? "'".$this->db->escape($this->range_account)."'" : "null").",";
-		$sql .= " sens=".(isset($this->sens) ? $this->sens : "null").",";
-		$sql .= " category_type=".(isset($this->category_type) ? $this->category_type : "null").",";
+		$sql .= " sens=".(isset($this->sens) ? ((int) $this->sens) : "null").",";
+		$sql .= " category_type=".(isset($this->category_type) ? ((int) $this->category_type) : "null").",";
 		$sql .= " formula=".(isset($this->formula) ? "'".$this->db->escape($this->formula)."'" : "null").",";
-		$sql .= " position=".(isset($this->position) ? $this->position : "null").",";
-		$sql .= " fk_country=".(isset($this->fk_country) ? $this->fk_country : "null").",";
-		$sql .= " active=".(isset($this->active) ? $this->active : "null");
+		$sql .= " position=".(isset($this->position) ? ((int) $this->position) : "null").",";
+		$sql .= " fk_country=".(isset($this->fk_country) ? ((int) $this->fk_country) : "null").",";
+		$sql .= " active=".(isset($this->active) ? ((int) $this->active) : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();

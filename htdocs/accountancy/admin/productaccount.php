@@ -212,19 +212,19 @@ if ($action == 'update') {
 							$nb_exists = $db->num_rows($resql_exists);
 							if ($nb_exists <= 0) {
 								// insert
-								$sql  = "INSERT INTO " . MAIN_DB_PREFIX . "product_perentity (fk_product, entity, " . $db->escape($accountancy_field_name) . ")";
+								$sql  = "INSERT INTO " . MAIN_DB_PREFIX . "product_perentity (fk_product, entity, " . $db->sanitize($accountancy_field_name) . ")";
 								$sql .= " VALUES (" . ((int) $productid) . ", " . ((int) $conf->entity) . ", '" . $db->escape($accounting->account_number) . "')";
 							} else {
 								$obj_exists = $db->fetch_object($resql_exists);
 								// update
 								$sql  = "UPDATE " . MAIN_DB_PREFIX . "product_perentity";
-								$sql .= " SET " . $accountancy_field_name . " = '" . $db->escape($accounting->account_number) . "'";
+								$sql .= " SET " . $db->sanitize($accountancy_field_name) . " = '" . $db->escape($accounting->account_number) . "'";
 								$sql .= " WHERE rowid = " . ((int) $obj_exists->rowid);
 							}
 						}
 					} else {
 						$sql = " UPDATE ".MAIN_DB_PREFIX."product";
-						$sql .= " SET ".$accountancy_field_name." = '".$db->escape($accounting->account_number)."'";
+						$sql .= " SET ".$db->sanitize($accountancy_field_name)." = '".$db->escape($accounting->account_number)."'";
 						$sql .= " WHERE rowid = ".((int) $productid);
 					}
 
@@ -323,16 +323,16 @@ $sql .= " aa.rowid as aaid";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.account_number = ppe." . $accountancy_field_name . " AND aa.fk_pcg_version = '" . $db->escape($pcgvercode) . "'";
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.account_number = ppe." . $db->sanitize($accountancy_field_name) . " AND aa.fk_pcg_version = '" . $db->escape($pcgvercode) . "'";
 } else {
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.account_number = p." . $accountancy_field_name . " AND aa.fk_pcg_version = '" . $db->escape($pcgvercode) . "'";
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.account_number = p." . $db->sanitize($accountancy_field_name) . " AND aa.fk_pcg_version = '" . $db->escape($pcgvercode) . "'";
 }
 if (!empty($searchCategoryProductList)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
 }
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if (strlen(trim($search_current_account))) {
-	$sql .= natural_search((!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') ? "p." : "ppe.") . $accountancy_field_name, $search_current_account);
+	$sql .= natural_search((!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') ? "p." : "ppe.") . $db->sanitize($accountancy_field_name), $search_current_account);
 }
 if ($search_current_account_valid == 'withoutvalidaccount') {
 	$sql .= " AND aa.account_number IS NULL";
@@ -346,7 +346,7 @@ if ($searchCategoryProductOperator == 1) {
 		if (intval($searchCategoryProduct) == -2) {
 			$searchCategoryProductSqlList[] = "cp.fk_categorie IS NULL";
 		} elseif (intval($searchCategoryProduct) > 0) {
-			$searchCategoryProductSqlList[] = "cp.fk_categorie = ".$db->escape($searchCategoryProduct);
+			$searchCategoryProductSqlList[] = "cp.fk_categorie = ".((int) $searchCategoryProduct);
 		}
 	}
 	if (!empty($searchCategoryProductSqlList)) {

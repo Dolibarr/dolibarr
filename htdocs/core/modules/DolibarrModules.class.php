@@ -1746,7 +1746,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			return 0;
 		}
 
-		dol_syslog(get_class($this)."::insert_const", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		foreach ($this->const as $key => $value) {
 			$name      = $this->const[$key][0];
@@ -1788,7 +1788,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						$err++;
 					}
 				} else {
-					dol_syslog(get_class($this)."::insert_const constant '".$name."' already exists", LOG_DEBUG);
+					dol_syslog(__METHOD__." constant '".$name."' already exists", LOG_DEBUG);
 				}
 			} else {
 				$err++;

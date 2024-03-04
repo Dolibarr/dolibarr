@@ -657,7 +657,7 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 
 						if ($setfields) {
 							$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
-							$sql .= " SET ".$setfields;
+							$sql .= " SET ".$db->sanitize($setfields);
 							$sql .= " WHERE rowid = ".((int) $movement->id);
 
 							$result = $db->query($sql);

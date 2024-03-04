@@ -10268,14 +10268,15 @@ abstract class CommonObject
 	/**
 	 * Delete all child object from a parent ID
 	 *
-	 * @param		int		$parentId      Parent Id
-	 * @param		string	$parentField   Name of Foreign key parent column
-	 * @param 		array 	$filter		an array filter
-	 * @param		string	$filtermode	AND or OR
-	 * @return		int						Return integer <0 if KO, >0 if OK
-	 * @throws Exception
+	 * @param	int			$parentId      	Parent Id
+	 * @param	string		$parentField   	Name of Foreign key parent column
+	 * @param 	string		$filter       	Filter as an Universal Search string.
+	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  	string      $filtermode   	No more used
+	 * @return	int							Return integer <0 if KO, >0 if OK
+	 * @throws 	Exception
 	 */
-	public function deleteByParentField($parentId = 0, $parentField = '', $filter = array(), $filtermode = "AND")
+	public function deleteByParentField($parentId = 0, $parentField = '', $filter = '', $filtermode = "AND")
 	{
 		global $user;
 
@@ -10288,21 +10289,13 @@ abstract class CommonObject
 			$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element;
 			$sql .= " WHERE ".$parentField." = ".(int) $parentId;
 
-			// Manage filters
-			$sqlwhere = array();
-			if (count($filter) > 0) {
-				foreach ($filter as $key => $value) {
-					if ($key == 'customsql') {
-						$sqlwhere[] = $value;
-					} elseif (strpos($value, '%') === false) {
-						$sqlwhere[] = $key." IN (".$this->db->sanitize($this->db->escape($value)).")";
-					} else {
-						$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
-					}
-				}
-			}
-			if (count($sqlwhere) > 0) {
-				$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
+			// Manage filter
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+			if ($errormessage) {
+				$this->errors[] = $errormessage;
+				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+				return -1;
 			}
 
 			$resql = $this->db->query($sql);

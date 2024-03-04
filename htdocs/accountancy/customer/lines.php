@@ -140,7 +140,7 @@ if (is_array($changeaccount) && count($changeaccount) > 0 && $user->hasRight('ac
 		$db->begin();
 
 		$sql1 = "UPDATE ".MAIN_DB_PREFIX."facturedet";
-		$sql1 .= " SET fk_code_ventilation=".(GETPOSTINT('account_parent') > 0 ? GETPOSTINT('account_parent') : '0');
+		$sql1 .= " SET fk_code_ventilation = ".(GETPOSTINT('account_parent') > 0 ? GETPOSTINT('account_parent') : 0);
 		$sql1 .= ' WHERE rowid IN ('.$db->sanitize(implode(',', $changeaccount)).')';
 
 		dol_syslog('accountancy/customer/lines.php::changeaccount sql= '.$sql1);
