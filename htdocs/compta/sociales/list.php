@@ -49,11 +49,11 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'sc
 $mode = GETPOST('mode', 'alpha');
 
 
-$search_ref = GETPOSTINT('search_ref');
+$search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_typeid = GETPOSTINT('search_typeid');
 $search_amount = GETPOST('search_amount', 'alpha');
-$search_status = GETPOSTINT('search_status');
+$search_status = GETPOST('search_status', 'intcomma');
 $search_date_startday = GETPOSTINT('search_date_startday');
 $search_date_startmonth = GETPOSTINT('search_date_startmonth');
 $search_date_startyear = GETPOSTINT('search_date_startyear');

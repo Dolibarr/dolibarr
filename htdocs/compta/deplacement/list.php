@@ -42,7 +42,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'deplacement', '', '');
 
-$search_ref = GETPOSTINT('search_ref');
+$search_ref = GETPOST('search_ref', 'alpha');
 $search_name = GETPOST('search_name', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 // $search_amount=GETPOST('search_amount','alpha');
