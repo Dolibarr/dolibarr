@@ -128,9 +128,6 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', 
 }
 llxHeader('', $title);
 
-if (isModEnabled('notification')) {
-	$langs->load("mails");
-}
 $head = societe_prepare_head($object);
 
 print dol_get_fiche_head($head, 'agenda', $langs->trans("ThirdParty"), -1, $object->picto);

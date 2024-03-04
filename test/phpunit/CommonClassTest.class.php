@@ -2,6 +2,7 @@
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,7 +159,7 @@ abstract class CommonClassTest extends TestCase
 		print PHP_EOL;
 		// Use GitHub Action compatible group output (:warning: arguments not encoded)
 		print "##[group]$className::$failedTestMethod failed - $argsText.".PHP_EOL;
-		print "## Exception: {$t->getMessage()}".PHP_EOL;
+		print "## ".get_class($t).": {$t->getMessage()}".PHP_EOL;
 
 		if ($nbLinesToShow) {
 			$newLines = count($last_lines);
@@ -440,5 +441,23 @@ abstract class CommonClassTest extends TestCase
 		} else {
 			$this->assertFileDoesNotExist($file, $message);
 		}
+	}
+
+
+	/**
+	 * Skip test if test is not running on "Unix"
+	 *
+	 * @param string $message Message to indicate which test requires "Unix"
+	 *
+	 * @return bool True if this is not *nix, and fake assert generated
+	 */
+	protected function fakeAssertIfNotUnix($message)
+	{
+		if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+			$this->assertTrue(true, "Dummy test to not mark the test as risky");
+			// $this->markTestSkipped("PHPUNIT is running on windows.  $message");
+			return true;
+		}
+		return false;
 	}
 }

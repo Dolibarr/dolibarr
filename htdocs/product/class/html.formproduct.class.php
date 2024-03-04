@@ -261,7 +261,7 @@ class FormProduct
 	/**
 	 *  Return list of warehouses
 	 *
-	 *  @param  string|int|array  $selected           Id of preselected warehouse ('' or '-1' for no value, 'ifone' and 'ifonenodefault' = select value if one value otherwise no value, '-2' to use the default value from setup)
+	 *  @param  string|int|array  $selected     Id of preselected warehouse ('' or '-1' for no value, 'ifone' and 'ifonenodefault' = select value if one value otherwise no value, '-2' to use the default value from setup)
 	 *  @param  string      $htmlname           Name of html select html
 	 *  @param  string      $filterstatus       warehouse status filter, following comma separated filter options can be used
 	 *                                          'warehouseopen' = select products from open warehouses,
@@ -491,10 +491,10 @@ class FormProduct
 	/**
 	 *    Display form to select warehouse
 	 *
-	 *    @param    string  $page        Page
-	 *    @param    int     $selected    Id of warehouse
-	 *    @param    string  $htmlname    Name of select html field
-	 *    @param    int     $addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+	 *    @param    string      $page        Page
+	 *    @param    string|int  $selected    Id of warehouse
+	 *    @param    string      $htmlname    Name of select html field
+	 *    @param    int         $addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *    @return   void
 	 */
 	public function formSelectWarehouses($page, $selected = '', $htmlname = 'warehouse_id', $addempty = 0)
@@ -692,7 +692,7 @@ class FormProduct
 	/**
 	 *  Return list of lot numbers (stock from product_batch) with stock location and stock qty
 	 *
-	 *  @param	int		$selected		Id of preselected lot stock id ('' for no value, 'ifone'=select value if one value otherwise no value)
+	 *  @param	string|int	$selected	Id of preselected lot stock id ('' for no value, 'ifone'=select value if one value otherwise no value)
 	 *  @param  string	$htmlname		Name of html select html
 	 *  @param  string	$filterstatus	lot status filter, following comma separated filter options can be used
 	 *  @param  int		$empty			1=Can be empty, 0 if not

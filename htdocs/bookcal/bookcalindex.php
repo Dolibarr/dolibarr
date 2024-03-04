@@ -64,7 +64,7 @@ $formfile = new FormFile($db);
 
 llxHeader("", $langs->trans("BookCalArea"));
 
-print load_fiche_titre($langs->trans("BookCalArea"), '', 'bookcal.png@bookcal');
+print load_fiche_titre($langs->trans("BookCalArea"), '', 'fa-calendar-check');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 

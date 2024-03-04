@@ -2,6 +2,7 @@
 /* Copyright (C) 2019	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2023	Benjamin Falière	<benjamin.faliere@altairis.fr>
  * Copyright (C) 2023	Charlene Benke		<charlene@patas-monkey.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1368,13 +1369,15 @@ class BOM extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->initAsSpecimenCommon();
 		$this->ref = 'BOM-123';
 		$this->date_creation = dol_now() - 20000;
+
+		return 1;
 	}
 
 
@@ -2128,10 +2131,10 @@ class BOMLine extends CommonObjectLine
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
-		$this->initAsSpecimenCommon();
+		return $this->initAsSpecimenCommon();
 	}
 }

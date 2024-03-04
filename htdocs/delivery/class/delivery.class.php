@@ -965,7 +965,7 @@ class Delivery extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -1012,6 +1012,8 @@ class Delivery extends CommonObject
 		$line->total_ht       = 100;
 
 		$this->lines[$i] = $line;
+
+		return 1;
 	}
 
 	/**

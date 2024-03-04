@@ -348,7 +348,10 @@ class WebservicesThirdpartyTest extends CommonClassTest
 		}
 
 		print __METHOD__." count(result)=".(is_array($result) ? count($result) : 0)."\n";
-		$this->assertEquals('OK', $result['result']['result_code']);
+
+		$resultcode = empty($result['result']['result_code']) ? 'KO' : $result['result']['result_code'];
+
+		$this->assertEquals('OK', $resultcode);
 
 		return $result;
 	}

@@ -489,10 +489,6 @@ if ($managedfor == "member") {
 		$adht = new AdherentType($db);
 		$result = $adhstat->fetch($memberid);
 
-		if (isModEnabled('notification')) {
-			$langs->load("mails");
-		}
-
 		$adht->fetch($adhstat->typeid);
 
 		$head = member_prepare_head($adhstat);

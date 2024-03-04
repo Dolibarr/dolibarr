@@ -234,6 +234,7 @@ define(
 		'ficheinter' => 'intervention',  // Backup for 'fichinter'
 		'propale' => 'propal', // Has old directory
 		'socpeople' => 'contact', // Has old directory
+		'fournisseur' => 'supplier',  // Has old directory
 
 		'actioncomm' => 'agenda',  // NO module directory (public dir agenda)
 		'product_price' => 'productprice', // NO directory
@@ -997,7 +998,6 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
  */
 function GETPOSTINT($paramname, $method = 0)
 {
-	// @phan-suppress-next-line GetPostShouldBeGetPostInt
 	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
 }
 
@@ -2903,10 +2903,10 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 /**
  *	Format a string.
  *
- *	@param	string	$fmt		Format of strftime function (http://php.net/manual/fr/function.strftime.php)
- *  @param	int		$ts			Timestamp (If is_gmt is true, timestamp is already includes timezone and daylight saving offset, if is_gmt is false, timestamp is a GMT timestamp and we must compensate with server PHP TZ)
- *  @param	bool	$is_gmt		See comment of timestamp parameter
- *	@return	string				A formatted string
+ *	@param	string		$fmt		Format of strftime function (http://php.net/manual/fr/function.strftime.php)
+ *  @param	int|false	$ts			Timestamp (If is_gmt is true, timestamp is already includes timezone and daylight saving offset, if is_gmt is false, timestamp is a GMT timestamp and we must compensate with server PHP TZ)
+ *  @param	bool		$is_gmt		See comment of timestamp parameter
+ *	@return	string					A formatted string
  *  @see dol_stringtotime()
  */
 function dol_strftime($fmt, $ts = false, $is_gmt = false)
@@ -4510,16 +4510,16 @@ function getPictoForType($key)
  *                                  				Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
  *                                                  Example: fontawesome_envelope-open-text_fas_red_1em if you want to use fontaweseome icons: fontawesome_<icon-name>_<style>_<color>_<size> (only icon-name is mandatory)
  *	@param		string		$moreatt				Add more attribute on img tag (For example 'class="pictofixedwidth"')
- *	@param		boolean|int	$pictoisfullpath		If true or 1, image path is a full path
+ *	@param		int<0,1>    $pictoisfullpath		If true or 1, image path is a full path, 0 if not
  *	@param		int			$srconly				Return only content of the src attribute of img.
  *  @param		int			$notitle				1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
  *  @param		string		$alt					Force alt for bind people
  *  @param		string		$morecss				Add more class css on img tag (For example 'myclascss').
- *  @param		string		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No margin left. Works for fontawesome picto only.
+ *  @param		int 		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No margin left. Works for fontawesome picto only.
  *  @return     string       				    	Return img tag
  *  @see        img_object(), img_picto_common()
  */
-function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2)
+function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2)
 {
 	global $conf;
 
@@ -4876,7 +4876,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
  *	@return	string						Return img tag
  *	@see	img_picto(), img_picto_common()
  */
-function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly = 0, $notitle = 0)
+function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0)
 {
 	if (strpos($picto, '^') === 0) {
 		return img_picto($titlealt, str_replace('^', '', $picto), $moreatt, $pictoisfullpath, $srconly, $notitle);
@@ -5103,7 +5103,7 @@ function img_delete($titlealt = 'default', $other = 'class="pictodelete"', $more
 		$titlealt = $langs->trans('Delete');
 	}
 
-	return img_picto($titlealt, 'delete.png', $other, false, 0, 0, '', $morecss);
+	return img_picto($titlealt, 'delete.png', $other, 0, 0, 0, '', $morecss);
 }
 
 /**
@@ -5424,7 +5424,7 @@ function img_search($titlealt = 'default', $other = '')
 		$titlealt = $langs->trans('Search');
 	}
 
-	$img = img_picto($titlealt, 'search.png', $other, false, 1);
+	$img = img_picto($titlealt, 'search.png', $other, 0, 1);
 
 	$input = '<input type="image" class="liste_titre" name="button_search" src="'.$img.'" ';
 	$input .= 'value="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'" >';
@@ -5447,7 +5447,7 @@ function img_searchclear($titlealt = 'default', $other = '')
 		$titlealt = $langs->trans('Search');
 	}
 
-	$img = img_picto($titlealt, 'searchclear.png', $other, false, 1);
+	$img = img_picto($titlealt, 'searchclear.png', $other, 0, 1);
 
 	$input = '<input type="image" class="liste_titre" name="button_removefilter" src="'.$img.'" ';
 	$input .= 'value="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'" >';
@@ -5698,7 +5698,7 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
  *	@param  string	$sortorder   Current sort order
  *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag, for example 'mycss '.
  *  @param	string	$tooltip	 Tooltip
- *  @param	string	$forcenowrapcolumntitle		No need for use 'wrapcolumntitle' css style
+ *  @param	int		$forcenowrapcolumntitle		No need for use 'wrapcolumntitle' css style
  *	@return	void
  */
 function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $moreparam = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $tooltip = "", $forcenowrapcolumntitle = 0)
@@ -5719,9 +5719,9 @@ function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $m
  *	@param  string	$sortfield   		Current field used to sort (Ex: 'd.datep,d.id')
  *	@param  string	$sortorder   		Current sort order (Ex: 'asc,desc')
  *  @param	string	$prefix		 		Prefix for css. Use space after prefix to add your own CSS tag, for example 'mycss '.
- *  @param	string	$disablesortlink	1=Disable sort link
+ *  @param	int 	$disablesortlink	1=Disable sort link
  *  @param	string	$tooltip	 		Tooltip
- *  @param	string	$forcenowrapcolumntitle		No need for use 'wrapcolumntitle' css style
+ *  @param	int 	$forcenowrapcolumntitle		No need for use 'wrapcolumntitle' css style
  *	@return	string
  */
 function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin = "", $moreparam = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $disablesortlink = 0, $tooltip = '', $forcenowrapcolumntitle = 0)
@@ -6545,7 +6545,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
  * 	@return	mixed			   					0 if not found, localtax rate if found
  *  @see get_default_tva()
  */
-function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_seller = "", $vatnpr = 0)
+function get_localtax($vatrate, $local, $thirdparty_buyer = null, $thirdparty_seller = null, $vatnpr = 0)
 {
 	global $db, $conf, $mysoc;
 
@@ -7684,7 +7684,7 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
  *
  *	@param	string	$stringtoclean			String to clean
  *  @param	array	$disallowed_tags		Array of tags not allowed
- *  @param	string	$cleanalsosomestyles	Clean also some tags
+ *  @param	int 	$cleanalsosomestyles	Clean also some tags
  *	@return string	    					String cleaned
  *
  * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_onlythesehtmltags() dol_string_onlythesehtmlattributes()
@@ -8048,7 +8048,7 @@ function dol_htmlcleanlastbr($stringtodecode)
  * @param   string	$a					Operand a
  * @param   string	$b					Operand b (ENT_QUOTES|ENT_HTML5=convert simple, double quotes, colon, e accent, ...)
  * @param   string	$c					Operand c
- * @param	string	$keepsomeentities	Entities but &, <, >, " are not converted.
+ * @param	int 	$keepsomeentities	Entities but &, <, >, " are not converted.
  * @return  string						String decoded
  */
 function dol_html_entity_decode($a, $b, $c = 'UTF-8', $keepsomeentities = 0)
@@ -8086,7 +8086,7 @@ function dol_htmlentities($string, $flags = ENT_QUOTES | ENT_SUBSTITUTE, $encodi
  *	Example, if string contains euro symbol that has ascii code 128
  *
  *	@param	string		$s      	String to check
- *  @param	string		$clean		Clean if it is not an ISO. Warning, if file is utf8, you will get a bad formatted file.
+ *  @param	int 		$clean		Clean if it is not an ISO. Warning, if file is utf8, you will get a bad formatted file.
  *	@return	int|string  	   		0 if bad iso, 1 if good iso, Or the clean string if $clean is 1
  *  @deprecated Duplicate of ascii_check()
  *  @see ascii_check()
@@ -9538,7 +9538,7 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  *
  *  @param      array		$array      		Array to sort (array of array('key1'=>val1,'key2'=>val2,'key3'...) or array of objects)
  *  @param      string		$index				Key in array to use for sorting criteria
- *  @param      int			$order				Sort order ('asc' or 'desc')
+ *  @param      string		$order				Sort order ('asc' or 'desc')
  *  @param      int			$natsort			If values are strings (I said value not type): 0=Use alphabetical order, 1=use "natural" sort (natsort)
  *   											If values are numeric (I said value not type): 0=Use numeric order (even if type is string) so use a "natural" sort, 1=use "natural" sort too (same than 0), -1=Force alphabetical order
  *  @param      int			$case_sensitive		1=sort is case sensitive, 0=not case sensitive
@@ -9852,18 +9852,23 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 					return '';
 				}
 			}
-			$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $s);	// accept parenthesis in '...->method(...'
-			$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-			$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-			$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
-			$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
-			$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);	// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
+			$savescheck = '';
+			$scheck = $s;
+			while ($scheck && $savescheck != $scheck) {
+				$savescheck = $scheck;
+				$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $scheck);	// accept parenthesis in '...->method(...'
+				$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
+				$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
+				$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
+				$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
+				$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);	// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
+			}
 			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
 			if (strpos($scheck, '(') !== false) {
 				if ($returnvalue) {
-					return 'Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s;
+					return 'Bad string syntax to evaluate (mode 1, found call of a function or method without using the direct name of the function): '.$s;
 				} else {
-					dol_syslog('Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s);
+					dol_syslog('Bad string syntax to evaluate (mode 1, found call of a function or method without using the direct name of the function): '.$s);
 					return '';
 				}
 			}
@@ -9883,18 +9888,23 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 					return '';
 				}
 			}
-			$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $s);	// accept parenthesis in '...->method(...'
-			$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-			$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-			$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
-			$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
-			$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);		// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
+			$savescheck = '';
+			$scheck = $s;
+			while ($scheck && $savescheck != $scheck) {
+				$savescheck = $scheck;
+				$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $scheck);	// accept parenthesis in '...->method(...'
+				$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
+				$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
+				$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
+				$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
+				$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);		// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
+			}
 			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
 			if (strpos($scheck, '(') !== false) {
 				if ($returnvalue) {
-					return 'Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s;
+					return 'Bad string syntax to evaluate (mode 2, found call of a function or method without using the direct name of the function): '.$s;
 				} else {
-					dol_syslog('Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s);
+					dol_syslog('Bad string syntax to evaluate (mode 2, found call of a function or method without using the direct name of the function): '.$s);
 					return '';
 				}
 			}
@@ -9931,22 +9941,27 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 
 		// We block use of php exec or php file functions
 		$forbiddenphpstrings = array('$$');
-		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST'));
+		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST', 'ReflectionFunction'));
 
 		$forbiddenphpfunctions = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen");
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "executeCLI", "verifCond"));	// native dolibarr functions
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64_decode", "rawurldecode", "urldecode")); // decode string functions
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64_decode", "rawurldecode", "urldecode", "str_rot13", "hex2bin")); // decode string functions used to obfuscated function name
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "require", "include", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("get_defined_functions", "get_defined_vars", "get_defined_constants", "get_declared_classes"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
 
+		$forbiddenphpmethods = array('invoke', 'invokeArgs');	// Method of ReflectionFunction to execute a function
+
 		$forbiddenphpregex = 'global\s+\$|\b('.implode('|', $forbiddenphpfunctions).')\b';
+
+		$forbiddenphpmethodsregex = '->('.implode('|', $forbiddenphpmethods).')';
 
 		do {
 			$oldstringtoclean = $s;
 			$s = str_ireplace($forbiddenphpstrings, '__forbiddenstring__', $s);
 			$s = preg_replace('/'.$forbiddenphpregex.'/i', '__forbiddenstring__', $s);
+			$s = preg_replace('/'.$forbiddenphpmethodsregex.'/i', '__forbiddenstring__', $s);
 			//$s = preg_replace('/\$[a-zA-Z0-9_\->\$]+\(/i', '', $s);	// Remove $function( call and $mycall->mymethod(
 		} while ($oldstringtoclean != $s);
 

@@ -49,11 +49,11 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'sc
 $mode = GETPOST('mode', 'alpha');
 
 
-$search_ref = GETPOSTINT('search_ref');
+$search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_typeid = GETPOSTINT('search_typeid');
 $search_amount = GETPOST('search_amount', 'alpha');
-$search_status = GETPOSTINT('search_status');
+$search_status = GETPOST('search_status', 'intcomma');
 $search_date_startday = GETPOSTINT('search_date_startday');
 $search_date_startmonth = GETPOSTINT('search_date_startmonth');
 $search_date_startyear = GETPOSTINT('search_date_startyear');
@@ -102,7 +102,7 @@ $arrayfields = array(
 	'cs.fk_type'	=>array('label'=>"Type", 'checked'=>1, 'position'=>30),
 	'cs.date_ech'	=>array('label'=>"Date", 'checked'=>1, 'position'=>40),
 	'cs.periode'	=>array('label'=>"PeriodEndDate", 'checked'=>1, 'position'=>50),
-	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>60, 'enable'=>(isModEnabled('project'))),
+	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>60, 'enabled'=>(isModEnabled('project'))),
 	'cs.fk_user'	=>array('label'=>"Employee", 'checked'=>1, 'position'=>70),
 	'cs.fk_mode_reglement'	=>array('checked'=>-1, 'position'=>80, 'label'=>"DefaultPaymentMode"),
 	'cs.amount'		=>array('label'=>"Amount", 'checked'=>1, 'position'=>100),

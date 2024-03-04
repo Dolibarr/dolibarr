@@ -896,6 +896,7 @@ class Mo extends CommonObject
 			return -2;
 		}
 		$productstatic = new Product($this->db);
+
 		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);	// Get lines consumed under the one to delete
 
 		$result = 0;
@@ -1589,13 +1590,15 @@ class Mo extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
-		$this->initAsSpecimenCommon();
+		$ret = $this->initAsSpecimenCommon();
 
 		$this->lines = array();
+
+		return $ret;
 	}
 
 	/**

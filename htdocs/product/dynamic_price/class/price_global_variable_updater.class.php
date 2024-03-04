@@ -306,7 +306,7 @@ class PriceGlobalVariableUpdater
 	 *	Initialise object with example values
 	 *	Id must be 0 if object instance is a specimen
 	 *
-	 *	@return	void
+	 *	@return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -318,6 +318,8 @@ class PriceGlobalVariableUpdater
 		$this->update_interval = 0;
 		$this->next_update = 0;
 		$this->last_status = '';
+
+		return 1;
 	}
 
 	/**

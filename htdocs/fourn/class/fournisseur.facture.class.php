@@ -12,7 +12,7 @@
  * Copyright (C) 2015-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016-2023	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
  *
@@ -2687,7 +2687,7 @@ class FactureFournisseur extends CommonInvoice
 			$sql .= " JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ff.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= ' WHERE ff.paye = 0';
-		$sql .= ' AND ff.fk_statut > 0';
+		$sql .= " AND ff.fk_statut IN (".self::STATUS_VALIDATED.")";
 		$sql .= " AND ff.entity = ".$conf->entity;
 		if ($user->socid) {
 			$sql .= ' AND ff.fk_soc = '.((int) $user->socid);
@@ -2989,7 +2989,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	id must be 0 if object instance is a specimen.
 	 *
 	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen($option = '')
 	{
@@ -3077,9 +3077,11 @@ class FactureFournisseur extends CommonInvoice
 			}
 		}
 
-		$this->total_ht       = $xnbp * 100;
-		$this->total_tva      = $xnbp * 19.6;
-		$this->total_ttc      = $xnbp * 119.6;
+		$this->total_ht = $xnbp * 100;
+		$this->total_tva = $xnbp * 19.6;
+		$this->total_ttc = $xnbp * 119.6;
+
+		return 1;
 	}
 
 	/**

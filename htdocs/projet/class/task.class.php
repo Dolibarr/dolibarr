@@ -897,7 +897,7 @@ class Task extends CommonObjectLine
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -912,6 +912,8 @@ class Task extends CommonObjectLine
 		$this->progress = '25';
 		$this->status = 0;
 		$this->note = 'This is a specimen task not';
+
+		return 1;
 	}
 
 	/**

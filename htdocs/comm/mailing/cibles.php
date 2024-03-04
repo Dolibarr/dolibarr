@@ -62,7 +62,7 @@ $search_lastname = GETPOST("search_lastname", 'alphanohtml');
 $search_firstname = GETPOST("search_firstname", 'alphanohtml');
 $search_email = GETPOST("search_email", 'alphanohtml');
 $search_other = GETPOST("search_other", 'alphanohtml');
-$search_dest_status = GETPOSTINT('search_dest_status');
+$search_dest_status = GETPOST('search_dest_status');	// Must be '' if not set, so do not use GETPOSTINT here.
 
 // Search modules dirs
 $modulesdir = dolGetModulesDirs('/mailings');
@@ -582,7 +582,7 @@ if ($object->fetch($id) >= 0) {
 	}
 
 	// List of selected targets
-	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut, mc.date_envoi, mc.tms,";
+	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut as status, mc.date_envoi, mc.tms,";
 	$sql .= " mc.source_url, mc.source_id, mc.source_type, mc.error_text,";
 	$sql .= " COUNT(mu.rowid) as nb";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
@@ -605,7 +605,7 @@ if ($object->fetch($id) >= 0) {
 		$sql .= natural_search("mc.other", $search_other);
 		$asearchcriteriahasbeenset++;
 	}
-	if ($search_dest_status != '' && $search_dest_status >= -1) {
+	if ($search_dest_status != '' && (int) $search_dest_status >= -1) {
 		$sql .= " AND mc.statut = ".((int) $search_dest_status);
 		$asearchcriteriahasbeenset++;
 	}
@@ -783,6 +783,7 @@ if ($object->fetch($id) >= 0) {
 			include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+
 			$objectstaticmember = new Adherent($db);
 			$objectstaticuser = new User($db);
 			$objectstaticcompany = new Societe($db);
@@ -822,7 +823,7 @@ if ($object->fetch($id) >= 0) {
 
 				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->firstname).'">'.dol_escape_htmltag($obj->firstname).'</td>';
 
-				print '<td><span class="small">'.dol_escape_htmltag($obj->other).'</small></td>';
+				print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($obj->other).'"><span class="small">'.dol_escape_htmltag($obj->other).'</small></td>';
 
 				print '<td class="center tdoverflowmax150">';
 				if (empty($obj->source_id) || empty($obj->source_type)) {
