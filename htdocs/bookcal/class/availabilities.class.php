@@ -62,7 +62,7 @@ class Availabilities extends CommonObject
 	/**
 	 * @var string String with name of icon for availabilities. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'availabilities@bookcal' if picto is file 'img/object_availabilities.png'.
 	 */
-	public $picto = 'fa-file';
+	public $picto = 'fa-calendar-check';
 
 
 	const STATUS_DRAFT = 0;

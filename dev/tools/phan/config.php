@@ -275,7 +275,6 @@ return [
 	'plugins' => [
 		__DIR__.'/plugins/NoVarDumpPlugin.php',
 		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
-		__DIR__.'/plugins/GetPostFixerPlugin.php',   // Only detects without --automatic-fix
 		// checks if a function, closure or method unconditionally returns.
 		// can also be written as 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php'
 		//'DeprecateAliasPlugin',

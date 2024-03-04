@@ -23,7 +23,8 @@ The following changes may create regressions for some external modules, but were
 * Some API HTTP return code were moved from 401 to 403 to better follow REST specification.
 * dolibarrtriggers class VERSION_XXX constants have been deprecated. Please use array dictionary VERSIONS['XXX'].
 * Properties ->date_update and ->date_modification were merged into date_modification.
-
+* All CLI tools (into /scripts) return a positive value to the shell if error (0 remains success) for a better
+  cross platform compatibility. On linux the exit(-1) was caught as 255, it may be now exit(1) so will be caught as 1.
 
 
 ***** ChangeLog for 19.0.1 compared to 19.0.0 *****

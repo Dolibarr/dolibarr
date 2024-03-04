@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alice Adminson <aadminson@example.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/bookcal/class/calendar.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal_calendar.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("bookcal@bookcal", "other"));
+$langs->loadLangs(array("agenda", "other"));
 
 // Get parameters
 $id = GETPOSTINT('id');

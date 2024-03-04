@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017       Florian HENRY           <florian.henry@atm-consulting.fr>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,10 +47,14 @@ class LoanSchedule extends CommonObject
 
 	public $bank_account;
 	public $bank_line;
+
+	/**
+	 * @var int|string Creation date
+	 */
 	public $datec;
 
 	/**
-	 * @var string Payment date
+	 * @var int|string Payment date
 	 */
 	public $datep;
 

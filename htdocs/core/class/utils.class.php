@@ -1454,7 +1454,7 @@ class Utils
 				$job->pid = null;
 
 				// Set last result as an error and add the reason on the last output
-				$job->lastresult = -1;
+				$job->lastresult = strval(-1);
 				$job->lastoutput = 'Job killed by job cleanUnfinishedCronjob';
 
 				if ($job->update($user) < 0) {

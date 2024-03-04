@@ -528,7 +528,7 @@ function societe_admin_prepare_head()
  *    @param	int			$searchlabel    Label of country to search (warning: searching on label is not reliable)
  *    @return	mixed       				Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
  */
-function getCountry($searchkey, $withcode = '', $dbtouse = 0, $outputlangs = '', $entconv = 1, $searchlabel = '')
+function getCountry($searchkey, $withcode = '', $dbtouse = null, $outputlangs = null, $entconv = 1, $searchlabel = '')
 {
 	global $db, $langs;
 
@@ -608,7 +608,7 @@ function getCountry($searchkey, $withcode = '', $dbtouse = 0, $outputlangs = '',
  *    @param    int		    $entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
  *    @return   string|array       			String with state code or state name or Array('id','code','label')/Array('id','code','label','region_code','region')
  */
-function getState($id, $withcode = '', $dbtouse = 0, $withregion = 0, $outputlangs = '', $entconv = 1)
+function getState($id, $withcode = '', $dbtouse = null, $withregion = 0, $outputlangs = null, $entconv = 1)
 {
 	global $db, $langs;
 
@@ -1560,7 +1560,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
  *      @param  string|string[]		$actioncode 	Filter on actioncode
  *      @return	string|void					    	Return html part or void if noprint is 1
  */
-function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = '', $noprint = 0, $actioncode = '')
+function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = null, $noprint = 0, $actioncode = '')
 {
 	global $user, $conf;
 
@@ -1591,7 +1591,7 @@ function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = '', $noprin
  *      @param	string			   $module		   You can add module name here if elementtype in table llx_actioncomm is objectkey@module
  *      @return	string|void				           Return html part or void if noprint is 1
  */
-function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC', $module = '')
+function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC', $module = '')
 {
 	global $user, $conf, $hookmanager;
 	global $form;

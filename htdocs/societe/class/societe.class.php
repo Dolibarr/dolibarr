@@ -1797,9 +1797,11 @@ class Societe extends CommonObject
 	 *    @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
 	 *    @param    string	$email   		Email of third party (Warning, this can return several records)
 	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
+	 * 	  @param	bool	$is_client		Is the thirdparty a client ?
+	 *    @param	bool	$is_supplier	Is the thirdparty a supplier ?
 	 *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
-	public function fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
+	public function fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = false, $is_supplier = false)
 	{
 		global $langs;
 		global $conf;
@@ -1869,6 +1871,15 @@ class Societe extends CommonObject
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_remise_supplier as sr2 ON sr2.rowid = (SELECT MAX(rowid) FROM '.MAIN_DB_PREFIX.'societe_remise_supplier WHERE fk_soc = s.rowid AND entity IN ('.getEntity('discount').'))';
 		}
 		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
+
+		// Filter on client or supplier, for Client::fetch() and Fournisseur::fetch()
+		if ($is_client) {
+			$sql .= ' AND s.client > 0';
+		}
+		if ($is_supplier) {
+			$sql .= ' AND s.fournisseur > 0';
+		} // if both false, no test (the thirdparty can be client and/or supplier)
+
 		if ($rowid) {
 			$sql .= ' AND s.rowid = '.((int) $rowid);
 		}

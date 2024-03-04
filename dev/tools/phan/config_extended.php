@@ -275,7 +275,6 @@ return [
 	'plugins' => [
 		__DIR__.'/plugins/NoVarDumpPlugin.php',
 		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
-		__DIR__.'/plugins/GetPostFixerPlugin.php',   // Only detects without --automatic-fix
 		'DeprecateAliasPlugin',
 		//'EmptyMethodAndFunctionPlugin',
 		'InvalidVariableIssetPlugin',

@@ -118,7 +118,7 @@ return [
 		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
 		//'DeprecateAliasPlugin',
 		// __DIR__.'/plugins/NoVarDumpPlugin.php',
-		__DIR__.'/plugins/GetPostFixerPlugin.php',
+		//__DIR__.'/plugins/GetPostFixerPlugin.php',
 		//'PHPDocToRealTypesPlugin',
 
 	/*
