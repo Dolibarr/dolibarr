@@ -7,7 +7,7 @@
  * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2018	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015-2024	Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2019	Thibault FOUCART		<support@ptibogxiv.net>
@@ -74,7 +74,9 @@ class Adherent extends CommonObject
 	 */
 	public $picto = 'member';
 
-
+	/**
+	 * @var string[] array of messages
+	 */
 	public $mesgs;
 
 	/**
@@ -217,6 +219,9 @@ class Adherent extends CommonObject
 	 */
 	public $gender;
 
+	/**
+	 * @var int|string date of birth
+	 */
 	public $birth;
 
 	/**
@@ -249,22 +254,49 @@ class Adherent extends CommonObject
 
 	// Fields loaded by fetch_subscriptions() from member table
 
+	/**
+	 * @var int|string date
+	 */
 	public $first_subscription_date;
 
+	/**
+	 * @var int|string date
+	 */
 	public $first_subscription_date_start;
 
+	/**
+	 * @var int|string date
+	 */
 	public $first_subscription_date_end;
 
+	/**
+	 * @var int|string date
+	 */
 	public $first_subscription_amount;
 
+	/**
+	 * @var int|string date
+	 */
 	public $last_subscription_date;
 
+	/**
+	 * @var int|string date
+	 */
 	public $last_subscription_date_start;
 
+	/**
+	 * @var int|string date
+	 */
 	public $last_subscription_date_end;
 
+	/**
+	 * @var int|string date
+	 */
 	public $last_subscription_amount;
 
+	/**
+	 * @var array
+	 */
 	public $subscriptions = array();
 
 	/**
