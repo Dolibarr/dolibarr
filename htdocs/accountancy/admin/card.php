@@ -85,17 +85,11 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 			// Clean code
 
 			// To manage zero or not at the end of the accounting account
-			if (getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
-				$account_number = $account_number;
-			} else {
+			if (!getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
 				$account_number = clean_account($account_number);
 			}
 
-			if (GETPOSTINT('account_parent') <= 0) {
-				$account_parent = 0;
-			} else {
-				$account_parent = GETPOSTINT('account_parent');
-			}
+			$account_parent = (GETPOSTINT('account_parent') > 0) ? GETPOSTINT('account_parent') : 0;
 
 			$object->fk_pcg_version = $obj->pcg_version;
 			$object->pcg_type = GETPOST('pcg_type', 'alpha');
@@ -148,17 +142,11 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 			// Clean code
 
 			// To manage zero or not at the end of the accounting account
-			if (getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
-				$account_number = $account_number;
-			} else {
+			if (!getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
 				$account_number = clean_account($account_number);
 			}
 
-			if (GETPOSTINT('account_parent') <= 0) {
-				$account_parent = 0;
-			} else {
-				$account_parent = GETPOSTINT('account_parent');
-			}
+			$account_parent = (GETPOSTINT('account_parent') > 0) ? GETPOSTINT('account_parent') : 0;
 
 			$object->fk_pcg_version = $obj->pcg_version;
 			$object->pcg_type = GETPOST('pcg_type', 'alpha');
