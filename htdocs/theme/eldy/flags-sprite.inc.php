@@ -22,7 +22,7 @@
  *		\brief      File for CSS style sheet Eldy
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
-	die('Must be call by steelsheet');
+	die('Must be call by stylesheet');
 } ?>
 /* <style type="text/css" > don't remove this line it's an ide hack */
 
