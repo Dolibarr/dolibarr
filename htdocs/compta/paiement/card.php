@@ -314,7 +314,7 @@ print $object->num_payment ? ' - '.$object->num_payment : '';
 print '</td></tr>';
 
 // Amount
-print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, '', $langs, 0, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
 
 $disable_delete = 0;
 // Bank account
