@@ -2044,7 +2044,8 @@ if ($action == 'create') {
 			$sday = date("d", $tmpdte);
 			print $form->selectDate($syear."-".$smonth."-".$sday, 'date_livraison', '', '', '', "addprop");
 		} else {
-			print $form->selectDate(-1, 'date_livraison', '', '', '', "addprop", 1, 1);
+			$tmp_date_delivery = GETPOST('date_delivery') ? : -1;
+			print $form->selectDate($tmp_date_delivery, 'date_livraison', '', '', '', "addprop", 1, 1);
 		}
 		print '</td></tr>';
 
