@@ -452,12 +452,12 @@ if ($action == 'create') {
 			$arrayoutstandingbills = $soc->getOutstandingBills();
 			$outstandingBills = $arrayoutstandingbills['opened'];
 			print ' ('.$langs->trans('CurrentOutstandingBill').': ';
-			print price($outstandingBills, '', $langs, 0, 0, -1, $conf->currency);
+			print price($outstandingBills, 0, $langs, 0, 0, -1, $conf->currency);
 			if ($soc->outstanding_limit != '') {
 				if ($outstandingBills > $soc->outstanding_limit) {
 					print img_warning($langs->trans("OutstandingBillReached"));
 				}
-				print ' / '.price($soc->outstanding_limit, '', $langs, 0, 0, -1, $conf->currency);
+				print ' / '.price($soc->outstanding_limit, 0, $langs, 0, 0, -1, $conf->currency);
 			}
 			print ')';
 			print '</td>';
