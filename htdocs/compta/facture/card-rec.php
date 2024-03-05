@@ -1308,11 +1308,11 @@ if ($action == 'create') {
 
 		// Amount (excl. tax)
 		print '<tr><td>'.$langs->trans("AmountHT").'</td>';
-		print '<td>'.price($object->total_ht, '', $langs, 1, -1, -1, $conf->currency).'</td>';
+		print '<td>'.price($object->total_ht, 0, $langs, 1, -1, -1, $conf->currency).'</td>';
 		print '</tr>';
 
 		// Amount tax
-		print '<tr><td>'.$langs->trans("AmountVAT").'</td><td>'.price($object->total_tva, '', $langs, 1, -1, -1, $conf->currency).'</td>';
+		print '<tr><td>'.$langs->trans("AmountVAT").'</td><td>'.price($object->total_tva, 0, $langs, 1, -1, -1, $conf->currency).'</td>';
 		print '</tr>';
 
 		// Amount Local Taxes
@@ -1325,7 +1325,7 @@ if ($action == 'create') {
 			print '<td class=nowrap">'.price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
 		}
 
-		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td colspan="3">'.price($object->total_ttc, '', $langs, 1, -1, -1, $conf->currency).'</td>';
+		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td colspan="3">'.price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</td>';
 		print '</tr>';
 
 
