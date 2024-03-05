@@ -2525,8 +2525,8 @@ class Facture extends CommonInvoice
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null").",";
-		$sql .= " situation_cycle_ref=".(empty($this->situation_cycle_ref) ? "null" : (int) $this->situation_cycle_ref)."',";
-		$sql .= " situation_counter=".(empty($this->situation_counter) ? "null" : (int) $this->situation_counter)."',";
+		$sql .= " situation_cycle_ref=".(empty($this->situation_cycle_ref) ? "null" : (int) $this->situation_cycle_ref).",";
+		$sql .= " situation_counter=".(empty($this->situation_counter) ? "null" : (int) $this->situation_counter).",";
 		$sql .= " situation_final=".(empty($this->situation_final) ? "0" : (int) $this->situation_final).",";
 		$sql .= " retained_warranty=".(empty($this->retained_warranty) ? "0" : (float) $this->retained_warranty).",";
 		$sql .= " retained_warranty_date_limit=".(strval($this->retained_warranty_date_limit) != '' ? "'".$this->db->idate($this->retained_warranty_date_limit)."'" : 'null').",";
