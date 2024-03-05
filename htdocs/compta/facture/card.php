@@ -1829,7 +1829,7 @@ if (empty($reshook)) {
 											$object->origin,
 											$lines[$i]->rowid,
 											$fk_parent_line,
-											isiset($lines[$i]->fk_fournprice) ? $lines[$i]->fk_fournprice : null,
+											isset($lines[$i]->fk_fournprice) ? $lines[$i]->fk_fournprice : null,
 											$lines[$i]->pa_ht,
 											$label,
 											$array_options,
