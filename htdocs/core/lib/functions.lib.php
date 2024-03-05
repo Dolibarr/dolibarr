@@ -8275,7 +8275,7 @@ function dol_concatdesc($text1, $text2, $forxml = false, $invert = false)
  * Return array of possible common substitutions. This includes several families like: 'system', 'mycompany', 'object', 'objectamount', 'date', 'user'
  *
  * @param	Translate       $outputlangs    Output language
- * @param   int             $onlykey        1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys), 
+ * @param   int             $onlykey        1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys),
  *                                          2=Values are trunc and html sanitized (to use for help tooltip)
  * @param   array|null      $exclude        Array of family keys we want to exclude. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
  * @param   Object|null     $object         Object for keys on object
