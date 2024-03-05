@@ -110,6 +110,7 @@ $workflowcodes = array(
 		'enabled'=>(isModEnabled("delivery_note") && isModEnabled('order')),
 		'picto'=>'order'
 	),
+
 	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array(
 		'family'=>'classify_order',
 		'position'=>42,

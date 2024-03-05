@@ -9,10 +9,13 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Créer une facture client automatiqueme
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Créer automatiquement une facture client à la cloture d'un commande (la facture sera du même montant que la commande)
 descWORKFLOW_TICKET_CREATE_INTERVENTION=Crée une intervention automatiquement à la création d'un ticket
 # Autoclassify customer proposal or order
+
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classer la/les proposition(s) commerciale(s) source(s) facturée(s) au classement facturé de la commande (et si le montant de la commande est le même que le total des propositions liées)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classer la/les proposition(s) commerciale(s) source facturée(s) à la validation d'une facture client (et si le montant de la facture est le même que la somme des propositions liées)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classer la/les commande(s) client(s) source(s) liées à facturée(s) quand une facture client est validée (et si le montant de la facture est le même que le montant total des commandes liées). Si vous avez une facture validée pour n commandes, cela peut également classer toutes les commandes sur Facturée.
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classer la/les commande(s) client(s) source(s) à Facturée quand une facture client est passée à Payé (et si le montant de la facture est identique à la somme des commandes sources). Si vous avez une facture définie facturée pour n commandes, cela peut aussi classer toutes les commandes sur Facturée.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Classer la/les commande(s) client(s) à Facturée si la somme du montant des factures liées est égale au montant total de la commande
+
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classer les commandes client source liées comme expédiées lorsqu'une expédition est validée (et si la quantité expédiée par toutes les expéditions est la même que dans le commande à mettre à jour)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classer la commande client source liée à expédiée lorsqu'une expédition est fermée (et si la quantité expédiée par toutes les expéditions est la même que dans la commande à mettre à jour)
 # Autoclassify purchase proposal
