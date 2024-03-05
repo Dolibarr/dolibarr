@@ -198,15 +198,16 @@ abstract class CommonObjectLine extends CommonObject
 	/**
 	 * Empty function to prevent errors on call of this function must be overload if useful
 	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int $limit offset limit
-	 * @param int $offset offset limit
-	 * @param array $filter filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 * @return int Return integer <0 if KO, >0 if OK
+	 * @param  string      		$sortorder    	Sort Order
+	 * @param  string      		$sortfield    	Sort field
+	 * @param  int         		$limit        	Limit the number of lines returned
+	 * @param  int         		$offset       	Offset
+	 * @param  string|array		$filter       	Filter as an Universal Search string.
+	 * 											Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string      		$filtermode   	No more used
+	 * @return array|int        	         	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		return 0;
 	}

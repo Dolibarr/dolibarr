@@ -10169,20 +10169,20 @@ abstract class CommonObject
 
 		// Delete cascade first
 		if (is_array($this->childtablesoncascade) && !empty($this->childtablesoncascade)) {
-			foreach ($this->childtablesoncascade as $table) {
-				$deleteFromObject = explode(':', $table);
+			foreach ($this->childtablesoncascade as $tabletodelete) {
+				$deleteFromObject = explode(':', $tabletodelete, 4);
 				if (count($deleteFromObject) >= 2) {
 					$className = str_replace('@', '', $deleteFromObject[0]);
 					$filePath = $deleteFromObject[1];
 					$columnName = $deleteFromObject[2];
-					$TMoreSQL = array();
+					$filter = '';
 					if (!empty($deleteFromObject[3])) {
-						$TMoreSQL['customsql'] = $deleteFromObject[3];
+						$filter = $deleteFromObject[3];
 					}
 					if (dol_include_once($filePath)) {
 						$childObject = new $className($this->db);
 						if (method_exists($childObject, 'deleteByParentField')) {
-							$result = $childObject->deleteByParentField($this->id, $columnName, $TMoreSQL);
+							$result = $childObject->deleteByParentField($this->id, $columnName, $filter);
 							if ($result < 0) {
 								$error++;
 								$this->errors[] = $childObject->error;
@@ -10200,7 +10200,7 @@ abstract class CommonObject
 					}
 				} else {
 					// Delete record in child table
-					$sql = "DELETE FROM ".$this->db->prefix().$table." WHERE ".$this->fk_element." = ".((int) $this->id);
+					$sql = "DELETE FROM ".$this->db->prefix().$tabletodelete." WHERE ".$this->fk_element." = ".((int) $this->id);
 
 					$resql = $this->db->query($sql);
 					if (!$resql) {
@@ -10287,7 +10287,7 @@ abstract class CommonObject
 			$this->db->begin();
 
 			$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element;
-			$sql .= " WHERE ".$parentField." = ".(int) $parentId;
+			$sql .= " WHERE ".$this->db->sanitize($parentField)." = ".(int) $parentId;
 
 			// Manage filter
 			$errormessage = '';

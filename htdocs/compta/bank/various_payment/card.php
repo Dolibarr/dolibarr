@@ -356,7 +356,9 @@ $options = array();
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 $bankcateg = new BankCateg($db);
 
-foreach ($bankcateg->fetchAll() as $bankcategory) {
+$arrayofbankcategs = $bankcateg->fetchAll();
+
+foreach ($arrayofbankcategs as $bankcategory) {
 	$options[$bankcategory->id] = $bankcategory->label;
 }
 

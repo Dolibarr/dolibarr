@@ -608,7 +608,7 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 	// Replace this with the query($sqlforexport) on a limited block and loop on each line to export them.
 	$limit = 0;
 	$offset = 0;
-	$result = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter, 'AND', (!getDolGlobalString('ACCOUNTING_REEXPORT') ? 0 : 1));
+	$result = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter, 'AND', (getDolGlobalString('ACCOUNTING_REEXPORT') ? 1 : 0));
 
 	if ($result < 0) {
 		$error++;

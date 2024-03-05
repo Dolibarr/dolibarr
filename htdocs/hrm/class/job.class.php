@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2021 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
- * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
- * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2017  	Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2021 	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021 	Greg Rastklan       <greg.rastklan@atm-consulting.fr>
+ * Copyright (C) 2021 	Jean-Pascal BOUDET  <jean-pascal.boudet@atm-consulting.fr>
+ * Copyright (C) 2021 	Grégory BLEMAND     <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2024	Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,10 +153,10 @@ class Job extends CommonObject
 
 	// /**
 	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
+	//  *               If name matches '@ClassNAme:FilePathClass:ParentFkFieldName' it will
 	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	//  */
-	protected $childtablesoncascade = array("@SkillRank:hrm/class/skillrank.class.php:fk_object:objecttype='job'");
+	protected $childtablesoncascade = array("@SkillRank:hrm/class/skillrank.class.php:fk_object:(objecttype:=:'job')");
 
 	// /**
 	//  * @var JobLine[]     Array of subtable lines
@@ -926,7 +926,7 @@ class Job extends CommonObject
 		$this->lines = array();
 
 		$objectline = new JobLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_job = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_job:=:'.((int) $this->id).')');
 
 		if (is_numeric($result)) {
 			$this->error = $objectline->error;

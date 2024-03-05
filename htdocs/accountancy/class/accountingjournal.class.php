@@ -178,7 +178,7 @@ class AccountingJournal extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.code' || $key == 't.label' || $key == 't.nature') {
-					$sqlwhere[] = $key."='".$this->db->escape($value)."'";
+					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 't.rowid' || $key == 't.active') {
 					$sqlwhere[] = $key.'='.((int) $value);
 				}
@@ -187,7 +187,7 @@ class AccountingJournal extends CommonObject
 		$sql .= ' WHERE 1 = 1';
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
 		if (count($sqlwhere) > 0) {
-			$sql .= " AND ".$this->db->sanitize(implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere), 1, 1, 1);
+			$sql .= " AND ".implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere);
 		}
 
 		if (!empty($sortfield)) {

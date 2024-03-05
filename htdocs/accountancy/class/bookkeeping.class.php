@@ -915,7 +915,7 @@ class BookKeeping extends CommonObject
 				} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.subledger_account>=' || $key == 't.subledger_account<=') {
 					$sqlwhere[] = $key.'\''.$this->db->escape($value).'\'';
 				} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
-					$sqlwhere[] = $key.'='.$value;
+					$sqlwhere[] = $key.' = '.((int) $value);
 				} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
 					$sqlwhere[] = $key.' LIKE \''.$this->db->escape($this->db->escapeforlike($value)).'%\'';
 				} elseif ($key == 't.date_creation>=' || $key == 't.date_creation<=') {
@@ -1114,7 +1114,7 @@ class BookKeeping extends CommonObject
 			$sql .= " AND t.date_export IS NULL";
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND '.$this->db->sanitize(implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere), 1, 1, 1);
+			$sql .= ' AND '.implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere);
 		}
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
@@ -1231,13 +1231,13 @@ class BookKeeping extends CommonObject
 				} elseif ($key == 't.reconciled_option') {
 					$sqlwhere[] = 't.lettering_code IS NULL';
 				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+					$sqlwhere[] = $key." LIKE '%".$this->escape($this->db->escapeforlike($value))."%'";
 				}
 			}
 		}
 		$sql .= ' WHERE entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
 		if (count($sqlwhere) > 0) {
-			$sql .= " AND ".$this->db->sanitize(implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere), 1, 1, 1);
+			$sql .= " AND ".implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere);
 		}
 
 		if (!empty($option)) {

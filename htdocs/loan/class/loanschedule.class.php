@@ -436,8 +436,6 @@ class LoanSchedule extends CommonObject
 	 */
 	public function fetchAll($loanid)
 	{
-		global $langs;
-
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.fk_loan,";
