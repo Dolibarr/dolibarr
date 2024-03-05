@@ -944,7 +944,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
 		if (count($sqlwhere) > 0) {
-			$sql .= " AND ".$this->db->sanitize(implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere), 1, 1, 1);
+			$sql .= " AND ".implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere);
 		}
 		// Filter by ledger account or subledger account
 		if (!empty($option)) {
@@ -1838,10 +1838,10 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Load all information of accountancy document
+	 * Load all accounting lines related to a given transaction ID $piecenum
 	 *
 	 * @param  int     $piecenum   Id of line to get
-	 * @param  string  $mode       Mode
+	 * @param  string  $mode       Mode ('' or '_tmp')
 	 * @return int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAllPerMvt($piecenum, $mode = '')
