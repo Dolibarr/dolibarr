@@ -71,6 +71,11 @@ class Product extends CommonObject
 	public $fk_element = 'fk_product';
 
 	/**
+	 * @var Product
+	 */
+	public $oldcopy;
+
+	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
@@ -290,7 +295,7 @@ class Product extends CommonObject
 	public $duration;
 
 	/**
-	 * Service Workstation
+	 * @var int Service Workstation
 	 */
 	public $fk_default_workstation;
 
