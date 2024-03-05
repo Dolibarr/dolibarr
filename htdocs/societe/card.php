@@ -2945,9 +2945,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<tr><td>'.$langs->trans('Capital').'</td><td>';
 			if ($object->capital) {
 				if (isModEnabled("multicurrency") && !empty($object->multicurrency_code)) {
-					print price($object->capital, '', $langs, 0, -1, -1, $object->multicurrency_code);
+					print price($object->capital, 0, $langs, 0, -1, -1, $object->multicurrency_code);
 				} else {
-					print price($object->capital, '', $langs, 0, -1, -1, $conf->currency);
+					print price($object->capital, 0, $langs, 0, -1, -1, $conf->currency);
 				}
 			} else {
 				print '&nbsp;';
