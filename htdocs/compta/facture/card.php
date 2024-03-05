@@ -4511,7 +4511,7 @@ if ($action == 'create') {
 		$file = GETPOST('file', 'alpha');
 
 		$formconfirm = $form->formconfirm(
-			$_SERVER["PHP_SELF"].'?facid='.$object->id.'&file='.$file,
+			$_SERVER["PHP_SELF"].'?facid='.$object->id.'&file='.urlencode($file),
 			$langs->trans('DeleteFileHeader'),
 			$langs->trans('DeleteFileText')."<br><br>".$file,
 			'remove_file',
