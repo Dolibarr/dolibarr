@@ -1596,7 +1596,7 @@ if (empty($reshook)) {
 									null,
 									0,
 									'',
-									0
+									(!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA)?0:1)
 								);
 							}
 
