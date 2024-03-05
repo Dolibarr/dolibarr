@@ -12,7 +12,7 @@
  * Copyright (C) 2013       Jean-Francois FERRY     <jfefe@aternatik.fr>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2014-2019  Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2014-2024  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2015-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
@@ -1596,7 +1596,7 @@ if (empty($reshook)) {
 									null,
 									0,
 									'',
-									1
+									(!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA)?0:1)
 								);
 							}
 
