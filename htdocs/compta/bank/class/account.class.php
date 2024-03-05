@@ -2570,12 +2570,15 @@ class AccountLine extends CommonObjectLine
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $option = '', $notooltip = 0)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$result = '';
 
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("BankTransactionLine").'</u>:<br>';
 		$label .= '<b>'.$langs->trans("Ref").':</b> '.$this->ref;
+		if ($this->amount) {
+			$label .= '<br><strong>'.$langs->trans("Amount").':</strong> '.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency);
+		}
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.((int) $this->id).'&save_lastsearch_values=1" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
@@ -2587,6 +2590,7 @@ class AccountLine extends CommonObjectLine
 		if ($withpicto != 2) {
 			$result .= ($this->ref ? $this->ref : $this->id);
 		}
+
 		$result .= $linkend;
 
 		if ($option == 'showall' || $option == 'showconciliated' || $option == 'showconciliatedandaccounted') {

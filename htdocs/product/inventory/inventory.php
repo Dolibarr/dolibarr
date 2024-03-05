@@ -1045,8 +1045,9 @@ if ($resql) {
 		// Expected quantity = Quantity in stock when we start inventory
 		print '<td class="right expectedqty" id="id_'.$obj->rowid.'" title="Stock viewed at last update: '.$obj->qty_stock.'">';
 		$valuetoshow = $obj->qty_stock;
+
 		// For inventory not yet close, we overwrite with the real value in stock now
-		if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
+		if (($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) && !getDolGlobalString('DISABLE_QTY_OVERWRITE')) {
 			if (isModEnabled('productbatch') && $product_static->hasbatch()) {
 				$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->detail_batch[$obj->batch]->qty;
 			} else {

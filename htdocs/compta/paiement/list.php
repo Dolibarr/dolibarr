@@ -183,6 +183,8 @@ if (GETPOST("orphelins", "alpha")) {
 	$sql = "SELECT p.rowid, p.ref, p.datep, p.amount, p.statut, p.num_paiement";
 	$sql .= ", c.code as paiement_code";
 
+	$sqlfields = $sql; // $sql fields to remove for count total
+
 	// Add fields from hooks
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
@@ -197,10 +199,13 @@ if (GETPOST("orphelins", "alpha")) {
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 } else {
-	$sql = "SELECT p.rowid, p.ref, p.datep, p.fk_bank, p.amount, p.statut, p.num_paiement";
+	$sql = "SELECT p.rowid, p.ref, p.datep, p.fk_bank, p.statut, p.num_paiement, p.amount";
 	$sql .= ", c.code as paiement_code";
 	$sql .= ", ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.fk_accountancy_journal as accountancy_journal";
 	$sql .= ", s.rowid as socid, s.nom as name, s.email";
+	// We need an aggregate because we added a left join to get the thirdparty. In real world, it should be the same thirdparty if payment is same (but not in database structure)
+	// so SUM(pf.amount) should be equal to p.amount but if we filter on $socid, it may differ
+	$sql .= ", SUM(pf.amount) as totalamount, COUNT(f.rowid) as nbinvoices";
 
 	// Add fields from hooks
 	$parameters = array();
@@ -213,18 +218,21 @@ if (GETPOST("orphelins", "alpha")) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
+
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
+
 	$sql .= " WHERE p.entity IN (".getEntity('invoice').")";
 	if ($socid > 0) {
-		$sql .= " AND f.fk_soc = ".((int) $socid);
+		$sql .= " AND EXISTS (SELECT f.fk_soc FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement_facture as pf";
+		$sql .= " WHERE p.rowid = pf.fk_paiement AND pf.fk_facture = f.rowid AND f.fk_soc = ".((int) $socid).")";
 	}
 	if ($userid) {
 		if ($userid == -1) {
-			$sql .= " AND f.fk_user_author IS NULL";
+			$sql .= " AND p.fk_user_creat IS NULL";
 		} else {
-			$sql .= " AND f.fk_user_author = ".((int) $userid);
+			$sql .= " AND p.fk_user_creat = ".((int) $userid);
 		}
 	}
 
@@ -248,7 +256,10 @@ if (GETPOST("orphelins", "alpha")) {
 		$sql .= natural_search('p.num_paiement', $search_payment_num);
 	}
 	if ($search_amount) {
-		$sql .= natural_search('p.amount', $search_amount, 1);
+		$sql .= " AND (".natural_search('p.amount', $search_amount, 1, 1);
+		$sql .= " OR ";
+		$sql .= natural_search('pf.amount', $search_amount, 1, 1);
+		$sql .= ")";
 	}
 	if ($search_company) {
 		$sql .= natural_search('s.nom', $search_company);
@@ -270,13 +281,18 @@ if (GETPOST("orphelins", "alpha")) {
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
+
+	$sql .= " GROUP BY p.rowid, p.ref, p.datep, p.fk_bank, p.statut, p.num_paiement, p.amount";
+	$sql .= ", c.code";
+	$sql .= ", ba.rowid, ba.ref, ba.label, ba.number, ba.account_number, ba.fk_accountancy_journal";
+	$sql .= ", s.rowid, s.nom, s.email";
 }
 
 // Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(DISTINCT p.rowid) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
@@ -298,6 +314,7 @@ $sql .= $db->order($sortfield, $sortorder);
 if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }
+//print $sql;
 
 $resql = $db->query($sql);
 if (!$resql) {
@@ -532,6 +549,8 @@ while ($i < min($num, $limit)) {
 
 	$object->id = $objp->rowid;
 	$object->ref = ($objp->ref ? $objp->ref : $objp->rowid);
+	$object->date = $db->jdate($objp->datep);
+	$object->amount = $objp->amount;
 
 	$companystatic->id = $objp->socid;
 	$companystatic->name = $objp->name;
@@ -629,7 +648,12 @@ while ($i < min($num, $limit)) {
 
 	// Amount
 	if (!empty($arrayfields['p.amount']['checked'])) {
-		print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
+		print '<td class="right">';
+		if ($objp->nbinvoices > 1 || ($objp->totalamount && $objp->amount != $objp->totalamount)) {
+			print $form->textwithpicto('', $langs->trans("PaymentMadeForSeveralInvoices"));
+		}
+		print '<span class="amount">'.price($objp->amount).'</span>';
+		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
