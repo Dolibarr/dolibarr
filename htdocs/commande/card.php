@@ -203,7 +203,7 @@ if (empty($reshook)) {
 							$line->fetch_product();
 						}
 						if (is_object($line->product) && $line->product->id > 0) {
-							if (empty($line->product->tosell)) {
+							if (empty($line->product->status)) {
 								$warningMsgLineList[$line->id] = $langs->trans('WarningLineProductNotToSell', $line->product->ref);
 							}
 						}
