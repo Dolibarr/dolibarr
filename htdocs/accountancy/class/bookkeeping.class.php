@@ -1211,17 +1211,17 @@ class BookKeeping extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.doc_date') {
-					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
+					$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate($value)."'";
 				} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=' || $key == 't.doc_date>' || $key == 't.doc_date<') {
-					$sqlwhere[] = $key."'".$this->db->idate($value)."'";
+					$sqlwhere[] = $this->db->sanitize($key)."'".$this->db->idate($value)."'";
 				} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.subledger_account>=' || $key == 't.subledger_account<=') {
-					$sqlwhere[] = $key."'".$this->db->escape($value)."'";
+					$sqlwhere[] = $this->db->sanitize($key)."'".$this->db->escape($value)."'";
 				} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
-					$sqlwhere[] = $key." = ".((int) $value);
+					$sqlwhere[] = $this->db->sanitize($key)." = ".((int) $value);
 				} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
-					$sqlwhere[] = $key." LIKE '".$this->db->escape($value)."%'";
+					$sqlwhere[] = $this->db->sanitize($key)." LIKE '".$this->db->escape($value)."%'";
 				} elseif ($key == 't.subledger_label') {
-					$sqlwhere[] = $key." LIKE '".$this->db->escape($value)."%'";
+					$sqlwhere[] = $this->db->sanitize($key)." LIKE '".$this->db->escape($value)."%'";
 				} elseif ($key == 't.code_journal' && !empty($value)) {
 					if (is_array($value)) {
 						$sqlwhere[] = natural_search("t.code_journal", implode(',', $value), 3, 1);
@@ -1231,7 +1231,7 @@ class BookKeeping extends CommonObject
 				} elseif ($key == 't.reconciled_option') {
 					$sqlwhere[] = 't.lettering_code IS NULL';
 				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->escape($this->db->escapeforlike($value))."%'";
+					$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->escape($this->db->escapeforlike($value))."%'";
 				}
 			}
 		}
