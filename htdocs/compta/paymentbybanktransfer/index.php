@@ -113,7 +113,7 @@ if (isModEnabled('salaries')) {
 
 print '<tr class="oddeven"><td>'.$langs->trans("Total").'</td>';
 print '<td class="right"><span class="amount nowraponall">';
-print price($totaltoshow, '', '', 1, -1, -1, 'auto');
+print price($totaltoshow, 0, '', 1, -1, -1, 'auto');
 print '</span></td></tr></table></div><br>';
 
 
