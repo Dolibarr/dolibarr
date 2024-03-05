@@ -492,6 +492,10 @@ class Product extends CommonObject
 	public $fourn_qty;
 	public $fourn_pu;
 	public $fourn_price_base_type;
+
+	/**
+	 * @var int ID
+	 */
 	public $fourn_socid;
 
 	/**
@@ -534,7 +538,7 @@ class Product extends CommonObject
 	public $sousprods;
 
 	/**
-	 * Path of subproducts. Build from ->sousprods with get_arbo_each_prod()
+	 * @var array Path of subproducts. Build from ->sousprods with get_arbo_each_prod()
 	 */
 	public $res;
 
