@@ -886,9 +886,9 @@ if ($socid > 0) {
 }
 
 // Restriction on sale representative
-if (!$permissiontoreadallthirdparty && getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+if (!$permissiontoreadallthirdparty) {
 	$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
-	if ($userschilds) {
+	if (getDolGlobalInt('MAIN_SEE_SUBORDINATES') && $userschilds) {
 		$sql .= " OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user IN (".$db->sanitize(implode(',', $userschilds))."))";
 	}
 	$sql .= ")";
