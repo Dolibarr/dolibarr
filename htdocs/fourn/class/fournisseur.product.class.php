@@ -6,7 +6,7 @@
  * Copyright (C) 2012		Christophe Battarel	  <christophe.battarel@altairis.fr>
  * Copyright (C) 2015		Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2016-2023	Charlene Benke         <charlene@patas-monkey.com>
- * Copyright (C) 2019-2024  Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2020       Pierre Ardoin         <mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -165,8 +165,15 @@ class ProductFournisseur extends Product
 	 */
 	public $fk_supplier_price_expression;
 
-	public $supplier_reputation; // reputation of supplier
-	public $reputations = array(); // list of available supplier reputations
+	/**
+	 * @var string reputation of supplier
+	 */
+	public $supplier_reputation;
+
+	/**
+	 * @var string[] list of available supplier reputations
+	 */
+	public $reputations = array();
 
 	// Multicurreny
 	public $fourn_multicurrency_id;

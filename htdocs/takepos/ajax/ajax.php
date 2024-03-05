@@ -93,9 +93,9 @@ if ($action == 'getProducts') {
 
 	$result = $object->fetch($category);
 	if ($result > 0) {
-		$filter = array();
+		$filter = '';
 		if ($tosell != '') {
-			$filter = array('customsql' => 'o.tosell = '.((int) $tosell));
+			$filter = '(o.tosell:=:'.((int) $tosell).')';
 		}
 		$prods = $object->getObjectsInCateg("product", 0, $limit, $offset, getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD'), 'ASC', $filter);
 		// Removed properties we don't need

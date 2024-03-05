@@ -636,18 +636,20 @@ class Dolresource extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$this->table_element."_extrafields as ef ON ef.fk_object=t.rowid";
 		$sql .= " WHERE t.entity IN (".getEntity('resource').")";
+
 		// Manage filter
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) {
-					$sql .= " AND ".$key." = '".$this->db->idate($value)."'";
+					$sql .= " AND ".$this->db->sanitize($key)." = '".$this->db->idate($value)."'";
 				} elseif (strpos($key, 'ef.') !== false) {
-					$sql .= $value;
+					$sql .= ((float) $value);
 				} else {
-					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
+					$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
 				}
 			}
 		}
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			$sql .= $this->db->plimit($limit, $offset);
