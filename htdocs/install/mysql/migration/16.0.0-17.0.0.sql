@@ -33,6 +33,9 @@
 
 
 -- Missing in v16 or lower
+
+-- VMYSQL4.3 ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
 ALTER TABLE llx_accounting_account DROP FOREIGN KEY fk_accounting_account_fk_pcg_version;
 ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32) NOT NULL;
 ALTER TABLE llx_accounting_account ADD CONSTRAINT fk_accounting_account_fk_pcg_version FOREIGN KEY (fk_pcg_version) REFERENCES llx_accounting_system (pcg_version);
@@ -406,4 +409,4 @@ ALTER TABLE llx_projet ADD COLUMN extraparams varchar(255);
 
 DELETE FROM llx_const WHERE name = 'TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST';
 
-
+UPDATE llx_menu SET url = '/fourn/paiement/list.php?mainmenu=billing&leftmenu=suppliers_bills_payment' WHERE leftmenu = 'suppliers_bills_payment';

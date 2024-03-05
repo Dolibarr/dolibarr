@@ -318,7 +318,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	// Check if email exists
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketsEmailMustExist").'</td>';
 	print '<td class="left">';
-	if (empty(getDolGlobalInt('TICKET_EMAIL_MUST_EXISTS'))) {
+	if (!getDolGlobalInt('TICKET_EMAIL_MUST_EXISTS')) {
 		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_TICKET_EMAIL_MUST_EXISTS&token='.newToken().'">' . img_picto($langs->trans('Disabled'), 'switch_off') . '</a>';
 	} else {
 		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_TICKET_EMAIL_MUST_EXISTS&token='.newToken().'">' . img_picto($langs->trans('Enabled'), 'switch_on') . '</a>';
@@ -334,7 +334,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	/*
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketCreateThirdPartyWithContactIfNotExist").'</td>';
 	print '<td class="left">';
-	if (empty(getDolGlobalInt('TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST'))) {
+	if (!getDolGlobalInt('TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST')) {
 		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST&token='.newToken().'">' . img_picto($langs->trans('Disabled'), 'switch_off') . '</a>';
 	} else {
 		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST&token='.newToken().'">' . img_picto($langs->trans('Enabled'), 'switch_on') . '</a>';

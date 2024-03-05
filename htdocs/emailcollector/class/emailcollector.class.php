@@ -2034,7 +2034,7 @@ class EmailCollector extends CommonObject
 								}
 
 								if (get_class($objectemail) != 'Societe') {
-									$thirdpartyid = $objectemail->fk_soc;
+									$thirdpartyid = $objectemail->fk_soc ?? $objectemail->socid;
 								} else {
 									$thirdpartyid = $objectemail->id;
 								}

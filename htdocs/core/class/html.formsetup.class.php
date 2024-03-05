@@ -243,7 +243,7 @@ class FormSetup
 	 */
 	public function saveConfFromPost($noMessageInUpdate = false)
 	{
-		global $hookmanager;
+		global $hookmanager,$conf;
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formSetupBeforeSaveConfFromPost', $parameters, $this); // Note that $action and $object may have been modified by some hooks
@@ -264,6 +264,10 @@ class FormSetup
 		$this->db->begin();
 		$error = 0;
 		foreach ($this->items as $item) {
+			if ($item->getType() == 'yesno' && !empty($conf->use_javascript_ajax)) {
+				continue;
+			}
+
 			$res = $item->setValueFromPost();
 			if ($res > 0) {
 				$item->saveConfValue();

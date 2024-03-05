@@ -129,7 +129,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 		// List of directories area
 		$texte .= '<tr><td>';
 		$texttitle = $langs->trans("ListOfDirectories");
-		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH)));
+		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim(getDolGlobalString('MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH'))));
 		$listoffiles = array();
 		foreach ($listofdir as $key => $tmpdir) {
 			$tmpdir = trim($tmpdir);
@@ -155,7 +155,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte .= '<textarea class="flat" cols="60" name="value1">';
-		$texte .= $conf->global->MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH;
+		$texte .= getDolGlobalString('MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH');
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
 		$texte .= '<input type="submit" class="button small reposition" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
@@ -163,7 +163,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 
 		// Scan directories
 		$nbofiles = count($listoffiles);
-		if (!empty($conf->global->MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH)) {
+		if (getDolGlobalString('MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH')) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
@@ -287,8 +287,8 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (!empty($conf->global->MAIN_DOC_USE_TIMING)) {
-					$format = $conf->global->MAIN_DOC_USE_TIMING;
+				if (getDolGlobalString('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalString('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
@@ -321,7 +321,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				$contactobject = null;
 				if (!empty($usecontact)) {
 					// We can use the company of contact instead of thirdparty company
-					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT))) {
+					if ($object->contact->socid != $object->thirdparty->id && getDolGlobalInt("MAIN_USE_COMPANY_NAME_OF_CONTACT")) {
 						$object->contact->fetch_thirdparty();
 						$socobject = $object->contact->thirdparty;
 						$contactobject = $object->contact;
@@ -350,8 +350,8 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				// Line of free text
 				$newfreetext = '';
 				$paramfreetext = 'MYMODULE_MYOBJECT_FREE_TEXT';
-				if (!empty($conf->global->$paramfreetext)) {
-					$newfreetext = make_substitutions($conf->global->$paramfreetext, $substitutionarray);
+				if (getDolGlobalString($paramfreetext)) {
+					$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray);
 				}
 
 				// Open and load template
@@ -477,7 +477,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				$reshook = $hookmanager->executeHooks('beforeODTSave', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				// Write new file
-				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
+				if (getDolGlobalString('MAIN_ODT_AS_PDF')) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {
@@ -498,8 +498,8 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
 				$reshook = $hookmanager->executeHooks('afterODTCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				if (getDolGlobalString('MAIN_UMASK')) {
+					@chmod($file, octdec(getDolGlobalString('MAIN_UMASK')));
 				}
 
 				$odfHandler = null; // Destroy object

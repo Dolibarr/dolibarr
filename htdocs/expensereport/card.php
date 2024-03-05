@@ -324,7 +324,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && $user->rights->expensereport->creer) {
+	if (($action == 'update' || $action == 'updateFromRefuse') && $user->rights->expensereport->creer) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 

@@ -700,6 +700,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
 			$action = 'closeas';
 		} elseif (GETPOST('statut', 'int') == $object::STATUS_SIGNED || GETPOST('statut', 'int') == $object::STATUS_NOTSIGNED) {
+			$locationTarget = '';
 			// prevent browser refresh from closing proposal several times
 			if ($object->statut == $object::STATUS_VALIDATED || ( ! empty($conf->global->PROPAL_SKIP_ACCEPT_REFUSE) && $object->statut == $object::STATUS_DRAFT)) {
 				$db->begin();
@@ -708,10 +709,12 @@ if (empty($reshook)) {
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
+				} else {
+					// Needed if object linked modified by trigger (because linked objects can't be fetched two times : linkedObjectsFullLoaded)
+					$locationTarget = DOL_URL_ROOT . '/comm/propal/card.php?id=' . $object->id;
 				}
 
 				$deposit = null;
-				$locationTarget = '';
 
 				$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
@@ -992,7 +995,8 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && ($qty >= 0) && (!empty($product_desc) || (!empty($idprod) && $idprod > 0))) {
+		$propal_qty_requirement = (!empty($conf->global->PROPAL_ENABLE_NEGATIVE_QTY) ? ($qty >= 0 || $qty <= 0) : $qty >= 0);
+		if (!$error && $propal_qty_requirement && (!empty($product_desc) || (!empty($idprod) && $idprod > 0))) {
 			$pu_ht = 0;
 			$pu_ttc = 0;
 			$price_min = 0;
@@ -1229,6 +1233,15 @@ if (empty($reshook)) {
 				}
 			}
 
+			$info_bits = 0;
+			if ($tva_npr) {
+				$info_bits |= 0x01;
+			}
+
+			// Local Taxes
+			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $tva_npr);
+			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $tva_npr);
+
 			// Margin
 			$fournprice = price2num(GETPOST('fournprice'.$predef) ? GETPOST('fournprice'.$predef) : '');
 			$buyingprice = price2num(GETPOST('buying_price'.$predef) != '' ? GETPOST('buying_price'.$predef) : ''); // If buying_price is '0', we muste keep this value
@@ -1241,7 +1254,7 @@ if (empty($reshook)) {
 			//$pu_equivalent_ttc = $pu_ttc;
 			$currency_tx = $object->multicurrency_tx;
 
-			// Check if we have a foreing currency
+			// Check if we have a foreign currency
 			// If so, we update the pu_equiv as the equivalent price in base currency
 			if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
 				$pu_equivalent = $pu_ht_devise * $currency_tx;
@@ -1250,25 +1263,28 @@ if (empty($reshook)) {
 				$pu_equivalent_ttc = $pu_ttc_devise * $currency_tx;
 			}
 
-			// Local Taxes
-			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $tva_npr);
-			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $tva_npr);
-
-			$info_bits = 0;
-			if ($tva_npr) {
-				$info_bits |= 0x01;
-			}
+			// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
+			/*
+			 if ($pu_equivalent) {
+			 $tmp = calcul_price_total(1, $pu_equivalent, 0, $tva_tx, -1, -1, 0, 'HT', $info_bits, $type);
+			 $pu_equivalent_ttc = ...
+			 } else {
+			 $tmp = calcul_price_total(1, $pu_equivalent_ttc, 0, $tva_tx, -1, -1, 0, 'TTC', $info_bits, $type);
+			 $pu_equivalent_ht = ...
+			 }
+			 */
 
 			//var_dump(price2num($price_min)); var_dump(price2num($pu_ht)); var_dump($remise_percent);
 			//var_dump(price2num($price_min_ttc)); var_dump(price2num($pu_ttc)); var_dump($remise_percent);exit;
 
+			// Check price is not lower than minimum
 			if ($usermustrespectpricemin) {
-				if ($pu_equivalent && $price_min && ((price2num($pu_equivalent) * (1 - $remise_percent / 100)) < price2num($price_min))) {
+				if ($pu_equivalent && $price_min && ((price2num($pu_equivalent) * (1 - $remise_percent / 100)) < price2num($price_min)) && $price_base_type == 'HT') {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
-				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc))) {
-					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc)) && $price_base_type == 'TTC') {
+					$mesg = $langs->trans("CantBeLessThanMinPriceInclTax", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 				}
@@ -1337,14 +1353,15 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'updateline' && $usercancreate && GETPOST('save')) {
 		// Update a line within proposal
+
+		// Clean parameters
+		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml'));
+
 		// Define info_bits
 		$info_bits = 0;
 		if (preg_match('/\*/', GETPOST('tva_tx'))) {
 			$info_bits |= 0x01;
 		}
-
-		// Clean parameters
-		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml'));
 
 		// Define vat_rate
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
@@ -1372,9 +1389,10 @@ if (empty($reshook)) {
 		// Prepare a price equivalent for minimum price check
 		$pu_equivalent = $pu_ht;
 		$pu_equivalent_ttc = $pu_ttc;
+
 		$currency_tx = $object->multicurrency_tx;
 
-		// Check if we have a foreing currency
+		// Check if we have a foreign currency
 		// If so, we update the pu_equiv as the equivalent price in base currency
 		if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
 			$pu_equivalent = $pu_ht_devise * $currency_tx;
@@ -1382,6 +1400,17 @@ if (empty($reshook)) {
 		if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
 			$pu_equivalent_ttc = $pu_ttc_devise * $currency_tx;
 		}
+
+		// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
+		/*
+		 if ($pu_equivalent) {
+		 $tmp = calcul_price_total(1, $pu_equivalent, 0, $vat_rate, -1, -1, 0, 'HT', $info_bits, $type);
+		 $pu_equivalent_ttc = ...
+		 } else {
+		 $tmp = calcul_price_total(1, $pu_equivalent_ttc, 0, $vat_rate, -1, -1, 0, 'TTC', $info_bits, $type);
+		 $pu_equivalent_ht = ...
+		 }
+		 */
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -1421,14 +1450,15 @@ if (empty($reshook)) {
 			//var_dump(price2num($price_min)); var_dump(price2num($pu_ht)); var_dump($remise_percent);
 			//var_dump(price2num($price_min_ttc)); var_dump(price2num($pu_ttc)); var_dump($remise_percent);exit;
 
+			// Check price is not lower than minimum
 			if ($usermustrespectpricemin) {
-				if ($pu_equivalent && $price_min && ((price2num($pu_equivalent) * (1 - $remise_percent / 100)) < price2num($price_min))) {
+				if ($pu_equivalent && $price_min && ((price2num($pu_equivalent) * (1 - $remise_percent / 100)) < price2num($price_min)) && $price_base_type == 'HT') {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 					$action = 'editline';
-				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc))) {
-					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc)) && $price_base_type == 'TTC') {
+					$mesg = $langs->trans("CantBeLessThanMinPriceInclTax", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 					$action = 'editline';
@@ -1557,7 +1587,7 @@ if (empty($reshook)) {
 		// warehouse
 		$result = $object->setWarehouse(GETPOST('warehouse_id', 'int'));
 	} elseif ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -1651,9 +1681,18 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewProp"), '', 'propal');
 
+	$cond_reglement_id = $mode_reglement_id = 0;
+
 	$soc = new Societe($db);
 	if ($socid > 0) {
 		$res = $soc->fetch($socid);
+
+		if (GETPOSTINT('cond_reglement_id') == 0) {
+			$cond_reglement_id = $soc->cond_reglement_id;
+		}
+		if (GETPOSTINT('mode_reglement_id') == 0) {
+			$mode_reglement_id = $soc->mode_reglement_id;
+		}
 	}
 
 	// Load objectsrc
@@ -1723,6 +1762,15 @@ if ($action == 'create') {
 		if (isModEnabled("multicurrency") && !empty($soc->multicurrency_code)) {
 			$currency_code = $soc->multicurrency_code;
 		}
+	}
+
+	// when payment term is empty (means not override by payment mode form a other object, like third-party), try to use default value
+	if (empty($cond_reglement_id)) {
+		$cond_reglement_id = GETPOST("cond_reglement_id", 'int');
+	}
+	// when payment mode is empty (means not override by payment mode form a other object, like third-party), try to use default value
+	if (empty($mode_reglement_id)) {
+		$mode_reglement_id = GETPOST("mode_reglement_id", 'int');
 	}
 
 	//Warehouse default if null
@@ -1825,13 +1873,13 @@ if ($action == 'create') {
 	// Terms of payment
 	print '<tr class="field_cond_reglement_id"><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	print img_picto('', 'paiment');
-	print $form->getSelectConditionsPaiements((GETPOSTISSET('cond_reglement_id') && GETPOST('cond_reglement_id', 'int') != 0) ? GETPOST('cond_reglement_id', 'int') : $soc->cond_reglement_id, 'cond_reglement_id', 1, 1, 0, '', (GETPOSTISSET('cond_reglement_id_deposit_percent') ? GETPOST('cond_reglement_id_deposit_percent', 'alpha') : $soc->deposit_percent));
+	print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, '', (GETPOSTISSET('cond_reglement_id_deposit_percent') ? GETPOST('cond_reglement_id_deposit_percent', 'alpha') : $soc->deposit_percent));
 	print '</td></tr>';
 
 	// Mode of payment
 	print '<tr class="field_mode_reglement_id"><td class="titlefieldcreate">'.$langs->trans('PaymentMode').'</td><td class="valuefieldcreate">';
 	print img_picto('', 'bank', 'class="pictofixedwidth"');
-	print $form->select_types_paiements((GETPOSTISSET('mode_reglement_id') && GETPOST('mode_reglement_id', 'int') != 0) ? GETPOST('mode_reglement_id', 'int') : $soc->mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
+	print $form->select_types_paiements($mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print '</td></tr>';
 
 	// Bank Account
@@ -2080,9 +2128,12 @@ if ($action == 'create') {
 	/*
 	 * Show object in view mode
 	 */
-
-	$soc = new Societe($db);
-	$soc->fetch($object->socid);
+	$object->fetch_thirdparty();
+	if ($object->thirdparty) {
+		$soc = $object->thirdparty;
+	} else {
+		$soc = new Societe($db);
+	}
 
 	$head = propal_prepare_head($object);
 	print dol_get_fiche_head($head, 'comm', $langs->trans('Proposal'), -1, 'propal');
@@ -2330,9 +2381,9 @@ if ($action == 'create') {
 	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', 0, 1);
 	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':'.$conf->global->THIRDPARTY_REF_INPUT_SIZE : ''), '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
-	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherProposals").'</a>)';
+	$morehtmlref .= '<br><span class="hideonsmartphone">'.$langs->trans('ThirdParty').' : </span>'.$soc->getNomUrl(1, 'customer');
+	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $soc->id > 0) {
+		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$soc->id.'&search_societe='.urlencode($soc->name).'">'.$langs->trans("OtherProposals").'</a>)';
 	}
 	// Project
 	if (isModEnabled('project')) {

@@ -2574,7 +2574,7 @@ span.mainmenuaspan.tmenudisabled {
 	cursor: not-allowed;
 }
 
-a.disabled {
+a.disabled, span.tmenu {
 	color: #aaa;
 	text-decoration: none !important;
 	cursor: default;
@@ -5058,6 +5058,7 @@ div.ui-tooltip.mytooltip {
 	color: var(--tooltipfontcolor);
 	line-height: 1.6em;
 	min-width: 550px;
+	pointer-events: none;
 }
 
 <?php
@@ -6389,7 +6390,7 @@ input.select2-input {
 }
 div.select2-drop-above
 {
-	background: var(--colorbackvmenu1);e
+	background: var(--colorbackvmenu1);
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 }

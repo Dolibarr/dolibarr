@@ -241,6 +241,20 @@ class Account extends CommonObject
 	public $date_solde;
 
 	/**
+	 * Balance. Used in Account::create
+	 * @var float
+	 * @deprecated
+	 * @see $balance
+	 */
+	public $solde;
+
+	/**
+	 * Balance. Used in Account::create
+	 * @var float
+	 */
+	public $balance;
+
+	/**
 	 * Creditor Identifier CI. Some banks use different ICS for direct debit and bank tranfer
 	 * @var string
 	 */
@@ -531,6 +545,8 @@ class Account extends CommonObject
 	 */
 	public function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur = '', $banque = '', $accountancycode = '', $datev = null, $num_releve = '', $amount_main_currency = null)
 	{
+		global $langs;
+
 		// Deprecation warning
 		if (is_numeric($oper)) {
 			dol_syslog(__METHOD__.": using numeric operations is deprecated", LOG_WARNING);
@@ -563,11 +579,11 @@ class Account extends CommonObject
 
 		// Check parameters
 		if (!$oper) {
-			$this->error = "oper not defined";
+			$this->error = $langs->trans("OperNotDefined");
 			return -1;
 		}
 		if (!$this->id) {
-			$this->error = "this->id not defined";
+			$this->error = $langs->trans("ThisIdNotDefined");
 			return -2;
 		}
 		if ($this->courant == Account::TYPE_CASH && $oper != 'LIQ') {
@@ -673,6 +689,14 @@ class Account extends CommonObject
 			return -1;
 		}
 
+		$balance = $this->balance;
+		if (empty($balance) && !empty($this->solde)) {
+			$balance = $this->solde;
+		}
+		if (empty($balance)) {
+			$balance = 0;
+		}
+
 		// Chargement librairie pour acces fonction controle RIB
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
@@ -746,7 +770,7 @@ class Account extends CommonObject
 				$accline = new AccountLine($this->db);
 				$accline->datec = $this->db->idate($now);
 				$accline->label = '('.$langs->trans("InitialBankBalance").')';
-				$accline->amount = price2num($this->solde);
+				$accline->amount = price2num($balance);
 				$accline->fk_user_author = $user->id;
 				$accline->fk_account = $this->id;
 				$accline->datev = $this->db->idate($this->date_solde);
@@ -958,8 +982,6 @@ class Account extends CommonObject
 	 */
 	public function fetch($id, $ref = '')
 	{
-		global $conf;
-
 		if (empty($id) && empty($ref)) {
 			$this->error = "ErrorBadParameters";
 			return -1;

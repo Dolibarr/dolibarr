@@ -343,6 +343,7 @@ HelpAbandonOther=Ce montant a été abandonné car il s'agissait d'une erreur de
 IdSocialContribution=Id de paiement charge fiscale ou sociale
 PaymentId=Id paiement
 PaymentRef=Ref paiement
+SourceInvoiceId=Id facture source
 InvoiceId=Id facture
 InvoiceRef=Réf. facture
 InvoiceDateCreation=Date création facture

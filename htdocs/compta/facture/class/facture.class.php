@@ -516,6 +516,7 @@ class Facture extends CommonInvoice
 		}
 
 		$now = dol_now();
+		$this->date_creation = $now;
 
 		$this->db->begin();
 
@@ -687,14 +688,14 @@ class Facture extends CommonInvoice
 		$sql .= ", ".($this->ref_ext ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 		$sql .= ", '".$this->db->escape($this->type)."'";
 		$sql .= ", ".((int) $socid);
-		$sql .= ", '".$this->db->idate($now)."'";
+		$sql .= ", '".$this->db->idate($this->date_creation)."'";
 		$sql .= ", ".($this->remise_absolue > 0 ? $this->remise_absolue : 'NULL');
 		$sql .= ", ".($this->remise_percent > 0 ? $this->remise_percent : 'NULL');
 		$sql .= ", '".$this->db->idate($this->date)."'";
 		$sql .= ", ".(empty($this->date_pointoftax) ? "null" : "'".$this->db->idate($this->date_pointoftax)."'");
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
-		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
+		$sql .= ", ".($this->ref_customer ? "'".$this->db->escape($this->ref_customer)."'" : ($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null"));
 		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
 		$sql .= ", ".($this->module_source ? "'".$this->db->escape($this->module_source)."'" : "null");
 		$sql .= ", ".($this->pos_source != '' ? "'".$this->db->escape($this->pos_source)."'" : "null");
@@ -1050,7 +1051,7 @@ class Facture extends CommonInvoice
 						$buyprice,
 						$_facrec->lines[$i]->label,
 						empty($_facrec->lines[$i]->array_options) ?null:$_facrec->lines[$i]->array_options,
-						$_facrec->lines[$i]->situation_percent,
+						100,	// situation percent is undefined on recurring invoice lines
 						'',
 						$_facrec->lines[$i]->fk_unit,
 						$_facrec->lines[$i]->multicurrency_subprice,
@@ -1157,6 +1158,7 @@ class Facture extends CommonInvoice
 
 		$facture->origin            = $this->origin;
 		$facture->origin_id         = $this->origin_id;
+		$facture->fk_account         = $this->fk_account;
 
 		$facture->lines = $this->lines; // Array of lines of invoice
 		$facture->situation_counter = $this->situation_counter;
@@ -4063,7 +4065,7 @@ class Facture extends CommonInvoice
 				}
 
 				// Mise a jour info denormalisees au niveau facture
-				$this->update_price(1);
+				$this->update_price(1, 'auto');
 				$this->db->commit();
 				return $result;
 			} else {
@@ -5595,8 +5597,18 @@ class Facture extends CommonInvoice
 								$email_tobcc = $arraymessage->email_tobcc;
 							}
 
+							//join file is asked
+							$joinFile = [];
+							$joinFileName = [];
+							$joinFileMime = [];
+							if ($arraymessage->joinfiles == 1 && !empty($tmpinvoice->last_main_doc)) {
+								$joinFile[] = DOL_DATA_ROOT.$tmpinvoice->last_main_doc;
+								$joinFileName[] = basename($tmpinvoice->last_main_doc);
+								$joinFileMime[] = dol_mimetype(DOL_DATA_ROOT.$tmpinvoice->last_main_doc);
+							}
+
 							// Mail Creation
-							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), $email_tocc, $email_tobcc, 0, 1, $errors_to, '', $trackid, '', $sendcontext, '');
+							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, $joinFile, $joinFileMime, $joinFileName, $email_tocc, $email_tobcc, 0, 1, $errors_to, '', $trackid, '', $sendcontext, '');
 
 							// Sending Mail
 							if ($cMailFile->sendfile()) {

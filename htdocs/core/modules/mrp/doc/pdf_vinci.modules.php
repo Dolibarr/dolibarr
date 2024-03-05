@@ -1168,35 +1168,38 @@ class pdf_vinci extends ModelePDFMo
 		}
 
 		// product info
-		$posy += 7;
 		$prodToMake = new Product($this->db);
-		$prodToMake->fetch($object->fk_product);
-		$pdf->SetFont('', 'B', $default_font_size + 1);
-		$pdf->SetXY($posx, $posy);
-		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($w, 3, $prodToMake->ref, '', 'R');
+		$resProdToMake = $prodToMake->fetch($object->fk_product);
 
-		$posy += 5;
-		$prodToMake = new Product($this->db);
-		$prodToMake->fetch($object->fk_product);
-		$pdf->SetFont('', 'B', $default_font_size + 3);
-		$pdf->SetXY($posx, $posy);
-		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($w, 3, $prodToMake->description, '', 'R');
+		if ($resProdToMake > 0) {
+			// ref
+			$posy += 7;
+			$pdf->SetFont('', 'B', $default_font_size + 1);
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->MultiCell($w, 3, $prodToMake->ref, '', 'R');
 
-		$array = array_filter(array($prodToMake->length, $prodToMake->width, $prodToMake->height));
-		$dim = implode("x", $array);
-		if (!empty($dim)) {
+			// description
 			$posy += 5;
 			$pdf->SetFont('', 'B', $default_font_size + 3);
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $dim, '', 'R');
+			$pdf->MultiCell($w, 3, html_entity_decode($prodToMake->description), '', 'R');
+			$posy = $pdf->GetY() - 5;
+
+			// dimensions
+			$array = array_filter(array($prodToMake->length, $prodToMake->width, $prodToMake->height));
+			$dim = implode("x", $array);
+			if (!empty($dim)) {
+				$posy += 5;
+				$pdf->SetFont('', 'B', $default_font_size + 3);
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, $dim, '', 'R');
+			}
 		}
 
 		$posy += 5;
-		$prodToMake = new Product($this->db);
-		$prodToMake->fetch($object->fk_product);
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);

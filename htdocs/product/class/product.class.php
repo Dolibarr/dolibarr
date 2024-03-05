@@ -770,7 +770,7 @@ class Product extends CommonObject
 					$sql .= ", mandatory_period";
 					$sql .= ") VALUES (";
 					$sql .= "'".$this->db->idate($now)."'";
-					$sql .= ", ".((int) $conf->entity);
+					$sql .= ", ".(!empty($this->entity) ? (int) $this->entity : (int) $conf->entity);
 					$sql .= ", '".$this->db->escape($this->ref)."'";
 					$sql .= ", ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 					$sql .= ", ".price2num($price_min_ht);
@@ -2677,18 +2677,18 @@ class Product extends CommonObject
 						if ($resql) {
 							$result = $this->db->fetch_array($resql);
 
-							$this->multiprices[$i] = $result["price"];
-							$this->multiprices_ttc[$i] = $result["price_ttc"];
-							$this->multiprices_min[$i] = $result["price_min"];
-							$this->multiprices_min_ttc[$i] = $result["price_min_ttc"];
-							$this->multiprices_base_type[$i] = $result["price_base_type"];
+							$this->multiprices[$i] = (!empty($result["price"]) ? $result["price"] : 0);
+							$this->multiprices_ttc[$i] = (!empty($result["price_ttc"]) ? $result["price_ttc"] : 0);
+							$this->multiprices_min[$i] = (!empty($result["price_min"]) ? $result["price_min"] : 0);
+							$this->multiprices_min_ttc[$i] = (!empty($result["price_min_ttc"]) ? $result["price_min_ttc"] : 0);
+							$this->multiprices_base_type[$i] = (!empty($result["price_base_type"]) ? $result["price_base_type"] : '');
 							// Next two fields are used only if PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL is on
-							$this->multiprices_tva_tx[$i] = $result["tva_tx"]; // TODO Add ' ('.$result['default_vat_code'].')'
-							$this->multiprices_recuperableonly[$i] = $result["recuperableonly"];
+							$this->multiprices_tva_tx[$i] = (!empty($result["tva_tx"]) ? $result["tva_tx"] : 0); // TODO Add ' ('.$result['default_vat_code'].')'
+							$this->multiprices_recuperableonly[$i] = (!empty($result["recuperableonly"]) ? $result["recuperableonly"] : 0);
 
 							// Price by quantity
-							$this->prices_by_qty[$i] = $result["price_by_qty"];
-							$this->prices_by_qty_id[$i] = $result["rowid"];
+							$this->prices_by_qty[$i] = (!empty($result["price_by_qty"]) ? $result["price_by_qty"] : 0);
+							$this->prices_by_qty_id[$i] = (!empty($result["rowid"]) ? $result["rowid"] : 0);
 							// Récuperation de la liste des prix selon qty si flag positionné
 							if ($this->prices_by_qty[$i] == 1) {
 								$sql = "SELECT rowid, price, unitprice, quantity, remise_percent, remise, price_base_type";
@@ -3078,11 +3078,12 @@ class Product extends CommonObject
 				if (!empty($conf->global->DECREASE_ONLY_UNINVOICEDPRODUCTS)) {
 					// If option DECREASE_ONLY_UNINVOICEDPRODUCTS is on, we make a compensation but only if order not yet invoice.
 					$adeduire = 0;
-					$sql = "SELECT sum(fd.qty) as count FROM ".$this->db->prefix()."facturedet as fd ";
-					$sql .= " JOIN ".$this->db->prefix()."facture as f ON fd.fk_facture = f.rowid ";
+					$sql = "SELECT SUM(".$this->db->ifsql('f.type=2', -1, 1)." * fd.qty) as count FROM ".$this->db->prefix()."facturedet as fd ";
+					$sql .= " JOIN ".$this->db->prefix()."facture as f ON fd.fk_facture = f.rowid";
 					$sql .= " JOIN ".$this->db->prefix()."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
-					$sql .= " JOIN ".$this->db->prefix()."commande as c ON el.fk_source = c.rowid ";
+					$sql .= " JOIN ".$this->db->prefix()."commande as c ON el.fk_source = c.rowid";
 					$sql .= " WHERE c.fk_statut IN (".$this->db->sanitize($filtrestatut).") AND c.facture = 0 AND fd.fk_product = ".((int) $this->id);
+
 					dol_syslog(__METHOD__.":: sql $sql", LOG_NOTICE);
 					$resql = $this->db->query($sql);
 					if ($resql) {
@@ -3099,11 +3100,12 @@ class Product extends CommonObject
 
 					// For every order having invoice already validated we need to decrease stock cause it's in physical stock
 					$adeduire = 0;
-					$sql = 'SELECT sum(fd.qty) as count FROM '.MAIN_DB_PREFIX.'facturedet as fd ';
-					$sql .= ' JOIN '.MAIN_DB_PREFIX.'facture as f ON fd.fk_facture = f.rowid ';
-					$sql .= ' JOIN '.MAIN_DB_PREFIX."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
-					$sql .= ' JOIN '.MAIN_DB_PREFIX.'commande as c ON el.fk_source = c.rowid ';
-					$sql .= ' WHERE c.fk_statut IN ('.$this->db->sanitize($filtrestatut).') AND f.fk_statut > '.Facture::STATUS_DRAFT.' AND fd.fk_product = '.((int) $this->id);
+					$sql = "SELECT sum(".$this->db->ifsql('f.type=2', -1, 1)." * fd.qty) as count FROM ".MAIN_DB_PREFIX."facturedet as fd ";
+					$sql .= " JOIN ".MAIN_DB_PREFIX."facture as f ON fd.fk_facture = f.rowid";
+					$sql .= " JOIN ".MAIN_DB_PREFIX."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
+					$sql .= " JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid";
+					$sql .= " WHERE c.fk_statut IN (".$this->db->sanitize($filtrestatut).") AND f.fk_statut > ".Facture::STATUS_DRAFT." AND fd.fk_product = ".((int) $this->id);
+
 					dol_syslog(__METHOD__.":: sql $sql", LOG_NOTICE);
 					$resql = $this->db->query($sql);
 					if ($resql) {
@@ -3111,6 +3113,9 @@ class Product extends CommonObject
 							$obj = $this->db->fetch_object($resql);
 							$adeduire += $obj->count;
 						}
+					} else {
+						$this->error = $this->db->error();
+						return -1;
 					}
 
 					$this->stats_commande['qty'] -= $adeduire;

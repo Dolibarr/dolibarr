@@ -323,6 +323,30 @@ if (empty($reshook)) {
 		$object->setProject($projectid);
 	}
 
+	if ($action == 'update_extras') {
+		$object->fetch($id);
+
+		$object->oldcopy = dol_clone($object);
+
+		// Fill array 'array_options' with data from update form
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+
+		if ($ret < 0) {
+			$error++;
+		}
+
+		if (!$error) {
+			$result = $object->insertExtraFields('DON_MODIFY');
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		}
+
+		if ($error) {
+			$action = 'edit_extras';
+		}
+	}
 
 	// Actions to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';

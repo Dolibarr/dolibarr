@@ -68,6 +68,11 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 || ($action == 'updateedit')) {
 	$tmparray = getCountry(GETPOST('country_id', 'int'), 'all', $db, $langs, 0);
 	if (!empty($tmparray['id'])) {
+		if ($tmparray['code'] == 'FR' && $tmparray['id'] != $mysoc->country_id) {
+			// For FR, default value of option to show profid SIREN is on by default
+			$res = dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS", 1, 'chaine', 0, '', $conf->entity);
+		}
+
 		$mysoc->country_id   = $tmparray['id'];
 		$mysoc->country_code = $tmparray['code'];
 		$mysoc->country_label = $tmparray['label'];
@@ -232,6 +237,9 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 		}
 		dolibarr_set_const($db, "MAIN_INFO_LOCALTAX_CALC2", GETPOST("clt2", 'aZ09'), 'chaine', 0, '', $conf->entity);
 	}
+
+	// Remove constant MAIN_INFO_SOCIETE_SETUP_TODO_WARNING
+	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_SETUP_TODO_WARNING", $conf->entity);
 
 	if (!$error) {
 		if (GETPOST('save')) {	// To avoid to show message when we juste switch the country that resubmit the form.

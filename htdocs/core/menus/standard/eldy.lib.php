@@ -1091,7 +1091,7 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 			$langs->loadLangs(array("admin", "help"));
 
 			$warnpicto = '';
-			if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
+			if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY) || !empty($conf->global->MAIN_INFO_SOCIETE_SETUP_TODO_WARNING)) {
 				$langs->load("errors");
 				$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
 			}
@@ -1672,7 +1672,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 
 			// Journals
 			if (isModEnabled('accounting') && $user->hasRight('accounting',  'comptarapport', 'lire') && $mainmenu == 'accountancy') {
-				$newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->hasRight('accounting',  'comptarapport', 'lire'), '', '', '');
+				$newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->hasRight('accounting',  'comptarapport', 'lire'), '', $mainmenu, 'accountancy_journal');
 
 				// Multi journal
 				$sql = "SELECT rowid, code, label, nature";

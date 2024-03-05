@@ -136,7 +136,7 @@ function testSqlAndScriptInject($val, $type)
 		$inj += preg_match('/user\s*\(/i', $val); // avoid to use function user() or mysql_user() that return current database login
 		$inj += preg_match('/information_schema/i', $val); // avoid to use request that read information_schema database
 		$inj += preg_match('/<svg/i', $val); // <svg can be allowed in POST
-		$inj += preg_match('/update[^&].*set.+=/i', $val);	// the [^&] test is to avoir error when request is like action=update&...set...
+		$inj += preg_match('/update[^&=\w].*set.+=/i', $val);	// the [^&=\w] test is to avoid error when request is like action=update&...set... or &updatemodule=...set...
 		$inj += preg_match('/union.+select/i', $val);
 	}
 	if ($type == 3) {
@@ -1673,7 +1673,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 		// Refresh value of MAIN_IHM_PARAMS_REV before forging the parameter line.
 		if (GETPOST('dol_resetcache')) {
-			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", ((int) $conf->global->MAIN_IHM_PARAMS_REV) + 1, 'chaine', 0, '', $conf->entity);
+			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 		}
 
 		$themeparam = '?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss', 'aZ09') ? '&amp;optioncss='.GETPOST('optioncss', 'aZ09', 1) : '').(empty($user->id) ? '' : ('&amp;userid='.$user->id)).'&amp;entity='.$conf->entity;
@@ -2077,8 +2077,20 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 			if (isset($_POST) && is_array($_POST)) {
 				foreach ($_POST as $key => $value) {
-					if ($key !== 'action' && $key !== 'password' && !is_array($value)) {
-						$qs .= '&'.$key.'='.urlencode($value);
+					$key = preg_replace('/[^a-z0-9_\-\[\]]/i', '', $key);
+					if (in_array($key, array('action', 'massaction', 'password'))) {
+						continue;
+					}
+					if (!is_array($value)) {
+						if ($value !== '') {
+							$qs .= '&'.$key.'='.urlencode($value);
+						}
+					} else {
+						foreach ($value as $value2) {
+							if (($value2 !== '') && (!is_array($value2))) {
+								$qs .= '&'.$key.'[]='.urlencode($value2);
+							}
+						}
 					}
 				}
 			}

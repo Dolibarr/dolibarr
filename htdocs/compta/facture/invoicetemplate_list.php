@@ -8,6 +8,7 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Meziane Sof          <virtualsof@yahoo.fr>
+ * Copyright (C) 2023      William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -359,6 +360,8 @@ if ($search_date_when_start) {
 if ($search_date_when_end) {
 	$sql .= " AND f.date_when <= '".$db->idate($search_date_when_end)."'";
 }
+// Add where from extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
 $tmpsortfield = $sortfield;
 if ($tmpsortfield == 'recurring') {

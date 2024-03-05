@@ -520,6 +520,8 @@ class FactureFournisseurRec extends CommonInvoice
 		$sql .= " auto_validate = ". (!empty($this->auto_validate) ? ((int) $this->auto_validate) : 0);
 		$sql .= " WHERE rowid = ". (int) $this->id;
 
+		$this->db->begin();
+
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -981,7 +983,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ', fk_user_author';
 			$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 			$sql .= ') VALUES (';
-			$sql .= ' ' . (int) $facid;   // source supplier invoie id
+			$sql .= ' ' . (int) $facid;   // source supplier invoice id
 			$sql .= ', ' . (!empty($fk_product) ? "'" . $this->db->escape($fk_product) . "'" : 'null');
 			$sql .= ', ' . (!empty($ref) ? "'" . $this->db->escape($ref) . "'" : 'null');
 			$sql .= ', ' . (!empty($label) ? "'" . $this->db->escape($label) . "'" : 'null');
@@ -1009,7 +1011,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ', ' . (int) $special_code;
 			$sql .= ', ' . (int) $rang;
 			$sql .= ', ' . ($fk_unit ? (int) $fk_unit : 'NULL');
-			$sql .= ', ' . (int) $user;
+			$sql .= ', ' . (int) $user->id;
 			$sql .= ', ' . (int) $this->fk_multicurrency;
 			$sql .= ", '" . $this->db->escape($this->multicurrency_code) . "'";
 			$sql .= ', ' . price2num($pu_ht_devise, 'CU');
@@ -1278,6 +1280,7 @@ class FactureFournisseurRec extends CommonInvoice
 			}
 
 			$saventity = $conf->entity;
+			$laststep="None";
 
 			while ($i < $num) {     // Loop on each template invoice. If $num = 0, test is false at first pass.
 				$line = $this->db->fetch_object($resql);
@@ -1288,6 +1291,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 				$new_fac_fourn = null;
 				$facturerec = new FactureFournisseurRec($this->db);
+				$laststep="Fetch {$line->rowid}";
 				$facturerec->fetch($line->rowid);
 
 				if ($facturerec->id > 0) {
@@ -1313,6 +1317,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$new_fac_fourn->libelle = $facturerec->libelle;
 
 					$invoiceidgenerated = $new_fac_fourn->create($user);
+					$laststep="Create invoiceidgenerated $invoiceidgenerated";
 					if ($invoiceidgenerated <= 0) {
 						$this->errors = $new_fac_fourn->errors;
 						$this->error = $new_fac_fourn->error;
@@ -1320,6 +1325,7 @@ class FactureFournisseurRec extends CommonInvoice
 					}
 					if (!$error && ($facturerec->auto_validate || $forcevalidation)) {
 						$result = $new_fac_fourn->validate($user);
+						$laststep = "Validate by user {$user->login}";
 						if ($result <= 0) {
 							$this->errors = $new_fac_fourn->errors;
 							$this->error = $new_fac_fourn->error;
@@ -1329,7 +1335,9 @@ class FactureFournisseurRec extends CommonInvoice
 
 					if (!$error && $facturerec->generate_pdf) {
 						// We refresh the object in order to have all necessary data (like date_lim_reglement)
+						$laststep = "Refresh {$new_fac_fourn->id}";
 						$new_fac_fourn->fetch($new_fac_fourn->id);
+						$laststep = "GenerateDocument {$new_fac_fourn->id}";
 						$result = $new_fac_fourn->generateDocument($facturerec->model_pdf, $langs);
 						if ($result < 0) {
 							$this->errors = $new_fac_fourn->errors;
@@ -1354,7 +1362,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$nb_create++;
 					$this->output .= $langs->trans('InvoiceGeneratedFromTemplate', $new_fac_fourn->ref, $facturerec->titre)."\n";
 				} else {
-					$this->db->rollback('createRecurringInvoices Process invoice template id=' .$facturerec->id. ', title=' .$facturerec->titre);
+					$this->db->rollback('createRecurringInvoices Process invoice template error={$error} invoiceidgenerated={$invoiceidgenerated} LastStep={$laststep} id=' .$facturerec->id. ', title=' .$facturerec->titre);
 				}
 
 				$parameters = array(
@@ -2182,7 +2190,7 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 		$sql .= ', special_code =' . (int) $this->special_code;
 		$sql .= ', rang = ' . (int) $this->rang;
 		$sql .= ', fk_unit = ' .($this->fk_unit ? "'".$this->db->escape($this->fk_unit)."'" : 'null');
-		$sql .= ', fk_user_modif = ' . (int) $user;
+		$sql .= ', fk_user_modif = ' . (int) $user->id;
 		$sql .= ' WHERE rowid = ' . (int) $this->id;
 
 		$this->db->begin();

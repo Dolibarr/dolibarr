@@ -284,7 +284,6 @@ if (empty($reshook)) {
 					$error++;
 				}
 			}
-
 			// If no SQL error we redirect to the request card
 			if (!$error) {
 				$db->commit();
@@ -924,15 +923,16 @@ $help_url = 'EN:Module_Holiday';
 llxHeader('', $title, $help_url);
 
 $edit = false;
+$errors = [];
 
 if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
+	// Form to add a leave request
+	print load_fiche_titre($langs->trans('MenuAddCP'), '', 'title_hrm.png');
+
 	// If user has no permission to create a leave
 	if ((in_array($fuserid, $childids) && empty($user->rights->holiday->write)) || (!in_array($fuserid, $childids) && ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->holiday->writeall_advance) || empty($user->rights->holiday->writeall))))) {
 		$errors[] = $langs->trans('CantCreateCP');
 	} else {
-		// Form to add a leave request
-		print load_fiche_titre($langs->trans('MenuAddCP'), '', 'title_hrm.png');
-
 		// Error management
 		if (GETPOST('error')) {
 			switch (GETPOST('error')) {
@@ -962,188 +962,190 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					break;
 			}
 
-			setEventMessages($errors, null, 'errors');
-		}
-
-
-		print '<script type="text/javascript">
-		$( document ).ready(function() {
-			$("input.button-save").click("submit", function(e) {
-				console.log("Call valider()");
-	    	    if (document.demandeCP.date_debut_.value != "")
-	    	    {
-		           	if(document.demandeCP.date_fin_.value != "")
-		           	{
-		               if(document.demandeCP.valideur.value != "-1") {
-		                 return true;
-		               }
-		               else {
-		                 alert("'.dol_escape_js($langs->transnoentities('InvalidValidatorCP')).'");
-		                 return false;
-		               }
-		            }
-		            else
-		            {
-		              alert("'.dol_escape_js($langs->transnoentities('NoDateFin')).'");
-		              return false;
-		            }
-		        }
-		        else
-		        {
-		           alert("'.dol_escape_js($langs->transnoentities('NoDateDebut')).'");
-		           return false;
-		        }
-	       	});
-		});
-       </script>'."\n";
-
-
-		// Formulaire de demande
-		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="demandeCP">'."\n";
-		print '<input type="hidden" name="token" value="'.newToken().'" />'."\n";
-		print '<input type="hidden" name="action" value="add" />'."\n";
-
-		if (empty($conf->global->HOLIDAY_HIDE_BALANCE)) {
-			print dol_get_fiche_head('', '', '', -1);
-
-			$out = '';
-			$nb_holiday = 0;
-			$typeleaves = $object->getTypes(1, 1);
-			foreach ($typeleaves as $key => $val) {
-				$nb_type = $object->getCPforUser($user->id, $val['rowid']);
-				$nb_holiday += $nb_type;
-
-				$out .= ' - '.($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']).': <strong>'.($nb_type ? price2num($nb_type) : 0).'</strong><br>';
-				//$out .= ' - '.$val['label'].': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
+			if (count($errors)) {
+				setEventMessages('', $errors, 'errors');
 			}
-			print $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>';
-			print $out;
-
-			print dol_get_fiche_end();
-		} elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE)) {
-			print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE).'<br>';
 		}
+	}
 
-		print dol_get_fiche_head();
 
-		//print '<span>'.$langs->trans('DelayToRequestCP',$object->getConfCP('delayForRequest')).'</span><br><br>';
+	print '<script type="text/javascript">
+    $( document ).ready(function() {
+        $("input.button-save").click("submit", function(e) {
+            console.log("Call valider()");
+            if (document.demandeCP.date_debut_.value != "")
+            {
+                if(document.demandeCP.date_fin_.value != "")
+                {
+                   if(document.demandeCP.valideur.value != "-1") {
+                     return true;
+                   }
+                   else {
+                     alert("'.dol_escape_js($langs->transnoentities('InvalidValidatorCP')).'");
+                     return false;
+                   }
+                }
+                else
+                {
+                  alert("'.dol_escape_js($langs->transnoentities('NoDateFin')).'");
+                  return false;
+                }
+            }
+            else
+            {
+               alert("'.dol_escape_js($langs->transnoentities('NoDateDebut')).'");
+               return false;
+            }
+        });
+    });
+   </script>'."\n";
 
-		print '<table class="border centpercent">';
-		print '<tbody>';
 
-		// User for leave request
-		print '<tr>';
-		print '<td class="titlefield fieldrequired">'.$langs->trans("User").'</td>';
-		print '<td>';
-		if ($cancreate && !$cancreateall) {
-			print img_picto('', 'user').$form->select_dolusers(($fuserid ? $fuserid : $user->id), 'fuserid', 0, '', 0, 'hierarchyme', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'minwidth200 maxwidth500');
-			//print '<input type="hidden" name="fuserid" value="'.($fuserid?$fuserid:$user->id).'">';
-		} else {
-			print img_picto('', 'user').$form->select_dolusers($fuserid ? $fuserid : $user->id, 'fuserid', 0, '', 0, '', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'minwidth200 maxwidth500');
-		}
-		print '</td>';
-		print '</tr>';
+	// Formulaire de demande
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="demandeCP">'."\n";
+	print '<input type="hidden" name="token" value="'.newToken().'" />'."\n";
+	print '<input type="hidden" name="action" value="add" />'."\n";
 
-		// Type
-		print '<tr>';
-		print '<td class="fieldrequired">'.$langs->trans("Type").'</td>';
-		print '<td>';
-		$typeleaves = $object->getTypes(1, -1);
-		$arraytypeleaves = array();
+	if (empty($conf->global->HOLIDAY_HIDE_BALANCE)) {
+		print dol_get_fiche_head('', '', '', -1);
+
+		$out = '';
+		$nb_holiday = 0;
+		$typeleaves = $object->getTypes(1, 1);
 		foreach ($typeleaves as $key => $val) {
-			$labeltoshow = ($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']);
-			$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')' : '');
-			$arraytypeleaves[$val['rowid']] = $labeltoshow;
+			$nb_type = $object->getCPforUser($user->id, $val['rowid']);
+			$nb_holiday += $nb_type;
+
+			$out .= ' - '.($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']).': <strong>'.($nb_type ? price2num($nb_type) : 0).'</strong><br>';
+			//$out .= ' - '.$val['label'].': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
 		}
-		print $form->selectarray('type', $arraytypeleaves, (GETPOST('type', 'alpha') ?GETPOST('type', 'alpha') : ''), 1, 0, 0, '', 0, 0, 0, '', '', true);
-		if ($user->admin) {
-			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-		}
-		print '</td>';
-		print '</tr>';
-
-		// Date start
-		print '<tr>';
-		print '<td class="fieldrequired">';
-		print $form->textwithpicto($langs->trans("DateDebCP"), $langs->trans("FirstDayOfHoliday"));
-		print '</td>';
-		print '<td>';
-		// Si la demande ne vient pas de l'agenda
-		if (!GETPOST('date_debut_')) {
-			print $form->selectDate(-1, 'date_debut_', 0, 0, 0, '', 1, 1);
-		} else {
-			$tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month', 'int'), GETPOST('date_debut_day', 'int'), GETPOST('date_debut_year', 'int'));
-			print $form->selectDate($tmpdate, 'date_debut_', 0, 0, 0, '', 1, 1);
-		}
-		print ' &nbsp; &nbsp; ';
-		print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday', 'alpha') ?GETPOST('starthalfday', 'alpha') : 'morning'));
-		print '</td>';
-		print '</tr>';
-
-		// Date end
-		print '<tr>';
-		print '<td class="fieldrequired">';
-		print $form->textwithpicto($langs->trans("DateFinCP"), $langs->trans("LastDayOfHoliday"));
-		print '</td>';
-		print '<td>';
-		if (!GETPOST('date_fin_')) {
-			print $form->selectDate(-1, 'date_fin_', 0, 0, 0, '', 1, 1);
-		} else {
-			$tmpdate = dol_mktime(0, 0, 0, GETPOST('date_fin_month', 'int'), GETPOST('date_fin_day', 'int'), GETPOST('date_fin_year', 'int'));
-			print $form->selectDate($tmpdate, 'date_fin_', 0, 0, 0, '', 1, 1);
-		}
-		print ' &nbsp; &nbsp; ';
-		print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday', 'alpha') ?GETPOST('endhalfday', 'alpha') : 'afternoon'));
-		print '</td>';
-		print '</tr>';
-
-		// Approver
-		print '<tr>';
-		print '<td class="fieldrequired">'.$langs->trans("ReviewedByCP").'</td>';
-		print '<td>';
-
-		$object = new Holiday($db);
-		$include_users = $object->fetch_users_approver_holiday();
-		if (empty($include_users)) {
-			print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateHolidays");
-		} else {
-			// Defined default approver (the forced approved of user or the supervisor if no forced value defined)
-			// Note: This use will be set only if the deinfed approvr has permission to approve so is inside include_users
-			$defaultselectuser = (empty($user->fk_user_holiday_validator) ? $user->fk_user : $user->fk_user_holiday_validator);
-			if (!empty($conf->global->HOLIDAY_DEFAULT_VALIDATOR)) {
-				$defaultselectuser = $conf->global->HOLIDAY_DEFAULT_VALIDATOR; // Can force default approver
-			}
-			if (GETPOST('valideur', 'int') > 0) {
-				$defaultselectuser = GETPOST('valideur', 'int');
-			}
-			$s = $form->select_dolusers($defaultselectuser, "valideur", 1, '', 0, $include_users, '', '0,'.$conf->entity, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
-			print img_picto('', 'user').$form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
-		}
-
-		//print $form->select_dolusers((GETPOST('valideur','int')>0?GETPOST('valideur','int'):$user->fk_user), "valideur", 1, ($user->admin ? '' : array($user->id)), 0, '', 0, 0, 0, 0, '', 0, '', '', 1);	// By default, hierarchical parent
-		print '</td>';
-		print '</tr>';
-
-		// Description
-		print '<tr>';
-		print '<td>'.$langs->trans("DescCP").'</td>';
-		print '<td class="tdtop">';
-		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, ROWS_3, '90%');
-		print $doleditor->Create(1);
-		print '</td></tr>';
-
-		// Other attributes
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
-
-		print '</tbody>';
-		print '</table>';
+		print $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>';
+		print $out;
 
 		print dol_get_fiche_end();
-
-		print $form->buttonsSaveCancel("SendRequestCP");
-
-		print '</from>'."\n";
+	} elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE)) {
+		print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE).'<br>';
 	}
+
+	print dol_get_fiche_head();
+
+	//print '<span>'.$langs->trans('DelayToRequestCP',$object->getConfCP('delayForRequest')).'</span><br><br>';
+
+	print '<table class="border centpercent">';
+	print '<tbody>';
+
+	// User for leave request
+	print '<tr>';
+	print '<td class="titlefield fieldrequired">'.$langs->trans("User").'</td>';
+	print '<td>';
+	if ($cancreate && !$cancreateall) {
+		print img_picto('', 'user').$form->select_dolusers(($fuserid ? $fuserid : $user->id), 'fuserid', 0, '', 0, 'hierarchyme', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'minwidth200 maxwidth500');
+		//print '<input type="hidden" name="fuserid" value="'.($fuserid?$fuserid:$user->id).'">';
+	} else {
+		print img_picto('', 'user').$form->select_dolusers($fuserid ? $fuserid : $user->id, 'fuserid', 0, '', 0, '', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'minwidth200 maxwidth500');
+	}
+	print '</td>';
+	print '</tr>';
+
+	// Type
+	print '<tr>';
+	print '<td class="fieldrequired">'.$langs->trans("Type").'</td>';
+	print '<td>';
+	$typeleaves = $object->getTypes(1, -1);
+	$arraytypeleaves = array();
+	foreach ($typeleaves as $key => $val) {
+		$labeltoshow = ($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']);
+		$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')' : '');
+		$arraytypeleaves[$val['rowid']] = $labeltoshow;
+	}
+	print $form->selectarray('type', $arraytypeleaves, (GETPOST('type', 'alpha') ?GETPOST('type', 'alpha') : ''), 1, 0, 0, '', 0, 0, 0, '', '', true);
+	if ($user->admin) {
+		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+	}
+	print '</td>';
+	print '</tr>';
+
+	// Date start
+	print '<tr>';
+	print '<td class="fieldrequired">';
+	print $form->textwithpicto($langs->trans("DateDebCP"), $langs->trans("FirstDayOfHoliday"));
+	print '</td>';
+	print '<td>';
+	// Si la demande ne vient pas de l'agenda
+	if (!GETPOST('date_debut_')) {
+		print $form->selectDate(-1, 'date_debut_', 0, 0, 0, '', 1, 1);
+	} else {
+		$tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month', 'int'), GETPOST('date_debut_day', 'int'), GETPOST('date_debut_year', 'int'));
+		print $form->selectDate($tmpdate, 'date_debut_', 0, 0, 0, '', 1, 1);
+	}
+	print ' &nbsp; &nbsp; ';
+	print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday', 'alpha') ?GETPOST('starthalfday', 'alpha') : 'morning'));
+	print '</td>';
+	print '</tr>';
+
+	// Date end
+	print '<tr>';
+	print '<td class="fieldrequired">';
+	print $form->textwithpicto($langs->trans("DateFinCP"), $langs->trans("LastDayOfHoliday"));
+	print '</td>';
+	print '<td>';
+	if (!GETPOST('date_fin_')) {
+		print $form->selectDate(-1, 'date_fin_', 0, 0, 0, '', 1, 1);
+	} else {
+		$tmpdate = dol_mktime(0, 0, 0, GETPOST('date_fin_month', 'int'), GETPOST('date_fin_day', 'int'), GETPOST('date_fin_year', 'int'));
+		print $form->selectDate($tmpdate, 'date_fin_', 0, 0, 0, '', 1, 1);
+	}
+	print ' &nbsp; &nbsp; ';
+	print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday', 'alpha') ?GETPOST('endhalfday', 'alpha') : 'afternoon'));
+	print '</td>';
+	print '</tr>';
+
+	// Approver
+	print '<tr>';
+	print '<td class="fieldrequired">'.$langs->trans("ReviewedByCP").'</td>';
+	print '<td>';
+
+	$object = new Holiday($db);
+	$include_users = $object->fetch_users_approver_holiday();
+	if (empty($include_users)) {
+		print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateHolidays");
+	} else {
+		// Defined default approver (the forced approved of user or the supervisor if no forced value defined)
+		// Note: This use will be set only if the deinfed approvr has permission to approve so is inside include_users
+		$defaultselectuser = (empty($user->fk_user_holiday_validator) ? $user->fk_user : $user->fk_user_holiday_validator);
+		if (!empty($conf->global->HOLIDAY_DEFAULT_VALIDATOR)) {
+			$defaultselectuser = $conf->global->HOLIDAY_DEFAULT_VALIDATOR; // Can force default approver
+		}
+		if (GETPOST('valideur', 'int') > 0) {
+			$defaultselectuser = GETPOST('valideur', 'int');
+		}
+		$s = $form->select_dolusers($defaultselectuser, "valideur", 1, '', 0, $include_users, '', '0,'.$conf->entity, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
+		print img_picto('', 'user').$form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
+	}
+
+	//print $form->select_dolusers((GETPOST('valideur','int')>0?GETPOST('valideur','int'):$user->fk_user), "valideur", 1, ($user->admin ? '' : array($user->id)), 0, '', 0, 0, 0, 0, '', 0, '', '', 1);	// By default, hierarchical parent
+	print '</td>';
+	print '</tr>';
+
+	// Description
+	print '<tr>';
+	print '<td>'.$langs->trans("DescCP").'</td>';
+	print '<td class="tdtop">';
+	$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, ROWS_3, '90%');
+	print $doleditor->Create(1);
+	print '</td></tr>';
+
+	// Other attributes
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
+	print '</tbody>';
+	print '</table>';
+
+	print dol_get_fiche_end();
+
+	print $form->buttonsSaveCancel("SendRequestCP");
+
+	print '</from>'."\n";
 } else {
 	if ($error) {
 		print '<div class="tabBar">';

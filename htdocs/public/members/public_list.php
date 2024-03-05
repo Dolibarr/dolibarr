@@ -111,6 +111,10 @@ if (!$sortfield) {
  * View
  */
 
+if (empty($conf->global->MEMBER_PUBLIC_ENABLED)) {
+	httponly_accessforbidden('Public access of list of members is not enabled');
+}
+
 $form = new Form($db);
 
 $morehead = '';

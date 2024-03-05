@@ -160,6 +160,13 @@ class modStock extends DolibarrModules
 		$this->rights[6][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[6][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 
+		$this->rights[6][0] = 1013;
+		$this->rights[6][1] = 'inventoryDeletePermission'; // Permission label
+		$this->rights[6][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[6][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[6][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+
+
 		if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 			$this->rights[8][0] = 1014;
 			$this->rights[8][1] = 'inventoryValidatePermission'; // Permission label

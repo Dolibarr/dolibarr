@@ -141,17 +141,18 @@ if ($id > 0 || !empty($ref)) {
 	if ($result < 0) {
 		dol_print_error($db, $object->error, $object->errors);
 	}
+	$entity = (!empty($object->entity) ? $object->entity : $conf->entity);
 	if (isModEnabled("product")) {
-		$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
+		$upload_dir = $conf->product->multidir_output[$entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
 	} elseif (isModEnabled("service")) {
-		$upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
+		$upload_dir = $conf->service->multidir_output[$entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
 	}
 
 	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {    // For backward compatiblity, we scan also old dirs
 		if (isModEnabled("product")) {
-			$upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
+			$upload_dirold = $conf->product->multidir_output[$entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
 		} else {
-			$upload_dirold = $conf->service->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
+			$upload_dirold = $conf->service->multidir_output[$entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
 		}
 	}
 }
@@ -448,6 +449,30 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Quick edit for extrafields
+	if ($action == 'update_extras') {
+		$object->oldcopy = dol_clone($object);
+
+		// Fill array 'array_options' with data from update form
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		if ($ret < 0) {
+			$error++;
+		}
+
+		if (!$error) {
+			// Actions on extra fields
+			$result = $object->insertExtraFields('PRODUCT_MODIFY');
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		}
+
+		if ($error) {
+			$action = 'edit_extras';
+		}
+	}
+
 	// Add a product or service
 	if ($action == 'add' && $usercancreate) {
 		$error = 0;
@@ -473,10 +498,11 @@ if (empty($reshook)) {
 		if (!$error) {
 			$units = GETPOST('units', 'int');
 
-			$object->ref                   = $ref;
-			$object->label                 = GETPOST('label', $label_security_check);
-			$object->price_base_type       = GETPOST('price_base_type', 'aZ09');
-			$object->mandatory_period 	   = !empty(GETPOST("mandatoryperiod", 'alpha')) ? 1 : 0;
+			$object->entity				= $conf->entity;
+			$object->ref				= $ref;
+			$object->label				= GETPOST('label', $label_security_check);
+			$object->price_base_type	= GETPOST('price_base_type', 'aZ09');
+			$object->mandatory_period	= !empty(GETPOST("mandatoryperiod", 'alpha')) ? 1 : 0;
 			if ($object->price_base_type == 'TTC') {
 				$object->price_ttc = GETPOST('price');
 			} else {
@@ -1460,7 +1486,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 			print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
 			print $formproduct->selectWarehouses(GETPOST('fk_default_warehouse', 'int'), 'fk_default_warehouse', 'warehouseopen', 1, 0, 0, '', 0, 0, array(), 'minwidth300 widthcentpercentminusxx maxwidth500');
-			print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken()).'">';
+			print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?&action=create&type='.GETPOST('type', 'int')).'">';
 			print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span>';
 			print '</a>';
 			print '</td>';
@@ -2024,7 +2050,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 				print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
 				print $formproduct->selectWarehouses((GETPOSTISSET('fk_default_warehouse') ? GETPOST('fk_default_warehouse') : $object->fk_default_warehouse), 'fk_default_warehouse', 'warehouseopen', 1);
-				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?action=create&type='.GETPOST('type', 'int')).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
+				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?action=edit&id='.((int) $object->id)).'">';
+				print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
 				print '</td></tr>';
 				/*
 				print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td>';

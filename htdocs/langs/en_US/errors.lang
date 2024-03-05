@@ -303,6 +303,7 @@ ErrorValueForTooLow=Value for <b>%s</b> is too low
 ErrorValueCantBeNull=Value for <b>%s</b> can't be null
 ErrorDateOfMovementLowerThanDateOfFileTransmission=The date of the bank transaction can't be lower than the date of the file transmission
 ErrorTooMuchFileInForm=Too much files in form, the maximum number is %s file(s)
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without option %s 
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -361,3 +362,7 @@ BadSetupOfField = Error bad setup of field
 BadSetupOfFieldClassNotFoundForValidation = Error bad setup of field : Class not found for validation
 BadSetupOfFieldFileNotFound = Error bad setup of field : File not found for inclusion
 BadSetupOfFieldFetchNotCallable = Error bad setup of field : Fetch not callable on class
+TotalAmountEmpty=Total Amount Empty
+FailedToFoundTheConversionRateForInvoice=Failed to found the conversion rate for invoice
+ThisIdNotDefined=$this->id not defined
+OperNotDefined=Oper not defined

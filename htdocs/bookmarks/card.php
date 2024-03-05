@@ -332,7 +332,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 
 	// Remove
 	if ($permissiontodelete && $action != 'edit') {
-		print '<a class="butActionDelete" href="list.php?bid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>'."\n";
+		print '<a class="butActionDelete" href="list.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>'."\n";
 	}
 
 	print '</div>';

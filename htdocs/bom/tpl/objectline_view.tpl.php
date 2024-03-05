@@ -332,8 +332,11 @@ if ($resql) {
 			$resql_supplier_price = $object->db->query($sql_supplier_price);
 			if ($resql_supplier_price) {
 				$obj = $object->db->fetch_object($resql_supplier_price);
-				$line_cost = $obj->min_price/$obj->qty * $sub_bom_line->qty * $line->qty;
-
+				if (!empty($obj->qty) && !empty($sub_bom_line->qty) && !empty($line->qty)) {
+					$line_cost = $obj->min_price/$obj->qty * $sub_bom_line->qty * $line->qty;
+				} else {
+					$line_cost = $obj->min_price;
+				}
 				print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price2num($line_cost, 'MT').'</span></td>';
 				$total_cost+= $line_cost;
 			}

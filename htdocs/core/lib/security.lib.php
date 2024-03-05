@@ -152,7 +152,7 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
 		if (empty($forceseed)) {
 			$ivseed = dolGetRandomBytes($ivlen);
 		} else {
-			$ivseed = dol_trunc(md5($forceseed), $ivlen, 'right', 'UTF-8', 1);
+			$ivseed = dol_substr(md5($forceseed), 0, $ivlen, 'ascii', 1);
 		}
 
 		$newchain = openssl_encrypt($chain, $ciphering, $key, 0, $ivseed);
@@ -353,6 +353,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	} else {
 		$objectid = $object;		// $objectid can be X or 'X,Y,Z'
 	}
+	if ($objectid == "-1") {
+		$objectid = 0;
+	}
 	if ($objectid) {
 		$objectid = preg_replace('/[^0-9\.\,]/', '', $objectid);	// For the case value is coming from a non sanitized user input
 	}
@@ -368,6 +371,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	$originalfeatures = $features;
 	if ($features == 'facturerec') {
 		$features = 'facture';
+	}
+	if ($features == 'supplier_invoicerec') {
+		$features = 'fournisseur';
+		$feature2 = 'facture';
 	}
 	if ($features == 'mo') {
 		$features = 'mrp';
@@ -389,6 +396,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	}
 	if ($features == 'product') {
 		$features = 'produit';
+	}
+	if ($features == 'payment_sc') {
+		$tableandshare = 'paiementcharge';
+		$parentfortableentity = 'fk_charge@chargesociales';
 	}
 
 	// Get more permissions checks from hooks
@@ -531,7 +542,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	// Check write permission from module (we need to know write permission to create but also to delete drafts record or to upload files)
 	$createok = 1;
 	$nbko = 0;
-	$wemustcheckpermissionforcreate = (GETPOST('sendit', 'alpha') || GETPOST('linkit', 'alpha') || in_array(GETPOST('action', 'aZ09'), array('create', 'update', 'add_element_resource', 'confirm_delete_linked_resource')) || GETPOST('roworder', 'alpha', 2));
+	$wemustcheckpermissionforcreate = (GETPOST('sendit', 'alpha') || GETPOST('linkit', 'alpha') || in_array(GETPOST('action', 'aZ09'), array('create', 'update', 'add_element_resource', 'confirm_deletebank', 'confirm_delete_linked_resource')) || GETPOST('roworder', 'alpha', 2));
 	$wemustcheckpermissionfordeletedraft = ((GETPOST("action", "aZ09") == 'confirm_delete' && GETPOST("confirm", "aZ09") == 'yes') || GETPOST("action", "aZ09") == 'delete');
 
 	if ($wemustcheckpermissionforcreate || $wemustcheckpermissionfordeletedraft) {
@@ -797,7 +808,6 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 	$params = explode('&', $tableandshare);
 	$dbtablename = (!empty($params[0]) ? $params[0] : '');
 	$sharedelement = (!empty($params[1]) ? $params[1] : $dbtablename);
-
 	foreach ($featuresarray as $feature) {
 		$sql = '';
 
@@ -813,14 +823,13 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($feature == 'task') {
 			$feature = 'projet_task';
 		}
-
 		if ($feature == 'payment_sc') {
-			$feature = "chargesociales";
+			$feature = 'paiementcharge';
 		}
 		$checkonentitydone = 0;
 
 		// Array to define rules of checks to do
-		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment','chargesociales'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment','chargesociales', 'paiementcharge'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe'); // Test for object Societe
 		$checkother = array('contact', 'agenda', 'contrat'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
@@ -841,7 +850,6 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($dbt_select != 'rowid' && $dbt_select != 'id') {
 			$objectid = "'".$objectid."'";	// Note: $objectid was already cast into int at begin of this method.
 		}
-
 		// Check permission for objectid on entity only
 		if (in_array($feature, $check) && $objectid > 0) {		// For $objectid = 0, no check
 			$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
@@ -1009,7 +1017,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}
-		//print $sql;
+
 
 		// For events, check on users assigned to event
 		if ($feature === 'agenda' && $objectid > 0) {

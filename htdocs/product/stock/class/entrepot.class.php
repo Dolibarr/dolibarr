@@ -127,7 +127,7 @@ class Entrepot extends CommonObject
 		'ref' =>array('type'=>'varchar(255)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'showoncombobox'=>1, 'position'=>25, 'searchall'=>1),
 		'description' =>array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-2, 'position'=>35, 'searchall'=>1),
 		'lieu' =>array('type'=>'varchar(64)', 'label'=>'LocationSummary', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'showoncombobox'=>2, 'searchall'=>1),
-		'fk_parent' =>array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ParentWarehouse', 'enabled'=>1, 'visible'=>-2, 'position'=>41),
+		'fk_parent' =>array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:1:((statut:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ParentWarehouse', 'enabled'=>1, 'visible'=>-2, 'position'=>41),
 		'fk_project' =>array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>25),
 		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-2, 'position'=>45, 'searchall'=>1),
 		'zip' =>array('type'=>'varchar(10)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>-2, 'position'=>50, 'searchall'=>1),
@@ -883,7 +883,7 @@ class Entrepot extends CommonObject
 	 *  @param     int			$hideref        Hide ref
 	 *  @return    int             				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		global $conf, $user, $langs;
 

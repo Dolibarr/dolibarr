@@ -498,11 +498,11 @@ if ($action == 'edit') {
 		print '</td><td>';
 		// SuperAdministrator access only
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
-			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW" size="32" value="'.$mainsmtppw.'" autocomplete="off">';
+			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW" size="32" value="' . htmlspecialchars($mainsmtppw, ENT_COMPAT, 'UTF-8') . '" autocomplete="off">';
 		} else {
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto($conf->global->MAIN_MAIL_SMTPS_PW, $htmltext, 1, 'superadmin');
-			print '<input type="hidden" name="MAIN_MAIL_SMTPS_PW" value="'.$mainsmtppw.'">';
+			print '<input type="hidden" name="MAIN_MAIL_SMTPS_PW" value="' . htmlspecialchars($mainsmtppw, ENT_COMPAT, 'UTF-8') . '">';
 		}
 		print '</td></tr>';
 	}
@@ -656,7 +656,7 @@ if ($action == 'edit') {
 	if (empty($conf->global->MAIN_DISABLE_ALL_MAILS)) {
 		// Force e-mail recipient
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_FORCE_SENDTO").'</td><td>'.getDolGlobalString('MAIN_MAIL_FORCE_SENDTO');
-		if (!empty(getDolGlobalString('MAIN_MAIL_FORCE_SENDTO'))) {
+		if (getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')) {
 			if (!isValidEmail(getDolGlobalString('MAIN_MAIL_FORCE_SENDTO'))) {
 				print img_warning($langs->trans("ErrorBadEMail"));
 			} else {

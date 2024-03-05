@@ -344,6 +344,7 @@ HelpAbandonOther=This amount has been abandoned since it was an error (wrong cus
 IdSocialContribution=Social/fiscal tax payment id
 PaymentId=Payment id
 PaymentRef=Payment ref.
+SourceInvoiceId=Source invoice id
 InvoiceId=Invoice id
 InvoiceRef=Invoice ref.
 InvoiceDateCreation=Invoice creation date

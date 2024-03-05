@@ -300,7 +300,7 @@ if ($action == 'update') {
 	$_SESSION["mainmenu"] = ""; // The menu manager may have changed
 
 	if (GETPOST('dol_resetcache')) {
-		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", ((int) $conf->global->MAIN_IHM_PARAMS_REV) + 1, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 	}
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup".'&mode='.$mode.(GETPOSTISSET('page_y') ? '&page_y='.GETPOST('page_y', 'int') : ''));

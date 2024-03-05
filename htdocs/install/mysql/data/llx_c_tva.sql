@@ -291,7 +291,7 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 2
 -- SLOVAKIA (id country=201)
 INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2011, 201,  '0', '0', 'VAT rate 0', 1);
 INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2012, 201, '10', '0', 'VAT rate - reduced', 1);
-INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2013, 201, '19', '0', 'VAT rate - standard', 1);
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2013, 201, '20', '0', 'VAT rate - standard', 1);
 
 -- SLOVENIA (id country=202)
 INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2021, 202,  '0', '0', 'VAT rate 0', 1);

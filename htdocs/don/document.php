@@ -68,11 +68,14 @@ if (!$sortfield) {
 }
 
 $object = new Don($db);
-if ($id > 0 || $ref) {
+if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 }
 
-$upload_dir = $conf->don->dir_output.'/'.get_exdir($id, 0, 0, 0, $object, 'donation').'/'.dol_sanitizeFileName($object->ref);
+if ($id > 0 || !empty($ref)) {
+	$upload_dir = $conf->don->multidir_output[$object->entity ? $object->entity : $conf->entity]."/".get_exdir(0, 0, 0, 1, $object);
+}
+
 $modulepart = 'don';
 
 // Security check

@@ -871,6 +871,12 @@ if ($search_amount_all_tax) {
 if ($search_status >= 0) {
 	$param .= "&search_status=".urlencode($search_status);
 }
+if ($search_paymentmode) {
+	$param .= '&search_paymentmode='.urlencode($search_paymentmode);
+}
+if ($search_paymentcond) {
+	$param .= '&search_paymentcond='.urlencode($search_paymentcond);
+}
 if ($show_files) {
 	$param .= '&show_files='.urlencode($show_files);
 }

@@ -322,7 +322,7 @@ function LoadProducts(position, issubcat) {
 	});
 
 	idata=0; //product data counter
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&category='+currentcat, function(data) {
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&thirdpartyid=' + jQuery('#thirdpartyid').val() + '&category='+currentcat, function(data) {
 		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat+" then loop on result to fill image thumbs");
 		console.log(data);
 		while (ishow < maxproduct) {
@@ -366,8 +366,18 @@ function LoadProducts(position, issubcat) {
 				}
 				?>
 				if (data[parseInt(idata)]['price_formated']) {
-					$("#proprice"+ishow).attr("class", "productprice");
-					$("#proprice"+ishow).html(data[parseInt(idata)]['price_ttc_formated']);
+					$("#proprice" + ishow).attr("class", "productprice");
+					<?php
+					if (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT')) {
+						?>
+						$("#proprice" + ishow).html(data[parseInt(idata)]['price_formated']);
+						<?php
+					} else {
+						?>
+						$("#proprice" + ishow).html(data[parseInt(idata)]['price_ttc_formated']);
+						<?php
+					}
+					?>
 				}
 				console.log("#prodiv"+ishow+".data(rowid)="+data[idata]['id']);
 				console.log($("#prodiv"+ishow));
@@ -448,8 +458,18 @@ function MoreProducts(moreorless) {
 				$("#probutton"+ishow).html(data[parseInt(idata)]['label']);
 				$("#probutton"+ishow).show();
 				if (data[parseInt(idata)]['price_formated']) {
-					$("#proprice"+ishow).attr("class", "productprice");
-					$("#proprice"+ishow).html(data[parseInt(idata)]['price_ttc_formated']);
+					$("#proprice" + ishow).attr("class", "productprice");
+					<?php
+					if (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT')) {
+						?>
+						$("#proprice" + ishow).html(data[parseInt(idata)]['price_formated']);
+						<?php
+					} else {
+						?>
+						$("#proprice" + ishow).html(data[parseInt(idata)]['price_ttc_formated']);
+						<?php
+					}
+					?>
 				}
 				$("#proimg"+ishow).attr("src","genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
@@ -557,7 +577,7 @@ function Refresh() {
 
 function New() {
 	// If we go here,it means $conf->global->TAKEPOS_BAR_RESTAURANT is not defined
-	invoiceid = $("#invoiceid").val();
+	invoiceid = $("#invoiceid").val();		// This is a hidden field added by invoice.php
 
 	console.log("New with place = <?php echo $place; ?>, js place="+place+", invoiceid="+invoiceid);
 
@@ -631,7 +651,7 @@ function Search2(keyCodeForEnter, moreorless) {
 			pageproducts = 0;
 			jQuery(".wrapper2 .catwatermark").hide();
 			var nbsearchresults = 0;
-			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo newToken();?>&term=' + search_term + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
+			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo newToken();?>&term=' + search_term + '&thirdpartyid=' + jQuery('#thirdpartyid').val() + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
 				for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
 					if (typeof (data[i]) == "undefined") {
 						$("#prowatermark" + i).html("");
@@ -660,7 +680,17 @@ function Search2(keyCodeForEnter, moreorless) {
 					$("#probutton" + i).show();
 					if (data[i]['price_formated']) {
 						$("#proprice" + i).attr("class", "productprice");
-						$("#proprice" + i).html(data[i]['price_ttc_formated']);
+						<?php
+						if (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT')) {
+							?>
+							$("#proprice" + i).html(data[i]['price_formated']);
+							<?php
+						} else {
+							?>
+							$("#proprice" + i).html(data[i]['price_ttc_formated']);
+							<?php
+						}
+						?>
 					}
 					$("#proimg" + i).attr("title", titlestring);
 					if( undefined !== data[i]['img']) {

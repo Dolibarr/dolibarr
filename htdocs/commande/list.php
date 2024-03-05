@@ -105,7 +105,7 @@ $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 
 $search_login = GETPOST('search_login', 'alpha');
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
-$search_billed = GETPOSTISSET('search_billed') ? GETPOST('search_billed', 'int') : GETPOST('billed', 'int');
+$search_billed = GETPOST('search_billed', 'int');
 $search_status = GETPOST('search_status', 'int');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
@@ -469,7 +469,7 @@ if (empty($reshook)) {
 								$array_options = $lines[$i]->array_options;
 							}
 
-							$objecttmp->context['createfromclone'];
+							$objecttmp->context['createfromclone'] = 'createfromclone';
 
 							$rang = ($nbOrders > 1) ? -1 : $lines[$i]->rang;
 							//there may already be rows from previous orders

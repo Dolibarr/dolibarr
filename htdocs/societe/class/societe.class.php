@@ -872,10 +872,11 @@ class Societe extends CommonObject
 	 *    Create third party in database.
 	 *    $this->code_client = -1 and $this->code_fournisseur = -1 means automatic assignement.
 	 *
-	 *    @param	User	$user       Object of user that ask creation
-	 *    @return   int         		>=0 if OK, <0 if KO
+	 *    @param	User	$user           Object of user that ask creation
+	 *    @param    int		$notrigger	    1=Does not execute triggers, 0= execute triggers
+	 *    @return   int         		    >=0 if OK, <0 if KO
 	 */
-	public function create(User $user)
+	public function create(User $user, $notrigger = 0)
 	{
 		global $langs, $conf, $mysoc;
 
@@ -1010,12 +1011,14 @@ class Societe extends CommonObject
 				}
 
 				if ($ret >= 0) {
-					// Call trigger
-					$result = $this->call_trigger('COMPANY_CREATE', $user);
-					if ($result < 0) {
-						$error++;
+					if (! $notrigger) {
+						// Call trigger
+						$result = $this->call_trigger('COMPANY_CREATE', $user);
+						if ($result < 0) {
+							$error++;
+						}
+						// End call triggers
 					}
-					// End call triggers
 				} else {
 					$error++;
 				}
@@ -1052,12 +1055,13 @@ class Societe extends CommonObject
 	/**
 	 * Create a contact/address from thirdparty
 	 *
-	 * @param 	User	$user		Object user
-	 * @param 	int		$no_email	1=Do not send mailing, 0=Ok to recieve mailling
-	 * @param 	array	$tags		Array of tag to affect to contact
-	 * @return 	int					<0 if KO, >0 if OK
+	 * @param 	User	$user		    Object user
+	 * @param 	int		$no_email	    1=Do not send mailing, 0=Ok to recieve mailling
+	 * @param 	array	$tags		    Array of tag to affect to contact
+	 * @param   int     $notrigger	    1=Does not execute triggers, 0= execute triggers
+	 * @return 	int					    <0 if KO, >0 if OK
 	 */
-	public function create_individual(User $user, $no_email = 0, $tags = array())
+	public function create_individual(User $user, $no_email = 0, $tags = array(), $notrigger = 0)
 	{
 		global $conf;
 
@@ -1085,7 +1089,7 @@ class Societe extends CommonObject
 		$this->setUpperOrLowerCase();
 		$contact->phone_pro         = $this->phone;
 
-		$contactId = $contact->create($user);
+		$contactId = $contact->create($user, $notrigger);
 		if ($contactId < 0) {
 			$error++;
 			$this->error = $contact->error;
@@ -2149,10 +2153,11 @@ class Societe extends CommonObject
 	 */
 	public function set_as_client()
 	{
+		global $conf;
 		// phpcs:enable
 		if ($this->id) {
 			$newclient = 1;
-			if ($this->client == 2 || $this->client == 3) {
+			if (($this->client == 2 || $this->client == 3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
 				$newclient = 3; //If prospect, we keep prospect tag
 			}
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
@@ -2688,9 +2693,9 @@ class Societe extends CommonObject
 			$label .= $this->getTypeUrl(1);
 		}
 
-		$label .= '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag($this->name);
+		$label .= '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag(dol_string_nohtmltag($this->name));
 		if (!empty($this->name_alias)) {
-			$label .= ' ('.dol_escape_htmltag($this->name_alias).')';
+			$label .= ' ('.dol_escape_htmltag(dol_string_nohtmltag($this->name_alias)).')';
 		}
 
 		if ($this->email) {
@@ -2952,6 +2957,7 @@ class Societe extends CommonObject
 		$sql = "SELECT rowid, email, statut as status, phone_mobile, lastname, poste, firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople";
 		$sql .= " WHERE fk_soc = ".((int) $this->id);
+		$sql .= " AND entity IN (".getEntity($this->element).")";
 		$sql .= " ORDER BY lastname, firstname";
 
 		$resql = $this->db->query($sql);

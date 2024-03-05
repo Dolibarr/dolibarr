@@ -1299,14 +1299,20 @@ $(document).ready(function() {
  *
  * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
  */
-$(document).on('select2:open', () => {
+<?php
+if (empty($conf->global->MAIN_DISABLE_SELECT2_FOCUS_PROTECTION) && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
+	?>
+$(document).on('select2:open', (e) => {
 	console.log("Execute the focus (click on combo or use space when on component");
-	let allFound = document.querySelectorAll('.select2-container--open .select2-search__field');
-	$(this).one('mouseup keyup',()=>{
-		setTimeout(()=>{
-			allFound[allFound.length - 1].focus();
-		},0);
-	});
+	const target = $(e.target);
+	if (target && target.length) {
+		let id = target[0].id || target[0].name;
+		if (id.substr(-2) == "[]") id = id.substr(0,id.length-2);
+		document.querySelector('input[aria-controls*='+id+']').focus();
+	}
 });
+	<?php
+}
+?>
 
 // End of lib_head.js.php

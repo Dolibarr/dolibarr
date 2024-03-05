@@ -67,16 +67,16 @@ print '<script type="text/javascript">
 				init_price();
 			});
 			jQuery("#nbpiece").keyup(function(event) {
-				console.log("We enter a qty on "+event.which);
-				if ( event.which == 54 ) {  /* char - */
+				console.log("We enter a qty on "+event.key);
+				if ( event.key == "-" ) {  /* char - */
 					console.log("We set direction to value 1");
 					jQuery("#nbpiece").val(jQuery("#nbpiece").val().replace("-", ""));
-
 					jQuery("#mouvement option").removeAttr("selected").change();
 					jQuery("#mouvement option[value=1]").attr("selected","selected").trigger("change");
 					jQuery("#mouvement").trigger("change");
-				} else if ( event.which == 187 ) {  /* char + */
+				} else if ( event.key == "+" ) {  /* char + */
 					console.log("We set direction to value 0");
+					jQuery("#nbpiece").val(jQuery("#nbpiece").val().replace("+", ""));
 					jQuery("#mouvement option").removeAttr("selected").change();
 					jQuery("#mouvement option[value=0]").attr("selected","selected").trigger("change");
 					jQuery("#mouvement").trigger("change");

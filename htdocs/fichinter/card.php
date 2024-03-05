@@ -9,6 +9,7 @@
  * Copyright (C) 2015-2016  Abbes Bahfir            <bafbes@gmail.com>
  * Copyright (C) 2018-2022 	Philippe Grand       	<philippe.grand@atoo-net.com>
  * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1104,6 +1105,12 @@ if ($action == 'create') {
 			$numref = $object->ref;
 		}
 		$text = $langs->trans('ConfirmValidateIntervention', $numref);
+		if (isModEnabled('notification')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+			$notify = new Notify($db);
+			$text .= '<br>';
+			$text .= $notify->confirmMessage('FICHINTER_VALIDATE', $object->socid, $object);
+		}
 
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate', '', 1, 1);
 	}
@@ -1623,9 +1630,9 @@ if ($action == 'create') {
 				// Reopen
 				if ($object->statut >= Fichinter::STATUS_CLOSED) {
 					if ($user->rights->ficheinter->creer) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans('Reopen').'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans('ReOpen').'</a></div>';
 					} else {
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('Reopen').'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('ReOpen').'</a></div>';
 					}
 				}
 

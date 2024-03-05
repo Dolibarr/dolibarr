@@ -394,35 +394,44 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
 		$service = 'StripeLive';
 		$servicestatus = 1;
 	}
-	global $stripearrayofkeysbyenv;
-	$site_account = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
-	if (!empty($site_account)) {
-		\Stripe\Stripe::setApiKey($site_account);
-	}
-	if (isModEnabled('stripe') && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
-		$service = 'StripeTest';
-		$servicestatus = '0';
-		dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
-	} else {
-		$service = 'StripeLive';
-		$servicestatus = '1';
-	}
-	$stripe = new Stripe($db);
-	if (!empty($site_account)) {
-		// If $site_account not defined, then key not set and no way to call API Location
-		$stripeacc = $stripe->getStripeAccount($service);
-		if ($stripeacc) {
-			$locations = \Stripe\Terminal\Location::all('', array("stripe_account" => $stripeacc));
+
+	try {
+		global $stripearrayofkeysbyenv;
+		$site_account = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
+		if (!empty($site_account)) {
+			\Stripe\Stripe::setApiKey($site_account);
+		}
+		if (isModEnabled('stripe') && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+			$service = 'StripeTest';
+			$servicestatus = '0';
+			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
 		} else {
-			$locations = \Stripe\Terminal\Location::all();
+			$service = 'StripeLive';
+			$servicestatus = '1';
+		}
+		$stripe = new Stripe($db);
+		if (!empty($site_account)) {
+			// If $site_account not defined, then key not set and no way to call API Location
+			$stripeacc = $stripe->getStripeAccount($service);
+			if ($stripeacc) {
+				$locations = \Stripe\Terminal\Location::all('', array("stripe_account" => $stripeacc));
+			} else {
+				$locations = \Stripe\Terminal\Location::all();
+			}
+		}
+	} catch (Exception $e) {
+		print $e->getMessage().'<br>';
+	}
+
+	// Define the array $location
+	$location = array();
+	$location[""] = $langs->trans("NotDefined");
+	if (!empty($locations)) {
+		foreach ($locations as $tmplocation) {
+			$location[$tmplocation->id] = $tmplocation->display_name;
 		}
 	}
 
-	$location = array();
-	$location[""] = $langs->trans("NotDefined");
-	foreach ($locations as $tmplocation) {
-		$location[$tmplocation->id] = $tmplocation->display_name;
-	}
 	print $form->selectarray("STRIPE_LOCATION", $location, getDolGlobalString('STRIPE_LOCATION'));
 	print '</td></tr>';
 }

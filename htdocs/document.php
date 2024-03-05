@@ -207,20 +207,17 @@ $original_file = str_replace('../', '/', $original_file);
 $original_file = str_replace('..\\', '/', $original_file);
 
 
-// Find the subdirectory name as the reference
-$refname = basename(dirname($original_file)."/");
-
 // Security check
 if (empty($modulepart)) {
 	accessforbidden('Bad value for parameter modulepart');
 }
 
 // Check security and set return info with full path of file
-$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname);
+$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, '');
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
-//var_dump($fullpath_original_file.' '.$original_file.' '.$refname.' '.$accessallowed);exit;
+//var_dump($fullpath_original_file.' '.$original_file.' '.$accessallowed);exit;
 
 if (!empty($hashp)) {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
@@ -284,7 +281,7 @@ if (!is_object($hookmanager)) {
 }
 $hookmanager->initHooks(array('document'));
 $parameters = array('ecmfile' => $ecmfile, 'modulepart' => $modulepart, 'original_file' => $original_file,
-	'entity' => $entity, 'refname' => $refname, 'fullpath_original_file' => $fullpath_original_file,
+	'entity' => $entity, 'fullpath_original_file' => $fullpath_original_file,
 	'filename' => $filename, 'fullpath_original_file_osencoded' => $fullpath_original_file_osencoded);
 $reshook = $hookmanager->executeHooks('downloadDocument', $parameters); // Note that $action and $object may have been
 if ($reshook < 0) {
@@ -294,6 +291,7 @@ if ($reshook < 0) {
 	exit;
 }
 
+
 // Permissions are ok and file found, so we return it
 top_httphead($type);
 header('Content-Description: File Transfer');
@@ -301,6 +299,7 @@ if ($encoding) {
 	header('Content-Encoding: '.$encoding);
 }
 // Add MIME Content-Disposition from RFC 2183 (inline=automatically displayed, attachment=need user action to open)
+
 if ($attachment) {
 	header('Content-Disposition: attachment; filename="'.$filename.'"');
 } else {

@@ -141,7 +141,7 @@ class modApi extends DolibarrModules
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
 		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Générer / modifier la clé API des utilisateurs';	// Permission label
+		$this->rights[$r][1] = 'Generate/modify users API key';	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'apikey';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = 'generate';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)

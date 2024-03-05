@@ -39,6 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/stocktransfer/modules_stocktransfe
 $langs->loadLangs(array("stocks", "other", "productbatch", "companies"));
  if (isModEnabled('incoterm')) $langs->load('incoterm');
 
+
 // Get parameters
 $id = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
@@ -954,12 +955,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					}
 				}
 			} elseif ($object->status == $object::STATUS_VALIDATED && $permissiontoadd) {
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=destock">'.$langs->trans("StockTransferDecrementation").'</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=destock&token='.newToken().'">'.$langs->trans("StockTransferDecrementation").'</a>';
 			} elseif ($object->status == $object::STATUS_TRANSFERED && $permissiontoadd) {
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=destockcancel">'.$langs->trans("StockTransferDecrementationCancel").'</a>';
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=addstock">'.$langs->trans("StockTransferIncrementation").'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=destockcancel&token='.newToken().'">'.$langs->trans("StockTransferDecrementationCancel").'</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=addstock&token='.newToken().'">'.$langs->trans("StockTransferIncrementation").'</a>';
 			} elseif ($object->status == $object::STATUS_CLOSED && $permissiontoadd) {
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=addstockcancel">'.$langs->trans("StockTransferIncrementationCancel").'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=addstockcancel&token='.newToken().'">'.$langs->trans("StockTransferIncrementationCancel").'</a>';
 			}
 
 			// Clone

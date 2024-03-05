@@ -90,12 +90,14 @@ class box_birthdays extends ModeleBoxes
 			$sql .= " WHERE u.entity IN (".getEntity('user').")";
 			$sql .= " AND u.statut = ".User::STATUS_ENABLED;
 			$sql .= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], 0);
+			$sql .= " AND u.birth < '".$this->db->idate(dol_get_first_day($tmparray['year']))."'";
 			$sql .= ' UNION ';
 			$sql .= "SELECT u.rowid, u.firstname, u.lastname, u.dateemployment as datea, date_format(u.dateemployment, '%d') as daya, 'employment' as typea, u.email, u.statut as status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 			$sql .= " WHERE u.entity IN (".getEntity('user').")";
 			$sql .= " AND u.statut = ".User::STATUS_ENABLED;
 			$sql .= dolSqlDateFilter('u.dateemployment', 0, $tmparray['mon'], 0);
+			$sql .= " AND u.dateemployment < '".$this->db->idate(dol_get_first_day($tmparray['year']))."'";
 			$sql .= " ORDER BY daya ASC";	// We want to have date of the month sorted by the day without taking into consideration the year
 			$sql .= $this->db->plimit($max, 0);
 

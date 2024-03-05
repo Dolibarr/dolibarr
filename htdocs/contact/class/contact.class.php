@@ -112,7 +112,7 @@ class Contact extends CommonObject
 		'photo' =>array('type'=>'varchar(255)', 'label'=>'Photo', 'enabled'=>1, 'visible'=>3, 'position'=>170),
 		'priv' =>array('type'=>'smallint(6)', 'label'=>'ContactVisibility', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>175),
 		'fk_stcommcontact' =>array('type'=>'integer', 'label'=>'ProspectStatus', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>220),
-		'fk_prospectlevel' =>array('type'=>'varchar(12)', 'label'=>'ProspectLevel', 'enabled'=>1, 'visible'=>-1, 'position'=>255),
+		'fk_prospectcontactlevel' =>array('type'=>'varchar(12)', 'label'=>'ProspectLevel', 'enabled'=>1, 'visible'=>-1, 'position'=>255),
 		'no_email' =>array('type'=>'smallint(6)', 'label'=>'No_Email', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>180),
 		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>3, 'position'=>195, 'searchall'=>1),
 		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>3, 'position'=>200, 'searchall'=>1),
@@ -136,6 +136,11 @@ class Contact extends CommonObject
 	 * @see $civility_code
 	 */
 	public $civilite;
+
+	/**
+	 * @var string gender
+	 */
+	public $gender;
 
 	/**
 	 * @var string Address
@@ -354,8 +359,8 @@ class Contact extends CommonObject
 		}
 
 		if (empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {	// Default behaviour
-			$this->field['fk_stcommcontact']['enabled'] = 0;
-			$this->field['fk_prospectcontactlevel']['enabled'] = 0;
+			$this->fields['fk_stcommcontact']['enabled'] = 0;
+			$this->fields['fk_prospectcontactlevel']['enabled'] = 0;
 		}
 
 		// Unset fields that are disabled
@@ -432,12 +437,13 @@ class Contact extends CommonObject
 	/**
 	 *  Add a contact into database
 	 *
-	 *  @param      User	$user       Object user that create
-	 *  @return     int      			<0 if KO, >0 if OK
+	 *  @param      User	$user           Object user that create
+	 *  @param      int     $notrigger	    1=Does not execute triggers, 0= execute triggers
+	 *  @return     int      			    <0 if KO, >0 if OK
 	 */
-	public function create($user)
+	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		$error = 0;
 		$now = dol_now();
@@ -513,7 +519,7 @@ class Contact extends CommonObject
 				}
 			}
 
-			if (!$error) {
+			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('CONTACT_CREATE', $user);
 				if ($result < 0) {
@@ -1671,6 +1677,7 @@ class Contact extends CommonObject
 		// Desactive utilisateur
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople";
 		$sql .= " SET statut = ".((int) $this->statut);
+		$sql .= ", fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 		$result = $this->db->query($sql);
 
@@ -1794,6 +1801,7 @@ class Contact extends CommonObject
 		$sql .= " WHERE sc.fk_soc =".((int) $this->socid);
 		$sql .= " AND sc.fk_c_type_contact=tc.rowid";
 		$sql .= " AND tc.element = '".$this->db->escape($element)."'";
+		$sql .= " AND sp.entity IN (".getEntity('contact').")";
 		$sql .= " AND tc.active = 1";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
