@@ -434,10 +434,10 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 					setEventMessages($mesg, null, 'mesgs');
 
 					$moreparam = '';
-					if (isset($paramname2) && isset($paramval2)) {
+					if (isset($paramval2)) {
 						$moreparam .= '&'.($paramname2 ? $paramname2 : 'mid').'='.$paramval2;
 					}
-					header('Location: '.$_SERVER["PHP_SELF"].'?'.(isset($paramname) ? $paramname : 'id').'='.(is_object($object) ? $object->id : '').$moreparam);
+					header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname ?? 'id').'='.(is_object($object) ? $object->id : '').$moreparam);
 					exit;
 				} else {
 					$langs->load("other");
